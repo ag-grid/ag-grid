@@ -3,6 +3,7 @@ var inlinesource = require('gulp-inline-source');
 var htmlmin = require('gulp-htmlmin');
 var uncss  = require('gulp-uncss');
 const debug = require('gulp-debug');
+const cp = require('child_process');
 
 gulp.task('copy-from-docs', copyFromDocs);
 gulp.task('copy-from-ag-grid', copyFromAgGrid);
@@ -87,3 +88,14 @@ gulp.task('copy-font-awesome', function() {
         .pipe(gulp.dest('./dist/dist/font-awesome'));
 });
 */
+
+gulp.task('start', cb => {
+    const php = cp.spawn('php', ['-S', '0.0.0.0:8888', '-t', 'src'], { stdio: 'inherit' });
+    const gulp = cp.spawn('./node_modules/.bin/webpack-dev-server' , { stdio: 'inherit' } );
+
+    process.on('exit', () => {
+        php.kill();
+        gulp.kill();
+    })
+});
+

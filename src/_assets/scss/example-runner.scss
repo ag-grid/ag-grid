@@ -1,0 +1,137 @@
+$grey-50: #FAFAFA;
+$grey-100: #F5F5F5;
+$grey-200: #EEEEEE;
+$grey-300: #E0E0E0;
+$grey-400: #BDBDBD;
+$grey-700: #616161;
+
+$light-blue-500: #03A9F4;
+$light-blue-700: #0288D1;
+
+$unit: 4px;
+$font-size: 14px;
+
+
+$primary-tab-background: $grey-100;
+$primary-tab-border: $grey-400;
+
+$secondary-tab-background: $grey-50;
+$selected-tab-background: $secondary-tab-background;
+
+
+$vertical-pad: $unit * 2;
+$horizontal-pad: $unit * 3;
+$border-radius: $unit;
+
+@mixin round-the-top {
+    border-top-right-radius: $border-radius;
+    border-top-left-radius: $border-radius;
+}
+
+.example-runner {
+    .fa {
+        color: $grey-400;
+    }
+
+    a {
+        color: $light-blue-700;
+    }
+
+    ul {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        background: $primary-tab-background;
+        font-size: $font-size;
+        padding-top: $vertical-pad;
+        @include round-the-top;
+        border-bottom: 1px solid $primary-tab-border;
+
+        > li {
+            list-style: none;
+            margin: 0;
+            margin-bottom: -1px;
+            padding: 1px 1px 0 1px;
+            @include round-the-top;
+
+            > a {
+                @include round-the-top;
+                padding: $vertical-pad $horizontal-pad;
+                display: block;
+                &:hover, &:focus {
+                    text-decoration: none;
+                    color: $light-blue-500;
+                }
+            }
+
+            &.active  {
+                padding: 0;
+                border: 1px solid $primary-tab-border;
+                border-bottom: 1px solid $secondary-tab-background;
+                color: $light-blue-500;
+
+
+                > a {
+                    background: $selected-tab-background;
+                }
+
+                .fa {
+                    color: $grey-700;
+                }
+            }
+        }
+
+        &.primary > li:first-child {
+            flex: 1;
+            font-size: $font-size + 2;
+            a {
+                padding-top: $vertical-pad - 2;
+                color: $grey-700;
+                &:hover {
+                    color: $light-blue-700;
+                }
+            }
+        }
+    }
+
+    ul.secondary {
+        background-color: $secondary-tab-background;
+        padding-top: $unit * 4;
+        padding-left: $horizontal-pad;
+        font-size: $font-size - 2;
+
+        .fa {
+            width: 12px;
+        }
+
+        > li.active {
+            border-bottom-color: white;
+
+            > a {
+                background-color: white;
+            }
+        }
+    }
+
+    .tab-contents {
+        background-color: $selected-tab-background;
+
+        .result {
+            padding: $vertical-pad $horizontal-pad;
+        }
+        iframe {
+            width: 100%;
+            background-color: transparent;
+            border: 0;
+            margin: 0;
+            height: 300px;
+        }
+    }
+
+    pre {
+        background: white;
+        border: none;
+        max-height: 400px;
+        overflow: auto;
+    }
+}

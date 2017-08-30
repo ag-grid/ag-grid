@@ -1,4 +1,5 @@
 <?php
+include 'example-runner.php';
 
 $version = 'latest';
 
@@ -154,12 +155,12 @@ function isFrameworkWebComponents()
 
     <!-- Bootstrap -->
     <link inline rel="stylesheet" href="../dist/bootstrap/css/bootstrap.css">
-    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="../dist/bootstrap/js/bootstrap.min.js"></script>
 
     <link inline rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../documentation-main/documentation.css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../dist/highlight/color-brewer.min.css">
+    <script src="../dist/highlight/highlight.pack.js"></script>
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
 
