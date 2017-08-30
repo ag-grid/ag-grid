@@ -128,7 +128,7 @@ include '../documentation-main/documentation_header.php';
         results when parsed by screen readers.
     </p>
 
-    <p>To force row and column order, enable the following gridOption property like so:</p>
+    <p>To force row and column order, enable the following gridOptions property like so:</p>
 
     <pre>gridOptions.ensureDomOrder = true</pre>
 
@@ -140,7 +140,7 @@ include '../documentation-main/documentation_header.php';
         in the DOM.
     </p>
     <p>
-        To overcome this it may be neccessary to disable visualisation at the expense of increasing the application memory footprint.
+        To overcome this it may be neccessary to disable visualisation at the expense of increasing the memory footprint.
     </p>
 
     <p>
