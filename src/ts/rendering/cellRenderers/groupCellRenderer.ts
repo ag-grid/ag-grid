@@ -150,10 +150,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // if doing rtl, padding is on the right
-            this.getGui().style.paddingRight = paddingPx + 'px';
+            this.getHtmlElement().style.paddingRight = paddingPx + 'px';
         } else {
             // otherwise it is on the left
-            this.getGui().style.paddingLeft = paddingPx + 'px';
+            this.getHtmlElement().style.paddingLeft = paddingPx + 'px';
         }
     }
 
@@ -271,7 +271,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             let cbSelectionComponent = new CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);
             cbSelectionComponent.init({rowNode: rowNode});
-            this.eCheckbox.appendChild(cbSelectionComponent.getGui());
+            this.eCheckbox.appendChild(cbSelectionComponent.getHtmlElement());
             this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
         }
     }

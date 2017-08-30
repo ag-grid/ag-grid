@@ -23,7 +23,7 @@ export class PopupEditorWrapper extends Component implements ICellEditorComp {
         this.params.onKeyDown(event);
     }
 
-    public getGui(): HTMLElement {
+    public getGui(): HTMLElement | string {
         
         // we call getGui() on child here (rather than in the constructor)
         // as we should wait for 'init' to be called on child first.
@@ -38,7 +38,7 @@ export class PopupEditorWrapper extends Component implements ICellEditorComp {
     public init(params: ICellEditorParams): void {
         this.params = params;
 
-        this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+        this.gridOptionsWrapper.setDomData(this.getHtmlElement(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
 
         this.addDestroyFunc( ()=> {
                 if (this.cellEditor.destroy) {
@@ -51,7 +51,7 @@ export class PopupEditorWrapper extends Component implements ICellEditorComp {
             // this needs to be 'super' and not 'this' as if we call 'this',
             // it ends up called 'getGui()' on the child before 'init' was called,
             // which is not good
-            super.getGui(),
+            super.getHtmlElement(),
             'keydown',
             this.onKeyDown.bind(this)
         );

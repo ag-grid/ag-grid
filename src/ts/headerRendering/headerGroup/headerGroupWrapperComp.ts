@@ -54,7 +54,7 @@ export class HeaderGroupWrapperComp extends Component {
     @PostConstruct
     private postConstruct(): void {
 
-        CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+        CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getHtmlElement(), this.gridOptionsWrapper, null, this.columnGroup);
 
         let displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
@@ -66,13 +66,13 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupWidth();
         this.addAttributes();
 
-        let setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
+        let setLeftFeature = new SetLeftFeature(this.columnGroup, this.getHtmlElement(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     }
 
     private addAttributes(): void {
-        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
+        this.getHtmlElement().setAttribute("col-id", this.columnGroup.getUniqueId());
     }
 
     private appendHeaderGroupComp(displayName: string): IHeaderGroupComp {
@@ -197,7 +197,7 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     private onWidthChanged(): void {
-        this.getGui().style.width = this.columnGroup.getActualWidth() + 'px';
+        this.getHtmlElement().style.width = this.columnGroup.getActualWidth() + 'px';
     }
 
     private setupResize(): void {

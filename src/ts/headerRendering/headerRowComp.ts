@@ -67,7 +67,7 @@ export class HeaderRowComp extends Component {
     private removeAndDestroyChildComponents(idsToDestroy: string[]): void {
         idsToDestroy.forEach( id => {
             let child = this.headerComps[id];
-            this.getGui().removeChild(_.assertHtmlElement(child.getGui()));
+            this.getHtmlElement().removeChild(_.assertHtmlElement(child.getGui()));
             if (child.destroy){
                 child.destroy();
             }
@@ -104,8 +104,8 @@ export class HeaderRowComp extends Component {
         let rowHeight = 0;
         for (let i=0; i<this.dept; i++) rowHeight+=sizes[i];
 
-        this.getGui().style.top = rowHeight + 'px';
-        this.getGui().style.height = sizes[this.dept] + 'px';
+        this.getHtmlElement().style.top = rowHeight + 'px';
+        this.getHtmlElement().style.height = sizes[this.dept] + 'px';
     }
 
     //noinspection JSUnusedLocalSymbols
@@ -136,7 +136,7 @@ export class HeaderRowComp extends Component {
 
     private setWidth(): void {
         let mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
-        this.getGui().style.width = mainRowWidth;
+        this.getHtmlElement().style.width = mainRowWidth;
     }
 
     private onGridColumnsChanged(): void {
@@ -175,7 +175,7 @@ export class HeaderRowComp extends Component {
             if (child.isEmptyGroup()) { return; }
 
             let idOfChild = child.getUniqueId();
-            let eParentContainer = this.getGui();
+            let eParentContainer = this.getHtmlElement();
 
             // if we already have this cell rendered, do nothing
             let colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;

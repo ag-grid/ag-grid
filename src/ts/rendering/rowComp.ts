@@ -206,7 +206,7 @@ export class RowComp extends Component {
     public getCellForCol(column: Column): HTMLElement {
         let cellComp = this.cellComps[column.getColId()];
         if (cellComp) {
-            return cellComp.getGui();
+            return cellComp.getHtmlElement();
         } else {
             return null;
         }
@@ -607,7 +607,7 @@ export class RowComp extends Component {
     }
 
     private ensureCellInCorrectContainer(cellComp: CellComp): void {
-        let eCell = cellComp.getGui();
+        let element = cellComp.getHtmlElement();
         let column = cellComp.getColumn();
         let pinnedType = column.getPinned();
         let eContainer = this.getContainerForCell(pinnedType);
@@ -618,10 +618,10 @@ export class RowComp extends Component {
         if (inWrongRow) {
             // take out from old row
             if (eOldContainer) {
-                eOldContainer.removeChild(eCell);
+                eOldContainer.removeChild(element);
             }
 
-            eContainer.appendChild(eCell);
+            eContainer.appendChild(element);
             cellComp.setParentRow(eContainer);
         }
     }
