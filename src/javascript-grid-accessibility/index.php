@@ -132,6 +132,8 @@ include '../documentation-main/documentation_header.php';
 
     <pre>gridOptions.ensureDomOrder = true</pre>
 
+    <note>Animations won't work properly when the DOM order is forced, so ensure they are not enabled.</note>
+
     <h2 id="dom-order">Column and Row Virtualisation</h2>
 
     <p>
@@ -140,7 +142,7 @@ include '../documentation-main/documentation_header.php';
         in the DOM.
     </p>
     <p>
-        To overcome this it may be neccessary to disable visualisation at the expense of increasing the memory footprint.
+        To overcome this it may be necessary to disable visualisation at the expense of increasing the memory footprint.
     </p>
 
     <p>
