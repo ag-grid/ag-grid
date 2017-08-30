@@ -118,7 +118,7 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         Some other grids claim to provide support for complex grid layouts and interactions but based on our own
-        independent testing and feedback we've received from our customers this is clearly not the case.
+        independent testing and feedback we've received from our users this is clearly not the case.
     </note>
 
     <h2 id="dom-order">Column and Row Order</h2>
