@@ -16,6 +16,9 @@ module.exports = {
         "site": './src/_assets/ts/site'
     },
     stats: "minimal",
+    externals: {
+        'angular': 'angular'
+    },
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "[name].js",
