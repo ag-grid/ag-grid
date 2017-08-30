@@ -31,7 +31,6 @@ do
             ;;
 
         "ag-grid-aurelia-example")
-            npm run copy-to-ag-docs
             ;;
 
         "ag-grid-react-example")
