@@ -25,7 +25,6 @@ function getTemplate(targetInstruction: any) {
 @noView()
 @autoinject()
 @processContent(parseElement)
-
 export class AgCellTemplate {
     template: string;
 

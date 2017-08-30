@@ -1,4 +1,4 @@
-// ag-grid-aurelia v13.0.0
+// ag-grid-aurelia v13.0.2
 import { Container, ViewCompiler, ViewResources } from "aurelia-framework";
 import { ColDef, ICellEditorComp, IFilterComp, IFrameworkFactory } from "ag-grid/main";
 import { AureliaComponentFactory } from "./aureliaComponentFactory";

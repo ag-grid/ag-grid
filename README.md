@@ -77,6 +77,6 @@ To build:
 - npm install gulp -g
 - npm install aurelia-framework
 - npm install ag-grid
-- (or: npm install aurelia-framework@1.0.x && npm install ag-grid)
+- (or: npm install aurelia-framework@1.0.x && npm install ag-grid@13.0.2)
 
 - npm run build
