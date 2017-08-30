@@ -287,15 +287,15 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.addDestroyableEventListener(this.eExpanded, 'click', expandOrContractListener);
         this.addDestroyableEventListener(this.eContracted, 'click', expandOrContractListener);
 
-        // if editing groups, then double click is to start editing
-        if (!this.gridOptionsWrapper.isEnableGroupEdit()) {
-            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
-        }
-
         // expand / contract as the user hits enter
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
         this.addDestroyableEventListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
+
+        // if editing groups, then double click is to start editing
+        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
+            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
+        }
     }
 
     private onKeyDown(event: KeyboardEvent): void {
@@ -359,14 +359,17 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
+    private isExpandable(): boolean {
+        let rowNode = this.params.node;
+        let reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
+        return this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
+    }
+
     private showExpandAndContractIcons(): void {
+
         let rowNode = this.params.node;
 
-        let reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
-
-        let expandable = this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
-
-        if (expandable) {
+        if (this.isExpandable()) {
             // if expandable, show one based on expand state.
             // if we were dragged down, means our parent is always expanded
             let expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;

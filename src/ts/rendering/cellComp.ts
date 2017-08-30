@@ -767,7 +767,14 @@ export class CellComp extends Component {
     }
 
     private getValue(): any {
-        let isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer;
+
+        // if we don't check this, then the grid will render leaf groups as open even if we are not
+        // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
+        // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
+        // them via the API, or user user expanded them in the UI before turning on pivot mode
+        let lockedClosedGroup = this.rowNode.leafGroup && this.beans.columnController.isPivotMode();
+
+        let isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
         if (isOpenGroup && this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
             // if doing grouping and footers, we don't want to include the agg value
             // in the header when the group is open
