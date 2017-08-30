@@ -87,13 +87,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>There are numerous screen readers available, however right now the most popular screen reader for Windows is
        <a href="https://www.freedomscientific.com/Downloads/JAWS">JAWS</a> and for MAC users it is the embedded
-       <a href="http://help.apple.com/voiceover/info/guide">VoiceOver</a> software. ag-Grid testing is focused on these
+       <a href="http://help.apple.com/voiceover/info/guide">VoiceOver</a> software. Our testing has focused on these
         screen readers.
     </p>
 
     <h2>ARIA Attributes</h2>
     <p>
-        In order to give screen readers the contextual information they require to interpret and interact with ag-Grid,
+        In order to give screen readers the contextual information they require to interpret and interact with the grid,
         <a href="https://www.w3.org/TR/wai-aria/">ARIA</a> attributes are added to the grid DOM elements. These
         attributes are particularity useful when plain HTML elements such <i>div</i> and <i>span</i> are used to create
         complex DOM structures, which is the case with ag-Grid.
@@ -118,27 +118,29 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         Some other grids claim to provide support for complex grid layouts and interactions but based on our own
-        independent testing and feedback we've received from our users this is clearly not the case.
+        independent testing and the feedback we've received from our users this is clearly not the case.
     </note>
 
     <h2 id="dom-order">Column and Row Order</h2>
 
     <p>
-        By default rows and columns can appear out of order in the DOM. This is due to how ag-Grid
-        virtualises columns and rows, a technique whereby the grid draws columns and rows as the user scrolls.
-        This 'incorrect order' can result in inconsistent results when parsed by screen readers.
+        By default rows and columns can appear out of order in the DOM. This 'incorrect order' can result in inconsistent
+        results when parsed by screen readers.
     </p>
 
-    <p>To force row and column order enable the following gridOption property like so:</p>
+    <p>To force row and column order, enable the following gridOption property like so:</p>
 
     <pre>gridOptions.ensureDomOrder = true</pre>
 
     <h2 id="dom-order">Column and Row Virtualisation</h2>
 
     <p>
-        Row and Column virtualisation can be problematic for keyboard navigation and screen readers as not all rows and
-        columns will be available in the DOM. To overcome this it may be neccessary to disable visualisation at the
-        expense of increasing the application memory footprint.
+        By default the grid uses virtualisation; a technique whereby the grid draws columns and rows as the user scrolls.
+        This can be problematic for keyboard navigation and screen readers as not all rows and columns will be available
+        in the DOM.
+    </p>
+    <p>
+        To overcome this it may be neccessary to disable visualisation at the expense of increasing the application memory footprint.
     </p>
 
     <p>
@@ -166,8 +168,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        As an alternative you may want to consider using <a href="../javascript-grid-pagination/">Pagination</a> instead of using
-        rowBuffer property to constrain the amount of rows.
+        As an alternative you may want to consider using <a href="../javascript-grid-pagination/">Pagination</a> instead
+        to constrain the amount of visible rows.
     </p>
 
     <h2 id="example-accessibility">Example - Accessibility</h2>
