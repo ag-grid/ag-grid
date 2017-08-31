@@ -18,7 +18,9 @@ include '../documentation-main/documentation_header.php';
     <h4>Bug Fixes</h4>
 
     <ul>
-        <li>AG-721: When in pivot, it was possible open level groups via API or vie double clicking. Bottom level groups in pivot should be locked closed.</li>
+        <li>AG-721: When in pivot, it was possible open level groups via API or via double clicking. Bottom level groups in pivot should be locked closed.</li>
+        <li>AG-597: Preserve grouped column order after dragging to new position</li>
+        <li>AG-620: Retain hidden columns when group moved</li>
     </ul>
 
     <h2>Version 13.0.x</h2>
