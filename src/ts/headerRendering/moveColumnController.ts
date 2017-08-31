@@ -29,9 +29,6 @@ export class MoveColumnController {
 
     private lastDraggingEvent: DraggingEvent;
 
-    // captures state of drag item when existing so we can restore state upon reentry
-    private exitDragItem: DragItem;
-
     // this counts how long the user has been trying to scroll by dragging and failing,
     // if they fail x amount of times, then the column will get pinned. this is what gives
     // the 'hold and pin' functionality
@@ -57,21 +54,16 @@ export class MoveColumnController {
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
 
-        let columns = draggingEvent.dragSource.dragItemCallback().columns;
+        let columns = draggingEvent.dragItem.columns;
         let dragCameFromToolPanel = draggingEvent.dragSource.type===DragSourceType.ToolPanel;
         if (dragCameFromToolPanel) {
             // the if statement doesn't work if drag leaves grid, then enters again
             this.columnController.setColumnsVisible(columns, true);
-        } else if (this.exitDragItem) {
-
-            // restore previous state of visible columns upon reentering
-            let visibleColumns: Column[] = this.exitDragItem.columns.filter(column => {
-                return this.exitDragItem.visibleState[column.getId()];
-            });
+        } else {
+            // restore previous state of visible columns upon re-entering
+            let visibleState = draggingEvent.dragItem.visibleState;
+            let visibleColumns: Column[] = columns.filter(column => visibleState[column.getId()] );
             this.columnController.setColumnsVisible(visibleColumns, true);
-
-            // clear out exit dragItem now that it has been used
-            this.exitDragItem = null;
         }
 
         this.columnController.setColumnsPinned(columns, this.pinned);
@@ -84,9 +76,6 @@ export class MoveColumnController {
             let dragItem = draggingEvent.dragSource.dragItemCallback();
             let columns = dragItem.columns;
             this.columnController.setColumnsVisible(columns, false);
-
-            // capture state of dragItem when exiting so we can reinstate it upon entering
-            this.exitDragItem = dragItem;
         }
         this.ensureIntervalCleared();
     }

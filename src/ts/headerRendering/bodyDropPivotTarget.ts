@@ -27,7 +27,7 @@ export class BodyDropPivotTarget {
         // in pivot mode, we don't accept any drops if functions are read only
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) { return; }
 
-        let dragColumns: Column[] = draggingEvent.dragSource.dragItemCallback().columns;
+        let dragColumns: Column[] = draggingEvent.dragItem.columns;
 
         dragColumns.forEach( column => {
             // we don't allow adding secondary columns

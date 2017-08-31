@@ -53,13 +53,14 @@ export enum VDirection {Up, Down}
 export enum HDirection {Left, Right}
 
 export interface DraggingEvent {
-    event: MouseEvent,
-    x: number,
-    y: number,
-    vDirection: VDirection,
-    hDirection: HDirection,
-    dragSource: DragSource,
-    fromNudge: boolean
+    event: MouseEvent;
+    x: number;
+    y: number;
+    vDirection: VDirection;
+    hDirection: HDirection;
+    dragSource: DragSource;
+    dragItem: DragItem;
+    fromNudge: boolean;
 }
 
 @Bean('dragAndDropService')
@@ -91,7 +92,7 @@ export class DragAndDropService {
 
     private dragSourceAndParamsList: {params: DragListenerParams, dragSource: DragSource}[] = [];
 
-    private dragItem: Column[];
+    private dragItem: DragItem;
     private eventLastTime: MouseEvent;
     private dragSource: DragSource;
     private dragging: boolean;
@@ -171,9 +172,8 @@ export class DragAndDropService {
         this.dragging = true;
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
-        let columns: Column[] = this.dragSource.dragItemCallback().columns;
-        columns.forEach(column => column.setMoving(true));
-        this.dragItem = columns;
+        this.dragItem = this.dragSource.dragItemCallback();
+        this.dragItem.columns.forEach(column => column.setMoving(true));
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
         this.createGhost();
     }
@@ -182,7 +182,7 @@ export class DragAndDropService {
         this.eventLastTime = null;
         this.dragging = false;
 
-        this.dragItem.forEach( column => column.setMoving(false) );
+        this.dragItem.columns.forEach( column => column.setMoving(false) );
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
             let draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
@@ -295,14 +295,15 @@ export class DragAndDropService {
         let x = event.clientX - rect.left;
         let y = event.clientY - rect.top;
 
-        let dropTargetEvent = <DraggingEvent> {
+        let dropTargetEvent: DraggingEvent = {
             event: event,
             x: x,
             y: y,
             vDirection: vDirection,
             hDirection: hDirection,
             dragSource: this.dragSource,
-            fromNudge: fromNudge
+            fromNudge: fromNudge,
+            dragItem: this.dragItem
         };
 
         return dropTargetEvent;

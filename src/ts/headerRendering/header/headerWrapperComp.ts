@@ -2,7 +2,10 @@ import {Component} from "../../widgets/component";
 import {Autowired, Context, PostConstruct} from "../../context/context";
 import {Column} from "../../entities/column";
 import {Utils as _} from "../../utils";
-import {DragAndDropService, DragSource, DragSourceType, DropTarget} from "../../dragAndDrop/dragAndDropService";
+import {
+    DragAndDropService, DragItem, DragSource, DragSourceType,
+    DropTarget
+} from "../../dragAndDrop/dragAndDropService";
 import {IHeaderComp, IHeaderParams} from "./headerComp";
 import {ColumnApi, ColumnController} from "../../columnController/columnController";
 import {HorizontalDragService} from "../horizontalDragService";
@@ -178,9 +181,10 @@ export class HeaderWrapperComp extends Component {
         }
     }
 
-    private createDragItem() {
+    private createDragItem(): DragItem {
         let visibleState: { [key: string]: boolean } = {};
         visibleState[this.column.getId()] = this.column.isVisible();
+
         return {
             columns: [this.column],
             visibleState: visibleState
