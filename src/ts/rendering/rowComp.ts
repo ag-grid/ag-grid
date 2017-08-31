@@ -839,7 +839,6 @@ export class RowComp extends Component {
         }
 
         classes.push('ag-row');
-        classes.push('ag-row-no-focus');
         classes.push(this.rowFocused ? 'ag-row-no-focus' : 'ag-row-focus');
 
         if (this.fadeRowIn) {
