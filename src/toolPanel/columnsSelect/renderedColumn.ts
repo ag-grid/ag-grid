@@ -1,28 +1,27 @@
 import {
-    Context,
-    DragSourceType,
+    AgCheckbox,
     Autowired,
-    Component,
+    Column,
+    ColumnApi,
     ColumnController,
-    DragAndDropService,
+    ColumnPivotChangeRequestEvent,
+    ColumnRowGroupChangeRequestEvent,
+    ColumnValueChangeRequestEvent,
+    Component,
+    Context,
     CssClassApplier,
+    DragAndDropService,
+    DragSource,
+    DragSourceType,
+    Events,
+    EventService,
+    GridApi,
     GridOptionsWrapper,
     GridPanel,
-    Column,
-    Events,
-    TouchListener,
-    QuerySelector,
     PostConstruct,
-    EventService,
-    Utils,
-    AgCheckbox,
-    DragSource,
-    ColumnRowGroupChangeRequestEvent,
-    ColumnPivotChangeRequestEvent,
-    ColumnValueChangeRequestEvent,
-    ColumnApi,
-    GridApi,
-    TapEvent
+    QuerySelector,
+    TouchListener,
+    Utils
 } from "ag-grid/main";
 
 export class RenderedColumn extends Component {
@@ -239,10 +238,19 @@ export class RenderedColumn extends Component {
             type: DragSourceType.ToolPanel,
             eElement: this.getHtmlElement(),
             dragItemName: this.displayName,
-            dragItem: [this.column]
+            dragItemCallback: () => this.createDragItem()
         };
         this.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
+    }
+
+    private createDragItem() {
+        let visibleState: { [key: string]: boolean } = {};
+        visibleState[this.column.getId()] = this.column.isVisible();
+        return {
+            columns: [this.column],
+            visibleState: visibleState
+        };
     }
 
     private onColumnStateChanged(): void {

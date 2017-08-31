@@ -1,23 +1,23 @@
 import {
-    CssClassApplier,
-    Utils,
-    DragSourceType,
+    AgCheckbox,
     Autowired,
     Column,
-    TouchListener,
-    Component,
-    GridOptionsWrapper,
     ColumnController,
-    Events,
-    GridPanel,
+    Component,
     Context,
-    DragSource,
+    CssClassApplier,
     DragAndDropService,
+    DragSource,
+    DragSourceType,
+    Events,
+    EventService,
+    GridOptionsWrapper,
+    GridPanel,
     OriginalColumnGroup,
     PostConstruct,
     QuerySelector,
-    EventService,
-    AgCheckbox
+    TouchListener,
+    Utils
 } from "ag-grid/main";
 
 export class RenderedGroup extends Component {
@@ -121,10 +121,22 @@ export class RenderedGroup extends Component {
             type: DragSourceType.ToolPanel,
             eElement: this.getHtmlElement(),
             dragItemName: this.displayName,
-            dragItem: this.columnGroup.getLeafColumns()
+            dragItemCallback: () => this.createDragItem()
         };
         this.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
+    }
+
+    private createDragItem() {
+        let visibleState: { [key: string]: boolean } = {};
+        this.columnGroup.getLeafColumns().forEach(col => {
+            visibleState[col.getId()] = col.isVisible();
+        });
+
+        return {
+            columns: this.columnGroup.getLeafColumns(),
+            visibleState: visibleState
+        };
     }
 
     private setupExpandContract(): void {

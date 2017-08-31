@@ -83,12 +83,21 @@ export class ColumnComponent extends Component {
         let dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eText,
-            dragItem: [this.column],
+            dragItemCallback: () => this.createDragItem(),
             dragItemName: this.displayName,
             dragSourceDropTarget: this.dragSourceDropTarget
         };
         this.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
+    }
+
+    private createDragItem() {
+        let visibleState: { [key: string]: boolean } = {};
+        visibleState[this.column.getId()] = this.column.isVisible();
+        return {
+            columns: [this.column],
+            visibleState: visibleState
+        };
     }
 
     private setupComponents(): void {

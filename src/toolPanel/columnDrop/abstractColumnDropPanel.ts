@@ -192,7 +192,7 @@ export abstract class AbstractColumnDropPanel extends Component {
 
         this.state = AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS;
 
-        this.potentialDndColumns = draggingEvent.dragSource.dragItem;
+        this.potentialDndColumns = draggingEvent.dragSource.dragItemCallback().columns;
         this.refreshGui();
 
         this.checkInsertIndex(draggingEvent);
@@ -211,7 +211,7 @@ export abstract class AbstractColumnDropPanel extends Component {
     private onDragEnter(draggingEvent: DraggingEvent): void {
 
         // this will contain all columns that are potential drops
-        let dragColumns = draggingEvent.dragSource.dragItem;
+        let dragColumns: Column[] = draggingEvent.dragSource.dragItemCallback().columns;
         this.state = AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN;
 
         // take out columns that are not groupable
@@ -234,7 +234,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         // someplace else, then we don't, as it was only 'asking'
 
         if (this.state===AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS) {
-            let columns = draggingEvent.dragSource.dragItem;
+            let columns = draggingEvent.dragSource.dragItemCallback().columns;
             this.removeColumns(columns);
         }
 
