@@ -9,6 +9,11 @@ import {Environment} from "../environment";
 
 export enum DragSourceType { ToolPanel, HeaderCell }
 
+export interface DragItem {
+    columns: Column[],
+    visibleState: {[key: string]: boolean};
+}
+
 export interface DragSource {
     /** So the drop target knows what type of event it is, useful for columns,
      * we we re-ordering or moving dropping from toolPanel */
@@ -16,7 +21,7 @@ export interface DragSource {
     /** Element which, when dragged, will kick off the DnD process */
     eElement: HTMLElement;
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
-    dragItem: Column[];
+    dragItemCallback: () => DragItem;
     /** This name appears in the ghost icon when dragging */
     dragItemName: string;
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
@@ -166,8 +171,9 @@ export class DragAndDropService {
         this.dragging = true;
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
-        this.dragSource.dragItem.forEach( column => column.setMoving(true));
-        this.dragItem = this.dragSource.dragItem;
+        let columns: Column[] = this.dragSource.dragItemCallback().columns;
+        columns.forEach(column => column.setMoving(true));
+        this.dragItem = columns;
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
         this.createGhost();
     }

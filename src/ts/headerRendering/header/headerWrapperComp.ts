@@ -1,9 +1,9 @@
 import {Component} from "../../widgets/component";
-import {PostConstruct, Autowired, Context} from "../../context/context";
+import {Autowired, Context, PostConstruct} from "../../context/context";
 import {Column} from "../../entities/column";
 import {Utils as _} from "../../utils";
-import {DropTarget, DragAndDropService, DragSource, DragSourceType} from "../../dragAndDrop/dragAndDropService";
-import {IHeaderParams, IHeaderComp} from "./headerComp";
+import {DragAndDropService, DragSource, DragSourceType, DropTarget} from "../../dragAndDrop/dragAndDropService";
+import {IHeaderComp, IHeaderParams} from "./headerComp";
 import {ColumnApi, ColumnController} from "../../columnController/columnController";
 import {HorizontalDragService} from "../horizontalDragService";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
@@ -169,13 +169,22 @@ export class HeaderWrapperComp extends Component {
             let dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
-                dragItem: [this.column],
+                dragItemCallback: () => this.createDragItem(),
                 dragItemName: displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource, true);
             this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
         }
+    }
+
+    private createDragItem() {
+        let visibleState: { [key: string]: boolean } = {};
+        visibleState[this.column.getId()] = this.column.isVisible();
+        return {
+            columns: [this.column],
+            visibleState: visibleState
+        };
     }
 
     private setupResize(): void {

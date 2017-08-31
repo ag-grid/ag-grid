@@ -9,7 +9,10 @@ import {GridCore} from "../../gridCore";
 import {IMenuFactory} from "../../interfaces/iMenuFactory";
 import {Autowired, Context, PostConstruct} from "../../context/context";
 import {CssClassApplier} from "../cssClassApplier";
-import {DragAndDropService, DropTarget, DragSource, DragSourceType} from "../../dragAndDrop/dragAndDropService";
+import {
+    DragAndDropService, DragItem, DragSource, DragSourceType,
+    DropTarget
+} from "../../dragAndDrop/dragAndDropService";
 import {SortController} from "../../sortController";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
 import {LongTapEvent, TapEvent, TouchListener} from "../../widgets/touchListener";
@@ -228,17 +231,27 @@ export class RenderedHeaderCell extends Component {
 
         if (suppressMove) { return; }
 
+
         if (eHeaderCellLabel) {
             let dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
-                dragItem: [this.column],
+                dragItemCallback: () => this.createDragItem(),
                 dragItemName: this.displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource, true);
             this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
         }
+    }
+
+    private createDragItem(): DragItem {
+        let visibleState: { [key: string]: boolean } = {};
+        visibleState[this.column.getId()] = this.column.isVisible();
+        return {
+            columns: [this.column],
+            visibleState: visibleState
+        };
     }
 
     private setupTap(): void {
