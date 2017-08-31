@@ -3,6 +3,7 @@ $grey-100: #F5F5F5;
 $grey-200: #EEEEEE;
 $grey-300: #E0E0E0;
 $grey-400: #BDBDBD;
+$grey-500: #9E9E9E;
 $grey-700: #616161;
 
 $light-blue-500: #03A9F4;
@@ -47,7 +48,7 @@ $border-radius: $unit;
         @include round-the-top;
         border-bottom: 1px solid $primary-tab-border;
 
-        > li {
+        li {
             list-style: none;
             margin: 0;
             margin-bottom: -1px;
@@ -67,12 +68,12 @@ $border-radius: $unit;
             &.active  {
                 padding: 0;
                 border: 1px solid $primary-tab-border;
-                border-bottom: 1px solid $secondary-tab-background;
+                border-bottom: 1px solid white;
                 color: $light-blue-500;
 
 
                 > a {
-                    background: $selected-tab-background;
+                    background: white;
                 }
 
                 .fa {
@@ -94,31 +95,60 @@ $border-radius: $unit;
         }
     }
 
+    .code-browser {
+        display: flex;
+        flex: 1;
+    }
+
     ul.secondary {
         background-color: $secondary-tab-background;
-        padding-top: $unit * 4;
-        padding-left: $horizontal-pad;
+        border-bottom: 0;
+        padding-top: 0;
         font-size: $font-size - 2;
+        flex-direction: column;
+        min-width: 190px;
 
         .fa {
             width: 12px;
         }
 
-        > li.active {
-            border-bottom-color: white;
+
+        li {
+            border: 0;
+            padding: 0;
+
+            > a {
+                background-color: $primary-tab-background;
+            }
+        }
+
+        li.active {
+            border: none;
+            border-radius: 0;
 
             > a {
                 background-color: white;
+                border-radius: 0;
             }
+        }
+
+        li.separator {
+            margin-top: $unit * 5;
+            padding-left: $horizontal-pad;
+            padding-bottom: $unit;
+            border-bottom: 1px solid $primary-tab-border;
+            color: $grey-500;
+            margin-bottom: 0;
         }
     }
 
     .tab-contents {
-        background-color: $selected-tab-background;
+        background-color: white;
 
         .result {
             padding: $vertical-pad $horizontal-pad;
         }
+
         iframe {
             width: 100%;
             background-color: transparent;
@@ -129,9 +159,17 @@ $border-radius: $unit;
     }
 
     pre {
+        flex: 1;
         background: white;
         border: none;
-        max-height: 400px;
+        height: 400px;
         overflow: auto;
+        margin: 0;
+
+        code {
+            word-break: keep-all;
+            word-wrap: normal;
+            white-space: pre;
+        }
     }
 }

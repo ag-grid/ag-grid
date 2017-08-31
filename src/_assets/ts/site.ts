@@ -1,1 +1,1 @@
-import './example-runner';
+import './../../example-runner/example-runner';

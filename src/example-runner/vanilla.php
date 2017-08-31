@@ -1,9 +1,5 @@
 <?php
-include 'example-runner.php';
-
-function path_combine(...$parts) {
-    return join(DIRECTORY_SEPARATOR, $parts);
-}
+include 'utils.php';
 
 $exampleDir = basename($_GET['example']);
 $exampleSection = basename($_GET['section']);

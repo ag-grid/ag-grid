@@ -1,5 +1,5 @@
 <?php
-include 'example-runner.php';
+include '../example-runner/utils.php';
 
 $version = 'latest';
 
