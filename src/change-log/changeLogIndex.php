@@ -13,7 +13,23 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h2>Version NEXT</h2>
+    <h2>Version 13.1.x</h2>
+
+    <h4>Revert of Breaking Change</h4>
+
+    <ul>
+        <li>
+            <p>
+                In v13.0 we introduced the method <code>afterGuiAttached()</code> for the cell renderers. The purpose of this was to allow
+                cell renderers to be created before the DOM existed which gave a marginal performance boost. This has caused
+                issues for frameworks like React and Angular (which sometimes need the parent DOM element to exist before the
+                component is created). For this reason we have reverted back to how things worked prior to v13.0.
+            </p>
+            <p>
+                So in summary, v13.0 introduced <code>afterGuiAttached()</code>, v13.1 takes <code>afterGuiAttached()</code> back out.
+            </p>
+        </li>
+    </ul>
 
     <h4>Bug Fixes</h4>
 
