@@ -1,10 +1,16 @@
-// Type definitions for ag-grid v13.0.1
+// Type definitions for ag-grid v13.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
 export declare enum DragSourceType {
     ToolPanel = 0,
     HeaderCell = 1,
+}
+export interface DragItem {
+    columns: Column[];
+    visibleState: {
+        [key: string]: boolean;
+    };
 }
 export interface DragSource {
     /** So the drop target knows what type of event it is, useful for columns,
@@ -13,7 +19,7 @@ export interface DragSource {
     /** Element which, when dragged, will kick off the DnD process */
     eElement: HTMLElement;
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
-    dragItem: Column[];
+    dragItemCallback: () => DragItem;
     /** This name appears in the ghost icon when dragging */
     dragItemName: string;
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
@@ -52,6 +58,7 @@ export interface DraggingEvent {
     vDirection: VDirection;
     hDirection: HDirection;
     dragSource: DragSource;
+    dragItem: DragItem;
     fromNudge: boolean;
 }
 export declare class DragAndDropService {

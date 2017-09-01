@@ -1,4 +1,4 @@
-// ag-grid v13.0.1
+// ag-grid v13.1.0
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -81,7 +81,7 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -127,7 +127,7 @@ var Context = (function () {
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
             var newComponent = new this.componentsMappedByName[key];
             this.wireBean(newComponent);
-            this.copyAttributesFromNode(element, newComponent.getGui());
+            this.copyAttributesFromNode(element, newComponent.getHtmlElement());
             newComponent.attributesSet();
             return newComponent;
         }
@@ -438,7 +438,7 @@ function getOrCreateProps(target) {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1779,7 +1779,7 @@ exports._ = Utils;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2446,7 +2446,7 @@ exports.GridOptionsWrapper = GridOptionsWrapper;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4469,7 +4469,7 @@ exports.ColumnController = ColumnController;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4671,7 +4671,7 @@ exports.EventService = EventService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4789,7 +4789,7 @@ exports.Events = Events;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5787,7 +5787,7 @@ exports.GridApi = GridApi;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5912,7 +5912,7 @@ exports.Constants = Constants;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5936,6 +5936,7 @@ var Component = (function (_super) {
     function Component(template) {
         var _this = _super.call(this) || this;
         _this.childComponents = [];
+        _this.hydrated = false;
         _this.annotatedEventListeners = [];
         _this.visible = true;
         // unique id for this row component. this is used for getting a reference to the HTML dom.
@@ -5947,11 +5948,20 @@ var Component = (function (_super) {
         }
         return _this;
     }
+    Component.prototype.setTemplateNoHydrate = function (template) {
+        this.template = template;
+    };
+    Component.prototype.afterGuiAttached = function (params) {
+        if (!this.eHtmlElement && params.eComponent) {
+            this.setHtmlElement(params.eComponent);
+        }
+    };
     Component.prototype.getCompId = function () {
         return this.compId;
     };
     Component.prototype.instantiate = function (context) {
-        this.instantiateRecurse(this.getGui(), context);
+        var element = this.getHtmlElement();
+        this.instantiateRecurse(element, context);
     };
     Component.prototype.instantiateRecurse = function (parentNode, context) {
         var childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
@@ -5969,7 +5979,8 @@ var Component = (function (_super) {
         }
     };
     Component.prototype.swapComponentForNode = function (newComponent, parentNode, childNode) {
-        parentNode.replaceChild(newComponent.getGui(), childNode);
+        var element = newComponent.getHtmlElement();
+        parentNode.replaceChild(element, childNode);
         this.childComponents.push(newComponent);
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     };
@@ -5990,20 +6001,25 @@ var Component = (function (_super) {
         }
     };
     Component.prototype.setTemplate = function (template) {
+        this.template = template;
         var eGui = utils_1.Utils.loadTemplate(template);
-        this.setTemplateFromElement(eGui);
+        this.setHtmlElement(eGui);
     };
-    Component.prototype.setTemplateFromElement = function (element) {
-        this.eGui = element;
-        this.eGui.__agComponent = this;
+    Component.prototype.setHtmlElement = function (element) {
+        this.eHtmlElement = element;
+        this.eHtmlElement.__agComponent = this;
+        this.hydrate();
+    };
+    Component.prototype.hydrate = function () {
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
+        this.hydrated = true;
     };
     Component.prototype.attributesSet = function () {
     };
     Component.prototype.wireQuerySelectors = function () {
-        var _this = this;
-        if (!this.eGui) {
+        var element = this.getHtmlElement();
+        if (!element) {
             return;
         }
         var thisProto = Object.getPrototypeOf(this);
@@ -6013,7 +6029,7 @@ var Component = (function (_super) {
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
                 var thisNoType_1 = this_1;
                 metaData[currentProtoName].querySelectors.forEach(function (querySelector) {
-                    var resultOfQuery = _this.eGui.querySelector(querySelector.querySelector);
+                    var resultOfQuery = element.querySelector(querySelector.querySelector);
                     if (resultOfQuery) {
                         var backingComponent = resultOfQuery.__agComponent;
                         if (backingComponent) {
@@ -6038,7 +6054,8 @@ var Component = (function (_super) {
     Component.prototype.addAnnotatedEventListeners = function () {
         var _this = this;
         this.removeAnnotatedEventListeners();
-        if (!this.eGui) {
+        var element = this.getHtmlElement();
+        if (!element) {
             return;
         }
         var thisProto = Object.getPrototypeOf(this);
@@ -6051,7 +6068,7 @@ var Component = (function (_super) {
                 }
                 metaData[currentProtoName].listenerMethods.forEach(function (eventListener) {
                     var listener = _this[eventListener.methodName].bind(_this);
-                    _this.eGui.addEventListener(eventListener.eventName, listener);
+                    element.addEventListener(eventListener.eventName, listener);
                     _this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener: listener });
                 });
             }
@@ -6059,39 +6076,55 @@ var Component = (function (_super) {
         }
     };
     Component.prototype.removeAnnotatedEventListeners = function () {
-        var _this = this;
         if (!this.annotatedEventListeners) {
             return;
         }
-        if (!this.eGui) {
+        var element = this.getHtmlElement();
+        if (!element) {
             return;
         }
         this.annotatedEventListeners.forEach(function (eventListener) {
-            _this.eGui.removeEventListener(eventListener.eventName, eventListener.listener);
+            element.removeEventListener(eventListener.eventName, eventListener.listener);
         });
         this.annotatedEventListeners = null;
     };
     Component.prototype.getGui = function () {
-        return this.eGui;
+        if (this.eHtmlElement) {
+            return this.eHtmlElement;
+        }
+        else {
+            return this.template;
+        }
     };
-    // this method is for older code, that wants to provide the gui element,
-    // it is not intended for this to be in ag-Stack
-    Component.prototype.setGui = function (eGui) {
-        this.eGui = eGui;
+    Component.prototype.getHtmlElement = function () {
+        if (this.eHtmlElement) {
+            return this.eHtmlElement;
+        }
+        else {
+            console.warn('getHtmlElement() called on component before gui was attached');
+            return null;
+        }
+    };
+    // used by Cell Comp (and old header code), design is a bit poor, overlap with afterGuiAttached???
+    Component.prototype.setHtmlElementNoHydrate = function (eHtmlElement) {
+        this.eHtmlElement = eHtmlElement;
     };
     Component.prototype.queryForHtmlElement = function (cssSelector) {
-        return this.eGui.querySelector(cssSelector);
+        var element = this.getHtmlElement();
+        return element.querySelector(cssSelector);
     };
     Component.prototype.queryForHtmlInputElement = function (cssSelector) {
-        return this.eGui.querySelector(cssSelector);
+        var element = this.getHtmlElement();
+        return element.querySelector(cssSelector);
     };
     Component.prototype.appendChild = function (newChild) {
+        var element = this.getHtmlElement();
         if (utils_1.Utils.isNodeOrElement(newChild)) {
-            this.eGui.appendChild(newChild);
+            element.appendChild(newChild);
         }
         else {
             var childComponent = newChild;
-            this.eGui.appendChild(utils_1.Utils.ensureElement(childComponent.getGui()));
+            element.appendChild(utils_1.Utils.ensureElement(childComponent.getGui()));
             this.childComponents.push(childComponent);
         }
     };
@@ -6105,9 +6138,10 @@ var Component = (function (_super) {
         return this.visible;
     };
     Component.prototype.setVisible = function (visible) {
+        var element = this.getHtmlElement();
         if (visible !== this.visible) {
             this.visible = visible;
-            utils_1.Utils.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
+            utils_1.Utils.addOrRemoveCssClass(element, 'ag-hidden', !visible);
             var event_1 = {
                 type: Component.EVENT_VISIBLE_CHANGED,
                 visible: this.visible
@@ -6116,29 +6150,34 @@ var Component = (function (_super) {
         }
     };
     Component.prototype.addOrRemoveCssClass = function (className, addOrRemove) {
-        utils_1.Utils.addOrRemoveCssClass(this.eGui, className, addOrRemove);
+        var element = this.getHtmlElement();
+        utils_1.Utils.addOrRemoveCssClass(element, className, addOrRemove);
     };
     Component.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
         this.childComponents.forEach(function (childComponent) { return childComponent.destroy(); });
         this.childComponents.length = 0;
-        this.removeAnnotatedEventListeners();
+        if (this.hydrated) {
+            this.removeAnnotatedEventListeners();
+        }
     };
     Component.prototype.addGuiEventListener = function (event, listener) {
-        var _this = this;
-        this.getGui().addEventListener(event, listener);
-        this.addDestroyFunc(function () { return _this.getGui().removeEventListener(event, listener); });
+        var element = this.getHtmlElement();
+        element.addEventListener(event, listener);
+        this.addDestroyFunc(function () { return element.removeEventListener(event, listener); });
     };
     Component.prototype.addCssClass = function (className) {
-        utils_1.Utils.addCssClass(this.getGui(), className);
+        var element = this.getHtmlElement();
+        utils_1.Utils.addCssClass(element, className);
     };
     Component.prototype.removeCssClass = function (className) {
-        utils_1.Utils.removeCssClass(this.getGui(), className);
+        var element = this.getHtmlElement();
+        utils_1.Utils.removeCssClass(element, className);
     };
     Component.prototype.getAttribute = function (key) {
-        var eGui = this.getGui();
-        if (eGui) {
-            return eGui.getAttribute(key);
+        var element = this.getHtmlElement();
+        if (element) {
+            return element.getAttribute(key);
         }
         else {
             return null;
@@ -6160,7 +6199,7 @@ exports.Component = Component;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6698,7 +6737,7 @@ exports.Column = Column;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6768,7 +6807,7 @@ exports.Logger = Logger;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8476,7 +8515,7 @@ function testKeyboardBinding(keyboardBinding, event) {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8546,7 +8585,7 @@ function getOrCreateProps(target, instanceName) {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8620,7 +8659,7 @@ exports.BeanStub = BeanStub;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8954,7 +8993,7 @@ exports.SelectionController = SelectionController;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9562,7 +9601,7 @@ exports.RowNode = RowNode;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10111,7 +10150,7 @@ exports.FilterManager = FilterManager;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10214,7 +10253,7 @@ exports.ExpressionService = ExpressionService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11183,7 +11222,7 @@ exports.RowRenderer = RowRenderer;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11424,7 +11463,7 @@ exports.ValueService = ValueService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11519,15 +11558,15 @@ var DragAndDropService = (function () {
         this.dragging = true;
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
-        this.dragSource.dragItem.forEach(function (column) { return column.setMoving(true); });
-        this.dragItem = this.dragSource.dragItem;
+        this.dragItem = this.dragSource.dragItemCallback();
+        this.dragItem.columns.forEach(function (column) { return column.setMoving(true); });
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
         this.createGhost();
     };
     DragAndDropService.prototype.onDragStop = function (mouseEvent) {
         this.eventLastTime = null;
         this.dragging = false;
-        this.dragItem.forEach(function (column) { return column.setMoving(false); });
+        this.dragItem.columns.forEach(function (column) { return column.setMoving(false); });
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
             var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
@@ -11636,7 +11675,8 @@ var DragAndDropService = (function () {
             vDirection: vDirection,
             hDirection: hDirection,
             dragSource: this.dragSource,
-            fromNudge: fromNudge
+            fromNudge: fromNudge,
+            dragItem: this.dragItem
         };
         return dropTargetEvent;
     };
@@ -11803,7 +11843,7 @@ exports.DragAndDropService = DragAndDropService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12013,7 +12053,7 @@ exports.SortController = SortController;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12293,7 +12333,7 @@ exports.ColumnGroup = ColumnGroup;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12335,7 +12375,7 @@ exports.GridCell = GridCell;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12505,7 +12545,7 @@ exports.FocusedCellController = FocusedCellController;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12684,7 +12724,7 @@ exports.PinnedRowModel = PinnedRowModel;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13124,7 +13164,7 @@ function updateLink(linkElement, obj) {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13283,7 +13323,7 @@ exports.ColumnUtils = ColumnUtils;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13454,7 +13494,7 @@ exports.OriginalColumnGroup = OriginalColumnGroup;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13533,7 +13573,7 @@ exports.ValueCache = ValueCache;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13638,7 +13678,7 @@ exports.ScrollVisibleService = ScrollVisibleService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13966,7 +14006,7 @@ exports.PaginationProxy = PaginationProxy;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14014,10 +14054,10 @@ var GridCore = (function () {
         if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
             // if we are doing RTL, then the tool panel appears on the left
             if (this.gridOptionsWrapper.isEnableRtl()) {
-                westPanel = this.toolPanel.getGui();
+                westPanel = this.toolPanel.getHtmlElement();
             }
             else {
-                eastPanel = this.toolPanel.getGui();
+                eastPanel = this.toolPanel.getHtmlElement();
             }
         }
         var createTopPanelGui = this.createNorthPanel();
@@ -14084,8 +14124,8 @@ var GridCore = (function () {
         var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
         this.rowGroupComp = this.rowGroupCompFactory.create();
         this.pivotComp = this.pivotCompFactory.create();
-        topPanelGui.appendChild(this.rowGroupComp.getGui());
-        topPanelGui.appendChild(this.pivotComp.getGui());
+        topPanelGui.appendChild(this.rowGroupComp.getHtmlElement());
+        topPanelGui.appendChild(this.pivotComp.getHtmlElement());
         this.rowGroupComp.addEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
         this.pivotComp.addEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
         this.destroyFunctions.push(function () {
@@ -14117,12 +14157,12 @@ var GridCore = (function () {
         }
         var eSouthPanel = document.createElement('div');
         if (statusBarEnabled) {
-            eSouthPanel.appendChild(this.statusBar.getGui());
+            eSouthPanel.appendChild(this.statusBar.getHtmlElement());
         }
         if (paginationPanelEnabled) {
             var paginationComp = new paginationComp_1.PaginationComp();
             this.context.wireBean(paginationComp);
-            eSouthPanel.appendChild(paginationComp.getGui());
+            eSouthPanel.appendChild(paginationComp.getHtmlElement());
             this.destroyFunctions.push(paginationComp.destroy.bind(paginationComp));
         }
         return eSouthPanel;
@@ -14358,7 +14398,7 @@ exports.GridCore = GridCore;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14640,7 +14680,7 @@ exports.PopupService = PopupService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14885,7 +14925,7 @@ exports.ComponentResolver = ComponentResolver;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15057,7 +15097,7 @@ exports.Beans = Beans;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15100,7 +15140,7 @@ var CellComp = (function (_super) {
         }
         _this.value = _this.getValue();
         _this.setUsingWrapper();
-        _this.prepareCellRenderer();
+        _this.chooseCellRenderer();
         _this.setupColSpan();
         return _this;
     }
@@ -15137,11 +15177,11 @@ var CellComp = (function (_super) {
     CellComp.prototype.afterAttached = function () {
         var querySelector = "[comp-id=\"" + this.getCompId() + "\"]";
         var eGui = this.eParentRow.querySelector(querySelector);
-        this.setGui(eGui);
+        this.setHtmlElementNoHydrate(eGui);
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.addDomData();
         this.addSelectionCheckbox();
-        this.attachCellRendererAfterCreate();
+        this.attachCellRenderer();
         this.angular1Compile();
         this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
         this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_FLASH_CELLS, this.onFlashCells.bind(this));
@@ -15160,7 +15200,7 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.onColumnHover = function () {
         var isHovered = this.beans.columnHoverService.isHovered(this.column);
-        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
+        utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-column-hover', isHovered);
     };
     CellComp.prototype.onCellChanged = function (event) {
         var eventImpactsThisCell = event.column === this.column;
@@ -15361,17 +15401,17 @@ var CellComp = (function (_super) {
     CellComp.prototype.animateCell = function (cssName) {
         var fullName = 'ag-cell-' + cssName;
         var animationFullName = 'ag-cell-' + cssName + '-animation';
-        var eGui = this.getGui();
+        var element = this.getHtmlElement();
         // we want to highlight the cells, without any animation
-        utils_1._.addCssClass(eGui, fullName);
-        utils_1._.removeCssClass(eGui, animationFullName);
+        utils_1._.addCssClass(element, fullName);
+        utils_1._.removeCssClass(element, animationFullName);
         // then once that is applied, we remove the highlight with animation
         setTimeout(function () {
-            utils_1._.removeCssClass(eGui, fullName);
-            utils_1._.addCssClass(eGui, animationFullName);
+            utils_1._.removeCssClass(element, fullName);
+            utils_1._.addCssClass(element, animationFullName);
             setTimeout(function () {
                 // and then to leave things as we got them, we remove the animation
-                utils_1._.removeCssClass(eGui, animationFullName);
+                utils_1._.removeCssClass(element, animationFullName);
             }, 1000);
         }, 500);
     };
@@ -15431,7 +15471,7 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.postProcessClassesFromColDef = function () {
         var _this = this;
-        this.processClassesFromColDef(function (className) { return utils_1._.addCssClass(_this.getGui(), className); });
+        this.processClassesFromColDef(function (className) { return utils_1._.addCssClass(_this.getHtmlElement(), className); });
     };
     CellComp.prototype.preProcessClassesFromColDef = function () {
         var res = [];
@@ -15469,7 +15509,7 @@ var CellComp = (function (_super) {
             // use cell renderer if it exists
         }
         else if (this.usingCellRenderer) {
-            this.attachCellRendererAfterRefresh();
+            this.attachCellRenderer();
         }
         else {
             var valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
@@ -15542,9 +15582,9 @@ var CellComp = (function (_super) {
     CellComp.prototype.postProcessCellClassRules = function () {
         var _this = this;
         this.processCellClassRules(function (className) {
-            utils_1._.addCssClass(_this.getGui(), className);
+            utils_1._.addCssClass(_this.getHtmlElement(), className);
         }, function (className) {
-            utils_1._.removeCssClass(_this.getGui(), className);
+            utils_1._.removeCssClass(_this.getHtmlElement(), className);
         });
     };
     CellComp.prototype.preProcessCellClassRules = function () {
@@ -15574,12 +15614,6 @@ var CellComp = (function (_super) {
         }
         else {
             this.usingWrapper = false;
-        }
-    };
-    CellComp.prototype.prepareCellRenderer = function () {
-        this.chooseCellRenderer();
-        if (this.usingCellRenderer) {
-            this.createCellRendererInstance();
         }
     };
     CellComp.prototype.chooseCellRenderer = function () {
@@ -15614,7 +15648,7 @@ var CellComp = (function (_super) {
             console.warn('ag-Grid: cellRenderer should return back a string or a DOM object, but got ' + this.cellRendererGui);
         }
     };
-    CellComp.prototype.attachCellRendererAfterRefresh = function () {
+    CellComp.prototype.attachCellRenderer = function () {
         if (!this.usingCellRenderer) {
             return;
         }
@@ -15625,34 +15659,6 @@ var CellComp = (function (_super) {
         }
         else {
             this.eParentOfValue.appendChild(this.cellRendererGui);
-        }
-        this.callAfterGuiAttachedOnCellRenderer();
-    };
-    // this gets called after row is initially created. if the cellRenderer is a string, then the string was included
-    // in the rows html and all we have to do is look it up.
-    CellComp.prototype.attachCellRendererAfterCreate = function () {
-        if (!this.usingCellRenderer) {
-            return;
-        }
-        if (typeof this.cellRendererGui === 'string') {
-            // if cell renderer returned back a string, then it was in the row template when it
-            // got created, so we look it up (and replace the reference to the string we had)
-            this.cellRendererGui = this.eParentOfValue.firstChild;
-        }
-        else {
-            // if cell renderer returned back an HTML object, then we append it to the dom now
-            this.eParentOfValue.appendChild(this.cellRendererGui);
-        }
-        this.callAfterGuiAttachedOnCellRenderer();
-    };
-    CellComp.prototype.callAfterGuiAttachedOnCellRenderer = function () {
-        if (this.cellRenderer.afterGuiAttached) {
-            var params = {
-                eGridCell: this.getGui(),
-                eParentOfValue: this.eParentOfValue,
-                eComponent: this.cellRendererGui
-            };
-            this.cellRenderer.afterGuiAttached(params);
         }
     };
     CellComp.prototype.createCellRendererParams = function (valueFormatted) {
@@ -15695,7 +15701,12 @@ var CellComp = (function (_super) {
         return valueFormattedExists ? valueFormatted : value;
     };
     CellComp.prototype.getValue = function () {
-        var isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer;
+        // if we don't check this, then the grid will render leaf groups as open even if we are not
+        // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
+        // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
+        // them via the API, or user user expanded them in the UI before turning on pivot mode
+        var lockedClosedGroup = this.rowNode.leafGroup && this.beans.columnController.isPivotMode();
+        var isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
         if (isOpenGroup && this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
             // if doing grouping and footers, we don't want to include the agg value
             // in the header when the group is open
@@ -15842,17 +15853,15 @@ var CellComp = (function (_super) {
             this.addInCellEditor();
         }
         if (cellEditor.afterGuiAttached) {
-            cellEditor.afterGuiAttached({
-                eComponent: utils_1._.assertHtmlElement(cellEditor.getGui())
-            });
+            cellEditor.afterGuiAttached();
         }
         var event = this.createEvent(null, events_1.Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(event);
         return true;
     };
     CellComp.prototype.addInCellEditor = function () {
-        utils_1._.removeAllChildren(this.getGui());
-        this.getGui().appendChild(utils_1._.assertHtmlElement(this.cellEditor.getGui()));
+        utils_1._.removeAllChildren(this.getHtmlElement());
+        this.getHtmlElement().appendChild(utils_1._.assertHtmlElement(this.cellEditor.getGui()));
         this.angular1Compile();
     };
     CellComp.prototype.addPopupCellEditor = function () {
@@ -15867,7 +15876,7 @@ var CellComp = (function (_super) {
             column: this.column,
             rowNode: this.rowNode,
             type: 'popupCellEditor',
-            eventSource: this.getGui(),
+            eventSource: this.getHtmlElement(),
             ePopup: utils_1._.assertHtmlElement(ePopupGui),
             keepWithinBounds: true
         });
@@ -15894,8 +15903,8 @@ var CellComp = (function (_super) {
     // to allow the text editor full access to the entire cell
     CellComp.prototype.setInlineEditingClass = function () {
         var editingInline = this.editingCell && !this.cellEditorInPopup;
-        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-inline-editing', editingInline);
-        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-not-inline-editing', !editingInline);
+        utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-inline-editing', editingInline);
+        utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-not-inline-editing', !editingInline);
     };
     CellComp.prototype.createCellEditor = function (keyPress, charPress, cellStartedEdit) {
         var params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
@@ -15917,7 +15926,7 @@ var CellComp = (function (_super) {
             $scope: this.scope,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
-            eGridCell: this.getGui(),
+            eGridCell: this.getHtmlElement(),
             parseValue: this.parseValue.bind(this),
             formatValue: this.formatValue.bind(this)
         };
@@ -16106,7 +16115,7 @@ var CellComp = (function (_super) {
         if (utils_1._.isBrowserIE() || utils_1._.isBrowserEdge()) {
             if (utils_1._.missing(document.activeElement) || document.activeElement === document.body) {
                 // console.log('missing focus');
-                this.getGui().focus();
+                this.getHtmlElement().focus();
             }
         }
     };
@@ -16131,7 +16140,7 @@ var CellComp = (function (_super) {
         return this.column;
     };
     CellComp.prototype.detach = function () {
-        this.eParentRow.removeChild(this.getGui());
+        this.eParentRow.removeChild(this.getHtmlElement());
     };
     // if the row is also getting destroyed, then we don't need to remove from dom,
     // as the row will also get removed, so no need to take out the cells from the row
@@ -16148,11 +16157,11 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.onLeftChanged = function () {
         var left = this.getCellLeft();
-        this.getGui().style.left = left + 'px';
+        this.getHtmlElement().style.left = left + 'px';
     };
     CellComp.prototype.onWidthChanged = function () {
         var width = this.getCellWidth();
-        this.getGui().style.width = width + 'px';
+        this.getHtmlElement().style.width = width + 'px';
     };
     CellComp.prototype.getRangeClasses = function () {
         var res = [];
@@ -16190,13 +16199,13 @@ var CellComp = (function (_super) {
             return;
         }
         var newRangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
-        var eGui = this.getGui();
+        var element = this.getHtmlElement();
         if (this.rangeCount !== newRangeCount) {
-            utils_1._.addOrRemoveCssClass(eGui, 'ag-cell-range-selected', newRangeCount !== 0);
-            utils_1._.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-1', newRangeCount === 1);
-            utils_1._.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-2', newRangeCount === 2);
-            utils_1._.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-3', newRangeCount === 3);
-            utils_1._.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-4', newRangeCount >= 4);
+            utils_1._.addOrRemoveCssClass(element, 'ag-cell-range-selected', newRangeCount !== 0);
+            utils_1._.addOrRemoveCssClass(element, 'ag-cell-range-selected-1', newRangeCount === 1);
+            utils_1._.addOrRemoveCssClass(element, 'ag-cell-range-selected-2', newRangeCount === 2);
+            utils_1._.addOrRemoveCssClass(element, 'ag-cell-range-selected-3', newRangeCount === 3);
+            utils_1._.addOrRemoveCssClass(element, 'ag-cell-range-selected-4', newRangeCount >= 4);
             this.rangeCount = newRangeCount;
         }
     };
@@ -16204,14 +16213,14 @@ var CellComp = (function (_super) {
         var firstRightPinned = this.column.isFirstRightPinned();
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
-            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-first-right-pinned', firstRightPinned);
+            utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-first-right-pinned', firstRightPinned);
         }
     };
     CellComp.prototype.onLastLeftPinnedChanged = function () {
         var lastLeftPinned = this.column.isLastLeftPinned();
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
-            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-last-left-pinned', lastLeftPinned);
+            utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-last-left-pinned', lastLeftPinned);
         }
     };
     CellComp.prototype.addSelectionCheckbox = function () {
@@ -16225,32 +16234,32 @@ var CellComp = (function (_super) {
             cbSelectionComponent_1.init({ rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc });
             this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
             // put the checkbox in before the value
-            this.eCellWrapper.insertBefore(cbSelectionComponent_1.getGui(), this.eParentOfValue);
+            this.eCellWrapper.insertBefore(cbSelectionComponent_1.getHtmlElement(), this.eParentOfValue);
         }
         else {
-            this.eParentOfValue = this.getGui();
+            this.eParentOfValue = this.getHtmlElement();
         }
     };
     CellComp.prototype.addDomData = function () {
         var _this = this;
-        var eGui = this.getGui();
-        this.beans.gridOptionsWrapper.setDomData(eGui, CellComp.DOM_DATA_KEY_CELL_COMP, this);
+        var element = this.getHtmlElement();
+        this.beans.gridOptionsWrapper.setDomData(element, CellComp.DOM_DATA_KEY_CELL_COMP, this);
         this.addDestroyFunc(function () {
-            return _this.beans.gridOptionsWrapper.setDomData(eGui, CellComp.DOM_DATA_KEY_CELL_COMP, null);
+            return _this.beans.gridOptionsWrapper.setDomData(element, CellComp.DOM_DATA_KEY_CELL_COMP, null);
         });
     };
     CellComp.prototype.onCellFocused = function (event) {
         var cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {
-            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
-            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
+            utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-focus', cellFocused);
+            utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-no-focus', !cellFocused);
             this.cellFocused = cellFocused;
         }
         // if this cell was just focused, see if we need to force browser focus, his can
         // happen if focus is programmatically set.
         if (cellFocused && event && event.forceBrowserFocus) {
-            this.getGui().focus();
+            this.getHtmlElement().focus();
         }
         // if another cell was focused, and we are editing, then stop editing
         var fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
@@ -16297,11 +16306,11 @@ var CellComp = (function (_super) {
             this.hideEditorPopup = null;
         }
         else {
-            utils_1._.removeAllChildren(this.getGui());
+            utils_1._.removeAllChildren(this.getHtmlElement());
             // put the cell back the way it was before editing
             if (this.usingWrapper) {
                 // if wrapper, then put the wrapper back
-                this.getGui().appendChild(this.eCellWrapper);
+                this.getHtmlElement().appendChild(this.eCellWrapper);
             }
             else {
                 // if cellRenderer, then put the gui back in. if the renderer has
@@ -16311,7 +16320,7 @@ var CellComp = (function (_super) {
                     // we know it's a dom element (not a string) because we converted
                     // it after the gui was attached if it was a string.
                     var eCell = this.cellRendererGui;
-                    this.getGui().appendChild(eCell);
+                    this.getHtmlElement().appendChild(eCell);
                 }
             }
         }
@@ -16336,7 +16345,7 @@ exports.CellComp = CellComp;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16434,7 +16443,7 @@ exports.SetLeftFeature = SetLeftFeature;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16513,7 +16522,7 @@ exports.ValueFormatterService = ValueFormatterService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16629,7 +16638,7 @@ var DragInstance = (function () {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16863,7 +16872,7 @@ exports.BalancedColumnTreeBuilder = BalancedColumnTreeBuilder;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17081,7 +17090,7 @@ exports.CsvCreator = CsvCreator;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17279,7 +17288,7 @@ exports.DisplayedGroupCreator = DisplayedGroupCreator;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17558,7 +17567,7 @@ exports.DragService = DragService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17793,7 +17802,7 @@ exports.AlignedGridsService = AlignedGridsService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17934,7 +17943,7 @@ var RowComp = (function (_super) {
     RowComp.prototype.getCellForCol = function (column) {
         var cellComp = this.cellComps[column.getColId()];
         if (cellComp) {
-            return cellComp.getGui();
+            return cellComp.getHtmlElement();
         }
         else {
             return null;
@@ -18290,7 +18299,7 @@ var RowComp = (function (_super) {
         }
     };
     RowComp.prototype.ensureCellInCorrectContainer = function (cellComp) {
-        var eCell = cellComp.getGui();
+        var element = cellComp.getHtmlElement();
         var column = cellComp.getColumn();
         var pinnedType = column.getPinned();
         var eContainer = this.getContainerForCell(pinnedType);
@@ -18300,9 +18309,9 @@ var RowComp = (function (_super) {
         if (inWrongRow) {
             // take out from old row
             if (eOldContainer) {
-                eOldContainer.removeChild(eCell);
+                eOldContainer.removeChild(element);
             }
-            eContainer.appendChild(eCell);
+            eContainer.appendChild(element);
             cellComp.setParentRow(eContainer);
         }
     };
@@ -18428,30 +18437,13 @@ var RowComp = (function (_super) {
     };
     RowComp.prototype.createFullWidthRowContainer = function (rowContainerComp, pinned, extraCssClass, cellRendererType, callback) {
         var _this = this;
-        var params = this.createFullWidthParams(pinned);
-        var cellRenderer = this.beans.componentResolver.createAgGridComponent(null, params, cellRendererType);
-        var gui = utils_1._.assertHtmlElement(cellRenderer.getGui());
-        var guiIsTemplate = typeof gui === 'string';
-        var cellTemplate = guiIsTemplate ? gui : '';
-        var rowTemplate = this.createTemplate(cellTemplate, extraCssClass);
+        var rowTemplate = this.createTemplate('', extraCssClass);
         rowContainerComp.appendRowTemplate(rowTemplate, function () {
             var eRow = rowContainerComp.getRowElement(_this.getCompId());
-            var eCell;
-            if (guiIsTemplate) {
-                eCell = eRow.firstChild;
-            }
-            else {
-                eRow.appendChild(gui);
-                eCell = gui;
-            }
-            if (cellRenderer.afterGuiAttached) {
-                var params_1 = {
-                    eGridCell: eRow,
-                    eParentOfValue: eRow,
-                    eComponent: eCell
-                };
-                cellRenderer.afterGuiAttached(params_1);
-            }
+            var params = _this.createFullWidthParams(eRow, pinned);
+            var cellRenderer = _this.beans.componentResolver.createAgGridComponent(null, params, cellRendererType);
+            var gui = utils_1._.ensureElement(cellRenderer.getGui());
+            eRow.appendChild(gui);
             _this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow, cellRenderer);
             _this.angular1Compile(eRow);
@@ -18462,7 +18454,7 @@ var RowComp = (function (_super) {
             this.beans.$compile(element)(this.scope);
         }
     };
-    RowComp.prototype.createFullWidthParams = function (pinned) {
+    RowComp.prototype.createFullWidthParams = function (eRow, pinned) {
         var params = {
             fullWidth: true,
             data: this.rowNode.data,
@@ -18474,8 +18466,8 @@ var RowComp = (function (_super) {
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext(),
             // these need to be taken out, as part of 'afterAttached' now
-            eGridCell: null,
-            eParentOfValue: null,
+            eGridCell: eRow,
+            eParentOfValue: eRow,
             pinned: pinned,
             addRenderedRowListener: this.addEventListener.bind(this)
         };
@@ -18487,7 +18479,6 @@ var RowComp = (function (_super) {
             classes.push(extraCssClass);
         }
         classes.push('ag-row');
-        classes.push('ag-row-no-focus');
         classes.push(this.rowFocused ? 'ag-row-no-focus' : 'ag-row-focus');
         if (this.fadeRowIn) {
             classes.push('ag-opacity-zero');
@@ -18950,7 +18941,7 @@ exports.RowComp = RowComp;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19043,7 +19034,7 @@ exports.TemplateService = TemplateService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19405,7 +19396,7 @@ exports.ScalarBaseFilter = ScalarBaseFilter;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19596,7 +19587,7 @@ exports.DefaultDateComponent = DefaultDateComponent;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19704,7 +19695,7 @@ exports.TouchListener = TouchListener;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19817,7 +19808,7 @@ exports.CellEditorFactory = CellEditorFactory;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19905,7 +19896,7 @@ exports.CellRendererFactory = CellRendererFactory;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20026,7 +20017,7 @@ exports.CellRendererService = CellRendererService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20130,7 +20121,7 @@ exports.AgComponentUtils = AgComponentUtils;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20271,7 +20262,7 @@ exports.HeaderRenderer = HeaderRenderer;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20328,7 +20319,7 @@ exports.Environment = Environment;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20393,7 +20384,7 @@ exports.CssClassApplier = CssClassApplier;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20574,7 +20565,7 @@ exports.AgCheckbox = AgCheckbox;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20782,7 +20773,7 @@ exports.RowNodeBlock = RowNodeBlock;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21031,7 +21022,7 @@ function checkForDeprecated(changes) {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21322,7 +21313,7 @@ var RowType;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21402,7 +21393,7 @@ var AutoWidthCalculator = (function () {
                 }
             }
         });
-        return comp ? comp.getGui() : null;
+        return comp ? comp.getHtmlElement() : null;
     };
     AutoWidthCalculator.prototype.putRowCellsIntoDummyContainer = function (column, eDummyContainer) {
         var _this = this;
@@ -21461,7 +21452,7 @@ exports.AutoWidthCalculator = AutoWidthCalculator;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21744,7 +21735,7 @@ exports.BorderLayout = BorderLayout;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21801,7 +21792,7 @@ exports.MouseEventService = MouseEventService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21879,7 +21870,7 @@ exports.GridRow = GridRow;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21922,10 +21913,10 @@ var CheckboxSelectionComponent = (function (_super) {
         this.eCheckedIcon = utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null);
         this.eUncheckedIcon = utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null);
         this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null);
-        var eGui = this.getGui();
-        eGui.appendChild(this.eCheckedIcon);
-        eGui.appendChild(this.eUncheckedIcon);
-        eGui.appendChild(this.eIndeterminateIcon);
+        var element = this.getHtmlElement();
+        element.appendChild(this.eCheckedIcon);
+        element.appendChild(this.eUncheckedIcon);
+        element.appendChild(this.eIndeterminateIcon);
     };
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
         var state = this.rowNode.isSelected();
@@ -22014,7 +22005,7 @@ exports.CheckboxSelectionComponent = CheckboxSelectionComponent;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22066,7 +22057,7 @@ var PopupEditorWrapper = (function (_super) {
     PopupEditorWrapper.prototype.init = function (params) {
         var _this = this;
         this.params = params;
-        this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+        this.gridOptionsWrapper.setDomData(this.getHtmlElement(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
         this.addDestroyFunc(function () {
             if (_this.cellEditor.destroy) {
                 _this.cellEditor.destroy();
@@ -22076,7 +22067,7 @@ var PopupEditorWrapper = (function (_super) {
         // this needs to be 'super' and not 'this' as if we call 'this',
         // it ends up called 'getGui()' on the child before 'init' was called,
         // which is not good
-        _super.prototype.getGui.call(this), 'keydown', this.onKeyDown.bind(this));
+        _super.prototype.getHtmlElement.call(this), 'keydown', this.onKeyDown.bind(this));
     };
     PopupEditorWrapper.prototype.afterGuiAttached = function () {
         if (this.cellEditor.afterGuiAttached) {
@@ -22128,7 +22119,7 @@ exports.PopupEditorWrapper = PopupEditorWrapper;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22228,7 +22219,7 @@ exports.AnimationFrameService = AnimationFrameService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22344,7 +22335,7 @@ exports.ColumnAnimationService = ColumnAnimationService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22461,7 +22452,7 @@ exports.TextCellEditor = TextCellEditor;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22496,7 +22487,7 @@ var SelectCellEditor = (function (_super) {
     __extends(SelectCellEditor, _super);
     function SelectCellEditor() {
         var _this = _super.call(this, '<div class="ag-cell-edit-input"><select class="ag-cell-edit-input"/></div>') || this;
-        _this.eSelect = _this.getGui().querySelector('select');
+        _this.eSelect = _this.getHtmlElement().querySelector('select');
         return _this;
     }
     SelectCellEditor.prototype.init = function (params) {
@@ -22564,7 +22555,7 @@ exports.SelectCellEditor = SelectCellEditor;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22603,11 +22594,11 @@ var AnimateSlideCellRenderer = (function (_super) {
         var refreshCountCopy = this.refreshCount;
         // if old animation, remove it
         if (this.ePrevious) {
-            this.getGui().removeChild(this.ePrevious);
+            this.getHtmlElement().removeChild(this.ePrevious);
         }
         this.ePrevious = utils_1.Utils.loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
         this.ePrevious.innerHTML = this.eCurrent.innerHTML;
-        this.getGui().insertBefore(this.ePrevious, this.eCurrent);
+        this.getHtmlElement().insertBefore(this.ePrevious, this.eCurrent);
         // having timeout of 0 allows use to skip to the next css turn,
         // so we know the previous css classes have been applied. so the
         // complex set of setTimeout below creates the animation
@@ -22621,7 +22612,7 @@ var AnimateSlideCellRenderer = (function (_super) {
             if (refreshCountCopy !== _this.refreshCount) {
                 return;
             }
-            _this.getGui().removeChild(_this.ePrevious);
+            _this.getHtmlElement().removeChild(_this.ePrevious);
             _this.ePrevious = null;
         }, 3000);
     };
@@ -22661,7 +22652,7 @@ exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22771,7 +22762,7 @@ exports.AnimateShowChangeCellRenderer = AnimateShowChangeCellRenderer;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22817,23 +22808,16 @@ var GroupCellRenderer = (function (_super) {
     }
     GroupCellRenderer.prototype.init = function (params) {
         this.params = params;
-        this.isEmbeddedRowMismatch();
         var embeddedRowMismatch = this.isEmbeddedRowMismatch();
-        //This allows for empty strings to appear as groups since
-        //it will only return for null or undefined.
+        // This allows for empty strings to appear as groups since
+        // it will only return for null or undefined.
         var cellIsEmpty = params.value == null;
         this.cellIsBlank = embeddedRowMismatch || cellIsEmpty;
         if (this.cellIsBlank) {
             return;
         }
         this.setupDragOpenParents();
-    };
-    GroupCellRenderer.prototype.afterGuiAttached = function (params) {
-        if (this.cellIsBlank) {
-            return;
-        }
-        var eGridCell = params.eGridCell;
-        this.addExpandAndContract(eGridCell);
+        this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.addPadding();
@@ -22891,11 +22875,11 @@ var GroupCellRenderer = (function (_super) {
         }
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // if doing rtl, padding is on the right
-            this.getGui().style.paddingRight = paddingPx + 'px';
+            this.getHtmlElement().style.paddingRight = paddingPx + 'px';
         }
         else {
             // otherwise it is on the left
-            this.getGui().style.paddingLeft = paddingPx + 'px';
+            this.getHtmlElement().style.paddingLeft = paddingPx + 'px';
         }
     };
     GroupCellRenderer.prototype.addPadding = function () {
@@ -23000,12 +22984,13 @@ var GroupCellRenderer = (function (_super) {
             var cbSelectionComponent_1 = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent_1);
             cbSelectionComponent_1.init({ rowNode: rowNode });
-            this.eCheckbox.appendChild(cbSelectionComponent_1.getGui());
+            this.eCheckbox.appendChild(cbSelectionComponent_1.getHtmlElement());
             this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
         }
     };
-    GroupCellRenderer.prototype.addExpandAndContract = function (eGroupCell) {
+    GroupCellRenderer.prototype.addExpandAndContract = function () {
         var params = this.params;
+        var eGroupCell = params.eGridCell;
         var eExpandedIcon = utils_1.Utils.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
         var eContractedIcon = utils_1.Utils.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
         this.eExpanded.appendChild(eExpandedIcon);
@@ -23013,14 +22998,14 @@ var GroupCellRenderer = (function (_super) {
         var expandOrContractListener = this.onExpandOrContract.bind(this);
         this.addDestroyableEventListener(this.eExpanded, 'click', expandOrContractListener);
         this.addDestroyableEventListener(this.eContracted, 'click', expandOrContractListener);
-        // if editing groups, then double click is to start editing
-        if (!this.gridOptionsWrapper.isEnableGroupEdit()) {
-            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
-        }
         // expand / contract as the user hits enter
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
         this.addDestroyableEventListener(params.node, rowNode_1.RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
+        // if editing groups, then double click is to start editing
+        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
+            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
+        }
     };
     GroupCellRenderer.prototype.onKeyDown = function (event) {
         if (utils_1.Utils.isKeyPressed(event, constants_1.Constants.KEY_ENTER)) {
@@ -23075,11 +23060,14 @@ var GroupCellRenderer = (function (_super) {
             this.params.api.redrawRows({ rowNodes: [rowNode] });
         }
     };
-    GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
+    GroupCellRenderer.prototype.isExpandable = function () {
         var rowNode = this.params.node;
         var reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
-        var expandable = this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
-        if (expandable) {
+        return this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
+    };
+    GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
+        var rowNode = this.params.node;
+        if (this.isExpandable()) {
             // if expandable, show one based on expand state.
             // if we were dragged down, means our parent is always expanded
             var expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;
@@ -23162,7 +23150,7 @@ exports.GroupCellRenderer = GroupCellRenderer;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23249,7 +23237,7 @@ exports.StylingService = StylingService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23343,7 +23331,7 @@ exports.ColumnHoverService = ColumnHoverService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23391,27 +23379,27 @@ var ComponentMetadataProvider = (function () {
             },
             cellRenderer: {
                 mandatoryMethodList: ['refresh'],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             innerRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             fullWidthCellRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             pinnedRowCellRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             groupRowInnerRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             }
         };
@@ -23444,7 +23432,7 @@ exports.ComponentMetadataProvider = ComponentMetadataProvider;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23692,7 +23680,7 @@ exports.CellNavigationService = CellNavigationService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23748,7 +23736,7 @@ var RenderedHeaderCell = (function (_super) {
     };
     RenderedHeaderCell.prototype.init = function () {
         var eGui = this.headerTemplateLoader.createHeaderElement(this.column);
-        this.setGui(eGui);
+        this.setHtmlElementNoHydrate(eGui);
         this.createScope();
         this.addAttributes();
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), eGui, this.gridOptionsWrapper, this.column, null);
@@ -23774,7 +23762,7 @@ var RenderedHeaderCell = (function (_super) {
         var colDef = this.column.getColDef();
         // add tooltip if exists
         if (colDef.headerTooltip) {
-            this.getGui().title = colDef.headerTooltip;
+            this.getHtmlElement().title = colDef.headerTooltip;
         }
     };
     RenderedHeaderCell.prototype.setupText = function () {
@@ -23810,7 +23798,7 @@ var RenderedHeaderCell = (function (_super) {
     };
     RenderedHeaderCell.prototype.onFilterChanged = function () {
         var filterPresent = this.column.isFilterActive();
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-filtered', filterPresent);
         utils_1.Utils.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !filterPresent);
     };
     RenderedHeaderCell.prototype.setupWidth = function () {
@@ -23818,7 +23806,7 @@ var RenderedHeaderCell = (function (_super) {
         this.onColumnWidthChanged();
     };
     RenderedHeaderCell.prototype.onColumnWidthChanged = function () {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
+        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
     };
     RenderedHeaderCell.prototype.createScope = function () {
         var _this = this;
@@ -23833,7 +23821,7 @@ var RenderedHeaderCell = (function (_super) {
         }
     };
     RenderedHeaderCell.prototype.addAttributes = function () {
-        this.getGui().setAttribute("colId", this.column.getColId());
+        this.getHtmlElement().setAttribute("colId", this.column.getColId());
     };
     RenderedHeaderCell.prototype.setupMenu = function () {
         var _this = this;
@@ -23873,10 +23861,10 @@ var RenderedHeaderCell = (function (_super) {
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
         if (this.column.isMoving()) {
-            utils_1.Utils.addCssClass(this.getGui(), 'ag-header-cell-moving');
+            utils_1.Utils.addCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
         }
         else {
-            utils_1.Utils.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+            utils_1.Utils.removeCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
         }
     };
     RenderedHeaderCell.prototype.setupMove = function (eHeaderCellLabel) {
@@ -23891,7 +23879,7 @@ var RenderedHeaderCell = (function (_super) {
             var dragSource_1 = {
                 type: dragAndDropService_1.DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
-                dragItem: [this.column],
+                dragItemCallback: function () { return _this.createDragItem(); },
                 dragItemName: this.displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
@@ -23899,12 +23887,20 @@ var RenderedHeaderCell = (function (_super) {
             this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });
         }
     };
+    RenderedHeaderCell.prototype.createDragItem = function () {
+        var visibleState = {};
+        visibleState[this.column.getId()] = this.column.isVisible();
+        return {
+            columns: [this.column],
+            visibleState: visibleState
+        };
+    };
     RenderedHeaderCell.prototype.setupTap = function () {
         var _this = this;
         if (this.gridOptionsWrapper.isSuppressTouch()) {
             return;
         }
-        var touchListener = new touchListener_1.TouchListener(this.getGui());
+        var touchListener = new touchListener_1.TouchListener(this.getHtmlElement());
         var tapListener = function (event) {
             _this.sortController.progressSort(_this.column, false);
         };
@@ -23977,15 +23973,15 @@ var RenderedHeaderCell = (function (_super) {
     RenderedHeaderCell.prototype.setupSort = function (eHeaderCellLabel) {
         var _this = this;
         var enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
-        var eGui = this.getGui();
+        var element = this.getHtmlElement();
         if (!enableSorting) {
-            utils_1.Utils.removeFromParent(eGui.querySelector('#agSortAsc'));
-            utils_1.Utils.removeFromParent(eGui.querySelector('#agSortDesc'));
-            utils_1.Utils.removeFromParent(eGui.querySelector('#agNoSort'));
+            utils_1.Utils.removeFromParent(element.querySelector('#agSortAsc'));
+            utils_1.Utils.removeFromParent(element.querySelector('#agSortDesc'));
+            utils_1.Utils.removeFromParent(element.querySelector('#agNoSort'));
             return;
         }
         // add sortable class for styling
-        utils_1.Utils.addCssClass(eGui, 'ag-header-cell-sortable');
+        utils_1.Utils.addCssClass(element, 'ag-header-cell-sortable');
         // add the event on the header, so when clicked, we do sorting
         if (eHeaderCellLabel) {
             eHeaderCellLabel.addEventListener("click", function (event) {
@@ -24000,9 +23996,9 @@ var RenderedHeaderCell = (function (_super) {
         this.onSortChanged();
     };
     RenderedHeaderCell.prototype.onSortChanged = function () {
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.column.isSortAscending());
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.column.isSortDescending());
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.column.isSortNone());
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-asc', this.column.isSortAscending());
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-desc', this.column.isSortDescending());
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-none', this.column.isSortNone());
         if (this.eSortAsc) {
             utils_1.Utils.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.column.isSortAscending());
         }
@@ -24110,7 +24106,7 @@ exports.RenderedHeaderCell = RenderedHeaderCell;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24215,7 +24211,7 @@ exports.HeaderTemplateLoader = HeaderTemplateLoader;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24261,7 +24257,7 @@ exports.GroupInstanceIdCreator = GroupInstanceIdCreator;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24312,7 +24308,7 @@ exports.Downloader = Downloader;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24548,7 +24544,7 @@ exports.Grid = Grid;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24818,7 +24814,7 @@ exports.RowNodeCache = RowNodeCache;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25099,7 +25095,7 @@ exports.InMemoryNodeManager = InMemoryNodeManager;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25159,7 +25155,7 @@ exports.ChangedPath = ChangedPath;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25345,7 +25341,7 @@ exports.TextFilter = TextFilter;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25396,7 +25392,7 @@ var NumberFilter = (function (_super) {
     };
     NumberFilter.prototype.initialiseFilterBodyUi = function () {
         this.filterNumber = null;
-        this.eFilterTextField = this.getGui().querySelector("#filterText");
+        this.eFilterTextField = this.getHtmlElement().querySelector("#filterText");
         var debounceMs = this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 500;
         var toDebounce = utils_1.Utils.debounce(this.onTextFieldsChanged.bind(this), debounceMs);
         this.addDestroyableEventListener(this.eFilterTextField, "input", toDebounce);
@@ -25511,7 +25507,7 @@ exports.NumberFilter = NumberFilter;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25580,7 +25576,7 @@ exports.NamedComponentResolver = NamedComponentResolver;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25721,7 +25717,7 @@ exports.ComponentProvider = ComponentProvider;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25758,7 +25754,7 @@ exports.PopupTextCellEditor = PopupTextCellEditor;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25795,7 +25791,7 @@ exports.PopupSelectCellEditor = PopupSelectCellEditor;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25829,7 +25825,7 @@ var LargeTextCellEditor = (function (_super) {
         if (utils_1.Utils.exists(params.value)) {
             this.textarea.value = params.value.toString();
         }
-        this.getGui().querySelector('.ag-large-textarea').appendChild(this.textarea);
+        this.getHtmlElement().querySelector('.ag-large-textarea').appendChild(this.textarea);
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
     };
     LargeTextCellEditor.prototype.onKeyDown = function (event) {
@@ -25870,7 +25866,7 @@ exports.LargeTextCellEditor = LargeTextCellEditor;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25982,14 +25978,14 @@ var HeaderContainer = (function () {
             var headerRowComp = new headerRowComp_1.HeaderRowComp(dept, type, this.pinned, this.eRoot, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
-            this.eContainer.appendChild(headerRowComp.getGui());
+            this.eContainer.appendChild(headerRowComp.getHtmlElement());
         }
         var includeFloatingFilterRow = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
         if (includeFloatingFilterRow) {
             var headerRowComp = new headerRowComp_1.HeaderRowComp(rowCount, headerRowComp_1.HeaderRowType.FLOATING_FILTER, this.pinned, this.eRoot, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
-            this.eContainer.appendChild(headerRowComp.getGui());
+            this.eContainer.appendChild(headerRowComp.getHtmlElement());
         }
     };
     __decorate([
@@ -26042,7 +26038,7 @@ exports.HeaderContainer = HeaderContainer;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26114,7 +26110,7 @@ var HeaderRowComp = (function (_super) {
         var _this = this;
         idsToDestroy.forEach(function (id) {
             var child = _this.headerComps[id];
-            _this.getGui().removeChild(utils_1.Utils.assertHtmlElement(child.getGui()));
+            _this.getHtmlElement().removeChild(utils_1.Utils.assertHtmlElement(child.getGui()));
             if (child.destroy) {
                 child.destroy();
             }
@@ -26150,8 +26146,8 @@ var HeaderRowComp = (function (_super) {
         var rowHeight = 0;
         for (var i = 0; i < this.dept; i++)
             rowHeight += sizes[i];
-        this.getGui().style.top = rowHeight + 'px';
-        this.getGui().style.height = sizes[this.dept] + 'px';
+        this.getHtmlElement().style.top = rowHeight + 'px';
+        this.getHtmlElement().style.height = sizes[this.dept] + 'px';
     };
     //noinspection JSUnusedLocalSymbols
     HeaderRowComp.prototype.init = function () {
@@ -26173,7 +26169,7 @@ var HeaderRowComp = (function (_super) {
     };
     HeaderRowComp.prototype.setWidth = function () {
         var mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
-        this.getGui().style.width = mainRowWidth;
+        this.getHtmlElement().style.width = mainRowWidth;
     };
     HeaderRowComp.prototype.onGridColumnsChanged = function () {
         this.removeAndDestroyAllChildComponents();
@@ -26203,7 +26199,7 @@ var HeaderRowComp = (function (_super) {
                 return;
             }
             var idOfChild = child.getUniqueId();
-            var eParentContainer = _this.getGui();
+            var eParentContainer = _this.getHtmlElement();
             // if we already have this cell rendered, do nothing
             var colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
             var headerComp;
@@ -26362,7 +26358,7 @@ exports.HeaderRowComp = HeaderRowComp;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26437,11 +26433,11 @@ var HeaderWrapperComp = (function (_super) {
         this.addDestroyableEventListener(this.column, column_1.Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
         this.addFeature(this.context, new selectAllFeature_1.SelectAllFeature(this.cbSelectAll, this.column));
-        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans);
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getHtmlElement(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
         this.addAttributes();
-        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getHtmlElement(), this.gridOptionsWrapper, this.column, null);
     };
     HeaderWrapperComp.prototype.addColumnHoverListener = function () {
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
@@ -26449,17 +26445,17 @@ var HeaderWrapperComp = (function (_super) {
     };
     HeaderWrapperComp.prototype.onColumnHover = function () {
         var isHovered = this.columnHoverService.isHovered(this.column);
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-column-hover', isHovered);
     };
     HeaderWrapperComp.prototype.setupSortableClass = function (enableSorting) {
         if (enableSorting) {
-            var eGui = this.getGui();
-            utils_1.Utils.addCssClass(eGui, 'ag-header-cell-sortable');
+            var element = this.getHtmlElement();
+            utils_1.Utils.addCssClass(element, 'ag-header-cell-sortable');
         }
     };
     HeaderWrapperComp.prototype.onFilterChanged = function () {
         var filterPresent = this.column.isFilterActive();
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-filtered', filterPresent);
     };
     HeaderWrapperComp.prototype.appendHeaderComp = function (displayName, enableSorting, enableMenu) {
         var _this = this;
@@ -26490,10 +26486,10 @@ var HeaderWrapperComp = (function (_super) {
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
         if (this.column.isMoving()) {
-            utils_1.Utils.addCssClass(this.getGui(), 'ag-header-cell-moving');
+            utils_1.Utils.addCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
         }
         else {
-            utils_1.Utils.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+            utils_1.Utils.removeCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
         }
     };
     HeaderWrapperComp.prototype.setupMove = function (eHeaderCellLabel, displayName) {
@@ -26508,13 +26504,21 @@ var HeaderWrapperComp = (function (_super) {
             var dragSource_1 = {
                 type: dragAndDropService_1.DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
-                dragItem: [this.column],
+                dragItemCallback: function () { return _this.createDragItem(); },
                 dragItemName: displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource_1, true);
             this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });
         }
+    };
+    HeaderWrapperComp.prototype.createDragItem = function () {
+        var visibleState = {};
+        visibleState[this.column.getId()] = this.column.isVisible();
+        return {
+            columns: [this.column],
+            visibleState: visibleState
+        };
     };
     HeaderWrapperComp.prototype.setupResize = function () {
         var _this = this;
@@ -26554,7 +26558,7 @@ var HeaderWrapperComp = (function (_super) {
         var colDef = this.column.getColDef();
         // add tooltip if exists
         if (colDef.headerTooltip) {
-            this.getGui().title = colDef.headerTooltip;
+            this.getHtmlElement().title = colDef.headerTooltip;
         }
     };
     HeaderWrapperComp.prototype.setupMovingCss = function () {
@@ -26562,7 +26566,7 @@ var HeaderWrapperComp = (function (_super) {
         this.onColumnMovingChanged();
     };
     HeaderWrapperComp.prototype.addAttributes = function () {
-        this.getGui().setAttribute("col-id", this.column.getColId());
+        this.getHtmlElement().setAttribute("col-id", this.column.getColId());
     };
     HeaderWrapperComp.prototype.setupWidth = function () {
         this.addDestroyableEventListener(this.column, column_1.Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
@@ -26576,7 +26580,7 @@ var HeaderWrapperComp = (function (_super) {
         this.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
     };
     HeaderWrapperComp.prototype.onColumnWidthChanged = function () {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
+        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
     };
     // optionally inverts the drag, depending on pinned and RTL
     // note - this method is duplicated in RenderedHeaderGroupCell - should refactor out?
@@ -26679,7 +26683,7 @@ exports.HeaderWrapperComp = HeaderWrapperComp;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26801,7 +26805,7 @@ exports.BodyDropTarget = BodyDropTarget;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26840,18 +26844,17 @@ var MoveColumnController = (function () {
     };
     MoveColumnController.prototype.onDragEnter = function (draggingEvent) {
         // we do dummy drag, so make sure column appears in the right location when first placed
-        var columns = draggingEvent.dragSource.dragItem;
+        var columns = draggingEvent.dragItem.columns;
         var dragCameFromToolPanel = draggingEvent.dragSource.type === dragAndDropService_1.DragSourceType.ToolPanel;
         if (dragCameFromToolPanel) {
             // the if statement doesn't work if drag leaves grid, then enters again
             this.columnController.setColumnsVisible(columns, true);
         }
         else {
-            // ensure that it's not all hidden cols (which happens if we drag outside of the grid body)
-            var allColumnsHidden = columns.every(function (col) { return !col.isVisible(); });
-            if (allColumnsHidden) {
-                this.columnController.setColumnsVisible(columns, true);
-            }
+            // restore previous state of visible columns upon re-entering
+            var visibleState_1 = draggingEvent.dragItem.visibleState;
+            var visibleColumns = columns.filter(function (column) { return visibleState_1[column.getId()]; });
+            this.columnController.setColumnsVisible(visibleColumns, true);
         }
         this.columnController.setColumnsPinned(columns, this.pinned);
         this.onDragging(draggingEvent, true);
@@ -26859,7 +26862,8 @@ var MoveColumnController = (function () {
     MoveColumnController.prototype.onDragLeave = function (draggingEvent) {
         var hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns() && !draggingEvent.fromNudge;
         if (hideColumnOnExit) {
-            var columns = draggingEvent.dragSource.dragItem;
+            var dragItem = draggingEvent.dragSource.dragItemCallback();
+            var columns = dragItem.columns;
             this.columnController.setColumnsVisible(columns, false);
         }
         this.ensureIntervalCleared();
@@ -26926,8 +26930,9 @@ var MoveColumnController = (function () {
             this.checkCenterForScrolling(xNormalised);
         }
         var hDirectionNormalised = this.normaliseDirection(draggingEvent.hDirection);
-        var columnsToMove = draggingEvent.dragSource.dragItem;
-        this.attemptMoveColumns(columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
+        var dragSourceType = draggingEvent.dragSource.type;
+        var columnsToMove = draggingEvent.dragSource.dragItemCallback().columns;
+        this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
     };
     MoveColumnController.prototype.normaliseDirection = function (hDirection) {
         if (this.gridOptionsWrapper.isEnableRtl()) {
@@ -26954,7 +26959,7 @@ var MoveColumnController = (function () {
         var gapsExist = spread !== indexes.length - 1;
         return gapsExist ? null : firstIndex;
     };
-    MoveColumnController.prototype.attemptMoveColumns = function (allMovingColumns, hDirection, xAdjusted, fromEnter) {
+    MoveColumnController.prototype.attemptMoveColumns = function (dragSourceType, allMovingColumns, hDirection, xAdjusted, fromEnter) {
         var draggingLeft = hDirection === dragAndDropService_1.HDirection.Left;
         var draggingRight = hDirection === dragAndDropService_1.HDirection.Right;
         var validMoves = this.calculateValidMoves(allMovingColumns, draggingRight, xAdjusted);
@@ -26973,6 +26978,10 @@ var MoveColumnController = (function () {
             // place the column to the RHS even if the mouse is moving left and the column is already on
             // the LHS. otherwise we stick to the rule described above.
             var constrainDirection = oldIndex !== null && !fromEnter;
+            // don't consider 'fromEnter' when dragging header cells, otherwise group can jump to opposite direction of drag
+            if (dragSourceType == dragAndDropService_1.DragSourceType.HeaderCell) {
+                constrainDirection = oldIndex !== null;
+            }
             if (constrainDirection) {
                 // only allow left drag if this column is moving left
                 if (draggingLeft && newIndex >= oldIndex) {
@@ -27096,7 +27105,7 @@ var MoveColumnController = (function () {
             this.failedMoveAttempts++;
             this.dragAndDropService.setGhostIcon(dragAndDropService_1.DragAndDropService.ICON_PINNED);
             if (this.failedMoveAttempts > 7) {
-                var columns = this.lastDraggingEvent.dragSource.dragItem;
+                var columns = this.lastDraggingEvent.dragSource.dragItemCallback.bind(this);
                 var pinType = this.needToMoveLeft ? column_1.Column.PINNED_LEFT : column_1.Column.PINNED_RIGHT;
                 this.columnController.setColumnsPinned(columns, pinType);
                 this.dragAndDropService.nudge();
@@ -27141,7 +27150,7 @@ exports.MoveColumnController = MoveColumnController;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27175,7 +27184,7 @@ var BodyDropPivotTarget = (function () {
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
             return;
         }
-        var dragColumns = draggingEvent.dragSource.dragItem;
+        var dragColumns = draggingEvent.dragItem.columns;
         dragColumns.forEach(function (column) {
             // we don't allow adding secondary columns
             if (!column.isPrimary()) {
@@ -27249,7 +27258,7 @@ exports.BodyDropPivotTarget = BodyDropPivotTarget;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27372,7 +27381,7 @@ exports.AutoGroupColService = AutoGroupColService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27476,7 +27485,7 @@ exports.ImmutableService = ImmutableService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27531,7 +27540,7 @@ exports.ColumnKeyCreator = ColumnKeyCreator;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27639,7 +27648,7 @@ exports.StandardMenuFactory = StandardMenuFactory;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27692,7 +27701,7 @@ exports.FilterStage = FilterStage;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27782,7 +27791,7 @@ exports.FilterService = FilterService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27835,7 +27844,7 @@ exports.SortStage = SortStage;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27998,7 +28007,7 @@ exports.SortService = SortService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28072,6 +28081,10 @@ var FlattenStage = (function () {
             var thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup;
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
+            }
+            // if we are pivoting, we never map below the leaf group
+            if (skipLeafNodes && rowNode.leafGroup) {
+                continue;
             }
             if (rowNode.group) {
                 // we traverse the group if it is expended, however we always traverse if the parent node
@@ -28183,7 +28196,7 @@ exports.FlattenStage = FlattenStage;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28540,7 +28553,7 @@ exports.InfiniteRowModel = InfiniteRowModel;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28652,7 +28665,7 @@ exports.RowNodeBlockLoader = RowNodeBlockLoader;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29245,7 +29258,7 @@ exports.InMemoryRowModel = InMemoryRowModel;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29294,7 +29307,7 @@ exports.BaseFrameworkFactory = BaseFrameworkFactory;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29388,7 +29401,7 @@ __webpack_require__(151);
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29680,7 +29693,7 @@ module.exports = g;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29796,7 +29809,7 @@ exports.RowContainerComponent = RowContainerComponent;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29850,7 +29863,7 @@ var LinkedListItem = (function () {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29918,7 +29931,7 @@ var HeaderComp = (function (_super) {
         if (this.gridOptionsWrapper.isSuppressTouch()) {
             return;
         }
-        var touchListener = new touchListener_1.TouchListener(this.getGui());
+        var touchListener = new touchListener_1.TouchListener(this.getHtmlElement());
         if (this.params.enableMenu) {
             var longTapListener = function (event) {
                 _this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(_this.params.column, event.touchStart);
@@ -29985,9 +29998,9 @@ var HeaderComp = (function (_super) {
         this.setMultiSortOrder();
     };
     HeaderComp.prototype.onSortChanged = function () {
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
         if (this.eSortAsc) {
             utils_1.Utils.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.params.column.isSortAscending());
         }
@@ -30101,7 +30114,7 @@ exports.HeaderComp = HeaderComp;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30193,7 +30206,7 @@ var HeaderGroupComp = (function (_super) {
         // no renderer, default text render
         if (this.params.displayName && this.params.displayName !== '') {
             if (utils_1.Utils.isBrowserSafari()) {
-                this.getGui().style.display = 'table-cell';
+                this.getHtmlElement().style.display = 'table-cell';
             }
             var eInnerText = this.getRefElement('agLabel');
             eInnerText.innerHTML = this.params.displayName;
@@ -30232,7 +30245,7 @@ exports.HeaderGroupComp = HeaderGroupComp;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30372,7 +30385,7 @@ var DateFloatingFilterComp = (function (_super) {
         this.dateComponent = this.componentRecipes.newDateComponent(dateComponentParams);
         var body = utils_1._.loadTemplate("<div></div>");
         body.appendChild(utils_1._.ensureElement(this.dateComponent.getGui()));
-        this.setTemplateFromElement(body);
+        this.setHtmlElement(body);
     };
     DateFloatingFilterComp.prototype.onDateChanged = function () {
         var parentModel = this.currentParentModel();
@@ -30534,7 +30547,7 @@ exports.ReadModelAsStringFloatingFilterComp = ReadModelAsStringFloatingFilterCom
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30576,9 +30589,9 @@ var BaseFilterWrapperComp = (function (_super) {
         this.column = params.column;
         var base = utils_1._.loadTemplate("<div class=\"ag-header-cell\" aria-hidden=\"true\"><div class=\"ag-floating-filter-body\" aria-hidden=\"true\"></div></div>");
         this.enrichBody(base);
-        this.setTemplateFromElement(base);
+        this.setHtmlElement(base);
         this.setupWidth();
-        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans);
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getHtmlElement(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     };
@@ -30587,7 +30600,7 @@ var BaseFilterWrapperComp = (function (_super) {
         this.onColumnWidthChanged();
     };
     BaseFilterWrapperComp.prototype.onColumnWidthChanged = function () {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
+        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
     };
     __decorate([
         context_1.Autowired('context'),
@@ -30675,7 +30688,7 @@ exports.EmptyFloatingFilterWrapperComp = EmptyFloatingFilterWrapperComp;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30886,7 +30899,7 @@ exports.PaginationComp = PaginationComp;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31107,7 +31120,7 @@ exports.SelectAllFeature = SelectAllFeature;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31159,7 +31172,7 @@ var HeaderGroupWrapperComp = (function (_super) {
         return _this;
     }
     HeaderGroupWrapperComp.prototype.postConstruct = function () {
-        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getHtmlElement(), this.gridOptionsWrapper, null, this.columnGroup);
         var displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
         var headerComponent = this.appendHeaderGroupComp(displayName);
         this.setupResize();
@@ -31167,12 +31180,12 @@ var HeaderGroupWrapperComp = (function (_super) {
         this.setupMove(utils_1.Utils.ensureElement(headerComponent.getGui()), displayName);
         this.setupWidth();
         this.addAttributes();
-        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getHtmlElement(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     };
     HeaderGroupWrapperComp.prototype.addAttributes = function () {
-        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
+        this.getHtmlElement().setAttribute("col-id", this.columnGroup.getUniqueId());
     };
     HeaderGroupWrapperComp.prototype.appendHeaderGroupComp = function (displayName) {
         var _this = this;
@@ -31215,17 +31228,20 @@ var HeaderGroupWrapperComp = (function (_super) {
                 eElement: eHeaderGroup,
                 dragItemName: displayName,
                 // we add in the original group leaf columns, so we move both visible and non-visible items
-                dragItem: this.getAllColumnsInThisGroup(),
+                dragItemCallback: this.getDragItemForGroup.bind(this),
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource_1, true);
             this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });
         }
     };
-    // when moving the columns, we want to move all the columns in this group in one go, and in the order they
-    // are currently in the screen.
-    HeaderGroupWrapperComp.prototype.getAllColumnsInThisGroup = function () {
+    // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
+    // and in the order they are currently in the screen.
+    HeaderGroupWrapperComp.prototype.getDragItemForGroup = function () {
         var allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        // capture visible state, used when reentering grid to dictate which columns should be visible
+        var visibleState = {};
+        allColumnsOriginalOrder.forEach(function (column) { return visibleState[column.getId()] = column.isVisible(); });
         var allColumnsCurrentOrder = [];
         this.columnController.getAllDisplayedColumns().forEach(function (column) {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
@@ -31235,7 +31251,11 @@ var HeaderGroupWrapperComp = (function (_super) {
         });
         // we are left with non-visible columns, stick these in at the end
         allColumnsOriginalOrder.forEach(function (column) { return allColumnsCurrentOrder.push(column); });
-        return allColumnsCurrentOrder;
+        // create and return dragItem
+        return {
+            columns: allColumnsCurrentOrder,
+            visibleState: visibleState
+        };
     };
     HeaderGroupWrapperComp.prototype.isSuppressMoving = function () {
         // if any child is fixed, then don't allow moving
@@ -31285,7 +31305,7 @@ var HeaderGroupWrapperComp = (function (_super) {
         this.childColumnsDestroyFuncs = [];
     };
     HeaderGroupWrapperComp.prototype.onWidthChanged = function () {
-        this.getGui().style.width = this.columnGroup.getActualWidth() + 'px';
+        this.getHtmlElement().style.width = this.columnGroup.getActualWidth() + 'px';
     };
     HeaderGroupWrapperComp.prototype.setupResize = function () {
         var _this = this;
@@ -31448,7 +31468,7 @@ exports.HeaderGroupWrapperComp = HeaderGroupWrapperComp;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31469,7 +31489,7 @@ exports.DefaultColumnTypes = {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31517,7 +31537,7 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31700,7 +31720,7 @@ exports.InfiniteCache = InfiniteCache;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31835,7 +31855,7 @@ exports.InfiniteBlock = InfiniteBlock;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31897,7 +31917,7 @@ exports.RowNodeFactory = RowNodeFactory;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31998,7 +32018,7 @@ exports.ChangeDetectionService = ChangeDetectionService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32121,7 +32141,7 @@ function toCamelCase(myString) {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32227,7 +32247,7 @@ exports.TabbedLayout = TabbedLayout;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32274,7 +32294,7 @@ exports.VerticalStack = VerticalStack;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32317,7 +32337,7 @@ exports.Promise = Promise;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32354,7 +32374,7 @@ exports.defaultGroupComparator = defaultGroupComparator;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */

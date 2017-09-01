@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.0.1
+// Type definitions for ag-grid v13.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../../entities/column";
@@ -45,6 +45,7 @@ export declare class RenderedHeaderCell extends Component {
     private setupMovingCss();
     private onColumnMovingChanged();
     private setupMove(eHeaderCellLabel);
+    private createDragItem();
     private setupTap();
     private setupResize();
     private useRenderer(headerNameValue, headerCellRenderer, eText);

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.0.1
+// Type definitions for ag-grid v13.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -74,12 +74,9 @@ export declare class CellComp extends Component {
     private postProcessCellClassRules();
     private preProcessCellClassRules();
     setUsingWrapper(): void;
-    private prepareCellRenderer();
     private chooseCellRenderer();
     private createCellRendererInstance();
-    private attachCellRendererAfterRefresh();
-    private attachCellRendererAfterCreate();
-    private callAfterGuiAttachedOnCellRenderer();
+    private attachCellRenderer();
     private createCellRendererParams(valueFormatted);
     private formatValue(value);
     private getValue();

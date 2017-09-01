@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,9 +42,9 @@ var BaseFilterWrapperComp = (function (_super) {
         this.column = params.column;
         var base = utils_1._.loadTemplate("<div class=\"ag-header-cell\" aria-hidden=\"true\"><div class=\"ag-floating-filter-body\" aria-hidden=\"true\"></div></div>");
         this.enrichBody(base);
-        this.setTemplateFromElement(base);
+        this.setHtmlElement(base);
         this.setupWidth();
-        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans);
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getHtmlElement(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     };
@@ -53,7 +53,7 @@ var BaseFilterWrapperComp = (function (_super) {
         this.onColumnWidthChanged();
     };
     BaseFilterWrapperComp.prototype.onColumnWidthChanged = function () {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
+        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
     };
     __decorate([
         context_1.Autowired('context'),

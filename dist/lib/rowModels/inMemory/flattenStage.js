@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,6 +74,10 @@ var FlattenStage = (function () {
             var thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup;
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
+            }
+            // if we are pivoting, we never map below the leaf group
+            if (skipLeafNodes && rowNode.leafGroup) {
+                continue;
             }
             if (rowNode.group) {
                 // we traverse the group if it is expended, however we always traverse if the parent node

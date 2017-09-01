@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -92,7 +92,7 @@ var HeaderGroupComp = (function (_super) {
         // no renderer, default text render
         if (this.params.displayName && this.params.displayName !== '') {
             if (utils_1.Utils.isBrowserSafari()) {
-                this.getGui().style.display = 'table-cell';
+                this.getHtmlElement().style.display = 'table-cell';
             }
             var eInnerText = this.getRefElement('agLabel');
             eInnerText.innerHTML = this.params.displayName;

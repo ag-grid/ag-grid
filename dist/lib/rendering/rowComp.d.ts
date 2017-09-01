@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.0.1
+// Type definitions for ag-grid v13.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellComp } from "./cellComp";
@@ -108,7 +108,7 @@ export declare class RowComp extends Component {
     onRowClick(mouseEvent: MouseEvent): void;
     private createFullWidthRowContainer(rowContainerComp, pinned, extraCssClass, cellRendererType, callback);
     private angular1Compile(element);
-    private createFullWidthParams(pinned);
+    private createFullWidthParams(eRow, pinned);
     private getInitialRowClasses(extraCssClass);
     stopEditing(cancel?: boolean): void;
     private setEditingRow(value);

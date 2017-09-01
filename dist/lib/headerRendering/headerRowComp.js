@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -72,7 +72,7 @@ var HeaderRowComp = (function (_super) {
         var _this = this;
         idsToDestroy.forEach(function (id) {
             var child = _this.headerComps[id];
-            _this.getGui().removeChild(utils_1.Utils.assertHtmlElement(child.getGui()));
+            _this.getHtmlElement().removeChild(utils_1.Utils.assertHtmlElement(child.getGui()));
             if (child.destroy) {
                 child.destroy();
             }
@@ -108,8 +108,8 @@ var HeaderRowComp = (function (_super) {
         var rowHeight = 0;
         for (var i = 0; i < this.dept; i++)
             rowHeight += sizes[i];
-        this.getGui().style.top = rowHeight + 'px';
-        this.getGui().style.height = sizes[this.dept] + 'px';
+        this.getHtmlElement().style.top = rowHeight + 'px';
+        this.getHtmlElement().style.height = sizes[this.dept] + 'px';
     };
     //noinspection JSUnusedLocalSymbols
     HeaderRowComp.prototype.init = function () {
@@ -131,7 +131,7 @@ var HeaderRowComp = (function (_super) {
     };
     HeaderRowComp.prototype.setWidth = function () {
         var mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
-        this.getGui().style.width = mainRowWidth;
+        this.getHtmlElement().style.width = mainRowWidth;
     };
     HeaderRowComp.prototype.onGridColumnsChanged = function () {
         this.removeAndDestroyAllChildComponents();
@@ -161,7 +161,7 @@ var HeaderRowComp = (function (_super) {
                 return;
             }
             var idOfChild = child.getUniqueId();
-            var eParentContainer = _this.getGui();
+            var eParentContainer = _this.getHtmlElement();
             // if we already have this cell rendered, do nothing
             var colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
             var headerComp;

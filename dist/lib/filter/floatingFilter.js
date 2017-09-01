@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -140,7 +140,7 @@ var DateFloatingFilterComp = (function (_super) {
         this.dateComponent = this.componentRecipes.newDateComponent(dateComponentParams);
         var body = utils_1._.loadTemplate("<div></div>");
         body.appendChild(utils_1._.ensureElement(this.dateComponent.getGui()));
-        this.setTemplateFromElement(body);
+        this.setHtmlElement(body);
     };
     DateFloatingFilterComp.prototype.onDateChanged = function () {
         var parentModel = this.currentParentModel();

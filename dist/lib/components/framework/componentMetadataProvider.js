@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,27 +48,27 @@ var ComponentMetadataProvider = (function () {
             },
             cellRenderer: {
                 mandatoryMethodList: ['refresh'],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             innerRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             fullWidthCellRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             pinnedRowCellRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             groupRowInnerRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             }
         };

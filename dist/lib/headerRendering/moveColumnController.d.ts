@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.0.1
+// Type definitions for ag-grid v13.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
@@ -30,7 +30,7 @@ export declare class MoveColumnController {
     onDragging(draggingEvent: DraggingEvent, fromEnter?: boolean): void;
     private normaliseDirection(hDirection);
     private calculateOldIndex(movingCols);
-    private attemptMoveColumns(allMovingColumns, hDirection, xAdjusted, fromEnter);
+    private attemptMoveColumns(dragSourceType, allMovingColumns, hDirection, xAdjusted, fromEnter);
     private calculateValidMoves(movingCols, draggingRight, x);
     private isColumnHidden(displayedColumns, col);
     private ensureIntervalStarted();

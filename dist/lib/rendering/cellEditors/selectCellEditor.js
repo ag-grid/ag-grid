@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,7 +35,7 @@ var SelectCellEditor = (function (_super) {
     __extends(SelectCellEditor, _super);
     function SelectCellEditor() {
         var _this = _super.call(this, '<div class="ag-cell-edit-input"><select class="ag-cell-edit-input"/></div>') || this;
-        _this.eSelect = _this.getGui().querySelector('select');
+        _this.eSelect = _this.getHtmlElement().querySelector('select');
         return _this;
     }
     SelectCellEditor.prototype.init = function (params) {

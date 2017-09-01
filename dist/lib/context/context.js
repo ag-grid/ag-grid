@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46,7 +46,7 @@ var Context = (function () {
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
             var newComponent = new this.componentsMappedByName[key];
             this.wireBean(newComponent);
-            this.copyAttributesFromNode(element, newComponent.getGui());
+            this.copyAttributesFromNode(element, newComponent.getHtmlElement());
             newComponent.attributesSet();
             return newComponent;
         }

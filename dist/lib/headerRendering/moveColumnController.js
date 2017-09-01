@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,18 +39,17 @@ var MoveColumnController = (function () {
     };
     MoveColumnController.prototype.onDragEnter = function (draggingEvent) {
         // we do dummy drag, so make sure column appears in the right location when first placed
-        var columns = draggingEvent.dragSource.dragItem;
+        var columns = draggingEvent.dragItem.columns;
         var dragCameFromToolPanel = draggingEvent.dragSource.type === dragAndDropService_1.DragSourceType.ToolPanel;
         if (dragCameFromToolPanel) {
             // the if statement doesn't work if drag leaves grid, then enters again
             this.columnController.setColumnsVisible(columns, true);
         }
         else {
-            // ensure that it's not all hidden cols (which happens if we drag outside of the grid body)
-            var allColumnsHidden = columns.every(function (col) { return !col.isVisible(); });
-            if (allColumnsHidden) {
-                this.columnController.setColumnsVisible(columns, true);
-            }
+            // restore previous state of visible columns upon re-entering
+            var visibleState_1 = draggingEvent.dragItem.visibleState;
+            var visibleColumns = columns.filter(function (column) { return visibleState_1[column.getId()]; });
+            this.columnController.setColumnsVisible(visibleColumns, true);
         }
         this.columnController.setColumnsPinned(columns, this.pinned);
         this.onDragging(draggingEvent, true);
@@ -58,7 +57,8 @@ var MoveColumnController = (function () {
     MoveColumnController.prototype.onDragLeave = function (draggingEvent) {
         var hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns() && !draggingEvent.fromNudge;
         if (hideColumnOnExit) {
-            var columns = draggingEvent.dragSource.dragItem;
+            var dragItem = draggingEvent.dragSource.dragItemCallback();
+            var columns = dragItem.columns;
             this.columnController.setColumnsVisible(columns, false);
         }
         this.ensureIntervalCleared();
@@ -125,8 +125,9 @@ var MoveColumnController = (function () {
             this.checkCenterForScrolling(xNormalised);
         }
         var hDirectionNormalised = this.normaliseDirection(draggingEvent.hDirection);
-        var columnsToMove = draggingEvent.dragSource.dragItem;
-        this.attemptMoveColumns(columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
+        var dragSourceType = draggingEvent.dragSource.type;
+        var columnsToMove = draggingEvent.dragSource.dragItemCallback().columns;
+        this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
     };
     MoveColumnController.prototype.normaliseDirection = function (hDirection) {
         if (this.gridOptionsWrapper.isEnableRtl()) {
@@ -153,7 +154,7 @@ var MoveColumnController = (function () {
         var gapsExist = spread !== indexes.length - 1;
         return gapsExist ? null : firstIndex;
     };
-    MoveColumnController.prototype.attemptMoveColumns = function (allMovingColumns, hDirection, xAdjusted, fromEnter) {
+    MoveColumnController.prototype.attemptMoveColumns = function (dragSourceType, allMovingColumns, hDirection, xAdjusted, fromEnter) {
         var draggingLeft = hDirection === dragAndDropService_1.HDirection.Left;
         var draggingRight = hDirection === dragAndDropService_1.HDirection.Right;
         var validMoves = this.calculateValidMoves(allMovingColumns, draggingRight, xAdjusted);
@@ -172,6 +173,10 @@ var MoveColumnController = (function () {
             // place the column to the RHS even if the mouse is moving left and the column is already on
             // the LHS. otherwise we stick to the rule described above.
             var constrainDirection = oldIndex !== null && !fromEnter;
+            // don't consider 'fromEnter' when dragging header cells, otherwise group can jump to opposite direction of drag
+            if (dragSourceType == dragAndDropService_1.DragSourceType.HeaderCell) {
+                constrainDirection = oldIndex !== null;
+            }
             if (constrainDirection) {
                 // only allow left drag if this column is moving left
                 if (draggingLeft && newIndex >= oldIndex) {
@@ -295,7 +300,7 @@ var MoveColumnController = (function () {
             this.failedMoveAttempts++;
             this.dragAndDropService.setGhostIcon(dragAndDropService_1.DragAndDropService.ICON_PINNED);
             if (this.failedMoveAttempts > 7) {
-                var columns = this.lastDraggingEvent.dragSource.dragItem;
+                var columns = this.lastDraggingEvent.dragSource.dragItemCallback.bind(this);
                 var pinType = this.needToMoveLeft ? column_1.Column.PINNED_LEFT : column_1.Column.PINNED_RIGHT;
                 this.columnController.setColumnsPinned(columns, pinType);
                 this.dragAndDropService.nudge();

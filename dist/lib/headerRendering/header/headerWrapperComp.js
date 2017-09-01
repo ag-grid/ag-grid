@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -75,11 +75,11 @@ var HeaderWrapperComp = (function (_super) {
         this.addDestroyableEventListener(this.column, column_1.Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
         this.addFeature(this.context, new selectAllFeature_1.SelectAllFeature(this.cbSelectAll, this.column));
-        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans);
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getHtmlElement(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
         this.addAttributes();
-        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getHtmlElement(), this.gridOptionsWrapper, this.column, null);
     };
     HeaderWrapperComp.prototype.addColumnHoverListener = function () {
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
@@ -87,17 +87,17 @@ var HeaderWrapperComp = (function (_super) {
     };
     HeaderWrapperComp.prototype.onColumnHover = function () {
         var isHovered = this.columnHoverService.isHovered(this.column);
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-column-hover', isHovered);
     };
     HeaderWrapperComp.prototype.setupSortableClass = function (enableSorting) {
         if (enableSorting) {
-            var eGui = this.getGui();
-            utils_1.Utils.addCssClass(eGui, 'ag-header-cell-sortable');
+            var element = this.getHtmlElement();
+            utils_1.Utils.addCssClass(element, 'ag-header-cell-sortable');
         }
     };
     HeaderWrapperComp.prototype.onFilterChanged = function () {
         var filterPresent = this.column.isFilterActive();
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-filtered', filterPresent);
     };
     HeaderWrapperComp.prototype.appendHeaderComp = function (displayName, enableSorting, enableMenu) {
         var _this = this;
@@ -128,10 +128,10 @@ var HeaderWrapperComp = (function (_super) {
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
         if (this.column.isMoving()) {
-            utils_1.Utils.addCssClass(this.getGui(), 'ag-header-cell-moving');
+            utils_1.Utils.addCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
         }
         else {
-            utils_1.Utils.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+            utils_1.Utils.removeCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
         }
     };
     HeaderWrapperComp.prototype.setupMove = function (eHeaderCellLabel, displayName) {
@@ -146,13 +146,21 @@ var HeaderWrapperComp = (function (_super) {
             var dragSource_1 = {
                 type: dragAndDropService_1.DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
-                dragItem: [this.column],
+                dragItemCallback: function () { return _this.createDragItem(); },
                 dragItemName: displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource_1, true);
             this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });
         }
+    };
+    HeaderWrapperComp.prototype.createDragItem = function () {
+        var visibleState = {};
+        visibleState[this.column.getId()] = this.column.isVisible();
+        return {
+            columns: [this.column],
+            visibleState: visibleState
+        };
     };
     HeaderWrapperComp.prototype.setupResize = function () {
         var _this = this;
@@ -192,7 +200,7 @@ var HeaderWrapperComp = (function (_super) {
         var colDef = this.column.getColDef();
         // add tooltip if exists
         if (colDef.headerTooltip) {
-            this.getGui().title = colDef.headerTooltip;
+            this.getHtmlElement().title = colDef.headerTooltip;
         }
     };
     HeaderWrapperComp.prototype.setupMovingCss = function () {
@@ -200,7 +208,7 @@ var HeaderWrapperComp = (function (_super) {
         this.onColumnMovingChanged();
     };
     HeaderWrapperComp.prototype.addAttributes = function () {
-        this.getGui().setAttribute("col-id", this.column.getColId());
+        this.getHtmlElement().setAttribute("col-id", this.column.getColId());
     };
     HeaderWrapperComp.prototype.setupWidth = function () {
         this.addDestroyableEventListener(this.column, column_1.Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
@@ -214,7 +222,7 @@ var HeaderWrapperComp = (function (_super) {
         this.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
     };
     HeaderWrapperComp.prototype.onColumnWidthChanged = function () {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
+        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
     };
     // optionally inverts the drag, depending on pinned and RTL
     // note - this method is duplicated in RenderedHeaderGroupCell - should refactor out?

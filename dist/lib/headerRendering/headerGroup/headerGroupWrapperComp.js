@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.1
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,7 +52,7 @@ var HeaderGroupWrapperComp = (function (_super) {
         return _this;
     }
     HeaderGroupWrapperComp.prototype.postConstruct = function () {
-        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getHtmlElement(), this.gridOptionsWrapper, null, this.columnGroup);
         var displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
         var headerComponent = this.appendHeaderGroupComp(displayName);
         this.setupResize();
@@ -60,12 +60,12 @@ var HeaderGroupWrapperComp = (function (_super) {
         this.setupMove(utils_1.Utils.ensureElement(headerComponent.getGui()), displayName);
         this.setupWidth();
         this.addAttributes();
-        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getHtmlElement(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     };
     HeaderGroupWrapperComp.prototype.addAttributes = function () {
-        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
+        this.getHtmlElement().setAttribute("col-id", this.columnGroup.getUniqueId());
     };
     HeaderGroupWrapperComp.prototype.appendHeaderGroupComp = function (displayName) {
         var _this = this;
@@ -108,17 +108,20 @@ var HeaderGroupWrapperComp = (function (_super) {
                 eElement: eHeaderGroup,
                 dragItemName: displayName,
                 // we add in the original group leaf columns, so we move both visible and non-visible items
-                dragItem: this.getAllColumnsInThisGroup(),
+                dragItemCallback: this.getDragItemForGroup.bind(this),
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource_1, true);
             this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });
         }
     };
-    // when moving the columns, we want to move all the columns in this group in one go, and in the order they
-    // are currently in the screen.
-    HeaderGroupWrapperComp.prototype.getAllColumnsInThisGroup = function () {
+    // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
+    // and in the order they are currently in the screen.
+    HeaderGroupWrapperComp.prototype.getDragItemForGroup = function () {
         var allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        // capture visible state, used when reentering grid to dictate which columns should be visible
+        var visibleState = {};
+        allColumnsOriginalOrder.forEach(function (column) { return visibleState[column.getId()] = column.isVisible(); });
         var allColumnsCurrentOrder = [];
         this.columnController.getAllDisplayedColumns().forEach(function (column) {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
@@ -128,7 +131,11 @@ var HeaderGroupWrapperComp = (function (_super) {
         });
         // we are left with non-visible columns, stick these in at the end
         allColumnsOriginalOrder.forEach(function (column) { return allColumnsCurrentOrder.push(column); });
-        return allColumnsCurrentOrder;
+        // create and return dragItem
+        return {
+            columns: allColumnsCurrentOrder,
+            visibleState: visibleState
+        };
     };
     HeaderGroupWrapperComp.prototype.isSuppressMoving = function () {
         // if any child is fixed, then don't allow moving
@@ -178,7 +185,7 @@ var HeaderGroupWrapperComp = (function (_super) {
         this.childColumnsDestroyFuncs = [];
     };
     HeaderGroupWrapperComp.prototype.onWidthChanged = function () {
-        this.getGui().style.width = this.columnGroup.getActualWidth() + 'px';
+        this.getHtmlElement().style.width = this.columnGroup.getActualWidth() + 'px';
     };
     HeaderGroupWrapperComp.prototype.setupResize = function () {
         var _this = this;
