@@ -47,7 +47,13 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
     componentDidMount() {
         const reactFrameworkFactory = new ReactFrameworkFactory(this);
-        const gridParams = {frameworkFactory: reactFrameworkFactory};
+
+        const gridParams = {
+            frameworkFactory: reactFrameworkFactory,
+            seedBeanInstances:{
+                agGridReact: this
+            }
+        };
 
         this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(this.props.gridOptions, this.props);
         AgGrid.Grid.setFrameworkBeans([ReactFrameworkComponentWrapper]);
@@ -57,6 +63,8 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
         this.api = this.gridOptions.api;
         this.columnApi = this.gridOptions.columnApi;
+
+
     }
 
     shouldComponentUpdate() {
@@ -100,7 +108,9 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     componentWillUnmount() {
-        this.api.destroy();
+        if (this.api){
+            this.api.destroy();
+        }
     }
 
     /*

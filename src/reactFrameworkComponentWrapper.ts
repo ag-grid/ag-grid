@@ -1,13 +1,18 @@
-import {BaseComponentWrapper, Bean, FrameworkComponentWrapper, IComponent, WrapableInterface, IAfterGuiAttachedParams} from "ag-grid";
+import {Autowired, BaseComponentWrapper, Bean, FrameworkComponentWrapper, IComponent, WrapableInterface, IAfterGuiAttachedParams} from "ag-grid";
 import {AgReactComponent} from "./agReactComponent";
+import {AgGridReact} from "./agGridReact";
 
 @Bean('frameworkComponentWrapper')
 export class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
+    @Autowired('agGridReact')
+    private agGridReact:AgGridReact;
+
     createWrapper(ReactComponent: { new (): any }): WrapableInterface {
+        let _self = this;
         class DynamicAgReactComponent extends AgReactComponent implements IComponent<any, IAfterGuiAttachedParams>, WrapableInterface {
 
             constructor() {
-                super(ReactComponent);
+                super(ReactComponent, _self.agGridReact);
             }
 
             public init(params: any) {
@@ -32,4 +37,5 @@ export class ReactFrameworkComponentWrapper extends BaseComponentWrapper<Wrapabl
         const wrapper: DynamicAgReactComponent = new DynamicAgReactComponent();
         return wrapper;
     }
+
 }
