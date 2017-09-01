@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "Webpack Tutorial: Using ngTools/webpack";
+$pageTitle = "Blog: Webpack Tutorial: Using ngTools/webpack";
 $pageDescription = "Webpack Tutorial - ngTools/webpack- Lessons Learnt at ag-Grid";
 $pageKeyboards = "webpack tutorial ngtools";
 

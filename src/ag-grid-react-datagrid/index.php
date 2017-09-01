@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "React datagrid";
+$pageTitle = "Blog: React datagrid";
 $pageDescription = "Bulding a React DataGrid Redux and ag-Grid";
 $pageKeyboards = "react datagrid redux";
 

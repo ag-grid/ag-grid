@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid Partners with webpack";
+$pageTitle = "Blog: ag-Grid Partners with webpack";
 $pageDescription = "ag-Grid is an open source JavaScript data grid with an optional enterprise paid component. webpack is an open-source collaborative effort with no revenue stream. ag-Grid is going to help webpack by generously giving money!";
 $pageKeyboards = "ag-Grid JavaScript ";
 

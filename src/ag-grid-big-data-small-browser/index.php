@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "JavaScript Big Data in a Small Browser";
+$pageTitle = "Blog: JavaScript Big Data in a Small Browser";
 $pageDescription = "A story on how the browser is limited to how much memory it can use, and how ag-Grid challenges the problem.";
 $pageKeyboards = "big data javascript browser";
 
