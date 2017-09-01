@@ -305,7 +305,7 @@ include '../documentation-main/documentation_header.php';
             <td>Remove a global event listener.</td>
         </tr>
         <tr>
-            <th>dispatchEvent(eventType, event)</th>
+            <th>dispatchEvent(event)</th>
             <td>Dispatch an event through the grid. Useful if you are doing a custom cellRenderer and want
                 to fire events such as 'cellValueChanged'.</td>
         </tr>
