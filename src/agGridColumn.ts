@@ -12,7 +12,7 @@ import {generateBindables} from "./agUtils";
     'suppressFilter','unSortIcon','suppressSizeToFit','suppressResize','suppressAutoSize','enableRowGroup','enablePivot',
     'enableValue','editable','suppressNavigable','newValueHandler','volatile','filter','filterFramework','filterParams','cellClassRules',
     'onCellValueChanged','onCellClicked','onCellDoubleClicked','onCellContextMenu','icons','enableCellChangeFlash','headerName',
-    'columnGroupShow','headerClass','children','groupId','openByDefault','marryChildren'])
+    'columnGroupShow','headerClass','children','groupId','openByDefault','marryChildren','headerCheckboxSelection','headerCheckboxSelectionFilteredOnly'])
 // <slot> is required for @children to work.  https://github.com/aurelia/templating/issues/451#issuecomment-254206622
 @inlineView(`<template><slot></slot></template>`)
 @autoinject()
