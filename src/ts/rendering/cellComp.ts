@@ -89,7 +89,7 @@ export class CellComp extends Component {
 
         this.value = this.getValue();
         this.setUsingWrapper();
-        this.prepareCellRenderer();
+        this.chooseCellRenderer();
         this.setupColSpan();
     }
 
@@ -139,7 +139,7 @@ export class CellComp extends Component {
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.addDomData();
         this.addSelectionCheckbox();
-        this.attachCellRendererAfterCreate();
+        this.attachCellRenderer();
         this.angular1Compile();
 
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
@@ -509,7 +509,7 @@ export class CellComp extends Component {
             }
             // use cell renderer if it exists
         } else if (this.usingCellRenderer) {
-            this.attachCellRendererAfterRefresh();
+            this.attachCellRenderer();
         } else {
             let valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
             let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
@@ -634,14 +634,6 @@ export class CellComp extends Component {
         }
     }
 
-    private prepareCellRenderer(): void {
-        this.chooseCellRenderer();
-
-        if (this.usingCellRenderer) {
-            this.createCellRendererInstance();
-        }
-    }
-
     private chooseCellRenderer(): void {
         // template gets preference, then cellRenderer, then do it ourselves
         let colDef = this.column.getColDef();
@@ -679,7 +671,7 @@ export class CellComp extends Component {
         }
     }
 
-    private attachCellRendererAfterRefresh(): void {
+    private attachCellRenderer(): void {
         if (!this.usingCellRenderer) { return; }
 
         this.createCellRendererInstance();
@@ -689,36 +681,6 @@ export class CellComp extends Component {
             this.cellRendererGui = <HTMLElement> this.eParentOfValue.firstChild;
         } else {
             this.eParentOfValue.appendChild(this.cellRendererGui);
-        }
-
-        this.callAfterGuiAttachedOnCellRenderer();
-    }
-
-    // this gets called after row is initially created. if the cellRenderer is a string, then the string was included
-    // in the rows html and all we have to do is look it up.
-    private attachCellRendererAfterCreate(): void {
-        if (!this.usingCellRenderer) { return; }
-
-        if (typeof this.cellRendererGui === 'string') {
-            // if cell renderer returned back a string, then it was in the row template when it
-            // got created, so we look it up (and replace the reference to the string we had)
-            this.cellRendererGui = <HTMLElement> this.eParentOfValue.firstChild;
-        } else {
-            // if cell renderer returned back an HTML object, then we append it to the dom now
-            this.eParentOfValue.appendChild(this.cellRendererGui);
-        }
-
-        this.callAfterGuiAttachedOnCellRenderer();
-    }
-
-    private callAfterGuiAttachedOnCellRenderer(): void {
-        if (this.cellRenderer.afterGuiAttached) {
-            let params: ICellRendererAfterGuiAttachedParams = {
-                eGridCell: this.getHtmlElement(),
-                eParentOfValue: this.eParentOfValue,
-                eComponent: <HTMLElement> this.cellRendererGui
-            };
-            this.cellRenderer.afterGuiAttached(params);
         }
     }
 
@@ -927,9 +889,7 @@ export class CellComp extends Component {
         }
 
         if (cellEditor.afterGuiAttached) {
-            cellEditor.afterGuiAttached({
-                eComponent: _.assertHtmlElement(cellEditor.getGui())
-            });
+            cellEditor.afterGuiAttached();
         }
 
         let event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
