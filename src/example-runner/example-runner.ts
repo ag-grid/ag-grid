@@ -3,6 +3,36 @@ import * as angular from "angular";
 
 const docs: angular.IModule = angular.module('documentation');
 
+docs.directive('codeHighlight', function() {
+    return {
+        restrict: 'A',
+        scope: {
+            language: '='
+        }, 
+        link: function(scope, element, attrs) {
+            var highlight = hljs.highlight(attrs.codeHighlight, element.text().trim()).value;
+            element.replaceWith('<code>' + highlight + '</code>');
+
+        }
+    }
+});
+
+
+docs.directive('snippet', function() {
+    return {
+        restrict: 'E',
+        scope: {
+            language: '='
+        }, 
+        link: function(scope, element, attrs) {
+            let language = attrs.language || "js";
+            let highlightedSource = hljs.highlight(language, element.text()).value;
+
+            element.empty().html('<pre><code>' + highlightedSource + '</code></pre>');
+        }
+    }
+});
+
 // taken from https://github.com/angular/angular.js/blob/489835dd0b36a108bedd5ded439a186aca4fa739/docs/app/src/examples.js#L53
 docs.factory('formPostData', ['$document', function($document) {
     return function(url, newWindow, fields) {
@@ -27,7 +57,7 @@ docs.factory('formPostData', ['$document', function($document) {
 }])
 
 
-class ExampleRunner {
+class ExampleRunner {initialFile: any;
     ready: boolean = false;
     private source: any;
     private loadingSource:boolean;
@@ -53,7 +83,7 @@ class ExampleRunner {
         }
 
         $onInit() {
-            this.selectedTab = "result";
+            this.selectedTab = "code";
             if (!this.boilerplateFiles) {
                 this.boilerplateFiles = [];
             }
@@ -63,7 +93,11 @@ class ExampleRunner {
                 this.files = [ 'index.html' ].concat(this.files);
             }
 
-            this.selectedFile = this.files[1];
+            if (this.initialFile) {
+                this.selectedFile = this.initialFile;
+            } else {
+                this.selectedFile = this.files[1];
+            }
             this.refreshSource();
             this.$timeout(() => this.ready = true);
         }
@@ -78,7 +112,7 @@ class ExampleRunner {
             .then((response: angular.IHttpResponse<{}>) => {
                 this.loadingSource = false;
                 const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
-                this.source = this.$sce.trustAsHtml(hljs.highlight(extension, <string> response.data).value);
+                this.source = this.$sce.trustAsHtml(hljs.highlight(extension, (response.data as string).trim()).value);
             });
         }
 
@@ -219,7 +253,8 @@ docs.component('exampleRunner', {
         section: '<',
         resultUrl: '<',
         name: '<',
-        type: '<'
+        type: '<',
+        initialFile: '<'
     },
 
     controller: ExampleRunner

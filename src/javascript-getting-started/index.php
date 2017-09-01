@@ -8,7 +8,6 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <hr />
-    <?= example('Simple Grid', 'hello-world') ?>
 <hr />
 
     <h1>
@@ -17,16 +16,16 @@ include '../documentation-main/documentation_header.php';
         JavaScript Grid
     </h1>
 
-    <h3>
-        Getting started with ag-Grid and plain JavaScript.
-    </h3>
+    <h2>
+        Getting Started With ag-Grid and Plain JavaScript
+    </h2>
 
     <p>This section documents how to get started with ag-Grid and JavaScript as quickly as possible. You will start off
         with
         a simple application and section by section add Grid features to the application ending up with a fully fledged
         application with ag-Grid at the heart of it.</p>
 
-    <h2>Prerequisites</h2>
+    <h3>Prerequisites</h3>
 
     <p>You will need the following build tools installed at a minimum:</p>
 
@@ -34,23 +33,23 @@ include '../documentation-main/documentation_header.php';
         <li>Git: Please see <a href="https://git-scm.com/">Git</a> for installation options</li>
     </ul>
 
-    <h2>Scaffolding</h2>
+    <h3>Scaffolding</h3>
 
     <p>To get started as quickly as possible we provide a <code>"Seed"</code> repo on Git that you can use. Let's clone
         this
         repo, install the dependencies and start it up:</p>
 
-    <pre>
-<span class="codeComment">// clone the ag-Grid React seed project</span>
+<snippet language="sh">
+# clone the ag-Grid React seed project
 git clone https://github.com/ag-grid/ag-grid-seed
 cd ag-grid-react-seed/javascript
 
-<span class="codeComment">// Now either open index.html from the browser of your choice, or from the command line:</span>
-<span class="codeComment">// either Windows:</span>
+# Now either open index.html from the browser of your choice, or from the command line:
+# either Windows:
 start index.html
-<span class="codeComment">// or OSX:</span>
+# or OSX:
 open index.html
-</pre>
+</snippet>
 
     <p>With those 2 commands you should now see the following application:</p>
 <div>
@@ -64,39 +63,39 @@ open index.html
     <p>At a minimum, a Grid requires row data & column definitions. Row data is provided to the grid as an array of
         JavaScript objects:</p>
 
-    <pre>
-<span class="codeComment">// row data </span>
+<snippet>
+// row data 
 [
     {make: "Toyota", model: "Celica", price: 35000},
     {make: "Ford", model: "Mondeo", price: 32000},
     {make: "Porsche", model: "Boxter", price: 72000}
 ]
-</pre>
+</snippet>
 
-    <p>Here we have 3 rows of data, with <code>make</code>, <code>model</code> and <code>price</code> making up the
-        data.</p>
+<p>Here we have 3 rows of data, with <code>make</code>, <code>model</code> and <code>price</code> making up the
+    data.</p>
 
-    <h3>Column Definitions</h3>
+<h3>Column Definitions</h3>
 
     <p>To display this information we need to tell the Grid what data we're interested in. Let's define the three
         columns
         that match the data above:</p>
 
-    <pre>
-<span class="codeComment">// column definitions</span>
+<snippet>
+// column definitions
 [
     {headerName: "Make", field: "make"},
     {headerName: "Model", field: "model"},
     {headerName: "Price", field: "price"}
 ]
-</pre>
+</snippet>
 
     <p>At a minimum a column definition needs a <code>headerName</code> - the column title to display - and a <code>field</code>
         - the data item to read off of from the row data. Here we're defining 3 columns, <code>Make</code>,
         <code>Model</code>
         and <code>Price</code>, each of which correspond to their lowercase equivalent in the row data above.</p>
 
-    <h3>Grid Definition</h3>
+<h3>Grid Definition</h3>
 
     <p>Ok, so now we know how to define our row and column data - how do we define our actual Grid?</p>
 
@@ -104,8 +103,7 @@ open index.html
         a
         <code>div</code> for ag-Grid to use::</p>
 
-    <pre>
-<span class="codeComment">&lt;!-- index.hmtl --></span>
+<snippet language="html">
 &lt;html&gt;
 &lt;head&gt;
     <span class="codeComment">&lt;!-- reference the ag-Grid library--></span>
@@ -122,7 +120,7 @@ open index.html
 
 &lt;/body&gt;
 &lt;/html&gt;
-</pre>
+</snippet>
 
     <p>Here we're referencing version 10.1.0 from a CDN. You can use a CDN too, download ag-Grid (see <a
                 href="../javascript-more-details">More Details</a>) or bundle it with a tool like <a
@@ -140,31 +138,35 @@ open index.html
         row and column
         information we want displayed:</p>
 
-    <pre>
-<span class="codeComment">// Grid Definition </span>
-<span class="codeComment">// let the grid know which columns and what data to use</span>
+<snippet>
+// Grid Definition 
+// let the grid know which columns and what data to use
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData
 }
-</pre>
+</snippet>
 
     <p>Finally, we wait for the DOM to load and once ready find the container we want ag-Grid to use (as defined by the
         ID we provided above)
         and pass in the <code>GridOptions</code> we want to use:</p>
 
-    <pre>
-<span class="codeComment">// wait for the document to be loaded, otherwise,</span>
-<span class="codeComment">// ag-Grid will not find the div in the document.</span>
-document.addEventListener("DOMContentLoaded", function() {
+<snippet>
+// wait for the document to be loaded, otherwise,
+// ag-Grid will not find the div in the document.
 
-    <span class="codeComment">// lookup the container we want the Grid to use</span>
+document.addEventListener("DOMContentLoaded", function() {
+    // lookup the container we want the Grid to use
     var eGridDiv = document.querySelector('#myGrid');
 
-    <span class="codeComment">// create the grid passing in the div to use together with the columns & data we want to use</span>
+    // create the grid passing in the div to use together with the columns & data we want to use
     new agGrid.Grid(eGridDiv, gridOptions);
 });
-</pre>
+</snippet>
+
+    <p>The final setup looks like this:</p>
+
+<?= example('Simple ag-Grid Example', 'hello-world') ?>
 
     <p>We encourage you to experiment with the plunker above - try adding new rows of data for example or renaming
         column headers.</p>
@@ -183,17 +185,17 @@ document.addEventListener("DOMContentLoaded", function() {
     <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
         enabled by setting a Grid property to true:</p>
 
-    <pre>
-<span class="codeComment">// Grid Definition </span>
-<span class="codeComment">// let the grid know which columns and what data to use</span>
+<snippet>
+// Grid Definition 
+// let the grid know which columns and what data to use
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
 
-    <span class="codeComment">// enable sorting </span>
+    // enable sorting 
     enableSorting: true
 }
-</pre>
+</snippet>
 
     <p>With a single property change we are now able to sort any column by clicking the column header (you can keep
         clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
@@ -211,19 +213,17 @@ var gridOptions = {
 
     <p>As with sorting, enabling filtering is as easy as setting a single property in our Grid definition:</p>
 
-    <pre>
-<span class="codeComment">// Grid Definition </span>
-<span class="codeComment">// let the grid know which columns and what data to use</span>
+    <snippet>
+// Grid Definition 
+// let the grid know which columns and what data to use
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
-
     enableSorting: true,
-
-    <span class="codeComment">// enable filtering </span>
+    // enable filtering 
     enableFilter: true
 }
-</pre>
+</snippet>
 
     <p>With the <code>enableFilter</code> property set we are now able to filter any column by clicking the column
         header
@@ -239,7 +239,9 @@ var gridOptions = {
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-    <show-example example="html5grid"></show-example>
+
+<?= example('Advanced ag-Grid Example', 'advanced', 'vanilla', 'example.js') ?>
+
 
     <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
         <code>column grouping</code> as well as using <code>JavaScript Components</code> in the header. And even this

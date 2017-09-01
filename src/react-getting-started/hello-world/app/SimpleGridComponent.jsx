@@ -41,16 +41,18 @@ export default class extends Component {
         };
 
         return (
-            <div style={containerStyle} className="ag-fresh">
-                <h1>Simple ag-Grid React Example</h1>
-                <AgGridReact
-                    // properties
-                    columnDefs={this.state.columnDefs}
-                    rowData={this.state.rowData}
 
-                    // events
-                    onGridReady={this.onGridReady}>
-                </AgGridReact>
+            <div>
+                <div style={containerStyle} className="ag-fresh">
+                    <AgGridReact
+                        // properties
+                        columnDefs={this.state.columnDefs}
+                        rowData={this.state.rowData}
+
+                        // events
+                        onGridReady={this.onGridReady}>
+                    </AgGridReact>
+                </div>
             </div>
         )
     }

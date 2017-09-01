@@ -156,10 +156,10 @@ function isFrameworkWebComponents()
     <!-- Bootstrap -->
     <link inline rel="stylesheet" href="../dist/bootstrap/css/bootstrap.css">
 
+    <link rel="stylesheet" href="../dist/highlight/atom-one-light.css">
     <link inline rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../documentation-main/documentation.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../dist/highlight/color-brewer.min.css">
     <script src="../dist/highlight/highlight.pack.js"></script>
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>

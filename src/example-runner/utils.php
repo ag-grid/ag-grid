@@ -48,7 +48,7 @@ function getBoilerplateConfig($type) {
 ATTR;
 }
 
-function example($title, $dir, $type='vanilla') {
+function example($title, $dir, $type='vanilla', $initialFile = null) {
     $fileList = htmlspecialchars(json_encode(getDirContents($dir)));
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));
     $additional = getBoilerplateConfig($type);
@@ -62,6 +62,7 @@ function example($title, $dir, $type='vanilla') {
         title="'$title'" 
         files="$fileList"
         result-url="'$resultUrl'"
+        initial-file="'$initialFile'"
         $additional
         >
     </example-runner>
