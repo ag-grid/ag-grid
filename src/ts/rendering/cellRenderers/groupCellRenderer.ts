@@ -64,8 +64,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private cellIsBlank: boolean;
 
     constructor() {
-        super();
-        this.setTemplateNoHydrate(GroupCellRenderer.TEMPLATE);
+        super(GroupCellRenderer.TEMPLATE);
     }
 
     public init(params: GroupCellRendererParams): void {
@@ -78,10 +77,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let cellIsEmpty = params.value==null;
 
         this.cellIsBlank = embeddedRowMismatch || cellIsEmpty;
-    }
-
-    public afterGuiAttached(params: ICellRendererAfterGuiAttachedParams): void {
-        super.afterGuiAttached(params);
 
         if (this.cellIsBlank) { return; }
 
