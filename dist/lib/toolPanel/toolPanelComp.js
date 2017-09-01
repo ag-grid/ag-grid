@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.0.1
+// ag-grid-enterprise v13.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -59,7 +59,7 @@ var ToolPanelComp = (function (_super) {
     };
     ToolPanelComp.prototype.addComponent = function (component) {
         this.context.wireBean(component);
-        this.getGui().appendChild(component.getGui());
+        this.getHtmlElement().appendChild(component.getHtmlElement());
         this.addDestroyFunc(function () {
             component.destroy();
         });

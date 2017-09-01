@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.0.1
+// ag-grid-enterprise v13.1.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -283,7 +283,7 @@ var EnterpriseMenu = (function () {
         this.mainMenuList.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
         this.tabItemGeneral = {
             title: ag_grid_1.Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
-            body: this.mainMenuList.getGui(),
+            body: this.mainMenuList.getHtmlElement(),
             name: EnterpriseMenu.TAB_GENERAL
         };
         return this.tabItemGeneral;
@@ -310,7 +310,7 @@ var EnterpriseMenu = (function () {
         ag_grid_1.Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
         this.columnSelectPanel = new columnSelectPanel_1.ColumnSelectPanel(false);
         this.context.wireBean(this.columnSelectPanel);
-        eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
+        eWrapperDiv.appendChild(this.columnSelectPanel.getHtmlElement());
         this.tabItemColumns = {
             title: ag_grid_1.Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
             body: eWrapperDiv,

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.0.1
+// ag-grid-enterprise v13.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -58,7 +58,7 @@ var RenderedGroup = (function (_super) {
         }
         this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
-        main_1.CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+        main_1.CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getHtmlElement(), this.gridOptionsWrapper, null, this.columnGroup);
     };
     RenderedGroup.prototype.addVisibilityListenersToAllChildren = function () {
         var _this = this;
@@ -73,12 +73,22 @@ var RenderedGroup = (function (_super) {
         var _this = this;
         var dragSource = {
             type: main_1.DragSourceType.ToolPanel,
-            eElement: this.getGui(),
+            eElement: this.getHtmlElement(),
             dragItemName: this.displayName,
-            dragItem: this.columnGroup.getLeafColumns()
+            dragItemCallback: function () { return _this.createDragItem(); }
         };
         this.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
+    };
+    RenderedGroup.prototype.createDragItem = function () {
+        var visibleState = {};
+        this.columnGroup.getLeafColumns().forEach(function (col) {
+            visibleState[col.getId()] = col.isVisible();
+        });
+        return {
+            columns: this.columnGroup.getLeafColumns(),
+            visibleState: visibleState
+        };
     };
     RenderedGroup.prototype.setupExpandContract = function () {
         this.eGroupClosedIcon = this.queryForHtmlElement('#eGroupClosedIcon');

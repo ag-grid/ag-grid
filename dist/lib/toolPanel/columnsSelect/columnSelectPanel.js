@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.0.1
+// ag-grid-enterprise v13.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -47,7 +47,7 @@ var ColumnSelectPanel = (function (_super) {
         this.destroyAllRenderedElements();
     };
     ColumnSelectPanel.prototype.destroyAllRenderedElements = function () {
-        main_1.Utils.removeAllChildren(this.getGui());
+        main_1.Utils.removeAllChildren(this.getHtmlElement());
         if (this.renderedItems) {
             main_1.Utils.iterateObject(this.renderedItems, function (key, renderedItem) { return renderedItem.destroy(); });
         }
@@ -62,7 +62,7 @@ var ColumnSelectPanel = (function (_super) {
         if (!columnGroup.isPadding()) {
             var renderedGroup = new renderedGroup_1.RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
             this.context.wireBean(renderedGroup);
-            this.appendChild(renderedGroup.getGui());
+            this.appendChild(renderedGroup.getHtmlElement());
             // we want to indent on the gui for the children
             newDept = dept + 1;
             this.renderedItems[columnGroup.getId()] = renderedGroup;
@@ -79,7 +79,7 @@ var ColumnSelectPanel = (function (_super) {
         }
         var renderedColumn = new renderedColumn_1.RenderedColumn(column, dept, this.allowDragging);
         this.context.wireBean(renderedColumn);
-        this.appendChild(renderedColumn.getGui());
+        this.appendChild(renderedColumn.getHtmlElement());
         this.renderedItems[column.getId()] = renderedColumn;
     };
     ColumnSelectPanel.prototype.recursivelyRenderComponents = function (tree, dept) {

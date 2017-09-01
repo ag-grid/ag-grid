@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.0.1
+// ag-grid-enterprise v13.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -47,18 +47,26 @@ var ColumnComponent = (function (_super) {
         var dragSource = {
             type: main_1.DragSourceType.ToolPanel,
             eElement: this.eText,
-            dragItem: [this.column],
+            dragItemCallback: function () { return _this.createDragItem(); },
             dragItemName: this.displayName,
             dragSourceDropTarget: this.dragSourceDropTarget
         };
         this.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
     };
+    ColumnComponent.prototype.createDragItem = function () {
+        var visibleState = {};
+        visibleState[this.column.getId()] = this.column.isVisible();
+        return {
+            columns: [this.column],
+            visibleState: visibleState
+        };
+    };
     ColumnComponent.prototype.setupComponents = function () {
         this.setTextValue();
         this.setupRemove();
         if (this.ghost) {
-            main_1.Utils.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
+            main_1.Utils.addCssClass(this.getHtmlElement(), 'ag-column-drop-cell-ghost');
         }
         if (this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
@@ -108,9 +116,9 @@ var ColumnComponent = (function (_super) {
         var ePopup = main_1.Utils.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
-        ePopup.appendChild(virtualList.getGui());
+        ePopup.appendChild(virtualList.getHtmlElement());
         ePopup.style.height = '100px';
-        ePopup.style.width = this.getGui().clientWidth + 'px';
+        ePopup.style.width = this.getHtmlElement().clientWidth + 'px';
         var popupHiddenFunc = function () {
             virtualList.destroy();
             _this.popupShowing = false;
@@ -119,7 +127,7 @@ var ColumnComponent = (function (_super) {
         virtualList.setComponentCreator(this.createAggSelect.bind(this, hidePopup));
         this.popupService.positionPopupUnderComponent({
             type: 'aggFuncSelect',
-            eventSource: this.getGui(),
+            eventSource: this.getHtmlElement(),
             ePopup: ePopup,
             keepWithinBounds: true,
             column: this.column
@@ -210,7 +218,7 @@ var AggItemComp = (function (_super) {
     __extends(AggItemComp, _super);
     function AggItemComp(itemSelected, value) {
         var _this = _super.call(this, '<div class="ag-select-agg-func-item"/>') || this;
-        _this.getGui().innerText = value;
+        _this.getHtmlElement().innerText = value;
         _this.value = value;
         _this.addGuiEventListener('click', itemSelected);
         return _this;
