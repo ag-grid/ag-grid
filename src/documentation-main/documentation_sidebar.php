@@ -41,6 +41,7 @@
     <div>
         We had some issues with frameworks, so took
         out afterGuiAttached() from cell renderers.
+        See the
         <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
     </div>
 </div>
