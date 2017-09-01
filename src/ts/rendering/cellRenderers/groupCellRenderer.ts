@@ -82,8 +82,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         this.setupDragOpenParents();
 
-        let eGridCell = params.eGridCell;
-        this.addExpandAndContract(eGridCell);
+        this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.addPadding();
@@ -269,8 +268,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    private addExpandAndContract(eGroupCell: HTMLElement): void {
+    private addExpandAndContract(): void {
         let params = this.params;
+        let eGroupCell = params.eGridCell;
         let eExpandedIcon = _.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
         let eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
         this.eExpanded.appendChild(eExpandedIcon);
