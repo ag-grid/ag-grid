@@ -13,8 +13,9 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h2>Version 13.1.x</h2>
 
+    <h2>Version 13.0.x</h2>
+    <h3>Version 13.1.0 [01-SEP-2017]</h3>
     <h4>Revert of Breaking Change</h4>
 
     <ul>
@@ -38,9 +39,9 @@ include '../documentation-main/documentation_header.php';
         <li>AG-597: Preserve grouped column order after dragging to new position</li>
         <li>AG-620: Retain hidden columns when group moved</li>
         <li>AG-729: ag-row-focus CSS class was getting added to every row</li>
+        <li>AG-733: resolved an issue with react+redux where the store was not injected</li>
     </ul>
 
-    <h2>Version 13.0.x</h2>
     <h3>Version 13.0.1 [29-AUG-2017]</h3>
 
     <h4>Bug Fixes</h4>
