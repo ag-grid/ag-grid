@@ -767,35 +767,16 @@ export class RowComp extends Component {
                                         extraCssClass: string, cellRendererType: string,
                                         callback: (eRow: HTMLElement, comp: ICellRendererComp) => void): void {
 
-        let params = this.createFullWidthParams(pinned);
-
-        let cellRenderer = this.beans.componentResolver.createAgGridComponent<ICellRendererComp>(null, params, cellRendererType);
-
-        let gui = _.assertHtmlElement(cellRenderer.getGui());
-        let guiIsTemplate = typeof gui === 'string';
-        let cellTemplate = guiIsTemplate ? <string><any> gui : '';
-
-        let rowTemplate = this.createTemplate(cellTemplate, extraCssClass);
+        let rowTemplate = this.createTemplate('', extraCssClass);
         rowContainerComp.appendRowTemplate(rowTemplate, ()=> {
 
             let eRow: HTMLElement = rowContainerComp.getRowElement(this.getCompId());
 
-            let eCell: HTMLElement;
-            if (guiIsTemplate) {
-                eCell = <HTMLElement> eRow.firstChild;
-            } else {
-                eRow.appendChild(gui);
-                eCell = gui;
-            }
+            let params = this.createFullWidthParams(eRow, pinned);
 
-            if (cellRenderer.afterGuiAttached) {
-                let params = {
-                    eGridCell: eRow,
-                    eParentOfValue: eRow,
-                    eComponent: eCell
-                };
-                cellRenderer.afterGuiAttached(params);
-            }
+            let cellRenderer = this.beans.componentResolver.createAgGridComponent<ICellRendererComp>(null, params, cellRendererType);
+            let gui = _.ensureElement(cellRenderer.getGui());
+            eRow.appendChild(gui);
 
             this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow, cellRenderer);
@@ -810,7 +791,7 @@ export class RowComp extends Component {
         }
     }
 
-    private createFullWidthParams(pinned: string): any {
+    private createFullWidthParams(eRow: HTMLElement, pinned: string): any {
         let params = {
             fullWidth: true,
             data: this.rowNode.data,
@@ -822,8 +803,8 @@ export class RowComp extends Component {
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext(),
             // these need to be taken out, as part of 'afterAttached' now
-            eGridCell: <HTMLElement> null,
-            eParentOfValue: <HTMLElement> null,
+            eGridCell: eRow,
+            eParentOfValue: eRow,
             pinned: pinned,
             addRenderedRowListener: this.addEventListener.bind(this)
         };
