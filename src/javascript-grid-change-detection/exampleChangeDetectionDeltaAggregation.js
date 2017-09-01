@@ -88,6 +88,7 @@ var gridOptions = {
     suppressAggFuncInHeader: true,
     animateRows: true,
     enableSorting: true,
+    enableColResize: true,
     getRowNodeId: function(rowData) {
         return rowData.id;
     },
