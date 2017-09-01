@@ -28,6 +28,7 @@ docs.factory('formPostData', ['$document', function($document) {
 
 
 class ExampleRunner {
+    ready: boolean = false;
     private source: any;
     private loadingSource:boolean;
     private selectedTab: string;
@@ -53,17 +54,24 @@ class ExampleRunner {
 
         $onInit() {
             this.selectedTab = "code";
+            if (!this.boilerplateFiles) {
+                this.boilerplateFiles = [];
+            }
+
+            // for angular and react, index.html is part of the boilerplate
+            if (this.files[0] != "index.html") {
+                this.files = [ 'index.html' ].concat(this.files);
+            }
 
             if (this.type == "angular") {
-                this.files = [ 'index.html' ].concat(this.files);
                 this.resultUrl = `../example-runner/angular.php?section=${this.section}&example=${this.name}`;
             } else {
-                this.boilerplateFiles = [];
                 this.resultUrl = `../example-runner/vanilla.php?section=${this.section}&example=${this.name}`;
             }
 
             this.selectedFile = this.files[0];
             this.refreshSource();
+            this.$timeout(() => this.ready = true);
         }
 
         refreshSource() {
@@ -136,7 +144,7 @@ docs.component('exampleTab', {
 
 docs.component('exampleRunner', {
     template: ` 
-    <div class="example-runner">
+        <div ng-class='["example-runner", { "example-loading": !$ctrl.ready }]'>
         <ul role="tablist" class="primary">
             <li class="title">
                 <a href="#example-{{$ctrl.name}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
@@ -177,7 +185,7 @@ docs.component('exampleRunner', {
                 <ul role="tablist" class="secondary">
 
                     <li ng-if="$ctrl.type == 'angular'" class="separator">
-                        <i class="fa fa-user-o"></i> App
+                         App
                     </li>
 
                     <example-tab 
@@ -190,7 +198,7 @@ docs.component('exampleRunner', {
                     </example-tab>
 
                     <li ng-if="$ctrl.type == 'angular'" class="separator">
-                        <i class="fa fa-gear"></i>Framework
+                        Framework
                     </li>
 
                     <example-tab 

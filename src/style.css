@@ -1394,3 +1394,9 @@ sup.new {
     color: white;
     padding: 0 2px;
 }
+
+/* this needs to be here, to avoid FOUC for examples */
+.example-loading {
+    visibility: hidden;
+}
+
