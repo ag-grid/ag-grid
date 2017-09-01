@@ -29,6 +29,23 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">1st September 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
+            v13.1
+        </span>
+        <img src="../images/logo-dark-hacked.svg"
+             style="width: 100%;"/>
+    </div>
+    <br/>
+    <div>
+        We had some issues with frameworks, so took
+        out afterGuiAttached() from cell renderers.
+        <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">30th August 2017</div>
     <div>
         Release of <b>ag-Grid-Aurelia v13.0.2</b>
