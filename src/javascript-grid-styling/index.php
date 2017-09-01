@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         <p>
-            We are currently upgrading the provided. If using an old theme, you have the
+            We are currently upgrading the provided themes. If you are using an old theme, you have the
             choice to move to a new theme. We will continue to keep the old themes for backwards
             compatibility. The current status of the themes is as follows:
             <style>
