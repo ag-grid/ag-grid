@@ -13,25 +13,47 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+
     <h2>Version 13.0.x</h2>
+    <h3>Version 13.1.0 [01-SEP-2017]</h3>
+    <h4>Revert of Breaking Change</h4>
+
+    <ul>
+        <li>
+            <p>
+                In v13.0 we introduced the method <code>afterGuiAttached()</code> for the cell renderers. The purpose of this was to allow
+                cell renderers to be created before the DOM existed which gave a marginal performance boost. This has caused
+                issues for frameworks like React and Angular (which sometimes need the parent DOM element to exist before the
+                component is created). For this reason we have reverted back to how things worked prior to v13.0.
+            </p>
+            <p>
+                So in summary, v13.0 introduced <code>afterGuiAttached()</code>, v13.1 takes <code>afterGuiAttached()</code> back out.
+            </p>
+        </li>
+    </ul>
+
+    <h4>Bug Fixes</h4>
+
+    <ul>
+        <li>AG-721: When in pivot, it was possible open level groups via API or via double clicking. Bottom level groups in pivot should be locked closed.</li>
+        <li>AG-597: Preserve grouped column order after dragging to new position</li>
+        <li>AG-620: Retain hidden columns when group moved</li>
+        <li>AG-729: ag-row-focus CSS class was getting added to every row</li>
+        <li>AG-733: resolved an issue with react+redux where the store was not injected</li>
+    </ul>
+
     <h3>Version 13.0.1 [29-AUG-2017]</h3>
 
     <h4>Bug Fixes</h4>
     <ul>
-
-        <!-- Niall Bits -->
         <li>AG-711: blank cells with no defined cell renderer were causing error</li>
         <li>AG-709: column header attribute was colId instead of col-id</li>
         <li>AG-706: rows were not rendering sometimes when cellRenderer was not returning back true 'object' or string</li>
         <li>AG-705: angular 1 cells were not getting compiled</li>
-
-        <!-- Petyo Bits -->
         <li>AG-710: Fixed an issues where drag and drop did not work as expected in ag-grid-react</li>
         <li>AG-712: Fixed an issue with headers no longer displaying ellipsis (&hellip;) when too narrow.</li>
         <li>AG-708: The themes are shipped without minifictation for easier debugging.</li>
         <li>AG-707: Fixed an issue introduced with new SVG icons - some of the icons passed through the <code>gridOptions</code> stopped working</li>
-
-        <!-- Alberto Bits -->
         <li>AG-714: Fixed an issue a column with a <code>cellRenderer='group'</code> and with an innerRenderer was not
             using the innerRenderer when displayed as a leaf cell</li>
     </ul>

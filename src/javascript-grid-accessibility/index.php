@@ -13,29 +13,13 @@ include '../documentation-main/documentation_header.php';
         Accessibility
     </h1>
 
-<p>
-    This page provides some guidance on how to address accessibility concerns in your grid implementations,
-    as well as sharing our current progress as we roll out more accessibility features in the upcoming releases.
-</p>
+    <p>
+        ag-Grid provides amongst the best support for accessibility compared to other grids available on the market today.
+    </p>
 
-    <div class="note">
-        <table>
-            <tbody><tr>
-                <td style="vertical-align: top;">
-                    <img src="../images/lab.png" title="Enterprise Lab" style="padding: 10px;">
-                </td>
-                <td style="padding-left: 10px;">
-                    <h4 class="ng-scope">
-                        Lab Feature
-                    </h4>
-                    <p class="ng-scope">
-                        Accessibility features are currently in development and therefore subject to change. Please provide
-                        feedback below so that we can best understand your requirements along with any suggestions you might
-                        have so that we can provide the best accessibility experience as possible.
-                </td>
-            </tr>
-            </tbody></table>
-    </div>
+    <p>
+        This page provides guidance on how to address accessibility concerns in your grid implementations.
+    </p>
 
     <h2>Web Conformance Guidelines</h2>
     <p>
@@ -52,13 +36,10 @@ include '../documentation-main/documentation_header.php';
 
         WCAG 2.0 has 3 levels of conformance; A, AA and AAA (in order of conformance)
     </p>
+
     <p>
         As meeting WCAG 2.0 level AA guidelines also meets the ADA and Section 508 standards, it is likely that most organisations will want to target this standard.
     </p>
-
-    <note>
-        How you design your grid is key to how accessible it will be. For instance the use of colours, images and complex layouts should be carefully considered.
-    </note>
 
     <h2>High Contrast Theme</h2>
     <p>
@@ -74,8 +55,29 @@ include '../documentation-main/documentation_header.php';
     <p>
         To create a high contrast theme please check out the <a href="../javascript-grid-styling/">Themes</a>
         documentation for details.
-        A new high contrast theme is in the ag-Grid backlog and will be scheduled for development soon.
     </p>
+
+    <h2>Keyboard navigation</h2>
+
+    <p>Users who have motor disabilities, as well as visually impaired users, often rely on keyboards for navigation.</p>
+
+    <p>For details on how to navigate the grid without using a mouse refer to the
+        <a href="../javascript-grid-keyboard-navigation/">Keyboard Navigation</a> documentation. Note that it is possible
+        to provide custom navigation which could come in useful for some accessibility requirements.</p>
+
+    <h2>Skip Navigation</h2>
+    <p>It may also be worth considering providing a "skip link" to easily navigate to the grid. For example you could
+        provide a hyperlink to the grid class attribute, i.e. href='#myGrid'.</p>
+
+    <p>The following css snippet shows how you could also hide this link by default and then reveal it when tabbed into:</p>
+
+    <pre>.skip-link {
+      left: -100%;
+      position: absolute;
+    }
+    .skip-link:focus {
+      left: 50%;
+    }</pre>
 
     <h2>Screen Readers</h2>
     <p>
@@ -85,13 +87,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>There are numerous screen readers available, however right now the most popular screen reader for Windows is
        <a href="https://www.freedomscientific.com/Downloads/JAWS">JAWS</a> and for MAC users it is the embedded
-       <a href="http://help.apple.com/voiceover/info/guide">VoiceOver</a> software. ag-Grid testing is focused on these
+       <a href="http://help.apple.com/voiceover/info/guide">VoiceOver</a> software. Our testing has focused on these
         screen readers.
     </p>
 
     <h2>ARIA Attributes</h2>
     <p>
-        In order to give screen readers the contextual information they require to interpret and interact with ag-Grid,
+        In order to give screen readers the contextual information they require to interpret and interact with the grid,
         <a href="https://www.w3.org/TR/wai-aria/">ARIA</a> attributes are added to the grid DOM elements. These
         attributes are particularity useful when plain HTML elements such <i>div</i> and <i>span</i> are used to create
         complex DOM structures, which is the case with ag-Grid.
@@ -111,76 +113,90 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         These attributes will enable screen readers to interpret and navigate the columns and rows of the grid.
-        Grids with simple layouts (e.g. without <a href="../javascript-grid-grouping-headers/">column groups</a> or
-        <a href="../javascript-grid-pivoting/"></a> pivots) will have best results.
+        Grids with simple layouts (e.g. without column groups, pinned columns or pivoting) will have best results.
     </p>
 
     <note>
-        Next steps include adding ARIA attributes for grid interaction, i.e. sorting / filtering etc...
+        Some other grids claim to provide support for complex grid layouts and interactions but based on our own
+        independent testing and the feedback we've received from our users this is clearly not the case.
     </note>
 
-    <h2 id="dom-order">Row and Column Order</h2>
+    <h2 id="dom-order">Column and Row Order</h2>
 
     <p>
-        By default in ag-Grid, rows and columns can appear out of order in the DOM. This is due to how ag-Grid
-        virtualises columns and rows, a technique whereby the grid draws columns and rows as the user scrolls.
-        This 'incorrect order' can result in inconsistent results when parsed by screen readers.
+        By default rows and columns can appear out of order in the DOM. This 'incorrect order' can result in inconsistent
+        results when parsed by screen readers.
+    </p>
+
+    <p>To force row and column order, enable the following gridOptions property like so:</p>
+
+    <pre>gridOptions.ensureDomOrder = true</pre>
+
+    <note>Animations won't work properly when the DOM order is forced, so ensure they are not enabled.</note>
+
+    <h2 id="dom-order">Column and Row Virtualisation</h2>
+
+    <p>
+        By default the grid uses virtualisation; a technique whereby the grid draws columns and rows as the user scrolls.
+        This can be problematic for keyboard navigation and screen readers as not all rows and columns will be available
+        in the DOM.
+    </p>
+    <p>
+        To overcome this it may be necessary to disable visualisation at the expense of increasing the memory footprint.
     </p>
 
     <p>
-        To force row and column order set <code>gridOptions.ensureDomOrder=true</code>.
+        Column virtualisation can be disabled as follows:
+    </p>
+
+    <pre>gridOptions.suppressColumnVirtualisation = true</pre>
+
+    <p>
+        This mean if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.
+    </p>
+
+    <p> There is no property to suppress row virtualisation however if you want to do this you can set the rowBuffer
+        property to be very large as follows:
+    </p>
+
+    <pre>gridOptions.rowBuffer = 9999</pre>
+
+    <p>
+        This sets number of rows rendered outside the scrollable viewable area the grid renders. The defaults is 20.
     </p>
 
     <p>
-        The example below presents a simple grid layout with <i>ensureDomOrder</i> enabled.
+        However note that lots of rendered rows will mean a very large amount of rendering in the DOM which will slow things down.
     </p>
+
+    <p>
+        As an alternative you may want to consider using <a href="../javascript-grid-pagination/">Pagination</a> instead
+        to constrain the amount of visible rows.
+    </p>
+
+    <h2 id="example-accessibility">Example - Accessibility</h2>
+
+    <p>
+        The example below presents a simple grid layout with the following properties enabled:
+    </p>
+
+    <ul>
+        <li>
+            <b>ensureDomOrder</b> - ensures the rows and columns in the DOM always appear in the same order as displayed in the grid.
+        </li>
+        <li>
+            <b>suppressColumnVirtualisation</b> - ensures all columns are rendered, i.e. appears in the DOM.
+        </li>
+        <li>
+            <b>rowBuffer</b> - sets the number of rows rendered outside of the scrollable viewable area.
+        </li>
+    </ul>
 
     <show-example example="accessibilityExample"></show-example>
 
     <note>
         Tested on Windows using JAWS (version 18) and Mac using VoiceOver (Sierra 10.12.4)
     </note>
-
-    <h2>Keyboard navigation</h2>
-
-    <p>Users who have motor disabilities, as well as visually impaired users, often rely on keyboards for navigation.</p>
-
-    <p>For details on how to navigate the grid without using a mouse refer to the
-       <a href="../javascript-grid-keyboard-navigation/">Keyboard Navigation</a> documentation. Note that it is possible
-       to provide custom navigation which could come in useful for some accessibility requirements.</p>
-
-    <h2>Skip Navigation</h2>
-    <p>It may also be worth considering providing a "skip link" to easily navigate to the grid. For example you could
-       provide a hyperlink to the grid class attribute, i.e. href='#myGrid'.</p>
-
-    <p>The following css snippet shows how you could also hide this link by default and then reveal it when tabbed into:</p>
-
-    <pre>.skip-link {
-  left: -100%;
-  position: absolute;
-}
-.skip-link:focus {
-  left: 50%;
-}</pre>
-
-
-<h3>Feedback</h3>
-
-<p>Please share your experiences and any suggestions you might have so that we can create the best accessibility possible...</p>
-
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = 'aggrid';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -206,7 +206,16 @@ export interface ColumnVO {
 </p>
 
 <p>
-    The example below mocks a data store for demonstration purposes.
+    This example also demonstrates filtering on the 'Age' Column.
+</p>
+
+<note>When filtering using the Enterprise Row Model it's important to specify the filter parameter: <i>newRowsAction: 'keep'</i>.
+    This is to prevent the filter from being reset.
+</note>
+
+
+<p>
+    A mock data store is used in the following example for demonstration purposes.
 </p>
 
 <show-complex-example example="exampleEnterpriseSliceAndDice.html"
