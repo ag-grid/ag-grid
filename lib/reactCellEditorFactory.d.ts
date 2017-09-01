@@ -1,4 +1,4 @@
-// ag-grid-react v13.0.1
+// ag-grid-react v13.1.0
 import { ICellEditorComp } from 'ag-grid';
 export declare function reactCellEditorFactory(reactComponent: any, parentComponent?: any): {
     new (): ICellEditorComp;
