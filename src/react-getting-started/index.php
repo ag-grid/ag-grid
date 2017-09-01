@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
         a simple application and section by section add Grid features to the application ending up with a fully fledged
         application, with ag-Grid and React at the heart of it.</p>
 
-    <h2>Prerequisites</h2>
+    <h3>Prerequisites</h3>
 
     <p>You will need the following build tools installed at a minimum:</p>
 
@@ -27,23 +27,25 @@ include '../documentation-main/documentation_header.php';
         <li>npm: Please see <a href="https://www.npmjs.com/get-npm">npm</a> for installation options</li>
     </ul>
 
-    <h2>Scaffolding</h2>
+    <h3>Scaffolding</h3>
 
-    <p>To get started as quickly as possible we provide a <code>"Seed"</code> repo on Git that you can use. Let's clone
+    <p>To get started as quickly as possible we provide a "Seed" repo on Git that you can use. Let's clone
         this
         repo, install the dependencies and start it up:</p>
 
-    <pre>
-<span class="codeComment">// clone the ag-Grid React seed project</span>
+
+<snippet language="sh">
+#clone the ag-Grid React seed project
 git clone https://github.com/ag-grid/ag-grid-react-seed
 cd ag-grid-react-seed/react
 
-<span class="codeComment">// install the project dependencies</span>
+# install the project dependencies
 npm i
 
-<span class="codeComment">// build & start the application</span>
+# build & start the application
 npm start
-</pre>
+</snippet>
+
 
     <p>It will take a few seconds to bundle the application and with just those 3 commands you should now see the following application:</p>
 
@@ -56,14 +58,14 @@ npm start
     <p>At a minimum, a Grid requires row data & column definitions. Row data is provided to the grid as an array of
         JavaScript objects:</p>
 
-    <pre>
-<span class="codeComment">// row data </span>
+<snippet>
+// row data 
 [
     {make: "Toyota", model: "Celica", price: 35000},
     {make: "Ford", model: "Mondeo", price: 32000},
     {make: "Porsche", model: "Boxter", price: 72000}
 ]
-</pre>
+</snippet>
 
     <p>Here we have 3 rows of data, with <code>make</code>, <code>model</code> and <code>price</code> making up the
         data.</p>
@@ -74,14 +76,14 @@ npm start
         columns
         that match the data above:</p>
 
-    <pre>
-<span class="codeComment">// column definitions</span>
+<snippet>
+// column definitions
 [
     {headerName: "Make", field: "make"},
     {headerName: "Model", field: "model"},
     {headerName: "Price", field: "price"}
 ]
-</pre>
+</snippet>
 
     <p>At a minimum a column definition needs a <code>headerName</code> - the column title to display - and a <code>field</code>
         - the data item to read off of from the row data. Here we're defining 3 columns, <code>Make</code>,
@@ -95,105 +97,42 @@ npm start
     <p>For a React application, you need to pull in the <code>AgGridReact</code> Component and include it in your <code>render</code>
         function:</p>
 
-    <pre>
-<span class="codeComment">// A simple Grid definition</span>
+<snippet>
+// Grid Definition 
 &lt;AgGridReact
-    // properties
     columnDefs={this.state.columnDefs}
-    rowData={this.state.rowData}
-&lt;/AgGridReact>
-</pre>
+    rowData={this.state.rowData}&gt;
+&lt;/AgGridReact&gt;
+</snippet>
 
     <p>Here we're telling the Grid to read the row & column definitions off the Components <code>state</code>. For a
         very simple Grid,
         this is all you need to do display tabular data.</p>
 
     <p>Of course there is much more we can do - in the following sections we will build on this starting point. For our
-        seed application here is the complete Component:</p>
+        seed application here is the complete example:</p>
 
-    <pre>
-<span class="codeComment">// SimpleGridComponent.jsx </span>
-import React, {Component} from "react";
-import {AgGridReact} from "ag-grid-react";
+    <?= example('ag-Grid in React', 'hello-world', 'react'); ?>
 
-export default class extends Component {
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            columnDefs: this.createColumnDefs(),
-            rowData: this.createRowData()
-        }
-    }
-
-    onGridReady(params) {
-        this.gridApi = params.api;
-        this.columnApi = params.columnApi;
-
-        this.gridApi.sizeColumnsToFit();
-    }
-
-    createColumnDefs() {
-        return [
-            {headerName: "Make", field: "make"},
-            {headerName: "Model", field: "model"},
-            {headerName: "Price", field: "price"}
-        ];
-    }
-
-    createRowData() {
-        return [
-            {make: "Toyota", model: "Celica", price: 35000},
-            {make: "Ford", model: "Mondeo", price: 32000},
-            {make: "Porsche", model: "Boxter", price: 72000}
-        ];
-    }
-
-    render() {
-        let containerStyle = {
-            height: 115,
-            width: 500
-        };
-
-        return (
-            &lt;div style={containerStyle} className="ag-fresh">
-                &lt;h1>Simple ag-Grid React Example&lt;/h1>
-                &lt;AgGridReact
-                    // properties
-                    columnDefs={this.state.columnDefs}
-                    rowData={this.state.rowData}
-
-                    // events
-                    onGridReady={this.onGridReady}>
-                &lt;/AgGridReact>
-            &lt;/div>
-        )
-    }
-};
-</pre>
-
-    <h3>Adding Features</h3>
+    <h2>Adding Features</h2>
 
     <p>Ok, great - so far so good. But wouldn't it be nice to be able to sort the data to help us see which car is the
         most expensive (or least!)?</p>
 
-    <h4>Sorting</h4>
+    <h3>Sorting</h3>
 
     <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
-        enabled by setting a Grid property to true:</p>
+        enabled by setting a the <code>enableSorting</code>Grid property. Notice that <code>enableSorting</code> is shorthand for <code>enableSorting=true</code>.</p>
 
-    <pre>
-<span class="codeComment">// Grid Definition </span>
+<snippet>
+// Grid Definition 
 &lt;AgGridReact
-    // properties
     columnDefs={this.state.columnDefs}
     rowData={this.state.rowData}
+    enableSorting&gt;
 
-    <span class="codeComment">// enable sorting</span>
-    enableSorting   <span class="codeComment">// shorthand for enableSorting="true"</span>
-
-&lt;/AgGridReact>
-</pre>
+&lt;/AgGridReact&gt;
+</snippet>
 
     <p>With a single property change we are now able to sort any column by clicking the column header (you can keep
         clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
@@ -201,7 +140,7 @@ export default class extends Component {
 
     <img src="../images/react-gs-sorting.png" style="display: block;margin: auto;height: 200px;">
 
-    <h4>Filtering</h4>
+    <h3>Filtering</h3>
 
     <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a
         real-world
@@ -209,22 +148,18 @@ export default class extends Component {
         this filtering is your friend.
     </p>
 
-    <p>As with sorting, enabling filtering is as easy as setting a single property in our Grid definition:</p>
+<p>As with sorting, enabling filtering is as easy as setting <code>enableFilter</code> in our Grid definition:</p>
 
-    <pre>
-<span class="codeComment">// Grid Definition </span>
+<snippet>
+// Grid Definition 
 &lt;AgGridReact
-    // properties
     columnDefs={this.state.columnDefs}
     rowData={this.state.rowData}
-
     enableSorting
+    enableFilter&gt;
 
-    <span class="codeComment">// enable filtering</span>
-    enableFilter   <span class="codeComment">// shorthand for enableFilter="true"</span>
-
-&lt;/AgGridReact>
-</pre>
+&lt;/AgGridReact&gt;
+</snippet>
 
     <p>With the <code>enableFilter</code> property set we are now able to filter any column by clicking the column
         header
@@ -234,12 +169,15 @@ export default class extends Component {
 
     <img src="../images/react-gs-filtering.png" style="display: block;margin: auto;height: 200px;">
 
-    <h3>Summary</h3>
+    <h2>Summary</h2>
 
     <p>We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
+<?= example('ag-Grid in React', 'rich', 'react'); ?>
+
+<!--
     <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=rich-grid"
                           sources="{
                             [
@@ -248,6 +186,7 @@ export default class extends Component {
                           }"
                           exampleHeight="525px">
     </show-complex-example>
+-->
 
     <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
         <code>column grouping</code> as well as using <code>React Components</code> in the header. And even this rich

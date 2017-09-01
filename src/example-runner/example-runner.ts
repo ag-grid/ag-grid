@@ -130,9 +130,6 @@ class ExampleRunner {initialFile: any;
         openPlunker(clickEvent) {
             const allFiles = this.files.concat(this.boilerplateFiles);
             this.$q.all(allFiles.map( (file: any) => this.$http.get(this.getSourceUrl(file)) )).then( (files: any) => {
-
-                debugger;
-
                 var postData: any = {
                     'tags[0]': "ag-grid",
                     'tags[1]': "example",

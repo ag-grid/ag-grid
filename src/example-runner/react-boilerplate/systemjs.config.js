@@ -18,6 +18,7 @@
 
             // ag grid
             'ag-grid': agGridScriptPath,
+            'ag-grid-enterprise': agGridEnterpriseScriptPath,
             'ag-grid-react': 'npm:ag-grid-react',
 
             // example

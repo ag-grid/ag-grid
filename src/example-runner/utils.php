@@ -1,5 +1,6 @@
 <?php
 define('AG_SCRIPT_PATH', "http" . ($_SERVER['HTTPS'] ? 's' : '') . "://{$_SERVER['HTTP_HOST']}/dist/ag-grid/ag-grid.js?ignore=notused50");
+define('AG_ENTERPRISE_SCRIPT_PATH', "http" . ($_SERVER['HTTPS'] ? 's' : '') . "://{$_SERVER['HTTP_HOST']}/dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused50");
 function path_combine(...$parts) {
     return join(DIRECTORY_SEPARATOR, $parts);
 }

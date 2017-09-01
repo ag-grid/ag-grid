@@ -111,6 +111,8 @@ $border-radius: $unit;
         font-size: $font-size - 2;
         flex-direction: column;
         min-width: 190px;
+        overflow: auto;
+        height: 450px;
 
         .fa {
             width: 12px;
@@ -156,11 +158,11 @@ $border-radius: $unit;
         }
 
         iframe {
+            height: 100%;
             width: 100%;
             background-color: transparent;
             border: 0;
             margin: 0;
-            height: 450px;
         }
     }
 
@@ -168,7 +170,7 @@ $border-radius: $unit;
         flex: 1;
         background: white;
         border: none;
-        height: 400px;
+        height: 450px;
         overflow: auto;
         margin: 0;
 

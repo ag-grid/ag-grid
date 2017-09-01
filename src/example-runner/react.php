@@ -18,7 +18,8 @@ $example = getExampleInfo('react');
     <script>
         var appLocation = '<?= $example['appLocation'] ?>';
         var boilerplatePath = '<?= $example['boilerplatePath'] ?>';
-        var agGridScriptPath = '<?= $example['agGridScriptPath'] ?>';
+        var agGridScriptPath = '<?= AG_SCRIPT_PATH ?>';
+        var agGridEnterpriseScriptPath = '<?= AG_ENTERPRISE_SCRIPT_PATH ?>';
     </script>
 
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
