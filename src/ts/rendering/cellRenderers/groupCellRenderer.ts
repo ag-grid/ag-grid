@@ -71,11 +71,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         this.params = params;
 
-        this.isEmbeddedRowMismatch();
-
         let embeddedRowMismatch = this.isEmbeddedRowMismatch();
-        //This allows for empty strings to appear as groups since
-        //it will only return for null or undefined.
+        // This allows for empty strings to appear as groups since
+        // it will only return for null or undefined.
         let cellIsEmpty = params.value==null;
 
         this.cellIsBlank = embeddedRowMismatch || cellIsEmpty;
@@ -83,14 +81,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (this.cellIsBlank) { return; }
 
         this.setupDragOpenParents();
-    }
 
-    public afterGuiAttached(params: ICellRendererAfterGuiAttachedParams): void {
-
-        if (this.cellIsBlank) { return; }
-
-        let eGridCell = params.eGridCell;
-        this.addExpandAndContract(eGridCell);
+        this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.addPadding();
@@ -150,10 +142,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // if doing rtl, padding is on the right
-            this.getGui().style.paddingRight = paddingPx + 'px';
+            this.getHtmlElement().style.paddingRight = paddingPx + 'px';
         } else {
             // otherwise it is on the left
-            this.getGui().style.paddingLeft = paddingPx + 'px';
+            this.getHtmlElement().style.paddingLeft = paddingPx + 'px';
         }
     }
 
@@ -271,13 +263,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             let cbSelectionComponent = new CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);
             cbSelectionComponent.init({rowNode: rowNode});
-            this.eCheckbox.appendChild(cbSelectionComponent.getGui());
+            this.eCheckbox.appendChild(cbSelectionComponent.getHtmlElement());
             this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
         }
     }
 
-    private addExpandAndContract(eGroupCell: HTMLElement): void {
+    private addExpandAndContract(): void {
         let params = this.params;
+        let eGroupCell = params.eGridCell;
         let eExpandedIcon = _.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
         let eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
         this.eExpanded.appendChild(eExpandedIcon);
@@ -287,15 +280,15 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.addDestroyableEventListener(this.eExpanded, 'click', expandOrContractListener);
         this.addDestroyableEventListener(this.eContracted, 'click', expandOrContractListener);
 
-        // if editing groups, then double click is to start editing
-        if (!this.gridOptionsWrapper.isEnableGroupEdit()) {
-            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
-        }
-
         // expand / contract as the user hits enter
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
         this.addDestroyableEventListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
+
+        // if editing groups, then double click is to start editing
+        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
+            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
+        }
     }
 
     private onKeyDown(event: KeyboardEvent): void {
@@ -359,14 +352,17 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
+    private isExpandable(): boolean {
+        let rowNode = this.params.node;
+        let reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
+        return this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
+    }
+
     private showExpandAndContractIcons(): void {
+
         let rowNode = this.params.node;
 
-        let reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
-
-        let expandable = this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
-
-        if (expandable) {
+        if (this.isExpandable()) {
             // if expandable, show one based on expand state.
             // if we were dragged down, means our parent is always expanded
             let expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;

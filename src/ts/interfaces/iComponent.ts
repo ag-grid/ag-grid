@@ -27,7 +27,7 @@ export interface IComponent<T, Z extends IAfterGuiAttachedParams> {
      element. The params has one callback method 'hidePopup', which you can call at any later
      point to hide the popup - good if you have an 'Apply' button and you want to hide the popup
      after it is pressed. */
-    afterGuiAttached?(params: Z): void;
+    afterGuiAttached?(params?: Z): void;
 
     /** The init(params) method is called on the filter once. See below for details on the parameters. */
     init?(params: T): void;

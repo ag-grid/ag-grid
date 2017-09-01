@@ -146,7 +146,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         this.dateComponent = this.componentRecipes.newDateComponent(dateComponentParams);
         let body: HTMLElement = _.loadTemplate(`<div></div>`);
         body.appendChild(_.ensureElement(this.dateComponent.getGui()));
-        this.setTemplateFromElement(body);
+        this.setHtmlElement(body);
     }
 
     private onDateChanged(): void {

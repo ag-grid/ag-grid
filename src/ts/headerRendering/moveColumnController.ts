@@ -1,11 +1,13 @@
 import {Autowired, PostConstruct} from "../context/context";
-import {LoggerFactory, Logger} from "../logger";
+import {Logger, LoggerFactory} from "../logger";
 import {ColumnController} from "../columnController/columnController";
 import {Column} from "../entities/column";
 import {Utils as _} from "../utils";
-import {DragAndDropService, DraggingEvent, DragSourceType, HDirection} from "../dragAndDrop/dragAndDropService";
+import {
+    DragAndDropService, DraggingEvent, DragItem, DragSourceType,
+    HDirection
+} from "../dragAndDrop/dragAndDropService";
 import {GridPanel} from "../gridPanel/gridPanel";
-import {ColumnGroup} from "../entities/columnGroup";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 export class MoveColumnController {
@@ -26,6 +28,7 @@ export class MoveColumnController {
     private centerContainer: boolean;
 
     private lastDraggingEvent: DraggingEvent;
+
     // this counts how long the user has been trying to scroll by dragging and failing,
     // if they fail x amount of times, then the column will get pinned. this is what gives
     // the 'hold and pin' functionality
@@ -50,18 +53,19 @@ export class MoveColumnController {
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // we do dummy drag, so make sure column appears in the right location when first placed
-        let columns = draggingEvent.dragSource.dragItem;
+
+        let columns = draggingEvent.dragItem.columns;
         let dragCameFromToolPanel = draggingEvent.dragSource.type===DragSourceType.ToolPanel;
         if (dragCameFromToolPanel) {
             // the if statement doesn't work if drag leaves grid, then enters again
             this.columnController.setColumnsVisible(columns, true);
         } else {
-            // ensure that it's not all hidden cols (which happens if we drag outside of the grid body)
-            let allColumnsHidden = columns.every(col => !col.isVisible());
-            if (allColumnsHidden) {
-                this.columnController.setColumnsVisible(columns, true);
-            }
+            // restore previous state of visible columns upon re-entering
+            let visibleState = draggingEvent.dragItem.visibleState;
+            let visibleColumns: Column[] = columns.filter(column => visibleState[column.getId()] );
+            this.columnController.setColumnsVisible(visibleColumns, true);
         }
+
         this.columnController.setColumnsPinned(columns, this.pinned);
         this.onDragging(draggingEvent, true);
     }
@@ -69,7 +73,8 @@ export class MoveColumnController {
     public onDragLeave(draggingEvent: DraggingEvent): void {
         let hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns() && !draggingEvent.fromNudge;
         if (hideColumnOnExit) {
-            let columns = draggingEvent.dragSource.dragItem;
+            let dragItem = draggingEvent.dragSource.dragItemCallback();
+            let columns = dragItem.columns;
             this.columnController.setColumnsVisible(columns, false);
         }
         this.ensureIntervalCleared();
@@ -149,9 +154,10 @@ export class MoveColumnController {
 
         let hDirectionNormalised = this.normaliseDirection(draggingEvent.hDirection);
 
-        let columnsToMove = draggingEvent.dragSource.dragItem;
+        let dragSourceType: DragSourceType = draggingEvent.dragSource.type;
+        let columnsToMove = draggingEvent.dragSource.dragItemCallback().columns;
 
-        this.attemptMoveColumns(columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
+        this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
     }
 
     private normaliseDirection(hDirection: HDirection): HDirection {
@@ -180,7 +186,7 @@ export class MoveColumnController {
         return gapsExist ? null : firstIndex;
     }
 
-    private attemptMoveColumns(allMovingColumns: Column[], hDirection: HDirection, xAdjusted: number, fromEnter: boolean): void {
+    private attemptMoveColumns(dragSourceType: DragSourceType, allMovingColumns: Column[], hDirection: HDirection, xAdjusted: number, fromEnter: boolean): void {
 
         let draggingLeft = hDirection === HDirection.Left;
         let draggingRight = hDirection === HDirection.Right;
@@ -206,9 +212,14 @@ export class MoveColumnController {
             // place the column to the RHS even if the mouse is moving left and the column is already on
             // the LHS. otherwise we stick to the rule described above.
 
-            let constrainDirection = oldIndex!==null && !fromEnter;
-            if (constrainDirection) {
+            let constrainDirection = oldIndex !== null && !fromEnter;
 
+            // don't consider 'fromEnter' when dragging header cells, otherwise group can jump to opposite direction of drag
+            if(dragSourceType == DragSourceType.HeaderCell) {
+                constrainDirection = oldIndex !== null;
+            }
+
+            if (constrainDirection) {
                 // only allow left drag if this column is moving left
                 if (draggingLeft && newIndex>=oldIndex) { continue; }
 
@@ -344,7 +355,7 @@ export class MoveColumnController {
             this.failedMoveAttempts++;
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
             if (this.failedMoveAttempts > 7) {
-                let columns = this.lastDraggingEvent.dragSource.dragItem;
+                let columns = this.lastDraggingEvent.dragSource.dragItemCallback.bind(this);
                 let pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
                 this.columnController.setColumnsPinned(columns, pinType);
                 this.dragAndDropService.nudge();

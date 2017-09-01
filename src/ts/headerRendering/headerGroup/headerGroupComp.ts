@@ -117,7 +117,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         if (this.params.displayName && this.params.displayName !== '') {
 
             if (_.isBrowserSafari()) {
-                this.getGui().style.display = 'table-cell';
+                this.getHtmlElement().style.display = 'table-cell';
             }
 
             let eInnerText = this.getRefElement('agLabel');

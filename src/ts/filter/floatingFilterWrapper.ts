@@ -36,10 +36,10 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
         let base:HTMLElement = _.loadTemplate(`<div class="ag-header-cell" aria-hidden="true"><div class="ag-floating-filter-body" aria-hidden="true"></div></div>`);
         this.enrichBody(base);
 
-        this.setTemplateFromElement(base);
+        this.setHtmlElement(base);
         this.setupWidth();
 
-        let setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
+        let setLeftFeature = new SetLeftFeature(this.column, this.getHtmlElement(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     }
@@ -54,7 +54,7 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
     }
 
     private onColumnWidthChanged(): void {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
+        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
     }
 }
 

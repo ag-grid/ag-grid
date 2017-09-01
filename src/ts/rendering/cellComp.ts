@@ -89,7 +89,7 @@ export class CellComp extends Component {
 
         this.value = this.getValue();
         this.setUsingWrapper();
-        this.prepareCellRenderer();
+        this.chooseCellRenderer();
         this.setupColSpan();
     }
 
@@ -134,12 +134,12 @@ export class CellComp extends Component {
     public afterAttached(): void {
         let querySelector = `[comp-id="${this.getCompId()}"]`;
         let eGui = <HTMLElement> this.eParentRow.querySelector(querySelector);
-        this.setGui(eGui);
+        this.setHtmlElementNoHydrate(eGui);
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.addDomData();
         this.addSelectionCheckbox();
-        this.attachCellRendererAfterCreate();
+        this.attachCellRenderer();
         this.angular1Compile();
 
         this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
@@ -161,7 +161,7 @@ export class CellComp extends Component {
 
     private onColumnHover(): void {
         let isHovered = this.beans.columnHoverService.isHovered(this.column);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
+        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-column-hover', isHovered)
     }
 
     private onCellChanged(event: CellChangedEvent): void {
@@ -386,17 +386,17 @@ export class CellComp extends Component {
     private animateCell(cssName: string): void {
         let fullName = 'ag-cell-' + cssName;
         let animationFullName = 'ag-cell-' + cssName + '-animation';
-        let eGui = this.getGui();
+        let element = this.getHtmlElement();
         // we want to highlight the cells, without any animation
-        _.addCssClass(eGui, fullName);
-        _.removeCssClass(eGui, animationFullName);
+        _.addCssClass(element, fullName);
+        _.removeCssClass(element, animationFullName);
         // then once that is applied, we remove the highlight with animation
         setTimeout( ()=> {
-            _.removeCssClass(eGui, fullName);
-            _.addCssClass(eGui, animationFullName);
+            _.removeCssClass(element, fullName);
+            _.addCssClass(element, animationFullName);
             setTimeout( ()=> {
                 // and then to leave things as we got them, we remove the animation
-                _.removeCssClass(eGui, animationFullName);
+                _.removeCssClass(element, animationFullName);
             }, 1000);
         }, 500);
     }
@@ -464,7 +464,7 @@ export class CellComp extends Component {
     }
 
     private postProcessClassesFromColDef() {
-        this.processClassesFromColDef(className => _.addCssClass(this.getGui(), className) );
+        this.processClassesFromColDef(className => _.addCssClass(this.getHtmlElement(), className) );
     }
 
     private preProcessClassesFromColDef(): string[] {
@@ -509,7 +509,7 @@ export class CellComp extends Component {
             }
             // use cell renderer if it exists
         } else if (this.usingCellRenderer) {
-            this.attachCellRendererAfterRefresh();
+            this.attachCellRenderer();
         } else {
             let valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
             let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
@@ -591,10 +591,10 @@ export class CellComp extends Component {
     private postProcessCellClassRules(): void {
         this.processCellClassRules(
             (className:string)=>{
-                _.addCssClass(this.getGui(), className);
+                _.addCssClass(this.getHtmlElement(), className);
             },
             (className:string)=>{
-                _.removeCssClass(this.getGui(), className);
+                _.removeCssClass(this.getHtmlElement(), className);
             }
         );
     }
@@ -631,14 +631,6 @@ export class CellComp extends Component {
             this.usingWrapper = true;
         } else {
             this.usingWrapper = false;
-        }
-    }
-
-    private prepareCellRenderer(): void {
-        this.chooseCellRenderer();
-
-        if (this.usingCellRenderer) {
-            this.createCellRendererInstance();
         }
     }
 
@@ -679,7 +671,7 @@ export class CellComp extends Component {
         }
     }
 
-    private attachCellRendererAfterRefresh(): void {
+    private attachCellRenderer(): void {
         if (!this.usingCellRenderer) { return; }
 
         this.createCellRendererInstance();
@@ -689,36 +681,6 @@ export class CellComp extends Component {
             this.cellRendererGui = <HTMLElement> this.eParentOfValue.firstChild;
         } else {
             this.eParentOfValue.appendChild(this.cellRendererGui);
-        }
-
-        this.callAfterGuiAttachedOnCellRenderer();
-    }
-
-    // this gets called after row is initially created. if the cellRenderer is a string, then the string was included
-    // in the rows html and all we have to do is look it up.
-    private attachCellRendererAfterCreate(): void {
-        if (!this.usingCellRenderer) { return; }
-
-        if (typeof this.cellRendererGui === 'string') {
-            // if cell renderer returned back a string, then it was in the row template when it
-            // got created, so we look it up (and replace the reference to the string we had)
-            this.cellRendererGui = <HTMLElement> this.eParentOfValue.firstChild;
-        } else {
-            // if cell renderer returned back an HTML object, then we append it to the dom now
-            this.eParentOfValue.appendChild(this.cellRendererGui);
-        }
-
-        this.callAfterGuiAttachedOnCellRenderer();
-    }
-
-    private callAfterGuiAttachedOnCellRenderer(): void {
-        if (this.cellRenderer.afterGuiAttached) {
-            let params: ICellRendererAfterGuiAttachedParams = {
-                eGridCell: this.getGui(),
-                eParentOfValue: this.eParentOfValue,
-                eComponent: <HTMLElement> this.cellRendererGui
-            };
-            this.cellRenderer.afterGuiAttached(params);
         }
     }
 
@@ -767,7 +729,14 @@ export class CellComp extends Component {
     }
 
     private getValue(): any {
-        let isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer;
+
+        // if we don't check this, then the grid will render leaf groups as open even if we are not
+        // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
+        // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
+        // them via the API, or user user expanded them in the UI before turning on pivot mode
+        let lockedClosedGroup = this.rowNode.leafGroup && this.beans.columnController.isPivotMode();
+
+        let isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
         if (isOpenGroup && this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
             // if doing grouping and footers, we don't want to include the agg value
             // in the header when the group is open
@@ -920,9 +889,7 @@ export class CellComp extends Component {
         }
 
         if (cellEditor.afterGuiAttached) {
-            cellEditor.afterGuiAttached({
-                eComponent: _.assertHtmlElement(cellEditor.getGui())
-            });
+            cellEditor.afterGuiAttached();
         }
 
         let event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
@@ -932,8 +899,8 @@ export class CellComp extends Component {
     }
 
     private addInCellEditor(): void {
-        _.removeAllChildren(this.getGui());
-        this.getGui().appendChild(_.assertHtmlElement(this.cellEditor.getGui()));
+        _.removeAllChildren(this.getHtmlElement());
+        this.getHtmlElement().appendChild(_.assertHtmlElement(this.cellEditor.getGui()));
 
         this.angular1Compile();
     }
@@ -954,7 +921,7 @@ export class CellComp extends Component {
             column: this.column,
             rowNode: this.rowNode,
             type: 'popupCellEditor',
-            eventSource: this.getGui(),
+            eventSource: this.getHtmlElement(),
             ePopup: _.assertHtmlElement(ePopupGui),
             keepWithinBounds: true
         });
@@ -986,8 +953,8 @@ export class CellComp extends Component {
     // to allow the text editor full access to the entire cell
     private setInlineEditingClass(): void {
         let editingInline = this.editingCell && !this.cellEditorInPopup;
-        _.addOrRemoveCssClass(this.getGui(), 'ag-cell-inline-editing', editingInline);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-cell-not-inline-editing', !editingInline);
+        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-inline-editing', editingInline);
+        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-not-inline-editing', !editingInline);
     }
 
     private createCellEditor(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorComp {
@@ -1014,7 +981,7 @@ export class CellComp extends Component {
             $scope: this.scope,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
-            eGridCell: this.getGui(),
+            eGridCell: this.getHtmlElement(),
             parseValue: this.parseValue.bind(this),
             formatValue: this.formatValue.bind(this)
         };
@@ -1224,7 +1191,7 @@ export class CellComp extends Component {
         if (_.isBrowserIE() || _.isBrowserEdge()) {
             if (_.missing(document.activeElement) || document.activeElement===document.body) {
                 // console.log('missing focus');
-                this.getGui().focus();
+                this.getHtmlElement().focus();
             }
         }
     }
@@ -1255,7 +1222,7 @@ export class CellComp extends Component {
     }
 
     public detach(): void {
-        this.eParentRow.removeChild(this.getGui());
+        this.eParentRow.removeChild(this.getHtmlElement());
     }
 
     // if the row is also getting destroyed, then we don't need to remove from dom,
@@ -1276,12 +1243,12 @@ export class CellComp extends Component {
 
     private onLeftChanged(): void {
         let left = this.getCellLeft();
-        this.getGui().style.left = left + 'px';
+        this.getHtmlElement().style.left = left + 'px';
     }
 
     private onWidthChanged(): void {
         let width = this.getCellWidth();
-        this.getGui().style.width = width + 'px';
+        this.getHtmlElement().style.width = width + 'px';
     }
 
     private getRangeClasses(): string[] {
@@ -1308,13 +1275,13 @@ export class CellComp extends Component {
     private onRangeSelectionChanged(): void {
         if (!this.beans.enterprise) { return; }
         let newRangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
-        let eGui = this.getGui();
+        let element = this.getHtmlElement();
         if (this.rangeCount !== newRangeCount) {
-            _.addOrRemoveCssClass(eGui, 'ag-cell-range-selected', newRangeCount!==0);
-            _.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-1', newRangeCount===1);
-            _.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-2', newRangeCount===2);
-            _.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-3', newRangeCount===3);
-            _.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-4', newRangeCount>=4);
+            _.addOrRemoveCssClass(element, 'ag-cell-range-selected', newRangeCount!==0);
+            _.addOrRemoveCssClass(element, 'ag-cell-range-selected-1', newRangeCount===1);
+            _.addOrRemoveCssClass(element, 'ag-cell-range-selected-2', newRangeCount===2);
+            _.addOrRemoveCssClass(element, 'ag-cell-range-selected-3', newRangeCount===3);
+            _.addOrRemoveCssClass(element, 'ag-cell-range-selected-4', newRangeCount>=4);
             this.rangeCount = newRangeCount;
         }
     }
@@ -1323,7 +1290,7 @@ export class CellComp extends Component {
         let firstRightPinned = this.column.isFirstRightPinned();
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
-            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-first-right-pinned', firstRightPinned);
+            _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-first-right-pinned', firstRightPinned);
         }
     }
 
@@ -1331,7 +1298,7 @@ export class CellComp extends Component {
         let lastLeftPinned = this.column.isLastLeftPinned();
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
-            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-last-left-pinned', lastLeftPinned);
+            _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-last-left-pinned', lastLeftPinned);
         }
     }
 
@@ -1350,18 +1317,18 @@ export class CellComp extends Component {
             this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
 
             // put the checkbox in before the value
-            this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);
+            this.eCellWrapper.insertBefore(cbSelectionComponent.getHtmlElement(), this.eParentOfValue);
 
         } else {
-            this.eParentOfValue = this.getGui();
+            this.eParentOfValue = this.getHtmlElement();
         }
     }
 
     private addDomData(): void {
-        let eGui = this.getGui();
-        this.beans.gridOptionsWrapper.setDomData(eGui, CellComp.DOM_DATA_KEY_CELL_COMP, this);
+        let element = this.getHtmlElement();
+        this.beans.gridOptionsWrapper.setDomData(element, CellComp.DOM_DATA_KEY_CELL_COMP, this);
         this.addDestroyFunc( ()=>
-            this.beans.gridOptionsWrapper.setDomData(eGui, CellComp.DOM_DATA_KEY_CELL_COMP, null)
+            this.beans.gridOptionsWrapper.setDomData(element, CellComp.DOM_DATA_KEY_CELL_COMP, null)
         );
     }
 
@@ -1370,15 +1337,15 @@ export class CellComp extends Component {
 
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {
-            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
-            _.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
+            _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-focus', cellFocused);
+            _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-no-focus', !cellFocused);
             this.cellFocused = cellFocused;
         }
 
         // if this cell was just focused, see if we need to force browser focus, his can
         // happen if focus is programmatically set.
         if (cellFocused && event && event.forceBrowserFocus) {
-            this.getGui().focus();
+            this.getHtmlElement().focus();
         }
 
         // if another cell was focused, and we are editing, then stop editing
@@ -1428,11 +1395,11 @@ export class CellComp extends Component {
             this.hideEditorPopup();
             this.hideEditorPopup = null;
         } else {
-            _.removeAllChildren(this.getGui());
+            _.removeAllChildren(this.getHtmlElement());
             // put the cell back the way it was before editing
             if (this.usingWrapper) {
                 // if wrapper, then put the wrapper back
-                this.getGui().appendChild(this.eCellWrapper);
+                this.getHtmlElement().appendChild(this.eCellWrapper);
             } else {
                 // if cellRenderer, then put the gui back in. if the renderer has
                 // a refresh, it will be called. however if it doesn't, then later
@@ -1441,7 +1408,7 @@ export class CellComp extends Component {
                     // we know it's a dom element (not a string) because we converted
                     // it after the gui was attached if it was a string.
                     let eCell = <HTMLElement>this.cellRendererGui;
-                    this.getGui().appendChild(eCell);
+                    this.getHtmlElement().appendChild(eCell);
                 }
             }
         }

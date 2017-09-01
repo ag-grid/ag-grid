@@ -101,7 +101,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private setupTap(): void {
         if (this.gridOptionsWrapper.isSuppressTouch()) { return; }
 
-        let touchListener = new TouchListener(this.getGui());
+        let touchListener = new TouchListener(this.getHtmlElement());
 
         if (this.params.enableMenu) {
             let longTapListener = (event: LongTapEvent)=> {
@@ -184,9 +184,9 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private onSortChanged(): void {
 
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
+        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
+        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
+        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
 
         if (this.eSortAsc) {
             _.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.params.column.isSortAscending());

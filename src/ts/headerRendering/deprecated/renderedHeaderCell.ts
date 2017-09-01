@@ -9,7 +9,10 @@ import {GridCore} from "../../gridCore";
 import {IMenuFactory} from "../../interfaces/iMenuFactory";
 import {Autowired, Context, PostConstruct} from "../../context/context";
 import {CssClassApplier} from "../cssClassApplier";
-import {DragAndDropService, DropTarget, DragSource, DragSourceType} from "../../dragAndDrop/dragAndDropService";
+import {
+    DragAndDropService, DragItem, DragSource, DragSourceType,
+    DropTarget
+} from "../../dragAndDrop/dragAndDropService";
 import {SortController} from "../../sortController";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
 import {LongTapEvent, TapEvent, TouchListener} from "../../widgets/touchListener";
@@ -65,7 +68,7 @@ export class RenderedHeaderCell extends Component {
     @PostConstruct
     public init(): void {
         let eGui = this.headerTemplateLoader.createHeaderElement(this.column);
-        this.setGui(eGui);
+        this.setHtmlElementNoHydrate(eGui);
 
         this.createScope();
         this.addAttributes();
@@ -99,7 +102,7 @@ export class RenderedHeaderCell extends Component {
 
         // add tooltip if exists
         if (colDef.headerTooltip) {
-            this.getGui().title = colDef.headerTooltip;
+            this.getHtmlElement().title = colDef.headerTooltip;
         }
     }
 
@@ -140,7 +143,7 @@ export class RenderedHeaderCell extends Component {
 
     private onFilterChanged(): void {
         let filterPresent = this.column.isFilterActive();
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
+        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-filtered', filterPresent);
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !filterPresent);
     }
 
@@ -150,7 +153,7 @@ export class RenderedHeaderCell extends Component {
     }
 
     private onColumnWidthChanged(): void {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
+        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
     }
 
     private createScope(): void {
@@ -167,7 +170,7 @@ export class RenderedHeaderCell extends Component {
     }
 
     private addAttributes(): void {
-        this.getGui().setAttribute("colId", this.column.getColId());
+        this.getHtmlElement().setAttribute("colId", this.column.getColId());
     }
 
     private setupMenu(): void {
@@ -215,9 +218,9 @@ export class RenderedHeaderCell extends Component {
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
         if (this.column.isMoving()) {
-            _.addCssClass(this.getGui(), 'ag-header-cell-moving');
+            _.addCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
         } else {
-            _.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+            _.removeCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
         }
     }
 
@@ -228,11 +231,12 @@ export class RenderedHeaderCell extends Component {
 
         if (suppressMove) { return; }
 
+
         if (eHeaderCellLabel) {
             let dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
-                dragItem: [this.column],
+                dragItemCallback: () => this.createDragItem(),
                 dragItemName: this.displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
@@ -241,11 +245,20 @@ export class RenderedHeaderCell extends Component {
         }
     }
 
+    private createDragItem(): DragItem {
+        let visibleState: { [key: string]: boolean } = {};
+        visibleState[this.column.getId()] = this.column.isVisible();
+        return {
+            columns: [this.column],
+            visibleState: visibleState
+        };
+    }
+
     private setupTap(): void {
 
         if (this.gridOptionsWrapper.isSuppressTouch()) { return; }
 
-        let touchListener = new TouchListener(this.getGui());
+        let touchListener = new TouchListener(this.getHtmlElement());
         let tapListener = (event: TapEvent)=> {
             this.sortController.progressSort(this.column, false);
         };
@@ -323,16 +336,16 @@ export class RenderedHeaderCell extends Component {
 
     public setupSort(eHeaderCellLabel: HTMLElement): void {
         let enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
-        let eGui = this.getGui();
+        let element = this.getHtmlElement();
         if (!enableSorting) {
-            _.removeFromParent(eGui.querySelector('#agSortAsc'));
-            _.removeFromParent(eGui.querySelector('#agSortDesc'));
-            _.removeFromParent(eGui.querySelector('#agNoSort'));
+            _.removeFromParent(element.querySelector('#agSortAsc'));
+            _.removeFromParent(element.querySelector('#agSortDesc'));
+            _.removeFromParent(element.querySelector('#agNoSort'));
             return;
         }
 
         // add sortable class for styling
-        _.addCssClass(eGui, 'ag-header-cell-sortable');
+        _.addCssClass(element, 'ag-header-cell-sortable');
 
         // add the event on the header, so when clicked, we do sorting
         if (eHeaderCellLabel) {
@@ -352,9 +365,9 @@ export class RenderedHeaderCell extends Component {
 
     private onSortChanged(): void {
 
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.column.isSortAscending());
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.column.isSortDescending());
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.column.isSortNone());
+        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-asc', this.column.isSortAscending());
+        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-desc', this.column.isSortDescending());
+        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-none', this.column.isSortNone());
 
         if (this.eSortAsc) {
             _.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.column.isSortAscending());

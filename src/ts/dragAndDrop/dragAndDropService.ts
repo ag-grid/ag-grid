@@ -9,6 +9,11 @@ import {Environment} from "../environment";
 
 export enum DragSourceType { ToolPanel, HeaderCell }
 
+export interface DragItem {
+    columns: Column[],
+    visibleState: {[key: string]: boolean};
+}
+
 export interface DragSource {
     /** So the drop target knows what type of event it is, useful for columns,
      * we we re-ordering or moving dropping from toolPanel */
@@ -16,7 +21,7 @@ export interface DragSource {
     /** Element which, when dragged, will kick off the DnD process */
     eElement: HTMLElement;
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
-    dragItem: Column[];
+    dragItemCallback: () => DragItem;
     /** This name appears in the ghost icon when dragging */
     dragItemName: string;
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
@@ -48,13 +53,14 @@ export enum VDirection {Up, Down}
 export enum HDirection {Left, Right}
 
 export interface DraggingEvent {
-    event: MouseEvent,
-    x: number,
-    y: number,
-    vDirection: VDirection,
-    hDirection: HDirection,
-    dragSource: DragSource,
-    fromNudge: boolean
+    event: MouseEvent;
+    x: number;
+    y: number;
+    vDirection: VDirection;
+    hDirection: HDirection;
+    dragSource: DragSource;
+    dragItem: DragItem;
+    fromNudge: boolean;
 }
 
 @Bean('dragAndDropService')
@@ -86,7 +92,7 @@ export class DragAndDropService {
 
     private dragSourceAndParamsList: {params: DragListenerParams, dragSource: DragSource}[] = [];
 
-    private dragItem: Column[];
+    private dragItem: DragItem;
     private eventLastTime: MouseEvent;
     private dragSource: DragSource;
     private dragging: boolean;
@@ -166,8 +172,8 @@ export class DragAndDropService {
         this.dragging = true;
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
-        this.dragSource.dragItem.forEach( column => column.setMoving(true));
-        this.dragItem = this.dragSource.dragItem;
+        this.dragItem = this.dragSource.dragItemCallback();
+        this.dragItem.columns.forEach(column => column.setMoving(true));
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
         this.createGhost();
     }
@@ -176,7 +182,7 @@ export class DragAndDropService {
         this.eventLastTime = null;
         this.dragging = false;
 
-        this.dragItem.forEach( column => column.setMoving(false) );
+        this.dragItem.columns.forEach( column => column.setMoving(false) );
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
             let draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
@@ -289,14 +295,15 @@ export class DragAndDropService {
         let x = event.clientX - rect.left;
         let y = event.clientY - rect.top;
 
-        let dropTargetEvent = <DraggingEvent> {
+        let dropTargetEvent: DraggingEvent = {
             event: event,
             x: x,
             y: y,
             vDirection: vDirection,
             hDirection: hDirection,
             dragSource: this.dragSource,
-            fromNudge: fromNudge
+            fromNudge: fromNudge,
+            dragItem: this.dragItem
         };
 
         return dropTargetEvent;

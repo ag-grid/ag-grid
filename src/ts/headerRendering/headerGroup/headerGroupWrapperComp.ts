@@ -7,7 +7,13 @@ import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {HorizontalDragService} from "../horizontalDragService";
 import {Autowired, Context, PostConstruct} from "../../context/context";
 import {CssClassApplier} from "../cssClassApplier";
-import {DragAndDropService, DragSource, DragSourceType, DropTarget} from "../../dragAndDrop/dragAndDropService";
+import {
+    DragAndDropService,
+    DragItem,
+    DragSource,
+    DragSourceType,
+    DropTarget
+} from "../../dragAndDrop/dragAndDropService";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
 import {IHeaderGroupComp, IHeaderGroupParams} from "./headerGroupComp";
 import {GridApi} from "../../gridApi";
@@ -54,7 +60,7 @@ export class HeaderGroupWrapperComp extends Component {
     @PostConstruct
     private postConstruct(): void {
 
-        CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+        CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getHtmlElement(), this.gridOptionsWrapper, null, this.columnGroup);
 
         let displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
@@ -66,13 +72,13 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupWidth();
         this.addAttributes();
 
-        let setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
+        let setLeftFeature = new SetLeftFeature(this.columnGroup, this.getHtmlElement(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     }
 
     private addAttributes(): void {
-        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
+        this.getHtmlElement().setAttribute("col-id", this.columnGroup.getUniqueId());
     }
 
     private appendHeaderGroupComp(displayName: string): IHeaderGroupComp {
@@ -113,7 +119,7 @@ export class HeaderGroupWrapperComp extends Component {
                 eElement: eHeaderGroup,
                 dragItemName: displayName,
                 // we add in the original group leaf columns, so we move both visible and non-visible items
-                dragItem: this.getAllColumnsInThisGroup(),
+                dragItemCallback: this.getDragItemForGroup.bind(this),
                 dragSourceDropTarget: this.dragSourceDropTarget
             };
             this.dragAndDropService.addDragSource(dragSource, true);
@@ -121,21 +127,31 @@ export class HeaderGroupWrapperComp extends Component {
         }
     }
 
-    // when moving the columns, we want to move all the columns in this group in one go, and in the order they
-    // are currently in the screen.
-    public getAllColumnsInThisGroup(): Column[] {
+    // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
+    // and in the order they are currently in the screen.
+    public getDragItemForGroup(): DragItem {
         let allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+
+        // capture visible state, used when reentering grid to dictate which columns should be visible
+        let visibleState: { [key: string]: boolean } = {};
+        allColumnsOriginalOrder.forEach(column => visibleState[column.getId()] = column.isVisible());
+
         let allColumnsCurrentOrder: Column[] = [];
-        this.columnController.getAllDisplayedColumns().forEach( column => {
+        this.columnController.getAllDisplayedColumns().forEach(column => {
             if (allColumnsOriginalOrder.indexOf(column) >= 0) {
                 allColumnsCurrentOrder.push(column);
                 _.removeFromArray(allColumnsOriginalOrder, column);
             }
         });
-        // we are left with non-visible columns, stick these in at the end
-        allColumnsOriginalOrder.forEach( column => allColumnsCurrentOrder.push(column));
 
-        return allColumnsCurrentOrder;
+        // we are left with non-visible columns, stick these in at the end
+        allColumnsOriginalOrder.forEach(column => allColumnsCurrentOrder.push(column));
+
+        // create and return dragItem
+        return {
+            columns: allColumnsCurrentOrder,
+            visibleState: visibleState
+        };
     }
 
     private isSuppressMoving(): boolean {
@@ -197,7 +213,7 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     private onWidthChanged(): void {
-        this.getGui().style.width = this.columnGroup.getActualWidth() + 'px';
+        this.getHtmlElement().style.width = this.columnGroup.getActualWidth() + 'px';
     }
 
     private setupResize(): void {
