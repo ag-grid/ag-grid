@@ -19,7 +19,6 @@ $primary-tab-border: $grey-400;
 $secondary-tab-background: $grey-50;
 $selected-tab-background: $secondary-tab-background;
 
-
 $vertical-pad: $unit * 2;
 $horizontal-pad: $unit * 3;
 $border-radius: $unit;
@@ -136,7 +135,7 @@ $border-radius: $unit;
             margin-top: $unit * 5;
             padding-left: $horizontal-pad;
             padding-bottom: $unit;
-            border-bottom: 1px solid $primary-tab-border;
+            border-bottom: 1px solid $grey-300;
             color: $grey-400;
             margin-bottom: 0;
         }
@@ -144,6 +143,7 @@ $border-radius: $unit;
 
     .tab-contents {
         background-color: white;
+        border-bottom: 1px solid $primary-tab-border;
 
         .result {
             padding: $vertical-pad $horizontal-pad;

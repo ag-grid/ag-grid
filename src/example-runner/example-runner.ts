@@ -44,16 +44,16 @@ class ExampleRunner {
     private boilerplatePath: string;
 
     constructor(
-        private $http: angular.IHttpService, 
-        private $timeout:angular.ITimeoutService, 
-        private $sce: angular.ISCEService, 
-        private $q:angular.IQService, 
+        private $http: angular.IHttpService,
+        private $timeout:angular.ITimeoutService,
+        private $sce: angular.ISCEService,
+        private $q:angular.IQService,
         private formPostData) {
             $http.defaults.cache = true;
         }
 
         $onInit() {
-            this.selectedTab = "code";
+            this.selectedTab = "result";
             if (!this.boilerplateFiles) {
                 this.boilerplateFiles = [];
             }
@@ -63,13 +63,7 @@ class ExampleRunner {
                 this.files = [ 'index.html' ].concat(this.files);
             }
 
-            if (this.type == "angular") {
-                this.resultUrl = `../example-runner/angular.php?section=${this.section}&example=${this.name}`;
-            } else {
-                this.resultUrl = `../example-runner/vanilla.php?section=${this.section}&example=${this.name}`;
-            }
-
-            this.selectedFile = this.files[0];
+            this.selectedFile = this.files[1];
             this.refreshSource();
             this.$timeout(() => this.ready = true);
         }
@@ -184,7 +178,7 @@ docs.component('exampleRunner', {
             <div ng-if="$ctrl.selectedTab == 'code'" role="tabpanel" class="code-browser">
                 <ul role="tablist" class="secondary">
 
-                    <li ng-if="$ctrl.type == 'angular'" class="separator">
+                    <li ng-if="$ctrl.boilerplateFiles.length > 0" class="separator">
                          App
                     </li>
 
@@ -197,16 +191,16 @@ docs.component('exampleRunner', {
                         on-click="$ctrl.selectedFile = file; $ctrl.refreshSource()">
                     </example-tab>
 
-                    <li ng-if="$ctrl.type == 'angular'" class="separator">
+                    <li ng-if="$ctrl.boilerplateFiles.length > 0" class="separator">
                         Framework
                     </li>
 
-                    <example-tab 
+                    <example-tab
                         ng-repeat="file in $ctrl.boilerplateFiles"
-                        value="file" 
-                        current-value="$ctrl.selectedFile" 
+                        value="file"
+                        current-value="$ctrl.selectedFile"
                         title="file"
-                        icon="'fa-file-code-o'" 
+                        icon="'fa-file-code-o'"
                         on-click="$ctrl.selectedFile = file; $ctrl.refreshSource()">
                     </example-tab>
                 </ul>
@@ -223,6 +217,7 @@ docs.component('exampleRunner', {
         boilerplatePath: '<',
         title: '<',
         section: '<',
+        resultUrl: '<',
         name: '<',
         type: '<'
     },

@@ -1,4 +1,5 @@
 <?php
+define('AG_SCRIPT_PATH', "http" . ($_SERVER['HTTPS'] ? 's' : '') . "://{$_SERVER['HTTP_HOST']}/dist/ag-grid/ag-grid.js?ignore=notused50");
 function path_combine(...$parts) {
     return join(DIRECTORY_SEPARATOR, $parts);
 }
@@ -33,17 +34,26 @@ function getDirContents($dir, &$results = array(), $prefix = ""){
     return $results;
 }
 
+function getBoilerplateConfig($type) {
+    if ($type == "vanilla") {
+        return "";
+    }
 
-function example($title, $dir, $type='') {
+    $boilerplatePath = "../example-runner/$type-boilerplate/";
+    $files = htmlspecialchars(json_encode(getDirContents($boilerplatePath)));
+
+    return <<<ATTR
+    boilerplate-path="'$boilerplatePath'"
+    boilerplate-files="$files"
+ATTR;
+}
+
+function example($title, $dir, $type='vanilla') {
     $fileList = htmlspecialchars(json_encode(getDirContents($dir)));
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));
-    $additional = '';
+    $additional = getBoilerplateConfig($type);
+    $resultUrl = "../example-runner/$type.php?section=$section&example=$dir";
 
-    if ($type == 'angular') {
-        $boilerplatePath = '../example-runner/angular-boilerplate/';
-        $additional .= "boilerplate-path=\"'$boilerplatePath'\"";
-        $additional .= ' boilerplate-files="' . htmlspecialchars(json_encode(getDirContents($boilerplatePath))) . '"';
-    }
     return <<<NG
     <example-runner 
         type="'$type'" 
@@ -51,9 +61,58 @@ function example($title, $dir, $type='') {
         section="'$section'" 
         title="'$title'" 
         files="$fileList"
+        result-url="'$resultUrl'"
         $additional
         >
     </example-runner>
 NG;
+}
+
+// helpers in the example render, shared between angular and react  
+function renderStyles($styles) {
+    foreach ($styles as $style) {
+        echo '    <link rel="stylesheet" href="'.$style.'">' . "\n";
+    }
+}
+
+function getStyles($files, $root, $preview) {
+    $styles = array();
+    foreach ($files as $file) {
+        $path = path_combine($root, $file);
+        $info = pathinfo($path);
+
+        if ($info['extension'] == 'css') {
+            $styles[] = $preview ? $file : $path;
+        }
+    }
+
+    return $styles;
+}
+
+function getExampleInfo($boilerplatePrefix) {
+    $exampleDir = basename($_GET['example']);
+    $exampleSection = basename($_GET['section']);
+    $appRoot = path_combine('..', $exampleSection, $exampleDir);
+    $files = getDirContents($appRoot);
+
+    $preview = isset($_GET['preview']);
+
+    $styles = getStyles($files, $appRoot, $preview);
+
+    if ($preview) {
+        $boilerplatePath = "";
+        $appLocation = "";
+    } else {
+        $boilerplatePath = "$boilerplatePrefix-boilerplate/";
+        $appLocation = $appRoot . "/";
+    }
+
+    return array(
+        "preview" => $preview,
+        "boilerplatePath" => $boilerplatePath,
+        "appLocation" => $appLocation,
+        "agGridScriptPath" => AG_SCRIPT_PATH,
+        "styles" => $styles
+    );
 }
 ?>

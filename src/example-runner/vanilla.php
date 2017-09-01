@@ -28,14 +28,9 @@ foreach ($files as $file) {
     <style> html, body { margin: 0; padding: 0; } </style>
 <?php } ?>
     <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
+    <script src="<?= AG_SCRIPT_PATH ?>"></script>
 <?php
-$url = "http" . ($_SERVER['HTTPS'] ? 's' : '') . "://{$_SERVER['HTTP_HOST']}/dist/ag-grid/ag-grid.js?ignore=notused50";
-?>
-    <script src="<?=$url?>"></script>
-<?php
-foreach ($styles as $style) {
-    echo '    <link rel="stylesheet" href="'.$style.'">' . "\n";
-}
+renderStyles($styles)
 ?>
 </head>
 <body>
