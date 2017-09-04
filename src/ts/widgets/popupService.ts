@@ -236,7 +236,7 @@ export class PopupService {
     //so that when the background is clicked, the child is removed again, giving
     //a model look to popups.
     public addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: ()=>void): (event?: any)=>void {
-        let eBody = document.body;
+        let eBody = this.gridOptionsWrapper.getDocument();
         if (!eBody) {
             console.warn('ag-grid: could not find the body of the document, document.body is empty');
             return;
