@@ -635,5 +635,17 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
             float: left;
         }
     }
+
+    .ag-sort-order {
+        margin-left: .5em;
+        font-size: 0.80em;
+        &::before {
+            content: '(';
+        }
+
+        &::after {
+            content: ')';
+        }
+    }
 }
 
