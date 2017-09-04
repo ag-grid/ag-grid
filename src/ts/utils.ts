@@ -1048,6 +1048,13 @@ export class Utils {
         return eventNoType.target || eventNoType.srcElement;
     }
 
+    static forEachSnapshotFirst(list: any[], callback: (item: any)=>void ): void {
+        if (list) {
+            let arrayCopy = list.slice(0);
+            arrayCopy.forEach(callback);
+        }
+    }
+
     // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
     static getBodyWidth(): number {
         if (document.body) {

@@ -63,6 +63,10 @@ export class EventService implements IEventEmitter {
         if (listenerList.indexOf(listener)<0) {
             listenerList.push(listener);
         }
+
+        if (eventType===Events.EVENT_DISPLAYED_COLUMNS_CHANGED) {
+            console.log(`addEventListener(EVENT_DISPLAYED_COLUMNS_CHANGED) count = ${listenerList.length}`);
+        }
     }
 
     private assertNotDeprecated(eventType:string):boolean{
@@ -93,6 +97,11 @@ export class EventService implements IEventEmitter {
     public removeEventListener(eventType: string, listener: Function, async = false): void {
         let listenerList = this.getListenerList(eventType, async);
         _.removeFromArray(listenerList, listener);
+
+
+        if (eventType===Events.EVENT_DISPLAYED_COLUMNS_CHANGED) {
+            console.log(`removeEventListener(EVENT_DISPLAYED_COLUMNS_CHANGED) count = ${listenerList.length}`);
+        }
     }
 
     public removeGlobalListener(listener: Function): void {
@@ -114,7 +123,7 @@ export class EventService implements IEventEmitter {
 
         // this allows the columnController to get events before anyone else
         let p1ListenerList = this.getListenerList(eventType + EventService.PRIORITY, async);
-        p1ListenerList.forEach(listener => {
+        _.forEachSnapshotFirst(p1ListenerList, listener => {
             if (async) {
                 this.dispatchAsync( () => listener(event) );
             } else {
@@ -123,7 +132,7 @@ export class EventService implements IEventEmitter {
         });
 
         let listenerList = this.getListenerList(eventType, async);
-        listenerList.forEach(listener => {
+        _.forEachSnapshotFirst(listenerList,listener => {
             if (async) {
                 this.dispatchAsync( () => listener(event) );
             } else {
@@ -131,7 +140,7 @@ export class EventService implements IEventEmitter {
             }
         });
 
-        globalListeners.forEach(listener => {
+        _.forEachSnapshotFirst(globalListeners, listener => {
             if (async) {
                 this.dispatchAsync( () => listener(eventType, event) );
             } else {
