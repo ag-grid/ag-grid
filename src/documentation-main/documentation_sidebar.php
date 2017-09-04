@@ -39,24 +39,7 @@
     </div>
     <br/>
     <div>
-        We had some issues with frameworks, so took
-        out afterGuiAttached() from cell renderers.
-        See the
-        <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
-    </div>
-</div>
-
-<div class="news-box">
-    <div class="news-header">30th August 2017</div>
-    <div>
-        Release of <b>ag-Grid-Aurelia v13.0.2</b>
-    </div>
-</div>
-
-<div class="news-box">
-    <div class="news-header">29th August 2017</div>
-    <div>
-        Patch release of <b>ag-Grid v13.0.1</b> with minor bug fixes, see the
+        Minor release, just bug fixes.
         <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
     </div>
 </div>
