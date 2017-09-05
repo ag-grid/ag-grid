@@ -1673,26 +1673,49 @@ export class ColumnController {
         });
     }
 
-    // called by headerRenderer - when a header is opened or closed
-    public setColumnGroupOpened(key: OriginalColumnGroup|string, newValue: boolean): void {
+    public setColumnGroupState(stateItems: ({groupId: string, open: boolean})[]): void {
         this.columnAnimationService.start();
 
-        let groupToUse: OriginalColumnGroup = this.getOriginalColumnGroup(key);
-        if (!groupToUse) { return; }
+        let impactedGroups: OriginalColumnGroup[] = [];
 
-        this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');
-        groupToUse.setExpanded(newValue);
+        stateItems.forEach( stateItem => {
+            let groupKey = stateItem.groupId;
+            let newValue = stateItem.open;
+
+            let originalColumnGroup: OriginalColumnGroup = this.getOriginalColumnGroup(groupKey);
+            if (!originalColumnGroup) { return; }
+
+            if (originalColumnGroup.isExpanded() === newValue) { return; }
+
+            this.logger.log('columnGroupOpened(' + originalColumnGroup.getGroupId() + ',' + newValue + ')');
+            originalColumnGroup.setExpanded(newValue);
+            impactedGroups.push(originalColumnGroup);
+        });
 
         this.updateGroupsAndDisplayedColumns();
-        let event: ColumnGroupOpenedEvent = {
-            type: Events.EVENT_COLUMN_GROUP_OPENED,
-            columnGroup: groupToUse,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        this.eventService.dispatchEvent(event);
+
+        impactedGroups.forEach( originalColumnGroup => {
+            let event: ColumnGroupOpenedEvent = {
+                type: Events.EVENT_COLUMN_GROUP_OPENED,
+                columnGroup: originalColumnGroup,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
+        });
 
         this.columnAnimationService.finish();
+    }
+
+    // called by headerRenderer - when a header is opened or closed
+    public setColumnGroupOpened(key: OriginalColumnGroup|string, newValue: boolean): void {
+        let keyAsString: string;
+        if (key instanceof OriginalColumnGroup) {
+            keyAsString = (<OriginalColumnGroup>key).getId();
+        } else {
+            keyAsString = <string>key;
+        }
+        this.setColumnGroupState([{groupId: keyAsString, open: newValue}]);
     }
 
     public getOriginalColumnGroup(key: OriginalColumnGroup|string): OriginalColumnGroup {
@@ -1716,36 +1739,6 @@ export class ColumnController {
         });
 
         return res;
-    }
-
-    // used by updateModel
-    private getColumnGroupState(): any {
-        let groupState: any = {};
-        this.columnUtils.depthFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), (child: ColumnGroupChild) => {
-            if (child instanceof ColumnGroup) {
-                let columnGroup = <ColumnGroup> child;
-                let key = columnGroup.getGroupId();
-                // if more than one instance of the group, we only record the state of the first item
-                if (!groupState.hasOwnProperty(key)) {
-                    groupState[key] = columnGroup.isExpanded();
-                }
-            }
-        });
-        return groupState;
-    }
-
-    // used by updateModel
-    private setColumnGroupState(groupState: any): any {
-        this.columnUtils.depthFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), (child: ColumnGroupChild) => {
-            if (child instanceof ColumnGroup) {
-                let columnGroup = <ColumnGroup> child;
-                let key = columnGroup.getGroupId();
-                let shouldExpandGroup = groupState[key]===true && columnGroup.isExpandable();
-                if (shouldExpandGroup) {
-                    columnGroup.setExpanded(true);
-                }
-            }
-        });
     }
 
     private calculateColumnsForDisplay(): Column[] {
@@ -1813,15 +1806,9 @@ export class ColumnController {
 
     private updateDisplayedColumns(): void {
 
-        // save opened / closed state
-        let oldGroupState = this.getColumnGroupState();
-
         let columnsForDisplay = this.calculateColumnsForDisplay();
 
         this.buildDisplayedTrees(columnsForDisplay);
-
-        // restore opened / closed state
-        this.setColumnGroupState(oldGroupState);
 
         this.calculateColumnsForGroupDisplay();
 
