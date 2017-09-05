@@ -155,6 +155,7 @@ $border-radius: $unit;
 
         .result {
             padding: $vertical-pad $horizontal-pad;
+            position: relative;
         }
 
         iframe {
@@ -178,6 +179,17 @@ $border-radius: $unit;
             word-break: keep-all;
             word-wrap: normal;
             white-space: pre;
+        }
+    }
+
+    .result-in-new-tab {
+        position: absolute;
+        right: $horizontal-pad;
+        background-color: transparent;
+        border: 0;
+
+        &:hover .fa {
+            color: $grey-500;
         }
     }
 }

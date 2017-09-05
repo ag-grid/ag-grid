@@ -49,11 +49,12 @@ function getBoilerplateConfig($type) {
 ATTR;
 }
 
-function example($title, $dir, $type='vanilla', $initialFile = null) {
+function example($title, $dir, $type='vanilla', $options = array()) {
     $fileList = htmlspecialchars(json_encode(getDirContents($dir)));
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));
     $additional = getBoilerplateConfig($type);
     $resultUrl = "../example-runner/$type.php?section=$section&example=$dir";
+    $jsonOptions = json_encode($options);
 
     return <<<NG
     <example-runner 
@@ -63,10 +64,26 @@ function example($title, $dir, $type='vanilla', $initialFile = null) {
         title="'$title'" 
         files="$fileList"
         result-url="'$resultUrl'"
-        initial-file="'$initialFile'"
+        options='$jsonOptions'
         $additional
         >
     </example-runner>
+NG;
+}
+
+function preview($title, $name, $url, $sourceCodeUrl, $options = array()) {
+    $jsonOptions = json_encode($options);
+
+    return <<<NG
+    <preview
+        title="'$title'"
+        name="'$name'"
+        result-url="'$url'"
+        source-code-url="'$sourceCodeUrl'"
+        options='$jsonOptions'
+        $additional
+        >
+    </preview>
 NG;
 }
 

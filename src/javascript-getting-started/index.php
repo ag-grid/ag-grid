@@ -7,9 +7,6 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<hr />
-<hr />
-
     <h1>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
         <img style="vertical-align: middle" src="../images/javascript.png" height="25px"/>
@@ -106,16 +103,16 @@ open index.html
 <snippet language="html">
 &lt;html&gt;
 &lt;head&gt;
-    <span class="codeComment">&lt;!-- reference the ag-Grid library--></span>
+    &lt;!-- reference the ag-Grid library--&gt;
     &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/10.1.0/ag-grid.js"&gt;&lt;/script&gt;
 
-    <span class="codeComment">&lt;!-- our application code --></span>
+    &lt;!-- our application code --&gt;
     &lt;script src="example.js"&gt;&lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
 &lt;h1&gt;Simple ag-Grid Example&lt;/h1&gt;
 
-<span class="codeComment">&lt;!-- the div ag-Grid will use to render it's data --></span>
+&lt;!-- the div ag-Grid will use to render it's data --&gt;
 &lt;div id="myGrid" style="height: 115px;width:500px" class="ag-fresh"&gt;&lt;/div&gt;
 
 &lt;/body&gt;
@@ -240,7 +237,7 @@ var gridOptions = {
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
 
-<?= example('Advanced ag-Grid Example', 'advanced', 'vanilla', 'example.js') ?>
+<?= preview('Advanced ag-Grid Example', 'rich-example', '../example-rich-grid/', 'https://github.com/ag-grid/ag-grid-docs/tree/master/src/example-rich-grid', array( 'exampleHeight' => 500 )) ?>
 
 
     <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates

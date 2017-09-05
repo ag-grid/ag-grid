@@ -21,18 +21,22 @@ function highlight(code: string, language: string): string {
     return Prism.highlight(code, prismLanguage);
 }
 
-docs.directive('codeHighlight', function() {
-    return {
-        restrict: 'A',
-        scope: {
-            language: '='
-        }, 
-        link: function(scope, element, attrs) {
-            element.replaceWith('<code>' + highlight(element.text().trim(), attrs.codeHighlight) + '</code>');
+function whenInViewPort(element, callback) {
+    function comparePosition() {
+        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
+        var scrollPos = scrollTop + document.documentElement.clientHeight;
+        var elemBottom = element[0].offsetTop + element[0].offsetHeight;
+
+        if (scrollPos >= elemBottom) { 
+            window.removeEventListener('scroll', comparePosition);
+            callback();
+            // setTimeout(callback, 1000);
         }
     }
-});
 
+    comparePosition();
+    window.addEventListener('scroll', comparePosition);
+}
 
 docs.directive('snippet', function() {
     return {
@@ -41,9 +45,11 @@ docs.directive('snippet', function() {
             language: '='
         }, 
         link: function(scope, element, attrs) {
-            const language = attrs.language || "js";
-            const highlightedSource = highlight(element.text(), language);
-            element.empty().html('<pre><code>' + highlightedSource + '</code></pre>');
+            whenInViewPort(element, function() {
+                const language = attrs.language || "js";
+                const highlightedSource = highlight(element.text(), language);
+                element.empty().html('<pre><code>' + highlightedSource + '</code></pre>');
+            })
         }
     }
 });
@@ -72,11 +78,12 @@ docs.factory('formPostData', ['$document', function($document) {
 }])
 
 
-class ExampleRunner {initialFile: any;
+class ExampleRunner {
     ready: boolean = false;
     private source: any;
     private loadingSource:boolean;
     private selectedTab: string;
+
     private selectedFile: string;
     private resultUrl: string;
 
@@ -88,82 +95,101 @@ class ExampleRunner {initialFile: any;
     private boilerplateFiles: string[];
     private boilerplatePath: string;
 
+    private options: {
+        showResult?: boolean,
+        initialFile?: string,
+        exampleHeight?: number
+    };
+
+    private iframeStyle: any;
+
     constructor(
         private $http: angular.IHttpService,
         private $timeout:angular.ITimeoutService,
         private $sce: angular.ISCEService,
         private $q:angular.IQService,
-        private formPostData) {
+        private formPostData, 
+        private $element: Element
+    ) {
             $http.defaults.cache = true;
+    }
+
+    $onInit() {
+        this.iframeStyle = {};
+
+        if (this.options.exampleHeight) {
+            this.iframeStyle.height = this.options.exampleHeight + "px";
+        }
+        if (!this.boilerplateFiles) {
+            this.boilerplateFiles = [];
         }
 
-        $onInit() {
-            this.selectedTab = "code";
-            if (!this.boilerplateFiles) {
-                this.boilerplateFiles = [];
-            }
+        // for angular and react, index.html is part of the boilerplate
+        if (this.files[0] != "index.html") {
+            this.files = [ 'index.html' ].concat(this.files);
+        }
 
-            // for angular and react, index.html is part of the boilerplate
-            if (this.files[0] != "index.html") {
-                this.files = [ 'index.html' ].concat(this.files);
-            }
+        this.selectedTab = this.options.showResult ? 'result' : 'code';
 
-            if (this.initialFile) {
-                this.selectedFile = this.initialFile;
-            } else {
-                this.selectedFile = this.files[1];
-            }
+        if (this.options.initialFile) {
+            this.selectedFile = this.options.initialFile;
+        } else {
+            this.selectedFile = this.files[1];
+        }
+
+        whenInViewPort(this.$element, () => {
             this.refreshSource();
-            this.$timeout(() => this.ready = true);
+            this.ready = true;
+        })
+    }
+
+    refreshSource() {
+        this.loadingSource = true;
+        this.source = this.$sce.trustAsHtml("Loading...");
+
+        const sourceUrl = this.getSourceUrl(this.selectedFile);
+
+        this.$http.get(sourceUrl)
+        .then((response: angular.IHttpResponse<{}>) => {
+            this.loadingSource = false;
+            const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
+            const highlightedSource = highlight((response.data as string).trim(), extension);
+            this.source = this.$sce.trustAsHtml(highlightedSource);
+        });
+    }
+
+    getSourceUrl(file:string) {
+        if (this.boilerplateFiles.indexOf(file) > -1 ) {
+            return [ this.boilerplatePath, file ].join('/');
         }
+        if (file == this.files[0]) {
+            return this.resultUrl + "&preview=true";
+        } else {
+            return ['', this.section, this.name, file].join('/');
+        }
+    }
 
-        refreshSource() {
-            this.loadingSource = true;
-            this.source = this.$sce.trustAsHtml("Loading...");
+    openPlunker(clickEvent) {
+        const allFiles = this.files.concat(this.boilerplateFiles);
+        this.$q.all(allFiles.map( (file: any) => this.$http.get(this.getSourceUrl(file)) )).then( (files: any) => {
+            var postData: any = {
+                'tags[0]': "ag-grid",
+                'tags[1]': "example",
+                'private': true,
+                'description': this.title
+            };
 
-            const sourceUrl = this.getSourceUrl(this.selectedFile);
-
-            this.$http.get(sourceUrl)
-            .then((response: angular.IHttpResponse<{}>) => {
-                this.loadingSource = false;
-                const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
-                const highlightedSource = highlight((response.data as string).trim(), extension);
-                this.source = this.$sce.trustAsHtml(highlightedSource);
+            files.forEach( (file:any, index: number) => {
+                postData['files[' + allFiles[index] + ']'] = file.data;
             });
-        }
-
-        getSourceUrl(file:string) {
-            if (this.boilerplateFiles.indexOf(file) > -1 ) {
-                return [ this.boilerplatePath, file ].join('/');
-            }
-            if (file == this.files[0]) {
-                return this.resultUrl + "&preview=true";
-            } else {
-                return ['', this.section, this.name, file].join('/');
-            }
-        }
-
-        openPlunker(clickEvent) {
-            const allFiles = this.files.concat(this.boilerplateFiles);
-            this.$q.all(allFiles.map( (file: any) => this.$http.get(this.getSourceUrl(file)) )).then( (files: any) => {
-                var postData: any = {
-                    'tags[0]': "ag-grid",
-                    'tags[1]': "example",
-                    'private': true,
-                    'description': this.title
-                };
-
-                files.forEach( (file:any, index: number) => {
-                    postData['files[' + allFiles[index] + ']'] = file.data;
-                });
 
 
-                this.formPostData('http://plnkr.co/edit/?p=preview', true, postData);
-            });
-        }
+            this.formPostData('http://plnkr.co/edit/?p=preview', true, postData);
+        });
+    }
 }
 
-ExampleRunner.$inject = ['$http', '$timeout', '$sce', '$q', 'formPostData'];
+ExampleRunner.$inject = ['$http', '$timeout', '$sce', '$q', 'formPostData', '$element'];
 
 docs.component('exampleTab', {
     template: `
@@ -185,7 +211,7 @@ docs.component('exampleTab', {
 
 docs.component('exampleRunner', {
     template: ` 
-        <div ng-class='["example-runner", { "example-loading": !$ctrl.ready }]'>
+        <div ng-if="$ctrl.ready" ng-class='["example-runner"]'>
         <ul role="tablist" class="primary">
             <li class="title">
                 <a href="#example-{{$ctrl.name}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
@@ -219,7 +245,8 @@ docs.component('exampleRunner', {
 
         <div class="tab-contents">
             <div ng-show="$ctrl.selectedTab == 'result'" role="tabpanel" class="result">
-                <iframe src="{{$ctrl.resultUrl}}" seamless="true"></iframe>
+                <a ng-href={{$ctrl.resultUrl}} target="_blank" class="result-in-new-tab" title="Show result in new tab"><i class="fa fa-arrows-alt" aria-hidden="true"></i></a>
+                <iframe ng-src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" seamless="true"></iframe>
             </div>
 
             <div ng-if="$ctrl.selectedTab == 'code'" role="tabpanel" class="code-browser">
@@ -267,8 +294,66 @@ docs.component('exampleRunner', {
         resultUrl: '<',
         name: '<',
         type: '<',
-        initialFile: '<'
+        options: '<'
     },
 
     controller: ExampleRunner
+});
+
+docs.component('preview', {
+    template: ` 
+        <div ng-if="$ctrl.ready" ng-class='["example-runner"]'>
+        <ul role="tablist" class="primary">
+            <li class="title">
+                <a href="#example-{{$ctrl.name}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
+            </li>
+
+            <example-tab 
+                value="'result'" 
+                current-value="'result'" 
+                title="'Result'"
+                icon="'fa-play'" 
+                >
+            </example-tab>
+
+            <li role="presentation">
+                <a role="tab" ng-href="{{$ctrl.resultUrl}}" target="_blank">
+                    <i class="fa fa-external-link" aria-hidden="true"></i> Browse Source Code
+                </a>
+            </li>
+
+        </ul>  
+
+        <div class="tab-contents">
+            <div role="tabpanel" class="result">
+                <a ng-href={{$ctrl.resultUrl}} target="_blank" class="result-in-new-tab" title="Show result in new tab"><i class="fa fa-arrows-alt" aria-hidden="true"></i></a>
+                <iframe src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" seamless="true"></iframe>
+            </div>
+        </div>
+
+    </div>
+    `,
+    bindings: {
+        resultUrl: '<',
+        sourceCodeUrl: '<',
+        title: '<',
+        name: '<',
+        options: '<'
+    },
+
+    controller: [ '$timeout', '$element', function($timeout, $element) {
+        this.ready = false;
+
+        this.$onInit = function() {
+            this.iframeStyle = {};
+
+            if (this.options.exampleHeight) {
+                this.iframeStyle.height = this.options.exampleHeight + "px";
+            }
+
+            whenInViewPort($element, () => { 
+                this.ready = true;
+            });
+        }
+    }]
 });
