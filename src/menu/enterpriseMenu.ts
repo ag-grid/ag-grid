@@ -15,6 +15,8 @@ import {
     EventService,
     TabbedItem,
     AgEvent,
+    IRowModel,
+    Constants,
     PostConstruct
 } from "ag-grid";
 import {ColumnSelectPanel} from "../toolPanel/columnsSelect/columnSelectPanel";
@@ -133,6 +135,7 @@ export class EnterpriseMenu {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
+    @Autowired('rowModel') private rowModel: IRowModel;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
@@ -310,6 +313,8 @@ export class EnterpriseMenu {
         let isPrimary = this.column.isPrimary();
         let pivotModeOn = this.columnController.isPivotMode();
 
+        let isInMemoryRowModel = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_IN_MEMORY;
+
         result.push('pinSubMenu');
 
         let allowValueAgg =
@@ -338,12 +343,12 @@ export class EnterpriseMenu {
         result.push('resetColumns');
         result.push('toolPanel');
 
-        // only add grouping expand/collapse if grouping
+        // only add grouping expand/collapse if grouping in the InMemoryRowModel
 
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
-        let allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
+        let allowExpandAndContract = isInMemoryRowModel && (pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0);
         if (allowExpandAndContract) {
             result.push('expandAll');
             result.push('contractAll');
