@@ -7,9 +7,15 @@ $pageKeyboards = "big data javascript browser";
 include('../includes/mediaHeader.php');
 ?>
 
+<style>
+    .codeComment {
+        color: darkgreen;
+    }
+</style>
+
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1>Hacks to building the worlds fastest JavaScript Data Grid</h1>
+        <h1>Squeezing the Browser - JavaScript Performance Hacks Inside ag-Grid</h1>
     </div>
 </div>
 
@@ -19,11 +25,14 @@ include('../includes/mediaHeader.php');
         <h3>Make It Faster</h3>
 
         <p>
-            ag-Grid is very fast, even in Internet Explorer and with large data sets.
-            In this blog I present the key design patterns, or 'hacks', used in ag-Grid which allow
-            the grid to render so fast. This will be of interest to users of ag-Grid as if you are aware of
-            these designs, you can code your application to make best use of them. Or if you are a competitor
-            of ag-Grid then you can take some of these designs into your own grid - it's lonely at the top,
+            <a href="https://www.ag-grid.com/">ag-Grid</a>
+            is a JavaScript data grid for displaying large amounts of data inside the browser
+            in a style similar to Excel.
+            ag-Grid is fast, even in Internet Explorer and with large volumes of data.
+            This blog presents performance patterns, or performance 'hacks', used in ag-Grid that puts
+            the grid on steroids. How we squeezed performance out of the browser is interesting to
+            anyone wanting to tune their own applications, but in particular a) users of ag-Grid so they can
+            best work with ag-Grid and b) competitors of ag-Grid - it's lonely at the top,
             it would be more fun if some competitors challenged us a little!
         </p>
 
@@ -64,7 +73,7 @@ include('../includes/mediaHeader.php');
 
         <h3>Hack 3 - Exploit Event Propagation</h3>
 
-        <h4>Problem Statement</h4>
+        <h4>Problem - To Much Event Listener Registration</h4>
 
         <p>
             The grid needs to have mouse and keyboard listeners on
@@ -81,10 +90,10 @@ include('../includes/mediaHeader.php');
             as even a simple grid of 20 visible columns and 50 visible rows means 20 (columns) x 50 (rows)
             x 8 (events) = 8,000 event listeners. When
             the user scrolls, due to row and column virtualisation, these listeners are getting constantly added and
-            removed at a vicious rate which adds a lag to scrolling.
+            removed which adds a lag to scrolling.
         </p>
 
-        <h4>Solution - Event Propagation to the Rescue</h4>
+        <h4>Solution - Event Propagation</h4>
 
         <p>
             6 of these 8 events propagate (the exceptions are <i>mouseenter</i> and <i>mouseleave</i> which do
@@ -97,46 +106,108 @@ include('../includes/mediaHeader.php');
             The challenge is then working out which cell caused the event.
         </p>
 
-        <pre>
-            // while creating cells the grid
-            parentContainer.addEventListener('click', myEventListener);
+        <pre><span class="codeComment">// parentContainer will contain all the cells</span>
+var parentContainer = document.createElement('div');
 
-            function myEventListener(event) {
-                let domElement = event.target;
-                if () {
-                }
-              sourceElement = sourceElement.parentElement;
-            }
+<span class="codeComment">// cells are regular DOM div objects</span>
+var eCell = document.createElement('div');
+<span class="codeComment">// attach our own properties to the DOM object.</span>
+<span class="codeComment">// once we are not using DOM properties, there is no performance hit.</span>
+eCell.__col = colId;
+eCell.__row = rowId;
+<span class="codeComment">// add the cell to the container, no listeners</span>
+parentContainer.appendChild(eCell);
 
+<span class="codeComment">// listen for clicks on the parent container only</span>
+parentContainer.addEventListener('click', myEventListener);
 
-        </pre>
-
-        <p>mouse events at grid panel</p>
+function myEventListener(event) {
+    <span class="codeComment">// go through all elements of the event, starting from the element that caused the event</span>
+    <span class="codeComment">// and continue up to the parent container. we should find the cell element along the way.</span>
+    var domElement = event.target;
+    var col, row;
+    while (domElement!=parentContainer) {
+        <span class="codeComment">// see if the dom element has col and row info</span>
+        if (domElement.__col && domElement.__row) {
+            <span class="codeComment">// if yes, we have found the cell, and know which row and col it is</span>
+            col = domElement.__col;
+            row = domElement.__row;
+            break;
+        }
+        domElement = domElement.parentElement;
+    }
+}</pre>
 
         <p>
-            + Add listeners only to the root, so no adding or removing of listeners while virtualising.
-            Then use DOM Data (new concept) . . . is this safe? Well half the worlds investment banks use
-            ag-Grid for trading software, as well as a lot of air traffic control systems around the world,
-            it there was a problem, we'd know about it by now.
+            Readers will notice we are attaching arbitrary attributes (<code>__col</code> and <code>__row</code>) onto the DOM element
+            and might be wondering is this safe? I hope so, as ag-Grid is used for air traffic control over Australia
+            as far as I know. In other words, ag-Grid has done this for a long time now and nobody has reported any issues.
+        </p>
+
+        <p>
+            This hack is also used by React . . . . . . #### reference needed
         </p>
 
         <h3>Hack 4 - Throw Away DOM</h3>
 
         <p>
-            + Detach now doesn't build down, if removing row, it just gets thrown away in one DOM hit.
-            This was due to adhearing to good advice - that adding listeners (etc) should be coupled with removing them.
-            Rule: Detach just the parent, let the rest rot.
+            Good programming sense tells you to de-construct everything you construct. This means any DOM item
+            you add to the browser you should remove in clean down code. This is standard clean programming, especially
+            when composing complex DOM structures.
+        </p>
+
+        <p>
+            This hack goes as follows: If you are removing an item from the DOM (eg a grid cell), but you know the
+            parent of that item is also going to be removed (eg a grid row) then there is no need to remove the
+            child items.
+        </p>
+
+        <p>
+            So in ag-Grid, as rows are created, we use composition to build the complex structure into the DOM.
+            However when removing the rows, we do not remove the cells individually form the DOM, instead we
+            chuck the entire row in one quick DOM hit.
         </p>
 
         <h3>Hack # innerHTML where possible</h3>
 
         <p>
-            + What we have is a hybrid. Use innerHTML where we can, then use components where the users chooses.
+            What is the fastest way to populate lots of cells and rows into the browser? Should you use
+            JavaScript to create each element and again JavaScript to update the attributes of each element
+            and use <code>appendChild()</code> to plug all the elements together? Or should you work off
+            document fragments? Or should you create all the document in one big piece of HTML and then
+            insert it into the dom using <code>.innerHTML()</code>?
         </p>
 
         <p>
-            + When no components are used, ag-Grid builds one big HTML string and uses innerHTML to inject
-            the HTML. There is no quicker way to render. There is no quicker grid.
+            We have done many tests. The answer is to use <code>.innerHTML()</code>.
+        </p>
+
+        <p>
+            So ag-Grid leverages the speed of <code>.innerHTML()</code> by creating the HTML in one big string
+            and then inserting it into the DOM (we use <code>element.insertAdjacentHTML()</code> so we don't
+            overwrite current children).
+        </p>
+
+        <pre><span class="codeComment">// build up the row's HTML in a string</span>
+var htmlParts = [];
+htmlParts.push('&lt;div class="ag-row">');
+cells.forEach( function(cell) {
+    htmlParts.push('&lt;div class="ag-cell">');
+    htmlParts.push(cell.getValue());
+    htmlParts.push('&lt;/div>');
+});
+htmlParts.push('&lt;/div>');
+
+<span class="codeComment">// append the string into the DOM, one DOM hit for the entire row</span>
+var rowHtml = htmlParts.join('');
+eContainer.insertAdjacentHTML(rowHtml);</pre>
+
+        <p>
+            This works great when there are no components used (ag-Grid native components, Angular components,
+            React components etc). So the grid makes the choice - for all cells that do not use components, the grid
+            will inject the whole row in one HTML string which is the quickest way to render HTML.
+            When a component is used, the grid will then go back and inject the components into the HTML
+            after teh row ins created.
         </p>
 
         <p>
