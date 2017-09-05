@@ -156,14 +156,12 @@ function isFrameworkWebComponents()
     <!-- Bootstrap -->
     <link inline rel="stylesheet" href="../dist/bootstrap/css/bootstrap.css">
 
-    <link rel="stylesheet" href="../dist/highlight/atom-one-light.css">
+    <link rel="stylesheet" href="../dist/prism/prism.css">
     <link inline rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="../documentation-main/documentation.css">
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-    <script src="../dist/highlight/highlight.pack.js"></script>
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
-
 </head>
 
 <body ng-app="documentation">

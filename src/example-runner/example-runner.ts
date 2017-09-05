@@ -1,7 +1,25 @@
 import './example-runner.scss';
 import * as angular from "angular";
+import * as Prism from "prismjs";
+import 'prismjs/components/prism-typescript';
+import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-jsx';
 
 const docs: angular.IModule = angular.module('documentation');
+
+const LanguageMap: { [ key: string ]: Prism.LanguageDefinition } = {
+    "js": Prism.languages.javascript,
+    "ts": Prism.languages.typescript,
+    "css": Prism.languages.css,
+    "sh": Prism.languages.bash,
+    "html": Prism.languages.html,
+    "jsx": Prism.languages.jsx
+}
+
+function highlight(code: string, language: string): string {
+    const prismLanguage = LanguageMap[language];
+    return Prism.highlight(code, prismLanguage);
+}
 
 docs.directive('codeHighlight', function() {
     return {
@@ -10,9 +28,7 @@ docs.directive('codeHighlight', function() {
             language: '='
         }, 
         link: function(scope, element, attrs) {
-            var highlight = hljs.highlight(attrs.codeHighlight, element.text().trim()).value;
-            element.replaceWith('<code>' + highlight + '</code>');
-
+            element.replaceWith('<code>' + highlight(element.text().trim(), attrs.codeHighlight) + '</code>');
         }
     }
 });
@@ -25,9 +41,8 @@ docs.directive('snippet', function() {
             language: '='
         }, 
         link: function(scope, element, attrs) {
-            let language = attrs.language || "js";
-            let highlightedSource = hljs.highlight(language, element.text()).value;
-
+            const language = attrs.language || "js";
+            const highlightedSource = highlight(element.text(), language);
             element.empty().html('<pre><code>' + highlightedSource + '</code></pre>');
         }
     }
@@ -112,7 +127,8 @@ class ExampleRunner {initialFile: any;
             .then((response: angular.IHttpResponse<{}>) => {
                 this.loadingSource = false;
                 const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
-                this.source = this.$sce.trustAsHtml(hljs.highlight(extension, (response.data as string).trim()).value);
+                const highlightedSource = highlight((response.data as string).trim(), extension);
+                this.source = this.$sce.trustAsHtml(highlightedSource);
             });
         }
 
