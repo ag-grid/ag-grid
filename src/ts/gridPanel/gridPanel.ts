@@ -443,14 +443,20 @@ export class GridPanel extends BeanStub {
         // the context menu if no rows are displayed, or user simply clicks outside of a cell
         let listener = (mouseEvent: MouseEvent) => {
             let target = _.getTarget(mouseEvent);
-            if (target===this.eBodyViewport) {
+            if (target===this.eBodyViewport || target===this.ePinnedLeftColsViewport || target===this.ePinnedRightColsViewport) {
                 // show it
                 this.onContextMenu(mouseEvent);
                 this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
 
-        this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener)
+        //For some reason listening only to this.eBody doesnt work... Maybe because the event is consumed somewhere else?
+        //In any case, not expending much time on this, if anyome comes accross this and knows how to make this work with
+        //one listener please go ahead and change it...
+        this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener);
+        this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'contextmenu', listener);
+        this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'contextmenu', listener);
+
     }
 
     private getRowForEvent(event: MouseEvent | KeyboardEvent): RowComp {
