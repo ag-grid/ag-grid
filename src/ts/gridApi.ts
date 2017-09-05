@@ -406,17 +406,26 @@ export class GridApi {
     }
 
     public getRowNode(id: string): RowNode {
-        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call getRowNode unless using normal row model') }
+        if (_.missing(this.inMemoryRowModel)) {
+            console.warn('ag-Grid: cannot call getRowNode unless using normal row model');
+            return;
+        }
         return this.inMemoryRowModel.getRowNode(id);
     }
 
     public expandAll() {
-        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call expandAll unless using normal row model') }
+        if (_.missing(this.inMemoryRowModel)) {
+            console.warn('ag-Grid: cannot call expandAll unless using normal row model');
+            return;
+        }
         this.inMemoryRowModel.expandOrCollapseAll(true);
     }
 
     public collapseAll() {
-        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call collapseAll unless using normal row model') }
+        if (_.missing(this.inMemoryRowModel)) {
+            console.warn('ag-Grid: cannot call collapseAll unless using normal row model');
+            return;
+        }
         this.inMemoryRowModel.expandOrCollapseAll(false);
     }
 
