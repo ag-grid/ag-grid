@@ -140,7 +140,7 @@ var DateFloatingFilterComp = (function (_super) {
         this.dateComponent = this.componentRecipes.newDateComponent(dateComponentParams);
         var body = utils_1._.loadTemplate("<div></div>");
         body.appendChild(utils_1._.ensureElement(this.dateComponent.getGui()));
-        this.setTemplateFromElement(body);
+        this.setHtmlElement(body);
     };
     DateFloatingFilterComp.prototype.onDateChanged = function () {
         var parentModel = this.currentParentModel();

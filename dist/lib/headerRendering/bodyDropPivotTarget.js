@@ -34,7 +34,7 @@ var BodyDropPivotTarget = (function () {
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
             return;
         }
-        var dragColumns = draggingEvent.dragSource.dragItem;
+        var dragColumns = draggingEvent.dragItem.columns;
         dragColumns.forEach(function (column) {
             // we don't allow adding secondary columns
             if (!column.isPrimary()) {

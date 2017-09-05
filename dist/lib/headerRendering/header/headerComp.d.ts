@@ -40,6 +40,7 @@ export declare class HeaderComp extends Component implements IHeaderComp {
     constructor();
     init(params: IHeaderParams): void;
     private setupText(displayName);
+    private setupIcons(column);
     private addInIcon(iconName, eParent, column);
     private setupTap();
     private setupMenu();

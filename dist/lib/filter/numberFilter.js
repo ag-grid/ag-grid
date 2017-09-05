@@ -51,7 +51,7 @@ var NumberFilter = (function (_super) {
     };
     NumberFilter.prototype.initialiseFilterBodyUi = function () {
         this.filterNumber = null;
-        this.eFilterTextField = this.getGui().querySelector("#filterText");
+        this.eFilterTextField = this.getHtmlElement().querySelector("#filterText");
         var debounceMs = this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 500;
         var toDebounce = utils_1.Utils.debounce(this.onTextFieldsChanged.bind(this), debounceMs);
         this.addDestroyableEventListener(this.eFilterTextField, "input", toDebounce);

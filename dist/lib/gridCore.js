@@ -48,10 +48,10 @@ var GridCore = (function () {
         if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
             // if we are doing RTL, then the tool panel appears on the left
             if (this.gridOptionsWrapper.isEnableRtl()) {
-                westPanel = this.toolPanel.getGui();
+                westPanel = this.toolPanel.getHtmlElement();
             }
             else {
-                eastPanel = this.toolPanel.getGui();
+                eastPanel = this.toolPanel.getHtmlElement();
             }
         }
         var createTopPanelGui = this.createNorthPanel();
@@ -118,8 +118,8 @@ var GridCore = (function () {
         var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
         this.rowGroupComp = this.rowGroupCompFactory.create();
         this.pivotComp = this.pivotCompFactory.create();
-        topPanelGui.appendChild(this.rowGroupComp.getGui());
-        topPanelGui.appendChild(this.pivotComp.getGui());
+        topPanelGui.appendChild(this.rowGroupComp.getHtmlElement());
+        topPanelGui.appendChild(this.pivotComp.getHtmlElement());
         this.rowGroupComp.addEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
         this.pivotComp.addEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
         this.destroyFunctions.push(function () {
@@ -151,12 +151,12 @@ var GridCore = (function () {
         }
         var eSouthPanel = document.createElement('div');
         if (statusBarEnabled) {
-            eSouthPanel.appendChild(this.statusBar.getGui());
+            eSouthPanel.appendChild(this.statusBar.getHtmlElement());
         }
         if (paginationPanelEnabled) {
             var paginationComp = new paginationComp_1.PaginationComp();
             this.context.wireBean(paginationComp);
-            eSouthPanel.appendChild(paginationComp.getGui());
+            eSouthPanel.appendChild(paginationComp.getHtmlElement());
             this.destroyFunctions.push(paginationComp.destroy.bind(paginationComp));
         }
         return eSouthPanel;

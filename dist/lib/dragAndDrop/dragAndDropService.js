@@ -95,15 +95,15 @@ var DragAndDropService = (function () {
         this.dragging = true;
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
-        this.dragSource.dragItem.forEach(function (column) { return column.setMoving(true); });
-        this.dragItem = this.dragSource.dragItem;
+        this.dragItem = this.dragSource.dragItemCallback();
+        this.dragItem.columns.forEach(function (column) { return column.setMoving(true); });
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
         this.createGhost();
     };
     DragAndDropService.prototype.onDragStop = function (mouseEvent) {
         this.eventLastTime = null;
         this.dragging = false;
-        this.dragItem.forEach(function (column) { return column.setMoving(false); });
+        this.dragItem.columns.forEach(function (column) { return column.setMoving(false); });
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
             var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
@@ -212,7 +212,8 @@ var DragAndDropService = (function () {
             vDirection: vDirection,
             hDirection: hDirection,
             dragSource: this.dragSource,
-            fromNudge: fromNudge
+            fromNudge: fromNudge,
+            dragItem: this.dragItem
         };
         return dropTargetEvent;
     };

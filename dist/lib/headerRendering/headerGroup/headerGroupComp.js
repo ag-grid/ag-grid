@@ -92,7 +92,7 @@ var HeaderGroupComp = (function (_super) {
         // no renderer, default text render
         if (this.params.displayName && this.params.displayName !== '') {
             if (utils_1.Utils.isBrowserSafari()) {
-                this.getGui().style.display = 'table-cell';
+                this.getHtmlElement().style.display = 'table-cell';
             }
             var eInnerText = this.getRefElement('agLabel');
             eInnerText.innerHTML = this.params.displayName;

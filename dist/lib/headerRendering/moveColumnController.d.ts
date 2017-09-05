@@ -30,7 +30,7 @@ export declare class MoveColumnController {
     onDragging(draggingEvent: DraggingEvent, fromEnter?: boolean): void;
     private normaliseDirection(hDirection);
     private calculateOldIndex(movingCols);
-    private attemptMoveColumns(allMovingColumns, hDirection, xAdjusted, fromEnter);
+    private attemptMoveColumns(dragSourceType, allMovingColumns, hDirection, xAdjusted, fromEnter);
     private calculateValidMoves(movingCols, draggingRight, x);
     private isColumnHidden(displayedColumns, col);
     private ensureIntervalStarted();

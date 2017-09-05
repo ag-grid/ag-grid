@@ -45,6 +45,7 @@ export declare class RenderedHeaderCell extends Component {
     private setupMovingCss();
     private onColumnMovingChanged();
     private setupMove(eHeaderCellLabel);
+    private createDragItem();
     private setupTap();
     private setupResize();
     private useRenderer(headerNameValue, headerCellRenderer, eText);

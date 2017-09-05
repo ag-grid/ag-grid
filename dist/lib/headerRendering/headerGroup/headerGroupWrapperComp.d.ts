@@ -2,9 +2,8 @@
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
-import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { DropTarget } from "../../dragAndDrop/dragAndDropService";
+import { DragItem, DropTarget } from "../../dragAndDrop/dragAndDropService";
 export declare class HeaderGroupWrapperComp extends Component {
     private static TEMPLATE;
     private gridOptionsWrapper;
@@ -30,7 +29,7 @@ export declare class HeaderGroupWrapperComp extends Component {
     private appendHeaderGroupComp(displayName);
     private addClasses();
     private setupMove(eHeaderGroup, displayName);
-    getAllColumnsInThisGroup(): Column[];
+    getDragItemForGroup(): DragItem;
     private isSuppressMoving();
     private setupWidth();
     private onDisplayedChildrenChanged();
