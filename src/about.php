@@ -144,7 +144,7 @@
 
         <div class="col-md-4">
             <div>
-                <img src='images/team/niall.png'/>
+                <img src='images/team/niall.jpg'/>
             </div>
             <h3>Niall Crosby</h3>
             <h4>Niall Crosby, CEO & CTO</h4>
@@ -155,7 +155,7 @@
 
         <div class="col-md-4">
             <div>
-                <img src='images/team/sean.png'/>
+                <img src='images/team/sean.jpg'/>
             </div>
             <h3>Sean Landsman</h3>
             <h4>Lead Developer - Frameworks</h4>
@@ -166,7 +166,7 @@
 
         <div class="col-md-4">
             <div>
-                <img src='images/team/alberto.png'/>
+                <img src='images/team/alberto.jpg'/>
             </div>
             <h3>Alberto Gutierrez</h3>
             <h4>Lead Developer - Data Internals</h4>
@@ -192,7 +192,7 @@
 
         <div class="col-md-4">
             <div>
-                <img src='images/team/petyo.png'/>
+                <img src='images/team/petyo.jpg'/>
             </div>
             <h3>Petyo Ivanov</h3>
             <h4>Lead Developer - UI</h4>
