@@ -16,6 +16,7 @@ import {Bean} from "./context/context";
 import {Qualifier} from "./context/context";
 import {Autowired} from "./context/context";
 import {PostConstruct} from "./context/context";
+import {OriginalColumnGroup} from "./entities/originalColumnGroup";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService {
@@ -147,11 +148,10 @@ export class AlignedGridsService {
     private processGroupOpenedEvent(groupOpenedEvent: ColumnGroupOpenedEvent): void {
         // likewise for column group
         let masterColumnGroup = groupOpenedEvent.columnGroup;
-        let otherColumnGroup: ColumnGroup;
+        let otherColumnGroup: OriginalColumnGroup;
         if (masterColumnGroup) {
-            let colId = masterColumnGroup.getGroupId();
-            let instanceId = masterColumnGroup.getInstanceId();
-            otherColumnGroup = this.columnController.getColumnGroup(colId, instanceId);
+            let groupId = masterColumnGroup.getGroupId();
+            otherColumnGroup = this.columnController.getOriginalColumnGroup(groupId);
         }
         if (masterColumnGroup && !otherColumnGroup) { return; }
 

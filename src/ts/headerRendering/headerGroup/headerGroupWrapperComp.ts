@@ -86,7 +86,7 @@ export class HeaderGroupWrapperComp extends Component {
             displayName: displayName,
             columnGroup: this.columnGroup,
             setExpanded: (expanded:boolean)=>{
-                this.columnController.setColumnGroupOpened(this.columnGroup, expanded);
+                this.columnController.setColumnGroupOpened(this.columnGroup.getOriginalColumnGroup(), expanded);
             },
             api: this.gridApi,
             columnApi: this.columnApi,

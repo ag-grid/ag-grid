@@ -77,7 +77,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private addTouchAndClickListeners(eElement: HTMLElement): void {
         let expandAction = ()=> {
             let newExpandedValue = !this.params.columnGroup.isExpanded();
-            this.columnController.setColumnGroupOpened(this.params.columnGroup, newExpandedValue);
+            this.columnController.setColumnGroupOpened(this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue);
         };
 
         let touchListener = new TouchListener(this.eCloseIcon);

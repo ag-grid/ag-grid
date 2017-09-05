@@ -4,6 +4,7 @@ import {ColDef} from "./entities/colDef";
 import {GridApi} from "./gridApi";
 import {ColumnApi} from "./columnController/columnController";
 import {ColumnGroup} from "./entities/columnGroup";
+import {OriginalColumnGroup} from "./entities/originalColumnGroup";
 
 export class Events {
 
@@ -206,7 +207,7 @@ export interface RangeSelectionChangedEvent extends AgGridEvent {
 }
 
 export interface ColumnGroupOpenedEvent extends AgGridEvent {
-    columnGroup: ColumnGroup
+    columnGroup: OriginalColumnGroup
 }
 
 export interface ItemsAddedEvent extends AgGridEvent {

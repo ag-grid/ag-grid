@@ -39,8 +39,9 @@ export class ColumnApi {
     @Autowired('columnController') private _columnController: ColumnController;
 
     public sizeColumnsToFit(gridWidth: any): void { this._columnController.sizeColumnsToFit(gridWidth); }
-    public setColumnGroupOpened(group: ColumnGroup|string, newValue: boolean, instanceId?: number): void { this._columnController.setColumnGroupOpened(group, newValue, instanceId); }
+    public setColumnGroupOpened(group: OriginalColumnGroup|string, newValue: boolean): void { this._columnController.setColumnGroupOpened(group, newValue); }
     public getColumnGroup(name: string, instanceId?: number): ColumnGroup { return this._columnController.getColumnGroup(name, instanceId); }
+    public getOriginalColumnGroup(name: string): OriginalColumnGroup { return this._columnController.getOriginalColumnGroup(name); }
 
     public getDisplayNameForColumn(column: Column, location: string): string { return this._columnController.getDisplayNameForColumn(column, location); }
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string { return this._columnController.getDisplayNameForColumnGroup(columnGroup, location); }
@@ -119,7 +120,7 @@ export class ColumnApi {
 
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
 
-    public columnGroupOpened(group: ColumnGroup|string, newValue: boolean): void {
+    public columnGroupOpened(group: OriginalColumnGroup|string, newValue: boolean): void {
         console.error('ag-Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
         this.setColumnGroupOpened(group, newValue);
     }
@@ -1673,11 +1674,12 @@ export class ColumnController {
     }
 
     // called by headerRenderer - when a header is opened or closed
-    public setColumnGroupOpened(passedGroup: ColumnGroup|string, newValue: boolean, instanceId?:number): void {
+    public setColumnGroupOpened(key: OriginalColumnGroup|string, newValue: boolean): void {
         this.columnAnimationService.start();
 
-        let groupToUse: ColumnGroup = this.getColumnGroup(passedGroup, instanceId);
+        let groupToUse: OriginalColumnGroup = this.getOriginalColumnGroup(key);
         if (!groupToUse) { return; }
+
         this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');
         groupToUse.setExpanded(newValue);
 
@@ -1691,6 +1693,29 @@ export class ColumnController {
         this.eventService.dispatchEvent(event);
 
         this.columnAnimationService.finish();
+    }
+
+    public getOriginalColumnGroup(key: OriginalColumnGroup|string): OriginalColumnGroup {
+        if (key instanceof OriginalColumnGroup) {
+            return <OriginalColumnGroup> key;
+        }
+
+        if (typeof key !== 'string') {
+            console.error('ag-Grid: group key must be a string');
+        }
+
+        // otherwise, search for the column group by id
+        let res: OriginalColumnGroup = null;
+        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, node => {
+            if (node instanceof OriginalColumnGroup) {
+                let originalColumnGroup = <OriginalColumnGroup> node;
+                if (originalColumnGroup.getId() === key) {
+                    res = originalColumnGroup;
+                }
+            }
+        });
+
+        return res;
     }
 
     // used by updateModel
