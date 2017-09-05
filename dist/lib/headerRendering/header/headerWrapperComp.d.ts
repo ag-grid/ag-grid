@@ -36,6 +36,7 @@ export declare class HeaderWrapperComp extends Component {
     private appendHeaderComp(displayName, enableSorting, enableMenu);
     private onColumnMovingChanged();
     private setupMove(eHeaderCellLabel, displayName);
+    private createDragItem();
     private setupResize();
     onDragging(dragChange: number, finished: boolean): void;
     onDragStart(): void;

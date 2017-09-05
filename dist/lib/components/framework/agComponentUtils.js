@@ -17,7 +17,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var componentMetadataProvider_1 = require("./componentMetadataProvider");
-var utils_1 = require("../../utils");
 var DefaultCellRenderer = (function () {
     function DefaultCellRenderer() {
     }
@@ -32,8 +31,8 @@ var DefaultCellRenderer = (function () {
     DefaultCellRenderer.prototype.getGui = function () {
         var valueToUse = this.params.valueFormatted != null ? this.params.valueFormatted : this.params.value;
         if (valueToUse == null)
-            return utils_1._.loadTemplate('');
-        return utils_1._.loadTemplate(valueToUse);
+            return '';
+        return '<span>' + valueToUse + '</span>';
     };
     return DefaultCellRenderer;
 }());
@@ -68,9 +67,11 @@ var AgComponentUtils = (function () {
             };
             Adapter.prototype.getGui = function () {
                 var callbackResult = callback(this.params);
+                if (callbackResult == null)
+                    return '';
                 if (typeof callbackResult != 'string')
                     return callbackResult;
-                return utils_1._.loadTemplate('<span>' + callbackResult + '</span>');
+                return callbackResult;
             };
             Adapter.prototype.init = function (params) {
                 this.params = params;

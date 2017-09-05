@@ -80,7 +80,7 @@ var AutoWidthCalculator = (function () {
                 }
             }
         });
-        return comp ? comp.getGui() : null;
+        return comp ? comp.getHtmlElement() : null;
     };
     AutoWidthCalculator.prototype.putRowCellsIntoDummyContainer = function (column, eDummyContainer) {
         var _this = this;

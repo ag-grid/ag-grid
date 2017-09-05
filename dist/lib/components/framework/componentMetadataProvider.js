@@ -48,27 +48,27 @@ var ComponentMetadataProvider = (function () {
             },
             cellRenderer: {
                 mandatoryMethodList: ['refresh'],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             innerRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             fullWidthCellRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             pinnedRowCellRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             groupRowInnerRenderer: {
                 mandatoryMethodList: [],
-                optionalMethodList: [],
+                optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             }
         };

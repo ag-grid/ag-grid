@@ -52,7 +52,7 @@ var PopupEditorWrapper = (function (_super) {
     PopupEditorWrapper.prototype.init = function (params) {
         var _this = this;
         this.params = params;
-        this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+        this.gridOptionsWrapper.setDomData(this.getHtmlElement(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
         this.addDestroyFunc(function () {
             if (_this.cellEditor.destroy) {
                 _this.cellEditor.destroy();
@@ -62,7 +62,7 @@ var PopupEditorWrapper = (function (_super) {
         // this needs to be 'super' and not 'this' as if we call 'this',
         // it ends up called 'getGui()' on the child before 'init' was called,
         // which is not good
-        _super.prototype.getGui.call(this), 'keydown', this.onKeyDown.bind(this));
+        _super.prototype.getHtmlElement.call(this), 'keydown', this.onKeyDown.bind(this));
     };
     PopupEditorWrapper.prototype.afterGuiAttached = function () {
         if (this.cellEditor.afterGuiAttached) {

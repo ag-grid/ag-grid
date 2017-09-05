@@ -43,6 +43,7 @@ var HeaderComp = (function (_super) {
     HeaderComp.prototype.init = function (params) {
         this.params = params;
         this.setupTap();
+        this.setupIcons(params.column);
         this.setupMenu();
         this.setupSort();
         this.setupFilterIcon();
@@ -50,6 +51,13 @@ var HeaderComp = (function (_super) {
     };
     HeaderComp.prototype.setupText = function (displayName) {
         this.eText.innerHTML = displayName;
+    };
+    HeaderComp.prototype.setupIcons = function (column) {
+        this.addInIcon('sortAscending', this.eSortAsc, column);
+        this.addInIcon('sortDescending', this.eSortDesc, column);
+        this.addInIcon('sortUnSort', this.eSortNone, column);
+        this.addInIcon('menu', this.eMenu, column);
+        this.addInIcon('filter', this.eFilter, column);
     };
     HeaderComp.prototype.addInIcon = function (iconName, eParent, column) {
         var eIcon = utils_1.Utils.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
@@ -60,7 +68,7 @@ var HeaderComp = (function (_super) {
         if (this.gridOptionsWrapper.isSuppressTouch()) {
             return;
         }
-        var touchListener = new touchListener_1.TouchListener(this.getGui());
+        var touchListener = new touchListener_1.TouchListener(this.getHtmlElement());
         if (this.params.enableMenu) {
             var longTapListener = function (event) {
                 _this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(_this.params.column, event.touchStart);
@@ -127,9 +135,9 @@ var HeaderComp = (function (_super) {
         this.setMultiSortOrder();
     };
     HeaderComp.prototype.onSortChanged = function () {
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
-        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
+        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
         if (this.eSortAsc) {
             utils_1.Utils.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.params.column.isSortAscending());
         }

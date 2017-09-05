@@ -25,7 +25,6 @@ var componentResolver_1 = require("./componentResolver");
 var groupCellRenderer_1 = require("../../rendering/cellRenderers/groupCellRenderer");
 var animateShowChangeCellRenderer_1 = require("../../rendering/cellRenderers/animateShowChangeCellRenderer");
 var animateSlideCellRenderer_1 = require("../../rendering/cellRenderers/animateSlideCellRenderer");
-var agComponentUtils_1 = require("./agComponentUtils");
 var rowComp_1 = require("../../rendering/rowComp");
 var RegisteredComponentSource;
 (function (RegisteredComponentSource) {
@@ -58,16 +57,16 @@ var ComponentProvider = (function () {
             floatingFilterWrapperComponent: floatingFilterWrapper_1.FloatingFilterWrapperComp,
             emptyFloatingFilterWrapperComponent: floatingFilterWrapper_1.EmptyFloatingFilterWrapperComp,
             //renderers
-            cellRenderer: agComponentUtils_1.DefaultCellRenderer,
-            fullWidthCellRenderer: groupCellRenderer_1.GroupCellRenderer,
-            innerRenderer: agComponentUtils_1.DefaultCellRenderer,
-            groupRowInnerRenderer: agComponentUtils_1.DefaultCellRenderer,
+            cellRenderer: null,
+            fullWidthCellRenderer: null,
+            innerRenderer: null,
+            groupRowInnerRenderer: null,
             animateShowChange: animateShowChangeCellRenderer_1.AnimateShowChangeCellRenderer,
             animateSlide: animateSlideCellRenderer_1.AnimateSlideCellRenderer,
             group: groupCellRenderer_1.GroupCellRenderer,
             groupRowRenderer: groupCellRenderer_1.GroupCellRenderer,
             loadingCellRenderer: rowComp_1.LoadingCellRenderer,
-            pinnedRowCellRenderer: agComponentUtils_1.DefaultCellRenderer
+            pinnedRowCellRenderer: null
         };
     };
     ComponentProvider.prototype.registerComponent = function (name, component) {

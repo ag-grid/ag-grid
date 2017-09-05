@@ -9,7 +9,7 @@ export declare class DefaultCellRenderer implements ICellRendererComp {
     private params;
     init?(params: ICellRendererParams): void;
     refresh(params: any): boolean;
-    getGui(): HTMLElement;
+    getGui(): HTMLElement | string;
 }
 export declare class AgComponentUtils {
     private componentMetadataProvider;

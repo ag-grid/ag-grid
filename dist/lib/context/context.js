@@ -46,7 +46,7 @@ var Context = (function () {
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
             var newComponent = new this.componentsMappedByName[key];
             this.wireBean(newComponent);
-            this.copyAttributesFromNode(element, newComponent.getGui());
+            this.copyAttributesFromNode(element, newComponent.getHtmlElement());
             newComponent.attributesSet();
             return newComponent;
         }

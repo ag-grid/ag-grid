@@ -112,14 +112,14 @@ var HeaderContainer = (function () {
             var headerRowComp = new headerRowComp_1.HeaderRowComp(dept, type, this.pinned, this.eRoot, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
-            this.eContainer.appendChild(headerRowComp.getGui());
+            this.eContainer.appendChild(headerRowComp.getHtmlElement());
         }
         var includeFloatingFilterRow = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
         if (includeFloatingFilterRow) {
             var headerRowComp = new headerRowComp_1.HeaderRowComp(rowCount, headerRowComp_1.HeaderRowType.FLOATING_FILTER, this.pinned, this.eRoot, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
-            this.eContainer.appendChild(headerRowComp.getGui());
+            this.eContainer.appendChild(headerRowComp.getHtmlElement());
         }
     };
     __decorate([

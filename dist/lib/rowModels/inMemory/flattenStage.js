@@ -75,6 +75,10 @@ var FlattenStage = (function () {
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
             }
+            // if we are pivoting, we never map below the leaf group
+            if (skipLeafNodes && rowNode.leafGroup) {
+                continue;
+            }
             if (rowNode.group) {
                 // we traverse the group if it is expended, however we always traverse if the parent node
                 // was removed (as the group will never be opened if it is not displayed, we show the children instead)

@@ -10,25 +10,31 @@ export interface VisibleChangedEvent extends AgEvent {
 }
 export declare class Component extends BeanStub implements IComponent<any, IAfterGuiAttachedParams> {
     static EVENT_VISIBLE_CHANGED: string;
-    private eGui;
+    private template;
+    private eHtmlElement;
     private childComponents;
+    private hydrated;
     private annotatedEventListeners;
     private visible;
     private compId;
     constructor(template?: string);
+    setTemplateNoHydrate(template: string): void;
+    afterGuiAttached(params: IAfterGuiAttachedParams): void;
     getCompId(): number;
     instantiate(context: Context): void;
     private instantiateRecurse(parentNode, context);
     private swapComponentForNode(newComponent, parentNode, childNode);
     private swapInComponentForQuerySelectors(newComponent, childNode);
     setTemplate(template: string): void;
-    setTemplateFromElement(element: HTMLElement): void;
+    setHtmlElement(element: HTMLElement): void;
+    private hydrate();
     attributesSet(): void;
     private wireQuerySelectors();
     private addAnnotatedEventListeners();
     private removeAnnotatedEventListeners();
-    getGui(): HTMLElement;
-    protected setGui(eGui: HTMLElement): void;
+    getGui(): HTMLElement | string;
+    getHtmlElement(): HTMLElement;
+    protected setHtmlElementNoHydrate(eHtmlElement: HTMLElement): void;
     protected queryForHtmlElement(cssSelector: string): HTMLElement;
     protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement;
     appendChild(newChild: Node | IComponent<any, IAfterGuiAttachedParams>): void;

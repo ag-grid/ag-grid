@@ -70,8 +70,6 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
     }
 
     public getValue(): any {
-        console.log('value is ' + this.eSelect.value);
         return this.eSelect.value;
     }
-
 }

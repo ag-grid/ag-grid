@@ -141,7 +141,7 @@ var RowComp = (function (_super) {
     RowComp.prototype.getCellForCol = function (column) {
         var cellComp = this.cellComps[column.getColId()];
         if (cellComp) {
-            return cellComp.getGui();
+            return cellComp.getHtmlElement();
         }
         else {
             return null;
@@ -497,7 +497,7 @@ var RowComp = (function (_super) {
         }
     };
     RowComp.prototype.ensureCellInCorrectContainer = function (cellComp) {
-        var eCell = cellComp.getGui();
+        var element = cellComp.getHtmlElement();
         var column = cellComp.getColumn();
         var pinnedType = column.getPinned();
         var eContainer = this.getContainerForCell(pinnedType);
@@ -507,9 +507,9 @@ var RowComp = (function (_super) {
         if (inWrongRow) {
             // take out from old row
             if (eOldContainer) {
-                eOldContainer.removeChild(eCell);
+                eOldContainer.removeChild(element);
             }
-            eContainer.appendChild(eCell);
+            eContainer.appendChild(element);
             cellComp.setParentRow(eContainer);
         }
     };
@@ -635,30 +635,13 @@ var RowComp = (function (_super) {
     };
     RowComp.prototype.createFullWidthRowContainer = function (rowContainerComp, pinned, extraCssClass, cellRendererType, callback) {
         var _this = this;
-        var params = this.createFullWidthParams(pinned);
-        var cellRenderer = this.beans.componentResolver.createAgGridComponent(null, params, cellRendererType);
-        var gui = utils_1._.assertHtmlElement(cellRenderer.getGui());
-        var guiIsTemplate = typeof gui === 'string';
-        var cellTemplate = guiIsTemplate ? gui : '';
-        var rowTemplate = this.createTemplate(cellTemplate, extraCssClass);
+        var rowTemplate = this.createTemplate('', extraCssClass);
         rowContainerComp.appendRowTemplate(rowTemplate, function () {
             var eRow = rowContainerComp.getRowElement(_this.getCompId());
-            var eCell;
-            if (guiIsTemplate) {
-                eCell = eRow.firstChild;
-            }
-            else {
-                eRow.appendChild(gui);
-                eCell = gui;
-            }
-            if (cellRenderer.afterGuiAttached) {
-                var params_1 = {
-                    eGridCell: eRow,
-                    eParentOfValue: eRow,
-                    eComponent: eCell
-                };
-                cellRenderer.afterGuiAttached(params_1);
-            }
+            var params = _this.createFullWidthParams(eRow, pinned);
+            var cellRenderer = _this.beans.componentResolver.createAgGridComponent(null, params, cellRendererType);
+            var gui = utils_1._.ensureElement(cellRenderer.getGui());
+            eRow.appendChild(gui);
             _this.afterRowAttached(rowContainerComp, eRow);
             callback(eRow, cellRenderer);
             _this.angular1Compile(eRow);
@@ -669,7 +652,7 @@ var RowComp = (function (_super) {
             this.beans.$compile(element)(this.scope);
         }
     };
-    RowComp.prototype.createFullWidthParams = function (pinned) {
+    RowComp.prototype.createFullWidthParams = function (eRow, pinned) {
         var params = {
             fullWidth: true,
             data: this.rowNode.data,
@@ -681,8 +664,8 @@ var RowComp = (function (_super) {
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext(),
             // these need to be taken out, as part of 'afterAttached' now
-            eGridCell: null,
-            eParentOfValue: null,
+            eGridCell: eRow,
+            eParentOfValue: eRow,
             pinned: pinned,
             addRenderedRowListener: this.addEventListener.bind(this)
         };
@@ -694,7 +677,6 @@ var RowComp = (function (_super) {
             classes.push(extraCssClass);
         }
         classes.push('ag-row');
-        classes.push('ag-row-no-focus');
         classes.push(this.rowFocused ? 'ag-row-no-focus' : 'ag-row-focus');
         if (this.fadeRowIn) {
             classes.push('ag-opacity-zero');

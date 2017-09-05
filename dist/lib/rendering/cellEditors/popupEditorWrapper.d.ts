@@ -12,7 +12,7 @@ export declare class PopupEditorWrapper extends Component implements ICellEditor
     gridOptionsWrapper: GridOptionsWrapper;
     constructor(cellEditor: ICellEditorComp);
     private onKeyDown(event);
-    getGui(): HTMLElement;
+    getGui(): HTMLElement | string;
     init(params: ICellEditorParams): void;
     afterGuiAttached(): void;
     getValue(): any;

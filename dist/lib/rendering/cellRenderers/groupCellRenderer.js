@@ -46,24 +46,16 @@ var GroupCellRenderer = (function (_super) {
     }
     GroupCellRenderer.prototype.init = function (params) {
         this.params = params;
-        this.isEmbeddedRowMismatch();
         var embeddedRowMismatch = this.isEmbeddedRowMismatch();
-        //This allows for empty strings to appear as groups since
-        //it will only return for null or undefined.
+        // This allows for empty strings to appear as groups since
+        // it will only return for null or undefined.
         var cellIsEmpty = params.value == null;
         this.cellIsBlank = embeddedRowMismatch || cellIsEmpty;
         if (this.cellIsBlank) {
             return;
         }
         this.setupDragOpenParents();
-    };
-    GroupCellRenderer.prototype.afterGuiAttached = function (params) {
-        if (this.cellIsBlank) {
-            return;
-        }
-        // hack to get renderer working with slick and non-slick
-        var eGridCell = this.params.eGridCell ? this.params.eGridCell : params.eGridCell;
-        this.addExpandAndContract(eGridCell);
+        this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.addPadding();
@@ -121,11 +113,11 @@ var GroupCellRenderer = (function (_super) {
         }
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // if doing rtl, padding is on the right
-            this.getGui().style.paddingRight = paddingPx + 'px';
+            this.getHtmlElement().style.paddingRight = paddingPx + 'px';
         }
         else {
             // otherwise it is on the left
-            this.getGui().style.paddingLeft = paddingPx + 'px';
+            this.getHtmlElement().style.paddingLeft = paddingPx + 'px';
         }
     };
     GroupCellRenderer.prototype.addPadding = function () {
@@ -145,9 +137,11 @@ var GroupCellRenderer = (function (_super) {
         if (rowNode.footer) {
             this.createFooterCell();
         }
-        else if (rowNode.group) {
+        else if (rowNode.group || utils_1.Utils.get(params.colDef, 'cellRendererParams.innerRenderer', null)) {
             this.createGroupCell();
-            this.addChildCount();
+            if (rowNode.group) {
+                this.addChildCount();
+            }
         }
         else {
             this.createLeafCell();
@@ -187,7 +181,7 @@ var GroupCellRenderer = (function (_super) {
             this.cellRendererService.useFullWidthGroupRowInnerCellRenderer(this.eValue, params);
         }
         else {
-            this.cellRendererService.useInnerCellRenderer(this.params, columnToUse.getColDef(), this.eValue, params);
+            this.cellRendererService.useInnerCellRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), this.eValue, params);
         }
     };
     GroupCellRenderer.prototype.addChildCount = function () {
@@ -228,12 +222,13 @@ var GroupCellRenderer = (function (_super) {
             var cbSelectionComponent_1 = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent_1);
             cbSelectionComponent_1.init({ rowNode: rowNode });
-            this.eCheckbox.appendChild(cbSelectionComponent_1.getGui());
+            this.eCheckbox.appendChild(cbSelectionComponent_1.getHtmlElement());
             this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
         }
     };
-    GroupCellRenderer.prototype.addExpandAndContract = function (eGroupCell) {
+    GroupCellRenderer.prototype.addExpandAndContract = function () {
         var params = this.params;
+        var eGroupCell = params.eGridCell;
         var eExpandedIcon = utils_1.Utils.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
         var eContractedIcon = utils_1.Utils.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
         this.eExpanded.appendChild(eExpandedIcon);
@@ -241,14 +236,14 @@ var GroupCellRenderer = (function (_super) {
         var expandOrContractListener = this.onExpandOrContract.bind(this);
         this.addDestroyableEventListener(this.eExpanded, 'click', expandOrContractListener);
         this.addDestroyableEventListener(this.eContracted, 'click', expandOrContractListener);
-        // if editing groups, then double click is to start editing
-        if (!this.gridOptionsWrapper.isEnableGroupEdit()) {
-            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
-        }
         // expand / contract as the user hits enter
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
         this.addDestroyableEventListener(params.node, rowNode_1.RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
+        // if editing groups, then double click is to start editing
+        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
+            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
+        }
     };
     GroupCellRenderer.prototype.onKeyDown = function (event) {
         if (utils_1.Utils.isKeyPressed(event, constants_1.Constants.KEY_ENTER)) {
@@ -303,11 +298,14 @@ var GroupCellRenderer = (function (_super) {
             this.params.api.redrawRows({ rowNodes: [rowNode] });
         }
     };
-    GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
+    GroupCellRenderer.prototype.isExpandable = function () {
         var rowNode = this.params.node;
         var reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
-        var expandable = this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
-        if (expandable) {
+        return this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
+    };
+    GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
+        var rowNode = this.params.node;
+        if (this.isExpandable()) {
             // if expandable, show one based on expand state.
             // if we were dragged down, means our parent is always expanded
             var expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;

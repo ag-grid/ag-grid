@@ -43,10 +43,10 @@ var CheckboxSelectionComponent = (function (_super) {
         this.eCheckedIcon = utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null);
         this.eUncheckedIcon = utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null);
         this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null);
-        var eGui = this.getGui();
-        eGui.appendChild(this.eCheckedIcon);
-        eGui.appendChild(this.eUncheckedIcon);
-        eGui.appendChild(this.eIndeterminateIcon);
+        var element = this.getHtmlElement();
+        element.appendChild(this.eCheckedIcon);
+        element.appendChild(this.eUncheckedIcon);
+        element.appendChild(this.eIndeterminateIcon);
     };
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
         var state = this.rowNode.isSelected();
