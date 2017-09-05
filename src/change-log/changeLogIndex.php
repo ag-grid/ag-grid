@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
 
     <h4>Bug Fixes</h4>
     <ul>
-        <li>AG-683 fixing bug where floating filters wouldn't get redrawn if showing/hiding columns from the tool panel</li>
+        <li>AG-683/411 fixing bug where floating filters wouldn't get redrawn if showing/hiding columns from the tool panel</li>
         <li>AG-473 fixing bug where the context menu wouldn't appear in the pinned are if there were no rows to show</li>
     </ul>
 
