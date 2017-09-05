@@ -21,6 +21,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-683/411 fixing bug where floating filters wouldn't get redrawn if showing/hiding columns from the tool panel</li>
         <li>AG-473 fixing bug where the context menu wouldn't appear in the pinned are if there were no rows to show</li>
         <li>AG-738 pinning columns by dragging mouse to edge was broke</li>
+        <li>Bugfix - event columnGroupOpened had reference to column rather than the original column group</li>
     </ul>
 
     <h4>Enhancements</h4>
@@ -31,7 +32,6 @@ include '../documentation-main/documentation_header.php';
             embedded)
         </li>
         <li>AG-737 the menu items 'expand all' and 'contract all' now only appear for InMemoryRowModel</li>
-        <li>Bugfix - event columnGroupOpened had reference to column rather than the original column group</li>
     </ul>
 
     <h2>Version 13.1.x</h2>
