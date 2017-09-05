@@ -12,7 +12,7 @@ var gridOptions = {
     ],
 
     enableColResize: true,
-    enforceRowDomOrder: true,
+    ensureDomOrder: true,
     suppressColumnVirtualisation: true,
     rowBuffer: 999
 };
