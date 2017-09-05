@@ -102,15 +102,6 @@ export class MoveColumnController {
         return x;
     }
 
-    private workOutNewIndex_old(displayedColumns: Column[], movingColumns: Column[], allColumns: Column[], dragColumn: Column, hDirection: HDirection, xAdjustedForScroll: number): number[] {
-        // if (hDirection === HDirection.Left) {
-        //     return this.getNewIndexForColMovingLeft(displayedColumns, movingColumns, allColumns, xAdjustedForScroll);
-        // } else {
-        //     return this.getNewIndexForColMovingRight(displayedColumns, movingColumns, allColumns, xAdjustedForScroll);
-        // }
-        return null;
-    }
-
     private checkCenterForScrolling(xAdjustedForScroll: number): void {
         if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
@@ -355,7 +346,7 @@ export class MoveColumnController {
             this.failedMoveAttempts++;
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
             if (this.failedMoveAttempts > 7) {
-                let columns = this.lastDraggingEvent.dragSource.dragItemCallback.bind(this);
+                let columns = this.lastDraggingEvent.dragItem.columns;
                 let pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
                 this.columnController.setColumnsPinned(columns, pinType);
                 this.dragAndDropService.nudge();
