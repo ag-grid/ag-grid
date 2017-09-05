@@ -318,7 +318,7 @@ CellValueChangedEvent {
     │       <span class="event-attribute">finished</span>: boolean // true for last event in sequence of dragging events
     │     }</span>
     ├── ColumnGroupOpenedEvent <span class="event-properties">{
-    │       <span class="event-attribute">columnGroup</span>: ColumnGroup // the column group that was opened
+    │       <span class="event-attribute">columnGroup</span>: OriginalColumnGroup // the original column group that was opened
     │     }</span>
     ├── BodyScrollEvent <span class="event-properties">{
     │       <span class="event-attribute">direction</span>: string // either 'horizontal' or 'vertical'

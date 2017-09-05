@@ -22,6 +22,7 @@ include '../documentation-main/documentation_header.php';
             embedded)
         </li>
         <li>AG-737 the menu items 'expand all' and 'contract all' now only appear for InMemoryRowModel</li>
+        <li>Bugfix - event columnGroupOpened had reference to column rather than the original column group</li>
     </ul>
 
     <h2>Version 13.1.x</h2>

@@ -19,8 +19,8 @@ include('../includes/mediaHeader.php');
         <h3>Make It Faster</h3>
 
         <p>
-            ag-Grid gives excellent performance making data intensive applications possible even in browsers
-            like Internet Explorer. In this blog I present the key design patterns used in ag-Grid which allow
+            ag-Grid is very fast, even in Internet Explorer and with large data sets.
+            In this blog I present the key design patterns, or 'hacks', used in ag-Grid which allow
             the grid to render so fast. This will be of interest to users of ag-Grid as if you are aware of
             these designs, you can code your application to make best use of them. Or if you are a competitor
             of ag-Grid then you can take some of these designs into your own grid - it's lonely at the top,
@@ -37,12 +37,14 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            If the grid was to render 10,000 rows, it would probably crash the browser.
+            If the grid was to render 10,000 rows, it would probably crash the browser as to many DOM elements
+            are getting created.
             Row virtualisation allows the display of a very large number of rows by only rendering what is
             currently visible to the user.
         </p>
 
         <p>
+            #### replace this with animated gif ####
             To see row virtualisation in action go to an ag-Grid demo and open the browser developer
             tools and observe the rows in the dom changing as you scroll up and down inside the grid.
         </p>
@@ -58,6 +60,111 @@ include('../includes/mediaHeader.php');
         <p>
             Column virtualisation allows the grid to display large numbers of columns without degrading the
             performance of the grid.
+        </p>
+
+        <h3>Hack 3 - Exploit Event Propagation</h3>
+
+        <h4>Problem Statement</h4>
+
+        <p>
+            The grid needs to have mouse and keyboard listeners on
+            all the cells so that a) the grid can fire events such as 'cellClicked' and b) so that the grid
+            can perform grid operations such as selection, range selection, keyboard navigation etc.
+            In all there are 8 events that the grid requires at the cell level which are
+            <i>click, dblclick, mousedown, contextmenu, mouseover,
+                mouseout, mouseenter</i> and <i>mouseleave</i>.
+        </p>
+
+        <p>
+            Adding event listeners to the DOM takes a small performance hit.
+            A grid would naturally add thousands of such listeners
+            as even a simple grid of 20 visible columns and 50 visible rows means 20 (columns) x 50 (rows)
+            x 8 (events) = 8,000 event listeners. When
+            the user scrolls, due to row and column virtualisation, these listeners are getting constantly added and
+            removed at a vicious rate which adds a lag to scrolling.
+        </p>
+
+        <h4>Solution - Event Propagation to the Rescue</h4>
+
+        <p>
+            6 of these 8 events propagate (the exceptions are <i>mouseenter</i> and <i>mouseleave</i> which do
+            not propagate). So instead of adding listeners to each cell, the grid instead adds each listener once to the container
+            that contains the cells. That way the listeners are added once as the grid initialises and not to
+            each individual cell.
+        </p>
+
+        <p>
+            The challenge is then working out which cell caused the event.
+        </p>
+
+        <pre>
+            // while creating cells the grid
+            parentContainer.addEventListener('click', myEventListener);
+
+            function myEventListener(event) {
+                let domElement = event.target;
+                if () {
+                }
+              sourceElement = sourceElement.parentElement;
+            }
+
+
+        </pre>
+
+        <p>mouse events at grid panel</p>
+
+        <p>
+            + Add listeners only to the root, so no adding or removing of listeners while virtualising.
+            Then use DOM Data (new concept) . . . is this safe? Well half the worlds investment banks use
+            ag-Grid for trading software, as well as a lot of air traffic control systems around the world,
+            it there was a problem, we'd know about it by now.
+        </p>
+
+        <h3>Hack 4 - Throw Away DOM</h3>
+
+        <p>
+            + Detach now doesn't build down, if removing row, it just gets thrown away in one DOM hit.
+            This was due to adhearing to good advice - that adding listeners (etc) should be coupled with removing them.
+            Rule: Detach just the parent, let the rest rot.
+        </p>
+
+        <h3>Hack # innerHTML where possible</h3>
+
+        <p>
+            + What we have is a hybrid. Use innerHTML where we can, then use components where the users chooses.
+        </p>
+
+        <p>
+            + When no components are used, ag-Grid builds one big HTML string and uses innerHTML to inject
+            the HTML. There is no quicker way to render. There is no quicker grid.
+        </p>
+
+        <p>
+            + Components are excellent for applications, their building blocks nature help construct
+            applications into more simple parts.
+        </p>
+
+        <h3>Hack # Animation Frames</h3>
+
+        <h3>Hack # Avoid Row Order</h3>
+
+        <p>
+            + Ensure row oder slows things down
+        </p>
+
+        <h3>Other Tried Hacks</h3>
+
+        <p>Document Fragments</p>
+
+        + Using a virtual DOM or dirty checking own't help this operation, at the end of the day they
+        will all call XXX on the DOM, they will just spend longer thinking about it.
+
+        <p>
+            + Here is the receipe for a grid. Why are we telling the world? Won't our competitors steal the ideas?
+            We are telling the world so that our users understand what's beneath the hood of ag-Grid, so they
+            can appreciate when to avoid components inside the grid and understand the tradeoffs when making
+            the decisions to use components. Yes our competitors can take these ideas and try to implement
+            them into their own grids, they can all battle it out for second place, we have no fear.
         </p>
 
         <h3>Tweaking Performance</h3>
