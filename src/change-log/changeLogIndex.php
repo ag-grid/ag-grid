@@ -20,13 +20,14 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li>AG-683/411 fixing bug where floating filters wouldn't get redrawn if showing/hiding columns from the tool panel</li>
         <li>AG-473 fixing bug where the context menu wouldn't appear in the pinned are if there were no rows to show</li>
+        <li>AG-738 pinning columns by dragging mouse to edge was broke</li>
     </ul>
 
-    <h4>Enhancemnets</h4>
+    <h4>Enhancements</h4>
     <ul>
         <li>
             Grid callback <code>getDocument()</code> now used for adding clicks to background for closing popups,
-            useful if you don't want to use the standard documnet.body (for people using non-standard browsers to GWT
+            useful if you don't want to use the standard documents.body (for people using non-standard browsers to GWT
             embedded)
         </li>
         <li>AG-737 the menu items 'expand all' and 'contract all' now only appear for InMemoryRowModel</li>
