@@ -1,7 +1,7 @@
 import {Utils as _} from "../utils";
 import {ColumnGroup} from "../entities/columnGroup";
 import {Column} from "../entities/column";
-import {ColDef, AbstractColDef, ColGroupDef, IAggFunc, ColSpanParams} from "../entities/colDef";
+import {AbstractColDef, ColDef, ColGroupDef, IAggFunc} from "../entities/colDef";
 import {ColumnGroupChild} from "../entities/columnGroupChild";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "../valueService/expressionService";
@@ -13,18 +13,26 @@ import {EventService} from "../eventService";
 import {ColumnUtils} from "./columnUtils";
 import {Logger, LoggerFactory} from "../logger";
 import {
-    ColumnEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent,
+    ColumnEvent,
+    ColumnEverythingChangedEvent,
+    ColumnGroupOpenedEvent,
+    ColumnMovedEvent,
+    ColumnPinnedEvent,
     ColumnPivotModeChangedEvent,
     ColumnResizedEvent,
     ColumnRowGroupChangedEvent,
-    ColumnValueChangedEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent, DisplayedColumnsWidthChangedEvent,
-    Events, GridColumnsChangedEvent,
+    ColumnValueChangedEvent,
+    ColumnVisibleEvent,
+    DisplayedColumnsChangedEvent,
+    DisplayedColumnsWidthChangedEvent,
+    Events,
+    GridColumnsChangedEvent,
     NewColumnsLoadedEvent,
     VirtualColumnsChangedEvent
 } from "../events";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import {GroupInstanceIdCreator} from "./groupInstanceIdCreator";
-import {Bean, Qualifier, Autowired, PostConstruct, Context, Optional} from "../context/context";
+import {Autowired, Bean, Context, Optional, PostConstruct, Qualifier} from "../context/context";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {IAggFuncService} from "../interfaces/iAggFuncService";
 import {ColumnAnimationService} from "../rendering/columnAnimationService";
@@ -50,6 +58,10 @@ export class ColumnApi {
     public setColumnState(columnState: any): boolean { return this._columnController.setColumnState(columnState); }
     public getColumnState(): any[] { return this._columnController.getColumnState(); }
     public resetColumnState(): void { this._columnController.resetColumnState(); }
+    public getColumnGroupState(): {groupId: string, open: boolean}[] {return this._columnController.getColumnGroupState()}
+    public setColumnGroupState(stateItems: ({groupId: string, open: boolean})[]): void {this._columnController.setColumnGroupState(stateItems)}
+    public resetColumnGroupState(): void { this._columnController.resetColumnGroupState(); }
+
     public isPinning(): boolean { return this._columnController.isPinningLeft() || this._columnController.isPinningRight(); }
     public isPinningLeft(): boolean { return this._columnController.isPinningLeft(); }
     public isPinningRight(): boolean { return this._columnController.isPinningRight(); }
@@ -180,7 +192,6 @@ export class ColumnApi {
         console.error('ag-Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
         return this.getDisplayNameForColumn(column, null);
     }
-
 }
 
 @Bean('columnController')
@@ -1234,7 +1245,6 @@ export class ColumnController {
         });
     }
 
-
     public resetColumnState(): void {
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
         let primaryColumns = this.getColumnsFromTree(this.primaryBalancedTree);
@@ -1675,7 +1685,37 @@ export class ColumnController {
         });
     }
 
-    public setColumnGroupState(stateItems: ({groupId: string, open: boolean})[]): void {
+    public resetColumnGroupState(): void {
+        let stateItems: {groupId: string, open: boolean}[] = [];
+
+        this.columnUtils.depthFirstOriginalTreeSearch(this.primaryBalancedTree, child => {
+            if (child instanceof OriginalColumnGroup) {
+                let groupState = {
+                    groupId: child.getGroupId(),
+                    open: child.getColGroupDef().openByDefault
+                };
+                stateItems.push(groupState);
+            }
+        });
+
+        this.setColumnGroupState(stateItems);
+    }
+
+    public getColumnGroupState(): {groupId: string, open: boolean}[] {
+        let columnGroupState: {groupId: string, open: boolean}[] = [];
+        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, node => {
+            if (node instanceof OriginalColumnGroup) {
+                let originalColumnGroup = <OriginalColumnGroup> node;
+                columnGroupState.push({
+                    groupId: originalColumnGroup.getGroupId(),
+                    open: originalColumnGroup.isExpanded()
+                });
+            }
+        });
+        return columnGroupState;
+    }
+
+    public setColumnGroupState(stateItems: {groupId: string, open: boolean}[]): void {
         this.columnAnimationService.start();
 
         let impactedGroups: OriginalColumnGroup[] = [];
