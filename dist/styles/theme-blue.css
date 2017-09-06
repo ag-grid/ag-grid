@@ -427,6 +427,13 @@
     float: right; }
   .ag-blue .ag-rtl .ag-floating-filter-button {
     float: left; }
+  .ag-blue .ag-sort-order {
+    margin-left: .5em;
+    font-size: 0.80em; }
+    .ag-blue .ag-sort-order::before {
+      content: '('; }
+    .ag-blue .ag-sort-order::after {
+      content: ')'; }
 
 .ag-blue .ag-floating-filter-body input {
   background-color: white;
@@ -438,6 +445,10 @@
   -webkit-filter: invert(100%);
   filter: invert(100%); }
 
-.ag-blue .ag-header .ag-icon-expanded, .ag-blue .ag-header .ag-icon-contracted {
+.ag-blue .ag-header .ag-icon-asc, .ag-blue .ag-header .ag-icon-desc, .ag-blue .ag-header .ag-icon-expanded, .ag-blue .ag-header .ag-icon-contracted, .ag-blue .ag-header .ag-icon-menu {
+  -webkit-filter: invert(100%);
+  filter: invert(100%); }
+
+.ag-blue .ag-tab-header .ag-icon {
   -webkit-filter: invert(100%);
   filter: invert(100%); }

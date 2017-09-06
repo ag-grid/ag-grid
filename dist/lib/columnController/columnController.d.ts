@@ -6,12 +6,14 @@ import { Column } from "../entities/column";
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
+import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { RowNode } from "../entities/rowNode";
 export declare class ColumnApi {
     private _columnController;
     sizeColumnsToFit(gridWidth: any): void;
-    setColumnGroupOpened(group: ColumnGroup | string, newValue: boolean, instanceId?: number): void;
+    setColumnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void;
     getColumnGroup(name: string, instanceId?: number): ColumnGroup;
+    getOriginalColumnGroup(name: string): OriginalColumnGroup;
     getDisplayNameForColumn(column: Column, location: string): string;
     getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string;
     getColumn(key: any): Column;
@@ -69,7 +71,7 @@ export declare class ColumnApi {
     autoSizeColumns(keys: (string | Column)[]): void;
     autoSizeAllColumns(): void;
     setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[]): void;
-    columnGroupOpened(group: ColumnGroup | string, newValue: boolean): void;
+    columnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void;
     hideColumns(colIds: any, hide: any): void;
     hideColumn(colId: any, hide: any): void;
     setState(columnState: any): boolean;
@@ -248,9 +250,12 @@ export declare class ColumnController {
     isReady(): boolean;
     private extractRowGroupColumns();
     private extractPivotColumns();
-    setColumnGroupOpened(passedGroup: ColumnGroup | string, newValue: boolean, instanceId?: number): void;
-    private getColumnGroupState();
-    private setColumnGroupState(groupState);
+    setColumnGroupState(stateItems: ({
+        groupId: string;
+        open: boolean;
+    })[]): void;
+    setColumnGroupOpened(key: OriginalColumnGroup | string, newValue: boolean): void;
+    getOriginalColumnGroup(key: OriginalColumnGroup | string): OriginalColumnGroup;
     private calculateColumnsForDisplay();
     private checkColSpanActiveInCols(columns);
     private calculateColumnsForGroupDisplay();

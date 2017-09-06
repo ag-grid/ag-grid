@@ -80,14 +80,6 @@ var MoveColumnController = (function () {
         }
         return x;
     };
-    MoveColumnController.prototype.workOutNewIndex_old = function (displayedColumns, movingColumns, allColumns, dragColumn, hDirection, xAdjustedForScroll) {
-        // if (hDirection === HDirection.Left) {
-        //     return this.getNewIndexForColMovingLeft(displayedColumns, movingColumns, allColumns, xAdjustedForScroll);
-        // } else {
-        //     return this.getNewIndexForColMovingRight(displayedColumns, movingColumns, allColumns, xAdjustedForScroll);
-        // }
-        return null;
-    };
     MoveColumnController.prototype.checkCenterForScrolling = function (xAdjustedForScroll) {
         if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
@@ -300,7 +292,7 @@ var MoveColumnController = (function () {
             this.failedMoveAttempts++;
             this.dragAndDropService.setGhostIcon(dragAndDropService_1.DragAndDropService.ICON_PINNED);
             if (this.failedMoveAttempts > 7) {
-                var columns = this.lastDraggingEvent.dragSource.dragItemCallback.bind(this);
+                var columns = this.lastDraggingEvent.dragItem.columns;
                 var pinType = this.needToMoveLeft ? column_1.Column.PINNED_LEFT : column_1.Column.PINNED_RIGHT;
                 this.columnController.setColumnsPinned(columns, pinType);
                 this.dragAndDropService.nudge();

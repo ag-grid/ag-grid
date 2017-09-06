@@ -139,9 +139,8 @@ var AlignedGridsService = (function () {
         var masterColumnGroup = groupOpenedEvent.columnGroup;
         var otherColumnGroup;
         if (masterColumnGroup) {
-            var colId = masterColumnGroup.getGroupId();
-            var instanceId = masterColumnGroup.getInstanceId();
-            otherColumnGroup = this.columnController.getColumnGroup(colId, instanceId);
+            var groupId = masterColumnGroup.getGroupId();
+            otherColumnGroup = this.columnController.getOriginalColumnGroup(groupId);
         }
         if (masterColumnGroup && !otherColumnGroup) {
             return;

@@ -427,3 +427,10 @@
     float: right; }
   .ag-bootstrap .ag-rtl .ag-floating-filter-button {
     float: left; }
+  .ag-bootstrap .ag-sort-order {
+    margin-left: .5em;
+    font-size: 0.80em; }
+    .ag-bootstrap .ag-sort-order::before {
+      content: '('; }
+    .ag-bootstrap .ag-sort-order::after {
+      content: ')'; }
