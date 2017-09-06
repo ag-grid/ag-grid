@@ -11,7 +11,7 @@ var columnDefs = [
     {headerName: "Sport", field: "sport", width: 110, filter: 'text'},
     {headerName: "Gold", field: "gold", width: 100},
     {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
+    {headerName: "Bronze", field: "bronze", width: 100, enableRowGroup: true, enablePivot: true, enableValue:true, pivot: true},
     {headerName: "Total", field: "total", width: 100}
 ];
 
