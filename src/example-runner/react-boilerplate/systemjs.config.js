@@ -19,7 +19,7 @@
             // ag grid
             'ag-grid': agGridScriptPath,
             'ag-grid-enterprise': agGridEnterpriseScriptPath,
-            'ag-grid-react': 'npm:ag-grid-react',
+            'ag-grid-react': agGridReactScriptPath,
 
             // example
             'app': appLocation + 'app'
@@ -34,10 +34,6 @@
             },
             "prop-types": {
                 main: './prop-types.min.js',
-                defaultExtension: 'js'
-            },
-            "ag-grid-react": {
-                main: './main.js',
                 defaultExtension: 'js'
             },
             "app": {

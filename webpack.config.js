@@ -13,9 +13,11 @@ module.exports = {
     devtool: 'inline-source-map',
     entry: {
         "ag-grid-enterprise/ag-grid-enterprise": './src/_assets/ts/ag-grid-enterprise.ts',
-        "site": './src/_assets/ts/site'
+        "ag-grid/ag-grid": './src/_assets/ts/ag-grid.ts',
+        "ag-grid-react/ag-grid-react": "./src/_assets/ts/ag-grid-react.ts",
+        "site": './src/_assets/ts/site',
+        
     },
-    stats: "minimal",
     externals: {
         'angular': 'angular'
     },

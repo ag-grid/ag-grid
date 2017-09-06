@@ -6,7 +6,7 @@
         "declaration": true,
         "target": "es5",
         "lib": [ "es5", "es6", "dom" ],
-        "globals": [ "angular", "window" ],
+        "globals": [ "angular", "window", "ag-grid" ],
         "noImplicitAny": false
     },
 

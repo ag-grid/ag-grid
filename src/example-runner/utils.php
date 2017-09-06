@@ -1,6 +1,28 @@
 <?php
-define('AG_SCRIPT_PATH', "http" . ($_SERVER['HTTPS'] ? 's' : '') . "://{$_SERVER['HTTP_HOST']}/dist/ag-grid/ag-grid.js?ignore=notused50");
-define('AG_ENTERPRISE_SCRIPT_PATH', "http" . ($_SERVER['HTTPS'] ? 's' : '') . "://{$_SERVER['HTTP_HOST']}/dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused50");
+define('AG_GRID_VERSION', '$$VERSION$$');
+
+function getResourceUrl($package, $script) {
+    // dev mode
+    if (isset($_ENV['AG_DEV'])) {
+        return "http://{$_SERVER['HTTP_HOST']}/dist/$package/$script.js";
+    // production mode, return from unpkg
+    } else {
+        return "https://unpkg.com/$package@" . AG_GRID_VERSION . "/dist/$script.min.js";
+    }
+
+}
+
+define('AG_SCRIPT_PATH', getResourceUrl('ag-grid', 'ag-grid'));
+define('AG_ENTERPRISE_SCRIPT_PATH', getResourceUrl('ag-grid-enterprise', 'ag-grid-enterprise'));
+
+
+if (isset($_ENV['AG_DEV'])) {
+    define('AG_REACT_SCRIPT_PATH', "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-react/ag-grid-react.js");
+// production mode, return from unpkg
+} else {
+    define('AG_REACT_SCRIPT_PATH', "https://unpkg.com/ag-grid-react@" . AG_GRID_VERSION . "/main.js");
+}
+
 function path_combine(...$parts) {
     return join(DIRECTORY_SEPARATOR, $parts);
 }

@@ -19,6 +19,7 @@ $example = getExampleInfo('react');
         var appLocation = '<?= $example['appLocation'] ?>';
         var boilerplatePath = '<?= $example['boilerplatePath'] ?>';
         var agGridScriptPath = '<?= AG_SCRIPT_PATH ?>';
+        var agGridReactScriptPath = '<?= AG_REACT_SCRIPT_PATH ?>';
         var agGridEnterpriseScriptPath = '<?= AG_ENTERPRISE_SCRIPT_PATH ?>';
     </script>
 
