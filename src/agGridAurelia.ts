@@ -16,6 +16,7 @@ import {AureliaFrameworkFactory} from "./aureliaFrameworkFactory";
 import {AgGridColumn} from "./agGridColumn";
 import {generateBindables} from "./agUtils";
 import {AgFullWidthRowTemplate} from './agTemplate';
+import {AureliaFrameworkComponentWrapper} from "./aureliaFrameworkComponentWrapper";
 
 interface IPropertyChanges {
     [key: string]: any
@@ -53,7 +54,8 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
                 private taskQueue: TaskQueue,
                 private auFrameworkFactory: AureliaFrameworkFactory,
                 private container: Container,
-                private viewResources: ViewResources) {
+                private viewResources: ViewResources,
+                private aureliaFrameworkComponentWrapper: AureliaFrameworkComponentWrapper) {
         this._nativeElement = element;
         // create all the events generically. this is done generically so that
         // if the list of grid events change, we don't need to change this code.
@@ -78,10 +80,16 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
         this.auFrameworkFactory.setContainer(this.container);
         this.auFrameworkFactory.setViewResources(this.viewResources);
 
+        this.aureliaFrameworkComponentWrapper.setContainer(this.container);
+        this.aureliaFrameworkComponentWrapper.setViewResources(this.viewResources);
+
         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
         this.gridParams = <any>{
             globalEventListener: this.globalEventListener.bind(this),
-            frameworkFactory: this.auFrameworkFactory
+            frameworkFactory: this.auFrameworkFactory,
+            seedBeanInstances: {
+                frameworkComponentWrapper: this.aureliaFrameworkComponentWrapper
+            }
         };
 
         if (this.columns && this.columns.length > 0) {

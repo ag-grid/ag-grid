@@ -1,4 +1,4 @@
-// ag-grid-aurelia v13.0.0
+// ag-grid-aurelia v13.0.2
 import { TargetInstruction } from "aurelia-framework";
 export declare class AgCellTemplate {
     template: string;

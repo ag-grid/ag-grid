@@ -12,8 +12,6 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
     constructor(private _componentFactory: AureliaComponentFactory, private _viewCompiler: ViewCompiler) {
     }
 
-
-
     public colDefCellEditor(colDef: ColDef): {new (): ICellEditorComp;} | string {
         if (colDef.cellEditorFramework) {
             //cache the columnDef viewFactory
