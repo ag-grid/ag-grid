@@ -64,19 +64,31 @@ include '../documentation-main/documentation_header.php';
                 </td>
             </tr>
             <tr>
+                <th>getColumnState()</th>
+                <td>Gets the state of the columns. Typically used when saving column state.</td>
+            </tr>
+            <tr>
                 <th>setColumnState(columnState)</th>
-                <td>Sets the state of the columns. See example below. Returns false if one or more columns
-                    could not be found.
-                </td>
+                <td>Sets the state of the columns from a previous state. Returns false if one or more columns could not be found.</td>
             </tr>
             <tr>
                 <th>resetColumnState()</th>
                 <td>Sets the state back to match the originally provided column definitions.</td>
             </tr>
+
             <tr>
-                <th>getColumnState()</th>
-                <td>Gets the state of the columns. See example below.</td>
+                <th>getColumnGroupState()</th>
+                <td>Gets the state of the column groups. Typically used when saving column group state.</td>
             </tr>
+            <tr>
+                <th>setColumnGroupState(columnState)</th>
+                <td>Sets the state of the column group state from a previous state.</td>
+            </tr>
+            <tr>
+                <th>resetColumnGroupState()</th>
+                <td>Sets the state back to match the originally provided column definitions.</td>
+            </tr>
+
             <tr>
                 <th>isPinning()</th>
                 <td>Returns true if pinning left or right, otherwise false.</td>

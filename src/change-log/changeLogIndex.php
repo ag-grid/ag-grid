@@ -82,8 +82,6 @@ include '../documentation-main/documentation_header.php';
             using the innerRenderer when displayed as a leaf cell</li>
     </ul>
 
-    </ul>
-
     <h3>Version 13.0.0 [25-AUG-2017]</h3>
 
     <h4>Enhancements</h4>
