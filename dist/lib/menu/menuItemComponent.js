@@ -51,7 +51,7 @@ var MenuItemComponent = (function (_super) {
             this.queryForHtmlElement('#eIcon').innerHTML = '&nbsp;';
         }
         if (this.params.tooltip) {
-            this.getGui().setAttribute('title', this.params.tooltip);
+            this.getHtmlElement().setAttribute('title', this.params.tooltip);
         }
         if (this.params.shortcut) {
             this.queryForHtmlElement('#eShortcut').innerHTML = this.params.shortcut;
@@ -71,13 +71,13 @@ var MenuItemComponent = (function (_super) {
         }
         this.queryForHtmlElement('#eName').innerHTML = this.params.name;
         if (this.params.disabled) {
-            ag_grid_1.Utils.addCssClass(this.getGui(), 'ag-menu-option-disabled');
+            ag_grid_1.Utils.addCssClass(this.getHtmlElement(), 'ag-menu-option-disabled');
         }
         else {
             this.addGuiEventListener('click', this.onOptionSelected.bind(this));
         }
         if (this.params.cssClasses) {
-            this.params.cssClasses.forEach(function (it) { return ag_grid_1.Utils.addCssClass(_this.getGui(), it); });
+            this.params.cssClasses.forEach(function (it) { return ag_grid_1.Utils.addCssClass(_this.getHtmlElement(), it); });
         }
     };
     MenuItemComponent.prototype.onOptionSelected = function () {

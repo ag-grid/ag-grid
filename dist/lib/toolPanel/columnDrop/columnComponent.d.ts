@@ -27,6 +27,7 @@ export declare class ColumnComponent extends Component {
     constructor(column: Column, dragSourceDropTarget: DropTarget, ghost: boolean, valueColumn: boolean);
     init(): void;
     private addDragSource();
+    private createDragItem();
     private setupComponents();
     private setupRemove();
     private setTextValue();

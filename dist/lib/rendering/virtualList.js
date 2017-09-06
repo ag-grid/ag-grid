@@ -48,19 +48,19 @@ var VirtualList = (function (_super) {
         // let nodeAtIndex = this.rowModel.getRow(index);
         var rowTopPixel = index * this.rowHeight;
         var rowBottomPixel = rowTopPixel + this.rowHeight;
-        var viewportTopPixel = this.getGui().scrollTop;
-        var viewportHeight = this.getGui().offsetHeight;
+        var viewportTopPixel = this.getHtmlElement().scrollTop;
+        var viewportHeight = this.getHtmlElement().offsetHeight;
         var viewportBottomPixel = viewportTopPixel + viewportHeight;
         var viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
         var viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
-            this.getGui().scrollTop = rowTopPixel;
+            this.getHtmlElement().scrollTop = rowTopPixel;
         }
         else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             var newScrollPosition = rowBottomPixel - viewportHeight;
-            this.getGui().scrollTop = newScrollPosition;
+            this.getHtmlElement().scrollTop = newScrollPosition;
         }
     };
     VirtualList.prototype.setComponentCreator = function (componentCreator) {
@@ -70,7 +70,7 @@ var VirtualList = (function (_super) {
         return this.rowHeight;
     };
     VirtualList.prototype.getScrollTop = function () {
-        return this.getGui().scrollTop;
+        return this.getHtmlElement().scrollTop;
     };
     VirtualList.prototype.setRowHeight = function (rowHeight) {
         this.rowHeight = rowHeight;
@@ -89,8 +89,8 @@ var VirtualList = (function (_super) {
         this.removeVirtualRows(rowsToRemove);
     };
     VirtualList.prototype.drawVirtualRows = function () {
-        var topPixel = this.getGui().scrollTop;
-        var bottomPixel = topPixel + this.getGui().offsetHeight;
+        var topPixel = this.getHtmlElement().scrollTop;
+        var bottomPixel = topPixel + this.getHtmlElement().offsetHeight;
         var firstRow = Math.floor(topPixel / this.rowHeight);
         var lastRow = Math.floor(bottomPixel / this.rowHeight);
         this.ensureRowsRendered(firstRow, lastRow);
@@ -131,7 +131,7 @@ var VirtualList = (function (_super) {
         main_1.Utils.addCssClass(eDiv, 'ag-virtual-list-item');
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
         var rowComponent = this.componentCreator(value);
-        eDiv.appendChild(rowComponent.getGui());
+        eDiv.appendChild(rowComponent.getHtmlElement());
         this.eListContainer.appendChild(eDiv);
         this.rowsInBodyContainer[rowIndex] = {
             rowComponent: rowComponent,

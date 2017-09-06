@@ -240,6 +240,7 @@ var EnterpriseMenu = (function () {
         var allowRowGroup = this.column.isAllowRowGroup();
         var isPrimary = this.column.isPrimary();
         var pivotModeOn = this.columnController.isPivotMode();
+        var isInMemoryRowModel = this.rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_IN_MEMORY;
         result.push('pinSubMenu');
         var allowValueAgg = 
         // if primary, then only allow aggValue if grouping and it's a value columns
@@ -263,11 +264,11 @@ var EnterpriseMenu = (function () {
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
         result.push('resetColumns');
         result.push('toolPanel');
-        // only add grouping expand/collapse if grouping
+        // only add grouping expand/collapse if grouping in the InMemoryRowModel
         // if pivoting, we only have expandable groups if grouping by 2 or more columns
         // as the lowest level group is not expandable while pivoting.
         // if not pivoting, then any active row group can be expanded.
-        var allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
+        var allowExpandAndContract = isInMemoryRowModel && (pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0);
         if (allowExpandAndContract) {
             result.push('expandAll');
             result.push('contractAll');
@@ -283,7 +284,7 @@ var EnterpriseMenu = (function () {
         this.mainMenuList.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
         this.tabItemGeneral = {
             title: ag_grid_1.Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
-            body: this.mainMenuList.getGui(),
+            body: this.mainMenuList.getHtmlElement(),
             name: EnterpriseMenu.TAB_GENERAL
         };
         return this.tabItemGeneral;
@@ -310,7 +311,7 @@ var EnterpriseMenu = (function () {
         ag_grid_1.Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
         this.columnSelectPanel = new columnSelectPanel_1.ColumnSelectPanel(false);
         this.context.wireBean(this.columnSelectPanel);
-        eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
+        eWrapperDiv.appendChild(this.columnSelectPanel.getHtmlElement());
         this.tabItemColumns = {
             title: ag_grid_1.Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
             body: eWrapperDiv,
@@ -369,6 +370,10 @@ var EnterpriseMenu = (function () {
         ag_grid_1.Autowired('menuItemMapper'),
         __metadata("design:type", menuItemMapper_1.MenuItemMapper)
     ], EnterpriseMenu.prototype, "menuItemMapper", void 0);
+    __decorate([
+        ag_grid_1.Autowired('rowModel'),
+        __metadata("design:type", Object)
+    ], EnterpriseMenu.prototype, "rowModel", void 0);
     __decorate([
         ag_grid_1.PostConstruct,
         __metadata("design:type", Function),

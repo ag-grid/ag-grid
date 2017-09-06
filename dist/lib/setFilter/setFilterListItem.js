@@ -35,7 +35,7 @@ var SetFilterListItem = (function (_super) {
         this.eCheckedIcon = main_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
         this.eUncheckedIcon = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
         this.eCheckbox = this.queryForHtmlElement(".ag-filter-checkbox");
-        this.eClickableArea = this.getGui();
+        this.eClickableArea = this.getHtmlElement();
         this.updateCheckboxIcon();
         this.render();
         var listener = function () {

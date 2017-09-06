@@ -59,7 +59,7 @@ var ToolPanelComp = (function (_super) {
     };
     ToolPanelComp.prototype.addComponent = function (component) {
         this.context.wireBean(component);
-        this.getGui().appendChild(component.getGui());
+        this.getHtmlElement().appendChild(component.getHtmlElement());
         this.addDestroyFunc(function () {
             component.destroy();
         });

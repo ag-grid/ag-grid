@@ -27,6 +27,7 @@ export declare class EnterpriseMenu {
     private gridOptionsWrapper;
     private eventService;
     private menuItemMapper;
+    private rowModel;
     private tabbedLayout;
     private hidePopupFunc;
     private column;

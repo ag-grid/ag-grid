@@ -50,10 +50,10 @@ var RenderedColumn = (function (_super) {
         this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onChange.bind(this));
         this.addDestroyableEventListener(this.eText, 'click', this.onClick.bind(this));
         this.addTap();
-        main_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+        main_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getHtmlElement(), this.gridOptionsWrapper, this.column, null);
     };
     RenderedColumn.prototype.addTap = function () {
-        var touchListener = new main_1.TouchListener(this.getGui());
+        var touchListener = new main_1.TouchListener(this.getHtmlElement());
         this.addDestroyableEventListener(touchListener, main_1.TouchListener.EVENT_TAP, this.onClick.bind(this));
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     };
@@ -200,12 +200,20 @@ var RenderedColumn = (function (_super) {
         var _this = this;
         var dragSource = {
             type: main_1.DragSourceType.ToolPanel,
-            eElement: this.getGui(),
+            eElement: this.getHtmlElement(),
             dragItemName: this.displayName,
-            dragItem: [this.column]
+            dragItemCallback: function () { return _this.createDragItem(); }
         };
         this.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
+    };
+    RenderedColumn.prototype.createDragItem = function () {
+        var visibleState = {};
+        visibleState[this.column.getId()] = this.column.isVisible();
+        return {
+            columns: [this.column],
+            visibleState: visibleState
+        };
     };
     RenderedColumn.prototype.onColumnStateChanged = function () {
         this.processingColumnStateChange = true;
