@@ -76,7 +76,6 @@ include '../documentation-main/documentation_header.php';
         </a>
     </div>
 
-    <?php include 'home/features.php'; ?>
 
     <!--
         <div class="todo-box">
