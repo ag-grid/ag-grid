@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>
+    <h1 class="first-h1">
         <img style="vertical-align: middle" src="/images/react_large.png" title="React Datagrid" alt="React Datagrid" height="50px"/>
         React Datagrid
     </h1>
@@ -23,22 +23,10 @@ include '../documentation-main/documentation_header.php';
         Simple ag-Grid with React Plunker Example - enough rows and cols to show scrolling
     </div>
 
-
     <div style="margin: 100px;"></div>
 
     <div class="list-group">
-        <a href="/example-react/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/examples.svg" width="50" />
-                </div>
-                <h4 class="list-group-item-heading">Roadshow</h4>
-                <p class="list-group-item-text">
-                    This page features examples of using ag-Grid and React together. It covers more of the features of ag-Grid.
-                </p>
-            </div>
-        </a>
-        <a href="/react-getting-started/" class="list-group-item">
+        <a href="react-getting-started/" class="list-group-item">
             <div class="float-parent">
                 <div class="section-icon-container">
                     <img src="../images/svg/docs/getting_started.svg" width="50" />
@@ -51,7 +39,7 @@ include '../documentation-main/documentation_header.php';
                 </p>
             </div>
         </a>
-        <a href="/react-more-details/" class="list-group-item">
+        <a href="react-more-details/" class="list-group-item">
             <div class="float-parent">
                 <div class="section-icon-container">
                     <img src="../images/svg/docs/more-details2.svg" width="50" />
@@ -63,7 +51,7 @@ include '../documentation-main/documentation_header.php';
                 </p>
             </div>
         </a>
-        <a href="/example-react/" class="list-group-item">
+        <a href="example-react/" class="list-group-item">
             <div class="float-parent">
                 <div class="section-icon-container">
                     <img src="../images/svg/docs/examples.svg" width="50" />
@@ -76,13 +64,8 @@ include '../documentation-main/documentation_header.php';
         </a>
     </div>
 
+    <?php include '../home/features.php'; ?>
 
-    <!--
-        <div class="todo-box">
-            Roadshow
-        </div>
-
-    --></div>
-
+</div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
