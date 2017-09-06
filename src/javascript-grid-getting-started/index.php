@@ -75,11 +75,7 @@ $linkHref = "<a href='" . $link . "'>here</a>";
     <h1 class="first-h framework-select-big-title">The Framework War</h1>
 
     <p class="framework-select-small-title">
-        ag-Grid is Agnostic - We love all frameworks.
-    </p>
-
-    <p class="framework-select-small-title">
-        You, however, must choose...
+        ag-Grid is Agnostic - We love all frameworks, but you must choose...
     </p>
 
     <div class="row framework-select-list">
