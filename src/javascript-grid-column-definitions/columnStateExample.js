@@ -4,11 +4,14 @@ var columnDefs = [
     {headerName: "Country", field: "country", width: 120, enableRowGroup: true},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true},
-    {headerName: "Gold", field: "gold", width: 100, hide: true},
-    {headerName: "Silver", field: "silver", width: 100, hide: true},
-    {headerName: "Bronze", field: "bronze", width: 100, hide: true},
-    {headerName: "Total", field: "total", width: 100}
+    {headerName: "Medals",
+        children: [
+            {headerName: "Total",  field: "total", columnGroupShow: 'closed', width: 125},
+            {headerName: "Gold",   field: "gold", columnGroupShow: 'open', width: 125},
+            {headerName: "Silver", field: "silver", columnGroupShow: 'open', width: 125},
+            {headerName: "Bronze", field: "bronze", columnGroupShow: 'open', width: 125}
+        ]
+    }
 ];
 
 var gridOptions = {
@@ -20,31 +23,42 @@ var gridOptions = {
     onGridReady: function() {
         gridOptions.api.addGlobalListener(function(type, event) {
             if (type.indexOf('column') >= 0) {
-                console.log('Got column event: ' + event);
+                console.log('Got column event: ', event);
             }
         });
     }
 };
 
-
-var savedState;
+var colState;
+var groupState;
 var sortState;
 var filterState;
 
 function printState() {
-    var state = gridOptions.columnApi.getColumnState();
-    console.log(state);
+    var colState = gridOptions.columnApi.getColumnState();
+    var groupState = gridOptions.columnApi.getColumnGroupState();
+    var sortState = gridOptions.api.getSortModel();
+    var filterState = gridOptions.api.getFilterModel();
+
+    console.log("***********************");
+    console.log("colState: ", colState);
+    console.log("groupState: ", groupState);
+    console.log("sortState: ", sortState);
+    console.log("filterState: ", filterState);
+    console.log("***********************");
 }
 
 function saveState() {
-    savedState = gridOptions.columnApi.getColumnState();
+    colState = gridOptions.columnApi.getColumnState();
+    groupState = gridOptions.columnApi.getColumnGroupState();
     sortState = gridOptions.api.getSortModel();
     filterState = gridOptions.api.getFilterModel();
     console.log('column state saved');
 }
 
 function restoreState() {
-    gridOptions.columnApi.setColumnState(savedState);
+    gridOptions.columnApi.setColumnState(colState);
+    gridOptions.columnApi.setColumnGroupState(groupState);
     gridOptions.api.setSortModel(sortState);
     gridOptions.api.setFilterModel(filterState);
     console.log('column state restored');
@@ -52,8 +66,10 @@ function restoreState() {
 
 function resetState() {
     gridOptions.columnApi.resetColumnState();
+    gridOptions.columnApi.resetColumnGroupState();
     gridOptions.api.setSortModel(null);
     gridOptions.api.setFilterModel(null);
+    console.log('column state reset');
 }
 
 function showAthlete(show) {
@@ -61,7 +77,7 @@ function showAthlete(show) {
 }
 
 function showMedals(show) {
-    gridOptions.columnApi.setColumnsVisible(['gold','silver','bronze'], show);
+    gridOptions.columnApi.setColumnsVisible(['total','gold','silver','bronze'], show);
 }
 
 function pinAthlete(pin) {
@@ -83,7 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
     httpRequest.open('GET', '../olympicWinners.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
         }
