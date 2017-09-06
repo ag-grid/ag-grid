@@ -676,11 +676,17 @@ export class CellComp extends Component {
 
         this.createCellRendererInstance();
 
-        if (typeof this.cellRendererGui === 'string') {
-            this.eParentOfValue.innerHTML = this.cellRendererGui;
+        if (typeof this.cellRendererGui !== 'object') {
+            //First check for simple return types
+            this.eParentOfValue.innerHTML = this.cellRendererGui + '';
             this.cellRendererGui = <HTMLElement> this.eParentOfValue.firstChild;
-        } else {
+        } else if (this.cellRendererGui instanceof HTMLElement){
+            //Is this an HTML Element
             this.eParentOfValue.appendChild(this.cellRendererGui);
+        } else if ((<any>this.cellRendererGui).toString) {
+            //Lastly before given up... Does it have a toString
+            this.eParentOfValue.innerHTML = (<any>this.cellRendererGui).toString() + '';
+            this.cellRendererGui = <HTMLElement> this.eParentOfValue.firstChild;
         }
     }
 
