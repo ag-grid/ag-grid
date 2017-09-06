@@ -14,18 +14,11 @@ include '../documentation-main/documentation_header.php';
         React Datagrid
     </h1>
 
-    <p>
-        The ag-Grid React component can be used insider your React application with full support for React
-        data binding, events, Redux and customise the grid using React Components.
-    </p>
-
     <div class="todo-box" style="height: 400px;">
         Simple ag-Grid with React Plunker Example - enough rows and cols to show scrolling
     </div>
 
-    <div style="margin: 100px;"></div>
-
-    <div class="list-group">
+    <div class="list-group" style="margin-top: 20px;">
         <a href="react-getting-started/" class="list-group-item">
             <div class="float-parent">
                 <div class="section-icon-container">

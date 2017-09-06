@@ -36,43 +36,51 @@ switch ($GLOBALS[framework]) {
 }
 $linkHref = "<a href='" . $link . "'>here</a>";
 ?>
+
+<style>
+    .framework-select-item {
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        padding: 20px;
+        margin: 20px;
+        color: #111;
+        font-size: 20px;
+        text-align: center;
+        display: inline-block;
+    }
+    .framework-select-item:hover {
+        background-color: #eee;
+    }
+    .framework-select-label {
+        margin-top: 15px;
+    }
+    .framework-select-list {
+        text-align: center;
+    }
+    .framework-select-small-title {
+        text-align: center;
+        font-size: 16px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+    .framework-select-big-title {
+        text-align: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+    }
+</style>
+
 <div>
 
-    <h1 class="first-h1"><img src="../images/svg/docs/getting_started.svg" width="50" /> Choose Your Framework</h1>
+    <h1 class="first-h framework-select-big-title">The Framework War</h1>
 
-    <?php if (isFrameworkAll()) { ?>
+    <p class="framework-select-small-title">
+        ag-Grid is Agnostic - We love all frameworks.
+    </p>
 
-        <p>
-            On the left hand menu there are Getting Started entries for JavaScript,
-            as well as all the major Frameworks.
-        </p>
-
-    <?php } ?>
-
-    <p></p>
-
-    <style>
-        .framework-select-item {
-            border-radius: 4px;
-            border: 1px solid #ddd;
-            padding: 20px;
-            color: #111;
-            font-size: 20px;
-            text-align: center;
-            display: inline-block;
-        }
-        .framework-select-item:hover {
-            background-color: #eee;
-        }
-        .framework-select-label {
-            margin-top: 15px;
-        }
-        .framework-select-list {
-            text-align: center;
-            margin-top: 20px;
-            margin-bottom: 20px;
-        }
-    </style>
+    <p class="framework-select-small-title">
+        You, however, must choose...
+    </p>
 
     <div class="row framework-select-list">
         <div class="col-md-3">
@@ -139,7 +147,7 @@ $linkHref = "<a href='" . $link . "'>here</a>";
             </a>
         </div>
         <div class="col-md-3">
-            <a href="../best-javascript-data-grid/">
+            <a href="../best-aurelia-data-grid/">
                 <div class="framework-select-item">
                     <img src="../images/aurelia_large.png" alt="Aurelia Datagrid" title="Aurelia"/>
                     <div class="framework-select-label">
@@ -160,17 +168,10 @@ $linkHref = "<a href='" . $link . "'>here</a>";
         </div>
     </div>
 
-    <?php if (isFrameworkAll()) { ?>
+    <p class="framework-select-small-title">
+        You can select your chosen framework in the menu (top left) to tailor the documentation for your selection.
+    </p>
 
-        <p>
-            On the left hand menu there are Getting Started entries for JavaScript,
-            as well as all the major Frameworks.
-        </p>
-
-    <?php } ?>
-
-    <h2>Browser Support/Compatibility</h2>
-
-    <p>ag-Grid is compatible with IE 9+, Firefox, Chrome and Safari.</p>
 </div>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>
