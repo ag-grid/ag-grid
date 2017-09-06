@@ -25,9 +25,10 @@ function whenInViewPort(element, callback) {
     function comparePosition() {
         var scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
         var scrollPos = scrollTop + document.documentElement.clientHeight;
-        var elemBottom = element[0].offsetTop + element[0].offsetHeight;
-
-        if (scrollPos >= elemBottom) { 
+        var elemTop = element[0].offsetTop;
+        console.log("scroll: ", scrollPos, "elem", elemTop);
+        if (scrollPos >= elemTop) { 
+            console.log("instantiating", element);
             window.removeEventListener('scroll', comparePosition);
             callback();
             // setTimeout(callback, 1000);
@@ -138,8 +139,10 @@ class ExampleRunner {
         }
 
         whenInViewPort(this.$element, () => {
-            this.refreshSource();
-            this.ready = true;
+            this.$timeout(() => {
+                this.refreshSource();
+                this.ready = true;
+            });
         })
     }
 
@@ -352,7 +355,7 @@ docs.component('preview', {
             }
 
             whenInViewPort($element, () => { 
-                this.ready = true;
+                $timeout(() => this.ready = true);
             });
         }
     }]
