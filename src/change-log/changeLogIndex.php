@@ -18,6 +18,7 @@ include '../documentation-main/documentation_header.php';
 
     <h4>Bug Fixes</h4>
     <ul>
+        <li>AG-379 fixing bug where function names where not translated in the tool panel or generated columns</li>
         <li>AG-683/411 fixing bug where floating filters wouldn't get redrawn if showing/hiding columns from the tool panel</li>
         <li>AG-473 fixing bug where the context menu wouldn't appear in the pinned are if there were no rows to show</li>
         <li>AG-738 pinning columns by dragging mouse to edge was broke</li>
