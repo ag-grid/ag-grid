@@ -63,7 +63,6 @@ include '../documentation-main/documentation_header.php';
                     or the colDef (an object).
                 </td>
             </tr>
-
             <tr>
                 <th>getColumnState()</th>
                 <td>Gets the state of the columns. Typically used when saving column state.</td>
@@ -83,9 +82,7 @@ include '../documentation-main/documentation_header.php';
             </tr>
             <tr>
                 <th>setColumnGroupState(columnState)</th>
-                <td>Sets the state of the column group state from a previous state.
-                    Returns false if one or more column groups could not be found.
-                </td>
+                <td>Sets the state of the column group state from a previous state.</td>
             </tr>
             <tr>
                 <th>resetColumnGroupState()</th>

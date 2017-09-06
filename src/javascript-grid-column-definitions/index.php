@@ -239,7 +239,7 @@ Examples of state include column visibility, width, row groups and values.
 
 
 <h1 id="column-api-example">Column API Example</h1>
-<p>This section illustrates how to store and restore column state using the <a href="../javascript-column-api/">Column API</a>.
+<p>This section illustrates how to store and restore column state using the <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
 
 <ul>
