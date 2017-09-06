@@ -140,8 +140,10 @@ export class ColumnComponent extends Component {
             let aggFunc = this.column.getAggFunc();
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             let aggFuncString = (typeof aggFunc === 'string') ? <string> aggFunc : 'agg';
+            let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            let aggFuncStringTranslated = localeTextFunc (aggFuncString, aggFuncString);
 
-            displayValue = `${aggFuncString}(${this.displayName})`;
+            displayValue = `${aggFuncStringTranslated}(${this.displayName})`;
         } else {
             displayValue = this.displayName;
         }
@@ -215,7 +217,10 @@ export class ColumnComponent extends Component {
             }
         };
 
-        let comp = new AggItemComp(itemSelected, value.toString());
+        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        let aggFuncString = value.toString();
+        let aggFuncStringTranslated = localeTextFunc (aggFuncString, aggFuncString);
+        let comp = new AggItemComp(itemSelected, aggFuncStringTranslated);
         return comp;
     }
 }
