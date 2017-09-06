@@ -11,8 +11,8 @@ include '../documentation-main/documentation_header.php';
 
     <h1>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
-        <img style="vertical-align: middle" src="/images/react_small.png" height="25px"/>
-        React Grid
+        <img style="vertical-align: middle" src="/images/react_small.png" title="React Datagrid" alt="React Datagrid" height="25px"/>
+        React Datagrid - Getting Started
     </h1>
 
     <h2>Getting Started</h2>

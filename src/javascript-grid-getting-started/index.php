@@ -21,7 +21,7 @@ switch ($GLOBALS[framework]) {
         $link = '../best-angularjs-data-grid/';
         break;
     case 'react':
-        $link = '../react-datagrid/';
+        $link = '../best-react-data-grid/';
         break;
     case 'vue':
         $link = '../best-vuejs-data-grid/';

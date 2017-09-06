@@ -114,9 +114,9 @@
                 </div>
             </div>
             <div class="HomeSection-framework">
-                <a href="react-datagrid/"><img src="../images/react_large_home.png" alt="React Datagrid" title="React" width="75%"/></a>
+                <a href="best-react-data-grid/"><img src="../images/react_large_home.png" alt="React Datagrid" title="React" width="75%"/></a>
                 <div class="framework-name">
-                    <a href="/react-datagrid/">React</a>
+                    <a href="/best-react-data-grid/">React</a>
                 </div>
             </div>
             <div class="HomeSection-framework">

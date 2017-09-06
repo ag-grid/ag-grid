@@ -9,9 +9,6 @@ include 'documentation_header.php';
 
 <div class="row">
     <div class="col-md-9">
-        <div style="padding: 10px;">
-            <h2 class="documentationHeader">Documentation</h2>
-        </div>
         <div class="list-group">
             <a href="/javascript-grid-getting-started/" class="list-group-item">
                 <div class="float-parent">

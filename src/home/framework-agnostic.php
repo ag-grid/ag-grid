@@ -18,7 +18,7 @@
                 </a>
             </div>
             <div class="col-md-2" style="text-align: center;">
-                <a href="/react-datagrid/">
+                <a href="/best-react-data-grid/">
                     <div>
                         <img inline src="images/react_small.png" alt="React Datagrid" title="React Datagrid"/>
                     </div>

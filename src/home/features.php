@@ -170,7 +170,7 @@
                 <p>ag-Grid lets you work with any of the following frameworks:
                     <a href="/best-angularjs-data-grid/" target="_blank">Angular 1</a>,
                     <a href="/best-angular-2-data-grid/" target="_blank">Angular</a>,
-                    <a href="/react-datagrid/" target="_blank">React</a>,
+                    <a href="/best-react-data-grid/" target="_blank">React</a>,
                     <a href="/best-vuejs-data-grid/" target="_blank">Vue</a>,
                     <a href="/best-aurelia-data-grid/" target="_blank">Aurelia</a>,
                     <a href="/best-web-component-data-grid/" target="_blank">WebComponents</a>,

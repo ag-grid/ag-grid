@@ -90,7 +90,7 @@
         menuItem(2, 'More Detail Javascript', 'More Details', 'javascript-more-details/');
     }
     if (isFrameworkReact()) {
-        menuItem(1, 'Overview React', 'ReactJS', 'react-datagrid/');
+        menuItem(1, 'Overview React', 'ReactJS', 'best-react-data-grid/');
         menuItem(2, 'Getting Started React', 'Getting Started', 'react-getting-started/');
         menuItem(2, 'More Detail React', 'More Details', 'react-more-details/');
     }

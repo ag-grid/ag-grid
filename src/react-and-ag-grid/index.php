@@ -49,7 +49,7 @@ include('../includes/mediaHeader.php');
         </p>
         <p>
             <div style="text-align: center">
-            <span style="color: darkgrey">Fig 1 - Sample ag-Grid and React - see <a href="../react-datagrid/">full example here</a></span>
+            <span style="color: darkgrey">Fig 1 - Sample ag-Grid and React - see <a href="../best-react-data-grid/">full example here</a></span>
             <br/>
             <img src="reactAndAgGrid.png" style="width: 500px;"/>
             </div>

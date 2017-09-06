@@ -12,9 +12,8 @@ include '../documentation-main/documentation_header.php';
     <h1>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
         <img style="vertical-align: middle" src="/images/react_small.png" height="25px"/>
-        React Grid
+        React Grid - More Details
     </h1>
-    <h2>More Details</h2>
 
     <note>Full working examples of ag-Grid and React can be found in <a href="https://github.com/ceolter/ag-grid-react-example">Github</a>, illustrating
         (amongst others) Rich Grids, Filtering with React Components, Master/Detail Grid and so on.</note>
