@@ -21,7 +21,7 @@ switch ($GLOBALS[framework]) {
         $link = '../best-angularjs-data-grid/';
         break;
     case 'react':
-        $link = '../best-react-data-grid/';
+        $link = '../react-datagrid/';
         break;
     case 'vue':
         $link = '../best-vuejs-data-grid/';
@@ -38,7 +38,7 @@ $linkHref = "<a href='" . $link . "'>here</a>";
 ?>
 <div>
 
-    <h1><img src="../images/svg/docs/getting_started.svg" width="50" /> Getting Started with ag-Grid</h1>
+    <h1><img src="../images/svg/docs/getting_started.svg" width="50" /> Getting Started</h1>
 
     <p>
         <?php if (!isFrameworkAll()) { ?>

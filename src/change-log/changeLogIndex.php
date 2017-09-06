@@ -23,6 +23,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-473 fixing bug where the context menu wouldn't appear in the pinned are if there were no rows to show</li>
         <li>AG-738 pinning columns by dragging mouse to edge was broke</li>
         <li>Bugfix - event columnGroupOpened had reference to column rather than the original column group</li>
+        <li>AG-729: ag-row-focus CSS class was getting added to every row</li>
     </ul>
 
     <h4>Enhancements</h4>
@@ -59,7 +60,6 @@ include '../documentation-main/documentation_header.php';
         <li>AG-721: When in pivot, it was possible open level groups via API or via double clicking. Bottom level groups in pivot should be locked closed.</li>
         <li>AG-597: Preserve grouped column order after dragging to new position</li>
         <li>AG-620: Retain hidden columns when group moved</li>
-        <li>AG-729: ag-row-focus CSS class was getting added to every row</li>
         <li>AG-733: resolved an issue with react+redux where the store was not injected</li>
     </ul>
 
