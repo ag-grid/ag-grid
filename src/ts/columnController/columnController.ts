@@ -1537,7 +1537,9 @@ export class ColumnController {
 
         if (aggFuncFound) {
             let aggFuncString = (typeof aggFunc === 'string') ? <string> aggFunc : 'func';
-            return `${aggFuncString}(${headerName})`;
+            let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            let aggFuncStringTranslated = localeTextFunc (aggFuncString, aggFuncString);
+            return `${aggFuncStringTranslated}(${headerName})`;
         } else {
             return headerName;
         }
