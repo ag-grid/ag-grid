@@ -262,5 +262,6 @@ export default class extends Component {
         use ag-Grid and React, as well as the options in installing dependencies and accessing the <code>Enterprise
             Features</code>.</p>
 
-    <?php include '../documentation-main/documentation_footer.php'; ?>
 </div>
+
+<?php include '../documentation-main/documentation_footer.php'; ?>

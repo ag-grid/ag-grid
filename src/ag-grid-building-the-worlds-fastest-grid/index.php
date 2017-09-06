@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "Blog: Building the worlds fastest JavaScript Data Grid";
+$pageTitle = "Blog: Squeezing the Browser - JavaScript Performance Hacks Inside ag-Grid";
 $pageDescription = "Explanation on how ag-Grid renders so fast.";
 $pageKeyboards = "big data javascript browser";
 
