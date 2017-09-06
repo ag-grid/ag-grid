@@ -1,9 +1,11 @@
-
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete",
+    {
+        headerName: "Athlete",
+        field: "athlete",
         headerCheckboxSelection: true,
         headerCheckboxSelectionFilteredOnly: true,
-        checkboxSelection: true},
+        checkboxSelection: true
+    },
     {headerName: "Age", field: "age"},
     {headerName: "Country", field: "country"},
     {headerName: "Year", field: "year"},
@@ -30,7 +32,7 @@ function onQuickFilterChanged(text) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
@@ -39,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', '../olympicWinners.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
