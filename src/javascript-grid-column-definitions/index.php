@@ -249,4 +249,10 @@ Examples of state include column visibility, width, row groups and values.
 
 <show-example example="columnStateExample"></show-example>
 
+
+<note>
+    This example also includes <a href="../javascript-grid-grouping-headers/">Column Groups</a> which are
+    covered in the next section, in order to demonstrate saving and restoring the expanded state.
+</note>
+
 <?php include '../documentation-main/documentation_footer.php';?>
