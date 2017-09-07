@@ -330,6 +330,9 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public frameworkComponents: any = undefined;
     @Input() public rowHoverClass: any = undefined;
     @Input() public suppressAnimationFrame: any = undefined;
+    @Input() public suppressExcelExport: any = undefined;
+    @Input() public suppressCsvExport: any = undefined;
+
 
 
     /**
