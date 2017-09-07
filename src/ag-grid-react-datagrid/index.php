@@ -67,18 +67,18 @@ include('../includes/mediaHeader.php');
 
             <p>We'll start off with our <a href="https://github.com/ag-grid/ag-grid-react-seed">ag-Grid React</a> Seed project to get us up and running with a simple skeleton application:</p>
 
-<pre>
+<snippet>
 git clone https://github.com/ag-grid/ag-grid-react-seed.git
 cd ag-grid-react-seed
-npm install
-</pre>
+npm install</snippet>
             <p>If we now run <code>npm start</code> we'll be presented with a simple Grid:</p>
 
             <img src="../images/react-seed.png" style="width: 100%;margin-bottom: 15px">
 
             <p>With this in place, let's install the Redux dependencies:</p>
 
-            <pre>npm i redux react-redux</pre>
+            <snippet>
+npm i redux react-redux</snippet>
 
             <p>Our application is going to a simple Stock Ticker application - we'll display 3 Stocks and their
                 corresponding live price.</p>
@@ -86,8 +86,8 @@ npm install
             <h3>The Service</h3>
             <p>First let's start with our <code>GridDataService</code>:</p>
 
-<pre>
-<span class="codeComment">// src/GridDataService.js </span>
+<snippet>
+// src/GridDataService.js 
 export default class GridDataService {
     constructor(dispatch) {
         this.dispatch = dispatch;
@@ -100,7 +100,7 @@ export default class GridDataService {
     }
 
     start() {
-        setInterval(() => {
+        setInterval(() =&gt; {
             this.applyPriceUpdateToRandomRow();
 
             this.dispatch({
@@ -111,7 +111,7 @@ export default class GridDataService {
     }
 
     applyPriceUpdateToRandomRow() {
-        let swingPositive = Math.random() >= 0.5; // if the price is going up or down
+        let swingPositive = Math.random() &gt;= 0.5; // if the price is going up or down
 
         let rowIndexToUpdate = Math.floor(Math.random() * 3);
         let rowToUpdate = this.rowData[rowIndexToUpdate];
@@ -121,8 +121,7 @@ export default class GridDataService {
         let newPrice = currentPrice + (swingPositive ? 1 : -1) * swing;
         rowToUpdate.price = newPrice;
     }
-}
-</pre>
+}</snippet>
 
             <p>The service manages the data - it has the current data and makes it available via <a href="http://redux.js.org/docs/introduction/">Redux</a>. In this example
             we have 3 rows of data (one each for Apple, Google and Microsoft) which the service periodically updates to
@@ -136,8 +135,8 @@ export default class GridDataService {
             <p>We'll create the <code>Redux Store</code> and the <code>GridDataService</code> in our entry file
                 <code>src/index.js</code>:</p>
 
-<pre>
-<span class="codeComment">// src/index.js </span>
+<snippet>
+// src/index.js 
 'use strict';
 
 import React from "react";
@@ -157,7 +156,7 @@ import SimpleGridExample from "./SimpleGridExample";
 import GridDataService from "./GridDataService";
 
 // a simple reducer
-let gridDataReducer = (state = {rowData: []}, action) => {
+let gridDataReducer = (state = {rowData: []}, action) =&gt; {
     switch (action.type) {
         case 'ROW_DATA_CHANGED':
             return {
@@ -176,19 +175,18 @@ let store = createStore(gridDataReducer);
 let gridDataService = new GridDataService(store.dispatch);
 
 // wait for the dom to be ready, then render our application
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () =&gt; {
     render(
         // make our application redux aware
-        &lt;Provider store={store}>
-            &lt;SimpleGridExample/>
-        &lt;/Provider>,
+        &lt;Provider store={store}&gt;
+            &lt;SimpleGridExample/&gt;
+        &lt;/Provider&gt;,
         document.querySelector('#app')
     );
 
     // kick off our service updates
     gridDataService.start();
-});
-</pre>
+});</snippet>
 
             <p>Here we do a number of bootstrap tasks:</p>
 
@@ -213,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <p>The <code>GridDataService</code> now looks like this:</p>
 
-<pre>
+<snippet>
 import React, {Component} from "react";
 import {AgGridReact} from "ag-grid-react";
 import {connect} from "react-redux";
@@ -237,7 +235,7 @@ class SimpleGridExample extends Component {
     createColumnDefs() {
         return [
             {headerName: "Company", field: "name"},
-            {headerName: "Price", field: "price", cellFormatter: (params) => params.value.toFixed(2)}
+            {headerName: "Price", field: "price", cellFormatter: (params) =&gt; params.value.toFixed(2)}
         ];
     }
 
@@ -248,30 +246,29 @@ class SimpleGridExample extends Component {
         };
 
         return (
-            &lt;div style={containerStyle} className="ag-fresh">
-                &lt;h1>Simple ag-Grid React Example&lt;/h1>
+            &lt;div style={containerStyle} className="ag-fresh"&gt;
+                &lt;h1&gt;Simple ag-Grid React Example&lt;/h1&gt;
                 &lt;AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}
                     rowData={this.props.rowData}
 
                     // events
-                    onGridReady={this.onGridReady}>
-                &lt;/AgGridReact>
-            &lt;/div>
+                    onGridReady={this.onGridReady}&gt;
+                &lt;/AgGridReact&gt;
+            &lt;/div&gt;
         )
     }
 }
 
 // pull off row data changes
 export default connect(
-    (state) => {
+    (state) =&gt; {
         return {
             rowData: state.rowData
         }
     }
-)(SimpleGridExample);
-</pre>
+)(SimpleGridExample);</snippet>
 
             <p>With a fairly small number of changes to the seed project we now have a <a href="https://facebook.github.io/react/">React</a> application using both
                 <a href="http://redux.js.org/docs/introduction/">Redux</a> and <a href="https://www.ag-grid.com">ag-Grid</a> - fantastic!</p>
@@ -291,19 +288,18 @@ export default connect(
             provide a unique key to <a href="https://www.ag-grid.com">ag-Grid</a> so that it can determine what has changed, if anything. We do this by providing
             the <code>getRowNodeId</code> callback. In our case, each row can be uniquely identified by it's <code>symbol</code>:</p>
 
-<pre>
+<snippet>
 &lt;AgGridReact
     // properties
     columnDefs={this.state.columnDefs}
     rowData={this.props.rowData}
 
     deltaRowDataMode
-    getRowNodeId={(data) => data.symbol}
+    getRowNodeId={(data) =&gt; data.symbol}
 
     // events
-    onGridReady={this.onGridReady}>
-&lt;/AgGridReact>
-</pre>
+    onGridReady={this.onGridReady}&gt;
+&lt;/AgGridReact&gt;</snippet>
 
             <p>Visually, the application appears no different with these changes, but performance has dramatically been improved.
             This would be evident in a larger application, especially one with a large amount of row data.</p>

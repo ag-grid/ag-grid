@@ -9,45 +9,43 @@
 <p>The above section details how to specify the Grid itself. To declare columns you can specify them as follows:</p>
 
 <h3 id="column-definition">Column Definition</h3>
-<pre>
-&lt;ag-grid-column header-name="Name" field="name" width.bind="150" pinned.bind="true"></ag-grid-column>
-</pre>
+<snippet>
+&lt;ag-grid-column header-name="Name" field="name" width.bind="150" pinned.bind="true"&gt;&lt;/ag-grid-column&gt;</snippet>
 
 <p>This example declares a simple Column Definition, specifying header name, field and width.</p>
 
 <h3 id="setting-column-properties">Setting Column Properties</h3>
 <p>There are some simple rules you should follow when setting column properties via Markup:</p>
-<pre ng-non-bindable>
-<span class="codeComment">// string value</span>
+<snippet>
+// string value
 property-name="String Value"
 property-name="'String Value'"
 property-name="${Interpolated Value}"
 
-<span class="codeComment">// boolean value</span>
+// boolean value
 property-name.bind="true|false"
 property-name.bind="{{Interpolated Value}}"
 property-name.bind="functionCallReturningABoolean()"
 
-<span class="codeComment">// numeric value</span>
+// numeric value
 property-name="Numeric Value"
 property-name.bind="functionCallReturningANumber()"
 
-<span class="codeComment">// function value</span>
+// function value
 property-name.bind="functionName"
-property-name.bind="functionCallReturningAFunction()"
-</pre>
+property-name.bind="functionCallReturningAFunction()"</snippet>
 
 <h4 id="setting-a-class-or-a-complex-value">Setting a Class or a Complex Value:</h4>
 <p>You can set a Class or a Complex property in the following way:</p>
-<pre>
-<span class="codeComment">// return a Class definition for a Filter</span>
+<snippet>
+// return a Class definition for a Filter
 filter.bind="getSkillFilter()"
 
 private getSkillFilter():any {
     return SkillFilter;
 }
 
-<span class="codeComment">// return an Object for filterParams</span>
+// return an Object for filterParams
 filter-params.bind.bind="getCountryFilterParams()"
 
 private getCountryFilterParams():any {
@@ -55,18 +53,16 @@ private getCountryFilterParams():any {
         cellRenderer: this.countryCellRenderer,
         cellHeight: 20
     }
-}
-</pre>
+}</snippet>
 
 <h3 id="grouped-column-definition">Grouped Column Definition</h3>
 <p>To specify a Grouped Column, you can nest a column defintion:</p>
-<pre>
-&lt;ag-grid-column header-name="IT Skills">
-&lt;ag-grid-column header-name="Skills" width.bind="125" suppress-sorting.bind="true" cell-renderer.bind="skillsCellRenderer" filter.bind="getSkillFilter()">&lt;/ag-grid-column>
+<snippet>
+&lt;ag-grid-column header-name="IT Skills"&gt;
+&lt;ag-grid-column header-name="Skills" width.bind="125" suppress-sorting.bind="true" cell-renderer.bind="skillsCellRenderer" filter.bind="getSkillFilter()"&gt;&lt;/ag-grid-column&gt;
 &lt;ag-grid-column header-name="Proficiency" field="proficiency" width.bind="120"
-                cell-renderer.bind="percentCellRenderer" filter.bind="getProficiencyFilter()">&lt;/ag-grid-column>
-&lt;/ag-grid-column>
-</pre>
+                cell-renderer.bind="percentCellRenderer" filter.bind="getProficiencyFilter()"&gt;&lt;/ag-grid-column&gt;
+&lt;/ag-grid-column&gt;</snippet>
 <p>In this example we have a parent Column of "IT Skills", with two child columns.</p>
 
 <!--<h3 id="example-rich-grid-using-markup">Example: Rich Grid using Markup</h3>-->

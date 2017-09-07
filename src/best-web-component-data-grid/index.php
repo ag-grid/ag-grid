@@ -83,8 +83,8 @@ include '../documentation-main/documentation_header.php';
         To use <code>ag-grid-webcomponent</code> you need to import it in your html file:
     </p>
 
-    <pre>
-&lt;link rel="import" href="path-to-ag-grid-webcomponent/ag-grid-webcomponent/ag-grid.html"&gt;</pre>
+    <snippet>
+&lt;link rel="import" href="path-to-ag-grid-webcomponent/ag-grid-webcomponent/ag-grid.html"&gt;</snippet>
 
     <h3>Download ag-Grid</h3>
 
@@ -123,8 +123,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>Using the bundled version is the quickest way to get going - reference this version in your HTML file is all you need
         to do.</p>
-    <pre>
-&lt;script src="path-to-ag-grid-/ag-grid.js"&gt;&lt;/script&gt;</pre>
+    <snippet>
+&lt;script src="path-to-ag-grid-/ag-grid.js"&gt;&lt;/script&gt;</snippet>
 
     <h3>Download ag-Grid-Enterprise</h3>
 
@@ -163,24 +163,24 @@ include '../documentation-main/documentation_header.php';
     <p>As with the ag-Grid example, all we need to do is reference the ag-grid-enterprise dependency and we're good
         to go:</p>
 
-    <pre>
-&lt;script src="path-to-ag-grid-/ag-grid.js"&gt;&lt;/script&gt;</pre>
+    <snippet>
+&lt;script src="path-to-ag-grid-/ag-grid.js"&gt;&lt;/script&gt;</snippet>
 
     <h3>Using the ag-Grid Web Component</h3>
 
     <p>To use the ag-Grid Web Component you need to use <code>ag-grid</code> in your template:</p>
 
-    <pre>
+    <snippet>
 &lt;body&gt;
 &lt;ag-grid id="myGrid"
          style="height: 140px; width: 350px;"
          class="ag-fresh"&gt;&lt;/ag-grid&gt;
 &lt;/body&gt;
-    </pre>
+   </snippet>
 
     <p>You can also provide simple properties at the same time, for example:</p>
 
-    <pre>
+    <snippet>
 &lt;body&gt;
     &lt;ag-grid id="myGrid"
              style="height: 140px; width: 350px;"
@@ -188,39 +188,38 @@ include '../documentation-main/documentation_header.php';
              enable-col-resize
              enable-sorting
              enable-filter&lt;/ag-grid&gt;
-&lt;/body&gt;</pre>
+&lt;/body&gt;</snippet>
 
     <p>Note here that the properties need to be lower case and hyphenated, as per the Web Components standard.</p>
 
     <p>A complete html file might look something like this:</p>
     
-    <pre>
+    <snippet>
 &lt;!DOCTYPE html&gt;
 &lt;html lang="en"&gt;
 &lt;head&gt;
     &lt;meta charset="UTF-8"&gt;
     &lt;title&gt;ag-Grid Web Component - Simple Example&lt;/title&gt;
 
-    <span class="codeComment">&lt;!-- webcomponents polyfill - must be before any wc related javascript is executed --&gt;</span>
-    <span style="font-weight: bold">&lt;script src=../../node_modules/@webcomponents/custom-elements/custom-elements.min.js&gt;&lt;/script&gt;</span>
+    &lt;!-- webcomponents polyfill - must be before any wc related javascript is executed --&gt;
+    &lt;span style="font-weight: bold"&gt;&lt;script src=../../node_modules/@webcomponents/custom-elements/custom-elements.min.js&gt;&lt;/script&gt;&lt;/span&gt;
 
-    <span class="codeComment">&lt;!-- before the ag-grid web component --&gt;</span>
-    <span class="codeComment">&lt;!-- either ag-grid or ag-grid-enterprise, depending on which you're using --&gt;</span>
-    <span style="font-weight: bold">&lt;script src="../../node_modules/ag-grid/dist/ag-grid.min.js"&gt;&lt;/script&gt;</span>
+    &lt;!-- before the ag-grid web component --&gt;
+    &lt;!-- either ag-grid or ag-grid-enterprise, depending on which you're using --&gt;
+    &lt;span style="font-weight: bold"&gt;&lt;script src="../../node_modules/ag-grid/dist/ag-grid.min.js"&gt;&lt;/script&gt;&lt;/span&gt;
 
-    <span class="codeComment">&lt;!-- the ag-grid-webcomponent--&gt;</span>
-    <span style="font-weight: bold">&lt;link rel="import" href="../../node_modules/ag-grid-webcomponent/ag-grid.html"&gt;</span>
+    &lt;!-- the ag-grid-webcomponent--&gt;
+    &lt;span style="font-weight: bold"&gt;&lt;link rel="import" href="../../node_modules/ag-grid-webcomponent/ag-grid.html"&gt;&lt;/span&gt;
 
-    <span class="codeComment">&lt;!-- the application code --&gt;</span>
-    <span style="font-weight: bold">&lt;script src="simple-grid-example.js"&gt;&lt;/script&gt;</span>
+    &lt;!-- the application code --&gt;
+    &lt;span style="font-weight: bold"&gt;&lt;script src="simple-grid-example.js"&gt;&lt;/script&gt;&lt;/span&gt;
 &lt;/head&gt;
 &lt;body&gt;
-<span style="font-weight: bold">&lt;ag-grid id="myGrid"
+&lt;span style="font-weight: bold"&gt;&lt;ag-grid id="myGrid"
          style="height: 140px; width: 350px;"
-         class="ag-fresh"&gt;&lt;/ag-grid&gt;</span>
+         class="ag-fresh"&gt;&lt;/ag-grid&gt;&lt;/span&gt;
 &lt;/body&gt;
-&lt;/html&gt;
-</pre>
+&lt;/html&gt;</snippet>
 
     <p>Note here we're including a polyfill to support older browsers without full support for Web Components (likely to
     be the case for a while yet), then the ag-Grid dependency, the ag-Grid-WebComponent dependency and finally our application

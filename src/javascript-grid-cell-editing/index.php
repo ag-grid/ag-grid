@@ -197,10 +197,11 @@ include '../documentation-main/documentation_header.php';
         from which the user can select. The example below shows configuring the select cell editor.
     </p>
 
-    <pre>colDef.cellEditor = 'select';
+    <snippet>
+colDef.cellEditor = 'select';
 colDef.cellEditorParams = {
     values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
-}</pre>
+}</snippet>
     <p>If you have many instances of a grid, you must register the cell editors with each one.</p>
 
     <h4 id="callback-new-value-handlers">Callback: New Value Handlers</h4>
@@ -220,40 +221,40 @@ colDef.cellEditorParams = {
             </li>
         </ol>
     </p>
-    <pre><span class="codeComment">// this does exactly what a field does, no difference,</span>
-<span class="codeComment">// but provided to demonstrate the equivalent of just using field</span>
+    <snippet>
+// this does exactly what a field does, no difference,
+// but provided to demonstrate the equivalent of just using field
 colDef.newValueHandler = function(params) {
 
     var field = params.colDef.field;
     var data = params.data;
     var value = params.newValue;
 
-    <span class="codeComment">// see if values are different first</span>
+    // see if values are different first
     if (data[field] === value) {
-        <span class="codeComment">// tell grid, no changes</span>
+        // tell grid, no changes
         return false;
     } else {
-        <span class="codeComment">// update and tell grid the change was made</span>
+        // update and tell grid the change was made
         data[field] = value;
         return true;
     }
 }
 
-<span class="codeComment">// this one does some formatting first, and doesn't use the field</span>
+// this one does some formatting first, and doesn't use the field
 colDef.newValueHandler = function(params) {
 
     var data = params.data;
     var value = params.newValue;
 
-    <span class="codeComment">// change the value, maybe we want it in upper case</span>
+    // change the value, maybe we want it in upper case
     var value = formatTheValueSomehow(value);
     data.iAmNotUsingTheField = value;
 
-    <span class="codeComment">// we can always return true if not sure, this way the grid</span>
-    <span class="codeComment">// will always update the cell and fire change events</span>
+    // we can always return true if not sure, this way the grid
+    // will always update the cell and fire change events
     return true;
-}
-</pre>
+}</snippet>
      <p>
         <code>newValueHandler</code> is provided a params object with the following attributes:
 

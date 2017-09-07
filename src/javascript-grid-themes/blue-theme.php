@@ -18,7 +18,8 @@ include '../documentation-main/documentation_header.php';
     To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
     <p/>
     The following is an example of using the ag-blue theme:<br/>
-    <pre>&lt;div ag-grid="gridOptions" class="ag-blue">&lt;/div></pre>
+    <snippet>
+&lt;div ag-grid="gridOptions" class="ag-blue"&gt;&lt;/div&gt;</snippet>
 
     <div class="bigTitle" id="blue-theme-example">Blue Theme Example</div>
 

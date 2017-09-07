@@ -22,30 +22,28 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Initialise Project</h3>
 
-    <pre>
+    <snippet>
 mkdir ag-grid-ts-webpack
 cd ag-grid-ts-webpack
 npm init
-<span class="codeComment">// accept defaults</span>
-</pre>
+// accept defaults</snippet>
 
     <h3>Install Dependencies</h3>
 
-    <pre>
+    <snippet>
 npm i --save ag-grid
 npm i --save-dev typescript ts-loader webpack webpack-dev-server extract-text-webpack-plugin
 npm i --save-dev css-loader style-loader html-loader html-webpack-plugin
 
-<span class="codeComment">// optional - only necessary if you're using any of the Enterprise features</span>
-npm i --save ag-grid-enterprise
-</pre>
+// optional - only necessary if you're using any of the Enterprise features
+npm i --save ag-grid-enterprise</snippet>
 
     <h3>Create Application</h3>
 
     <p>Our application will be a very simple one, consisting of a single class that will render a simple grid:</p>
 
-    <pre>
-<span class="codeComment">// src/SimpleGrid.ts </span>
+    <snippet>
+// src/SimpleGrid.ts 
 import {Grid, GridOptions} from "ag-grid/main";
 
 // for ag-grid-enterprise users only
@@ -86,10 +84,9 @@ class SimpleGrid {
     }
 }
 
-new SimpleGrid();
-</pre>
-<pre>
-<span class="codeComment">// config/index.html </span>
+new SimpleGrid();</snippet>
+<snippet>
+// config/index.html 
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
@@ -97,20 +94,18 @@ new SimpleGrid();
 &lt;body&gt;
 &lt;div id="myGrid" style="height: 150px;width: 600px" class="ag-fresh"&gt;&lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;
-</pre>
+&lt;/html&gt;</snippet>
     <h2>TypeScript Configuration</h2>
 
     <p>Our <code>tsconfig.json</code> is very simple in this example:</p>
 
-    <pre>
-<span class="codeComment">// tsconfig.json</span>
+    <snippet>
+// tsconfig.json
 {
   "compilerOptions": {
     "sourceMap":  true
   }
-}
-</pre>
+}</snippet>
 
     <h2>Webpack Configuration</h2>
 
@@ -122,8 +117,8 @@ new SimpleGrid();
 
     <h3 id="webpack-dev-configuration">Webpack Development Configuration</h3>
 
-    <pre>
-<span class="codeComment">// config/webpack.dev.js</span>
+    <snippet>
+// config/webpack.dev.js
 var webpack = require('webpack');
 var path = require('path');
 
@@ -169,8 +164,7 @@ module.exports = {
             template: 'config/index.html'
         })
     ]
-};
-</pre>
+};</snippet>
 
     <p>
         <code>entry</code>
@@ -208,7 +202,8 @@ module.exports = {
         artifacts in the dist directory (from this configuration).</p>
 
     <h3 id="webpack-production-configuration">Webpack Production Configuration</h3>
-    <pre><span class="codeComment">// config/webpack.prod.js</span>
+    <snippet>
+// config/webpack.prod.js
 var webpack = require('webpack');
 var path = require('path');
 
@@ -260,20 +255,19 @@ module.exports = {
             template: 'config/index.html'
         })
     ]
-};
-</pre>
+};</snippet>
     <p>We don't use a development server with this configuration - we generate the final artifacts in the dist/ folder
         and expect this to be deploy to a server.</p>
     <p>We use the plugins to remove duplicates and minify and extract the CSS into cache busting hash named files.</p>
 
     <p>With all this in place, we can now add the following npm scripts to our package.json:</p>
 
-    <pre>
+    <snippet>
 "scripts": {
     "start": "webpack-dev-server --config config/webpack.dev.js --inline --progress --port 8080",
     "build": "webpack --config config/webpack.prod.js --progress --profile --bail"
 },
-    </pre>
+   </snippet>
 
     <p>Now we can either run <code>npm start</code> to run the development setup, or <code>npm run build</code> for the
         production build.

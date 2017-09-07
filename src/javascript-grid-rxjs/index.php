@@ -27,21 +27,19 @@ include '../documentation-main/documentation_header.php';
     
     <ul>
         <li>A unique key per row - we do this by making use of the <code>getRowNodeId</code> callback</li>
-        <pre>
+        <snippet>
 const gridOptions = {
     getRowNodeId: function (data) {
         // the code is unique, so perfect for the id
         return data.code;
     }
-    ...rest of the gridOptions
-</pre>
+    ...rest of the gridOptions</snippet>
         <li>A manner of letting ag-Grid know the type of update we're doing - for this we make use of the <a
                 href="../javascript-grid-data-update">Transaction</a> method</li>
-<pre>
-updates$.subscribe((updates) => {
+<snippet>
+updates$.subscribe((updates) =&gt; {
     gridOptions.api.updateRowData({update: updates}
-}));
-</pre>
+}));</snippet>
     </ul>
 
     <p>With these two pieces of code we can supply the updates to ag-Grid and the grid will only re-render the changes rows, resulting
@@ -68,15 +66,14 @@ updates$.subscribe((updates) => {
         <li>A manner of letting ag-Grid know that we're supplying the full data again, but with altered data within - for this we make use of the <a
                 href="../javascript-grid-data-update">deltaRowDataMode</a> method</li>
     </ul>
-    <pre>
+    <snippet>
 const gridOptions = {
     getRowNodeId: function (data) {
         // the code is unique, so perfect for the id
         return data.code;
     },
     deltaRowDataMode:true
-    ...rest of the gridOptions
-</pre>
+    ...rest of the gridOptions</snippet>
 
     <p>With these configuration we can supply the updates to ag-Grid and the grid will only re-render the changes rows, resulting
         in much improved performance.</p>

@@ -39,7 +39,7 @@
     can then use later
     when instantiating the Grid.</p>
 
-<pre>
+<snippet>
 &lt;html&gt;
 &lt;head&gt;
     &lt;script src="path-to-ag-grid-/ag-grid.js"&gt;&lt;/script&gt;
@@ -48,5 +48,4 @@
 &lt;body&gt;
     &lt;div id="myGrid" style="height: 100%;" class="ag-fresh"&gt;&lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;
-</pre>
+&lt;/html&gt;</snippet>

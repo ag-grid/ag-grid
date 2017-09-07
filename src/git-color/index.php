@@ -61,7 +61,7 @@ include('../includes/mediaHeader.php');
             Git commands:
         </p>
 
-<pre>
+<snippet>
 [color]
     branch = auto
     diff = auto
@@ -78,8 +78,7 @@ include('../includes/mediaHeader.php');
 [color "status"]
     added = yellow
     changed = green
-    untracked = cyan
-</pre>
+    untracked = cyan</snippet>
 
         <img src="../images/git_status.png" style="width: 100%;padding-bottom: 10px">
 
@@ -101,8 +100,9 @@ include('../includes/mediaHeader.php');
         <p>You can install this either via Git clone, or via Homebrew. I work primarily on OSX and found the cloning method
             easier, but both should work.</p>
 
-<pre>cd ~
-git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt --depth=1</pre>
+<snippet>
+cd ~
+git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt --depth=1</snippet>
 
         <p>This will create a directory within your home directory called <code>.bash-git-prompt</code>, which does the work of
             executing Git status commands and returning the results in a format with icons and colours - all of which is
@@ -110,8 +110,9 @@ git clone https://github.com/magicmonty/bash-git-prompt.git .bash-git-prompt --d
 
         <p>Next we need to ensure the script is run when we're in the terminal. Add the following to ~/.bashrc:</p>
 
-<pre>GIT_PROMPT_ONLY_IN_REPO=1
-source ~/.bash-git-prompt/gitprompt.sh</pre>
+<snippet>
+GIT_PROMPT_ONLY_IN_REPO=1
+source ~/.bash-git-prompt/gitprompt.sh</snippet>
 
         <p><code>GIT_PROMPT_ONLY_IN_REPO=1</code> will ensure that the Git output will only be done in Git managed directories.</p>
 
@@ -119,7 +120,8 @@ source ~/.bash-git-prompt/gitprompt.sh</pre>
         you may want to add this to your <code>.bash_profile</code> to ensure your changes are picked up each time you open a
         new terminal window:</p>
 
-        <pre>[[ -s ~/.bashrc ]] && source ~/.bashrc</pre>
+        <snippet>
+[[ -s ~/.bashrc ]] && source ~/.bashrc</snippet>
 
         <p>The default configuration would give you an output something like this:</p>
 
@@ -138,29 +140,29 @@ source ~/.bash-git-prompt/gitprompt.sh</pre>
         of the output. There are a number of themes provide with <code>bash-git-prompt</code> and I'd encourage you to try them
         to see what's possible, but in my case I decided to tweak the output to something bespoke.</p>
 
-        <pre>git_prompt_make_custom_theme Default</pre>
+        <snippet>
+git_prompt_make_custom_theme Default</snippet>
 
         <p>The above will create a new theme file (<code>~/.git-prompt-colors.sh</code>) based on the Default theme.</p>
 
         <p>I won't list the entire file contents here, but will highlight the parts I've changed:</p>
 
-<pre>
-<span class="codeComment">// just the current directory name - not the full path</span>
+<snippet>
+// just the current directory name - not the full path
 PathShort="\W";
 
-<span class="codeComment">// round brackets surround the Git output</span>
-<span class="codeComment">// I prefer them to square brackets - I couldn't tell you why ;-)</span>
+// round brackets surround the Git output
+// I prefer them to square brackets - I couldn't tell you why ;-)
 GIT_PROMPT_PREFIX="("                 # start of the git info string
 GIT_PROMPT_SUFFIX=")"                 # the end of the git info string
 
-<span class="codeComment">// change a couple of the colours to be inline with what I've configured in Git</span>
+// change a couple of the colours to be inline with what I've configured in Git
 GIT_PROMPT_CHANGED="${Green}✚ "        # the number of changed files
 GIT_PROMPT_UNTRACKED="${Red}…"       # the number of untracked files/dirs
 
-<span class="codeComment">// The pre-Git output - show username@host current-directory</span>
-<span class="codeComment">// This information will be displayed all the time, even if not in a Git controlled directory</span>
-GIT_PROMPT_START_USER="${USER}@${HOSTNAME} ${Yellow}${PathShort}${ResetColor}"
-</pre>
+// The pre-Git output - show username@host current-directory
+// This information will be displayed all the time, even if not in a Git controlled directory
+GIT_PROMPT_START_USER="${USER}@${HOSTNAME} ${Yellow}${PathShort}${ResetColor}"</snippet>
 
         <p>That's it! With these small changes in place I'm done - I have the output I wanted with very little configuration.</p>
 

@@ -52,16 +52,17 @@ include '../documentation-main/documentation_header.php';
         To get the grid to refresh the cells, call <code>api.refreshCells()</code>. The interface is as follows:
     </p>
 
-    <pre><span class="codeComment">// method for refreshing cells</span>
+    <snippet>
+// method for refreshing cells
 function refreshCells(params: RefreshCellsParams = {}): void;
 
-<span class="codeComment">// params for refresh cells</span>
+// params for refresh cells
 interface RefreshCellsParams {
-    rowNodes?: RowNode[]; <span class="codeComment">// specify rows, or all rows by default</span>
-    columns?: (string|Column)[]; <span class="codeComment">// specify columns, or all columns by default</span>
-    force?: boolean; <span class="codeComment">// skips change detection, refresh everything</span>
-    volatile?: boolean; <span class="codeComment">// only volatile cells - deprecated - for backwards compatibility</span>
-}</pre>
+    rowNodes?: RowNode[]; // specify rows, or all rows by default
+    columns?: (string|Column)[]; // specify columns, or all columns by default
+    force?: boolean; // skips change detection, refresh everything
+    volatile?: boolean; // only volatile cells - deprecated - for backwards compatibility
+}</snippet>
 
     <p>
         Each parameter is optional. The simplest is to call with no parameters which will refresh
@@ -180,13 +181,14 @@ interface RefreshCellsParams {
         To get the grid to redraw rows, call <code>api.redrawRows()</code>. The interface is as follows:
     </p>
 
-    <pre><span class="codeComment">// method for redraw rows</span>
+    <snippet>
+// method for redraw rows
 function redrawRows(params: RedrawRowsParams = {})
 
-<span class="codeComment">// params for redraw rows</span>
+// params for redraw rows
 interface RedrawRowsParams {
-    rowNodes?: RowNode[]; <span class="codeComment">// the row nodes to redraw</span>
-}</pre>
+    rowNodes?: RowNode[]; // the row nodes to redraw
+}</snippet>
 
     <h3>Example Redraw Nodes</h3>
 

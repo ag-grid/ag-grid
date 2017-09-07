@@ -29,24 +29,22 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Initialise Project</h3>
 
-<pre>
+<snippet>
 mkdir ag-grid-webpack
 cd ag-grid-webpack
 npm init
-<span class="codeComment">// accept defaults</span>
-</pre>
+// accept defaults</snippet>
 
     <h3>Install Dependencies</h3>
 
-<pre>
+<snippet>
 npm i --save ag-grid ag-grid-angular
 npm i --save @angular/common @angular/compiler @angular/compiler-cli @angular/core @angular/platform-browser @angular/platform-browser-dynamic typescript rxjs core-js zone.js
 npm i --save-dev webpack@1.14.x webpack-dev-server@1.16.x angular2-template-loader@0.6.x awesome-typescript-loader@3.1.x extract-text-webpack-plugin@1.0.x file-loader canonical-path @types/node
 npm i --save-dev css-loader style-loader html-loader html-webpack-plugin raw-loader url-loader
 
-<span class="codeComment">// optional - only necessary if you're using any of the Enterprise features</span>
-npm i --save ag-grid-enterprise
-</pre>
+// optional - only necessary if you're using any of the Enterprise features
+npm i --save ag-grid-enterprise</snippet>
 
     <h3>Create Application</h3>
 
@@ -55,7 +53,7 @@ npm i --save ag-grid-enterprise
     <note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ag-grid/ag-grid-angular-seed">GitHub.</a></note>
 
     <p>The resulting project structure will look like this:</p>
-<pre>
+<snippet>
 └── ag-grid-webpack
     ├── app
     │   ├── app.component.html
@@ -71,11 +69,10 @@ npm i --save ag-grid-enterprise
     │   └── webpack.prod.js
     ├── node_modules
     ├── package.json
-    └── tsconfig.json
-</pre>
+    └── tsconfig.json</snippet>
 
-<pre ng-non-bindable>
-<span class="codeComment">// app/app.module.ts </span>
+<snippet>
+// app/app.module.ts 
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 // ag-grid
@@ -95,10 +92,9 @@ import {AppComponent} from "./app.component";
     bootstrap: [AppComponent]
 })
 export class AppModule {
-}
-</pre>
-<pre ng-non-bindable>
-<span class="codeComment">// app/app.component.ts </span>
+}</snippet>
+<snippet>
+// app/app.component.ts 
 import {Component} from "@angular/core";
 
 import {GridOptions} from "ag-grid/main";
@@ -130,18 +126,16 @@ export class AppComponent {
             {make: "Porsche", model: "Boxter", price: 72000}
         ];
     }
-}
-</pre>
-<pre ng-non-bindable>
-<span class="codeComment">// app/app.component.html </span>
+}</snippet>
+<snippet>
+// app/app.component.html 
 &lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-fresh"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"&gt;
-&lt;/ag-grid-angular&gt;
-</pre>
-<pre ng-non-bindable>
-<span class="codeComment">// app/boot.ts </span>
+&lt;/ag-grid-angular&gt;</snippet>
+<snippet>
+// app/boot.ts 
 import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 import {AppModule} from "./app.module";
 
@@ -149,10 +143,9 @@ import {AppModule} from "./app.module";
 // import {LicenseManager} from "ag-grid-enterprise/main";
 // LicenseManager.setLicenseKey("your license key");
 
-platformBrowserDynamic().bootstrapModule(AppModule);
-</pre>
-<pre ng-non-bindable>
-<span class="codeComment">// app/polyfills.ts </span>
+platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
+<snippet>
+// app/polyfills.ts 
 import "core-js/es6";
 import "core-js/es7/reflect";
 require('zone.js/dist/zone');
@@ -162,10 +155,9 @@ if (process.env.ENV === 'production') {
     // Development
     Error['stackTraceLimit'] = Infinity;
     require('zone.js/dist/long-stack-trace-zone');
-}
-</pre>
-<pre ng-non-bindable>
-<span class="codeComment">// app/vendor.ts </span>
+}</snippet>
+<snippet>
+// app/vendor.ts 
 // Angular
 import '@angular/platform-browser';
 import '@angular/platform-browser-dynamic';
@@ -179,18 +171,16 @@ import 'rxjs';
 import 'ag-grid/dist/styles/ag-grid.css';
 import 'ag-grid/dist/styles/theme-fresh.css';
 
-import 'ag-grid-angular/main'
-</pre>
-<pre ng-non-bindable>
-<span class="codeComment">// for ag-grid-enterprise users only </span>
-//import 'ag-grid-enterprise/main';
-</pre>
+import 'ag-grid-angular/main'</snippet>
+<snippet>
+// for ag-grid-enterprise users only 
+//import 'ag-grid-enterprise/main';</snippet>
 
 <h2>tsconfig.json</h2>
     <p>We use this to let the TypeScript compiler know what our target is (es5), what libraries we depend on (dom and es2015) and so on:</p>
 
-<pre>
-<span class="codeComment">// tsconfig.json</span>
+<snippet>
+// tsconfig.json
 {
   "compilerOptions": {
     "target": "es5",
@@ -207,26 +197,24 @@ import 'ag-grid-angular/main'
   "exclude": [
     "node_modules/*"
   ]
-}
-</pre>
+}</snippet>
 
     <h2>Webpack Configuration</h2>
 
     <p>We have 2 Webpack Configurations in the example project - a dev configuration and a production configuration. In both
     of these configurations we make use of an html file where our generated bundle(s) will be inserted and will serve as our application
     starting point, as well as a helper file for within use of the webpack configurations:</p>
-<pre>
-<span class="codeComment">// config/helpers.js</span>
+<snippet>
+// config/helpers.js
 var path = require('path');
 var _root = path.resolve(__dirname, '..');
 function root(args) {
     args = Array.prototype.slice.call(arguments, 0);
     return path.join.apply(path, [_root].concat(args));
 }
-exports.root = root;
-</pre>
-<pre ng-non-bindable>
-<span class="codeComment">&lt;!-- config/index.html --></span>
+exports.root = root;</snippet>
+<snippet>
+&lt;!-- config/index.html --&gt;
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
@@ -236,8 +224,7 @@ exports.root = root;
 &lt;body&gt;
 &lt;my-app&gt;Loading...&lt;/my-app&gt;
 &lt;/body&gt;
-&lt;/html&gt;
-</pre>
+&lt;/html&gt;</snippet>
 
     <p><code>helpers.js</code> helps us to resolve path easily, and <code>index.html</code> will be used by the
         <code>HtmlWebpackPlugin</code> plugin to ensure the generated bundles are inserted dynamically, instead of us
@@ -245,8 +232,8 @@ exports.root = root;
 
     <h3 id="webpack-dev-configuration">Webpack Development Configuration</h3>
 
-<pre>
-<span class="codeComment">// config/webpack.dev.js</span>
+<snippet>
+// config/webpack.dev.js
 var webpack = require('webpack');
 var helpers = require('./helpers');
 var path = require('path');
@@ -321,8 +308,7 @@ module.exports = {
         historyApiFallback: true,
         stats: 'minimal'
     }
-};
-</pre>
+};</snippet>
 
     <p>
         <code>entry</code>
@@ -367,7 +353,8 @@ module.exports = {
     <p>The dev configuration doesn't generate any files - it keeps all bundles in memory, so you won't find any artifacts in the dist directory (from this configuration).</p>
 
     <h3 id="webpack-production-configuration">Webpack Production Configuration</h3>
-<pre><span class="codeComment">// webpack.prod.js</span>
+<snippet>
+// webpack.prod.js
 var webpack = require('webpack');
 var path = require('path');
 var helpers = require('./helpers');
@@ -456,25 +443,23 @@ module.exports = {
             }
         })
     ]
-};
-</pre>
+};</snippet>
     <p>We don't use a development server with this configuration - we generate the final artifacts in the dist/ folder and expect this to be deploy to a server.</p>
     <p>We use the plugins to remove duplicates and minify and extract the CSS into cache busting hash named files.</p>
     <p>Finally, we use the DefinePlugin to provide an environment variable that we can use in our application code to <code>enableProdMode()</code></p>
-<pre>
+<snippet>
 if (process.env.ENV === 'production') {
     enableProdMode();
-}
-</pre>
+}</snippet>
 
     <p>With all this in place, we can now add the following npm scripts to our package.json:</p>
 
-    <pre>
+    <snippet>
   "scripts": {
     "start": "webpack-dev-server --config config/webpack.dev.js --inline --progress --port 8080",
     "build": "webpack --config config/webpack.prod.js --progress --profile --bail"
   },
-    </pre>
+   </snippet>
 
     <p>Now we can either run <code>npm start</code> to run the development setup, or <code>npm run build</code> for the production build.
     In the case of the production build the generated files will be under the <code>dist/</code> folder.</p>
@@ -489,15 +474,16 @@ if (process.env.ENV === 'production') {
         <li>Place your application-wide CSS file(s) in a directory other than <code>./app</code> - for example <code>./css/</code>.
             Remember that CSS under <code>./app</code> is treated differently - it is used for component-scoped styles.</li>
         <li>In a suitable component - we suggest <code>boot.ts</code> import the CSS you want to include:</li>
-        <pre>import '../css/app.css';</pre>
+        <snippet>
+import '../css/app.css';</snippet>
     </ul>
 
     <p>And that's it - you can now override ag-Grid CSS with your own in <code>./css/app.css</code>. For example, the following
     would set the cell background to green across the board.</p>
-<pre>
+<snippet>
 .ag-cell {
     background-color: green;
-}</pre>
+}</snippet>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

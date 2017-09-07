@@ -29,10 +29,11 @@
         as Aurelia components.
     </p>
 
-    <pre><span class="codeComment">// create your filter as Filter Component</span>
+    <snippet>
+// create your filter as Filter Component
 export default class PartialMatchFilter implements IFilter {
   private params: IFilterParams;
-  private valueGetter: (rowNode: RowNode) => any;
+  private valueGetter: (rowNode: RowNode) =&gt; any;
   private filterText: any;
   private eGui: HTMLElement;
   private eFilterText: any;
@@ -46,7 +47,7 @@ export default class PartialMatchFilter implements IFilter {
   public getGui() {
     this.eGui = document.createElement('div');
     this.eGui.innerHTML =
-      '&lt;input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/>';
+      '&lt;input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Full name search..."/&gt;';
 
     this.eFilterText = this.eGui.querySelector('#filterText');
     this.eFilterText.addEventListener("changed", listener);
@@ -74,9 +75,9 @@ export default class PartialMatchFilter implements IFilter {
   doesFilterPass(params: IDoesFilterPassParams): boolean {
     // make sure each word passes separately, ie search for firstname, lastname
     let passed = true;
-    this.filterText.toLowerCase().split(" ").forEach((filterWord) => {
-      let value = this.valueGetter(&lt;any>params);
-      if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
+    this.filterText.toLowerCase().split(" ").forEach((filterWord) =&gt; {
+      let value = this.valueGetter(&lt;any&gt;params);
+      if (value.toString().toLowerCase().indexOf(filterWord) &lt; 0) {
         passed = false;
       }
     });
@@ -97,14 +98,13 @@ export default class PartialMatchFilter implements IFilter {
   }
 }
 
-<span class="codeComment">// provide a method that returns the name of the class to use as a filter (in the parent component)</span>
+// provide a method that returns the name of the class to use as a filter (in the parent component)
 getPartialMatchFilter() {
     return PartialMatchFilter;
 }
 
-<span class="codeComment">// then reference the Component in your column definitions like this</span>
-&lt;ag-grid-column header-name="Filter Component" field="name" width.bind="198" filter.bind="getPartialMatchFilter()"></ag-grid-column>
-</pre>
+// then reference the Component in your column definitions like this
+&lt;ag-grid-column header-name="Filter Component" field="name" width.bind="198" filter.bind="getPartialMatchFilter()"&gt;&lt;/ag-grid-column&gt;</snippet>
 
 <!--    <h3 id="example-filtering-in-an-aurelia-project"><img src="../images/aurelia.png" height="20px"/> Example: Filtering in an Aurelia Project</h3>-->
 <!--    <p>-->

@@ -68,22 +68,24 @@
 
     <p>Once you have the ag-Grid dependencies installed, you will then be able to access ag-Grid classes and components inside your application:</p>
 
-    <pre>import {GridOptions, GridApi, ColumnApi} from "ag-grid";</pre>
+    <snippet>
+import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
 
     <p>
         You will need to include the CSS for ag-Grid, either directly inside
         your html page, or as part of creating your bundle if bundling. Teh following
         shows referencing the css from your web page:
     </p>
-    <pre>&lt;link href="node_modules/ag-grid/styles/ag-grid.css" rel="stylesheet" />
-&lt;link href="node_modules/ag-grid/styles/theme-fresh.css" rel="stylesheet" />
-</pre>
+    <snippet>
+&lt;link href="node_modules/ag-grid/styles/ag-grid.css" rel="stylesheet" /&gt;
+&lt;link href="node_modules/ag-grid/styles/theme-fresh.css" rel="stylesheet" /&gt;</snippet>
 
     <p>
         You will also need to configure Aurelia (aurelia_project/aurelia.json) to use ag-grid and ag-grid-aurelia as follows:
     </p>
 
-    <pre>      {
+    <snippet>
+     {
         "name": "vendor-bundle.js",
         "prepend": [
           "node_modules/bluebird/js/browser/bluebird.core.js",
@@ -103,7 +105,7 @@
             "path": "../../ag-grid-aurelia",
             "main": "main"
           }
-        ]</pre>
+        ]</snippet>
 
     <p>
         All the above items are specific to Aurelia and is intended to point
@@ -157,15 +159,16 @@
         The example has ag-Grid configured through the template in the following ways:
     </p>
 
-    <pre><span class="codeComment">// notice the grid has an id called agGrid, which can be used to call the API</span>
+    <snippet>
+// notice the grid has an id called agGrid, which can be used to call the API
 &lt;g-grid-aurelia #agGrid class="ag-fresh"
-    <span class="codeComment">// items bound to properties on the controller</span>
+    // items bound to properties on the controller
     grid-options.bind="gridOptions"
     column-defs.bind="columnDefs"
     show-tool-panel.bind="showToolPanel"
     row-data.bind="rowData"
 
-    <span class="codeComment">// boolean values 'turned on'</span>
+    // boolean values 'turned on'
     enable-col-resize
     enable-sorting
     enable-filter
@@ -175,11 +178,11 @@
     tool-panel-suppress-values
     debug
 
-    <span class="codeComment">// simple values</span>
+    // simple values
     row-height.bind="22"
     row-selection="multiple"
 
-    <span class="codeComment">// event callbacks</span>
+    // event callbacks
     model-updated.call="onModelUpdated()"
     cell-clicked.call="onCellClicked($event)"
     cell-double-clicked.call="onCellDoubleClicked($event)"
@@ -204,8 +207,8 @@
     column-visible.call="onColumnEvent($event)"
     column-group-opened.call="onColumnEvent($event)"
     column-resized.call="onColumnEvent($event)"
-    column-pinned-count-changed.call="onColumnEvent($event)">
-&lt;/ag-grid-aurelia></pre>
+    column-pinned-count-changed.call="onColumnEvent($event)"&gt;
+&lt;/ag-grid-aurelia&gt;</snippet>
 
     <p>
         The above is all you need to get started using ag-Grid in a Aurelia application. Now would

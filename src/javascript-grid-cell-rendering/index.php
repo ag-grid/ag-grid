@@ -19,23 +19,24 @@ include '../documentation-main/documentation_header.php';
         <li>Build your own cell renderer.</li>
     </ol>
 
-<pre><span class="codeComment">// 1 - do nothing, simple text is used by the grid</span>
+<snippet>
+// 1 - do nothing, simple text is used by the grid
 var colDef1 = {
     cellRenderer: null,
     ...
 }
 
-<span class="codeComment">// 2 - use one of the grids provided cell renderer's, reference it by name</span>
+// 2 - use one of the grids provided cell renderer's, reference it by name
 var colDef2 = {
     cellRenderer: 'group',
     ...
 }
 
-<span class="codeComment">// 3 - provide your own cell renderer</span>
+// 3 - provide your own cell renderer
 var colDef3 = {
     cellRenderer: MyCustomCellRendererClass,
     ...
-}</pre>
+}</snippet>
 
     This section of the documentation explains the first two items above, how to use no cell
     renderer and how to use the grid provided cell renderer's. To build your own cell renderer,
@@ -147,21 +148,22 @@ var colDef3 = {
     of a column and it's configuration:
 </p>
 
-<pre>colDef = {
-    <span class="codeComment">// tell the grid we want to show group values in this column</span>
+<snippet>
+colDef = {
+    // tell the grid we want to show group values in this column
     showRowGroup: true,
-    <span class="codeComment">// set the cell renderer to 'group'</span>
+    // set the cell renderer to 'group'
     cellRenderer: 'group',
-    <span class="codeComment">// provide extra params to the cellRenderer</span>
+    // provide extra params to the cellRenderer
     cellRendererParams: {
-        suppressCount: false, <span class="codeComment">// turn off the row count</span>
-        checkbox: true, <span class="codeComment">// enable checkbox selection</span>
-        padding: 10, <span class="codeComment">// set padding to 10px</span>
-        innerRenderer: myInnerRenderer, <span class="codeComment">// provide an inner renderer</span>
-        footerValueGetter: myFooterValueGetter <span class="codeComment">// provide a footer value getter</span>
+        suppressCount: false, // turn off the row count
+        checkbox: true, // enable checkbox selection
+        padding: 10, // set padding to 10px
+        innerRenderer: myInnerRenderer, // provide an inner renderer
+        footerValueGetter: myFooterValueGetter // provide a footer value getter
     }
     ...
-};</pre>
+};</snippet>
 
 <p>
     The set of parameters for the group cell renderer are:

@@ -47,12 +47,13 @@ include '../documentation-main/documentation_header.php';
         To turn on infinite scrolling, you must a) set the grid property rowModelType to infinite and b) provide a datasource.
     </p>
 
-    <pre><span class="codeComment">// before grid initialised</span>
+    <snippet>
+// before grid initialised
 gridOptions.rowModelType = 'infinite';
 gridOptions.datasource = myDataSource;
 
-<span class="codeComment">// after grid initialised, you can set or change the datasource</span>
-gridOptions.api.setDatasource(myDataSource);</pre>
+// after grid initialised, you can set or change the datasource
+gridOptions.api.setDatasource(myDataSource);</snippet>
 
     <h2 id="datasource">Datasource</h2>
 
@@ -61,11 +62,12 @@ gridOptions.api.setDatasource(myDataSource);</pre>
         or using the grid API.
     </p>
 
-    <pre><span class="codeComment">// set as a property</span>
+    <snippet>
+// set as a property
 gridOptions.datasource = myDatasource;
 
-<span class="codeComment">// or use the api after the grid is initialised</span>
-gridOptions.api.setDatasource(myDatasource);</pre>
+// or use the api after the grid is initialised
+gridOptions.api.setDatasource(myDatasource);</snippet>
 
     <h3 id="changing-a-datasource">Changing the Datasource</h3>
 
@@ -91,41 +93,43 @@ gridOptions.api.setDatasource(myDatasource);</pre>
         implement the following interface:
     </p>
 
-    <pre><span class="codeComment">// Infinite Scrolling Datasource</span>
+    <snippet>
+// Infinite Scrolling Datasource
 interface IDatasource {
 
-    <span class="codeComment">// Callback the grid calls that you implement to fetch rows from the server. See below for params.</span>
+    // Callback the grid calls that you implement to fetch rows from the server. See below for params.
     getRows(params: IGetRowsParams): void;
-}</pre>
+}</snippet>
 
     <p>
         The getRows() method takes the following parameters:
     </p>
 
-    <pre><span class="codeComment">// Params for the above IDatasource.getRows()</span>
+    <snippet>
+// Params for the above IDatasource.getRows()
 interface IGetRowsParams {
 
-    <span class="codeComment">// The first row index to get.</span>
+    // The first row index to get.
     startRow: number;
 
-    <span class="codeComment">// The first row index to NOT get.</span>
+    // The first row index to NOT get.
     endRow: number;
 
-    <span class="codeComment">// If doing server side sorting, contains the sort model</span>
+    // If doing server side sorting, contains the sort model
     sortModel: any,
 
-    <span class="codeComment">// If doing server side filtering, contains the filter model</span>
+    // If doing server side filtering, contains the filter model
     filterModel: any;
 
-    <span class="codeComment">// The grid context object</span>
+    // The grid context object
     context: any;
 
-    <span class="codeComment">// Callback to call when the request is successful.</span>
+    // Callback to call when the request is successful.
     successCallback(rowsThisBlock: any[], lastRow?: number): void;
 
-    <span class="codeComment">// Callback to call when the request fails.</span>
+    // Callback to call when the request fails.
     failCallback(): void;
-}</pre>
+}</snippet>
 
     <h3 id="function-get-rows">Function getRows()</h3>
 
@@ -237,10 +241,11 @@ interface IGetRowsParams {
         and should return the id for the data.
     </p>
 
-    <pre>gridOptions.getRowNodeId: function(item) {
-    <span class="codeComment">// the id can be any string, as long as it's unique within your dataset</span>
+    <snippet>
+gridOptions.getRowNodeId: function(item) {
+    // the id can be any string, as long as it's unique within your dataset
     return item.id.toString();
-}</pre>
+}</snippet>
 
     <p>
         Once you have <i>getRowNodeId()</i> implemented, selection will persist across sorts and filters.
@@ -322,23 +327,23 @@ interface IGetRowsParams {
         when the id is set.
     </p>
 
-    <pre>
+    <snippet>
 loadingSpinnerColumn = {
 
-    <span class="codeComment">// use a value getter to have the node id as this columns value</span>
+    // use a value getter to have the node id as this columns value
     valueGetter: 'node.id',
 
-    <span class="codeComment">// then a custom cellRenderer</span>
+    // then a custom cellRenderer
     cellRenderer: function(params) {
         if (params.value === undefined) {
-            <span class="codeComment">// when no node id, display the spinner image</span>
-            return '&lt;img src="loading.gif">'
+            // when no node id, display the spinner image
+            return '&lt;img src="loading.gif"&gt;'
         } else {
-            <span class="codeComment">// otherwise just display node id (or whatever you wish for this column)</span>
+            // otherwise just display node id (or whatever you wish for this column)
             return params.value;
         }
     }
-}</pre>
+}</snippet>
 
     <p>Refer to section <a href="../javascript-grid-cell-rendering-components">Cell Rendering</a> for how to build
     cell renderers.</p>

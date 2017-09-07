@@ -37,17 +37,17 @@
 
 
 <h3 id="cell-renderers-from-templates"><img src="../images/aurelia_large.png" style="width: 20px;"/> Cell Renderer's from Templates</h3>
-<pre><span class="codeComment">// create your cellRenderer as an Aurelia template</span>
+<snippet>
+// create your cellRenderer as an Aurelia template
 &lt;ag-grid-aurelia #agGrid style="width: 100%; height: 100%;" class="ag-fresh"
-                 grid-options.bind="gridOptions">
-  &lt;ag-grid-column header-name="Mood" field="mood" width.bind="150" editable.bind="true">
-    &lt;ag-cell-template>
-      &lt;img width="20px" if.bind="params.value === 'Happy'" src="images/smiley.png"/>
-      &lt;img width="20px" if.bind="params.value !== 'Happy'" src="images/smiley-sad.png"/>
-    &lt;/ag-cell-template>
-  &lt;/ag-grid-column>
-&lt;/ag-grid-aurelia>
-</pre>
+                 grid-options.bind="gridOptions"&gt;
+  &lt;ag-grid-column header-name="Mood" field="mood" width.bind="150" editable.bind="true"&gt;
+    &lt;ag-cell-template&gt;
+      &lt;img width="20px" if.bind="params.value === 'Happy'" src="images/smiley.png"/&gt;
+      &lt;img width="20px" if.bind="params.value !== 'Happy'" src="images/smiley-sad.png"/&gt;
+    &lt;/ag-cell-template&gt;
+  &lt;/ag-grid-column&gt;
+&lt;/ag-grid-aurelia&gt;</snippet>
 
 <p>The advantage of using Templates for your renderers is that you have the ability to use Aurelia's dynamic data binding facilties.</p>
 

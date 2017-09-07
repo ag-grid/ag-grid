@@ -21,9 +21,10 @@ include '../documentation-main/documentation_header.php';
 <p>In order to set the filter type to text you need to add the following to your column definition</p>
 
 
-<p><pre>colDef:{
+<p><snippet>
+colDef:{
     filter:'text'
-}</pre></p>
+}</snippet></p>
 
 <note>
     <p>Enterprise users have <a href="../javascript-grid-set-filtering/">Set Filter</a> as the default type</p>
@@ -63,12 +64,13 @@ include '../documentation-main/documentation_header.php';
 
 The parameters for the filter must be specified in the property filterParams inside the column definition
 object
-<p><pre>colDef:{
+<p><snippet>
+colDef:{
     filter:'text',
     filterParams:{
         ...
     }
-}</pre></p>
+}</snippet></p>
 </p>
 
 <h3 id="textCustomComparator">Text Custom Comparator</h3>
@@ -89,9 +91,8 @@ object
 
 <p>The <i>textCustomComparator</i> is a function with the following signature:</p>
 
-<pre>
-(filter:string, gridValue:any, filterText:string):boolean;
-</pre>
+<snippet>
+(filter:string, gridValue:any, filterText:string):boolean;</snippet>
 
 <ul>
     <li><b>filter:string</b> The applicable filter type being tested. One of: {equals, notEqual, contains, notContains,
@@ -107,13 +108,13 @@ object
     used as a template to create your own.
 </p>
 
-<pre>
+<snippet>
 function myComparator (filter, value, filterText){
     var filterTextLoweCase = filterText.toLowerCase();
     var valueLowerCase = value.toString().toLowerCase();
     switch (filter) {
     case 'contains':
-        return valueLowerCase.indexOf(filterTextLoweCase) >= 0;
+        return valueLowerCase.indexOf(filterTextLoweCase) &gt;= 0;
     case 'notContains':
         return valueLowerCase.indexOf(filterTextLoweCase) === -1;
     case 'equals':
@@ -124,14 +125,13 @@ function myComparator (filter, value, filterText){
         return valueLowerCase.indexOf(filterTextLoweCase) === 0;
     case 'endsWith':
         var index = valueLowerCase.lastIndexOf(filterTextLoweCase);
-        return index >= 0 && index === (valueLowerCase.length - filterTextLoweCase.length);
+        return index &gt;= 0 && index === (valueLowerCase.length - filterTextLoweCase.length);
     default:
         // should never happen
         console.warn('invalid filter type ' + filter);
         return false;
     }
-}
-</pre>
+}</snippet>
 
 <h3 id="textFormatter">Text Formatter</h3>
 <p>
@@ -141,9 +141,8 @@ function myComparator (filter, value, filterText){
 </p>
 <p>
     The <i>textFormatter</i> is a function with the following signature
-<pre>
-(gridValue:string):string;
-</pre>
+<snippet>
+(gridValue:string):string;</snippet>
 <ul>
     <li><b>gridValue:string</b> The value coming from the grid. This can be the valueGetter if there is any for the
     column, or the value as originally provided in the rowData</li>
@@ -157,7 +156,7 @@ function myComparator (filter, value, filterText){
 <p>
     The following is an example to remove accents and convert to lower case.
 </p>
-<pre>
+<snippet>
 function(s){
         var r=s.toLowerCase();
         r = r.replace(new RegExp("\\s", 'g'),"");
@@ -173,8 +172,7 @@ function(s){
         r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
         r = r.replace(new RegExp("\\W", 'g'),"");
         return r;
-};
-</pre>
+};</snippet>
 
 <h2 id="model">Text Filter Model</h2>
 
@@ -182,19 +180,19 @@ function(s){
     Get and set the state of the text filter by getting and setting the model on the filter instance.
 </p>
 
-    <p><pre><span class="codeComment">// get filter instance</span>
+    <p><snippet>
+// get filter instance
 var athleteFilterComponent = gridOptions.api.getFilterInstance('athlete');
 
-<span class="codeComment">// get filter model</span>
+// get filter model
 var model = athleteFilterComponent.getModel();
 
-<span class="codeComment">// OR set filter model and update</span>
+// OR set filter model and update
 athleteFilterComponent.setModel({
     type:'endsWith',
     filter:'thing'
 });
-athleteFilterComponent.onFilterChanged()
-</pre></p>
+athleteFilterComponent.onFilterChanged()</snippet></p>
 
 <p>
     The text filter model has the following attributes:

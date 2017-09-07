@@ -8,8 +8,8 @@
     often need a simple way to let a "parent" component know that something has happened on a "child" component. In this case
     the simplest route is to use the <code>gridOptions.context</code> to hold a reference to the parent, which the child can then access.</p>
 
-<pre>
-<span class="codeComment">// in the parent component - the component that hosts ag-grid-angular and specifies which angular components to use in the grid</span>
+<snippet>
+// in the parent component - the component that hosts ag-grid-angular and specifies which angular components to use in the grid
 beforeMount() {
     this.gridOptions = {
         context: {
@@ -20,10 +20,9 @@ beforeMount() {
     this.createColumnDefs();
 },
 
-<span class="codeComment">// in the child component - the Vue components created dynamically in the grid</span>
-<span class="codeComment">// the parent component can then be accessed as follows:</span>
-this.params.context.componentParent
-</pre>
+// in the child component - the Vue components created dynamically in the grid
+// the parent component can then be accessed as follows:
+this.params.context.componentParent</snippet>
 
 <p>Note that although we've used <code>componentParent</code> as the property name here it can be anything - the main
     point is that you can use the <code>context</code> mechanism to share information between the components.</p>

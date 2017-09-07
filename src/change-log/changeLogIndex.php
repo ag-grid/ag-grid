@@ -1010,12 +1010,13 @@ include '../documentation-main/documentation_header.php';
         Lots of work has been done to support natively React and Angular 2, to allow you to plug in React
         and Angular 2 cellEditors and cellRenderers simply. Now, instead of using cellRenderer, you use
         cellRendererFramework as follows:
-        <pre><span class="codeComment">// when not using React or Angular 2</span>
+        <snippet>
+// when not using React or Angular 2
 colDef.cellRenderer = MyCellRenderer;
 
-<span class="codeComment">// in v6, you can use React or Angular 2 components directly</span>
-colDef.cellRendererFramework = MyReactCellRenderer; <span class="codeComment">// for React</span>
-colDef.cellRendererFramework = MyAngular2CellRenderer; <span class="codeComment">// for Angular</span></pre>
+// in v6, you can use React or Angular 2 components directly
+colDef.cellRendererFramework = MyReactCellRenderer; // for React
+colDef.cellRendererFramework = MyAngular2CellRenderer; // for Angular</snippet>
     Full details on how get this all working are in the updated React and Angular 2 sections of the docs.
     If you are using Angular 2 or React, it's best you read these sections to see how to do things
     in the new improved way.
@@ -1034,8 +1035,8 @@ colDef.cellRendererFramework = MyAngular2CellRenderer; <span class="codeComment"
                 to the filter component directly via api.getFilterInstance(colKey). From here you can access all
                 methods on the filter component. So if you want to add extra items to (what used to be) the API, now
                 you just add them directly to your filter component.
-        <pre>
-<span class="codeComment">// eg if your filter was like this:</span>
+        <snippet>
+// eg if your filter was like this:
 function MyFilter() {}
 
 MyFilter.prototype.getApi = function() {
@@ -1049,7 +1050,7 @@ MyFilter.prototype.getApi = function() {
     }
 }
 
-<span class="codeComment">// it should now be like this:</span>
+// it should now be like this:
 function MyFilter() {}
 
 MyFilter.prototype.getModel = function() {
@@ -1058,19 +1059,19 @@ MyFilter.prototype.getModel = function() {
 
 MyFilter.prototype.setModel = function(model) {
     ...
-}</pre>
+}</snippet>
             </li>
             <li><b>If you were providing custom params to your custom filters</b> then these used to be passed to the filter embedded into the filter params.
                 Now the custom params are added to the main params.
-        <pre>
-<span class="codeComment">// eg when you define this:</span>
+        <snippet>
+// eg when you define this:
 colDef = {
     ...
     filter: MyFilter,
     filterParams: {a: 'A', b: 'B'}
 }
 
-<span class="codeComment">// the old way resulted in:</span>
+// the old way resulted in:
 params = {
     column: Column,
     ...
@@ -1080,13 +1081,13 @@ params = {
     }
 }
 
-<span class="codeComment">// but now it results in:</span>
+// but now it results in:
 params = {
     column: Column,
     ...
     a: 'A',
     b: 'B'
-}</pre>
+}</snippet>
             </li>
             <li>
     <p>

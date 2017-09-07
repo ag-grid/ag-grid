@@ -18,15 +18,15 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Installation</h3>
 
-<pre>
+<snippet>
 git clone https://github.com/ag-grid/ag-grid-openfin-example
 cd ag-grid-openfin-example
-npm install
-</pre>
+npm install</snippet>
 
     <p>Now that the examples and dependencies have been installed, you can run the examples. Open a terminal and run
         the following to serve up the applications:</p>
-    <pre>npm run server</pre>
+    <snippet>
+npm run server</snippet>
 
     <p>Depending on the example you wish you run, you will need to open one or two more terminal windows - see each example for
     more details.</p>
@@ -36,7 +36,8 @@ npm install
     <p>A simple ag-Grid running within the <a href="https://openfin.co/">OpenFin</a> container.</p>
 
     <p>Open a terminal and run the following command:</p>
-    <pre>npm run simple-grid</pre>
+    <snippet>
+npm run simple-grid</snippet>
 
     <img src="../images/openfin-simple-grid.png"/>
 
@@ -45,7 +46,8 @@ npm install
     <p>A more sophisticated ag-Grid example running within the <a href="https://openfin.co/">OpenFin</a> container.</p>
 
     <p>Open a terminal and run the following command:</p>
-    <pre>npm run rich-grid</pre>
+    <snippet>
+npm run rich-grid</snippet>
 
     <img src="../images/openfin-rich-grid.png"/>
 
@@ -54,7 +56,8 @@ npm install
     <p>A MasterDetail example within a single <a href="https://openfin.co/">OpenFin</a> application</p>
 
     <p>Open a terminal and run the following command:</p>
-    <pre>npm run masterdetail-master-single</pre>
+    <snippet>
+npm run masterdetail-master-single</snippet>
 
     <img src="../images/openfin-masterdetail-single.png"/>
 
@@ -65,10 +68,12 @@ npm install
     <p>Here when a row is clicked on in the "master" application, more detailed information is displayed in the "detail" application.</p>
 
     <p>Open a terminal and run the following command:</p>
-    <pre>npm run masterdetail-master</pre>
+    <snippet>
+npm run masterdetail-master</snippet>
 
     <p>Open another terminal and run the following command:</p>
-    <pre>npm run masterdetail-detail</pre>
+    <snippet>
+npm run masterdetail-detail</snippet>
 
     <img width="100%" src="../images/openfin-masterdetail-multi.png"/>
 
@@ -85,10 +90,12 @@ npm install
     application will be updated accordingly.</p>
 
     <p>Open a terminal and run the following command:</p>
-    <pre>npm run stocks-master</pre>
+    <snippet>
+npm run stocks-master</snippet>
 
     <p>Open another terminal and run the following command:</p>
-    <pre>npm run stocks-detail</pre>
+    <snippet>
+npm run stocks-detail</snippet>
 
     <img width="100%" src="../images/openfin-masterdetail-graph.png"/>
 

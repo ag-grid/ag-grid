@@ -25,18 +25,19 @@ include '../documentation-main/documentation_header.php';
         To have one (the first) grid reflect column changes in another (the second), place the
         first grid's options in <code>alignedGrids</code> property of the second grids.
     </p>
-    <pre><code>gridOptionsFirst = {
-    <span class="codeComment">// some grid options here</span>
+    <snippet>
+gridOptionsFirst = {
+    // some grid options here
         ...
 };
 
 gridOptionsSecond = {
-    <span class="codeComment">// register first grid to receive events from the second</span>
+    // register first grid to receive events from the second
     alignedGrids: [gridOptionsFirst]
 
-    <span class="codeComment">// other grid options here</span>
+    // other grid options here
     ...
-}</code></pre>
+}</snippet>
 
     <h2 id="demonstration-example">Example - Aligned Grids</h2>
 

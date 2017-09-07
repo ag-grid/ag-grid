@@ -27,9 +27,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>The following is an example of using the theme (using AngularJS 1.x):</p>
 
-<pre>
-&lt;div ag-grid="gridOptions" class="ag-theme-material"&gt;&lt;/div&gt;
-</pre>
+<snippet>
+&lt;div ag-grid="gridOptions" class="ag-theme-material"&gt;&lt;/div&gt;</snippet>
 
 
     <h3>Include the Roboto Font</h3>
@@ -37,7 +36,8 @@ include '../documentation-main/documentation_header.php';
     <p>The material design guidelines require the Roboto font to be used throughout the interface. The easiest way to include it in the document is by loading it from the Google CDN. 
 Put the following code in the HEAD element of your document: </p>
 
-<pre>&lt;link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"&gt;</pre>
+<snippet>
+&lt;link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"&gt;</snippet>
 
 
     <h3>Change the Theme Primary / Secondary Colors through Scss</h3>
@@ -50,14 +50,13 @@ Put the following code in the HEAD element of your document: </p>
 
     <p>To change the application colors, set the variables values to your colors of choice, and include the Scss theme file after that.<p>
 
-<pre>
+<snippet>
 // Set the colors to blue and amber
 $ag-mat-primary: #2196F3; // blue-500
 $ag-mat-accent: #FFD740; // amber-A200
 
 // Import the ag-Grid material-next theme
-@import '~ag-grid/src/styles/theme-material-next';
-</pre>
+@import '~ag-grid/src/styles/theme-material-next';</snippet>
 
 <p>You can examine the full list of the variables that can be changed in the <a href="https://github.com/ag-grid/ag-grid/blob/latest/src/styles/ag-theme-material.scss#L17-L59">theme source file</a>.</p>
 
@@ -82,15 +81,14 @@ The icons should be <strong>18x18px sized SVG</strong> files. You can check the 
 <p>You can also change individual icons by overriding the background images for the respective CSS selector. 
 The following code snippet overrides the pin icon used in the drag hint when reordering columns:<p>
 
-<pre>
+<snippet>
 /* 
  * The override should be placed after the import of the theme. 
  * Alternatively, you can aso increase the selector's specifcity 
  */
 .ag-theme-material .ag-icon-pin {
     background-image: url('path/to/my-pin-icon.svg');
-}
-</pre>
+}</snippet>
 
 <p>The icon classes follow the <code>.ag-icon-{icon-file-name}</code> convention.</p>
 
@@ -116,21 +114,24 @@ A working example that integrates Angular Material's input, checkbox, select and
     To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
     <p/>
     The following is an example of using the ag-material theme:<br/>
-    <pre>&lt;div ag-grid="gridOptions" class="ag-material"&gt;&lt;/div&gt;</pre>
+    <snippet>
+&lt;div ag-grid="gridOptions" class="ag-material"&gt;&lt;/div&gt;</snippet>
 
     </p>
     Note that to use the Material theme you'll need to override the default rowHeight
-    <pre>gridOptions = {
+    <snippet>
+gridOptions = {
     rowHeight: 48
-}</pre>
+}</snippet>
 
     Additionally, to be consistent with Googles guidelines, you should override the default checkbox behaviour - in the example
     below we've overriden the selected checkbox state to be blue
-    <pre>gridOptions = {
+    <snippet>
+gridOptions = {
     icons: {
-        checkboxChecked: '&lt;img src="data:image/png;base64,..."/>'
+        checkboxChecked: '&lt;img src="data:image/png;base64,..."/&gt;'
     }
-}</pre>
+}</snippet>
 
     <div class="bigTitle" id="material-theme-example">Material Theme Example</div>
 

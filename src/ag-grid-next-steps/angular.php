@@ -28,11 +28,12 @@
         In your package.json file, specify dependency on ag-grid AND ag-grid-angular.
         The ag-grid package contains the core ag-grid engine and the ag-grid-angular
         contains the Angular component.
-    <pre>"dependencies": {
+    <snippet>
+"dependencies": {
     ...
     "ag-grid": "8.1.x",
     "ag-grid-angular": "8.1.x"
-}</pre>
+}</snippet>
     The major and minor versions should match. Every time a new major or minor
     version of ag-Grid is released, the component will also be released. However
     for patch versions, the component will not be released.
@@ -40,27 +41,29 @@
 
     <p>You will then be able to access ag-Grid inside your application:</p>
 
-    <pre>import {AgGridModule} from 'ag-grid-angular/main';</pre>
+    <snippet>
+import {AgGridModule} from 'ag-grid-angular/main';</snippet>
 
     <p>
         Which you can then use as a dependency inside your module:
     </p>
 
-    <pre>@NgModule({
+    <snippet>
+@NgModule({
     imports: [
         BrowserModule,
         AgGridModule.withComponents([...optional Angular Components to be used in the grid....]),
         ...
-})</pre>
+})</snippet>
 
     <p>
         You will need to include the CSS for ag-Grid, either directly inside
         your html page, or as part of creating your bundle if bundling. The following
         shows referencing the css from your web page:
     </p>
-    <pre>&lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" />
-&lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" />
-</pre>
+    <snippet>
+&lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" /&gt;
+&lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" /&gt;</snippet>
 
     <h2 id="configuring-ag-grid-in-angular">Configuring ag-Grid in Angular</h2>
 
@@ -118,7 +121,7 @@
     <h3 id="providing-angular-components-to-ag-grid">Providing Angular Components to ag-Grid</h3>
     <p>In order for ag-Grid to be able to use your Angular Components, you need to provide them in the <strong>top
             level</strong> module:</p>
-    <pre>
+    <snippet>
 @NgModule({
 imports: [
     BrowserModule,
@@ -128,13 +131,12 @@ imports: [
         [
             SquareComponent,
             CubeComponent,
-            ...other components
-</pre>
+            ...other components</snippet>
 
     <p>You can then use these components as editors, renderers or filters. For example, to use an Angular
         Component as a
         Cell Renderer, you would do the following:</p>
-    <pre>
+    <snippet>
 let colDefs = [
     {
         headerName: "Square Component",
@@ -145,8 +147,7 @@ let colDefs = [
         width: 175
     },
     ...other column definitions
-]
-</pre>
+]</snippet>
     <p>Please see the relevant sections on <a
                 href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cell renderer's</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cell editors</a> and
@@ -158,30 +159,31 @@ let colDefs = [
         The example has ag-Grid configured through the template in the following ways:
     </p>
 
-    <pre><span class="codeComment">// notice the grid has an id called agGrid, which can be used to call the API</span>
+    <snippet>
+// notice the grid has an id called agGrid, which can be used to call the API
 &lt;ag-grid-angular #agGrid style="width: 100%; height: 350px;" class="ag-fresh"
 
-    <span class="codeComment">// items bound to properties on the controller</span>
+    // items bound to properties on the controller
     [gridOptions]="gridOptions"
     [columnDefs]="columnDefs"
     [showToolPanel]="showToolPanel"
     [rowData]="rowData"
 
-    <span class="codeComment">// boolean values 'turned on'</span>
+    // boolean values 'turned on'
     enableColResize
     enableSorting
     enableFilter
 
-    <span class="codeComment">// simple values, not bound</span>
+    // simple values, not bound
     rowHeight="22"
     rowSelection="multiple"
 
-    <span class="codeComment">// event callbacks</span>
+    // event callbacks
     (modelUpdated)="onModelUpdated()"
     (cellClicked)="onCellClicked($event)"
-    (cellDoubleClicked)="onCellDoubleClicked($event)">
+    (cellDoubleClicked)="onCellDoubleClicked($event)"&gt;
 
-&lt;/ag-grid-angular></pre>
+&lt;/ag-grid-angular&gt;</snippet>
 
     <p>
         The above is all you need to get started using ag-Grid in a Angular application. Now would
@@ -202,8 +204,8 @@ let colDefs = [
         which the
         child can then access.</p>
 
-    <pre>
-<span class="codeComment">// in the parent component - the component that hosts ag-grid-angular and specifies which angular components to use in the grid</span>
+    <snippet>
+// in the parent component - the component that hosts ag-grid-angular and specifies which angular components to use in the grid
 constructor() {
     this.gridOptions = &lt;GridOptions&gt;{
         context: {
@@ -214,10 +216,9 @@ constructor() {
     this.gridOptions.columnDefs = this.createColumnDefs();
 }
 
-<span class="codeComment">// in the child component - the angular components created dynamically in the grid</span>
-<span class="codeComment">// the parent component can then be accessed as follows:</span>
-this.params.context.componentParent
-</pre>
+// in the child component - the angular components created dynamically in the grid
+// the parent component can then be accessed as follows:
+this.params.context.componentParent</snippet>
 
     <p>Note that although we've used <code>componentParent</code> as the property name here it can be anything -
         the
@@ -291,46 +292,44 @@ this.params.context.componentParent
         follows:</p>
 
     <h3 id="column-definition">Column Definition</h3>
-    <pre>
-&lt;ag-grid-column headerName="Name" field="name" [width]="150">&lt;/ag-grid-column>
-</pre>
+    <snippet>
+&lt;ag-grid-column headerName="Name" field="name" [width]="150"&gt;&lt;/ag-grid-column&gt;</snippet>
 
     <p>This example declares a simple Column Definition, specifying header name, field and width.</p>
 
     <h3 id="setting-column-properties">Setting Column Properties</h3>
     <p>There are some simple rules you should follow when setting column properties via Markup:</p>
-    <pre ng-non-bindable>
-<span class="codeComment">// string value</span>
+    <snippet>
+// string value
 propertyName="String Value"
 [propertyName]="'String Value'"
 [propertyName]="{{Interpolated Value}}"
 [propertyName]="functionCallReturningAString()"
 
-<span class="codeComment">// boolean value</span>
+// boolean value
 [propertyName]="true|false"
 [propertyName]="{{Interpolated Value}}"
 [propertyName]="functionCallReturningABoolean()"
 
-<span class="codeComment">// numeric value</span>
+// numeric value
 [propertyName]="Numeric Value"
 [propertyName]="functionCallReturningANumber()"
 
-<span class="codeComment">// function value</span>
+// function value
 [propertyName]="functionName"
-[propertyName]="functionCallReturningAFunction()"
-</pre>
+[propertyName]="functionCallReturningAFunction()"</snippet>
 
     <h4 id="setting-a-class-or-a-complex-value">Setting a Class or a Complex Value:</h4>
     <p>You can set a Class or a Complex property in the following way:</p>
-    <pre>
-<span class="codeComment">// return a Class definition for a Filter</span>
+    <snippet>
+// return a Class definition for a Filter
 [filter]="getSkillFilter()"
 
 private getSkillFilter():any {
     return SkillFilter;
 }
 
-<span class="codeComment">// return an Object for filterParams</span>
+// return an Object for filterParams
 [filterParams]="getCountryFilterParams()"
 
 private getCountryFilterParams():any {
@@ -338,17 +337,15 @@ private getCountryFilterParams():any {
         cellRenderer: this.countryCellRenderer,
         cellHeight: 20
     }
-}
-</pre>
+}</snippet>
 
     <h3 id="grouped-column-definition">Grouped Column Definition</h3>
     <p>To specify a Grouped Column, you can nest a column defintion:</p>
-    <pre ng-non-bindable>
-&lt;ag-grid-column headerName="IT Skills">
-    &lt;ag-grid-column headerName="Skills" [width]="125" [suppressSorting]="true" [cellRenderer]="skillsCellRenderer" [filter]="getSkillFilter()">&lt;/ag-grid-column>
-    &lt;ag-grid-column headerName="Proficiency" field="proficiency" [width]="120" [cellRenderer]="percentCellRenderer" [filter]="getProficiencyFilter()">&lt;/ag-grid-column>
-&lt;/ag-grid-column>
-</pre>
+    <snippet>
+&lt;ag-grid-column headerName="IT Skills"&gt;
+    &lt;ag-grid-column headerName="Skills" [width]="125" [suppressSorting]="true" [cellRenderer]="skillsCellRenderer" [filter]="getSkillFilter()"&gt;&lt;/ag-grid-column&gt;
+    &lt;ag-grid-column headerName="Proficiency" field="proficiency" [width]="120" [cellRenderer]="percentCellRenderer" [filter]="getProficiencyFilter()"&gt;&lt;/ag-grid-column&gt;
+&lt;/ag-grid-column&gt;</snippet>
     <p>In this example we have a parent Column of "IT Skills", with two child columns.</p>
 
     <h3 id="example-rich-grid-using-markup">Example: Rich Grid using Markup</h3>

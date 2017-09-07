@@ -40,7 +40,8 @@ include('../includes/mediaHeader.php');
         <p>With v7, we drop our reliance on the <code>RuntimeCompiler</code> and move to using the <code>ComponentFactoryResolver</code> instead. We are able to do this by making use of <code>entryComponents</code> within our <code>NgModule</code>, which tells the AOT
         compiler to create a <code>ComponentFactory</code> for the Component, and registers it with the <code>ComponentFactoryResolver</code>.</p>
 
-<pre><span class="codeComment">// AgGridModule</span>
+<snippet>
+// AgGridModule
 @NgModule({
     imports: [],
     declarations: [
@@ -64,20 +65,19 @@ export class AgGridModule {
             ],
         };
     }
-}
-</pre>
+}</snippet>
 
-<pre>
-<span class="codeComment">// Dynamically instantiating the user supplied Angular 2 Component</span>
+<snippet>
+// Dynamically instantiating the user supplied Angular 2 Component
 factory = this._componentFactoryResolver.resolveComponentFactory(componentType);
-let component = viewContainerRef.createComponent(factory);
-</pre>
+let component = viewContainerRef.createComponent(factory);</snippet>
 
         <p>With this new arrangement, we can now offer full Angular 2 Component support, together with either AOT or JIT support.</p>
         <p>The only downside is that we are no longer able to offer support for template strings, as we are no longer able to dynamically create new Components and Modules. On balance, we feel this trade off was a worthwhile one.</p>
 
         <p>The new way of declaring Components pushes the responsiblity of <code>Module</code>'s and <code>Component</code>'s up to the user, back where it belongs. It also allows for a simplified interface to the grid - instead of:</p>
-<pre>{
+<snippet>
+{
     headerName: "Clickable Component",
     field: "name",
     cellRendererFramework: {
@@ -85,38 +85,39 @@ let component = viewContainerRef.createComponent(factory);
         dependencies: [ClickableComponent]
     },
     width: 200
-}
-</pre>
+}</snippet>
 
         <p>You now only need to do this:</p>
-<pre>{
+<snippet>
+{
     headerName: "Clickable Component",
     field: "name",
     cellRendererFramework: ClickableParentComponent,
     width: 250
-}
-</pre>
+}</snippet>
 
         <h2>Show Me More!</h2>
         <p>Let's replicate what ag-Grid does with a more concrete example.  Let's assume a user wants to use an external component (i.e. ag-Grid) and let it do its thing but also wants to
         be able to supply domain specific components to this external component, for use within it.</p>
 
         <p>First, here is our domain specific Component:</p>
-        <pre>@Component({
+        <snippet>
+@Component({
     selector: 'dynamic-component',
-    template: '<span> Dynamic Component! </span>',
+    template: '&lt;span&gt; Dynamic Component! &lt;/span&gt;',
 })
 export class DynamicComponent {
-}</pre>
+}</snippet>
 
         <p>It's not much more than a simple piece of text that we want displayed in our library.</p>
 
         <p>Next, here is our library component:</p>
-        <pre>@Component({
+        <snippet>
+@Component({
     selector: 'grid-component',
     template: `
-    &lt;button (click)="addDynamicGridComponent()">Add Dynamic Grid component</button>
-    &lt;br/>
+    &lt;button (click)="addDynamicGridComponent()"&gt;Add Dynamic Grid component&lt;/button&gt;
+    &lt;br/&gt;
   `
 })
 export class GridComponent {
@@ -130,18 +131,20 @@ export class GridComponent {
         let compFactory = this.cfr.resolveComponentFactory(this.componentType);
         this.viewContainerRef.createComponent(compFactory);
     }
-}</pre>
+}</snippet>
 
         <p>In this case, we have a button that when clicked will dynamically create a supplied component type beneath it.</p>
         <p>The key part of this component is this block:</p>
-        <pre>let compFactory = this.cfr.resolveComponentFactory(this.componentType);</pre>
+        <snippet>
+let compFactory = this.cfr.resolveComponentFactory(this.componentType);</snippet>
 
         <p>This will retrieve the <code>ComponentFactory</code> for the supplied component type, which we can then use to create new instances of it.</p>
 
         <p>For this to work, we need to ensure that the AOT compiler knows that it needs to create a <code>ComponentFactory</code> for the user supplied components. If we don't
         then our code would work for Just-In-Time (JIT) but not for Ahead-Of-Time (AOT) compilation.</p>
 
-        <pre>@NgModule({
+        <snippet>
+@NgModule({
     declarations: [
         GridComponent
     ],
@@ -158,14 +161,16 @@ export class GridComponentModule {
             ]
         }
     }
-}</pre>
+}</snippet>
 
         <p>The key part of this module is this line:</p>
-        <pre>{provide: ANALYZE_FOR_ENTRY_COMPONENTS, useValue: components, multi: true}</pre>
+        <snippet>
+{provide: ANALYZE_FOR_ENTRY_COMPONENTS, useValue: components, multi: true}</snippet>
         <p>Which will add the the entries to <code>entryComponents</code>, which in turn will let the AOT compiler know to create <code>ComponentFactory</code> for the specified components.</p>
 
         <p>Tying this together, the user code would do the following:</p>
-        <pre>@NgModule({
+        <snippet>
+@NgModule({
     imports: [
         BrowserModule,
         GridComponentModule.withComponents([DynamicComponent])
@@ -174,18 +179,19 @@ export class GridComponentModule {
     bootstrap: [AppComponent]
 })
 export class AppModule {
-}</pre>
+}</snippet>
         <p>And the client component would look like this:</p>
-        <pre>@Component({
+        <snippet>
+@Component({
     selector: 'my-app',
-    template: `<grid-component [componentType]="getComponentType()"></grid-component>
+    template: `&lt;grid-component [componentType]="getComponentType()"&gt;&lt;/grid-component&gt;
   `
 })
 export class AppComponent {
     getComponentType() : any {
         return DynamicComponent;
     }
-}</pre>
+}</snippet>
 
         <p>You can find all the code for the above example over at <a href="https://github.com/seanlandsman/angular2-dynamic-components">GitHub</a>.</p>
 

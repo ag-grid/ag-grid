@@ -23,13 +23,13 @@ include '../documentation-main/documentation_header.php';
         the set filter. Set the filterParams on the columnDefinition as follows:
     </p>
 
-    <pre>
+    <snippet>
 columnDefinition = {
     headerName: "Athlete",
     field: "athlete",
     filter: 'set',
     filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20, values: ['A','B','C'], newRowsAction: 'keep'}
-}</pre>
+}</snippet>
 
     <p>
         The set filter params are specific to each filter and have the following meanings:
@@ -191,16 +191,16 @@ columnDefinition = {
     </p>
 
     <p>
-<pre><span class="codeComment">// get filter instance</span>
+<snippet>
+// get filter instance
 var countryFilterComponent = gridOptions.api.getFilterInstance('country');
 
-<span class="codeComment">// get filter model</span>
+// get filter model
 var model = countryFilterComponent.getModel();
 
-<span class="codeComment">// OR set filter model and update</span>
+// OR set filter model and update
 countryFilterComponent.setModel(['Spain','Ireland','South Africa','Australia','England']);
-countryFilterComponent.onFilterChanged()
-</pre>
+countryFilterComponent.onFilterChanged()</snippet>
 </p>
 
     <p>

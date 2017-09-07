@@ -28,14 +28,15 @@
         as Angular components.
     </p>
 
-    <pre ng-non-bindable><span class="codeComment">// create your Cell Editor as a Angular component</span>
+    <snippet>
+// create your Cell Editor as a Angular component
 @Component({
     selector: 'editor-cell',
     template: `
-        &lt;div #container class="mood" tabindex="0" (keydown)="onKeyDown($event)">
-            &lt;img src="../images/smiley.png" (click)="setHappy(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
-            &lt;img src="../images/smiley-sad.png" (click)="setHappy(false)" [ngClass]="{'selected' : !happy, 'default' : happy}">
-        &lt;/div>
+        &lt;div #container class="mood" tabindex="0" (keydown)="onKeyDown($event)"&gt;
+            &lt;img src="../images/smiley.png" (click)="setHappy(true)" [ngClass]="{'selected' : happy, 'default' : !happy}"&gt;
+            &lt;img src="../images/smiley-sad.png" (click)="setHappy(false)" [ngClass]="{'selected' : !happy, 'default' : happy}"&gt;
+        &lt;/div&gt;
     `,
     styles: [`
         .mood {
@@ -104,17 +105,17 @@ class MoodEditorComponent implements AgEditorComponent, AfterViewInit {
         }
     }
 }
-<span class="codeComment">// then reference the Component in your colDef like this</span>
+// then reference the Component in your colDef like this
 colDef = {
         headerName: "Mood",
         field: "mood",
-        <span class="codeComment">// instead of cellEditor we use cellEditorFramework</span>
+        // instead of cellEditor we use cellEditorFramework
         cellEditorFramework: MoodEditorComponent,
-        <span class="codeComment">// specify all the other fields as normal</span>
+        // specify all the other fields as normal
         editable: true,
         width: 150
     }
-}</pre>
+}</snippet>
 
     <p>Your Angular components need to implement <code>AgEditorComponent</code>.</p>
 

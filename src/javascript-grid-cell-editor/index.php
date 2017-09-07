@@ -17,86 +17,88 @@ include '../documentation-main/documentation_header.php';
     The interface for the cell editor component is as follows:
 </p>
 
-<pre>interface ICellEditorComp {
+<snippet>
+interface ICellEditorComp {
 
-    <span class="codeComment">// gets called once after the editor is created</span>
+    // gets called once after the editor is created
     init?(params: ICellEditorParams): void;
 
-    <span class="codeComment">// Gets called once after GUI is attached to DOM.</span>
-    <span class="codeComment">// Useful if you want to focus or highlight a component</span>
-    <span class="codeComment">// (this is not possible when the element is not attached)</span>
+    // Gets called once after GUI is attached to DOM.
+    // Useful if you want to focus or highlight a component
+    // (this is not possible when the element is not attached)
     afterGuiAttached?(): void;
 
-    <span class="codeComment">// Return the DOM element of your editor, this is what the grid puts into the DOM</span>
+    // Return the DOM element of your editor, this is what the grid puts into the DOM
     getGui(): HTMLElement;
 
-    <span class="codeComment">// Should return the final value to the grid, the result of the editing</span>
+    // Should return the final value to the grid, the result of the editing
     getValue(): any;
 
-    <span class="codeComment">// Gets called once by grid after editing is finished</span>
-    <span class="codeComment">// if your editor needs to do any cleanup, do it here</span>
+    // Gets called once by grid after editing is finished
+    // if your editor needs to do any cleanup, do it here
     destroy?(): void;
 
-    <span class="codeComment">// Gets called once after initialised.</span>
-    <span class="codeComment">// If you return true, the editor will appear in a popup</span>
+    // Gets called once after initialised.
+    // If you return true, the editor will appear in a popup
     isPopup?(): boolean;
 
-    <span class="codeComment">// Gets called once before editing starts, to give editor a chance to</span>
-    <span class="codeComment">// cancel the editing before it even starts.</span>
+    // Gets called once before editing starts, to give editor a chance to
+    // cancel the editing before it even starts.
     isCancelBeforeStart?(): boolean;
 
-    <span class="codeComment">// Gets called once when editing is finished (eg if enter is pressed).</span>
-    <span class="codeComment">// If you return true, then the result of the edit will be ignored.</span>
+    // Gets called once when editing is finished (eg if enter is pressed).
+    // If you return true, then the result of the edit will be ignored.
     isCancelAfterEnd?(): boolean;
 
-    <span class="codeComment">// If doing full row edit, then gets called when tabbing into the cell.</span>
+    // If doing full row edit, then gets called when tabbing into the cell.
     focusIn?(): boolean;
 
-    <span class="codeComment">// If doing full row edit, then gets called when tabbing out of the cell.</span>
+    // If doing full row edit, then gets called when tabbing out of the cell.
     focusOut?(): boolean;
-}</pre>
+}</snippet>
 
 <p>
     Below is a simple example of Cell Editor:
 </p>
 
-<pre><code><span class="codeComment">// function to act as a class</span>
+<snippet>
+// function to act as a class
 function MyCellEditor () {}
 
-<span class="codeComment">// gets called once before the renderer is used</span>
+// gets called once before the renderer is used
 MyCellEditor.prototype.init = function(params) {
-    <span class="codeComment">// create the cell</span>
+    // create the cell
     this.eInput = document.createElement('input');
     this.eInput.value = params.value;
 };
 
-<span class="codeComment">// gets called once when grid ready to insert the element</span>
+// gets called once when grid ready to insert the element
 MyCellEditor.prototype.getGui = function() {
     return this.eInput;
 };
 
-<span class="codeComment">// focus and select can be done after the gui is attached</span>
+// focus and select can be done after the gui is attached
 MyCellEditor.prototype.afterGuiAttached = function() {
     this.eInput.focus();
     this.eInput.select();
 };
 
-<span class="codeComment">// returns the new value after editing</span>
+// returns the new value after editing
 MyCellEditor.prototype.getValue = function() {
     return this.eInput.value;
 };
 
-<span class="codeComment">// any cleanup we need to be done here</span>
+// any cleanup we need to be done here
 MyCellEditor.prototype.destroy = function() {
-    <span class="codeComment">// but this example is simple, no cleanup, we could</span>
-    <span class="codeComment">// even leave this method out as it's optional</span>
+    // but this example is simple, no cleanup, we could
+    // even leave this method out as it's optional
 };
 
-<span class="codeComment">// if true, then this editor will appear in a popup </span>
+// if true, then this editor will appear in a popup 
 MyCellEditor.prototype.isPopup = function() {
-    <span class="codeComment"> and we could leave this method out also, false is the default</span>
+     and we could leave this method out also, false is the default
     return false;
-};</code></pre>
+};</snippet>
 
 
 <h3 id="cell-editor-params">
@@ -188,15 +190,16 @@ MyCellEditor.prototype.isPopup = function() {
     as the 'country' parameter:
 </p>
 
-<pre><code><span class="codeComment">// define cell renderer to be reused</span>
+<snippet>
+// define cell renderer to be reused
 var myCellEditor = .....
 
-<span class="codeComment">// use with a color</span>
-colDef.cellEditor = ... <span class="codeComment">// provide cellEditor as before</span>
+// use with a color
+colDef.cellEditor = ... // provide cellEditor as before
 colDef.cellEditorParams = {
     country: 'Ireland'
 }
-</code></pre>
+</snippet>
 
 <h3 id="cell-editing-example">Cell Editing Example</h3>
 

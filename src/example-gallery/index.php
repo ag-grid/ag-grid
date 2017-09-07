@@ -75,20 +75,21 @@ include '../documentation-main/documentation_header.php';
         In the example, all rows back are modified so that the rows looks something like this:
     </p>
 
-    <pre>row = {
-    <span class="codeComment">// country field is complex object</span>
+    <snippet>
+row = {
+    // country field is complex object
     country: {
         name: 'Ireland',
         code: 'IRE'
     },
-    <span class="codeComment">// year field is complex object</span>
+    // year field is complex object
     year: {
         name: '2012',
         shortName: "'12"
     },
-    <span class="codeComment">// other fields as normal</span>
+    // other fields as normal
     ...
-};</pre>
+};</snippet>
 
     <p>
         Then the columns are set up so that country uses a <code>valueGetter</code> and year uses a field

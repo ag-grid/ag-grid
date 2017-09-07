@@ -25,7 +25,8 @@ include '../documentation-main/documentation_header.php';
         Here is a code snippet of providing two groups of columns.
     </p>
 
-    <pre><code>gridOptions.columnDefs = [
+    <snippet>
+gridOptions.columnDefs = [
     {
         headerName: "Athlete Details",
         children: [
@@ -44,7 +45,7 @@ include '../documentation-main/documentation_header.php';
             {headerName: "Bronze", columnGroupShow: 'open'}
         ]
     }
-];</code></pre>
+];</snippet>
 
     <h2 id="column-definitions-vs-column-group-definitions">Column Definitions vs Column Group Definitions</h2>
 

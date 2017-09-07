@@ -21,9 +21,10 @@ include '../documentation-main/documentation_header.php';
 <p>In order to set the filter type to text you need to add the following to your column definition</p>
 
 
-<p><pre>colDef:{
+<p><snippet>
+colDef:{
     filter:'number'
-}</pre></p>
+}</snippet></p>
 
 <h2 id="params">Number Filter Parameters</h2>
 <p>
@@ -53,12 +54,13 @@ include '../documentation-main/documentation_header.php';
 
 The parameters for the filter must be specified in the property filterParams inside the column definition
 object
-<p><pre>colDef:{
+<p><snippet>
+colDef:{
     filter:'number',
     filterParams:{
         ...
     }
-}</pre></p>
+}</snippet></p>
 </p>
 
 <h2 id="model">Number Filter Model</h2>
@@ -67,27 +69,27 @@ object
     Get and set the state of the number filter by getting and setting the model on the filter instance.
 </p>
 
-<p><pre><span class="codeComment">// get filter instance</span>
+<p><snippet>
+// get filter instance
 var ageFilterComponent = gridOptions.api.getFilterInstance('age');
 
-<span class="codeComment">// get filter model</span>
+// get filter model
 var model = ageFilterComponent.getModel();
 
-<span class="codeComment">// OR set filter model and update</span>
+// OR set filter model and update
 ageFilterComponent.setModel({
     type:'lessThan',
     filter:35
 });
 ageFilterComponent.onFilterChanged()
 
-<span class="codeComment">// NOTE number filter allows for ranges</span>
+// NOTE number filter allows for ranges
 ageFilterComponent.setModel({
     type:'inRange',
     filter:30,
     filterTo:35
 });
-ageFilterComponent.onFilterChanged()
-</pre></p>
+ageFilterComponent.onFilterChanged()</snippet></p>
 
 <p>
     The number filter model has the following attributes:

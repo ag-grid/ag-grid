@@ -70,19 +70,20 @@ include '../documentation-main/documentation_header.php';
     <p>
         You can add a CSS class to the columns in the tool panel by specifying <i>toolPanelHeaderClass</i>
         in the column definintion as follows:
-        <pre>colDefs = {
-    <span class="codeComment">// set as string</span>
+        <snippet>
+colDefs = {
+    // set as string
     {headerName: "Gold", field: "gold", toolPanelClass: 'tp-gold'},
 
-    <span class="codeComment">// set as array of strings</span>
+    // set as array of strings
     {headerName: "Silver", field: "silver", toolPanelClass: ['tp-silver']},
 
-    <span class="codeComment">// set as function returning string or array of strings</span>
+    // set as function returning string or array of strings
     {headerName: "Bronze", field: "bronze",
         toolPanelClass: function(params) {
             return 'tp-bronze';
         }},
-}</pre>
+}</snippet>
     </p>
 
     <h3 id="toolPanelExample">Tool Panel Example</h3>

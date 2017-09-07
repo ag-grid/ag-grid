@@ -37,7 +37,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         <code>getContextMenuItems()</code> takes the following object as parameters:
-        <pre>GetContextMenuItemsParams {
+        <snippet>
+GetContextMenuItemsParams {
     column: Column, // the column that was clicked
     node: RowNode, // the node that was clicked
     value: any, // the value displayed in the clicked cell
@@ -45,7 +46,7 @@ include '../documentation-main/documentation_header.php';
     columnApi: ColumnAPI, // the column API
     context: any, // the grid context
     defaultItems: string[] // names of the items that would be provided by default
-}</pre>
+}</snippet>
     </p>
 
     <p>
@@ -60,18 +61,18 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         A MenuItem description looks as follows (items with question marks are optional):
-        <pre>MenuItemDef {
+        <snippet>
+MenuItemDef {
     name: string, // name of menu item
     disabled?: boolean, // if item should be enabled / disabled
     shortcut?: string, // shortcut (just display text, saying the shortcut here does nothing)
-    action?: ()=>void, // function that gets executed when item is chosen
+    action?: ()=&gt;void, // function that gets executed when item is chosen
     checked?: boolean, // set to true to provide a check beside the option
     icon?: HTMLElement|string, // the icon to display beside the icon, either a DOM element or HTML string
     subMenu?: MenuItemDef[] // if this menu is a sub menu, contains a list of sub menu item definitions
     cssClasses?: string[]; //Additional CSS classes to be applied to the menu item
     tooltip?: string; //Optional tooltip for the menu item
-}
-</pre>
+}</snippet>
     </p>
 
     <p>

@@ -17,11 +17,12 @@ include '../documentation-main/documentation_header.php';
         for the value.
     </p>
 
-    <pre><span class="codeComment">// the grid is told to use the 'country' field for this column</span>
+    <snippet>
+// the grid is told to use the 'country' field for this column
 var countryColDef = {
     field: 'country',
     ...
-}</pre>
+}</snippet>
 
     <p>
         You should use <code>colDef.field</code> most of the time. However you may require to get / set the data
@@ -82,25 +83,26 @@ var countryColDef = {
         <code>colDef.field</code> mechanism. The interface for <code>valueGetter</code> is as follows:
     </p>
 
-    <pre><span class="codeComment">// function for valueGetter</span>
-function valueGetter(params: ValueGetterParams) => any;
+    <snippet>
+// function for valueGetter
+function valueGetter(params: ValueGetterParams) =&gt; any;
 
-<span class="codeComment">// interface for params</span>
+// interface for params
 interface ValueGetterParams {
-    data: any, <span class="codeComment">// the data you provided for this row</span>
-    node: RowNode, <span class="codeComment">// the row node for this row</span>
-    colDef: ColDef, <span class="codeComment">// the column def for this column</span>
-    column: Column, <span class="codeComment">// the column for this column</span>
-    api: GridApi, <span class="codeComment">// the grid API</span>
-    columnApi: ColumnApi, <span class="codeComment">// the grid Column API</span>
-    context: any,  <span class="codeComment">// the context</span>
-    getValue: (colId: string) => any  <span class="codeComment">// a utility method, for getting other column values</span>
+    data: any, // the data you provided for this row
+    node: RowNode, // the row node for this row
+    colDef: ColDef, // the column def for this column
+    column: Column, // the column for this column
+    api: GridApi, // the grid API
+    columnApi: ColumnApi, // the grid Column API
+    context: any,  // the context
+    getValue: (colId: string) =&gt; any  // a utility method, for getting other column values
 }
 
-<span class="codeComment">// example value getter, adds two fields together</span>
+// example value getter, adds two fields together
 colDef.valueGetter = function(params) {
     return params.data.firstName + params.data.lastName;
-}</pre>
+}</snippet>
 
     <note>
         All valueGetter's must be pure functions. That means, given the same state of your
@@ -123,25 +125,26 @@ colDef.valueGetter = function(params) {
         The interface for <code>valueFormatter</code> is as follows:
     </p>
 
-    <pre><span class="codeComment">// function for valueFormatter</span>
-function valueFormatter(params: ValueGetterParams) => any;
+    <snippet>
+// function for valueFormatter
+function valueFormatter(params: ValueGetterParams) =&gt; any;
 
-<span class="codeComment">// interface for params</span>
+// interface for params
 interface ValueFormatterParams {
-    value: any, <span class="codeComment">// the value before the change</span>
-    data: any, <span class="codeComment">// the data you provided for this row</span>
-    node: RowNode, <span class="codeComment">// the row node for this row</span>
-    colDef: ColDef, <span class="codeComment">// the column def for this column</span>
-    column: Column, <span class="codeComment">// the column for this column</span>
-    api: GridApi, <span class="codeComment">// the grid API</span>
-    columnApi: ColumnApi, <span class="codeComment">// the grid Column API</span>
-    context: any  <span class="codeComment">// the context</span>
+    value: any, // the value before the change
+    data: any, // the data you provided for this row
+    node: RowNode, // the row node for this row
+    colDef: ColDef, // the column def for this column
+    column: Column, // the column for this column
+    api: GridApi, // the grid API
+    columnApi: ColumnApi, // the grid Column API
+    context: any  // the context
 }
 
-<span class="codeComment">// example value formatter, simple currency formatter</span>
+// example value formatter, simple currency formatter
 colDef.valueFormatter = function(params) {
     return '£' + params.value;
-}</pre>
+}</snippet>
 
     <h2>Value Formatter vs Cell Renderer</h2>
 

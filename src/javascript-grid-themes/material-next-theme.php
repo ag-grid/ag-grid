@@ -23,9 +23,8 @@ include '../documentation-main/documentation_header.php';
 
     The following is an example of using the ag-material-next theme (using AngularJS 1.x):<br/>
 
-<pre>
-&lt;div ag-grid="gridOptions" class="ag-material-next">&lt;/div>
-</pre>
+<snippet>
+&lt;div ag-grid="gridOptions" class="ag-material-next"&gt;&lt;/div&gt;</snippet>
 
     </p>
 

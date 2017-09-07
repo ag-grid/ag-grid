@@ -22,10 +22,9 @@
 
     <h3>Referenceing Styles</h3>
     <p>You'll need to import the ag-Grid CSS in your application, as well as a theme you wish to use:</p>
-<pre>
+<snippet>
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
-</pre>
+import "../node_modules/ag-grid/dist/styles/theme-fresh.css";</snippet>
     <p>In this case we're using the Fresh Theme - please refer to the <a href="../javascript-grid-themes">Themes</a>
         documentation for more information.</p>
 
@@ -86,13 +85,14 @@ import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
 
     <p>Once you have the ag-Grid dependencies installed, you will then be able to access ag-Grid inside your application:</p>
 
-    <pre>import {AgGridVue} from 'ag-grid-vue';</pre>
+    <snippet>
+import {AgGridVue} from 'ag-grid-vue';</snippet>
 
     <p>
         Which you can then use as a component within your application:
     </p>
 
-    <pre>
+    <snippet>
 export default {
     data () {
         return {
@@ -105,26 +105,24 @@ export default {
         ..other components
     },
     ... the rest of your application component
-}
-</pre>
+}</snippet>
 
     <p>
         You will need to include the CSS for ag-Grid, either directly inside
         your html page, or as part of creating your bundle if bundling. The following
         shows referencing the css from your web page:
     </p>
-    <pre>&lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" />
-&lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" />
-</pre>
+    <snippet>
+&lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" /&gt;
+&lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" /&gt;</snippet>
 
     <p>If you're using the <code>style-loader</code> you can also import the CSS dependencies into your final bundle:</p>
-    <pre>
+    <snippet>
 import "../node_modules/ag-grid/dist/styles/ag-grid.css"
 import "../node_modules/ag-grid/dist/styles/theme-fresh.css"
 
-<span class="codeComment">// only needed if you're using enterprise features</span>
-import "ag-grid-enterprise/main";
-</pre>
+// only needed if you're using enterprise features
+import "ag-grid-enterprise/main";</snippet>
 
     <p>Importing of the CSS should be done before you use the ag-Grid Vue Component.</p>
 
@@ -170,10 +168,10 @@ import "ag-grid-enterprise/main";
         these components in your column definitions):</p>
 
     <h4 id="simple-inline-components">Simple, Inline Components</h4>
-    <pre>
+    <snippet>
 components: {
     'CubeComponent': {
-        template: '<span>{{ valueCubed() }}</span>',
+        template: '&lt;span&gt;{{ valueCubed() }}&lt;/span&gt;',
         methods: {
             valueCubed() {
                 return this.params.value * this.params.value * this.params.value;
@@ -181,36 +179,34 @@ components: {
         }
     },
     ParamsComponent: {
-        template: '<span>Field: {{params.colDef.field}}, Value: {{params.value}}</span>',
+        template: '&lt;span&gt;Field: {{params.colDef.field}}, Value: {{params.value}}&lt;/span&gt;',
         methods: {
             valueCubed() {
                 return this.params.value * this.params.value * this.params.value;
             }
         }
     }
-}
-</pre>
+}</snippet>
 
     <p>Note here that we can define the property name either quoted or not - but note that in order to reference these
         components in your column definitions you'll need to provide them as case-sensitive strings (see referencing components below).</p>
 
     <h4 id="simple-locally-declared-components">Simple, Locally Declared Components</h4>
-    <pre>
+    <snippet>
 let SquareComponent = Vue.extend({
-    template: '<span>{{ valueSquared() }}</span>',
+    template: '&lt;span&gt;{{ valueSquared() }}&lt;/span&gt;',
     methods: {
         valueSquared() {
             return this.params.value * this.params.value;
         }
     }
-});
-</pre>
+});</snippet>
 
     <h4 id="external-js-components">External .js Components</h4>
-    <pre>
-<span class="codeComment">// SquareComponent.js</span>
+    <snippet>
+// SquareComponent.js
 export default Vue.extend({
-    template: '<span>{{ valueSquared() }}</span>',
+    template: '&lt;span&gt;{{ valueSquared() }}&lt;/span&gt;',
     methods: {
         valueSquared() {
             return this.params.value * this.params.value;
@@ -218,12 +214,11 @@ export default Vue.extend({
     }
 });
 
-<span class="codeComment">// MyGridApp.vue (your Component holding the ag-Grid component)</span>
-import SquareComponent from './SquareComponent'
-</pre>
+// MyGridApp.vue (your Component holding the ag-Grid component)
+import SquareComponent from './SquareComponent'</snippet>
 
     <h4 id="more-complex-external-single-file-components">More Complex, External Single File Components (.vue)</h4>
-    <pre ng-non-bindable>
+    <snippet>
 &lt;template&gt;
     &lt;span class="currency"&gt;{{ params.value | currency('EUR') }}&lt;/span&gt;
 &lt;/template&gt;
@@ -248,8 +243,7 @@ import SquareComponent from './SquareComponent'
     .currency {
         color: blue;
     }
-&lt;/style&gt;
-</pre>
+&lt;/style&gt;</snippet>
 
 
     <p>You can then use these components as editors, renderers or filters. Which method you choose depends on preference
@@ -266,8 +260,8 @@ import SquareComponent from './SquareComponent'
     <p>For inline components (ie defined in the <code>components</code> property) you can
         reference components by either case-sensitive property name, for example:</p>
 
-    <pre>
-<span class="codeComment">// defined as a quoted string above: 'CubeComponent'</span>
+    <snippet>
+// defined as a quoted string above: 'CubeComponent'
 {
     headerName: "Cube",
     field: "value",
@@ -275,25 +269,24 @@ import SquareComponent from './SquareComponent'
     colId: "cube",
     width: 125
 },
-<span class="codeComment">// defined as a value above: ParamsComponent</span>
+// defined as a value above: ParamsComponent
 {
     headerName: "Row Params",
     field: "row",
     cellRendererFramework: 'ParamsComponent',
     colId: "params",
     width: 245
-},
-</pre>
+},</snippet>
 
     <p>In both cases we need to define the component to be used in the cell as a case-senstive string.</p>
 
     <p>For components defined outside of the application component you can pass them by reference. For example:</p>
-    <pre>
-<span class="codeComment">// import or create our component outside of our app</span>
+    <snippet>
+// import or create our component outside of our app
 import CurrencyComponent from './CurrencyComponent.vue'
 let SquareComponent = Vue.extend({...rest of the component
 
-<span class="codeComment">// reference the component by reference</span>
+// reference the component by reference
 this.columnDefs = [
     {headerName: "Row", field: "row", width: 140},
     {
@@ -310,8 +303,7 @@ this.columnDefs = [
         cellRendererFramework: CurrencyComponent,
         colId: "params",
         width: 150
-    }
-</pre>
+    }</snippet>
 
     <p>Please see the relevant sections on <a href="../javascript-grid-cell-rendering-components/#vueCellRendering">cell renderer's</a>,
         <a href="../javascript-grid-cell-editing/#vueCellEditing">cell editors</a> and
@@ -321,28 +313,28 @@ this.columnDefs = [
         The rich-grid example has ag-Grid configured through the template in the following ways:
     </p>
 
-    <pre>
+    <snippet>
 &lt;ag-grid-vue style="width: 100%; height: 350px;" class="ag-fresh"
-    <span class="codeComment">// these are attributes, not bound, give explicit values here</span>
+    // these are attributes, not bound, give explicit values here
     rowHeight="22"
     rowSelection="multiple"
 
-    <span class="codeComment">// these are boolean values</span>
-    <span class="codeComment">// (leaving them out will default them to false)</span>
+    // these are boolean values
+    // (leaving them out will default them to false)
     :enableColResize="true"
     :enableSorting="true"
 
-    <span class="codeComment">// these are bound properties</span>
+    // these are bound properties
     :gridOptions="gridOptions"
     :columnDefs="columnDefs"
 
-    <span class="codeComment">// this is a callback</span>
+    // this is a callback
     :isScrollLag="myIsScrollLagFunction"
 
-    <span class="codeComment">// these are registering event callbacks</span>
+    // these are registering event callbacks
     :modelUpdated="onModelUpdated"
     :cellClicked="onCellClicked"
-&lt;/ag-grid-vue></code></pre>
+&lt;/ag-grid-vue&gt;</snippet>
 
     <p>
         The above is all you need to get started using ag-Grid in a VueJS application. Now would

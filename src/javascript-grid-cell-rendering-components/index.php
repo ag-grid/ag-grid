@@ -42,20 +42,21 @@ include '../documentation-main/documentation_header.php';
     Below are some simple examples of a cell renderer function:
 </p>
 
-<pre><code><span class="codeComment">// put the value in bold</span>
+<snippet>
+// put the value in bold
 colDef.cellRenderer = function(params) {
-    return '&lt;b>' + params.value.toUpperCase() + '&lt;/b>';
+    return '&lt;b&gt;' + params.value.toUpperCase() + '&lt;/b&gt;';
 }
 
-<span class="codeComment">// put a tooltip on the value</span>
+// put a tooltip on the value
 colDef.cellRenderer = function(params) {
-    return '&lt;span title="the tooltip">'+params.value+'&lt;/span>';
+    return '&lt;span title="the tooltip"&gt;'+params.value+'&lt;/span&gt;';
 }
 
-<span class="codeComment">// create a DOM object </span>
+// create a DOM object 
 colDef.cellRenderer = function(params) {
     var eDiv = document.createElement('div');
-    eDiv.innerHTML = '&lt;span class="my-css-class">&lt;button class="btn-simple">Push Me&lt;/button>&lt;/span>';
+    eDiv.innerHTML = '&lt;span class="my-css-class"&gt;&lt;button class="btn-simple"&gt;Push Me&lt;/button&gt;&lt;/span&gt;';
     var eButton = eDiv.querySelectorAll('.btn-simple')[0];
 
     var eButton.addEventListener('click', function() {
@@ -63,7 +64,7 @@ colDef.cellRenderer = function(params) {
     });
 
     return eDiv;
-}</code></pre>
+}</snippet>
 
 <p>
     See further below for the set of parameters passed to the rendering function.
@@ -92,88 +93,91 @@ colDef.cellRenderer = function(params) {
     The interface for the cell renderer component is as follows:
 </p>
 
-<pre>interface ICellRendererComp {
-    <span class="codeComment">// Optional - Params for rendering. The same params that are passed to the <code>cellRenderer</code> function.</span>
+<snippet>
+interface ICellRendererComp {
+    // Optional - Params for rendering. The same params that are passed to the cellRenderer function.
     init?(params: ICellRendererParams): void;
 
-    <span class="codeComment">// Mandatory - Return the DOM element of your editor, this is what the grid puts into the DOM</span>
+    // Mandatory - Return the DOM element of your editor, this is what the grid puts into the DOM
     getGui(): HTMLElement;
 
-    <span class="codeComment">// Optional - Gets called once by grid after editing is finished - if your editor needs to do any cleanup,</span>
-    <span class="codeComment">// do it here</span>
+    // Optional - Gets called once by grid after editing is finished - if your editor needs to do any cleanup,
+    // do it here
     destroy?(): void;
 
-    <span class="codeComment">// Mandatory - Get the cell to refresh. Return true if the refresh succeeded, otherwise return false.</span>
-    <span class="codeComment">// If you return false, the grid will remove the component from the DOM and create</span>
-    <span class="codeComment">// a new component in it's place with the new values.</span>
+    // Mandatory - Get the cell to refresh. Return true if the refresh succeeded, otherwise return false.
+    // If you return false, the grid will remove the component from the DOM and create
+    // a new component in it's place with the new values.
     refresh(params: any): boolean;
-}</pre>
+}</snippet>
 
 <p>The interface for the cell renderer parameters is as follows:</p>
-<pre>interface ICellRendererParams {
-    value: any, <span class="codeComment">// value to be rendered</span>
-    valueFormatted: any, <span class="codeComment">// value to be rendered formatted</span>
-    getValue: ()=> any, <span class="codeComment">// convenience function to get most recent up to date value</span>
-    setValue: (value: any) => void, <span class="codeComment">// convenience to set the value </span>
-    formatValue: (value: any) => any, <span class="codeComment">// convenience to format a value using the columns formatter</span>
-    data: any, <span class="codeComment">// the rows data</span>
-    node: RowNode, <span class="codeComment">// row rows row node</span>
-    colDef: ColDef, <span class="codeComment">// the cells column definition</span>
-    column: Column, <span class="codeComment">// the cells column</span>
-    rowIndex: number, <span class="codeComment">// the current index of the row (this changes after filter and sort)</span>
-    api: GridApi, <span class="codeComment">// the grid API</span>
-    eGridCell: HTMLElement, <span class="codeComment">// the grid's cell, a DOM div element</span>
-    eParentOfValue: HTMLElement, <span class="codeComment">// the parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection</span>
-    columnApi: ColumnApi, <span class="codeComment">// grid column API</span>
-    context: any, <span class="codeComment">// the grid's context</span>
-    refreshCell: ()=>void <span class="codeComment">// convenience function to refresh the cell</span>
-}</pre>
+<snippet>
+interface ICellRendererParams {
+    value: any, // value to be rendered
+    valueFormatted: any, // value to be rendered formatted
+    getValue: ()=&gt; any, // convenience function to get most recent up to date value
+    setValue: (value: any) =&gt; void, // convenience to set the value 
+    formatValue: (value: any) =&gt; any, // convenience to format a value using the columns formatter
+    data: any, // the rows data
+    node: RowNode, // row rows row node
+    colDef: ColDef, // the cells column definition
+    column: Column, // the cells column
+    rowIndex: number, // the current index of the row (this changes after filter and sort)
+    api: GridApi, // the grid API
+    eGridCell: HTMLElement, // the grid's cell, a DOM div element
+    eParentOfValue: HTMLElement, // the parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection
+    columnApi: ColumnApi, // grid column API
+    context: any, // the grid's context
+    refreshCell: ()=&gt;void // convenience function to refresh the cell
+}</snippet>
 
     <p>
         Below is a simple example of cell renderer class:
     </p>
 
-<pre><span class="codeComment">// function to act as a class</span>
+<snippet>
+// function to act as a class
 function MyCellRenderer () {}
 
-<span class="codeComment">// gets called once before the renderer is used</span>
+// gets called once before the renderer is used
 MyCellRenderer.prototype.init = function(params) {
-    <span class="codeComment">// create the cell</span>
+    // create the cell
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '&lt;span class="my-css-class">&lt;button class="btn-simple">Push Me&lt;/button>&lt;span class="my-value">&lt;/span>&lt;/span>';
+    this.eGui.innerHTML = '&lt;span class="my-css-class"&gt;&lt;button class="btn-simple"&gt;Push Me&lt;/button&gt;&lt;span class="my-value"&gt;&lt;/span&gt;&lt;/span&gt;';
 
-    <span class="codeComment">// get references to the elements we want</span>
+    // get references to the elements we want
     this.eButton = this.eGui.querySelectorAll('.btn-simple')[0];
     this.eValue = this.eGui.querySelectorAll('.my-value')[0];
 
-    <span class="codeComment">// set value into cell</span>
+    // set value into cell
     this.eValue.innerHTML = params.valueFormatted ? params.valueFormatted : params.value;
 
-    <span class="codeComment">// add event listener to button</span>
+    // add event listener to button
     this.eventListener = function() {
         console.log('button was clicked!!');
     };
     this.eButton.addEventListener('click', this.eventListener);
 };
 
-<span class="codeComment">// gets called once when grid ready to insert the element</span>
+// gets called once when grid ready to insert the element
 MyCellRenderer.prototype.getGui = function() {
     return this.eGui;
 };
 
-<span class="codeComment">// gets called whenever the user gets the cell to refresh</span>
+// gets called whenever the user gets the cell to refresh
 MyCellRenderer.prototype.refresh = function(params) {
-    <span class="codeComment">// set value into cell again</span>
+    // set value into cell again
     this.eValue.innerHTML = params.valueFormatted ? params.valueFormatted : params.value;
-    <span class="codeComment">// return true to tell the grid we refreshed successfully</span>
+    // return true to tell the grid we refreshed successfully
     return true;
 };
 
-<span class="codeComment">// gets called when the cell is removed from the grid</span>
+// gets called when the cell is removed from the grid
 MyCellRenderer.prototype.destroy = function() {
-    <span class="codeComment">// do cleanup, remove event listener from button</span>
+    // do cleanup, remove event listener from button
     this.eButton.removeEventListener('click', this.eventListener);
-};</code></pre>
+};</snippet>
 
 <h1 id="cell-renderer-component-refresh">Component Refresh</h1>
 
@@ -266,22 +270,23 @@ In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> a
     Provide params to a cell renderer using the colDef option <code>cellRendererParams</code>.
 </p>
 
-<pre><code><span class="codeComment">// define cellRenderer to be reused</span>
+<snippet>
+// define cellRenderer to be reused
 var myCellRenderer = function(params) {
-    return '&lt;span style="color: '+params.color+'">' + params.value + '&lt;/span>';
+    return '&lt;span style="color: '+params.color+'"&gt;' + params.value + '&lt;/span&gt;';
 }
 
-<span class="codeComment">// use with a color</span>
+// use with a color
 colDef.cellRenderer = myCellRenderer;
 colDef.cellRendererParams = {
     color: 'guinnessBlack'
 }
 
-<span class="codeComment">// use with another color</span>
+// use with another color
 colDef.cellRenderer = myCellRenderer;
 colDef.cellRendererParams = {
     color: 'irishGreen'
-}</code></pre>
+}</snippet>
 
 <h1 id="example-using-cell-renderers">Example: Using Cell Renderer's</h1>
 
@@ -307,19 +312,18 @@ colDef.cellRendererParams = {
 </p>
 <p>
     This is simply fixed by checking for the existence of the data before you use it like the following:
-    <pre>
+    <snippet>
 colDef.cellRenderer = function(params) {
 
-    <span class="codeComment">// check the data exists, to avoid error</span>
+    // check the data exists, to avoid error
     if (!params.node.group) {
-        <span class="codeComment">// data exists, so we can access it</span>
-        return '&lt;b>'+params.data.theBoldValue+'&lt;/b>';
+        // data exists, so we can access it
+        return '&lt;b&gt;'+params.data.theBoldValue+'&lt;/b&gt;';
     } else {
-        <span class="codeComment">// when we return null, the grid will display a blank cell</span>
+        // when we return null, the grid will display a blank cell
         return null;
     }
-};
-</pre>
+};</snippet>
 </p>
 
 <?php if (isFrameworkAngular2()) { ?>

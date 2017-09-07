@@ -129,7 +129,8 @@ include '../documentation-main/documentation_header.php';
     <p>
         Be careful adding listeners to rowNodes in cell renderer's that you remove the listener when the rendered
         row in destroyed due to row virtualisation. You can cater for this as follows:
-        <pre>var renderer = function(params) {
+        <snippet>
+var renderer = function(params) {
     // add listener
     var selectionChangedCallback = function () {
         // some logic on selection changed here
@@ -143,7 +144,7 @@ include '../documentation-main/documentation_header.php';
     }
 
     return params.value;
-}</pre>
+}</snippet>
     </p>
 
 </div>

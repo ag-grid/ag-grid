@@ -15,11 +15,12 @@ include '../documentation-main/documentation_header.php';
         You can pin columns by setting the pinned attribute on the column definition to either 'left' or 'right'.
     </p>
 
-    <pre><code>colDef = {
+    <snippet>
+colDef = {
     headerName: "Athlete",
     field: "athlete",
-    <b>pinned: 'left'</b>
-}</code></pre>
+    &lt;b&gt;pinned: 'left'&lt;/b&gt;
+}</snippet>
 
     <p>Below shows an example with two pinned columns on the left and one pinned columns on the right.
     The example also demonstrates changing the pinning via the API at runtime.</p>

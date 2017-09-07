@@ -26,37 +26,36 @@
 </ul>
 
 <p>So let's create a simply example with 3 columns and 3 rows of data:</p>
-<pre>
-<span class="codeComment">// specify the columns</span>
+<snippet>
+// specify the columns
 var columnDefs = [
     {headerName: "Make", field: "make"},
     {headerName: "Model", field: "model"},
     {headerName: "Price", field: "price"}
 ];
 
-<span class="codeComment">// specify the data</span>
+// specify the data
 var rowData = [
     {make: "Toyota", model: "Celica", price: 35000},
     {make: "Ford", model: "Mondeo", price: 32000},
     {make: "Porsche", model: "Boxter", price: 72000}
 ];
 
-<span class="codeComment">// let the grid know which columns and what data to use</span>
+// let the grid know which columns and what data to use
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData
 };
 
-<span class="codeComment">// wait for the document to be loaded, otherwise ag-Grid will not find the div in the document.</span>
+// wait for the document to be loaded, otherwise ag-Grid will not find the div in the document.
 document.addEventListener("DOMContentLoaded", function() {
 
-    <span class="codeComment">// lookup the container we want the Grid to use</span>
+    // lookup the container we want the Grid to use
     var eGridDiv = document.querySelector('#myGrid');
 
-    <span class="codeComment">// create the grid passing in the div to use together with the columns & data we want to use</span>
+    // create the grid passing in the div to use together with the columns & data we want to use
     new agGrid.Grid(eGridDiv, gridOptions);
-});
-</pre>
+});</snippet>
 
 <p>With that in place we have a quick and simple Grid up and running:</p>
 

@@ -70,13 +70,13 @@ include '../documentation-main/documentation_header.php';
     The interface for the datasource is as follows:
 </p>
 
-<pre><span class="codeComment">// datasource for enterprise row model</span>
+<snippet>
+// datasource for enterprise row model
 interface IEnterpriseDatasource {
 
-    <span class="codeComment">// just one method, to get the rows</span>
+    // just one method, to get the rows
     getRows(params: IEnterpriseGetRowsParams): void;
-}
-</pre>
+}</snippet>
 
 <p>
     Each time the grid requires more rows, it will call the <code>getRows()</code> method.
@@ -85,20 +85,20 @@ interface IEnterpriseDatasource {
     is looking for. The interface for the <code>params</code> is as follows:
 </p>
 
-<pre>interface IEnterpriseGetRowsParams {
+<snippet>
+interface IEnterpriseGetRowsParams {
 
-    <span class="codeComment">// details for the request</span>
+    // details for the request
     request: IEnterpriseGetRowsRequest;
 
-    <span class="codeComment">// success callback, pass the rows back the grid asked for.</span>
-    <span class="codeComment">// if the total row count is known, provide it via lastRow, so the</span>
-    <span class="codeComment">// grid can adjust the scrollbar accordingly.</span>
+    // success callback, pass the rows back the grid asked for.
+    // if the total row count is known, provide it via lastRow, so the
+    // grid can adjust the scrollbar accordingly.
     successCallback(rowsThisPage: any[], lastRow: number): void;
 
-    <span class="codeComment">// fail callback, tell the grid the call failed so it can adjust its state</span>
+    // fail callback, tell the grid the call failed so it can adjust its state
     failCallback(): void;
-}
-</pre>
+}</snippet>
 
 <p>
     The request gives details on what the grid is looking for. The success and failure callbacks are not included
@@ -106,33 +106,33 @@ interface IEnterpriseDatasource {
     allows the request object to be serialised (eg via JSON) and sent to your server. The request has the following interface:
 </p>
 
-<pre>interface IEnterpriseGetRowsRequest {
+<snippet>
+interface IEnterpriseGetRowsRequest {
 
-    <span class="codeComment">// details for the request</span>
+    // details for the request
     rowGroupCols: ColumnVO[];
 
-    <span class="codeComment">// columns that have aggregations on them</span>
+    // columns that have aggregations on them
     valueCols: ColumnVO[];
 
-    <span class="codeComment">// what groups the user is viewing</span>
+    // what groups the user is viewing
     groupKeys: string[];
 
-    <span class="codeComment">// if filtering, what the filter model is</span>
+    // if filtering, what the filter model is
     filterModel: any;
 
-    <span class="codeComment">// if sorting, what the sort model is</span>
+    // if sorting, what the sort model is
     sortModel: any;
 }
 
-<span class="codeComment">// we pass a VO (Value Object) of the column and not the column itself,</span>
-<span class="codeComment">// so the data can be converted to a JSON string and passed to server side</span>
+// we pass a VO (Value Object) of the column and not the column itself,
+// so the data can be converted to a JSON string and passed to server side
 export interface ColumnVO {
     id: string;
     displayName: string;
     field: string;
     aggFunc: string;
-}
-</pre>
+}</snippet>
 
 <p>
     Studying the interfaces above alone probably won't describe the whole story in an understandable way. The best

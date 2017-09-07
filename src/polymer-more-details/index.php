@@ -28,47 +28,45 @@ include '../documentation-main/documentation_header.php';
     <p>The following dependencies are therefore required at a minimum, all to be installed with <a
                 href="https://bower.io">Bower</a>:</p>
 
-    <pre>
+    <snippet>
 bower install -save polymer
 
-<span class="codeComment">// or ag-grid-enterprise - see further below for more details on using the Enterprise Features</span>
+// or ag-grid-enterprise - see further below for more details on using the Enterprise Features
 bower install -save ag-grid
 
-bower install -save ag-grid-polymer</pre>
+bower install -save ag-grid-polymer</snippet>
     <p style="padding-top: 10px">You can then reference the dependency as follows in the top of your application html file:</p>
 
-<pre>
+<snippet>
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-    <span class="codeComment">&lt;!-- polymer polyfill - must be before any wc related javascript is executed --&gt;</span>
-    &lt;script src="bower_components/webcomponentsjs/webcomponents-loader.js"&gt;</script&gt;
-    &lt;link rel="import" href="bower_components/polymer/polymer.html"&gt;</span>
+    &lt;!-- polymer polyfill - must be before any wc related javascript is executed --&gt;
+    &lt;script src="bower_components/webcomponentsjs/webcomponents-loader.js"&gt;&lt;/script&gt;
+    &lt;link rel="import" href="bower_components/polymer/polymer.html"&gt;&lt;/span&gt;
     
-    <span class="codeComment">&lt;!-- before the ag-grid web component --&gt;</span>
-    <span class="codeComment">&lt;!-- either ag-grid or ag-grid-enterprise, depending on which you're using --&gt;</span>
-    <span class="codeComment">&lt;!-- note: using noStyle version here as the you can't directly style anything in a shadow tree using a CSS rule</span>
-    <span class="codeComment">     outside of the shadow tree --&gt;</span>
+    &lt;!-- before the ag-grid web component --&gt;
+    &lt;!-- either ag-grid or ag-grid-enterprise, depending on which you're using --&gt;
+    &lt;!-- note: using noStyle version here as the you can't directly style anything in a shadow tree using a CSS rule
+         outside of the shadow tree --&gt;
     &lt;script src="bower_components/ag-grid/dist/ag-grid.noStyle.js"&gt;&lt;/script&gt;
     
-    <span class="codeComment">&lt;!-- ag-grid-polymer element --&gt;</span>
+    &lt;!-- ag-grid-polymer element --&gt;
     &lt;link rel="import" href="bower_components/ag-grid-polymer/ag-grid-polymer.html"&gt;
     
-    <span class="codeComment">&lt;!-- your application code can now be imported --&gt;</span>
+    &lt;!-- your application code can now be imported --&gt;
     &lt;link rel="import" href="application.html"&gt;
-&lt;/head&gt;
-</pre>
+&lt;/head&gt;</snippet>
 
     <p>
         You can now include <code>ag-grid-polymer</code> inside your template as follows:
     </p>
 
-    <pre ng-non-bindable>
+    <snippet>
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
          class="ag-fresh"
          rowData="{{rowData}}"
-columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
-</pre>
+columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
 
     <h3><img src="../images/enterprise_50.png" style="height: 22px;margin-right: 5px"/>Downloading the ag-Grid Polymer Enterprise Dependency</h3>
 
@@ -77,7 +75,8 @@ columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
 
     <h3>Download ag-Grid-Enterprise</h3>
 
-    <pre>bower install ag-grid-enterprise</pre>
+    <snippet>
+bower install ag-grid-enterprise</snippet>
 
     <p>Note that this is instead of the <code>ag-grid</code> dependency - you need <span style="font-style: italic">either</span>
         <code>ag-grid</code>or <code>ag-grid-enterprise</code>, not both.</p>
@@ -85,27 +84,26 @@ columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
 
     <p>As with the first section above, you need to reference the ag-grid Enterprise dependency:</p>
 
-    <pre>
+    <snippet>
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
-    <span class="codeComment">&lt;!-- polymer polyfill - must be before any wc related javascript is executed --&gt;</span>
-    &lt;script src="bower_components/webcomponentsjs/webcomponents-loader.js"&gt;</script&gt;
-    &lt;link rel="import" href="bower_components/polymer/polymer.html"&gt;</span>
+    &lt;!-- polymer polyfill - must be before any wc related javascript is executed --&gt;
+    &lt;script src="bower_components/webcomponentsjs/webcomponents-loader.js"&gt;&lt;/script&gt;
+    &lt;link rel="import" href="bower_components/polymer/polymer.html"&gt;&lt;/span&gt;
 
-        <span class="codeComment">&lt;!-- before the ag-grid web component --&gt;</span>
-    <span class="codeComment">&lt;!-- either ag-grid or ag-grid-enterprise, depending on which you're using --&gt;</span>
-    <span class="codeComment">&lt;!-- note: using noStyle version here as the you can't directly style anything in a shadow tree using a CSS rule</span>
-    <span class="codeComment">     outside of the shadow tree --&gt;</span>
+        &lt;!-- before the ag-grid web component --&gt;
+    &lt;!-- either ag-grid or ag-grid-enterprise, depending on which you're using --&gt;
+    &lt;!-- note: using noStyle version here as the you can't directly style anything in a shadow tree using a CSS rule
+         outside of the shadow tree --&gt;
     &lt;script src="bower_components/ag-grid-enterprise/dist/ag-grid-enterprise.noStyle.js"&gt;&lt;/script&gt;
 
-    <span class="codeComment">&lt;!-- ag-grid-polymer element --&gt;</span>
+    &lt;!-- ag-grid-polymer element --&gt;
     &lt;link rel="import" href="bower_components/ag-grid-polymer/ag-grid-polymer.html"&gt;
 
-    <span class="codeComment">&lt;!-- your application code can now be imported --&gt;</span>
+    &lt;!-- your application code can now be imported --&gt;
     &lt;link rel="import" href="application.html"&gt;
-&lt;/head&gt;
-</pre>
+&lt;/head&gt;</snippet>
 
     <h2 id="ag-Grid-polymer-features">ag-Grid Polymer Features</h2>
 
@@ -136,13 +134,12 @@ columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
 
     <h4>Properties on <code>ag-grid-polymer</code></h4>
 
-    <pre ng-non-bindable>
-<span class="codeComment">// Grid Definition</span>
+    <snippet>
+// Grid Definition
 &lt;ag-grid-polymer rowData="{{rowData}}"
                  enableSorting
                  enable-filtering
-                 ...other properties&gt;&lt;/ag-grid-polymer&gt;
-</pre>
+                 ...other properties&gt;&lt;/ag-grid-polymer&gt;</snippet>
 
     <p>Here we've specified 3 properties: <code>rowData</code> is provided with two-way binding. <code>enableSorting</code>
     and <code>enable-filtering</code> illustrate how you can specify properties in different cases.</p>
@@ -160,11 +157,10 @@ columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
 
     <h4>Events on <code>ag-grid-polymer</code></h4>
 
-    <pre ng-non-bindable>
-<span class="codeComment">// Grid Definition</span>
+    <snippet>
+// Grid Definition
 &lt;ag-grid-polymer onGridReady="{{onGridReady}}"
-                 ...other properties&gt;&lt;/ag-grid-polymer&gt;
-</pre>
+                 ...other properties&gt;&lt;/ag-grid-polymer&gt;</snippet>
 
     <p>Here we're listening to the <code>gridReady</code> event - as with most events we need to add the "on" prefix.</p>
 
@@ -175,45 +171,42 @@ columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
 
     <h4>Events via the <code>gridOptions</code> property</h4>
 
-<pre ng-non-bindable>
-<span class="codeComment">// Grid Definition</span>
+<snippet>
+// Grid Definition
 &lt;ag-grid-polymer gridOptions="{{gridOptions}}"
                  ...other properties&gt;&lt;/ag-grid-polymer&gt;
 
-<span class="codeComment">// Application Code </span>
-this.gridOptions.onColumnResized = (event) => {
+// Application Code 
+this.gridOptions.onColumnResized = (event) =&gt; {
     console.log('event via option 3: ' + event);
-};
-</pre>
+};</snippet>
 
     <h4>Events via Event Listeners on an instance of <code>ag-grid-polymer</code></h4>
 
-<pre ng-non-bindable>
-<span class="codeComment">// Grid Definition</span>
+<snippet>
+// Grid Definition
 &lt;ag-grid-polymer id="myGrid"
                  ...other properties&gt;&lt;/ag-grid-polymer&gt;
 
-<span class="codeComment">// Application Code </span>
-this.$.myGrid.addEventListener('columnresized', (event) => {
+// Application Code 
+this.$.myGrid.addEventListener('columnresized', (event) =&gt; {
     console.log('event via option 1: ' + event.agGridDetails);
-})
-</pre>
+})</snippet>
 
     <p>In this case we need to specify an id on the <code>ag-grid-polymer</code> component in order to access it.</p>
     <p>The grid's payload will be available on the events <code>agGridDetails</code> property.</p>
 
     <h4>Events via direct property access on an instance of <code>ag-grid-polymer</code></h4>
 
-<pre ng-non-bindable>
-<span class="codeComment">// Grid Definition</span>
+<snippet>
+// Grid Definition
 &lt;ag-grid-polymer id="myGrid"
                  ...other properties&gt;&lt;/ag-grid-polymer&gt;
 
-<span class="codeComment">// Application Code </span>
-this.$.myGrid.oncolumnresized = (event) => {
+// Application Code 
+this.$.myGrid.oncolumnresized = (event) =&gt; {
     console.log('event via option 2: ' + event.agGridDetails);
-}
-</pre>
+}</snippet>
 
     <p>In this case we need to specify an id on the <code>ag-grid-polymer</code> component in order to access it.</p>
     <p>The grid's payload will be available on the events <code>agGridDetails</code> property.</p>
@@ -251,8 +244,8 @@ this.$.myGrid.oncolumnresized = (event) => {
         which the
         child can then access.</p>
 
-    <pre>
-<span class="codeComment">// in the parent component - the component that hosts ag-grid-polymer and specifies which polymer components to use in the grid</span>
+    <snippet>
+// in the parent component - the component that hosts ag-grid-polymer and specifies which polymer components to use in the grid
 constructor() {
     this.gridOptions = &lt;GridOptions&gt;{
         context: {
@@ -261,10 +254,9 @@ constructor() {
     };
 }
 
-<span class="codeComment">// in the child component - the polymer components created dynamically in the grid</span>
-<span class="codeComment">// the parent component can then be accessed as follows:</span>
-this.params.context.componentParent
-</pre>
+// in the child component - the polymer components created dynamically in the grid
+// the parent component can then be accessed as follows:
+this.params.context.componentParent</snippet>
 
     <p>Note that although we've used <code>componentParent</code> as the property name here it can be anything -
         the

@@ -32,7 +32,8 @@
     <p>A VueJS component can be defined in a few different ways (please see <a href="/best-vuejs-data-grid#define_component">
             Defining VueJS Components</a> for all the options), but in this example we're going to define our editor as a Single File Component:</p>
 
-<pre ng-non-bindable><span class="codeComment">// create your cell editor as a VueJS component</span>
+<snippet>
+// create your cell editor as a VueJS component
 &lt;template&gt;
     &lt;div :ref="'container'" class="mood" tabindex="0" @keydown="onKeyDown"&gt;
         &lt;img src="images/smiley.png" @click="onClick(true)" :class="{selected : happy, default : !happy}"&gt;
@@ -114,18 +115,17 @@
     }
 &lt;/style&gt;
 
-<span class="codeComment">// then reference the Component in your colDef like this</span>
+// then reference the Component in your colDef like this
 this.colDefs = [
     {
-        <span class="codeComment">// specify all the other fields as normal</span>
+        // specify all the other fields as normal
         headerName: "Mood",
         field: "mood",
         editable: true,
         width: 250,
-        <span class="codeComment">// instead of cellEditor we use cellEditorFramework</span>
+        // instead of cellEditor we use cellEditorFramework
         cellEditorFramework: MoodEditorComponent
-    }
-</pre>
+    }</snippet>
 
     <p>
         By using <code>colDef.cellEditorFramework</code> (instead of <code>colDef.cellEditor</code>) the grid
@@ -139,15 +139,14 @@ this.colDefs = [
         you from the <code>created</code> VueJS lifecycle hook.</p>
 
     <p>You can think of this as you having defined the following:</p>
-<pre>
+<snippet>
 export default {
     data () {
         return {
             params: null
         }
     },
-    ...
-</pre>
+    ...</snippet>
 
     <p>but you do not need to do this - this is made available to you behind the scenes, and contains the cells value.</p>
 

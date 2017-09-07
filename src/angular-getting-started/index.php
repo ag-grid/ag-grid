@@ -33,17 +33,16 @@ include '../documentation-main/documentation_header.php';
         this
         repo, install the dependencies and start it up:</p>
 
-    <pre>
-<span class="codeComment">// clone the ag-Grid Angular seed project</span>
+    <snippet>
+// clone the ag-Grid Angular seed project
 git clone https://github.com/ag-grid/ag-grid-angular-seed
 cd ag-grid-angular-seed/angular-cli
 
-<span class="codeComment">// install the project dependencies</span>
+// install the project dependencies
 npm i
 
-<span class="codeComment">// build & start the application</span>
-npm start
-</pre>
+// build & start the application
+npm start</snippet>
 
     <p>With those 3 commands you should now see the following application:</p>
 
@@ -56,14 +55,13 @@ npm start
     <p>At a minimum, a Grid requires row data & column definitions. Row data is provided to the grid as an array of
         JavaScript objects:</p>
 
-    <pre>
-<span class="codeComment">// row data </span>
+    <snippet>
+// row data 
 [
     {make: "Toyota", model: "Celica", price: 35000},
     {make: "Ford", model: "Mondeo", price: 32000},
     {make: "Porsche", model: "Boxter", price: 72000}
-]
-</pre>
+]</snippet>
 
     <p>Here we have 3 rows of data, with <code>make</code>, <code>model</code> and <code>price</code> making up the
         data.</p>
@@ -74,14 +72,13 @@ npm start
         columns
         that match the data above:</p>
 
-    <pre>
-<span class="codeComment">// column definitions</span>
+    <snippet>
+// column definitions
 [
     {headerName: "Make", field: "make"},
     {headerName: "Model", field: "model", cellRendererFramework: RedComponentComponent},
     {headerName: "Price", field: "price"}
-]
-</pre>
+]</snippet>
 
     <p>At a minimum a column definition needs a <code>headerName</code> - the column title to display - and a <code>field</code>
         - the data item to read off of from the row data. Here we're defining 3 columns, <code>Make</code>,
@@ -98,13 +95,12 @@ npm start
 
     <p>For a Angular application, you need to pull in the <code>ag-grid-angular</code> Component and include it in your <code>template</code>:</p>
 
-    <pre>
-<span class="codeComment">// src/app/my-grid-application/my-grid-application.component.html</span>
+    <snippet>
+// src/app/my-grid-application/my-grid-application.component.html
 &lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-fresh"
                  [rowData]="rowData"
                  [columnDefs]="columnDefs"&gt;
-&lt;/ag-grid-angular&gt;
-</pre>
+&lt;/ag-grid-angular&gt;</snippet>
 
     <p>Here we're telling the Grid to read the row & column definitions off the application Component itself, in fields
         called <code>rowData</code> and <code>columnDefs</code>. For a very simple Grid, this is all you need to do display tabular data.</p>
@@ -126,15 +122,15 @@ npm start
     <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
         enabled by setting a Grid property to true:</p>
 
-    <pre>
-<span class="codeComment">// Grid Definition </span>
+    <snippet>
+// Grid Definition 
 &lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-fresh"
                  [rowData]="rowData"
                  [columnDefs]="columnDefs"&gt;
 
-                 enableSorting <span class="codeComment">// shorthand for [enableSorting]="true"</span>
+                 enableSorting // shorthand for [enableSorting]="true"
 &lt;/ag-grid-angular&gt;
-    </pre>
+   </snippet>
 
     <p>With a single property change we are now able to sort any column by clicking the column header (you can keep
         clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
@@ -152,15 +148,14 @@ npm start
 
     <p>As with sorting, enabling filtering is as easy as setting a single property in our Grid definition:</p>
 
-    <pre>
-<span class="codeComment">// Grid Definition </span>
+    <snippet>
+// Grid Definition 
 &lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-fresh"
                  [rowData]="rowData"
                  [columnDefs]="columnDefs"&gt;
 
-                 enableFilter <span class="codeComment">// shorthand for [enableFilter]="true"</span>
-&lt;/ag-grid-angular&gt;
-</pre>
+                 enableFilter // shorthand for [enableFilter]="true"
+&lt;/ag-grid-angular&gt;</snippet>
 
     <p>With the <code>enableFilter</code> property set we are now able to filter any column by clicking the column
         header

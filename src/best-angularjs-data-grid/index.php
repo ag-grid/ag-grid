@@ -68,7 +68,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>As with the ag-Grid example, all we need to do is reference the ag-grid-enterprise dependency and we're good
     to go:</p>
-<pre>
+<snippet>
 &lt;html&gt;
 &lt;head&gt;
     &lt;script src="path-to-ag-grid-enterprise/ag-grid-enterprise.js"&gt;&lt;/script&gt;
@@ -77,8 +77,7 @@ include '../documentation-main/documentation_header.php';
 &lt;body&gt;
     &lt;div id="myGrid" style="height: 100%;" class="ag-fresh"&gt;&lt;/div&gt;
 &lt;/body&gt;
-&lt;/html&gt;
-</pre>
+&lt;/html&gt;</snippet>
 <note>
     <strong>Self Contained Bundles</strong>
 
@@ -111,7 +110,8 @@ include '../documentation-main/documentation_header.php';
     enterprise features are available when you use ag-Grid.
 </p>
 
-<pre>// ECMA 5 - using nodes require() method
+<snippet>
+// ECMA 5 - using nodes require() method
 var AgGrid = require('ag-grid');
 // only include this line if you want to use ag-grid-enterprise
 require('ag-grid-enterprise');
@@ -119,23 +119,22 @@ require('ag-grid-enterprise');
 // ECMA 6 - using the system import method
 import {Grid} from 'ag-grid/main';
 // only include this line if you want to use ag-grid-enterprise
-import 'ag-grid-enterprise/main';
-</pre>
+import 'ag-grid-enterprise/main';</snippet>
 
 
 <h3 id="creating-the-angularjs-module">Creating the AngularJS 1.x Module</h3>
 Include ag-Grid as a dependency of your module like this:
 <p/>
-<pre>
-<span class="codeComment">// if you're using ag-Grid-Enterprise, you'll need to provide the License Key before doing anything else</span>
-<span class="codeComment">// not necessary if you're just using ag-Grid</span>
+<snippet>
+// if you're using ag-Grid-Enterprise, you'll need to provide the License Key before doing anything else
+// not necessary if you're just using ag-Grid
 agGrid.LicenseManager.setLicenseKey("your license key goes here");
 
-<span class="codeComment">// get ag-Grid to create an Angular module and register the ag-Grid directive</span>
+// get ag-Grid to create an Angular module and register the ag-Grid directive
 agGrid.initialiseAgGridWithAngular1(angular);
 
-<span class="codeComment">// create your module with ag-Grid as a dependency</span>
-var module = angular.module("example", ["agGrid"]);</code></pre>
+// create your module with ag-Grid as a dependency
+var module = angular.module("example", ["agGrid"]);</snippet>
 
 <h4 id="ag-grid-div">ag-Grid Div</h4>
 
@@ -156,7 +155,8 @@ var module = angular.module("example", ["agGrid"]);</code></pre>
     the width and height you give it.
 </p>
 
-<pre>&lt;div <b>ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"</b>>&lt;/div></pre>
+<snippet>
+&lt;div &lt;b&gt;ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"&lt;/b&gt;&gt;&lt;/div&gt;</snippet>
 
 <p>
     (note: a div by default has 100% width, so the width is not specified explicitly above).

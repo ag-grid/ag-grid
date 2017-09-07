@@ -32,12 +32,13 @@ include('../includes/mediaHeader.php');
         <h3>Ok, I'm ready for the complicated configuration - bring it on!</h3>
 
         <p>To have ag-Grid available to your Angular 2 application, you need to import the <code>AgGridModule</code>. All you need to do is:</p>
-<pre>@NgModule({
+<snippet>
+@NgModule({
     imports: [
         BrowserModule,
         AgGridModule.forRoot(),
     ...
-})</pre>
+})</snippet>
 
         <p>The <code>forRoot</code> part is to ensure our providers are injected at the root level (or rather, are singletons). We do this as we cache the dynamically created modules under the hood.</p>
         <p>Remember, Angular 2 Components can only belong to a single Module...</p>
@@ -51,18 +52,19 @@ include('../includes/mediaHeader.php');
         <p>ag-Grid supports rendering of cells via Angular with either templates, or components.</p>
 
         <p>For quick and easy rendering, use templates:</p>
-<pre ng-non-bindable><span class="codeComment">// then reference the Component in your colDef like this</span>
+<snippet>
+// then reference the Component in your colDef like this
 colDef = {
-    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+    // instead of cellRenderer we use cellRendererFramework
     cellRendererFramework: {
         template: '{{params.value | currency}}',
         moduleImports: [CommonModule]
     },
-    <span class="codeComment">// specify all the other fields as normal</span>
+    // specify all the other fields as normal
     headerName: "Currency Pipe Template",
     field: "value",
     width: 200
-    </pre>
+   </snippet>
 
         <p>Easy! From this you can see that we also support pipes in the templates - in this case we have to provide the <code>CommonModule</code> as we're using the provided <code>currency</code> pipe, but you can provide your own.</p>
 
@@ -70,15 +72,15 @@ colDef = {
         <p>For richer cell rendering, you can provide a full Angular 2 component. In this example we have a "parent" component that uses a "child" one.</p>
 
         <p>First, the components:</p>
-<pre>
-<span class="codeComment">// the parent component</span>
+<snippet>
+// the parent component
 @Component({
     selector: 'ratio-cell',
     template: `
-    &lt;ag-ratio style="height:20px" [topRatio]="params?.value?.top" [bottomRatio]="params?.value?.bottom"></ag-ratio>
+    &lt;ag-ratio style="height:20px" [topRatio]="params?.value?.top" [bottomRatio]="params?.value?.bottom"&gt;&lt;/ag-ratio&gt;
     `,
     styles: [`
-        <span class="codeComment">//styles omitted for brevity</span>
+        //styles omitted for brevity
     `]
 })
 export class RatioParentComponent implements AgRendererComponent {
@@ -91,32 +93,30 @@ export class RatioParentComponent implements AgRendererComponent {
     }
 }
 
-<span class="codeComment">// the child component (ag-ratio)</span>
+// the child component (ag-ratio)
 @Component({
   selector: 'ag-ratio',
   template: `
-    &lt;svg viewBox="0 0 300 100" preserveAspectRatio="none">
-        &lt;rect x="0" y="0" [attr.width]="topRatio * 300" height="50" rx="4" ry="4" class="topBar" />
-        &lt;rect x="0" y="50" [attr.width]="bottomRatio * 300" height="50" rx="4" ry="4" class="bottomBar" />
-    &lt;/svg>
+    &lt;svg viewBox="0 0 300 100" preserveAspectRatio="none"&gt;
+        &lt;rect x="0" y="0" [attr.width]="topRatio * 300" height="50" rx="4" ry="4" class="topBar" /&gt;
+        &lt;rect x="0" y="50" [attr.width]="bottomRatio * 300" height="50" rx="4" ry="4" class="bottomBar" /&gt;
+    &lt;/svg&gt;
   `,
   styles: [
-        <span class="codeComment">//styles omitted for brevity</span>
+        //styles omitted for brevity
   `]
 })
 export class RatioComponent {
   @Input() topRatio: number = 0.67;
   @Input() bottomRatio: number = 0.50;
-}
-</pre>
+}</snippet>
 
         <p>Finally, lets tell the grid we want to use these components in our cell:</p>
-<pre>
+<snippet>
 cellRendererFramework: {
     component: RatioParentComponent,
     dependencies: [RatioComponent]
-},
-</pre>
+},</snippet>
         <p>In this case we need to tell Angular that we need RatioComponent too - we need to do this as the component creation is dynamically!</p>
         <p>The result would be something like this (taken from our <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> project):</p>
 
@@ -127,17 +127,17 @@ cellRendererFramework: {
         <p>ag-Grid also supports editing of cells via Angular 2 Components.</p>
 
         <p>Configuration is as easy as it is with renderers - first, we start with defining our Component:</p>
-<pre>
+<snippet>
 @Component({
     selector: 'editor-cell',
     template: `
-        &lt;div #container class="mood" tabindex="0" (keydown)="onKeyDown($event)">
-            &lt;img src="../images/smiley.png" (click)="setHappy(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
-            &lt;img src="../images/smiley-sad.png" (click)="setHappy(false)" [ngClass]="{'selected' : !happy, 'default' : happy}">
-        &lt;/div>
+        &lt;div #container class="mood" tabindex="0" (keydown)="onKeyDown($event)"&gt;
+            &lt;img src="../images/smiley.png" (click)="setHappy(true)" [ngClass]="{'selected' : happy, 'default' : !happy}"&gt;
+            &lt;img src="../images/smiley-sad.png" (click)="setHappy(false)" [ngClass]="{'selected' : !happy, 'default' : happy}"&gt;
+        &lt;/div&gt;
     `,
     styles: [`
-        <span class="codeComment">//styles omitted for brevity</span>
+        //styles omitted for brevity
     `]
 })
 class MoodEditorComponent implements AgEditorComponent, AfterViewInit {
@@ -146,7 +146,7 @@ class MoodEditorComponent implements AgEditorComponent, AfterViewInit {
     @ViewChild('container', {read: ViewContainerRef}) private container;
     private happy:boolean = false;
 
-    <span class="codeComment">// dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this</span>
+    // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
         this.container.element.nativeElement.focus();
     }
@@ -174,22 +174,20 @@ class MoodEditorComponent implements AgEditorComponent, AfterViewInit {
 
     onKeyDown(event):void {
         let key = event.which || event.keyCode;
-        if (key == 37 || <span class="codeComment">// left</span>
-            key == 39) {  <span class="codeComment">// right</span>
+        if (key == 37 || // left
+            key == 39) {  // right
             this.toggleMood();
             event.stopPropagation();
         }
     }
-}
-</pre>
+}</snippet>
 
         <p>Now tell the grid that we want to use this Component as an editor:</p>
-<pre>
+<snippet>
 cellEditorFramework: {
     component: MoodEditorComponent,
     moduleImports: [CommonModule]
-}
-</pre>
+}</snippet>
         <p>In this case we tell ag-Grid that we need the <code>CommonModule</code> too - we need it for this Component as we're using some of the built in directives (<code>ngClass</code> etc).</p>
 
         <p>The result would be something like this (again taken from our <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> project):</p>
@@ -204,16 +202,16 @@ cellEditorFramework: {
         <p>ag-Grid supports filtering of rows via Angular 2 Components.</p>
 
         <p>As with the rendering and editing components above, we start with our component:</p>
-<pre>
+<snippet>
 @Component({
     selector: 'filter-cell',
     template: `
-        Filter: &lt;input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
+        Filter: &lt;input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text"&gt;
     `
 })
 class PartialMatchFilterComponent implements AgFilterComponent {
     private params:IFilterParams;
-    private valueGetter:(rowNode:RowNode) => any;
+    private valueGetter:(rowNode:RowNode) =&gt; any;
     private text:string = '';
 
     @ViewChild('input', {read: ViewContainerRef}) private input;
@@ -230,8 +228,8 @@ class PartialMatchFilterComponent implements AgFilterComponent {
     doesFilterPass(params:IDoesFilterPassParams):boolean {
         return this.text.toLowerCase()
             .split(" ")
-            .every((filterWord) => {
-                return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
+            .every((filterWord) =&gt; {
+                return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) &gt;= 0;
             });
     }
 
@@ -257,16 +255,14 @@ class PartialMatchFilterComponent implements AgFilterComponent {
             this.params.filterChangedCallback();
         }
     }
-}
-</pre>
+}</snippet>
 
         <p>And again, let's tell the grid that we want to use this Component as a filter:</p>
-<pre>
+<snippet>
 filterFramework: {
     component: PartialMatchFilterComponent,
     moduleImports: [FormsModule]
-},
-</pre>
+},</snippet>
 
         <p>Easy again! In this case we have to provide the <code>FormsModule</code> as we're using the provided directives (<code>ngModel</code> etc), but again you can provide your own.</p>
 

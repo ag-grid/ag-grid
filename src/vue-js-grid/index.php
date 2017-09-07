@@ -55,11 +55,12 @@ include('../includes/mediaHeader.php');
         <p>First, we need to create the boilerplate for our application - for this we'll use the <a href="https://github.com/vuejs/vue-cli" target="_blank">vue-cli</a> to spin
         up a simple Webpack configuration:</p>
 
-        <pre>vue init webpack munro-app</pre>
+        <snippet>
+vue init webpack munro-app</snippet>
 
         <p>We don't need <code>vue-router</code> and for the purposes of this application we won't use ESLint or Karma/Mocha:</p>
 
-<pre>
+<snippet>
 ? Project name munro-app
 ? Project description A Vue.js project
 ? Author Sean Landsman &lt;your@email.com&gt;
@@ -67,26 +68,26 @@ include('../includes/mediaHeader.php');
 ? Install vue-router? No
 ? Use ESLint to lint your code? No
 ? Setup unit tests with Karma + Mocha? No
-? Setup e2e tests with Nightwatch? No
-</pre>
+? Setup e2e tests with Nightwatch? No</snippet>
 
         <p>Once done follow the instructions that follow:</p>
-<pre>cd munro-app
+<snippet>
+cd munro-app
 npm install
-npm run dev</pre>
+npm run dev</snippet>
 
         <p>After this we'll end up with a simple folder structure and working skeleton application.</p>
 
         <p>Next let's install the ag-Grid dependencies we'll need:</p>
 
-<pre>
+<snippet>
 npm install ag-grid --save
-npm install ag-grid-vue --save
-</pre>
+npm install ag-grid-vue --save</snippet>
 
         <p>We'll also use <code>whatwg-fetch</code> to pull in our Munro.json data file:</p>
 
-<pre>npm install whatwg-fetch --save</pre>
+<snippet>
+npm install whatwg-fetch --save</snippet>
 
         <p>One last piece of housekeeping - delete <code>src/components/Hello.vue</code>.</p>
 
@@ -97,8 +98,8 @@ npm install ag-grid-vue --save
         <p>Let's create a Grid component that will retrieve the Munro information and render it.</p>
         
         <p>The <code>MunroGrid</code> component looks like this:</p>
-<pre>
-<span class="codeComment">// MunroGrid.vue</span>
+<snippet>
+// MunroGrid.vue
 &lt;template&gt;
     &lt;ag-grid-vue class="ag-fresh grid"
                  :gridOptions="gridOptions"
@@ -164,8 +165,7 @@ npm install ag-grid-vue --save
     .grid {
         height: 255px;
     }
-&lt;/style&gt;
-</pre>
+&lt;/style&gt;</snippet>
 
         <p>The main parts of this component are:</p>
 
@@ -178,8 +178,8 @@ npm install ag-grid-vue --save
 
         <p>With our component ready, we now need to add it to our application. Update <code>src/App.vue</code> with the following:</p>
         
-<pre>
-<span class="codeComment">// App.vue</span>
+<snippet>
+// App.vue
 &lt;template&gt;
   &lt;div id="app"&gt;
       &lt;munro-grid&gt;&lt;/munro-grid&gt;
@@ -199,21 +199,19 @@ npm install ag-grid-vue --save
             MunroGrid
         }
     }
-&lt;/script&gt;
-</pre>
+&lt;/script&gt;</snippet>
 
         <p>Finally, we need to pull in the ag-Grid CSS. Update <code>src/main.js</code> to import the required files:</p>
 
-<pre>
-<span class="codeComment">// main.js</span>
+<snippet>
+// main.js
 import Vue from "vue";
 import App from "./App";
 
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
 import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
 
-...other imports
-</pre>
+...other imports</snippet>
 
         <p>With all that in place we can spin up the application once again - this is what you should see:</p>
 
@@ -224,8 +222,8 @@ import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
         <p>Ok, so far so good.  But wouldn't it be nice to get a view of a Munro when we clicked on it? I think so - let's
         create a new component we'll call <code>MunroDetail</code> that will show some key information about a Munro, as well as display an image of it:</p>
 
-<pre>
-<span class="codeComment">// MunroDetail.vue</span>
+<snippet>
+// MunroDetail.vue
 &lt;template&gt;
     &lt;div class="detail" v-if="selectedMunro"&gt;
         &lt;table class="table"&gt;
@@ -309,8 +307,7 @@ import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
     .image {
         width: 100%;
     }
-&lt;/style&gt;
-</pre>
+&lt;/style&gt;</snippet>
 
         <p>Nothing too complicated here - we have a simple table that will present some key information about a Munro,
             and will show an image when a prompt is clicked on (<code>@click="showImage=true"</code>).</p>
@@ -319,8 +316,8 @@ import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
         will only affect the component we're working on. Very nice indeed.</p>
 
         <p>Now let's update <code>MunroGrid</code> so that when a row is clicked on we emit an event to let users know:</p>
-<pre>
-<span class="codeComment">// MunroGrid.vue</span>
+<snippet>
+// MunroGrid.vue
 &lt;template&gt;
     &lt;ag-grid-vue class="ag-fresh grid"
                  :gridOptions="gridOptions"
@@ -390,16 +387,14 @@ import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
     .grid {
         height: 255px;
     }
-&lt;/style&gt;
-</pre>
+&lt;/style&gt;</snippet>
 
         <p>The only change we've made here to listen for <code>rowClicked</code> event from the Grid and then to emit these
         events up:</p>
-<pre>
+<snippet>
 onRowClicked(params) {
     this.$emit("munroSelected", params.node.data)
-},
-</pre>
+},</snippet>
 
         <p>Easy!</p>
 
@@ -407,8 +402,8 @@ onRowClicked(params) {
         <p>So now we have have a component to display the Munro and have updated our Grid component to broadcast Munro selection.
             Let's add our <code>MunroDetail</code>to our main <code>App.vue</code>, as well as tie up a row being selected in <code>MunroGrid</code>
             to displaying the information in <code>MunroDetail</code>:</p>
-<pre>
-<span class="codeComment">// App.vue</span>
+<snippet>
+// App.vue
 &lt;template&gt;
     &lt;div id="app"&gt;
         &lt;div id="contentwrapper"&gt;
@@ -492,8 +487,7 @@ onRowClicked(params) {
             margin-left: 0;
         }
     }
-&lt;/style&gt;
-</pre>
+&lt;/style&gt;</snippet>
 
         <p>Key parts of our updates are:</p>
         <ul>
@@ -527,8 +521,8 @@ onRowClicked(params) {
 
         <p>I'd like to have this as a horizontal slider with the grid filtering as we slide - let's see what we can come up with.</p>
 
-<pre>
-<span class="codeComment">// SliderComponent.vue</span>
+<snippet>
+// SliderComponent.vue
 &lt;template&gt;
     &lt;span class="slider"&gt;
         &lt;input type="range" :min="min" :max="max" :step="step" :value="value" @input="onSliderChanging" @change="onSliderChanged" /&gt; {{ value }}
@@ -583,8 +577,7 @@ onRowClicked(params) {
         padding-right: 4px;
         z-index: 1;
     }
-&lt;/style&gt;
-</pre>
+&lt;/style&gt;</snippet>
 
         <p>Here we have a simple slider control - it takes in a few properties to control its behaviour and initial state,
             and fires an event when the user changes its value.</p>
@@ -592,8 +585,8 @@ onRowClicked(params) {
         <p>Now let's create a new Filter component for use in the Grid. This new Filter will make use of the <code>SliderComponent</code>
         we've just created.</p>
 
-<pre>
-<span class="codeComment">// SliderFilter.vue</span>
+<snippet>
+// SliderFilter.vue
 &lt;template&gt;
     &lt;slider :min="min" :max="max" :step="step" :initialValue="initialValue" @valueChanged="filterValueChanged"&gt;&lt;/slider&gt;
 &lt;/template&gt;
@@ -648,8 +641,7 @@ onRowClicked(params) {
             this.initialValue = this.params.initialValue;
         }
     })
-&lt;/script&gt;
-</pre>
+&lt;/script&gt;</snippet>
 
         <p>This too is a simple component - we remember to enclose our logic with <code>Vue.extend</code> as this is
         what allows the Grid to create components dynamically, and the rest is normal ag-Grid logic.</p>
@@ -662,7 +654,7 @@ onRowClicked(params) {
 
         <p>And finally, let's add the new <code>SliderFilter</code> to <code>MunroGrid</code>:</p>
         
-<pre>
+<snippet>
 &lt;template&gt;
     &lt;ag-grid-vue class="ag-fresh grid"
                  :gridOptions="gridOptions"
@@ -744,8 +736,7 @@ onRowClicked(params) {
     .grid {
         height: 255px;
     }
-&lt;/style&gt;
-</pre>
+&lt;/style&gt;</snippet>
 
         <img src="../images/vue_munro_5.png" style="width: 100%;padding-bottom: 10px">
 

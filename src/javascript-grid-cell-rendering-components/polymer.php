@@ -32,8 +32,8 @@
 
 <h3 id="cell-renderers-from-polymer-components"><img src="../images/polymer-large.png" style="width: 20px;"/>
     Cell Renderer's from Polymer Components</h3>
-<pre ng-non-bindable>
-<span class="codeComment">// create your cell renderer as a Polymer component</span>
+<snippet>
+// create your cell renderer as a Polymer component
 &lt;dom-module id="square-cell-renderer"&gt;
     &lt;template&gt;
         &lt;span&gt;{{valueSquared}}&lt;/span&gt;
@@ -69,20 +69,20 @@
     &lt;/script&gt;
 &lt;/dom-module&gt;
     
-<span class="codeComment">// then reference the Component in your colDef like this</span>
+// then reference the Component in your colDef like this
 colDef = {
     {
         headerName: "Square Component",
         field: "value",
-        <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+        // instead of cellRenderer we use cellRendererFramework
         cellRendererFramework: 'square-cell-renderer'
 
-        <span class="codeComment">// specify all the other fields as normal</span>
+        // specify all the other fields as normal
         editable:true,
         colId: "square",
         width: 200
     }
-}</pre>
+}</snippet>
 
 <p>The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the
     cell <code>params</code>.<p>

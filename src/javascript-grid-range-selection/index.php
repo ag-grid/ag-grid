@@ -56,12 +56,13 @@ include '../documentation-main/documentation_header.php';
         all the intermediary events will have both of these values as false.
     </p>
 
-    <pre>api.addEventListener('rangeSelectionChanged', function(event) {
+    <snippet>
+api.addEventListener('rangeSelectionChanged', function(event) {
     // this prints true for first event only
     console.log('has changed, started = ' + event.started);
     // this prints true for last event only
     console.log('has changed, finished = ' + event.finished);
-});</pre>
+});</snippet>
 
     <h3>Range Selection API</h3>
 
@@ -71,7 +72,8 @@ include '../documentation-main/documentation_header.php';
         Get the selected ranges using <i>api.getRangeSelections()</i>. This will return back
         a list of range selection objects, each object contain the details of one range. The
         structure of the range selection is as follows:
-        <pre>RangeSelection {
+        <snippet>
+RangeSelection {
     start: GridCell; // the start cell of the range
     end: GridCell; // the end cell of the range
     columns: Column[]; // all the columns of the range
@@ -81,7 +83,7 @@ GridCell {
     rowIndex: number; // the index of the row. indexes are zero based.
     floating: string; // whether the row is floating ('top', 'bottom' or null for not floating)
     column: Column; // the column of the cell
-}</pre>
+}</snippet>
     </p>
 
     <p>
@@ -114,14 +116,15 @@ GridCell {
     <p>
         Adds a range to the selection. This keeps any prevoius ranges. If you wish to have this range
     exclusively, then call clearRangeSelection() first.
-        <pre>AddRangeSelectionParams{
+        <snippet>
+AddRangeSelectionParams{
     rowStart: number, // the start row index
     floatingStart: string, // the starting floating ('top', 'bottom' or null/undefined)
     rowEnd: number, // the end row index
     floatingEnd: string, // the end floating ('top', 'bottom' or null/undefined)
     columnStart: string|Column, // colId of the starting column
     columnEnd: string|Column // colId of the ending column
-}</pre>
+}</snippet>
     </p>
 
     <h3>Callback processCellForClipboard()</h3>

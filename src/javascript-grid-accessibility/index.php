@@ -71,13 +71,14 @@ include '../documentation-main/documentation_header.php';
 
     <p>The following css snippet shows how you could also hide this link by default and then reveal it when tabbed into:</p>
 
-    <pre>.skip-link {
+    <snippet>
+.skip-link {
       left: -100%;
       position: absolute;
     }
     .skip-link:focus {
       left: 50%;
-    }</pre>
+    }</snippet>
 
     <h2>Screen Readers</h2>
     <p>
@@ -130,7 +131,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>To force row and column order, enable the following gridOptions property like so:</p>
 
-    <pre>gridOptions.ensureDomOrder = true</pre>
+    <snippet>
+gridOptions.ensureDomOrder = true</snippet>
 
     <note>Animations won't work properly when the DOM order is forced, so ensure they are not enabled.</note>
 
@@ -149,7 +151,8 @@ include '../documentation-main/documentation_header.php';
         Column virtualisation can be disabled as follows:
     </p>
 
-    <pre>gridOptions.suppressColumnVirtualisation = true</pre>
+    <snippet>
+gridOptions.suppressColumnVirtualisation = true</snippet>
 
     <p>
         This mean if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.
@@ -159,7 +162,8 @@ include '../documentation-main/documentation_header.php';
         property to be very large as follows:
     </p>
 
-    <pre>gridOptions.rowBuffer = 9999</pre>
+    <snippet>
+gridOptions.rowBuffer = 9999</snippet>
 
     <p>
         This sets number of rows rendered outside the scrollable viewable area the grid renders. The defaults is 20.

@@ -106,37 +106,38 @@ include('../includes/mediaHeader.php');
             The challenge is then working out which cell caused the event.
         </p>
 
-        <pre><span class="codeComment">// parentContainer will contain all the cells</span>
+        <snippet>
+// parentContainer will contain all the cells
 var parentContainer = document.createElement('div');
 
-<span class="codeComment">// cells are regular DOM div objects</span>
+// cells are regular DOM div objects
 var eCell = document.createElement('div');
-<span class="codeComment">// attach our own properties to the DOM object.</span>
-<span class="codeComment">// once we are not using DOM properties, there is no performance hit.</span>
+// attach our own properties to the DOM object.
+// once we are not using DOM properties, there is no performance hit.
 eCell.__col = colId;
 eCell.__row = rowId;
-<span class="codeComment">// add the cell to the container, no listeners</span>
+// add the cell to the container, no listeners
 parentContainer.appendChild(eCell);
 
-<span class="codeComment">// listen for clicks on the parent container only</span>
+// listen for clicks on the parent container only
 parentContainer.addEventListener('click', myEventListener);
 
 function myEventListener(event) {
-    <span class="codeComment">// go through all elements of the event, starting from the element that caused the event</span>
-    <span class="codeComment">// and continue up to the parent container. we should find the cell element along the way.</span>
+    // go through all elements of the event, starting from the element that caused the event
+    // and continue up to the parent container. we should find the cell element along the way.
     var domElement = event.target;
     var col, row;
     while (domElement!=parentContainer) {
-        <span class="codeComment">// see if the dom element has col and row info</span>
+        // see if the dom element has col and row info
         if (domElement.__col && domElement.__row) {
-            <span class="codeComment">// if yes, we have found the cell, and know which row and col it is</span>
+            // if yes, we have found the cell, and know which row and col it is
             col = domElement.__col;
             row = domElement.__row;
             break;
         }
         domElement = domElement.parentElement;
     }
-}</pre>
+}</snippet>
 
         <p>
             Readers will notice we are attaching arbitrary attributes (<code>__col</code> and <code>__row</code>) onto the DOM element
@@ -188,19 +189,20 @@ function myEventListener(event) {
             overwrite current children).
         </p>
 
-        <pre><span class="codeComment">// build up the row's HTML in a string</span>
+        <snippet>
+// build up the row's HTML in a string
 var htmlParts = [];
-htmlParts.push('&lt;div class="ag-row">');
+htmlParts.push('&lt;div class="ag-row"&gt;');
 cells.forEach( function(cell) {
-    htmlParts.push('&lt;div class="ag-cell">');
+    htmlParts.push('&lt;div class="ag-cell"&gt;');
     htmlParts.push(cell.getValue());
-    htmlParts.push('&lt;/div>');
+    htmlParts.push('&lt;/div&gt;');
 });
-htmlParts.push('&lt;/div>');
+htmlParts.push('&lt;/div&gt;');
 
-<span class="codeComment">// append the string into the DOM, one DOM hit for the entire row</span>
+// append the string into the DOM, one DOM hit for the entire row
 var rowHtml = htmlParts.join('');
-eContainer.insertAdjacentHTML(rowHtml);</pre>
+eContainer.insertAdjacentHTML(rowHtml);</snippet>
 
         <p>
             This works great when there are no components used (ag-Grid native components, Angular components,

@@ -36,27 +36,26 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Testing Dependencies</h3>
 
-<pre>
+<snippet>
 npm install protractor webdriver-manager --save-dev
 
-<span class="codeComment">// optional dependencies - if you're using TypeScript </span>
-npm install @types/jasmine @types/selenium-webdriver --save-dev
-</pre>
+// optional dependencies - if you're using TypeScript 
+npm install @types/jasmine @types/selenium-webdriver --save-dev</snippet>
 
     <p>Note you can install <code>protractor</code> and <code>webdriver-manager</code> globally if you'd prefer,
         which would allow for shorter commands when executing either of these tools.</p>
 
     <p>We now need to update the webdriver:</p>
 
-    <pre>./node_modules/.bin/webdriver-manager update</pre>
+    <snippet>
+./node_modules/.bin/webdriver-manager update</snippet>
 
     <p>This can be added to your package.json for easier packaging and repeatability:</p>
 
-<pre>
+<snippet>
 "scripts": {
     "postinstall": "webdriver-manager update"
-}
-</pre>
+}</snippet>
 
     <h4>Selenium Server</h4>
 
@@ -64,23 +63,25 @@ npm install @types/jasmine @types/selenium-webdriver --save-dev
 
     <p>Remember that the interaction between your tests and the browser is as follows:</p>
 
-    <pre>[Test Scripts] &lt; ------------ &gt; [Selenium Server] &lt; ------------ &gt; [Browser Drivers]</pre>
+    <snippet>
+[Test Scripts] &lt; ------------ &gt; [Selenium Server] &lt; ------------ &gt; [Browser Drivers]</snippet>
 
     <p>We'll run the server separately to begin with here:</p>
 
-    <pre>./node_modules/.bin/webdriver-manager start</pre>
+    <snippet>
+./node_modules/.bin/webdriver-manager start</snippet>
 
     <h3>Sample Configuration</h3>
 
-    <pre>
-<span class="codeComment">// conf.js</span>
+    <snippet>
+// conf.js
 exports.config = {
     framework: 'jasmine',
     specs: ['spec.js']
-}
-</pre>
+}</snippet>
 
-    <pre>Here we specify the <code>Jasmine</code> testing framework as well as our test to run.</pre>
+    <snippet>
+Here we specify the Jasmine testing framework as well as our test to run.</snippet>
 
     <h3>Sample Test</h3>
 
@@ -98,17 +99,17 @@ exports.config = {
         have the <code>ag-header-cell-text</code> class:
     </p>
 
-<pre>
-<span class="codeComment">// spec.js</span>
+<snippet>
+// spec.js
 describe('ag-Grid Protractor Test', function () {
     // not an angular application
     browser.ignoreSynchronization = true;
 
-    beforeEach(() => {
+    beforeEach(() =&gt; {
         browser.get("https://www.ag-grid.com/best-javascript-data-grid/example-js.html");
     });
 
-    it('should have expected column headers', () => {
+    it('should have expected column headers', () =&gt; {
         element.all(by.css(".ag-header-cell-text"))
             .map(function (header) {
                 return header.getText()
@@ -116,25 +117,23 @@ describe('ag-Grid Protractor Test', function () {
                 expect(headers).toEqual(['Make', 'Model', 'Price']);
             });
     });
-});
-</pre>
+});</snippet>
 
     <p>We can now run our test by executing the following command:</p>
 
-<pre>
+<snippet>
 ./node_modules/.bin/protractor conf.js
 
-<span class="codeComment">// or if protractor is installed globally</span>
-protractor conf.js
-</pre>
+// or if protractor is installed globally
+protractor conf.js</snippet>
 
     <h4>Checking Grid Data</h4>
 
     <p>We can match grid data by looking for rows by matching <code>div[row="&lt;row id&gt;"]</code> and then column
         values within these rows by looking for <code>div</code>'s with a class of <code>.ag-cell-value</code>:</p>
 
-<pre>
-it('first row should have expected grid data', () => {
+<snippet>
+it('first row should have expected grid data', () =&gt; {
     element.all(by.css('div[row="0"] div.ag-cell-value'))
         .map(function (cell) {
             return cell.getText();
@@ -142,8 +141,7 @@ it('first row should have expected grid data', () => {
         .then(function (cellValues) {
             expect(cellValues).toEqual(["Toyota", "Celica", "35000"]);
         });
-});
-</pre>
+});</snippet>
 
     <p>We can add this to <code>spec.js</code> and run the tests as before.</p>
 
@@ -158,24 +156,24 @@ it('first row should have expected grid data', () => {
     <p>The utilities can be installed & imported as follows:</p>
 
     <p>Installing:</p>
-<pre>
-npm install ag-grid-testing --save-dev
-</pre>
+<snippet>
+npm install ag-grid-testing --save-dev</snippet>
 
     <p>Importing:</p>
 
-    <pre>let ag_grid_utils = require("ag-grid-testing");
-    </pre>
+    <snippet>
+let ag_grid_utils = require("ag-grid-testing");
+   </snippet>
 
     <h4>verifyRowDataMatchesGridData</h4>
 
     <p>Compares Grid data to provided data. The order of the data provided should correspond to the order within the grid.
     The property names should correspond to the <code>colId</code>'s of the columns.</p>
 
-    <pre>
+    <snippet>
 ag_grid_utils.verifyRowDataMatchesGridData(
     [
-        <span class="codeComment">// first row</span>
+        // first row
         {
             "name": "Amelia Braxton",
             "proficiency": "42%",
@@ -183,45 +181,46 @@ ag_grid_utils.verifyRowDataMatchesGridData(
             "mobile": "+960 018 686 075",
             "landline": "+743 1027 698 318"
         },
-        <span class="codeComment">// more rows...</span>
+        // more rows...
     ]
 );
-    </pre>
+   </snippet>
 
     <h4>verifyCellContentAttributesContains</h4>
     <p>Userful when there is an array of data within a cell, each of which is witing an attribute (for example an image).</p>
 
-    <pre>ag_grid_utils.verifyCellContentAttributesContains(1, "3", "src", ['android', 'mac', 'css'], "img");</pre>
+    <snippet>
+ag_grid_utils.verifyCellContentAttributesContains(1, "3", "src", ['android', 'mac', 'css'], "img");</snippet>
 
     <h4>allElementsTextMatch</h4>
 
     <p>Verifies that all elements text (ie the cell value) matches the provided data. Usf</p>
 
-    <pre>
+    <snippet>
 ag_grid_utils.allElementsTextMatch(by.css(".ag-header-cell-text"),
     ['#', 'Name', 'Country', 'Skills', 'Proficiency', 'Mobile', 'Land-line']
 );
-    </pre>
+   </snippet>
 
     <h4>clickOnHeader</h4>
 
     <p>Clicks on a header with the provided <code>headerName</code>.</p>
-    <pre>ag_grid_utils.clickOnHeader("Name");</pre>
+    <snippet>
+ag_grid_utils.clickOnHeader("Name");</snippet>
 
     <h4>getLocatorForCell</h4>
 
     <p>Provides a CSS <code>Locator</code> for a grid cell, by row & id and optionally a further CSS selector.</p>
 
-    <pre>
+    <snippet>
 ag_grid_utils.getLocatorForCell(0, "make")
-ag_grid_utils.getLocatorForCell(0, "make", "div.myClass)
-</pre>
+ag_grid_utils.getLocatorForCell(0, "make", "div.myClass)</snippet>
 
     <h4>getCellContentsAsText</h4>
 
     <p>Returns the cell value (as text) for by row & id and optionally a further CSS selector.</p>
 
-<pre>
+<snippet>
 ag_grid_utils.getCellContentsAsText(0, "make")
              .then(function(cellValue) {
                 // do something with cellValue
@@ -230,8 +229,7 @@ ag_grid_utils.getCellContentsAsText(0, "make")
 ag_grid_utils.getCellContentsAsText(0, "make", "div.myClass)
              .then(function(cellValue) {
                 // do something with cellValue
-             });
-</pre>
+             });</snippet>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

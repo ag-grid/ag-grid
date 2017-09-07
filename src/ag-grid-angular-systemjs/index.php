@@ -27,30 +27,28 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Initialise Project</h3>
 
-    <pre>
+    <snippet>
 mkdir ag-grid-systemjs
 cd ag-grid-systemjs
 npm init
-<span class="codeComment">// accept defaults</span>
-</pre>
+// accept defaults</snippet>
 
     <h3>Install Dependencies</h3>
 
-    <pre>
+    <snippet>
 npm i --save ag-grid ag-grid-angular
 npm i --save @angular/common @angular/compiler @angular/compiler-cli @angular/core @angular/platform-browser @angular/platform-browser-dynamic @angular/router typescript rxjs core-js zone.js
 npm i --save-dev systemjs@0.19.x systemjs-builder@0.15.33 concurrently@2.2.0 lite-server@2.2.2 gulp@3.9.1 gulp-ngc@0.1.x @types/node@6.0.45
 
-<span class="codeComment">// optional - only necessary if you're using any of the Enterprise features</span>
-npm i --save ag-grid-enterprise
-</pre>
+// optional - only necessary if you're using any of the Enterprise features
+npm i --save ag-grid-enterprise</snippet>
 
     <p>Our application will be a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility & configuration files.</p>
 
     <note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ag-grid/ag-grid-angular-seed">GitHub.</a></note>
 
     <p>The resulting project structure will look like this:</p>
-<pre>
+<snippet>
 ag-grid-systemjs
 ├── aot
 │   ├── ag-grid.css
@@ -72,10 +70,10 @@ ag-grid-systemjs
 ├── package.json
 ├── systemjs.config.js
 ├── tsconfig-aot.json
-└── tsconfig.json</pre>
+└── tsconfig.json</snippet>
 
-<pre ng-non-bindable>
-<span class="codeComment">// app/app.module.ts </span>
+<snippet>
+// app/app.module.ts 
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
 // ag-grid
@@ -95,10 +93,10 @@ import {AppComponent} from "./app.component";
     bootstrap: [AppComponent]
 })
 export class AppModule {
-}</pre>
+}</snippet>
 
-<pre ng-non-bindable>
-<span class="codeComment">// app/app.component.ts </span>
+<snippet>
+// app/app.component.ts 
 import {Component} from "@angular/core";
 
 import {GridOptions} from "ag-grid/main";
@@ -115,8 +113,8 @@ export class AppComponent {
 
     constructor() {
         // we pass an empty gridOptions in, so we can grab the api out
-        this.gridOptions = <GridOptions>{
-            onGridReady: () => {
+        this.gridOptions = &lt;GridOptions&gt;{
+            onGridReady: () =&gt; {
                 this.gridOptions.api.sizeColumnsToFit();
             }
         };
@@ -131,21 +129,20 @@ export class AppComponent {
             {make: "Porsche", model: "Boxter", price: 72000}
         ];
     }
-}</pre>
-<pre ng-non-bindable>
-<span class="codeComment">// app/app.component.html </span>
+}</snippet>
+<snippet>
+// app/app.component.html 
 &lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-fresh"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"&gt;
-&lt;/ag-grid-angular&gt;
-</pre>
+&lt;/ag-grid-angular&gt;</snippet>
     <h3 id="for-just-in-time-jit-compilation">Just in Time (JIT) Compilation</h3>
 
     <p>Our boot file for Just in Time (JIT) looks like this:</p>
 
-    <pre ng-non-bindable>
-<span class="codeComment">// app/boot.ts </span>
+    <snippet>
+// app/boot.ts 
 import {platformBrowserDynamic} from "@angular/platform-browser-dynamic";
 import {AppModule} from "./app.module";
 
@@ -153,12 +150,11 @@ import {AppModule} from "./app.module";
 // import {LicenseManager} from "ag-grid-enterprise/main";
 // LicenseManager.setLicenseKey("your license key");
 
-platformBrowserDynamic().bootstrapModule(AppModule);
-</pre>
+platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
 
     <p>Our tsconfig.json file looks like this - note we're excluding the AOT related files (see <a href="#aotCompilation">AOT</a> below) here:</p>
-    <pre ng-non-bindable>
-<span class="codeComment">// tsconfig.json </span>
+    <snippet>
+// tsconfig.json 
 {
   "compilerOptions": {
     "target": "es5",
@@ -178,11 +174,11 @@ platformBrowserDynamic().bootstrapModule(AppModule);
     "docs/*",
     "**/*-aot.ts"
   ]
-}</pre>
+}</snippet>
 
     <p>For Just in Time (JIT) compilation our SystemJS Configuration file looks like this:</p>
-    <pre ng-non-bindable>
-<span class="codeComment">// systemjs.config.js </span>
+    <snippet>
+// systemjs.config.js 
 (function (global) {
     System.config({
             defaultJSExtensions: true,
@@ -216,10 +212,10 @@ platformBrowserDynamic().bootstrapModule(AppModule);
         }
     );
 })(this);
-    </pre>
+   </snippet>
 
-    <pre ng-non-bindable>
-<span class="codeComment">// index.html </span>
+    <snippet>
+// index.html 
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 
@@ -257,16 +253,16 @@ platformBrowserDynamic().bootstrapModule(AppModule);
 &lt;/body&gt;
 
 &lt;/html&gt;
-    </pre>
+   </snippet>
 
     <p>Finally, we can add the following utility scrips to our package.json file to run our app:</p>
-    <pre ng-non-bindable>
+    <snippet>
 "scripts": {
   "lite": "lite-server",
   "tsc:w": "tsc -p tsconfig.json -w",
   "start": "concurrently \"npm run tsc:w\" \"npm run lite\" "
 },
-    </pre>
+   </snippet>
 
     <p>We can now run <code>npm start</code> to run the development setup.</p>
 
@@ -276,8 +272,8 @@ platformBrowserDynamic().bootstrapModule(AppModule);
 
     <p>Our boot file for Ahead-of-Time (AOT) is a bit different this time - this time we'll make use of the compiled factories:</p>
 
-<pre ng-non-bindable>
-<span class="codeComment">// app/boot-aot.ts </span>
+<snippet>
+// app/boot-aot.ts 
 import {platformBrowser} from "@angular/platform-browser";
 import {AppModuleNgFactory} from "../aot/app/app.module.ngfactory";
 
@@ -285,11 +281,11 @@ import {AppModuleNgFactory} from "../aot/app/app.module.ngfactory";
 // import {LicenseManager} from "ag-grid-enterprise/main";
 // LicenseManager.setLicenseKey("your license key");
 
-platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);</pre>
+platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);</snippet>
 
     <p>We have a separate tsconfig file (tsconfig-aot.json) for AOT mode::</p>
-    <pre ng-non-bindable>
-<span class="codeComment">// tsconfig-aot.json </span>
+    <snippet>
+// tsconfig-aot.json 
 {
   "compilerOptions": {
     "target": "es5",
@@ -312,12 +308,12 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);</pre>
     "genDir": "aot",
     "skipMetadataEmit": true
   }
-}</pre>
+}</snippet>
 
     <p>Our SystemJS config file is different for AOT:</p>
 
-    <pre>
-<span class="codeComment">// aot/systemjs.config.js </span>
+    <snippet>
+// aot/systemjs.config.js 
 (function (global) {
     System.config({
             defaultJSExtensions: true,
@@ -363,12 +359,12 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);</pre>
             }
         }
     );
-})(this);</pre>
+})(this);</snippet>
 
 
     <p>Our AOT index.html file - this time we'll be using a bundled AOT version of the code. This will result is quicker startup and runtime behaviour, as well as less network traffic:</p>
 
-    <pre>
+    <snippet>
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 
@@ -397,18 +393,19 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);</pre>
 &lt;script src="./dist/bundle.js"&gt;&lt;/script&gt;
 
 &lt;/html&gt;
-    </pre>
+   </snippet>
 
     <p>
         We'll use SystemJS Builder for rollup, and ngc to compile:
     </p>
 
-<pre><span class="codeComment">// gulpfile.js</span>
+<snippet>
+// gulpfile.js
 const gulp = require('gulp');
 const ngc = require('gulp-ngc');
 const SystemBuilder = require('systemjs-builder');
 
-gulp.task('ngc', () => {
+gulp.task('ngc', () =&gt; {
     return ngc('./tsconfig-aot.json');
 });
 
@@ -425,34 +422,32 @@ gulp.task('aot-bundle', function () {
                 sourceMaps: true
             });
         })
-});
-</pre>
+});</snippet>
 
     <p>There are a few shim & polyfill files we need too:</p>
 
-<pre>
+<snippet>
 cp ./node_modules/core-js/client/shim.min.js aot/
 cp ./node_modules/zone.js/dist/zone.min.js aot/
 cp ./node_modules/ag-grid/dist/styles/ag-grid.css aot/
-cp ./node_modules/ag-grid/dist/styles/theme-fresh.css aot/</pre>
+cp ./node_modules/ag-grid/dist/styles/theme-fresh.css aot/</snippet>
 
     <p>We make use of lite-server to test the application, so let's create a AOT friendly config file for it:</p>
 
-    <pre>
-<span class="codeComment">// aot/bs-config.json</span>
+    <snippet>
+// aot/bs-config.json
 {
   "port": 8000,
   "files": ["./dist/**/*.{html,htm,css,js}"],
   "server": { "baseDir": "./aot" }
 }
-    </pre>
+   </snippet>
 
     <p>Finally, we can add the following utlity scripts to our package.json:</p>
 
-    <pre>
+    <snippet>
 "build:aot": "gulp ngc && gulp aot-bundle",
-"lite:aot": "lite-server -c aot/bs-config.json",
-</pre>
+"lite:aot": "lite-server -c aot/bs-config.json",</snippet>
 
     <img src="../images/systemjs-app.png" style="width: 100%">
 

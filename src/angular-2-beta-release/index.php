@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         To define the Angular 2 Components you wish to use in the grid, you need to supply them in the module:
     </p>
-<pre>
+<snippet>
 @NgModule({
     imports: [
         BrowserModule,
@@ -61,14 +61,13 @@ include '../documentation-main/documentation_header.php';
     bootstrap: [AppComponent]
 })
 export class AppModule {
-}
-</pre>
+}</snippet>
 
     <p>The key part of this is that you need to supply any Angular 2 Components in <code>AgGridModule.withComponents</code> - this makes them available to ag-grid.
         If you're not using Angular 2 Components in the grid then you can simply pass in no arguments.</p>
 
     <p>The column definition is simpler now - you only need to supply the component:</p>
-<pre>
+<snippet>
 {
     headerName: "Square Component",
     field: "value",
@@ -77,8 +76,7 @@ export class AppModule {
     colId: "square",
     width: 200
 },
-...other column definitions
-</pre>
+...other column definitions</snippet>
 
     <p>Note here that previously you would have needed to supply either dependent modules (ie FormsModule) or dependant Components as part of the <code>cellRendererFramework</code>,
         but the responsibility for this now moves to the module (where it belongs). If your components need something from a module add the module and an import, and if your Component
@@ -96,43 +94,39 @@ export class AppModule {
 
     <h3>JIT (Just In Time) Compilation</h3>
     <p>
-<pre>
-<span class="codeComment">TypeScript Compilation</span>
+<snippet>
+TypeScript Compilation
 npm run tsc
-<span class="codeComment">Launch the lite-server and run the JIT version (by default at http://localhost:3000/)</span>
-npm run lite
-</pre>
+Launch the lite-server and run the JIT version (by default at http://localhost:3000/)
+npm run lite</snippet>
 
     <p>The key part of the JIT index.html (in the root of the project) looks like this:</p>
-<pre>
-&lt;script src="systemjs.config.js">&lt;/script>
-&lt;script>
+<snippet>
+&lt;script src="systemjs.config.js"&gt;&lt;/script&gt;
+&lt;script&gt;
     System.import('app').catch(function (err) {
         console.error(err);
     });
-&lt;/script>
-</pre>
+&lt;/script&gt;</snippet>
 
     <h3>AOT (Ahead of Time) Compilation</h3>
     <p>
-<pre>
-<span class="codeComment">TypeScript Compilation, Minifying and Rollup</span>
+<snippet>
+TypeScript Compilation, Minifying and Rollup
 npm run build:aot
-<span class="codeComment">Run the lite-server and run the AOT bundled version (by default at http://localhost:3000/)</span>
-npm run lite:aot
-</pre>
+Run the lite-server and run the AOT bundled version (by default at http://localhost:3000/)
+npm run lite:aot</snippet>
 
     We use systemjs-builder for rollup and minification here. All AOT artifacts and assets will be under the <code>aot</code> directory.
     </p>
 
     <p>The key part of the AOT index.html (under aot/) looks like this:</p>
-    <pre>
-&lt;script src="systemjs.config.js">&lt;/script>
-&lt;body>
-&lt;my-app>Loading...&lt;/my-app>
-&lt;/body>
-&lt;script src="./dist/bundle.js">&lt;/script>
-</pre>
+    <snippet>
+&lt;script src="systemjs.config.js"&gt;&lt;/script&gt;
+&lt;body&gt;
+&lt;my-app&gt;Loading...&lt;/my-app&gt;
+&lt;/body&gt;
+&lt;script src="./dist/bundle.js"&gt;&lt;/script&gt;</snippet>
 
 </div>
 

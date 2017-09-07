@@ -59,46 +59,43 @@ include('../includes/mediaHeader.php');
             decide to split these functions into separate
             files for easier maintenance:</p>
 
-<pre>
-<span class="codeComment">// sum.js</span>
+<snippet>
+// sum.js
 var sum = function (a, b) {
     return a + b;
-};
-</pre>
-<pre>
-<span class="codeComment">// multiply.js</span>
-<span class="codeComment">// slightly contrived here - we're going to repeatedly sum to multiply, to illustrate dependency</span>
-<span class="codeComment">// interaction</span>
+};</snippet>
+<snippet>
+// multiply.js
+// slightly contrived here - we're going to repeatedly sum to multiply, to illustrate dependency
+// interaction
 var multiply = function (a, b) {
     var total = 0;
-    for (var i = 0; i < b; i++) {
+    for (var i = 0; i &lt; b; i++) {
         total = sum(a, total);
     }
     return total;
-};
-</pre>
-<pre>
-<span class="codeComment">// index.js - our application logic</span>
+};</snippet>
+<snippet>
+// index.js - our application logic
 var totalMultiply = multiply(5, 3);
 var totalSum = sum(5, 3);
 
 console.log('Product of 5 and 3 = ' + totalMultiply);
-console.log('Sum of 5 and 3 = ' + totalSum);
-</pre>
-<pre>
-<span class="codeComment">// index.html - our entry point to our application</span>
+console.log('Sum of 5 and 3 = ' + totalSum);</snippet>
+<snippet>
+// index.html - our entry point to our application
 &lt;html&gt;
 &lt;head&gt;
     &lt;script src="src/sum.js"&gt;&lt;/script&gt;
     &lt;script src="src/multiply.js"&gt;&lt;/script&gt;
     &lt;script src="src/index.js"&gt;&lt;/script&gt;
 &lt;/head&gt;
-&lt;/html&gt;
-</pre>
+&lt;/html&gt;</snippet>
 
         <p>The output of this would be:</p>
-        <pre>Product of 5 and 3 = 15
-index.js:17 Sum of 5 and 3 = 8</pre>
+        <snippet>
+Product of 5 and 3 = 15
+index.js:17 Sum of 5 and 3 = 8</snippet>
 
         <h1>How can Webpack help us?</h1>
 
@@ -152,28 +149,26 @@ index.js:17 Sum of 5 and 3 = 8</pre>
             code.
             It uses <code>require</code> to then pull in these exported values.</p>
 
-<pre>
-<span class="codeComment">// sum.js</span>
+<snippet>
+// sum.js
 var sum = function (a, b) {
     return a + b;
 };
-module.exports = sum;
-</pre>
-<pre>
-<span class="codeComment">// multiply.js</span>
+module.exports = sum;</snippet>
+<snippet>
+// multiply.js
 var sum = require('./sum');
 
 var multiply = function (a, b) {
     var total = 0;
-    for (var i = 0; i < b; i++) {
+    for (var i = 0; i &lt; b; i++) {
         total = sum(a, total);
     }
     return total;
 };
-module.exports = multiply;
-</pre>
-<pre>
-<span class="codeComment">// index.js - our application logic</span>
+module.exports = multiply;</snippet>
+<snippet>
+// index.js - our application logic
 var multiply = require('./multiply');
 var sum = require('./sum');
 
@@ -181,16 +176,14 @@ var totalMultiply = multiply(5, 3);
 var totalSum = sum(5, 3);
 
 console.log('Product of 5 and 3 = ' + totalMultiply);
-console.log('Sum of 5 and 3 = ' + totalSum);
-</pre>
-<pre>
-<span class="codeComment">// index.html - our entry point to our application</span>
+console.log('Sum of 5 and 3 = ' + totalSum);</snippet>
+<snippet>
+// index.html - our entry point to our application
 &lt;html&gt;
 &lt;head&gt;
     &lt;script src="./dist/bundle.js""&gt;&lt;/script&gt;
 &lt;/head&gt;
-&lt;/html&gt;
-</pre>
+&lt;/html&gt;</snippet>
 
         <p>Notice that we've made both <code>sum</code> and <code>multiply</code> available to other code and we've
             pulled
@@ -204,7 +197,7 @@ console.log('Sum of 5 and 3 = ' + totalSum);
         <h1>Webpack - Initial Configuration</h1>
 
         <p>For the above to work, we need to do some initial Webpack configuration:</p>
-        <pre>
+        <snippet>
 var path = require('path');
 module.exports = {
     entry: './src/index.js',
@@ -212,8 +205,7 @@ module.exports = {
         path: path.resolve(__dirname, './dist/),
         filename: 'bundle.js
     }
-}
-</pre>
+}</snippet>
 
         <p>At a minimum, we need to tell Webpack what our application entry point is and what the resulting output
             should be.</p>
@@ -238,8 +230,8 @@ module.exports = {
 
         <p>Looking at the resulting bundle.js can be very instructional (prettified and commented for easier
             navigation):</p>
-<pre>
-<span class="codeComment">// the webpack bootstrap</span>
+<snippet>
+// the webpack bootstrap
 (function (modules) {
     // The module cache
     var installedModules = {};
@@ -261,7 +253,7 @@ module.exports = {
 })
 /************************************************************************/
 ([
-    <span class="codeComment">// index.js - our application logic</span>
+    // index.js - our application logic
     /* 0 */
     function (module, exports, __webpack_require__) {
 
@@ -274,7 +266,7 @@ module.exports = {
         console.log('Product of 5 and 3 = ' + totalMultiply);
         console.log('Sum of 5 and 3 = ' + totalSum);
     },
-    <span class="codeComment">// multiply.js</span>
+    // multiply.js
     /* 1 */
     function (module, exports, __webpack_require__) {
 
@@ -282,14 +274,14 @@ module.exports = {
 
         var multiply = function (a, b) {
             var total = 0;
-            for (var i = 0; i < b; i++) {
+            for (var i = 0; i &lt; b; i++) {
                 total = sum(a, total);
             }
             return total;
         };
         module.exports = multiply;
     },
-    <span class="codeComment">// sum.js</span>
+    // sum.js
     /* 2 */
     function (module, exports) {
 
@@ -298,8 +290,7 @@ module.exports = {
         };
         module.exports = sum;
     }
-]);
-</pre>
+]);</snippet>
 
         <p>From this you can see that Webpack wraps each of our files into a module and passes them into the Webpack
             bootstrap as an array of Modules.
@@ -327,17 +318,16 @@ module.exports = {
             more information about Babel.</p>
 
         <p>First, let's convert our ES5 code into ES2015:</p>
-<pre>
-<span class="codeComment">// sum.js</span>
-const sum = (a, b) => a + b;
+<snippet>
+// sum.js
+const sum = (a, b) =&gt; a + b;
 
-export default sum;
-</pre>
-<pre>
-<span class="codeComment">// multiply.js</span>
+export default sum;</snippet>
+<snippet>
+// multiply.js
 import sum from './sum';
 
-const multiply = (a, b) => {
+const multiply = (a, b) =&gt; {
     let total = 0;
     for(let i=0;i&lt;b;i++) {
         total = sum(a, total);
@@ -345,10 +335,9 @@ const multiply = (a, b) => {
     return total;
 };
 
-export default multiply;
-</pre>
-<pre>
-<span class="codeComment">// index.js - our application logic</span>
+export default multiply;</snippet>
+<snippet>
+// index.js - our application logic
 import multiply from './multiply';
 import sum from './sum';
 
@@ -356,11 +345,9 @@ const totalMultiply = multiply(5, 3);
 const totalSum = sum(5, 3);
 
 console.log(`Product of 5 and 3 = ${totalMultiply}`);
-console.log(`Sum of 5 and 3 = ${totalSum}`);
-</pre>
-<pre>
-<span class="codeComment">// index.html is unchanged</span>
-</pre>
+console.log(`Sum of 5 and 3 = ${totalSum}`);</snippet>
+<snippet>
+// index.html is unchanged</snippet>
         <p>Here we're using Arrow Functions, the const keyword, Template Strings and the es2015 import/export module
             format, all of which are ES2015 features.</p>
 
@@ -376,7 +363,7 @@ console.log(`Sum of 5 and 3 = ${totalSum}`);
         </p>
 
         <p>The webpack configuration with the Babel Loader in place looks like this:</p>
-        <pre>
+        <snippet>
 const path = require('path');
 
 module.exports = {
@@ -397,8 +384,7 @@ module.exports = {
             }
         ]
     }
-};
-</pre>
+};</snippet>
 
         <p>As we can have a number of Loaders in Webpack, the values provided are in an array - in our case we're only
             providing one
@@ -422,7 +408,7 @@ module.exports = {
 
         <p>Looking at our bundle.js again (and this time only looking at the part that contains sum.js) we can see the
             following:</p>
-        <pre>
+        <snippet>
 /* 2 */
 function(module, exports) {
     var sum = function sum(a, b) {
@@ -430,8 +416,7 @@ function(module, exports) {
     };
 
     module.exports = sum;
-}
-</pre>
+}</snippet>
 
         <p>So the Babel Loader has converted our ES2015 code back into ES5 code - great! The best of both worlds.</p>
 
@@ -439,44 +424,43 @@ function(module, exports) {
 
         <p>Let's expand our example to actually output the results of our calculations. We'll create a body on the page,
             and then add the results of the product and sum to spans, which we'll add to the body:</p>
-<pre>
-<span class="codeComment">// index.js - our application logic</span>
+<snippet>
+// index.js - our application logic
 import multiply from './multiply';
 import sum from './sum';
 
 const totalMultiply = multiply(5, 3);
 const totalSum = sum(5, 3);
 
-<span class="codeComment">// create the body</span>
+// create the body
 const body = document.createElement("body");
 document.documentElement.appendChild(body);
 
-<span class="codeComment">// calculate the product and add it to a span</span>
+// calculate the product and add it to a span
 const multiplyResultsSpan = document.createElement('span');
 multiplyResultsSpan.appendChild(document.createTextNode(`Product of 5 and 3 = ${totalMultiply}`));
 
-<span class="codeComment">// calculate the sum and add it to a span</span>
+// calculate the sum and add it to a span
 const sumResultSpan = document.createElement('span');
 sumResultSpan.appendChild(document.createTextNode(`Sum of 5 and 3 = ${totalSum}`));
 
-<span class="codeComment">// add the results to the page</span>
+// add the results to the page
 document.body.appendChild(multiplyResultsSpan);
-document.body.appendChild(sumResultSpan);
-</pre>
+document.body.appendChild(sumResultSpan);</snippet>
         <p>The output would be the same as before, but on a page:</p>
-        <pre>Product of 5 and 3 = 15Sum of 5 and 3 = 8</pre>
+        <snippet>
+Product of 5 and 3 = 15Sum of 5 and 3 = 8</snippet>
 
         <p>We can improve this with CSS - let's ensure each result is on a new line, and add a border around each
             result.</p>
 
         <p>Our CSS will look like this:</p>
-<pre>
-<span class="codeComment">// math_output.css</span>
+<snippet>
+// math_output.css
 span {
     border: 5px solid brown;
     display:block;
-}
-</pre>
+}</snippet>
         <p>We need to pull this CSS into our application. We could of course simply add a <code>link</code> tag to our
             html,
             but if we import it and then use Webpack to process it, we'll benefit from what Webpack can offer.</p>
@@ -486,33 +470,32 @@ span {
             to (it's still global),
             but from a developers perspective the relationship is clearer.</p>
 
-<pre>
-<span class="codeComment">// index.js - our application logic</span>
+<snippet>
+// index.js - our application logic
 import multiply from './multiply';
 import sum from './sum';
 
-<span class="codeComment">// import the CSS we want to use here</span>
+// import the CSS we want to use here
 import './math_output.css';
 
 const totalMultiply = multiply(5, 3);
 const totalSum = sum(5, 3);
 
-<span class="codeComment">// create the body</span>
+// create the body
 const body = document.createElement("body");
 document.documentElement.appendChild(body);
 
-<span class="codeComment">// calculate the product and add it to a span</span>
+// calculate the product and add it to a span
 const multiplyResultsSpan = document.createElement('span');
 multiplyResultsSpan.appendChild(document.createTextNode(`Product of 5 and 3 = ${totalMultiply}`));
 
-<span class="codeComment">// calculate the sum and add it to a span</span>
+// calculate the sum and add it to a span
 const sumResultSpan = document.createElement('span');
 sumResultSpan.appendChild(document.createTextNode(`Sum of 5 and 3 = ${totalSum}`));
 
-<span class="codeComment">// add the results to the page</span>
+// add the results to the page
 document.body.appendChild(multiplyResultsSpan);
-document.body.appendChild(sumResultSpan);
-</pre>
+document.body.appendChild(sumResultSpan);</snippet>
         <p>The only change from before is that we're now importing the CSS.</p>
 
         <p>We need two Loaders to process our CSS:
@@ -525,7 +508,7 @@ document.body.appendChild(sumResultSpan);
         </p>
 
         <p>Our Webpack config now looks like this:</p>
-        <pre>
+        <snippet>
 const path = require('path');
 
 module.exports = {
@@ -550,8 +533,7 @@ module.exports = {
             }
         ]
     }
-};
-</pre>
+};</snippet>
 
         <p>
         <ul>
@@ -585,7 +567,7 @@ module.exports = {
             from appearing in our bundle.</p>
 
         <p>Our Webpack config now looks like this:</p>
-        <pre>
+        <snippet>
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -614,49 +596,44 @@ module.exports = {
     plugins: [
         new ExtractTextPlugin('style.css')
     ]
-};
-</pre>
+};</snippet>
 
         <p>At the top we're importing the ExtractTextPlugin. We've also changed the loader for CSS to use this
             plugin: </p>
-        <pre>
+        <snippet>
 {
     test: /\.css$/,
     loader: ExtractTextPlugin.extract('css-loader')
-}
-</pre>
+}</snippet>
 
         <p>This tells Webpack to pass the results off the css-loader to the ExtractTextPlugin. At the bottom we
             configure the plugin:</p>
-        <pre>
+        <snippet>
 plugins: [
     new ExtractTextPlugin('style.css')
-]
-</pre>
+]</snippet>
         <p>What this does is tell the plugin that for all data passed to it, save it down to a file called style.css.
             This may not seem immediately useful, but as before with many separate JavaScript files, imagine we had many
             CSS files. By doing the above, we can combine many separate CSS files into one file, reducing the number of
             web calls required at load time.</p>
 
         <p>Looking at dist/style.css we can see:</p>
-        <pre>
+        <snippet>
 span {
     border: 5px solid brown;
     display:block;
-}
-</pre>
+}</snippet>
 
         <p>Which of course is the content of our CSS. To make use of this we need to modify our index.html to import
             this CSS:</p>
-        <pre>
-<span class="codeComment">// index.html - our entry point to our application</span>
+        <snippet>
+// index.html - our entry point to our application
 &lt;html&gt;
 &lt;head&gt;
-    &lt;link rel="stylesheet" href="dist/style.css"/>
+    &lt;link rel="stylesheet" href="dist/style.css"/&gt;
     &lt;script src="./dist/bundle.js""&gt;&lt;/script&gt;
 &lt;/head&gt;
-&lt;/html&gt;
-</pre>
+&lt;/html&gt;</snippet>
         <p>The output will be the same as before.</p>
 
         <h1>A Picture Is Worth A Thousand Words</h1>
@@ -683,9 +660,9 @@ span {
 
         <p>First, let's add a new image utility class - this will create a new image for us and add it to the
             document:</p>
-        <pre>
-<span class="codeComment">// image_util.js</span>
-const addImageToPage = (imageSrc) => {
+        <snippet>
+// image_util.js
+const addImageToPage = (imageSrc) =&gt; {
     const image = document.createElement('img');
     image.src = imageSrc;
     image.style.height = '100px';
@@ -693,49 +670,47 @@ const addImageToPage = (imageSrc) => {
     document.body.appendChild(image);
 };
 
-export default addImageToPage;
-</pre>
+export default addImageToPage;</snippet>
 
         <p>Let's import both the new image utility as well as the images we want to add to our application:</p>
-        <pre>
-<span class="codeComment">// index.js - our application logic</span>
+        <snippet>
+// index.js - our application logic
 import multiply from './multiply';
 import sum from './sum';
 
-<span class="codeComment">// import our image utility</span>
+// import our image utility
 import addImageToPage from './image_util';
 
-<span class="codeComment">// import the images we want to use</span>
+// import the images we want to use
 import multiplyImg from '../images/multiply.png';
 import sumImg from '../images/sum.png';
 
-<span class="codeComment">// import the CSS we want to use here</span>
+// import the CSS we want to use here
 import './math_output.css';
 
 const totalMultiply = multiply(5, 3);
 const totalSum = sum(5, 3);
 
-<span class="codeComment">// create the body</span>
+// create the body
 const body = document.createElement("body");
 document.documentElement.appendChild(body);
 
-<span class="codeComment">// calculate the product and add it to a span</span>
+// calculate the product and add it to a span
 const multiplyResultsSpan = document.createElement('span');
 multiplyResultsSpan.appendChild(document.createTextNode(`Product of 5 and 3 = ${totalMultiply}`));
 
-<span class="codeComment">// calculate the sum and add it to a span</span>
+// calculate the sum and add it to a span
 const sumResultSpan = document.createElement('span');
 sumResultSpan.appendChild(document.createTextNode(`Sum of 5 and 3 = ${totalSum}`));
 
-<span class="codeComment">// add the results to the page</span>
+// add the results to the page
 addImageToPage(multiplyImg);
 document.body.appendChild(multiplyResultsSpan);
 
 addImageToPage(sumImg);
-document.body.appendChild(sumResultSpan);
-</pre>
+document.body.appendChild(sumResultSpan);</snippet>
         <p>Finally, let's configure Webpack to process these images with the two new Loaders:</p>
-        <pre>
+        <snippet>
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
@@ -772,8 +747,7 @@ module.exports = {
     plugins: [
         new ExtractTextPlugin('style.css')
     ]
-};
-</pre>
+};</snippet>
 
         <p>
         <ul>
@@ -792,22 +766,19 @@ module.exports = {
         </p>
 
         <p>If we now run Webpack we will see something like the following:</p>
-        <pre>
+        <snippet>
 38ba485a2e2306d9ad96d479e36d2e7b.png
 bundle.js
-style.css
-</pre>
+style.css</snippet>
 
         <p>If we open 38ba485a2e2306d9ad96d479e36d2e7b.png we should find that it is our large image - multiply.png. The
             smaller image, sum.png, has been inlined in bundle.js as follows:</p>
-        <pre>
-module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6FBMVEUAuv8AgL...."
-</pre>
+        <snippet>
+module.exports = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6FBMVEUAuv8AgL...."</snippet>
 
         <p>Which would be equivalent to having:</p>
-        <pre>
-img.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6FBMVEUAuv8AgL...'
-</pre>
+        <snippet>
+img.src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAoAAAAHgCAMAAAACDyzWAAAC6FBMVEUAuv8AgL...'</snippet>
 
         <p>When we run our application output is:</p>
 

@@ -297,9 +297,11 @@ include '../documentation-main/documentation_header.php';
             </p>
             <p>
                 So eg, the example has this:<br/>
-            <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid/ag-grid.js?ignore=notused51"><br/></pre>
+            <snippet>
+&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid/ag-grid.js?ignore=notused51"&gt;&lt;br/&gt;</snippet>
             But all you need is this:<br/>
-            <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js"></pre>
+            <snippet>
+&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js"&gt;</snippet>
             </p>
         </div>
     </div>

@@ -16,11 +16,12 @@ include '../documentation-main/documentation_header.php';
         This can be done using pixels or percentages.
     </p>
 
-    <pre><span class="codeComment">// set width using percentages</span>
-&lt;div id="myGrid" class="ag-fresh" <b>style="width: 100%; height: 100%;"</b>>&lt;/div>
+    <snippet>
+// set width using percentages
+&lt;div id="myGrid" class="ag-fresh" &lt;b&gt;style="width: 100%; height: 100%;"&lt;/b&gt;&gt;&lt;/div&gt;
 
-<span class="codeComment">// OR set width using fixed pixels</span>
-&lt;div id="myGrid" class="ag-fresh" <b>style="width: 500px; height: 200px;"</b>>&lt;/div></pre>
+// OR set width using fixed pixels
+&lt;div id="myGrid" class="ag-fresh" &lt;b&gt;style="width: 500px; height: 200px;"&lt;/b&gt;&gt;&lt;/div&gt;</snippet>
 
     <h3 id="percent-width-and-height">Pitfall When Using Percent Width & Height</h3>
 

@@ -44,8 +44,9 @@
         want to use it.
     </p>
 
-    <pre><code>// get ag-Grid to install the web component
-agGrid.initialiseAgGridWithWebComponents();</code></pre>
+    <snippet>
+// get ag-Grid to install the web component
+agGrid.initialiseAgGridWithWebComponents();</snippet>
 
     <p>
         ag-Grid registers as a tag named 'ag-grid'. To insert a grid into your application, use the
@@ -55,10 +56,12 @@ agGrid.initialiseAgGridWithWebComponents();</code></pre>
 
     <p>
         HTML Code:
-    <pre><code>&lt;ag-grid id="myGrid">&lt;/ag-grid></code></pre>
+    <snippet>
+&lt;ag-grid id="myGrid"&gt;&lt;/ag-grid&gt;</snippet>
     Javascript Code:<br/>
-    <pre><code>var myGrid = document.querySelector('#myGrid');
-myGrid.setGridOptions(gridOptions);</code></pre>
+    <snippet>
+var myGrid = document.querySelector('#myGrid');
+myGrid.setGridOptions(gridOptions);</snippet>
     </p>
 
     <h2 id="basic-web-components-example">Basic Web Components Example</h2>
