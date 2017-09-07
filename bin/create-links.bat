@@ -23,4 +23,13 @@ rmdir ag-grid-enterprise
 mklink /J ag-grid-enterprise ..\..\ag-grid-enterprise
 cd ..\..
 
+cd ag-grid-react
+mkdir node_modules
+cd node_modules
+rmdir ag-grid
+mklink /J ag-grid ..\..\ag-grid
+rmdir ag-grid-enterprise
+mklink /J ag-grid-enterprise ..\..\ag-grid-enterprise
+cd ..\..
+
 cd ag-grid-dev
