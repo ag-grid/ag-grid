@@ -7,12 +7,10 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
     <div>
-        <h1>
+        <h1 class="first-h1">
             <img style="vertical-align: middle" src="/images/angular2_large.png" height="50px"/>
-            Building Angular 2
+            Angular 2+ Datagrid - Building
         </h1>
-
-        <h2>Building ag-Grid with Angular 2</h2>
 
         <p>This section documents options on how to build and distribute your ag-Grid / Angular application, using the
             following build tools:</p>

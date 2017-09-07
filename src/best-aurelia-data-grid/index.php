@@ -1,18 +1,17 @@
 <?php
 $key = "Getting Started Aurelia";
-$pageTitle = "Aurelia Grid";
+$pageTitle = "Aurelia Datagrid";
 $pageDescription = "ag-Grid can be used as a data grid inside your Aurelia application. This page details how to get started.";
-$pageKeyboards = "Aurelia Grid";
+$pageKeyboards = "Aurelia Datagrid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h1 id="implementing-the-aurelia-datagrid">
-        <img src="../images/svg/docs/getting_started.svg" width="50"/>
-        <img style="vertical-align: middle" src="../images/aurelia_small.png" height="25px"/>
-        Aurelia Grid
+    <h1 class="first-h1" id="implementing-the-aurelia-datagrid">
+        <img style="vertical-align: middle" src="../images/aurelia_large.png" height="50px" alt="Aurelia Datagrid" title="Aurelia"/>
+        Aurelia Datagrid
     </h1>
 
     <p>This page shows you how to get started with ag-Grid and Aurelia.</p>

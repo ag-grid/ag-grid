@@ -9,12 +9,10 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>
-        <img src="../images/svg/docs/getting_started.svg" width="50"/>
-        <img style="vertical-align: middle" src="/images/angular2_small.png" height="25px"/>
-        Angular 2 Grid
+    <h1 class="first-h1">
+        <img style="vertical-align: middle" src="../images/angular2_large.png" height="50px"/>
+        Angular 2+ Datagrid - More Details
     </h1>
-    <h2>More Details</h2>
 
     <note>Full working examples of ag-Grid and Angular can be found in <a href="https://github.com/ag-grid/ag-grid-angular-example">Github</a>, illustrating
         (amongst others) Rich Grids, Filtering with Angular Components, Master/Detail Grid and so on.</note>
