@@ -26,12 +26,11 @@ function whenInViewPort(element, callback) {
         var scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
         var scrollPos = scrollTop + document.documentElement.clientHeight;
         var elemTop = element[0].offsetTop;
-        console.log("scroll: ", scrollPos, "elem", elemTop);
+
         if (scrollPos >= elemTop) { 
-            console.log("instantiating", element);
             window.removeEventListener('scroll', comparePosition);
             callback();
-            // setTimeout(callback, 1000);
+            // setTimeout(callback, 2000);
         }
     }
 
@@ -214,7 +213,7 @@ docs.component('exampleTab', {
 
 docs.component('exampleRunner', {
     template: ` 
-        <div ng-if="$ctrl.ready" ng-class='["example-runner"]'>
+        <div  ng-class='["example-runner"]'>
         <ul role="tablist" class="primary">
             <li class="title">
                 <a href="#example-{{$ctrl.name}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
@@ -246,7 +245,11 @@ docs.component('exampleRunner', {
 
         </ul>  
 
-        <div class="tab-contents">
+        <div class="loading-placeholder" ng-if="!$ctrl.ready" ng-style="$ctrl.iframeStyle">
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        </div>
+
+        <div class="tab-contents" ng-if="$ctrl.ready">
             <div ng-show="$ctrl.selectedTab == 'result'" role="tabpanel" class="result">
                 <a ng-href={{$ctrl.resultUrl}} target="_blank" class="result-in-new-tab" title="Show result in new tab"><i class="fa fa-arrows-alt" aria-hidden="true"></i></a>
                 <iframe ng-src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" seamless="true"></iframe>
@@ -313,7 +316,7 @@ docs.component('preview', {
     },
 
     template: ` 
-        <div ng-if="$ctrl.ready" ng-class='["example-runner"]'>
+        <div ng-class='["example-runner"]'>
         <ul role="tablist" class="primary">
             <li class="title">
                 <a href="#example-{{$ctrl.name}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
@@ -335,7 +338,14 @@ docs.component('preview', {
 
         </ul>  
 
-        <div class="tab-contents">
+        <div class="loading-placeholder" ng-if="!$ctrl.ready" ng-style="$ctrl.iframeStyle">
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        </div>
+        <div class="loading-placeholder" ng-if="!$ctrl.ready">
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+        </div>
+
+        <div class="tab-contents" ng-if="$ctrl.ready">
             <div role="tabpanel" class="result">
                 <a ng-href={{$ctrl.resultUrl}} target="_blank" class="result-in-new-tab" title="Show result in new tab"><i class="fa fa-arrows-alt" aria-hidden="true"></i></a>
                 <iframe src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" seamless="true"></iframe>

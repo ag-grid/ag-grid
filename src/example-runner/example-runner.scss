@@ -148,6 +148,12 @@ $border-radius: $unit;
         }
     }
 
+    .loading-placeholder {
+        height: 450px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
     .tab-contents {
         background-color: white;
         border-bottom-left-radius: $border-radius;
