@@ -1,21 +1,18 @@
 <?php
 $key = "Getting Started React";
-$pageTitle = "React Grid";
+$pageTitle = "React Datagrid";
 $pageDescription = "ag-Grid can be used as a data grid inside your React application. This page details how to get started.";
-$pageKeyboards = "React Grid";
+$pageKeyboards = "React Datagrid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
 
-    <h1>
-        <img src="../images/svg/docs/getting_started.svg" width="50"/>
-        <img style="vertical-align: middle" src="/images/react_small.png" title="React Datagrid" alt="React Datagrid" height="25px"/>
+    <h1 class="first-h1">
+        <img style="vertical-align: middle" src="/images/react_large.png" title="React Datagrid" alt="React Datagrid" height="50px"/>
         React Datagrid - Getting Started
     </h1>
-
-    <h2>Getting Started</h2>
 
     <p>This section documents how to get started with ag-Grid and React as quickly as possible. You will start off with
         a simple application and section by section add Grid features to the application ending up with a fully fledged

@@ -9,9 +9,9 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>
+    <h1 class="first-h1">
         <img style="vertical-align: middle" src="/images/polymer-large.png" height="50px"/>
-        Polymer Grid
+        Polymer Datagrid
     </h1>
 
     <p>

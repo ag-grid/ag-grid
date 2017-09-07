@@ -1,15 +1,15 @@
 <?php
 $key = "Overview JavaScript";
-$pageTitle = "JavaScript Grid";
+$pageTitle = "JavaScript Datagrid";
 $pageDescription = "ag-Grid can be used as a data grid inside your plain JavaScript application. This page details how to get started.";
-$pageKeyboards = "JavaScript Grid";
+$pageKeyboards = "JavaScript Datagrid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
     <div>
 
-        <h1>
+        <h1 class="first-h1">
             <img style="vertical-align: middle" src="/images/javascript_large.png" height="50px"/>
             JavaScript Grid
         </h1>

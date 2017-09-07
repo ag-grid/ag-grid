@@ -58,6 +58,7 @@ include '../documentation-main/documentation_header.php';
         <li><b>customHeader</b>: If you want to put some rows at the top of the xls file, stick it here.
             The format of this rows is specified below in the section custom rows.</li>
         <li><b>customFooter</b>: Same as customHeader, but for the end of the file.</li>
+        <li><b>sheetName</b>: The name of the sheet in excel where the grid will get exported. If not specified defaults to 'ag-grid'.</li>
     </ul>
 
 

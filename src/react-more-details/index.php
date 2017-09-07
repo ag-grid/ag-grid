@@ -1,6 +1,6 @@
 <?php
 $key = "More Detail React";
-$pageTitle = "React Grid";
+$pageTitle = "React Datagrid";
 $pageDescription = "ag-Grid can be used as a data grid inside your React application. This page details how to get started.";
 $pageKeyboards = "React Grid";
 $pageGroup = "basics";
@@ -9,10 +9,9 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>
-        <img src="../images/svg/docs/getting_started.svg" width="50"/>
-        <img style="vertical-align: middle" src="/images/react_small.png" height="25px"/>
-        React Grid - More Details
+    <h1 class="first-h1">
+        <img style="vertical-align: middle" src="/images/react_large.png" title="React Datagrid" alt="React Datagrid" height="50px"/>
+        React Datagrid - More Details
     </h1>
 
     <note>Full working examples of ag-Grid and React can be found in <a href="https://github.com/ceolter/ag-grid-react-example">Github</a>, illustrating

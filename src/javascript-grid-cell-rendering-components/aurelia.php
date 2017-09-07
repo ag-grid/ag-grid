@@ -12,8 +12,8 @@
 </div>
 
 <p>
-    It is possible to provide Aurelia Component cellRenderers for ag-Grid to use, with support for two way binding. All of the information above is
-    relevant to Aurelia cellRenderers. This section explains how to apply this logic to your Aurelia component.
+    It is possible to provide Aurelia Component cell renderer's for ag-Grid to use, with support for two way binding. All of the information above is
+    relevant to Aurelia cell renderer's. This section explains how to apply this logic to your Aurelia component.
 </p>
 
 <p>
@@ -21,22 +21,22 @@
     <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-aurelia-example</a> on Github.</p>
 </p>
 
-<h3 id="specifying-a-aurelia-cell-renderer"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellRenderer</h3>
+<h3 id="specifying-a-aurelia-cell-renderer"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia Cell Renderer</h3>
 
 <p>
     If you are using the ag-grid-aurelia component to create the ag-Grid instance,
-    then you will have the option of additionally specifying the cellRenderers
+    then you will have the option of additionally specifying the cell renderer's
     as aurelia components. You have two options that are described below:
 <ol>
     <li>Templates</li>
-    <li>cellRenderer Functions or cellRenderer Components</li>
+    <li>Cell Renderer Functions or Cell Renderer Components</li>
 </ol>
 
     We only mention Templates here - using functions or regular components is discussed above in earlier sections.
 </p>
 
 
-<h3 id="cell-renderers-from-templates"><img src="../images/aurelia_large.png" style="width: 20px;"/> cellRenderers from Templates</h3>
+<h3 id="cell-renderers-from-templates"><img src="../images/aurelia_large.png" style="width: 20px;"/> Cell Renderer's from Templates</h3>
 <pre><span class="codeComment">// create your cellRenderer as an Aurelia template</span>
 &lt;ag-grid-aurelia #agGrid style="width: 100%; height: 100%;" class="ag-fresh"
                  grid-options.bind="gridOptions">

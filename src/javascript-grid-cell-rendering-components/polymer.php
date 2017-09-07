@@ -11,29 +11,29 @@
 </div>
 
 <p>
-    It is possible to provide a Polymer cellRenderers for ag-Grid to use. All of the information above is
-    relevant to Polymer cellRenderers. This section explains how to apply this logic to your Polymer component.
+    It is possible to provide a Polymer cell renderer's for ag-Grid to use. All of the information above is
+    relevant to Polymer cell renderer's. This section explains how to apply this logic to your Polymer component.
 </p>
 
 <p>
     For examples on Polymer cellRendering, see the
     <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.
-    Polymer Renderers are used on all but the first Grid on this example page (the first grid uses plain JavaScript
-    Renderers)</p>
+    Polymer renderer's are used on all but the first Grid on this example page (the first grid uses plain JavaScript
+    renderer's)</p>
 </p>
 
 <h3 id="specifying-a-polymer-cell-renderer"><img src="../images/polymer-large.png" style="width: 20px;"/> Specifying a
-    Polymer cellRenderer</h3>
+    Polymer Cell Renderer</h3>
 
 <p>
     If you are using the ag-grid-polymer component to create the ag-Grid instance,
-    then you will have the option of additionally specifying the cellRenderers
+    then you will have the option of additionally specifying the cell renderer's
     as Polymer components.
 
 <h3 id="cell-renderers-from-polymer-components"><img src="../images/polymer-large.png" style="width: 20px;"/>
-    cellRenderers from Polymer Components</h3>
+    Cell Renderer's from Polymer Components</h3>
 <pre ng-non-bindable>
-<span class="codeComment">// create your cellRenderer as a Polymer component</span>
+<span class="codeComment">// create your cell renderer as a Polymer component</span>
 &lt;dom-module id="square-cell-renderer"&gt;
     &lt;template&gt;
         &lt;span&gt;{{valueSquared}}&lt;/span&gt;
@@ -88,7 +88,7 @@ colDef = {
     cell <code>params</code>.<p>
 
 <p>
-    By using <i>colDef.cellRendererFramework</i> (instead of <i>colDef.cellRenderer</i>) the grid
+    By using <code>colDef.cellRendererFramework</code> (instead of <code>colDef.cellRenderer</code>) the grid
     will know it's an Polymer component, based on the fact that you are using the Polymer version of
     ag-Grid.
 </p>
@@ -102,7 +102,7 @@ colDef = {
     <li>gridOptions.groupRowRenderer<b>Framework</b></li>
     <li>gridOptions.groupRowInnerRenderer<b>Framework</b></li>
 </ul>
-In other words, wherever you specify a normal cellRenderer, you can now specify a Polymer cellRenderer
+In other words, wherever you specify a normal cell renderer, you can now specify a Polymer cell renderer
 in the property of the same name excepting ending 'Framework'. As long as you are using the Polymer ag-Grid component,
 the grid will know the framework to use is Polymer.
 </p>
@@ -124,7 +124,7 @@ the grid will know the framework to use is Polymer.
     Lifecycle</h3>
 
 <p>
-    All of the methods in the ICellRenderer interface described above are applicable
+    All of the methods in the <code>ICellRenderer</code> interface described above are applicable
     to the Polymer Component with the following exceptions:
 <ul>
     <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method.
@@ -140,7 +140,7 @@ the grid will know the framework to use is Polymer.
 <h3 id="example-rendering-using-more-complex-polymer-components">Example: Rendering using more complex Polymer
     Components</h3>
 <p>
-    Using more complex Polymer Components in the Cell Renderers
+    Using more complex Polymer Components in the Cell Renderer's
 </p>
 <show-complex-example example="../framework-examples/polymer-examples/src/rich-dynamic-components-grid/index.html"
                       sources="{
@@ -152,6 +152,6 @@ the grid will know the framework to use is Polymer.
 </show-complex-example>
 
 <note>The full <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> repo shows many
-    more examples for rendering, including grouped rows, full width renderers
-    and so on, as well as examples on using Polymer Components with both CellEditors and Filters
+    more examples for rendering, including grouped rows, full width renderer's
+    and so on, as well as examples on using Polymer Components with both Cell Editor's and Filters
 </note>

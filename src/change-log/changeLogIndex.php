@@ -15,15 +15,14 @@ include '../documentation-main/documentation_header.php';
 
     <h2>NEXT</h2>
 
-
     <h4>Bug Fixes</h4>
     <ul>
-        <li>AG-746 fixing bug where an error is thrown if a renderer returns something other than a string or a Dom Element</li>
-        <li>AG-379 fixing bug where function names where not translated in the tool panel or generated columns</li>
-        <li>AG-683/411 fixing bug where floating filters wouldn't get redrawn if showing/hiding columns from the tool panel</li>
-        <li>AG-473 fixing bug where the context menu wouldn't appear in the pinned are if there were no rows to show</li>
-        <li>AG-738 pinning columns by dragging mouse to edge was broke</li>
-        <li>Bugfix - event columnGroupOpened had reference to column rather than the original column group</li>
+        <li>AG-746: fixing bug where an error is thrown if a renderer returns something other than a string or a Dom Element</li>
+        <li>AG-379: fixing bug where function names where not translated in the tool panel or generated columns</li>
+        <li>AG-683/411: fixing bug where floating filters wouldn't get redrawn if showing/hiding columns from the tool panel</li>
+        <li>AG-473: fixing bug where the context menu wouldn't appear in the pinned are if there were no rows to show</li>
+        <li>AG-738: pinning columns by dragging mouse to edge was broke</li>
+        <li>AG-739: event columnGroupOpened had reference to column rather than the original column group</li>
         <li>AG-729: ag-row-focus CSS class was getting added to every row</li>
     </ul>
 
@@ -34,7 +33,10 @@ include '../documentation-main/documentation_header.php';
             useful if you don't want to use the standard documents.body (for people using non-standard browsers to GWT
             embedded)
         </li>
+        <li>AG-669 excel export now has a property <code>sheetName</code> that allows to configure the name of the generated Excel sheet.</li>
+        <li>AG-749 headerName is now optional in the columnDef, if your provide a field the name would be derived from the field name</li>
         <li>AG-737 the menu items 'expand all' and 'contract all' now only appear for InMemoryRowModel</li>
+        <li>AG-651: allow saving / restoring col group 'open/closed' state</li>
     </ul>
 
     <h2>Version 13.1.x</h2>
@@ -80,8 +82,6 @@ include '../documentation-main/documentation_header.php';
         <li>AG-707: Fixed an issue introduced with new SVG icons - some of the icons passed through the <code>gridOptions</code> stopped working</li>
         <li>AG-714: Fixed an issue a column with a <code>cellRenderer='group'</code> and with an innerRenderer was not
             using the innerRenderer when displayed as a leaf cell</li>
-    </ul>
-
     </ul>
 
     <h3>Version 13.0.0 [25-AUG-2017]</h3>

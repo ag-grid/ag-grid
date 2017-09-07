@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     So for rendering your values, you have the following three options:
     <ol>
         <li>Do nothing, simple strings get used to display the data.</li>
-        <li>Use one of the grid provided renderer's.</li>
+        <li>Use one of the grid provided cell renderer's.</li>
         <li>Build your own cell renderer.</li>
     </ol>
 
@@ -25,7 +25,7 @@ var colDef1 = {
     ...
 }
 
-<span class="codeComment">// 2 - use one of the grids provided renderers, reference it by name</span>
+<span class="codeComment">// 2 - use one of the grids provided cell renderer's, reference it by name</span>
 var colDef2 = {
     cellRenderer: 'group',
     ...
@@ -66,8 +66,8 @@ var colDef3 = {
 
 <p>
     If you have no requirements for custom cells, then you should use no cell renderer.
-    Having no custom cell renderers will result in the fastest possible grid (which might
-    be important to you if using Internet Explorer) as even the simpliest cell renderer
+    Having no custom cell renderer's will result in the fastest possible grid (which might
+    be important to you if using Internet Explorer) as even the simplest cell renderer
     will result in some extra div's in the DOM.
 </p>
 
@@ -90,7 +90,7 @@ var colDef3 = {
 <h2 id="animate-renderer">Grid Renderer's - animateShowChange and animateSlide</h2>
 
 <p>
-    The grid provides two cellRenderer's for animating changes to data. They are:
+    The grid provides two cell renderer's for animating changes to data. They are:
 <ul>
     <li>
         <b>animateShowChange:</b> The previous value is temporarily shown beside the old value
@@ -124,9 +124,9 @@ var colDef3 = {
 <show-example example="exampleAnimationRenderers"></show-example>
 
 <note>
-    We hope you like the animation cellRenderer's. However you can also take inspiration from them,
-    and create your own animations in your own cellRenderer's. Check out our source code on Github on
-    how we implemented these cellRenderer's for inspiration.
+    We hope you like the animation cell renderer's. However you can also take inspiration from them,
+    and create your own animations in your own cell renderer's. Check out our source code on Github on
+    how we implemented these cell renderer's for inspiration.
 </note>
 
 <note>
@@ -143,7 +143,7 @@ var colDef3 = {
 </p>
 
 <p>
-    The gird's group cellRenderer takes many parameters to configure it. Here is an example
+    The grid's group cell renderer takes many parameters to configure it. Here is an example
     of a column and it's configuration:
 </p>
 
@@ -164,7 +164,7 @@ var colDef3 = {
 };</pre>
 
 <p>
-    The set of parameters for the group cellRenderer are:
+    The set of parameters for the group cell renderer are:
 <ul>
     <li><b>suppressCount:</b> One of [true, false], if true, count is not displayed beside the name.</li>
     <li><b>checkbox:</b> One of [true,false], if true, a selection checkbox is included.</li>
@@ -178,7 +178,7 @@ var colDef3 = {
 <h3>Example Group cellRenderer</h3>
 
 <p>
-    Below shows an example of configuring a group cellRenderer. The example setup is not realistic as it
+    Below shows an example of configuring a group cell renderer. The example setup is not realistic as it
     has many columns configured for the showing the groups. The reason for this is to demonstrate different
     group column configurations side by side. In your application, you will typically have one column
     for showing the groups.
@@ -194,12 +194,12 @@ var colDef3 = {
         <li>
             The column <b>'Country Group - No Renderer'</b> configures the grid to put the 'Country' group data
             only into this column by setting <code>showRowGroup='country'</code>. All rows that are not this
-            group are blank. There is no cellRenderer configured, so the grid just places the text for the group
+            group are blank. There is no cell renderer configured, so the grid just places the text for the group
             into the cell, there is not expand / collapse functionality.
         </li>
         <li>
             The column <b>'All Groups - no Renderer'</b> builds on before, but adds all groups by setting
-            <code>showRowGroup=true</code>. This gets the column to display all groups, but again no cellRenderer
+            <code>showRowGroup=true</code>. This gets the column to display all groups, but again no cell renderer
             so not expand / collapse functionality.
         </li>
         <li>
@@ -231,9 +231,9 @@ var colDef3 = {
 <show-example example="exampleGroupRenderer"></show-example>
 
 <note>
-    If you don't like the grid provided group cellRenderer, you can build your own cellRenderer and provide
+    If you don't like the grid provided group cell renderer, you can build your own cell renderer and provide
     the grouping functionality. If you do this, then take a look at the grids source code and see how we
-    implemented the ag-Grid group cellRenderer.
+    implemented the ag-Grid group cell renderer.
 </note>
 
 <?php include '../documentation-main/documentation_footer.php';?>

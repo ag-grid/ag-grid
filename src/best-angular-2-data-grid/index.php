@@ -9,9 +9,9 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>
+    <h1 class="first-h1">
         <img style="vertical-align: middle" src="/images/angular2_large.png" height="50px"/>
-        Angular 2 Grid
+        Angular 2+ Datagrid
     </h1>
 
     <p>

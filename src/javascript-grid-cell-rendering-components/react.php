@@ -12,26 +12,26 @@
 </div>
 
 <p>
-    It is possible to provide a React cellRenderer for ag-Grid to use. All of the information above is
-    relevant to React cellRenderers. This section explains how to apply this logic to your React component.
+    It is possible to provide a React cell renderer for ag-Grid to use. All of the information above is
+    relevant to React cell renderer's. This section explains how to apply this logic to your React component.
 </p>
 
 <p>
     For examples on React cellRendering, see the
     <a href="https://github.com/ag-grid/ag-grid-react-example">ag-grid-react-example</a> on Github.
-    In the example, both 'Skills' and 'Proficiency' columns use React cellRenderers. The Country column
-    uses a standard ag-Grid cellRenderer, to demonstrate both working side by side.</p>
+    In the example, both 'Skills' and 'Proficiency' columns use React cell renderer's. The Country column
+    uses a standard ag-Grid cell renderer, to demonstrate both working side by side.</p>
 </p>
 
-<h3 id="specifying-a-react-cell-renderer"><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React cellRenderer</h3>
+<h3 id="specifying-a-react-cell-renderer"><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React Cell Renderer</h3>
 
 <p>
     If you are using the ag-grid-react component to create the ag-Grid instance,
-    then you will have the option of additionally specifying the cellRenderers
+    then you will have the option of additionally specifying the cell renderer's
     as React components.
 </p>
 
-<pre><span class="codeComment">// create your cellRenderer as a React component</span>
+<pre><span class="codeComment">// create your cell renderer as a React component</span>
 class NameCellRenderer extends React.Component {
     render() {
     <span class="codeComment">// put in render logic</span>
@@ -52,7 +52,7 @@ colDef = {
 }</pre>
 
 <p>
-    By using <i>colDef.cellRendererFramework</i> (instead of <i>colDef.cellRenderer</i>) the grid
+    By using <code>colDef.cellRendererFramework</code> (instead of <code>colDef.cellRenderer</code>) the grid
     will know it's a React component, based on the fact that you are using the React version of
     ag-Grid.
 </p>
@@ -66,14 +66,14 @@ colDef = {
     <li>gridOptions.groupRowRenderer<b>Framework</b></li>
     <li>gridOptions.groupRowInnerRenderer<b>Framework</b></li>
 </ul>
-In other words, wherever you specify a normal cellRenderer, you can now specify a React cellRenderer
+In other words, wherever you specify a normal cell renderer, you can now specify a React cell renderer
 in the property of the same name excepting ending 'Framework'. As long as you are using the React ag-Grid component,
 the grid will know the framework to use is React.
 </p>
 
 <h3 id="example-rendering-using-react-components">Example: Rendering using React Components</h3>
 <p>
-    Using React Components in the Cell Renderers
+    Using React Components in the Cell Renderer's
 </p>
 
 <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=dynamic"
@@ -90,10 +90,10 @@ the grid will know the framework to use is React.
 <h3 id="react-props"><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
 
 <p>
-    The React component will get the 'cellRenderer Params' as described above as its React Props.
+    The React component will get the 'Cell Renderer Params' as described above as its React Props.
     Therefore you can access all the parameters as React Props.
 
-<pre><span class="codeComment">// React cellRenderer Component</span>
+<pre><span class="codeComment">// React Cell Renderer Component</span>
 class NameCellRenderer extends React.Component {
 
     <span class="codeComment">// did you know that React passes props to your component constructor??</span>
@@ -136,7 +136,7 @@ class NameCellRenderer extends React.Component {
 <h3 id="example-rendering-using-more-complex-react-components">Example: Rendering using more complex React
     Components</h3>
 <p>
-    Using more complex React Components in the Cell Renderers
+    Using more complex React Components in the Cell Renderer's
 </p>
 
 <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=rich-dynamic"
