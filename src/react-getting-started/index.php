@@ -195,4 +195,3 @@ array( 'exampleHeight' => 525 )
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
-</div>
