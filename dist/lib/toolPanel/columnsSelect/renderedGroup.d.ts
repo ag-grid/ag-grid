@@ -22,6 +22,7 @@ export declare class RenderedGroup extends Component {
     init(): void;
     private addVisibilityListenersToAllChildren();
     private addDragSource();
+    private createDragItem();
     private setupExpandContract();
     private onClick();
     private onCheckboxChanged();

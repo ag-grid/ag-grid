@@ -38,7 +38,7 @@ var AbstractColumnDropPanel = (function (_super) {
         this.guiDestroyFunctions.forEach(function (func) { return func(); });
         this.guiDestroyFunctions.length = 0;
         this.childColumnComponents.length = 0;
-        main_1.Utils.removeAllChildren(this.getGui());
+        main_1.Utils.removeAllChildren(this.getHtmlElement());
     };
     AbstractColumnDropPanel.prototype.init = function (params) {
         this.params = params;
@@ -90,7 +90,7 @@ var AbstractColumnDropPanel = (function (_super) {
         var goingLeft = draggingEvent.hDirection === main_1.HDirection.Left;
         var mouseX = mouseEvent.clientX;
         this.childColumnComponents.forEach(function (childColumn) {
-            var rect = childColumn.getGui().getBoundingClientRect();
+            var rect = childColumn.getHtmlElement().getBoundingClientRect();
             var rectX = goingLeft ? rect.right : rect.left;
             var horizontalFit = enableRtl ? (mouseX <= rectX) : (mouseX >= rectX);
             if (horizontalFit) {
@@ -106,7 +106,7 @@ var AbstractColumnDropPanel = (function (_super) {
         var newIndex = 0;
         var mouseEvent = draggingEvent.event;
         this.childColumnComponents.forEach(function (childColumn) {
-            var rect = childColumn.getGui().getBoundingClientRect();
+            var rect = childColumn.getHtmlElement().getBoundingClientRect();
             if (draggingEvent.vDirection === main_1.VDirection.Down) {
                 var verticalFit = mouseEvent.clientY >= rect.top;
                 if (verticalFit) {
@@ -127,7 +127,7 @@ var AbstractColumnDropPanel = (function (_super) {
             return;
         }
         this.state = AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS;
-        this.potentialDndColumns = draggingEvent.dragSource.dragItem;
+        this.potentialDndColumns = draggingEvent.dragSource.dragItemCallback().columns;
         this.refreshGui();
         this.checkInsertIndex(draggingEvent);
         this.refreshGui();
@@ -141,7 +141,7 @@ var AbstractColumnDropPanel = (function (_super) {
     };
     AbstractColumnDropPanel.prototype.onDragEnter = function (draggingEvent) {
         // this will contain all columns that are potential drops
-        var dragColumns = draggingEvent.dragSource.dragItem;
+        var dragColumns = draggingEvent.dragSource.dragItemCallback().columns;
         this.state = AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN;
         // take out columns that are not groupable
         var goodDragColumns = main_1.Utils.filter(dragColumns, this.isColumnDroppable.bind(this));
@@ -159,7 +159,7 @@ var AbstractColumnDropPanel = (function (_super) {
         // if the dragging started from us, we remove the group, however if it started
         // someplace else, then we don't, as it was only 'asking'
         if (this.state === AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS) {
-            var columns = draggingEvent.dragSource.dragItem;
+            var columns = draggingEvent.dragSource.dragItemCallback().columns;
             this.removeColumns(columns);
         }
         if (this.potentialDndColumns) {
@@ -267,7 +267,7 @@ var AbstractColumnDropPanel = (function (_super) {
             if (needSeparator) {
                 _this.addArrowToGui();
             }
-            _this.getGui().appendChild(columnComponent.getGui());
+            _this.getHtmlElement().appendChild(columnComponent.getHtmlElement());
         });
     };
     AbstractColumnDropPanel.prototype.createColumnComponent = function (column, ghost) {
@@ -285,13 +285,13 @@ var AbstractColumnDropPanel = (function (_super) {
         var eGroupIcon = this.params.icon;
         main_1.Utils.addCssClass(eGroupIcon, 'ag-column-drop-icon');
         main_1.Utils.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
-        this.getGui().appendChild(eGroupIcon);
+        this.getHtmlElement().appendChild(eGroupIcon);
         if (!this.horizontal) {
             var eTitle = document.createElement('span');
             eTitle.innerHTML = this.params.title;
             main_1.Utils.addCssClass(eTitle, 'ag-column-drop-title');
             main_1.Utils.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
-            this.getGui().appendChild(eTitle);
+            this.getHtmlElement().appendChild(eTitle);
         }
     };
     AbstractColumnDropPanel.prototype.isExistingColumnsEmpty = function () {
@@ -305,7 +305,7 @@ var AbstractColumnDropPanel = (function (_super) {
         var eMessage = document.createElement('span');
         eMessage.innerHTML = this.params.emptyMessage;
         main_1.Utils.addCssClass(eMessage, 'ag-column-drop-empty-message');
-        this.getGui().appendChild(eMessage);
+        this.getHtmlElement().appendChild(eMessage);
     };
     AbstractColumnDropPanel.prototype.addArrowToGui = function () {
         // only add the arrows if the layout is horizontal
@@ -318,7 +318,7 @@ var AbstractColumnDropPanel = (function (_super) {
             var eArrow = document.createElement('span');
             eArrow.className = spanClass;
             eArrow.innerHTML = charCode;
-            this.getGui().appendChild(eArrow);
+            this.getHtmlElement().appendChild(eArrow);
         }
     };
     AbstractColumnDropPanel.STATE_NOT_DRAGGING = 'notDragging';

@@ -1,5 +1,5 @@
 // ag-grid-enterprise v13.0.1
-import { Component, Column } from "ag-grid/main";
+import { Column, Component } from "ag-grid/main";
 export declare class RenderedColumn extends Component {
     private static TEMPLATE;
     private gridOptionsWrapper;
@@ -26,5 +26,6 @@ export declare class RenderedColumn extends Component {
     private actionUnCheckedPivotMode();
     private actionCheckedPivotMode();
     private addDragSource();
+    private createDragItem();
     private onColumnStateChanged();
 }

@@ -65,7 +65,7 @@ var ContextMenuFactory = (function () {
         }
         var menu = new ContextMenu(menuItems);
         this.context.wireBean(menu);
-        var eMenuGui = menu.getGui();
+        var eMenuGui = menu.getHtmlElement();
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
         var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () { return menu.destroy(); });
@@ -76,7 +76,10 @@ var ContextMenuFactory = (function () {
             mouseEvent: mouseEvent,
             ePopup: eMenuGui
         });
-        menu.afterGuiAttached(hidePopup);
+        menu.afterGuiAttached({
+            eComponent: eMenuGui,
+            hidePopupCallback: hidePopup
+        });
     };
     __decorate([
         ag_grid_1.Autowired('context'),
@@ -121,8 +124,8 @@ var ContextMenu = (function (_super) {
         this.appendChild(menuList);
         menuList.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
     };
-    ContextMenu.prototype.afterGuiAttached = function (hidePopup) {
-        this.addDestroyFunc(hidePopup);
+    ContextMenu.prototype.afterGuiAttached = function (params) {
+        this.addDestroyFunc(params.hidePopupCallback);
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     };

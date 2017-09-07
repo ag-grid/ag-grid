@@ -119,7 +119,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/* WEBPACK VAR INJECTION */(function(global) {/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -382,7 +382,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -615,7 +615,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1281,7 +1281,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1397,7 +1397,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var eventType = event.type;
 	        // this allows the columnController to get events before anyone else
 	        var p1ListenerList = this.getListenerList(eventType + EventService_1.PRIORITY, async);
-	        p1ListenerList.forEach(function (listener) {
+	        utils_1.Utils.forEachSnapshotFirst(p1ListenerList, function (listener) {
 	            if (async) {
 	                _this.dispatchAsync(function () { return listener(event); });
 	            }
@@ -1406,7 +1406,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        });
 	        var listenerList = this.getListenerList(eventType, async);
-	        listenerList.forEach(function (listener) {
+	        utils_1.Utils.forEachSnapshotFirst(listenerList, function (listener) {
 	            if (async) {
 	                _this.dispatchAsync(function () { return listener(event); });
 	            }
@@ -1414,7 +1414,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                listener(event);
 	            }
 	        });
-	        globalListeners.forEach(function (listener) {
+	        utils_1.Utils.forEachSnapshotFirst(globalListeners, function (listener) {
 	            if (async) {
 	                _this.dispatchAsync(function () { return listener(eventType, event); });
 	            }
@@ -1482,7 +1482,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1551,7 +1551,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -1597,7 +1597,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.componentsMappedByName && this.componentsMappedByName[key]) {
 	            var newComponent = new this.componentsMappedByName[key];
 	            this.wireBean(newComponent);
-	            this.copyAttributesFromNode(element, newComponent.getGui());
+	            this.copyAttributesFromNode(element, newComponent.getHtmlElement());
 	            newComponent.attributesSet();
 	            return newComponent;
 	        }
@@ -1907,7 +1907,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -2824,6 +2824,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var eventNoType = event;
 	        return eventNoType.target || eventNoType.srcElement;
 	    };
+	    Utils.forEachSnapshotFirst = function (list, callback) {
+	        if (list) {
+	            var arrayCopy = list.slice(0);
+	            arrayCopy.forEach(callback);
+	        }
+	    };
 	    // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
 	    Utils.getBodyWidth = function () {
 	        if (document.body) {
@@ -3247,7 +3253,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -3371,7 +3377,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -3619,7 +3625,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -3736,7 +3742,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -4053,19 +4059,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    GridApi.prototype.getRowNode = function (id) {
 	        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
-	            console.log('cannot call getRowNode unless using normal row model');
+	            console.warn('ag-Grid: cannot call getRowNode unless using normal row model');
+	            return;
 	        }
 	        return this.inMemoryRowModel.getRowNode(id);
 	    };
 	    GridApi.prototype.expandAll = function () {
 	        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
-	            console.log('cannot call expandAll unless using normal row model');
+	            console.warn('ag-Grid: cannot call expandAll unless using normal row model');
+	            return;
 	        }
 	        this.inMemoryRowModel.expandOrCollapseAll(true);
 	    };
 	    GridApi.prototype.collapseAll = function () {
 	        if (utils_1.Utils.missing(this.inMemoryRowModel)) {
-	            console.log('cannot call collapseAll unless using normal row model');
+	            console.warn('ag-Grid: cannot call collapseAll unless using normal row model');
+	            return;
 	        }
 	        this.inMemoryRowModel.expandOrCollapseAll(false);
 	    };
@@ -4733,7 +4742,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -4950,7 +4959,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -5240,7 +5249,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -5282,8 +5291,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function ColumnApi() {
 	    }
 	    ColumnApi.prototype.sizeColumnsToFit = function (gridWidth) { this._columnController.sizeColumnsToFit(gridWidth); };
-	    ColumnApi.prototype.setColumnGroupOpened = function (group, newValue, instanceId) { this._columnController.setColumnGroupOpened(group, newValue, instanceId); };
+	    ColumnApi.prototype.setColumnGroupOpened = function (group, newValue) { this._columnController.setColumnGroupOpened(group, newValue); };
 	    ColumnApi.prototype.getColumnGroup = function (name, instanceId) { return this._columnController.getColumnGroup(name, instanceId); };
+	    ColumnApi.prototype.getOriginalColumnGroup = function (name) { return this._columnController.getOriginalColumnGroup(name); };
 	    ColumnApi.prototype.getDisplayNameForColumn = function (column, location) { return this._columnController.getDisplayNameForColumn(column, location); };
 	    ColumnApi.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) { return this._columnController.getDisplayNameForColumnGroup(columnGroup, location); };
 	    ColumnApi.prototype.getColumn = function (key) { return this._columnController.getPrimaryColumn(key); };
@@ -6534,7 +6544,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        if (aggFuncFound) {
 	            var aggFuncString = (typeof aggFunc === 'string') ? aggFunc : 'func';
-	            return aggFuncString + "(" + headerName + ")";
+	            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+	            var aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
+	            return aggFuncStringTranslated + "(" + headerName + ")";
 	        }
 	        else {
 	            return headerName;
@@ -6659,52 +6671,65 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        });
 	    };
-	    // called by headerRenderer - when a header is opened or closed
-	    ColumnController.prototype.setColumnGroupOpened = function (passedGroup, newValue, instanceId) {
+	    ColumnController.prototype.setColumnGroupState = function (stateItems) {
+	        var _this = this;
 	        this.columnAnimationService.start();
-	        var groupToUse = this.getColumnGroup(passedGroup, instanceId);
-	        if (!groupToUse) {
-	            return;
-	        }
-	        this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');
-	        groupToUse.setExpanded(newValue);
+	        var impactedGroups = [];
+	        stateItems.forEach(function (stateItem) {
+	            var groupKey = stateItem.groupId;
+	            var newValue = stateItem.open;
+	            var originalColumnGroup = _this.getOriginalColumnGroup(groupKey);
+	            if (!originalColumnGroup) {
+	                return;
+	            }
+	            if (originalColumnGroup.isExpanded() === newValue) {
+	                return;
+	            }
+	            _this.logger.log('columnGroupOpened(' + originalColumnGroup.getGroupId() + ',' + newValue + ')');
+	            originalColumnGroup.setExpanded(newValue);
+	            impactedGroups.push(originalColumnGroup);
+	        });
 	        this.updateGroupsAndDisplayedColumns();
-	        var event = {
-	            type: events_1.Events.EVENT_COLUMN_GROUP_OPENED,
-	            columnGroup: groupToUse,
-	            api: this.gridApi,
-	            columnApi: this.columnApi
-	        };
-	        this.eventService.dispatchEvent(event);
+	        impactedGroups.forEach(function (originalColumnGroup) {
+	            var event = {
+	                type: events_1.Events.EVENT_COLUMN_GROUP_OPENED,
+	                columnGroup: originalColumnGroup,
+	                api: _this.gridApi,
+	                columnApi: _this.columnApi
+	            };
+	            _this.eventService.dispatchEvent(event);
+	        });
 	        this.columnAnimationService.finish();
 	    };
-	    // used by updateModel
-	    ColumnController.prototype.getColumnGroupState = function () {
-	        var groupState = {};
-	        this.columnUtils.depthFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), function (child) {
-	            if (child instanceof columnGroup_1.ColumnGroup) {
-	                var columnGroup = child;
-	                var key = columnGroup.getGroupId();
-	                // if more than one instance of the group, we only record the state of the first item
-	                if (!groupState.hasOwnProperty(key)) {
-	                    groupState[key] = columnGroup.isExpanded();
-	                }
-	            }
-	        });
-	        return groupState;
+	    // called by headerRenderer - when a header is opened or closed
+	    ColumnController.prototype.setColumnGroupOpened = function (key, newValue) {
+	        var keyAsString;
+	        if (key instanceof originalColumnGroup_1.OriginalColumnGroup) {
+	            keyAsString = key.getId();
+	        }
+	        else {
+	            keyAsString = key;
+	        }
+	        this.setColumnGroupState([{ groupId: keyAsString, open: newValue }]);
 	    };
-	    // used by updateModel
-	    ColumnController.prototype.setColumnGroupState = function (groupState) {
-	        this.columnUtils.depthFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), function (child) {
-	            if (child instanceof columnGroup_1.ColumnGroup) {
-	                var columnGroup = child;
-	                var key = columnGroup.getGroupId();
-	                var shouldExpandGroup = groupState[key] === true && columnGroup.isExpandable();
-	                if (shouldExpandGroup) {
-	                    columnGroup.setExpanded(true);
+	    ColumnController.prototype.getOriginalColumnGroup = function (key) {
+	        if (key instanceof originalColumnGroup_1.OriginalColumnGroup) {
+	            return key;
+	        }
+	        if (typeof key !== 'string') {
+	            console.error('ag-Grid: group key must be a string');
+	        }
+	        // otherwise, search for the column group by id
+	        var res = null;
+	        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, function (node) {
+	            if (node instanceof originalColumnGroup_1.OriginalColumnGroup) {
+	                var originalColumnGroup = node;
+	                if (originalColumnGroup.getId() === key) {
+	                    res = originalColumnGroup;
 	                }
 	            }
 	        });
+	        return res;
 	    };
 	    ColumnController.prototype.calculateColumnsForDisplay = function () {
 	        var columnsForDisplay;
@@ -6762,12 +6787,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return result;
 	    };
 	    ColumnController.prototype.updateDisplayedColumns = function () {
-	        // save opened / closed state
-	        var oldGroupState = this.getColumnGroupState();
 	        var columnsForDisplay = this.calculateColumnsForDisplay();
 	        this.buildDisplayedTrees(columnsForDisplay);
-	        // restore opened / closed state
-	        this.setColumnGroupState(oldGroupState);
 	        this.calculateColumnsForGroupDisplay();
 	        // this is also called when a group is opened or closed
 	        this.updateGroupsAndDisplayedColumns();
@@ -7262,7 +7283,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -7541,7 +7562,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8078,7 +8099,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8236,7 +8257,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8406,7 +8427,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8508,7 +8529,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8705,7 +8726,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -8785,7 +8806,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 	        });
-	        return comp ? comp.getGui() : null;
+	        return comp ? comp.getHtmlElement() : null;
 	    };
 	    AutoWidthCalculator.prototype.putRowCellsIntoDummyContainer = function (column, eDummyContainer) {
 	        var _this = this;
@@ -8843,7 +8864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -9811,7 +9832,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -10132,13 +10153,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // the context menu if no rows are displayed, or user simply clicks outside of a cell
 	        var listener = function (mouseEvent) {
 	            var target = utils_1.Utils.getTarget(mouseEvent);
-	            if (target === _this.eBodyViewport) {
+	            if (target === _this.eBodyViewport || target === _this.ePinnedLeftColsViewport || target === _this.ePinnedRightColsViewport) {
 	                // show it
 	                _this.onContextMenu(mouseEvent);
 	                _this.preventDefaultOnContextMenu(mouseEvent);
 	            }
 	        };
+	        //For some reason listening only to this.eBody doesnt work... Maybe because the event is consumed somewhere else?
+	        //In any case, not expending much time on this, if anyome comes accross this and knows how to make this work with
+	        //one listener please go ahead and change it...
 	        this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener);
+	        this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'contextmenu', listener);
+	        this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'contextmenu', listener);
 	    };
 	    GridPanel.prototype.getRowForEvent = function (event) {
 	        var sourceElement = utils_1.Utils.getTarget(event);
@@ -11518,7 +11544,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -11800,7 +11826,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12078,7 +12104,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12411,7 +12437,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12467,7 +12493,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -12510,7 +12536,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        _this.value = _this.getValue();
 	        _this.setUsingWrapper();
-	        _this.prepareCellRenderer();
+	        _this.chooseCellRenderer();
 	        _this.setupColSpan();
 	        return _this;
 	    }
@@ -12547,11 +12573,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    CellComp.prototype.afterAttached = function () {
 	        var querySelector = "[comp-id=\"" + this.getCompId() + "\"]";
 	        var eGui = this.eParentRow.querySelector(querySelector);
-	        this.setGui(eGui);
+	        this.setHtmlElementNoHydrate(eGui);
 	        // all of these have dependencies on the eGui, so only do them after eGui is set
 	        this.addDomData();
 	        this.addSelectionCheckbox();
-	        this.attachCellRendererAfterCreate();
+	        this.attachCellRenderer();
 	        this.angular1Compile();
 	        this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
 	        this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_FLASH_CELLS, this.onFlashCells.bind(this));
@@ -12570,7 +12596,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    CellComp.prototype.onColumnHover = function () {
 	        var isHovered = this.beans.columnHoverService.isHovered(this.column);
-	        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
+	        utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-column-hover', isHovered);
 	    };
 	    CellComp.prototype.onCellChanged = function (event) {
 	        var eventImpactsThisCell = event.column === this.column;
@@ -12771,17 +12797,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    CellComp.prototype.animateCell = function (cssName) {
 	        var fullName = 'ag-cell-' + cssName;
 	        var animationFullName = 'ag-cell-' + cssName + '-animation';
-	        var eGui = this.getGui();
+	        var element = this.getHtmlElement();
 	        // we want to highlight the cells, without any animation
-	        utils_1._.addCssClass(eGui, fullName);
-	        utils_1._.removeCssClass(eGui, animationFullName);
+	        utils_1._.addCssClass(element, fullName);
+	        utils_1._.removeCssClass(element, animationFullName);
 	        // then once that is applied, we remove the highlight with animation
 	        setTimeout(function () {
-	            utils_1._.removeCssClass(eGui, fullName);
-	            utils_1._.addCssClass(eGui, animationFullName);
+	            utils_1._.removeCssClass(element, fullName);
+	            utils_1._.addCssClass(element, animationFullName);
 	            setTimeout(function () {
 	                // and then to leave things as we got them, we remove the animation
-	                utils_1._.removeCssClass(eGui, animationFullName);
+	                utils_1._.removeCssClass(element, animationFullName);
 	            }, 1000);
 	        }, 500);
 	    };
@@ -12841,7 +12867,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    CellComp.prototype.postProcessClassesFromColDef = function () {
 	        var _this = this;
-	        this.processClassesFromColDef(function (className) { return utils_1._.addCssClass(_this.getGui(), className); });
+	        this.processClassesFromColDef(function (className) { return utils_1._.addCssClass(_this.getHtmlElement(), className); });
 	    };
 	    CellComp.prototype.preProcessClassesFromColDef = function () {
 	        var res = [];
@@ -12879,7 +12905,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // use cell renderer if it exists
 	        }
 	        else if (this.usingCellRenderer) {
-	            this.attachCellRendererAfterRefresh();
+	            this.attachCellRenderer();
 	        }
 	        else {
 	            var valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
@@ -12952,9 +12978,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    CellComp.prototype.postProcessCellClassRules = function () {
 	        var _this = this;
 	        this.processCellClassRules(function (className) {
-	            utils_1._.addCssClass(_this.getGui(), className);
+	            utils_1._.addCssClass(_this.getHtmlElement(), className);
 	        }, function (className) {
-	            utils_1._.removeCssClass(_this.getGui(), className);
+	            utils_1._.removeCssClass(_this.getHtmlElement(), className);
 	        });
 	    };
 	    CellComp.prototype.preProcessCellClassRules = function () {
@@ -12984,12 +13010,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        else {
 	            this.usingWrapper = false;
-	        }
-	    };
-	    CellComp.prototype.prepareCellRenderer = function () {
-	        this.chooseCellRenderer();
-	        if (this.usingCellRenderer) {
-	            this.createCellRendererInstance();
 	        }
 	    };
 	    CellComp.prototype.chooseCellRenderer = function () {
@@ -13024,45 +13044,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	            console.warn('ag-Grid: cellRenderer should return back a string or a DOM object, but got ' + this.cellRendererGui);
 	        }
 	    };
-	    CellComp.prototype.attachCellRendererAfterRefresh = function () {
+	    CellComp.prototype.attachCellRenderer = function () {
 	        if (!this.usingCellRenderer) {
 	            return;
 	        }
 	        this.createCellRendererInstance();
-	        if (typeof this.cellRendererGui === 'string') {
-	            this.eParentOfValue.innerHTML = this.cellRendererGui;
+	        if (typeof this.cellRendererGui !== 'object') {
+	            //First check for simple return types
+	            this.eParentOfValue.innerHTML = this.cellRendererGui + '';
 	            this.cellRendererGui = this.eParentOfValue.firstChild;
 	        }
-	        else {
+	        else if (this.cellRendererGui instanceof HTMLElement) {
+	            //Is this an HTML Element
 	            this.eParentOfValue.appendChild(this.cellRendererGui);
 	        }
-	        this.callAfterGuiAttachedOnCellRenderer();
-	    };
-	    // this gets called after row is initially created. if the cellRenderer is a string, then the string was included
-	    // in the rows html and all we have to do is look it up.
-	    CellComp.prototype.attachCellRendererAfterCreate = function () {
-	        if (!this.usingCellRenderer) {
-	            return;
-	        }
-	        if (typeof this.cellRendererGui === 'string') {
-	            // if cell renderer returned back a string, then it was in the row template when it
-	            // got created, so we look it up (and replace the reference to the string we had)
+	        else if (this.cellRendererGui.toString) {
+	            //Lastly before given up... Does it have a toString
+	            this.eParentOfValue.innerHTML = this.cellRendererGui.toString() + '';
 	            this.cellRendererGui = this.eParentOfValue.firstChild;
-	        }
-	        else {
-	            // if cell renderer returned back an HTML object, then we append it to the dom now
-	            this.eParentOfValue.appendChild(this.cellRendererGui);
-	        }
-	        this.callAfterGuiAttachedOnCellRenderer();
-	    };
-	    CellComp.prototype.callAfterGuiAttachedOnCellRenderer = function () {
-	        if (this.cellRenderer.afterGuiAttached) {
-	            var params = {
-	                eGridCell: this.getGui(),
-	                eParentOfValue: this.eParentOfValue,
-	                eComponent: this.cellRendererGui
-	            };
-	            this.cellRenderer.afterGuiAttached(params);
 	        }
 	    };
 	    CellComp.prototype.createCellRendererParams = function (valueFormatted) {
@@ -13105,7 +13104,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return valueFormattedExists ? valueFormatted : value;
 	    };
 	    CellComp.prototype.getValue = function () {
-	        var isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer;
+	        // if we don't check this, then the grid will render leaf groups as open even if we are not
+	        // allowing the user to open leaf groups. confused? remember for pivot mode we don't allow
+	        // opening leaf groups, so we have to force leafGroups to be closed in case the user expanded
+	        // them via the API, or user user expanded them in the UI before turning on pivot mode
+	        var lockedClosedGroup = this.rowNode.leafGroup && this.beans.columnController.isPivotMode();
+	        var isOpenGroup = this.rowNode.group && this.rowNode.expanded && !this.rowNode.footer && !lockedClosedGroup;
 	        if (isOpenGroup && this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
 	            // if doing grouping and footers, we don't want to include the agg value
 	            // in the header when the group is open
@@ -13252,17 +13256,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.addInCellEditor();
 	        }
 	        if (cellEditor.afterGuiAttached) {
-	            cellEditor.afterGuiAttached({
-	                eComponent: utils_1._.assertHtmlElement(cellEditor.getGui())
-	            });
+	            cellEditor.afterGuiAttached();
 	        }
 	        var event = this.createEvent(null, events_1.Events.EVENT_CELL_EDITING_STARTED);
 	        this.beans.eventService.dispatchEvent(event);
 	        return true;
 	    };
 	    CellComp.prototype.addInCellEditor = function () {
-	        utils_1._.removeAllChildren(this.getGui());
-	        this.getGui().appendChild(utils_1._.assertHtmlElement(this.cellEditor.getGui()));
+	        utils_1._.removeAllChildren(this.getHtmlElement());
+	        this.getHtmlElement().appendChild(utils_1._.assertHtmlElement(this.cellEditor.getGui()));
 	        this.angular1Compile();
 	    };
 	    CellComp.prototype.addPopupCellEditor = function () {
@@ -13277,7 +13279,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            column: this.column,
 	            rowNode: this.rowNode,
 	            type: 'popupCellEditor',
-	            eventSource: this.getGui(),
+	            eventSource: this.getHtmlElement(),
 	            ePopup: utils_1._.assertHtmlElement(ePopupGui),
 	            keepWithinBounds: true
 	        });
@@ -13304,8 +13306,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // to allow the text editor full access to the entire cell
 	    CellComp.prototype.setInlineEditingClass = function () {
 	        var editingInline = this.editingCell && !this.cellEditorInPopup;
-	        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-inline-editing', editingInline);
-	        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-not-inline-editing', !editingInline);
+	        utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-inline-editing', editingInline);
+	        utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-not-inline-editing', !editingInline);
 	    };
 	    CellComp.prototype.createCellEditor = function (keyPress, charPress, cellStartedEdit) {
 	        var params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
@@ -13327,7 +13329,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            $scope: this.scope,
 	            onKeyDown: this.onKeyDown.bind(this),
 	            stopEditing: this.stopEditingAndFocus.bind(this),
-	            eGridCell: this.getGui(),
+	            eGridCell: this.getHtmlElement(),
 	            parseValue: this.parseValue.bind(this),
 	            formatValue: this.formatValue.bind(this)
 	        };
@@ -13516,7 +13518,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (utils_1._.isBrowserIE() || utils_1._.isBrowserEdge()) {
 	            if (utils_1._.missing(document.activeElement) || document.activeElement === document.body) {
 	                // console.log('missing focus');
-	                this.getGui().focus();
+	                this.getHtmlElement().focus();
 	            }
 	        }
 	    };
@@ -13541,7 +13543,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.column;
 	    };
 	    CellComp.prototype.detach = function () {
-	        this.eParentRow.removeChild(this.getGui());
+	        this.eParentRow.removeChild(this.getHtmlElement());
 	    };
 	    // if the row is also getting destroyed, then we don't need to remove from dom,
 	    // as the row will also get removed, so no need to take out the cells from the row
@@ -13558,11 +13560,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    CellComp.prototype.onLeftChanged = function () {
 	        var left = this.getCellLeft();
-	        this.getGui().style.left = left + 'px';
+	        this.getHtmlElement().style.left = left + 'px';
 	    };
 	    CellComp.prototype.onWidthChanged = function () {
 	        var width = this.getCellWidth();
-	        this.getGui().style.width = width + 'px';
+	        this.getHtmlElement().style.width = width + 'px';
 	    };
 	    CellComp.prototype.getRangeClasses = function () {
 	        var res = [];
@@ -13600,13 +13602,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return;
 	        }
 	        var newRangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
-	        var eGui = this.getGui();
+	        var element = this.getHtmlElement();
 	        if (this.rangeCount !== newRangeCount) {
-	            utils_1._.addOrRemoveCssClass(eGui, 'ag-cell-range-selected', newRangeCount !== 0);
-	            utils_1._.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-1', newRangeCount === 1);
-	            utils_1._.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-2', newRangeCount === 2);
-	            utils_1._.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-3', newRangeCount === 3);
-	            utils_1._.addOrRemoveCssClass(eGui, 'ag-cell-range-selected-4', newRangeCount >= 4);
+	            utils_1._.addOrRemoveCssClass(element, 'ag-cell-range-selected', newRangeCount !== 0);
+	            utils_1._.addOrRemoveCssClass(element, 'ag-cell-range-selected-1', newRangeCount === 1);
+	            utils_1._.addOrRemoveCssClass(element, 'ag-cell-range-selected-2', newRangeCount === 2);
+	            utils_1._.addOrRemoveCssClass(element, 'ag-cell-range-selected-3', newRangeCount === 3);
+	            utils_1._.addOrRemoveCssClass(element, 'ag-cell-range-selected-4', newRangeCount >= 4);
 	            this.rangeCount = newRangeCount;
 	        }
 	    };
@@ -13614,14 +13616,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var firstRightPinned = this.column.isFirstRightPinned();
 	        if (this.firstRightPinned !== firstRightPinned) {
 	            this.firstRightPinned = firstRightPinned;
-	            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-first-right-pinned', firstRightPinned);
+	            utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-first-right-pinned', firstRightPinned);
 	        }
 	    };
 	    CellComp.prototype.onLastLeftPinnedChanged = function () {
 	        var lastLeftPinned = this.column.isLastLeftPinned();
 	        if (this.lastLeftPinned !== lastLeftPinned) {
 	            this.lastLeftPinned = lastLeftPinned;
-	            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-last-left-pinned', lastLeftPinned);
+	            utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-last-left-pinned', lastLeftPinned);
 	        }
 	    };
 	    CellComp.prototype.addSelectionCheckbox = function () {
@@ -13635,32 +13637,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	            cbSelectionComponent_1.init({ rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc });
 	            this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
 	            // put the checkbox in before the value
-	            this.eCellWrapper.insertBefore(cbSelectionComponent_1.getGui(), this.eParentOfValue);
+	            this.eCellWrapper.insertBefore(cbSelectionComponent_1.getHtmlElement(), this.eParentOfValue);
 	        }
 	        else {
-	            this.eParentOfValue = this.getGui();
+	            this.eParentOfValue = this.getHtmlElement();
 	        }
 	    };
 	    CellComp.prototype.addDomData = function () {
 	        var _this = this;
-	        var eGui = this.getGui();
-	        this.beans.gridOptionsWrapper.setDomData(eGui, CellComp.DOM_DATA_KEY_CELL_COMP, this);
+	        var element = this.getHtmlElement();
+	        this.beans.gridOptionsWrapper.setDomData(element, CellComp.DOM_DATA_KEY_CELL_COMP, this);
 	        this.addDestroyFunc(function () {
-	            return _this.beans.gridOptionsWrapper.setDomData(eGui, CellComp.DOM_DATA_KEY_CELL_COMP, null);
+	            return _this.beans.gridOptionsWrapper.setDomData(element, CellComp.DOM_DATA_KEY_CELL_COMP, null);
 	        });
 	    };
 	    CellComp.prototype.onCellFocused = function (event) {
 	        var cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
 	        // see if we need to change the classes on this cell
 	        if (cellFocused !== this.cellFocused) {
-	            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
-	            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
+	            utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-focus', cellFocused);
+	            utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-no-focus', !cellFocused);
 	            this.cellFocused = cellFocused;
 	        }
 	        // if this cell was just focused, see if we need to force browser focus, his can
 	        // happen if focus is programmatically set.
 	        if (cellFocused && event && event.forceBrowserFocus) {
-	            this.getGui().focus();
+	            this.getHtmlElement().focus();
 	        }
 	        // if another cell was focused, and we are editing, then stop editing
 	        var fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
@@ -13707,11 +13709,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.hideEditorPopup = null;
 	        }
 	        else {
-	            utils_1._.removeAllChildren(this.getGui());
+	            utils_1._.removeAllChildren(this.getHtmlElement());
 	            // put the cell back the way it was before editing
 	            if (this.usingWrapper) {
 	                // if wrapper, then put the wrapper back
-	                this.getGui().appendChild(this.eCellWrapper);
+	                this.getHtmlElement().appendChild(this.eCellWrapper);
 	            }
 	            else {
 	                // if cellRenderer, then put the gui back in. if the renderer has
@@ -13721,7 +13723,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    // we know it's a dom element (not a string) because we converted
 	                    // it after the gui was attached if it was a string.
 	                    var eCell = this.cellRendererGui;
-	                    this.getGui().appendChild(eCell);
+	                    this.getHtmlElement().appendChild(eCell);
 	                }
 	            }
 	        }
@@ -13745,7 +13747,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14352,7 +14354,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14592,7 +14594,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14670,7 +14672,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14711,7 +14713,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14788,7 +14790,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -14812,6 +14814,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function Component(template) {
 	        var _this = _super.call(this) || this;
 	        _this.childComponents = [];
+	        _this.hydrated = false;
 	        _this.annotatedEventListeners = [];
 	        _this.visible = true;
 	        // unique id for this row component. this is used for getting a reference to the HTML dom.
@@ -14823,11 +14826,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        return _this;
 	    }
+	    Component.prototype.setTemplateNoHydrate = function (template) {
+	        this.template = template;
+	    };
+	    Component.prototype.afterGuiAttached = function (params) {
+	        if (!this.eHtmlElement && params.eComponent) {
+	            this.setHtmlElement(params.eComponent);
+	        }
+	    };
 	    Component.prototype.getCompId = function () {
 	        return this.compId;
 	    };
 	    Component.prototype.instantiate = function (context) {
-	        this.instantiateRecurse(this.getGui(), context);
+	        var element = this.getHtmlElement();
+	        this.instantiateRecurse(element, context);
 	    };
 	    Component.prototype.instantiateRecurse = function (parentNode, context) {
 	        var childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
@@ -14845,7 +14857,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    Component.prototype.swapComponentForNode = function (newComponent, parentNode, childNode) {
-	        parentNode.replaceChild(newComponent.getGui(), childNode);
+	        var element = newComponent.getHtmlElement();
+	        parentNode.replaceChild(element, childNode);
 	        this.childComponents.push(newComponent);
 	        this.swapInComponentForQuerySelectors(newComponent, childNode);
 	    };
@@ -14866,20 +14879,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    Component.prototype.setTemplate = function (template) {
+	        this.template = template;
 	        var eGui = utils_1.Utils.loadTemplate(template);
-	        this.setTemplateFromElement(eGui);
+	        this.setHtmlElement(eGui);
 	    };
-	    Component.prototype.setTemplateFromElement = function (element) {
-	        this.eGui = element;
-	        this.eGui.__agComponent = this;
+	    Component.prototype.setHtmlElement = function (element) {
+	        this.eHtmlElement = element;
+	        this.eHtmlElement.__agComponent = this;
+	        this.hydrate();
+	    };
+	    Component.prototype.hydrate = function () {
 	        this.addAnnotatedEventListeners();
 	        this.wireQuerySelectors();
+	        this.hydrated = true;
 	    };
 	    Component.prototype.attributesSet = function () {
 	    };
 	    Component.prototype.wireQuerySelectors = function () {
-	        var _this = this;
-	        if (!this.eGui) {
+	        var element = this.getHtmlElement();
+	        if (!element) {
 	            return;
 	        }
 	        var thisProto = Object.getPrototypeOf(this);
@@ -14889,7 +14907,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
 	                var thisNoType_1 = this_1;
 	                metaData[currentProtoName].querySelectors.forEach(function (querySelector) {
-	                    var resultOfQuery = _this.eGui.querySelector(querySelector.querySelector);
+	                    var resultOfQuery = element.querySelector(querySelector.querySelector);
 	                    if (resultOfQuery) {
 	                        var backingComponent = resultOfQuery.__agComponent;
 	                        if (backingComponent) {
@@ -14914,7 +14932,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Component.prototype.addAnnotatedEventListeners = function () {
 	        var _this = this;
 	        this.removeAnnotatedEventListeners();
-	        if (!this.eGui) {
+	        var element = this.getHtmlElement();
+	        if (!element) {
 	            return;
 	        }
 	        var thisProto = Object.getPrototypeOf(this);
@@ -14927,7 +14946,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	                metaData[currentProtoName].listenerMethods.forEach(function (eventListener) {
 	                    var listener = _this[eventListener.methodName].bind(_this);
-	                    _this.eGui.addEventListener(eventListener.eventName, listener);
+	                    element.addEventListener(eventListener.eventName, listener);
 	                    _this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener: listener });
 	                });
 	            }
@@ -14935,39 +14954,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    Component.prototype.removeAnnotatedEventListeners = function () {
-	        var _this = this;
 	        if (!this.annotatedEventListeners) {
 	            return;
 	        }
-	        if (!this.eGui) {
+	        var element = this.getHtmlElement();
+	        if (!element) {
 	            return;
 	        }
 	        this.annotatedEventListeners.forEach(function (eventListener) {
-	            _this.eGui.removeEventListener(eventListener.eventName, eventListener.listener);
+	            element.removeEventListener(eventListener.eventName, eventListener.listener);
 	        });
 	        this.annotatedEventListeners = null;
 	    };
 	    Component.prototype.getGui = function () {
-	        return this.eGui;
+	        if (this.eHtmlElement) {
+	            return this.eHtmlElement;
+	        }
+	        else {
+	            return this.template;
+	        }
 	    };
-	    // this method is for older code, that wants to provide the gui element,
-	    // it is not intended for this to be in ag-Stack
-	    Component.prototype.setGui = function (eGui) {
-	        this.eGui = eGui;
+	    Component.prototype.getHtmlElement = function () {
+	        if (this.eHtmlElement) {
+	            return this.eHtmlElement;
+	        }
+	        else {
+	            console.warn('getHtmlElement() called on component before gui was attached');
+	            return null;
+	        }
+	    };
+	    // used by Cell Comp (and old header code), design is a bit poor, overlap with afterGuiAttached???
+	    Component.prototype.setHtmlElementNoHydrate = function (eHtmlElement) {
+	        this.eHtmlElement = eHtmlElement;
 	    };
 	    Component.prototype.queryForHtmlElement = function (cssSelector) {
-	        return this.eGui.querySelector(cssSelector);
+	        var element = this.getHtmlElement();
+	        return element.querySelector(cssSelector);
 	    };
 	    Component.prototype.queryForHtmlInputElement = function (cssSelector) {
-	        return this.eGui.querySelector(cssSelector);
+	        var element = this.getHtmlElement();
+	        return element.querySelector(cssSelector);
 	    };
 	    Component.prototype.appendChild = function (newChild) {
+	        var element = this.getHtmlElement();
 	        if (utils_1.Utils.isNodeOrElement(newChild)) {
-	            this.eGui.appendChild(newChild);
+	            element.appendChild(newChild);
 	        }
 	        else {
 	            var childComponent = newChild;
-	            this.eGui.appendChild(utils_1.Utils.ensureElement(childComponent.getGui()));
+	            element.appendChild(utils_1.Utils.ensureElement(childComponent.getGui()));
 	            this.childComponents.push(childComponent);
 	        }
 	    };
@@ -14981,9 +15016,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.visible;
 	    };
 	    Component.prototype.setVisible = function (visible) {
+	        var element = this.getHtmlElement();
 	        if (visible !== this.visible) {
 	            this.visible = visible;
-	            utils_1.Utils.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
+	            utils_1.Utils.addOrRemoveCssClass(element, 'ag-hidden', !visible);
 	            var event_1 = {
 	                type: Component.EVENT_VISIBLE_CHANGED,
 	                visible: this.visible
@@ -14992,29 +15028,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    Component.prototype.addOrRemoveCssClass = function (className, addOrRemove) {
-	        utils_1.Utils.addOrRemoveCssClass(this.eGui, className, addOrRemove);
+	        var element = this.getHtmlElement();
+	        utils_1.Utils.addOrRemoveCssClass(element, className, addOrRemove);
 	    };
 	    Component.prototype.destroy = function () {
 	        _super.prototype.destroy.call(this);
 	        this.childComponents.forEach(function (childComponent) { return childComponent.destroy(); });
 	        this.childComponents.length = 0;
-	        this.removeAnnotatedEventListeners();
+	        if (this.hydrated) {
+	            this.removeAnnotatedEventListeners();
+	        }
 	    };
 	    Component.prototype.addGuiEventListener = function (event, listener) {
-	        var _this = this;
-	        this.getGui().addEventListener(event, listener);
-	        this.addDestroyFunc(function () { return _this.getGui().removeEventListener(event, listener); });
+	        var element = this.getHtmlElement();
+	        element.addEventListener(event, listener);
+	        this.addDestroyFunc(function () { return element.removeEventListener(event, listener); });
 	    };
 	    Component.prototype.addCssClass = function (className) {
-	        utils_1.Utils.addCssClass(this.getGui(), className);
+	        var element = this.getHtmlElement();
+	        utils_1.Utils.addCssClass(element, className);
 	    };
 	    Component.prototype.removeCssClass = function (className) {
-	        utils_1.Utils.removeCssClass(this.getGui(), className);
+	        var element = this.getHtmlElement();
+	        utils_1.Utils.removeCssClass(element, className);
 	    };
 	    Component.prototype.getAttribute = function (key) {
-	        var eGui = this.getGui();
-	        if (eGui) {
-	            return eGui.getAttribute(key);
+	        var element = this.getHtmlElement();
+	        if (element) {
+	            return element.getAttribute(key);
 	        }
 	        else {
 	            return null;
@@ -15035,7 +15076,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15108,7 +15149,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15151,10 +15192,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.eCheckedIcon = utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null);
 	        this.eUncheckedIcon = utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null);
 	        this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null);
-	        var eGui = this.getGui();
-	        eGui.appendChild(this.eCheckedIcon);
-	        eGui.appendChild(this.eUncheckedIcon);
-	        eGui.appendChild(this.eIndeterminateIcon);
+	        var element = this.getHtmlElement();
+	        element.appendChild(this.eCheckedIcon);
+	        element.appendChild(this.eUncheckedIcon);
+	        element.appendChild(this.eIndeterminateIcon);
 	    };
 	    CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
 	        var state = this.rowNode.isSelected();
@@ -15242,7 +15283,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15411,7 +15452,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15515,7 +15556,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15630,7 +15671,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -15957,7 +15998,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16009,7 +16050,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    PopupEditorWrapper.prototype.init = function (params) {
 	        var _this = this;
 	        this.params = params;
-	        this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+	        this.gridOptionsWrapper.setDomData(this.getHtmlElement(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
 	        this.addDestroyFunc(function () {
 	            if (_this.cellEditor.destroy) {
 	                _this.cellEditor.destroy();
@@ -16019,7 +16060,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // this needs to be 'super' and not 'this' as if we call 'this',
 	        // it ends up called 'getGui()' on the child before 'init' was called,
 	        // which is not good
-	        _super.prototype.getGui.call(this), 'keydown', this.onKeyDown.bind(this));
+	        _super.prototype.getHtmlElement.call(this), 'keydown', this.onKeyDown.bind(this));
 	    };
 	    PopupEditorWrapper.prototype.afterGuiAttached = function () {
 	        if (this.cellEditor.afterGuiAttached) {
@@ -16070,7 +16111,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16209,9 +16250,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var masterColumnGroup = groupOpenedEvent.columnGroup;
 	        var otherColumnGroup;
 	        if (masterColumnGroup) {
-	            var colId = masterColumnGroup.getGroupId();
-	            var instanceId = masterColumnGroup.getInstanceId();
-	            otherColumnGroup = this.columnController.getColumnGroup(colId, instanceId);
+	            var groupId = masterColumnGroup.getGroupId();
+	            otherColumnGroup = this.columnController.getOriginalColumnGroup(groupId);
 	        }
 	        if (masterColumnGroup && !otherColumnGroup) {
 	            return;
@@ -16304,7 +16344,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16482,7 +16522,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16581,7 +16621,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16634,7 +16674,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -16775,7 +16815,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    RowComp.prototype.getCellForCol = function (column) {
 	        var cellComp = this.cellComps[column.getColId()];
 	        if (cellComp) {
-	            return cellComp.getGui();
+	            return cellComp.getHtmlElement();
 	        }
 	        else {
 	            return null;
@@ -17131,7 +17171,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    RowComp.prototype.ensureCellInCorrectContainer = function (cellComp) {
-	        var eCell = cellComp.getGui();
+	        var element = cellComp.getHtmlElement();
 	        var column = cellComp.getColumn();
 	        var pinnedType = column.getPinned();
 	        var eContainer = this.getContainerForCell(pinnedType);
@@ -17141,9 +17181,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (inWrongRow) {
 	            // take out from old row
 	            if (eOldContainer) {
-	                eOldContainer.removeChild(eCell);
+	                eOldContainer.removeChild(element);
 	            }
-	            eContainer.appendChild(eCell);
+	            eContainer.appendChild(element);
 	            cellComp.setParentRow(eContainer);
 	        }
 	    };
@@ -17269,30 +17309,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    RowComp.prototype.createFullWidthRowContainer = function (rowContainerComp, pinned, extraCssClass, cellRendererType, callback) {
 	        var _this = this;
-	        var params = this.createFullWidthParams(pinned);
-	        var cellRenderer = this.beans.componentResolver.createAgGridComponent(null, params, cellRendererType);
-	        var gui = utils_1._.assertHtmlElement(cellRenderer.getGui());
-	        var guiIsTemplate = typeof gui === 'string';
-	        var cellTemplate = guiIsTemplate ? gui : '';
-	        var rowTemplate = this.createTemplate(cellTemplate, extraCssClass);
+	        var rowTemplate = this.createTemplate('', extraCssClass);
 	        rowContainerComp.appendRowTemplate(rowTemplate, function () {
 	            var eRow = rowContainerComp.getRowElement(_this.getCompId());
-	            var eCell;
-	            if (guiIsTemplate) {
-	                eCell = eRow.firstChild;
-	            }
-	            else {
-	                eRow.appendChild(gui);
-	                eCell = gui;
-	            }
-	            if (cellRenderer.afterGuiAttached) {
-	                var params_1 = {
-	                    eGridCell: eRow,
-	                    eParentOfValue: eRow,
-	                    eComponent: eCell
-	                };
-	                cellRenderer.afterGuiAttached(params_1);
-	            }
+	            var params = _this.createFullWidthParams(eRow, pinned);
+	            var cellRenderer = _this.beans.componentResolver.createAgGridComponent(null, params, cellRendererType);
+	            var gui = utils_1._.ensureElement(cellRenderer.getGui());
+	            eRow.appendChild(gui);
 	            _this.afterRowAttached(rowContainerComp, eRow);
 	            callback(eRow, cellRenderer);
 	            _this.angular1Compile(eRow);
@@ -17303,7 +17326,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.beans.$compile(element)(this.scope);
 	        }
 	    };
-	    RowComp.prototype.createFullWidthParams = function (pinned) {
+	    RowComp.prototype.createFullWidthParams = function (eRow, pinned) {
 	        var params = {
 	            fullWidth: true,
 	            data: this.rowNode.data,
@@ -17315,8 +17338,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
 	            context: this.beans.gridOptionsWrapper.getContext(),
 	            // these need to be taken out, as part of 'afterAttached' now
-	            eGridCell: null,
-	            eParentOfValue: null,
+	            eGridCell: eRow,
+	            eParentOfValue: eRow,
 	            pinned: pinned,
 	            addRenderedRowListener: this.addEventListener.bind(this)
 	        };
@@ -17328,8 +17351,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            classes.push(extraCssClass);
 	        }
 	        classes.push('ag-row');
-	        classes.push('ag-row-no-focus');
-	        classes.push(this.rowFocused ? 'ag-row-no-focus' : 'ag-row-focus');
+	        classes.push(this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
 	        if (this.fadeRowIn) {
 	            classes.push('ag-opacity-zero');
 	        }
@@ -17790,7 +17812,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17859,7 +17881,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17951,7 +17973,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -17999,10 +18021,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
 	            // if we are doing RTL, then the tool panel appears on the left
 	            if (this.gridOptionsWrapper.isEnableRtl()) {
-	                westPanel = this.toolPanel.getGui();
+	                westPanel = this.toolPanel.getHtmlElement();
 	            }
 	            else {
-	                eastPanel = this.toolPanel.getGui();
+	                eastPanel = this.toolPanel.getHtmlElement();
 	            }
 	        }
 	        var createTopPanelGui = this.createNorthPanel();
@@ -18069,8 +18091,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
 	        this.rowGroupComp = this.rowGroupCompFactory.create();
 	        this.pivotComp = this.pivotCompFactory.create();
-	        topPanelGui.appendChild(this.rowGroupComp.getGui());
-	        topPanelGui.appendChild(this.pivotComp.getGui());
+	        topPanelGui.appendChild(this.rowGroupComp.getHtmlElement());
+	        topPanelGui.appendChild(this.pivotComp.getHtmlElement());
 	        this.rowGroupComp.addEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
 	        this.pivotComp.addEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
 	        this.destroyFunctions.push(function () {
@@ -18102,12 +18124,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        var eSouthPanel = document.createElement('div');
 	        if (statusBarEnabled) {
-	            eSouthPanel.appendChild(this.statusBar.getGui());
+	            eSouthPanel.appendChild(this.statusBar.getHtmlElement());
 	        }
 	        if (paginationPanelEnabled) {
 	            var paginationComp = new paginationComp_1.PaginationComp();
 	            this.context.wireBean(paginationComp);
-	            eSouthPanel.appendChild(paginationComp.getGui());
+	            eSouthPanel.appendChild(paginationComp.getHtmlElement());
 	            this.destroyFunctions.push(paginationComp.destroy.bind(paginationComp));
 	        }
 	        return eSouthPanel;
@@ -18342,7 +18364,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -18890,7 +18912,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19076,7 +19098,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    //so that when the background is clicked, the child is removed again, giving
 	    //a model look to popups.
 	    PopupService.prototype.addAsModalPopup = function (eChild, closeOnEsc, closedCallback) {
-	        var eBody = document.body;
+	        var eBody = this.gridOptionsWrapper.getDocument();
 	        if (!eBody) {
 	            console.warn('ag-grid: could not find the body of the document, document.body is empty');
 	            return;
@@ -19171,7 +19193,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19356,7 +19378,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19717,7 +19739,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -19768,7 +19790,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    NumberFilter.prototype.initialiseFilterBodyUi = function () {
 	        this.filterNumber = null;
-	        this.eFilterTextField = this.getGui().querySelector("#filterText");
+	        this.eFilterTextField = this.getHtmlElement().querySelector("#filterText");
 	        var debounceMs = this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 500;
 	        var toDebounce = utils_1.Utils.debounce(this.onTextFieldsChanged.bind(this), debounceMs);
 	        this.addDestroyableEventListener(this.eFilterTextField, "input", toDebounce);
@@ -19882,7 +19904,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20072,7 +20094,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20201,7 +20223,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20445,7 +20467,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20513,7 +20535,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20653,7 +20675,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -20721,7 +20743,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.gridOptionsWrapper.isSuppressTouch()) {
 	            return;
 	        }
-	        var touchListener = new touchListener_1.TouchListener(this.getGui());
+	        var touchListener = new touchListener_1.TouchListener(this.getHtmlElement());
 	        if (this.params.enableMenu) {
 	            var longTapListener = function (event) {
 	                _this.gridOptionsWrapper.getApi().showColumnMenuAfterMouseClick(_this.params.column, event.touchStart);
@@ -20788,9 +20810,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.setMultiSortOrder();
 	    };
 	    HeaderComp.prototype.onSortChanged = function () {
-	        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
-	        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
-	        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
+	        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
+	        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
+	        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
 	        if (this.eSortAsc) {
 	            utils_1.Utils.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.params.column.isSortAscending());
 	        }
@@ -20903,7 +20925,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21112,7 +21134,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21219,7 +21241,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21277,7 +21299,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _this = this;
 	        var expandAction = function () {
 	            var newExpandedValue = !_this.params.columnGroup.isExpanded();
-	            _this.columnController.setColumnGroupOpened(_this.params.columnGroup, newExpandedValue);
+	            _this.columnController.setColumnGroupOpened(_this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue);
 	        };
 	        var touchListener = new touchListener_1.TouchListener(this.eCloseIcon);
 	        this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, expandAction);
@@ -21311,7 +21333,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // no renderer, default text render
 	        if (this.params.displayName && this.params.displayName !== '') {
 	            if (utils_1.Utils.isBrowserSafari()) {
-	                this.getGui().style.display = 'table-cell';
+	                this.getHtmlElement().style.display = 'table-cell';
 	            }
 	            var eInnerText = this.getRefElement('agLabel');
 	            eInnerText.innerHTML = this.params.displayName;
@@ -21349,7 +21371,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21489,7 +21511,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.dateComponent = this.componentRecipes.newDateComponent(dateComponentParams);
 	        var body = utils_1._.loadTemplate("<div></div>");
 	        body.appendChild(utils_1._.ensureElement(this.dateComponent.getGui()));
-	        this.setTemplateFromElement(body);
+	        this.setHtmlElement(body);
 	    };
 	    DateFloatingFilterComp.prototype.onDateChanged = function () {
 	        var parentModel = this.currentParentModel();
@@ -21650,7 +21672,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21692,9 +21714,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.column = params.column;
 	        var base = utils_1._.loadTemplate("<div class=\"ag-header-cell\" aria-hidden=\"true\"><div class=\"ag-floating-filter-body\" aria-hidden=\"true\"></div></div>");
 	        this.enrichBody(base);
-	        this.setTemplateFromElement(base);
+	        this.setHtmlElement(base);
 	        this.setupWidth();
-	        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans);
+	        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getHtmlElement(), this.beans);
 	        setLeftFeature.init();
 	        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
 	    };
@@ -21703,7 +21725,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.onColumnWidthChanged();
 	    };
 	    BaseFilterWrapperComp.prototype.onColumnWidthChanged = function () {
-	        this.getGui().style.width = this.column.getActualWidth() + 'px';
+	        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
 	    };
 	    __decorate([
 	        context_1.Autowired('context'),
@@ -21790,7 +21812,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -21887,7 +21909,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22058,7 +22080,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22173,7 +22195,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22285,7 +22307,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22401,7 +22423,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22436,7 +22458,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __extends(SelectCellEditor, _super);
 	    function SelectCellEditor() {
 	        var _this = _super.call(this, '<div class="ag-cell-edit-input"><select class="ag-cell-edit-input"/></div>') || this;
-	        _this.eSelect = _this.getGui().querySelector('select');
+	        _this.eSelect = _this.getHtmlElement().querySelector('select');
 	        return _this;
 	    }
 	    SelectCellEditor.prototype.init = function (params) {
@@ -22481,7 +22503,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.eSelect.focus();
 	    };
 	    SelectCellEditor.prototype.getValue = function () {
-	        console.log('value is ' + this.eSelect.value);
 	        return this.eSelect.value;
 	    };
 	    __decorate([
@@ -22503,7 +22524,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22581,7 +22602,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22617,7 +22638,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22653,7 +22674,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22687,7 +22708,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (utils_1.Utils.exists(params.value)) {
 	            this.textarea.value = params.value.toString();
 	        }
-	        this.getGui().querySelector('.ag-large-textarea').appendChild(this.textarea);
+	        this.getHtmlElement().querySelector('.ag-large-textarea').appendChild(this.textarea);
 	        this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
 	    };
 	    LargeTextCellEditor.prototype.onKeyDown = function (event) {
@@ -22727,7 +22748,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22814,7 +22835,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -22853,11 +22874,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var refreshCountCopy = this.refreshCount;
 	        // if old animation, remove it
 	        if (this.ePrevious) {
-	            this.getGui().removeChild(this.ePrevious);
+	            this.getHtmlElement().removeChild(this.ePrevious);
 	        }
 	        this.ePrevious = utils_1.Utils.loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
 	        this.ePrevious.innerHTML = this.eCurrent.innerHTML;
-	        this.getGui().insertBefore(this.ePrevious, this.eCurrent);
+	        this.getHtmlElement().insertBefore(this.ePrevious, this.eCurrent);
 	        // having timeout of 0 allows use to skip to the next css turn,
 	        // so we know the previous css classes have been applied. so the
 	        // complex set of setTimeout below creates the animation
@@ -22871,7 +22892,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (refreshCountCopy !== _this.refreshCount) {
 	                return;
 	            }
-	            _this.getGui().removeChild(_this.ePrevious);
+	            _this.getHtmlElement().removeChild(_this.ePrevious);
 	            _this.ePrevious = null;
 	        }, 3000);
 	    };
@@ -22910,7 +22931,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23019,7 +23040,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23065,23 +23086,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    GroupCellRenderer.prototype.init = function (params) {
 	        this.params = params;
-	        this.isEmbeddedRowMismatch();
 	        var embeddedRowMismatch = this.isEmbeddedRowMismatch();
-	        //This allows for empty strings to appear as groups since
-	        //it will only return for null or undefined.
+	        // This allows for empty strings to appear as groups since
+	        // it will only return for null or undefined.
 	        var cellIsEmpty = params.value == null;
 	        this.cellIsBlank = embeddedRowMismatch || cellIsEmpty;
 	        if (this.cellIsBlank) {
 	            return;
 	        }
 	        this.setupDragOpenParents();
-	    };
-	    GroupCellRenderer.prototype.afterGuiAttached = function (params) {
-	        if (this.cellIsBlank) {
-	            return;
-	        }
-	        var eGridCell = params.eGridCell;
-	        this.addExpandAndContract(eGridCell);
+	        this.addExpandAndContract();
 	        this.addCheckboxIfNeeded();
 	        this.addValueElement();
 	        this.addPadding();
@@ -23139,11 +23153,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        if (this.gridOptionsWrapper.isEnableRtl()) {
 	            // if doing rtl, padding is on the right
-	            this.getGui().style.paddingRight = paddingPx + 'px';
+	            this.getHtmlElement().style.paddingRight = paddingPx + 'px';
 	        }
 	        else {
 	            // otherwise it is on the left
-	            this.getGui().style.paddingLeft = paddingPx + 'px';
+	            this.getHtmlElement().style.paddingLeft = paddingPx + 'px';
 	        }
 	    };
 	    GroupCellRenderer.prototype.addPadding = function () {
@@ -23248,12 +23262,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var cbSelectionComponent_1 = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
 	            this.context.wireBean(cbSelectionComponent_1);
 	            cbSelectionComponent_1.init({ rowNode: rowNode });
-	            this.eCheckbox.appendChild(cbSelectionComponent_1.getGui());
+	            this.eCheckbox.appendChild(cbSelectionComponent_1.getHtmlElement());
 	            this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
 	        }
 	    };
-	    GroupCellRenderer.prototype.addExpandAndContract = function (eGroupCell) {
+	    GroupCellRenderer.prototype.addExpandAndContract = function () {
 	        var params = this.params;
+	        var eGroupCell = params.eGridCell;
 	        var eExpandedIcon = utils_1.Utils.createIconNoSpan('groupExpanded', this.gridOptionsWrapper, null);
 	        var eContractedIcon = utils_1.Utils.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
 	        this.eExpanded.appendChild(eExpandedIcon);
@@ -23261,14 +23276,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var expandOrContractListener = this.onExpandOrContract.bind(this);
 	        this.addDestroyableEventListener(this.eExpanded, 'click', expandOrContractListener);
 	        this.addDestroyableEventListener(this.eContracted, 'click', expandOrContractListener);
-	        // if editing groups, then double click is to start editing
-	        if (!this.gridOptionsWrapper.isEnableGroupEdit()) {
-	            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
-	        }
 	        // expand / contract as the user hits enter
 	        this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
 	        this.addDestroyableEventListener(params.node, rowNode_1.RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
 	        this.showExpandAndContractIcons();
+	        // if editing groups, then double click is to start editing
+	        if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
+	            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
+	        }
 	    };
 	    GroupCellRenderer.prototype.onKeyDown = function (event) {
 	        if (utils_1.Utils.isKeyPressed(event, constants_1.Constants.KEY_ENTER)) {
@@ -23323,11 +23338,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.params.api.redrawRows({ rowNodes: [rowNode] });
 	        }
 	    };
-	    GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
+	    GroupCellRenderer.prototype.isExpandable = function () {
 	        var rowNode = this.params.node;
 	        var reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
-	        var expandable = this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
-	        if (expandable) {
+	        return this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
+	    };
+	    GroupCellRenderer.prototype.showExpandAndContractIcons = function () {
+	        var rowNode = this.params.node;
+	        if (this.isExpandable()) {
 	            // if expandable, show one based on expand state.
 	            // if we were dragged down, means our parent is always expanded
 	            var expanded = this.draggedFromHideOpenParents ? true : rowNode.expanded;
@@ -23409,7 +23427,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23529,7 +23547,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23615,7 +23633,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23708,7 +23726,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23811,7 +23829,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -23859,27 +23877,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            cellRenderer: {
 	                mandatoryMethodList: ['refresh'],
-	                optionalMethodList: [],
+	                optionalMethodList: ['afterGuiAttached'],
 	                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
 	            },
 	            innerRenderer: {
 	                mandatoryMethodList: [],
-	                optionalMethodList: [],
+	                optionalMethodList: ['afterGuiAttached'],
 	                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
 	            },
 	            fullWidthCellRenderer: {
 	                mandatoryMethodList: [],
-	                optionalMethodList: [],
+	                optionalMethodList: ['afterGuiAttached'],
 	                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
 	            },
 	            pinnedRowCellRenderer: {
 	                mandatoryMethodList: [],
-	                optionalMethodList: [],
+	                optionalMethodList: ['afterGuiAttached'],
 	                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
 	            },
 	            groupRowInnerRenderer: {
 	                mandatoryMethodList: [],
-	                optionalMethodList: [],
+	                optionalMethodList: ['afterGuiAttached'],
 	                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
 	            }
 	        };
@@ -23911,7 +23929,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -24121,7 +24139,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -24368,7 +24386,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -24508,7 +24526,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -24620,14 +24638,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var headerRowComp = new headerRowComp_1.HeaderRowComp(dept, type, this.pinned, this.eRoot, this.dropTarget);
 	            this.context.wireBean(headerRowComp);
 	            this.headerRowComps.push(headerRowComp);
-	            this.eContainer.appendChild(headerRowComp.getGui());
+	            this.eContainer.appendChild(headerRowComp.getHtmlElement());
 	        }
 	        var includeFloatingFilterRow = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
 	        if (includeFloatingFilterRow) {
 	            var headerRowComp = new headerRowComp_1.HeaderRowComp(rowCount, headerRowComp_1.HeaderRowType.FLOATING_FILTER, this.pinned, this.eRoot, this.dropTarget);
 	            this.context.wireBean(headerRowComp);
 	            this.headerRowComps.push(headerRowComp);
-	            this.eContainer.appendChild(headerRowComp.getGui());
+	            this.eContainer.appendChild(headerRowComp.getHtmlElement());
 	        }
 	    };
 	    __decorate([
@@ -24679,7 +24697,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -24774,15 +24792,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.dragging = true;
 	        this.dragSource = dragSource;
 	        this.eventLastTime = mouseEvent;
-	        this.dragSource.dragItem.forEach(function (column) { return column.setMoving(true); });
-	        this.dragItem = this.dragSource.dragItem;
+	        this.dragItem = this.dragSource.dragItemCallback();
+	        this.dragItem.columns.forEach(function (column) { return column.setMoving(true); });
 	        this.lastDropTarget = this.dragSource.dragSourceDropTarget;
 	        this.createGhost();
 	    };
 	    DragAndDropService.prototype.onDragStop = function (mouseEvent) {
 	        this.eventLastTime = null;
 	        this.dragging = false;
-	        this.dragItem.forEach(function (column) { return column.setMoving(false); });
+	        this.dragItem.columns.forEach(function (column) { return column.setMoving(false); });
 	        if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
 	            var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
 	            this.lastDropTarget.onDragStop(draggingEvent);
@@ -24891,7 +24909,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            vDirection: vDirection,
 	            hDirection: hDirection,
 	            dragSource: this.dragSource,
-	            fromNudge: fromNudge
+	            fromNudge: fromNudge,
+	            dragItem: this.dragItem
 	        };
 	        return dropTargetEvent;
 	    };
@@ -25057,7 +25076,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25113,7 +25132,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25185,7 +25204,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _this = this;
 	        idsToDestroy.forEach(function (id) {
 	            var child = _this.headerComps[id];
-	            _this.getGui().removeChild(utils_1.Utils.assertHtmlElement(child.getGui()));
+	            _this.getHtmlElement().removeChild(utils_1.Utils.assertHtmlElement(child.getGui()));
 	            if (child.destroy) {
 	                child.destroy();
 	            }
@@ -25221,8 +25240,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var rowHeight = 0;
 	        for (var i = 0; i < this.dept; i++)
 	            rowHeight += sizes[i];
-	        this.getGui().style.top = rowHeight + 'px';
-	        this.getGui().style.height = sizes[this.dept] + 'px';
+	        this.getHtmlElement().style.top = rowHeight + 'px';
+	        this.getHtmlElement().style.height = sizes[this.dept] + 'px';
 	    };
 	    //noinspection JSUnusedLocalSymbols
 	    HeaderRowComp.prototype.init = function () {
@@ -25244,7 +25263,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    HeaderRowComp.prototype.setWidth = function () {
 	        var mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
-	        this.getGui().style.width = mainRowWidth;
+	        this.getHtmlElement().style.width = mainRowWidth;
 	    };
 	    HeaderRowComp.prototype.onGridColumnsChanged = function () {
 	        this.removeAndDestroyAllChildComponents();
@@ -25274,7 +25293,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return;
 	            }
 	            var idOfChild = child.getUniqueId();
-	            var eParentContainer = _this.getGui();
+	            var eParentContainer = _this.getHtmlElement();
 	            // if we already have this cell rendered, do nothing
 	            var colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
 	            var headerComp;
@@ -25432,7 +25451,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25488,7 +25507,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    RenderedHeaderCell.prototype.init = function () {
 	        var eGui = this.headerTemplateLoader.createHeaderElement(this.column);
-	        this.setGui(eGui);
+	        this.setHtmlElementNoHydrate(eGui);
 	        this.createScope();
 	        this.addAttributes();
 	        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), eGui, this.gridOptionsWrapper, this.column, null);
@@ -25514,7 +25533,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var colDef = this.column.getColDef();
 	        // add tooltip if exists
 	        if (colDef.headerTooltip) {
-	            this.getGui().title = colDef.headerTooltip;
+	            this.getHtmlElement().title = colDef.headerTooltip;
 	        }
 	    };
 	    RenderedHeaderCell.prototype.setupText = function () {
@@ -25550,7 +25569,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    RenderedHeaderCell.prototype.onFilterChanged = function () {
 	        var filterPresent = this.column.isFilterActive();
-	        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
+	        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-filtered', filterPresent);
 	        utils_1.Utils.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !filterPresent);
 	    };
 	    RenderedHeaderCell.prototype.setupWidth = function () {
@@ -25558,7 +25577,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.onColumnWidthChanged();
 	    };
 	    RenderedHeaderCell.prototype.onColumnWidthChanged = function () {
-	        this.getGui().style.width = this.column.getActualWidth() + 'px';
+	        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
 	    };
 	    RenderedHeaderCell.prototype.createScope = function () {
 	        var _this = this;
@@ -25573,7 +25592,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    RenderedHeaderCell.prototype.addAttributes = function () {
-	        this.getGui().setAttribute("colId", this.column.getColId());
+	        this.getHtmlElement().setAttribute("colId", this.column.getColId());
 	    };
 	    RenderedHeaderCell.prototype.setupMenu = function () {
 	        var _this = this;
@@ -25613,10 +25632,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // this is what makes the header go dark when it is been moved (gives impression to
 	        // user that the column was picked up).
 	        if (this.column.isMoving()) {
-	            utils_1.Utils.addCssClass(this.getGui(), 'ag-header-cell-moving');
+	            utils_1.Utils.addCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
 	        }
 	        else {
-	            utils_1.Utils.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+	            utils_1.Utils.removeCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
 	        }
 	    };
 	    RenderedHeaderCell.prototype.setupMove = function (eHeaderCellLabel) {
@@ -25631,7 +25650,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dragSource_1 = {
 	                type: dragAndDropService_1.DragSourceType.HeaderCell,
 	                eElement: eHeaderCellLabel,
-	                dragItem: [this.column],
+	                dragItemCallback: function () { return _this.createDragItem(); },
 	                dragItemName: this.displayName,
 	                dragSourceDropTarget: this.dragSourceDropTarget
 	            };
@@ -25639,12 +25658,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });
 	        }
 	    };
+	    RenderedHeaderCell.prototype.createDragItem = function () {
+	        var visibleState = {};
+	        visibleState[this.column.getId()] = this.column.isVisible();
+	        return {
+	            columns: [this.column],
+	            visibleState: visibleState
+	        };
+	    };
 	    RenderedHeaderCell.prototype.setupTap = function () {
 	        var _this = this;
 	        if (this.gridOptionsWrapper.isSuppressTouch()) {
 	            return;
 	        }
-	        var touchListener = new touchListener_1.TouchListener(this.getGui());
+	        var touchListener = new touchListener_1.TouchListener(this.getHtmlElement());
 	        var tapListener = function (event) {
 	            _this.sortController.progressSort(_this.column, false);
 	        };
@@ -25717,15 +25744,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    RenderedHeaderCell.prototype.setupSort = function (eHeaderCellLabel) {
 	        var _this = this;
 	        var enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
-	        var eGui = this.getGui();
+	        var element = this.getHtmlElement();
 	        if (!enableSorting) {
-	            utils_1.Utils.removeFromParent(eGui.querySelector('#agSortAsc'));
-	            utils_1.Utils.removeFromParent(eGui.querySelector('#agSortDesc'));
-	            utils_1.Utils.removeFromParent(eGui.querySelector('#agNoSort'));
+	            utils_1.Utils.removeFromParent(element.querySelector('#agSortAsc'));
+	            utils_1.Utils.removeFromParent(element.querySelector('#agSortDesc'));
+	            utils_1.Utils.removeFromParent(element.querySelector('#agNoSort'));
 	            return;
 	        }
 	        // add sortable class for styling
-	        utils_1.Utils.addCssClass(eGui, 'ag-header-cell-sortable');
+	        utils_1.Utils.addCssClass(element, 'ag-header-cell-sortable');
 	        // add the event on the header, so when clicked, we do sorting
 	        if (eHeaderCellLabel) {
 	            eHeaderCellLabel.addEventListener("click", function (event) {
@@ -25740,9 +25767,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.onSortChanged();
 	    };
 	    RenderedHeaderCell.prototype.onSortChanged = function () {
-	        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.column.isSortAscending());
-	        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.column.isSortDescending());
-	        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.column.isSortNone());
+	        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-asc', this.column.isSortAscending());
+	        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-desc', this.column.isSortDescending());
+	        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-none', this.column.isSortNone());
 	        if (this.eSortAsc) {
 	            utils_1.Utils.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.column.isSortAscending());
 	        }
@@ -25849,7 +25876,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -25953,7 +25980,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -26068,7 +26095,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -26132,7 +26159,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -26207,11 +26234,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.addDestroyableEventListener(this.column, column_1.Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
 	        this.onFilterChanged();
 	        this.addFeature(this.context, new selectAllFeature_1.SelectAllFeature(this.cbSelectAll, this.column));
-	        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans);
+	        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getHtmlElement(), this.beans);
 	        setLeftFeature.init();
 	        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
 	        this.addAttributes();
-	        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+	        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getHtmlElement(), this.gridOptionsWrapper, this.column, null);
 	    };
 	    HeaderWrapperComp.prototype.addColumnHoverListener = function () {
 	        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
@@ -26219,17 +26246,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    HeaderWrapperComp.prototype.onColumnHover = function () {
 	        var isHovered = this.columnHoverService.isHovered(this.column);
-	        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
+	        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-column-hover', isHovered);
 	    };
 	    HeaderWrapperComp.prototype.setupSortableClass = function (enableSorting) {
 	        if (enableSorting) {
-	            var eGui = this.getGui();
-	            utils_1.Utils.addCssClass(eGui, 'ag-header-cell-sortable');
+	            var element = this.getHtmlElement();
+	            utils_1.Utils.addCssClass(element, 'ag-header-cell-sortable');
 	        }
 	    };
 	    HeaderWrapperComp.prototype.onFilterChanged = function () {
 	        var filterPresent = this.column.isFilterActive();
-	        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
+	        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-filtered', filterPresent);
 	    };
 	    HeaderWrapperComp.prototype.appendHeaderComp = function (displayName, enableSorting, enableMenu) {
 	        var _this = this;
@@ -26260,10 +26287,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // this is what makes the header go dark when it is been moved (gives impression to
 	        // user that the column was picked up).
 	        if (this.column.isMoving()) {
-	            utils_1.Utils.addCssClass(this.getGui(), 'ag-header-cell-moving');
+	            utils_1.Utils.addCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
 	        }
 	        else {
-	            utils_1.Utils.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+	            utils_1.Utils.removeCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
 	        }
 	    };
 	    HeaderWrapperComp.prototype.setupMove = function (eHeaderCellLabel, displayName) {
@@ -26278,13 +26305,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var dragSource_1 = {
 	                type: dragAndDropService_1.DragSourceType.HeaderCell,
 	                eElement: eHeaderCellLabel,
-	                dragItem: [this.column],
+	                dragItemCallback: function () { return _this.createDragItem(); },
 	                dragItemName: displayName,
 	                dragSourceDropTarget: this.dragSourceDropTarget
 	            };
 	            this.dragAndDropService.addDragSource(dragSource_1, true);
 	            this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });
 	        }
+	    };
+	    HeaderWrapperComp.prototype.createDragItem = function () {
+	        var visibleState = {};
+	        visibleState[this.column.getId()] = this.column.isVisible();
+	        return {
+	            columns: [this.column],
+	            visibleState: visibleState
+	        };
 	    };
 	    HeaderWrapperComp.prototype.setupResize = function () {
 	        var _this = this;
@@ -26324,7 +26359,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var colDef = this.column.getColDef();
 	        // add tooltip if exists
 	        if (colDef.headerTooltip) {
-	            this.getGui().title = colDef.headerTooltip;
+	            this.getHtmlElement().title = colDef.headerTooltip;
 	        }
 	    };
 	    HeaderWrapperComp.prototype.setupMovingCss = function () {
@@ -26332,7 +26367,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.onColumnMovingChanged();
 	    };
 	    HeaderWrapperComp.prototype.addAttributes = function () {
-	        this.getGui().setAttribute("col-id", this.column.getColId());
+	        this.getHtmlElement().setAttribute("col-id", this.column.getColId());
 	    };
 	    HeaderWrapperComp.prototype.setupWidth = function () {
 	        this.addDestroyableEventListener(this.column, column_1.Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
@@ -26346,7 +26381,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
 	    };
 	    HeaderWrapperComp.prototype.onColumnWidthChanged = function () {
-	        this.getGui().style.width = this.column.getActualWidth() + 'px';
+	        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
 	    };
 	    // optionally inverts the drag, depending on pinned and RTL
 	    // note - this method is duplicated in RenderedHeaderGroupCell - should refactor out?
@@ -26448,7 +26483,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -26628,7 +26663,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -26848,7 +26883,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -26900,7 +26935,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return _this;
 	    }
 	    HeaderGroupWrapperComp.prototype.postConstruct = function () {
-	        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+	        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getHtmlElement(), this.gridOptionsWrapper, null, this.columnGroup);
 	        var displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 	        var headerComponent = this.appendHeaderGroupComp(displayName);
 	        this.setupResize();
@@ -26908,12 +26943,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.setupMove(utils_1.Utils.ensureElement(headerComponent.getGui()), displayName);
 	        this.setupWidth();
 	        this.addAttributes();
-	        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
+	        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getHtmlElement(), this.beans);
 	        setLeftFeature.init();
 	        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
 	    };
 	    HeaderGroupWrapperComp.prototype.addAttributes = function () {
-	        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
+	        this.getHtmlElement().setAttribute("col-id", this.columnGroup.getUniqueId());
 	    };
 	    HeaderGroupWrapperComp.prototype.appendHeaderGroupComp = function (displayName) {
 	        var _this = this;
@@ -26921,7 +26956,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            displayName: displayName,
 	            columnGroup: this.columnGroup,
 	            setExpanded: function (expanded) {
-	                _this.columnController.setColumnGroupOpened(_this.columnGroup, expanded);
+	                _this.columnController.setColumnGroupOpened(_this.columnGroup.getOriginalColumnGroup(), expanded);
 	            },
 	            api: this.gridApi,
 	            columnApi: this.columnApi,
@@ -26956,17 +26991,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	                eElement: eHeaderGroup,
 	                dragItemName: displayName,
 	                // we add in the original group leaf columns, so we move both visible and non-visible items
-	                dragItem: this.getAllColumnsInThisGroup(),
+	                dragItemCallback: this.getDragItemForGroup.bind(this),
 	                dragSourceDropTarget: this.dragSourceDropTarget
 	            };
 	            this.dragAndDropService.addDragSource(dragSource_1, true);
 	            this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });
 	        }
 	    };
-	    // when moving the columns, we want to move all the columns in this group in one go, and in the order they
-	    // are currently in the screen.
-	    HeaderGroupWrapperComp.prototype.getAllColumnsInThisGroup = function () {
+	    // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
+	    // and in the order they are currently in the screen.
+	    HeaderGroupWrapperComp.prototype.getDragItemForGroup = function () {
 	        var allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+	        // capture visible state, used when reentering grid to dictate which columns should be visible
+	        var visibleState = {};
+	        allColumnsOriginalOrder.forEach(function (column) { return visibleState[column.getId()] = column.isVisible(); });
 	        var allColumnsCurrentOrder = [];
 	        this.columnController.getAllDisplayedColumns().forEach(function (column) {
 	            if (allColumnsOriginalOrder.indexOf(column) >= 0) {
@@ -26976,7 +27014,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	        // we are left with non-visible columns, stick these in at the end
 	        allColumnsOriginalOrder.forEach(function (column) { return allColumnsCurrentOrder.push(column); });
-	        return allColumnsCurrentOrder;
+	        // create and return dragItem
+	        return {
+	            columns: allColumnsCurrentOrder,
+	            visibleState: visibleState
+	        };
 	    };
 	    HeaderGroupWrapperComp.prototype.isSuppressMoving = function () {
 	        // if any child is fixed, then don't allow moving
@@ -27026,7 +27068,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.childColumnsDestroyFuncs = [];
 	    };
 	    HeaderGroupWrapperComp.prototype.onWidthChanged = function () {
-	        this.getGui().style.width = this.columnGroup.getActualWidth() + 'px';
+	        this.getHtmlElement().style.width = this.columnGroup.getActualWidth() + 'px';
 	    };
 	    HeaderGroupWrapperComp.prototype.setupResize = function () {
 	        var _this = this;
@@ -27188,7 +27230,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27309,7 +27351,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27348,18 +27390,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    MoveColumnController.prototype.onDragEnter = function (draggingEvent) {
 	        // we do dummy drag, so make sure column appears in the right location when first placed
-	        var columns = draggingEvent.dragSource.dragItem;
+	        var columns = draggingEvent.dragItem.columns;
 	        var dragCameFromToolPanel = draggingEvent.dragSource.type === dragAndDropService_1.DragSourceType.ToolPanel;
 	        if (dragCameFromToolPanel) {
 	            // the if statement doesn't work if drag leaves grid, then enters again
 	            this.columnController.setColumnsVisible(columns, true);
 	        }
 	        else {
-	            // ensure that it's not all hidden cols (which happens if we drag outside of the grid body)
-	            var allColumnsHidden = columns.every(function (col) { return !col.isVisible(); });
-	            if (allColumnsHidden) {
-	                this.columnController.setColumnsVisible(columns, true);
-	            }
+	            // restore previous state of visible columns upon re-entering
+	            var visibleState_1 = draggingEvent.dragItem.visibleState;
+	            var visibleColumns = columns.filter(function (column) { return visibleState_1[column.getId()]; });
+	            this.columnController.setColumnsVisible(visibleColumns, true);
 	        }
 	        this.columnController.setColumnsPinned(columns, this.pinned);
 	        this.onDragging(draggingEvent, true);
@@ -27367,7 +27408,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    MoveColumnController.prototype.onDragLeave = function (draggingEvent) {
 	        var hideColumnOnExit = !this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns() && !draggingEvent.fromNudge;
 	        if (hideColumnOnExit) {
-	            var columns = draggingEvent.dragSource.dragItem;
+	            var dragItem = draggingEvent.dragSource.dragItemCallback();
+	            var columns = dragItem.columns;
 	            this.columnController.setColumnsVisible(columns, false);
 	        }
 	        this.ensureIntervalCleared();
@@ -27388,14 +27430,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            x += this.gridPanel.getBodyViewportScrollLeft();
 	        }
 	        return x;
-	    };
-	    MoveColumnController.prototype.workOutNewIndex_old = function (displayedColumns, movingColumns, allColumns, dragColumn, hDirection, xAdjustedForScroll) {
-	        // if (hDirection === HDirection.Left) {
-	        //     return this.getNewIndexForColMovingLeft(displayedColumns, movingColumns, allColumns, xAdjustedForScroll);
-	        // } else {
-	        //     return this.getNewIndexForColMovingRight(displayedColumns, movingColumns, allColumns, xAdjustedForScroll);
-	        // }
-	        return null;
 	    };
 	    MoveColumnController.prototype.checkCenterForScrolling = function (xAdjustedForScroll) {
 	        if (this.centerContainer) {
@@ -27434,8 +27468,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.checkCenterForScrolling(xNormalised);
 	        }
 	        var hDirectionNormalised = this.normaliseDirection(draggingEvent.hDirection);
-	        var columnsToMove = draggingEvent.dragSource.dragItem;
-	        this.attemptMoveColumns(columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
+	        var dragSourceType = draggingEvent.dragSource.type;
+	        var columnsToMove = draggingEvent.dragSource.dragItemCallback().columns;
+	        this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
 	    };
 	    MoveColumnController.prototype.normaliseDirection = function (hDirection) {
 	        if (this.gridOptionsWrapper.isEnableRtl()) {
@@ -27462,7 +27497,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var gapsExist = spread !== indexes.length - 1;
 	        return gapsExist ? null : firstIndex;
 	    };
-	    MoveColumnController.prototype.attemptMoveColumns = function (allMovingColumns, hDirection, xAdjusted, fromEnter) {
+	    MoveColumnController.prototype.attemptMoveColumns = function (dragSourceType, allMovingColumns, hDirection, xAdjusted, fromEnter) {
 	        var draggingLeft = hDirection === dragAndDropService_1.HDirection.Left;
 	        var draggingRight = hDirection === dragAndDropService_1.HDirection.Right;
 	        var validMoves = this.calculateValidMoves(allMovingColumns, draggingRight, xAdjusted);
@@ -27481,6 +27516,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // place the column to the RHS even if the mouse is moving left and the column is already on
 	            // the LHS. otherwise we stick to the rule described above.
 	            var constrainDirection = oldIndex !== null && !fromEnter;
+	            // don't consider 'fromEnter' when dragging header cells, otherwise group can jump to opposite direction of drag
+	            if (dragSourceType == dragAndDropService_1.DragSourceType.HeaderCell) {
+	                constrainDirection = oldIndex !== null;
+	            }
 	            if (constrainDirection) {
 	                // only allow left drag if this column is moving left
 	                if (draggingLeft && newIndex >= oldIndex) {
@@ -27604,7 +27643,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.failedMoveAttempts++;
 	            this.dragAndDropService.setGhostIcon(dragAndDropService_1.DragAndDropService.ICON_PINNED);
 	            if (this.failedMoveAttempts > 7) {
-	                var columns = this.lastDraggingEvent.dragSource.dragItem;
+	                var columns = this.lastDraggingEvent.dragItem.columns;
 	                var pinType = this.needToMoveLeft ? column_1.Column.PINNED_LEFT : column_1.Column.PINNED_RIGHT;
 	                this.columnController.setColumnsPinned(columns, pinType);
 	                this.dragAndDropService.nudge();
@@ -27648,7 +27687,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27682,7 +27721,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
 	            return;
 	        }
-	        var dragColumns = draggingEvent.dragSource.dragItem;
+	        var dragColumns = draggingEvent.dragItem.columns;
 	        dragColumns.forEach(function (column) {
 	            // we don't allow adding secondary columns
 	            if (!column.isPrimary()) {
@@ -27755,7 +27794,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27800,7 +27839,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27922,7 +27961,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -27972,7 +28011,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -28075,7 +28114,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -28095,7 +28134,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -28149,7 +28188,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -28196,7 +28235,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -28431,7 +28470,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -28538,7 +28577,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -28590,7 +28629,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -28679,7 +28718,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -28731,7 +28770,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -28893,7 +28932,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -28967,6 +29006,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup;
 	            if (thisRowShouldBeRendered) {
 	                this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
+	            }
+	            // if we are pivoting, we never map below the leaf group
+	            if (skipLeafNodes && rowNode.leafGroup) {
+	                continue;
 	            }
 	            if (rowNode.group) {
 	                // we traverse the group if it is expended, however we always traverse if the parent node
@@ -29077,7 +29120,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -29433,7 +29476,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -29615,7 +29658,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -29749,7 +29792,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -29956,7 +29999,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -30225,7 +30268,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -30336,7 +30379,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -30928,7 +30971,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31208,7 +31251,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31267,7 +31310,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31315,7 +31358,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31389,7 +31432,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31450,7 +31493,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31550,7 +31593,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31672,7 +31715,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31777,7 +31820,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31823,7 +31866,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31865,7 +31908,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -31901,7 +31944,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
-	 * @version v13.0.1
+	 * @version v13.0.0
 	 * @link http://www.ag-grid.com/
 	 * @license MIT
 	 */
@@ -32188,6 +32231,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var allowRowGroup = this.column.isAllowRowGroup();
 	        var isPrimary = this.column.isPrimary();
 	        var pivotModeOn = this.columnController.isPivotMode();
+	        var isInMemoryRowModel = this.rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_IN_MEMORY;
 	        result.push('pinSubMenu');
 	        var allowValueAgg = 
 	        // if primary, then only allow aggValue if grouping and it's a value columns
@@ -32211,11 +32255,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
 	        result.push('resetColumns');
 	        result.push('toolPanel');
-	        // only add grouping expand/collapse if grouping
+	        // only add grouping expand/collapse if grouping in the InMemoryRowModel
 	        // if pivoting, we only have expandable groups if grouping by 2 or more columns
 	        // as the lowest level group is not expandable while pivoting.
 	        // if not pivoting, then any active row group can be expanded.
-	        var allowExpandAndContract = pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0;
+	        var allowExpandAndContract = isInMemoryRowModel && (pivotModeOn ? rowGroupCount > 1 : rowGroupCount > 0);
 	        if (allowExpandAndContract) {
 	            result.push('expandAll');
 	            result.push('contractAll');
@@ -32231,7 +32275,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.mainMenuList.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
 	        this.tabItemGeneral = {
 	            title: ag_grid_1.Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
-	            body: this.mainMenuList.getGui(),
+	            body: this.mainMenuList.getHtmlElement(),
 	            name: EnterpriseMenu.TAB_GENERAL
 	        };
 	        return this.tabItemGeneral;
@@ -32258,7 +32302,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        ag_grid_1.Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
 	        this.columnSelectPanel = new columnSelectPanel_1.ColumnSelectPanel(false);
 	        this.context.wireBean(this.columnSelectPanel);
-	        eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
+	        eWrapperDiv.appendChild(this.columnSelectPanel.getHtmlElement());
 	        this.tabItemColumns = {
 	            title: ag_grid_1.Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
 	            body: eWrapperDiv,
@@ -32317,6 +32361,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        ag_grid_1.Autowired('menuItemMapper'),
 	        __metadata("design:type", menuItemMapper_1.MenuItemMapper)
 	    ], EnterpriseMenu.prototype, "menuItemMapper", void 0);
+	    __decorate([
+	        ag_grid_1.Autowired('rowModel'),
+	        __metadata("design:type", Object)
+	    ], EnterpriseMenu.prototype, "rowModel", void 0);
 	    __decorate([
 	        ag_grid_1.PostConstruct,
 	        __metadata("design:type", Function),
@@ -32381,7 +32429,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.destroyAllRenderedElements();
 	    };
 	    ColumnSelectPanel.prototype.destroyAllRenderedElements = function () {
-	        main_1.Utils.removeAllChildren(this.getGui());
+	        main_1.Utils.removeAllChildren(this.getHtmlElement());
 	        if (this.renderedItems) {
 	            main_1.Utils.iterateObject(this.renderedItems, function (key, renderedItem) { return renderedItem.destroy(); });
 	        }
@@ -32396,7 +32444,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!columnGroup.isPadding()) {
 	            var renderedGroup = new renderedGroup_1.RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
 	            this.context.wireBean(renderedGroup);
-	            this.appendChild(renderedGroup.getGui());
+	            this.appendChild(renderedGroup.getHtmlElement());
 	            // we want to indent on the gui for the children
 	            newDept = dept + 1;
 	            this.renderedItems[columnGroup.getId()] = renderedGroup;
@@ -32413,7 +32461,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        var renderedColumn = new renderedColumn_1.RenderedColumn(column, dept, this.allowDragging);
 	        this.context.wireBean(renderedColumn);
-	        this.appendChild(renderedColumn.getGui());
+	        this.appendChild(renderedColumn.getHtmlElement());
 	        this.renderedItems[column.getId()] = renderedColumn;
 	    };
 	    ColumnSelectPanel.prototype.recursivelyRenderComponents = function (tree, dept) {
@@ -32540,7 +32588,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        this.onColumnStateChanged();
 	        this.addVisibilityListenersToAllChildren();
-	        main_1.CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+	        main_1.CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getHtmlElement(), this.gridOptionsWrapper, null, this.columnGroup);
 	    };
 	    RenderedGroup.prototype.addVisibilityListenersToAllChildren = function () {
 	        var _this = this;
@@ -32555,12 +32603,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _this = this;
 	        var dragSource = {
 	            type: main_1.DragSourceType.ToolPanel,
-	            eElement: this.getGui(),
+	            eElement: this.getHtmlElement(),
 	            dragItemName: this.displayName,
-	            dragItem: this.columnGroup.getLeafColumns()
+	            dragItemCallback: function () { return _this.createDragItem(); }
 	        };
 	        this.dragAndDropService.addDragSource(dragSource, true);
 	        this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
+	    };
+	    RenderedGroup.prototype.createDragItem = function () {
+	        var visibleState = {};
+	        this.columnGroup.getLeafColumns().forEach(function (col) {
+	            visibleState[col.getId()] = col.isVisible();
+	        });
+	        return {
+	            columns: this.columnGroup.getLeafColumns(),
+	            visibleState: visibleState
+	        };
 	    };
 	    RenderedGroup.prototype.setupExpandContract = function () {
 	        this.eGroupClosedIcon = this.queryForHtmlElement('#eGroupClosedIcon');
@@ -32806,10 +32864,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onChange.bind(this));
 	        this.addDestroyableEventListener(this.eText, 'click', this.onClick.bind(this));
 	        this.addTap();
-	        main_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+	        main_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getHtmlElement(), this.gridOptionsWrapper, this.column, null);
 	    };
 	    RenderedColumn.prototype.addTap = function () {
-	        var touchListener = new main_1.TouchListener(this.getGui());
+	        var touchListener = new main_1.TouchListener(this.getHtmlElement());
 	        this.addDestroyableEventListener(touchListener, main_1.TouchListener.EVENT_TAP, this.onClick.bind(this));
 	        this.addDestroyFunc(touchListener.destroy.bind(touchListener));
 	    };
@@ -32956,12 +33014,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _this = this;
 	        var dragSource = {
 	            type: main_1.DragSourceType.ToolPanel,
-	            eElement: this.getGui(),
+	            eElement: this.getHtmlElement(),
 	            dragItemName: this.displayName,
-	            dragItem: [this.column]
+	            dragItemCallback: function () { return _this.createDragItem(); }
 	        };
 	        this.dragAndDropService.addDragSource(dragSource, true);
 	        this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
+	    };
+	    RenderedColumn.prototype.createDragItem = function () {
+	        var visibleState = {};
+	        visibleState[this.column.getId()] = this.column.isVisible();
+	        return {
+	            columns: [this.column],
+	            visibleState: visibleState
+	        };
 	    };
 	    RenderedColumn.prototype.onColumnStateChanged = function () {
 	        this.processingColumnStateChange = true;
@@ -33107,7 +33173,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _this = this;
 	        var cMenuItem = new menuItemComponent_1.MenuItemComponent(menuItemDef);
 	        this.context.wireBean(cMenuItem);
-	        this.getGui().appendChild(cMenuItem.getGui());
+	        this.getHtmlElement().appendChild(cMenuItem.getHtmlElement());
 	        this.addDestroyFunc(function () { return cMenuItem.destroy(); });
 	        cMenuItem.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, function (event) {
 	            if (menuItemDef.subMenu) {
@@ -33130,14 +33196,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.removeActiveItem();
 	        this.activeMenuItemParams = menuItemParams;
 	        this.activeMenuItem = menuItem;
-	        ag_grid_1.Utils.addCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
+	        ag_grid_1.Utils.addCssClass(this.activeMenuItem.getHtmlElement(), 'ag-menu-option-active');
 	        if (menuItemParams.subMenu) {
 	            this.addHoverForChildPopup(menuItemParams, menuItem);
 	        }
 	    };
 	    MenuList.prototype.removeActiveItem = function () {
 	        if (this.activeMenuItem) {
-	            ag_grid_1.Utils.removeCssClass(this.activeMenuItem.getGui(), 'ag-menu-option-active');
+	            ag_grid_1.Utils.removeCssClass(this.activeMenuItem.getHtmlElement(), 'ag-menu-option-active');
 	            this.activeMenuItem = null;
 	            this.activeMenuItemParams = null;
 	        }
@@ -33154,7 +33220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }, 500);
 	    };
 	    MenuList.prototype.addSeparator = function () {
-	        this.getGui().appendChild(ag_grid_1.Utils.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
+	        this.getHtmlElement().appendChild(ag_grid_1.Utils.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
 	    };
 	    MenuList.prototype.showChildMenu = function (menuItemDef, menuItemComp) {
 	        var _this = this;
@@ -33163,7 +33229,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.context.wireBean(childMenu);
 	        childMenu.addMenuItems(menuItemDef.subMenu);
 	        var ePopup = ag_grid_1.Utils.loadTemplate('<div class="ag-menu"></div>');
-	        ePopup.appendChild(childMenu.getGui());
+	        ePopup.appendChild(childMenu.getHtmlElement());
 	        var hidePopupFunc = this.popupService.addAsModalPopup(ePopup, true);
 	        this.popupService.positionPopupForMenu({
 	            eventSource: menuItemComp.getGui(),
@@ -33269,7 +33335,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.queryForHtmlElement('#eIcon').innerHTML = '&nbsp;';
 	        }
 	        if (this.params.tooltip) {
-	            this.getGui().setAttribute('title', this.params.tooltip);
+	            this.getHtmlElement().setAttribute('title', this.params.tooltip);
 	        }
 	        if (this.params.shortcut) {
 	            this.queryForHtmlElement('#eShortcut').innerHTML = this.params.shortcut;
@@ -33289,13 +33355,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        this.queryForHtmlElement('#eName').innerHTML = this.params.name;
 	        if (this.params.disabled) {
-	            ag_grid_1.Utils.addCssClass(this.getGui(), 'ag-menu-option-disabled');
+	            ag_grid_1.Utils.addCssClass(this.getHtmlElement(), 'ag-menu-option-disabled');
 	        }
 	        else {
 	            this.addGuiEventListener('click', this.onOptionSelected.bind(this));
 	        }
 	        if (this.params.cssClasses) {
-	            this.params.cssClasses.forEach(function (it) { return ag_grid_1.Utils.addCssClass(_this.getGui(), it); });
+	            this.params.cssClasses.forEach(function (it) { return ag_grid_1.Utils.addCssClass(_this.getHtmlElement(), it); });
 	        }
 	    };
 	    MenuItemComponent.prototype.onOptionSelected = function () {
@@ -35355,7 +35421,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var aggFuncs = valueColDefs.map(function (colDef) { return colDef.getAggFunc(); });
 	        // don't add pivot totals if there is less than 1 aggFunc or they are not all the same
 	        if (!aggFuncs || aggFuncs.length < 1 || !this.sameAggFuncs(aggFuncs)) {
-	            console.warn('ag-Grid: aborting adding pivot total columns - value columns require same aggFunc');
+	            // console.warn('ag-Grid: aborting adding pivot total columns - value columns require same aggFunc');
 	            return;
 	        }
 	        // arbitrarily select a value column to use as a template for pivot columns
@@ -35573,14 +35639,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var _this = this;
 	        this.virtualList = new virtualList_1.VirtualList();
 	        this.context.wireBean(this.virtualList);
-	        this.getGui().querySelector('#richList').appendChild(this.virtualList.getGui());
+	        this.getHtmlElement().querySelector('#richList').appendChild(this.virtualList.getHtmlElement());
 	        if (main_1.Utils.exists(this.filterParams.cellHeight)) {
 	            this.virtualList.setRowHeight(this.filterParams.cellHeight);
 	        }
 	        this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
 	        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting);
 	        this.virtualList.setModel(new ModelWrapper(this.model));
-	        main_1._.setVisible(this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
+	        main_1._.setVisible(this.getHtmlElement().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
 	        this.eMiniFilter.value = this.model.getMiniFilter();
 	        this.addDestroyableEventListener(this.eMiniFilter, 'input', function () { return _this.onMiniFilterChanged(); });
 	        this.updateCheckboxIcon();
@@ -36164,7 +36230,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.eCheckedIcon = main_1._.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
 	        this.eUncheckedIcon = main_1._.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
 	        this.eCheckbox = this.queryForHtmlElement(".ag-filter-checkbox");
-	        this.eClickableArea = this.getGui();
+	        this.eClickableArea = this.getHtmlElement();
 	        this.updateCheckboxIcon();
 	        this.render();
 	        var listener = function () {
@@ -36287,19 +36353,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // let nodeAtIndex = this.rowModel.getRow(index);
 	        var rowTopPixel = index * this.rowHeight;
 	        var rowBottomPixel = rowTopPixel + this.rowHeight;
-	        var viewportTopPixel = this.getGui().scrollTop;
-	        var viewportHeight = this.getGui().offsetHeight;
+	        var viewportTopPixel = this.getHtmlElement().scrollTop;
+	        var viewportHeight = this.getHtmlElement().offsetHeight;
 	        var viewportBottomPixel = viewportTopPixel + viewportHeight;
 	        var viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
 	        var viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
 	        if (viewportScrolledPastRow) {
 	            // if row is before, scroll up with row at top
-	            this.getGui().scrollTop = rowTopPixel;
+	            this.getHtmlElement().scrollTop = rowTopPixel;
 	        }
 	        else if (viewportScrolledBeforeRow) {
 	            // if row is below, scroll down with row at bottom
 	            var newScrollPosition = rowBottomPixel - viewportHeight;
-	            this.getGui().scrollTop = newScrollPosition;
+	            this.getHtmlElement().scrollTop = newScrollPosition;
 	        }
 	    };
 	    VirtualList.prototype.setComponentCreator = function (componentCreator) {
@@ -36309,7 +36375,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.rowHeight;
 	    };
 	    VirtualList.prototype.getScrollTop = function () {
-	        return this.getGui().scrollTop;
+	        return this.getHtmlElement().scrollTop;
 	    };
 	    VirtualList.prototype.setRowHeight = function (rowHeight) {
 	        this.rowHeight = rowHeight;
@@ -36328,8 +36394,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.removeVirtualRows(rowsToRemove);
 	    };
 	    VirtualList.prototype.drawVirtualRows = function () {
-	        var topPixel = this.getGui().scrollTop;
-	        var bottomPixel = topPixel + this.getGui().offsetHeight;
+	        var topPixel = this.getHtmlElement().scrollTop;
+	        var bottomPixel = topPixel + this.getHtmlElement().offsetHeight;
 	        var firstRow = Math.floor(topPixel / this.rowHeight);
 	        var lastRow = Math.floor(bottomPixel / this.rowHeight);
 	        this.ensureRowsRendered(firstRow, lastRow);
@@ -36370,7 +36436,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        main_1.Utils.addCssClass(eDiv, 'ag-virtual-list-item');
 	        eDiv.style.top = (this.rowHeight * rowIndex) + "px";
 	        var rowComponent = this.componentCreator(value);
-	        eDiv.appendChild(rowComponent.getGui());
+	        eDiv.appendChild(rowComponent.getHtmlElement());
 	        this.eListContainer.appendChild(eDiv);
 	        this.rowsInBodyContainer[rowIndex] = {
 	            rowComponent: rowComponent,
@@ -36447,7 +36513,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.virtualList = new virtualList_1.VirtualList();
 	        this.context.wireBean(this.virtualList);
 	        this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
-	        this.getGui().querySelector('.ag-rich-select-list').appendChild(this.virtualList.getGui());
+	        this.getHtmlElement().querySelector('.ag-rich-select-list').appendChild(this.virtualList.getHtmlElement());
 	        if (main_1.Utils.exists(this.params.cellHeight)) {
 	            this.virtualList.setRowHeight(this.params.cellHeight);
 	        }
@@ -36462,8 +36528,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            getRow: function (index) { return values[index]; }
 	        });
 	        this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
-	        this.addDestroyableEventListener(this.virtualList.getGui(), 'click', this.onClick.bind(this));
-	        this.addDestroyableEventListener(this.virtualList.getGui(), 'mousemove', this.onMouseMove.bind(this));
+	        this.addDestroyableEventListener(this.virtualList.getHtmlElement(), 'click', this.onClick.bind(this));
+	        this.addDestroyableEventListener(this.virtualList.getHtmlElement(), 'mousemove', this.onMouseMove.bind(this));
 	    };
 	    RichSelectCellEditor.prototype.onKeyDown = function (event) {
 	        var key = event.which || event.keyCode;
@@ -36491,7 +36557,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    RichSelectCellEditor.prototype.renderSelectedValue = function () {
-	        var eValue = this.getGui().querySelector('.ag-rich-select-value');
+	        var eValue = this.getHtmlElement().querySelector('.ag-rich-select-value');
 	        var valueFormatted = this.params.formatValue(this.selectedValue);
 	        if (this.cellRenderer) {
 	            var result_1 = this.cellRendererService.useCellRenderer(this.params.column.getColDef(), eValue, { value: this.selectedValue, valueFormatted: valueFormatted });
@@ -36527,7 +36593,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return row;
 	    };
 	    RichSelectCellEditor.prototype.onMouseMove = function (mouseEvent) {
-	        var rect = this.virtualList.getGui().getBoundingClientRect();
+	        var rect = this.virtualList.getHtmlElement().getBoundingClientRect();
 	        var scrollTop = this.virtualList.getScrollTop();
 	        var mouseY = mouseEvent.clientY - rect.top + scrollTop;
 	        var row = Math.floor(mouseY / this.virtualList.getRowHeight());
@@ -36553,7 +36619,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // we call refresh again, as the list could of moved, and we need to render the new rows
 	        this.virtualList.refresh();
 	        if (this.focusAfterAttached) {
-	            this.getGui().focus();
+	            this.getHtmlElement().focus();
 	        }
 	    };
 	    RichSelectCellEditor.prototype.getValue = function () {
@@ -36619,7 +36685,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (!this.populateWithRenderer(value, valueFormatted)) {
 	            this.populateWithoutRenderer(value, valueFormatted);
 	        }
-	        main_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
+	        main_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-rich-select-row-selected', selected);
 	    };
 	    RichSelectRow.prototype.populateWithoutRenderer = function (value, valueFormatted) {
 	        var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
@@ -36627,15 +36693,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (main_1.Utils.exists(valueToRender) && valueToRender !== '') {
 	            // not using innerHTML to prevent injection of HTML
 	            // https://developer.mozilla.org/en-US/docs/Web/API/Element/innerHTML#Security_considerations
-	            this.getGui().textContent = valueToRender.toString();
+	            this.getHtmlElement().textContent = valueToRender.toString();
 	        }
 	        else {
 	            // putting in blank, so if missing, at least the user can click on it
-	            this.getGui().innerHTML = '&nbsp;';
+	            this.getHtmlElement().innerHTML = '&nbsp;';
 	        }
 	    };
 	    RichSelectRow.prototype.populateWithRenderer = function (value, valueFormatted) {
-	        var childComponent = this.cellRendererService.useCellRenderer(this.columnDef, this.getGui(), { value: value, valueFormatted: valueFormatted });
+	        var childComponent = this.cellRendererService.useCellRenderer(this.columnDef, this.getHtmlElement(), { value: value, valueFormatted: valueFormatted });
 	        if (childComponent && childComponent.destroy) {
 	            this.addDestroyFunc(childComponent.destroy.bind(childComponent));
 	        }
@@ -37338,7 +37404,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        var menu = new ContextMenu(menuItems);
 	        this.context.wireBean(menu);
-	        var eMenuGui = menu.getGui();
+	        var eMenuGui = menu.getHtmlElement();
 	        // need to show filter before positioning, as only after filter
 	        // is visible can we find out what the width of it is
 	        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () { return menu.destroy(); });
@@ -37349,7 +37415,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            mouseEvent: mouseEvent,
 	            ePopup: eMenuGui
 	        });
-	        menu.afterGuiAttached(hidePopup);
+	        menu.afterGuiAttached({
+	            eComponent: eMenuGui,
+	            hidePopupCallback: hidePopup
+	        });
 	    };
 	    __decorate([
 	        ag_grid_1.Autowired('context'),
@@ -37394,8 +37463,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.appendChild(menuList);
 	        menuList.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
 	    };
-	    ContextMenu.prototype.afterGuiAttached = function (hidePopup) {
-	        this.addDestroyFunc(hidePopup);
+	    ContextMenu.prototype.afterGuiAttached = function (params) {
+	        this.addDestroyFunc(params.hidePopupCallback);
 	        // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
 	        this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
 	    };
@@ -37901,7 +37970,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.guiDestroyFunctions.forEach(function (func) { return func(); });
 	        this.guiDestroyFunctions.length = 0;
 	        this.childColumnComponents.length = 0;
-	        main_1.Utils.removeAllChildren(this.getGui());
+	        main_1.Utils.removeAllChildren(this.getHtmlElement());
 	    };
 	    AbstractColumnDropPanel.prototype.init = function (params) {
 	        this.params = params;
@@ -37953,7 +38022,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var goingLeft = draggingEvent.hDirection === main_1.HDirection.Left;
 	        var mouseX = mouseEvent.clientX;
 	        this.childColumnComponents.forEach(function (childColumn) {
-	            var rect = childColumn.getGui().getBoundingClientRect();
+	            var rect = childColumn.getHtmlElement().getBoundingClientRect();
 	            var rectX = goingLeft ? rect.right : rect.left;
 	            var horizontalFit = enableRtl ? (mouseX <= rectX) : (mouseX >= rectX);
 	            if (horizontalFit) {
@@ -37969,7 +38038,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var newIndex = 0;
 	        var mouseEvent = draggingEvent.event;
 	        this.childColumnComponents.forEach(function (childColumn) {
-	            var rect = childColumn.getGui().getBoundingClientRect();
+	            var rect = childColumn.getHtmlElement().getBoundingClientRect();
 	            if (draggingEvent.vDirection === main_1.VDirection.Down) {
 	                var verticalFit = mouseEvent.clientY >= rect.top;
 	                if (verticalFit) {
@@ -37990,7 +38059,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return;
 	        }
 	        this.state = AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS;
-	        this.potentialDndColumns = draggingEvent.dragSource.dragItem;
+	        this.potentialDndColumns = draggingEvent.dragSource.dragItemCallback().columns;
 	        this.refreshGui();
 	        this.checkInsertIndex(draggingEvent);
 	        this.refreshGui();
@@ -38004,7 +38073,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    AbstractColumnDropPanel.prototype.onDragEnter = function (draggingEvent) {
 	        // this will contain all columns that are potential drops
-	        var dragColumns = draggingEvent.dragSource.dragItem;
+	        var dragColumns = draggingEvent.dragSource.dragItemCallback().columns;
 	        this.state = AbstractColumnDropPanel.STATE_NEW_COLUMNS_IN;
 	        // take out columns that are not groupable
 	        var goodDragColumns = main_1.Utils.filter(dragColumns, this.isColumnDroppable.bind(this));
@@ -38022,7 +38091,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // if the dragging started from us, we remove the group, however if it started
 	        // someplace else, then we don't, as it was only 'asking'
 	        if (this.state === AbstractColumnDropPanel.STATE_REARRANGE_COLUMNS) {
-	            var columns = draggingEvent.dragSource.dragItem;
+	            var columns = draggingEvent.dragSource.dragItemCallback().columns;
 	            this.removeColumns(columns);
 	        }
 	        if (this.potentialDndColumns) {
@@ -38130,7 +38199,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (needSeparator) {
 	                _this.addArrowToGui();
 	            }
-	            _this.getGui().appendChild(columnComponent.getGui());
+	            _this.getHtmlElement().appendChild(columnComponent.getHtmlElement());
 	        });
 	    };
 	    AbstractColumnDropPanel.prototype.createColumnComponent = function (column, ghost) {
@@ -38148,13 +38217,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var eGroupIcon = this.params.icon;
 	        main_1.Utils.addCssClass(eGroupIcon, 'ag-column-drop-icon');
 	        main_1.Utils.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
-	        this.getGui().appendChild(eGroupIcon);
+	        this.getHtmlElement().appendChild(eGroupIcon);
 	        if (!this.horizontal) {
 	            var eTitle = document.createElement('span');
 	            eTitle.innerHTML = this.params.title;
 	            main_1.Utils.addCssClass(eTitle, 'ag-column-drop-title');
 	            main_1.Utils.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
-	            this.getGui().appendChild(eTitle);
+	            this.getHtmlElement().appendChild(eTitle);
 	        }
 	    };
 	    AbstractColumnDropPanel.prototype.isExistingColumnsEmpty = function () {
@@ -38168,7 +38237,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var eMessage = document.createElement('span');
 	        eMessage.innerHTML = this.params.emptyMessage;
 	        main_1.Utils.addCssClass(eMessage, 'ag-column-drop-empty-message');
-	        this.getGui().appendChild(eMessage);
+	        this.getHtmlElement().appendChild(eMessage);
 	    };
 	    AbstractColumnDropPanel.prototype.addArrowToGui = function () {
 	        // only add the arrows if the layout is horizontal
@@ -38181,7 +38250,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var eArrow = document.createElement('span');
 	            eArrow.className = spanClass;
 	            eArrow.innerHTML = charCode;
-	            this.getGui().appendChild(eArrow);
+	            this.getHtmlElement().appendChild(eArrow);
 	        }
 	    };
 	    AbstractColumnDropPanel.STATE_NOT_DRAGGING = 'notDragging';
@@ -38247,18 +38316,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var dragSource = {
 	            type: main_1.DragSourceType.ToolPanel,
 	            eElement: this.eText,
-	            dragItem: [this.column],
+	            dragItemCallback: function () { return _this.createDragItem(); },
 	            dragItemName: this.displayName,
 	            dragSourceDropTarget: this.dragSourceDropTarget
 	        };
 	        this.dragAndDropService.addDragSource(dragSource, true);
 	        this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource); });
 	    };
+	    ColumnComponent.prototype.createDragItem = function () {
+	        var visibleState = {};
+	        visibleState[this.column.getId()] = this.column.isVisible();
+	        return {
+	            columns: [this.column],
+	            visibleState: visibleState
+	        };
+	    };
 	    ColumnComponent.prototype.setupComponents = function () {
 	        this.setTextValue();
 	        this.setupRemove();
 	        if (this.ghost) {
-	            main_1.Utils.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
+	            main_1.Utils.addCssClass(this.getHtmlElement(), 'ag-column-drop-cell-ghost');
 	        }
 	        if (this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
 	            this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
@@ -38285,7 +38362,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var aggFunc = this.column.getAggFunc();
 	            // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
 	            var aggFuncString = (typeof aggFunc === 'string') ? aggFunc : 'agg';
-	            displayValue = aggFuncString + "(" + this.displayName + ")";
+	            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+	            var aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
+	            displayValue = aggFuncStringTranslated + "(" + this.displayName + ")";
 	        }
 	        else {
 	            displayValue = this.displayName;
@@ -38308,9 +38387,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var ePopup = main_1.Utils.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
 	        ePopup.style.top = '0px';
 	        ePopup.style.left = '0px';
-	        ePopup.appendChild(virtualList.getGui());
+	        ePopup.appendChild(virtualList.getHtmlElement());
 	        ePopup.style.height = '100px';
-	        ePopup.style.width = this.getGui().clientWidth + 'px';
+	        ePopup.style.width = this.getHtmlElement().clientWidth + 'px';
 	        var popupHiddenFunc = function () {
 	            virtualList.destroy();
 	            _this.popupShowing = false;
@@ -38319,7 +38398,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        virtualList.setComponentCreator(this.createAggSelect.bind(this, hidePopup));
 	        this.popupService.positionPopupUnderComponent({
 	            type: 'aggFuncSelect',
-	            eventSource: this.getGui(),
+	            eventSource: this.getHtmlElement(),
 	            ePopup: ePopup,
 	            keepWithinBounds: true,
 	            column: this.column
@@ -38344,7 +38423,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _this.columnController.setColumnAggFunc(_this.column, value);
 	            }
 	        };
-	        var comp = new AggItemComp(itemSelected, value.toString());
+	        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+	        var aggFuncString = value.toString();
+	        var aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
+	        var comp = new AggItemComp(itemSelected, aggFuncStringTranslated);
 	        return comp;
 	    };
 	    ColumnComponent.EVENT_COLUMN_REMOVE = 'columnRemove';
@@ -38410,7 +38492,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    __extends(AggItemComp, _super);
 	    function AggItemComp(itemSelected, value) {
 	        var _this = _super.call(this, '<div class="ag-select-agg-func-item"/>') || this;
-	        _this.getGui().innerText = value;
+	        _this.getHtmlElement().innerText = value;
 	        _this.value = value;
 	        _this.addGuiEventListener('click', itemSelected);
 	        return _this;
@@ -38484,7 +38566,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    ToolPanelComp.prototype.addComponent = function (component) {
 	        this.context.wireBean(component);
-	        this.getGui().appendChild(component.getGui());
+	        this.getHtmlElement().appendChild(component.getHtmlElement());
 	        this.addDestroyFunc(function () {
 	            component.destroy();
 	        });
@@ -40701,8 +40783,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./ag-grid.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./ag-grid.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-grid.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-grid.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -41051,8 +41133,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./theme-fresh.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./theme-fresh.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-fresh.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-fresh.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -41070,7 +41152,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-fresh {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #222;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-fresh .ag-numeric-cell {\n    text-align: right; }\n  .ag-fresh .ag-header-cell-label {\n    display: flex; }\n    .ag-fresh .ag-header-cell-label > span {\n      float: left; }\n    .ag-fresh .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-fresh .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-fresh .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-fresh .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-fresh .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-fresh img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-fresh .ag-root {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-fresh .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-fresh .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-fresh .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-fresh .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-fresh .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-fresh .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-fresh .ag-cell-focus {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-fresh .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted silver;\n    border-left: 1px solid transparent; }\n  .ag-fresh .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px dotted silver; }\n  .ag-fresh .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-fresh .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-fresh .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-fresh .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-fresh .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-fresh .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-fresh .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-fresh .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid darkgrey;\n    background-color: white; }\n  .ag-fresh .ag-rich-select-value {\n    padding: 2px; }\n  .ag-fresh .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-rich-select-row {\n    padding: 2px; }\n  .ag-fresh .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-large-text {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-header-select-all, .ag-fresh .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-fresh .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-fresh .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-fresh .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-fresh .ag-header {\n    color: #333;\n    background: linear-gradient(white, lightgrey);\n    border-bottom: 1px solid darkgrey;\n    font-weight: normal; }\n  .ag-fresh .ag-header-icon {\n    color: #333;\n    stroke: none;\n    fill: #333; }\n  .ag-fresh .ag-filter-icon {\n    display: inline-block; }\n  .ag-fresh .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-layout-for-print .ag-header-container {\n    background: linear-gradient(white, lightgrey);\n    border-bottom: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-header-cell {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-header-cell {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-fresh .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-fresh .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-header-group-cell-with-group {\n    border-bottom: 1px solid darkgrey; }\n  .ag-fresh .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-fresh .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-fresh .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-fresh .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-body {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-row-odd {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-row-even {\n    background-color: white; }\n  .ag-fresh .ag-row-selected {\n    background-color: powderblue; }\n  .ag-fresh .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-fresh .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-fresh .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid darkgrey;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-fresh .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid darkgrey;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-fresh .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-fresh .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-fresh .ag-group-cell {\n    font-style: italic; }\n  .ag-fresh .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-fresh .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-fresh .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-fresh .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-fresh .ag-group-child-count {\n    display: inline-block; }\n  .ag-fresh .ag-footer-cell {\n    font-style: italic; }\n  .ag-fresh .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-fresh .ag-menu .ag-tab-header {\n      background-color: #e6e6e6; }\n    .ag-fresh .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-fresh .ag-menu .ag-tab-selected {\n      background-color: #f6f6f6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-fresh .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-fresh .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-fresh .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-fresh .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-fresh .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-fresh .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-fresh .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-fresh .ag-paging-panel {\n    padding: 4px; }\n  .ag-fresh .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-fresh .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-fresh .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: 1px solid darkgrey;\n    border-top: 1px solid darkgrey;\n    color: #222; }\n  .ag-fresh .ltr .ag-tool-panel {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .rtl .ag-tool-panel {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-status-bar {\n    color: #222;\n    background-color: #f6f6f6;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: 1px solid darkgrey;\n    border-left: 1px solid darkgrey;\n    border-right: 1px solid darkgrey;\n    padding: 2px; }\n  .ag-fresh .ag-status-bar-aggregations {\n    float: right; }\n  .ag-fresh .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-fresh .ag-column-drop-cell {\n    background: linear-gradient(white, lightgrey);\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-fresh .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-fresh .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-fresh .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-fresh .ag-column-drop-cell-button:hover {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-fresh .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-fresh .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid darkgrey;\n    border-left: 1px solid darkgrey;\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid darkgrey;\n    overflow: auto; }\n    .ag-fresh .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-fresh .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-fresh .ag-pivot-mode {\n    border-bottom: 1px solid darkgrey;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid darkgrey;\n    overflow: auto; }\n  .ag-fresh .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-fresh .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-fresh .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-fresh .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-fresh .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-fresh .ag-rtl .ag-floating-filter-button {\n    float: left; }\n", ""]);
+	exports.push([module.id, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-fresh {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #222;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-fresh .ag-numeric-cell {\n    text-align: right; }\n  .ag-fresh .ag-header-cell-label {\n    display: flex; }\n    .ag-fresh .ag-header-cell-label > span {\n      float: left; }\n    .ag-fresh .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-fresh .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-fresh .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-fresh .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-fresh .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-fresh img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-fresh .ag-root {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-fresh .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-fresh .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-fresh .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-fresh .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-fresh .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-fresh .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-fresh .ag-cell-focus {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-fresh .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted silver;\n    border-left: 1px solid transparent; }\n  .ag-fresh .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px dotted silver; }\n  .ag-fresh .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-fresh .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-fresh .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-fresh .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-fresh .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-fresh .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-fresh .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-fresh .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid darkgrey;\n    background-color: white; }\n  .ag-fresh .ag-rich-select-value {\n    padding: 2px; }\n  .ag-fresh .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-rich-select-row {\n    padding: 2px; }\n  .ag-fresh .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-large-text {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-header-select-all, .ag-fresh .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-fresh .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-fresh .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-fresh .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-fresh .ag-header {\n    color: #333;\n    background: linear-gradient(white, lightgrey);\n    border-bottom: 1px solid darkgrey;\n    font-weight: normal; }\n  .ag-fresh .ag-header-icon {\n    color: #333;\n    stroke: none;\n    fill: #333; }\n  .ag-fresh .ag-filter-icon {\n    display: inline-block; }\n  .ag-fresh .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-layout-for-print .ag-header-container {\n    background: linear-gradient(white, lightgrey);\n    border-bottom: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-header-cell {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-header-cell {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-fresh .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-fresh .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-header-group-cell-with-group {\n    border-bottom: 1px solid darkgrey; }\n  .ag-fresh .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-fresh .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-fresh .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-fresh .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-body {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-row-odd {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-row-even {\n    background-color: white; }\n  .ag-fresh .ag-row-selected {\n    background-color: powderblue; }\n  .ag-fresh .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-fresh .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-fresh .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid darkgrey;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-fresh .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid darkgrey;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-fresh .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-fresh .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-fresh .ag-group-cell {\n    font-style: italic; }\n  .ag-fresh .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-fresh .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-fresh .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-fresh .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-fresh .ag-group-child-count {\n    display: inline-block; }\n  .ag-fresh .ag-footer-cell {\n    font-style: italic; }\n  .ag-fresh .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-fresh .ag-menu .ag-tab-header {\n      background-color: #e6e6e6; }\n    .ag-fresh .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-fresh .ag-menu .ag-tab-selected {\n      background-color: #f6f6f6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-fresh .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-fresh .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-fresh .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-fresh .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-fresh .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-fresh .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-fresh .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-fresh .ag-paging-panel {\n    padding: 4px; }\n  .ag-fresh .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-fresh .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-fresh .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: 1px solid darkgrey;\n    border-top: 1px solid darkgrey;\n    color: #222; }\n  .ag-fresh .ltr .ag-tool-panel {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .rtl .ag-tool-panel {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-status-bar {\n    color: #222;\n    background-color: #f6f6f6;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: 1px solid darkgrey;\n    border-left: 1px solid darkgrey;\n    border-right: 1px solid darkgrey;\n    padding: 2px; }\n  .ag-fresh .ag-status-bar-aggregations {\n    float: right; }\n  .ag-fresh .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-fresh .ag-column-drop-cell {\n    background: linear-gradient(white, lightgrey);\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-fresh .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-fresh .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-fresh .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-fresh .ag-column-drop-cell-button:hover {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-fresh .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-fresh .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid darkgrey;\n    border-left: 1px solid darkgrey;\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid darkgrey;\n    overflow: auto; }\n    .ag-fresh .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-fresh .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-fresh .ag-pivot-mode {\n    border-bottom: 1px solid darkgrey;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid darkgrey;\n    overflow: auto; }\n  .ag-fresh .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-fresh .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-fresh .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-fresh .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-fresh .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-fresh .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-fresh .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-fresh .ag-sort-order::before {\n      content: '('; }\n    .ag-fresh .ag-sort-order::after {\n      content: ')'; }\n", ""]);
 
 	// exports
 
@@ -41091,8 +41173,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./theme-dark.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./theme-dark.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-dark.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-dark.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -41110,7 +41192,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-dark {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #ccc;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-dark .ag-numeric-cell {\n    text-align: right; }\n  .ag-dark .ag-header-cell-label {\n    display: flex; }\n    .ag-dark .ag-header-cell-label > span {\n      float: left; }\n    .ag-dark .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-dark .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-dark .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-dark .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-dark .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-dark .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-dark .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-dark .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-dark img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-dark .ag-root {\n    border: 1px solid grey; }\n  .ag-dark .ag-cell-data-changed {\n    background-color: chocolate; }\n  .ag-dark .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-dark .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-dark .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(100, 160, 160, 0.4); }\n  .ag-dark .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(100, 190, 190, 0.4); }\n  .ag-dark .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(100, 220, 220, 0.4); }\n  .ag-dark .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(100, 250, 250, 0.4); }\n  .ag-dark .ag-cell-focus {\n    border: 1px solid darkgrey; }\n  .ag-dark .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-dark .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted grey;\n    border-left: 1px solid transparent; }\n  .ag-dark .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px dotted grey; }\n  .ag-dark .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-cell-highlight {\n    border: 1px solid lightgreen; }\n  .ag-dark .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-dark .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-dark .ag-value-change-delta-up {\n    color: greenyellow; }\n  .ag-dark .ag-value-change-delta-down {\n    color: red; }\n  .ag-dark .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-dark .ag-value-change-value-highlight {\n    background-color: chocolate;\n    transition: background-color 0.1s; }\n  .ag-dark .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid grey;\n    background-color: #302E2E; }\n  .ag-dark .ag-rich-select-value {\n    padding: 2px; }\n  .ag-dark .ag-rich-select-list {\n    border-top: 1px solid #555; }\n  .ag-dark .ag-rich-select-row {\n    padding: 2px; }\n  .ag-dark .ag-rich-select-row-selected {\n    background-color: #4A708B; }\n  .ag-dark .ag-large-text {\n    border: 1px solid grey; }\n  .ag-dark .ag-header-select-all, .ag-dark .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-dark .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-dark .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-dark .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-dark .ag-header {\n    color: #e0e0e0;\n    background: #626262;\n    border-bottom: 1px solid grey;\n    font-weight: normal; }\n  .ag-dark .ag-header-icon {\n    color: #e0e0e0;\n    stroke: none;\n    fill: #e0e0e0; }\n  .ag-dark .ag-filter-icon {\n    display: inline-block; }\n  .ag-dark .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-layout-for-print .ag-header-container {\n    background: #626262;\n    border-bottom: 1px solid grey; }\n  .ag-dark .ag-ltr .ag-header-cell {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-header-cell {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-dark .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-dark .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-header-group-cell-with-group {\n    border-bottom: 1px solid grey; }\n  .ag-dark .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-dark .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-dark .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-dark .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-body {\n    background-color: #302E2E; }\n  .ag-dark .ag-row-odd {\n    background-color: #302E2E; }\n  .ag-dark .ag-row-even {\n    background-color: #403E3E; }\n  .ag-dark .ag-row-selected {\n    background-color: #4A708B; }\n  .ag-dark .ag-row-stub {\n    background-color: #333; }\n  .ag-dark .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-dark .ag-floating-top {\n    background-color: #333; }\n  .ag-dark .ag-floating-top .ag-row {\n    background-color: #333; }\n  .ag-dark .ag-floating-bottom {\n    background-color: #333; }\n  .ag-dark .ag-floating-bottom .ag-row {\n    background-color: #333; }\n  .ag-dark .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-dark .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid grey;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-dark .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid grey;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-dark .ag-group-cell-entire-row {\n    background-color: #302E2E;\n    padding: 2px; }\n  .ag-dark .ag-footer-cell-entire-row {\n    background-color: #302E2E;\n    padding: 2px; }\n  .ag-dark .ag-group-cell {\n    font-style: italic; }\n  .ag-dark .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-dark .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-dark .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-dark .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-dark .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-dark .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-dark .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-dark .ag-group-child-count {\n    display: inline-block; }\n  .ag-dark .ag-footer-cell {\n    font-style: italic; }\n  .ag-dark .ag-menu {\n    border: 1px solid #555;\n    background-color: #302E2E;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-dark .ag-menu .ag-tab-header {\n      background-color: #626262; }\n    .ag-dark .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-dark .ag-menu .ag-tab-selected {\n      background-color: #302E2E;\n      border-right: 1px solid #555;\n      border-left: 1px solid #555;\n      border-top: 1px solid #555; }\n  .ag-dark .ag-menu-separator {\n    border-top: 1px solid #555; }\n  .ag-dark .ag-menu-option-active {\n    background-color: #4A708B; }\n  .ag-dark .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-dark .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-dark .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-dark .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-dark .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-dark .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-dark .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-dark .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #555; }\n  .ag-dark .ag-filter-apply-panel {\n    border-top: 1px solid #555;\n    padding: 2px 0px 2px 4px; }\n  .ag-dark .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-dark .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-dark .ag-paging-panel {\n    padding: 4px; }\n  .ag-dark .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-dark .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-dark .ag-tool-panel {\n    background-color: #302E2E;\n    border-bottom: 1px solid grey;\n    border-top: 1px solid grey;\n    color: #ccc; }\n  .ag-dark .ltr .ag-tool-panel {\n    border-right: 1px solid grey; }\n  .ag-dark .rtl .ag-tool-panel {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-status-bar {\n    color: #ccc;\n    background-color: #302E2E;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: 1px solid grey;\n    border-left: 1px solid grey;\n    border-right: 1px solid grey;\n    padding: 2px; }\n  .ag-dark .ag-status-bar-aggregations {\n    float: right; }\n  .ag-dark .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-dark .ag-column-drop-cell {\n    background: #403E3E;\n    color: #e0e0e0;\n    border: 1px solid #666; }\n  .ag-dark .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-dark .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-dark .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-dark .ag-column-drop-cell-button:hover {\n    border: 1px solid grey; }\n  .ag-dark .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-dark .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-dark .ag-column-drop {\n    background-color: #302E2E; }\n  .ag-dark .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid grey;\n    border-left: 1px solid grey;\n    border-right: 1px solid grey; }\n  .ag-dark .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid grey;\n    overflow: auto; }\n    .ag-dark .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-dark .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-dark .ag-pivot-mode {\n    border-bottom: 1px solid grey;\n    padding: 2px 4px 3px 4px;\n    background-color: #302E2E; }\n  .ag-dark .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid grey;\n    overflow: auto; }\n  .ag-dark .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: #302E2E;\n    border: 1px solid grey; }\n  .ag-dark .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-dark .ag-select-agg-func-item:hover {\n    background-color: #4A708B; }\n  .ag-dark .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-dark .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-dark .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: invert(100%);\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-dark .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-dark .ag-rtl .ag-floating-filter-button {\n    float: left; }\n\n.ag-dark ::-webkit-scrollbar {\n  width: 12px;\n  height: 12px;\n  background: #302E2E; }\n  .ag-dark ::-webkit-scrollbar-thumb {\n    background-color: #626262; }\n\n.ag-dark ::-webkit-scrollbar-corner {\n  background: #302E2E; }\n\n.ag-dark select {\n  background-color: #302E2E;\n  color: #ccc; }\n\n.ag-dark input {\n  background-color: #302E2E;\n  color: #ccc; }\n\n.ag-dark .ag-floating-filter-body input {\n  background-color: #302E2E;\n  color: #ccc; }\n  .ag-dark .ag-floating-filter-body input[readonly] {\n    background: rgba(48, 46, 46, 0.3); }\n\n.ag-dark .ag-icon {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n", ""]);
+	exports.push([module.id, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-dark {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #ccc;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-dark .ag-numeric-cell {\n    text-align: right; }\n  .ag-dark .ag-header-cell-label {\n    display: flex; }\n    .ag-dark .ag-header-cell-label > span {\n      float: left; }\n    .ag-dark .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-dark .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-dark .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-dark .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-dark .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-dark .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-dark .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-dark .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-dark img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-dark .ag-root {\n    border: 1px solid grey; }\n  .ag-dark .ag-cell-data-changed {\n    background-color: chocolate; }\n  .ag-dark .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-dark .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-dark .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(100, 160, 160, 0.4); }\n  .ag-dark .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(100, 190, 190, 0.4); }\n  .ag-dark .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(100, 220, 220, 0.4); }\n  .ag-dark .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(100, 250, 250, 0.4); }\n  .ag-dark .ag-cell-focus {\n    border: 1px solid darkgrey; }\n  .ag-dark .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-dark .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted grey;\n    border-left: 1px solid transparent; }\n  .ag-dark .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px dotted grey; }\n  .ag-dark .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-cell-highlight {\n    border: 1px solid lightgreen; }\n  .ag-dark .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-dark .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-dark .ag-value-change-delta-up {\n    color: greenyellow; }\n  .ag-dark .ag-value-change-delta-down {\n    color: red; }\n  .ag-dark .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-dark .ag-value-change-value-highlight {\n    background-color: chocolate;\n    transition: background-color 0.1s; }\n  .ag-dark .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid grey;\n    background-color: #302E2E; }\n  .ag-dark .ag-rich-select-value {\n    padding: 2px; }\n  .ag-dark .ag-rich-select-list {\n    border-top: 1px solid #555; }\n  .ag-dark .ag-rich-select-row {\n    padding: 2px; }\n  .ag-dark .ag-rich-select-row-selected {\n    background-color: #4A708B; }\n  .ag-dark .ag-large-text {\n    border: 1px solid grey; }\n  .ag-dark .ag-header-select-all, .ag-dark .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-dark .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-dark .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-dark .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-dark .ag-header {\n    color: #e0e0e0;\n    background: #626262;\n    border-bottom: 1px solid grey;\n    font-weight: normal; }\n  .ag-dark .ag-header-icon {\n    color: #e0e0e0;\n    stroke: none;\n    fill: #e0e0e0; }\n  .ag-dark .ag-filter-icon {\n    display: inline-block; }\n  .ag-dark .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-layout-for-print .ag-header-container {\n    background: #626262;\n    border-bottom: 1px solid grey; }\n  .ag-dark .ag-ltr .ag-header-cell {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-header-cell {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-dark .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-dark .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-header-group-cell-with-group {\n    border-bottom: 1px solid grey; }\n  .ag-dark .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-dark .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-dark .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-dark .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-body {\n    background-color: #302E2E; }\n  .ag-dark .ag-row-odd {\n    background-color: #302E2E; }\n  .ag-dark .ag-row-even {\n    background-color: #403E3E; }\n  .ag-dark .ag-row-selected {\n    background-color: #4A708B; }\n  .ag-dark .ag-row-stub {\n    background-color: #333; }\n  .ag-dark .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-dark .ag-floating-top {\n    background-color: #333; }\n  .ag-dark .ag-floating-top .ag-row {\n    background-color: #333; }\n  .ag-dark .ag-floating-bottom {\n    background-color: #333; }\n  .ag-dark .ag-floating-bottom .ag-row {\n    background-color: #333; }\n  .ag-dark .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-dark .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid grey;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-dark .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid grey;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-dark .ag-group-cell-entire-row {\n    background-color: #302E2E;\n    padding: 2px; }\n  .ag-dark .ag-footer-cell-entire-row {\n    background-color: #302E2E;\n    padding: 2px; }\n  .ag-dark .ag-group-cell {\n    font-style: italic; }\n  .ag-dark .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-dark .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-dark .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-dark .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-dark .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-dark .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-dark .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-dark .ag-group-child-count {\n    display: inline-block; }\n  .ag-dark .ag-footer-cell {\n    font-style: italic; }\n  .ag-dark .ag-menu {\n    border: 1px solid #555;\n    background-color: #302E2E;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-dark .ag-menu .ag-tab-header {\n      background-color: #626262; }\n    .ag-dark .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-dark .ag-menu .ag-tab-selected {\n      background-color: #302E2E;\n      border-right: 1px solid #555;\n      border-left: 1px solid #555;\n      border-top: 1px solid #555; }\n  .ag-dark .ag-menu-separator {\n    border-top: 1px solid #555; }\n  .ag-dark .ag-menu-option-active {\n    background-color: #4A708B; }\n  .ag-dark .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-dark .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-dark .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-dark .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-dark .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-dark .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-dark .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-dark .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #555; }\n  .ag-dark .ag-filter-apply-panel {\n    border-top: 1px solid #555;\n    padding: 2px 0px 2px 4px; }\n  .ag-dark .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-dark .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-dark .ag-paging-panel {\n    padding: 4px; }\n  .ag-dark .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-dark .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-dark .ag-tool-panel {\n    background-color: #302E2E;\n    border-bottom: 1px solid grey;\n    border-top: 1px solid grey;\n    color: #ccc; }\n  .ag-dark .ltr .ag-tool-panel {\n    border-right: 1px solid grey; }\n  .ag-dark .rtl .ag-tool-panel {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-status-bar {\n    color: #ccc;\n    background-color: #302E2E;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: 1px solid grey;\n    border-left: 1px solid grey;\n    border-right: 1px solid grey;\n    padding: 2px; }\n  .ag-dark .ag-status-bar-aggregations {\n    float: right; }\n  .ag-dark .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-dark .ag-column-drop-cell {\n    background: #403E3E;\n    color: #e0e0e0;\n    border: 1px solid #666; }\n  .ag-dark .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-dark .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-dark .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-dark .ag-column-drop-cell-button:hover {\n    border: 1px solid grey; }\n  .ag-dark .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-dark .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-dark .ag-column-drop {\n    background-color: #302E2E; }\n  .ag-dark .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid grey;\n    border-left: 1px solid grey;\n    border-right: 1px solid grey; }\n  .ag-dark .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid grey;\n    overflow: auto; }\n    .ag-dark .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-dark .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-dark .ag-pivot-mode {\n    border-bottom: 1px solid grey;\n    padding: 2px 4px 3px 4px;\n    background-color: #302E2E; }\n  .ag-dark .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid grey;\n    overflow: auto; }\n  .ag-dark .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: #302E2E;\n    border: 1px solid grey; }\n  .ag-dark .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-dark .ag-select-agg-func-item:hover {\n    background-color: #4A708B; }\n  .ag-dark .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-dark .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-dark .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: invert(100%);\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-dark .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-dark .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-dark .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-dark .ag-sort-order::before {\n      content: '('; }\n    .ag-dark .ag-sort-order::after {\n      content: ')'; }\n\n.ag-dark ::-webkit-scrollbar {\n  width: 12px;\n  height: 12px;\n  background: #302E2E; }\n  .ag-dark ::-webkit-scrollbar-thumb {\n    background-color: #626262; }\n\n.ag-dark ::-webkit-scrollbar-corner {\n  background: #302E2E; }\n\n.ag-dark select {\n  background-color: #302E2E;\n  color: #ccc; }\n\n.ag-dark input {\n  background-color: #302E2E;\n  color: #ccc; }\n\n.ag-dark .ag-floating-filter-body input {\n  background-color: #302E2E;\n  color: #ccc; }\n  .ag-dark .ag-floating-filter-body input[readonly] {\n    background: rgba(48, 46, 46, 0.3); }\n\n.ag-dark .ag-icon {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n", ""]);
 
 	// exports
 
@@ -41131,8 +41213,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./theme-blue.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./theme-blue.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-blue.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-blue.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -41150,7 +41232,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-blue {\n  line-height: 1.4;\n  font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n  font-size: 10pt;\n  color: #222;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-blue .ag-numeric-cell {\n    text-align: right; }\n  .ag-blue .ag-header-cell-label {\n    display: flex; }\n    .ag-blue .ag-header-cell-label > span {\n      float: left; }\n    .ag-blue .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-blue .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-blue .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-blue .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-blue .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-blue .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-blue .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-blue .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-blue img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-blue .ag-root {\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-blue .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-blue .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-blue .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-blue .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-blue .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-blue .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-blue .ag-cell-focus {\n    border: 2px solid #217346; }\n  .ag-blue .ag-cell-no-focus {\n    border-top: 2px solid transparent;\n    border-bottom: 1px dotted #9bc2e6; }\n  .ag-blue .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted #9bc2e6;\n    border-left: 2px solid transparent; }\n  .ag-blue .ag-rtl .ag-cell-no-focus {\n    border-right: 2px solid transparent;\n    border-left: 1px dotted #9bc2e6; }\n  .ag-blue .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-blue .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-blue .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-blue .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-blue .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-blue .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-blue .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-blue .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid #9bc2e6;\n    background-color: white; }\n  .ag-blue .ag-rich-select-value {\n    padding: 2px; }\n  .ag-blue .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-blue .ag-rich-select-row {\n    padding: 2px; }\n  .ag-blue .ag-rich-select-row-selected {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-large-text {\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-select-all, .ag-blue .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-blue .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-blue .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-blue .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-blue .ag-header {\n    color: #fff;\n    background: #5B9BD5;\n    border-bottom: 1px solid #9bc2e6;\n    font-weight: 600; }\n  .ag-blue .ag-header-icon {\n    color: #fff;\n    stroke: none;\n    fill: #fff; }\n  .ag-blue .ag-filter-icon {\n    display: inline-block; }\n  .ag-blue .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-layout-for-print .ag-header-container {\n    background: #5B9BD5;\n    border-bottom: 1px solid #9bc2e6; }\n  .ag-blue .ag-ltr .ag-header-cell {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-header-cell {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-blue .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-blue .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-group-cell-with-group {\n    border-bottom: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-blue .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-blue .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-blue .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-body {\n    background-color: #f6f6f6; }\n  .ag-blue .ag-row-odd {\n    background-color: #DDEBF7; }\n  .ag-blue .ag-row-even {\n    background-color: #fff; }\n  .ag-blue .ag-row-selected {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-blue .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-blue .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid #9bc2e6;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-blue .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid #9bc2e6;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-blue .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-blue .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-blue .ag-group-cell {\n    font-style: italic; }\n  .ag-blue .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-blue .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-blue .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-blue .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-blue .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-blue .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-blue .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-blue .ag-group-child-count {\n    display: inline-block; }\n  .ag-blue .ag-footer-cell {\n    font-style: italic; }\n  .ag-blue .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n    font-size: 10pt; }\n    .ag-blue .ag-menu .ag-tab-header {\n      background-color: #5B9BD5; }\n    .ag-blue .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-blue .ag-menu .ag-tab-selected {\n      background-color: #9bc2e6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-blue .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-blue .ag-menu-option-active {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-blue .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-blue .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-blue .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-blue .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-blue .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-blue .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-blue .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-blue .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-blue .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-blue .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-blue .ag-paging-panel {\n    padding: 4px; }\n  .ag-blue .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-blue .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-blue .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: 1px solid #9bc2e6;\n    border-top: 1px solid #9bc2e6;\n    color: #222; }\n  .ag-blue .ltr .ag-tool-panel {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .rtl .ag-tool-panel {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-status-bar {\n    color: #222;\n    background-color: #f6f6f6;\n    font-size: 10pt;\n    height: 22px;\n    border-bottom: 1px solid #9bc2e6;\n    border-left: 1px solid #9bc2e6;\n    border-right: 1px solid #9bc2e6;\n    padding: 2px; }\n  .ag-blue .ag-status-bar-aggregations {\n    float: right; }\n  .ag-blue .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-blue .ag-column-drop-cell {\n    background: #ddebf7;\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-blue .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-blue .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-blue .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-blue .ag-column-drop-cell-button:hover {\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-blue .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-blue .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-blue .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid #9bc2e6;\n    border-left: 1px solid #9bc2e6;\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid #9bc2e6;\n    overflow: auto; }\n    .ag-blue .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-blue .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-blue .ag-pivot-mode {\n    border-bottom: 1px solid #9bc2e6;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-blue .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid #9bc2e6;\n    overflow: auto; }\n  .ag-blue .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-blue .ag-select-agg-func-item:hover {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-blue .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-blue .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-blue .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-blue .ag-rtl .ag-floating-filter-button {\n    float: left; }\n\n.ag-blue .ag-floating-filter-body input {\n  background-color: white;\n  color: #222; }\n  .ag-blue .ag-floating-filter-body input[readonly] {\n    background: rgba(255, 255, 255, 0.3); }\n\n.ag-blue .ag-floating-filter-button {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n\n.ag-blue .ag-header .ag-icon-expanded, .ag-blue .ag-header .ag-icon-contracted {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n", ""]);
+	exports.push([module.id, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-blue {\n  line-height: 1.4;\n  font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n  font-size: 10pt;\n  color: #222;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-blue .ag-numeric-cell {\n    text-align: right; }\n  .ag-blue .ag-header-cell-label {\n    display: flex; }\n    .ag-blue .ag-header-cell-label > span {\n      float: left; }\n    .ag-blue .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-blue .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-blue .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-blue .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-blue .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-blue .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-blue .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-blue .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-blue img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-blue .ag-root {\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-blue .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-blue .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-blue .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-blue .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-blue .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-blue .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-blue .ag-cell-focus {\n    border: 2px solid #217346; }\n  .ag-blue .ag-cell-no-focus {\n    border-top: 2px solid transparent;\n    border-bottom: 1px dotted #9bc2e6; }\n  .ag-blue .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted #9bc2e6;\n    border-left: 2px solid transparent; }\n  .ag-blue .ag-rtl .ag-cell-no-focus {\n    border-right: 2px solid transparent;\n    border-left: 1px dotted #9bc2e6; }\n  .ag-blue .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-blue .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-blue .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-blue .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-blue .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-blue .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-blue .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-blue .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid #9bc2e6;\n    background-color: white; }\n  .ag-blue .ag-rich-select-value {\n    padding: 2px; }\n  .ag-blue .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-blue .ag-rich-select-row {\n    padding: 2px; }\n  .ag-blue .ag-rich-select-row-selected {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-large-text {\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-select-all, .ag-blue .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-blue .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-blue .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-blue .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-blue .ag-header {\n    color: #fff;\n    background: #5B9BD5;\n    border-bottom: 1px solid #9bc2e6;\n    font-weight: 600; }\n  .ag-blue .ag-header-icon {\n    color: #fff;\n    stroke: none;\n    fill: #fff; }\n  .ag-blue .ag-filter-icon {\n    display: inline-block; }\n  .ag-blue .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-layout-for-print .ag-header-container {\n    background: #5B9BD5;\n    border-bottom: 1px solid #9bc2e6; }\n  .ag-blue .ag-ltr .ag-header-cell {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-header-cell {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-blue .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-blue .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-group-cell-with-group {\n    border-bottom: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-blue .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-blue .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-blue .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-body {\n    background-color: #f6f6f6; }\n  .ag-blue .ag-row-odd {\n    background-color: #DDEBF7; }\n  .ag-blue .ag-row-even {\n    background-color: #fff; }\n  .ag-blue .ag-row-selected {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-blue .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-blue .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid #9bc2e6;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-blue .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid #9bc2e6;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-blue .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-blue .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-blue .ag-group-cell {\n    font-style: italic; }\n  .ag-blue .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-blue .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-blue .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-blue .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-blue .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-blue .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-blue .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-blue .ag-group-child-count {\n    display: inline-block; }\n  .ag-blue .ag-footer-cell {\n    font-style: italic; }\n  .ag-blue .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n    font-size: 10pt; }\n    .ag-blue .ag-menu .ag-tab-header {\n      background-color: #5B9BD5; }\n    .ag-blue .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-blue .ag-menu .ag-tab-selected {\n      background-color: #9bc2e6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-blue .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-blue .ag-menu-option-active {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-blue .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-blue .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-blue .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-blue .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-blue .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-blue .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-blue .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-blue .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-blue .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-blue .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-blue .ag-paging-panel {\n    padding: 4px; }\n  .ag-blue .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-blue .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-blue .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: 1px solid #9bc2e6;\n    border-top: 1px solid #9bc2e6;\n    color: #222; }\n  .ag-blue .ltr .ag-tool-panel {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .rtl .ag-tool-panel {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-status-bar {\n    color: #222;\n    background-color: #f6f6f6;\n    font-size: 10pt;\n    height: 22px;\n    border-bottom: 1px solid #9bc2e6;\n    border-left: 1px solid #9bc2e6;\n    border-right: 1px solid #9bc2e6;\n    padding: 2px; }\n  .ag-blue .ag-status-bar-aggregations {\n    float: right; }\n  .ag-blue .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-blue .ag-column-drop-cell {\n    background: #ddebf7;\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-blue .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-blue .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-blue .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-blue .ag-column-drop-cell-button:hover {\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-blue .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-blue .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-blue .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid #9bc2e6;\n    border-left: 1px solid #9bc2e6;\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid #9bc2e6;\n    overflow: auto; }\n    .ag-blue .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-blue .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-blue .ag-pivot-mode {\n    border-bottom: 1px solid #9bc2e6;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-blue .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid #9bc2e6;\n    overflow: auto; }\n  .ag-blue .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-blue .ag-select-agg-func-item:hover {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-blue .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-blue .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-blue .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-blue .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-blue .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-blue .ag-sort-order::before {\n      content: '('; }\n    .ag-blue .ag-sort-order::after {\n      content: ')'; }\n\n.ag-blue .ag-floating-filter-body input {\n  background-color: white;\n  color: #222; }\n  .ag-blue .ag-floating-filter-body input[readonly] {\n    background: rgba(255, 255, 255, 0.3); }\n\n.ag-blue .ag-floating-filter-button {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n\n.ag-blue .ag-header .ag-icon-asc, .ag-blue .ag-header .ag-icon-desc, .ag-blue .ag-header .ag-icon-expanded, .ag-blue .ag-header .ag-icon-contracted, .ag-blue .ag-header .ag-icon-menu {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n\n.ag-blue .ag-tab-header .ag-icon {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n", ""]);
 
 	// exports
 
@@ -41171,8 +41253,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./theme-material.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./theme-material.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-material.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-material.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -41190,7 +41272,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-material {\n  line-height: 1.4;\n  font-family: Roboto;\n  font-size: 14px;\n  color: #666;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-material .ag-numeric-cell {\n    text-align: right; }\n  .ag-material .ag-header-cell-label {\n    display: flex; }\n    .ag-material .ag-header-cell-label > span {\n      float: left; }\n    .ag-material .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-material .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-material .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-material .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-material .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-material .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-material .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-material .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-material img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-material .ag-root {\n    border: none; }\n  .ag-material .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-material .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-material .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-material .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-material .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-material .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-material .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-material .ag-cell-focus {\n    border: 1px solid lightgrey; }\n  .ag-material .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid lightgrey; }\n  .ag-material .ag-ltr .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px solid transparent; }\n  .ag-material .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px solid transparent; }\n  .ag-material .ag-rtl .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-material .ag-ltr .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-material .ag-rtl .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-material .ag-ltr .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-material .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-material .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-material .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-material .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-material .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-material .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-material .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-material .ag-rich-select {\n    font-size: 14px;\n    border: none;\n    background-color: white; }\n  .ag-material .ag-rich-select-value {\n    padding: 2px; }\n  .ag-material .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-material .ag-rich-select-row {\n    padding: 2px; }\n  .ag-material .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-material .ag-large-text {\n    border: none; }\n  .ag-material .ag-header-select-all, .ag-material .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-material .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-material .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-material .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-material .ag-header {\n    color: #666;\n    background: none;\n    border-bottom: none;\n    font-weight: bold; }\n  .ag-material .ag-header-icon {\n    color: #666;\n    stroke: none;\n    fill: #666; }\n  .ag-material .ag-filter-icon {\n    display: inline-block; }\n  .ag-material .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-layout-for-print .ag-header-container {\n    background: none;\n    border-bottom: none; }\n  .ag-material .ag-ltr .ag-header-cell {\n    border-right: none; }\n  .ag-material .ag-rtl .ag-header-cell {\n    border-left: none; }\n  .ag-material .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-material .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-material .ag-ltr .ag-header-group-cell {\n    border-right: none; }\n  .ag-material .ag-rtl .ag-header-group-cell {\n    border-left: none; }\n  .ag-material .ag-header-group-cell-with-group {\n    border-bottom: none; }\n  .ag-material .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-material .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-material .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-material .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-ltr .ag-pinned-right-header {\n    border-left: none; }\n  .ag-material .ag-rtl .ag-pinned-left-header {\n    border-right: none; }\n  .ag-material .ag-body {\n    background-color: #fff; }\n  .ag-material .ag-row-odd {\n    background-color: white; }\n  .ag-material .ag-row-even {\n    background-color: white; }\n  .ag-material .ag-row-selected {\n    background-color: #F5F5F5; }\n  .ag-material .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-material .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-material .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-material .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-material .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-material .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-material .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-material .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-material .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-material .ag-group-cell-entire-row {\n    background-color: #fff;\n    padding: 2px; }\n  .ag-material .ag-footer-cell-entire-row {\n    background-color: #fff;\n    padding: 2px; }\n  .ag-material .ag-group-cell {\n    font-style: italic; }\n  .ag-material .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-material .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-material .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-material .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-material .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-material .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-material .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-material .ag-group-child-count {\n    display: inline-block; }\n  .ag-material .ag-footer-cell {\n    font-style: italic; }\n  .ag-material .ag-menu {\n    border: 1px solid #808080;\n    background-color: #fff;\n    cursor: default;\n    font-family: Roboto;\n    font-size: 14px; }\n    .ag-material .ag-menu .ag-tab-header {\n      background-color: #f6f6f6; }\n    .ag-material .ag-menu .ag-tab {\n      padding: 6px 16px 6px 16px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-material .ag-menu .ag-tab-selected {\n      background-color: #fff;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent; }\n  .ag-material .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-material .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-material .ag-menu-option-icon {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle; }\n  .ag-material .ag-menu-option-text {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle; }\n  .ag-material .ag-menu-option-shortcut {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle; }\n  .ag-material .ag-menu-option-popup-pointer {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-material .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-material .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-material .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-material .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-material .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-material .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-material .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-material .ag-paging-panel {\n    padding: 4px; }\n  .ag-material .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-material .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-material .ag-tool-panel {\n    background-color: #fff;\n    border-bottom: none;\n    border-top: none;\n    color: #666; }\n  .ag-material .ltr .ag-tool-panel {\n    border-right: none; }\n  .ag-material .rtl .ag-tool-panel {\n    border-left: none; }\n  .ag-material .ag-status-bar {\n    color: #666;\n    background-color: #fff;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: none;\n    border-left: none;\n    border-right: none;\n    padding: 2px; }\n  .ag-material .ag-status-bar-aggregations {\n    float: right; }\n  .ag-material .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-material .ag-column-drop-cell {\n    background: none;\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-material .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-material .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-material .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-material .ag-column-drop-cell-button:hover {\n    border: none; }\n  .ag-material .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-material .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-material .ag-column-drop {\n    background-color: #fff; }\n  .ag-material .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: none;\n    border-left: none;\n    border-right: none; }\n  .ag-material .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: none;\n    overflow: auto; }\n    .ag-material .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-material .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-material .ag-pivot-mode {\n    border-bottom: none;\n    padding: 2px 4px 3px 4px;\n    background-color: #fff; }\n  .ag-material .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: none;\n    overflow: auto; }\n  .ag-material .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: none; }\n  .ag-material .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-material .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-material .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-material .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-material .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-material .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-material .ag-rtl .ag-floating-filter-button {\n    float: left; }\n\n.ag-material .ag-row-hover {\n  background-color: #eeeeee !important; }\n\n.ag-material .ag-cell-not-inline-editing {\n  padding-top: 15px; }\n\n.ag-material .ag-header-cell-menu-button:hover {\n  border: 1px solid grey; }\n\n.ag-material .ag-header-cell-label {\n  text-align: left; }\n\n.ag-material .ag-header {\n  border-bottom: 1px solid grey; }\n\n.ag-material .ag-selection-checkbox {\n  padding-right: 12px;\n  padding-left: 12px; }\n", ""]);
+	exports.push([module.id, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-material {\n  line-height: 1.4;\n  font-family: Roboto;\n  font-size: 14px;\n  color: #666;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-material .ag-numeric-cell {\n    text-align: right; }\n  .ag-material .ag-header-cell-label {\n    display: flex; }\n    .ag-material .ag-header-cell-label > span {\n      float: left; }\n    .ag-material .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-material .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-material .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-material .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-material .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-material .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-material .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-material .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-material img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-material .ag-root {\n    border: none; }\n  .ag-material .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-material .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-material .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-material .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-material .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-material .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-material .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-material .ag-cell-focus {\n    border: 1px solid lightgrey; }\n  .ag-material .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid lightgrey; }\n  .ag-material .ag-ltr .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px solid transparent; }\n  .ag-material .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px solid transparent; }\n  .ag-material .ag-rtl .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-material .ag-ltr .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-material .ag-rtl .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-material .ag-ltr .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-material .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-material .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-material .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-material .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-material .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-material .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-material .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-material .ag-rich-select {\n    font-size: 14px;\n    border: none;\n    background-color: white; }\n  .ag-material .ag-rich-select-value {\n    padding: 2px; }\n  .ag-material .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-material .ag-rich-select-row {\n    padding: 2px; }\n  .ag-material .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-material .ag-large-text {\n    border: none; }\n  .ag-material .ag-header-select-all, .ag-material .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-material .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-material .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-material .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-material .ag-header {\n    color: #666;\n    background: none;\n    border-bottom: none;\n    font-weight: bold; }\n  .ag-material .ag-header-icon {\n    color: #666;\n    stroke: none;\n    fill: #666; }\n  .ag-material .ag-filter-icon {\n    display: inline-block; }\n  .ag-material .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-layout-for-print .ag-header-container {\n    background: none;\n    border-bottom: none; }\n  .ag-material .ag-ltr .ag-header-cell {\n    border-right: none; }\n  .ag-material .ag-rtl .ag-header-cell {\n    border-left: none; }\n  .ag-material .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-material .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-material .ag-ltr .ag-header-group-cell {\n    border-right: none; }\n  .ag-material .ag-rtl .ag-header-group-cell {\n    border-left: none; }\n  .ag-material .ag-header-group-cell-with-group {\n    border-bottom: none; }\n  .ag-material .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-material .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-material .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-material .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-ltr .ag-pinned-right-header {\n    border-left: none; }\n  .ag-material .ag-rtl .ag-pinned-left-header {\n    border-right: none; }\n  .ag-material .ag-body {\n    background-color: #fff; }\n  .ag-material .ag-row-odd {\n    background-color: white; }\n  .ag-material .ag-row-even {\n    background-color: white; }\n  .ag-material .ag-row-selected {\n    background-color: #F5F5F5; }\n  .ag-material .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-material .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-material .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-material .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-material .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-material .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-material .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-material .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-material .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-material .ag-group-cell-entire-row {\n    background-color: #fff;\n    padding: 2px; }\n  .ag-material .ag-footer-cell-entire-row {\n    background-color: #fff;\n    padding: 2px; }\n  .ag-material .ag-group-cell {\n    font-style: italic; }\n  .ag-material .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-material .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-material .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-material .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-material .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-material .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-material .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-material .ag-group-child-count {\n    display: inline-block; }\n  .ag-material .ag-footer-cell {\n    font-style: italic; }\n  .ag-material .ag-menu {\n    border: 1px solid #808080;\n    background-color: #fff;\n    cursor: default;\n    font-family: Roboto;\n    font-size: 14px; }\n    .ag-material .ag-menu .ag-tab-header {\n      background-color: #f6f6f6; }\n    .ag-material .ag-menu .ag-tab {\n      padding: 6px 16px 6px 16px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-material .ag-menu .ag-tab-selected {\n      background-color: #fff;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent; }\n  .ag-material .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-material .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-material .ag-menu-option-icon {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle; }\n  .ag-material .ag-menu-option-text {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle; }\n  .ag-material .ag-menu-option-shortcut {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle; }\n  .ag-material .ag-menu-option-popup-pointer {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-material .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-material .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-material .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-material .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-material .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-material .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-material .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-material .ag-paging-panel {\n    padding: 4px; }\n  .ag-material .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-material .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-material .ag-tool-panel {\n    background-color: #fff;\n    border-bottom: none;\n    border-top: none;\n    color: #666; }\n  .ag-material .ltr .ag-tool-panel {\n    border-right: none; }\n  .ag-material .rtl .ag-tool-panel {\n    border-left: none; }\n  .ag-material .ag-status-bar {\n    color: #666;\n    background-color: #fff;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: none;\n    border-left: none;\n    border-right: none;\n    padding: 2px; }\n  .ag-material .ag-status-bar-aggregations {\n    float: right; }\n  .ag-material .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-material .ag-column-drop-cell {\n    background: none;\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-material .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-material .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-material .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-material .ag-column-drop-cell-button:hover {\n    border: none; }\n  .ag-material .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-material .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-material .ag-column-drop {\n    background-color: #fff; }\n  .ag-material .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: none;\n    border-left: none;\n    border-right: none; }\n  .ag-material .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: none;\n    overflow: auto; }\n    .ag-material .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-material .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-material .ag-pivot-mode {\n    border-bottom: none;\n    padding: 2px 4px 3px 4px;\n    background-color: #fff; }\n  .ag-material .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: none;\n    overflow: auto; }\n  .ag-material .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: none; }\n  .ag-material .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-material .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-material .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-material .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-material .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-material .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-material .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-material .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-material .ag-sort-order::before {\n      content: '('; }\n    .ag-material .ag-sort-order::after {\n      content: ')'; }\n\n.ag-material .ag-row-hover {\n  background-color: #eeeeee !important; }\n\n.ag-material .ag-cell-not-inline-editing {\n  padding-top: 15px; }\n\n.ag-material .ag-header-cell-menu-button:hover {\n  border: 1px solid grey; }\n\n.ag-material .ag-header-cell-label {\n  text-align: left; }\n\n.ag-material .ag-header {\n  border-bottom: 1px solid grey; }\n\n.ag-material .ag-selection-checkbox {\n  padding-right: 12px;\n  padding-left: 12px; }\n", ""]);
 
 	// exports
 
@@ -41211,8 +41293,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./ag-theme-material.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./ag-theme-material.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-material.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./ag-theme-material.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -41230,7 +41312,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, ".ag-theme-material {\n  font: 400 13px \"Roboto\", sans-serif;\n  color: rgba(0, 0, 0, 0.87);\n  background-color: #FFFFFF; }\n  .ag-theme-material .ag-header {\n    font: 700 12px \"Roboto\", sans-serif;\n    color: rgba(0, 0, 0, 0.54); }\n  .ag-theme-material .ag-header-row {\n    border-bottom: 1px solid #E0E0E0;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box; }\n  .ag-theme-material .ag-row {\n    border-bottom: 1px solid #E0E0E0;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box; }\n  .ag-theme-material .ag-row-hover {\n    background-color: #EEEEEE; }\n  .ag-theme-material .ag-numeric-cell {\n    text-align: right; }\n  .ag-theme-material .ag-header-cell-label {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    float: left;\n    width: calc(100% - 18px); }\n    .ag-theme-material .ag-header-cell-label > span {\n      float: left; }\n    .ag-theme-material .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-theme-material .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-label {\n    -webkit-box-orient: horizontal;\n    -webkit-box-direction: reverse;\n    -ms-flex-direction: row-reverse;\n    flex-direction: row-reverse; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-label {\n    float: right; }\n    .ag-theme-material .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-theme-material .ag-header-cell, .ag-theme-material .ag-header-group-cell {\n    padding-left: 24px;\n    padding-right: 24px;\n    line-height: 56px; }\n  .ag-theme-material .ag-cell {\n    padding-left: 24px;\n    padding-right: 24px;\n    line-height: 46px;\n    border: 1px solid transparent; }\n  .ag-theme-material .ag-cell:focus {\n    outline: initial;\n    border: 1px solid #3f51b5; }\n  .ag-theme-material .ag-cell-highlight {\n    background-color: #FCE4EC !important; }\n  .ag-theme-material .ag-cell-highlight-animation {\n    -webkit-transition: background-color 1s;\n    transition: background-color 1s; }\n  .ag-theme-material .ag-header-cell-resize {\n    width: 16px;\n    position: absolute;\n    right: -8px;\n    z-index: 4; }\n    .ag-theme-material .ag-header-cell-resize::after {\n      border-right: 1px solid #E0E0E0;\n      display: block;\n      height: 24px;\n      margin-top: 16px;\n      content: 'resize';\n      overflow: hidden;\n      text-indent: 8px;\n      width: 8px; }\n  .ag-theme-material .ag-icon-aggregation {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTMgMTN2MWExIDEgMCAwIDEtMSAxSDVhMSAxIDAgMCAxLTEtMXYtMWwzLTQtMy00VjRhMSAxIDAgMCAxIDEtMWg3YTEgMSAwIDAgMSAxIDF2MUg2LjVsMi41NSAzLjRhMSAxIDAgMCAxIDAgMS4yTDYuNSAxM0gxM3oiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-arrows {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDYuNWgzdi0yaDJMOSAxIDUuNSA0LjVoMnYyem0tMSAxaC0ydi0yTDEgOWwzLjUgMy41di0yaDJ2LTN6TTE3IDlsLTMuNS0zLjV2MmgtMnYzaDJ2MkwxNyA5em0tNi41IDIuNWgtM3YyaC0yTDkgMTdsMy41LTMuNWgtMnYtMnoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-asc {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCAzdjkuMTNMNCA4IDMgOWw2IDYgNi02LTEtMS00IDQuMTNWM3oiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-checked-readonly {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiIG9wYWNpdHk9Ii41Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-checked {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-indeterminate-readonly {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yem0tMiAxMEg0VjhoMTB2MnoiIGZpbGwtb3BhY2l0eT0iLjUiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-indeterminate {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yem0tMiAxMEg0VjhoMTB2MnoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-unchecked-readonly {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMnYxNEgyVjJoMTR6bTAtMkgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yeiIgZmlsbC1vcGFjaXR5PSIuNSIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-unchecked {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMnYxNEgyVjJoMTR6bTAtMkgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yeiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-column {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiAyaDR2Mkgyem0wIDRoNHYxMEgyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-columns {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-contracted {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMi41TDggOWwzLjUtMy41LTEtMUw2IDlsNC41IDQuNXoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-copy {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMSAySDRhMSAxIDAgMCAwLTEgMXY5aDFWM2g3VjJ6IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNiA0aDZhMSAxIDAgMCAxIDEgMXY5YTEgMSAwIDAgMS0xIDFINmExIDEgMCAwIDEtMS0xVjVhMSAxIDAgMCAxIDEtMXptMCAxdjloNlY1SDZ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-cut {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy4zNDggNS45NDhjLjE2MS0uMzUuMjUyLS43MzUuMjUyLTEuMTQ4YTIuOCAyLjggMCAxIDAtNS42IDAgMi44IDIuOCAwIDAgMCAyLjggMi44Yy40MTMgMCAuNzk4LS4wOTEgMS4xNDgtLjI1Mkw3LjYgOWwtMS42NTIgMS42NTJBMi43MjggMi43MjggMCAwIDAgNC44IDEwLjRhMi44IDIuOCAwIDEgMCAwIDUuNiAyLjggMi44IDAgMCAwIDIuOC0yLjhjMC0uNDEzLS4wOTEtLjc5OC0uMjUyLTEuMTQ4TDkgMTAuNGw0LjkgNC45SDE2di0uN0w3LjM0OCA1Ljk0OHpNNC44IDYuMmExLjQgMS40IDAgMSAxIDAtMi44IDEuNCAxLjQgMCAwIDEgMCAyLjh6bTAgOC40YTEuNCAxLjQgMCAxIDEgMC0yLjggMS40IDEuNCAwIDAgMSAwIDIuOHpNOSA5LjM1QS4zNDcuMzQ3IDAgMCAxIDguNjUgOWMwLS4xOTYuMTU0LS4zNS4zNS0uMzUuMTk2IDAgLjM1LjE1NC4zNS4zNSAwIC4xOTYtLjE1NC4zNS0uMzUuMzV6bTQuOS02LjY1TDkuNyA2LjlsMS40IDEuNEwxNiAzLjR2LS43aC0yLjF6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-desc {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTVWNmw0IDQgMS0xLTYtNi02IDYgMSAxIDQtNHY5eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-expanded {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMi41TDkuNSA5IDYgNS41bDEtMUwxMS41IDkgNyAxMy41eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-eye-slash {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMi40NDkgMTIuNDVsLTEuMzg4LTEuMzg3YTIuOTE4IDIuOTE4IDAgMCAwLTQuMTI0LTQuMTI0TDUuNTUgNS41NUE2Ljg1IDYuODUgMCAwIDEgOSA0LjYyNSA2Ljg5OSA2Ljg5OSAwIDAgMSAxNS40MTcgOWE2LjkzNSA2LjkzNSAwIDAgMS0yLjk2OCAzLjQ1em0tLjk1NS40NkE2Ljg5OSA2Ljg5OSAwIDAgMSAyLjU4NCA5IDYuOTMzIDYuOTMzIDAgMCAxIDQuNzEgNi4xMjVMNi4zNTUgNy43N2EyLjkxOCAyLjkxOCAwIDAgMCAzLjg3NSAzLjg3NWwxLjI2NCAxLjI2NHoiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0xMC4yNDIgMTAuMjM1TDcuNzY1IDcuNzU4QTEuNzQ0IDEuNzQ0IDAgMCAxIDkgNy4yNWMuOTY4IDAgMS43NS43ODIgMS43NSAxLjc1IDAgLjQ4Mi0uMTk0LjkxOC0uNTA4IDEuMjM1em0tLjkyNy40ODdhMS43NDggMS43NDggMCAwIDEtMi4wMzctMi4wMzdsMi4wMzcgMi4wMzd6Ii8+PHBhdGggZD0iTTMuMDcgOC40ODdoMTIuNDE3djFIMy4wN3oiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-eye {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0LjYyNUE2Ljg5OSA2Ljg5OSAwIDAgMCAyLjU4MyA5IDYuODk5IDYuODk5IDAgMCAwIDkgMTMuMzc1IDYuODk5IDYuODk5IDAgMCAwIDE1LjQxNyA5IDYuODk5IDYuODk5IDAgMCAwIDkgNC42MjV6bTAgNy4yOTJhMi45MTggMi45MTggMCAwIDEgMC01LjgzNCAyLjkxOCAyLjkxOCAwIDAgMSAwIDUuODM0ek05IDcuMjVjLS45NjggMC0xLjc1Ljc4Mi0xLjc1IDEuNzVzLjc4MiAxLjc1IDEuNzUgMS43NSAxLjc1LS43ODIgMS43NS0xLjc1UzkuOTY4IDcuMjUgOSA3LjI1eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-filter {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-group {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xNCAxNEg3di0yaDlhMiAyIDAgMCAxLTIgMnptLTUtMnYyaDJ2LTJIOXoiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0xNiA2YTIgMiAwIDAgMC0yLTJINWEyIDIgMCAwIDAtMiAyaDEzek03IDR2Mkg1VjRoMnptOSA2SDdWOGg5djJ6TTkgOHYyaDJWOEg5eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-indeterminate {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0LjYyNUE2Ljg5OSA2Ljg5OSAwIDAgMCAyLjU4MyA5IDYuODk5IDYuODk5IDAgMCAwIDkgMTMuMzc1IDYuODk5IDYuODk5IDAgMCAwIDE1LjQxNyA5IDYuODk5IDYuODk5IDAgMCAwIDkgNC42MjV6bTAgNy4yOTJhMi45MTggMi45MTggMCAwIDEgMC01LjgzNCAyLjkxOCAyLjkxOCAwIDAgMSAwIDUuODM0eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-left {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUgOEg2bDQtNC0xLTEtNiA2IDYgNiAxLTEtNC00aDl6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-loading {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImIiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImQiIGQ9Ik03IDRoM3YySDd6Ii8+PHBhdGggaWQ9ImUiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImYiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImciIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImgiIGQ9Ik03IDRoM3YySDd6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMyA0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNS41aDF2MmgtMXoiLz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMyA0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNSA3LjVoMXYyaC0xeiIvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzIDQpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNjIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNLjUgNC41aDJ2MWgtMnoiLz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMyA0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTcuNSA0LjVoMnYxaC0yeiIvPjwvZz48ZyBvcGFjaXR5PSIuNzE0Ij48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxLjY3MiAxMC42MjEpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNlIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41LjVoMXYyaC0xeiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxLjY3MiAxMC42MjEpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNmIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41IDcuNWgxdjJoLTF6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDEuNjcyIDEwLjYyMSkiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2ciLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik0uNSA0LjVoMnYxaC0yeiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxLjY3MiAxMC42MjEpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNoIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNy41IDQuNWgydjFoLTJ6Ii8+PC9nPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-menu {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-minus {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQgMTBINFY4aDEweiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-none {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoNXYtMkgyeiIvPjxwYXRoIGQ9Ik0yIDR2MmgxNFY0em0wIDZoOVY4SDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-not-allowed {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxLjVDNC44NiAxLjUgMS41IDQuODYgMS41IDljMCA0LjE0IDMuMzYgNy41IDcuNSA3LjUgNC4xNCAwIDcuNS0zLjM2IDcuNS03LjUgMC00LjE0LTMuMzYtNy41LTcuNS03LjV6TTMgOWMwLTMuMzE1IDIuNjg1LTYgNi02YTUuOTMgNS45MyAwIDAgMSAzLjY3NSAxLjI2OGwtOC40MDggOC40MDdBNS45MjcgNS45MjcgMCAwIDEgMyA5em02IDZhNS45MjcgNS45MjcgMCAwIDEtMy42NzUtMS4yNjhsOC40MDctOC40MDdBNS45MjcgNS45MjcgMCAwIDEgMTUgOWMwIDMuMzE1LTIuNjg1IDYtNiA2eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-paste {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEgM2MwLS41LS41LTEuNS0yLTEuNVM3IDIuNSA3IDNINGExIDEgMCAwIDAtMSAxdjExYTEgMSAwIDAgMCAxIDFoMTBhMSAxIDAgMCAwIDEtMVY0YTEgMSAwIDAgMC0xLTFoLTN6bS0yIC4yNzNjLjM2NyAwIC42NjcuMjg2LjY2Ny42MzYgMCAuMzUtLjMuNjM2LS42NjcuNjM2LS4zNjcgMC0uNjY3LS4yODYtLjY2Ny0uNjM2IDAtLjM1LjMtLjYzNi42NjctLjYzNnpNMTQgMTVINFY0aDJ2Mmg2VjRoMnYxMXoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-pin {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik05LjY1NyAybDUuNDEgNS40MS0uNTQuNTQyLS41NDItLjU0MS00LjMyOCAyLjE2NCAxLjA4MiAxLjA4Mi0xLjU0MSAxLjU0TDQuODY5IDcuODdsMS41NDItMS41NCAxLjA4MiAxLjA4IDIuMTY0LTQuMzI5LS41NDEtLjU0eiIvPjxwYXRoIGQ9Ik02IDExbC0yLjUgMi41IiBzdHJva2U9IiMwMDAiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-pivot {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTExLjUgMTAuNUwxMyA5bDEuNSAxLjVtLTUgMUw4IDEzbDEuNSAxLjUiLz48cGF0aCBkPSJNMCAwaDE4djE4SDB6Ii8+PHBhdGggZD0iTTMgMWgxMmEyIDIgMCAwIDEgMiAydjEyYTIgMiAwIDAgMS0yIDJIM2EyIDIgMCAwIDEtMi0yVjNhMiAyIDAgMCAxIDItMnptMyAxNHYtM0gzdjNoM3ptMC00VjhIM3YzaDN6bTAtNVYzSDN2M2gzem01IDBWM0g3djNoNHptNCA5VjhIN3Y3aDh6bTAtOVYzaC0zdjNoM3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-plus {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQgMTBoLTR2NEg4di00SDRWOGg0VjRoMnY0aDR6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-right {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAzTDggNGw0IDRIM3YyaDlsLTQgNCAxIDEgNi02eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-left {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTNMNiA5bDQtNHoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-right {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCA1bDQgNC00IDR6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-up {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAxMGw0LTQgNCA0eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-down {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSA4bDQgNCA0LTR6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-tick {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNi41IDEyLjVMMyA5bC0xIDEgNC41IDQuNSA5LTktMS0xeiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-cross {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQgNWwtMS0xLTQgNC00LTQtMSAxIDQgNC00IDQgMSAxIDQtNCA0IDQgMS0xLTQtNHoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-tree-open {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIuNSA2LjVMOSAxMCA1LjUgNi41bC0xIDFMOSAxMmw0LjUtNC41eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-tree-closed {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMi41TDkuNSA5IDYgNS41bDEtMUwxMS41IDkgNyAxMy41eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-header-cell-menu-button .ag-icon-menu {\n    height: 56px; }\n  .ag-theme-material .ag-icon-checkbox-checked:empty {\n    background: #ff4081 none;\n    -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=) no-repeat 50% 50%;\n    mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=) no-repeat 50% 50%; }\n    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n      .ag-theme-material .ag-icon-checkbox-checked:empty {\n        background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=); } }\n  .ag-theme-material .ag-menu {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    padding: 0;\n    z-index: 5; }\n    .ag-theme-material .ag-menu .ag-menu-list {\n      width: 100%;\n      cursor: default;\n      margin-top: 8px;\n      margin-bottom: 8px; }\n    .ag-theme-material .ag-menu .ag-menu-option {\n      line-height: 32px;\n      padding-left: 16px;\n      padding-right: 16px; }\n      .ag-theme-material .ag-menu .ag-menu-option > span {\n        vertical-align: middle;\n        display: table-cell; }\n    .ag-theme-material .ag-menu .ag-menu-option-active {\n      background: #EEEEEE; }\n    .ag-theme-material .ag-menu .ag-menu-option-icon {\n      padding-left: 8px;\n      padding-right: 8px; }\n      .ag-theme-material .ag-menu .ag-menu-option-icon span {\n        margin-top: 8px;\n        height: 18px;\n        line-height: 0; }\n    .ag-theme-material .ag-menu .ag-menu-option-shortcut {\n      padding-left: 16px; }\n    .ag-theme-material .ag-menu .ag-menu-separator {\n      margin-left: -8px; }\n      .ag-theme-material .ag-menu .ag-menu-separator > span {\n        height: 16px;\n        background-image: url(\"data:image/svg+xml;utf8,<svg width='1' height='16px' viewBox='0 0 1 16px' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='8px' x2='1' y2='8px' stroke-width='1' stroke='#E0E0E0'/> </svg>\"); }\n    .ag-theme-material .ag-menu .ag-menu-option-popup-pointer {\n      width: 34px; }\n  .ag-theme-material.ag-dnd-ghost {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    font: 700 12px \"Roboto\", sans-serif;\n    color: rgba(0, 0, 0, 0.54);\n    border: none;\n    height: 56px !important;\n    line-height: 56px;\n    z-index: 5;\n    margin: 0;\n    -webkit-transform: translatey(16px);\n    transform: translatey(16px);\n    padding: 0 16px; }\n    .ag-theme-material.ag-dnd-ghost span, .ag-theme-material.ag-dnd-ghost div {\n      float: left;\n      height: 100%;\n      margin: 0;\n      padding: 0; }\n  .ag-theme-material .ag-tab-header {\n    background: #EEEEEE;\n    display: table;\n    width: 100%;\n    min-width: 220px; }\n    .ag-theme-material .ag-tab-header .ag-tab {\n      display: table-cell;\n      height: 32px;\n      vertical-align: middle;\n      text-align: center;\n      border-bottom: 2px solid transparent; }\n      .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected {\n        border-bottom: 2px solid #3f51b5; }\n        .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-filter {\n          display: inline-block;\n          background: #3f51b5 none;\n          -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) no-repeat 50% 50%;\n          mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) no-repeat 50% 50%; }\n          @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n            .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-filter {\n              background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+); } }\n        .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-columns {\n          display: inline-block;\n          background: #3f51b5 none;\n          -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+) no-repeat 50% 50%;\n          mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+) no-repeat 50% 50%; }\n          @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n            .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-columns {\n              background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+); } }\n        .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-menu {\n          display: inline-block;\n          background: #3f51b5 none;\n          -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==) no-repeat 50% 50%;\n          mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==) no-repeat 50% 50%; }\n          @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n            .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-menu {\n              background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==); } }\n  .ag-theme-material .ag-tab-body {\n    padding: 8px 0; }\n    .ag-theme-material .ag-tab-body .ag-filter-select {\n      margin: 8px;\n      width: calc(100% - 16px); }\n    .ag-theme-material .ag-tab-body .ag-menu-list {\n      margin-top: 0;\n      margin-bottom: 0; }\n      .ag-theme-material .ag-tab-body .ag-menu-list > div:first-child > span {\n        padding-top: 0; }\n      .ag-theme-material .ag-tab-body .ag-menu-list > div:last-child > span {\n        padding-bottom: 0; }\n      .ag-theme-material .ag-tab-body .ag-menu-list > div:last-child > .ag-menu-option-popup-pointer {\n        background-position-y: 0; }\n  .ag-theme-material .ag-filter-select {\n    margin: 8px;\n    width: calc(100% - 16px); }\n  .ag-theme-material .ag-filter input[type=text], .ag-theme-material .ag-filter input[type=date] {\n    border: 0;\n    background: transparent;\n    font-size: inherit;\n    font-family: inherit;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n    border-bottom: 1px solid #E0E0E0;\n    height: 24px;\n    padding-bottom: 8px;\n    color: rgba(0, 0, 0, 0.87);\n    padding-left: 8px; }\n    .ag-theme-material .ag-filter input[type=text]:focus, .ag-theme-material .ag-filter input[type=date]:focus {\n      border-bottom: 2px solid #3f51b5;\n      padding-bottom: 7px;\n      outline: none; }\n    .ag-theme-material .ag-filter input[type=text]::-webkit-input-placeholder, .ag-theme-material .ag-filter input[type=date]::-webkit-input-placeholder {\n      color: rgba(0, 0, 0, 0.38); }\n    .ag-theme-material .ag-filter input[type=text]:-ms-input-placeholder, .ag-theme-material .ag-filter input[type=date]:-ms-input-placeholder {\n      color: rgba(0, 0, 0, 0.38); }\n    .ag-theme-material .ag-filter input[type=text]::placeholder, .ag-theme-material .ag-filter input[type=date]::placeholder {\n      color: rgba(0, 0, 0, 0.38); }\n  .ag-theme-material .ag-filter label {\n    display: block;\n    padding-left: 8px; }\n  .ag-theme-material .ag-filter .ag-set-filter-list {\n    padding-top: 8px; }\n  .ag-theme-material .ag-filter .ag-filter-header-container {\n    height: 32px;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box; }\n  .ag-theme-material .ag-filter .ag-filter-header-container:nth-child(2) {\n    border-bottom: 1px solid #E0E0E0; }\n  .ag-theme-material .ag-filter .ag-filter-checkbox {\n    float: left;\n    margin-right: 8px;\n    height: 32px;\n    padding-top: 4px; }\n  .ag-theme-material .ag-filter .ag-filter-value {\n    height: 32px;\n    float: left;\n    line-height: 28px; }\n  .ag-theme-material .ag-filter .ag-filter-apply-panel {\n    padding: 8px;\n    padding-top: 16px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-pack: end;\n    -ms-flex-pack: end;\n    justify-content: flex-end; }\n    .ag-theme-material .ag-filter .ag-filter-apply-panel button {\n      -webkit-appearance: none;\n      background: transparent;\n      border: 0;\n      color: #3f51b5;\n      text-transform: uppercase;\n      font-family: inherit;\n      font-size: inherit;\n      padding: 0;\n      margin: 0; }\n    .ag-theme-material .ag-filter .ag-filter-apply-panel button + button {\n      margin-left: 16px; }\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column-group::not(::first-child) {\n    border-top: 1px solid #E0E0E0; }\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column-group,\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column {\n    height: 32px;\n    line-height: 32px;\n    margin-left: 8px; }\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column-group span,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column span {\n      float: left;\n      height: 100%; }\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column-group .ag-column-select-indent,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column .ag-column-select-indent {\n      width: 16px; }\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column-group .ag-column-select-checkbox, .ag-theme-material .ag-column-select-panel .ag-column-select-column-group .ag-column-group-icons,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column .ag-column-select-checkbox,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column .ag-column-group-icons {\n      margin-right: 8px; }\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column {\n    margin-left: 42px; }\n  .ag-theme-material .ag-tool-panel {\n    border-right: 0;\n    background-color: #FAFAFA; }\n    .ag-theme-material .ag-tool-panel .ag-pivot-mode {\n      height: 56px;\n      border-bottom: 1px solid #E0E0E0;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      line-height: 56px; }\n      .ag-theme-material .ag-tool-panel .ag-pivot-mode span {\n        float: left;\n        height: 100%; }\n      .ag-theme-material .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select {\n        margin-left: 8px; }\n        .ag-theme-material .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select .ag-checkbox-label {\n          margin-left: 8px; }\n    .ag-theme-material .ag-tool-panel .ag-column-select-panel {\n      padding: 8px 0;\n      padding-bottom: 7px;\n      border-bottom: 1px solid #E0E0E0; }\n    .ag-theme-material .ag-tool-panel .ag-column-drop {\n      overflow: auto;\n      border-bottom: 1px solid #E0E0E0;\n      padding: 8px 0;\n      padding-bottom: 16px;\n      clear: both; }\n      .ag-theme-material .ag-tool-panel .ag-column-drop .ag-icon {\n        float: left;\n        height: 40px;\n        margin: 0 8px; }\n      .ag-theme-material .ag-tool-panel .ag-column-drop .ag-column-drop-title {\n        line-height: 40px;\n        height: 40px;\n        float: left;\n        width: calc(100% - 34px);\n        clear: right; }\n      .ag-theme-material .ag-tool-panel .ag-column-drop .ag-column-drop-empty-message {\n        clear: both;\n        font: 700 12px \"Roboto\", sans-serif;\n        color: rgba(0, 0, 0, 0.38);\n        padding-left: 32px;\n        padding-right: 8px;\n        line-height: 16px; }\n  .ag-theme-material .ag-filter-icon:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-sort-ascending-icon:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCAzdjkuMTNMNCA4IDMgOWw2IDYgNi02LTEtMS00IDQuMTNWM3oiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-sort-descending-icon:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTVWNmw0IDQgMS0xLTYtNi02IDYgMSAxIDQtNHY5eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-sort-none-icon:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoNXYtMkgyeiIvPjxwYXRoIGQ9Ik0yIDR2MmgxNFY0em0wIDZoOVY4SDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-header-cell-label .ag-header-icon {\n    margin: 0;\n    height: 100%;\n    background-size: 14px 14px;\n    background-position-y: 20px;\n    margin-left: 8px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-label .ag-header-icon {\n    margin-left: 0;\n    margin-right: 8px; }\n  .ag-theme-material .ag-paging-panel {\n    border-top: 1px solid #E0E0E0;\n    height: 56px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n    -ms-flex-align: center;\n    align-items: center;\n    padding: 0 24px;\n    -webkit-box-pack: end;\n    -ms-flex-pack: end;\n    justify-content: flex-end;\n    color: rgba(0, 0, 0, 0.54); }\n    .ag-theme-material .ag-paging-panel > span {\n      margin-left: 32px; }\n    .ag-theme-material .ag-paging-panel button[ref=btFirst] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00LjUgNC41SDZ2OUg0LjV6Ii8+PHBhdGggZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNMTQgMTIuNUwxMC41IDkgMTQgNS41bC0xLTFMOC41IDlsNC41IDQuNXoiLz48L2c+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btFirst][disabled] {\n        opacity: 0.38; }\n    .ag-theme-material .ag-paging-panel button[ref=btPrevious] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMi41TDggOWwzLjUtMy41LTEtMUw2IDlsNC41IDQuNXoiLz48L3N2Zz4=) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btPrevious][disabled] {\n        opacity: 0.38; }\n    .ag-theme-material .ag-paging-panel button[ref=btLast] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMy41IDQuNUgxMnY5aDEuNXoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik00IDEyLjVMNy41IDkgNCA1LjVsMS0xTDkuNSA5IDUgMTMuNXoiLz48L2c+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btLast][disabled] {\n        opacity: 0.38; }\n    .ag-theme-material .ag-paging-panel button[ref=btNext] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMi41TDkuNSA5IDYgNS41bDEtMUwxMS41IDkgNyAxMy41eiIvPjwvc3ZnPg==) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btNext][disabled] {\n        opacity: 0.38; }\n  .ag-theme-material .ag-row-selected {\n    background-color: #F5F5F5; }\n  .ag-theme-material .ag-cell-range-selected:not(.ag-cell-focus) {\n    background-color: #E8EAF6; }\n  .ag-theme-material .ag-cell-inline-editing {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    height: 72px;\n    z-index: 2;\n    background: #F5F5F5;\n    padding: 24px;\n    line-height: normal; }\n    .ag-theme-material .ag-cell-inline-editing input[type=text] {\n      border: 0;\n      background: transparent;\n      font-size: inherit;\n      font-family: inherit;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      border-bottom: 1px solid #E0E0E0;\n      height: 24px;\n      padding-bottom: 8px;\n      color: rgba(0, 0, 0, 0.87); }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]:focus {\n        border-bottom: 2px solid #3f51b5;\n        padding-bottom: 7px;\n        outline: none; }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]::-webkit-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]:-ms-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]::placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n    .ag-theme-material .ag-cell-inline-editing select {\n      height: auto; }\n  .ag-theme-material .ag-popup-editor {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    padding: 0;\n    background: #F5F5F5; }\n    .ag-theme-material .ag-popup-editor .ag-large-textarea textarea {\n      padding: 24px;\n      border: 0;\n      background: transparent;\n      font-size: inherit;\n      font-family: inherit;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      border-bottom: 1px solid #E0E0E0;\n      height: 24px;\n      padding-bottom: 8px;\n      color: rgba(0, 0, 0, 0.87);\n      height: auto; }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea:focus {\n        border-bottom: 2px solid #3f51b5;\n        padding-bottom: 7px;\n        outline: none; }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea::-webkit-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea:-ms-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea::placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n  .ag-theme-material .ag-rich-select {\n    background: #F5F5F5;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIuNSA2LjVMOSAxMCA1LjUgNi41bC0xIDFMOSAxMmw0LjUtNC41eiIvPjwvc3ZnPg==);\n    background-position-y: 16px;\n    background-position-x: calc(100% - 8px);\n    background-repeat: no-repeat; }\n    .ag-theme-material .ag-rich-select .ag-rich-select-list {\n      height: 200px; }\n    .ag-theme-material .ag-rich-select .ag-rich-select-value {\n      line-height: 48px;\n      height: 48px;\n      padding-left: 24px; }\n    .ag-theme-material .ag-rich-select .ag-virtual-list-item {\n      cursor: default;\n      height: 48px;\n      line-height: 48px;\n      padding-left: 24px; }\n      .ag-theme-material .ag-rich-select .ag-virtual-list-item:hover {\n        background-color: #EEEEEE; }\n  .ag-theme-material .ag-floating-filter-body {\n    float: left;\n    width: calc(100% - 8px * 4);\n    margin-right: 0;\n    height: 100%; }\n    .ag-theme-material .ag-floating-filter-body input {\n      border: 0;\n      background: transparent;\n      font-size: inherit;\n      font-family: inherit;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      border-bottom: 1px solid #E0E0E0;\n      height: 24px;\n      padding-bottom: 8px;\n      color: rgba(0, 0, 0, 0.87); }\n      .ag-theme-material .ag-floating-filter-body input:focus {\n        border-bottom: 2px solid #3f51b5;\n        padding-bottom: 7px;\n        outline: none; }\n      .ag-theme-material .ag-floating-filter-body input::-webkit-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-floating-filter-body input:-ms-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-floating-filter-body input::placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n  .ag-theme-material .ag-floating-filter-button {\n    padding-top: 20px;\n    float: right; }\n    .ag-theme-material .ag-floating-filter-button button {\n      -webkit-appearance: none;\n      background: transparent;\n      border: 0;\n      color: #3f51b5;\n      text-transform: uppercase;\n      font-family: inherit;\n      font-size: inherit;\n      padding: 0;\n      margin: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden; }\n  .ag-theme-material .ag-cell-label-container {\n    height: 100%; }\n  .ag-theme-material .ag-header-cell-label {\n    height: 100%; }\n    .ag-theme-material .ag-header-cell-label span {\n      height: 100%; }\n  .ag-theme-material .ag-header-group-cell-label {\n    height: 100%; }\n    .ag-theme-material .ag-header-group-cell-label span {\n      float: left;\n      height: 100%; }\n  .ag-theme-material .ag-header-select-all {\n    margin-right: 24px;\n    height: 100%; }\n    .ag-theme-material .ag-header-select-all span {\n      height: 100%; }\n  .ag-theme-material .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {\n    width: calc(100% - 18px - 24px);\n    float: left; }\n  .ag-theme-material .ag-selection-checkbox span, .ag-theme-material .ag-group-expanded span, .ag-theme-material .ag-group-contracted span {\n    margin-right: 24px; }\n  .ag-theme-material .ag-selection-checkbox span {\n    position: relative;\n    top: 4px; }\n  .ag-theme-material .ag-group-expanded .ag-icon-contracted:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIuNSA2LjVMOSAxMCA1LjUgNi41bC0xIDFMOSAxMmw0LjUtNC41eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-column-drop-horizontal {\n    height: 48px;\n    line-height: 32px;\n    background-color: #EEEEEE;\n    padding-left: 24px; }\n    .ag-theme-material .ag-column-drop-horizontal.ag-width-half {\n      margin-bottom: -3px; }\n    .ag-theme-material .ag-column-drop-horizontal span {\n      height: 100%;\n      float: left; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-icon-group, .ag-theme-material .ag-column-drop-horizontal .ag-icon-pivot {\n      margin-right: 24px; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-right-arrow {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAzTDggNGw0IDRIM3YyaDlsLTQgNCAxIDEgNi02eiIvPjwvc3ZnPg==) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-left-arrow {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUgOEg2bDQtNC0xLTEtNiA2IDYgNiAxLTEtNC00aDl6Ii8+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-left-arrow, .ag-theme-material .ag-column-drop-horizontal .ag-right-arrow {\n      text-indent: 100%;\n      overflow: hidden;\n      height: 100%;\n      margin: 0 8px;\n      opacity: 0.54; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-column-drop-empty-message {\n      height: 100%;\n      line-height: 48px;\n      opacity: 0.54; }\n  .ag-theme-material .ag-column-drop-cell {\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n    height: 32px !important;\n    margin-top: 8px;\n    padding: 0 4px;\n    background: #E0E0E0;\n    border-radius: 32px; }\n    .ag-theme-material .ag-column-drop-cell .ag-column-drop-cell-text {\n      margin: 0 8px;\n      height: 100%;\n      line-height: 32px; }\n    .ag-theme-material .ag-column-drop-cell .ag-column-drop-cell-button {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxLjVBNy40OTMgNy40OTMgMCAwIDAgMS41IDljMCA0LjE0OCAzLjM1MyA3LjUgNy41IDcuNSA0LjE0OCAwIDcuNS0zLjM1MiA3LjUtNy41IDAtNC4xNDctMy4zNTItNy41LTcuNS03LjV6bTMuNzUgMTAuMTkzbC0xLjA1NyAxLjA1N0w5IDEwLjA1NyA2LjMwOCAxMi43NSA1LjI1IDExLjY5MyA3Ljk0MiA5IDUuMjUgNi4zMDggNi4zMDggNS4yNSA5IDcuOTQybDIuNjkzLTIuNjkyIDEuMDU3IDEuMDU4TDEwLjA1NyA5bDIuNjkzIDIuNjkzeiIvPjwvc3ZnPg==) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      height: 100%;\n      opacity: 0.54;\n      margin: 0 4px; }\n      .ag-theme-material .ag-column-drop-cell .ag-column-drop-cell-button:hover {\n        opacity: 0.87; }\n  .ag-theme-material .ag-column-drop-vertical > .ag-column-drop-cell {\n    margin-top: 0;\n    margin-left: 8px;\n    margin-bottom: 8px;\n    float: left; }\n  .ag-theme-material .ag-row-level-1 > .ag-cell:first-child > span:first-child {\n    padding-left: 66px !important; }\n  .ag-theme-material .ag-row-level-2 > .ag-cell:first-child > span:first-child {\n    padding-left: 132px !important; }\n  .ag-theme-material .ag-row-level-3 > .ag-cell:first-child > span:first-child {\n    padding-left: 198px !important; }\n  .ag-theme-material .ag-row-level-4 > .ag-cell:first-child > span:first-child {\n    padding-left: 264px !important; }\n  .ag-theme-material .ag-row-level-5 > .ag-cell:first-child > span:first-child {\n    padding-left: 330px !important; }\n  .ag-theme-material .ag-row-level-6 > .ag-cell:first-child > span:first-child {\n    padding-left: 396px !important; }\n  .ag-theme-material .ag-row-level-7 > .ag-cell:first-child > span:first-child {\n    padding-left: 462px !important; }\n  .ag-theme-material .ag-row-level-8 > .ag-cell:first-child > span:first-child {\n    padding-left: 528px !important; }\n  .ag-theme-material .ag-row-level-9 > .ag-cell:first-child > span:first-child {\n    padding-left: 594px !important; }\n  .ag-theme-material .ag-row-level-10 > .ag-cell:first-child > span:first-child {\n    padding-left: 660px !important; }\n  .ag-theme-material .ag-row-level-11 > .ag-cell:first-child > span:first-child {\n    padding-left: 726px !important; }\n  .ag-theme-material .ag-row-level-12 > .ag-cell:first-child > span:first-child {\n    padding-left: 792px !important; }\n  .ag-theme-material .ag-row-level-13 > .ag-cell:first-child > span:first-child {\n    padding-left: 858px !important; }\n  .ag-theme-material .ag-row-level-14 > .ag-cell:first-child > span:first-child {\n    padding-left: 924px !important; }\n  .ag-theme-material .ag-row-level-15 > .ag-cell:first-child > span:first-child {\n    padding-left: 990px !important; }\n  .ag-theme-material .ag-row-level-16 > .ag-cell:first-child > span:first-child {\n    padding-left: 1056px !important; }\n  .ag-theme-material .ag-row-level-17 > .ag-cell:first-child > span:first-child {\n    padding-left: 1122px !important; }\n  .ag-theme-material .ag-row-level-18 > .ag-cell:first-child > span:first-child {\n    padding-left: 1188px !important; }\n  .ag-theme-material .ag-row-level-19 > .ag-cell:first-child > span:first-child {\n    padding-left: 1254px !important; }\n  .ag-theme-material .ag-row-level-20 > .ag-cell:first-child > span:first-child {\n    padding-left: 1320px !important; }\n  .ag-theme-material .ag-rtl .ag-numeric-cell {\n    text-align: left; }\n  .ag-theme-material .ag-rtl .ag-header-cell-menu-button {\n    float: left; }\n  .ag-theme-material .ag-rtl .ag-header-cell-label {\n    float: right;\n    width: calc(100% - 18px); }\n    .ag-theme-material .ag-rtl .ag-header-cell-label > span {\n      float: right; }\n    .ag-theme-material .ag-rtl .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n  .ag-theme-material .ag-rtl .ag-numeric-header .ag-header-cell-menu-button {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-numeric-header .ag-header-cell-label {\n    float: left; }\n    .ag-theme-material .ag-rtl .ag-numeric-header .ag-header-cell-label > span {\n      float: left; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-pivot-mode span {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select {\n    margin-right: 8px; }\n    .ag-theme-material .ag-rtl .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select .ag-checkbox-label {\n      margin-right: 8px; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-column-drop .ag-icon {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-column-drop .ag-column-drop-title {\n    float: right;\n    clear: left; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-column-drop .ag-column-drop-empty-message {\n    padding-right: 32px;\n    padding-left: 8px; }\n  .ag-theme-material .ag-rtl .ag-filter-checkbox {\n    float: right;\n    margin-left: 8px; }\n  .ag-theme-material .ag-rtl .ag-filter-value {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group,\n  .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column {\n    margin-right: 8px; }\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group span,\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column span {\n      float: right; }\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group .ag-column-select-checkbox, .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group .ag-column-group-icons,\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column .ag-column-select-checkbox,\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column .ag-column-group-icons {\n      margin-left: 8px; }\n  .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column {\n    margin-right: 42px;\n    margin-left: 0; }\n  .ag-theme-material .ag-rtl .ag-icon-tree-closed {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMi41TDggOWwzLjUtMy41LTEtMUw2IDlsNC41IDQuNXoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-rtl .ag-header-group-cell-label {\n    height: 100%; }\n    .ag-theme-material .ag-rtl .ag-header-group-cell-label span {\n      float: right;\n      height: 100%; }\n  .ag-theme-material .ag-rtl .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-header-select-all {\n    margin-left: 24px;\n    margin-right: 0; }\n  .ag-theme-material .ag-rtl .ag-selection-checkbox span, .ag-theme-material .ag-rtl .ag-group-expanded span, .ag-theme-material .ag-rtl .ag-group-contracted span {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-column-drop-horizontal {\n    padding-right: 24px; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal span {\n      float: right; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-icon-group, .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-icon-pivot {\n      margin-left: 24px;\n      margin-right: 0; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-right-arrow {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAzTDggNGw0IDRIM3YyaDlsLTQgNCAxIDEgNi02eiIvPjwvc3ZnPg==) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      height: 100%; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-left-arrow {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUgOEg2bDQtNC0xLTEtNiA2IDYgNiAxLTEtNC00aDl6Ii8+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      height: 100%; }\n  .ag-theme-material .ag-rtl .ag-floating-filter-body {\n    float: right;\n    margin-left: 0; }\n  .ag-theme-material .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-theme-material .ag-rtl .ag-header-group-cell-label span {\n    float: right;\n    height: 100%; }\n", ""]);
+	exports.push([module.id, ".ag-theme-material {\n  font: 400 13px \"Roboto\", sans-serif;\n  color: rgba(0, 0, 0, 0.87);\n  background-color: #FFFFFF; }\n  .ag-theme-material .ag-header {\n    font: 700 12px \"Roboto\", sans-serif;\n    color: rgba(0, 0, 0, 0.54); }\n  .ag-theme-material .ag-header-row {\n    border-bottom: 1px solid #E0E0E0;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box; }\n  .ag-theme-material .ag-row {\n    border-bottom: 1px solid #E0E0E0;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box; }\n  .ag-theme-material .ag-row-hover {\n    background-color: #EEEEEE; }\n  .ag-theme-material .ag-numeric-cell {\n    text-align: right; }\n  .ag-theme-material .ag-header-cell-label {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    float: left;\n    width: calc(100% - 18px); }\n    .ag-theme-material .ag-header-cell-label > span {\n      float: left; }\n    .ag-theme-material .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-theme-material .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-label {\n    -webkit-box-orient: horizontal;\n    -webkit-box-direction: reverse;\n    -ms-flex-direction: row-reverse;\n    flex-direction: row-reverse; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-label {\n    float: right; }\n    .ag-theme-material .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-theme-material .ag-header-cell, .ag-theme-material .ag-header-group-cell {\n    padding-left: 24px;\n    padding-right: 24px;\n    line-height: 56px; }\n  .ag-theme-material .ag-cell {\n    padding-left: 24px;\n    padding-right: 24px;\n    line-height: 46px;\n    border: 1px solid transparent; }\n  .ag-theme-material .ag-cell:focus {\n    outline: initial;\n    border: 1px solid #3f51b5; }\n  .ag-theme-material .ag-cell-highlight {\n    background-color: #FCE4EC !important; }\n  .ag-theme-material .ag-cell-highlight-animation {\n    -webkit-transition: background-color 1s;\n    transition: background-color 1s; }\n  .ag-theme-material .ag-header-cell-resize {\n    width: 16px;\n    position: absolute;\n    right: -8px;\n    z-index: 4; }\n    .ag-theme-material .ag-header-cell-resize::after {\n      border-right: 1px solid #E0E0E0;\n      display: block;\n      height: 24px;\n      margin-top: 16px;\n      content: 'resize';\n      overflow: hidden;\n      text-indent: 8px;\n      width: 8px; }\n  .ag-theme-material .ag-icon-aggregation {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTMgMTN2MWExIDEgMCAwIDEtMSAxSDVhMSAxIDAgMCAxLTEtMXYtMWwzLTQtMy00VjRhMSAxIDAgMCAxIDEtMWg3YTEgMSAwIDAgMSAxIDF2MUg2LjVsMi41NSAzLjRhMSAxIDAgMCAxIDAgMS4yTDYuNSAxM0gxM3oiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-arrows {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDYuNWgzdi0yaDJMOSAxIDUuNSA0LjVoMnYyem0tMSAxaC0ydi0yTDEgOWwzLjUgMy41di0yaDJ2LTN6TTE3IDlsLTMuNS0zLjV2MmgtMnYzaDJ2MkwxNyA5em0tNi41IDIuNWgtM3YyaC0yTDkgMTdsMy41LTMuNWgtMnYtMnoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-asc {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTVWNmw0IDQgMS0xLTYtNi02IDYgMSAxIDQtNHY5eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-checked-readonly {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiIG9wYWNpdHk9Ii41Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-checked {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-indeterminate-readonly {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yem0tMiAxMEg0VjhoMTB2MnoiIGZpbGwtb3BhY2l0eT0iLjUiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-indeterminate {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yem0tMiAxMEg0VjhoMTB2MnoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-unchecked-readonly {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMnYxNEgyVjJoMTR6bTAtMkgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yeiIgZmlsbC1vcGFjaXR5PSIuNSIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-unchecked {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMnYxNEgyVjJoMTR6bTAtMkgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yeiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-column {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiAyaDR2Mkgyem0wIDRoNHYxMEgyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-columns {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-contracted {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMi41TDggOWwzLjUtMy41LTEtMUw2IDlsNC41IDQuNXoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-copy {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMSAySDRhMSAxIDAgMCAwLTEgMXY5aDFWM2g3VjJ6IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNiA0aDZhMSAxIDAgMCAxIDEgMXY5YTEgMSAwIDAgMS0xIDFINmExIDEgMCAwIDEtMS0xVjVhMSAxIDAgMCAxIDEtMXptMCAxdjloNlY1SDZ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-cut {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy4zNDggNS45NDhjLjE2MS0uMzUuMjUyLS43MzUuMjUyLTEuMTQ4YTIuOCAyLjggMCAxIDAtNS42IDAgMi44IDIuOCAwIDAgMCAyLjggMi44Yy40MTMgMCAuNzk4LS4wOTEgMS4xNDgtLjI1Mkw3LjYgOWwtMS42NTIgMS42NTJBMi43MjggMi43MjggMCAwIDAgNC44IDEwLjRhMi44IDIuOCAwIDEgMCAwIDUuNiAyLjggMi44IDAgMCAwIDIuOC0yLjhjMC0uNDEzLS4wOTEtLjc5OC0uMjUyLTEuMTQ4TDkgMTAuNGw0LjkgNC45SDE2di0uN0w3LjM0OCA1Ljk0OHpNNC44IDYuMmExLjQgMS40IDAgMSAxIDAtMi44IDEuNCAxLjQgMCAwIDEgMCAyLjh6bTAgOC40YTEuNCAxLjQgMCAxIDEgMC0yLjggMS40IDEuNCAwIDAgMSAwIDIuOHpNOSA5LjM1QS4zNDcuMzQ3IDAgMCAxIDguNjUgOWMwLS4xOTYuMTU0LS4zNS4zNS0uMzUuMTk2IDAgLjM1LjE1NC4zNS4zNSAwIC4xOTYtLjE1NC4zNS0uMzUuMzV6bTQuOS02LjY1TDkuNyA2LjlsMS40IDEuNEwxNiAzLjR2LS43aC0yLjF6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-desc {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCAzdjkuMTNMNCA4IDMgOWw2IDYgNi02LTEtMS00IDQuMTNWM3oiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-expanded {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMi41TDkuNSA5IDYgNS41bDEtMUwxMS41IDkgNyAxMy41eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-eye-slash {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMi40NDkgMTIuNDVsLTEuMzg4LTEuMzg3YTIuOTE4IDIuOTE4IDAgMCAwLTQuMTI0LTQuMTI0TDUuNTUgNS41NUE2Ljg1IDYuODUgMCAwIDEgOSA0LjYyNSA2Ljg5OSA2Ljg5OSAwIDAgMSAxNS40MTcgOWE2LjkzNSA2LjkzNSAwIDAgMS0yLjk2OCAzLjQ1em0tLjk1NS40NkE2Ljg5OSA2Ljg5OSAwIDAgMSAyLjU4NCA5IDYuOTMzIDYuOTMzIDAgMCAxIDQuNzEgNi4xMjVMNi4zNTUgNy43N2EyLjkxOCAyLjkxOCAwIDAgMCAzLjg3NSAzLjg3NWwxLjI2NCAxLjI2NHoiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0xMC4yNDIgMTAuMjM1TDcuNzY1IDcuNzU4QTEuNzQ0IDEuNzQ0IDAgMCAxIDkgNy4yNWMuOTY4IDAgMS43NS43ODIgMS43NSAxLjc1IDAgLjQ4Mi0uMTk0LjkxOC0uNTA4IDEuMjM1em0tLjkyNy40ODdhMS43NDggMS43NDggMCAwIDEtMi4wMzctMi4wMzdsMi4wMzcgMi4wMzd6Ii8+PHBhdGggZD0iTTMuMDcgOC40ODdoMTIuNDE3djFIMy4wN3oiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-eye {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0LjYyNUE2Ljg5OSA2Ljg5OSAwIDAgMCAyLjU4MyA5IDYuODk5IDYuODk5IDAgMCAwIDkgMTMuMzc1IDYuODk5IDYuODk5IDAgMCAwIDE1LjQxNyA5IDYuODk5IDYuODk5IDAgMCAwIDkgNC42MjV6bTAgNy4yOTJhMi45MTggMi45MTggMCAwIDEgMC01LjgzNCAyLjkxOCAyLjkxOCAwIDAgMSAwIDUuODM0ek05IDcuMjVjLS45NjggMC0xLjc1Ljc4Mi0xLjc1IDEuNzVzLjc4MiAxLjc1IDEuNzUgMS43NSAxLjc1LS43ODIgMS43NS0xLjc1UzkuOTY4IDcuMjUgOSA3LjI1eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-filter {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-group {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xNCAxNEg3di0yaDlhMiAyIDAgMCAxLTIgMnptLTUtMnYyaDJ2LTJIOXoiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0xNiA2YTIgMiAwIDAgMC0yLTJINWEyIDIgMCAwIDAtMiAyaDEzek03IDR2Mkg1VjRoMnptOSA2SDdWOGg5djJ6TTkgOHYyaDJWOEg5eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-indeterminate {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0LjYyNUE2Ljg5OSA2Ljg5OSAwIDAgMCAyLjU4MyA5IDYuODk5IDYuODk5IDAgMCAwIDkgMTMuMzc1IDYuODk5IDYuODk5IDAgMCAwIDE1LjQxNyA5IDYuODk5IDYuODk5IDAgMCAwIDkgNC42MjV6bTAgNy4yOTJhMi45MTggMi45MTggMCAwIDEgMC01LjgzNCAyLjkxOCAyLjkxOCAwIDAgMSAwIDUuODM0eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-left {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUgOEg2bDQtNC0xLTEtNiA2IDYgNiAxLTEtNC00aDl6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-loading {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImIiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImQiIGQ9Ik03IDRoM3YySDd6Ii8+PHBhdGggaWQ9ImUiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImYiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImciIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImgiIGQ9Ik03IDRoM3YySDd6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMyA0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNS41aDF2MmgtMXoiLz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMyA0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNSA3LjVoMXYyaC0xeiIvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzIDQpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNjIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNLjUgNC41aDJ2MWgtMnoiLz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMyA0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTcuNSA0LjVoMnYxaC0yeiIvPjwvZz48ZyBvcGFjaXR5PSIuNzE0Ij48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxLjY3MiAxMC42MjEpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNlIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41LjVoMXYyaC0xeiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxLjY3MiAxMC42MjEpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNmIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41IDcuNWgxdjJoLTF6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDEuNjcyIDEwLjYyMSkiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2ciLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik0uNSA0LjVoMnYxaC0yeiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxLjY3MiAxMC42MjEpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNoIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNy41IDQuNWgydjFoLTJ6Ii8+PC9nPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-menu {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-minus {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQgMTBINFY4aDEweiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-none {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoNXYtMkgyeiIvPjxwYXRoIGQ9Ik0yIDR2MmgxNFY0em0wIDZoOVY4SDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-not-allowed {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxLjVDNC44NiAxLjUgMS41IDQuODYgMS41IDljMCA0LjE0IDMuMzYgNy41IDcuNSA3LjUgNC4xNCAwIDcuNS0zLjM2IDcuNS03LjUgMC00LjE0LTMuMzYtNy41LTcuNS03LjV6TTMgOWMwLTMuMzE1IDIuNjg1LTYgNi02YTUuOTMgNS45MyAwIDAgMSAzLjY3NSAxLjI2OGwtOC40MDggOC40MDdBNS45MjcgNS45MjcgMCAwIDEgMyA5em02IDZhNS45MjcgNS45MjcgMCAwIDEtMy42NzUtMS4yNjhsOC40MDctOC40MDdBNS45MjcgNS45MjcgMCAwIDEgMTUgOWMwIDMuMzE1LTIuNjg1IDYtNiA2eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-paste {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEgM2MwLS41LS41LTEuNS0yLTEuNVM3IDIuNSA3IDNINGExIDEgMCAwIDAtMSAxdjExYTEgMSAwIDAgMCAxIDFoMTBhMSAxIDAgMCAwIDEtMVY0YTEgMSAwIDAgMC0xLTFoLTN6bS0yIC4yNzNjLjM2NyAwIC42NjcuMjg2LjY2Ny42MzYgMCAuMzUtLjMuNjM2LS42NjcuNjM2LS4zNjcgMC0uNjY3LS4yODYtLjY2Ny0uNjM2IDAtLjM1LjMtLjYzNi42NjctLjYzNnpNMTQgMTVINFY0aDJ2Mmg2VjRoMnYxMXoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-pin {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik05LjY1NyAybDUuNDEgNS40MS0uNTQuNTQyLS41NDItLjU0MS00LjMyOCAyLjE2NCAxLjA4MiAxLjA4Mi0xLjU0MSAxLjU0TDQuODY5IDcuODdsMS41NDItMS41NCAxLjA4MiAxLjA4IDIuMTY0LTQuMzI5LS41NDEtLjU0eiIvPjxwYXRoIGQ9Ik02IDExbC0yLjUgMi41IiBzdHJva2U9IiMwMDAiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-pivot {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTExLjUgMTAuNUwxMyA5bDEuNSAxLjVtLTUgMUw4IDEzbDEuNSAxLjUiLz48cGF0aCBkPSJNMCAwaDE4djE4SDB6Ii8+PHBhdGggZD0iTTMgMWgxMmEyIDIgMCAwIDEgMiAydjEyYTIgMiAwIDAgMS0yIDJIM2EyIDIgMCAwIDEtMi0yVjNhMiAyIDAgMCAxIDItMnptMyAxNHYtM0gzdjNoM3ptMC00VjhIM3YzaDN6bTAtNVYzSDN2M2gzem01IDBWM0g3djNoNHptNCA5VjhIN3Y3aDh6bTAtOVYzaC0zdjNoM3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-plus {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQgMTBoLTR2NEg4di00SDRWOGg0VjRoMnY0aDR6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-right {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAzTDggNGw0IDRIM3YyaDlsLTQgNCAxIDEgNi02eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-left {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTNMNiA5bDQtNHoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-right {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCA1bDQgNC00IDR6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-up {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAxMGw0LTQgNCA0eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-down {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSA4bDQgNCA0LTR6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-tick {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNi41IDEyLjVMMyA5bC0xIDEgNC41IDQuNSA5LTktMS0xeiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-cross {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQgNWwtMS0xLTQgNC00LTQtMSAxIDQgNC00IDQgMSAxIDQtNCA0IDQgMS0xLTQtNHoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-tree-open {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIuNSA2LjVMOSAxMCA1LjUgNi41bC0xIDFMOSAxMmw0LjUtNC41eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-tree-closed {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMi41TDkuNSA5IDYgNS41bDEtMUwxMS41IDkgNyAxMy41eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-header-cell-menu-button .ag-icon-menu {\n    height: 56px; }\n  .ag-theme-material .ag-icon-checkbox-checked:empty {\n    background: #ff4081 none;\n    -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=) no-repeat 50% 50%;\n    mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=) no-repeat 50% 50%; }\n    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n      .ag-theme-material .ag-icon-checkbox-checked:empty {\n        background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=); } }\n  .ag-theme-material .ag-menu {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    padding: 0;\n    z-index: 5; }\n    .ag-theme-material .ag-menu .ag-menu-list {\n      width: 100%;\n      cursor: default;\n      margin-top: 8px;\n      margin-bottom: 8px; }\n    .ag-theme-material .ag-menu .ag-menu-option {\n      line-height: 32px;\n      padding-left: 16px;\n      padding-right: 16px; }\n      .ag-theme-material .ag-menu .ag-menu-option > span {\n        vertical-align: middle;\n        display: table-cell; }\n    .ag-theme-material .ag-menu .ag-menu-option-active {\n      background: #EEEEEE; }\n    .ag-theme-material .ag-menu .ag-menu-option-icon {\n      padding-left: 8px;\n      padding-right: 8px; }\n      .ag-theme-material .ag-menu .ag-menu-option-icon span {\n        margin-top: 8px;\n        height: 18px;\n        line-height: 0; }\n    .ag-theme-material .ag-menu .ag-menu-option-shortcut {\n      padding-left: 16px; }\n    .ag-theme-material .ag-menu .ag-menu-separator {\n      margin-left: -8px; }\n      .ag-theme-material .ag-menu .ag-menu-separator > span {\n        height: 16px;\n        background-image: url(\"data:image/svg+xml;utf8,<svg width='1' height='16px' viewBox='0 0 1 16px' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='8px' x2='1' y2='8px' stroke-width='1' stroke='#E0E0E0'/> </svg>\"); }\n    .ag-theme-material .ag-menu .ag-menu-option-popup-pointer {\n      width: 34px; }\n  .ag-theme-material.ag-dnd-ghost {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    font: 700 12px \"Roboto\", sans-serif;\n    color: rgba(0, 0, 0, 0.54);\n    border: none;\n    height: 56px !important;\n    line-height: 56px;\n    z-index: 5;\n    margin: 0;\n    -webkit-transform: translatey(16px);\n    transform: translatey(16px);\n    padding: 0 16px; }\n    .ag-theme-material.ag-dnd-ghost span, .ag-theme-material.ag-dnd-ghost div {\n      float: left;\n      height: 100%;\n      margin: 0;\n      padding: 0; }\n  .ag-theme-material .ag-tab-header {\n    background: #EEEEEE;\n    display: table;\n    width: 100%;\n    min-width: 220px; }\n    .ag-theme-material .ag-tab-header .ag-tab {\n      display: table-cell;\n      height: 32px;\n      vertical-align: middle;\n      text-align: center;\n      border-bottom: 2px solid transparent; }\n      .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected {\n        border-bottom: 2px solid #3f51b5; }\n        .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-filter {\n          display: inline-block;\n          background: #3f51b5 none;\n          -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) no-repeat 50% 50%;\n          mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) no-repeat 50% 50%; }\n          @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n            .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-filter {\n              background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+); } }\n        .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-columns {\n          display: inline-block;\n          background: #3f51b5 none;\n          -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+) no-repeat 50% 50%;\n          mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+) no-repeat 50% 50%; }\n          @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n            .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-columns {\n              background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+); } }\n        .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-menu {\n          display: inline-block;\n          background: #3f51b5 none;\n          -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==) no-repeat 50% 50%;\n          mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==) no-repeat 50% 50%; }\n          @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n            .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-menu {\n              background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==); } }\n  .ag-theme-material .ag-tab-body {\n    padding: 8px 0; }\n    .ag-theme-material .ag-tab-body .ag-filter-select {\n      margin: 8px;\n      width: calc(100% - 16px); }\n    .ag-theme-material .ag-tab-body .ag-menu-list {\n      margin-top: 0;\n      margin-bottom: 0; }\n      .ag-theme-material .ag-tab-body .ag-menu-list > div:first-child > span {\n        padding-top: 0; }\n      .ag-theme-material .ag-tab-body .ag-menu-list > div:last-child > span {\n        padding-bottom: 0; }\n      .ag-theme-material .ag-tab-body .ag-menu-list > div:last-child > .ag-menu-option-popup-pointer {\n        background-position-y: 0; }\n  .ag-theme-material .ag-filter-select {\n    margin: 8px;\n    width: calc(100% - 16px); }\n  .ag-theme-material .ag-filter input[type=text], .ag-theme-material .ag-filter input[type=date] {\n    border: 0;\n    background: transparent;\n    font-size: inherit;\n    font-family: inherit;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n    border-bottom: 1px solid #E0E0E0;\n    height: 24px;\n    padding-bottom: 8px;\n    color: rgba(0, 0, 0, 0.87);\n    padding-left: 8px; }\n    .ag-theme-material .ag-filter input[type=text]:focus, .ag-theme-material .ag-filter input[type=date]:focus {\n      border-bottom: 2px solid #3f51b5;\n      padding-bottom: 7px;\n      outline: none; }\n    .ag-theme-material .ag-filter input[type=text]::-webkit-input-placeholder, .ag-theme-material .ag-filter input[type=date]::-webkit-input-placeholder {\n      color: rgba(0, 0, 0, 0.38); }\n    .ag-theme-material .ag-filter input[type=text]:-ms-input-placeholder, .ag-theme-material .ag-filter input[type=date]:-ms-input-placeholder {\n      color: rgba(0, 0, 0, 0.38); }\n    .ag-theme-material .ag-filter input[type=text]::placeholder, .ag-theme-material .ag-filter input[type=date]::placeholder {\n      color: rgba(0, 0, 0, 0.38); }\n  .ag-theme-material .ag-filter label {\n    display: block;\n    padding-left: 8px; }\n  .ag-theme-material .ag-filter .ag-set-filter-list {\n    padding-top: 8px; }\n  .ag-theme-material .ag-filter .ag-filter-header-container {\n    height: 32px;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box; }\n  .ag-theme-material .ag-filter .ag-filter-header-container:nth-child(2) {\n    border-bottom: 1px solid #E0E0E0; }\n  .ag-theme-material .ag-filter .ag-filter-checkbox {\n    float: left;\n    margin-right: 8px;\n    height: 32px;\n    padding-top: 4px; }\n  .ag-theme-material .ag-filter .ag-filter-value {\n    height: 32px;\n    float: left;\n    line-height: 28px; }\n  .ag-theme-material .ag-filter .ag-filter-apply-panel {\n    padding: 8px;\n    padding-top: 16px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-pack: end;\n    -ms-flex-pack: end;\n    justify-content: flex-end; }\n    .ag-theme-material .ag-filter .ag-filter-apply-panel button {\n      -webkit-appearance: none;\n      background: transparent;\n      border: 0;\n      color: #3f51b5;\n      text-transform: uppercase;\n      font-family: inherit;\n      font-size: inherit;\n      padding: 0;\n      margin: 0; }\n    .ag-theme-material .ag-filter .ag-filter-apply-panel button + button {\n      margin-left: 16px; }\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column-group::not(::first-child) {\n    border-top: 1px solid #E0E0E0; }\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column-group,\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column {\n    height: 32px;\n    line-height: 32px;\n    margin-left: 8px; }\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column-group span,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column span {\n      float: left;\n      height: 100%; }\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column-group .ag-column-select-indent,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column .ag-column-select-indent {\n      width: 16px; }\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column-group .ag-column-select-checkbox, .ag-theme-material .ag-column-select-panel .ag-column-select-column-group .ag-column-group-icons,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column .ag-column-select-checkbox,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column .ag-column-group-icons {\n      margin-right: 8px; }\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column {\n    margin-left: 42px; }\n  .ag-theme-material .ag-tool-panel {\n    border-right: 0;\n    background-color: #FAFAFA; }\n    .ag-theme-material .ag-tool-panel .ag-pivot-mode {\n      height: 56px;\n      border-bottom: 1px solid #E0E0E0;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      line-height: 56px; }\n      .ag-theme-material .ag-tool-panel .ag-pivot-mode span {\n        float: left;\n        height: 100%; }\n      .ag-theme-material .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select {\n        margin-left: 8px; }\n        .ag-theme-material .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select .ag-checkbox-label {\n          margin-left: 8px; }\n    .ag-theme-material .ag-tool-panel .ag-column-select-panel {\n      padding: 8px 0;\n      padding-bottom: 7px;\n      border-bottom: 1px solid #E0E0E0; }\n    .ag-theme-material .ag-tool-panel .ag-column-drop {\n      overflow: auto;\n      border-bottom: 1px solid #E0E0E0;\n      padding: 8px 0;\n      padding-bottom: 16px;\n      clear: both; }\n      .ag-theme-material .ag-tool-panel .ag-column-drop .ag-icon {\n        float: left;\n        height: 40px;\n        margin: 0 8px; }\n      .ag-theme-material .ag-tool-panel .ag-column-drop .ag-column-drop-title {\n        line-height: 40px;\n        height: 40px;\n        float: left;\n        width: calc(100% - 34px);\n        clear: right; }\n      .ag-theme-material .ag-tool-panel .ag-column-drop .ag-column-drop-empty-message {\n        clear: both;\n        font: 700 12px \"Roboto\", sans-serif;\n        color: rgba(0, 0, 0, 0.38);\n        padding-left: 32px;\n        padding-right: 8px;\n        line-height: 16px; }\n  .ag-theme-material .ag-filter-icon:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-sort-ascending-icon:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTVWNmw0IDQgMS0xLTYtNi02IDYgMSAxIDQtNHY5eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-sort-descending-icon:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCAzdjkuMTNMNCA4IDMgOWw2IDYgNi02LTEtMS00IDQuMTNWM3oiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-sort-none-icon:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoNXYtMkgyeiIvPjxwYXRoIGQ9Ik0yIDR2MmgxNFY0em0wIDZoOVY4SDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-header-cell-label .ag-header-icon {\n    margin: 0;\n    height: 100%;\n    background-size: 14px 14px;\n    background-position-y: 20px;\n    margin-left: 8px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-label .ag-header-icon {\n    margin-left: 0;\n    margin-right: 8px; }\n  .ag-theme-material .ag-paging-panel {\n    border-top: 1px solid #E0E0E0;\n    height: 56px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n    -ms-flex-align: center;\n    align-items: center;\n    padding: 0 24px;\n    -webkit-box-pack: end;\n    -ms-flex-pack: end;\n    justify-content: flex-end;\n    color: rgba(0, 0, 0, 0.54); }\n    .ag-theme-material .ag-paging-panel > span {\n      margin-left: 32px; }\n    .ag-theme-material .ag-paging-panel button[ref=btFirst] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00LjUgNC41SDZ2OUg0LjV6Ii8+PHBhdGggZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNMTQgMTIuNUwxMC41IDkgMTQgNS41bC0xLTFMOC41IDlsNC41IDQuNXoiLz48L2c+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btFirst][disabled] {\n        opacity: 0.38; }\n    .ag-theme-material .ag-paging-panel button[ref=btPrevious] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMi41TDggOWwzLjUtMy41LTEtMUw2IDlsNC41IDQuNXoiLz48L3N2Zz4=) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btPrevious][disabled] {\n        opacity: 0.38; }\n    .ag-theme-material .ag-paging-panel button[ref=btLast] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMy41IDQuNUgxMnY5aDEuNXoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik00IDEyLjVMNy41IDkgNCA1LjVsMS0xTDkuNSA5IDUgMTMuNXoiLz48L2c+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btLast][disabled] {\n        opacity: 0.38; }\n    .ag-theme-material .ag-paging-panel button[ref=btNext] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMi41TDkuNSA5IDYgNS41bDEtMUwxMS41IDkgNyAxMy41eiIvPjwvc3ZnPg==) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btNext][disabled] {\n        opacity: 0.38; }\n  .ag-theme-material .ag-row-selected {\n    background-color: #F5F5F5; }\n  .ag-theme-material .ag-cell-range-selected:not(.ag-cell-focus) {\n    background-color: #E8EAF6; }\n  .ag-theme-material .ag-cell-inline-editing {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    height: 72px;\n    z-index: 2;\n    background: #F5F5F5;\n    padding: 24px;\n    line-height: normal; }\n    .ag-theme-material .ag-cell-inline-editing input[type=text] {\n      border: 0;\n      background: transparent;\n      font-size: inherit;\n      font-family: inherit;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      border-bottom: 1px solid #E0E0E0;\n      height: 24px;\n      padding-bottom: 8px;\n      color: rgba(0, 0, 0, 0.87); }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]:focus {\n        border-bottom: 2px solid #3f51b5;\n        padding-bottom: 7px;\n        outline: none; }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]::-webkit-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]:-ms-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]::placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n    .ag-theme-material .ag-cell-inline-editing select {\n      height: auto; }\n  .ag-theme-material .ag-popup-editor {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    padding: 0;\n    background: #F5F5F5; }\n    .ag-theme-material .ag-popup-editor .ag-large-textarea textarea {\n      padding: 24px;\n      border: 0;\n      background: transparent;\n      font-size: inherit;\n      font-family: inherit;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      border-bottom: 1px solid #E0E0E0;\n      height: 24px;\n      padding-bottom: 8px;\n      color: rgba(0, 0, 0, 0.87);\n      height: auto; }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea:focus {\n        border-bottom: 2px solid #3f51b5;\n        padding-bottom: 7px;\n        outline: none; }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea::-webkit-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea:-ms-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea::placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n  .ag-theme-material .ag-rich-select {\n    background: #F5F5F5;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIuNSA2LjVMOSAxMCA1LjUgNi41bC0xIDFMOSAxMmw0LjUtNC41eiIvPjwvc3ZnPg==);\n    background-position-y: 16px;\n    background-position-x: calc(100% - 8px);\n    background-repeat: no-repeat; }\n    .ag-theme-material .ag-rich-select .ag-rich-select-list {\n      height: 200px; }\n    .ag-theme-material .ag-rich-select .ag-rich-select-value {\n      line-height: 48px;\n      height: 48px;\n      padding-left: 24px; }\n    .ag-theme-material .ag-rich-select .ag-virtual-list-item {\n      cursor: default;\n      height: 48px;\n      line-height: 48px;\n      padding-left: 24px; }\n      .ag-theme-material .ag-rich-select .ag-virtual-list-item:hover {\n        background-color: #EEEEEE; }\n  .ag-theme-material .ag-floating-filter-body {\n    float: left;\n    width: calc(100% - 8px * 4);\n    margin-right: 0;\n    height: 100%; }\n    .ag-theme-material .ag-floating-filter-body input {\n      border: 0;\n      background: transparent;\n      font-size: inherit;\n      font-family: inherit;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      border-bottom: 1px solid #E0E0E0;\n      height: 24px;\n      padding-bottom: 8px;\n      color: rgba(0, 0, 0, 0.87); }\n      .ag-theme-material .ag-floating-filter-body input:focus {\n        border-bottom: 2px solid #3f51b5;\n        padding-bottom: 7px;\n        outline: none; }\n      .ag-theme-material .ag-floating-filter-body input::-webkit-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-floating-filter-body input:-ms-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-floating-filter-body input::placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n  .ag-theme-material .ag-floating-filter-button {\n    padding-top: 20px;\n    float: right; }\n    .ag-theme-material .ag-floating-filter-button button {\n      -webkit-appearance: none;\n      background: transparent;\n      border: 0;\n      color: #3f51b5;\n      text-transform: uppercase;\n      font-family: inherit;\n      font-size: inherit;\n      padding: 0;\n      margin: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden; }\n  .ag-theme-material .ag-cell-label-container {\n    height: 100%; }\n  .ag-theme-material .ag-header-cell-label {\n    height: 100%; }\n    .ag-theme-material .ag-header-cell-label span {\n      height: 100%; }\n  .ag-theme-material .ag-header-group-cell-label {\n    height: 100%; }\n    .ag-theme-material .ag-header-group-cell-label span {\n      float: left;\n      height: 100%; }\n  .ag-theme-material .ag-header-select-all {\n    margin-right: 24px;\n    height: 100%; }\n    .ag-theme-material .ag-header-select-all span {\n      height: 100%; }\n  .ag-theme-material .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {\n    width: calc(100% - 18px - 24px);\n    float: left; }\n  .ag-theme-material .ag-selection-checkbox span, .ag-theme-material .ag-group-expanded span, .ag-theme-material .ag-group-contracted span {\n    margin-right: 24px; }\n  .ag-theme-material .ag-selection-checkbox span {\n    position: relative;\n    top: 4px; }\n  .ag-theme-material .ag-group-expanded .ag-icon-contracted:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIuNSA2LjVMOSAxMCA1LjUgNi41bC0xIDFMOSAxMmw0LjUtNC41eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-column-drop-horizontal {\n    height: 48px;\n    line-height: 32px;\n    background-color: #EEEEEE;\n    padding-left: 24px; }\n    .ag-theme-material .ag-column-drop-horizontal.ag-width-half {\n      margin-bottom: -3px; }\n    .ag-theme-material .ag-column-drop-horizontal span {\n      height: 100%;\n      float: left; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-icon-group, .ag-theme-material .ag-column-drop-horizontal .ag-icon-pivot {\n      margin-right: 24px; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-right-arrow {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAzTDggNGw0IDRIM3YyaDlsLTQgNCAxIDEgNi02eiIvPjwvc3ZnPg==) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-left-arrow {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUgOEg2bDQtNC0xLTEtNiA2IDYgNiAxLTEtNC00aDl6Ii8+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-left-arrow, .ag-theme-material .ag-column-drop-horizontal .ag-right-arrow {\n      text-indent: 100%;\n      overflow: hidden;\n      height: 100%;\n      margin: 0 8px;\n      opacity: 0.54; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-column-drop-empty-message {\n      height: 100%;\n      line-height: 48px;\n      opacity: 0.54; }\n  .ag-theme-material .ag-column-drop-cell {\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n    height: 32px !important;\n    margin-top: 8px;\n    padding: 0 4px;\n    background: #E0E0E0;\n    border-radius: 32px; }\n    .ag-theme-material .ag-column-drop-cell .ag-column-drop-cell-text {\n      margin: 0 8px;\n      height: 100%;\n      line-height: 32px; }\n    .ag-theme-material .ag-column-drop-cell .ag-column-drop-cell-button {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxLjVBNy40OTMgNy40OTMgMCAwIDAgMS41IDljMCA0LjE0OCAzLjM1MyA3LjUgNy41IDcuNSA0LjE0OCAwIDcuNS0zLjM1MiA3LjUtNy41IDAtNC4xNDctMy4zNTItNy41LTcuNS03LjV6bTMuNzUgMTAuMTkzbC0xLjA1NyAxLjA1N0w5IDEwLjA1NyA2LjMwOCAxMi43NSA1LjI1IDExLjY5MyA3Ljk0MiA5IDUuMjUgNi4zMDggNi4zMDggNS4yNSA5IDcuOTQybDIuNjkzLTIuNjkyIDEuMDU3IDEuMDU4TDEwLjA1NyA5bDIuNjkzIDIuNjkzeiIvPjwvc3ZnPg==) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      height: 100%;\n      opacity: 0.54;\n      margin: 0 4px; }\n      .ag-theme-material .ag-column-drop-cell .ag-column-drop-cell-button:hover {\n        opacity: 0.87; }\n  .ag-theme-material .ag-column-drop-vertical > .ag-column-drop-cell {\n    margin-top: 0;\n    margin-left: 8px;\n    margin-bottom: 8px;\n    float: left; }\n  .ag-theme-material .ag-row-level-1 > .ag-cell:first-child > span:first-child {\n    padding-left: 66px !important; }\n  .ag-theme-material .ag-row-level-2 > .ag-cell:first-child > span:first-child {\n    padding-left: 132px !important; }\n  .ag-theme-material .ag-row-level-3 > .ag-cell:first-child > span:first-child {\n    padding-left: 198px !important; }\n  .ag-theme-material .ag-row-level-4 > .ag-cell:first-child > span:first-child {\n    padding-left: 264px !important; }\n  .ag-theme-material .ag-row-level-5 > .ag-cell:first-child > span:first-child {\n    padding-left: 330px !important; }\n  .ag-theme-material .ag-row-level-6 > .ag-cell:first-child > span:first-child {\n    padding-left: 396px !important; }\n  .ag-theme-material .ag-row-level-7 > .ag-cell:first-child > span:first-child {\n    padding-left: 462px !important; }\n  .ag-theme-material .ag-row-level-8 > .ag-cell:first-child > span:first-child {\n    padding-left: 528px !important; }\n  .ag-theme-material .ag-row-level-9 > .ag-cell:first-child > span:first-child {\n    padding-left: 594px !important; }\n  .ag-theme-material .ag-row-level-10 > .ag-cell:first-child > span:first-child {\n    padding-left: 660px !important; }\n  .ag-theme-material .ag-row-level-11 > .ag-cell:first-child > span:first-child {\n    padding-left: 726px !important; }\n  .ag-theme-material .ag-row-level-12 > .ag-cell:first-child > span:first-child {\n    padding-left: 792px !important; }\n  .ag-theme-material .ag-row-level-13 > .ag-cell:first-child > span:first-child {\n    padding-left: 858px !important; }\n  .ag-theme-material .ag-row-level-14 > .ag-cell:first-child > span:first-child {\n    padding-left: 924px !important; }\n  .ag-theme-material .ag-row-level-15 > .ag-cell:first-child > span:first-child {\n    padding-left: 990px !important; }\n  .ag-theme-material .ag-row-level-16 > .ag-cell:first-child > span:first-child {\n    padding-left: 1056px !important; }\n  .ag-theme-material .ag-row-level-17 > .ag-cell:first-child > span:first-child {\n    padding-left: 1122px !important; }\n  .ag-theme-material .ag-row-level-18 > .ag-cell:first-child > span:first-child {\n    padding-left: 1188px !important; }\n  .ag-theme-material .ag-row-level-19 > .ag-cell:first-child > span:first-child {\n    padding-left: 1254px !important; }\n  .ag-theme-material .ag-row-level-20 > .ag-cell:first-child > span:first-child {\n    padding-left: 1320px !important; }\n  .ag-theme-material .ag-cell-data-changed {\n    background-color: #FCE4EC; }\n  .ag-theme-material .ag-cell-data-changed-animation {\n    background-color: transparent;\n    -webkit-transition: background-color 1s;\n    transition: background-color 1s; }\n  .ag-theme-material .ag-rtl .ag-numeric-cell {\n    text-align: left; }\n  .ag-theme-material .ag-rtl .ag-header-cell-menu-button {\n    float: left; }\n  .ag-theme-material .ag-rtl .ag-header-cell-label {\n    float: right;\n    width: calc(100% - 18px); }\n    .ag-theme-material .ag-rtl .ag-header-cell-label > span {\n      float: right; }\n    .ag-theme-material .ag-rtl .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n  .ag-theme-material .ag-rtl .ag-numeric-header .ag-header-cell-menu-button {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-numeric-header .ag-header-cell-label {\n    float: left; }\n    .ag-theme-material .ag-rtl .ag-numeric-header .ag-header-cell-label > span {\n      float: left; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-pivot-mode span {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select {\n    margin-right: 8px; }\n    .ag-theme-material .ag-rtl .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select .ag-checkbox-label {\n      margin-right: 8px; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-column-drop .ag-icon {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-column-drop .ag-column-drop-title {\n    float: right;\n    clear: left; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-column-drop .ag-column-drop-empty-message {\n    padding-right: 32px;\n    padding-left: 8px; }\n  .ag-theme-material .ag-rtl .ag-filter-checkbox {\n    float: right;\n    margin-left: 8px; }\n  .ag-theme-material .ag-rtl .ag-filter-value {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group,\n  .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column {\n    margin-right: 8px; }\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group span,\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column span {\n      float: right; }\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group .ag-column-select-checkbox, .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group .ag-column-group-icons,\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column .ag-column-select-checkbox,\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column .ag-column-group-icons {\n      margin-left: 8px; }\n  .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column {\n    margin-right: 42px;\n    margin-left: 0; }\n  .ag-theme-material .ag-rtl .ag-icon-tree-closed {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMi41TDggOWwzLjUtMy41LTEtMUw2IDlsNC41IDQuNXoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-rtl .ag-header-group-cell-label {\n    height: 100%; }\n    .ag-theme-material .ag-rtl .ag-header-group-cell-label span {\n      float: right;\n      height: 100%; }\n  .ag-theme-material .ag-rtl .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-header-select-all {\n    margin-left: 24px;\n    margin-right: 0; }\n  .ag-theme-material .ag-rtl .ag-selection-checkbox span, .ag-theme-material .ag-rtl .ag-group-expanded span, .ag-theme-material .ag-rtl .ag-group-contracted span {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-column-drop-horizontal {\n    padding-right: 24px; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal span {\n      float: right; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-icon-group, .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-icon-pivot {\n      margin-left: 24px;\n      margin-right: 0; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-right-arrow {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAzTDggNGw0IDRIM3YyaDlsLTQgNCAxIDEgNi02eiIvPjwvc3ZnPg==) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      height: 100%; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-left-arrow {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUgOEg2bDQtNC0xLTEtNiA2IDYgNiAxLTEtNC00aDl6Ii8+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      height: 100%; }\n  .ag-theme-material .ag-rtl .ag-floating-filter-body {\n    float: right;\n    margin-left: 0; }\n  .ag-theme-material .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-theme-material .ag-rtl .ag-header-group-cell-label span {\n    float: right;\n    height: 100%; }\n", ""]);
 
 	// exports
 
@@ -41251,8 +41333,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./theme-bootstrap.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./theme-bootstrap.css");
+			module.hot.accept("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-bootstrap.css", function() {
+				var newContent = require("!!../../../ag-grid-enterprise/node_modules/css-loader/index.js!./theme-bootstrap.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -41270,7 +41352,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	// module
-	exports.push([module.id, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-bootstrap {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #000;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-bootstrap .ag-numeric-cell {\n    text-align: right; }\n  .ag-bootstrap .ag-header-cell-label {\n    display: flex; }\n    .ag-bootstrap .ag-header-cell-label > span {\n      float: left; }\n    .ag-bootstrap .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-bootstrap .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-bootstrap .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-bootstrap .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-bootstrap .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-bootstrap .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-bootstrap .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-bootstrap .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-bootstrap img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-bootstrap .ag-root {\n    border: none; }\n  .ag-bootstrap .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-bootstrap .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-bootstrap .ag-cell-not-inline-editing {\n    padding: 4px;\n    /* compensate for the transparent borders; */\n    padding-left: 3px; }\n  .ag-bootstrap .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-bootstrap .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-bootstrap .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-bootstrap .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-bootstrap .ag-cell-focus {\n    border: 2px solid #217346; }\n  .ag-bootstrap .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-bootstrap .ag-ltr .ag-cell-no-focus {\n    border-right: none;\n    border-left: 1px solid transparent; }\n  .ag-bootstrap .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: none; }\n  .ag-bootstrap .ag-rtl .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-bootstrap .ag-ltr .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-bootstrap .ag-rtl .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-bootstrap .ag-ltr .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-bootstrap .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-bootstrap .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-bootstrap .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-bootstrap .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-bootstrap .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-bootstrap .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-bootstrap .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-bootstrap .ag-rich-select {\n    font-size: 14px;\n    border: none;\n    background-color: white; }\n  .ag-bootstrap .ag-rich-select-value {\n    padding: 2px; }\n  .ag-bootstrap .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-rich-select-row {\n    padding: 2px; }\n  .ag-bootstrap .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-bootstrap .ag-large-text {\n    border: none; }\n  .ag-bootstrap .ag-header-select-all, .ag-bootstrap .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-bootstrap .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-bootstrap .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-bootstrap .ag-header {\n    color: #000;\n    background: none;\n    border-bottom: none;\n    font-weight: 600; }\n  .ag-bootstrap .ag-header-icon {\n    color: #000;\n    stroke: none;\n    fill: #000; }\n  .ag-bootstrap .ag-filter-icon {\n    display: inline-block; }\n  .ag-bootstrap .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-layout-for-print .ag-header-container {\n    background: none;\n    border-bottom: none; }\n  .ag-bootstrap .ag-ltr .ag-header-cell {\n    border-right: none; }\n  .ag-bootstrap .ag-rtl .ag-header-cell {\n    border-left: none; }\n  .ag-bootstrap .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-bootstrap .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-bootstrap .ag-ltr .ag-header-group-cell {\n    border-right: none; }\n  .ag-bootstrap .ag-rtl .ag-header-group-cell {\n    border-left: none; }\n  .ag-bootstrap .ag-header-group-cell-with-group {\n    border-bottom: none; }\n  .ag-bootstrap .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-bootstrap .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-bootstrap .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-bootstrap .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-ltr .ag-pinned-right-header {\n    border-left: none; }\n  .ag-bootstrap .ag-rtl .ag-pinned-left-header {\n    border-right: none; }\n  .ag-bootstrap .ag-body {\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-row-odd {\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-row-even {\n    background-color: white; }\n  .ag-bootstrap .ag-row-selected {\n    background-color: powderblue; }\n  .ag-bootstrap .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-bootstrap .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-bootstrap .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-bootstrap .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-bootstrap .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 4px; }\n  .ag-bootstrap .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 4px; }\n  .ag-bootstrap .ag-group-cell {\n    font-style: italic; }\n  .ag-bootstrap .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-bootstrap .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-bootstrap .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-bootstrap .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-bootstrap .ag-group-child-count {\n    display: inline-block; }\n  .ag-bootstrap .ag-footer-cell {\n    font-style: italic; }\n  .ag-bootstrap .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-bootstrap .ag-menu .ag-tab-header {\n      background-color: #e6e6e6; }\n    .ag-bootstrap .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-bootstrap .ag-menu .ag-tab-selected {\n      background-color: #f6f6f6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-bootstrap .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-bootstrap .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-bootstrap .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-bootstrap .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-bootstrap .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-bootstrap .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-bootstrap .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-bootstrap .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-bootstrap .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-bootstrap .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-paging-panel {\n    padding: 4px; }\n  .ag-bootstrap .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-bootstrap .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-bootstrap .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: none;\n    border-top: none;\n    color: #000; }\n  .ag-bootstrap .ltr .ag-tool-panel {\n    border-right: none; }\n  .ag-bootstrap .rtl .ag-tool-panel {\n    border-left: none; }\n  .ag-bootstrap .ag-status-bar {\n    color: #000;\n    background-color: #f6f6f6;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: none;\n    border-left: none;\n    border-right: none;\n    padding: 2px; }\n  .ag-bootstrap .ag-status-bar-aggregations {\n    float: right; }\n  .ag-bootstrap .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-bootstrap .ag-column-drop-cell {\n    background: none;\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-bootstrap .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-bootstrap .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-bootstrap .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-bootstrap .ag-column-drop-cell-button:hover {\n    border: none; }\n  .ag-bootstrap .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-bootstrap .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-bootstrap .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: none;\n    border-left: none;\n    border-right: none; }\n  .ag-bootstrap .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: none;\n    overflow: auto; }\n    .ag-bootstrap .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-bootstrap .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-bootstrap .ag-pivot-mode {\n    border-bottom: none;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: none;\n    overflow: auto; }\n  .ag-bootstrap .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: none; }\n  .ag-bootstrap .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-bootstrap .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-bootstrap .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-bootstrap .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-bootstrap .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-bootstrap .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-bootstrap .ag-rtl .ag-floating-filter-button {\n    float: left; }\n", ""]);
+	exports.push([module.id, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-bootstrap {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #000;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-bootstrap .ag-numeric-cell {\n    text-align: right; }\n  .ag-bootstrap .ag-header-cell-label {\n    display: flex; }\n    .ag-bootstrap .ag-header-cell-label > span {\n      float: left; }\n    .ag-bootstrap .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-bootstrap .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-bootstrap .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-bootstrap .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-bootstrap .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-bootstrap .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-bootstrap .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-bootstrap .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-bootstrap img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-bootstrap .ag-root {\n    border: none; }\n  .ag-bootstrap .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-bootstrap .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-bootstrap .ag-cell-not-inline-editing {\n    padding: 4px;\n    /* compensate for the transparent borders; */\n    padding-left: 3px; }\n  .ag-bootstrap .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-bootstrap .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-bootstrap .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-bootstrap .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-bootstrap .ag-cell-focus {\n    border: 2px solid #217346; }\n  .ag-bootstrap .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-bootstrap .ag-ltr .ag-cell-no-focus {\n    border-right: none;\n    border-left: 1px solid transparent; }\n  .ag-bootstrap .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: none; }\n  .ag-bootstrap .ag-rtl .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-bootstrap .ag-ltr .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-bootstrap .ag-rtl .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-bootstrap .ag-ltr .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-bootstrap .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-bootstrap .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-bootstrap .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-bootstrap .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-bootstrap .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-bootstrap .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-bootstrap .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-bootstrap .ag-rich-select {\n    font-size: 14px;\n    border: none;\n    background-color: white; }\n  .ag-bootstrap .ag-rich-select-value {\n    padding: 2px; }\n  .ag-bootstrap .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-rich-select-row {\n    padding: 2px; }\n  .ag-bootstrap .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-bootstrap .ag-large-text {\n    border: none; }\n  .ag-bootstrap .ag-header-select-all, .ag-bootstrap .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-bootstrap .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-bootstrap .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-bootstrap .ag-header {\n    color: #000;\n    background: none;\n    border-bottom: none;\n    font-weight: 600; }\n  .ag-bootstrap .ag-header-icon {\n    color: #000;\n    stroke: none;\n    fill: #000; }\n  .ag-bootstrap .ag-filter-icon {\n    display: inline-block; }\n  .ag-bootstrap .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-layout-for-print .ag-header-container {\n    background: none;\n    border-bottom: none; }\n  .ag-bootstrap .ag-ltr .ag-header-cell {\n    border-right: none; }\n  .ag-bootstrap .ag-rtl .ag-header-cell {\n    border-left: none; }\n  .ag-bootstrap .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-bootstrap .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-bootstrap .ag-ltr .ag-header-group-cell {\n    border-right: none; }\n  .ag-bootstrap .ag-rtl .ag-header-group-cell {\n    border-left: none; }\n  .ag-bootstrap .ag-header-group-cell-with-group {\n    border-bottom: none; }\n  .ag-bootstrap .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-bootstrap .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-bootstrap .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-bootstrap .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-ltr .ag-pinned-right-header {\n    border-left: none; }\n  .ag-bootstrap .ag-rtl .ag-pinned-left-header {\n    border-right: none; }\n  .ag-bootstrap .ag-body {\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-row-odd {\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-row-even {\n    background-color: white; }\n  .ag-bootstrap .ag-row-selected {\n    background-color: powderblue; }\n  .ag-bootstrap .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-bootstrap .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-bootstrap .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-bootstrap .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-bootstrap .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 4px; }\n  .ag-bootstrap .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 4px; }\n  .ag-bootstrap .ag-group-cell {\n    font-style: italic; }\n  .ag-bootstrap .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-bootstrap .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-bootstrap .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-bootstrap .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-bootstrap .ag-group-child-count {\n    display: inline-block; }\n  .ag-bootstrap .ag-footer-cell {\n    font-style: italic; }\n  .ag-bootstrap .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-bootstrap .ag-menu .ag-tab-header {\n      background-color: #e6e6e6; }\n    .ag-bootstrap .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-bootstrap .ag-menu .ag-tab-selected {\n      background-color: #f6f6f6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-bootstrap .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-bootstrap .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-bootstrap .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-bootstrap .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-bootstrap .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-bootstrap .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-bootstrap .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-bootstrap .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-bootstrap .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-bootstrap .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-paging-panel {\n    padding: 4px; }\n  .ag-bootstrap .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-bootstrap .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-bootstrap .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: none;\n    border-top: none;\n    color: #000; }\n  .ag-bootstrap .ltr .ag-tool-panel {\n    border-right: none; }\n  .ag-bootstrap .rtl .ag-tool-panel {\n    border-left: none; }\n  .ag-bootstrap .ag-status-bar {\n    color: #000;\n    background-color: #f6f6f6;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: none;\n    border-left: none;\n    border-right: none;\n    padding: 2px; }\n  .ag-bootstrap .ag-status-bar-aggregations {\n    float: right; }\n  .ag-bootstrap .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-bootstrap .ag-column-drop-cell {\n    background: none;\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-bootstrap .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-bootstrap .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-bootstrap .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-bootstrap .ag-column-drop-cell-button:hover {\n    border: none; }\n  .ag-bootstrap .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-bootstrap .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-bootstrap .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: none;\n    border-left: none;\n    border-right: none; }\n  .ag-bootstrap .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: none;\n    overflow: auto; }\n    .ag-bootstrap .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-bootstrap .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-bootstrap .ag-pivot-mode {\n    border-bottom: none;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: none;\n    overflow: auto; }\n  .ag-bootstrap .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: none; }\n  .ag-bootstrap .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-bootstrap .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-bootstrap .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-bootstrap .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-bootstrap .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-bootstrap .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-bootstrap .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-bootstrap .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-bootstrap .ag-sort-order::before {\n      content: '('; }\n    .ag-bootstrap .ag-sort-order::after {\n      content: ')'; }\n", ""]);
 
 	// exports
 
