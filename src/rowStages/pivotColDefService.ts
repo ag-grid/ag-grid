@@ -92,7 +92,8 @@ export class PivotColDefService {
                     // this.addPivotTotalColumn(newPivotKeys, columnIdSequence, valueGroup, pivotColumnDefs);
 
                     measureColumns.forEach(measureColumn => {
-                        let colDef = this.createColDef(measureColumn, measureColumn.getColDef().headerName, newPivotKeys, columnIdSequence);
+                        let columnName:string = this.columnController.getDisplayNameForColumn(measureColumn, 'header')
+                        let colDef = this.createColDef(measureColumn, columnName, newPivotKeys, columnIdSequence);
                         colDef.columnGroupShow = 'open';
                         valueGroup.children.push(colDef);
                         pivotColumnDefs.push(colDef);

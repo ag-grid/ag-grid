@@ -73,12 +73,12 @@ export class MenuItemMapper {
                 action: ()=> this.columnController.autoSizeAllColumns()
             };
             case 'rowGroup': return {
-                name: localeTextFunc('groupBy', 'Group by') + ' ' + column.getColDef().headerName,
+                name: localeTextFunc('groupBy', 'Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
                 action: ()=> this.columnController.addRowGroupColumn(column),
                 icon: Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
             };
             case 'rowUnGroup': return {
-                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + column.getColDef().headerName,
+                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
                 action: ()=> this.columnController.removeRowGroupColumn(column),
                 icon: Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };
