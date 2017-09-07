@@ -106,7 +106,7 @@ the grid will know the framework to use is Angular.
     Lifecycle</h3>
 
 <p>
-    All of the methods in the ICellRenderer interface described above are applicable
+    All of the methods in the <code>ICellRenderer</code> interface described above are applicable
     to the Angular Component with the following exceptions:
 <ul>
     <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the

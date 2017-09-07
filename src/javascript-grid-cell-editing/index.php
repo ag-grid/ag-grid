@@ -34,12 +34,12 @@ include '../documentation-main/documentation_header.php';
     <h3 id="default-editing">Enabling editing in a column</h3>
 
     <p>
-        The simplest way to enable editing is by providing <i>colDef.editable=true</i> by doing so all the cells
+        The simplest way to enable editing is by providing <code>colDef.editable=true</code> by doing so all the cells
         in the column will be editable.
     </p>
 
     <p>
-        It is possible to have only a few cells in a column editable, to do so, instead of <i>colDef.editable=true</i>,
+        It is possible to have only a few cells in a column editable, to do so, instead of <code>colDef.editable=true</code>,
         you can specify a callback that will get called for each cell displayed for that column. If you return true the
         cell will be editable. The params for the callback are:
 
@@ -82,7 +82,7 @@ include '../documentation-main/documentation_header.php';
     <h3 id="start-editing">Start Editing</h3>
 
     <p>
-        If you have <i>colDef.editable=true</i> set for a column then editing will start upon any of the following:
+        If you have <code>colDef.editable=true</code> set for a column then editing will start upon any of the following:
         Editing can start in the following ways:
         <ul>
         <li><b>Edit Key Pressed</b>: One of the following is pressed: Enter, F2, Backspace, Delete. If this
@@ -90,13 +90,13 @@ include '../documentation-main/documentation_header.php';
         will clear the contents of the cell if Backspace or Delete are pressed.</li>
         <li><b>Printable Key Pressed</b>: Any of the following characters are pressed:
             "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}"<br/>
-            If this happens then params.charPress will contain the character that started the edit. The default editor
+            If this happens then <code>params.charPress</code> will contain the character that started the edit. The default editor
             places this character into the edit field so that the user experience is they are typing into the cell.</li>
-        <li><b>Mouse Double Click</b>: If the mouse is double clicked. There is a grid property <i>singleClickEdit</i>
-            that will allow single click to start editing instead of double click. Another property <i>suppressClickEdit</i>
+        <li><b>Mouse Double Click</b>: If the mouse is double clicked. There is a grid property <code>singleClickEdit</code>
+            that will allow single click to start editing instead of double click. Another property <code>suppressClickEdit</code>
             will prevent both single click and double click from starting the edit - use this if you want to have
-            your own way of starting editing only, such as clicking a button in your custom cellRenderer.</li>
-        <li><b>api.startEditingCell()</b>: If you call startEditingCell() on the grid API</li>
+            your own way of starting editing only, such as clicking a button in your custom cell renderer.</li>
+        <li><b>api.startEditingCell()</b>: If you call <code>startEditingCell()</code> on the grid API</li>
     </ul>
     </p>
 
@@ -105,7 +105,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The grid will stop editing when any of the following happen:
         <ul>
-        <li><b>Callback stopEditing</b>: The callback <i>stopEditing</i> (from the params above) gets called by the
+        <li><b>Callback stopEditing</b>: The callback <code>stopEditing</code> (from the params above) gets called by the
             editor. This is how your cell editor informs the grid to stop editing.</li>
         <li><b>Other Cell Focus</b>: If focus in the grid goes to another cell, the editing will stop.</li>
         <li><b>Enter Key Down</b>: If the grid receives an 'Enter' key press event on the cell. If you do NOT
@@ -119,7 +119,7 @@ include '../documentation-main/documentation_header.php';
             in the direction of the navigation key.</li>
         <li><b>Popup Editor Closed</b>: If using popup editor, the popup is configured to close if you click
             outside the editor. Closing the popup triggers the grid to stop editing.</li>
-        <li><b>gridApi.stopEditing()</b>: If you call stopEditing() on the grid API.</li>
+        <li><b>gridApi.stopEditing()</b>: If you call <code>stopEditing()</code> on the grid API.</li>
     </ul>
     </p>
 
@@ -154,7 +154,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        To have an editor appear in a popup, have the <i>isPopup()</i> method return true. If you want editing
+        To have an editor appear in a popup, have the <code>isPopup()</code> method return true. If you want editing
         to be done within a cell, either return false or don't provide this method at all.
     </p>
 
@@ -167,8 +167,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        The next and previous cells can also be navigated using the API functions <i>api.tabToNextCell()</i>
-        and <i>api.tabToPreviousCell()</i>. Both of these methods will return true if the navigation was
+        The next and previous cells can also be navigated using the API functions <code>api.tabToNextCell()</code>
+        and <code>api.tabToPreviousCell()</code>. Both of these methods will return true if the navigation was
         successful, otherwise false.
     </p>
 
@@ -186,11 +186,11 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <note>We have found the standard HTML 'select' to behave odd when in the grid. This is because the browser
+<note>We have found the standard HTML <code>select</code> to behave odd when in the grid. This is because the browser
     doesn't have a great API for opening and closing the select's popup. We advise you don't use
-    it unless you have to - that is we advise against 'select' and 'popupSelect' as
-    they give poor user experience, especially if using keyboard navigation. If using ag-Grid Enterprise, then you should use the provided
-    richSelect.</note>
+    it unless you have to - that is we advise against <code>select</code> and <code>popupSelect</code> as
+    they give poor user experience, especially if using keyboard navigation. If using ag-Grid Enterprise,
+    then you should use the provided <code>richSelect</code>.</note>
 
     <p>
         The default text cell editor takes no parameters. The select cell editor takes a list of values
@@ -201,31 +201,15 @@ include '../documentation-main/documentation_header.php';
 colDef.cellEditorParams = {
     values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
 }</pre>
-<!--
-    TAKING OUT as we want to reconsider how to register components
-
-    <h3>Registering cellEditors</h3>
-
-    <p>
-        Like cellRenderers, cellEditors can also be registered with ag-Grid and referenced by
-        strings. You register cellRenderers in one of the following ways:
-    <ul>
-        <li>Provide <i>cellEditors</i> property to the grid as a map of key=>cellEditor pairs.
-            This property is used once during grid initialisation.</li>
-        <li>Register the cellEditor by calling <i>gridApi.addCellEditor(key, cellEditor)</i>.
-            This can be called at any time during the lifetime of the grid.</li>
-    </ul>
-    </p>-->
-
     <p>If you have many instances of a grid, you must register the cell editors with each one.</p>
 
     <h4 id="callback-new-value-handlers">Callback: New Value Handlers</h4>
 
     <p>
-        A newValueHandler is the inverse of a valueGetter. If you want to set the value into the data yourself
-        and not use the field, then use the newValueHandler. Return true if the update was successful, to inform
-        the grid to refresh the cell and fire updates. Return false if no update was done (cell doesn't refresh
-        and no updates). Use a newValueHandler if:
+        A <code>newValueHandler</code> is the inverse of a <code>valueGetter</code>. If you want to set the value into
+        the data yourself and not use the field, then use the <code>newValueHandler</code>. Return true if the update was
+        successful, to inform the grid to refresh the cell and fire updates. Return false if no update was done (cell
+        doesn't refresh and no updates). Use a <code>newValueHandler</code> if:
         <ol>
             <li>
                 A field value alone cannot be used, eg you want to place the new value into an array at a
@@ -270,33 +254,35 @@ colDef.newValueHandler = function(params) {
     return true;
 }
 </pre>
+     <p>
+        <code>newValueHandler</code> is provided a params object with the following attributes:
 
-    <p>
-        newValueHandler is provided a params object with attributes:<br/>
-        <b>node: </b>The grid node in question.<br/>
-        <b>data: </b>The row data in question.<br/>
-        <b>oldValue: </b>If 'field' is in the column definition, contains the value in the data before the edit.<br/>
-        <b>newValue: </b>The string value entered into the default editor.<br/>
-        <b>rowIndex: </b>The index of the virtualised row.<br/>
-        <b>colDef: </b>The column definition.<br/>
-        <b>context: </b>The context as set in the gridOptions.<br/>
-        <b>api: </b>A reference to the ag-Grid API.<br/>
+        <ul>
+            <li><b>node: </b>The grid node in question.</li>
+            <li><b>data: </b>The row data in question.</li>
+            <li><b>oldValue: </b>If 'field' is in the column definition, contains the value in the data before the edit.</li>
+            <li><b>newValue: </b>The string value entered into the default editor.</li>
+            <li><b>rowIndex: </b>The index of the virtualised row.</li>
+            <li><b>colDef: </b>The column definition.</li>
+            <li><b>context: </b>The context as set in the gridOptions.</li>
+            <li><b>api: </b>A reference to the ag-Grid API.</li>
+        </ul>
     </p>
 
     <h4 id="event-cell-value-changed">Event: Cell Value Changed</h4>
 
     <p>
         After a cell has been changed with default editing (ie not your own custom cell renderer),
-        then <i>cellValueChanged</i> event is fired. You can listen for this event in the normal
-        way, or additionally you can add a <i>onCellValueChanged()</i> callback to the colDef.
+        then <code>cellValueChanged</code> event is fired. You can listen for this event in the normal
+        way, or additionally you can add a <code>onCellValueChanged()</code> callback to the colDef.
         This is used if your application needs to do something after a value has been changed.
     </p>
     <p>
-        The <i>cellValueChanged</i> event contains the same parameters as newValueHandler with one difference,
-        the <i>newValue</i>. If 'field' is in the column definition, the newValue contains the value
-        in the data after the edit. So for example, if the onCellValueChanged converts the provided
-        string value into a number, then newValue for newValueHandler will have the string, and
-        newValue for onCellValueChanged will have the number.
+        The <code>cellValueChanged</code> event contains the same parameters as <code>newValueHandler</code> with one difference,
+        the <code>newValue</code>. If 'field' is in the column definition, the <code>newValue</code> contains the value
+        in the data after the edit. So for example, if the <code>onCellValueChanged</code> converts the provided
+        string value into a number, then <code>newValue</code> for <code>newValueHandler</code> will have the string, and
+        <code>newValue</code> for <code>onCellValueChanged</code> will have the number.
     </p>
 
     <h3 id="editing-api">Editing API</h3>
@@ -306,7 +292,7 @@ colDef.newValueHandler = function(params) {
     </p>
 
     <p>
-        <b>api.startEditingCell(params)</b><br/>
+        <code>api.startEditingCell(params)</code><br/>
         Starts editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. Parameters are as follows:
         <ul>
         <li><b>rowIndex</b>: The row index of the row to start editing.</li>
@@ -316,7 +302,7 @@ colDef.newValueHandler = function(params) {
     </p>
 
     <p>
-        <b>api.stopEditing(cancel)</b><br/>
+        <code>api.stopEditing(cancel)</code><br/>
         If the grid is editing this will stop editing.
     </p>
     <p>
@@ -367,14 +353,14 @@ colDef.newValueHandler = function(params) {
         If using custom cell editors, the cell editors will work in the exact same way with the
         following additions:
         <ul>
-        <li><b>focusIn:</b> If your cell editor has a focusIn method, it will get called when the
+    <li><b>focusIn:</b> If your cell editor has a <code>focusIn()</code> method, it will get called when the
             user tabs into the cell. This should be used to put the focus on the particular item
             to be focused, eg the <code>textfield</code> within your cell editor.</li>
-        <li><b>focusOut:</b> If your cell editor has a focusOut method, it will get called when the
+    <li><b>focusOut:</b> If your cell editor has a <code>focusOut()</code> method, it will get called when the
             user tabs out of the cell. No intended use for this, is just there to compliment the
-            focusIn method, maybe you will have a reason to use it.</li>
-        <li><b>Events: </b> When a row stops editing, the <i>cellValueChanged</i> event gets called
-            for each column and <i>rowValueChanged</i> gets called once for the row.</li>
+            <code>focusIn()</code> method, maybe you will have a reason to use it.</li>
+        <li><b>Events: </b> When a row stops editing, the <code>cellValueChanged</code> event gets called
+            for each column and <code>rowValueChanged</code> gets called once for the row.</li>
     </ul>
     </p>
 
@@ -403,7 +389,7 @@ colDef.newValueHandler = function(params) {
         <ul>
             <li>
                 The 'Price' column has a custom editor demonstrating how you should implement
-                the <i>'focusIn'</i> method. Both <i>focusIn</i> and <i>focusOut</i> for this
+                the <code>focusIn()</code> method. Both <code>focusIn()</code> and <code>focusOut()</code> for this
                 editor are logged to the console.
             </li>
             <li>
@@ -421,10 +407,10 @@ colDef.newValueHandler = function(params) {
                 specified cell.
             </li>
             <li>
-                <i>cellValueChanged</i> and <i>rowValueChanged</i> events are logged to console.
+                <code>cellValueChanged</code> and <code>rowValueChanged</code> events are logged to console.
             </li>
             <li>
-                The CSS class <i>ag-row-editing</i> changes the background color to highlight
+                The CSS class <code>ag-row-editing</code> changes the background color to highlight
                 the editing row.
             </li>
         </ul>
@@ -443,11 +429,11 @@ colDef.newValueHandler = function(params) {
     <p>
         In other scenarios, editing groups does make sense. For example if implementing a file explorer,
         editing a folder name or owner does make sense in isolation to the contained files. Thus to cater
-        for this, you can enable editing of groups with the property <i>enableGroupEdit=true</i>.
+        for this, you can enable editing of groups with the property <code>enableGroupEdit=true</code>.
     </p>
 
     <p>
-        The example below shows using <i>enableGroupEdit=true</i> along with tree data to allow editing of group data.
+        The example below shows using <code>enableGroupEdit=true</code> along with tree data to allow editing of group data.
     </p>
 
     <show-example example="exampleEditingGroups"></show-example>
@@ -464,7 +450,7 @@ colDef.newValueHandler = function(params) {
         Single Click Editing
     </h4>
     <p>
-        To change the default so that a single click starts editing, set the property <i>singleClickEdit=true</i>.
+        To change the default so that a single click starts editing, set the property <code>singleClickEdit=true</code>.
         This is useful when you want a cell to enter edit mode as soon as you click on it, similar to the experience
         you get when inside Excel.
     </p>
@@ -473,8 +459,8 @@ colDef.newValueHandler = function(params) {
     </h4>
     <p>
         To change the default so that neither single or double click starts editing, set the property
-        <i>suppressClickEdit=true</i>. This is useful when you want to start the editing in another way,
-        such as including a button in your cellRenderer.
+        <code>suppressClickEdit=true</code>. This is useful when you want to start the editing in another way,
+        such as including a button in your cell renderer.
     </p>
 
     <h3 id="single-click-and-no-click-example">Single Click and No Click Example</h3>
@@ -491,7 +477,7 @@ colDef.newValueHandler = function(params) {
     </p>
     <p>
         If you want the grid to stop editing when focus leaves, set the grid property
-        <i>stopEditingWhenGridLosesFocus=true</i>.
+        <code>stopEditingWhenGridLosesFocus=true</code>.
     </p>
     <p>
         By default, the grid not stop editing if you focus outside. The default is
@@ -501,7 +487,7 @@ colDef.newValueHandler = function(params) {
     </p>
 
     <p>
-        The example below shows the editing with <i>stopEditingWhenGridLosesFocus=true</i>.
+        The example below shows the editing with <code>stopEditingWhenGridLosesFocus=true</code>.
         Notice the following:
         <ul>
             <li>

@@ -115,7 +115,7 @@ class NameCellRenderer extends React.Component {
 <h3 id="react-methods-lifecycle"><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>
 
 <p>
-    All of the methods in the ICellRenderer interface described above are applicable
+    All of the methods in the <code>ICellRenderer</code> interface described above are applicable
     to the React Component with the following exceptions:
 <ul>
     <li><i>init()</i> is not used. Instead use the React props passed to your Component.</li>
@@ -127,10 +127,10 @@ class NameCellRenderer extends React.Component {
 <h3 id="handling-refresh"><img src="../images/react_large.png" style="width: 20px;"/> Handling Refresh</h3>
 
 <p>
-    You have the option of handling refresh or not by either providing a <i>refresh()</i> method on
+    You have the option of handling refresh or not by either providing a <code>refresh()</code> method on
     your React component or not. If not present, then the grid will destroy your component and create
     a new one if it tries to refresh the cell. If you do implement it, then it's up to your React
-    components <i>refresh()</i> method to update the state of your component.
+    components <code>refresh()</code> method to update the state of your component.
 </p>
 
 <h3 id="example-rendering-using-more-complex-react-components">Example: Rendering using more complex React

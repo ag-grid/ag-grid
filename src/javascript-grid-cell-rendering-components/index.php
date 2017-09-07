@@ -188,7 +188,7 @@ MyCellRenderer.prototype.destroy = function() {
     The following will result in the cell renderer's refresh method getting called:
 <ul>
     <li>
-        Calling <code>rowNode.setDataValue(colKey, value)</code> to set a value directly onto the rowNode
+        Calling <code>rowNode.setDataValue(colKey, value)</code> to set a value directly onto the <code>rowNode</code>
     </li>
     <li>
         When editing a cell and editing is stopped, so that cell displays new value after editing.
@@ -198,7 +198,7 @@ MyCellRenderer.prototype.destroy = function() {
     </li>
 </ul>
 If any of the above occur and the grid confirms the data has changed via
-<a href="../javascript-grid-change-detection/">Change Detection</a>, then the <i>refresh()</i>
+<a href="../javascript-grid-change-detection/">Change Detection</a>, then the <code>refresh()</code>
 method will be called.
 </p>
 
@@ -206,7 +206,7 @@ method will be called.
     The following will <b>not</b> result in the cell renderer's refresh method getting called:
 <ul>
     <li>
-        Calling <code>rowNode.setData(data)</code> to set new data into a rowNode.
+        Calling <code>rowNode.setData(data)</code> to set new data into a <code>rowNode</code>.
     </li>
     <li>
         Scrolling the grid vertically (results in rows getting ripped in / out of the dom).
@@ -245,7 +245,7 @@ All of the above will result in the component getting destroyed and recreated.
     <li><code>destroy()</code> is called once.</li>
 </ul>
 In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> and <code>destroy()</code> are always called exactly once.
-<i>refresh()</i> is optionally called multiple times.
+<code>refresh()</code> is optionally called multiple times.
 </p>
 
 <p>
@@ -290,7 +290,7 @@ colDef.cellRendererParams = {
     methods above.
 </p>
 <ul>
-    <li>'Month' column uses cellStyle to format each cell in the column with the same style.</li>
+    <li>'Month' column uses <code>cellStyle</code> to format each cell in the column with the same style.</li>
     <li>'Max Temp' and 'Min Temp' columns uses the Function method to format each cell in the column with the same style.</li>
     <li>'Days of Air Frost' column uses the Component method to format each cell in the column with the same style</li>
     <li>'Days Sunshine' and 'Rainfall (10mm)' use simple functions to display icons.</li>

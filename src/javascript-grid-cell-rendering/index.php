@@ -130,9 +130,9 @@ var colDef3 = {
 </note>
 
 <note>
-    Most of the ag-Grid users love the animateShowChange cell renderer for showing changes in values.
+    Most of the ag-Grid users love the <code>animateShowChange</code> cell renderer for showing changes in values.
     Not many people like the animateSlide one. So if you are trying to impress someone, probably best
-    show them the animateShowChange :)
+    show them the <code>animateShowChange</code> :)
 </note>
 
 <h2>Grid Renderer - Group</h2>
