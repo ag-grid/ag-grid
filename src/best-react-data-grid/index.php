@@ -14,9 +14,7 @@ include '../documentation-main/documentation_header.php';
         React Datagrid
     </h1>
 
-    <div class="todo-box" style="height: 400px;">
-        Simple ag-Grid with React Plunker Example - enough rows and cols to show scrolling
-    </div>
+    <?= example('ag-Grid in React', 'rich', 'react', array( ‘exampleHeight’ => 800 )); ?>
 
     <div class="list-group" style="margin-top: 20px;">
         <a href="../react-getting-started/" class="list-group-item">
