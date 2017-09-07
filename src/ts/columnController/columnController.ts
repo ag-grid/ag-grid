@@ -1484,8 +1484,12 @@ export class ColumnController {
                 console.warn('ag-grid: headerValueGetter must be a function or a string');
                 return '';
             }
-        } else {
+        } else if (colDef.headerName != null){
             return colDef.headerName;
+        } else if ((<ColDef>colDef).field){
+            return _.camelCaseToHumanText((<ColDef>colDef).field)
+        } else {
+            return '';
         }
     }
 

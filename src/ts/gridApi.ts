@@ -760,6 +760,10 @@ export class GridApi {
         }
     }
 
+    public camelCaseToHumanReadable (camelCase:string):string{
+        return _.camelCaseToHumanText(camelCase);
+    }
+
     public addRangeSelection(rangeSelection: AddRangeSelectionParams): void {
         if (!this.rangeController) { console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise'); }
         this.rangeController.addRange(rangeSelection);

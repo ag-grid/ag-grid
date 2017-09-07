@@ -1421,6 +1421,17 @@ export class Utils {
     static addSafePassiveEventListener (eElement: HTMLElement, event: string, listener: (event?: any)=>void){
         eElement.addEventListener(event, listener, <any>(Utils.passiveEvents.indexOf(event) > -1 ? {passive:true} : null));
     }
+
+    static camelCaseToHumanText (camelCase:string):string{
+        if (camelCase == null) return null;
+
+        // Who needs to learn how to code when you have stack overflow!
+        // from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
+        let rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
+        let words:string[] = camelCase.replace( rex, '$1$4 $2$3$5' ).replace('.', ' ').split(' ');
+
+        return words.map(word=>word.substring(0,1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length):'')).join(' ');
+    }
 }
 
 export class NumberSequence {
