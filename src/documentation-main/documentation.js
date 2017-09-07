@@ -1,7 +1,6 @@
 (function () {
 
     var module = angular.module("documentation", []);
-
     /*
      * Show Example directive
      */

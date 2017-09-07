@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": true,
+        "target": "es5",
+        "lib": [ "es5", "es6", "dom" ],
+        "noImplicitAny": false
+    },
+
+    "include": [ "./src/_assets/**/*.ts" ],
+
+    "exclude": [ "./node_modules" ]
+}

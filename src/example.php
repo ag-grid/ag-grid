@@ -63,11 +63,7 @@
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
 
-<?php if (isset($_ENV['GRID_SCRIPT_PATH'])) { ?>
-    <script src="<?php echo $_ENV['GRID_SCRIPT_PATH']  ?>"></script>
-<?php } else { ?>
     <script src="./dist/ag-grid-enterprise/ag-grid-enterprise.js?ignore=notused51"></script>
-<? } ?>
 
     <script src="example.js"></script>
 
