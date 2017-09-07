@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
 
 
 <snippet language="sh">
-#clone the ag-Grid React seed project
+# clone the ag-Grid React seed project
 git clone https://github.com/ag-grid/ag-grid-react-seed
 cd ag-grid-react-seed/react
 
@@ -182,18 +182,7 @@ npm start
 array( 'exampleHeight' => 525 )
 ); ?>
 
-<!--
-    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=rich-grid"
-                          sources="{
-                            [
-                                { root: '/framework-examples/react-examples/examples/src/richGridExample/', files: 'ColDefFactory.jsx,NameCellEditor.jsx,RichGridExample.css,SkillsFilter.jsx,MyReactDateComponent.jsx,ProficiencyCellRenderer.jsx,RichGridExample.jsx,MyReactHeaderComponent.jsx,ProficiencyFilter.jsx,RowDataFactory.js,MyReactHeaderGroupComponent.jsx,RefData.js,SkillsCellRenderer.jsx' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
--->
-
-    <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
+   <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
         <code>column grouping</code> as well as using <code>React Components</code> in the header. And even this rich
         example is only
         scratching the surface - we've only just gotten started with with ag-Grid can do!</p>
@@ -203,11 +192,7 @@ array( 'exampleHeight' => 525 )
         use ag-Grid and React, as well as the options in installing dependencies and accessing the <code>Enterprise
             Features</code>.</p>
 
-<<<<<<< HEAD
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
-=======
-    <?php include '../documentation-main/documentation_footer.php'; ?>
 </div>
->>>>>>> Support for react examples
