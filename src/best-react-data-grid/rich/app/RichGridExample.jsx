@@ -16,29 +16,33 @@ export default class RichGridExample extends Component {
             columnDefs: new ColDefFactory().createColDefs(),
             rowData: new RowDataFactory().createRowData(),
             icons: {
-                columnRemoveFromGroup: '<i class="fa fa-remove"/>',
-                filter: '<i class="fa fa-filter"/>',
-                sortAscending: '<i class="fa fa-long-arrow-down"/>',
-                sortDescending: '<i class="fa fa-long-arrow-up"/>',
-                groupExpanded: '<i class="fa fa-minus-square-o"/>',
-                groupContracted: '<i class="fa fa-plus-square-o"/>',
-                columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
-                columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
+                // columnRemoveFromGroup: '<i class="fa fa-remove"/>',
+                // filter: '<i class="fa fa-filter"/>',
+                // sortAscending: '<i class="fa fa-long-arrow-down"/>',
+                // sortDescending: '<i class="fa fa-long-arrow-up"/>',
+                // groupExpanded: '<i class="fa fa-minus-square-o"/>',
+                // groupContracted: '<i class="fa fa-plus-square-o"/>',
+                // columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
+                // columnGroupClosed: '<i class="fa fa-plus-square-o"/>',
+                // checkboxChecked: '<i class="fa fa-arrow-left"/>',
+                // checkboxUnchecked: '<i class="fa fa-arrow-right"/>',
+                // checkboxIndeterminate: '<i class="fa fa-arrow-up"/>'
+
             }
         };
 
         // the grid options are optional, because you can provide every property
         // to the grid via standard React properties
-        // this.gridOptions = {
-        //     // We register the react date component that ag-grid will use to render
-        //     dateComponentFramework: DateComponent,
-        //     defaultColDef: {
-        //         headerComponentFramework: SortableHeaderComponent,
-        //         headerComponentParams: {
-        //             menuIcon: 'fa-bars'
-        //         }
-        //     }
-        // };
+        this.gridOptions = {
+            // We register the react date component that ag-grid will use to render
+            dateComponentFramework: DateComponent,
+            defaultColDef: {
+                headerComponentFramework: SortableHeaderComponent,
+                headerComponentParams: {
+                    menuIcon: 'fa-bars'
+                }
+            }
+        };
 
         this.onGridReady = this.onGridReady.bind(this);
     }
@@ -50,7 +54,7 @@ export default class RichGridExample extends Component {
 
     render() {
         return (
-            <div style={{height: 400, width: 945}} className="ag-fresh">
+            <div style={{height: 525, width: 900}} className="ag-fresh">
                 <AgGridReact
                     // gridOptions is optional - it's possible to provide
                     // all values as React props

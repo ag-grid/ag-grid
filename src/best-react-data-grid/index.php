@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
         React Datagrid
     </h1>
 
-    <?= example('ag-Grid in React', 'rich', 'react', array( ‘exampleHeight’ => 800 )); ?>
+    <?= example('ag-Grid in React', 'rich', 'react', array( "exampleHeight" => 525 )); ?>
 
     <div class="list-group" style="margin-top: 20px;">
         <a href="../react-getting-started/" class="list-group-item">

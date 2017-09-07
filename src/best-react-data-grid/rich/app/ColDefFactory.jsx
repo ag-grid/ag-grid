@@ -16,16 +16,11 @@ export default class ColDefFactory {
                 checkboxSelection: true,
                 suppressSorting: true,
                 suppressMenu: true,
-                pinned: true,
-                // icons: {
-                //     checkboxChecked: '<i class="fa fa-arrow-left"/>',
-                //     checkboxUnchecked: '<i class="fa fa-arrow-right"/>',
-                //     checkboxIndeterminate: '<i class="fa fa-arrow-up"/>'
-                // }
+                pinned: true
             },
             {
                 headerName: 'Employee',
-                // headerGroupComponentFramework: HeaderGroupComponent,
+                headerGroupComponentFramework: HeaderGroupComponent,
                 children: [
                     {
                         headerName: "Name",
@@ -44,10 +39,10 @@ export default class ColDefFactory {
                         enableRowGroup: true,
                         enablePivot: true,
                         // an example of using a non-React cell renderer
-                        // cellRenderer: countryCellRenderer,
+                        cellRenderer: countryCellRenderer,
                         pinned: true,
                         filterParams: {
-                            // cellRenderer: countryCellRenderer,
+                            cellRenderer: countryCellRenderer,
                             cellHeight: 20
                         },
                         columnGroupShow: 'open'
@@ -79,9 +74,9 @@ export default class ColDefFactory {
                         enableRowGroup: true,
                         enablePivot: true,
                         // supply a React component
-                        // cellRendererFramework: SkillsCellRenderer,
+                        cellRendererFramework: SkillsCellRenderer,
                         // supply a React component
-                        // filterFramework: SkillsFilter
+                        filterFramework: SkillsFilter
                     },
                     {
                         headerName: "Proficiency",
@@ -89,9 +84,9 @@ export default class ColDefFactory {
                         width: 135,
                         enableValue: true,
                         // supply a React component
-                        // cellRendererFramework: ProficiencyCellRenderer,
+                        cellRendererFramework: ProficiencyCellRenderer,
                         // supply a React component
-                        // filterFramework: ProficiencyFilter
+                        filterFramework: ProficiencyFilter
                     }
                 ]
             },
