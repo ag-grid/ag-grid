@@ -43,12 +43,14 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
     private excelStyles: ExcelStyle[];
     private customHeader: ExcelCell[][];
     private customFooter: ExcelCell[][];
+    private sheetName:string;
 
     constructor(columnController: ColumnController,
                 valueService: ValueService,
                 gridOptionsWrapper: GridOptionsWrapper,
                 processCellCallback: (params: ProcessCellForExportParams) => string,
                 processHeaderCallback: (params: ProcessHeaderForExportParams) => string,
+                sheetName:string,
                 private excelXmlFactory: ExcelXmlFactory,
                 baseExcelStyles: ExcelStyle[],
                 private styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[]) {
@@ -62,6 +64,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
             });
             this.excelStyles = baseExcelStyles.slice();
         }
+        this.sheetName = sheetName;
     }
 
     private rows: ExcelRow[] = [];
@@ -140,7 +143,7 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
         }
 
         let data: ExcelWorksheet [] = [{
-            name: "ag-grid",
+            name: this.sheetName,
             table: {
                 columns: this.cols,
                 rows: join(this.customHeader, this.rows, this.customFooter)
@@ -275,6 +278,7 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], ExcelGridSerializin
             this.gridOptionsWrapper,
             params ? params.processCellCallback : null,
             params ? params.processHeaderCallback : null,
+            params && params.sheetName != null && params.sheetName != "" ? params.sheetName : 'ag-grid',
             this.excelXmlFactory,
             this.gridOptions.excelStyles,
             this.styleLinker.bind(this)
