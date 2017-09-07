@@ -20,7 +20,8 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>headerName</th>
-            <td>The name to render in the column header</td>
+            <td>The name to render in the column header. If not specified and field is specified, the field name would
+            be used as the header name.</td>
         </tr>
         <tr>
             <th>columnGroupShow</th>
