@@ -656,6 +656,14 @@ include '../documentation-main/documentation_header.php';
                 in earlier versions (v9 or earlier) of ag-Grid. It is strongly recommended that you don't change
                 this property unless you have legacy issues.
             </td>
+            <th>suppressCsvExport</th>
+            <td>
+                Prevents the user to export any grid to CSV.
+            </td>
+            <th>suppressExcelExport</th>
+            <td>
+                Prevents the user to export any grid to Excel.
+            </td>
         </tr>
     </table>
 </div>
