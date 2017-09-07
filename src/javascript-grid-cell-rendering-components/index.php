@@ -12,35 +12,34 @@ include '../documentation-main/documentation_header.php';
 <p>
     The Cell Renderer - the most important component of ag-Grid. With this, you can put whatever
     you want in the grid cells. The job of the grid is to lay out the cells. What goes into the cells,
-    that's where you come in! You customise the rendering inside the cells by providing Cell Renderer's
-    (cellRenderer's).
+    that's where you come in! You customise the rendering inside the cells by providing cell renderer's.
 </p>
 
 <p>
-    You configure cellRenderers as part of the column definition and can be one of the following:
+    You configure cell renderer's as part of the column definition and can be one of the following:
 <ul>
-    <li>function: The cellRenderer is a function that gets called once for each cell. The function
+    <li>function: The <code>cellRenderer</code> is a function that gets called once for each cell. The function
         should return a string (which will be treated as html) or a DOM object. Use this if you
         have no cleanup or refresh requirements of the cell - it's a 'fire and forget' approach
         to the cell rendering.</li>
     <li>component: The grid will call 'new' on the provided class and treat the object as a component, using
         lifecycle methods. Use this if you need to do cleanup when the cell is removed or have
         refresh requirements.</li>
-    <li>string: The cellRenderer is looked up from the provided cellRenderers. Use this if you
+    <li>string: The cell renderer is looked up from the provided cell renderer's. Use this if you
         want to use a built in renderer (eg 'group').</li>
 </ul>
 </p>
 
-<h1 id="cell-renderer-function">cellRenderer Function</h1>
+<h1 id="cell-renderer-function">Cell Renderer Function</h1>
 
 <p>
-    The easiest (but not as flexible) way to provide your own cellRenderer is to provide a function.
+    The easiest (but not as flexible) way to provide your own cell renderer is to provide a function.
     The function takes a set of parameters (with information on what to render) and you return back
     either a) a string of HTML or b) a DOM object.
 </p>
 
 <p>
-    Below are some simple examples of cellRenderer function:
+    Below are some simple examples of a cell renderer function:
 </p>
 
 <pre><code><span class="codeComment">// put the value in bold</span>
@@ -70,31 +69,31 @@ colDef.cellRenderer = function(params) {
     See further below for the set of parameters passed to the rendering function.
 </p>
 
-<h1 id="cell-renderer-component">cellRenderer Component</h1>
+<h1 id="cell-renderer-component">Cell Renderer Component</h1>
 
 <p>
-    The most flexible (but a little more tricky) way to provide a cellRenderer is to provide a component class.
+    The most flexible (but a little more tricky) way to provide a cell renderer is to provide a component class.
     The component class that you provide can have callback methods on it for refresh and destroy.
 </p>
 
 <note>
     <p>
-        A cellRenderer Component is an ag-Grid concept that is similar in how 'components' work in other frameworks.
+        A cell renderer Component is an ag-Grid concept that is similar in how 'components' work in other frameworks.
         Other than sharing the same concept and name, ag-Grid Components have nothing to do with Angular components,
         React components, or any other components.
     </p>
     <p>
-        An ag-Grid cellRenderer Component does not need to extend any class or do anything except implement the
+        An ag-Grid cell renderer Component does not need to extend any class or do anything except implement the
         methods shown in the interface.
     </p>
 </note>
 
 <p>
-    The interface for the cellRenderer component is as follows:
+    The interface for the cell renderer component is as follows:
 </p>
 
 <pre>interface ICellRendererComp {
-    <span class="codeComment">// Optional - Params for rendering. The same params that are passed to the cellRenderer function.</span>
+    <span class="codeComment">// Optional - Params for rendering. The same params that are passed to the <code>cellRenderer</code> function.</span>
     init?(params: ICellRendererParams): void;
 
     <span class="codeComment">// Mandatory - Return the DOM element of your editor, this is what the grid puts into the DOM</span>
@@ -131,7 +130,7 @@ colDef.cellRenderer = function(params) {
 }</pre>
 
     <p>
-        Below is a simple example of cellRenderer class:
+        Below is a simple example of cell renderer class:
     </p>
 
 <pre><span class="codeComment">// function to act as a class</span>
@@ -185,8 +184,8 @@ MyCellRenderer.prototype.destroy = function() {
 <h3>Events Causing Refresh</h3>
 <p>
     The grid is constantly refreshing the data in the browser, but not every refresh of the grid
-    results in the refresh method of your cellRenderer getting called.
-    The following will result in cellRenderer refresh method getting called:
+    results in the refresh method of your cell renderer getting called.
+    The following will result in the cell renderer's refresh method getting called:
 <ul>
     <li>
         Calling <code>rowNode.setDataValue(colKey, value)</code> to set a value directly onto the rowNode
@@ -204,7 +203,7 @@ method will be called.
 </p>
 
 <p>
-    The following will <b>not</b> result in cellRenderer refresh method getting called:
+    The following will <b>not</b> result in the cell renderer's refresh method getting called:
 <ul>
     <li>
         Calling <code>rowNode.setData(data)</code> to set new data into a rowNode.
@@ -227,17 +226,17 @@ All of the above will result in the component getting destroyed and recreated.
 
     <p>
         The refresh method returns back a boolean value. If you do not want to handle the refresh in the
-        cellRenderer, just return back <code>false</code> from an otherwise empty method. This will indicate
+        cell renderer, just return back <code>false</code> from an otherwise empty method. This will indicate
         to the grid that you did not refresh and the grid will instead rip the component out and destroy it
         and create another instance of your component from scratch instead.
     </p>
 
 <h1 id="cell-renderer-component-lifecycle">
-    cellRenderer Component Lifecycle
+    Cell Renderer Component Lifecycle
 </h1>
 
 <p>
-    The lifecycle of the cellRenderer is as follows:
+    The lifecycle of the cell renderer is as follows:
 <ul>
     <li><code>new</code> is called on the class.</li>
     <li><code>init()</code> is called once.</li>
@@ -255,16 +254,16 @@ In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> a
     again to get a new version of the GUI.
 </p>
 
-<h3 id="complementing-cell-renderer-params">Complementing cellRenderer Params</h3>
+<h3 id="complementing-cell-renderer-params">Complementing Cell Renderer Params</h3>
 
 <p>
     On top of the parameters provided by the grid, you can also provide your own parameters. This is useful if
-    you want to 'configure' your cellRenderer. For example, you might have a cellRenderer for formatting
-    currency but you need to provide what currency for your cellRenderer to use.
+    you want to 'configure' your cell renderer. For example, you might have a cell renderer for formatting
+    currency but you need to provide what currency for your cell renderer to use.
 </p>
 
 <p>
-    Provide params to a cellRenderer using the colDef option cellRendererParams.
+    Provide params to a cell renderer using the colDef option <code>cellRendererParams</code>.
 </p>
 
 <pre><code><span class="codeComment">// define cellRenderer to be reused</span>
@@ -284,7 +283,7 @@ colDef.cellRendererParams = {
     color: 'irishGreen'
 }</code></pre>
 
-<h1 id="example-using-cell-renderers">Example: Using cellRenderers</h1>
+<h1 id="example-using-cell-renderers">Example: Using Cell Renderer's</h1>
 
 <p>
     The example below shows five columns formatted, demonstrating each of the
@@ -299,10 +298,10 @@ colDef.cellRendererParams = {
 
 <show-example example="example2"></show-example>
 
-<h1 id="cell-renderers-and-row-groups">Cell Renderers and Row Groups</h1>
+<h1 id="cell-renderers-and-row-groups">Cell Renderer's and Row Groups</h1>
 
 <p>
-    If you are mixing cellRenderers and row grouping, then you need to understand that the value and / or data
+    If you are mixing cell renderer's and row grouping, then you need to understand that the value and / or data
     may be missing in the group row. You can check if you are on a group row of not by checking <code>rowNode.group</code>.
     Groups will have <code>aggData</code> and <code>groupData</code> instead of data.
 </p>
