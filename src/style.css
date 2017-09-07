@@ -1394,3 +1394,40 @@ sup.new {
     color: white;
     padding: 0 2px;
 }
+
+/* this needs to be here, to avoid FOUC for examples */
+.example-loading {
+    visibility: hidden;
+}
+
+pre, code, snippet {
+    font-size: 12px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+
+snippet {
+    display: block;
+    border: 1px solid red;
+    white-space: pre;
+    border: 1px solid rgb(201, 201, 201);
+    border-radius: 4px;
+    background-color: rgb(245, 245, 245);
+    padding: 10px;
+    padding-top: 0;
+    margin-bottom: 1em;
+}
+
+snippet pre, snippet code {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    background-color: transparent;
+}
+
+.hljs-string {
+    color: #c7254e;
+}
+
+.hljs-attr {
+    color: #0288D1;
+}

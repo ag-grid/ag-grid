@@ -230,7 +230,7 @@ athleteFilterComponent.onFilterChanged()
 <ul>
     <li>The athlete column has only two filter options: <i>filterOptions=['contains','notContains']</i></li>
     <li>The athlete column has a text formatter so if you search for 'o' it will find &oslash; You can try this by
-        searching the string 'bjo'</i></li>
+        searching the string 'Bjo'</i></li>
     <li>The athlete column has a debounce of 0ms <i>debounceMs:0</i> in the column filter menu. The floating filter
     has the default 500ms</li>
     <li>The athlete column filter is case sensitive, note that it has the following flag: <code>caseSensitive:true</code></li>

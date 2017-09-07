@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
         JavaScript Grid
     </h1>
 
-    <h3>Downloading ag-Grid</h3>
+    <h2>Download ag-Grid</h2>
 
     <p>ag-Grid is distributed as both a self contained bundle and also via a CommonJS package.</p>
 
@@ -23,7 +23,9 @@ include '../documentation-main/documentation_header.php';
         library
         directly via a CDN:</p>
 
-    <pre>&lt;script src="_url_to_your_chosen_cdn_/ag-grid.js"&gt;&lt;/script&gt;</pre>
+<snippet language="html">
+&lt;script src="_url_to_your_chosen_cdn_/ag-grid.js"&gt;&lt;/script&gt;
+</snippet>
 
     <p>But you can also download the library in the following ways:</p>
 
@@ -40,7 +42,7 @@ include '../documentation-main/documentation_header.php';
             <td style="padding: 10px;"><img src="../images/npm.png"/></td>
             <td>
                 <b>NPM</b><br/>
-                npm install ag-grid
+                <code>npm install ag-grid</code>
             </td>
 
             <td style="width: 20px;"/>
@@ -56,23 +58,25 @@ include '../documentation-main/documentation_header.php';
     <p>You could then reference the ag-Grid library in a similar way to the CDN method above, but from a local
         filesystem:</p>
 
-    <pre>&lt;script src="node_modules/ag-grid/dist/ag-grid.js"&gt;&lt;/script&gt;</pre>
+<snippet language="html">
+&lt;script src="node_modules/ag-grid/dist/ag-grid.js"&gt;&lt;/script&gt;
+</snippet>
 
     <p>Here we're illustrating how you can reference the ag-Grid library when using npm, but the same principle would
         apply when using bower.</p>
 
-    <h4>ag-Grid Bundle Types</h4>
+    <h3>ag-Grid Bundle Types</h3>
     <p>
         There are four bundle files in the distribution:
     <ul>
-        <li>dist/ag-grid.js -> standard bundle containing JavaScript and CSS</li>
-        <li>dist/ag-grid.min.js -> minified bundle containing JavaScript and CSS</li>
-        <li>dist/ag-grid.noStyle.js -> standard bundle containing JavaScript without CSS</li>
-        <li>dist/ag-grid.min.noStyle.js -> minified bundle containing JavaScript without CSS</li>
+        <li><code>dist/ag-grid.js</code> &mdash; standard bundle containing JavaScript and CSS</li>
+        <li><code>dist/ag-grid.min.js</code> &mdash; minified bundle containing JavaScript and CSS</li>
+        <li><code>dist/ag-grid.noStyle.js</code> &mdash; standard bundle containing JavaScript without CSS</li>
+        <li><code>dist/ag-grid.min.noStyle.js</code> &mdash; minified bundle containing JavaScript without CSS</li>
     </ul>
     </p>
 
-    <h4>CommonJS</h4>
+    <h3>CommonJS</h3>
 
     <p>
         To use CommonJS, it's best to download the packages via NPM and then either <i>require</i> (ECMA 5) or
@@ -80,14 +84,15 @@ include '../documentation-main/documentation_header.php';
         them into your project.
     </p>
 
-    <pre>// ECMA 5 - using nodes require() method
+<snippet>
+// ECMA 5 - using nodes require() method
 var AgGrid = require('ag-grid');
 
 // ECMA 6 - using the system import method
 import {Grid} from 'ag-grid/main';
-</pre>
+</snippet>
 
-    <h3>Download ag-Grid-Enterprise</h3>
+    <h2>Download ag-Grid-Enterprise</h2>
 
     <p>As with the main ag-Grid library above, the ag-Grid-Enterprise library is also distributed as both a self
         contained bundle and also via a CommonJS package. </p>
@@ -97,7 +102,10 @@ import {Grid} from 'ag-grid/main';
         dependency.</p>
 
     <p>If you're using the bundled version, you can reference the ag-Grid-Enterprise library via CDN:</p>
-    <pre>&lt;script src="_url_to_your_chosen_cdn_/ag-grid-enterprise.js"&gt;&lt;/script&gt;</pre>
+
+<snippet language=html>
+&lt;script src="_url_to_your_chosen_cdn_/ag-grid-enterprise.js"&gt;&lt;/script&gt;
+</snippet>
 
     <p>But you can also download the library in the following ways:</p>
 
@@ -106,7 +114,7 @@ import {Grid} from 'ag-grid/main';
             <td style="padding: 10px;"><img src="../images/bower.png"/></td>
             <td>
                 <b>Bower</b><br/>
-                bower install ag-grid-enterprise
+                <code>bower install ag-grid-enterprise</code>
             </td>
 
             <td style="width: 20px;"/>
@@ -114,7 +122,7 @@ import {Grid} from 'ag-grid/main';
             <td style="padding: 10px;"><img src="../images/npm.png"/></td>
             <td>
                 <b>NPM</b><br/>
-                npm install ag-grid-enterprise
+                <code>npm install ag-grid-enterprise</code>
             </td>
 
             <td style="width: 20px;"/>
@@ -130,26 +138,30 @@ import {Grid} from 'ag-grid/main';
     <p>You could then reference the ag-Grid library in a similar way to the CDN method above, but from a local
         filesystem:</p>
 
-    <pre>&lt;script src="node_modules/ag-grid/dist/ag-grid-enterprise.js"&gt;&lt;/script&gt;</pre>
+<snippet language=html>
+&lt;script src="node_modules/ag-grid/dist/ag-grid-enterprise.js"&gt;&lt;/script&gt;
+</snippet>
 
-    <h4>ag-Grid Enterprise Bundle Types</h4>
+    <h3>ag-Grid Enterprise Bundle Types</h3>
+
     <p>
         Again similar to ag-Grid, ag-Grid-Enterprise has 4 bundles:
     <ul>
-        <li>dist/ag-grid-enterprise.js -> standard bundle containing JavaScript and CSS</li>
-        <li>dist/ag-grid-enterprise.min.js -> minified bundle containing JavaScript and CSS</li>
-        <li>dist/ag-grid-enterprise.noStyle.js -> standard bundle containing JavaScript without CSS</li>
-        <li>dist/ag-grid-enterprise.min.noStyle.js -> minified bundle containing JavaScript without CSS</li>
+        <li><code>dist/ag-grid-enterprise.js</code> &mdash; standard bundle containing JavaScript and CSS</li>
+        <li><code>dist/ag-grid-enterprise.min.js</code> &mdash; minified bundle containing JavaScript and CSS</li>
+        <li><code>dist/ag-grid-enterprise.noStyle.js</code> &mdash; standard bundle containing JavaScript without CSS</li>
+        <li><code>dist/ag-grid-enterprise.min.noStyle.js </code> &mdash; minified bundle containing JavaScript without CSS</li>
     </ul>
 
-    <h4>CommonJS</h4>
+    <h3>CommonJS</h3>
     <p>
         If using CommonJS, you one need to include ag-Grid-Enterprise into your project. You do not need to
         execute any code inside it. When ag-Grid-Enterprise loads, it will register with ag-Grid such that the
         enterprise features are available when you use ag-Grid.
     </p>
 
-    <pre>// ECMA 5 - using nodes require() method
+<snippet>
+// ECMA 5 - using nodes require() method
 var AgGrid = require('ag-grid');
 // only include this line if you want to use ag-grid-enterprise
 require('ag-grid-enterprise');
@@ -158,37 +170,28 @@ require('ag-grid-enterprise');
 import {Grid} from 'ag-grid/main';
 // only include this line if you want to use ag-grid-enterprise
 import 'ag-grid-enterprise/main';
-</pre>
+</snippet>
+
 
     <p>The Enterprise dependency has to be made available before any Grid related component, so we suggest including it
         as soon as possible.</p>
 
-    <h4>Documentation Examples</h4>
-    <p>
-        Almost all the examples in the online documentation use the self contained bundle of ag-Grid and do
-        not use
-        any framework. This is to make the examples as easy to follow (focusing only on what the example
-        is about) and easy to copy and run locally.
-    </p>
+    <h2>Documentation Examples</h2>
+    <p> Also in the examples, ag-Grid is loaded with an additional parameter <i>"ignore=notused"</i>.
+ If you are using the self contained bundle <b>you do not need to include this extra parameter</b>. i
+It's purpose is as a dummy parameter, which the documentation changes every time there is a grid release, to trick the browser in getting the latest version rather than using a cached version.  <br/> </p>
 
-    <p>
-        Also in the examples, ag-Grid is loaded with an additional parameter <i>"ignore=notused"</i>. If you
-        are
-        using
-        the self contained bundle <b>you do not need to include this extra parameter</b>. It's purpose is as
-        a dummy
-        parameter, which the documentation
-        changes every time there is a grid release, to trick the browser in getting the latest version
-        rather than
-        using
-        a cached version.
-        <br/>
-    </p>
-    <p>
-        So eg, the example has this:<br/>
-    <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid/ag-grid.js?ignore=notused51"><br/></pre>
-    But all you need is this:<br/>
-    <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js"></pre>
+    <p> So eg, the example has this:</p>
+
+<snippet language=html>
+&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid/ag-grid.js?ignore=notused51"&gt;
+</snippet>
+
+    <p>But all you need is this:</p>
+
+<snippet language=html>
+&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js">
+</snippet>
 
     <h2 id="aggrid-javascript-testing">Testing ag-Grid Applications with Jasmine</h2>
 
@@ -200,9 +203,10 @@ import 'ag-grid-enterprise/main';
 
     <p>An alternative is to use a utility function that polls until the API has been set on the <code>GridOptions</code>:</p>
 
-    <pre>
+    <snippet>
 function waitForGridApiToBeAvailable(gridOptions, success) {
-    // recursive without a terminating condition, but jasmines default test timeout will kill it (asmine.DEFAULT_TIMEOUT_INTERVAL)
+    // recursive without a terminating condition, 
+    // but jasmines default test timeout will kill it (asmine.DEFAULT_TIMEOUT_INTERVAL)
     if(gridOptions.api) {
         success()
     } else {
@@ -210,16 +214,16 @@ function waitForGridApiToBeAvailable(gridOptions, success) {
             waitForGridApiToBeAvailable(gridOptions, success);
         }, 500);
     }
-}   </pre>
+}   </snippet>
 
     <p>Once the API is ready, we can then invoke Grid <code>API</code> and <code>ColumnApi</code> methods:</p>
 
-    <pre>
+<snippet>
 it('select all button selects all rows', () => {
-    selectAllRows();                    <span class="codeComment">// selectAllRows is a global function created in the application code </span>
+    selectAllRows();                    // selectAllRows is a global function created in the application code 
     expect(gridOptionsUnderTest.api.getSelectedNodes().length).toEqual(3);
 });
-    </pre>
+</snippet>
 
     <h2 id="next-steps">Next Steps...</h2>
 

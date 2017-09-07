@@ -43,6 +43,7 @@ var gridOptions = {
     showToolPanel: true,
     enableSorting: true,
     enableFilter: true,
+    floatingFilter: true,
     enableColResize: true,
     autoGroupColumnDef: {
         headerName: "Athlete", field: "athlete", width: 180,
