@@ -82,15 +82,15 @@ private getCountryFilterParams():any {
 
 <p>
     It is possible to build
-    <a href="../javascript-grid-cell-rendering-components/#aureliaCellRendering">cellRenderers</a>,
-    <a href="../javascript-grid-cell-editing/#aureliaCellEditing">cellEditors</a> and
+    <a href="../javascript-grid-cell-rendering-components/#aureliaCellRendering">cell renderer's</a>,
+    <a href="../javascript-grid-cell-editing/#aureliaCellEditing">cell editors</a> and
     <a href="../javascript-grid-filtering/#aureliaFiltering">filters</a> using Aurelia. Doing each of these
     is explained in the section on each.
 </p>
 
 <p>
     Although it is possible to use Aurelia for your customisations of ag-Grid, it is not necessary. The grid
-    will happily work with both Aurelia and non-Aurelia portions (eg cellRenderers in Aurelia or normal JavaScript).
+    will happily work with both Aurelia and non-Aurelia portions (eg cell renderer's in Aurelia or normal JavaScript).
     If you do use Aurelia, be aware that you are adding an extra layer of indirection into ag-Grid. ag-Grid's
     internal framework is already highly tuned to work incredibly fast and does not require Aurelia or anything
     else to make it faster. If you are looking for a lightning fast grid, even if you are using Aurelia and

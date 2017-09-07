@@ -146,7 +146,7 @@ colDef.valueFormatter = function(params) {
     <h2>Value Formatter vs Cell Renderer</h2>
 
     <p>
-        A <a href="../javascript-grid-cell-rendering-components/">cellRenderer</a> allows you to put whatever HTML
+        A <a href="../javascript-grid-cell-rendering-components/">cell renderer</a> allows you to put whatever HTML
         you want into a cell. This sounds like a <code>valueFormatter</code> and and a <code>cellRenderer</code>
         have cross purposes, so you may be wondering, when do you use each one and not the other?
     </p>

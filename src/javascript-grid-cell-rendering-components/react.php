@@ -6,7 +6,7 @@
 
 <div class="note" style="margin-bottom: 20px">
     <img align="left" src="../images/note.png" style="margin-right: 10px;" />
-    <p>This section explains how to utilise ag-Grid cellRenders using React. You should read about how
+    <p>This section explains how to utilise ag-Grid cell renderer's using React. You should read about how
     <a href="/">Cell Rendering works in ag-Grid</a> first before trying to
     understand this section.</p>
 </div>

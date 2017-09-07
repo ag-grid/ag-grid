@@ -5,14 +5,14 @@
 
     <div class="note" style="margin-bottom: 20px">
         <img align="left" src="../images/note.png" style="margin-right: 10px;" />
-        <p>This section explains how to utilise ag-Grid cellEditors using Angular 2+. You should read about how
+        <p>This section explains how to utilise ag-Grid Cell Editors using Angular 2+. You should read about how
         <a href="../javascript-grid-cell-editor/">Cell Editing</a> works in ag-Grid first before trying to
         understand this section.</p>
     </div>
 
     <p>
-        It is possible to provide a Angular cellEditor for ag-Grid to use. All of the information above is
-        relevant to Angular cellEditors. This section explains how to apply this logic to your Angular component.
+        It is possible to provide a Angular Cell Editor for ag-Grid to use. All of the information above is
+        relevant to Angular Cell Editors. This section explains how to apply this logic to your Angular component.
     </p>
 
     <p>
@@ -20,15 +20,15 @@
         <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on Github.
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular cellEditor</h3>
+    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular Cell Editor</h3>
 
     <p>
         If you are using the ag-grid-angular component to create the ag-Grid instance,
-        then you will have the option of additionally specifying the cellEditors
+        then you will have the option of additionally specifying the cell editors
         as Angular components.
     </p>
 
-    <pre ng-non-bindable><span class="codeComment">// create your cellEditor as a Angular component</span>
+    <pre ng-non-bindable><span class="codeComment">// create your Cell Editor as a Angular component</span>
 @Component({
     selector: 'editor-cell',
     template: `
@@ -119,7 +119,7 @@ colDef = {
     <p>Your Angular components need to implement <code>AgEditorComponent</code>.</p>
 
     <p>
-        By using <i>colDef.cellEditorFramework</i> (instead of <i>colDef.cellEditor</i>) the grid
+        By using <code>colDef.cellEditorFramework</code> (instead of <code>colDef.cellEditor</code>) the grid
         will know it's an Angular component, based on the fact that you are using the Angular version of
         ag-Grid.
     </p>
@@ -133,7 +133,7 @@ colDef = {
     <h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods / Lifecycle</h3>
 
     <p>
-        All of the methods in the ICellEditor interface described above are applicable
+        All of the methods in the <code>ICellEditor</code> interface described above are applicable
         to the Angular Component with the following exceptions:
     <ul>
         <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the <code>AgRendererComponent</code> interface).</li>

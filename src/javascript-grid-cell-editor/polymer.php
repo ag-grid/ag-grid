@@ -5,30 +5,30 @@
 
     <div class="note" style="margin-bottom: 20px">
         <img align="left" src="../images/note.png" style="margin-right: 10px;" />
-        <p>This section explains how to utilise ag-Grid cellEditors using Polymer. You should read about how
+        <p>This section explains how to utilise ag-Grid Cell Editors using Polymer. You should read about how
         <a href="../javascript-grid-cell-editor/">Cell Editing</a> works in ag-Grid first before trying to
         understand this section.</p>
     </div>
 
     <p>
-        It is possible to provide a Polymer cellEditor for ag-Grid to use. All of the information above is
-        relevant to Polymer cellEditors. This section explains how to apply this logic to your Polymer component.
+        It is possible to provide a Polymer cell editor for ag-Grid to use. All of the information above is
+        relevant to Polymer cell editors. This section explains how to apply this logic to your Polymer component.
     </p>
 
     <p>
-        For an example of Polymer cellEditing, see the
+        For an example of Polymer cell editing, see the
         <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.
     </p>
 
-    <h3><img src="../images/polymer-large.png" style="width: 20px;"/> Specifying a Polymer cellEditor</h3>
+    <h3><img src="../images/polymer-large.png" style="width: 20px;"/> Specifying a Polymer cell editor</h3>
 
     <p>
         If you are using the ag-grid-polymer component to create the ag-Grid instance,
-        then you will have the option of additionally specifying the cellEditors
+        then you will have the option of additionally specifying the cell editors
         as Polymer components.
     </p>
 
-    <pre ng-non-bindable><span class="codeComment">// create your cellEditor as a Polymer component</span>
+    <pre ng-non-bindable><span class="codeComment">// create your cell editor as a Polymer component</span>
 &lt;dom-module id="mood-editor"&gt;
     &lt;template&gt;
         &lt;style&gt;
@@ -164,7 +164,7 @@ colDef = {
 }</pre>
 
     <p>
-        By using <i>colDef.cellEditorFramework</i> (instead of <i>colDef.cellEditor</i>) the grid
+        By using <code>colDef.cellEditorFramework</code> (instead of <code>colDef.cellEditor</code>) the grid
         will know it's an Polymer component, based on the fact that you are using the Polymer version of
         ag-Grid.
     </p>
@@ -177,7 +177,7 @@ colDef = {
     <h3 id="polymer-methods-lifecycle"><img src="../images/polymer-large.png" style="width: 20px;"/> Polymer Methods / Lifecycle</h3>
 
     <p>
-        All of the methods in the ICellEditor interface described above are applicable
+        All of the methods in the <code>ICellEditor</code> interface described above are applicable
         to the Polymer Component with the following exceptions:
     <ul>
         <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method.</li>

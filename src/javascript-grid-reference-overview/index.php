@@ -405,8 +405,8 @@ this.$.myGrid.oncolumnresized = (event) => {
             <h3>Cell Editors, Cell Renderers, Filters etc</h3>
 
             <p>Please see the relevant sections on <a
-                        href="../javascript-grid-cell-rendering-components/#polymerCellRendering">cellRenderers</a>,
-                <a href="../javascript-grid-cell-editing/#polymerCellEditing">cellEditors</a> and
+                        href="../javascript-grid-cell-rendering-components/#polymerCellRendering">cell renderer's</a>,
+                <a href="../javascript-grid-cell-editing/#polymerCellEditing">cell editors</a> and
                 <a href="../javascript-grid-filtering/#polymerFiltering">filters</a> for configuring and using Polymer
                 Components in ag-Grid.</p>
 

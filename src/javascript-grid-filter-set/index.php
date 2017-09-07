@@ -38,14 +38,14 @@ columnDefinition = {
     <ul>
         <li><b>cellRenderer:</b> Similar to the cell renderer for the grid (you can use the same one in both locations).
             Setting it separately here allows for the value to be rendered differently in the filter. Note that
-            the cellRenderer for the setFilter only receives the value as a parameter, as opposite to the cellRenderer
+            the cell renderer for the set filter only receives the value as a parameter, as opposed to the cell renderer
             in the colDef that receives more information.
         </li>
         <li><b>cellHeight:</b> The height of the cell.</li>
         <li><b>values:</b> The values to display in the filter. If this is not set, then the filter will
             takes its values from what is loaded in the table. Setting it allows you to set values where a) the
             value may not be present in the list (for example, if you want to show all states in America so
-            that the user is not confused by missing states, even though states are missing from the dataset
+            that the user is not confused by missing states, even though states are missing from the data set
             in the grid) and b) the list is not available (happens when doing server side filtering in pagination
             and infinite scrolling).</li>
         <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter,

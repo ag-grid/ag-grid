@@ -10,23 +10,23 @@ include '../documentation-main/documentation_header.php';
     <h2 id="cell-editing">Cell Editing</h2>
 
     <p>
-        cellRenderers and cellEditors, the former for showing the data, the latter for editing the data.
+        Cell Renderer's and Cell Editors, the former for showing the data, the latter for editing the data.
         If your application is for showing data only, such as a reporting application, then you will not
-        need to use cellEditors. If you are editing your data like a spreadsheet, then cellEditors are
+        need to use cell editors. If you are editing your data like a spreadsheet, then cell editors are
         going to be your best friend as you build your application using ag-Grid.
     </p>
 
     <p>
-        Use cellEditors to provide editing functionality to your data through the grid that ties in
+        Use Cell Editors to provide editing functionality to your data through the grid that ties in
         with the grid navigation, refresh and general data management.
     </p>
 
     <p>
-        You configure cellEditors as part of the column definition and can be one of the following:
+        You configure cell editors as part of the column definition and can be one of the following:
     <ul>
         <li>component: The grid will call 'new' on the provided class and treat the object as a component, using
             lifecycle methods.</li>
-        <li>string: The cellEditor is looked up from the provided cellEditors. Use this if you
+    <li>string: The <code>cellEditor</code> is looked up from the provided cell editors. Use this if you
             want to use a built in editor.</li>
     </ul>
     </p>
@@ -76,7 +76,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         To get simple string editing, you do not need to provide an editor. The grid by default allows simple
-        string editing on cells. The default editor is used if you do not provide a cellEditor.
+        string editing on cells. The default editor is used if you do not provide a cell editor.
     </p>
 
     <h3 id="start-editing">Start Editing</h3>
@@ -106,7 +106,7 @@ include '../documentation-main/documentation_header.php';
         The grid will stop editing when any of the following happen:
         <ul>
         <li><b>Callback stopEditing</b>: The callback <i>stopEditing</i> (from the params above) gets called by the
-            editor. This is how your cellEditor informs the grid to stop editing.</li>
+            editor. This is how your cell editor informs the grid to stop editing.</li>
         <li><b>Other Cell Focus</b>: If focus in the grid goes to another cell, the editing will stop.</li>
         <li><b>Enter Key Down</b>: If the grid receives an 'Enter' key press event on the cell. If you do NOT
         want to stop editing when Enter is pressed, then listen for the event and stop propagation so the grid
@@ -150,7 +150,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         From a lifecycle and behaviour point of view, 'in cell' and 'popup' have no impact on the editor. So you
-        can create a cellEditor and change this property and observe how your editor behaves in each way.
+        can create a cell editor and change this property and observe how your editor behaves in each way.
     </p>
 
     <p>
@@ -172,7 +172,7 @@ include '../documentation-main/documentation_header.php';
         successful, otherwise false.
     </p>
 
-    <h3 id="provided-celleditors">Provided cellEditors</h3>
+    <h3 id="provided-celleditors">Provided Cell Editors</h3>
 
     <p>
         The grid, out of the box, comes with the following editors:
@@ -193,8 +193,8 @@ include '../documentation-main/documentation_header.php';
     richSelect.</note>
 
     <p>
-        The default text cellEditor takes no parameters. The select cellEditor takes a list of values
-        from which the user can select. The example below shows configuring the select cellEditor.
+        The default text cell editor takes no parameters. The select cell editor takes a list of values
+        from which the user can select. The example below shows configuring the select cell editor.
     </p>
 
     <pre>colDef.cellEditor = 'select';
@@ -217,7 +217,7 @@ colDef.cellEditorParams = {
     </ul>
     </p>-->
 
-    <p>If you have many instances of a grid, you must register the cellEditors with each one.</p>
+    <p>If you have many instances of a grid, you must register the cell editors with each one.</p>
 
     <h4 id="callback-new-value-handlers">Callback: New Value Handlers</h4>
 
@@ -311,7 +311,7 @@ colDef.newValueHandler = function(params) {
         <ul>
         <li><b>rowIndex</b>: The row index of the row to start editing.</li>
         <li><b>colKey</b>: The column key of the column to start editing.</li>
-        <li><b>keyPress, charPress</b>: The keyPress and charPress that are passed to the cellEditor</li>
+        <li><b>keyPress, charPress</b>: The keyPress and charPress that are passed to the cell editor</li>
     </ul>
     </p>
 
@@ -367,10 +367,10 @@ colDef.newValueHandler = function(params) {
         If using custom cell editors, the cell editors will work in the exact same way with the
         following additions:
         <ul>
-        <li><b>focusIn:</b> If your cellEditor has a focusIn method, it will get called when the
+        <li><b>focusIn:</b> If your cell editor has a focusIn method, it will get called when the
             user tabs into the cell. This should be used to put the focus on the particular item
-            to be focused, eg the textfield within your cellEditor.</li>
-        <li><b>focusOut:</b> If your cellEditor has a focusOut method, it will get called when the
+            to be focused, eg the <code>textfield</code> within your cell editor.</li>
+        <li><b>focusOut:</b> If your cell editor has a focusOut method, it will get called when the
             user tabs out of the cell. No intended use for this, is just there to compliment the
             focusIn method, maybe you will have a reason to use it.</li>
         <li><b>Events: </b> When a row stops editing, the <i>cellValueChanged</i> event gets called

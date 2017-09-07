@@ -11,7 +11,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1><img src="/images/aurelia_large.png"/> ag-Grid - The Enterprise Datagrid For Aurelia</h2>
+        <h1><img src="/images/aurelia_large.png"/> ag-Grid - The Enterprise Datagrid For Aurelia</h1>
     </div>
 </div>
 
@@ -126,9 +126,9 @@ export class AgGridColumn {
 &lt;/ag-grid-column>
 </pre>
 
-        <p>This in turn woud be mapped to a column with a defined cellRenderer and cellEditor.</p>
+        <p>This in turn woud be mapped to a column with a defined cell renderer and cell editor.</p>
 
-        <p>That's pretty much it! In time - and if there's sufficient interest - we'll look at being able to create Renderers,
+        <p>That's pretty much it! In time - and if there's sufficient interest - we'll look at being able to create Renderer's,
         Editors and Filters from Components, in the same way that we do with Angular. Based on feedback we've received this
         declarative/markup driven definition works well for now.</p>
 

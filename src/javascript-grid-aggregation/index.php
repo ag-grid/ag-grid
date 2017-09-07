@@ -176,7 +176,7 @@ colDef = {
                 <b>'xyz' on Bronze</b>:
                 The 'xyz' function is another function with much use, however it demonstrates you can return anything
                 from an aggregation function - as long as your aggregation function can handle the result (if you have
-                groups inside groups) and as long as your cellRenderer can render the result (if using a cellRenderer).
+                groups inside groups) and as long as your cell renderer can render the result (if using <code>cellRenderer</code>).
             </p>
 
             <p>

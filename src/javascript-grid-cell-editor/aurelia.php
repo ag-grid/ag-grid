@@ -6,14 +6,14 @@
 
     <div class="note" style="margin-bottom: 20px">
         <img align="left" src="../images/note.png" style="margin-right: 10px;" />
-        <p>This section explains how to utilise ag-Grid cellEditors using Aurelia. You should read about how
+        <p>This section explains how to utilise ag-Grid Cell Editors using Aurelia. You should read about how
             <a href="../javascript-grid-cell-editor/">Cell Editing</a> works in ag-Grid first before trying to
             understand this section.</p>
     </div>
 
     <p>
-        It is possible to provide a Aurelia cellEditor for ag-Grid to use. All of the information above is
-        relevant to Aurelia cellEditors. This section explains how to apply this logic to your Aurelia component.
+        It is possible to provide a Aurelia Cell Editor for ag-Grid to use. All of the information above is
+        relevant to Aurelia Cell Editors. This section explains how to apply this logic to your Aurelia component.
     </p>
 
     <p>
@@ -24,7 +24,7 @@
     <h3 id="specifying-a-aurelia-cell-editor"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellEditor</h3>
 
 
-    <pre><span class="codeComment">// Create your cellEditor as a Aurelia component</span>
+    <pre><span class="codeComment">// Create your cell editor as a Aurelia component</span>
 
 <span class="codeComment">// Component View</span>
 &lt;template>

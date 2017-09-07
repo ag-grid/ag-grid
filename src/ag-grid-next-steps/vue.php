@@ -28,7 +28,7 @@ this.params.context.componentParent
 <p>Note that although we've used <code>componentParent</code> as the property name here it can be anything - the main
     point is that you can use the <code>context</code> mechanism to share information between the components.</p>
 
-<p>The <span style="font-style: italic">"A Simple Example, using CellRenderers created from VueJS Components"</span> above illustrates this in the Child/Parent column:</p>
+<p>The <span style="font-style: italic">"A Simple Example, using cell renderer's created from VueJS Components"</span> above illustrates this in the Child/Parent column:</p>
 <ul>
     <li><a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue" target="_blank" class="fa fa-external-link"> Parent & Child Component</a></li>
 </ul>
@@ -54,8 +54,8 @@ include '../javascript-grid-getting-started/ag-grid-enterprise-framework.php'
 
 <p>
     It is possible to build
-    <a href="../javascript-grid-cell-rendering-components/#vue2CellRendering">cellRenderers</a>,
-    <a href="../javascript-grid-cell-editing/#vue2CellEditing">cellEditors</a> and
+    <a href="../javascript-grid-cell-rendering-components/#vue2CellRendering">cell renderer's</a>,
+    <a href="../javascript-grid-cell-editing/#vue2CellEditing">cell editors</a> and
     <a href="../javascript-grid-filtering/#vue2Filtering">filters</a> using VueJS. Doing each of these
     is explained in the section on each.
 </p>

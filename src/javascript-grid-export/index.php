@@ -95,11 +95,11 @@ include '../documentation-main/documentation_header.php';
         The same data that is in the grid gets exported, but none of the GUI representation of the data will be.
         What this means is:
         <ul>
-            <li>The raw values, and not the result of cellRenderer, will get used, meaning:
+            <li>The raw values, and not the result of cell renderer, will get used, meaning:
                 <ul>
-                    <li>cellRenderers will NOT be used.</li>
-                    <li>valueGetters will be used.</li>
-                    <li>cellFormatters will NOT be used (use <i>processCellCallback</i> instead).</li>
+                    <li>Cell Renderer's will NOT be used.</li>
+                    <li>Value Getters will be used.</li>
+                    <li>Cell Formatter's will NOT be used (use <i>processCellCallback</i> instead).</li>
                 </ul>
             </li>
             <li>If row grouping, all data will be exported regardless of groups open or closed.</li>

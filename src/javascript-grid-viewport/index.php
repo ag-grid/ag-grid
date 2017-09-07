@@ -147,7 +147,7 @@ interface IViewportDatasourceParams {
             be stored inside the old data, leave the rest of the data untouched. This will result in the grid refreshing
             only the cell that was updated. If the cell has a component with a refresh method, the refresh method will be
             called thus allowing animation. If no refresh method is provided, the grid will remove the cell (and destroy
-            the cellRenderer if it exists) and create the cell again from scratch.
+            the cell renderer if it exists) and create the cell again from scratch.
         </li>
     </ul>
     </p>
@@ -198,7 +198,7 @@ interface IViewportDatasourceParams {
 
     <p>
         And you guessed it, if you are doing grouping, you will need to implement this yourself on the server side.
-        If you group, then you will need to provide your own groupCellRenderer that gives functionality to your own
+        If you group, then you will need to provide your own <code>groupCellRenderer</code> that gives functionality to your own
         custom grouping. You will also need to manage how the grouping impacts the overall grid's set size yourself (ie
         if you expand a group, the number of rows increases, and likewise contracting will decrease).
     </p>
@@ -236,9 +236,9 @@ interface IViewportDatasourceParams {
     </p>
 
     <p>
-        Two built in cellRenderers are used: animateShowChange (bid, mid and ask columns) and animateSlide
+        Two built in cell renderer's are used: animateShowChange (bid, mid and ask columns) and animateSlide
         (volume column). You may find these useful, however they are provided to demonstrate how one could
-        achieve a change animation. You will probably want to provide your own custom animation cellRenderer
+        achieve a change animation. You will probably want to provide your own custom animation cell renderer
         as how the animation happens will be depend on your application, the type of data and frequency
         of change.
     </p>

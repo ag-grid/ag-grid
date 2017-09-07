@@ -10,11 +10,11 @@ include '../documentation-main/documentation_header.php';
 <h2 id="cell-editors">Cell Editors</h2>
 
 <p>
-    Create your own cellEditor by providing a cellEditor component.
+    Create your own cell editor by providing a cell editor component.
 </p>
 
 <p>
-    The interface for the cellEditor component is as follows:
+    The interface for the cell editor component is as follows:
 </p>
 
 <pre>interface ICellEditorComp {
@@ -57,7 +57,7 @@ include '../documentation-main/documentation_header.php';
 }</pre>
 
 <p>
-    Below is a simple example of cellEditor class:
+    Below is a simple example of Cell Editor:
 </p>
 
 <pre><code><span class="codeComment">// function to act as a class</span>
@@ -100,11 +100,11 @@ MyCellEditor.prototype.isPopup = function() {
 
 
 <h3 id="cell-editor-params">
-    cellEditor Params
+    Cell Editor Params
 </h3>
 
 <p>
-    The cellEditor component takes parameters in its init() method and contain the following:
+    The Cell Editor component takes parameters in its init() method and contain the following:
 </p>
 
 <table class="table">
@@ -180,15 +180,15 @@ MyCellEditor.prototype.isPopup = function() {
     </tr>
 </table>
 
-<h3 id="complementing-cell-editor-params">Complementing cellEditor Params</h3>
+<h3 id="complementing-cell-editor-params">Complementing Cell Editor Params</h3>
 
 <p>
-    Again like cellRenderers, cellEditors can also be provided with additional parameters.
-    Do this using cellEditorParams like in the following example which will pass 'Ireland'
+    Again like cell renderer's, cell editors can also be provided with additional parameters.
+    Do this using <code>cellEditorParams</code> like in the following example which will pass 'Ireland'
     as the 'country' parameter:
 </p>
 
-<pre><code><span class="codeComment">// define cellRenderer to be reused</span>
+<pre><code><span class="codeComment">// define cell renderer to be reused</span>
 var myCellEditor = .....
 
 <span class="codeComment">// use with a color</span>
@@ -206,7 +206,7 @@ colDef.cellEditorParams = {
     <li>'Age' column uses a Component cell editor that allows simple integer input only.</li>
     <li>'Mood' column uses a custom Component cell editor and renderer that allows choice of mood based on image selection.</li>
     <li>'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. Tab & Esc (amongst others) will exit editing in this field, Shift+Enter will allow newlines.</li>
-    <li>'Country' columns shows using 'richSelect' for a complex object - the cellRenderer takes care of only rendering the country name.</li>
+    <li>'Country' columns shows using 'richSelect' for a complex object - the cell renderer takes care of only rendering the country name.</li>
 </ul>
 </p>
 

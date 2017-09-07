@@ -24,6 +24,6 @@
 </show-complex-example>
 
 <note>The full <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> repo shows many
-    more examples for rendering, including grouped rows, full width renderers
-    and so on, as well as examples on using Polymer Components with both CellEditors and Filters
+    more examples for rendering, including grouped rows, full width renderer's
+    and so on, as well as examples on using Polymer Components with both Cell Editors and Filters
 </note>

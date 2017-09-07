@@ -132,11 +132,11 @@ the grid will know the framework to use is VueJS.
 
 <h3 id="example-rendering-using-more-complex-vuejs-components">Example: Rendering using more complex VueJS Components</h3>
 <p>
-    Using more complex VueJS Components in the Cell Renderers
+    Using more complex VueJS Components in the Cell Renderer's
 </p>
 <show-example url="../framework-examples/vue-examples/#/rich-dynamic"
               jsfile="../framework-examples/vue-examples/src/rich-dynamic-component-example/RichDynamicComponentExample.vue"
               exampleHeight="525px"></show-example>
 
 <note>The full <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers
-    and so on, as well as examples on using VueJS Components with both CellEditors and Filters</note>
+    and so on, as well as examples on using VueJS Components with both Cell Editors and Filters</note>

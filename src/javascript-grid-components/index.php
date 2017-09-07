@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
                             </div>
                             <h2 class="list-group-item-heading">Cell Renderer</h2>
                             <p class="list-group-item-text">
-                                A cellRenderer customises the contents of a cell.
+                                A cell renderer customises the contents of a cell.
                             </p>
                         </div>
                     </a>
@@ -55,7 +55,7 @@ include '../documentation-main/documentation_header.php';
                             </div>
                             <h2 class="list-group-item-heading">Cell Editor</h2>
                             <p class="list-group-item-text">
-                                A cellEditor customises the editing of a cell.
+                                A cell editor customises the editing of a cell.
                             </p>
                         </div>
                     </a>
@@ -146,8 +146,8 @@ include '../documentation-main/documentation_header.php';
                 <li>Provide an ag-Grid component in JavaScript.</li>
                 <li>Provide an ag-Grid component as a framework component (eg React or Angular).</li>
             </ol>
-            For example if you want to build a cellRenderer and you are using React, you have the choice
-            to build the cellRenderer using React or using plain JavaScript.
+            For example if you want to build a cell renderer and you are using React, you have the choice
+            to build the cell renderer using React or using plain JavaScript.
         </p>
 
         <p>

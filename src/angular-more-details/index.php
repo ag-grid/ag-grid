@@ -214,8 +214,8 @@ let colDefs = [
 ]
 </pre>
     <p>Please see the relevant sections on <a
-                href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cellRenderers</a>,
-        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
+                href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cell renderer's</a>,
+        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cell editors</a> and
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> for configuring and using Angular
         Components in
         ag-Grid.</p>
@@ -426,8 +426,8 @@ private getCountryFilterParams():any {
 
     <p>
         It is possible to build
-        <a href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cellRenderers</a>,
-        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cellEditors</a> and
+        <a href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cell renderer's</a>,
+        <a href="../javascript-grid-cell-editing/#ng2CellEditing">cell editors</a> and
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular. Doing each of these
         is explained in the section on each.
     </p>
