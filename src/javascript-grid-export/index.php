@@ -23,6 +23,9 @@ include '../documentation-main/documentation_header.php';
         an old school 'file download' from the server).
     </p>
 
+    <note>If you want to disable CSV export, you can set the property <code>suppressCsvExport = true</code> in your
+        <code>gridOptions</code></note>
+
     <p>
         The API methods are as follows:
     </p>

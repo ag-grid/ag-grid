@@ -33,6 +33,7 @@ include '../documentation-main/documentation_header.php';
             useful if you don't want to use the standard documents.body (for people using non-standard browsers to GWT
             embedded)
         </li>
+        <li>AG-313 excel and csv export now by setting to true the properties <code>suppressCsvExport</code> <code>suppressExcelExport</code>.</li>
         <li>AG-669 excel export now has a property <code>sheetName</code> that allows to configure the name of the generated Excel sheet.</li>
         <li>AG-749 headerName is now optional in the columnDef, if your provide a field the name would be derived from the field name</li>
         <li>AG-737 the menu items 'expand all' and 'contract all' now only appear for InMemoryRowModel</li>

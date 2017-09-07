@@ -23,6 +23,9 @@ include '../documentation-main/documentation_header.php';
         </ol>
     </p>
 
+    <note>If you want to disable Excel export, you can set the property <code>suppressExcelExport = true</code> in your
+    <code>gridOptions</code></note>
+
     <h3 id="ExcelExportApi">API</h3>
 
     <p>
