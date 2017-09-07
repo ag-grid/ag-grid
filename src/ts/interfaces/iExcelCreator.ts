@@ -103,6 +103,7 @@ export interface ExcelInterior {
 }
 
 export interface ExcelExportParams extends ExportParams<ExcelCell[][]>{
+    sheetName?:string;
 }
 
 export interface IExcelCreator{
