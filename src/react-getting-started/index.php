@@ -175,7 +175,12 @@ npm start
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-<?= example('ag-Grid in React', 'rich', 'react'); ?>
+<?= preview('ag-Grid in React', 
+'rich', 
+'../framework-examples/react-examples/examples/?fromDocs&example=rich-grid',
+'https://github.com/ag-grid/ag-grid-react-example/tree/master/src/richGridExample',
+array( 'exampleHeight' => 525 )
+); ?>
 
 <!--
     <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=rich-grid"
