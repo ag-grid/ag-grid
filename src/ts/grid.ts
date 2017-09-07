@@ -268,5 +268,3 @@ export class Grid {
     }
 
 }
-
-console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaasdfadsfadsf');
