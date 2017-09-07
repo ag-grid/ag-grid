@@ -304,6 +304,14 @@ docs.component('exampleRunner', {
 });
 
 docs.component('preview', {
+    bindings: {
+        resultUrl: '<',
+        sourceCodeUrl: '<',
+        title: '<',
+        name: '<',
+        options: '<'
+    },
+
     template: ` 
         <div ng-if="$ctrl.ready" ng-class='["example-runner"]'>
         <ul role="tablist" class="primary">
@@ -320,7 +328,7 @@ docs.component('preview', {
             </example-tab>
 
             <li role="presentation">
-                <a role="tab" ng-href="{{$ctrl.resultUrl}}" target="_blank">
+                <a role="tab" ng-href="{{$ctrl.sourceCodeUrl}}" target="_blank">
                     <i class="fa fa-external-link" aria-hidden="true"></i> Browse Source Code
                 </a>
             </li>
@@ -336,13 +344,6 @@ docs.component('preview', {
 
     </div>
     `,
-    bindings: {
-        resultUrl: '<',
-        sourceCodeUrl: '<',
-        title: '<',
-        name: '<',
-        options: '<'
-    },
 
     controller: [ '$timeout', '$element', function($timeout, $element) {
         this.ready = false;
