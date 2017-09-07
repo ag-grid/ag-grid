@@ -46,14 +46,15 @@ include('../includes/mediaHeader.php');
 
         <h3>The Library</h3>
         <p>Our Library is going to be a simple one - all it does is display an array of dynamically created Angular 2 Components. The main component looks like this:</p>
-        <pre>@Component({
+        <snippet>
+@Component({
     selector: 'grid-component',
     template: `
-        &lt;div class="row" *ngFor="let cellComponentType of cellComponentTypes">
-            <&lt;div class="col-lg-12">
-                &lt;grid-cell [componentType]="cellComponentType"></grid-cell>
-            &lt;/div>
-        &lt;/div>
+        &lt;div class="row" *ngFor="let cellComponentType of cellComponentTypes"&gt;
+            &lt;&lt;div class="col-lg-12"&gt;
+                &lt;grid-cell [componentType]="cellComponentType"&gt;&lt;/grid-cell&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
     `
 })
 export class Grid {
@@ -64,11 +65,12 @@ export class Grid {
     addDynamicCellComponent(selectedComponentType:any) {
         this.cellComponentTypes.push(selectedComponentType);
     }
-}</pre>
+}</snippet>
 
     <p>As you can see it's a pretty simple component - all it does is display the current <code>cellComponentTypes</code>. These are the user supplied components, and they can be any Angular 2 Component.</p>
         <p>The interesting part of the Library is in the <code>Cell</code> Component:</p>
-        <pre>@Component({
+        <snippet>
+@Component({
     selector: 'grid-cell',
     template: ''
 })
@@ -83,20 +85,21 @@ export class Cell implements OnInit {
         let compFactory = this.cfr.resolveComponentFactory(this.componentType);
         this.viewContainerRef.createComponent(compFactory);
     }
-}</pre>
+}</snippet>
 
         <p>You'll notice that we don't have a template here - that's deliberate as the <code>Cell</code> doesn't have any content of its own - all it does is serve up the user supplied Component. The important part of this Component are these two lines:</p>
-        <pre>let compFactory = this.cfr.resolveComponentFactory(this.componentType);</pre>
+        <snippet>
+let compFactory = this.cfr.resolveComponentFactory(this.componentType);</snippet>
         <p>This line asks the <code>ComponentFactoryResolver</code> to find the <code>ComponentFactory</code> for the provided Component. We'll use this factory next to create the actual component:</p>
-<pre>
-this.viewContainerRef.createComponent(compFactory);
-</pre>
+<snippet>
+this.viewContainerRef.createComponent(compFactory);</snippet>
 
         <p>And that's all there is to it from the Library Component side of things - we find the factory for the Component, and then create a new instance of the Component. Easy!</p>
 
         <p>For this to work we need to tell Angular's AOT Compiler to create factories for the user provided Components, or <code>ComponentFactoryResolver</code> won't find them. We can make use of
             <code>NgModule.entryComponents</code> for this - this will ensure that the AOT compiler creates the necessary factories, but for you purposes there is an easier way, especially from a users perspective:</p>
-        <pre>@NgModule({
+        <snippet>
+@NgModule({
     imports: [
         BrowserModule,
         FormsModule
@@ -118,24 +121,26 @@ export class GridModule {
             ]
         }
     }
-}</pre>
+}</snippet>
 
         <p>By making use of <code>ANALYZE_FOR_ENTRY_COMPONENTS</code> here, we are able to add multiple components to the <code>NgModule.entryComponents</code> entry dynamically, in a user friendly way.</p>
 
         <h3>The Application</h3>
 
         <p>From the application side of things, the first thing we need to do is create the components we want to use in the Library - these can be any valid Angular 2 Component. In our case we have three similar Components:</p>
-        <pre>@Component({
+        <snippet>
+@Component({
     selector: 'dynamic-component',
-    template: '&lt;div class="img-rounded" style="background-color: lightskyblue;margin: 5px"> Blue Dynamic Component! &lt;/div>',
+    template: '&lt;div class="img-rounded" style="background-color: lightskyblue;margin: 5px"&gt; Blue Dynamic Component! &lt;/div&gt;',
 })
 export class BlueDynamicComponent {
-}</pre>
+}</snippet>
 
         <p>All these components do is display a little styled text.</p>
 
         <p>To register these in both our Application, and in the Library, we need to switch to the Application Module:</p>
-        <pre>@NgModule({
+        <snippet>
+@NgModule({
     imports: [
         BrowserModule,
         FormsModule,
@@ -154,54 +159,55 @@ export class BlueDynamicComponent {
     bootstrap: [AppComponent]
 })
 export class AppModule {
-}</pre>
+}</snippet>
 
         <p>We declare our Components in the usual way, but we additionally need to register them with the Library (remember, this is the part where they'll be added to the
             Library's <code>NgModule.entryComponent</code> entry). We do this in this part of the module:</p>
-        <pre>GridModule.withComponents([
+        <snippet>
+GridModule.withComponents([
     BlueDynamicComponent,
     GreenDynamicComponent,
     RedDynamicComponent
-])
-</pre>
+])</snippet>
 
         <p>Finally, we can take a look at the main Application Component:</p>
-        <pre>@Component({
+        <snippet>
+@Component({
     selector: 'my-app',
     template: `
-        &lt;div class="container-fluid">
-            &lt;div class="page-header">
-                &lt;h1>Creating AOT Friendly Dynamic Components with Angular 2</h1>
-            &lt;/div>
-            &lt;div class="row">
-                &lt;div class="col-lg-12">
-                    &lt;div class="panel panel-default">
-                        &lt;div class="panel-heading">Application Code&lt;/div>
-                        &lt;div class="panel-body">
-                            &lt;div class="input-group">
-                                &lt;span class="input-group-btn">
-                                    &lt;button type="button" class="btn btn-primary" (click)="grid.addDynamicCellComponent(selectedComponentType)">Add Dynamic Grid component</button>
-                                &lt;/span>
+        &lt;div class="container-fluid"&gt;
+            &lt;div class="page-header"&gt;
+                &lt;h1&gt;Creating AOT Friendly Dynamic Components with Angular 2&lt;/h1&gt;
+            &lt;/div&gt;
+            &lt;div class="row"&gt;
+                &lt;div class="col-lg-12"&gt;
+                    &lt;div class="panel panel-default"&gt;
+                        &lt;div class="panel-heading"&gt;Application Code&lt;/div&gt;
+                        &lt;div class="panel-body"&gt;
+                            &lt;div class="input-group"&gt;
+                                &lt;span class="input-group-btn"&gt;
+                                    &lt;button type="button" class="btn btn-primary" (click)="grid.addDynamicCellComponent(selectedComponentType)"&gt;Add Dynamic Grid component&lt;/button&gt;
+                                &lt;/span&gt;
 
-                                &lt;select class="form-control" [(ngModel)]="selectedComponentType">
-                                    &lt;option *ngFor="let cellComponentType of componentTypes" [ngValue]="cellComponentType">{{cellComponentType.name}}</option>
-                                &lt;/select>
-                            &lt;/div>
-                        &lt;/div>
-                    &lt;/div>
-                &lt;/div>
-            &lt;/div>
-            &lt;div class="row">
-                &lt;div class="col-lg-12">
-                    &lt;div class="panel panel-default">
-                        &lt;div class="panel-heading">Library Code&lt;/div>
-                        &lt;div class="panel-body">
-                            &lt;grid-component #grid>&lt;/grid-component>
-                        &lt;/div>
-                    &lt;/div>
-                &lt;/div>
-            &lt;/div>
-        &lt;/div>
+                                &lt;select class="form-control" [(ngModel)]="selectedComponentType"&gt;
+                                    &lt;option *ngFor="let cellComponentType of componentTypes" [ngValue]="cellComponentType"&gt;{{cellComponentType.name}}&lt;/option&gt;
+                                &lt;/select&gt;
+                            &lt;/div&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="row"&gt;
+                &lt;div class="col-lg-12"&gt;
+                    &lt;div class="panel panel-default"&gt;
+                        &lt;div class="panel-heading"&gt;Library Code&lt;/div&gt;
+                        &lt;div class="panel-body"&gt;
+                            &lt;grid-component #grid&gt;&lt;/grid-component&gt;
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
     `
 })
 export class AppComponent implements OnInit {
@@ -212,16 +218,17 @@ export class AppComponent implements OnInit {
         // default to the first available option
         this.selectedComponentType = this.componentTypes ? this.componentTypes[0] : null;
     }
-}
-</pre>
+}</snippet>
 
         <p>It may look like theres a lot going on here, but the bulk of the template is to make it look pretty. The key parts of this Component are:</p>
 
-        <pre>&lt;button type="button" class="btn btn-primary" (click)="grid.addDynamicCellComponent(selectedComponentType)">Add Dynamic Grid component</button></pre>
+        <snippet>
+&lt;button type="button" class="btn btn-primary" (click)="grid.addDynamicCellComponent(selectedComponentType)"&gt;Add Dynamic Grid component&lt;/button&gt;</snippet>
 
         <p>This will ask the Library to add a create a new instance of the supplied Component, and in turn render it.</p>
 
-        <pre>&lt;grid-component #grid>&lt;/grid-component></pre>
+        <snippet>
+&lt;grid-component #grid&gt;&lt;/grid-component&gt;</snippet>
 
         <p>And this line is our Library Component.</p>
 

@@ -29,35 +29,36 @@
         as React components.
     </p>
 
-    <pre><span class="codeComment">// create your Cell Editor as a React component</span>
+    <snippet>
+// create your Cell Editor as a React component
 class NameCellEditor extends React.Component {
 
-    <span class="codeComment">// constructor gets the props</span>
+    // constructor gets the props
     constructor(props) {
-        <span class="codeComment">// set initial state to be the value to be edited</span>
+        // set initial state to be the value to be edited
         this.state = {value: props.value};
     }
 
     render() {
-    <span class="codeComment">// put in render logic</span>
-        return &lt;input type="text" value={this.state.value}>&lt;/input>;
+    // put in render logic
+        return &lt;input type="text" value={this.state.value}&gt;&lt;/input&gt;;
     }
 
-    <span class="codeComment">// more logic is needed, but enough for now to show the general setup</span>
+    // more logic is needed, but enough for now to show the general setup
 }
 
-<span class="codeComment">// then reference the Component in your colDef like this</span>
+// then reference the Component in your colDef like this
 colDef = {
 
-    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+    // instead of cellRenderer we use cellRendererFramework
     cellEditorFramework: NameCellEditor
 
-    <span class="codeComment">// specify all the other fields as normal</span>
-    cellRendererFramework: NameCellRenderer     <span class="codeComment">// if you have a React cell renderer</span>
+    // specify all the other fields as normal
+    cellRendererFramework: NameCellRenderer     // if you have a React cell renderer
     headerName: 'Name',
     field: 'firstName',
     ...
-}</pre>
+}</snippet>
 
     <p>
         By using <code>colDef.cellEditorFramework</code> (instead of <code>colDef.cellEditor</code>) the grid

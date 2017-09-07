@@ -130,7 +130,7 @@ include '../documentation-main/documentation_header.php';
         below 'Export with Styles'
         </li>
     </ul>
-    <pre>
+    <snippet>
 [
     [],
     [{styleId:'bigHeader', data:{type:'String', value:'Summary'}}],
@@ -139,7 +139,7 @@ include '../documentation-main/documentation_header.php';
         {styleId:'amount', data:{type:'Number', value:'3695.36'}}
     ],
     []
-]</pre>
+]</snippet>
     </p>
 
     <p>
@@ -285,33 +285,33 @@ include '../documentation-main/documentation_header.php';
 
 
     <h4>Excel Style Definition Example</h4>
-    <pre>
+    <snippet>
 var columnDef = {
     ...,
-    <span class="codeComment">// The same cellClassRules and cellClass can be used for CSS and Excel</span>
+    // The same cellClassRules and cellClass can be used for CSS and Excel
     cellClassRules: {
-        greenBackground: function(params) { return params.value < 23}
+        greenBackground: function(params) { return params.value &lt; 23}
     },
     cellClass: 'redFont'
 }
 
-<span class="codeComment">// In this example we can see how we merge the styles in Excel.</span>
-<span class="codeComment">// Everyone less than 23 will have a green background, and a light green color font (#e0ffc1)</span>
-<span class="codeComment">// also because redFont is set in cellClass, it will always be applied</span>
+// In this example we can see how we merge the styles in Excel.
+// Everyone less than 23 will have a green background, and a light green color font (#e0ffc1)
+// also because redFont is set in cellClass, it will always be applied
 
 var gridOptions = {
     ...,
     ExcelStyles: [
-        <span class="codeComment">// The base style, red font.</span>
+        // The base style, red font.
         {
             id: "redFont",
             interior: {
                 color: "#FF0000", pattern: 'Solid'
             }
         },
-        <span class="codeComment">// The cellClassStyle: background is green and font color is light green,</span>
-        <span class="codeComment">// note that since this excel style it's defined after redFont</span>
-        <span class="codeComment">// it will override the red font color obtained through cellClass:'red'</span>
+        // The cellClassStyle: background is green and font color is light green,
+        // note that since this excel style it's defined after redFont
+        // it will override the red font color obtained through cellClass:'red'
         {
             id: "greenBackground",
             alignment: {
@@ -340,7 +340,7 @@ var gridOptions = {
     ]
 }
 
-    </pre>
+   </snippet>
 
     <h4>Resolving Excel Styles</h4>
 
@@ -444,15 +444,16 @@ var gridOptions = {
         <li><a href="http://sheetjs.com/" target="_blank">sheetJs</a> Is included as a third party library</li>
         <li>
             The "Export to Excel (xlsx)" button reuses the XML and passes it to sheetJs to generate a xlsx</li>
-<pre>
+<snippet>
     var content = gridOptions.api.getDataAsExcel(params);
     var workbook = XLSX.read(content, {type: 'binary'});
-    var xlsxContent = XLSX.write(workbook, {bookType: 'xlsx', type: 'base64'});</pre>
+    var xlsxContent = XLSX.write(workbook, {bookType: 'xlsx', type: 'base64'});</snippet>
         </li>
         <li>There is some code to handle the conversion from base64 to blob adapted from
             <a href="http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript">stackOverflow</a></li>
         <li>There is some code to handle the download of the blob:
-<pre>function download (params, content){
+<snippet>
+function download (params, content){
     var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
     var fileName = fileNamePresent ? params.fileName : 'noWarning.xlsx';
 
@@ -461,10 +462,10 @@ var gridOptions = {
 
 
     if (window.navigator.msSaveOrOpenBlob) {
-        <span class="codeComment">// Internet Explorer</span>
+        // Internet Explorer
         window.navigator.msSaveOrOpenBlob(blobObject, fileName);
     } else {
-        <span class="codeComment">// Chrome</span>
+        // Chrome
         var downloadLink = document.createElement("a");
         downloadLink.href = URL.createObjectURL(blobObject);
         downloadLink.download = fileName;
@@ -472,7 +473,7 @@ var gridOptions = {
         document.body.appendChild(downloadLink);
         downloadLink.click();
         document.body.removeChild(downloadLink);
-}</pre></li>
+}</snippet></li>
     <li>Note that this example doesnt't import the styles to xls. To add styling to the xlsx, the logic could be extended
         to read the XML styling information received from
         <i>gridOptions.api.getDataAsExcel(params)</i>, and it could thn be passed into SheetJs through the object returned by

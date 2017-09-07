@@ -43,15 +43,14 @@ include '../documentation-main/documentation_header.php';
 <p>You can change individual icons by overriding the background images for the respective CSS selector. 
 The following code snippet overrides the fresh theme pin icon  used in the drag hint when reordering columns:<p>
 
-<pre>
+<snippet>
 /* 
  * The override should be placed after the import of the theme. 
  * Alternatively, you can aso increase the selector's specifcity.
  */
 .ag-fresh .ag-icon-pin {
     background-image: url('path/to/my-pin-icon.svg');
-}
-</pre>
+}</snippet>
 
 <p>The icon classes follow the <code>.ag-icon-{icon-file-name}</code> convention.</p>
 
@@ -63,7 +62,7 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
 The icons should be <strong>14x14px sized SVG</strong> files. You can check the <a href="https://github.com/ag-grid/ag-grid/tree/latest/src/styles/icons">full icon list in the GitHub repository</a>. 
 </p> 
 
-<pre>
+<snippet>
 // styles.scss
 // This is an example of the application scss file; 
 // Popular framework project scaffolders like angular-cli support 
@@ -77,8 +76,7 @@ $ag-icons-path: "./my-icons/";
 // The "~" path prefix below relies on Webpack's sass-loader -
 // https://github.com/webpack-contrib/sass-loader. 
 @import "~ag-grid/src/styles/ag-grid.scss";
-@import "~ag-grid/src/styles/theme-fresh.scss";
-</pre>
+@import "~ag-grid/src/styles/theme-fresh.scss";</snippet>
 
 <p>A working Sass / Webpack which includes the source theme file is available in the <a href="https://github.com/ag-grid/ag-grid-seed/tree/master/typescript-webpack/src">ag grid seed repository</a>.
 
@@ -95,7 +93,8 @@ $ag-icons-path: "./my-icons/";
         The icons are set as follows:
     </p>
 
-    <pre><span class="codeComment">// column header items</span>
+    <snippet>
+// column header items
 menu
 filter
 columns
@@ -103,53 +102,52 @@ sortAscending
 sortDescending
 sortUnSort
 
-<span class="codeComment">// expand / contract row group</span>
+// expand / contract row group
 groupExpanded
 groupContracted
 
-<span class="codeComment">// expand / contract column group</span>
+// expand / contract column group
 columnGroupOpened
 columnGroupClosed
 
-<span class="codeComment">// tool panel column group open / close</span>
+// tool panel column group open / close
 columnSelectOpen
 columnSelectClosed
 
-<span class="codeComment">// row checkbox selection and tool panel column selection</span>
+// row checkbox selection and tool panel column selection
 checkboxChecked
 checkboxUnchecked
 checkboxIndeterminate
 
-<span class="codeComment">// tool panel column selection, when read only (ie disabled checkboxes)</span>
+// tool panel column selection, when read only (ie disabled checkboxes)
 checkboxCheckedReadOnly
 checkboxUncheckedReadOnly
 checkboxIndeterminateReadOnly
 
-<span class="codeComment">// when moving columns</span>
-columnMovePin <span class="codeComment">// when column is to the left, before it gets pinned</span>
-columnMoveAdd <span class="codeComment">// when adding a column</span>
-columnMoveHide <span class="codeComment">// when removing a column</span>
-columnMoveMove <span class="codeComment">// when moving a column</span>
-columnMoveLeft <span class="codeComment">// when moving and scrolling left</span>
-columnMoveRight <span class="codeComment">// when moving and scrolling right</span>
-columnMoveGroup <span class="codeComment">// when about to drop into group panel</span>
-columnMoveValue <span class="codeComment">// when about to drop into value panel</span>
-columnMovePivot <span class="codeComment">// when about to drop into pivot panel</span>
-dropNotAllowed <span class="codeComment">// when trying to drop column into group/value/pivot panel and column doesn't support it</span>
+// when moving columns
+columnMovePin // when column is to the left, before it gets pinned
+columnMoveAdd // when adding a column
+columnMoveHide // when removing a column
+columnMoveMove // when moving a column
+columnMoveLeft // when moving and scrolling left
+columnMoveRight // when moving and scrolling right
+columnMoveGroup // when about to drop into group panel
+columnMoveValue // when about to drop into value panel
+columnMovePivot // when about to drop into pivot panel
+dropNotAllowed // when trying to drop column into group/value/pivot panel and column doesn't support it
 
-<span class="codeComment">// menu</span>
-menuPin <span class="codeComment">// beside the column pin menu item</span>
-menuValue <span class="codeComment">// beside the column value menu item</span>
-menuAddRowGroup <span class="codeComment">// beside the column row group menu item</span>
-menuRemoveRowGroup <span class="codeComment">// beside the column row group menu item</span>
-clipboardCopy <span class="codeComment">// beside the copy to clipboard menu item</span>
-clipboardPaste <span class="codeComment">// beside the paste from clipboard menu item</span>
+// menu
+menuPin // beside the column pin menu item
+menuValue // beside the column value menu item
+menuAddRowGroup // beside the column row group menu item
+menuRemoveRowGroup // beside the column row group menu item
+clipboardCopy // beside the copy to clipboard menu item
+clipboardPaste // beside the paste from clipboard menu item
 
-<span class="codeComment"></span>// column drop panels
-rowGroupPanel <span class="codeComment">// beside where to drop columns for row group</span>
-pivotPanel <span class="codeComment">// beside where to drop columns for pivot</span>
-valuePanel <span class="codeComment">// beside where to drop columns for value</span>
-</pre>
+// column drop panels
+rowGroupPanel // beside where to drop columns for row group
+pivotPanel // beside where to drop columns for pivot
+valuePanel // beside where to drop columns for value</snippet>
 
     <p>
         Setting the icons on the column definitions is identical, except group icons are not used in column definitions.

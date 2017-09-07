@@ -38,35 +38,34 @@ include '../documentation-main/documentation_header.php';
     <p>To achieve this determine the width of the grid and work out how many columns could fit in that space, hiding any that
     don't fit, constantly updating based on the <code>gridSizeChanged</code> event firing:</p>
 
-<pre>
-<span class="codeComment">// get the current grids width</span>
+<snippet>
+// get the current grids width
 var gridWidth = document.getElementById('myGrid').offsetWidth;
 
-<span class="codeComment">// keep track of which columns to hide/show</span>
+// keep track of which columns to hide/show
 var columnsToShow = [];
 var columnsToHide = [];
 
-<span class="codeComment">// iterate over all columns (visible or not) and work out</span>
-<span class="codeComment">// now many columns can fit (based on their minWidth)</span>
+// iterate over all columns (visible or not) and work out
+// now many columns can fit (based on their minWidth)
 var totalColsWidth = 0;
 var allColumns = gridOptions.columnApi.getAllColumns();
-for (var i = 0; i < allColumns.length; i++) {
+for (var i = 0; i &lt; allColumns.length; i++) {
     let column = allColumns[i];
     totalColsWidth += column.getMinWidth();
-    if(totalColsWidth > gridWidth) {
+    if(totalColsWidth &gt; gridWidth) {
         columnsToHide.push(column.colId);
     } else {
         columnsToShow.push(column.colId);
     }
 }
 
-<span class="codeComment">// show/hide columns based on current grid width</span>
+// show/hide columns based on current grid width
 gridOptions.columnApi.setColumnsVisible(columnsToShow, true);
 gridOptions.columnApi.setColumnsVisible(columnsToHide, false);
 
-<span class="codeComment">// fill out any available space to ensure there are no gaps</span>
-gridOptions.api.sizeColumnsToFit();
-</pre>
+// fill out any available space to ensure there are no gaps
+gridOptions.api.sizeColumnsToFit();</snippet>
 
     <p>This example is best seen when opened in a new tab - then change the horizontal size of the browser and watch as
     columns hide/show based on the current grid size.</p>
@@ -78,27 +77,26 @@ gridOptions.api.sizeColumnsToFit();
     <p>Sometimes the vertical height of the grid is greater than the number of rows you have it in.  You can dynamically
     set the row heights to fill the available height as follows:</p>
 
-<pre>
-<span class="codeComment">// get the height of the grid body - this excludes the height of the headers</span>
+<snippet>
+// get the height of the grid body - this excludes the height of the headers
 var gridHeight = document.getElementsByClassName('ag-body')[0].offsetHeight;
 
-<span class="codeComment">// get the rendered rows</span>
+// get the rendered rows
 var renderedRows = gridOptions.api.getRenderedNodes();
 
-<span class="codeComment">// if the rendered rows * min height is greater than available height, just just set the height</span>
-<span class="codeComment">// to the min and let the scrollbar do its thing</span>
-if(renderedRows.length * minRowHeight >= gridHeight) {
+// if the rendered rows * min height is greater than available height, just just set the height
+// to the min and let the scrollbar do its thing
+if(renderedRows.length * minRowHeight &gt;= gridHeight) {
     if(currentRowHeight !== minRowHeight) {
         currentRowHeight = minRowHeight;
         gridOptions.api.resetRowHeights();
     }
 } else {
-    <span class="codeComment">// set the height of the row to the grid height / number of rows available</span>
+    // set the height of the row to the grid height / number of rows available
     currentRowHeight = Math.floor(gridHeight / renderedRows.length);
     console.log(gridHeight + " / " + currentRowHeight);
     gridOptions.api.resetRowHeights();
-}
-</pre>
+}</snippet>
 
     <p>This example is best seen when opened in a new tab - then change the horizontal size of the browser and watch as
         columns hide/show based on the current grid size.</p>

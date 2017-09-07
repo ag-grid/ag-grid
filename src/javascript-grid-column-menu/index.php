@@ -48,13 +48,14 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         <i>getContextMenuItems()</i> takes the following object as parameters:
-        <pre>GetMainMenuItemsParams {
+        <snippet>
+GetMainMenuItemsParams {
     column: Column, // the column that was clicked
     api: GridApi, // the grid API
     columnApi: ColumnAPI, // the column API
     context: any, // the grid context
     defaultItems: string[] // list of the items that would be displayed by default
-}</pre>
+}</snippet>
     </p>
 
     <p>
@@ -65,16 +66,16 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         A MenuItem description looks as follows (items with question marks are optional):
-        <pre>MenuItem {
+        <snippet>
+MenuItem {
     name: string, // name of menu item
     disabled?: boolean, // if item should be enabled / disabled
     shortcut?: string, // shortcut (just display text, saying the shortcut here does nothing)
-    action?: ()=>void, // function that gets executed when item is chosen
+    action?: ()=&gt;void, // function that gets executed when item is chosen
     checked?: boolean, // set to true to provide a check beside the option
     icon?: HTMLElement|string, // the icon to display beside the icon, either a DOM element or HTML string
     subMenu?: MenuItemDef[] // if this menu is a sub menu, contains a list of sub menu item definitions
-}
-</pre>
+}</snippet>
 
     <h4>Built In Menu Items</h4>
 
@@ -108,16 +109,18 @@ include '../documentation-main/documentation_header.php';
 
     <h4>Menu Item Separators</h4>
     <p>You can add menu item separators as follows:</p>
-    <pre>menuItems.push('separator')</pre>
+    <snippet>
+menuItems.push('separator')</snippet>
 
     <?php include './postProcessPopup.php';?>
 
     <h3>Overriding Column Menu Width</h3>
     <p>You can override the menu width by overriding the corresponding CSS:</p>
 
-    <pre>.ag-set-filter-list {
+    <snippet>
+.ag-set-filter-list {
     width: 500px !important;
-}</pre>
+}</snippet>
 
     <h3>Example Column Menu</h3>
 

@@ -115,7 +115,8 @@ include '../documentation-main/documentation_header.php';
 <p>
     To have the functionality to expand a group (ie have plus (+) and minus (-) icons, you need to configure the
     group cellRenderer on one of the column definitions. This is done as follows:
-<pre>colDef.cellRenderer = 'group'</pre>
+<snippet>
+colDef.cellRenderer = 'group'</snippet>
 </p>
 
 <h3 id="flowerNodes">Flower Nodes</h3>
@@ -131,10 +132,11 @@ include '../documentation-main/documentation_header.php';
     To tell the grid that a row 'can flower' (ie should be expandable) then implement the
     <code>doesDataFlower(dataItem)</code> callback.
 </p>
-<pre>gridOptions.doesDataFlower = function(dataItem) {
+<snippet>
+gridOptions.doesDataFlower = function(dataItem) {
     var canFlower = dataItem.checkSomeFlagThatYouSetOnTheData;
     return canFlower;
-}</pre>
+}</snippet>
 
 <p>
     <i>doesDataFlower</i> gets called exactly once for each data item you provide to the grid. It does not

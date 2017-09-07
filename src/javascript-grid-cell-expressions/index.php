@@ -33,19 +33,20 @@ include '../documentation-main/documentation_header.php';
         into a string.
     </p>
 
-    <pre><span class="codeComment">// this is using standard functions</span>
+    <snippet>
+// this is using standard functions
 colDef = {
-    valueGetter: function(params) { return params.<span class="codeHighlight">data.firstName</span>; },
-    valueFormatter: function(params) { return params.<span class="codeHighlight">value.toUpperCase()</span>; }
+    valueGetter: function(params) { return params.&lt;span class="codeHighlight"&gt;data.firstName&lt;/span&gt;; },
+    valueFormatter: function(params) { return params.&lt;span class="codeHighlight"&gt;value.toUpperCase()&lt;/span&gt;; }
     ...
 };
 
-<span class="codeComment">// this is the same as above but using expressions</span>
+// this is the same as above but using expressions
 colDef = {
-    valueGetter: '<span class="codeHighlight">data.firstName</span>',
-    valueFormatter: '<span class="codeHighlight">value.toUpperCase()</span>'
+    valueGetter: '&lt;span class="codeHighlight"&gt;data.firstName&lt;/span&gt;',
+    valueFormatter: '&lt;span class="codeHighlight"&gt;value.toUpperCase()&lt;/span&gt;'
     ...
-};</pre>
+};</snippet>
 
     <h2>Example Column Definition Expressions</h2>
 
@@ -174,13 +175,14 @@ colDef = {
         then gets wrapped into a function with all the params attributes as function attributes.
     </p>
 
-    <pre><span class="codeComment">// this is a simple expression on the column definition</span>
-colDef.valueGetter = '<span class="codeHighlight">data.firstName</span>';
+    <snippet>
+// this is a simple expression on the column definition
+colDef.valueGetter = '&lt;span class="codeHighlight"&gt;data.firstName&lt;/span&gt;';
 
-<span class="codeComment">// the grid will then compile the above to this:</span>
+// the grid will then compile the above to this:
 ___compiledValueGetter = function(node, data, colDef, column, api, columnApi, context, getValue) {
-    return <span class="codeHighlight">data.firstName</span>;
-}</pre>
+    return &lt;span class="codeHighlight"&gt;data.firstName&lt;/span&gt;;
+}</snippet>
 
     <p>
         If your expression has the word <code>return</code> in it, then the grid will assume it is a multi line

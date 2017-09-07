@@ -159,14 +159,15 @@ include '../documentation-main/documentation_header.php';
         to appear sometimes (eg if the columns is ordered first in the grid).
     </p>
 
-    <pre><span class="codeComment">// the name column header always has a checkbox in the header</span>
+    <snippet>
+// the name column header always has a checkbox in the header
 colDef = {
     field: 'name',
     headerCheckboxSelection: true
     ...
 }
 
-<span class="codeComment">// the country column header only has checkbox if it is the first column</span>
+// the country column header only has checkbox if it is the first column
 colDef = {
     field: 'country',
     headerCheckboxSelection: function(params) {
@@ -175,7 +176,7 @@ colDef = {
         return thisIsFirstColumn;
     }
     ...
-}</pre>
+}</snippet>
 
     <p>
         If <i>headerCheckboxSelection</i> is a function, the function will be called every
@@ -250,17 +251,18 @@ colDef = {
         <li><b>clearSelection</b> (optional): for selection only. If true, other nodes selection will be cleared.
             Use this if you do not want multi selection and want this node to be exclusively selected.</li>
     </ul>
-    <pre><span class="codeComment">// set selected, keep any other selections</span>
+    <snippet>
+// set selected, keep any other selections
 node.setSelected(true);
 
-<span class="codeComment">// set selected, exclusively, remove any other selections</span>
+// set selected, exclusively, remove any other selections
 node.setSelected(true, true);
 
-<span class="codeComment">// un-select</span>
+// un-select
 node.setSelected(false);
 
-<span class="codeComment">// check status of node selection</span>
-var selected = node.isSelected();</pre>
+// check status of node selection
+var selected = node.isSelected();</snippet>
 
     The selected status method returns true if the node is selected, or false if it is not selected. If the
     node is a group node and the group selection is set to 'children', then this will return true if all child
@@ -283,11 +285,12 @@ var selected = node.isSelected();</pre>
     </p>
     <p>
         If you want to select only filtered out rows nodes, then you do this following:
-        <pre><span class="codeComment">// loop through each node after filter</span>
+        <snippet>
+// loop through each node after filter
 api.forEachNodeAfterFilter( function(node) {
-  <span class="codeComment">// select the node</span>
+  // select the node
   node.setSelected(true);
-});</pre>
+});</snippet>
     </p>
 
     <h3 id="deep-dive-example-using-for-each-node">Deep Dive Example - Using <i>forEachNode</i></h3>
@@ -323,20 +326,22 @@ api.forEachNodeAfterFilter( function(node) {
         override the default arrow key navigation
     </p>
 
-    <pre><code>var gridOptions = {
+    <snippet>
+var gridOptions = {
 
         // ...
 
         navigateToNextCell: myNavigation
 
-}</code></pre>
+}</snippet>
 
 
     <p>
         From the code below you can see that we iterate over each node and call the <i>setSelected()</i>
         method if matches the current rowIndex.</p>
 
-    <pre><code>function myNavigation(params) {
+    <snippet>
+function myNavigation(params) {
 
    var previousCell = params.previousCellDef;
    var suggestedNextCell = params.nextCellDef;
@@ -350,7 +355,7 @@ api.forEachNodeAfterFilter( function(node) {
        case KEY_DOWN:
            previousCell = params.previousCellDef;
            // set selected cell on current cell + 1
-           gridOptions.api.forEachNode( (node) => {
+           gridOptions.api.forEachNode( (node) =&gt; {
                if (previousCell.rowIndex + 1 === node.rowIndex) {
                    node.setSelected(true);
                }
@@ -359,7 +364,7 @@ api.forEachNodeAfterFilter( function(node) {
        case KEY_UP:
            previousCell = params.previousCellDef;
            // set selected cell on current cell - 1
-           gridOptions.api.forEachNode( (node) => {
+           gridOptions.api.forEachNode( (node) =&gt; {
                if (previousCell.rowIndex - 1 === node.rowIndex) {
                    node.setSelected(true);
                }
@@ -371,7 +376,7 @@ api.forEachNodeAfterFilter( function(node) {
        default:
            throw "this will never happen, navigation is always on of the 4 keys above";
    }
-}</code></pre>
+}</snippet>
 
     <show-example example="example5" example-height="450px"></show-example>
 

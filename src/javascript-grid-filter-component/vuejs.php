@@ -34,7 +34,8 @@
         Defining VueJS Components</a> for all the options), but in this example we're going to define our renderer as a Single File Component:</p>
 
 
-<pre ng-non-bindable><span class="codeComment">// create your filter as Filter Component</span>
+<snippet>
+// create your filter as Filter Component
 import Vue from "vue";
 
 export default Vue.extend({
@@ -55,8 +56,8 @@ export default Vue.extend({
             console.log("filterpass");
             return !this.text || this.text.toLowerCase()
                     .split(" ")
-                    .every((filterWord) => {
-                        return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
+                    .every((filterWord) =&gt; {
+                        return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) &gt;= 0;
                     });
         },
 
@@ -89,18 +90,17 @@ export default Vue.extend({
     }
 })
 
-<span class="codeComment">// then reference the Component in your colDef like this</span>
+// then reference the Component in your colDef like this
 colDef = {
-    <span class="codeComment">// we use cellRendererFramework instead of cellRenderer </span>
+    // we use cellRendererFramework instead of cellRenderer 
     filterFramework: PartialMatchFilterComponent,
 
-    <span class="codeComment">// specify all the other fields as normal</span>
+    // specify all the other fields as normal
     headerName: "Filter Component",
     field: "name",
     width: 400
     ...
-}
-</pre>
+}</snippet>
 
     <p>
         By using <i>colDef.filterFramework</i> (instead of <i>colDef.filter</i>) the grid
@@ -114,15 +114,14 @@ colDef = {
     you from the <code>created</code> VueJS lifecycle hook.</p>
 
 <p>You can think of this as you having defined the following:</p>
-<pre>
+<snippet>
 export default {
     data () {
         return {
             params: null
         }
     },
-    ...
-</pre>
+    ...</snippet>
 
     <p>but you do not need to do this - this is made available to you behind the scenes, and contains the cells value.</p>
 
@@ -150,7 +149,8 @@ export default {
         method. If your component is a VueJS component, then this will give you a reference to the ag-Grid's
         Component which wraps your VueJS Component. Just like Russian Dolls. To get to the wrapped VueJS instance
         of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
-        <pre><span class="codeComment">// lets assume a VueJS component as follows</span>
+        <snippet>
+// lets assume a VueJS component as follows
 export default Vue.extend({
     template: `&lt;input style="height: 20px" :ref="'input'" v-model="text"&gt;`,
     data() {
@@ -162,18 +162,18 @@ export default Vue.extend({
         },
         ...other methods
 
-<span class="codeComment">// then in your app, if you want to execute myMethod()...</span>
+// then in your app, if you want to execute myMethod()...
 laterOnInYourApplicationSomewhere() {
 
-    <span class="codeComment">// get reference to the ag-Grid Filter component</span>
-    let agGridFilter = api.getFilterInstance('name'); <span class="codeComment">// assume filter on name column</span>
+    // get reference to the ag-Grid Filter component
+    let agGridFilter = api.getFilterInstance('name'); // assume filter on name column
 
-    <span class="codeComment">// get VueJS instance from the ag-Grid instance</span>
+    // get VueJS instance from the ag-Grid instance
     let vueFilterInstance = agGridFilter.getFrameworkComponentInstance();
 
-    <span class="codeComment">// now we're sucking diesel!!!</span>
+    // now we're sucking diesel!!!
     vueFilterInstance.componentMethod();
-}</pre>
+}</snippet>
     </p>
 
     <h3 id="example-filtering-using-vuejs-components"><img src="../images/vue_large.png" style="width: 20px;"/> Example: Filtering using VueJS Components</h3>

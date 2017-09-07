@@ -35,7 +35,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
 
-    <pre><code>// return same style for each row
+    <snippet>
+// return same style for each row
 var colDef = {
     name: 'Static Styles',
     field' 'field1',
@@ -54,7 +55,7 @@ var colDef = {
         }
     }
 }
-    </code></pre>
+    </snippet>
 
 
     <h3 id="cellClass">Column Definition cellClass</h3>
@@ -63,7 +64,8 @@ var colDef = {
         Provides a class for the cells in this column. Can be a string (a class), array of strings
         (array of classes), or a function (that returns a string or an array of strings).
 
-    <pre><code>// return same class for each row
+    <snippet>
+// return same class for each row
 var colDef1 = {
     name: 'Static Class',
     field' 'field1',
@@ -90,7 +92,7 @@ var colDef4 = {
     field' 'field4',
     cellClass: function(params) { return ['my-class-1','my-class-2']; }
 }
-        </code></pre>
+        </snippet>
 
     </p>
 
@@ -122,14 +124,15 @@ var colDef4 = {
         The following snippet is cellClassRules using functions on a year column:
     </p>
 
-        <pre>cellClassRules: {
-    <span class="codeComment">// apply green to 2008</span>
+        <snippet>
+cellClassRules: {
+    // apply green to 2008
     'rag-green-outer': function(params) { return params.value === 2008},
-    <span class="codeComment">// apply amber 2004</span>
+    // apply amber 2004
     'rag-amber-outer': function(params) { return params.value === 2004},
-    <span class="codeComment">// apply red to 2000</span>
+    // apply red to 2000
     'rag-red-outer': function(params) { return params.value === 2000}
-}</pre>
+}</snippet>
 
     <p>
         When a function is provided the params object has the attributes: <i>value, data, node,
@@ -160,11 +163,12 @@ var colDef4 = {
         The following snippet is cellClassRules using expressions on an age column:
     </p>
 
-    <pre>cellClassRules: {
-    'rag-green': 'x < 20',
-    'rag-amber': 'x >= 20 && x < 25',
-    'rag-red': 'x >= 25'
-}</pre>
+    <snippet>
+cellClassRules: {
+    'rag-green': 'x &lt; 20',
+    'rag-amber': 'x &gt;= 20 && x &lt; 25',
+    'rag-red': 'x &gt;= 25'
+}</snippet>
 
     <h4>Refresh of Styles</h4>
 
@@ -217,29 +221,28 @@ var colDef4 = {
     </ul>
     </p>
 
-    <pre>
-<span class="codeComment">// set background color on every row</span>
-<span class="codeComment">// this is probably bad, should be using CSS classes</span>
+    <snippet>
+// set background color on every row
+// this is probably bad, should be using CSS classes
 gridOptions.rowStyle = {background: 'black'};
 
-<span class="codeComment">// set background color on odd rows</span>
-<span class="codeComment">// again, this looks bad, should be using CSS classes</span>
+// set background color on odd rows
+// again, this looks bad, should be using CSS classes
 gridOptions.getRowStyle = function(params) {
     if (params.node.rowIndex % 2 === 0) {
     return { background: 'red' }
     }
 }
 
-<span class="codeComment">// all rows assigned CSS class 'my-green-class'</span>
+// all rows assigned CSS class 'my-green-class'
 gridOptions.rowClass = 'my-green-class';
 
-<span class="codeComment">// all odd rows assigned 'my-shaded-effect'</span>
+// all odd rows assigned 'my-shaded-effect'
 gridOptions.getRowClass = function(params) {
     if (params.node.rowIndex % 2 === 0) {
         return 'my-shaded-effect';
     }
-}
-</pre>
+}</snippet>
 
 </div>
 

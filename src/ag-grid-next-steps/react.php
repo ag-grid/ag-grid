@@ -45,18 +45,18 @@ include '../javascript-grid-getting-started/ag-grid-enterprise-framework.php'
 <p>To use React and Redux we'll make use of <code>react-redux</code>. If we (in this example) only listen of rowData
     changes
     then the following will suffice:</p>
-<pre>
+<snippet>
 export default connect(
-    (state) => {
+    (state) =&gt; {
         return {
             rowData: state.fxData
         }
     }
-)(FxQuoteMatrix);</pre>
+)(FxQuoteMatrix);</snippet>
 
 <p>If we bind to this on our grid definition then any changes to Redux will be reflected within the grid:</p>
 
-<pre>
+<snippet>
 &lt;AgGridReact
     // properties
     columnDefs={this.state.columnDefs}
@@ -64,8 +64,7 @@ export default connect(
 
     // events
     onGridReady={this.onGridReady}&gt;
-&lt;/AgGridReact&gt;
-</pre>
+&lt;/AgGridReact&gt;</snippet>
 
 <p>The problem with this approach is that any change to the rowData will trigger a full refresh of the Grid as it
     doesn't know which row nodes have changed.</p>
@@ -73,19 +72,19 @@ export default connect(
 <h3 id="react-delta-changes">Using React-Redux with <code>enableImmutableMode</code></h3>
 
 <p>As before, we listen to changes in react-redux in the normal way:</p>
-<pre>
+<snippet>
 export default connect(
-    (state) => {
+    (state) =&gt; {
         return {
             rowData: state.fxData
         }
     }
-)(FxQuoteMatrix);</pre>
+)(FxQuoteMatrix);</snippet>
 
 <p>This time however, we enable <code>enableImmutableMode</code>. We also specify <code>getRowNodeId</code> which will
     allow the Grid to determine if rows have changed, by providing each row with a unique ID:</p>
 
-<pre>
+<snippet>
 &lt;AgGridReact
     // properties
     columnDefs={this.state.columnDefs}
@@ -96,19 +95,17 @@ export default connect(
 
     // events
     onGridReady={this.onGridReady}&gt;
-&lt;/AgGridReact&gt;
-</pre>
+&lt;/AgGridReact&gt;</snippet>
 
 <p>For this to work, each row has to have something that can uniquely identify it. In our
     <a href="/ag-grid-react-trader-dashboard">Trader Dashboard</a> example, the Top Movers panel (bottom right) uses
     this
     technique and each row can uniquely be identified by the FX curreny code:</p>
 
-<pre>
+<snippet>
 getRowNodeId(data) {
     return data.symbol;
-}
-</pre>
+}</snippet>
 
 <p>By adding these two small pieces of configuration, we are now able to prevent ag-Grid from re-rendering all visible
     rows,
@@ -130,16 +127,15 @@ getRowNodeId(data) {
 
 <h3>Binding to methods in the React binding</h3>
 <p>If you have something like:</p>
-<pre>
+<snippet>
 &lt;AgGridReact
     // events
     onGridReady={this.onGridReady.bind(this)}&gt;
-    ... rest of the configuration
-</pre>
+    ... rest of the configuration</snippet>
 <p>Then everytime the component renders, a new instance of <code>onGridReady</code> will be passed to ag-Grid and it will believe
 that it's a different function. To avoid this, do the binding separately (in the constructor for example):</p>
 
-<pre>
+<snippet>
 class TopMoversGrid extends Component {
     constructor(props) {
         super(props);
@@ -150,12 +146,11 @@ class TopMoversGrid extends Component {
 
     render() {
         return (
-            <div className="ag-fresh">
+            &lt;div className="ag-fresh"&gt;
                 &lt;AgGridReact
                     // events
                     onGridReady={this.onGridReady}&gt;
-                ... rest of the component
-</pre>
+                ... rest of the component</snippet>
 
 <p>Now ag-Grid will get the same function everytime the component renders.</p>
 
@@ -178,22 +173,21 @@ result is ag-Grid changing state.</p>
 
 <p>A common scenario might be where you pre-process your row data before passing it to ag-Grid - for example:</p>
 
-<pre>
+<snippet>
 class TopMoversGrid extends Component {
     constructor(props) {
         super(props);
     }
 
     cleanData() {
-        return this.props.rowData.filter(data => data.isClean)
+        return this.props.rowData.filter(data =&gt; data.isClean)
     }
 
     render() {
         return (
             &lt;AgGridReact
                 rowData={this.cleanData}
-                ...rest of the component
-</pre>
+                ...rest of the component</snippet>
 
 <p>As above, this call will result in ag-Grid believing that the rowData has changed each time the component renders as the filtering
 operation will return a new array each time. Again to alleviate this behaviour extract data that isn't likely to change and pre-process it only once.</p>

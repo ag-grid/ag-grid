@@ -34,14 +34,15 @@ include '../documentation-main/documentation_header.php';
         if an option outside the grid is changed).
     </p>
 
-    <pre><code><span class="codeComment">// show 'loading' overlay</span>
+    <snippet>
+// show 'loading' overlay
 gridOptions.api.showLoadingOverlay()
 
-<span class="codeComment">// show 'no rows' overlay</span>
+// show 'no rows' overlay
 gridOptions.api.showNoRowsOverlay()
 
-<span class="codeComment">// clear all overlays</span>
-gridOptions.api.hideOverlay()</code></pre>
+// clear all overlays
+gridOptions.api.hideOverlay()</snippet>
 
     <p>
         The overlays are mutually exclusive, you cannot show more than one overlay at any given time.

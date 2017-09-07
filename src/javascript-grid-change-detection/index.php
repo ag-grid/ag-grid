@@ -125,17 +125,18 @@ include '../documentation-main/documentation_header.php';
         name is stored in a complex object.
     </p>
 
-    <pre><span class="codeComment">// column with custom equals method for change detection</span>
+    <snippet>
+// column with custom equals method for change detection
 colDef = {
 
-    <span class="codeComment">// method returns true if first and last names are equal</span>
+    // method returns true if first and last names are equal
     equals: function(person1, person2) {
         var firstNameEqual = person1.firstName === person2.firstName;
         var lastNameEqual = person2.lastName === person2.lastName;
         return firstNameEqual && lastNameEqual;
     }
     ...
-}</pre>
+}</snippet>
 
     <h2>Triggering Value Change Detection</h2>
 

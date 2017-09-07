@@ -266,13 +266,14 @@ include '../documentation-main/documentation_header.php';
     <p>
         Below shows the event hierarchy and properties. All properties are inherited. For example the CellValueChangedEvent
         has properties:
-    <pre><span class="event-properties">// all properties, including inherited, for CellValueChangedEvent</span>
+    <snippet>
+&lt;span class="event-properties"&gt;// all properties, including inherited, for CellValueChangedEvent&lt;/span&gt;
 CellValueChangedEvent {
-    type, api, columnApi, <span class="event-properties">// -> properties from AgEvent</span>
-    node, data, rowIndex, rowPinned, context, event, <span class="event-properties">// -> properties from RowEvent</span>
-    column, colDef, value, <span class="event-properties">// -> properties from CellEvent</span>
-    oldValue, newValue <span class="event-properties">// -> properties from CellValueChangedEvent</span>
-}</pre>
+    type, api, columnApi, &lt;span class="event-properties"&gt;// -&gt; properties from AgEvent&lt;/span&gt;
+    node, data, rowIndex, rowPinned, context, event, &lt;span class="event-properties"&gt;// -&gt; properties from RowEvent&lt;/span&gt;
+    column, colDef, value, &lt;span class="event-properties"&gt;// -&gt; properties from CellEvent&lt;/span&gt;
+    oldValue, newValue &lt;span class="event-properties"&gt;// -&gt; properties from CellValueChangedEvent&lt;/span&gt;
+}</snippet>
     </p>
 
     <pre class="event-hierarchy"><span class="event-properties">//---------------------------------------------------------//</span>

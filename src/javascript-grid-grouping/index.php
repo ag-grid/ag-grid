@@ -22,10 +22,11 @@ include '../documentation-main/documentation_header.php';
         To group rows by a particular column, mark the column you want to group with <code>rowGroup=true</code>.
         There is no limit on the number of columns that the grid can group by.
         For example, the following will group the rows in the grid by country and then sport:
-    <pre>gridOptions.columnDefs = [
-    {headerName: "Country", field: "country", <span class="codeHighlight">rowGroup: true</span>},
-    {headerName: "Sport", field: "sport", <span class="codeHighlight">rowGroup: true</span>},
-];</pre>
+    <snippet>
+gridOptions.columnDefs = [
+    {headerName: "Country", field: "country", &lt;span class="codeHighlight"&gt;rowGroup: true&lt;/span&gt;},
+    {headerName: "Sport", field: "sport", &lt;span class="codeHighlight"&gt;rowGroup: true&lt;/span&gt;},
+];</snippet>
     </p>
 
     <h2>Auto Column Group</h2>
@@ -136,9 +137,10 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li>To see the leaf node values, open any country and any year int the group column. Note how their leaf nodes are showing
             the value for the athlete column, this is achieved with a valueGetter:
-<pre> valueGetter: function (params){
+<snippet>
+valueGetter: function (params){
     return params.data ? params.data.athlete : ''
-}</pre></li>
+}</snippet></li>
         <li>Filtering is switched on so you can see how now you can filter the group column by athlete.</li>
     </ul>
 
@@ -188,23 +190,25 @@ include '../documentation-main/documentation_header.php';
         By default, if you are using a column to display more than one group, the grid will order the groups based in
         the order in which you provide the columns. The following code snipped will group by country first, then sport
         second.
-<pre>columnDefs = [
-    <span class="codeComment">// country listed first, gets grouped first</span>
-    {headerName: "Country", field: "country", <span class="codeHighlight">rowGroup: true</span>},
-    <span class="codeComment">// sport listed second, gets grouped second</span>
-    {headerName: "Sport", field: "sport", <span class="codeHighlight">rowGroup: true</span>},
-];</pre>
+<snippet>
+columnDefs = [
+    // country listed first, gets grouped first
+    {headerName: "Country", field: "country", &lt;span class="codeHighlight"&gt;rowGroup: true&lt;/span&gt;},
+    // sport listed second, gets grouped second
+    {headerName: "Sport", field: "sport", &lt;span class="codeHighlight"&gt;rowGroup: true&lt;/span&gt;},
+];</snippet>
     </p>
 
     <p>
         To explicitly set the order of the grouping and not depend on the column order, then use
         <code>rowGroupIndex</code> instead of <code>rowGroup</code> as follows:
-    <pre>columnDefs = [
-    <span class="codeComment">// index = 1, gets grouped second</span>
-    {headerName: "Country", field: "country", <span class="codeHighlight">rowGroupIndex: 1</span>},
-    <span class="codeComment">// index = 0, gets grouped first</span>
-    {headerName: "Sport", field: "sport", <span class="codeHighlight">rowGroupIndex: 0</span>},
-];</pre>
+    <snippet>
+columnDefs = [
+    // index = 1, gets grouped second
+    {headerName: "Country", field: "country", &lt;span class="codeHighlight"&gt;rowGroupIndex: 1&lt;/span&gt;},
+    // index = 0, gets grouped first
+    {headerName: "Sport", field: "sport", &lt;span class="codeHighlight"&gt;rowGroupIndex: 0&lt;/span&gt;},
+];</snippet>
     </p>
 
     <p>
@@ -285,25 +289,26 @@ include '../documentation-main/documentation_header.php';
     </p>
     <p>
         The following pieces of code do the exact same thing:
-    <pre><code><span class="codeComment">// option 1 - tell the grid to group by row, the grid defaults to using</span>
-<span class="codeComment">// the default group cell renderer for the row with default settings.</span>
+    <snippet>
+// option 1 - tell the grid to group by row, the grid defaults to using
+// the default group cell renderer for the row with default settings.
 gridOptions.groupUseEntireRow = true;
 
-<span class="codeComment">// option 2 - this does the exact same as the above, except we configure</span>
-<span class="codeComment">// it explicitly rather than letting the grid choose the defaults.</span>
-<span class="codeComment">// we tell the grid what renderer to use (the built in renderer) and we</span>
-<span class="codeComment">// configure the default renderer with our own inner renderer</span>
+// option 2 - this does the exact same as the above, except we configure
+// it explicitly rather than letting the grid choose the defaults.
+// we tell the grid what renderer to use (the built in renderer) and we
+// configure the default renderer with our own inner renderer
 gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowRenderer:  'group';
 gridOptions.groupRowRendererParams: {
     innerRenderer: function(params) {return params.node.key;},
 };
 
-<span class="codeComment">// option 3 - again the exact same. we allow the grid to choose the group</span>
-<span class="codeComment">// cell renderer, but we provide our own inner renderer.</span>
+// option 3 - again the exact same. we allow the grid to choose the group
+// cell renderer, but we provide our own inner renderer.
 gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowInnerRenderer: function(params) {return params.node.key;};
-</code></pre>
+</snippet>
     </p>
     <p>
         The above probably reads a bit confusing. So here are rules to help you choose:
@@ -328,20 +333,22 @@ gridOptions.groupRowInnerRenderer: function(params) {return params.node.key;};
         Here is an example of taking full control, creating your own renderer. In practice,
         this example is a bit useless, as you will need to add functionality to at least expand
         and collapse the group, however it demonstrates the configuration:
-    <pre><code>gridOptions.groupUseEntireRow = true;
+    <snippet>
+gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowRenderer: function(params) {return params.node.key;};
-</code></pre>
+</snippet>
     <p>
         This example takes full control also, but uses the provided group renderer
         but configured differently by asking for a checkbox for selection:
-    <pre><code>gridOptions.groupUseEntireRow = true;
+    <snippet>
+gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowRenderer: 'group';
 gridOptions.groupRowRendererParams: {
     checkbox: true,
     // innerRenderer is optional, we could leave this out and use the default
     innerRenderer: function(params) {return params.node.key;},
 }
-</code></pre>
+</snippet>
     </p>
 
     </p>
@@ -404,11 +411,12 @@ gridOptions.groupRowRendererParams: {
         To expand or contract a group via the API, you first must get a reference to the rowNode and then call
         <i>rowNode.setExpanded(boolean).</i> This will result in the grid getting updated and displaying the
         correct rows. For example, to expand a group with the name 'Zimbabwe' would be done as follows:
-    <pre>gridOptions.api.forEachNode(function(node) {
+    <snippet>
+gridOptions.api.forEachNode(function(node) {
     if (node.key==='Zimbabwe') {
         node.setExpanded(true);
     }
-});</pre>
+});</snippet>
     </p>
 
     <p>
@@ -430,14 +438,15 @@ gridOptions.groupRowRendererParams: {
 
     <p>
         The example below shows grouping on the county, with country an object within each row.
-    <pre>rowItem = {
+    <snippet>
+rowItem = {
     athlete: 'Michael Phelps',
-        country: { <span class="codeComment">// country is complex object, so need to provide colDef.keyCreator()</span>
+        country: { // country is complex object, so need to provide colDef.keyCreator()
         name: 'United States',
         code: 'US'
     }
     ....
-}</pre>
+}</snippet>
 
 
     <h2 id="grouping-footers">Grouping Footers</h2>
@@ -452,17 +461,18 @@ gridOptions.groupRowRendererParams: {
         want, then use the <i>footerValueGetter</i> option. The following shows two snippets for achieving
         the same, one using a function, one using an expression.
     </p>
-    <pre><code><span class="codeComment">// use a function to return a footer value</span>
+    <snippet>
+// use a function to return a footer value
 cellRenderer: 'group',
 cellRendererParams: {
     footerValueGetter: function(params) { return 'Total (' + params.value + ')'},
 }}
 
-<span class="codeComment">// use an expression to return a footer value. this gives the same result as above</span>
+// use an expression to return a footer value. this gives the same result as above
 cellRenderer: 'group',
 cellRendererParams: {
     footerValueGetter: '"Total (" + x + ")"'
-}}</code></pre>
+}}</snippet>
     <p>
         When showing the groups in one column, the aggregation data is displayed
         in the group header when collapsed and only in the footer when expanded (ie it moves from the header
@@ -590,16 +600,15 @@ cellRendererParams: {
 
     <p>
         This illustrates how to configure an specific column to show the groups generated by the country column
-    <pre>
+    <snippet>
 coldefs:[
-    <span class="codeComment">// The column we are grouping by, it is also hidden.</span>
+    // The column we are grouping by, it is also hidden.
     {headerName: "Country", field: "country", width: 120, rowGroup:true, hide:true},
-    <span class="codeComment">// We appoint this column as the column to show the country groups.</span>
-    <span class="codeComment">// note that we need to provide an appropiate cell renderer.</span>
-    <span class="codeComment">// in this case we are using the out of the box group cell renderer.</span>
+    // We appoint this column as the column to show the country groups.
+    // note that we need to provide an appropiate cell renderer.
+    // in this case we are using the out of the box group cell renderer.
     {headerName: "Country - group", showRowGroup='country', width: 120, cellRenderer: 'group'},
-]
-</pre>
+]</snippet>
 
     <p>The following example shows how to appoint individual columns to show individual groups</p>
 

@@ -13,16 +13,17 @@ include '../documentation-main/documentation_header.php';
         the ColDef's are specified in the grid options. The following example shows a simple grid with 3 columns defined:
     </p>
 
-<pre>var gridOptions = {
-    <span class="codeComment">// define 3 columns</span>
+<snippet>
+var gridOptions = {
+    // define 3 columns
     columnDefs: [
         {headerName: 'Athlete', field: 'athlete'},
         {headerName: 'Sport', field: 'sport'},
         {headerName: 'Age', field: 'age'}
     ],
 
-    <span class="codeComment">// other grid options here...</span>
-}</pre>
+    // other grid options here...
+}</snippet>
 
     <p>
         See <a href="../javascript-grid-column-properties/">Column Properties</a> for a
@@ -34,9 +35,10 @@ include '../documentation-main/documentation_header.php';
         the following:
     </p>
 
-<pre>var gridOptions = {
+<snippet>
+var gridOptions = {
     columnDefs: [
-        <span class="codeComment">// put the three columns into a group</span>
+        // put the three columns into a group
         {headerName: 'Group A',
             children: [
                 {headerName: 'Athlete', field: 'athlete'},
@@ -46,8 +48,8 @@ include '../documentation-main/documentation_header.php';
         }
     ],
 
-    <span class="codeComment">// other grid options here...</span>
-}</pre>
+    // other grid options here...
+}</snippet>
 
     <p>
         Groups are explained in more detail in the section
@@ -76,46 +78,47 @@ include '../documentation-main/documentation_header.php';
         The following code snippet shows these three properties configures:
     </p>
 
-    <pre>var gridOptions = {
+    <snippet>
+var gridOptions = {
     rowData: myRowData,
 
-    <span class="codeComment">// define columns</span>
+    // define columns
     columnDefs: [
-        <span class="codeComment">// uses the default column properties</span>
+        // uses the default column properties
         {headerName: 'Col A', field: 'a'},
 
-        <span class="codeComment">// overrides the default with a number filter</span>
+        // overrides the default with a number filter
         {headerName: 'Col B', field: 'b', filter: 'number'},
 
-        <span class="codeComment">// overrides the default using a column type</span>
+        // overrides the default using a column type
         {headerName: 'Col C', field: 'c', type: 'nonEditableColumn'},
 
-        <span class="codeComment">// overrides the default using a multiple column types</span>
+        // overrides the default using a multiple column types
         {headerName: 'Col D', field: 'd', type: ['dateColumn', 'nonEditableColumn']}
     ],
 
-    <span class="codeComment">// a default column definition with properties that get applied to every column</span>
+    // a default column definition with properties that get applied to every column
     defaultColDef: {
-        <span class="codeComment">// set every column width</span>
+        // set every column width
         width: 100,
-        <span class="codeComment">// make every column editable</span>
+        // make every column editable
         editable: true,
-        <span class="codeComment">// make every column use 'text' filter by default</span>
+        // make every column use 'text' filter by default
         filter: 'text'
     },
 
-    <span class="codeComment">// if we had column groups, we could provide default group items here</span>
+    // if we had column groups, we could provide default group items here
     defaultColGroupDef: {}
 
-    <span class="codeComment">// define a column type (you can define as many as you like)</span>
+    // define a column type (you can define as many as you like)
     columnTypes: {
         "nonEditableColumn": {editable: false},
         "dateColumn": {filter: 'date', filterParams: {comparator: myDateComparator}, suppressMenu:true}
         }
     }
 
-    <span class="codeComment">// other grid options here...</span>
-}</pre>
+    // other grid options here...
+}</snippet>
 
     <p>
         When the grid creates a column it starts with the default column, then adds in anything from the column
@@ -126,18 +129,19 @@ include '../documentation-main/documentation_header.php';
     </p>
 
 
-<pre><span class="codeComment">// Step 1: the grid starts with an empty merged definition</span>
+<snippet>
+// Step 1: the grid starts with an empty merged definition
 {}
 
-<span class="codeComment">// Step 2: default column properties are merged in</span>
+// Step 2: default column properties are merged in
 {width: 100, editable: true, filter: 'text'}
 
-<span class="codeComment">// Step 3: column type properties are merged in (using the 'type' property)</span>
+// Step 3: column type properties are merged in (using the 'type' property)
 {width: 100, editable: false, filter: 'number'}
 
-<span class="codeComment">// Step 4: finally column definition properties are merged in</span>
+// Step 4: finally column definition properties are merged in
 {headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'number'}
-    </pre>
+   </snippet>
 
     <p>
         The following examples demonstrates this configuration.
@@ -155,14 +159,13 @@ Setting the column definition type to <code>numericColumn</code> aligns the colu
 which makes the scanning of the data easier for the user.
 </p>
 
-<pre>
+<snippet>
 var gridOptions = {
     columnDefs: [
         { headerName: "Column A", field: "a" },
         { headerName: "Column B", field: "b", type: "numericColumn" }
     ]
-}
-</pre>
+}</snippet>
 
 <h1 id="changing-column-headers">Updating Column Definitions</h1>
 
@@ -177,19 +180,18 @@ var gridOptions = {
     the header name immediately we explicitly invoke <i>refreshHeader()</i> via the <a href="../javascript-grid-api/">Grid API</a>.
 </p>
 
-<pre>
-<span class="codeComment">// get a reference to the column</span>
+<snippet>
+// get a reference to the column
 var col = gridOptions.columnApi.getColumn("colId");
 
-<span class="codeComment">// obtain the column definition from the column</span>
+// obtain the column definition from the column
 var colDef = col.getColDef();
 
-<span class="codeComment">// update the header name</span>
+// update the header name
 colDef.headerName = "New Header";
 
-<span class="codeComment">// the column is now updated. to reflect the header change, get the grid refresh the header</span>
-gridOptions.api.refreshHeader();
-</pre>
+// the column is now updated. to reflect the header change, get the grid refresh the header
+gridOptions.api.refreshHeader();</snippet>
 
 
 
@@ -212,11 +214,11 @@ Examples of state include column visibility, width, row groups and values.
     An example is shown below:
 </p>
 
-<pre>[
+<snippet>
+[
   {colId: "athlete", aggFunc: "sum",  hide: false, rowGroupIndex: 0,    width: 150, pinned: null},
   {colId: "age",     aggFunc: null,   hide: true,  rowGroupIndex: null, width: 90,  pinned: 'left'}
-]
-</pre>
+]</snippet>
 
 <p>
     The values have the following meaning:

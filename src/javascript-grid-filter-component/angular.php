@@ -31,16 +31,17 @@
         as Angular components.
     </p>
 
-    <pre ng-non-bindable><span class="codeComment">// create your filter as a Angular component</span>
+    <snippet>
+// create your filter as a Angular component
 @Component({
     selector: 'filter-cell',
     template: `
-        Filter: &lt;input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
+        Filter: &lt;input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text"&gt;
     `
 })
 class PartialMatchFilterComponent implements AgFilterComponent {
     private params:IFilterParams;
-    private valueGetter:(rowNode:RowNode) => any;
+    private valueGetter:(rowNode:RowNode) =&gt; any;
     private text:string = '';
 
     @ViewChild('input', {read: ViewContainerRef}) private input;
@@ -57,8 +58,8 @@ class PartialMatchFilterComponent implements AgFilterComponent {
     doesFilterPass(params:IDoesFilterPassParams):boolean {
         return this.text.toLowerCase()
             .split(" ")
-            .every((filterWord) => {
-                return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
+            .every((filterWord) =&gt; {
+                return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) &gt;= 0;
             });
     }
 
@@ -86,17 +87,17 @@ class PartialMatchFilterComponent implements AgFilterComponent {
     }
 }
 
-<span class="codeComment">// then reference the Component in your colDef like this</span>
+// then reference the Component in your colDef like this
 colDef = {
 
-    <span class="codeComment">// we use cellRendererFramework instead of cellRenderer </span>
+    // we use cellRendererFramework instead of cellRenderer 
     filterFramework: PartialMatchFilterComponent
 
-    <span class="codeComment">// specify all the other fields as normal</span>
+    // specify all the other fields as normal
     headerName: 'Name',
     field: 'firstName',
     ...
-}</pre>
+}</snippet>
 
     <p>Your Angular components need to implement <code>AgFilterComponent</code>. The ag Framework expects to find the
         mandatory methods on the interface on the created component (and will call optional methods if they're present).</p>
@@ -111,11 +112,11 @@ colDef = {
 
     <p>The ag Framework expects to find the <code>agInit</code> (on the <code>AgFilterComponent</code> interface) method on the created component, and uses it to supply the 'filter params'.</p>
 
-    <pre>
+    <snippet>
 agInit(params:IFilterParams):void {
     this.params = params;
     this.valueGetter = params.valueGetter;
-}</pre>
+}</snippet>
     </p>
 
     <h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods / Lifecycle</h3>
@@ -142,35 +143,36 @@ agInit(params:IFilterParams):void {
         method. If your component is a Angular component, then this will give you a reference to the ag-Grid's
         Component which wraps your Angular Component. Just like Russian Dolls. To get to the wrapped Angular instance
         of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
-        <pre><span class="codeComment">// lets assume a Angular component as follows</span>
+        <snippet>
+// lets assume a Angular component as follows
 @Component({
     selector: 'filter-cell',
     template: `
-        Filter: &lt;input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
+        Filter: &lt;input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text"&gt;
     `
 })
 class PartialMatchFilterComponent implements AgFilterComponent {
 
-    ... <span class="codeComment">// standard filter methods hidden</span>
+    ... // standard filter methods hidden
 
-    <span class="codeComment">// put a custom method on the filter</span>
+    // put a custom method on the filter
     myMethod() {
-        <span class="codeComment">// does something</span>
+        // does something
     }
 }
 
-<span class="codeComment">// then in your app, if you want to execute myMethod()...</span>
+// then in your app, if you want to execute myMethod()...
 laterOnInYourApplicationSomewhere() {
 
-    <span class="codeComment">// get reference to the ag-Grid Filter component</span>
-    let agGridFilter = api.getFilterInstance('name'); <span class="codeComment">// assume filter on name column</span>
+    // get reference to the ag-Grid Filter component
+    let agGridFilter = api.getFilterInstance('name'); // assume filter on name column
 
-    <span class="codeComment">// get Angular instance from the ag-Grid instance</span>
+    // get Angular instance from the ag-Grid instance
     let ng2FilterInstance = agGridFilter.getFrameworkComponentInstance();
 
-    <span class="codeComment">// now we're sucking diesel!!!</span>
+    // now we're sucking diesel!!!
     ng2FilterInstance.myMethod();
-}</pre>
+}</snippet>
     </p>
 
     <h3 id="example-filtering-using-angular-components"><img src="../images/angular2_large.png" style="width: 20px;"/> Example: Filtering using Angular Components</h3>

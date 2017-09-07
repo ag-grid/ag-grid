@@ -31,57 +31,56 @@ include('../includes/mediaHeader.php');
         <p>
             <code>AgGridAurelia</code> is the main Custom Component for Aurelia - it handles all core grid events and properties, as well as initial instantiation and removal.
         </p>
-<pre>
+<snippet>
 @customElement('ag-grid-aurelia')
-// &lt;slot> is required for @children to work.
+// &lt;slot&gt; is required for @children to work.
 // https://github.com/aurelia/templating/issues/451#issuecomment-254206622
-@inlineView(`&lt;template>&lt;slot>&lt;/slot>&lt;/template>`)
+@inlineView(`&lt;template&gt;&lt;slot&gt;&lt;/slot&gt;&lt;/template&gt;`)
 @autoinject()
 export class AgGridAurelia implements ComponentAttached, ComponentDetached {
-...
-</pre>
+...</snippet>
         <p>
             The grid definition (which we'll get to in a minute) consists of the parent selector (<code>ag-grid-aurelia</code>) and a number of child <code>ag-grid-column</code>'s.
         </p>
-<pre>
+<snippet>
 @children('ag-grid-column')
-public columns: AgGridColumn[] = [];
-</pre>
+public columns: AgGridColumn[] = [];</snippet>
         <p>During the creation and initialisation phases, we dynamically create all available grid events, set all provided gridOptions, map supplied column definitions to colDefs and finally instantiate
         ag-Grid itself:</p>
-<pre><span class="codeComment">// create all available grid events</span>
+<snippet>
+// create all available grid events
 // create all the events generically. this is done generically so that
 // if the list of grid events change, we don't need to change this code.
-ComponentUtil.EVENTS.forEach((eventName) => {
+ComponentUtil.EVENTS.forEach((eventName) =&gt; {
     //create an empty event
-    (<any>this)[eventName] = () => {
+    (&lt;any&gt;this)[eventName] = () =&gt; {
     };
 });
 
-<span class="codeComment">// copy supplied properties to gridOptions</span>
+// copy supplied properties to gridOptions
 this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
 this.gridParams = {
     globalEventListener: this.globalEventListener.bind(this),
     frameworkFactory: this.auFrameworkFactory
 };
 
-<span class="codeComment">// map supplied column definitions to expected colDefs</span>
-if (this.columns && this.columns.length > 0) {
+// map supplied column definitions to expected colDefs
+if (this.columns && this.columns.length &gt; 0) {
     this.gridOptions.columnDefs = this.columns
-        .map((column: AgGridColumn) => {
+        .map((column: AgGridColumn) =&gt; {
             return column.toColDef();
         });
 }
 
-<span class="codeComment">// instantiate ag-Grid with the supplied configuration</span>
-new Grid(this._nativeElement, this.gridOptions, this.gridParams);
-</pre>
+// instantiate ag-Grid with the supplied configuration
+new Grid(this._nativeElement, this.gridOptions, this.gridParams);</snippet>
 
         <p>Note: this is an abridged version of what actually happens for brevity's sake.</p>
 
         <h4>Mapping Columns to Template Types</h4>
         <p>Each type of column is defined by a selector and then converted to a colDef that the grid understands. This is done in <code>AgGridColumn</code>:</p>
-<pre>@autoinject()
+<snippet>
+@autoinject()
 export class AgGridColumn {
     @children('ag-grid-column')
     public childColumns:AgGridColumn[] = [];
@@ -97,34 +96,32 @@ export class AgGridColumn {
         let colDef:ColDef = this.createColDefFromGridColumn();
 
         if (this.hasChildColumns()) {
-            (<any>colDef)["children"] = this.getChildColDefs(this.childColumns);
+            (&lt;any&gt;colDef)["children"] = this.getChildColDefs(this.childColumns);
         }
 
         if (this.cellTemplate) {
             colDef.cellRendererFramework = {template: this.cellTemplate.template};
-            delete (<any>colDef).cellTemplate;
+            delete (&lt;any&gt;colDef).cellTemplate;
         }
 
         if (this.editorTemplate) {
             colDef.editable = true;
             colDef.cellEditorFramework = {template: this.editorTemplate.template};
-            delete (<any>colDef).editorTemplate;
+            delete (&lt;any&gt;colDef).editorTemplate;
         }
-        ...
-</pre>
+        ...</snippet>
 
         <p>So for example, if we defined a column as follows:</p>
-<pre>
-&lt;ag-grid-column header-name="Mood" field="mood" width.bind="250" editable.bind="true">
-    &lt;ag-cell-template>
-      &lt;img width="20px" if.bind="params.value === 'Happy'" src="images/smiley.png"/>
-      &lt;img width="20px" if.bind="params.value !== 'Happy'" src="images/smiley-sad.png"/>
-    &lt;/ag-cell-template>
-    &lt;ag-editor-template>
-      &lt;ag-mood-editor></ag-mood-editor>
-    &lt;/ag-editor-template>
-&lt;/ag-grid-column>
-</pre>
+<snippet>
+&lt;ag-grid-column header-name="Mood" field="mood" width.bind="250" editable.bind="true"&gt;
+    &lt;ag-cell-template&gt;
+      &lt;img width="20px" if.bind="params.value === 'Happy'" src="images/smiley.png"/&gt;
+      &lt;img width="20px" if.bind="params.value !== 'Happy'" src="images/smiley-sad.png"/&gt;
+    &lt;/ag-cell-template&gt;
+    &lt;ag-editor-template&gt;
+      &lt;ag-mood-editor&gt;&lt;/ag-mood-editor&gt;
+    &lt;/ag-editor-template&gt;
+&lt;/ag-grid-column&gt;</snippet>
 
         <p>This in turn woud be mapped to a column with a defined cell renderer and cell editor.</p>
 

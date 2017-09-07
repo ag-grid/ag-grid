@@ -25,14 +25,15 @@ include '../documentation-main/documentation_header.php';
         the server only contains codes (keys) which must be mapped to names (values) for display purposes.
     </p>
 
-    <pre><span class="codeComment">// data from server</span>
+    <snippet>
+// data from server
 var rowData = [
     {make: "tyt", exteriorColour: "fg", interiorColour: "bw", price: 35000},
     {make: "frd", exteriorColour: "bw", interiorColour: "cb", price: 32000},
         ...
 ]
 
-<span class="codeComment">// supporting reference data</span>
+// supporting reference data
 var carMappings = {
      "tyt": "Toyota",
      "frd": "Ford",
@@ -44,8 +45,7 @@ var colourMappings = {
      "bw": "Burlywood",
      "fg": "Forest Green"
 };
-
-</pre>
+</snippet>
     <h2 id="reference-data-with-value-handlers">Using Value Handlers</h2>
 
     <p>
@@ -59,7 +59,8 @@ var colourMappings = {
         it down into the underlying data.
     </p>
 
-<pre>{
+<snippet>
+{
     headerName: "Make",
     field: "make",
     cellEditor: "select",
@@ -67,14 +68,14 @@ var colourMappings = {
         values: extractValues(carMappings)
     },
     valueFormatter: function (params) {
-        <span class="codeComment">// convert code to value</span>
+        // convert code to value
         return lookupValue(carMappings, params.value);
     },
     valueParser: function (params) {
-        <span class="codeComment">// convert value to code</span>
+        // convert value to code
         return lookupKey(carMappings, params.newValue);
     }
-}</pre>
+}</snippet>
 
     <note>
         When editing using Cell Editors it's important to ensure the underlying data is updated with the codes (keys) rather
@@ -87,11 +88,11 @@ var colourMappings = {
       than the code. In this case you should also include the <code>useFormatter</code> property as follows:
     </p>
 
-<pre>cellEditor: 'text',
+<snippet>
+cellEditor: 'text',
 cellEditorParams: {
    useFormatter: true
-}
-</pre>
+}</snippet>
 
     <h2 id="reference-data-with-ref-data-prop">Using the 'refData' property</h2>
 
@@ -106,15 +107,16 @@ cellEditorParams: {
         as shown below:
     </p>
 
-    <pre>{
+    <snippet>
+{
     headerName: "Make",
     field: "make",
     cellEditor: "select",
     cellEditorParams: {
        values: extractValues(carMappings)
     },
-    refData: carMappings <span class="codeComment">// just required to specify refData!</span>
-}</pre>
+    refData: carMappings // just required to specify refData!
+}</snippet>
 
     <p>Like in the previous example using <i>Value Handlers</i>, where the underlying data contains codes, the grid will
        use the specified reference data to display the associated values in the cells and save down the codes (keys) in

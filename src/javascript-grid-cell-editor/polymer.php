@@ -28,7 +28,8 @@
         as Polymer components.
     </p>
 
-    <pre ng-non-bindable><span class="codeComment">// create your cell editor as a Polymer component</span>
+    <snippet>
+// create your cell editor as a Polymer component
 &lt;dom-module id="mood-editor"&gt;
     &lt;template&gt;
         &lt;style&gt;
@@ -151,17 +152,17 @@
         customElements.define(MoodEditor.is, MoodEditor);
     &lt;/script&gt;
 &lt;/dom-module&gt;
-        <span class="codeComment">// then reference the Component in your colDef like this</span>
+        // then reference the Component in your colDef like this
 colDef = {
         headerName: "Mood",
         field: "mood",
-        <span class="codeComment">// instead of cellEditor we use cellEditorFramework</span>
+        // instead of cellEditor we use cellEditorFramework
         cellEditorFramework: 'mood-editor',
-        <span class="codeComment">// specify all the other fields as normal</span>
+        // specify all the other fields as normal
         editable: true,
         width: 150
     }
-}</pre>
+}</snippet>
 
     <p>
         By using <code>colDef.cellEditorFramework</code> (instead of <code>colDef.cellEditor</code>) the grid

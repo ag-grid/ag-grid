@@ -29,7 +29,8 @@
         as Polymer components.
     </p>
 
-    <pre ng-non-bindable><span class="codeComment">// create your filter as a Polymer component</span>
+    <snippet>
+// create your filter as a Polymer component
 &lt;dom-module id="partial-match-filter"&gt;
     &lt;template&gt;
         Filter: &lt;input style="height: 20px" id="input" on-input="onChange" value="{{text::input}}"&gt;
@@ -93,17 +94,17 @@
     &lt;/script&gt;
 &lt;/dom-module&gt;
 
-<span class="codeComment">// then reference the Component in your colDef like this</span>
+// then reference the Component in your colDef like this
 colDef = {
 
-    <span class="codeComment">// we use cellRendererFramework instead of cellRenderer </span>
+    // we use cellRendererFramework instead of cellRenderer 
     filterFramework: 'partial-match-filter'
 
-    <span class="codeComment">// specify all the other fields as normal</span>
+    // specify all the other fields as normal
     headerName: 'Name',
     field: 'firstName',
     ...
-}</pre>
+}</snippet>
 
     <p>Your Polymer components need to implement <code>IFilter</code>. The ag Framework expects to find the
         mandatory methods on the interface on the created component (and will call optional methods if they're present)
@@ -119,11 +120,11 @@ colDef = {
 
     <p>The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the 'filter params'.</p>
 
-    <pre>
+    <snippet>
 agInit(params:IFilterParams):void {
     this.params = params;
     this.valueGetter = params.valueGetter;
-}</pre>
+}</snippet>
     </p>
 
     <h3 id="polymer-methods-lifecycle"><img src="../images/polymer-large.png" style="width: 20px;"/> Polymer Methods / Lifecycle</h3>
@@ -148,7 +149,8 @@ agInit(params:IFilterParams):void {
         method. If your component is a Polymer component, then this will give you a reference to the ag-Grid's
         Component which wraps your Polymer Component. Just like Russian Dolls. To get to the wrapped Polymer instance
         of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
-        <pre ng-non-bindable><span class="codeComment">// lets assume a Polymer component as follows</span>
+        <snippet>
+// lets assume a Polymer component as follows
 &lt;dom-module id="partial-match-filter"&gt;
     &lt;template&gt;
         Filter: &lt;input style="height: 20px" id="input" on-input="onChange" value="{{text::input}}"&gt;
@@ -156,27 +158,27 @@ agInit(params:IFilterParams):void {
 
     &lt;script&gt;
         class PartialMatchFilter extends Polymer.Element {
-    ... <span class="codeComment">// standard filter methods hidden</span>
+    ... // standard filter methods hidden
 
-    <span class="codeComment">// put a custom method on the filter</span>
+    // put a custom method on the filter
     componentMethod() {
-        <span class="codeComment">// does something</span>
+        // does something
     }
 }
 
-<span class="codeComment">// then in your app, if you want to execute myMethod()...</span>
+// then in your app, if you want to execute myMethod()...
 laterOnInYourApplicationSomewhere() {
 
-    <span class="codeComment">// get reference to the ag-Grid Filter component</span>
+    // get reference to the ag-Grid Filter component
     let agGridFilter = this.gridOptions.api.getFilterInstance("name");
-    let agGridFilter = api.getFilterInstance('name'); <span class="codeComment">// assume filter on name column</span>
+    let agGridFilter = api.getFilterInstance('name'); // assume filter on name column
 
-    <span class="codeComment">// get Polymer instance from the ag-Grid instance</span>
+    // get Polymer instance from the ag-Grid instance
     let polymerFilterInstance = getFrameworkComponentInstance();
 
-    <span class="codeComment">// now we're sucking diesel!!!</span>
+    // now we're sucking diesel!!!
     polymerFilterInstance.componentMethod("Hello World!");
-}</pre>
+}</snippet>
     </p>
 
     <h3 id="example-filtering-using-polymer-components"><img src="../images/polymer-large.png" style="width: 20px;"/> Example: Filtering using Polymer Components</h3>

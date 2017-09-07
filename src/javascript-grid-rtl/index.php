@@ -57,16 +57,16 @@ include '../documentation-main/documentation_header.php';
         Themes then also use these styles for adding different values based on whether RTL is used or NOT.
         For example, the following is used inside the provided themes:
     </p>
-    <pre><span class="codeComment">// selection checkbox gets 4px padding to the RIGHT when LTR</span>
+    <snippet>
+// selection checkbox gets 4px padding to the RIGHT when LTR
 .ag-ltr .ag-selection-checkbox {
     padding-right 4px;
 }
 
-<span class="codeComment">// selection checkbox gets 4px padding to the LEFT when RTL</span>
+// selection checkbox gets 4px padding to the LEFT when RTL
 .ag-rtl .ag-selection-checkbox {
     padding-left 4px;
-}
-</pre>
+}</snippet>
 
     <h4 id="pinning-and-scroll-bars">Pinning and Scroll Bars</h4>
 

@@ -59,28 +59,29 @@ include '../documentation-main/documentation_header.php';
     component. A floating filter component class can be any function /class that implements the following interface:
 </p>
 
-<pre>interface IFloatingFilterComp {
-    <span class="codeComment">// mandatory methods</span>
+<snippet>
+interface IFloatingFilterComp {
+    // mandatory methods
 
-    <span class="codeComment">// The init(params) method is called on the floating filter once. See below for details on the parameters.</span>
+    // The init(params) method is called on the floating filter once. See below for details on the parameters.
     init(params: IFilterFloatingParams): void;
 
-    <span class="codeComment">// This is a method that ag-Grid will call every time the model from the associated rich filter
+    &lt;span class="codeComment"&gt;// This is a method that ag-Grid will call every time the model from the associated rich filter
     // for this floating filter changes. Typically this would be used so that you can refresh your UI and show
-    // on it a visual representation of the latest model for the filter as it is being updated somewhere else.</span>
+    // on it a visual representation of the latest model for the filter as it is being updated somewhere else.&lt;/span&gt;
     onParentModelChanged(parentModel:any)
 
-    <span class="codeComment">// Returns the dom html element for this floating filter.</span>
+    // Returns the dom html element for this floating filter.
     getGui(): HTMLElement;
 
-    <span class="codeComment">// optional methods</span>
+    // optional methods
 
-    <span class="codeComment">// Gets called when the floating filter is destroyed.
+    &lt;span class="codeComment"&gt;// Gets called when the floating filter is destroyed.
     // Like column headers, the floating filter life span is only when the column is visible,
     // so gets destroyed if column is made not visible or when user scrolls column out of
-    // view with horizontal scrolling.</span>
+    // view with horizontal scrolling.&lt;/span&gt;
     destroy?(): void;
-}</pre>
+}</snippet>
 
 
 <h3 id="ifilter-params">IFloatingFilterParams</h3>
@@ -91,30 +92,31 @@ include '../documentation-main/documentation_header.php';
     params object, overriding items of the same name if a name clash exists.
 </p>
 
-<pre>interface IFloatingFilterParams {
+<snippet>
+interface IFloatingFilterParams {
 
-    <span class="codeComment">// The column this filter is for</span>
+    // The column this filter is for
     column: Column;
 
-    <span class="codeComment">// This is the callback you need to invoke from your component every time that you want
+    &lt;span class="codeComment"&gt;// This is the callback you need to invoke from your component every time that you want
     // to update the model from your parent rich filter. In order to make this call you need to be able to produce a
     // model object like the one this rich filter will produce through getModel(). After this call is completed,
-    // the parent rich filter will be updated and the data on the grid filtered accordingly if applyButton=false.</span>
+    // the parent rich filter will be updated and the data on the grid filtered accordingly if applyButton=false.&lt;/span&gt;
     onFloatingFilterChanged(change:any): void;
 
-    <span class="codeComment">// This is a shortcut to invoke getModel on the parent rich filter..</span>
+    // This is a shortcut to invoke getModel on the parent rich filter..
     currentParentModel(): any;
 
-    <span class="codeComment">// Boolean flag to indicate if the button in the floating filter that opens the rich
-    // filter in a popup should be displayed</span>
+    &lt;span class="codeComment"&gt;// Boolean flag to indicate if the button in the floating filter that opens the rich
+    // filter in a popup should be displayed&lt;/span&gt;
     suppressFilterButton: boolean;
 
-    <span class="codeComment">// Amount in ms to debounce key presses before the filter is fired defaults to 500</span>
+    // Amount in ms to debounce key presses before the filter is fired defaults to 500
     debounceMs?:number;
 
-    <span class="codeComment">// The grid API</span>
+    // The grid API
     api: any;
-}</pre>
+}</snippet>
 
 <h3 id="example">Custom Floating Filter Example</h3>
 

@@ -18,14 +18,15 @@
     The interface <i>IHeaderAngularComp</i> is as follows:
 </p>
 
-<pre>interface IHeaderAngularComp {
+<snippet>
+interface IHeaderAngularComp {
 
-    <span class="codeComment">// equivalent of init in IHeaderComp</span>
-    <span class="codeComment">// IHeaderCompParams is same as non Angular version</span>
+    // equivalent of init in IHeaderComp
+    // IHeaderCompParams is same as non Angular version
     agInit?(params: IHeaderCompParams): void;
 
-    <span class="codeComment">// no getGui() or destroy(), all handled by Angular</span>
-}</pre>
+    // no getGui() or destroy(), all handled by Angular
+}</snippet>
 
 <!-- Header Component -->
 <h3 id="header-group-component">Header Group Component</h3>
@@ -42,14 +43,15 @@
     The interface <i>IHeaderGroupAngularComp</i> is as follows:
 </p>
 
-<pre>interface IHeaderGroupAngularComp {
+<snippet>
+interface IHeaderGroupAngularComp {
 
-    <span class="codeComment">// equivalent of init in IHeaderGroupComp,</span>
-    <span class="codeComment">// IHeaderGroupCompParams is same as non Angular version</span>
+    // equivalent of init in IHeaderGroupComp,
+    // IHeaderGroupCompParams is same as non Angular version
     agInit?(params: IHeaderGroupCompParams): void;
 
-    <span class="codeComment">// no getGui() or destroy(), all handled by Angular</span>
-}</pre>
+    // no getGui() or destroy(), all handled by Angular
+}</snippet>
 
 <p>For a full working example of Header Components in Angular see
     <a href="https://github.com/ag-grid/ag-grid-angular-example">Angular Example</a>.

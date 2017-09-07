@@ -26,39 +26,39 @@ include '../documentation-main/documentation_header.php';
     Date Component via the grid property dateComponent as follows:
 </p>
 
-<pre>
+<snippet>
 gridOptions: {
     ...
-    <span class="codeComment">// Here is where we specify the component to be used as the date picket widget</span>
+    // Here is where we specify the component to be used as the date picket widget
     dateComponent: MyDateEditor
-}},
-</pre>
+}},</snippet>
 
 <p>
     The interface for dateComponent is like this:
 </p>
 
-<pre>interface IDateComp {
-    <span class="codeComment">// mandatory methods</span>
+<snippet>
+interface IDateComp {
+    // mandatory methods
 
-    <span class="codeComment">// The init(params) method is called on the filter once. See below for details on the parameters.</span>
+    // The init(params) method is called on the filter once. See below for details on the parameters.
     init(params: IFilterParams): void;
 
-    <span class="codeComment">// Returns the GUI for this filter. The GUI can be a) a string of html or b) a DOM element or node.</span>
+    // Returns the GUI for this filter. The GUI can be a) a string of html or b) a DOM element or node.
     getGui(): any;
 
-    <span class="codeComment">/** Returns the current date represented by this editor */</span>
+    /** Returns the current date represented by this editor */
     getDate(): Date;
 
-    <span class="codeComment">/** Sets the date represented by this component */</span>
+    /** Sets the date represented by this component */
     setDate(date:Date): void;
 
-    <span class="codeComment">// optional methods</span>
+    // optional methods
 
-    <span class="codeComment">// Gets called when the component is destroyed. If your custom component needs to do
-    // any resource cleaning up, do it here.</span>
+    &lt;span class="codeComment"&gt;// Gets called when the component is destroyed. If your custom component needs to do
+    // any resource cleaning up, do it here.&lt;/span&gt;
     destroy?(): void;
-}</pre>
+}</snippet>
 
 <h4>IDateParams</h4>
 
@@ -68,12 +68,13 @@ gridOptions: {
     params object, overriding items of the same name if a name clash exists.
 </p>
 
-<pre>interface IDateParams {
+<snippet>
+interface IDateParams {
 
-    <span class="codeComment">/** Callback method to call when the date has changed. */</span>
-    onDateChanged:()=>void
+    /** Callback method to call when the date has changed. */
+    onDateChanged:()=&gt;void
 
-}</pre>
+}</snippet>
 
 
 <h3>Custom Date Example</h3>

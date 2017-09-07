@@ -32,7 +32,8 @@
     <p>A VueJS component can be defined in a few different ways (please see <a href="/best-vuejs-data-grid#define_component">
         Defining VueJS Components</a> for all the options), but in this example we're going to define our renderer as a Single File Component:</p>
 
-<pre ng-non-bindable><span class="codeComment">// create your cell renderer as a VueJS component</span>
+<snippet>
+// create your cell renderer as a VueJS component
 &lt;template&gt;
     &lt;span class="currency"&gt;{{ params.value | currency('EUR') }}&lt;/span&gt;
 &lt;/template&gt;
@@ -59,32 +60,30 @@
     }
 &lt;/style&gt;
 
-<span class="codeComment">// then reference the Component in your colDef like this</span>
+// then reference the Component in your colDef like this
 {
-    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+    // instead of cellRenderer we use cellRendererFramework
     cellRendererFramework: CurrencyComponent,
 
-    <span class="codeComment">// specify all the other fields as normal</span>
+    // specify all the other fields as normal
     headerName: "Currency (Filter)",
     field: "currency",
     colId: "params",
     width: 150
-}
-</pre>
+}</snippet>
 
 <p>The Grid cell's value will be made available implicitly in a data value names <code>params</code>. This value will be available to
     you from the <code>created</code> VueJS lifecycle hook.</p>
 
 <p>You can think of this as you having defined the following:</p>
-<pre>
+<snippet>
 export default {
     data () {
         return {
             params: null
         }
     },
-    ...
-</pre>
+    ...</snippet>
 
 <p>but you do not need to do this - this is made available to you behind the scenes, and contains the cells value.</p>
 

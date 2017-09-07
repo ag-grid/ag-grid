@@ -49,28 +49,30 @@ include '../documentation-main/documentation_header.php';
         The following example shows how you can provide a unique look & feel to the headers. Note that:
     <ul>
         <li>The header heights have all been changed in the gridOptions:
-            <pre>...
+            <snippet>
+...
 
-    <span class="codeComment">//Group columns</span>
+    //Group columns
     groupHeaderHeight:75,
 
-    <span class="codeComment">//Label columns</span>
+    //Label columns
     headerHeight: 150,
 
-    <span class="codeComment">//Floating filter</span>
+    //Floating filter
     floatingFiltersHeight:50,
 
-    <span class="codeComment">//Pivoting, requires turning on pivot mode. Label columns</span>
+    //Pivoting, requires turning on pivot mode. Label columns
     pivotGroupHeaderHeight:50,
 
-    <span class="codeComment">//Pivoting, requires turning on pivot mode. Group columns</span>
+    //Pivoting, requires turning on pivot mode. Group columns
     pivotGroupHeaderHeight:100,
 
-...</pre>
+...</snippet>
         </li>
         <li>The grouped column header <i>Athlete Details</i> has an specific style applied to it to make it bigger. Note
             that the style is slightly different depending if pivoting or not:
-<pre>.ag-pivot-off .ag-header-group-cell{
+<snippet>
+.ag-pivot-off .ag-header-group-cell{
     font-size: 50px;
     color: red;
 }
@@ -78,34 +80,35 @@ include '../documentation-main/documentation_header.php';
 .ag-pivot-on .ag-header-group-cell{
     font-size: 25px;
     color: green;
-}</pre>
+}</snippet>
         </li>
         <li>
             The column labels have CSS applied to them so they are displayed vertically.
-<pre>.ag-cell-label-container{
-    <span class="codeComment">/*Necessary to allow for text to grow vertically*/</span>
+<snippet>
+.ag-cell-label-container{
+    /*Necessary to allow for text to grow vertically*/
     height: 100%;
 }
 
 .ag-header-cell-label {
-    <span class="codeComment">/*Necessary to allow for text to grow vertically*/</span>
+    /*Necessary to allow for text to grow vertically*/
     height: 100%;
     padding:0 !important;
 }
 
 .ag-header-cell-label .ag-header-cell-text{
-    <span class="codeComment">/*Force the width corresponding at how much width</span>
-    <span class="codeComment">we need once the text is layed out vertically*/</span>
+    /*Force the width corresponding at how much width
+    we need once the text is layed out vertically*/
     width: 30px;
     transform: rotate(90deg);
     margin-top: 50px;
-    <span class="codeComment">/*Since we are rotating a span*/</span>
+    /*Since we are rotating a span*/
     display: inline-block;
-}</pre>
+}</snippet>
         </li>
         <li>
             The floating filters are using a much bigger area and the font used is bigger and bolder.
-            <pre>
+            <snippet>
 .ag-floating-filter-body input {
     height:49px
 }
@@ -121,18 +124,19 @@ include '../documentation-main/documentation_header.php';
 .ag-floating-filter-body input {
     font-size: 15px;
     font-weight: bold;
-}</pre>
+}</snippet>
         </li>
         <li>
             The styling of the column labels have also be tweaked depending if pivoting or not
-<pre>.ag-pivot-off .ag-header-cell-label{
+<snippet>
+.ag-pivot-off .ag-header-cell-label{
     color:#8a6d3b;
 }
 
 .ag-pivot-on .ag-header-cell-label{
     color:#1b6d85;
     font-weight: bold;
-}</pre>
+}</snippet>
         </li>
     </ul>
     </pre>

@@ -25,7 +25,8 @@ include '../documentation-main/documentation_header.php';
         <code>colDef.colSpan</code>.
     </p>
 
-    <pre><span class="codeComment">// col span is 2 for rows with russia, but 1 for everything else</span>
+    <snippet>
+// col span is 2 for rows with russia, but 1 for everything else
 colDef = {
     headerName: "Country",
     field: "country",
@@ -33,24 +34,25 @@ colDef = {
         return params.data.country==='Russia' ? 2 : 1;
     }
     ...
-};</pre>
+};</snippet>
 
     <p>
         The interface for the colSpan callback is as follows:
     </p>
 
-    <pre><span class="codeComment">// function you implement on the column definition</span>
-function colSpan(params: ColSpanParams) => number;
+    <snippet>
+// function you implement on the column definition
+function colSpan(params: ColSpanParams) =&gt; number;
 
 interface ColSpanParams {
-    node: any, <span class="codeComment">// row node in question</span>
-    data: RowNode, <span class="codeComment">// data for the row</span>
-    colDef: ColDef, <span class="codeComment">// the col def for the column</span>
-    column: Column, <span class="codeComment">// the column object in question</span>
-    api: GridApi, <span class="codeComment">// the grid's API</span>
-    columnApi: ColumnApi, <span class="codeComment">// the grids column API</span>
-    context: any <span class="codeComment">// the provided context</span>
-}</pre>
+    node: any, // row node in question
+    data: RowNode, // data for the row
+    colDef: ColDef, // the col def for the column
+    column: Column, // the column object in question
+    api: GridApi, // the grid's API
+    columnApi: ColumnApi, // the grids column API
+    context: any // the provided context
+}</snippet>
 
     <h2>Column Spanning Simple Example</h2>
 

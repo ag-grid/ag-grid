@@ -41,10 +41,11 @@ include '../documentation-main/documentation_header.php';
         To pivot rows by a particular column, mark the column you want to group with <code>pivot=true</code>.
         There is no limit on the number of columns that the grid can pivot by.
         For example, the following will pivot the rows in the grid by country and then sport:
-    <pre>gridOptions.columnDefs = [
-    {headerName: "Country", field: "country", <span class="codeHighlight">pivot: true</span>},
-    {headerName: "Sport", field: "sport", <span class="codeHighlight">pivot: true</span>},
-];</pre>
+    <snippet>
+gridOptions.columnDefs = [
+    {headerName: "Country", field: "country", &lt;span class="codeHighlight"&gt;pivot: true&lt;/span&gt;},
+    {headerName: "Sport", field: "sport", &lt;span class="codeHighlight"&gt;pivot: true&lt;/span&gt;},
+];</snippet>
     </p>
 
 
@@ -175,14 +176,14 @@ include '../documentation-main/documentation_header.php';
         such columns called <i>getSecondaryPivotColumn(pivotCols, valueCol)</i>
     </p>
 
-    <pre>// look up the column that pivots on country Ireland and aggregates gold
+    <snippet>
+// look up the column that pivots on country Ireland and aggregates gold
 var irelandGoldColumn = columnApi.getSecondaryPivotColumn(['Ireland'],'gold');
 columnApi.setColumnWidth(irelandGoldColumn, newWidth);
 
 // look up the column that pivots on country SausageKingdom and year 2002 and aggregates silver
 var sausageKingdomColumn = columnApi.getSecondaryPivotColumn(['SausageKingdom','2002'],'gold');
-console.log('found column with id ' + sausageKingdomColumn.getId());
-</pre>
+console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
 
     <h2>Filtering with Pivot</h2>
 

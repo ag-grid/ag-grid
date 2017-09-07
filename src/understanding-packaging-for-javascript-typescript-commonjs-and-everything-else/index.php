@@ -82,17 +82,17 @@ include('../includes/mediaHeader.php');
             have the Typescript compiler bundle your files into one file.
         </p>
 
-        <pre>
+        <snippet>
 /* This top bit is the old way of referenceing other TypeScript files, it ensures */
 /* when Typescript joins the files together, this file goes after MyUtils.ts */
-///&lt;reference path='./MyUtils.ts' />
+///&lt;reference path='./MyUtils.ts' /&gt;
 
 /* This is the internal module definition */
 module ag.grid {
     export class Grid {
         ...
     }
-}</pre>
+}</snippet>
 
         <p>
             Do not do any of this!! It lacks support for CommonJS or ECMA 6 modules. Instead you should use
@@ -108,15 +108,14 @@ module ag.grid {
             most of the rest of the world is using, incluing the React community.
         </p>
 
-        <pre>
+        <snippet>
 /* Include your references like this*/
-import {MyUtils} from './MyUtils' />
+import {MyUtils} from './MyUtils' /&gt;
 
 /* No modules, the file name and location provide the equivalent */
 export class Grid {
     ...
-}
-</pre>
+}</snippet>
 
         <h3>Configuring Typescript - Compiling into Modules</h3>
 
@@ -125,7 +124,7 @@ export class Grid {
             TypeScript settings in the Gulp file. The portion of the gulpfile.js of interest is as follows:
         </p>
 
-        <pre>
+        <snippet>
 function tscTask() {
     var tsResult = gulp
         .src('src/ts/**/*.ts')
@@ -148,7 +147,7 @@ function tscTask() {
             .pipe(header(headerTemplate, { pkg : pkg }))
             .pipe(gulp.dest('dist/lib'))
     ])
-}        </pre>
+}       </snippet>
 
         <p>The item of interest for now is <i><b>module: 'commonjs'</b></i>. TypeScript supports
         the following 4 Modules: commonjs, amd, system and umd. This is what we think about them:
@@ -180,7 +179,8 @@ function tscTask() {
 
         <p>
             So keeping our small 'Grid' class example from above, the generated Typescript to JavaScript file will be:
-            <pre>/* require gets used where we used import */
+            <snippet>
+/* require gets used where we used import */
 var MyUtils = require("./MyUtils");
 
 /* ECMA 6 class becomes a function in ECMA 5, how Typescript supports classes today */
@@ -192,8 +192,7 @@ var Grid = (function () {
 })();
 
 /* require exports used to export the class */
-exports.Grid = Grid;
-</pre>
+exports.Grid = Grid;</snippet>
         </p>
 
         <h3>Exposing CommonJS Modules</h3>
@@ -201,11 +200,12 @@ exports.Grid = Grid;
         <p>
             Once your project has CommonJS files, another project can use your project using CommonJS.
             For example someone can include your file using Node dependencies and the following code:
-            <pre>// for CommonJS require
+            <snippet>
+// for CommonJS require
 var Grid = require('ag-grid/dist/lib/grid');
 
 // or for ECMA 6 import
-import {Grid} from 'ag-grid/dist/lib/grid';</pre>
+import {Grid} from 'ag-grid/dist/lib/grid';</snippet>
         </p>
 
         <p>This is great, it works, but it's long winded that the client has to include 'dist/lib' in
@@ -215,13 +215,15 @@ import {Grid} from 'ag-grid/dist/lib/grid';</pre>
             <li>Specify the main file in your package.json eg: "main": "./main.js"</li>
         </ul>
         Then in your main file, specify what you want to export.
-        <pre>exports.Grid = require('./dist/lib/grid').Grid;</pre>
+        <snippet>
+exports.Grid = require('./dist/lib/grid').Grid;</snippet>
         Once this is done, then the client can access the module in the short-hand version of the above.
-            <pre>// for CommonJS require
+            <snippet>
+// for CommonJS require
 var Grid = require('ag-grid').Grid; // if no file specified, it's picked up from package.json entry
 
 // or for ECMA 6 import
-import {Grid} from 'ag-grid/main';</pre>
+import {Grid} from 'ag-grid/main';</snippet>
         </p>
 
         <p>You can have as many 'main' files as you like, giving you the option of splitting the modules out.
@@ -257,7 +259,8 @@ import {Grid} from 'ag-grid/main';</pre>
             Similar to exposing the CommonJS modules, you should expose the definition files. Do this
             by creating a definition file with the same name as the module file. In ag-Grid, this file
         is called main.d.ts and contains lines like the following:
-            <pre>export * from './dist/lib/grid';</pre>
+            <snippet>
+export * from './dist/lib/grid';</snippet>
         </p>
 
         <p>Now, when a client is using TypeScript and imports your project via CommonJS or ECMA 6 modules,
@@ -275,7 +278,8 @@ import {Grid} from 'ag-grid/main';</pre>
         by just referencing your script directly from the HTML page. In the ag-Grid project, similar to TypeScript, Webpack is also configured
         inside the Gulp file. You have the option of webpack.config.js instead of having the settings in Gulp, again
         no advantage, it's just the preference of ag-Grid to keep the config inside the Gulp file.
-<pre>function webpackTask(minify, styles) {
+<snippet>
+function webpackTask(minify, styles) {
     return gulp.src('src/entry.js')
         .pipe(webpackStream({
             entry: {
@@ -289,7 +293,7 @@ import {Grid} from 'ag-grid/main';</pre>
             }
         }))
         .pipe(gulp.dest('./dist/'));
-}</pre>
+}</snippet>
         The above is a cut down version of what ag-Grid uses, as ag-Grid also considers minified versions
         and optionally includes CSS. See the ag-Grid project for the full working version.
         </p>
@@ -313,11 +317,14 @@ import {Grid} from 'ag-grid/main';</pre>
             code. You could include the require / import in your component code, however doing so
             would require advance knowledge of what packaging plug-in will be used. For example
             some plugins reference CSS files like this:
-        <pre>require('ag-grid/dist/theme-fresh.css')</pre>
+        <snippet>
+require('ag-grid/dist/theme-fresh.css')</snippet>
         while another can expect this:
-        <pre>require('!ag-grid/dist/theme-fresh.css')</pre>
+        <snippet>
+require('!ag-grid/dist/theme-fresh.css')</snippet>
         or maybe this:
-        <pre>require('css!ag-grid/dist/theme-fresh.css')</pre>
+        <snippet>
+require('css!ag-grid/dist/theme-fresh.css')</snippet>
         </p>
         <p>Because you can't know, the safest is to let the client reference the CSS in the client code.</p>
 

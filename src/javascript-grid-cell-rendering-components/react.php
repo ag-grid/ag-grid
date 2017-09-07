@@ -31,25 +31,26 @@
     as React components.
 </p>
 
-<pre><span class="codeComment">// create your cell renderer as a React component</span>
+<snippet>
+// create your cell renderer as a React component
 class NameCellRenderer extends React.Component {
     render() {
-    <span class="codeComment">// put in render logic</span>
-        return &lt;span>{this.props.value}&lt;/span>;
+    // put in render logic
+        return &lt;span&gt;{this.props.value}&lt;/span&gt;;
     }
 }
 
-<span class="codeComment">// then reference the Component in your colDef like this</span>
+// then reference the Component in your colDef like this
 colDef = {
 
-    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+    // instead of cellRenderer we use cellRendererFramework
     cellRendererFramework: NameCellRenderer
 
-    <span class="codeComment">// specify all the other fields as normal</span>
+    // specify all the other fields as normal
     headerName: 'Name',
     field: 'firstName',
     ...
-}</pre>
+}</snippet>
 
 <p>
     By using <code>colDef.cellRendererFramework</code> (instead of <code>colDef.cellRenderer</code>) the grid
@@ -93,23 +94,24 @@ the grid will know the framework to use is React.
     The React component will get the 'Cell Renderer Params' as described above as its React Props.
     Therefore you can access all the parameters as React Props.
 
-<pre><span class="codeComment">// React Cell Renderer Component</span>
+<snippet>
+// React Cell Renderer Component
 class NameCellRenderer extends React.Component {
 
-    <span class="codeComment">// did you know that React passes props to your component constructor??</span>
+    // did you know that React passes props to your component constructor??
     constructor(props) {
         super(props);
-        <span class="codeComment">// from here you can access any of the props!</span>
+        // from here you can access any of the props!
         console.log('The value is ' + props.value);
-        <span class="codeComment">// we can even call grid API functions, if that was useful</span>
+        // we can even call grid API functions, if that was useful
         props.api.selectAll();
     }
 
     render() {
-        <span class="codeComment">// or access props using 'this'</span>
-        return &lt;span>{this.props.value}&lt;/span>;
+        // or access props using 'this'
+        return &lt;span&gt;{this.props.value}&lt;/span&gt;;
     }
-}</pre>
+}</snippet>
 </p>
 
 <h3 id="react-methods-lifecycle"><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>

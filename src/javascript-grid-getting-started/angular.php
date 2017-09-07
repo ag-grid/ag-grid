@@ -30,13 +30,14 @@
 <p>
     First we'll create a new project - lets call it <code>ag-grid-test</code>:
 </p>
-<pre>ng new ag-grid-test
-cd ag-grid-test</pre>
+<snippet>
+ng new ag-grid-test
+cd ag-grid-test</snippet>
 
 <p>Let's update our dependencies - first let's install <code>ag-grid</code> and <code>ag-grid-angular</code>:</p>
-<pre>
+<snippet>
 npm i ag-grid --save
-npm i ag-grid-angular --save</pre>
+npm i ag-grid-angular --save</snippet>
 
 <p>We are also going to assume an Angular CLI version 1.0.0-rc.x and Angular versions  of 2.4.x for this example -
     you can use a higher (or lower) version here, but you'll need to ensure that you choose the corresponding version of
@@ -44,20 +45,22 @@ npm i ag-grid-angular --save</pre>
 
 <p>Now let's create our main Application Component - this will be the component that creates the ag-Grid grid for
     us:</p>
-<pre>ng generate component MyGridApplication <span class="codeComment">// or my-grid-application</span></pre>
+<snippet>
+ng generate component MyGridApplication // or my-grid-application</snippet>
 
 <p>And a component that we'll use in our grid:</p>
-<pre>ng generate component RedComponent  <span class="codeComment">// or red-component</span></pre>
+<snippet>
+ng generate component RedComponent  // or red-component</snippet>
 
 <p>Based on the above commands, our application will have a selector of <code>app-my-grid-application></code> - you
     can change this of course, but we'll use the default here. Let's use this in our application:
-<pre>
-<span class="codeComment">// src/app/app.component.html</span>
-&lt;app-my-grid-application&gt;&lt;/app-my-grid-application&gt;</pre>
+<snippet>
+// src/app/app.component.html
+&lt;app-my-grid-application&gt;&lt;/app-my-grid-application&gt;</snippet>
 
 <p>Our grid component is going to be a simple renderer that styles its contents red:</p>
-<pre ng-non-bindable>
-<span class="codeComment">// src/app/red-component/red-component.component.ts</span>
+<snippet>
+// src/app/red-component/red-component.component.ts
 import {Component} from "@angular/core";
 
 @Component({
@@ -72,13 +75,12 @@ export class RedComponentComponent {
     }
 }
 
-<span class="codeComment">// src/app/red-component/red-component.component.html</span>
-&lt;span style="color: red"&gt;{{ params.value }}&lt;/span&gt;
-</pre>
+// src/app/red-component/red-component.component.html
+&lt;span style="color: red"&gt;{{ params.value }}&lt;/span&gt;</snippet>
 
 <p>For our Application component, we'll have the following:</p>
-<pre ng-non-bindable>
-<span class="codeComment">// src/app/my-grid-application/my-grid-application.component.ts</span>
+<snippet>
+// src/app/my-grid-application/my-grid-application.component.ts
 import {Component} from "@angular/core";
 import {GridOptions} from "ag-grid";
 import {RedComponentComponent} from "../red-component/red-component.component";
@@ -91,7 +93,7 @@ export class MyGridApplicationComponent {
     private gridOptions: GridOptions;
 
     constructor() {
-        this.gridOptions = <GridOptions>{};
+        this.gridOptions = &lt;GridOptions&gt;{};
         this.gridOptions.columnDefs = [
             {
                 headerName: "ID",
@@ -114,17 +116,16 @@ export class MyGridApplicationComponent {
     }
 }
 
-<span class="codeComment">// src/app/my-grid-application/my-grid-application.component.html</span>
+// src/app/my-grid-application/my-grid-application.component.html
 &lt;div style="width: 200px;"&gt;
     &lt;ag-grid-angular #agGrid style="width: 100%; height: 200px;" class="ag-fresh"
                  [gridOptions]="gridOptions"&gt;
     &lt;/ag-grid-angular&gt;
-&lt;/div&gt;
-</pre>
+&lt;/div&gt;</snippet>
 
 <p>Now we need to let Angular know about our new components, as well as the ag-Grid Module:</p>
 
-<pre>
+<snippet>
 import {BrowserModule} from "@angular/platform-browser";
 import {NgModule} from "@angular/core";
 import {AgGridModule} from "ag-grid-angular/main";
@@ -148,21 +149,20 @@ import {RedComponentComponent} from "./red-component/red-component.component";
     bootstrap: [AppComponent]
 })
 export class AppModule {
-}
-</pre>
+}</snippet>
 
 
 <p>And finally, we need to update angular-cli.json to include the ag-Grid styles we want to include:</p>
-<pre>
+<snippet>
 "styles": [
     "../node_modules/ag-grid/dist/styles/ag-grid.css",
     "../node_modules/ag-grid/dist/styles/theme-fresh.css"
-],
-</pre>
+],</snippet>
 
 <p>With these changes in place we can now build and run our application with:</p>
 
-<pre>ng serve</pre>
+<snippet>
+ng serve</snippet>
 
 <p>The results of which will be:</p>
 

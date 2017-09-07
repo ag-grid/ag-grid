@@ -35,17 +35,16 @@ include '../documentation-main/documentation_header.php';
         this
         repo, install the dependencies and start it up:</p>
 
-    <pre>
-<span class="codeComment">// clone the ag-Grid Polymer seed project</span>
+    <snippet>
+// clone the ag-Grid Polymer seed project
 git clone https://github.com/ag-grid/ag-grid-polymer-seed
 cd ag-grid-polymer-seed
 
-<span class="codeComment">// install the project dependencies</span>
+// install the project dependencies
 npm i
 
-<span class="codeComment">// start the application</span>
-npm start
-</pre>
+// start the application
+npm start</snippet>
 
     <p>With those 3 commands you should now see the following application:</p>
 
@@ -58,14 +57,13 @@ npm start
     <p>At a minimum, a Grid requires row data & column definitions. Row data is provided to the grid as an array of
         JavaScript objects:</p>
 
-    <pre>
-<span class="codeComment">// row data </span>
+    <snippet>
+// row data 
 [
     {make: "Toyota", model: "Celica", price: 35000},
     {make: "Ford", model: "Mondeo", price: 32000},
     {make: "Porsche", model: "Boxter", price: 72000}
-]
-</pre>
+]</snippet>
 
     <p>Here we have 3 rows of data, with <code>make</code>, <code>model</code> and <code>price</code> making up the
         data.</p>
@@ -76,14 +74,13 @@ npm start
         columns
         that match the data above:</p>
 
-    <pre>
-<span class="codeComment">// column definitions</span>
+    <snippet>
+// column definitions
 [
     {headerName: "Make", field: "make"},
     {headerName: "Model", field: "model", cellRendererFramework: 'red-cell-renderer'},
     {headerName: "Price", field: "price"}
-]
-</pre>
+]</snippet>
 
     <p>At a minimum a column definition needs a <code>headerName</code> - the column title to display - and a <code>field</code>
         - the data item to read off of from the row data. Here we're defining 3 columns, <code>Make</code>,
@@ -100,14 +97,13 @@ npm start
 
     <p>For a Polymer application, you need to pull in the <code>ag-grid-polymer</code> Component and include it in your <code>template</code>:</p>
 
-    <pre ng-non-bindable>
-<span class="codeComment">// Grid Definition</span>
+    <snippet>
+// Grid Definition
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
                  class="ag-fresh"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
-                 onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;
-</pre>
+                 onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
 
     <p>Here we're telling the Grid to read the row & column definitions off the application Component itself, in fields
         called <code>rowData</code> and <code>columnDefs</code>. For a very simple Grid, this is all you need to do display tabular data.</p>
@@ -115,8 +111,8 @@ npm start
     <p>Of course there is much more we can do - in the following sections we will build on this starting point. For our
         seed application here is the complete Component:</p>
 
-    <pre ng-non-bindable>
-<span class="codeComment">// simple-grid.html </span>
+    <snippet>
+// simple-grid.html 
 &lt;link rel="import" href="red-cell-renderer.html"&gt;
 &lt;dom-module id="simple-grid"&gt;
     &lt;template&gt;
@@ -162,8 +158,7 @@ npm start
         }
         customElements.define(SimpleGrid.is, SimpleGrid);
     &lt;/script&gt;
-&lt;/dom-module&gt;
-</pre>
+&lt;/dom-module&gt;</snippet>
 
     <h3>Adding Features</h3>
 
@@ -175,17 +170,16 @@ npm start
     <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
         enabled by setting a Grid property to true:</p>
 
-    <pre ng-non-bindable>
-<span class="codeComment">// Grid Definition</span>
+    <snippet>
+// Grid Definition
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
                  class="ag-fresh"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
 
-                 enableSorting <span class="codeComment">// shorthand for enableSorting="true" </span>
+                 enableSorting // shorthand for enableSorting="true" 
 
-                 onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;
-</pre>
+                 onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
 
     <p>With a single property change we are now able to sort any column by clicking the column header (you can keep
         clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
@@ -203,17 +197,16 @@ npm start
 
     <p>As with sorting, enabling filtering is as easy as setting a single property in our Grid definition:</p>
 
-    <pre ng-non-bindable>
-<span class="codeComment">// Grid Definition</span>
+    <snippet>
+// Grid Definition
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
                  class="ag-fresh"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
 
-                 enableFilter <span class="codeComment">// shorthand for enableFilter="true" </span>
+                 enableFilter // shorthand for enableFilter="true" 
 
-                 onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;
-</pre>
+                 onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
 
     <p>With the <code>enableFilter</code> property set we are now able to filter any column by clicking the column
         header

@@ -42,17 +42,17 @@ include '../documentation-main/documentation_header.php';
         When a filter is active on a column, the filter icon appears before the column name in the header.
     </p>
 
-<pre>
+<snippet>
 gridOptions = {
-    <span class="codeComment">// turn on filtering</span>
+    // turn on filtering
     enableFilter: true,
     ...
     columnDefs: [
-        {headerName: "Athlete", field: "athlete", filter: "text"}, <span class="codeComment">// text filter</span>
-        {headerName: "Age",     field: "age",     filter: "number"}, <span class="codeComment">// number filter</span>
-        {headerName: "Sport",   field: "sport",   suppressFilter: true} <span class="codeComment">// NO filter</span>
+        {headerName: "Athlete", field: "athlete", filter: "text"}, // text filter
+        {headerName: "Age",     field: "age",     filter: "number"}, // number filter
+        {headerName: "Sport",   field: "sport",   suppressFilter: true} // NO filter
     ]
-}</pre>
+}</snippet>
 
     <h3 id="default-built-in-filters">Filter Types</h3>
 
@@ -103,18 +103,18 @@ gridOptions = {
         As an example, the following sets parameters for the text filter.
     </p>
 
-    <pre>
+    <snippet>
 columnDefinition = {
 
     headerName: 'Athlete',
     field: 'athlete'
 
-    <span class="codeComment">// set the column to use text filter</span>
+    // set the column to use text filter
     filter: 'text',
 
-    <span class="codeComment">// pass in additional parameters to the text filter</span>
+    // pass in additional parameters to the text filter
     filterParams: {apply: true, newRowsAction: 'keep'}
-}</pre>
+}</snippet>
 
     <h3 id="built-in-filters-example">Built In Filters Example</h3>
 
@@ -210,8 +210,9 @@ columnDefinition = {
         get a reference to the underlying filtering instance (ie what was created after ag-Grid called 'new'
         on your filter). You get a reference to the filter instance by calling <code>api.getFilterInstance(colKey)</code>.
     </p>
-    <pre><span class="codeComment">// Get a reference to the name filter instance</span>
-var nameFilterInstance = api.getFilterInstance('name');</pre>
+    <snippet>
+// Get a reference to the name filter instance
+var nameFilterInstance = api.getFilterInstance('name');</snippet>
     <p>
         All of the methods of the IFilter interface are present, assuming the underlying
         filter implements the method. Your custom filters can add their own methods here that ag-Grid will
@@ -278,9 +279,8 @@ var nameFilterInstance = api.getFilterInstance('name');</pre>
 
     <h4>Reset All Filters</h4>
     <p>You can reset all filters by doing the following:</p>
-    <pre>
-gridOptions.api.setFilterModel(null);
-</pre>
+    <snippet>
+gridOptions.api.setFilterModel(null);</snippet>
 
     <h3 id="get_set_filter_model">Get / Set All Filter Models</h3>
 
@@ -320,12 +320,12 @@ gridOptions.api.setFilterModel(null);
     Floating filters are activated by setting grid property <i>floatingFilter=true</i>:
 </p>
 
-<pre>
+<snippet>
 gridOptions = {
-    <span class="codeComment">// turn on floating filters</span>
+    // turn on floating filters
     floatingFilter: true
     ...
-}</pre>
+}</snippet>
 
 <p>
     Floating filters are an accessory to the main column filters. They do not contain their own state,
@@ -388,11 +388,12 @@ gridOptions = {
 
     The null comparator is an object used to tell if nulls should be included when filtering data, its interface it's like
     this:
-<pre>export interface NullComparator{
+<snippet>
+export interface NullComparator{
     equals?:boolean
     lessThan?:boolean
     greaterThan?:boolean
-}</pre>
+}</snippet>
 </p>
 
 

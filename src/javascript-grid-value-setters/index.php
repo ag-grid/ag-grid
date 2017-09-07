@@ -94,35 +94,36 @@ include '../documentation-main/documentation_header.php';
         The interface for <code>valueSetter</code> is as follows:
     </p>
 
-    <pre><span class="codeComment">// function for valueSetter</span>
-function valueSetter(params: ValueSetterParams) => boolean;
+    <snippet>
+// function for valueSetter
+function valueSetter(params: ValueSetterParams) =&gt; boolean;
 
-<span class="codeComment">// interface for params</span>
+// interface for params
 interface ValueGetterParams {
-    oldValue: any, <span class="codeComment">// the value before the change</span>
-    newValue: any, <span class="codeComment">// the value after the change</span>
-    data: any, <span class="codeComment">// the data you provided for this row</span>
-    node: RowNode, <span class="codeComment">// the row node for this row</span>
-    colDef: ColDef, <span class="codeComment">// the column def for this column</span>
-    column: Column, <span class="codeComment">// the column for this column</span>
-    api: GridApi, <span class="codeComment">// the grid API</span>
-    columnApi: ColumnApi, <span class="codeComment">// the grid Column API</span>
-    context: any  <span class="codeComment">// the context</span>
+    oldValue: any, // the value before the change
+    newValue: any, // the value after the change
+    data: any, // the data you provided for this row
+    node: RowNode, // the row node for this row
+    colDef: ColDef, // the column def for this column
+    column: Column, // the column for this column
+    api: GridApi, // the grid API
+    columnApi: ColumnApi, // the grid Column API
+    context: any  // the context
 }
 
-<span class="codeComment">// example value setter, put into a particular part of the data</span>
+// example value setter, put into a particular part of the data
 colDef.valueSetter = function(params) {
-    <span class="codeComment">// see if values are different, if you have a complex object,</span>
-    <span class="codeComment">// it would be more complicated to do this.</span>
+    // see if values are different, if you have a complex object,
+    // it would be more complicated to do this.
     if (params.oldValue!==params.newValue) {
         params.data[someField] = params.newValue;
-        <span class="codeComment">// get grid to refresh the cell</span>
+        // get grid to refresh the cell
         return true;
     } else {
-        <span class="codeComment">// no change, so no refresh needed</span>
+        // no change, so no refresh needed
         return false;
     }
-}</pre>
+}</snippet>
     <h2 id="value-parser">Value Parser</h2>
 
     <p>
@@ -131,27 +132,28 @@ colDef.valueSetter = function(params) {
         The interface for <code>valueParser</code> is as follows:
     </p>
 
-    <pre><span class="codeComment">// function for valueParser</span>
-function valueParser(params: ValueParserParams) => any;
+    <snippet>
+// function for valueParser
+function valueParser(params: ValueParserParams) =&gt; any;
 
-<span class="codeComment">// interface for params</span>
+// interface for params
 interface ValueParserParams {
-    oldValue: any, <span class="codeComment">// the value before the change</span>
-    newValue: any, <span class="codeComment">// the value after the change</span>
-    data: any, <span class="codeComment">// the data you provided for this row</span>
-    node: RowNode, <span class="codeComment">// the row node for this row</span>
-    colDef: ColDef, <span class="codeComment">// the column def for this column</span>
-    column: Column, <span class="codeComment">// the column for this column</span>
-    api: GridApi, <span class="codeComment">// the grid API</span>
-    columnApi: ColumnApi, <span class="codeComment">// the grid Column API</span>
-    context: any  <span class="codeComment">// the context</span>
+    oldValue: any, // the value before the change
+    newValue: any, // the value after the change
+    data: any, // the data you provided for this row
+    node: RowNode, // the row node for this row
+    colDef: ColDef, // the column def for this column
+    column: Column, // the column for this column
+    api: GridApi, // the grid API
+    columnApi: ColumnApi, // the grid Column API
+    context: any  // the context
 }
 
-<span class="codeComment">// example value parser, convert a string to a number</span>
+// example value parser, convert a string to a number
 colDef.valueParser = function(params) {
-    <span class="codeComment">// this is how to convert a string to a number using JavaScript</span>
+    // this is how to convert a string to a number using JavaScript
     return Number(params.newValue);
-}</pre>
+}</snippet>
 
 </div>
 

@@ -33,7 +33,8 @@
 
 <h3 id="cell-renderers-from-angular-components"><img src="../images/angular2_large.png" style="width: 20px;"/>
     cell renderer's from Angular Components</h3>
-<pre><span class="codeComment">// create your cell renderer as a Angular component</span>
+<snippet>
+// create your cell renderer as a Angular component
 @Component({
     selector: 'square-cell',
     template: `{{valueSquared()}}`
@@ -49,20 +50,20 @@ class SquareComponent implements AgRendererComponent {
         return this.params.value * this.params.value;
     }
 }
-<span class="codeComment">// then reference the Component in your colDef like this</span>
+// then reference the Component in your colDef like this
 colDef = {
     {
         headerName: "Square Component",
         field: "value",
-        <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+        // instead of cellRenderer we use cellRendererFramework
         cellRendererFramework: SquareComponent
 
-        <span class="codeComment">// specify all the other fields as normal</span>
+        // specify all the other fields as normal
         editable:true,
         colId: "square",
         width: 200
     }
-}</pre>
+}</snippet>
 
 <p>Your Angular components need to implement <code>AgRendererComponent</code>.
     The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the

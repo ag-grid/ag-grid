@@ -41,10 +41,10 @@ include '../documentation-main/documentation_header.php';
         The sort methods gets the value as well as the row nodes.
     </p>
 
-    <pre>
+    <snippet>
 colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
     return valueA - valueB;
-}</pre>
+}</snippet>
 
     <h3 id="example-custom-sorting">Example: Custom Sorting</h3>
 
@@ -132,10 +132,11 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         by country ascending, and then by sport descending.
     </p>
 
-    <pre>[
+    <snippet>
+[
     {colId: 'country', sort: 'asc'},
     {colId: 'sport', sort: 'desc'}
-]</pre>
+]</snippet>
 
     <h3 id="example-sorting-api">Example: Sorting API</h3>
 
@@ -160,15 +161,15 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         so specifying it in the colDef:
     </p>
 
-    <pre>
+    <snippet>
 var groupColumn = {
     headerName: "Group",
-    comparator: [yourOwnComparator], <span class="codeComment">// this is the important bit</span>
+    comparator: [yourOwnComparator], // this is the important bit
     cellRenderer: {
         renderer: "group",
     }
 };
-    </pre>
+   </snippet>
 
     <h3 id="accentedSort">Accented sort</h3>
 

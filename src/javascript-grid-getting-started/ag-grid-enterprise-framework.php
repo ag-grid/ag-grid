@@ -40,9 +40,8 @@
         <h3>Referencing ag-Grid-Enterprise</h3>
         <p>In your application, before instantiating the grid, you need to reference the included ag-grid-enterprise dependency:</p>
 
-<pre>
-<?= $framework_enterprise ?>
-</pre>
+<snippet>
+&lt;?= $framework_enterprise ?&gt;</snippet>
 
     </div>
 </div>

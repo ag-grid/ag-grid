@@ -33,12 +33,14 @@ include '../documentation-main/documentation_header.php';
     <p>
         Use this if you are using the bundled version of ag-Grid (eg you are using <i>ag-grid-enterprise.js</i>).
     </p>
-    <pre>agGrid.LicenseManager.setLicenseKey("your license key");</pre>
+    <snippet>
+agGrid.LicenseManager.setLicenseKey("your license key");</snippet>
 
     <h4>CommonJS</h4>
     <p>Use this if you are using CommonJS to load ag-Grid.</p>
-    <pre>var enterprise = require("ag-grid-enterprise");
-enterprise.LicenseManager.setLicenseKey("your license key");</pre>
+    <snippet>
+var enterprise = require("ag-grid-enterprise");
+enterprise.LicenseManager.setLicenseKey("your license key");</snippet>
 
     <h4>Do Not Mix Loading Mechanisms</h4>
 
@@ -58,7 +60,8 @@ enterprise.LicenseManager.setLicenseKey("your license key");</pre>
 
     <p>For example:</p>
 
-    <pre>
+    <snippet>
+
 import {platformBrowser} from "@angular/platform-browser";
 import {AppModuleNgFactory} from "../aot/app/app.module.ngfactory";
 
@@ -66,7 +69,7 @@ import {LicenseManager} from "ag-grid-enterprise/main";
 LicenseManager.setLicenseKey("your license key");
 
 platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
-    </pre>
+   </snippet>
 
 <?php } ?>
 <?php if (isFrameworkReact()) { ?>
@@ -78,7 +81,8 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
 
     <p>For example:</p>
 
-    <pre>
+    <snippet>
+
 import React from "react";
 import {render} from "react-dom";
 
@@ -90,12 +94,12 @@ LicenseManager.setLicenseKey("your license key");
 
 import App from "./App";
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () =&gt; {
     render(
         &lt;App/&gt;,
         document.querySelector('#app')
     );
-});</pre>
+});</snippet>
 
 <?php } ?>
 <?php if (isFrameworkVue()) { ?>
@@ -107,7 +111,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <p>For example:</p>
 
-    <pre>
+    <snippet>
+
 import Vue from "vue";
 
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
@@ -121,7 +126,7 @@ LicenseManager.setLicenseKey("your license key");
 new Vue({
     el: "#el",
     ...
-});</pre>
+});</snippet>
 
 <?php } ?>
 <?php if (isFrameworkPolymer()) { ?>
@@ -133,38 +138,41 @@ new Vue({
     <p>If you have many components with agGrid in, the we suggest
     you run a separate script to reference and set the license key - for example:</p>
     
-    <pre>
-<span class="codeComment">// the main/initial index.html</span>
+    <snippet>
+
+// the main/initial index.html
 &lt;script src="../bower_components/ag-grid-enterprise/dist/ag-grid-enterprise.noStyle.js"&gt;&lt;/script&gt;
 
-<span class="codeComment">&lt;!-- ag-grid-polymer element --&gt;</span>
+&lt;!-- ag-grid-polymer element --&gt;
 &lt;link rel="import" href="../bower_components/ag-grid-polymer/ag-grid-polymer.html"&gt;
 
-<span class="codeComment">&lt;!-- your code --&gt;</span>
-<span class="codeComment">&lt;!-- licenseKey.js will be responsible for setting the license key across the application --&gt;</span>
+&lt;!-- your code --&gt;
+&lt;!-- licenseKey.js will be responsible for setting the license key across the application --&gt;
 &lt;script src="licenseKey.js"&gt;&lt;/script&gt;
 &lt;link rel="import" href="grid-component-one.html"&gt;
-&lt;link rel="import" href="grid-component-one.html"&gt;</pre>
-<pre>
-<span class="codeComment">// licenseKey.js</span>
-agGrid.LicenseManager.setLicenseKey("your license key")
-</pre>
+&lt;link rel="import" href="grid-component-one.html"&gt;</snippet>
+<snippet>
+
+// licenseKey.js
+agGrid.LicenseManager.setLicenseKey("your license key")</snippet>
 
     <p>If you have a single component, or a single component that in turn has the child components, you can set the license key 
         in this parent component - for example:</p>
 
-    <pre>
-<span class="codeComment">// the main/initial index.html</span>
+    <snippet>
+
+// the main/initial index.html
 &lt;script src="../bower_components/ag-grid-enterprise/dist/ag-grid-enterprise.noStyle.js"&gt;&lt;/script&gt;
 
-<span class="codeComment">&lt;!-- ag-grid-polymer element --&gt;</span>
+&lt;!-- ag-grid-polymer element --&gt;
 &lt;link rel="import" href="../bower_components/ag-grid-polymer/ag-grid-polymer.html"&gt;
 
-<span class="codeComment">&lt;!-- your code --&gt;</span>
-&lt;link rel="import" href="main-component-one.html"&gt;</pre>
+&lt;!-- your code --&gt;
+&lt;link rel="import" href="main-component-one.html"&gt;</snippet>
     
-    <pre>
-<span class="codeComment">// main-component-one.html</span>
+    <snippet>
+
+// main-component-one.html
 &lt;dom-module id="simple-grid-example"&gt;
     &lt;template id="template"&gt;
         &lt;div &gt;
@@ -181,7 +189,7 @@ agGrid.LicenseManager.setLicenseKey("your license key")
         class SimpleGridExample extends Polymer.Element {
             ...
         }
-    </pre>
+   </snippet>
 
 <?php } ?>
 <?php if (isFrameworkAurelia()) { ?>
@@ -190,7 +198,8 @@ agGrid.LicenseManager.setLicenseKey("your license key")
 
     <p>
         For Aurelia users, we suggest you set your License Key in the <code>configure</code> function, as follows:
-    <pre>
+    <snippet>
+
 export function configure(aurelia: Aurelia) {
   aurelia.use
     .standardConfiguration()
@@ -199,7 +208,7 @@ export function configure(aurelia: Aurelia) {
 
   LicenseManager.setLicenseKey("your license key");
 
-  ...rest of function</pre>
+  ...rest of function</snippet>
 </div>
 <?php } ?>
 

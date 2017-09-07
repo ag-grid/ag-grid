@@ -47,34 +47,36 @@
     <p>
         The root of the example application is MyApp.jsx. At the top of this file you can
         see the import the AgGridReact component as follows:
-    <pre><code>import {AgGridReact} from 'ag-grid-react';</code></pre>
+    <snippet>
+import {AgGridReact} from 'ag-grid-react';</snippet>
     After the import you can then reference the component inside your JSX definitions.
     See the <i>render()</i> function in MyApp.jsx, it has AgGridReact defined as
     follows (Make sure that you set the height for the parent element of `
     <AgGridReact/>
     `):
-    <pre><code>&lt;AgGridReact
+    <snippet>
+&lt;AgGridReact
 
-    <span class="codeComment">// listen for events with React callbacks</span>
+    // listen for events with React callbacks
     onRowSelected={this.onRowSelected.bind(this)}
     onCellClicked={this.onCellClicked.bind(this)}
 
-    <span class="codeComment">// binding to properties within React State or Props</span>
+    // binding to properties within React State or Props
     showToolPanel={this.state.showToolPanel}
     quickFilterText={this.state.quickFilterText}
     icons={this.state.icons}
 
-    <span class="codeComment">// column definitions and row data are immutable, the grid</span>
-    <span class="codeComment">// will update when these lists change</span>
+    // column definitions and row data are immutable, the grid
+    // will update when these lists change
     columnDefs={this.state.columnDefs}
     rowData={this.state.rowData}
 
-    <span class="codeComment">// or provide props the old way with no binding</span>
+    // or provide props the old way with no binding
     rowSelection="multiple"
     enableSorting="true"
     enableFilter="true"
     rowHeight="22"
-/></code></pre>
+/&gt;</snippet>
     </p>
 
     <h2 id="loading-css">Loading CSS</h2>
@@ -82,12 +84,14 @@
     <p>You need 1) the core ag-Grid css and 2) a theme. These are stored in css files packaged
         in the core ag-Grid. To access them, first up we need to define an alias to use inside
         webpack.config.js:
-    <pre><code>alias: {
+    <snippet>
+alias: {
     "ag-grid-root" : __dirname + "/node_modules/ag-grid"
-}</code></pre>
+}</snippet>
     Once this is done, we can then access the two css files that we need as follows:
-    <pre><code>import 'ag-grid-root/dist/styles/ag-grid.css';
-import 'ag-grid-root/dist/styles/theme-fresh.css';</code></pre>
+    <snippet>
+import 'ag-grid-root/dist/styles/ag-grid.css';
+import 'ag-grid-root/dist/styles/theme-fresh.css';</snippet>
     You will also need to configure CSS loaders for Webpack.
     </p>
 
@@ -99,21 +103,21 @@ import 'ag-grid-root/dist/styles/theme-fresh.css';</code></pre>
         for this to work.
     </p>
 
-    <pre><span class="codeComment">// a parent container of the grid, you could put this on your body tag</span>
-<span class="codeComment">// if you only every wanted to use one style of grid</span>
+    <snippet>
+// a parent container of the grid, you could put this on your body tag
+// if you only every wanted to use one style of grid
 
-<span class="codeComment">// HTML</span>
-&lt;div class="ag-fresh">
+// HTML
+&lt;div class="ag-fresh"&gt;
     ...
 
-<span class="codeComment">// OR JSX</span>
-&lt;div className="ag-fresh">
+// OR JSX
+&lt;div className="ag-fresh"&gt;
     ...
 
-    <span class="codeComment">// then later, use the grid</span>
+    // then later, use the grid
     &lt;AgGridReact
-        ...
-</pre>
+        ...</snippet>
 
     <h2 id="grid-api">Grid API</h2>
 
@@ -123,22 +127,23 @@ import 'ag-grid-root/dist/styles/theme-fresh.css';</code></pre>
         the grid and grab the api from the params. You can then call this api at a later
         stage to interact with the grid (on top of the interaction that can be done by
         setting and changing the props).
-    <pre><code><span class="codeComment">// provide gridReady callback to the grid</span>
+    <snippet>
+// provide gridReady callback to the grid
 &lt;AgGridReact
     onGridReady={this.onGridReady.bind(this)}
-    .../>
+    .../&gt;
 
-<span class="codeComment">// in onGridReady, store the api for later use</span>
+// in onGridReady, store the api for later use
 onGridReady(params) {
     this.api = params.api;
     this.columnApi = params.columnApi;
 }
 
-<span class="codeComment">// use the api some point later!</span>
+// use the api some point later!
 somePointLater() {
     this.api.selectAll();
     this.columnApi.setColumnVisible('country', visible);
-}</code></pre>
+}</snippet>
     </p>
 
     <p>

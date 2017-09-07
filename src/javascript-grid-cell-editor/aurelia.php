@@ -24,19 +24,20 @@
     <h3 id="specifying-a-aurelia-cell-editor"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellEditor</h3>
 
 
-    <pre><span class="codeComment">// Create your cell editor as a Aurelia component</span>
+    <snippet>
+// Create your cell editor as a Aurelia component
 
-<span class="codeComment">// Component View</span>
-&lt;template>
-  &lt;require from="./mood-editor.css"></require>
+// Component View
+&lt;template&gt;
+  &lt;require from="./mood-editor.css"&gt;&lt;/require&gt;
 
-  &lt;div class.bind="'mood'" tabindex="0" focus.bind="hasFocus" keydown.trigger="onKeyDown($event)">
-    &lt;img src="images/smiley.png" click.delegate="setHappy(true)" class.bind="happy ? 'selected' : 'default'">
-    &lt;img src="images/smiley-sad.png" click.delegate="setHappy(false)" class.bind="!happy ? 'selected' : 'default'">
-  &lt;/div>
-&lt;/template>
+  &lt;div class.bind="'mood'" tabindex="0" focus.bind="hasFocus" keydown.trigger="onKeyDown($event)"&gt;
+    &lt;img src="images/smiley.png" click.delegate="setHappy(true)" class.bind="happy ? 'selected' : 'default'"&gt;
+    &lt;img src="images/smiley-sad.png" click.delegate="setHappy(false)" class.bind="!happy ? 'selected' : 'default'"&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
 
-<span class="codeComment">// Component Logic</span>
+// Component Logic
 @customElement('ag-mood-editor')
 @inject(Element)
 export class NumericEditor extends BaseAureliaEditor {
@@ -84,16 +85,15 @@ export class NumericEditor extends BaseAureliaEditor {
   }
 }
 
-<span class="codeComment">// then reference the Component in your column definitions like this</span>
+// then reference the Component in your column definitions like this
 &lt;ag-grid-aurelia #agGrid style="width: 100%; height: 100%;" class="ag-fresh"
-                 grid-options.bind="gridOptions">
-  &lt;ag-grid-column header-name="Mood" field="mood" width.bind="150" editable.bind="true">
-    &lt;ag-editor-template>
-      &lt;ag-mood-editor>&lt;/ag-mood-editor>
-    &lt;/ag-editor-template>
-  &lt;/ag-grid-column>
-&lt;/ag-grid-aurelia>
-</pre>
+                 grid-options.bind="gridOptions"&gt;
+  &lt;ag-grid-column header-name="Mood" field="mood" width.bind="150" editable.bind="true"&gt;
+    &lt;ag-editor-template&gt;
+      &lt;ag-mood-editor&gt;&lt;/ag-mood-editor&gt;
+    &lt;/ag-editor-template&gt;
+  &lt;/ag-grid-column&gt;
+&lt;/ag-grid-aurelia&gt;</snippet>
 
     <p>Your Aurelia components should implement <code>BaseAureliaEditor</code>.</p>
 

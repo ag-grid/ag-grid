@@ -33,7 +33,8 @@ include '../documentation-main/documentation_header.php';
         For example, to set the height to 50px, do the following:
     </p>
 
-    <pre><code></code>gridOptions.rowHeight = 50;</code></pre>
+    <snippet>
+gridOptions.rowHeight = 50;</snippet>
 
     <p>
         Changing the property will set a new row height for all rows, including pinned rows top and bottom.
@@ -47,13 +48,14 @@ include '../documentation-main/documentation_header.php';
         to 50px for all non-pinned rows and 25px for pinned rows, do the following:
     </p>
 
-    <pre><code></code>gridOptions.getRowHeight = function(params) {
+    <snippet>
+gridOptions.getRowHeight = function(params) {
     if (params.node.floating) {
         return 25;
     } else {
         return 50;
     }
-}</code></pre>
+}</snippet>
 
     <p>
         The params object passed to the callback has the following values:

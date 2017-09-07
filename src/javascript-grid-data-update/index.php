@@ -171,37 +171,37 @@ include '../documentation-main/documentation_header.php';
         and then returns all the impacted row nodes.
     </p>
 
-    <pre><span class="codeComment">// API method for updating data</span>
+    <snippet>
+// API method for updating data
 function updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
 
-<span class="codeComment">// params for above</span>
+// params for above
 interface RowDataTransaction {
 
-    <span class="codeComment">// rows to add</span>
+    // rows to add
     add?: any[];
-    <span class="codeComment">// index for rows to add</span>
+    // index for rows to add
     addIndex?: number,
 
-    <span class="codeComment">// rows to remove</span>
+    // rows to remove
     remove?: any[];
 
-    <span class="codeComment">// rows to update</span>
+    // rows to update
     update?: any[];
 }
 
-<span class="codeComment">// result for above</span>
+// result for above
 interface RowDataTransaction {
 
-    <span class="codeComment">// Row Nodes added</span>
+    // Row Nodes added
     add: RowNode[];
 
-    <span class="codeComment">// Row Nodes removed</span>
+    // Row Nodes removed
     remove: RowNode[];
 
-    <span class="codeComment">// Row Nodes updated</span>
+    // Row Nodes updated
     update: RowNode[];
-}
-</pre>
+}</snippet>
 
     <h3>Adding Rows</h3>
 

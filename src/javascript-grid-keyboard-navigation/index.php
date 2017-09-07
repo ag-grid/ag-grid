@@ -95,17 +95,18 @@ include '../documentation-main/documentation_header.php';
         function signature is as follows:
     </p>
 
-    <pre>interface NavigateToNextCellParams {
+    <snippet>
+interface NavigateToNextCellParams {
 
-    <span class="codeComment">// the keycode for the arrow key pressed, left = 37, up = 38, right = 39, down = 40</span>
+    // the keycode for the arrow key pressed, left = 37, up = 38, right = 39, down = 40
     key: number;
 
-    <span class="codeComment">// the cell that currently has focus</span>
+    // the cell that currently has focus
     previousCellDef: GridCellDef;
 
-    <span class="codeComment">// the cell the grid would normally pick as the next cell for this navigation</span>
+    // the cell the grid would normally pick as the next cell for this navigation
     nextCellDef: GridCellDef;
-}</pre>
+}</snippet>
 
     <h3 id="tab-to-next-cell">tabToNextCell</h3>
 
@@ -114,21 +115,22 @@ include '../documentation-main/documentation_header.php';
         parameter object is as follows:
     </p>
 
-    <pre>interface TabToNextCellParams {
+    <snippet>
+interface TabToNextCellParams {
 
-    <span class="codeComment">// true if the shift key is also down</span>
+    // true if the shift key is also down
     backwards: boolean;
 
-    <span class="codeComment">// true if the current cell is editing (you may want to skip cells that are not editable,</span>
-    <span class="codeComment">// as the grid will enter the next cell in editing mode also if tabbing)</span>
+    // true if the current cell is editing (you may want to skip cells that are not editable,
+    // as the grid will enter the next cell in editing mode also if tabbing)
     editing: boolean;
 
-    <span class="codeComment">// the cell that currently has focus</span>
+    // the cell that currently has focus
     previousCellDef: GridCellDef;
 
-    <span class="codeComment">// the cell the grid would normally pick as the next cell for this navigation</span>
+    // the cell the grid would normally pick as the next cell for this navigation
     nextCellDef: GridCellDef;
-}</pre>
+}</snippet>
 
     <h3 id="grid-cell-def">GridCellDef</h3>
 
@@ -137,17 +139,18 @@ include '../documentation-main/documentation_header.php';
         interface is as follows:
     </p>
 
-    <pre>interface GridCellDef {
+    <snippet>
+interface GridCellDef {
 
-    <span class="codeComment">// either 'top', 'bottom' or undefined/null (for not floating)</span>
+    // either 'top', 'bottom' or undefined/null (for not floating)
     floating: string;
 
-    <span class="codeComment">// a positive number from 0 to n, where n is the last row the grid is rendering</span>
+    // a positive number from 0 to n, where n is the last row the grid is rendering
     rowIndex: number;
 
-    <span class="codeComment">// the grid column</span>
+    // the grid column
     column: Column;
-}</pre>
+}</snippet>
 
     <p>
         The functions take a GridCellDef for current and next cells, as well as returning a GridCellDef object.

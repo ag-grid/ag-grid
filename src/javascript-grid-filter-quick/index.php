@@ -13,7 +13,8 @@ include '../documentation-main/documentation_header.php';
     In addition to the column specific filtering, a 'quick filter' (influenced by how filtering is done in Google
     GMail) can also be applied. Set the quick filter by using the Grid's API:
 
-    <pre>api.setQuickFilter('new filter text');</pre>
+    <snippet>
+api.setQuickFilter('new filter text');</snippet>
 
     If you are using a framework such as Angular or React, you can set bind the quick filter text to the
     <code>quickFilter</code> attribute.
@@ -26,12 +27,13 @@ include '../documentation-main/documentation_header.php';
     instead of searchable string values. Or maybe you want to format string values for searching (eg take out
     accent characters, or take out commas from numbers). If you want to do this, then provide a <i>getQuickFilterText</i>
     to the column definition, eg:
-<pre>colDef = {
+<snippet>
+colDef = {
     headerName: "D", field: "d",
     getQuickFilterText: function(params) {
         return params.value.name;
     }
-}</pre>
+}</snippet>
 Params contains {value, node, data, column, colDef}.
 </p>
 <note>

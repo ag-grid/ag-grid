@@ -47,39 +47,40 @@ include '../documentation-main/documentation_header.php';
         above.
     </p>
 
-        <pre><span class="codeComment">// Option 1: column that uses the built in 'sum' function</span>
+        <snippet>
+// Option 1: column that uses the built in 'sum' function
 colDef1.aggFunc = 'sum';
 
-<span class="codeComment">// Option 2: register aggFunc to grid called 'abc', then reference by name</span>
+// Option 2: register aggFunc to grid called 'abc', then reference by name
 gridOptions.api.addAggFunc('abc', myCustomAggFunc);
 colDef2.aggFunc = 'abc';
 
-<span class="codeComment">// Option 3: column uses a function directly</span>
+// Option 3: column uses a function directly
 colDef3.aggFunc = myCustomAggFunc;
 
-<span class="codeComment">// this is the function 2 and 3 above are using</span>
+// this is the function 2 and 3 above are using
 function myCustomAggFunc(values) {
     var sum = 0;
     values.forEach( function(value) {sum += value;} );
     return sum;
-}
-</pre>
+}</snippet>
 
     <h3>Restricting Functions</h3>
 
     <p>
         By default, all functions are available to all value columns. To restrict the functions on
         a column, use the <i>allowedAggFuncs</i> column property.
-        <pre><span class="codeComment">// define Gold column</span>
+        <snippet>
+// define Gold column
 colDef = {
     headerName: 'Gold',
     field: 'gold',
-    <span class="codeComment">// allow gui to set aggregations for this column</span>
+    // allow gui to set aggregations for this column
     enableValue: true,
-    <span class="codeComment">// restrict aggregations to sum, min and max</span>
+    // restrict aggregations to sum, min and max
     allowedAggFuncs: ['sum','min','max']
     ...
-}</pre>
+}</snippet>
     </p>
 
     <h3>Example 1 - Built In Functions</h3>
@@ -241,11 +242,12 @@ colDef = {
     <p>
         For groups, when aggregating, the grid stores the results in the colId of the column. For example, if you
         have a group defined as follows:
-        <pre>colDef = {
+        <snippet>
+colDef = {
     field: 'abby',
     valueGetter: 'data.a + data.b',
     colId: 'aaa'
-}</pre>
+}</snippet>
     Then the result of the aggregation will be stored in <i>data.aaa</i> and not in 'abby'. Most of the time this
     will not matter for you as the colId will default to the field if colId is missing and it doesn't violate uniqueness.
     You need to be aware of this, as if you store the result in a place other than the colId, it won't work.
@@ -267,10 +269,11 @@ colDef = {
         This is through throw the api method <i>recomputeAggregates</i>. For example, if you allow editing,
         and want the aggregates to update as new values are edited, then create code like the following:
 
-        <pre>// add a listener to the editable colDef
+        <snippet>
+// add a listener to the editable colDef
 colDef.onCellValueChanged = function() {
     gridOptions.api.recomputeAggregates();
-}</pre>
+}</snippet>
 
 </div>
 

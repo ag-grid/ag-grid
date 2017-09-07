@@ -21,9 +21,10 @@ include '../documentation-main/documentation_header.php';
         The example below shows all the text that can be defined.
     </p>
 
-    <pre>localeText = {
+    <snippet>
+localeText = {
 
-        <span class="codeComment">// for filter panel</span>
+        // for filter panel
         page: 'daPage',
         more: 'daMore',
         to: 'daTo',
@@ -34,29 +35,29 @@ include '../documentation-main/documentation_header.php';
         previous: 'daPreviousen',
         loadingOoo: 'daLoading...',
 
-        <span class="codeComment">// for set filter</span>
+        // for set filter
         selectAll: 'daSelect Allen',
         searchOoo: 'daSearch...',
         blanks: 'daBlanc',
 
-        <span class="codeComment">// for number filter and text filter</span>
+        // for number filter and text filter
         filterOoo: 'daFilter...',
         applyFilter: 'daApplyFilter...',
 
-        <span class="codeComment">// for number filter</span>
+        // for number filter
         equals: 'daEquals',
         lessThan: 'daLessThan',
         greaterThan: 'daGreaterThan',
 
-        <span class="codeComment">// for text filter</span>
+        // for text filter
         contains: 'daContains',
         startsWith: 'daStarts dawith',
         endsWith: 'daEnds dawith',
 
-        <span class="codeComment">// the header of the default group column</span>
+        // the header of the default group column
         group: 'laGroup',
 
-        <span class="codeComment">// tool panel</span>
+        // tool panel
         columns: 'laColumns',
         rowGroupColumns: 'laPivot Cols',
         rowGroupColumnsEmptyMessage: 'la drag cols to group',
@@ -68,10 +69,10 @@ include '../documentation-main/documentation_header.php';
         valueColumnsEmptyMessage: 'la drag cols to aggregate',
         pivotColumnsEmptyMessage: 'la drag here to pivot',
 
-        <span class="codeComment">// other</span>
+        // other
         noRowsToShow: 'la no rows',
 
-        <span class="codeComment">// enterprise menu</span>
+        // enterprise menu
         pinColumn: 'laPin Column',
         valueAggregation: 'laValue Agg',
         autosizeThiscolumn: 'laAutosize Diz',
@@ -86,12 +87,12 @@ include '../documentation-main/documentation_header.php';
         csvExport: 'la CSV Exportp',
         excelExport: 'la Excel Exporto',
 
-        <span class="codeComment">// enterprise menu pinning</span>
-        pinLeft: 'laPin <<',
-        pinRight: 'laPin >>',
-        noPin: 'laDontPin <>',
+        // enterprise menu pinning
+        pinLeft: 'laPin &lt;&lt;',
+        pinRight: 'laPin &gt;&gt;',
+        noPin: 'laDontPin &lt;&gt;',
 
-        <span class="codeComment">// enterprise menu aggregation and status panel</span>
+        // enterprise menu aggregation and status panel
         sum: 'laSum',
         min: 'laMin',
         max: 'laMax',
@@ -101,13 +102,13 @@ include '../documentation-main/documentation_header.php';
         count: 'laCount',
         average: 'laAverage',
 
-        <span class="codeComment">// standard menu</span>
+        // standard menu
         copy: 'laCopy',
         copyWithHeaders: 'laCopy Wit hHeaders',
         ctrlC: 'ctrl n C',
         paste: 'laPaste',
         ctrlV: 'ctrl n C'
-}</pre>
+}</snippet>
 
     <show-example example="internationalisation"></show-example>
 
@@ -126,9 +127,10 @@ include '../documentation-main/documentation_header.php';
         default language).
     </p>
 
-    <pre>var gridOptions = {
+    <snippet>
+var gridOptions = {
 
-    <span class="codeComment">// standard grid settings, thrown in here to pad out the example</span>
+    // standard grid settings, thrown in here to pad out the example
     enableSorting: true,
     enableFilter: true,
     enableColResize: true,
@@ -136,15 +138,15 @@ include '../documentation-main/documentation_header.php';
 
     localeTextFunc: function(key, defaultValue) {
 
-        <span class="codeComment">// to avoid key clash with external keys, we add 'grid' to the start of each key.</span>
+        // to avoid key clash with external keys, we add 'grid' to the start of each key.
         var gridKey = 'grid.' + key;
 
-        <span class="codeComment">// look the value up. here we use the AngularJS 1.x $filter service, however you can use whatever</span>
-        <span class="codeComment">// service you want, AngularJS 1.x or otherwise.</span>
+        // look the value up. here we use the AngularJS 1.x $filter service, however you can use whatever
+        // service you want, AngularJS 1.x or otherwise.
         var value = $filter('translate')(gridKey);
         return value === gridKey ? defaultValue : value;
     }
-};</pre>
+};</snippet>
 
 </div>
 

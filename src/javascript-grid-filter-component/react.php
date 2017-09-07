@@ -29,34 +29,35 @@
         as React components.
     </p>
 
-    <pre><span class="codeComment">// create your filter as a React component</span>
+    <snippet>
+// create your filter as a React component
 class NameFilter extends React.Component {
 
-    <span class="codeComment">// put in render logic, build a nice gui in React</span>
+    // put in render logic, build a nice gui in React
     render() {
-        return &lt;span>My Nice Little Filter Gui&lt;/span>;
+        return &lt;span&gt;My Nice Little Filter Gui&lt;/span&gt;;
     }
 
-    <span class="codeComment">// implement the other Filter callbacks</span>
+    // implement the other Filter callbacks
     isFilterActive(params) {
-        <span class="codeComment">// do some filter logic</span>
+        // do some filter logic
         return filterPass ? true : false;
     }
 
-    <span class="codeComment">// etc etc, more logic, but leaving out for now</span>
+    // etc etc, more logic, but leaving out for now
 }
 
-<span class="codeComment">// then reference the Component in your colDef like this</span>
+// then reference the Component in your colDef like this
 colDef = {
 
-    <span class="codeComment">// instead of cellRenderer we use cellRendererFramework</span>
+    // instead of cellRenderer we use cellRendererFramework
     filterFramework: NameFilter
 
-    <span class="codeComment">// specify all the other fields as normal</span>
+    // specify all the other fields as normal
     headerName: 'Name',
     field: 'firstName',
     ...
-}</pre>
+}</snippet>
 
     <p>
         By using <i>colDef.filterFramework</i> (instead of <i>colDef.filter</i>) the grid
@@ -71,22 +72,23 @@ colDef = {
         The React component will get the 'filter Params' as described above as its React Props.
         Therefore you can access all the parameters as React Props.
 
-    <pre><span class="codeComment">// React filter Component</span>
+    <snippet>
+// React filter Component
 class NameFilter extends React.Component {
 
-    <span class="codeComment">// did you know that React passes props to your component constructor??</span>
+    // did you know that React passes props to your component constructor??
     constructor(props) {
         super(props);
-        <span class="codeComment">// from here you can access any of the props!</span>
+        // from here you can access any of the props!
         console.log('The field for this filter is ' + props.colDef.field);
     }
 
-    <span class="codeComment">// maybe your filter has a button in it, and when it gets clicked...</span>
+    // maybe your filter has a button in it, and when it gets clicked...
     onButtonWasPressed() {
-        <span class="codeComment">// all the methods in the props can be called</span>
+        // all the methods in the props can be called
         this.props.filterChangedCallback();
     }
-}</pre>
+}</snippet>
     </p>
 
     <h3 id="react-methods-lifecycle"><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle</h3>
@@ -113,29 +115,30 @@ class NameFilter extends React.Component {
         method. If your component is a React component, then this will give you a reference to the ag-Grid's
         Component which wraps your React Component. Just like Russian Dolls. To get to the wrapped React instance
         of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
-        <pre><span class="codeComment">// lets assume a React component as follows</span>
+        <snippet>
+// lets assume a React component as follows
 class NameFilter extends React.Component {
 
-    ... <span class="codeComment">// standard filter methods hidden</span>
+    ... // standard filter methods hidden
 
-    <span class="codeComment">// put a custom method on the filter</span>
+    // put a custom method on the filter
     myMethod() {
-        <span class="codeComment">// does something</span>
+        // does something
     }
 }
 
-<span class="codeComment">// then in your app, if you want to execute myMethod()...</span>
+// then in your app, if you want to execute myMethod()...
 laterOnInYourApplicationSomewhere() {
 
-    <span class="codeComment">// get reference to the ag-Grid Filter component</span>
-    var agGridFilter = api.getFilterInstance('name'); <span class="codeComment">// assume filter on name column</span>
+    // get reference to the ag-Grid Filter component
+    var agGridFilter = api.getFilterInstance('name'); // assume filter on name column
 
-    <span class="codeComment">// get React instance from the ag-Grid instance</span>
+    // get React instance from the ag-Grid instance
     var reactFilterInstance = agGridFilter.getFrameworkComponentInstance();
 
-    <span class="codeComment">// now we're sucking diesel!!!</span>
+    // now we're sucking diesel!!!
     reactFilterInstance.myMethod();
-}</pre>
+}</snippet>
 
    <h3 id="example-filtering-using-react-components"><img src="../images/react_large.png" style="width: 20px;"/> Example: Filtering using React Components</h3>
    <p>
