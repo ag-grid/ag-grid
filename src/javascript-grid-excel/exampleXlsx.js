@@ -108,7 +108,8 @@ function onBtExport() {
         skipPinnedBottom: getBooleanValue('#skipPinnedBottom'),
         allColumns: getBooleanValue('#allColumns'),
         onlySelected: getBooleanValue('#onlySelected'),
-        fileName: document.querySelector('#fileName').value
+        fileName: document.querySelector('#fileName').value,
+        sheetName: document.querySelector('#sheetName').value
     };
 
     if (getBooleanValue('#skipGroupR')) {

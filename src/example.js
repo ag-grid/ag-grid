@@ -287,6 +287,7 @@ suppressScrollLag: true,
 };
 
 function getContextMenuItems(params) {
+    if (params.node == null) return null;
     var result = params.defaultItems.splice(0);
     result.push(
         {
