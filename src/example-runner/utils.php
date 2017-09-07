@@ -71,11 +71,21 @@ function getBoilerplateConfig($type) {
 ATTR;
 }
 
+function toQueryString($key) {
+    return "$key=true";
+}
+
 function example($title, $dir, $type='vanilla', $options = array()) {
     $fileList = htmlspecialchars(json_encode(getDirContents($dir)));
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));
     $additional = getBoilerplateConfig($type);
-    $resultUrl = "../example-runner/$type.php?section=$section&example=$dir";
+
+    if ($options['extras']) {
+        $extras = '&' . join("&", array_map( 'toQueryString', $options['extras']));
+    } else {
+        $extras = '';
+    }
+    $resultUrl = "../example-runner/$type.php?section=$section&example=$dir$extras";
     $jsonOptions = json_encode($options);
 
     return <<<NG
