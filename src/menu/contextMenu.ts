@@ -40,7 +40,11 @@ export class ContextMenuFactory implements IContextMenuFactory {
         let defaultMenuOptions: string[];
         if (Utils.exists(node)) {
             // if user clicks a cell
-            defaultMenuOptions = ['copy','copyWithHeaders','paste','separator','toolPanel','export'];
+            let anyExport:boolean = !this.gridOptionsWrapper.isSuppressExcelExport() || !this.gridOptionsWrapper.isSuppressCsvExport();
+            defaultMenuOptions = ['copy','copyWithHeaders','paste','separator','toolPanel'];
+            if (anyExport){
+                defaultMenuOptions.push('export')
+            }
         } else {
             // if user clicks outside of a cell (eg below the rows, or not rows present)
             defaultMenuOptions = ['toolPanel'];

@@ -118,10 +118,18 @@ export class MenuItemMapper {
                 checked: this.gridApi.isToolPanelShowing(),
                 action: ()=> this.gridApi.showToolPanel(!this.gridApi.isToolPanelShowing())
             };
-            case 'export': return {
-                name: localeTextFunc('export', 'Export'),
-                subMenu: ['csvExport','excelExport']
-            };
+            case 'export':
+                let exportSubMenuItems:string[] = [];
+                if (!this.gridOptionsWrapper.isSuppressCsvExport()){
+                    exportSubMenuItems.push('csvExport')
+                }
+                if (!this.gridOptionsWrapper.isSuppressExcelExport()){
+                    exportSubMenuItems.push('excelExport')
+                }
+                return {
+                    name: localeTextFunc('export', 'Export'),
+                    subMenu: exportSubMenuItems
+                };
             case 'csvExport': return {
                 name: localeTextFunc('csvExport', 'CSV Export'),
                 action: ()=> this.gridApi.exportDataAsCsv({})

@@ -318,6 +318,9 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], ExcelGridSerializin
         });
     }
 
+    public isExportSuppressed ():boolean{
+        return this.gridOptionsWrapper.isSuppressExcelExport();
+    }
 
 }
 
