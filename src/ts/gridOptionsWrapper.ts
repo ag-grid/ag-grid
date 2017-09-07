@@ -316,6 +316,8 @@ export class GridOptionsWrapper {
     public getDefaultColDef(): ColDef { return this.gridOptions.defaultColDef; }
     public getDefaultColGroupDef(): ColGroupDef { return this.gridOptions.defaultColGroupDef; }
     public getDefaultExportParams(): BaseExportParams { return this.gridOptions.defaultExportParams; }
+    public isSuppressCsvExport() { return isTrue(this.gridOptions.suppressCsvExport); }
+    public isSuppressExcelExport() { return isTrue(this.gridOptions.suppressExcelExport); }
 
     public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }

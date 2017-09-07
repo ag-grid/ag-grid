@@ -134,6 +134,10 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     public export(userParams?: P): string {
+        if (this.isExportSuppressed()){
+            console.warn(`ag-grid: Export canceled. Export is not allowed as per your configuration.`);
+            return "";
+        }
         let {mergedParams, data} = this.getMergedParamsAndData(userParams);
 
         let fileNamePresent = mergedParams && mergedParams.fileName && mergedParams.fileName.length !== 0;
@@ -172,6 +176,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     public abstract getMimeType():string;
     public abstract getDefaultFileName ():string;
     public abstract getDefaultFileExtension ():string;
+    public abstract isExportSuppressed ():boolean;
 }
 
 @Bean('csvCreator')
@@ -210,5 +215,9 @@ export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvEx
                 params && params.suppressQuotes,
                 (params && params.columnSeparator) || ','
             )
+    }
+
+    public isExportSuppressed ():boolean{
+        return this.gridOptionsWrapper.isSuppressCsvExport();
     }
 }
