@@ -55,7 +55,7 @@ include '../documentation-main/documentation_header.php';
         the resize to avoid a flicker.
     </p>
 
-    <show-example example="exampleWidthAndHeight"></show-example>
+    <?= example('Width & Height', 'example-width-and-height', 'vanilla', array( "showResult" => true) ) ?>
 
     <h2 id="dom-layout">DOM Layout</h2>
 
@@ -114,7 +114,8 @@ include '../documentation-main/documentation_header.php';
         The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.
         Note that if you use the example inlined the scroll bars shown are for the containing iframe, not the grid.
     </note>
-    <show-example example="exampleAutoHeight"></show-example>
+
+    <?= example('Auto Height', 'example-auto-height', 'vanilla', array( "showResult" => true) ) ?>
 
     <h3>Animation with Auto Height</h3>
 
