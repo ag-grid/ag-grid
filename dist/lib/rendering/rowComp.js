@@ -677,7 +677,7 @@ var RowComp = (function (_super) {
             classes.push(extraCssClass);
         }
         classes.push('ag-row');
-        classes.push(this.rowFocused ? 'ag-row-no-focus' : 'ag-row-focus');
+        classes.push(this.rowFocused ? 'ag-row-focus' : 'ag-row-no-focus');
         if (this.fadeRowIn) {
             classes.push('ag-opacity-zero');
         }

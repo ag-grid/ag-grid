@@ -6,7 +6,7 @@ import { Column } from "./entities/column";
 import { ColDef } from "./entities/colDef";
 import { GridApi } from "./gridApi";
 import { ColumnApi } from "./columnController/columnController";
-import { ColumnGroup } from "./entities/columnGroup";
+import { OriginalColumnGroup } from "./entities/originalColumnGroup";
 export declare class Events {
     /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
     static EVENT_COLUMN_EVERYTHING_CHANGED: string;
@@ -175,7 +175,7 @@ export interface RangeSelectionChangedEvent extends AgGridEvent {
     started: boolean;
 }
 export interface ColumnGroupOpenedEvent extends AgGridEvent {
-    columnGroup: ColumnGroup;
+    columnGroup: OriginalColumnGroup;
 }
 export interface ItemsAddedEvent extends AgGridEvent {
     items: RowNode[];

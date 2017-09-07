@@ -73,7 +73,7 @@ var HeaderGroupWrapperComp = (function (_super) {
             displayName: displayName,
             columnGroup: this.columnGroup,
             setExpanded: function (expanded) {
-                _this.columnController.setColumnGroupOpened(_this.columnGroup, expanded);
+                _this.columnController.setColumnGroupOpened(_this.columnGroup.getOriginalColumnGroup(), expanded);
             },
             api: this.gridApi,
             columnApi: this.columnApi,

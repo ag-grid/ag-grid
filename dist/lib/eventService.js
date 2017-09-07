@@ -116,7 +116,7 @@ var EventService = (function () {
         var eventType = event.type;
         // this allows the columnController to get events before anyone else
         var p1ListenerList = this.getListenerList(eventType + EventService_1.PRIORITY, async);
-        p1ListenerList.forEach(function (listener) {
+        utils_1.Utils.forEachSnapshotFirst(p1ListenerList, function (listener) {
             if (async) {
                 _this.dispatchAsync(function () { return listener(event); });
             }
@@ -125,7 +125,7 @@ var EventService = (function () {
             }
         });
         var listenerList = this.getListenerList(eventType, async);
-        listenerList.forEach(function (listener) {
+        utils_1.Utils.forEachSnapshotFirst(listenerList, function (listener) {
             if (async) {
                 _this.dispatchAsync(function () { return listener(event); });
             }
@@ -133,7 +133,7 @@ var EventService = (function () {
                 listener(event);
             }
         });
-        globalListeners.forEach(function (listener) {
+        utils_1.Utils.forEachSnapshotFirst(globalListeners, function (listener) {
             if (async) {
                 _this.dispatchAsync(function () { return listener(eventType, event); });
             }

@@ -42,8 +42,9 @@ var ColumnApi = (function () {
     function ColumnApi() {
     }
     ColumnApi.prototype.sizeColumnsToFit = function (gridWidth) { this._columnController.sizeColumnsToFit(gridWidth); };
-    ColumnApi.prototype.setColumnGroupOpened = function (group, newValue, instanceId) { this._columnController.setColumnGroupOpened(group, newValue, instanceId); };
+    ColumnApi.prototype.setColumnGroupOpened = function (group, newValue) { this._columnController.setColumnGroupOpened(group, newValue); };
     ColumnApi.prototype.getColumnGroup = function (name, instanceId) { return this._columnController.getColumnGroup(name, instanceId); };
+    ColumnApi.prototype.getOriginalColumnGroup = function (name) { return this._columnController.getOriginalColumnGroup(name); };
     ColumnApi.prototype.getDisplayNameForColumn = function (column, location) { return this._columnController.getDisplayNameForColumn(column, location); };
     ColumnApi.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) { return this._columnController.getDisplayNameForColumnGroup(columnGroup, location); };
     ColumnApi.prototype.getColumn = function (key) { return this._columnController.getPrimaryColumn(key); };
@@ -1294,7 +1295,9 @@ var ColumnController = (function () {
         }
         if (aggFuncFound) {
             var aggFuncString = (typeof aggFunc === 'string') ? aggFunc : 'func';
-            return aggFuncString + "(" + headerName + ")";
+            var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            var aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
+            return aggFuncStringTranslated + "(" + headerName + ")";
         }
         else {
             return headerName;
@@ -1419,52 +1422,65 @@ var ColumnController = (function () {
             }
         });
     };
-    // called by headerRenderer - when a header is opened or closed
-    ColumnController.prototype.setColumnGroupOpened = function (passedGroup, newValue, instanceId) {
+    ColumnController.prototype.setColumnGroupState = function (stateItems) {
+        var _this = this;
         this.columnAnimationService.start();
-        var groupToUse = this.getColumnGroup(passedGroup, instanceId);
-        if (!groupToUse) {
-            return;
-        }
-        this.logger.log('columnGroupOpened(' + groupToUse.getGroupId() + ',' + newValue + ')');
-        groupToUse.setExpanded(newValue);
+        var impactedGroups = [];
+        stateItems.forEach(function (stateItem) {
+            var groupKey = stateItem.groupId;
+            var newValue = stateItem.open;
+            var originalColumnGroup = _this.getOriginalColumnGroup(groupKey);
+            if (!originalColumnGroup) {
+                return;
+            }
+            if (originalColumnGroup.isExpanded() === newValue) {
+                return;
+            }
+            _this.logger.log('columnGroupOpened(' + originalColumnGroup.getGroupId() + ',' + newValue + ')');
+            originalColumnGroup.setExpanded(newValue);
+            impactedGroups.push(originalColumnGroup);
+        });
         this.updateGroupsAndDisplayedColumns();
-        var event = {
-            type: events_1.Events.EVENT_COLUMN_GROUP_OPENED,
-            columnGroup: groupToUse,
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        this.eventService.dispatchEvent(event);
+        impactedGroups.forEach(function (originalColumnGroup) {
+            var event = {
+                type: events_1.Events.EVENT_COLUMN_GROUP_OPENED,
+                columnGroup: originalColumnGroup,
+                api: _this.gridApi,
+                columnApi: _this.columnApi
+            };
+            _this.eventService.dispatchEvent(event);
+        });
         this.columnAnimationService.finish();
     };
-    // used by updateModel
-    ColumnController.prototype.getColumnGroupState = function () {
-        var groupState = {};
-        this.columnUtils.depthFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), function (child) {
-            if (child instanceof columnGroup_1.ColumnGroup) {
-                var columnGroup = child;
-                var key = columnGroup.getGroupId();
-                // if more than one instance of the group, we only record the state of the first item
-                if (!groupState.hasOwnProperty(key)) {
-                    groupState[key] = columnGroup.isExpanded();
-                }
-            }
-        });
-        return groupState;
+    // called by headerRenderer - when a header is opened or closed
+    ColumnController.prototype.setColumnGroupOpened = function (key, newValue) {
+        var keyAsString;
+        if (key instanceof originalColumnGroup_1.OriginalColumnGroup) {
+            keyAsString = key.getId();
+        }
+        else {
+            keyAsString = key;
+        }
+        this.setColumnGroupState([{ groupId: keyAsString, open: newValue }]);
     };
-    // used by updateModel
-    ColumnController.prototype.setColumnGroupState = function (groupState) {
-        this.columnUtils.depthFirstDisplayedColumnTreeSearch(this.getAllDisplayedColumnGroups(), function (child) {
-            if (child instanceof columnGroup_1.ColumnGroup) {
-                var columnGroup = child;
-                var key = columnGroup.getGroupId();
-                var shouldExpandGroup = groupState[key] === true && columnGroup.isExpandable();
-                if (shouldExpandGroup) {
-                    columnGroup.setExpanded(true);
+    ColumnController.prototype.getOriginalColumnGroup = function (key) {
+        if (key instanceof originalColumnGroup_1.OriginalColumnGroup) {
+            return key;
+        }
+        if (typeof key !== 'string') {
+            console.error('ag-Grid: group key must be a string');
+        }
+        // otherwise, search for the column group by id
+        var res = null;
+        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, function (node) {
+            if (node instanceof originalColumnGroup_1.OriginalColumnGroup) {
+                var originalColumnGroup = node;
+                if (originalColumnGroup.getId() === key) {
+                    res = originalColumnGroup;
                 }
             }
         });
+        return res;
     };
     ColumnController.prototype.calculateColumnsForDisplay = function () {
         var columnsForDisplay;
@@ -1522,12 +1538,8 @@ var ColumnController = (function () {
         return result;
     };
     ColumnController.prototype.updateDisplayedColumns = function () {
-        // save opened / closed state
-        var oldGroupState = this.getColumnGroupState();
         var columnsForDisplay = this.calculateColumnsForDisplay();
         this.buildDisplayedTrees(columnsForDisplay);
-        // restore opened / closed state
-        this.setColumnGroupState(oldGroupState);
         this.calculateColumnsForGroupDisplay();
         // this is also called when a group is opened or closed
         this.updateGroupsAndDisplayedColumns();

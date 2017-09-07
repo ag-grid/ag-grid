@@ -556,12 +556,19 @@ var CellComp = (function (_super) {
             return;
         }
         this.createCellRendererInstance();
-        if (typeof this.cellRendererGui === 'string') {
-            this.eParentOfValue.innerHTML = this.cellRendererGui;
+        if (typeof this.cellRendererGui !== 'object') {
+            //First check for simple return types
+            this.eParentOfValue.innerHTML = this.cellRendererGui + '';
             this.cellRendererGui = this.eParentOfValue.firstChild;
         }
-        else {
+        else if (this.cellRendererGui instanceof HTMLElement) {
+            //Is this an HTML Element
             this.eParentOfValue.appendChild(this.cellRendererGui);
+        }
+        else if (this.cellRendererGui.toString) {
+            //Lastly before given up... Does it have a toString
+            this.eParentOfValue.innerHTML = this.cellRendererGui.toString() + '';
+            this.cellRendererGui = this.eParentOfValue.firstChild;
         }
     };
     CellComp.prototype.createCellRendererParams = function (valueFormatted) {

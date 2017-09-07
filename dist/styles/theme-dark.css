@@ -427,6 +427,13 @@
     float: right; }
   .ag-dark .ag-rtl .ag-floating-filter-button {
     float: left; }
+  .ag-dark .ag-sort-order {
+    margin-left: .5em;
+    font-size: 0.80em; }
+    .ag-dark .ag-sort-order::before {
+      content: '('; }
+    .ag-dark .ag-sort-order::after {
+      content: ')'; }
 
 .ag-dark ::-webkit-scrollbar {
   width: 12px;
