@@ -60,22 +60,24 @@ $linkHref = "<a href='" . $link . "'>here</a>";
     .framework-select-small-title {
         text-align: center;
         font-size: 16px;
-        padding-top: 20px;
-        padding-bottom: 20px;
+        padding-bottom: 10px;
     }
     .framework-select-big-title {
         text-align: center;
-        padding-top: 40px;
-        padding-bottom: 40px;
+        padding-bottom: 10px;
     }
 </style>
 
 <div>
 
-    <h1 class="first-h framework-select-big-title">The Framework War</h1>
+    <h1 class="first-h framework-select-big-title">Choose Your Framework</h1>
 
     <p class="framework-select-small-title">
-        ag-Grid is Agnostic - We love all frameworks, but you must choose...
+        Some 'more simple' data grids support one framework.
+    </p>
+
+    <p class="framework-select-small-title">
+        ag-Grid has you covered when you move between frameworks.
     </p>
 
     <div class="row framework-select-list">
@@ -100,21 +102,21 @@ $linkHref = "<a href='" . $link . "'>here</a>";
             </a>
         </div>
         <div class="col-md-3">
-            <a href="../best-angularjs-data-grid/">
-                <div class="framework-select-item">
-                    <img src="../images/angularjs_large.png" alt="Angular Datagrid" title="Angular"/>
-                    <div class="framework-select-label">
-                        Angular
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
             <a href="../best-angular-2-data-grid/">
                 <div class="framework-select-item">
                     <img src="../images/angular2_large.png" alt="Angular 2 Datagrid" title="Angular"/>
                     <div class="framework-select-label">
                         Angular 2+
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="../best-angularjs-data-grid/">
+                <div class="framework-select-item">
+                    <img src="../images/angularjs_large.png" alt="Angular Datagrid" title="Angular"/>
+                    <div class="framework-select-label">
+                        Angular
                     </div>
                 </div>
             </a>

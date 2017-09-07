@@ -9,9 +9,8 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 id="implementing-the-angularjs-datagrid">
-        <img src="../images/svg/docs/getting_started.svg" width="50" alt="Getting Started"/>
-        <img style="vertical-align: middle" src="/images/angularjs.png" height="25px" alt="Angular"/>
+    <h1 class="first-h1" id="implementing-the-angularjs-datagrid">
+        <img style="vertical-align: middle" src="../images/angularjs_large.png" height="50px" alt="Angular"/>
         Angular Grid
     </h1>
 

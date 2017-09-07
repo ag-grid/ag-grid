@@ -9,12 +9,10 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>
-        <img src="../images/svg/docs/getting_started.svg" width="50"/>
-        <img style="vertical-align: middle" src="/images/angular2_small.png" height="25px"/>
-        Angular 2 Grid
+    <h1 class="first-h1">
+        <img style="vertical-align: middle" src="../images/angular2_large.png" height="50px"/>
+        Angular 2+ Datagrid - Getting Started
     </h1>
-    <h2>Getting Started</h2>
 
     <p>This section documents how to get started with ag-Grid and Angular as quickly as possible. You will start off with
         a simple application and section by section add Grid features to the application ending up with a fully fledged

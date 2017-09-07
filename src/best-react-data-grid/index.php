@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
     </div>
 
     <div class="list-group" style="margin-top: 20px;">
-        <a href="react-getting-started/" class="list-group-item">
+        <a href="../react-getting-started/" class="list-group-item">
             <div class="float-parent">
                 <div class="section-icon-container">
                     <img src="../images/svg/docs/getting_started.svg" width="50" />
@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
                 </p>
             </div>
         </a>
-        <a href="react-more-details/" class="list-group-item">
+        <a href="../react-more-details/" class="list-group-item">
             <div class="float-parent">
                 <div class="section-icon-container">
                     <img src="../images/svg/docs/more-details2.svg" width="50" />
@@ -44,7 +44,7 @@ include '../documentation-main/documentation_header.php';
                 </p>
             </div>
         </a>
-        <a href="example-react/" class="list-group-item">
+        <a href="../example-react/" class="list-group-item">
             <div class="float-parent">
                 <div class="section-icon-container">
                     <img src="../images/svg/docs/examples.svg" width="50" />
@@ -57,7 +57,7 @@ include '../documentation-main/documentation_header.php';
         </a>
     </div>
 
-    <?php include '../home/features.php'; ?>
+    <?php include '../home/features-detail.php'; ?>
 
 </div>
 
