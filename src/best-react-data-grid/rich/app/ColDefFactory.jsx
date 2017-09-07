@@ -1,10 +1,5 @@
 import SkillsCellRenderer from './SkillsCellRenderer.jsx';
-import NameCellEditor from './NameCellEditor.jsx';
 import ProficiencyCellRenderer from './ProficiencyCellRenderer.jsx';
-import RefData from './RefData';
-import SkillsFilter from './SkillsFilter.jsx';
-import ProficiencyFilter from './ProficiencyFilter.jsx';
-import HeaderGroupComponent from './HeaderGroupComponent.jsx';
 
 export default class ColDefFactory {
 
@@ -20,24 +15,17 @@ export default class ColDefFactory {
             },
             {
                 headerName: 'Employee',
-                headerGroupComponentFramework: HeaderGroupComponent,
                 children: [
                     {
                         headerName: "Name",
                         field: "name",
-                        enableRowGroup: true,
-                        enablePivot: true,
                         width: 150,
                         pinned: true,
                         editable: true,
-                        // use a React cellEditor
-                        cellEditorFramework: NameCellEditor
                     }, {
                         headerName: "Country",
                         field: "country",
                         width: 150,
-                        enableRowGroup: true,
-                        enablePivot: true,
                         // an example of using a non-React cell renderer
                         cellRenderer: countryCellRenderer,
                         pinned: true,
@@ -50,8 +38,6 @@ export default class ColDefFactory {
                         headerName: "DOB",
                         field: "dob",
                         width: 110,
-                        enableRowGroup: true,
-                        enablePivot: true,
                         filter: 'date',
                         pinned: true,
                         cellRenderer: function (params) {
@@ -71,22 +57,15 @@ export default class ColDefFactory {
                         width: 125,
                         suppressSorting: true,
                         field: 'skills',
-                        enableRowGroup: true,
-                        enablePivot: true,
                         // supply a React component
                         cellRendererFramework: SkillsCellRenderer,
-                        // supply a React component
-                        filterFramework: SkillsFilter
                     },
                     {
                         headerName: "Proficiency",
                         field: "proficiency",
                         width: 135,
-                        enableValue: true,
                         // supply a React component
                         cellRendererFramework: ProficiencyCellRenderer,
-                        // supply a React component
-                        filterFramework: ProficiencyFilter
                     }
                 ]
             },
@@ -105,10 +84,31 @@ export default class ColDefFactory {
 // this is a simple cell renderer, putting together static html, no
 // need to use React for it.
 function countryCellRenderer(params) {
+    const COUNTRY_CODES = {
+        Ireland: "ie",
+        Spain: "es",
+        "United Kingdom": "gb",
+        France: "fr",
+        Germany: "de",
+        Sweden: "se",
+        Italy: "it",
+        Greece: "gr",
+        Iceland: "is",
+        Portugal: "pt",
+        Malta: "mt",
+        Norway: "no",
+        Brazil: "br",
+        Argentina: "ar",
+        Colombia: "co",
+        Peru: "pe",
+        Venezuela: "ve",
+        Uruguay: "uy"
+    };
+
     if (params.value) {
         const flag = "<img border='0' width='15' height='10' " +
             "style='margin-bottom: 2px' src='http://flags.fmcdn.net/data/flags/mini/"
-            + RefData.COUNTRY_CODES[params.value] + ".png'>";
+            + COUNTRY_CODES[params.value] + ".png'>";
         return flag + " " + params.value;
     } else {
         return null;

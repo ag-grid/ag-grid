@@ -1,13 +1,14 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
-import RefData from './RefData';
 
 export default class SkillsCellRenderer extends React.Component {
+
+    IT_SKILLS = ['android', 'css', 'html5', 'mac', 'windows'];
 
     render() {
         var skills = [];
         var rowData = this.props.data;
-        RefData.IT_SKILLS.forEach( (skill) => {
+        this.IT_SKILLS.forEach( (skill) => {
             if (rowData && rowData.skills && rowData.skills[skill]) {
                 skills.push(<img key={skill} src={'/images/skills/' + skill + '.png'} width={16} title={skill} />);
             }

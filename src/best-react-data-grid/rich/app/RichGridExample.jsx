@@ -2,8 +2,6 @@ import React, {Component} from "react";
 import {AgGridReact} from "ag-grid-react";
 import RowDataFactory from "./RowDataFactory";
 import ColDefFactory from "./ColDefFactory.jsx";
-import DateComponent from "./DateComponent.jsx";
-import SortableHeaderComponent from "./SortableHeaderComponent";
 // take this line out if you do not want to use ag-Grid-Enterprise
 import "ag-grid-enterprise";
 
@@ -22,21 +20,8 @@ export default class RichGridExample extends Component {
                 sortDescending: '<i class="fa fa-long-arrow-up"/>',
                 groupExpanded: '<i class="fa fa-minus-square-o"/>',
                 groupContracted: '<i class="fa fa-plus-square-o"/>',
-                columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
-                columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
-            }
-        };
-
-        // the grid options are optional, because you can provide every property
-        // to the grid via standard React properties
-        this.gridOptions = {
-            // We register the react date component that ag-grid will use to render
-            dateComponentFramework: DateComponent,
-            defaultColDef: {
-                headerComponentFramework: SortableHeaderComponent,
-                headerComponentParams: {
-                    menuIcon: 'fa-bars'
-                }
+                columnGroupOpened: '<i class="fa fa-plus-square-o"/>',
+                columnGroupClosed: '<i class="fa fa-minus-square-o"/>'
             }
         };
 
