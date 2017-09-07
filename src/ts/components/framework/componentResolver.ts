@@ -9,8 +9,9 @@ import {NamedComponentResolver} from "./namedComponentResolver";
 import {AgGridComponentFunctionInput, AgGridRegisteredComponentInput} from "./componentProvider";
 import {AgComponentUtils} from "./agComponentUtils";
 import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
+import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
 
-export type ComponentHolder = GridOptions | ColDef | ColGroupDef;
+export type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams;
 
 export type AgComponentPropertyInput<A extends IComponent<any, IAfterGuiAttachedParams>> = AgGridRegisteredComponentInput<A> | string;
 
@@ -188,7 +189,7 @@ export class ComponentResolver {
      * @returns {any} It merges the user agGridParams with the actual params specified by the user.
      */
     public mergeParams(
-        holder: GridOptions|ColDef|ColGroupDef,
+        holder: ComponentHolder,
         propertyName: string,
         agGridParams: any
     ):any{
