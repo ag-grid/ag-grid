@@ -3,6 +3,7 @@ import {Column} from "../entities/column";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {_} from "../utils";
 import {ColDef} from "../entities/colDef";
+import {ColumnController} from "./columnController";
 
 @Bean('autoGroupColService')
 export class AutoGroupColService {
@@ -12,6 +13,7 @@ export class AutoGroupColService {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
+    @Autowired('columnController') private columnController: ColumnController;
 
     public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
         let groupAutoColumns: Column[] = [];
@@ -79,7 +81,7 @@ export class AutoGroupColService {
             let rowGroupColDef = rowGroupCol.getColDef();
             _.assign(defaultAutoColDef, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
-                headerName: rowGroupColDef.headerName,
+                headerName: this.columnController.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: rowGroupColDef.headerValueGetter
             });
 

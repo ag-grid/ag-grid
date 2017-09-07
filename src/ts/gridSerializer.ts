@@ -350,7 +350,8 @@ export class GridSerializer {
             let columnGroup: ColumnGroup = columnGroupChild as ColumnGroup;
             let colDef = columnGroup.getDefinition();
 
-            gridRowIterator.onColumn(colDef != null ? colDef.headerName : '', columnIndex++, columnGroup.getLeafColumns().length - 1);
+            let columnName = this.columnController.getDisplayNameForColumnGroup(columnGroup, 'header');
+            gridRowIterator.onColumn(columnName, columnIndex++, columnGroup.getLeafColumns().length - 1);
         });
     }
 }
