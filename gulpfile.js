@@ -37,7 +37,7 @@ gulp.task('bundle-site', () => {
         .pipe(gulp.dest('dist/dist'));
 });
 
-const SKIP_INLINE=true;
+const SKIP_INLINE=false;
 
 // the below caused errors if we tried to copy in from ag-grid and ag-grid-enterprise linked folders
 function processSrc() {
@@ -107,7 +107,7 @@ gulp.task('serve', cb => {
     })
 });
 
-gulp.task('serve-release', cb => {
+gulp.task('serve-release', () => {
     const php = cp.spawn('php', ['-S', '127.0.0.1:8080', '-t', 'dist'], { stdio: 'inherit' });
 
     process.on('exit', () => {

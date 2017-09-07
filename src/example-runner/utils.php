@@ -22,12 +22,14 @@ if (isset($_ENV['AG_DEV'])) {
 }
 
 function path_combine(...$parts) {
-    return join(DIRECTORY_SEPARATOR, $parts);
+    return join("/", $parts);
 }
 
 function moveIndexFirst($a, $b) {
     if ($a == "index.html") {
         return -1;
+    } elseif ($b == "index.html") {
+        return 1;
     } else {
         return strcmp($a, $b);
     }
@@ -35,10 +37,11 @@ function moveIndexFirst($a, $b) {
 
 function getDirContents($dir, &$results = array(), $prefix = ""){
     $files = scandir($dir);
+
     usort($files, 'moveIndexFirst');
 
     foreach($files as $key => $value){
-        $path = realpath($dir.DIRECTORY_SEPARATOR.$value);
+        $path = realpath($dir."/".$value);
         
         if (substr($value, 0, 1) == ".") {
             continue;
@@ -47,7 +50,7 @@ function getDirContents($dir, &$results = array(), $prefix = ""){
         if(!is_dir($path)) {
             $results[] = $prefix . $value;
         } else if($value != "." && $value != "..") {
-            getDirContents($path, $results, $prefix.$value.DIRECTORY_SEPARATOR);
+            getDirContents($path, $results, $prefix.$value."/");
         }
     }
 

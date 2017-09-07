@@ -4,7 +4,6 @@ include 'utils.php';
 $exampleDir = basename($_GET['example']);
 $exampleSection = basename($_GET['section']);
 $files = getDirContents(path_combine('..', $exampleSection, $exampleDir));
-array_shift($files); // drop index.php
 $scripts = array();
 $styles = array();
 $preview = isset($_GET['preview']);
