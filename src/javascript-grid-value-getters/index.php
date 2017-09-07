@@ -175,27 +175,28 @@ colDef.valueFormatter = function(params) {
     <ul>
         <li>Only one of column or columnGroup will be present, depending on whether it's
             a column or a column group.</li>
-        <li>Parameter <i>location</i> allows you to have different column names depending on
+        <li>Parameter <code>location</code> allows you to have different column names depending on
             where the column is appearing, eg you might want to have a different name when the column
             is in the column drop zone or the toolbar.</li>
     </ul>
 
     <p>
-        See the <a href="../javascript-grid-tool-panel/#toolPanelExample">Tool Panel Example</a> for an example of <i>headerValueGetter</i>
-        used in different locations, where you can change the header name depending on where the name appears.
+        See the <a href="../javascript-grid-tool-panel/#toolPanelExample">Tool Panel Example</a> for an example of
+        <code>headerValueGetter</code> used in different locations, where you can change the header name depending on
+        where the name appears.
     </p>
 
     <h2>Floating Cell Formatter</h2>
 
     <p>
-        Use <b>floatingCellFormatter</b> instead of <code>colDef.cellFormatter</code> to allow different formatting
+        Use <code>floatingCellFormatter</code> instead of <code>colDef.cellFormatter</code> to allow different formatting
         for pinned rows. If you don't specify a <code>colDef.floatingCellFormatter</code>, then <code>cellFormatter</code>
         will get used instead if it is present.
     </p>
 
     <note>
         You can use the same formatter for pinned rows and normal rows and check the row type.
-        You can check if the row is floating by checking params.node.floating property.
+        You can check if the row is floating by checking <code>params.node.floating</code> property.
     </note>
 
 </div>

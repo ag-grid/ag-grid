@@ -13,9 +13,9 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The section <a href="../javascript-grid-value-getters">Getters and Formatters</a>
-        explained how to use <i>valueGetter</i> and <i>valueFormatter</i>
+        explained how to use <code>valueGetter</code> and <code>valueFormatter</code>
         to get and format the value before displaying it. This section explains their
-        counterparts; <i>valueSetter</i> and <i>valueParser</i>, which are used for saving
+        counterparts; <code>valueSetter</code> and <code>valueParser</code>, which are used for saving
         edited values.
     </p>
 

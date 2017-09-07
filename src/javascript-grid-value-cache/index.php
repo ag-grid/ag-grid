@@ -13,39 +13,39 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The value cache is used for the results of <a href="../javascript-grid-value-getters">valueGetter's</a>.
-        If you are not using valueGetter's, then you do not need the value cache.
+        If you are not using value getters, then you do not need the value cache.
     </p>
 
     <p>
-        Each time the grid requires a value from a valueGetter, the valueGetter is executed. For most use cases,
-        this will not be an issue, as valueGetters will execute quickly and not have any noticeable performance
+        Each time the grid requires a value from a value getter, the <code>valueGetter</code> is executed. For most use
+        cases, this will not be an issue, as value getter will execute quickly and not have any noticeable performance
         implications for your application. However sometimes you might implement time intensive tasks in your
-        valueGetters. If this is the case, then you can opt to turn on the value cache to store the results of the
-        valueGetters.
+        value getters. If this is the case, then you can opt to turn on the value cache to store the results of the
+        value getters.
     </p>
 
     <p>
-        When the value cache is turned on, each time a valueGetter is executed, it's result is stored in the value cache.
-        If the data in the grid has not changed since the last time the valueGetter was used, then the value is retrieved
-        from the cache instead of executing the valueGetter again.
+        When the value cache is turned on, each time a value getter is executed, it's result is stored in the value cache.
+        If the data in the grid has not changed since the last time the value getter was used, then the value is retrieved
+        from the cache instead of executing the value getter again.
     </p>
 
     <p>
-        This value cache is for advanced users who have time consuming valueGetters and want to speed up their
-        applications by introducing a cache to reduce the number of times valueGetters get executed.
+        This value cache is for advanced users who have time consuming value getters and want to speed up their
+        applications by introducing a cache to reduce the number of times value getters get executed.
     </p>
 
     <note>
         <p>
             One client of ag-Grid had 1,000 rows and 20 columns in a grid. A lot of the columns were doing advanced
             maths, using third party maths API in the valueGetter for 8 of the columns. The client was also grouping
-            and the summing by the columns containing the valueGetters. This meant, if more rows were added, the grid
-            recomputed the aggregations, resulting in all the valueGetters getting called again, causing the grid
+            and the summing by the columns containing the value getters. This meant, if more rows were added, the grid
+            recomputed the aggregations, resulting in all the value getters getting called again, causing the grid
             to stall for around 1,000ms as rows were added.
         </p>
         <p>
-            Introducing the value cache meant the valueGetters were execute once when the initial data was loaded, so
-            the 1,000ms happened once. Then when delta changes came in, the valueGetters were only executed on the
+            Introducing the value cache meant the value getters were execute once when the initial data was loaded, so
+            the 1,000ms happened once. Then when delta changes came in, the value getters were only executed on the
             new records, giving an almost seamless experience to the user.
         </p>
     </note>
@@ -55,14 +55,14 @@ include '../documentation-main/documentation_header.php';
     <p>
         Below shows a grid demonstrating the value cache. The column on the right has a value getter
         that has a <code>console.log()</code>
-        statement. This will allow us to see exactly when the valueGetter is called. So it is best
+        statement. This will allow us to see exactly when the value getter is called. So it is best
         to open this example in a new tab and open up the development console. From the example,
         the following can be noted:
     </p>
 
     <ul>
         <li>
-            When the grid is initially loaded, the <b>valueGetter is called over 100 times</b>. This is for the following
+            When the grid is initially loaded, the <b>value getter is called over 100 times</b>. This is for the following
             reasons:
             <ul>
                 <li>The aggregation requires each value for the group total.</li>
@@ -70,17 +70,17 @@ include '../documentation-main/documentation_header.php';
             </ul>
         </li>
         <li>
-            As you <b>scroll up and down</b> the grid, the valueGetters are executed, as the DOM needs values for rendering.
+            As you <b>scroll up and down</b> the grid, the value getters are executed, as the DOM needs values for rendering.
         </li>
         <li>
-            As you <b>open and close groups</b>, the valueGetters are executed, as the DOM needs values for rendering.
+            As you <b>open and close groups</b>, the value getters are executed, as the DOM needs values for rendering.
         </li>
         <li>
             Now turn the value cache <b>on</b> by selecting the radio button at the top. The grid gets reset and then
-            works with the value cache on. Notice in the console that the valueGetter gets executed exactly 100 times,
-            once for each row. Even through the valueGetter result is used in two places (aggregation and rendering
-            the row), the valueGetter is only called once. Even scrolling and opening / closing the groups does not
-            result in the valueGetter getting executed again.
+            works with the value cache on. Notice in the console that the value getter gets executed exactly 100 times,
+            once for each row. Even through the value getter result is used in two places (aggregation and rendering
+            the row), the value getter is only called once. Even scrolling and opening / closing the groups does not
+            result in the value getter getting executed again.
         </li>
     </ul>
 
@@ -89,7 +89,7 @@ include '../documentation-main/documentation_header.php';
     <note>
         Note that the example still works fast when the value cache is turned off. This emphasises
         you don't need to turn the value cache on if your application is not getting slowed down by your
-        valueGetters.
+        value getters.
     </note>
 
     <h1>Value Cache Properties</h1>
@@ -106,9 +106,9 @@ include '../documentation-main/documentation_header.php';
     <h1 id="expiring">Expiring the Value Cache</h1>
 
     <p>
-        The value cache starts empty. Then as valueGetters execute, their results are stored and the value cache
+        The value cache starts empty. Then as value getters execute, their results are stored and the value cache
         fills up. Certain events trigger the value cache to be emptied. This is called expiring the value
-        cache. Once expired, every valueGetter will get executed again next time the value is needed.
+        cache. Once expired, every value getter will get executed again next time the value is needed.
         The events that cause the value cache to expire are the following:
     <ul>
         <li>New row data is set into the grid via <code>setRowData()</code> API or changing the
@@ -134,12 +134,12 @@ include '../documentation-main/documentation_header.php';
             <li>Editing is enabled.</li>
             <li>There are only 10 rows, so it's easier to count the number of cells.</li>
             <li>
-                There is another column <b>'Total x10'</b> which also uses a valueGetter and references
-                the original <b>'Total'</b>column, thus calling this valueGetter results in an additional call
-                to the original valueGetter.
+                There is another column <b>'Total x10'</b> which also uses a value getter and references
+                the original <b>'Total'</b>column, thus calling this value getter results in an additional call
+                to the original value getter.
             </li>
         </ul>
-        As before, we focus on the valueGetter of the <b>'Total'</b> column and can see how many times it
+        As before, we focus on the value getter of the <b>'Total'</b> column and can see how many times it
         gets called via the console. The following can be noted:
     </p>
     <ul>
@@ -153,22 +153,22 @@ include '../documentation-main/documentation_header.php';
             </ul>
         </li>
         <li>
-            Despite the values getting used multiple times, each valueGetter is executed exactly once.
+            Despite the values getting used multiple times, each value getter is executed exactly once.
             This can be observed by opening the development console and observing the log message
-            the valueGetter prints.
+            the value getter prints.
         </li>
         <li>
-            If you close and then re-open a group, the valueGetter's are not re-executed, even though
+            If you close and then re-open a group, the value getters are not re-executed, even though
             the values are needed to re-create the DOM elements that represent the cells.
         </li>
         <li>
-            Hitting <b>'Refresh Cells'</b> will refresh all the cells, but again the valueGetters will not get re-executed.
+            Hitting <b>'Refresh Cells'</b> will refresh all the cells, but again the value getters will not get re-executed.
         </li>
         <li>
-            Hitting <b>'Invalidate Cache'</b> and then <b>'Refresh Cells'</b> will result in the valueGetters
+            Hitting <b>'Invalidate Cache'</b> and then <b>'Refresh Cells'</b> will result in the value getters
             getting re-executed, as the cell refresh operation requires the values and the cache was invalidated.
             You will notice invalidating and then refreshing doesn't do anything noticeable to the grid, the
-            data is the same, the only hint that anything happened is the valueGetter's console messages.
+            data is the same, the only hint that anything happened is the value getter's console messages.
         </li>
         <li>
             Changing any value in the grid, either editing via the UI directly or hitting the
@@ -183,9 +183,9 @@ include '../documentation-main/documentation_header.php';
     <note>
         It is not possible to partially invalidate the cache, eg it is not possible to invalidate only a
         portion of the cells. You might think that if you update a cell, then you only need to invalidate
-        that row's data as the valueGetters can only access that row. That is not true - a valueGetter
+        that row's data as the value getters can only access that row. That is not true - a value getter
         is a function where you can take data from anywhere in the grid and the grid is none the wiser.
-        So if you change any value, then every single valueGetter is potentially impacted as far as the grid
+        So if you change any value, then every single value getter is potentially impacted as far as the grid
         is concerned so the whole value cache is invalidated.
     </note>
 
@@ -202,7 +202,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         If you have <code>valueCacheNeverExpires=true</code>, then the only event that
         will expire the value cache will be the <code>api.expireValueCache()</code> method. Use
-        this if your data is changing, but you don't want to execute valueGetter's again, or you
+        this if your data is changing, but you don't want to execute value getters again, or you
         want to control exactly when the value cache is expired.
     </p>
 
@@ -215,12 +215,12 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li>
-            When the grid initialises, there are 12 valueGetter calls. The values are getting cached.
+            When the grid initialises, there are 12 value getter calls. The values are getting cached.
         </li>
         <li>
             After you edit a cell, either through the UI or through the API by pressing <b>'Update One Value'</b>,
-            the valueGetters are not called again, so the total columns are not correctly refreshed. Because the
-            grid already executed the valueGetter's for this column, it will not do it again, it will instead take
+            the value getters are not called again, so the total columns are not correctly refreshed. Because the
+            grid already executed the value getter's for this column, it will not do it again, it will instead take
             values from the value cache.
         </li>
         <li>
