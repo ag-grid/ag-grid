@@ -112,39 +112,9 @@ npm start
     <p>Of course there is much more we can do - in the following sections we will build on this starting point. For our
         seed application here is the complete Component:</p>
 
-    <pre>
-<span class="codeComment">// src/app/my-grid-application/my-grid-application.component.ts</span>
-import {Component} from "@angular/core";
-import {RedComponentComponent} from "../red-component/red-component.component";
+    
+    <?= example('Simple Grid', 'hello-world', 'angular') ?>
 
-@Component({
-    selector: 'app-my-grid-application',
-    templateUrl: './my-grid-application.component.html'
-})
-export class MyGridApplicationComponent {
-    columnDefs;
-    rowData;
-
-    constructor() {
-        this.columnDefs = [
-            {headerName: "Make", field: "make"},
-            {headerName: "Model", field: "model", cellRendererFramework: RedComponentComponent},
-            {headerName: "Price", field: "price"}
-        ];
-
-        this.rowData = [
-            {make: "Toyota", model: "Celica", price: 35000},
-            {make: "Ford", model: "Mondeo", price: 32000},
-            {make: "Porsche", model: "Boxter", price: 72000}
-        ]
-    }
-
-    onGridReady(params) {
-        params.api.sizeColumnsToFit();
-    }
-}
-
-</pre>
 
     <h3>Adding Features</h3>
 

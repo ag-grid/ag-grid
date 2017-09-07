@@ -20,13 +20,13 @@ renderStyles($example['styles']);
 
     <!-- Polyfills -->
     <script src="https://unpkg.com/core-js/client/shim.min.js"></script>
-    <script src="https://unpkg.com/zone.js@0.7.4?main=browser"></script>
+    <script src="https://unpkg.com/zone.js@0.8.17?main=browser"></script>
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
 
     <script>
         var appLocation = '<?= $example['appLocation'] ?>';
         var boilerplatePath = '<?= $example['boilerplatePath'] ?>';
-        var agGridScriptPath = '<?= $example['agGridScriptPath'] ?>';
+        var systemJsMap = <?= json_encode($systemJsMap) ?>;
     </script>
 
     <script src="<?=$example['boilerplatePath']?>systemjs.config.js"></script>

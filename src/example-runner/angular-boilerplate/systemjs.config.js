@@ -45,9 +45,7 @@
             ]
         },
         // map tells the System loader where to look for things
-        map: {
-            'app': appLocation + 'app',
-            // our app is within the app folder, appLocation comes from index.html
+        map: Object.assign({
             // angular bundles
             '@angular/animations': 'npm:@angular/animations/bundles/animations.umd.js',
             '@angular/animations/browser': 'npm:@angular/animations/bundles/animations-browser.umd.js',
@@ -63,14 +61,14 @@
             '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
             '@angular/upgrade': 'npm:@angular/upgrade/bundles/upgrade.umd.js',
             '@angular/upgrade/static': 'npm:@angular/upgrade/bundles/upgrade-static.umd.js',
-
             'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
+
             'ts':                        'npm:plugin-typescript@5.2.7/lib/plugin.js',
             'typescript':                'npm:typescript@2.3.2/lib/typescript.js',
 
-            'ag-grid-angular': 'npm:ag-grid-angular',
-            'ag-grid': agGridScriptPath
-        },
+            // our app is within the app folder, appLocation comes from index.html
+            'app': appLocation + 'app'
+        }, systemJsMap),
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
             "app": {
@@ -82,13 +80,9 @@
                     }
                 }
             },
-            'ag-grid-angular': {
-                main: 'main.js'
-            },
             rxjs: {
                 defaultExtension: false
             }
         }
     });
-
 })(this);

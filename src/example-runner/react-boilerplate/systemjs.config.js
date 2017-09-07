@@ -5,7 +5,7 @@
         paths: {
             "npm:": 'https://unpkg.com/'
         }, 
-        map: {
+        map: Object.assign({
             // babel transpiler
             'plugin-babel': 'npm:systemjs-plugin-babel@0.0.25/plugin-babel.js',
             'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
@@ -16,14 +16,10 @@
             'react-dom-factories': 'npm:react-dom-factories',
             'prop-types': 'npm:prop-types',
 
-            // ag grid
-            'ag-grid': agGridScriptPath,
-            'ag-grid-enterprise': agGridEnterpriseScriptPath,
-            'ag-grid-react': agGridReactScriptPath,
-
             // example
             'app': appLocation + 'app'
-        },
+            // taken from index.html
+        }, systemJsMap),
 
         packages: {
             "react": {

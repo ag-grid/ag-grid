@@ -1,26 +1,24 @@
 <?php
+// $$VERSION$$ gets replaced in prod
 define('AG_GRID_VERSION', '$$VERSION$$');
 
-function getResourceUrl($package, $script) {
-    // dev mode
-    if (isset($_ENV['AG_DEV'])) {
-        return "http://{$_SERVER['HTTP_HOST']}/dist/$package/$script.js";
-    // production mode, return from unpkg
-    } else {
-        return "https://unpkg.com/$package@" . AG_GRID_VERSION . "/dist/$script.min.js";
-    }
-
-}
-
-define('AG_SCRIPT_PATH', getResourceUrl('ag-grid', 'ag-grid'));
-define('AG_ENTERPRISE_SCRIPT_PATH', getResourceUrl('ag-grid-enterprise', 'ag-grid-enterprise'));
-
-
 if (isset($_ENV['AG_DEV'])) {
-    define('AG_REACT_SCRIPT_PATH', "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-react/ag-grid-react.js");
+    $systemJsMap = array(
+        "ag-grid" =>                "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid/ag-grid.js",
+        "ag-grid-enterprise" =>     "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid/ag-grid.js",
+        "ag-grid-react" =>          "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-react/ag-grid-react.js",
+        // I can't make a bundle for angular , load it from NPM for now. This won't pick the local changes 
+        "ag-grid-angular" =>        "npm:ag-grid-angular@13.0.0/main.js"
+        // "ag-grid-angular" =>        "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-angular/ag-grid-angular.js"
+    );
 // production mode, return from unpkg
 } else {
-    define('AG_REACT_SCRIPT_PATH', "https://unpkg.com/ag-grid-react@" . AG_GRID_VERSION . "/main.js");
+    $systemJsMap = array(
+        "ag-grid" =>                "npm:ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.min.js",
+        "ag-grid-enterprise" =>     "npm:ag-grid-enterprise@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.min.js",
+        "ag-grid-react" =>          "npm:ag-grid-react@" . AG_GRID_VERSION . "/main.js",
+        "ag-grid-angular" =>        "npm:ag-grid-angular@" . AG_GRID_VERSION . "/main.js"
+    );
 }
 
 function path_combine(...$parts) {
@@ -33,7 +31,6 @@ function moveIndexFirst($a, $b) {
     } else {
         return strcmp($a, $b);
     }
-
 }
 
 function getDirContents($dir, &$results = array(), $prefix = ""){

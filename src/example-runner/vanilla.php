@@ -38,11 +38,8 @@ foreach ($files as $file) {
     <!-- font awesome -->
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <!-- you don't need ignore=notused in your code, this is just here to trick the cache -->
-    <script src="<?= AG_SCRIPT_PATH ?>"></script>
-<?php
-renderStyles($styles)
-?>
+    <script src="<?= $systemJsMap["ag-grid"] ?>"></script>
+<?php renderStyles($styles); ?>
 </head>
 <body>
 

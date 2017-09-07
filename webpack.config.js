@@ -15,12 +15,11 @@ module.exports = {
         "ag-grid-enterprise/ag-grid-enterprise": './src/_assets/ts/ag-grid-enterprise.ts',
         "ag-grid/ag-grid": './src/_assets/ts/ag-grid.ts',
         "ag-grid-react/ag-grid-react": "./src/_assets/ts/ag-grid-react.ts",
+        "ag-grid-angular/ag-grid-angular": "./src/_assets/ts/ag-grid-angular.ts",
         "site": './src/_assets/ts/site',
         
     },
-    externals: {
-        'angular': 'angular'
-    },
+    externals: [ 'angular', '@angular' ],
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "[name].js",
@@ -95,6 +94,11 @@ module.exports = {
         // new ExtractTextPlugin('styles.css'),
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-        new ForkTsCheckerWebpackPlugin({ tsconfig: './tsconfig.json' })
+        new ForkTsCheckerWebpackPlugin({ tsconfig: './tsconfig.json' }),
+        // angular needs this for some reason
+        new webpack.ContextReplacementPlugin(
+          /angular(\\|\/)core(\\|\/)@angular/,
+          path.resolve(__dirname, 'src')
+        )
     ]
 }
