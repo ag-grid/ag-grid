@@ -19,7 +19,7 @@ module.exports = {
         "site": './src/_assets/ts/site',
         
     },
-    externals: [ 'angular', '@angular' ],
+    externals: [ 'angular', 'react', 'react-dom' ],
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "[name].js",
