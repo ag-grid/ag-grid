@@ -4,7 +4,7 @@ const autoprefixer = require('autoprefixer');
 const webpack = require('webpack');
 const path = require('path');
 
-const host = '0.0.0.0';
+const host = '127.0.0.1';
 const port = 8080;
 const phpPort = 8888;
 

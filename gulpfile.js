@@ -94,8 +94,12 @@ function copyAgGridEnterpriseToDist() {
 }
 
 gulp.task('serve', cb => {
-    const php = cp.spawn('php', ['-S', '0.0.0.0:8888', '-t', 'src'], { stdio: 'inherit', env: { 'AG_DEV': 'true' } });
-    const gulp = cp.spawn('./node_modules/.bin/webpack-dev-server' , { stdio: 'inherit' } );
+    const webpackDevServerCmd = process.platform == 'win32' 
+        ? '.\\node_modules\\.bin\\webpack-dev-server.cmd' 
+        : './node_modules/.bin/webpack-dev-server' 
+
+    const php = cp.spawn('php', ['-S', '127.0.0.1:8888', '-t', 'src'], { stdio: 'inherit', env: { 'AG_DEV': 'true' } });
+    const gulp = cp.spawn(webpackDevServerCmd, { stdio: 'inherit' } );
 
     process.on('exit', () => {
         php.kill();
@@ -104,7 +108,7 @@ gulp.task('serve', cb => {
 });
 
 gulp.task('serve-release', cb => {
-    const php = cp.spawn('php', ['-S', '0.0.0.0:8080', '-t', 'dist'], { stdio: 'inherit' });
+    const php = cp.spawn('php', ['-S', '127.0.0.1:8080', '-t', 'dist'], { stdio: 'inherit' });
 
     process.on('exit', () => {
         php.kill();
