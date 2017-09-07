@@ -317,19 +317,22 @@ var GridApi = (function () {
     };
     GridApi.prototype.getRowNode = function (id) {
         if (utils_1.Utils.missing(this.inMemoryRowModel)) {
-            console.log('cannot call getRowNode unless using normal row model');
+            console.warn('ag-Grid: cannot call getRowNode unless using normal row model');
+            return;
         }
         return this.inMemoryRowModel.getRowNode(id);
     };
     GridApi.prototype.expandAll = function () {
         if (utils_1.Utils.missing(this.inMemoryRowModel)) {
-            console.log('cannot call expandAll unless using normal row model');
+            console.warn('ag-Grid: cannot call expandAll unless using normal row model');
+            return;
         }
         this.inMemoryRowModel.expandOrCollapseAll(true);
     };
     GridApi.prototype.collapseAll = function () {
         if (utils_1.Utils.missing(this.inMemoryRowModel)) {
-            console.log('cannot call collapseAll unless using normal row model');
+            console.warn('ag-Grid: cannot call collapseAll unless using normal row model');
+            return;
         }
         this.inMemoryRowModel.expandOrCollapseAll(false);
     };

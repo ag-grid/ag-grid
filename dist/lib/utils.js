@@ -917,6 +917,12 @@ var Utils = (function () {
         var eventNoType = event;
         return eventNoType.target || eventNoType.srcElement;
     };
+    Utils.forEachSnapshotFirst = function (list, callback) {
+        if (list) {
+            var arrayCopy = list.slice(0);
+            arrayCopy.forEach(callback);
+        }
+    };
     // taken from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
     Utils.getBodyWidth = function () {
         if (document.body) {

@@ -321,13 +321,18 @@ var GridPanel = (function (_super) {
         // the context menu if no rows are displayed, or user simply clicks outside of a cell
         var listener = function (mouseEvent) {
             var target = utils_1.Utils.getTarget(mouseEvent);
-            if (target === _this.eBodyViewport) {
+            if (target === _this.eBodyViewport || target === _this.ePinnedLeftColsViewport || target === _this.ePinnedRightColsViewport) {
                 // show it
                 _this.onContextMenu(mouseEvent);
                 _this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
+        //For some reason listening only to this.eBody doesnt work... Maybe because the event is consumed somewhere else?
+        //In any case, not expending much time on this, if anyome comes accross this and knows how to make this work with
+        //one listener please go ahead and change it...
         this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener);
+        this.addDestroyableEventListener(this.ePinnedRightColsViewport, 'contextmenu', listener);
+        this.addDestroyableEventListener(this.ePinnedLeftColsViewport, 'contextmenu', listener);
     };
     GridPanel.prototype.getRowForEvent = function (event) {
         var sourceElement = utils_1.Utils.getTarget(event);

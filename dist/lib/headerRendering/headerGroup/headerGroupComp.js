@@ -58,7 +58,7 @@ var HeaderGroupComp = (function (_super) {
         var _this = this;
         var expandAction = function () {
             var newExpandedValue = !_this.params.columnGroup.isExpanded();
-            _this.columnController.setColumnGroupOpened(_this.params.columnGroup, newExpandedValue);
+            _this.columnController.setColumnGroupOpened(_this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue);
         };
         var touchListener = new touchListener_1.TouchListener(this.eCloseIcon);
         this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, expandAction);

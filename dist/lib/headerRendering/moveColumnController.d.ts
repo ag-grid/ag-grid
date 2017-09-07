@@ -25,7 +25,6 @@ export declare class MoveColumnController {
     onDragLeave(draggingEvent: DraggingEvent): void;
     onDragStop(): void;
     private normaliseX(x);
-    private workOutNewIndex_old(displayedColumns, movingColumns, allColumns, dragColumn, hDirection, xAdjustedForScroll);
     private checkCenterForScrolling(xAdjustedForScroll);
     onDragging(draggingEvent: DraggingEvent, fromEnter?: boolean): void;
     private normaliseDirection(hDirection);

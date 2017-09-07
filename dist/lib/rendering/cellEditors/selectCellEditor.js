@@ -80,7 +80,6 @@ var SelectCellEditor = (function (_super) {
         this.eSelect.focus();
     };
     SelectCellEditor.prototype.getValue = function () {
-        console.log('value is ' + this.eSelect.value);
         return this.eSelect.value;
     };
     __decorate([
