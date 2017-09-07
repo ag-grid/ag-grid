@@ -25,7 +25,56 @@ var gridOptions = {
     },
     navigateToNextCell: myNavigateToNextCell,
     tabToNextCell: myTabToNextCell,
-    columnDefs: columnDefs
+    columnDefs: columnDefs,
+    enableSorting: true,
+    onGridReady: function (params) {
+        // note that the columms can be added/removed as the viewport changes
+        // be sure to remove old listeners when they're removed, and add new listeners when columns
+        // are added (using virtualColumnsChanged for example)
+
+        // store the colIds so that we can go along the columns
+        var columns = gridOptions.columnApi.getAllDisplayedVirtualColumns();
+        var colIds = columns.map(function (column) {
+            return column.colId
+        });
+
+        var tabIndex = 0;
+        columns.forEach(function (column) {
+            // for each column set a tabindex, otherwise it wont be able to get focus
+            let element = document.querySelector("div[col-id=" + column.colId + "] div.ag-header-cell-label");
+            element.setAttribute("tabindex", tabIndex++);
+
+            // register a listener for when a key is pressed on a column
+            element
+                .addEventListener('keydown', function (e) {
+                    // if a tab, navigate to the next column and focus on it
+                    // we loop back to the first column if the user is at the last visible column
+                    if (e.key === 'Tab') {
+                        var index = colIds.findIndex(function (colId) {
+                            return colId === column.colId
+                        });
+                        if (index === -1 || index === colIds.length - 1) {
+                            index = 0;
+                        } else {
+                            index = index + 1;
+                        }
+
+                        var nextElement = document.querySelector("div[col-id=" + colIds[index] + "] div.ag-header-cell-label");
+                        nextElement.focus();
+
+                        // otherwise it'll leap forward two columns
+                        e.preventDefault();
+                    } else if (e.key === 'Enter') {
+                        // on enter sort the column
+                        // you'll probably want to cycle through asc/desc/none here for each enter pressed
+                        var sort = [
+                            {colId: column.colId, sort: 'asc'}
+                        ];
+                        gridOptions.api.setSortModel(sort);
+                    }
+                })
+        })
+    }
 };
 
 function myTabToNextCell(params) {
@@ -35,8 +84,12 @@ function myTabToNextCell(params) {
 
     var renderedRowCount = gridOptions.api.getModel().getRowCount();
 
-    if (nextRowIndex < 0) { nextRowIndex = 0; }
-    if (nextRowIndex >= renderedRowCount) { nextRowIndex = renderedRowCount - 1; }
+    if (nextRowIndex < 0) {
+        nextRowIndex = 0;
+    }
+    if (nextRowIndex >= renderedRowCount) {
+        nextRowIndex = renderedRowCount - 1;
+    }
 
     var result = {
         rowIndex: nextRowIndex,
@@ -54,7 +107,7 @@ function myNavigateToNextCell(params) {
         case KEY_DOWN:
             // return the cell above
             var nextRowIndex = previousCell.rowIndex - 1;
-            if (nextRowIndex<0) {
+            if (nextRowIndex < 0) {
                 // returning null means don't navigate
                 return null;
             } else {
@@ -79,7 +132,7 @@ function myNavigateToNextCell(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
@@ -88,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', '../olympicWinners.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);

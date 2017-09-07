@@ -161,7 +161,7 @@ agGrid.LicenseManager.setLicenseKey("your license key")
 &lt;link rel="import" href="../bower_components/ag-grid-polymer/ag-grid-polymer.html"&gt;
 
 <span class="codeComment">&lt;!-- your code --&gt;</span>
-        &lt;link rel="import" href="main-component-one.html"&gt;</pre>
+&lt;link rel="import" href="main-component-one.html"&gt;</pre>
     
     <pre>
 <span class="codeComment">// main-component-one.html</span>
