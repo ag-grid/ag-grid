@@ -37,7 +37,8 @@ foreach ($files as $file) {
     <!-- font awesome -->
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <script src="<?= $systemJsMap["ag-grid"] ?>"></script>
+    <script src="<?= $systemJsMap[isset($_GET['enterprise']) ? "ag-grid-enterprise" : "ag-grid"] ?>"></script>
+
 <?php renderStyles($styles); ?>
 </head>
 <body>

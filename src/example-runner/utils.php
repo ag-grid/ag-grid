@@ -5,7 +5,7 @@ define('AG_GRID_VERSION', '$$VERSION$$');
 if (isset($_ENV['AG_DEV'])) {
     $systemJsMap = array(
         "ag-grid" =>                "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid/ag-grid.js",
-        "ag-grid-enterprise" =>     "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-enteprise/ag-grid-enteprise.js",
+        "ag-grid-enterprise" =>     "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-enterprise/ag-grid-enterprise.js",
         "ag-grid-react" =>          "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-react/ag-grid-react.js",
         // I can't make a bundle for angular , load it from NPM for now. This won't pick the local changes 
         // "ag-grid-angular" =>        "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-angular/ag-grid-angular.js"
@@ -71,8 +71,8 @@ function getBoilerplateConfig($type) {
 ATTR;
 }
 
-function toQueryString($key) {
-    return "$key=true";
+function toQueryString($key, $value) {
+    return "$key=$value";
 }
 
 function example($title, $dir, $type='vanilla', $options = array()) {
@@ -80,12 +80,24 @@ function example($title, $dir, $type='vanilla', $options = array()) {
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));
     $additional = getBoilerplateConfig($type);
 
+    $query = array(
+        "section" => $section,
+        "example" => $dir
+    );
+
     if ($options['extras']) {
-        $extras = '&' . join("&", array_map( 'toQueryString', $options['extras']));
-    } else {
-        $extras = '';
+        foreach($options['extras'] as $extra) {
+            $query[$extra] = "1";
+        }
     }
-    $resultUrl = "../example-runner/$type.php?section=$section&example=$dir$extras";
+
+    if ($options['enterprise']) {
+        $query['enterprise'] = true;
+    }
+
+    $queryString = join("&", array_map('toQueryString', array_keys($query), $query));
+
+    $resultUrl = "../example-runner/$type.php?$queryString";
     $jsonOptions = json_encode($options);
 
     return <<<NG
