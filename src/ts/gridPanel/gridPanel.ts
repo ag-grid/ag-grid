@@ -1625,7 +1625,7 @@ export class GridPanel extends BeanStub {
     public getBodyHeight(): number {
         return this.bodyHeight;
     }
-asdasdf
+
     public setHorizontalScrollPosition(hScrollPosition: number): void {
         this.eBodyViewport.scrollLeft = hScrollPosition;
 
