@@ -1,12 +1,10 @@
 import React from 'react';
 
-// cell renderer for the proficiency column. this is a very basic cell renderer,
-// it is arguable that we should not of used React and just returned a string of
-// html as a normal ag-Grid cellRenderer.
-export default class ProficiencyCellRenderer extends React.Component {
+// customer cell for the proficiency column
+export default class ProficiencyCustomCell extends React.Component {
 
     render() {
-        var backgroundColor;
+        let backgroundColor;
         if (this.props.value < 20) {
             backgroundColor = 'red';
         } else if (this.props.value < 60) {

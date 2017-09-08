@@ -1,4 +1,5 @@
-export default class RowDataFactory {
+// this class generates same data to use inside the grid
+export default class SampleRowDataFactory {
 
     createRowData() {
         const rowData = [];

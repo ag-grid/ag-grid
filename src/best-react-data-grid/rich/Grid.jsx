@@ -1,29 +1,21 @@
 import React, {Component} from "react";
 import {AgGridReact} from "ag-grid-react";
-import RowDataFactory from "./RowDataFactory";
-import ColDefFactory from "./ColDefFactory.jsx";
+import SampleRowDataFactory from "./SampleRowData.jsx";
+import ColumnDefinitionFactory from "./ColumnDefinitions.jsx";
 
 // take this line out if you do not want to use ag-Grid-Enterprise
 import "ag-grid-enterprise";
 
-export default class RichGridExample extends Component {
+export default class Grid extends Component {
 
     constructor() {
         super();
 
         this.state = {
-            columnDefs: new ColDefFactory().createColDefs(),
-            rowData: new RowDataFactory().createRowData(),
-            icons: {
-                columnRemoveFromGroup: '<i class="fa fa-remove"/>',
-                filter: '<i class="fa fa-filter"/>',
-                sortAscending: '<i class="fa fa-long-arrow-down"/>',
-                sortDescending: '<i class="fa fa-long-arrow-up"/>',
-                groupExpanded: '<i class="fa fa-minus-square-o"/>',
-                groupContracted: '<i class="fa fa-plus-square-o"/>',
-                columnGroupOpened: '<i class="fa fa-plus-square-o"/>',
-                columnGroupClosed: '<i class="fa fa-minus-square-o"/>'
-            }
+            // set the columns to use inside the grid
+            columnDefs: new ColumnDefinitionFactory().createColDefs(),
+            // set the row data to use inside the grid
+            rowData: new SampleRowDataFactory().createRowData()
         };
 
         this.onGridReady = this.onGridReady.bind(this);
@@ -44,9 +36,6 @@ export default class RichGridExample extends Component {
 
                     // listening for events
                     onGridReady={this.onGridReady}
-
-                    // binding to an object property
-                    icons={this.state.icons}
 
                     // binding to array properties
                     columnDefs={this.state.columnDefs}
