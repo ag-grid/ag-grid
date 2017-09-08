@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2 id="material-theme">Material Theme<sup class=new>new</sup></h2>
 
     <p>
-        The Material Next theme is available from <strong>version 13.0</strong> onwards. 
+        The New material theme is available from <strong>version 13.0</strong> onwards. 
         To comply with the <a href="https://material.io/guidelines/components/data-tables.html#">material design data table guidelines</a>, 
         the theme uses different spacing and icon set compared to the other themes. 
     </p>
@@ -29,7 +29,6 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 &lt;div ag-grid="gridOptions" class="ag-theme-material"&gt;&lt;/div&gt;</snippet>
-
 
     <h3>Include the Roboto Font</h3>
 
@@ -55,8 +54,8 @@ Put the following code in the HEAD element of your document: </p>
 $ag-mat-primary: #2196F3; // blue-500
 $ag-mat-accent: #FFD740; // amber-A200
 
-// Import the ag-Grid material-next theme
-@import '~ag-grid/src/styles/theme-material-next';</snippet>
+// Import the ag-Grid material theme
+@import '~ag-grid/src/styles/ag-theme-material';</snippet>
 
 <p>You can examine the full list of the variables that can be changed in the <a href="https://github.com/ag-grid/ag-grid/blob/latest/src/styles/ag-theme-material.scss#L17-L59">theme source file</a>.</p>
 

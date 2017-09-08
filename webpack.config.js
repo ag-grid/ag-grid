@@ -107,7 +107,7 @@ module.exports = {
         // new ExtractTextPlugin('styles.css'),
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-        new ForkTsCheckerWebpackPlugin({ tsconfig: './tsconfig.json' }),
+        new ForkTsCheckerWebpackPlugin({ tsconfig: path.resolve(__dirname, "./tsconfig.json") }),
         // angular needs this for some reason
         new webpack.ContextReplacementPlugin(
           /angular(\\|\/)core(\\|\/)@angular/,

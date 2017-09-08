@@ -9,7 +9,7 @@
         "noImplicitAny": false
     },
 
-    "include": [ "./src/_assets/**/*.ts" ],
+    "include": [ "./src/_assets/**/*.ts", "../ag-grid/src/ts/**/*.ts", "../ag-grid-enterprise/src/**/*.ts" ],
 
-    "exclude": [ "./node_modules" ]
+    "exclude": [ "node_modules" ]
 }

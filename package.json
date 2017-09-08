@@ -38,6 +38,7 @@
     "prismjs": "^1.6.0"
   },
   "devDependencies": {
+    "@types/core-js": "^0.9.43",
     "@types/jasmine": "2.5.x",
     "@types/selenium-webdriver": "3.0.x",
     "ag-grid-testing": "^0.0.2",
@@ -67,7 +68,7 @@
     "style-loader": "^0.18.2",
     "thread-loader": "^1.1.0",
     "ts-loader": "^2.3.2",
-    "typescript": "2.3.x",
+    "typescript": "2.4.1",
     "url-loader": "^0.5.9",
     "vinyl-named": "^1.1.0",
     "webdriver-manager": "12.0.x",
