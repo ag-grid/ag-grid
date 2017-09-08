@@ -179,23 +179,23 @@ export class AlignedGridsService {
         switch (colEvent.type) {
             case Events.EVENT_COLUMN_MOVED:
                 let movedEvent = <ColumnMovedEvent> colEvent;
-                this.logger.log('onColumnEvent-> processing '+event+' toIndex = ' + movedEvent.toIndex);
+                this.logger.log('onColumnEvent-> processing '+colEvent.type+' toIndex = ' + movedEvent.toIndex);
                 this.columnController.moveColumns(columnIds, movedEvent.toIndex);
                 break;
             case Events.EVENT_COLUMN_VISIBLE:
                 let visibleEvent = <ColumnVisibleEvent> colEvent;
-                this.logger.log('onColumnEvent-> processing '+event+' visible = '+ visibleEvent.visible);
+                this.logger.log('onColumnEvent-> processing '+colEvent.type+' visible = '+ visibleEvent.visible);
                 this.columnController.setColumnsVisible(columnIds, visibleEvent.visible);
                 break;
             case Events.EVENT_COLUMN_PINNED:
                 let pinnedEvent = <ColumnPinnedEvent> colEvent;
-                this.logger.log('onColumnEvent-> processing '+event+' pinned = '+ pinnedEvent.pinned);
+                this.logger.log('onColumnEvent-> processing '+colEvent.type+' pinned = '+ pinnedEvent.pinned);
                 this.columnController.setColumnsPinned(columnIds, pinnedEvent.pinned);
                 break;
             case Events.EVENT_COLUMN_RESIZED:
                 let resizedEvent = <ColumnResizedEvent> colEvent;
                 masterColumns.forEach( (masterColumn: Column)=> {
-                    this.logger.log('onColumnEvent-> processing '+event+' actualWidth = '+ masterColumn.getActualWidth());
+                    this.logger.log('onColumnEvent-> processing '+colEvent.type+' actualWidth = '+ masterColumn.getActualWidth());
                     this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), resizedEvent.finished);
                 });
                 break;
