@@ -1,9 +1,12 @@
 import {Component, ViewEncapsulation} from "@angular/core";
 import {ColumnApi, GridApi, GridOptions} from "ag-grid/main";
 
-import RefData from "./data/refData";
 // only import this if you are using the ag-Grid-Enterprise
 import "ag-grid-enterprise/main";
+
+import RefData from "./data/refData";
+import {SkillsRendererComponent} from "./skills-renderer.component";
+import {ProficiencyCellRenderer} from "./proficiency-renderer.component";
 
 @Component({
     selector: 'my-app',
@@ -40,12 +43,10 @@ export class RichGridComponent {
         this.columnDefs = this.createColumnDefs();
     }
 
-
     private onReady(params) {
         this.api = params.api;
         this.columnApi = params.columnApi;
     }
-
 
     private createRowData() {
         const rowData: any[] = [];
@@ -102,10 +103,13 @@ export class RichGridComponent {
                         // an example of using a non-React cell renderer
                         cellRenderer: countryCellRenderer,
                         pinned: true,
+                        filter: 'set',
                         filterParams: {
                             cellRenderer: countryCellRenderer,
                             cellHeight: 20
-                        }
+                        },
+                        cellEditor: 'richSelect',
+                        editable: true
                     },
                     {
                         headerName: "Date of Birth",
@@ -129,13 +133,15 @@ export class RichGridComponent {
                         headerName: "Skills",
                         width: 125,
                         suppressSorting: true,
-                        cellRenderer: skillsCellRenderer
+                        // supply an angular component
+                        cellRendererFramework: SkillsRendererComponent
                     },
                     {
                         headerName: "Proficiency",
                         field: "proficiency",
                         width: 135,
-                        cellRenderer: percentCellRenderer
+                        // supply an angular component
+                        cellRendererFramework: ProficiencyCellRenderer
                     },
                 ]
             },
@@ -153,17 +159,6 @@ export class RichGridComponent {
     }
 }
 
-function skillsCellRenderer(params) {
-    const data = params.data;
-    const skills = [];
-    RefData.IT_SKILLS.forEach(function (skill) {
-        if (data && data.skills && data.skills[skill]) {
-            skills.push('<img src="/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
-        }
-    });
-    return skills.join(' ');
-}
-
 function countryCellRenderer(params) {
     const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='/images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
     return flag + " " + params.value;
@@ -178,32 +173,6 @@ function createRandomPhoneNumber() {
         }
     }
     return result;
-}
-
-function percentCellRenderer(params) {
-    const value = params.value;
-
-    const eDivPercentBar = document.createElement('div');
-    eDivPercentBar.className = 'div-percent-bar';
-    eDivPercentBar.style.width = value + '%';
-    if (value < 20) {
-        eDivPercentBar.style.backgroundColor = 'red';
-    } else if (value < 60) {
-        eDivPercentBar.style.backgroundColor = '#ff9900';
-    } else {
-        eDivPercentBar.style.backgroundColor = '#00A000';
-    }
-
-    const eValue = document.createElement('div');
-    eValue.className = 'div-percent-value';
-    eValue.innerHTML = value + '%';
-
-    const eOuterDiv = document.createElement('div');
-    eOuterDiv.className = 'div-outer-div';
-    eOuterDiv.appendChild(eValue);
-    eOuterDiv.appendChild(eDivPercentBar);
-
-    return eOuterDiv;
 }
 
 //Utility function used to pad the date formatting.
