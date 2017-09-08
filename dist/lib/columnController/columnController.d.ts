@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.0.0
+// Type definitions for ag-grid v13.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -20,6 +20,15 @@ export declare class ColumnApi {
     setColumnState(columnState: any): boolean;
     getColumnState(): any[];
     resetColumnState(): void;
+    getColumnGroupState(): {
+        groupId: string;
+        open: boolean;
+    }[];
+    setColumnGroupState(stateItems: ({
+        groupId: string;
+        open: boolean;
+    })[]): void;
+    resetColumnGroupState(): void;
     isPinning(): boolean;
     isPinningLeft(): boolean;
     isPinningRight(): boolean;
@@ -250,10 +259,15 @@ export declare class ColumnController {
     isReady(): boolean;
     private extractRowGroupColumns();
     private extractPivotColumns();
-    setColumnGroupState(stateItems: ({
+    resetColumnGroupState(): void;
+    getColumnGroupState(): {
         groupId: string;
         open: boolean;
-    })[]): void;
+    }[];
+    setColumnGroupState(stateItems: {
+        groupId: string;
+        open: boolean;
+    }[]): void;
     setColumnGroupOpened(key: OriginalColumnGroup | string, newValue: boolean): void;
     getOriginalColumnGroup(key: OriginalColumnGroup | string): OriginalColumnGroup;
     private calculateColumnsForDisplay();

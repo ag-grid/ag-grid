@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.0.0
+// Type definitions for ag-grid v13.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -119,6 +119,8 @@ export interface GridOptions {
     embedFullWidthRows?: boolean;
     excelStyles?: any[];
     floatingFilter?: boolean;
+    suppressExcelExport: boolean;
+    suppressCsvExport: boolean;
     colWidth?: number;
     minColWidth?: number;
     maxColWidth?: number;

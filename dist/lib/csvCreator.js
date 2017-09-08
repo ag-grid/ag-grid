@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.0
+ * @version v13.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -133,6 +133,10 @@ var BaseCreator = (function () {
     function BaseCreator() {
     }
     BaseCreator.prototype.export = function (userParams) {
+        if (this.isExportSuppressed()) {
+            console.warn("ag-grid: Export canceled. Export is not allowed as per your configuration.");
+            return "";
+        }
         var _a = this.getMergedParamsAndData(userParams), mergedParams = _a.mergedParams, data = _a.data;
         var fileNamePresent = mergedParams && mergedParams.fileName && mergedParams.fileName.length !== 0;
         var fileName = fileNamePresent ? mergedParams.fileName : this.getDefaultFileName();
@@ -194,6 +198,9 @@ var CsvCreator = (function (_super) {
     };
     CsvCreator.prototype.createSerializingSession = function (params) {
         return new CsvSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params ? params.processCellCallback : null, params ? params.processHeaderCallback : null, params && params.suppressQuotes, (params && params.columnSeparator) || ',');
+    };
+    CsvCreator.prototype.isExportSuppressed = function () {
+        return this.gridOptionsWrapper.isSuppressCsvExport();
     };
     __decorate([
         context_1.Autowired('columnController'),

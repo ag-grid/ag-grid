@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.0
+ * @version v13.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -234,12 +234,14 @@ var GridSerializer = (function () {
         }
     };
     GridSerializer.prototype.doAddHeaderHeader = function (gridSerializingSession, displayedGroups) {
+        var _this = this;
         var gridRowIterator = gridSerializingSession.onNewHeaderGroupingRow();
         var columnIndex = 0;
         displayedGroups.forEach(function (columnGroupChild) {
             var columnGroup = columnGroupChild;
             var colDef = columnGroup.getDefinition();
-            gridRowIterator.onColumn(colDef != null ? colDef.headerName : '', columnIndex++, columnGroup.getLeafColumns().length - 1);
+            var columnName = _this.columnController.getDisplayNameForColumnGroup(columnGroup, 'header');
+            gridRowIterator.onColumn(columnName, columnIndex++, columnGroup.getLeafColumns().length - 1);
         });
     };
     __decorate([

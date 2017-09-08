@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.0
+ * @version v13.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,6 +19,7 @@ var context_1 = require("../context/context");
 var column_1 = require("../entities/column");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var utils_1 = require("../utils");
+var columnController_1 = require("./columnController");
 var AutoGroupColService = (function () {
     function AutoGroupColService() {
     }
@@ -79,7 +80,7 @@ var AutoGroupColService = (function () {
             var rowGroupColDef = rowGroupCol.getColDef();
             utils_1._.assign(defaultAutoColDef, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
-                headerName: rowGroupColDef.headerName,
+                headerName: this.columnController.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: rowGroupColDef.headerValueGetter
             });
             if (rowGroupColDef.cellRenderer) {
@@ -107,6 +108,10 @@ var AutoGroupColService = (function () {
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)
     ], AutoGroupColService.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('columnController'),
+        __metadata("design:type", columnController_1.ColumnController)
+    ], AutoGroupColService.prototype, "columnController", void 0);
     AutoGroupColService = AutoGroupColService_1 = __decorate([
         context_1.Bean('autoGroupColService')
     ], AutoGroupColService);

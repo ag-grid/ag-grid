@@ -1,11 +1,12 @@
-// Type definitions for ag-grid v13.0.0
+// Type definitions for ag-grid v13.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "../../entities/gridOptions";
 import { IAfterGuiAttachedParams, IComponent } from "../../interfaces/iComponent";
 import { ColDef, ColGroupDef } from "../../entities/colDef";
 import { AgGridRegisteredComponentInput } from "./componentProvider";
-export declare type ComponentHolder = GridOptions | ColDef | ColGroupDef;
+import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
+export declare type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams;
 export declare type AgComponentPropertyInput<A extends IComponent<any, IAfterGuiAttachedParams>> = AgGridRegisteredComponentInput<A> | string;
 export declare enum ComponentType {
     AG_GRID = 0,
@@ -66,7 +67,7 @@ export declare class ComponentResolver {
      *      specified by the user in the configuration
      * @returns {any} It merges the user agGridParams with the actual params specified by the user.
      */
-    mergeParams(holder: GridOptions | ColDef | ColGroupDef, propertyName: string, agGridParams: any): any;
+    mergeParams(holder: ComponentHolder, propertyName: string, agGridParams: any): any;
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
      * It takes
