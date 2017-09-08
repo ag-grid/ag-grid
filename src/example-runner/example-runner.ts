@@ -129,7 +129,7 @@ class ExampleRunner {
             this.files = [ 'index.html' ].concat(this.files);
         }
 
-        this.selectedTab = this.options.showResult ? 'result' : 'code';
+        this.selectedTab = this.options.showResult === false ? 'code' : 'result';
 
         if (this.options.initialFile) {
             this.selectedFile = this.options.initialFile;

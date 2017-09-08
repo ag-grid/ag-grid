@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     <p>The final setup looks like this:</p>
 
-<?= example('Simple ag-Grid Example', 'hello-world') ?>
+<?= example('Simple ag-Grid Example', 'hello-world', 'vanilla', array("showResult" => false)) ?>
 
     <p>We encourage you to experiment with the plunker above - try adding new rows of data for example or renaming
         column headers.</p>
