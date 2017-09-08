@@ -1,6 +1,6 @@
 {
   "name": "ag-grid",
-  "version": "13.0.0",
+  "version": "13.1.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "scripts": {

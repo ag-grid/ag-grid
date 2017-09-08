@@ -1,15 +1,16 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.0
+ * @version v13.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-global.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
-global.HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? {} : HTMLButtonElement;
-global.HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? {} : HTMLSelectElement;
-global.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTMLInputElement;
+var globalObj = typeof global === 'undefined' ? {} : global;
+globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
+globalObj.HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? {} : HTMLButtonElement;
+globalObj.HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? {} : HTMLSelectElement;
+globalObj.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTMLInputElement;
 // columnController
 var balancedColumnTreeBuilder_1 = require("./dist/lib/columnController/balancedColumnTreeBuilder");
 exports.BalancedColumnTreeBuilder = balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder;

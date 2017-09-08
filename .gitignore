@@ -16,7 +16,4 @@ src/ts/**/*.js
 
 ag-grid.iml
 
-dist/
-.cache-loader
-.DS_Store
-.sass-cache
+
