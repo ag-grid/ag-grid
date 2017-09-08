@@ -8,7 +8,7 @@ import {generateBindables} from "./agUtils";
     'valueGetter','keyCreator','headerCellRenderer','headerCellTemplate','width','minWidth','maxWidth','cellClass',
     'cellStyle','cellRenderer','cellRendererFramework','cellRendererParams','cellEditor','cellEditorFramework','cellEditorParams',
     'floatingCellRenderer','floatingCellRendererFramework','floatingCellRendererParams','cellFormatter(','floatingCellFormatter',
-    'aggFunc','rowGroupIndex','pivotIndex','comparator','checkboxSelection','suppressMenu','suppressSorting','suppressMovable',
+    'getQuickFilterText', 'aggFunc','rowGroupIndex','pivotIndex','comparator','checkboxSelection','suppressMenu','suppressSorting','suppressMovable',
     'suppressFilter','unSortIcon','suppressSizeToFit','suppressResize','suppressAutoSize','enableRowGroup','enablePivot',
     'enableValue','editable','suppressNavigable','newValueHandler','volatile','filter','filterFramework','filterParams','cellClassRules',
     'onCellValueChanged','onCellClicked','onCellDoubleClicked','onCellContextMenu','icons','enableCellChangeFlash','headerName',
