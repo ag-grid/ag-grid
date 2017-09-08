@@ -49,7 +49,7 @@ include '../documentation-main/documentation_header.php';
                 </div>
                 <h4 class="list-group-item-heading">Building</h4>
                 <p class="list-group-item-text">
-                    Documenting using Angular CLI, Webpack, Webpack 2 and SystemJS to build your ag-Grid application.</p>
+                    Documenting using Angular CLI, Webpack, Webpack 2, ngTools & Webpack and SystemJS to build your ag-Grid application.</p>
             </div>
         </a>
         <a href="../example-angular/" class="list-group-item">
