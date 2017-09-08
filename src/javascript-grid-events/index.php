@@ -323,6 +323,8 @@ CellValueChangedEvent {
     │     }</span>
     ├── BodyScrollEvent <span class="event-properties">{
     │       <span class="event-attribute">direction</span>: string // either 'horizontal' or 'vertical'
+    │       <span class="event-attribute">top</span>: number // top px of the scroll
+    │       <span class="event-attribute">left</span>: number // left px of the scroll
     │     }</span>
     ├── PaginationChangedEvent <span class="event-properties">{
     │       <span class="event-attribute">animate</span>: boolean, // true if rows were animated to new position

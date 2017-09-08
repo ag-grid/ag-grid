@@ -13,6 +13,12 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+    <h2>NEXT</h2>
+
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>AG-755: when using 'aligned grids', removed infinite loop on horizontal scroll</li>
+    </ul>
 
     <h2>Version 13.1.x</h2>
     <h3>Version 13.1.1 [08-SEP-2017]</h3>
