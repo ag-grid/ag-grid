@@ -32,7 +32,7 @@
     <p>A VueJS component can be defined in a few different ways (please see <a href="/best-vuejs-data-grid#define_component">
         Defining VueJS Components</a> for all the options), but in this example we're going to define our renderer as a Single File Component:</p>
 
-<snippet>
+<snippet ng-non-bindable>
 // create your cell renderer as a VueJS component
 &lt;template&gt;
     &lt;span class="currency"&gt;{{ params.value | currency('EUR') }}&lt;/span&gt;

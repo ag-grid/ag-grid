@@ -93,11 +93,11 @@ function onBtStopEditing() {
 }
 
 function onBtStartEditing(key, char) {
-    gridOptions.api.setFocusedCell(0, 'address');
+    gridOptions.api.setFocusedCell(0, 'last_name');
 
     gridOptions.api.startEditingCell({
         rowIndex: 0,
-        colKey: 'address',
+        colKey: 'last_name',
         keyPress: key,
         charPress: char
     });

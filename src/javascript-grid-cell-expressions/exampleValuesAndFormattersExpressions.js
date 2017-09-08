@@ -1,5 +1,5 @@
 var columnDefs = [
-    {headerName: "String (editable)", field: "simple", editable: true, width: 160, valueGetter: 'column.colId'},
+    {headerName: "String (editable)", field: "simple", editable: true, width: 160},
     {headerName: "Bad Number (editable)", field: "numberBad", editable: true, width: 200},
     {headerName: "Good Number (editable)", field: "numberGood", editable: true, width: 200,
         valueFormatter: '"£" + Math.floor(value).toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, "$1,")',
