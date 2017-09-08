@@ -2,8 +2,6 @@ import React, {Component} from "react";
 import {AgGridReact} from "ag-grid-react";
 import SampleRowDataFactory from "./SampleRowData.jsx";
 import ColumnDefinitionFactory from "./ColumnDefinitions.jsx";
-
-// take this line out if you do not want to use ag-Grid-Enterprise
 import "ag-grid-enterprise";
 
 export default class Grid extends Component {

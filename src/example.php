@@ -1,3 +1,6 @@
+<?php
+require "example-runner/utils.php";
+?>
 <!DOCTYPE html>
 <html class="height-100">
 
@@ -63,7 +66,7 @@
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
 
-    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js"></script>
+    <?= globalAgGridScript(true) ?>
 
     <script src="example.js"></script>
 
