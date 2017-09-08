@@ -24,6 +24,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-738: pinning columns by dragging mouse to edge was broke</li>
         <li>AG-739: event columnGroupOpened had reference to column rather than the original column group</li>
         <li>AG-729: ag-row-focus CSS class was getting added to every row</li>
+        <li>AG-743: aligned grids was not working in Firefox</li>
     </ul>
 
     <h4>Enhancements</h4>
