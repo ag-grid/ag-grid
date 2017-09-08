@@ -189,7 +189,7 @@ import 'ag-grid-enterprise/main';
     <snippet>
 function waitForGridApiToBeAvailable(gridOptions, success) {
     // recursive without a terminating condition, 
-    // but jasmines default test timeout will kill it (asmine.DEFAULT_TIMEOUT_INTERVAL)
+    // but jasmines default test timeout will kill it (jasmine.DEFAULT_TIMEOUT_INTERVAL)
     if(gridOptions.api) {
         success()
     } else {
