@@ -2,7 +2,7 @@ import {Component, ViewEncapsulation} from "@angular/core";
 import {ColumnApi, GridApi, GridOptions} from "ag-grid/main";
 
 // only import this if you are using the ag-Grid-Enterprise
-import "ag-grid-enterprise/main";
+import "ag-grid-enterprise";
 
 import RefData from "./data/refData";
 import {SkillsRendererComponent} from "./skills-renderer.component";
@@ -109,6 +109,12 @@ export class RichGridComponent {
                             cellHeight: 20
                         },
                         cellEditor: 'richSelect',
+                        cellEditorParams: {
+                            values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
+                                "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
+                                "Uruguay", "Venezuela", "Belgium", "Luxembourg"],
+                            cellRenderer: countryCellRenderer,
+                        },
                         editable: true
                     },
                     {
