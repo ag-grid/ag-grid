@@ -13,8 +13,9 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h2>NEXT</h2>
 
+    <h2>Version 13.1.x</h2>
+    <h3>Version 13.1.1 [08-SEP-2017]</h3>
     <h4>Bug Fixes</h4>
     <ul>
         <li>AG-746: fixing bug where an error is thrown if a renderer returns something other than a string or a Dom Element</li>
@@ -41,7 +42,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-651: allow saving / restoring col group 'open/closed' state</li>
     </ul>
 
-    <h2>Version 13.1.x</h2>
+
     <h3>Version 13.1.0 [01-SEP-2017]</h3>
     <h4>Revert of Breaking Change</h4>
 
