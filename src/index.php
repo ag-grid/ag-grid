@@ -1,3 +1,6 @@
+<?php
+require "example-runner/utils.php"
+?>
 <!DOCTYPE html>
 <html>
 <head lang="en">
@@ -147,7 +150,7 @@ include 'includes/navbar.php'; ?>
 <?php $navKey = "home";
 include './includes/footer.php'; ?>
 
-<script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js"></script>
+<?= globalAgGridScript(true) ?>
 
 <link inline href="example-file-browser/fileBrowser.css" rel="stylesheet">
 <link inline href="best-angularjs-data-grid/basic.css" rel="stylesheet">

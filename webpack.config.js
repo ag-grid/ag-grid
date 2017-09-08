@@ -22,8 +22,16 @@ module.exports = {
         'angular': 'angular', 
         'react': 'react', 
         'react-dom': 'react-dom', 
-        'ag-grid': 'ag-grid', 
-        'ag-grid/main': 'ag-grid' 
+        'ag-grid': { 
+            'commonjs': 'ag-grid',
+            'commonjs2': 'ag-grid',
+            'root': 'agGrid'
+        }, 
+        'ag-grid/main': { 
+            'commonjs': 'ag-grid',
+            'commonjs2': 'ag-grid',
+            'root': 'agGrid'
+        }, 
     },
     output: {
         path: path.resolve(__dirname, "dist"),

@@ -28,6 +28,35 @@ if (USE_LOCAL) {
     );
 }
 
+define(AG_GRID_SCRIPT_PATH, $systemJsMap['ag-grid']);
+define(AG_GRID_ENTERPRISE_SCRIPT_PATH, $systemJsMap['ag-grid-enterprise']);
+
+function globalAgGridScript($enteprise = false) {
+$agGrid = AG_GRID_SCRIPT_PATH;
+$agGridEnterprise = AG_GRID_ENTERPRISE_SCRIPT_PATH;
+
+    if (!$enteprise) {
+        $output = <<<SCR
+    <script src="$agGrid"></script>
+SCR;
+    } else {
+        if (USE_LOCAL) {
+            $output = <<<SCR
+        <script src="$agGrid"></script>
+        <script> window['ag-grid'] = agGrid; </script>
+        <script src="$agGridEnterprise"></script>
+        <script> agGrid = window['ag-grid']; </script>
+SCR;
+        } else {
+            $output = <<<SCR
+    <script src="$agGridEnterprise"></script>
+SCR;
+        }
+    }
+
+    return $output;
+}
+
 function path_combine(...$parts) {
     return join("/", $parts);
 }
