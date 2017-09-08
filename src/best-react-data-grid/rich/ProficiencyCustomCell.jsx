@@ -1,6 +1,6 @@
 import React from 'react';
 
-// customer cell for the proficiency column
+// custom cell for the proficiency column
 export default class ProficiencyCustomCell extends React.Component {
 
     render() {

@@ -1,11 +1,9 @@
 import {Component, ViewEncapsulation} from "@angular/core";
 import {ColumnApi, GridApi, GridOptions} from "ag-grid/main";
-
 // only import this if you are using the ag-Grid-Enterprise
 import "ag-grid-enterprise";
 
 import RefData from "./data/refData";
-import {SkillsRendererComponent} from "./skills-renderer.component";
 import {ProficiencyCellRenderer} from "./proficiency-renderer.component";
 
 @Component({
@@ -133,29 +131,17 @@ export class RichGridComponent {
                 ]
             },
             {
-                headerName: 'IT Skills',
-                children: [
-                    {
-                        headerName: "Skills",
-                        width: 125,
-                        suppressSorting: true,
-                        // supply an angular component
-                        cellRendererFramework: SkillsRendererComponent
-                    },
-                    {
-                        headerName: "Proficiency",
-                        field: "proficiency",
-                        width: 135,
-                        // supply an angular component
-                        cellRendererFramework: ProficiencyCellRenderer
-                    },
-                ]
+                headerName: "Proficiency",
+                field: "proficiency",
+                width: 135,
+                // supply an angular component
+                cellRendererFramework: ProficiencyCellRenderer
             },
             {
                 headerName: 'Contact',
                 children: [
                     {headerName: "Mobile", field: "mobile", width: 150, filter: 'text'},
-                    {headerName: "Land-line", field: "landline", width: 150, filter: 'text'},
+                    {headerName: "Landline", field: "landline", width: 150, filter: 'text'},
                     {headerName: "Address", field: "address", width: 500, filter: 'text'}
                 ]
             }
