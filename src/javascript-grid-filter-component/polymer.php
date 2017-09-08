@@ -29,7 +29,7 @@
         as Polymer components.
     </p>
 
-    <snippet>
+    <snippet ng-non-bindable>
 // create your filter as a Polymer component
 &lt;dom-module id="partial-match-filter"&gt;
     &lt;template&gt;
@@ -120,7 +120,7 @@ colDef = {
 
     <p>The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the 'filter params'.</p>
 
-    <snippet>
+<snippet ng-non-bindable>
 agInit(params:IFilterParams):void {
     this.params = params;
     this.valueGetter = params.valueGetter;
@@ -149,7 +149,7 @@ agInit(params:IFilterParams):void {
         method. If your component is a Polymer component, then this will give you a reference to the ag-Grid's
         Component which wraps your Polymer Component. Just like Russian Dolls. To get to the wrapped Polymer instance
         of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
-        <snippet>
+        <snippet ng-non-bindable>
 // lets assume a Polymer component as follows
 &lt;dom-module id="partial-match-filter"&gt;
     &lt;template&gt;
