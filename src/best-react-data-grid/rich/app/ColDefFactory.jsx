@@ -29,13 +29,15 @@ export default class ColDefFactory {
                         // an example of using a non-React cell renderer
                         cellRenderer: countryCellRenderer,
                         pinned: true,
+                        filter: 'set',
                         filterParams: {
                             cellRenderer: countryCellRenderer,
                             cellHeight: 20
                         },
-                        columnGroupShow: 'open'
+                        cellEditor: 'richSelect',
+                        editable: true
                     }, {
-                        headerName: "DOB",
+                        headerName: "Date of Birth",
                         field: "dob",
                         width: 110,
                         filter: 'date',
