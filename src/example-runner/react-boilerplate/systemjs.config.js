@@ -16,10 +16,9 @@
             'react-dom-factories': 'npm:react-dom-factories',
             'prop-types': 'npm:prop-types',
 
-            // example
             'app': appLocation + 'app'
-            // taken from index.html
-        }, systemJsMap),
+            
+        }, systemJsMap), // systemJsMap comes from index.html
 
         packages: {
             "react": {

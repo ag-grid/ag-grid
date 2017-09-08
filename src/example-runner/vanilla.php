@@ -37,7 +37,15 @@ foreach ($files as $file) {
     <!-- font awesome -->
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <script src="<?= $systemJsMap[isset($_GET['enterprise']) ? "ag-grid-enterprise" : "ag-grid"] ?>"></script>
+    <?php if (USE_LOCAL && isset($_GET["enterprise"])) { ?>
+        <!-- this is visible only in dev mode, to fix the missing ag-grid bundling in ag-grid enterprise -->
+        <script src="<?= $systemJsMap['ag-grid'] ?>"></script>
+        <script> window['ag-grid'] = agGrid; </script>
+        <script src="<?= $systemJsMap['ag-grid-enterprise'] ?>"></script>
+        <script> agGrid = window['ag-grid']; </script>
+    <? } else {?>
+        <script src="<?= $systemJsMap[isset($_GET['enterprise']) ? "ag-grid-enterprise" : "ag-grid"] ?>"></script>
+    <?php } ?>
 
 <?php renderStyles($styles); ?>
 </head>

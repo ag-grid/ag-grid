@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {AgGridReact} from "ag-grid-react";
 import RowDataFactory from "./RowDataFactory";
 import ColDefFactory from "./ColDefFactory.jsx";
+
 // take this line out if you do not want to use ag-Grid-Enterprise
 import "ag-grid-enterprise";
 

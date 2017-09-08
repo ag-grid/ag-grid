@@ -16,10 +16,15 @@ module.exports = {
         "ag-grid/ag-grid": './src/_assets/ts/ag-grid.ts',
         "ag-grid-react/ag-grid-react": "./src/_assets/ts/ag-grid-react.ts",
         "ag-grid-angular/ag-grid-angular": "./src/_assets/ts/ag-grid-angular.ts",
-        "site": './src/_assets/ts/site',
-        
+        "site": './src/_assets/ts/site'
     },
-    externals: [ 'angular', 'react', 'react-dom' ],
+    externals: { 
+        'angular': 'angular', 
+        'react': 'react', 
+        'react-dom': 'react-dom', 
+        'ag-grid': 'ag-grid', 
+        'ag-grid/main': 'ag-grid' 
+    },
     output: {
         path: path.resolve(__dirname, "dist"),
         filename: "[name].js",
