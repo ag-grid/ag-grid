@@ -115,7 +115,8 @@ export const AgGridNg2NgFactory:i0.ComponentFactory<i4.AgGridNg2> = i0.ɵccf('ag
         pinnedTopRowData:'pinnedTopRowData',pinnedBottomRowData:'pinnedBottomRowData',
         pinnedRowDataChanged:'pinnedRowDataChanged',alwaysShowStatusBar:'alwaysShowStatusBar',
         ensureDomOrder:'ensureDomOrder',components:'components',frameworkComponents:'frameworkComponents',
-        rowHoverClass:'rowHoverClass',suppressAnimationFrame:'suppressAnimationFrame'},
+        rowHoverClass:'rowHoverClass',suppressAnimationFrame:'suppressAnimationFrame',
+        suppressExcelExport:'suppressExcelExport',suppressCsvExport:'suppressCsvExport'},
     {gridReady:'gridReady',columnEverythingChanged:'columnEverythingChanged',newColumnsLoaded:'newColumnsLoaded',
         columnPivotModeChanged:'columnPivotModeChanged',columnRowGroupChanged:'columnRowGroupChanged',
         columnPivotChanged:'columnPivotChanged',gridColumnsChanged:'gridColumnsChanged',
@@ -146,4 +147,4 @@ export const AgGridNg2NgFactory:i0.ComponentFactory<i4.AgGridNg2> = i0.ɵccf('ag
         componentStateChanged:'componentStateChanged',beforeFilterChanged:'beforeFilterChanged',
         afterFilterChanged:'afterFilterChanged',beforeSortChanged:'beforeSortChanged',
         afterSortChanged:'afterSortChanged'},([] as any[]));
-//# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVwb3MvbWFzdGVyL2FnLWdyaWQtYW5ndWxhci9zcmMvYWdHcmlkTmcyLm5nZmFjdG9yeS50cyIsInZlcnNpb24iOjMsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIm5nOi8vL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVwb3MvbWFzdGVyL2FnLWdyaWQtYW5ndWxhci9zcmMvYWdHcmlkTmcyLnRzIiwibmc6Ly8vVXNlcnMvYWxiZXJ0by92b2xhdGlsZS9yZXBvcy9tYXN0ZXIvYWctZ3JpZC1hbmd1bGFyL3NyYy9hZ0dyaWROZzIudHMuQWdHcmlkTmcyX0hvc3QuaHRtbCJdLCJzb3VyY2VzQ29udGVudCI6WyIgIiwiPGFnLWdyaWQtYW5ndWxhcj48L2FnLWdyaWQtYW5ndWxhcj4iXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7Ozs7OztvQkNBQTtNQUFBO2FBQUE7bUJBQUE7VUFBQSxzQkFBQTs7cUNBQUE7VUFBQTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OyJ9
+//# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVsZWFzZXMvMTMuMS4xL2FnLWdyaWQtYW5ndWxhci9zcmMvYWdHcmlkTmcyLm5nZmFjdG9yeS50cyIsInZlcnNpb24iOjMsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIm5nOi8vL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVsZWFzZXMvMTMuMS4xL2FnLWdyaWQtYW5ndWxhci9zcmMvYWdHcmlkTmcyLnRzIiwibmc6Ly8vVXNlcnMvYWxiZXJ0by92b2xhdGlsZS9yZWxlYXNlcy8xMy4xLjEvYWctZ3JpZC1hbmd1bGFyL3NyYy9hZ0dyaWROZzIudHMuQWdHcmlkTmcyX0hvc3QuaHRtbCJdLCJzb3VyY2VzQ29udGVudCI6WyIgIiwiPGFnLWdyaWQtYW5ndWxhcj48L2FnLWdyaWQtYW5ndWxhcj4iXSwibWFwcGluZ3MiOiJBQUFBOzs7Ozs7Ozs7Ozs7Ozs7Ozs7OztvQkNBQTtNQUFBO2FBQUE7bUJBQUE7VUFBQSxzQkFBQTs7cUNBQUE7VUFBQTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OzsifQ==

@@ -213,6 +213,8 @@ var AgGridNg2 = (function () {
         this.frameworkComponents = undefined;
         this.rowHoverClass = undefined;
         this.suppressAnimationFrame = undefined;
+        this.suppressExcelExport = undefined;
+        this.suppressCsvExport = undefined;
         /**
          * Outputs
          */
@@ -581,6 +583,8 @@ AgGridNg2.propDecorators = {
     'frameworkComponents': [{ type: core_1.Input },],
     'rowHoverClass': [{ type: core_1.Input },],
     'suppressAnimationFrame': [{ type: core_1.Input },],
+    'suppressExcelExport': [{ type: core_1.Input },],
+    'suppressCsvExport': [{ type: core_1.Input },],
     'gridReady': [{ type: core_1.Output },],
     'columnEverythingChanged': [{ type: core_1.Output },],
     'newColumnsLoaded': [{ type: core_1.Output },],
