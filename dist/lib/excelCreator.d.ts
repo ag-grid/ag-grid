@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.0.1
+// ag-grid-enterprise v13.1.1
 import { BaseCreator, BaseGridSerializingSession, Column, ColumnController, ExcelCell, ExcelExportParams, ExcelStyle, GridOptionsWrapper, IExcelCreator, ProcessCellForExportParams, ProcessHeaderForExportParams, RowAccumulator, RowNode, RowSpanningAccumulator, RowType, ValueService } from "ag-grid/main";
 import { ExcelXmlFactory } from "./excelXmlFactory";
 export interface ExcelMixedStyle {
@@ -15,7 +15,8 @@ export declare class ExcelGridSerializingSession extends BaseGridSerializingSess
     private excelStyles;
     private customHeader;
     private customFooter;
-    constructor(columnController: ColumnController, valueService: ValueService, gridOptionsWrapper: GridOptionsWrapper, processCellCallback: (params: ProcessCellForExportParams) => string, processHeaderCallback: (params: ProcessHeaderForExportParams) => string, excelXmlFactory: ExcelXmlFactory, baseExcelStyles: ExcelStyle[], styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[]);
+    private sheetName;
+    constructor(columnController: ColumnController, valueService: ValueService, gridOptionsWrapper: GridOptionsWrapper, processCellCallback: (params: ProcessCellForExportParams) => string, processHeaderCallback: (params: ProcessHeaderForExportParams) => string, sheetName: string, excelXmlFactory: ExcelXmlFactory, baseExcelStyles: ExcelStyle[], styleLinker: (rowType: RowType, rowIndex: number, colIndex: number, value: string, column: Column, node: RowNode) => string[]);
     private rows;
     private cols;
     addCustomHeader(customHeader: ExcelCell[][]): void;
@@ -46,4 +47,5 @@ export declare class ExcelCreator extends BaseCreator<ExcelCell[][], ExcelGridSe
     getDefaultFileExtension(): string;
     createSerializingSession(params?: ExcelExportParams): ExcelGridSerializingSession;
     private styleLinker(rowType, rowIndex, colIndex, value, column, node);
+    isExportSuppressed(): boolean;
 }

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.0.1
+// ag-grid-enterprise v13.1.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var columnSelectPanel_1 = require("./toolPanel/columnsSelect/columnSelectPanel");

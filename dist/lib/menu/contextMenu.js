@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.0.1
+// ag-grid-enterprise v13.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -34,7 +34,11 @@ var ContextMenuFactory = (function () {
         var defaultMenuOptions;
         if (ag_grid_1.Utils.exists(node)) {
             // if user clicks a cell
-            defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator', 'toolPanel', 'export'];
+            var anyExport = !this.gridOptionsWrapper.isSuppressExcelExport() || !this.gridOptionsWrapper.isSuppressCsvExport();
+            defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator', 'toolPanel'];
+            if (anyExport) {
+                defaultMenuOptions.push('export');
+            }
         }
         else {
             // if user clicks outside of a cell (eg below the rows, or not rows present)

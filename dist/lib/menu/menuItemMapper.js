@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.0.1
+// ag-grid-enterprise v13.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -76,12 +76,12 @@ var MenuItemMapper = (function () {
                 action: function () { return _this.columnController.autoSizeAllColumns(); }
             };
             case 'rowGroup': return {
-                name: localeTextFunc('groupBy', 'Group by') + ' ' + column.getColDef().headerName,
+                name: localeTextFunc('groupBy', 'Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
                 action: function () { return _this.columnController.addRowGroupColumn(column); },
                 icon: ag_grid_1.Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
             };
             case 'rowUnGroup': return {
-                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + column.getColDef().headerName,
+                name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
                 action: function () { return _this.columnController.removeRowGroupColumn(column); },
                 icon: ag_grid_1.Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };
@@ -121,10 +121,18 @@ var MenuItemMapper = (function () {
                 checked: this.gridApi.isToolPanelShowing(),
                 action: function () { return _this.gridApi.showToolPanel(!_this.gridApi.isToolPanelShowing()); }
             };
-            case 'export': return {
-                name: localeTextFunc('export', 'Export'),
-                subMenu: ['csvExport', 'excelExport']
-            };
+            case 'export':
+                var exportSubMenuItems = [];
+                if (!this.gridOptionsWrapper.isSuppressCsvExport()) {
+                    exportSubMenuItems.push('csvExport');
+                }
+                if (!this.gridOptionsWrapper.isSuppressExcelExport()) {
+                    exportSubMenuItems.push('excelExport');
+                }
+                return {
+                    name: localeTextFunc('export', 'Export'),
+                    subMenu: exportSubMenuItems
+                };
             case 'csvExport': return {
                 name: localeTextFunc('csvExport', 'CSV Export'),
                 action: function () { return _this.gridApi.exportDataAsCsv({}); }

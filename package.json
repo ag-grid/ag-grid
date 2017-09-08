@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-enterprise",
-  "version": "13.1.0",
+  "version": "13.1.1",
   "description": "ag-Grid Enterprise Features",
   "main": "main.js",
   "types": "main.d.ts",

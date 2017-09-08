@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.0.1
+// ag-grid-enterprise v13.1.1
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -78,7 +78,8 @@ var PivotColDefService = (function () {
                     // add total pivot column to value group
                     // this.addPivotTotalColumn(newPivotKeys, columnIdSequence, valueGroup, pivotColumnDefs);
                     measureColumns.forEach(function (measureColumn) {
-                        var colDef = _this.createColDef(measureColumn, measureColumn.getColDef().headerName, newPivotKeys, columnIdSequence);
+                        var columnName = _this.columnController.getDisplayNameForColumn(measureColumn, 'header');
+                        var colDef = _this.createColDef(measureColumn, columnName, newPivotKeys, columnIdSequence);
                         colDef.columnGroupShow = 'open';
                         valueGroup_1.children.push(colDef);
                         pivotColumnDefs.push(colDef);
@@ -101,7 +102,7 @@ var PivotColDefService = (function () {
         var aggFuncs = valueColDefs.map(function (colDef) { return colDef.getAggFunc(); });
         // don't add pivot totals if there is less than 1 aggFunc or they are not all the same
         if (!aggFuncs || aggFuncs.length < 1 || !this.sameAggFuncs(aggFuncs)) {
-            console.warn('ag-Grid: aborting adding pivot total columns - value columns require same aggFunc');
+            // console.warn('ag-Grid: aborting adding pivot total columns - value columns require same aggFunc');
             return;
         }
         // arbitrarily select a value column to use as a template for pivot columns

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.0.1
+// ag-grid-enterprise v13.1.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -24,7 +24,7 @@ var main_1 = require("ag-grid/main");
 var excelXmlFactory_1 = require("./excelXmlFactory");
 var ExcelGridSerializingSession = (function (_super) {
     __extends(ExcelGridSerializingSession, _super);
-    function ExcelGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, excelXmlFactory, baseExcelStyles, styleLinker) {
+    function ExcelGridSerializingSession(columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, sheetName, excelXmlFactory, baseExcelStyles, styleLinker) {
         var _this = _super.call(this, columnController, valueService, gridOptionsWrapper, processCellCallback, processHeaderCallback, function (raw) { return main_1.Utils.escape(raw); }) || this;
         _this.excelXmlFactory = excelXmlFactory;
         _this.styleLinker = styleLinker;
@@ -41,6 +41,7 @@ var ExcelGridSerializingSession = (function (_super) {
             });
             _this.excelStyles = baseExcelStyles.slice();
         }
+        _this.sheetName = sheetName;
         return _this;
     }
     ExcelGridSerializingSession.prototype.addCustomHeader = function (customHeader) {
@@ -107,7 +108,7 @@ var ExcelGridSerializingSession = (function (_super) {
             return all;
         }
         var data = [{
-                name: "ag-grid",
+                name: this.sheetName,
                 table: {
                     columns: this.cols,
                     rows: join(this.customHeader, this.rows, this.customFooter)
@@ -220,7 +221,7 @@ var ExcelCreator = (function (_super) {
         return 'xls';
     };
     ExcelCreator.prototype.createSerializingSession = function (params) {
-        return new ExcelGridSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params ? params.processCellCallback : null, params ? params.processHeaderCallback : null, this.excelXmlFactory, this.gridOptions.excelStyles, this.styleLinker.bind(this));
+        return new ExcelGridSerializingSession(this.columnController, this.valueService, this.gridOptionsWrapper, params ? params.processCellCallback : null, params ? params.processHeaderCallback : null, params && params.sheetName != null && params.sheetName != "" ? params.sheetName : 'ag-grid', this.excelXmlFactory, this.gridOptions.excelStyles, this.styleLinker.bind(this));
     };
     ExcelCreator.prototype.styleLinker = function (rowType, rowIndex, colIndex, value, column, node) {
         if ((rowType === main_1.RowType.HEADER) || (rowType === main_1.RowType.HEADER_GROUPING))
@@ -247,6 +248,9 @@ var ExcelCreator = (function (_super) {
         return applicableStyles.sort(function (left, right) {
             return (styleIds.indexOf(left) < styleIds.indexOf(right)) ? -1 : 1;
         });
+    };
+    ExcelCreator.prototype.isExportSuppressed = function () {
+        return this.gridOptionsWrapper.isSuppressExcelExport();
     };
     __decorate([
         main_1.Autowired('excelXmlFactory'),
