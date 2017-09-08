@@ -45,6 +45,7 @@ export default class Grid extends Component {
                     enableColResize="true"
                     enableSorting="true"
                     enableFilter="true"
+                    animateRows="true"
                     groupHeaders="true"
                     rowHeight="22"
                 />
