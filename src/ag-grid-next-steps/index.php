@@ -282,27 +282,6 @@ include '../documentation-main/documentation_header.php';
                 is about) and easy to copy and run locally.
             </p>
 
-            <p>
-                Also in the examples, ag-Grid is loaded with an additional parameter <i>"ignore=notused"</i>. If you
-                are
-                using
-                the self contained bundle <b>you do not need to include this extra parameter</b>. Its purpose is as
-                a dummy
-                parameter, which the documentation
-                changes every time there is a grid release, to trick the browser in getting the latest version
-                rather than
-                using
-                a cached version.
-                <br/>
-            </p>
-            <p>
-                So eg, the example has this:<br/>
-            <snippet>
-&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid/ag-grid.js?ignore=notused51"&gt;&lt;br/&gt;</snippet>
-            But all you need is this:<br/>
-            <snippet>
-&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js"&gt;</snippet>
-            </p>
         </div>
     </div>
 <?php } ?>

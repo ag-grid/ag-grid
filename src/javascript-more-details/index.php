@@ -176,23 +176,6 @@ import 'ag-grid-enterprise/main';
     <p>The Enterprise dependency has to be made available before any Grid related component, so we suggest including it
         as soon as possible.</p>
 
-    <h2>Documentation Examples</h2>
-    <p> Also in the examples, ag-Grid is loaded with an additional parameter <i>"ignore=notused"</i>.
- If you are using the self contained bundle <b>you do not need to include this extra parameter</b>. i
-It's purpose is as a dummy parameter, which the documentation changes every time there is a grid release, to trick the browser in getting the latest version rather than using a cached version.  <br/> </p>
-
-    <p> So eg, the example has this:</p>
-
-<snippet language=html>
-&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid/ag-grid.js?ignore=notused51"&gt;
-</snippet>
-
-    <p>But all you need is this:</p>
-
-<snippet language=html>
-&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js">
-</snippet>
-
     <h2 id="aggrid-javascript-testing">Testing ag-Grid Applications with Jasmine</h2>
 
     <p>In our <a href="https://github.com/ag-grid/ag-grid-seed">Javascript Seed Repo</a> we provide working
