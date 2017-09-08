@@ -52,6 +52,17 @@ include '../documentation-main/documentation_header.php';
                     Documenting using Angular CLI, Webpack, Webpack 2 and SystemJS to build your ag-Grid application.</p>
             </div>
         </a>
+        <a href="../example-angular/" class="list-group-item">
+            <div class="float-parent">
+                <div class="section-icon-container">
+                    <img src="../images/svg/docs/examples.svg" width="50" />
+                </div>
+                <h4 class="list-group-item-heading">Full Examples with Angular</h4>
+                <p class="list-group-item-text">
+                    This page features examples of using ag-Grid and Angular together. It covers more of the features of ag-Grid.
+                </p>
+            </div>
+        </a>
     </div>
 
     <?php include '../home/features-detail.php'; ?>
