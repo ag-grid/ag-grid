@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.0.0
+// Type definitions for ag-grid v13.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator, GridSerializingSession } from "./gridSerializer";
@@ -37,6 +37,7 @@ export declare abstract class BaseCreator<T, S extends GridSerializingSession<T>
     abstract getMimeType(): string;
     abstract getDefaultFileName(): string;
     abstract getDefaultFileExtension(): string;
+    abstract isExportSuppressed(): boolean;
 }
 export declare class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvExportParams> {
     private columnController;
@@ -47,4 +48,5 @@ export declare class CsvCreator extends BaseCreator<string, CsvSerializingSessio
     getDefaultFileName(): string;
     getDefaultFileExtension(): string;
     createSerializingSession(params?: CsvExportParams): CsvSerializingSession;
+    isExportSuppressed(): boolean;
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.0
+ * @version v13.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1261,6 +1261,15 @@ var Utils = (function () {
     };
     Utils.addSafePassiveEventListener = function (eElement, event, listener) {
         eElement.addEventListener(event, listener, (Utils.passiveEvents.indexOf(event) > -1 ? { passive: true } : null));
+    };
+    Utils.camelCaseToHumanText = function (camelCase) {
+        if (camelCase == null)
+            return null;
+        // Who needs to learn how to code when you have stack overflow!
+        // from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
+        var rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
+        var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
+        return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
     };
     Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
     // static prepend(parent: HTMLElement, child: HTMLElement): void {

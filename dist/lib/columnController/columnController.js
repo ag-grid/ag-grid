@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.0
+ * @version v13.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,6 +51,9 @@ var ColumnApi = (function () {
     ColumnApi.prototype.setColumnState = function (columnState) { return this._columnController.setColumnState(columnState); };
     ColumnApi.prototype.getColumnState = function () { return this._columnController.getColumnState(); };
     ColumnApi.prototype.resetColumnState = function () { this._columnController.resetColumnState(); };
+    ColumnApi.prototype.getColumnGroupState = function () { return this._columnController.getColumnGroupState(); };
+    ColumnApi.prototype.setColumnGroupState = function (stateItems) { this._columnController.setColumnGroupState(stateItems); };
+    ColumnApi.prototype.resetColumnGroupState = function () { this._columnController.resetColumnGroupState(); };
     ColumnApi.prototype.isPinning = function () { return this._columnController.isPinningLeft() || this._columnController.isPinningRight(); };
     ColumnApi.prototype.isPinningLeft = function () { return this._columnController.isPinningLeft(); };
     ColumnApi.prototype.isPinningRight = function () { return this._columnController.isPinningRight(); };
@@ -1236,8 +1239,14 @@ var ColumnController = (function () {
                 return '';
             }
         }
-        else {
+        else if (colDef.headerName != null) {
             return colDef.headerName;
+        }
+        else if (colDef.field) {
+            return utils_1.Utils.camelCaseToHumanText(colDef.field);
+        }
+        else {
+            return '';
         }
     };
     /*
@@ -1421,6 +1430,32 @@ var ColumnController = (function () {
                 column.setPivotActive(true);
             }
         });
+    };
+    ColumnController.prototype.resetColumnGroupState = function () {
+        var stateItems = [];
+        this.columnUtils.depthFirstOriginalTreeSearch(this.primaryBalancedTree, function (child) {
+            if (child instanceof originalColumnGroup_1.OriginalColumnGroup) {
+                var groupState = {
+                    groupId: child.getGroupId(),
+                    open: child.getColGroupDef().openByDefault
+                };
+                stateItems.push(groupState);
+            }
+        });
+        this.setColumnGroupState(stateItems);
+    };
+    ColumnController.prototype.getColumnGroupState = function () {
+        var columnGroupState = [];
+        this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, function (node) {
+            if (node instanceof originalColumnGroup_1.OriginalColumnGroup) {
+                var originalColumnGroup = node;
+                columnGroupState.push({
+                    groupId: originalColumnGroup.getGroupId(),
+                    open: originalColumnGroup.isExpanded()
+                });
+            }
+        });
+        return columnGroupState;
     };
     ColumnController.prototype.setColumnGroupState = function (stateItems) {
         var _this = this;

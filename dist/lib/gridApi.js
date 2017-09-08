@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.0
+ * @version v13.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -617,6 +617,9 @@ var GridApi = (function () {
             console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise');
             return null;
         }
+    };
+    GridApi.prototype.camelCaseToHumanReadable = function (camelCase) {
+        return utils_1.Utils.camelCaseToHumanText(camelCase);
     };
     GridApi.prototype.addRangeSelection = function (rangeSelection) {
         if (!this.rangeController) {

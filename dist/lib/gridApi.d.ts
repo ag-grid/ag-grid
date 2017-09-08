@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.0.0
+// Type definitions for ag-grid v13.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
@@ -176,6 +176,7 @@ export declare class GridApi {
     destroy(): void;
     resetQuickFilter(): void;
     getRangeSelections(): RangeSelection[];
+    camelCaseToHumanReadable(camelCase: string): string;
     addRangeSelection(rangeSelection: AddRangeSelectionParams): void;
     clearRangeSelection(): void;
     copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void;

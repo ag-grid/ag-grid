@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.0.0
+// Type definitions for ag-grid v13.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -243,6 +243,7 @@ export declare class Utils {
     }, expression: string, defaultValue: any): any;
     static passiveEvents: string[];
     static addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void): void;
+    static camelCaseToHumanText(camelCase: string): string;
 }
 export declare class NumberSequence {
     private nextValue;

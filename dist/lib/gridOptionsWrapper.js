@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.0
+ * @version v13.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -270,6 +270,8 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getDefaultColDef = function () { return this.gridOptions.defaultColDef; };
     GridOptionsWrapper.prototype.getDefaultColGroupDef = function () { return this.gridOptions.defaultColGroupDef; };
     GridOptionsWrapper.prototype.getDefaultExportParams = function () { return this.gridOptions.defaultExportParams; };
+    GridOptionsWrapper.prototype.isSuppressCsvExport = function () { return isTrue(this.gridOptions.suppressCsvExport); };
+    GridOptionsWrapper.prototype.isSuppressExcelExport = function () { return isTrue(this.gridOptions.suppressExcelExport); };
     GridOptionsWrapper.prototype.getHeaderCellTemplate = function () { return this.gridOptions.headerCellTemplate; };
     GridOptionsWrapper.prototype.getHeaderCellTemplateFunc = function () { return this.gridOptions.getHeaderCellTemplate; };
     GridOptionsWrapper.prototype.getNodeChildDetailsFunc = function () { return this.gridOptions.getNodeChildDetails; };

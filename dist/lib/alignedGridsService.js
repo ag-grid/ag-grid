@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.0.0
+ * @version v13.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -169,23 +169,23 @@ var AlignedGridsService = (function () {
         switch (colEvent.type) {
             case events_1.Events.EVENT_COLUMN_MOVED:
                 var movedEvent = colEvent;
-                this.logger.log('onColumnEvent-> processing ' + event + ' toIndex = ' + movedEvent.toIndex);
+                this.logger.log('onColumnEvent-> processing ' + colEvent.type + ' toIndex = ' + movedEvent.toIndex);
                 this.columnController.moveColumns(columnIds, movedEvent.toIndex);
                 break;
             case events_1.Events.EVENT_COLUMN_VISIBLE:
                 var visibleEvent = colEvent;
-                this.logger.log('onColumnEvent-> processing ' + event + ' visible = ' + visibleEvent.visible);
+                this.logger.log('onColumnEvent-> processing ' + colEvent.type + ' visible = ' + visibleEvent.visible);
                 this.columnController.setColumnsVisible(columnIds, visibleEvent.visible);
                 break;
             case events_1.Events.EVENT_COLUMN_PINNED:
                 var pinnedEvent = colEvent;
-                this.logger.log('onColumnEvent-> processing ' + event + ' pinned = ' + pinnedEvent.pinned);
+                this.logger.log('onColumnEvent-> processing ' + colEvent.type + ' pinned = ' + pinnedEvent.pinned);
                 this.columnController.setColumnsPinned(columnIds, pinnedEvent.pinned);
                 break;
             case events_1.Events.EVENT_COLUMN_RESIZED:
                 var resizedEvent_1 = colEvent;
                 masterColumns.forEach(function (masterColumn) {
-                    _this.logger.log('onColumnEvent-> processing ' + event + ' actualWidth = ' + masterColumn.getActualWidth());
+                    _this.logger.log('onColumnEvent-> processing ' + colEvent.type + ' actualWidth = ' + masterColumn.getActualWidth());
                     _this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), resizedEvent_1.finished);
                 });
                 break;
