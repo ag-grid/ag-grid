@@ -33,15 +33,15 @@ include '../documentation-main/documentation_header.php';
         this
         repo, install the dependencies and start it up:</p>
 
-    <snippet>
-// clone the ag-Grid Angular seed project
+<snippet language="sh">
+# clone the ag-Grid Angular seed project
 git clone https://github.com/ag-grid/ag-grid-angular-seed
 cd ag-grid-angular-seed/angular-cli
 
-// install the project dependencies
+# install the project dependencies
 npm i
 
-// build & start the application
+# build & start the application
 npm start</snippet>
 
     <p>With those 3 commands you should now see the following application:</p>
@@ -171,20 +171,14 @@ npm start</snippet>
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=rich-grid"
-                          sources="{
-                            [
-                                { root: '/framework-examples/angular-examples/app/rich-grid-example/', files: 'rich-grid.component.ts,rich-grid.component.html,proficiency-renderer.css,rich-grid.css' },
-                                { root: '/framework-examples/angular-examples/app/header-group-component/', files: 'header-group.component.ts,header-group.component.html,header-group.component.css' },
-                                { root: '/framework-examples/angular-examples/app/header-component/', files: 'header.component.ts,header.component.html,header.component.css' },
-                                { root: '/framework-examples/angular-examples/app/filters/', files: 'skillFilter.ts,proficiencyFilter.ts' },
-                                { root: '/framework-examples/angular-examples/app/date-component/', files: 'date.component.ts,date.component.html,date.component.css' },
-                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                          plunker="https://embed.plnkr.co/EINfsm/"
-                          exampleHeight="525px">
-    </show-complex-example>
+
+<?= preview(
+    'Advanced Angular ag-Grid Example', 
+    'rich-example', 
+    '../framework-examples/angular-examples/index.html?fromDocs=true&example=rich-grid', 
+    'https://github.com/ag-grid/ag-grid-docs/tree/master/src/framework-examples/angular-examples', 
+    array( 'exampleHeight' => 550 )) 
+?>
 
     <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
         <code>column grouping</code> as well as using <code>Angular Components</code> in the header. And even this rich
