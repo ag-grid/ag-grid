@@ -276,6 +276,11 @@ interface IGetRowsParams {
         filtering, ag-Grid-Enterprise is not required for infinite scrolling)
     </p>
 
+
+    <note>When filtering using the Infinite Row Model it's important to specify the filter parameter: <i>newRowsAction: 'keep'</i>.
+          This is to prevent the filter from being reset.
+    </note>
+
     <show-complex-example example="exampleInfiniteServerSide.html"
                           sources="{
                                 [

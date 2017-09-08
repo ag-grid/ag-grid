@@ -97,9 +97,6 @@ colDef.cellRenderer = function(params) {
     <span class="codeComment">// Optional - Params for rendering. The same params that are passed to the cellRenderer function.</span>
     init?(params: ICellRendererParams): void;
 
-    <span class="codeComment">// Optional - After GUI is attached to DOM, this gets called. Contains the DOM element.</span>
-    afterGuiAttached?(params: ICellRendererAfterGuiAttachedParams)
-
     <span class="codeComment">// Mandatory - Return the DOM element of your editor, this is what the grid puts into the DOM</span>
     getGui(): HTMLElement;
 
@@ -126,16 +123,11 @@ colDef.cellRenderer = function(params) {
     column: Column, <span class="codeComment">// the cells column</span>
     rowIndex: number, <span class="codeComment">// the current index of the row (this changes after filter and sort)</span>
     api: GridApi, <span class="codeComment">// the grid API</span>
+    eGridCell: HTMLElement, <span class="codeComment">// the grid's cell, a DOM div element</span>
+    eParentOfValue: HTMLElement, <span class="codeComment">// the parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection</span>
     columnApi: ColumnApi, <span class="codeComment">// grid column API</span>
     context: any, <span class="codeComment">// the grid's context</span>
     refreshCell: ()=>void <span class="codeComment">// convenience function to refresh the cell</span>
-}</pre>
-
-<p>The interface for after GUI attached is as follows:</p>
-<pre>interface ICellRendererAfterGuiAttachedParams {
-    eComponent: HTMLElement, <span class="codeComment">// the DOM element for your cell renderer</span>
-    eGridCell: HTMLElement, <span class="codeComment">// the grid's cell DOM element</span>
-    eParentOfValue: HTMLElement <span class="codeComment">// the element the cell renderer is sitting directly inside</span>
 }</pre>
 
     <p>
@@ -262,101 +254,6 @@ In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> a
     to update the existing GUI in your refresh, do not think that the grid is going to call <code>getGui()</code>
     again to get a new version of the GUI.
 </p>
-
-<h1 id="cell-renderer-params">cellRenderer Params</h1>
-
-<p>
-    The cellRenderer function and cellRenderer component take parameters as follows:
-<ul>
-    <li><b>cellRenderer function: </b> Passed to function.</li>
-    <li><b>cellRenderer component: </b> Passed to init method.</li>
-</ul>
-The parameters are identical regardless of which cellRenderer type you use and contain the following:
-</p>
-
-<table class="table">
-    <tr>
-        <th>Value</th>
-        <th>Description</th>
-    </tr>
-    <tr>
-        <th>value</th>
-        <td>The value to be rendered.</td>
-    </tr>
-    <tr>
-        <th>valueFormatted</th>
-        <td>If a valueFormatter was provided, is the result of calling the formatter.</td>
-    </tr>
-    <tr>
-        <th>getValue()</th>
-        <td>Gives the current value for the cell, calling the relevant valueGetter / expression
-            if necessary. This can be called at any time after rendering and will return the current value.</td>
-    </tr>
-    <tr>
-        <th>setValue(value)</th>
-        <td>Sets the value for the cell. If the value is different, will result in the cell getting refreshed.</td>
-    </tr>
-    <tr>
-        <th>formatValue()</th>
-        <td>A function, that when called, formats the value. The valueFormatted attribute already gives
-            you the formatted value, however you can call this if you need to format another value,
-            maybe you need to format a different value (this is used by the provided 'animation' cellRenderers
-            where they need to format the delta difference).</td>
-    </tr>
-    <tr>
-        <th>node</th>
-        <td>The RowNode of the row being rendered.</td>
-    </tr>
-    <tr>
-        <th>data</th>
-        <td>The row (from the rowData array, where value was taken) been rendered.</td>
-    </tr>
-    <tr>
-        <th>column</th>
-        <td>The column been rendered (in ag-Grid, each colDef is wrapped by a Column).</td>
-    </tr>
-    <tr>
-        <th>colDef</th>
-        <td>The colDef been rendered.</td>
-    </tr>
-    <tr>
-        <th>$scope</th>
-        <td>If compiling to Angular, is the row's child scope, otherwise null.</td>
-    </tr>
-    <tr>
-        <th>rowIndex</th>
-        <td>The index of the row, after sorting and filtering.</td>
-    </tr>
-    <tr>
-        <th>api</th>
-        <td>A reference to the grid api.</td>
-    </tr>
-    <tr>
-        <th>columnApi</th>
-        <td>A reference to the column api.</td>
-    </tr>
-    <tr>
-        <th>context</th>
-        <td>The context as set on the gridOptions.</td>
-    </tr>
-    <tr>
-        <th>refreshCell()</th>
-        <td>A callback function, to tell the grid to refresh this cell and reapply all css styles and classes.
-            Useful if you update the data for the cell and want to just render again from scratch.</td>
-    </tr>
-    <tr>
-        <th>eGridCell</th>
-        <td>A reference to the DOM element representing the grid cell that your component will live inside.
-            Useful if you want to add event listeners or classes at this level. This is the DOM element that
-            gets browser focus when selecting cells.</td>
-    </tr>
-    <tr>
-        <th>eParentOfValue</th>
-        <td>If using checkbox selection, your component will live inside eParentOfValue which sits beside a
-            checkbox and both live inside eGridCell.</td>
-    </tr>
-
-</table>
 
 <h3 id="complementing-cell-renderer-params">Complementing cellRenderer Params</h3>
 

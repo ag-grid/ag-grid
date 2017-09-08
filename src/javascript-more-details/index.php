@@ -186,7 +186,7 @@ import 'ag-grid-enterprise/main';
     </p>
     <p>
         So eg, the example has this:<br/>
-    <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid/ag-grid.js?ignore=notused50"><br/></pre>
+    <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid/ag-grid.js?ignore=notused52"><br/></pre>
     But all you need is this:<br/>
     <pre>&lt;link rel="stylesheet" type="text/css" href="../dist/ag-grid.js"></pre>
 
