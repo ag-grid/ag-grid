@@ -216,6 +216,8 @@ export interface ItemsAddedEvent extends AgGridEvent {
 
 export interface BodyScrollEvent extends AgGridEvent {
     direction: string;
+    left: number;
+    top: number;
 }
 
 // not documented

@@ -1625,9 +1625,18 @@ export class GridPanel extends BeanStub {
     public getBodyHeight(): number {
         return this.bodyHeight;
     }
-
+asdasdf
     public setHorizontalScrollPosition(hScrollPosition: number): void {
         this.eBodyViewport.scrollLeft = hScrollPosition;
+
+        // we need to manually do the event handling (rather than wait for the event)
+        // for the alignedGridsService, as if we don't, the aligned grid service gets
+        // notified async, and then it's 'consuming' flag doesn't get used right, and
+        // we can end up with an infinite loop
+        if (this.nextScrollLeft !== hScrollPosition) {
+            this.nextScrollLeft = hScrollPosition;
+            this.doHorizontalScroll();
+        }
     }
 
     // tries to scroll by pixels, but returns what the result actually was
@@ -1702,12 +1711,14 @@ export class GridPanel extends BeanStub {
             type: Events.EVENT_BODY_SCROLL,
             api: this.gridApi,
             columnApi: this.columnApi,
-            direction: 'horizontal'
+            direction: 'horizontal',
+            left: this.scrollLeft,
+            top: this.scrollTop
         };
         this.eventService.dispatchEvent(event);
         this.horizontallyScrollHeaderCenterAndFloatingCenter();
         this.setLeftAndRightBounds();
-        this.alignedGridsService.fireHorizontalScrollEvent(this.scrollLeft);
+        // this.alignedGridsService.fireHorizontalScrollEvent(this.scrollLeft);
     }
 
     private onBodyVerticalScroll(): void {
@@ -1737,7 +1748,6 @@ export class GridPanel extends BeanStub {
 
     public executeFrame(): boolean {
         if (this.scrollLeft !== this.nextScrollLeft) {
-            this.scrollLeft = this.nextScrollLeft;
             this.doHorizontalScroll();
             return true;
         } else if (this.scrollTop !== this.nextScrollTop) {
@@ -1759,7 +1769,9 @@ export class GridPanel extends BeanStub {
             type: Events.EVENT_BODY_SCROLL,
             direction: 'vertical',
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            left: this.scrollLeft,
+            top: this.scrollTop
         };
         this.eventService.dispatchEvent(event);
         this.rowRenderer.redrawAfterScroll();

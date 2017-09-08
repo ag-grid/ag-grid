@@ -5,7 +5,7 @@ import {Logger} from "./logger";
 import {EventService} from "./eventService";
 import {LoggerFactory} from "./logger";
 import {
-    AgEvent,
+    AgEvent, BodyScrollEvent,
     ColumnEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnResizedEvent, ColumnVisibleEvent,
     Events
 } from "./events";
@@ -18,8 +18,12 @@ import {Autowired} from "./context/context";
 import {PostConstruct} from "./context/context";
 import {OriginalColumnGroup} from "./entities/originalColumnGroup";
 
+let counter = 0;
+
 @Bean('alignedGridsService')
 export class AlignedGridsService {
+
+    private instanceId = counter++;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -44,6 +48,7 @@ export class AlignedGridsService {
         this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
         this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this));
     }
 
     // common logic across all the fire methods
@@ -80,15 +85,16 @@ export class AlignedGridsService {
         });
     }
 
-    public fireHorizontalScrollEvent(horizontalScroll: number): void {
+    private fireScrollEvent(event: BodyScrollEvent): void {
+        if (event.direction!=='horizontal') { return; }
         this.fireEvent( alignedGridsService => {
-            alignedGridsService.onScrollEvent(horizontalScroll);
+            alignedGridsService.onScrollEvent(event);
         });
     }
 
-    public onScrollEvent(horizontalScroll: number): void {
+    private onScrollEvent(event: BodyScrollEvent): void {
         this.onEvent(()=> {
-            this.gridPanel.setHorizontalScrollPosition(horizontalScroll);
+            this.gridPanel.setHorizontalScrollPosition(event.left);
         });
     }
 
