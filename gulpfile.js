@@ -16,8 +16,12 @@ const gulpIf = require('gulp-if');
 const replace = require('gulp-replace');
 
 gulp.task('process-src', processSrc);
-gulp.task('release', ['process-src', 'bundle-site' ]);
+gulp.task('copy-from-ag-grid', copyFromAgGrid);
+gulp.task('copy-from-ag-grid-enterprise', copyFromAgGridEnterprise);
+
+gulp.task('release', ['process-src', 'bundle-site', 'copy-from-ag-grid', 'copy-from-ag-grid-enterprise' ]);
 gulp.task('default', ['release']);
+
 
 /* for ci */
 gulp.task('copy-ag-dependencies-to-dist', ['copy-ag-grid-to-dist', 'copy-ag-grid-enterprise-to-dist']);
@@ -37,17 +41,14 @@ gulp.task('bundle-site', () => {
         .pipe(gulp.dest('dist/dist'));
 });
 
-const SKIP_INLINE=false;
+const SKIP_INLINE=true;
 
 // the below caused errors if we tried to copy in from ag-grid and ag-grid-enterprise linked folders
 function processSrc() {
-
     const version = require('../ag-grid/package.json').version;
 
     const phpFilter = filter( '**/*.php', { restore: true } );
     const bootstrapFilter = filter('src/dist/bootstrap/css/bootstrap.css', { restore: true })
-
-    const hardCodedScriptFilter = filter( ['**/*.html', 'src/index.php'], { restore: true } );
 
     const uncssPipe = uncss({ html: ['src/**/*.php','src/**/*.html'],
         ignore: [
@@ -58,21 +59,12 @@ function processSrc() {
     });
 
     return gulp.src(['./src/**/*','!./src/dist/ag-grid/','!./src/dist/ag-grid-enterprise/'])
-
         // inline the PHP part
         .pipe(phpFilter)
         .pipe(replace('$$VERSION$$', version))
         // .pipe(debug())
         .pipe(gulpIf(!SKIP_INLINE, inlinesource()))
         .pipe(phpFilter.restore)
-
-
-        // replace the hard-coded scripts with unpkg
-
-        .pipe(hardCodedScriptFilter)
-        .pipe(replace('../dist/ag-grid/ag-grid.js', `https://unpkg.com/ag-grid@${version}/dist/ag-grid.min.js`))
-        .pipe(replace('../dist/ag-grid-enterprise/ag-grid-enterprise.js', `https://unpkg.com/ag-grid-enterprise@${version}/dist/ag-grid-enterprise.min.js`))
-        .pipe(hardCodedScriptFilter.restore)
 
         // do uncss
         .pipe(bootstrapFilter)
@@ -83,6 +75,16 @@ function processSrc() {
         .pipe(gulp.dest('./dist'));
 }
 
+gulp.task('replace-to-cdn', () => {
+    const version = require('../ag-grid/package.json').version;
+
+    // replace the hard-coded scripts with unpkg
+    return gulp.src(['dist/**/*.html', 'dist/index.php'])
+        .pipe(replace('../dist/ag-grid/ag-grid.js', `https://unpkg.com/ag-grid@${version}/dist/ag-grid.min.js`))
+        .pipe(replace('../dist/ag-grid-enterprise/ag-grid-enterprise.js', `https://unpkg.com/ag-grid-enterprise@${version}/dist/ag-grid-enterprise.min.js`))
+        .pipe(gulp.dest('./dist'));
+});
+
 function copyAgGridToDist() {
     return gulp.src(['./node_modules/ag-grid/dist/ag-grid.js'])
         .pipe(gulp.dest('./src/dist/ag-grid/'));
@@ -91,6 +93,17 @@ function copyAgGridToDist() {
 function copyAgGridEnterpriseToDist() {
     return gulp.src(['./node_modules/ag-grid-enterprise/dist/ag-grid-enterprise.js'])
         .pipe(gulp.dest('./src/dist/ag-grid-enterprise/'));
+}
+
+
+function copyFromAgGrid() {
+    return gulp.src(['../ag-grid/dist/ag-grid.js'])
+        .pipe(gulp.dest('./dist/dist/ag-grid/'));
+}
+
+function copyFromAgGridEnterprise() {
+    return gulp.src(['../ag-grid-enterprise/dist/ag-grid-enterprise.js', '../ag-grid-enterprise/dist/ag-grid-enterprise.min.js'])
+        .pipe(gulp.dest('./dist/dist/ag-grid-enterprise'));
 }
 
 gulp.task('serve', cb => {
@@ -108,8 +121,15 @@ gulp.task('serve', cb => {
 });
 
 gulp.task('serve-release', () => {
-    const php = cp.spawn('php', ['-S', '127.0.0.1:8080', '-t', 'dist'], { stdio: 'inherit' });
+    const php = cp.spawn('php', ['-S', '127.0.0.1:9090', '-t', 'dist'], { stdio: 'inherit' });
 
+    process.on('exit', () => {
+        php.kill();
+    })
+});
+
+gulp.task('serve-preview', () => {
+    const php = cp.spawn('php', ['-S', '127.0.0.1:9999', '-t', 'dist'], { stdio: 'inherit', env: { 'AG_DEV': 'true' } });
     process.on('exit', () => {
         php.kill();
     })
