@@ -141,7 +141,7 @@ gridOptions.columnDefs = [
         Here is a basic example of grouping in action.
     </p>
 
-    <show-example example="example1"></show-example>
+    <?= example('Basic Grouping', 'basic-grouping') ?>
 
     <h2 id="grouping-example-with-marrychildren-set">Marry Children</h2>
 
@@ -170,7 +170,7 @@ gridOptions.columnDefs = [
         </li>
     </ul>
 
-    <show-example example="exampleMarryChildren"></show-example>
+    <?= example('Marry Children', 'marry-children') ?>
 
     <h2 id="advanced-grouping-example">Advanced Grouping Example</h2>
 
@@ -202,8 +202,7 @@ gridOptions.columnDefs = [
     <p>
     </p>
 
-    <show-example example="exampleColumnGroupComplex"></show-example>
-
+    <?= example('Advanced Grouping', 'advanced-grouping') ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
