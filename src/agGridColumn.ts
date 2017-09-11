@@ -4,7 +4,7 @@ import {AgCellTemplate, AgEditorTemplate, AgFilterTemplate} from "./agTemplate";
 import {generateBindables} from "./agUtils";
 
 @customElement('ag-grid-column')
-@generateBindables(["colId", "sort", "sortedAt", "sortingOrder", "field", "headerValueGetter", "hide", "pinned",
+@generateBindables(["colId", "sort", "sortedAt", "sortingOrder", "field", "headerValueGetter", "hideCol", "pinned",
     "tooltipField", "headerTooltip", "valueGetter", "keyCreator", "headerCellRenderer", "headerCellTemplate",
     "width", "minWidth", "maxWidth", "cellClass", "cellStyle", "cellRenderer", "cellRendererFramework",
     "cellRendererParams", "cellEditor", "cellEditorFramework", "cellEditorParams", "floatingCellRenderer",
@@ -25,6 +25,10 @@ import {generateBindables} from "./agUtils";
 @inlineView(`<template><slot></slot></template>`)
 @autoinject()
 export class AgGridColumn {
+    private mappedColumnProperties: any = {
+        "hideCol": "hide"   // hide exists in aurelia-templating-resources and will conflict
+    };
+
     @children('ag-grid-column')
     public childColumns: AgGridColumn[] = [];
 
@@ -83,7 +87,8 @@ export class AgGridColumn {
     private createColDefFromGridColumn(): ColDef {
         let colDef: ColDef = {};
         for (let prop in this) {
-            (<any>colDef)[prop] = (<any>this)[prop];
+            let colDefProperty = this.mappedColumnProperties[prop] ? this.mappedColumnProperties[prop] : prop;
+            (<any>colDef)[colDefProperty] = (<any>this)[prop];
         }
         delete (<any>colDef).childColumns;
         return colDef;
