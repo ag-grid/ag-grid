@@ -144,6 +144,7 @@ export class ExcelXmlFactory {
                         prefix: "ss:",
                         map: {
                             Bold: style.font.bold,
+                            FontName: style.font.fontName,
                             Italic: style.font.italic,
                             Color: style.font.color,
                             Outline: style.font.outline,
