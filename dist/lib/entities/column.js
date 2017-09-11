@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.1
+ * @version v13.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.1
+ * @version v13.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -561,7 +561,7 @@ var CellComp = (function (_super) {
             this.eParentOfValue.innerHTML = this.cellRendererGui + '';
             this.cellRendererGui = this.eParentOfValue.firstChild;
         }
-        else if (this.cellRendererGui instanceof HTMLElement) {
+        else if (this.cellRendererGui instanceof Node) {
             //Is this an HTML Element
             this.eParentOfValue.appendChild(this.cellRendererGui);
         }

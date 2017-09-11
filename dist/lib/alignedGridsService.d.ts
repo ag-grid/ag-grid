@@ -1,9 +1,10 @@
-// Type definitions for ag-grid v13.1.1
+// Type definitions for ag-grid v13.1.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent, ColumnEvent } from "./events";
 import { Column } from "./entities/column";
 export declare class AlignedGridsService {
+    private instanceId;
     private gridOptionsWrapper;
     private columnController;
     private gridPanel;
@@ -15,8 +16,8 @@ export declare class AlignedGridsService {
     private fireEvent(callback);
     private onEvent(callback);
     private fireColumnEvent(event);
-    fireHorizontalScrollEvent(horizontalScroll: number): void;
-    onScrollEvent(horizontalScroll: number): void;
+    private fireScrollEvent(event);
+    private onScrollEvent(event);
     getMasterColumns(event: ColumnEvent): Column[];
     getColumnIds(event: ColumnEvent): string[];
     onColumnEvent(event: AgEvent): void;

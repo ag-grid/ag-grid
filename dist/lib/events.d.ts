@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.1.1
+// Type definitions for ag-grid v13.1.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -182,6 +182,8 @@ export interface ItemsAddedEvent extends AgGridEvent {
 }
 export interface BodyScrollEvent extends AgGridEvent {
     direction: string;
+    left: number;
+    top: number;
 }
 export interface FlashCellsEvent extends AgGridEvent {
     cells: any;

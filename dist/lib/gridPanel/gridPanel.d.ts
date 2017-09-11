@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.1.1
+// Type definitions for ag-grid v13.1.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BorderLayout } from "../layout/borderLayout";
@@ -28,7 +28,7 @@ export declare class GridPanel extends BeanStub {
     private pinnedRowModel;
     private eventService;
     private context;
-    private taskQueue;
+    private animationFrameService;
     private paginationProxy;
     private columnApi;
     private gridApi;

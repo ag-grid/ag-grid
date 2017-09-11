@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.1
+ * @version v13.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,8 +28,10 @@ var context_1 = require("./context/context");
 var context_2 = require("./context/context");
 var context_3 = require("./context/context");
 var context_4 = require("./context/context");
+var counter = 0;
 var AlignedGridsService = (function () {
     function AlignedGridsService() {
+        this.instanceId = counter++;
         // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
         // while processing a master event) we mark this if consuming an event, and if we are, then
         // we don't fire back any events.
@@ -44,6 +46,7 @@ var AlignedGridsService = (function () {
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
         this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
+        this.eventService.addEventListener(events_1.Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this));
     };
     // common logic across all the fire methods
     AlignedGridsService.prototype.fireEvent = function (callback) {
@@ -75,15 +78,18 @@ var AlignedGridsService = (function () {
             alignedGridsService.onColumnEvent(event);
         });
     };
-    AlignedGridsService.prototype.fireHorizontalScrollEvent = function (horizontalScroll) {
+    AlignedGridsService.prototype.fireScrollEvent = function (event) {
+        if (event.direction !== 'horizontal') {
+            return;
+        }
         this.fireEvent(function (alignedGridsService) {
-            alignedGridsService.onScrollEvent(horizontalScroll);
+            alignedGridsService.onScrollEvent(event);
         });
     };
-    AlignedGridsService.prototype.onScrollEvent = function (horizontalScroll) {
+    AlignedGridsService.prototype.onScrollEvent = function (event) {
         var _this = this;
         this.onEvent(function () {
-            _this.gridPanel.setHorizontalScrollPosition(horizontalScroll);
+            _this.gridPanel.setHorizontalScrollPosition(event.left);
         });
     };
     AlignedGridsService.prototype.getMasterColumns = function (event) {

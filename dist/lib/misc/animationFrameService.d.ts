@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.1.1
+// Type definitions for ag-grid v13.1.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class AnimationFrameService {
@@ -8,7 +8,8 @@ export declare class AnimationFrameService {
     private ticking;
     addP1Task(task: () => void): void;
     addP2Task(task: () => void): void;
-    executeFrame(): void;
+    private executeFrame(millis);
+    flushAllFrames(): void;
     schedule(): void;
     private requestFrame();
 }

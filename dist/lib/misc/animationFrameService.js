@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.1
+ * @version v13.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,12 +32,13 @@ var AnimationFrameService = (function () {
         this.p2Tasks.add(task);
         this.schedule();
     };
-    AnimationFrameService.prototype.executeFrame = function () {
+    AnimationFrameService.prototype.executeFrame = function (millis) {
         var frameStart = new Date().getTime();
         var duration = (new Date().getTime()) - frameStart;
         var gridPanelNeedsAFrame = true;
         // 16ms is 60 fps
-        while (duration < 60) {
+        var noMaxMillis = millis <= 0;
+        while (noMaxMillis || duration < millis) {
             if (gridPanelNeedsAFrame) {
                 gridPanelNeedsAFrame = this.gridPanel.executeFrame();
             }
@@ -61,6 +62,9 @@ var AnimationFrameService = (function () {
             this.ticking = false;
         }
     };
+    AnimationFrameService.prototype.flushAllFrames = function () {
+        this.executeFrame(-1);
+    };
     AnimationFrameService.prototype.schedule = function () {
         if (!this.ticking) {
             this.ticking = true;
@@ -70,7 +74,7 @@ var AnimationFrameService = (function () {
     AnimationFrameService.prototype.requestFrame = function () {
         // check for the existence of requestAnimationFrame, and if
         // it's missing, then we polyfill it with setTimeout()
-        var callback = this.executeFrame.bind(this);
+        var callback = this.executeFrame.bind(this, 60);
         if (window.requestAnimationFrame) {
             window.requestAnimationFrame(callback);
         }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.1
+ * @version v13.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,6 +51,7 @@ var paginationProxy_1 = require("../rowModels/paginationProxy");
 var gridApi_1 = require("../gridApi");
 var pinnedRowModel_1 = require("../rowModels/pinnedRowModel");
 var beans_1 = require("./beans");
+var animationFrameService_1 = require("../misc/animationFrameService");
 var RowRenderer = (function (_super) {
     __extends(RowRenderer, _super);
     function RowRenderer() {
@@ -691,6 +692,8 @@ var RowRenderer = (function (_super) {
         // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
         // floating cell, the scrolls get out of sync
         this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
+        // need to flush frames, to make sure the correct cells are rendered
+        this.animationFrameService.flushAllFrames();
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
         if (this.rangeController) {
             var gridCell = new gridCell_1.GridCell({ rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column });
@@ -835,19 +838,22 @@ var RowRenderer = (function (_super) {
             // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
             // floating cell, the scrolls get out of sync
             this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
+            // get the grid panel to flush all animation frames - otherwise the call below to get the cellComp
+            // could fail, if we just scrolled the grid (to make a cell visible) and the rendering hasn't finished.
+            this.animationFrameService.flushAllFrames();
             // we have to call this after ensureColumnVisible - otherwise it could be a virtual column
             // or row that is not currently in view, hence the renderedCell would not exist
-            var nextRenderedCell = this.getComponentForCell(nextCell);
+            var nextCellComp = this.getComponentForCell(nextCell);
             // if next cell is fullWidth row, then no rendered cell,
             // as fullWidth rows have no cells, so we skip it
-            if (utils_1.Utils.missing(nextRenderedCell)) {
+            if (utils_1.Utils.missing(nextCellComp)) {
                 continue;
             }
             // if editing, but cell not editable, skip cell
-            if (startEditing && !nextRenderedCell.isCellEditable()) {
+            if (startEditing && !nextCellComp.isCellEditable()) {
                 continue;
             }
-            if (nextRenderedCell.isSuppressNavigable()) {
+            if (nextCellComp.isSuppressNavigable()) {
                 continue;
             }
             // by default, when we click a cell, it gets selected into a range, so to keep keyboard navigation
@@ -857,7 +863,7 @@ var RowRenderer = (function (_super) {
                 this.rangeController.setRangeToCell(gridCell_2);
             }
             // we successfully tabbed onto a grid cell, so return true
-            return nextRenderedCell;
+            return nextCellComp;
         }
     };
     __decorate([
@@ -932,6 +938,10 @@ var RowRenderer = (function (_super) {
         context_1.Autowired('beans'),
         __metadata("design:type", beans_1.Beans)
     ], RowRenderer.prototype, "beans", void 0);
+    __decorate([
+        context_1.Autowired('animationFrameService'),
+        __metadata("design:type", animationFrameService_1.AnimationFrameService)
+    ], RowRenderer.prototype, "animationFrameService", void 0);
     __decorate([
         context_1.Optional('rangeController'),
         __metadata("design:type", Object)

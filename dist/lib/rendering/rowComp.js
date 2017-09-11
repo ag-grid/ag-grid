@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.1
+ * @version v13.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -867,9 +867,15 @@ var RowComp = (function (_super) {
         this.eAllRowContainers.forEach(function (row) { return utils_1._.addOrRemoveCssClass(row, 'ag-row-selected', selected); });
     };
     RowComp.prototype.callAfterRowAttachedOnCells = function (newCellComps, eRow) {
+        var _this = this;
         newCellComps.forEach(function (cellComp) {
             cellComp.setParentRow(eRow);
             cellComp.afterAttached();
+            // if we are editing the row, then the cell needs to turn
+            // into edit mode
+            if (_this.editingRow) {
+                cellComp.startEditingIfEnabled();
+            }
         });
     };
     RowComp.prototype.afterRowAttached = function (rowContainerComp, eRow) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.1
+ * @version v13.1.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1349,6 +1349,14 @@ var GridPanel = (function (_super) {
     };
     GridPanel.prototype.setHorizontalScrollPosition = function (hScrollPosition) {
         this.eBodyViewport.scrollLeft = hScrollPosition;
+        // we need to manually do the event handling (rather than wait for the event)
+        // for the alignedGridsService, as if we don't, the aligned grid service gets
+        // notified async, and then it's 'consuming' flag doesn't get used right, and
+        // we can end up with an infinite loop
+        if (this.nextScrollLeft !== hScrollPosition) {
+            this.nextScrollLeft = hScrollPosition;
+            this.doHorizontalScroll();
+        }
     };
     // tries to scroll by pixels, but returns what the result actually was
     GridPanel.prototype.scrollHorizontally = function (pixels) {
@@ -1397,7 +1405,7 @@ var GridPanel = (function (_super) {
         if (this.nextScrollLeft !== scrollLeft) {
             this.nextScrollLeft = scrollLeft;
             if (this.useAnimationFrame) {
-                this.taskQueue.schedule();
+                this.animationFrameService.schedule();
             }
             else {
                 this.doHorizontalScroll();
@@ -1410,12 +1418,14 @@ var GridPanel = (function (_super) {
             type: events_1.Events.EVENT_BODY_SCROLL,
             api: this.gridApi,
             columnApi: this.columnApi,
-            direction: 'horizontal'
+            direction: 'horizontal',
+            left: this.scrollLeft,
+            top: this.scrollTop
         };
         this.eventService.dispatchEvent(event);
         this.horizontallyScrollHeaderCenterAndFloatingCenter();
         this.setLeftAndRightBounds();
-        this.alignedGridsService.fireHorizontalScrollEvent(this.scrollLeft);
+        // this.alignedGridsService.fireHorizontalScrollEvent(this.scrollLeft);
     };
     GridPanel.prototype.onBodyVerticalScroll = function () {
         var bodyVScrollActive = this.isBodyVerticalScrollActive();
@@ -1428,7 +1438,7 @@ var GridPanel = (function (_super) {
         if (this.useAnimationFrame) {
             if (this.nextScrollTop !== scrollTop) {
                 this.nextScrollTop = scrollTop;
-                this.taskQueue.schedule();
+                this.animationFrameService.schedule();
             }
         }
         else {
@@ -1441,7 +1451,6 @@ var GridPanel = (function (_super) {
     };
     GridPanel.prototype.executeFrame = function () {
         if (this.scrollLeft !== this.nextScrollLeft) {
-            this.scrollLeft = this.nextScrollLeft;
             this.doHorizontalScroll();
             return true;
         }
@@ -1465,7 +1474,9 @@ var GridPanel = (function (_super) {
             type: events_1.Events.EVENT_BODY_SCROLL,
             direction: 'vertical',
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            left: this.scrollLeft,
+            top: this.scrollTop
         };
         this.eventService.dispatchEvent(event);
         this.rowRenderer.redrawAfterScroll();
@@ -1596,7 +1607,7 @@ var GridPanel = (function (_super) {
     __decorate([
         context_1.Autowired('animationFrameService'),
         __metadata("design:type", animationFrameService_1.AnimationFrameService)
-    ], GridPanel.prototype, "taskQueue", void 0);
+    ], GridPanel.prototype, "animationFrameService", void 0);
     __decorate([
         context_1.Autowired('paginationProxy'),
         __metadata("design:type", paginationProxy_1.PaginationProxy)
