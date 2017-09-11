@@ -680,7 +680,7 @@ export class CellComp extends Component {
             //First check for simple return types
             this.eParentOfValue.innerHTML = this.cellRendererGui + '';
             this.cellRendererGui = <HTMLElement> this.eParentOfValue.firstChild;
-        } else if (this.cellRendererGui instanceof HTMLElement){
+        } else if (this.cellRendererGui instanceof Node){
             //Is this an HTML Element
             this.eParentOfValue.appendChild(this.cellRendererGui);
         } else if ((<any>this.cellRendererGui).toString) {
