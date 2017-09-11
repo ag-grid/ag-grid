@@ -147,7 +147,7 @@ var gridOptions = {
         The following examples demonstrates this configuration.
     </p>
 
-<show-example example="columnDefinitionExample"></show-example>
+<?= example('Column Definition Example', 'column-definition', 'vanilla', array("showResult" => true)) ?>
 
 <h1>Provided Column Types</h1>
 
@@ -249,7 +249,7 @@ Examples of state include column visibility, width, row groups and values.
     <li><b>registering for column events, the result of which are printed to the console.</b></li>
 </ul>
 
-<show-example example="columnStateExample"></show-example>
+<?= example('Column State Example', 'column-state', 'vanilla', array('enterprise' => true, "showResult" => true)) ?>
 
 
 <note>
