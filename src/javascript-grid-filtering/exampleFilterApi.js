@@ -46,13 +46,13 @@ function irelandAndUk() {
     countryFilterComponent.selectNothing();
     countryFilterComponent.selectValue('Ireland');
     countryFilterComponent.selectValue('Great Britain');
-    countryFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function clearCountryFilter() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     countryFilterComponent.selectEverything();
-    countryFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function destroyCountryFilter() {
@@ -69,14 +69,14 @@ function endingStan() {
             countryFilterComponent.selectValue(value);
         }
     }
-    countryFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function setCountryModel() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     var model = ['Algeria','Argentina'];
     countryFilterComponent.setModel(model);
-    countryFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function printCountryModel() {
@@ -96,7 +96,7 @@ function ageBelow25() {
         filter: 25,
         filterTo: null
     });
-    ageFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function ageAbove30() {
@@ -106,7 +106,7 @@ function ageAbove30() {
         filter: 30,
         filterTo: null
     });
-    ageFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function ageBetween25And30() {
@@ -116,13 +116,13 @@ function ageBetween25And30() {
         filter: 25,
         filterTo: 30
     });
-    ageFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function clearAgeFilter() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setModel(null);
-    ageFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function after2010(){
@@ -132,7 +132,7 @@ function after2010(){
         dateFrom: '2010-01-01',
         dateTo: null
     });
-    dateFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function before2012(){
@@ -142,13 +142,13 @@ function before2012(){
         dateFrom: '2012-01-01',
         dateTo: null
     });
-    dateFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 function clearDateFilter(){
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setModel(null);
-    dateFilterComponent.onFilterChanged();
+    gridOptions.api.onFilterChanged();
 }
 
 // setup the grid after the page has finished loading
