@@ -168,7 +168,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let rowNode = this.displayedGroup;
         if (rowNode.footer) {
             this.createFooterCell();
-        } else if (rowNode.group || _.get(params.colDef, 'cellRendererParams.innerRenderer', null)) {
+        } else if (
+            rowNode.group ||
+            _.get(params.colDef, 'cellRendererParams.innerRenderer', null) ||
+            _.get(params.colDef, 'cellRendererParams.innerRendererFramework', null)
+        ) {
             this.createGroupCell();
             if (rowNode.group){
                 this.addChildCount();
