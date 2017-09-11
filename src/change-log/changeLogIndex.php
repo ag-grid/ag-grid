@@ -18,6 +18,7 @@ include '../documentation-main/documentation_header.php';
     <h3>Version 13.1.2 [11-SEP-2017]</h3>
     <h4>Bug Fixes</h4>
     <ul>
+        <li>AG-764: fix bug introduced in 13.1 that breaks aurelia cell renderers.</li>
         <li>AG-761: make suppressExcelExport and suppressCsvExport optional properties.</li>
         <li>AG-755: innerRendererFramework does not use framework to render leaf nodes in tree data</li>
         <li>AG-755: fontName property for Excel Export was being ignored</li>
