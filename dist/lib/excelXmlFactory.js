@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.1
+// ag-grid-enterprise v13.1.2
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -134,6 +134,7 @@ var ExcelXmlFactory = (function () {
                             prefix: "ss:",
                             map: {
                                 Bold: style.font.bold,
+                                FontName: style.font.fontName,
                                 Italic: style.font.italic,
                                 Color: style.font.color,
                                 Outline: style.font.outline,

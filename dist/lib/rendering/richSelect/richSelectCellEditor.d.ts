@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.1
+// ag-grid-enterprise v13.1.2
 import { ICellEditor, ICellEditorParams, Component, Context, ICellRendererComp, ICellRendererFunc, CellRendererService } from "ag-grid/main";
 export interface IRichCellEditorParams extends ICellEditorParams {
     values: string[];

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.1
+// ag-grid-enterprise v13.1.2
 import { MenuItemDef, Component, AgEvent } from "ag-grid";
 export interface MenuItemSelectedEvent extends AgEvent {
     name: string;

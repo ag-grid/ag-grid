@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.1
+// ag-grid-enterprise v13.1.2
 import { Column, Component } from "ag-grid/main";
 export declare class RenderedColumn extends Component {
     private static TEMPLATE;

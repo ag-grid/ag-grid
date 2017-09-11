@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.1
+// ag-grid-enterprise v13.1.2
 import { IContextMenuFactory, RowNode, Column, IAfterGuiAttachedParams } from "ag-grid";
 export declare class ContextMenuFactory implements IContextMenuFactory {
     private context;
