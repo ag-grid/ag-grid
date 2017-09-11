@@ -26,6 +26,7 @@ import {PaginationProxy} from "../rowModels/paginationProxy";
 import {GridApi, RefreshCellsParams} from "../gridApi";
 import {PinnedRowModel} from "../rowModels/pinnedRowModel";
 import {Beans} from "./beans";
+import {AnimationFrameService} from "../misc/animationFrameService";
 
 @Bean('rowRenderer')
 export class RowRenderer extends BeanStub {
@@ -48,6 +49,7 @@ export class RowRenderer extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('beans') private beans: Beans;
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('rangeController') private rangeController: IRangeController;
 
     private firstRenderedRow: number;
@@ -818,6 +820,9 @@ export class RowRenderer extends BeanStub {
         // floating cell, the scrolls get out of sync
         this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
 
+        // need to flush frames, to make sure the correct cells are rendered
+        this.animationFrameService.flushAllFrames();
+
         this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.floating, true);
         if (this.rangeController) {
             let gridCell = new GridCell({rowIndex: nextCell.rowIndex, floating: nextCell.floating, column: nextCell.column});
@@ -984,22 +989,26 @@ export class RowRenderer extends BeanStub {
             // floating cell, the scrolls get out of sync
             this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
 
+            // get the grid panel to flush all animation frames - otherwise the call below to get the cellComp
+            // could fail, if we just scrolled the grid (to make a cell visible) and the rendering hasn't finished.
+            this.animationFrameService.flushAllFrames();
+
             // we have to call this after ensureColumnVisible - otherwise it could be a virtual column
             // or row that is not currently in view, hence the renderedCell would not exist
-            let nextRenderedCell = this.getComponentForCell(nextCell);
+            let nextCellComp = this.getComponentForCell(nextCell);
 
             // if next cell is fullWidth row, then no rendered cell,
             // as fullWidth rows have no cells, so we skip it
-            if (_.missing(nextRenderedCell)) {
+            if (_.missing(nextCellComp)) {
                 continue;
             }
 
             // if editing, but cell not editable, skip cell
-            if (startEditing && !nextRenderedCell.isCellEditable()) {
+            if (startEditing && !nextCellComp.isCellEditable()) {
                 continue;
             }
 
-            if (nextRenderedCell.isSuppressNavigable()) {
+            if (nextCellComp.isSuppressNavigable()) {
                 continue;
             }
 
@@ -1011,9 +1020,10 @@ export class RowRenderer extends BeanStub {
             }
 
             // we successfully tabbed onto a grid cell, so return true
-            return nextRenderedCell;
+            return nextCellComp;
         }
     }
+
 }
 
 export interface RefreshViewParams {

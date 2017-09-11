@@ -144,7 +144,7 @@ export class GridPanel extends BeanStub {
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
-    @Autowired('animationFrameService') private taskQueue: AnimationFrameService;
+    @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
 
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -1698,7 +1698,7 @@ export class GridPanel extends BeanStub {
         if (this.nextScrollLeft !== scrollLeft) {
             this.nextScrollLeft = scrollLeft;
             if (this.useAnimationFrame) {
-                this.taskQueue.schedule();
+                this.animationFrameService.schedule();
             } else {
                 this.doHorizontalScroll();
             }
@@ -1735,7 +1735,7 @@ export class GridPanel extends BeanStub {
         if (this.useAnimationFrame) {
             if (this.nextScrollTop !== scrollTop) {
                 this.nextScrollTop = scrollTop;
-                this.taskQueue.schedule();
+                this.animationFrameService.schedule();
             }
         } else {
             if (scrollTop !== this.scrollTop) {

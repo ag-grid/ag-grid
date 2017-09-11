@@ -22,7 +22,7 @@ export class AnimationFrameService {
         this.schedule();
     }
 
-    public executeFrame(): void {
+    private executeFrame(millis: number): void {
 
         let frameStart = new Date().getTime();
 
@@ -31,7 +31,8 @@ export class AnimationFrameService {
         let gridPanelNeedsAFrame = true;
 
         // 16ms is 60 fps
-        while (duration < 60) {
+        let noMaxMillis = millis <= 0;
+        while (noMaxMillis || duration < millis) {
             if (gridPanelNeedsAFrame) {
                 gridPanelNeedsAFrame = this.gridPanel.executeFrame();
             } else if (!this.p1Tasks.isEmpty()) {
@@ -53,6 +54,10 @@ export class AnimationFrameService {
         }
     }
 
+    public flushAllFrames(): void {
+        this.executeFrame(-1);
+    }
+
     public schedule(): void {
         if (!this.ticking) {
             this.ticking = true;
@@ -63,7 +68,7 @@ export class AnimationFrameService {
     private requestFrame(): void {
         // check for the existence of requestAnimationFrame, and if
         // it's missing, then we polyfill it with setTimeout()
-        let callback = this.executeFrame.bind(this);
+        let callback = this.executeFrame.bind(this, 60);
         if (window.requestAnimationFrame) {
             window.requestAnimationFrame(callback);
         } else if (window.webkitRequestAnimationFrame) {
