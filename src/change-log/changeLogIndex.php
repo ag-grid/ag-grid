@@ -18,7 +18,8 @@ include '../documentation-main/documentation_header.php';
     <h4>Bug Fixes</h4>
     <ul>
         <li>AG-755: when using 'aligned grids', removed infinite loop on horizontal scroll</li>
-        <li>AG-756: column virutalisation and full row edit were not working with each other, as user scrolled, newly created cells were not editable.</li>
+        <li>AG-756: column virtualisation and full row edit were not working with each other, as user scrolled, newly created cells were not editable.</li>
+        <li>AG-760: tabbing to next row when, when next cell was not virtualised (due to column virtualisation) was failing</li>
     </ul>
 
     <h2>Version 13.1.x</h2>

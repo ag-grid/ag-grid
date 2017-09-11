@@ -207,8 +207,6 @@ var gridOptions = {
     },
     // suppressTabbing: true,
     // rowHoverClass: true,
-// isScrollLag: function() { return true; },
-suppressScrollLag: true,
     // layoutInterval: -1,
 // suppressAnimationFrame: true,
 //     pinnedTopRowData: [{},{},{}],
