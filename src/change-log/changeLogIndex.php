@@ -13,16 +13,19 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h2>NEXT</h2>
 
+    <h2>Version 13.1.x</h2>
+    <h3>Version 13.1.2 [11-SEP-2017]</h3>
     <h4>Bug Fixes</h4>
     <ul>
+        <li>AG-761: make suppressExcelExport and suppressCsvExport optional properties.</li>
+        <li>AG-755: innerRendererFramework does not use framework to render leaf nodes in tree data</li>
+        <li>AG-755: fontName property for Excel Export was being ignored</li>
         <li>AG-755: when using 'aligned grids', removed infinite loop on horizontal scroll</li>
         <li>AG-756: column virtualisation and full row edit were not working with each other, as user scrolled, newly created cells were not editable.</li>
         <li>AG-760: tabbing to next row when, when next cell was not virtualised (due to column virtualisation) was failing</li>
     </ul>
 
-    <h2>Version 13.1.x</h2>
     <h3>Version 13.1.1 [08-SEP-2017]</h3>
     <h4>Bug Fixes</h4>
     <ul>
