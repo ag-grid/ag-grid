@@ -14,33 +14,44 @@ include '../documentation-main/documentation_header.php';
         Reference
     </h1>
 
-<!--    The interface to ag-Grid is modelled around standard DOM elements. This gives ag-Grid a consistent
-    feel to already existing DOM elements (nice for everyone). It also has the added benefit
-    of fitting nicely into Web Components and your framework.
+<!--    <div style="">
+
+        <a href="../javascript-grid-properties/" class="select-item">
+            <img src="../images/svg/docs/interfacing.svg" width="20" />
+            Grid Properties
+        </a>
+
+        <a href="../javascript-grid-events/" class="select-item">
+            <img src="../images/svg/docs/interfacing.svg" width="20" />
+            Grid Events
+        </a>
+
+        <a href="../javascript-grid-callbacks/" class="select-item">
+            <img src="../images/svg/docs/interfacing.svg" width="20" />
+            Grid Callbacks
+        </a>
+
+        <a href="../javascript-grid-api/" class="select-item">
+            <img src="../images/svg/docs/interfacing.svg" width="20" />
+            Grid API
+        </a>
+
+    </div>
+
+    <div style="">
+
+        <a href="../javascript-grid-column-properties/" class="select-item">
+            <img src="../images/svg/docs/interfacing.svg" width="20" />
+            Column Properties
+        </a>
+
+        <a href="../javascript-grid-column-api/" class="select-item">
+            <img src="../images/svg/docs/interfacing.svg" width="20" />
+            Column API
+        </a>
+
+    </div>
 -->
-    <p>
-        The interface to the grid is split into the following:
-    </p>
-    <ul>
-        <li>
-            <b>Grid Properties</b>: Properties for configuring the grid.
-        </li>
-        <li>
-            <b>Grid Events</b>: Events emitted by the grid.
-        </li>
-        <li>
-            <b>Grid Callbacks</b>: Functions to allow the grid query the application.
-        </li>
-        <li>
-            <b>Grid API</b>: Runtime API into the grid.
-        </li>
-        <li>
-            <b>Column Properties</b>: Properties for configuring grid columns.
-        </li>
-        <li>
-            <b>Column API</b>: Runtime API for managing the grid's columns.
-        </li>
-    </ul>
     <p>
         This section explains how to configure the the grid's properties, events, callbacks and API.
     </p>

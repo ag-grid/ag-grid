@@ -14,46 +14,83 @@ include '../documentation-main/documentation_header.php';
         React Datagrid
     </h1>
 
+    <a href="../react-getting-started/" class="select-item list-group-item">
+        <div class="float-parent">
+            <div class="section-icon-container">
+                <img src="../images/svg/docs/getting_started.svg" width="50" />
+            </div>
+            <h4 class="list-group-item-heading">Getting Started</h4>
+            <p class="list-group-item-text">
+                Learn how to get a simple application working using ag-Grid and ReactJS.
+                Start here to get a simple grid working in your application, then follow on
+                to further sections to understand how particular features work.
+            </p>
+        </div>
+    </a>
+    <a href="../react-more-details/" class="select-item list-group-item">
+        <div class="float-parent">
+            <div class="section-icon-container">
+                <img src="../images/svg/docs/more-details2.svg" width="50" />
+            </div>
+            <h4 class="list-group-item-heading">More Details</h4>
+            <p class="list-group-item-text">
+                Dive deeper in how to use ag-Grid with React, including referencing dependencies,
+                an overview on interfacing, integrating with redux, performance and more.
+            </p>
+        </div>
+    </a>
+    <a href="../example-react/" class="select-item list-group-item">
+        <div class="float-parent">
+            <div class="section-icon-container">
+                <img src="../images/svg/docs/examples.svg" width="50" />
+            </div>
+            <h4 class="list-group-item-heading">Full Examples with React</h4>
+            <p class="list-group-item-text">
+                This page features examples of using ag-Grid and React together. It covers more of the features of ag-Grid.
+            </p>
+        </div>
+    </a>
+
     <?= example('ag-Grid in React', 'rich', 'react', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 
-    <div class="list-group" style="margin-top: 20px;">
-        <a href="../react-getting-started/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/getting_started.svg" width="50" />
+<!--    <div class="list-group" style="margin-top: 20px;">
+            <a href="../react-getting-started/" class="list-group-item">
+                <div class="float-parent">
+                    <div class="section-icon-container">
+                        <img src="../images/svg/docs/getting_started.svg" width="50" />
+                    </div>
+                    <h4 class="list-group-item-heading">Getting Started</h4>
+                    <p class="list-group-item-text">
+                        Learn how to get a simple application working using ag-Grid and ReactJS.
+                        Start here to get a simple grid working in your application, then follow on
+                        to further sections to understand how particular features work.
+                    </p>
                 </div>
-                <h4 class="list-group-item-heading">Getting Started</h4>
-                <p class="list-group-item-text">
-                    Learn how to get a simple application working using ag-Grid and ReactJS.
-                    Start here to get a simple grid working in your application, then follow on
-                    to further sections to understand how particular features work.
-                </p>
-            </div>
-        </a>
-        <a href="../react-more-details/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/more-details2.svg" width="50" />
+            </a>
+            <a href="../react-more-details/" class="list-group-item">
+                <div class="float-parent">
+                    <div class="section-icon-container">
+                        <img src="../images/svg/docs/more-details2.svg" width="50" />
+                    </div>
+                    <h4 class="list-group-item-heading">More Details</h4>
+                    <p class="list-group-item-text">
+                        Dive deeper in how to use ag-Grid with React, including referencing dependencies,
+                        an overview on interfacing, integrating with redux, performance and more.
+                    </p>
                 </div>
-                <h4 class="list-group-item-heading">More Details</h4>
-                <p class="list-group-item-text">
-                    Dive deeper in how to use ag-Grid with React, including referencing dependencies,
-                    an overview on interfacing, integrating with redux, performance and more.
-                </p>
-            </div>
-        </a>
-        <a href="../example-react/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/examples.svg" width="50" />
+            </a>
+            <a href="../example-react/" class="list-group-item">
+                <div class="float-parent">
+                    <div class="section-icon-container">
+                        <img src="../images/svg/docs/examples.svg" width="50" />
+                    </div>
+                    <h4 class="list-group-item-heading">Full Examples with React</h4>
+                    <p class="list-group-item-text">
+                        This page features examples of using ag-Grid and React together. It covers more of the features of ag-Grid.
+                    </p>
                 </div>
-                <h4 class="list-group-item-heading">Full Examples with React</h4>
-                <p class="list-group-item-text">
-                    This page features examples of using ag-Grid and React together. It covers more of the features of ag-Grid.
-                </p>
-            </div>
-        </a>
-    </div>
+            </a>
+        </div>-->
 
     <?php include '../home/features-detail.php'; ?>
 
