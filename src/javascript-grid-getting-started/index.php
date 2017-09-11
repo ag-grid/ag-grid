@@ -41,14 +41,6 @@ $linkHref = "<a href='" . $link . "'>here</a>";
 
     <h1 class="first-h framework-select-big-title">Choose Your Framework</h1>
 
-    <p class="framework-select-small-title">
-        Some 'more simple' data grids support one framework.
-    </p>
-
-    <p class="framework-select-small-title">
-        ag-Grid has you covered when you move between frameworks.
-    </p>
-
     <div class="row framework-select-list">
         <div class="col-md-3">
             <a href="../best-javascript-data-grid/">
@@ -134,10 +126,6 @@ $linkHref = "<a href='" . $link . "'>here</a>";
             </a>
         </div>
     </div>
-
-    <p class="framework-select-small-title">
-        You can select your chosen framework in the menu (top left) to tailor the documentation for your selection.
-    </p>
 
 </div>
 

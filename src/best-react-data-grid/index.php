@@ -14,7 +14,35 @@ include '../documentation-main/documentation_header.php';
         React Datagrid
     </h1>
 
-    <a href="../react-getting-started/" class="select-item list-group-item">
+
+    <div class="row framework-select-list">
+        <div class="col-md-4">
+            <a href="../react-getting-started/">
+                <div class="framework-select-item">
+                    <img src="../images/react_large.png" width="40" alt="Getting Started" title="Getting Started"/>
+                        Getting Started
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="../react-more-details/">
+                <div class="framework-select-item">
+                    <img src="../images/react_large.png" width="40" alt="More Details" title="More Details"/>
+                        More Details
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="../example-react/">
+                <div class="framework-select-item">
+                    <img src="../images/react_large.png" width="40" alt="React Examples" title="React Examples"/>
+                        React Examples
+                </div>
+            </a>
+        </div>
+    </div>
+
+<!--    <a href="../react-getting-started/" class="select-item list-group-item">
         <div class="float-parent">
             <div class="section-icon-container">
                 <img src="../images/svg/docs/getting_started.svg" width="50" />
@@ -49,7 +77,7 @@ include '../documentation-main/documentation_header.php';
                 This page features examples of using ag-Grid and React together. It covers more of the features of ag-Grid.
             </p>
         </div>
-    </a>
+    </a>-->
 
     <?= example('ag-Grid in React', 'rich', 'react', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 
