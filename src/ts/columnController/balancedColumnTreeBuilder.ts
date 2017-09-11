@@ -65,7 +65,7 @@ export class BalancedColumnTreeBuilder {
                 let newChild = child;
                 for (let i = columnDept-1; i>=currentDept; i--) {
                     let newColId = columnKeyCreator.getUniqueKey(null, null);
-                    let colGroupDefMerged = this.createMergedColGroupDef(null);
+                    let colGroupDefMerged = this.createMergedColGroupDef(<ColGroupDef> { headerName : '' });
                     let paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true);
                     this.context.wireBean(paddedGroup);
                     paddedGroup.setChildren([newChild]);
