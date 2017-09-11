@@ -37,37 +37,6 @@ switch ($GLOBALS[framework]) {
 $linkHref = "<a href='" . $link . "'>here</a>";
 ?>
 
-<style>
-    .framework-select-item {
-        border-radius: 4px;
-        border: 1px solid #ddd;
-        padding: 20px;
-        margin: 20px;
-        color: #111;
-        font-size: 20px;
-        text-align: center;
-        display: inline-block;
-    }
-    .framework-select-item:hover {
-        background-color: #eee;
-    }
-    .framework-select-label {
-        margin-top: 15px;
-    }
-    .framework-select-list {
-        text-align: center;
-    }
-    .framework-select-small-title {
-        text-align: center;
-        font-size: 16px;
-        padding-bottom: 10px;
-    }
-    .framework-select-big-title {
-        text-align: center;
-        padding-bottom: 10px;
-    }
-</style>
-
 <div>
 
     <h1 class="first-h framework-select-big-title">Choose Your Framework</h1>
