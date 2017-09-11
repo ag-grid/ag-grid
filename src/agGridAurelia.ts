@@ -1,17 +1,17 @@
 import {
-    bindable,
     autoinject,
-    inlineView,
-    customElement,
+    bindable,
+    child,
+    children,
     ComponentAttached,
     ComponentDetached,
-    children,
-    child,
     Container,
-    ViewResources,
-    TaskQueue
+    customElement,
+    inlineView,
+    TaskQueue,
+    ViewResources
 } from "aurelia-framework";
-import {Grid, GridOptions, GridApi, ColumnApi, GridParams, ComponentUtil} from "ag-grid/main";
+import {ColumnApi, ComponentUtil, Grid, GridApi, GridOptions, GridParams} from "ag-grid/main";
 import {AureliaFrameworkFactory} from "./aureliaFrameworkFactory";
 import {AgGridColumn} from "./agGridColumn";
 import {generateBindables} from "./agUtils";
@@ -67,8 +67,8 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
     }
 
     attached() {
-        //initialize the grid in the queue
-        //because of bug in @children
+        // initialize the grid in the queue
+        // because of bug in @children
         // https://github.com/aurelia/templating/issues/403
         this.taskQueue.queueTask(this.initGrid.bind(this));
     }
@@ -101,7 +101,7 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
 
         if (this.fullWidthRowTemplate) {
             this.gridOptions.fullWidthCellRendererFramework =
-              {template: this.fullWidthRowTemplate.template};
+                {template: this.fullWidthRowTemplate.template};
         }
 
         new Grid(this._nativeElement, this.gridOptions, this.gridParams);

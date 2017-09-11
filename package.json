@@ -35,8 +35,8 @@
     "typescript": "^2.0.3"
   },
   "peerDependencies": {
-    "aurelia-framework": "1.0.x",
-    "ag-grid": "13.0.2"
+    "aurelia-framework": "1.x",
+    "ag-grid": "^13.0.0"
   },
   "dependencies": {
 

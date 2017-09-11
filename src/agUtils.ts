@@ -7,7 +7,7 @@ export function generateBindables(names: string[], bindingModeToUse?: any): any 
         let behaviorResource: HtmlBehaviorResource = <HtmlBehaviorResource>metadata.getOrCreateOwn(metadata.resource, HtmlBehaviorResource, target);
 
         let nameOrConfigOrTargets: any[] = names.map((name) => {
-            let nameOrConfigOrTarget:any = {
+            let nameOrConfigOrTarget: any = {
                 name: name
             };
 
