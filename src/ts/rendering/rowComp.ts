@@ -1034,6 +1034,12 @@ export class RowComp extends Component {
         newCellComps.forEach( cellComp => {
             cellComp.setParentRow(eRow);
             cellComp.afterAttached();
+
+            // if we are editing the row, then the cell needs to turn
+            // into edit mode
+            if (this.editingRow) {
+                cellComp.startEditingIfEnabled();
+            }
         });
     }
 
