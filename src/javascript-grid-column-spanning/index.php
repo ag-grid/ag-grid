@@ -86,7 +86,7 @@ interface ColSpanParams {
         </li>
     </ul>
 
-    <show-example example="exampleColumnSpanning"></show-example>
+    <?= example('Column Spanning Simple', 'column-spanning-simple') ?>
 
     <h2>Column Spanning Complex Example</h2>
 
@@ -108,8 +108,7 @@ interface ColSpanParams {
         </li>
     </ul>
 
-    <show-example example="exampleColumnSpanningComplex"></show-example>
-
+    <?= example('Column Spanning Complex', 'column-spanning-complex') ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
