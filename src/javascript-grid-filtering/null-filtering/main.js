@@ -18,7 +18,7 @@ var columnDefs = [
             var dateParts = dateAsString.split("/");
             var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
-            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
+            if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
                 return 0
             }
 

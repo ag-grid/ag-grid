@@ -133,7 +133,7 @@ columnDefinition = {
         The column athlete has a debounce of 1000ms before the selected options are filtered out
     </p>
 
-    <show-example example="exampleSetFilter"></show-example>
+    <?= example('Set Filter', 'set-filter', 'vanilla', array("enterprise" => 1)) ?>
 
     <h3 id="sortingSetFilter">Sorting And Formatting Set Filter Values List</h3>
 
@@ -153,7 +153,7 @@ columnDefinition = {
         can check this by searching for 'bjo'in the mini-filter box.
     </p>
 
-    <show-example example="exampleSetFilterComparator"></show-example>
+    <?= example('Set Filter Comparator', 'set-filter-comparator', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="newRowsSetFilter">New Rows Action and Values Example</h2>
 
@@ -181,8 +181,7 @@ columnDefinition = {
         no longer exist in the new set.
     </note>
 
-    <show-example example="exampleSetFilterNewRows"></show-example>
-
+    <?= example('Set Filter New Rows', 'set-filter-new-rows', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="model">Set Filter Model</h2>
 
@@ -240,13 +239,12 @@ countryFilterComponent.onFilterChanged()</snippet>
         end of the interaction a call to gridOptions.api.onFilterChanged() is performed.
     </p>
 
-    <show-example example="exampleSetFilterApi"></show-example>
-
+    <?= example('Set Filter API', 'set-filter-api', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="floating">Floating Set Filter</h2>
     <p>
         If your grid has floatingFilter enabled, your columns with set filter will automatically show below the header a new
-        column that will show two elements:
+        column that<!----> will show two elements:
 
     <ul>
         <li>Filter input box: It reflects any change made to the set filtering from anywhere within the application. This includes

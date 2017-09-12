@@ -81,7 +81,7 @@ include 'documentation_header.php';
             <div class="col-md-4">
                 <a href="../javascript-grid-examples/">
                     <div class="framework-select-item">
-                        <img src="../images/svg/docs/components.svg" width="50" alt="Examples" title="Examples"/>
+                        <img src="../images/svg/docs/examples.svg" width="50" alt="Examples" title="Examples"/>
                         <div class="framework-select-label">
                             Examples
                         </div>

@@ -1,13 +1,7 @@
-<html>
-<head>
-    <script src="../dist/ag-grid/ag-grid.js"></script>
-    <script src="exampleQuickFilter.js"></script>
-</head>
-<body>
-<div style="height: 100%; padding-top: 20px; box-sizing: border-box;">
+<div style="height: 100%; padding-top: 35px; box-sizing: border-box;">
     <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
 </div>
-<div style="position: absolute; padding-top: 4px; padding-left: 8px; top: 0px; left: 0px;">
+<div style="position: absolute; padding-top: 4px; top: 0px; left: 0px;">
     <input placeholder="Filter..." type="text" oninput="onFilterChanged(this.value)"/>
     <button style="margin-left: 20px;" onclick="onPrintQuickFilterTexts(this.value)">Print Quick Filter Texts</button>
     <span style="margin-left: 50px">
@@ -21,5 +15,3 @@
         </label>
     </span>
 </div>
-</body>
-</html>
