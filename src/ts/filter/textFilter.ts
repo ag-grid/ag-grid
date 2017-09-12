@@ -66,6 +66,10 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
         return BaseFilter.CONTAINS;
     }
 
+    public init(params:ITextFilterParams) {
+        this.defaultFilter = BaseFilter.CONTAINS;
+        super.init(params);
+    }
 
     public customInit(): void {
         this.comparator = this.filterParams.textCustomComparator ? this.filterParams.textCustomComparator : TextFilter.DEFAULT_COMPARATOR;
@@ -172,7 +176,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
 
     public resetState(): void{
         this.setFilter(null);
-        this.setFilterType(this.defaultFilter || BaseFilter.CONTAINS);
+        this.setFilterType(this.defaultFilter);
     }
 
     public serialize(): SerializedTextFilter{

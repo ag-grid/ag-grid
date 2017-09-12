@@ -32,6 +32,11 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
         };
     }
 
+    public init(params:INumberFilterParams) {
+        this.defaultFilter = BaseFilter.EQUALS;
+        super.init(params);
+    }
+
     public getApplicableFilterTypes ():string[]{
         return [BaseFilter.EQUALS, BaseFilter.NOT_EQUAL, BaseFilter.LESS_THAN, BaseFilter.LESS_THAN_OR_EQUAL,
             BaseFilter.GREATER_THAN, BaseFilter.GREATER_THAN_OR_EQUAL, BaseFilter.IN_RANGE];
@@ -152,9 +157,9 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public resetState():void{
-        this.setFilterType(BaseFilter.EQUALS);
+        this.setFilterType(this.defaultFilter);
         this.setFilter(null);
-        this.setFilterTo(this.defaultFilter || null);
+        this.setFilterTo(null);
     }
 
     public setType (filterType:string):void{

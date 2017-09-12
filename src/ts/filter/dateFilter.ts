@@ -38,6 +38,11 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
 
     private dateTo:Date;
 
+    public init(params:IDateFilterParams){
+        this.defaultFilter = BaseFilter.EQUALS;
+        super.init(params);
+    }
+
     public modelFromFloatingFilter(from: string): SerializedDateFilter {
         return {
             dateFrom: from,
@@ -155,7 +160,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     public resetState():void{
         this.setDateFrom(null);
         this.setDateTo(null);
-        this.setFilterType(this.defaultFilter || "equals");
+        this.setFilterType(this.defaultFilter);
     }
 
     public parse(model: SerializedDateFilter): void {
