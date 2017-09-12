@@ -241,7 +241,8 @@ athleteFilterComponent.onFilterChanged()</snippet></p>
     <li>The sports column has a different default option <i>defaultOption='startsWith'</i></li>
 </ul>
 </p>
-<show-example example="exampleFilter"></show-example>
+
+<?= example('Text Filter', 'text-filter') ?>
 
 <h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
 
