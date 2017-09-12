@@ -100,15 +100,7 @@ Params contains {value, node, data, column, colDef}.
     for each column except E (which would be fixed by adding an appropriate getQuickFilterText method like D does).
 </p>
 
-<!-- todo-plunk plunker="https://embed.plnkr.co/XlK0mtmxrKZjYOn3t56x/" -->
-<show-complex-example example="exampleQuickFilter.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleQuickFilter.html,exampleQuickFilter.js' }
-                                ]
-                              }"
-                      exampleheight="500px">
-</show-complex-example>
+<?= example('Quick Filter', 'quick-filter') ?>
 
 <h3 id="server-side-filtering">Server Side Data</h3>
 
@@ -120,7 +112,6 @@ Params contains {value, node, data, column, colDef}.
 
 
 </p>
-
 
 
 <?php include '../documentation-main/documentation_footer.php';?>
