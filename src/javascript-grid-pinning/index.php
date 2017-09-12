@@ -41,7 +41,7 @@ colDef = {
 
     <h2>Example Pinning</h2>
 
-    <show-example example="examplePinned"></show-example>
+    <?= example('Column Pinning', 'column-pinning') ?>
 
     <note>
         If you pin to many columns, so that the pinned columns take up the whole width of the grid,

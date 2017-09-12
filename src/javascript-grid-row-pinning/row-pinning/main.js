@@ -41,7 +41,7 @@ function onPinnedRowBottomCount(footerRowsToFloat) {
 
 function setData(rowData) {
     gridOptions.api.setRowData(rowData);
-    // initilise the pinned rows
+    // initialise the pinned rows
     onPinnedRowTopCount(1);
     onPinnedRowBottomCount(1);
     // if this timeout is missing, we size to fit before the scrollbar shows,
@@ -74,10 +74,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '../olympicWinners.json');
+    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             setData(httpResult);
         }

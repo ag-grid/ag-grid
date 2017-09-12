@@ -47,7 +47,7 @@ include '../documentation-main/documentation_header.php';
         Example below shows pinned rows.
     </p>
 
-    <show-example example="examplePinnedRow" example-height="450px"></show-example>
+    <?= example('Row Pinning', 'row-pinning') ?>
 
 </div>
 
