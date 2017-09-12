@@ -103,7 +103,7 @@ let publishSelectedSymbols = function () {
         // do http request to get our sample data - not using any framework to keep the example self contained.
         // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
         let httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', '../javascript-grid-graphing/stocks/summary.json');
+        httpRequest.open('GET', '../javascript-grid-graphing/stocks-master-detail/stocks/summary.json');
         httpRequest.send();
         httpRequest.onreadystatechange = function () {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
@@ -145,7 +145,7 @@ let requestStockDataLoad = function (stockSymbols) {
     let promises = [];
     stockSymbols.forEach((stockSymbol) => {
         "use strict";
-        promises.push(makeRequest(`../javascript-grid-graphing/stocks/${stockSymbol}.json`))
+        promises.push(makeRequest(`../javascript-grid-graphing/stocks-master-detail/stocks/${stockSymbol}.json`))
     });
     return promises;
 };
