@@ -22,15 +22,7 @@ include '../documentation-main/documentation_header.php';
     data that when clicked on provides a simple time-series chart of the corresponding data. Multiple rows (or stocks) can be
     selected to provide a comparison between stocks.</p>
 
-    <show-complex-example example="./stocksMasterDetail.html"
-                          sources="{
-                            [
-                                { root: './', files: 'stocksMasterDetail.html,stocksMasterDetail.js' }
-                            ]
-                          }"
-                          plunker=""
-                          exampleheight="800px">
-    </show-complex-example>
+    <?= example('Auto Height', 'stocks-master-detail') ?>
 
     <h3>Inline Graphs using jQuery Sparklines</h3>
 
