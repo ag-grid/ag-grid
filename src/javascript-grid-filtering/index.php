@@ -129,16 +129,7 @@ columnDefinition = {
     </ul>
     </p>
 
-    <show-complex-example example="example1.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'example1.html,example1.js' }
-                                ]
-                              }"
-                          plunker="https://embed.plnkr.co/pTreZEgQtV7OZRExQUjU/"
-                          exampleheight="500px">
-    </show-complex-example>
-
+    <?= example('Built-In Filters', 'built-in-filters') ?>
 
     <h3 id="apply-function">Apply Function</h3>
 
@@ -186,15 +177,7 @@ columnDefinition = {
         </ul>
     </p>
 
-    <show-complex-example example="exampleFilterApply.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleFilterApply.html,exampleFilterApply.js' }
-                                ]
-                              }"
-                          plunker="https://embed.plnkr.co/eIdTwdmysRxmhyOZJFbP/"
-                          exampleheight="500px">
-    </show-complex-example>
+    <?= example('Apply Button and Filter Events', 'apply-and-filter-events') ?>
 
     <h3 id="filtering-animation">Filtering Animation</h3>
 
@@ -236,15 +219,7 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <show-complex-example example="exampleFilterApi.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleFilterApi.html,exampleFilterApi.js' }
-                                ]
-                              }"
-                          plunker="https://embed.plnkr.co/0NoAA9cEZa1Zr9brMZ2I/"
-                          exampleheight="500px">
-    </show-complex-example>
+    <?= example('Filter API', 'filter-api') ?>
 
     <h4 id="reset_filters">Reset Individual Filters</h4>
 
@@ -307,7 +282,7 @@ gridOptions.api.setFilterModel(null);</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <show-example example="exampleFilterModel"></show-example>
+    <?= example('Filter Model', 'filter-model') ?>
 
 <h3 id="floatingFilter">Floating filters</h3>
 
@@ -367,7 +342,7 @@ gridOptions = {
     </ul>
 </p>
 
-<show-example example="exampleFloatingFilter"></show-example>
+<?= example('Floating Filter', 'floating-filter') ?>
 
 <h3>Server Side Filtering</h3>
 
@@ -405,8 +380,7 @@ In the following example you can filter by age or date and see how <code>null</c
 on the combination of filter type and your <code>columnDef.filterParams.nullComparator</code>
 </p>
 
-<show-example example="exampleNullFiltering"></show-example>
-
+<?= example('Null Filtering', 'null-filtering') ?>
 
 <p>
     Note that <code>inRange</code> will never include <code>null</code>.
