@@ -35,3 +35,6 @@ AddOutputFilterByType DEFLATE application/json
 
 # RewriteCond %{THE_REQUEST} ^.*/index\.php
 # RewriteRule ^(.*)index.php$ /$1 [R=301,L]
+
+Header add Access-Control-Allow-Origin "*"
+Header add Access-Control-Allow-Methods: "GET,POST,OPTIONS,DELETE,PUT"

@@ -32,4 +32,12 @@
 
 <?php $headerTitle = "ag-Grid Blog"; include 'headerRow.php'; ?>
 
+<?php include '../example-runner/utils.php'; ?>
+
+
+
+
+
+
+
 <div class="container">

@@ -26,6 +26,7 @@ var columnDefs = [
 
 var gridOptions = {
     enableColResize: true,
+    rowBuffer: 0,
     debug: true,
     rowSelection: 'multiple',
     rowDeselection: true,

@@ -1,8 +1,8 @@
 <?php
 
-$pageTitle = "Blog: Squeezing the Browser - JavaScript Performance Hacks Inside ag-Grid";
-$pageDescription = "Explanation on how ag-Grid renders so fast.";
-$pageKeyboards = "big data javascript browser";
+$pageTitle = "Squeezing the Browser - JavaScript Performance Hacks Inside ag-Grid";
+$pageDescription = "Explanation of the performance techniques used inside ag-Grid to make it render fast.";
+$pageKeyboards = "ag grid javascript datagrid performance";
 
 include('../includes/mediaHeader.php');
 ?>
@@ -22,13 +22,13 @@ include('../includes/mediaHeader.php');
 <div class="row">
     <div class="col-md-9">
 
-        <h3>Make It Faster</h3>
+        <h2>Make It Faster</h2>
 
         <p>
             <a href="https://www.ag-grid.com/">ag-Grid</a>
             is a JavaScript data grid for displaying large amounts of data inside the browser
             in a style similar to Excel.
-            ag-Grid is fast, even in Internet Explorer and with large volumes of data.
+            ag-Grid is fast, even in Internet Explorer with large volumes of data.
             This blog presents performance patterns, or performance 'hacks', used in ag-Grid that puts
             the grid on steroids. How we squeezed performance out of the browser is interesting to
             anyone wanting to tune their own applications, but in particular a) users of ag-Grid so they can
@@ -36,7 +36,7 @@ include('../includes/mediaHeader.php');
             it would be more fun if some competitors challenged us a little!
         </p>
 
-        <h3>Hack 1 - Row Virtualisation</h3>
+        <h2>Hack 1 - Row Virtualisation</h2>
 
         <p>
             Row virtualisation means only rendering rows that are visible on the screen. For example, if the
@@ -53,12 +53,14 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            #### replace this with animated gif ####
-            To see row virtualisation in action go to an ag-Grid demo and open the browser developer
-            tools and observe the rows in the dom changing as you scroll up and down inside the grid.
+            This image below shows row virtualisation - notice how the DOM only has 5 or 6 rows rendered,
+            matching the number of rows the user actually sees.
         </p>
 
-        <h3>Hack 2 - Column Virtualisation</h3>
+        <img src="./images/rowVirtualisation.gif" style="width: 100%; border:1px solid #aaa;"/>
+
+
+        <h2>Hack 2 - Column Virtualisation</h2>
 
         <p>
             Column virtualisation does for columns what row virtualisation does for rows. In other words,
@@ -71,9 +73,9 @@ include('../includes/mediaHeader.php');
             performance of the grid.
         </p>
 
-        <h3>Hack 3 - Exploit Event Propagation</h3>
+        <h2>Hack 3 - Exploit Event Propagation</h2>
 
-        <h4>Problem - To Much Event Listener Registration</h4>
+        <h3>Problem - To Much Event Listener Registration</h3>
 
         <p>
             The grid needs to have mouse and keyboard listeners on
@@ -93,7 +95,7 @@ include('../includes/mediaHeader.php');
             removed which adds a lag to scrolling.
         </p>
 
-        <h4>Solution - Event Propagation</h4>
+        <h3>Solution - Event Propagation</h3>
 
         <p>
             6 of these 8 events propagate (the exceptions are <i>mouseenter</i> and <i>mouseleave</i> which do
@@ -149,18 +151,18 @@ function myEventListener(event) {
             This hack is also used by React . . . . . . #### reference needed
         </p>
 
-        <h3>Hack 4 - Throw Away DOM</h3>
+        <h2>Hack 4 - Throw Away DOM</h2>
 
         <p>
             Good programming sense tells you to de-construct everything you construct. This means any DOM item
-            you add to the browser you should remove in clean down code. This is standard clean programming, especially
-            when composing complex DOM structures.
+            you add to the browser you should remove from the browser in your clean down code. In framework land
+            it means removing components from their parents when the component is disposed.
         </p>
 
         <p>
             This hack goes as follows: If you are removing an item from the DOM (eg a grid cell), but you know the
             parent of that item is also going to be removed (eg a grid row) then there is no need to remove the
-            child items.
+            child items individually.
         </p>
 
         <p>
@@ -169,11 +171,11 @@ function myEventListener(event) {
             chuck the entire row in one quick DOM hit.
         </p>
 
-        <h3>Hack # innerHTML where possible</h3>
+        <h2>Hack 5 - innerHTML where possible</h2>
 
         <p>
             What is the fastest way to populate lots of cells and rows into the browser? Should you use
-            JavaScript to create each element and again JavaScript to update the attributes of each element
+            JavaScript (ie <code>document.createElement()</code>) to create each element and again JavaScript to update the attributes of each element
             and use <code>appendChild()</code> to plug all the elements together? Or should you work off
             document fragments? Or should you create all the document in one big piece of HTML and then
             insert it into the dom using <code>.innerHTML()</code>?
@@ -185,8 +187,9 @@ function myEventListener(event) {
 
         <p>
             So ag-Grid leverages the speed of <code>.innerHTML()</code> by creating the HTML in one big string
-            and then inserting it into the DOM (we use <code>element.insertAdjacentHTML()</code> so we don't
-            overwrite current children).
+            and then inserting it into the DOM using <code>element.insertAdjacentHTML()</code> (using
+            <code>insertAdjacentHTML()</code> rather than <code>.innerHTML()</code> appends the HTML rather than
+            replacing the current content).
         </p>
 
         <snippet>
@@ -205,44 +208,139 @@ var rowHtml = htmlParts.join('');
 eContainer.insertAdjacentHTML(rowHtml);</snippet>
 
         <p>
-            This works great when there are no components used (ag-Grid native components, Angular components,
-            React components etc). So the grid makes the choice - for all cells that do not use components, the grid
+            This works great when there are no custom cell renderers. So the grid makes the choice
+            - for all cells that do not use cell renderers, the grid
             will inject the whole row in one HTML string which is the quickest way to render HTML.
             When a component is used, the grid will then go back and inject the components into the HTML
-            after teh row ins created.
+            after the row is created.
         </p>
 
         <p>
-            + Components are excellent for applications, their building blocks nature help construct
-            applications into more simple parts.
+            Cell renderers are a type of component. The component concept is great for applications, they
+            are the building blocks for the composite design pattern used for building large applications,
+            where smaller pieces (components) fit together to create bigger pieces. However in ag-Grid
+            if you want the fasted grid possible, it's best to avoid the use of cell renderer compnoents
+            so that the grid can leverage the power of <code>innerHTML</code> for the fastest rendering
+            of rows.
         </p>
-
-        <h3>Hack # Animation Frames</h3>
-
-        <h3>Hack # Avoid Row Order</h3>
 
         <p>
-            + Ensure row oder slows things down
+            If you are a user of ag-Grid, you might be wondering if cell renderers are bad. The answer is
+            it depends on your platform - if you are using Chrome or small non-complex grid, then you will
+            probably use cell renderers with not problem at all. If you are displaying large grids using
+            Internet Explorer, it is worth checking the performance impact your cell renderers are adding.
         </p>
 
-        <h3>Other Tried Hacks</h3>
-
-        <p>Document Fragments</p>
-
-        + Using a virtual DOM or dirty checking own't help this operation, at the end of the day they
-        will all call XXX on the DOM, they will just spend longer thinking about it.
+        <h2>Hack 6 - Debouncing Scroll Events</h2>
 
         <p>
-            + Here is the receipe for a grid. Why are we telling the world? Won't our competitors steal the ideas?
-            We are telling the world so that our users understand what's beneath the hood of ag-Grid, so they
-            can appreciate when to avoid components inside the grid and understand the tradeoffs when making
-            the decisions to use components. Yes our competitors can take these ideas and try to implement
-            them into their own grids, they can all battle it out for second place, we have no fear.
+            When you scroll in ag-Grid, the grid is doing row and column virtualisation, which means the DOM
+            is getting trashed. This trashing is time consuming and if processed within the event listener
+            will make the scroll experience 'rough'.
+        </p>
+        <p>
+            To get around this, the grid uses debouncing of scroll events with animation frames. This is
+            a common trick to achieve smooth scrolling and is explained very well in this blog
+            <a href="https://www.html5rocks.com/en/tutorials/speed/animations/">Leaner, Meaner, Faster Animations
+            with RequestAnimationFrame</a>. As this techniuqe is well explained in other posts,
+            I won't repeat it here.
         </p>
 
-        <h3>Tweaking Performance</h3>
+        <h2>Hack 7 - Animation Frames</h2>
 
-        <p>rowBuffer</p>
+        <p>
+            Even with all the above performance tunings, some users of ag-Grid still said "make it faster, it's
+            not good enough in Internet Explorer, the scrolling is awful, it takes to long". What some users
+            experienced was a 2 to 3 second lag in Internet Explorer for the rows to draw after a scroll.
+        </p>
+
+        <p>
+            So the next performance hack was to break the rendering of the rows into different steps using animation frames.
+            When the user scrolls vertically to show different rows, then following tasks are set up in a task queue:
+            <ul>
+                <li>1 task, if pinning then scroll the pinned panels.</li>
+                <li>n tasks to insert each rows container (results in drawing the row background color).</li>
+                <li>n tasks to insert the cells using string building and <code>innerHTML</code>.</li>
+                <li>n tasks to insert the cells using cell renderers (if using cell renderers).</li>
+                <li>n tasks to add <i>mouseenter</i> and <i>mouseleave</i> listeners to all rows (for adding / removing hover class).</li>
+                <li>n tasks to remove the old rows (do not deconstruct cells, just rip the rows out).</li>
+            </ul>
+            So if you scroll to show 10 new rows, you will have 50+ tasks, as each scroll, row creation, cell
+            creation etc will be an individual task.
+        </p>
+        <p>
+            The grid will then uses animation frames (or timeouts if the browser does not support animation frames)
+            to execute the tasks using a priority order. The order ensures things such as:
+            <ul>
+                <li>Scrolling will get done first, so best efforts are made to keep pinned sections in line.</li>
+                <li>Row containers are second, so the first thing the user will see is the outline of the rows.</li>
+                <li>Cells are drawn in stages, as quickly as the browser will allow while giving visual feedback to the user.</li>
+                <li>Removing of old rows is left to last, as that has no visual impact.</li>
+                <li>If a new scroll event comes in, then this gets priority again over older tasks of lower priority,
+                    keeping all pinned areas in sync as a priority.</li>
+                <li>Tasks that are old (ie the user has scrolled past the row by the the time the row gets to be rendered)
+                    will be cancelled.</li>
+            </ul>
+            Having so many tasks would result in a lot of animation frames. The grid does not put each individual
+            task into an animation frame, this would be overkill as then the create, destroy and schedule of
+            animations frames would add their own overhead. Instead the grid requests one animation frame
+            and executes as many tasks as it can within 60ms (60ms was picked following tests and found 60ms gave the best
+            user experience). If the grid does not exhaust the task queue, it requests another animation frame
+            and tries again, and keeps trying until the task queue is emptied.
+        </p>
+
+        <p>
+            Fast browsers (eg Chrome) on our ag-Grid development machines can get everything done in one animation
+            frame and produces zero flicker.
+            Slower browsers (eg Internet Explorer) on the same machines can take 10+ animation frames
+            to process the task queue for a standard scroll - in this situation the user would experience a smooth
+            scrolling experience with iterative feedback as the grid is rendered in stages,
+            which is a better user experience than blocking the UI and painting everything in one go.
+        </p>
+
+        <p>
+            If you are reading this blog from the top, you will notice we are using animation frames to add
+            <i>mouseenter</i> and <i>mouseleave</i> which is different to the other events we require where we
+            use event propagation to listen for all other events at the parent level. <i>mouseenter</i> and <i>mouseleave</i>
+            do not propagate, so instead we add these in an animation frame after the rows are rendered which has minimal
+            impact to the user (as they are not waiting for these events to be added before they see the row on the
+            screen).
+        </p>
+
+        <p>
+            The grid uses similar task priority queue for horizontal scrolling, so when the user scrolls to show
+            more columns, the header gets scrolled first and the cells are updated next, all done using the
+            same task queue and animation frames.
+        </p>
+
+        <h2>Hack 8 - Avoid Row Order</h2>
+
+        <p>
+            The DOM created by the grid by default will have the rows appear in the order they were created. This
+            can get out of sync with the rows on the screen as the user scrolls (the row virtualisaiton trashing
+            adds and removes rows as the user scrolls) as well as sorting and filtering.
+        </p>
+
+        <p>
+            Screen readers and other tools for accessibility require the row order to be the same in the DOM as
+            on the screen. Having the row order consistent with the screen causes a performance hit, as it stops
+            the grid from adding rows in bulk.
+        </p>
+
+        <p>
+            So there is a trade-off. By default the grid does not order the rows. If the user wants the row order
+            guaranteed, then they set the property <code>ensureDomOrder=true</code>. The grid works a bit slower,
+            but is compatible with screen readers.
+        </p>
+
+        <h2>Summary</h2>
+
+        <p>
+            Above is the result of years of learning and now tried and tested approaches for squeezing performance
+            out of the browser. If you have more ideas to make things faster, or otherwise want to improve on the above,
+            then please comment on the above. If all the above you think is easy and you could do better, then
+            send us your CV!
+        </p>
 
         <div style="background-color: #eee; padding: 10px; display: inline-block;">
 
@@ -258,8 +356,8 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
                     </td>
                     <td>
                         <a href="https://twitter.com/share" class="twitter-share-button"
-                           data-url="https://www.ag-grid.com/ag-grid-big-data-small-browser/"
-                           data-text="JavaScript Big Data in a Small Browser #javascript #angularjs #react" data-via="ceolter"
+                           data-url="https://www.ag-grid.com/ag-grid-performance-hacks/"
+                           data-text="Squeezing the Browser - JavaScript Performance Hacks Inside ag-Grid #javascript #angularjs #react" data-via="ceolter"
                            data-size="large">Tweet</a>
                         <script>!function (d, s, id) {
                                 var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
@@ -281,8 +379,8 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
         <img src="../images/ag-Grid2-200.png" style="display: inline-block; padding-bottom: 20px;"/>
 
         <div>
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-angular-connect-2016/"
-               data-text="We're Gonna Need a Bigger Boat - ag-Grid Sponsors Angular Connect 2016" data-via="ceolter" data-size="large">Tweet</a>
+            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-performance-hacks/"
+               data-text="Squeezing the Browser - JavaScript Performance Hacks Inside ag-Grid" data-via="ceolter" data-size="large">Tweet</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 
@@ -292,15 +390,7 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
                 <img src="/niall.png"/>
             </p>
             <p>
-                About Me
-            </p>
-            <p>
-                I have been writing software all my life! Starting with Assembly, C++ and MFC,
-                moving onto full stack Java / JSP / GWT and now focusing on full stack
-                Java / Javascript.
-            </p>
-            <p>
-                Founder, Technical Lead and CEO of ag-Grid LTD.
+                Founder, Technical Lead and CEO at ag-Grid.
             </p>
 
             <div>
