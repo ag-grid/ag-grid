@@ -40,15 +40,7 @@ include '../documentation-main/documentation_header.php';
         <li>Expenditure: Expenditure shown in a Pie Chart.</li>
     </ul>
 
-    <show-complex-example example="./inlineGraphs.html"
-                          sources="{
-                            [
-                                { root: './', files: 'inlineGraphs.html,inlineGraphs.js' }
-                            ]
-                          }"
-                          plunker=""
-                          exampleheight="820px">
-    </show-complex-example>
+    <?= example('Auto Height', 'inline-graphs') ?>
 
 </div>
 <?php include '../documentation-main/documentation_footer.php'; ?>
