@@ -154,7 +154,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     public resetState():void{
         this.setFilterType(BaseFilter.EQUALS);
         this.setFilter(null);
-        this.setFilterTo(null);
+        this.setFilterTo(this.defaultFilter || null);
     }
 
     public setType (filterType:string):void{
