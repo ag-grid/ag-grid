@@ -205,7 +205,7 @@ cellClassRules: {
         </ul>
     </p>
 
-    <show-example example="exampleCellStyling"></show-example>
+    <?= example('Cell Styling', 'cell-styling') ?>
 
     <h1 id="rowStyling">Row Styling</h1>
 

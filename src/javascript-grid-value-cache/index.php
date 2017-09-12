@@ -84,7 +84,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <show-example example="exampleValueCache"></show-example>
+    <?= example('Value Cache', 'value-cache', 'vanilla', array("enterprise" => 1)) ?>
 
     <note>
         Note that the example still works fast when the value cache is turned off. This emphasises
@@ -178,7 +178,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <show-example example="exampleValueCacheEditing"></show-example>
+    <?= example('Expiring Cache through Editing', 'expiring-through-editing', 'vanilla', array("enterprise" => 1)) ?>
 
     <note>
         It is not possible to partially invalidate the cache, eg it is not possible to invalidate only a
@@ -229,7 +229,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <show-example example="exampleValueCacheNever"></show-example>
+    <?= example('Never expire Value change', 'never-expire', 'vanilla', array("enterprise" => 1)) ?>
 
 </div>
 
