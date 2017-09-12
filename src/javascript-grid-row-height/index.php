@@ -67,14 +67,12 @@ gridOptions.getRowHeight = function(params) {
     </ul>
     </p>
 
-    <h3 id="row-height-simple-example">Row Height Simple Example</h3>
-
     <p>
         The example below hows dynamic row height, specifying a different row height for each row.
         It uses the <i>getRowHeight()</i> callback to achieve this.
     </p>
 
-    <show-example example="exampleRowHeight"></show-example>
+    <?= example('Row Height Simple', 'row-height-simple') ?>
 
     <h3 id="row-height-more-complex-example">Row Height More Complex Example</h3>
 
@@ -86,7 +84,7 @@ gridOptions.getRowHeight = function(params) {
         the contents of the cell.
     </p>
 
-    <show-example example="exampleRowHeightComplex"></show-example>
+    <?= example('Row Height Complex', 'row-height-complex') ?>
 
     <h3 id="changingRowHeight">Changing Row Height</h3>
 
@@ -143,7 +141,7 @@ gridOptions.getRowHeight = function(params) {
     height is an ag-Grid free feature, we just demonstrate it against groups and normal
     rows below.</p>
 
-    <show-example example="exampleRowHeightChange"></show-example>
+    <?= example('Changing Row Height', 'row-height-change', 'vanilla', array("enterprise" => 1)) ?>
 
     <h3 id="height-for-floating-rows">Height for Pinned Rows</h3>
 
