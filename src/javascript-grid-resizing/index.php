@@ -98,8 +98,7 @@ include '../documentation-main/documentation_header.php';
         after you press the button.
     </p>
 
-    <show-example example="example2"></show-example>
-
+    <?= example('Column Resizing', 'column-resizing') ?>
 
     <h3 id="resizing-example">Sizing Columns By Default</h3>
 
@@ -115,7 +114,8 @@ include '../documentation-main/documentation_header.php';
         should fail). The grid checks again after 100ms, and tries to resize again. This is needed
         for some frameworks (eg Angular) as DOM objects are used before getting attached.
     </p>
-    <show-example example="exampleDivNotInDom"></show-example>
+
+    <?= example('Default Resizing', 'default-resizing') ?>
 
     <h3 id="resizing-groups">Resizing Groups</h3>
 
@@ -131,7 +131,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <show-example example="exampleResizeGroups"></show-example>
+    <?= example('Resizing Groups', 'resizing-groups') ?>
 
 </div>
 
