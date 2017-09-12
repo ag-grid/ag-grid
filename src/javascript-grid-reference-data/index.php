@@ -151,7 +151,7 @@ cellEditorParams: {
         </li>
     </ul>
 
-    <show-example example="exampleRefDataWithValueHandlers"></show-example>
+    <?= example('Value Handlers', 'ref-data-value-handler', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="example-reference-data-with-ref-data-prop">Example - 'refData' Property</h2>
 
@@ -182,7 +182,8 @@ cellEditorParams: {
         </li>
     </ul>
 
-    <show-example example="exampleRefDataProperty"></show-example>
+    <?= example('Ref Data Property', 'ref-data-property', 'vanilla', array("enterprise" => 1)) ?>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

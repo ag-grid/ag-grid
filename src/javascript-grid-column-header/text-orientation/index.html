@@ -1,7 +1,5 @@
 <html>
 <head>
-    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js"></script>
-    <script src="exampleDynamicHeaders.js"></script>
     <style>
         .ag-cell-label-container{
             /*Necessary to allow for text to grow vertically*/
@@ -17,9 +15,9 @@
         .ag-header-cell-label .ag-header-cell-text{
             /*Force the width corresponding at how much widht
             we need once the text is layed out vertically*/
-            width: 30px;
+            width: 55px;
             transform: rotate(90deg);
-            margin-top: 50px;
+            margin-top: 60px;
             /*Since we are rotating a span*/
             display: inline-block;
         }
@@ -30,7 +28,7 @@
         }
 
         .ag-pivot-on .ag-header-group-cell{
-            font-size: 25px;
+            font-size: 10px;
             color: green;
         }
 
@@ -39,6 +37,10 @@
         }
 
         .ag-pivot-on .ag-header-cell-label{
+            font-size: 10px;
+            height: 90px;
+            margin-top: -26px;
+            margin-left: -20px;
             color:#1b6d85;
             font-weight: bold;
         }
@@ -46,9 +48,8 @@
         .ag-pivot-on .ag-header-cell-label .ag-header-cell-text{
             /*There is empty space left at the top from the menu and sort
             icons not used*/
-            margin-top: 15px;
+            margin-top: 25px;
         }
-
 
         /*Floating filters*/
         .ag-floating-filter-body{

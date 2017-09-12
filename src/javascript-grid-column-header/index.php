@@ -141,8 +141,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </pre>
 
-
-    <show-example example="exampleDynamicHeaders"></show-example>
+    <?= example('Header Height and Text Orientation', 'text-orientation', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="headerHeight">Dynamic Header Heights</h2>
 
@@ -152,7 +151,7 @@ include '../documentation-main/documentation_header.php';
         descriptions at the top of the page
     </p>
 
-    <show-example example="exampleDynamicHeaders2"></show-example>
+    <?= example('Dynamic Header Height', 'dynamic-height','vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="refresh-headers-and-footers">Refresh Headers and Footers</h2>
 
