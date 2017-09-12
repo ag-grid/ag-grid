@@ -162,7 +162,7 @@ AddRangeSelectionParams{
         copying it from the clipboard.
     </p>
 
-    <show-example example="rangeSelection"></show-example>
+    <?= example('Range Selection', 'range-selection', 'vanilla', array("enterprise" => 1)) ?>
 
 </div>
 
