@@ -4,7 +4,6 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null,
     enableSorting: true,
     animateRows: true,
     sortingOrder: ['desc','asc',null],

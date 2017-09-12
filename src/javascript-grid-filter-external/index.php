@@ -38,15 +38,6 @@ include '../documentation-main/documentation_header.php';
     The example below shows the external filters in action.
 </p>
 
-<show-complex-example example="exampleFilterExternal.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleFilterExternal.html,exampleFilterExternal.js' }
-                                ]
-                              }"
-                      plunker="https://embed.plnkr.co/08TNWPFljkRArrXM84Ji/"
-                      exampleheight="500px">
-</show-complex-example>
-
+<?= example('External Filter', 'external-filter') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

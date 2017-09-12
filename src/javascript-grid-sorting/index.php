@@ -58,15 +58,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         </ul>
     </p>
 
-    <show-complex-example example="example1.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'example1.html,example1.js' }
-                                ]
-                              }"
-                          plunker="https://embed.plnkr.co/Juo2VlvgFKVbaITxamcS/"
-                          exampleheight="350px">
-    </show-complex-example>
+    <?= example('Custom Sorting', 'custom-sorting') ?>
 
     <h3 id="sorting-animation">Sorting Animation</h3>
 
@@ -105,15 +97,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
     </ul>
     </p>
 
-    <show-complex-example example="exampleSortingOrder.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleSortingOrder.html,exampleSortingOrder.js' }
-                                ]
-                              }"
-                          plunker="https://embed.plnkr.co/qnv5QmxC8ldSdQH9qFNz/"
-                          exampleheight="350px">
-    </show-complex-example>
+    <?= example('Sorting Order and Animation', 'sorting-order-and-animation') ?>
 
     <h3 id="sorting-api">Sorting API</h3>
 
@@ -144,15 +128,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         The example below shows the API in action.
     </p>
 
-    <show-complex-example example="sortingApi.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'sortingApi.html,sortingApi.js' }
-                                ]
-                              }"
-                          plunker="https://embed.plnkr.co/RCnt9c9nigG3Zpfj9RhL/"
-                          exampleheight="350px">
-    </show-complex-example>
+    <?= example('Sorting API', 'sorting-api') ?>
 
     <h3 id="sorting-groups">Sorting Groups</h3>
 
@@ -187,8 +163,7 @@ var groupColumn = {
         The following example is configured to use this feature.
     </p>
 
-
-    <show-example example="exampleSortingAccented"></show-example>
+    <?= example('Accented Sort', 'accented-sort') ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
