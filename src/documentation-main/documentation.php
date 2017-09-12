@@ -66,7 +66,7 @@ include 'documentation_header.php';
                 </a>
             </div>
             <div class="col-md-4">
-                <a href="../javascript-grid-styling/">
+                <a href="../javascript-grid-components/">
                     <div class="framework-select-item">
                         <img src="../images/svg/docs/components.svg" width="50" alt="Components" title="Components"/>
                         <div class="framework-select-label">

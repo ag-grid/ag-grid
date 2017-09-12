@@ -13,6 +13,24 @@
 .framework-select-item:hover {
     background-color: #eee;
 }
+.framework-select-item-parent:hover {
+    text-decoration: none;
+}
+.framework-select-item-small {
+    padding: 4px;
+    margin: 4px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    color: #111;
+    font-size: 20px;
+    text-align: center;
+    display: inline-block;
+    background-color: aliceblue;
+}
+.framework-select-item-small:hover {
+    background-color: #eee;
+    text-decoration: none;
+}
 .framework-select-label {
     margin-top: 15px;
 }

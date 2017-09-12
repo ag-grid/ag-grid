@@ -14,12 +14,12 @@ include '../documentation-main/documentation_header.php';
         React Datagrid
     </h1>
 
-
+    <!--
     <div class="row framework-select-list">
         <div class="col-md-4">
             <a href="../react-getting-started/">
                 <div class="framework-select-item">
-                    <img src="../images/react_large.png" width="40" alt="Getting Started" title="Getting Started"/>
+                    <img src="../images/react_large.png" width="20" alt="Getting Started" title="Getting Started"/>
                         Getting Started
                 </div>
             </a>
@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
         <div class="col-md-4">
             <a href="../react-more-details/">
                 <div class="framework-select-item">
-                    <img src="../images/react_large.png" width="40" alt="More Details" title="More Details"/>
+                    <img src="../images/react_large.png" width="20" alt="More Details" title="More Details"/>
                         More Details
                 </div>
             </a>
@@ -35,13 +35,13 @@ include '../documentation-main/documentation_header.php';
         <div class="col-md-4">
             <a href="../example-react/">
                 <div class="framework-select-item">
-                    <img src="../images/react_large.png" width="40" alt="React Examples" title="React Examples"/>
+                    <img src="../images/react_large.png" width="20" alt="React Examples" title="React Examples"/>
                         React Examples
                 </div>
             </a>
         </div>
     </div>
-
+-->
 <!--    <a href="../react-getting-started/" class="select-item list-group-item">
         <div class="float-parent">
             <div class="section-icon-container">
@@ -80,6 +80,33 @@ include '../documentation-main/documentation_header.php';
     </a>-->
 
     <?= example('ag-Grid in React', 'rich', 'react', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
+
+
+    <div style="text-align: right;">
+
+        <div style="border: 1px solid #eee; display: inline-block;">
+
+            <span style="font-size: 20px; padding: 10px;">Next:</span>
+            <a href="../react-getting-started/" class="framework-select-item-parent">
+                <div class="framework-select-item-small">
+                    <img src="../images/react_large.png" width="20" alt="Getting Started" title="Getting Started"/>
+                    Getting Started
+                </div>
+            </a>
+            <a href="../react-more-details/" class="framework-select-item-parent">
+                <div class="framework-select-item-small">
+                    <img src="../images/react_large.png" width="20" alt="More Details" title="More Details"/>
+                    More Details
+                </div>
+            </a>
+            <a href="../example-react/" class="framework-select-item-parent">
+                <div class="framework-select-item-small">
+                    <img src="../images/react_large.png" width="20" alt="React Examples" title="React Examples"/>
+                    React Examples
+                </div>
+            </a>
+        </div>
+    </div>
 
 <!--    <div class="list-group" style="margin-top: 20px;">
             <a href="../react-getting-started/" class="list-group-item">
