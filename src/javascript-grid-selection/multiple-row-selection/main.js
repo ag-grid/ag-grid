@@ -1,4 +1,3 @@
-
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150},
     {headerName: "Age", field: "age", width: 90},
@@ -14,7 +13,7 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowSelection: 'single',
+    rowSelection: 'multiple',
     onSelectionChanged: onSelectionChanged
 };
 
@@ -22,11 +21,19 @@ function onSelectionChanged() {
     var selectedRows = gridOptions.api.getSelectedRows();
     var selectedRowsString = '';
     selectedRows.forEach( function(selectedRow, index) {
-        if (index!=0) {
+        if (index>5) {
+            return;
+        }
+        if (index!==0) {
             selectedRowsString += ', ';
         }
         selectedRowsString += selectedRow.athlete;
     });
+
+    if (selectedRows.length>=5) {
+        selectedRowsString += (' - and ' + (selectedRows.length - 5) + ' others');
+    }
+
     document.querySelector('#selectedRows').innerHTML = selectedRowsString;
 }
 
@@ -38,10 +45,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '../olympicWinners.json');
+    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
         }
