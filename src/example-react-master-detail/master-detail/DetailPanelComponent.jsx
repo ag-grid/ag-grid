@@ -2,8 +2,6 @@ import React, {Component} from "react";
 
 import {AgGridReact} from "ag-grid-react";
 
-import "./DetailPanelComponent.css";
-
 export default class DetailPanelComponent extends Component {
     constructor(props) {
         super(props);
@@ -11,7 +9,7 @@ export default class DetailPanelComponent extends Component {
         this.state = {
             columnDefs: this.createColumnDefs(),
             parentRecord: this.props.node.parent.data,
-            img: `images/${this.props.node.parent.data.image}.png`
+            img: `/images/${this.props.node.parent.data.image}.png`
         };
 
         this.onGridReady = this.onGridReady.bind(this);
