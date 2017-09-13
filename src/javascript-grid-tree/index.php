@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
         would put aggregation values or group titles if needed.
     </p>
 
-    <show-example example="exampleTree"></show-example>
+    <?= example('Simple Tree Data', 'tree-data', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="file-explorer-example">Example - File Explorer</h2>
 
