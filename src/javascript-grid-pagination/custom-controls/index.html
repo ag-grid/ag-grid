@@ -1,9 +1,9 @@
 <html>
 <head>
-    <script src="../dist/ag-grid/ag-grid.js"></script>
-    <script src="examplePagingApi.js"></script>
     <style>
         .label {
+            color: #0f0f0f;
+            font-size: smaller;
         }
         .value {
             margin-right: 20px;
@@ -13,14 +13,15 @@
             text-align: right;
             padding-right: 2px;
             background: #eee;
+
         }
     </style>
 </head>
 <body>
-    <div style="box-sizing: border-box; padding-top: 64px; height: 100%;">
+    <div style="box-sizing: border-box; padding-top: 65px; height: 100%;">
         <div style="height: 100%;" id="myGrid" class="ag-fresh"></div>
     </div>
-    <div style="position: fixed; top: 0px; left: 0px; padding: 10px;">
+    <div style="position: fixed; top: 0; left: 0">
         <div>
             <button onclick="onBtFirst()">To First</button>
             <button onclick="onBtLast()" id="btLast" disabled="true">To Last</button>
@@ -31,7 +32,6 @@
         </div>
         <div style="margin-top: 6px">
             <span class="label">Last Page Found:</span><span class="value" id="lbLastPageFound"></span>
-            <span class="label">Loading:</span><span class="value" id="lbLoading"></span>
             <span class="label">Page Size:</span><span class="value" id="lbPageSize"></span>
             <span class="label">Total Pages:</span><span class="value" id="lbTotalPages"></span>
             <span class="label">Current Page:</span><span class="value" id="lbCurrentPage"></span>
