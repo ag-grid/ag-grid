@@ -294,7 +294,7 @@ colDef = {
         </ul>
     </p>
 
-    <show-example example="exampleHeaderComponent"></show-example>
+    <?= example('Header component', 'header-component') ?>
 
     <h2 id="headerGroupComponent">Header Group Component</h2>
 
