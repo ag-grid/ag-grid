@@ -231,6 +231,11 @@ interface IFloatingFilterParams {
     <?php include './angular.php'; ?>
 <?php } ?>
 
+<span id="reactAnchor"></span>
+<?php if (isFrameworkReact()) { ?>
+    <?php include './react.php'; ?>
+<?php } ?>
+
 <span id="polymerAnchor"></span>
 <?php if (isFrameworkPolymer()) { ?>
     <?php include './polymer.php'; ?>

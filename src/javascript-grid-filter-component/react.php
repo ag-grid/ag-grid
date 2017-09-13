@@ -145,11 +145,4 @@ laterOnInYourApplicationSomewhere() {
        Using React Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
    </p>
 
-   <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=filter"
-                         sources="{
-                            [
-                                { root: '/framework-examples/react-examples/examples/src/filterComponentExample/', files: 'FilterComponentExample.jsx,PartialMatchFilter.jsx' }
-                            ]
-                          }"
-                         exampleHeight="525px">
-   </show-complex-example>
+   <?= example('Filter Component', 'react-filter', 'react', array( "exampleHeight" => 440, "showResult" => true )); ?>

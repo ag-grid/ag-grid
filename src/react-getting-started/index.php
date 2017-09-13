@@ -175,12 +175,7 @@ npm start
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-<?= preview('ag-Grid in React', 
-'rich', 
-'../framework-examples/react-examples/examples/?fromDocs&example=rich-grid',
-'https://github.com/ag-grid/ag-grid-react-example/tree/master/src/richGridExample',
-array( 'exampleHeight' => 525 )
-); ?>
+    <?= example('ag-Grid in React', 'full-rich', 'react', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 
    <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
         <code>column grouping</code> as well as using <code>React Components</code> in the header. And even this rich
