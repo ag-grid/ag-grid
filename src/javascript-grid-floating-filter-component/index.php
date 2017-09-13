@@ -224,7 +224,7 @@ interface IFloatingFilterParams {
 </ul>
 </p>
 
-<show-example example="exampleComplexCustomFilterAndFloatingFilter"></show-example>
+<?= example('Custom Filter and Floating Filter', 'custom-complex-filter-and-floating-filter') ?>
 
 <span id="ng2AngularAnchor"></span>
 <?php if (isFrameworkAngular2()) { ?>

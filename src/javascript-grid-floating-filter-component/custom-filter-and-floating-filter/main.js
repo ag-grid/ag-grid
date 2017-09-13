@@ -1,54 +1,21 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text', floatingFilterComponentParams:{
-        debounceMs:2000
-    }},
-    {headerName: "Age", field: "age", width: 90, filter: 'number', floatingFilterComponentParams:{
-        debounceMs:0
-    }},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 130, filter:'date', filterParams:{
-        comparator:function (filterLocalDateAtMidnight, cellValue){
-            var dateAsString = cellValue;
-            var dateParts  = dateAsString.split("/");
-            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
-
-            if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                return 0
-            }
-
-            if (cellDate < filterLocalDateAtMidnight) {
-                return -1;
-            }
-
-            if (cellDate > filterLocalDateAtMidnight) {
-                return 1;
-            }
-        }
-    }, floatingFilterComponentParams:{
-        suppressFilterButton:true
-    }},
-    {headerName: "Sport", field: "sport", width: 110},
+    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text'},
     {headerName: "Gold", field: "gold", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
-            maxValue:7,
             suppressFilterButton:true
         }, filter: NumberFilter
     },
     {headerName: "Silver", field: "silver", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
-            maxValue:3,
             suppressFilterButton:true
         }, filter: NumberFilter},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
-            maxValue:2,
             suppressFilterButton:true
         }, filter: NumberFilter},
     {headerName: "Total", field: "total", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
         floatingFilterComponentParams:{
-            maxValue:5,
             suppressFilterButton:true
         }, filter: NumberFilter}
 ];
@@ -114,9 +81,9 @@ NumberFilter.prototype.doesFilterPass = function (params) {
 
 NumberFilter.prototype.isFilterActive = function () {
     return  this.filterText !== null &&
-        this.filterText !== undefined &&
-        this.filterText !== '' &&
-        isNumeric(this.filterText);
+            this.filterText !== undefined &&
+            this.filterText !== '' &&
+            isNumeric(this.filterText);
 };
 
 NumberFilter.prototype.getModel = function () {
@@ -141,52 +108,35 @@ function NumberFloatingFilter() {
 NumberFloatingFilter.prototype.init = function (params) {
     this.onFloatingFilterChanged = params.onFloatingFilterChanged;
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '<div style="width:75%; margin-left:10px" class="slider"></div>'
-    this.eSlider = $(this.eGui.querySelector('div'));
-    this.currentValue = 0;
+    this.eGui.innerHTML = '&gt; <input style="width:20px" type="text"/>'
+    this.currentValue = null;
+    this.eFilterInput = this.eGui.querySelector('input');
     var that = this;
-    this.eSlider.slider({
-        min:0,
-        max:params.maxValue,
-        change: function(e, ui) {
-            //Every time the value of the slider changes
-            if (!e.originalEvent) {
-                //If this event its triggered from outside. ie setModel() on the parent Filter we
-                //would be in this area of the code and we need to prevent an infinite loop:
-                //onParentModelChanged => onFloatingFilterChanged => onParentModelChanged => onFloatingFilterChanged ...
-                return;
-            }
-            that.currentValue = ui.value;
-            that.onFloatingFilterChanged(that.buildModel())
+    function onInputBoxChanged(){
+        if (that.eFilterInput.value === '') {
+            //Remove the filter
+            that.onFloatingFilterChanged(null);
+            return;
         }
-    });
 
-
+        that.currentValue = Number(that.eFilterInput.value);
+        that.onFloatingFilterChanged(that.currentValue);
+    }
+    this.eFilterInput.addEventListener('input', onInputBoxChanged);
 };
 
 NumberFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
     // When the filter is empty we will receive a null message her
     if (!parentModel) {
-        //If there is no filtering set to the minimun
-        this.eSlider.slider( "option", "value", 0 );
-        this.currentValue = null;
+        this.eFilterInput.value = '';
     } else {
-        if (parentModel.filter !== this.currentValue){
-            this.eSlider.slider( "option", "value", parentModel );
-        }
-        this.currentValue = parentModel;
+        this.eFilterInput.value = parentModel + '';
     }
-    //Print a summary on the slider button
-    this.eSlider.children(".ui-slider-handle").html(this.currentValue ? '>' + this.currentValue : '');
+    this.currentValue = parentModel;
 };
 
 NumberFloatingFilter.prototype.getGui = function () {
     return this.eGui;
-};
-
-NumberFloatingFilter.prototype.buildModel = function () {
-    if (this.currentValue === 0) return null;
-    return this.currentValue;
 };
 
 
