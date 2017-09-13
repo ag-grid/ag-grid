@@ -4,10 +4,27 @@ function EnterpriseDatasource(fakeServer) {
 
 EnterpriseDatasource.prototype.getRows = function(params) {
     // console.log('EnterpriseDatasource.getRows: params = ', params);
+    var that = this;
     this.fakeServer.getData(params.request,
-        function successCallback(resultForGrid, lastRow) {
+        function successCallback(resultForGrid, lastRow, secondaryCols) {
             params.successCallback(resultForGrid, lastRow);
+
+            let secondaryColumnDefinitions = that.buildSecondaryColumnDefinitions(secondaryCols);
+            gridOptions.columnApi.setSecondaryColumns(secondaryColumnDefinitions);
         });
+};
+
+EnterpriseDatasource.prototype.buildSecondaryColumnDefinitions = function(valueCols) {
+    if (valueCols) {
+        return valueCols.map( function(col) {
+            return {
+                headerName: col.displayName,
+                field: col.field
+            }
+        } );
+    } else {
+        return null;
+    }
 };
 
 function FakeServer(allData) {
@@ -24,53 +41,59 @@ FakeServer.prototype.getData = function(request, callback) {
     var groupKeys = request.groupKeys;
     // if going aggregation, contains the value columns, eg ['gold','silver','bronze']
     var valueCols = request.valueCols;
+    // if pivoting, contains the columns we are pivoting by
+    var pivotCols = request.pivotCols;
+
+    var pivotActive = request.pivotMode && pivotCols.length > 0 && valueCols.length > 0;
 
     // we are not doing sorting and filtering in this example, but if you did
     // want to sort or filter using your implementation, you would do it here.
     var filterModel = request.filterModel;
     var sortModel = request.sortModel;
 
-    var result;
+    var rowData = this.allData;
 
-    var filteredData = this.filterList(this.allData, filterModel);
+    rowData = this.filterList(rowData, filterModel);
+
+    if (pivotActive) {
+        var pivotResult = this.pivot(pivotCols, rowGroupCols, valueCols, rowData);
+        rowData = pivotResult.data;
+        valueCols = pivotResult.aggCols;
+    }
 
     // if not grouping, just return the full set
-    if (rowGroupCols.length===0) {
-        result = filteredData;
-    } else {
+    if (rowGroupCols.length>0) {
         // otherwise if grouping, a few steps...
 
         // first, if not the top level, take out everything that is not under the group
         // we are looking at.
-        var filteredData = this.filterOutOtherGroups(filteredData, groupKeys, rowGroupCols);
+        rowData = this.filterOutOtherGroups(rowData, groupKeys, rowGroupCols);
 
         // if grouping, return the group
-        var showingGroups = rowGroupCols.length > groupKeys.length;
+        var groupingActive = rowGroupCols.length > groupKeys.length;
 
-        if (showingGroups) {
-            result = this.buildGroupsFromData(filteredData, rowGroupCols, groupKeys, valueCols);
-        } else {
-            // show all remaining leaf level rows
-            result = filteredData;
+        if (groupingActive) {
+            rowData = this.buildGroupsFromData(rowData, rowGroupCols, groupKeys, valueCols);
         }
     }
 
     // sort data if needed
-    result = this.sortList(result, sortModel);
+    rowData = this.sortList(rowData, sortModel);
 
     // we mimic finding the last row. if the request exceeds the length of the
     // list, then we assume the last row is found. this would be similar to hitting
     // a database, where we have gone past the last row.
-    var lastRowFound = (result.length <= request.endRow);
-    var lastRow = lastRowFound ? result.length : null;
+    var lastRowFound = (rowData.length <= request.endRow);
+    var lastRow = lastRowFound ? rowData.length : null;
 
     // only return back the rows that the user asked for
-    var result = result.slice(request.startRow, request.endRow);
+    rowData = rowData.slice(request.startRow, request.endRow);
 
     // so that the example behaves like a server side call, we put
     // it in a timeout to a) give a delay and b) make it asynchronous
     setTimeout( function() {
-        callback(result, lastRow);
+        var secondaryCols = pivotActive ? valueCols : null;
+        callback(rowData, lastRow, secondaryCols);
     }, 1000);
 };
 
@@ -150,33 +173,96 @@ FakeServer.prototype.filterList = function(data, filterModel) {
     return resultOfFilter;
 };
 
-FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, groupKeys, valueCols) {
+FakeServer.prototype.iterateObject = function(object, callback) {
+    if (!object) {
+        return;
+    }
+    let keys = Object.keys(object);
+    for (let i = 0; i < keys.length; i++) {
+        let key = keys[i];
+        let value = object[key];
+        callback(key, value);
+    }
+};
+
+FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) {
+    // assume 1 pivot col and 1 value col for this example
+    var pivotCol = pivotCols[0];
+    var valueCol = valueCols[0];
+
+    var valField = valueCol.id;
+    var pivotField = pivotCol.id;
+
+    var pivotData = [];
+    var aggColsList = [];
+    var aggColsMap = {};
+
+    data.forEach( function(item) {
+        var value = item[valField];
+        var pivotValue = item[pivotField].toString();
+
+        if (!aggColsMap[pivotValue]) {
+            var newCol = {
+                id: pivotValue,
+                displayName: valueCol.aggFunc + '(' + pivotValue + ')',
+                field: pivotValue,
+                aggFunc: valueCol.aggFunc
+            };
+            aggColsList.push(newCol);
+            aggColsMap[pivotValue] = true;
+        }
+
+        var pivotItem = {};
+        pivotItem[pivotValue] = value;
+
+        rowGroupCols.forEach( function(rowGroupCol) {
+            var rowGroupField = rowGroupCol.id;
+            pivotItem[rowGroupField] = item[rowGroupField];
+        });
+
+        pivotData.push(pivotItem);
+    });
+
+    return {
+        data: pivotData,
+        aggCols: aggColsList
+    };
+};
+
+FakeServer.prototype.buildGroupsFromData = function(rowData, rowGroupCols, groupKeys, valueCols) {
     var rowGroupCol = rowGroupCols[groupKeys.length];
     var field = rowGroupCol.id;
-    var mappedValues = this.groupBy(filteredData, field);
-    var listOfKeys = Object.keys(mappedValues);
+    var mappedRowData = this.groupBy(rowData, field);
     var groups = [];
-    listOfKeys.forEach(function(key) {
+
+    this.iterateObject(mappedRowData, function(key, rowData) {
         var groupItem = {};
         groupItem[field] = key;
 
         valueCols.forEach(function(valueCol) {
             var field = valueCol.id;
 
+            var values = [];
+            rowData.forEach( function(childItem) {
+                var value = childItem[field];
+                // if pivoting, value will be undefined if this row data has no value for the column
+                if (value!==undefined) {
+                    values.push(value);
+                }
+            });
+
             // the aggregation we do depends on which agg func the user picked
             switch (valueCol.aggFunc) {
                 case 'sum':
                     var sum = 0;
-                    mappedValues[key].forEach( function(childItem) {
-                        var value = childItem[field];
+                    values.forEach( function(value) {
                         sum += value;
                     });
                     groupItem[field] = sum;
                     break;
                 case 'min':
                     var min = null;
-                    mappedValues[key].forEach( function(childItem) {
-                        var value = childItem[field];
+                    values.forEach( function(value) {
                         if (min===null || min > value) {
                             min = value;
                         }
@@ -185,8 +271,7 @@ FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, 
                     break;
                 case 'max':
                     var max = null;
-                    mappedValues[key].forEach( function(childItem) {
-                        var value = childItem[field];
+                    values.forEach( function(value) {
                         if (max===null || max < value) {
                             max = value;
                         }
@@ -203,7 +288,7 @@ FakeServer.prototype.buildGroupsFromData = function(filteredData, rowGroupCols, 
 
         });
 
-        groups.push(groupItem)
+        groups.push(groupItem);
     });
     return groups;
 };
