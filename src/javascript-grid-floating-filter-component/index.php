@@ -190,7 +190,7 @@ interface IFloatingFilterParams {
 </ol>
 </p>
 
-<show-example example="exampleCustomFilterAndFloatingFilter"></show-example>
+<?= example('Custom Filter and Floating Filter', 'custom-filter-and-floating-filter') ?>
 
 <h3 id="example">Custom Filter And Read-Only Floating Filter Example</h3>
 
