@@ -94,11 +94,4 @@ colDef = {
     <p>
         Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=editor"
-                          sources="{
-                            [
-                                { root: '/framework-examples/react-examples/examples/src/editorComponentExample/', files: 'EditorComponentsExample.jsx,MoodRenderer.jsx,MoodEditor.jsx,NumericEditor.jsx' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
+    <?= example('React Editor Components', 'react-editor', 'react', array( "exampleHeight" => 440, "showResult" => true )); ?>

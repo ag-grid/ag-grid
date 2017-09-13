@@ -104,8 +104,7 @@ export default class DynamicComponentsExample extends Component {
     }
     render() {
         return (
-            <div style={{height: 425, width: 900}}
-                 className="ag-fresh">
+            <div style={{height: 425, width: 900}} className="ag-fresh">
                 <button onClick={this.refreshRowData} style={{marginBottom: 10}}>Refresh Data</button>
                 <AgGridReact
                     // properties
