@@ -13,27 +13,12 @@ include '../documentation-main/documentation_header.php';
     <p>A simple Grid using React Components as Cell Renderers, with Child Components, Two-Way Binding and
         Parent to Child Components Events.</p>
 
-    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=dynamic"
-                          sources="{
-                            [
-                                { root: '/framework-examples/react-examples/examples/src/dynamicComponentExample/', files: 'ChildMessageRenderer.jsx,CurrencyRenderer.jsx,ParamsRenderer.jsx,CubeRenderer.jsx,DynamicComponentsExample.jsx,SquareRenderer.jsx' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
+    <?= example('Simple Dynamic Component', 'dynamic', 'react', array( "exampleHeight" => 460, "showResult" => true )); ?>
 
     <h2 id="rich-dynamic">Richer Dynamic Components</h2>
     <p>A Richer Example using React Components as Cell Renderers, with Dynamic Components included via Modules.</p>
 
-    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=rich-dynamic"
-                          sources="{
-                            [
-                                { root: '/framework-examples/react-examples/examples/src/richComponentExample/', files: 'ClickableRenderer.jsx,RatioRenderer.jsx,RichComponentsExample.jsx' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
-
+    <?= example('Richer Dynamic Components', 'rich-dynamic', 'react', array( "exampleHeight" => 400, "showResult" => true )); ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
