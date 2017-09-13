@@ -1,9 +1,10 @@
 import React, {Component} from "react";
 import {connect} from "react-redux";
+
 // take this line out if you do not want to use ag-Grid-Enterprise
 import "ag-grid-enterprise";
 
-import {updateRowData} from "./gridDataActions";
+import {updateRowData} from "./gridDataActions.jsx";
 
 /*
  * This component serves both to host the demo controls, which in turn will drive row data state changes
@@ -98,9 +99,9 @@ class HeaderComponent extends Component {
     render() {
         return (
             <div style={{marginTop: 15}}>
-                <button onClick={this.addFiveItems}>Add Five Items</button>
-                <button onClick={this.removeSelected}>Remove Selected</button>
-                <button onClick={this.updatePrices}>Update Prices</button>
+                <button onClick={this.addFiveItems} style={{marginLeft: 5}}>Add Five Items</button>
+                <button onClick={this.removeSelected} style={{marginLeft: 5}}>Remove Selected</button>
+                <button onClick={this.updatePrices} style={{marginLeft: 5}}>Update Prices</button>
 
                 <span style={{padding: 10}}/>
                 <button id="groupingOn" onClick={() => this.setGroupingEnabled(true)}>Turn Grouping On</button>
@@ -110,9 +111,9 @@ class HeaderComponent extends Component {
                 <span style={{padding: 10}}/>
                 <span style={{border: "1px  solid lightgrey", padding: 4}}>
                 Group Selected:
-                    <button onClick={() => this.setSelectedToGroup('A')}>A</button>
-                    <button onClick={() => this.setSelectedToGroup('B')}>B</button>
-                    <button onClick={() => this.setSelectedToGroup('C')}>C</button>
+                    <button onClick={() => this.setSelectedToGroup('A')} style={{marginLeft: 5}}>A</button>
+                    <button onClick={() => this.setSelectedToGroup('B')} style={{marginLeft: 5}}>B</button>
+                    <button onClick={() => this.setSelectedToGroup('C')} style={{marginLeft: 5}}>C</button>
                 </span>
             </div>
         )

@@ -1,13 +1,14 @@
 import React, {Component} from "react";
 import {Provider} from "react-redux";
 import {createStore} from "redux";
+
 // take this line out if you do not want to use ag-Grid-Enterprise
 import "ag-grid-enterprise";
 
-import HeaderComponent from "./HeaderComponent";
-import GridComponent from "./GridComponent";
+import HeaderComponent from "./HeaderComponent.jsx";
+import GridComponent from "./GridComponent.jsx";
 
-import gridData from "./gridDataReducer";
+import gridData from "./gridDataReducer.jsx";
 
 let store = createStore(gridData);
 
@@ -30,7 +31,6 @@ export default class SimpleReduxExample extends Component {
         return (
             <Provider store={store}>
                 <div>
-                    <h1>Simple Redux Example using ag-Grid's deltaRowMode</h1>
                     <HeaderComponent setGroupingEnabled={this.setGroupingEnabled} />
                     <GridComponent ref={ grid => { this.grid = grid ? grid.getWrappedInstance() : null }} />
                 </div>

@@ -2,10 +2,11 @@ import React, {Component} from "react";
 
 import {AgGridReact} from "ag-grid-react";
 import {connect} from "react-redux";
+
 // take this line out if you do not want to use ag-Grid-Enterprise
 import "ag-grid-enterprise";
 
-import {updateRowSelection} from "./gridDataActions";
+import {updateRowSelection} from "./gridDataActions.jsx";
 
 /*
  * This component serves to display the row data (provided by redux)
@@ -16,9 +17,9 @@ class GridComponent extends Component {
 
         this.state = {
             columnDefs: [
-                {headerName: 'Symbol', field: 'symbol'},
-                {headerName: 'Price', field: 'price'},
-                {headerName: 'Group', field: 'group'}
+                {headerName: 'Symbol', field: 'symbol', width: 300},
+                {headerName: 'Price', field: 'price', width: 300},
+                {headerName: 'Group', field: 'group', width: 300}
             ]
         };
 
@@ -62,8 +63,7 @@ class GridComponent extends Component {
     // this requires each row to have a uniquely identifying property - in this case the row data "symbol" (see getRowNodeId)
     render() {
         return (
-            <div style={{height: 400, width: 945, marginTop: 15}}
-                 className="ag-fresh">
+            <div style={{height: 400, width: 900, marginTop: 15}} className="ag-fresh">
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}
