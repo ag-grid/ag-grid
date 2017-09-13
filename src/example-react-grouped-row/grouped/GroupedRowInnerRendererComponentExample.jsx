@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 
 import {AgGridReact} from "ag-grid-react";
-import MedalRenderer from "./MedalRenderer";
+import MedalRenderer from "./MedalRenderer.jsx";
 
 import "ag-grid-enterprise";
 
@@ -31,30 +31,30 @@ export default class GroupedRowInnerRendererComponentExample extends Component {
             {
                 headerName: "Country",
                 field: "country",
-                width: 100,
+                width: 200,
                 rowGroupIndex: 0
             },
             {
                 headerName: "Name",
                 field: "name",
-                width: 100
+                width: 190
             },
             {
                 headerName: "Gold",
                 field: "gold",
-                width: 100,
+                width: 170,
                 aggFunc: 'sum'
             },
             {
                 headerName: "Silver",
                 field: "silver",
-                width: 100,
+                width: 170,
                 aggFunc: 'sum'
             },
             {
                 headerName: "Bronze",
                 field: "bronze",
-                width: 100,
+                width: 170,
                 aggFunc: 'sum'
             },
         ];
@@ -106,9 +106,7 @@ export default class GroupedRowInnerRendererComponentExample extends Component {
 
     render() {
         return (
-            <div style={{height: 400, width: 945}}
-                 className="ag-fresh">
-                <h1>Group Row Renderer Example</h1>
+            <div style={{height: 340, width: 900}} className="ag-fresh">
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}
