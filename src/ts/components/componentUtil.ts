@@ -186,12 +186,12 @@ export class ComponentUtil {
             api.setRowData(changes.rowData.currentValue);
         }
 
-        if (changes.floatingTopRowData) {
-            api.setFloatingTopRowData(changes.floatingTopRowData.currentValue);
+        if (changes.pinnedTopRowData) {
+            api.setFloatingTopRowData(changes.pinnedTopRowData.currentValue);
         }
 
-        if (changes.floatingBottomRowData) {
-            api.setFloatingBottomRowData(changes.floatingBottomRowData.currentValue);
+        if (changes.pinnedBottomRowData) {
+            api.setFloatingBottomRowData(changes.pinnedBottomRowData.currentValue);
         }
 
         if (changes.columnDefs) {
