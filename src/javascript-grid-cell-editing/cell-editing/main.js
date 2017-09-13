@@ -105,7 +105,7 @@ function onBtStartEditing(key, char) {
 
 function getCharCodeFromEvent(event) {
     event = event || window.event;
-    return (typeof event.which == "undefined") ? event.keyCode : event.which;
+    return (typeof event.which === "undefined") ? event.keyCode : event.which;
 }
 
 function isCharNumeric(charStr) {

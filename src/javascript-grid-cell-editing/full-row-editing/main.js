@@ -128,7 +128,7 @@ function isKeyPressedNumeric(event) {
 
 function getCharCodeFromEvent(event) {
     event = event || window.event;
-    return (typeof event.which == "undefined") ? event.keyCode : event.which;
+    return (typeof event.which === "undefined") ? event.keyCode : event.which;
 }
 
 // wait for the document to be loaded, otherwise
