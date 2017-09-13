@@ -173,10 +173,10 @@
         // do http request to get our sample data - not using any framework to keep the example self contained.
         // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
         var httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', '../olympicWinners.json');
+        httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json');
         httpRequest.send();
         httpRequest.onreadystatechange = function() {
-            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
                 var httpResult = JSON.parse(httpRequest.responseText);
                 gridOptions.api.setRowData(httpResult);
                 // when this demo is on the main page, the pages takes a moment
