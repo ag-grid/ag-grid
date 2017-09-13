@@ -294,7 +294,7 @@ colDef = {
         </ul>
     </p>
 
-    <show-example example="exampleHeaderComponent"></show-example>
+    <?= example('Header component', 'header-component') ?>
 
     <h2 id="headerGroupComponent">Header Group Component</h2>
 
@@ -403,7 +403,7 @@ columnGroup.removeEventListener('expandedChanged', listener);</snippet>
 
     <h3 id="example-header-group-cells">Example - Header Group Cells</h3>
 
-    <show-example example="exampleHeaderGroupComponent"></show-example>
+    <?= example('Header Group', 'header-group-component') ?>
 
     <?php if (isFrameworkAngular2()) { ?>
         <?php include './angular.php';?>

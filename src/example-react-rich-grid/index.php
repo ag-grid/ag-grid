@@ -12,14 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2>React Rich Grid Example</h2>
     <p>A feature rich Grid example, demonstrating many of ag-Grid's features, including Date, Header and Header Group Components.</p>
 
-    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=rich-grid"
-                          sources="{
-                            [
-                                { root: '/framework-examples/react-examples/examples/src/richGridExample/', files: 'ColDefFactory.jsx,NameCellEditor.jsx,RichGridExample.css,SkillsFilter.jsx,MyReactDateComponent.jsx,ProficiencyCellRenderer.jsx,RichGridExample.jsx,MyReactHeaderComponent.jsx,ProficiencyFilter.jsx,RowDataFactory.js,MyReactHeaderGroupComponent.jsx,RefData.js,SkillsCellRenderer.jsx' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
+    <?= example('ag-Grid in React', 'rich', 'react', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 
 </div>
 

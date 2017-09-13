@@ -11,10 +11,13 @@ var gridOptions = {
     enableColResize: true,
     rowModelType: 'enterprise',
     rowGroupPanelShow: 'always',
+    pivotPanelShow: 'always',
     enableFilter: true,
+    pivotMode: true,
     animateRows: true,
     debug: true,
     enableSorting: true,
+    enableRangeSelection: true,
     showToolPanel: true,
     suppressAggFuncInHeader: true,
     // restrict to 2 server side calls concurrently
