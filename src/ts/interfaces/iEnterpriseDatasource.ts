@@ -17,6 +17,10 @@ export interface IEnterpriseGetRowsRequest {
     rowGroupCols: ColumnVO[];
     // columns that have aggregations on them
     valueCols: ColumnVO[];
+    // columns that have pivot on them
+    pivotCols: ColumnVO[];
+    // defines if pivot mode is on or off
+    pivotMode: boolean;
     // what groups the user is viewing
     groupKeys: string[];
     // if filtering, what the filter model is
