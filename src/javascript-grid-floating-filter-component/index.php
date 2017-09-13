@@ -207,7 +207,7 @@ interface IFloatingFilterParams {
     a read-only floating filter that gets updated as you change the values from their rich filter
 </p>
 
-<show-example example="exampleCustomFilterDefaultFloatingFilter"></show-example>
+<?= example('Custom Filter Only', 'custom-filter') ?>
 
 <h3 id="example">Complex example with JQuery</h3>
 
