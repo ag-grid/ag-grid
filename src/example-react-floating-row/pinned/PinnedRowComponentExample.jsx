@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 
 import {AgGridReact} from "ag-grid-react";
-import StyledRenderer from "./StyledRenderer";
+import StyledRenderer from "./StyledRenderer.jsx";
 
 export default class PinnedRowComponentExample extends Component {
     constructor(props) {
@@ -65,9 +65,8 @@ export default class PinnedRowComponentExample extends Component {
 
     render() {
         return (
-            <div style={{height: 400, width: 945}}
+            <div style={{height: 400, width: 900}}
                  className="ag-fresh">
-                <h1>Pinned Row Renderer Example</h1>
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}
