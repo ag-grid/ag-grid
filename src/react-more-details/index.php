@@ -333,7 +333,7 @@ export default connect(
 &lt;/AgGridReact&gt;</snippet>
 
     <p>For this to work, each row has to have something that can uniquely identify it. In our
-        <a href="/ag-grid-react-trader-dashboard">Trader Dashboard</a> example, the Top Movers panel (bottom right) uses
+        <a href="/ag-grid-react-trader-dashboard" target="_blank">Trader Dashboard <i class="fa fa-external-link" aria-hidden="true"/></a> example, the Top Movers panel (bottom right) uses
         this
         technique and each row can uniquely be identified by the FX curreny code:</p>
 
