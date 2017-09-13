@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
         examples is the <code>pagination=true</code> property.
     </p>
 
-    <show-example example="clientPaging"></show-example>
+    <?= example('Client Paging', 'client-paging', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="clientPagination">Supported Row Models</h2>
     <p>Pagination in ag-Grid is supported in <a href="../javascript-grid-row-models/">all the different row models</a>.
@@ -46,7 +46,7 @@ include '../documentation-main/documentation_header.php';
         automatically changes. To view this, open the example up in a new tab and resize your browser.
     </p>
 
-    <show-example example="autoPageSize"></show-example>
+    <?= example('Auto Page Size', 'auto-page-size', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="customising-pagination">Example: Customising Pagination</h2>
 
@@ -59,7 +59,7 @@ include '../documentation-main/documentation_header.php';
             <i>paginationSetPageSize(newPageSize)</i></li>
     </ul>
 
-    <show-example example="customPaging"></show-example>
+    <?= example('Custom Paging', 'custom-paging', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="custom-pagination-controls">Example: Custom Pagination Controls</h2>
 
@@ -75,7 +75,7 @@ include '../documentation-main/documentation_header.php';
     <p>The example also sets property <i>suppressScrollOnNewData=true</i>, which tells the grid to NOT
     scroll to the top when the page changes.</p>
 
-    <show-example example="customControls"></show-example>
+    <?= example('Custom Controls', 'custom-controls', 'vanilla', array("enterprise" => 1)) ?>
 
     <h1 id="properties">Pagination Properties</h1>
     <?php include 'paginationProperties.php' ?>

@@ -12,14 +12,8 @@ include '../documentation-main/documentation_header.php';
     <h2>Filter Component</h2>
     <p>A Filter Example, with the Filter written as a React Component.</p>
 
-    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=filter"
-                          sources="{
-                            [
-                                { root: '/framework-examples/react-examples/examples/src/filterComponentExample/', files: 'FilterComponentExample.jsx,PartialMatchFilter.jsx' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
+    <?= example('Filter Component', 'filter', 'react', array( "exampleHeight" => 440, "showResult" => true )); ?>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

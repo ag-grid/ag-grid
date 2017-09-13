@@ -328,7 +328,7 @@ colDef.newValueHandler = function(params) {
         The example below illustrates different parts of the editing API using the buttons at the top.
     </p>
 
-    <show-example example="exampleCellEditing"></show-example>
+    <?= example('Cell Editing', 'cell-editing') ?>
 
     <h3 id="datepicker-cell-editing-example">Datepicker Cell Editing Example</h3>
 
@@ -337,7 +337,7 @@ colDef.newValueHandler = function(params) {
         <li>'Date' column uses a Component cell editor that allows you to pick a date using jQuery UI Datepicker.</li>
     </ul>
 
-     <show-example example="exampleDatepicker"></show-example>
+    <?= example('Datepicker Cell Editing', 'datepicker-cell-editing', 'vanilla', array("enterprise" => 1)) ?>
 
     </p>
 
@@ -417,7 +417,7 @@ colDef.newValueHandler = function(params) {
         </ul>
     </p>
 
-    <show-example example="exampleFullRowEditing"></show-example>
+    <?= example('Full Row Editing', 'full-row-editing', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="groupEditing">Group Editing</h2>
 
@@ -437,7 +437,7 @@ colDef.newValueHandler = function(params) {
         The example below shows using <code>enableGroupEdit=true</code> along with tree data to allow editing of group data.
     </p>
 
-    <show-example example="exampleEditingGroups"></show-example>
+    <?= example('Group Editing', 'group-editing', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="singleClickEditing">Single Click, Double Click, No Click Editing</h2>
 
@@ -464,9 +464,7 @@ colDef.newValueHandler = function(params) {
         such as including a button in your cell renderer.
     </p>
 
-    <h3 id="single-click-and-no-click-example">Single Click and No Click Example</h3>
-
-    <show-example example="exampleSingleClickEditing"></show-example>
+    <?= example('Single Click Editing', 'single-click-editing') ?>
 
     <h3 id="losingFocusStopsEditing">Stop Editing When Grid Loses Focus</h3>
 
@@ -502,7 +500,7 @@ colDef.newValueHandler = function(params) {
         </ul>
     </p>
 
-    <show-example example="exampleStopEditWhenGridLosesFocus"></show-example>
+    <?= example('Stop Editing When Grid Loses Focus', 'stop-edit-when-grid-loses-focus') ?>
 
     <note>Cell Editing can also be done via Cell Editor Components - please see <a href="../javascript-grid-cell-editor">
             Cell Editor Components</a> for more information.</note>

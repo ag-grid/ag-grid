@@ -122,7 +122,7 @@ var colDef3 = {
 </ul>
 </p>
 
-<show-example example="exampleAnimationRenderers"></show-example>
+<?= example('Animation Renderers', 'animation-renderers') ?>
 
 <note>
     We hope you like the animation cell renderer's. However you can also take inspiration from them,
@@ -230,7 +230,7 @@ colDef = {
     </ul>
 </p>
 
-<show-example example="exampleGroupRenderer"></show-example>
+<?= example('Group Renderers', 'group-renderer', 'vanilla', array("enterprise" => 1)) ?>
 
 <note>
     If you don't like the grid provided group cell renderer, you can build your own cell renderer and provide

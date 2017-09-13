@@ -77,16 +77,7 @@ the grid will know the framework to use is React.
     Using React Components in the Cell Renderer's
 </p>
 
-<show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=dynamic"
-                      sources="{
-                            [
-                                { root: '/framework-examples/react-examples/examples/src/dynamicComponentExample/', files: 'ChildMessageRenderer.jsx,CurrencyRenderer.jsx,ParamsRenderer.jsx,CubeRenderer.jsx,DynamicComponentsExample.jsx,SquareRenderer.jsx' }
-                            ]
-                          }"
-                      exampleHeight="525px">
-</show-complex-example>
-
-
+<?= example('Simple Dynamic Component', 'react-dynamic', 'react', array( "exampleHeight" => 460, "showResult" => true )); ?>
 
 <h3 id="react-props"><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
 
@@ -141,11 +132,6 @@ class NameCellRenderer extends React.Component {
     Using more complex React Components in the Cell Renderer's
 </p>
 
-<show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=rich-dynamic"
-                      sources="{
-                            [
-                                { root: '/framework-examples/react-examples/examples/src/richComponentExample/', files: 'ClickableRenderer.jsx,RatioRenderer.jsx,RichComponentsExample.jsx' }
-                            ]
-                          }"
-                      exampleHeight="525px">
+<?= example('Richer Dynamic Components', 'react-rich-dynamic', 'react', array( "exampleHeight" => 380, "showResult" => true )); ?>
+
 </show-complex-example>

@@ -213,7 +213,7 @@ colDef.cellEditorParams = {
 </ul>
 </p>
 
-<show-example example="exampleEditorComponent"></show-example>
+<?= example('Editor Component', 'editor-component') ?>
 
 <?php if (isFrameworkAngular2()) { ?>
     <?php include './angular.php';?>

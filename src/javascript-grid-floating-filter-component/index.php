@@ -160,7 +160,7 @@ interface IFloatingFilterParams {
 </ol>
 </p>
 
-<show-example example="exampleCustomFloatingFilter"></show-example>
+<?= example('Custom Floating Filter', 'custom-floating-filter') ?>
 
 
 <h3 id="example">Custom Filter And Custom Floating Filter Example</h3>
@@ -190,7 +190,7 @@ interface IFloatingFilterParams {
 </ol>
 </p>
 
-<show-example example="exampleCustomFilterAndFloatingFilter"></show-example>
+<?= example('Custom Filter and Floating Filter', 'custom-filter-and-floating-filter') ?>
 
 <h3 id="example">Custom Filter And Read-Only Floating Filter Example</h3>
 
@@ -207,7 +207,7 @@ interface IFloatingFilterParams {
     a read-only floating filter that gets updated as you change the values from their rich filter
 </p>
 
-<show-example example="exampleCustomFilterDefaultFloatingFilter"></show-example>
+<?= example('Custom Filter Only', 'custom-filter') ?>
 
 <h3 id="example">Complex example with JQuery</h3>
 
@@ -224,11 +224,16 @@ interface IFloatingFilterParams {
 </ul>
 </p>
 
-<show-example example="exampleComplexCustomFilterAndFloatingFilter"></show-example>
+<?= example('Custom Filter and Floating Filter', 'custom-complex-filter-and-floating-filter') ?>
 
 <span id="ng2AngularAnchor"></span>
 <?php if (isFrameworkAngular2()) { ?>
     <?php include './angular.php'; ?>
+<?php } ?>
+
+<span id="reactAnchor"></span>
+<?php if (isFrameworkReact()) { ?>
+    <?php include './react.php'; ?>
 <?php } ?>
 
 <span id="polymerAnchor"></span>
