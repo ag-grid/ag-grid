@@ -15,7 +15,7 @@ export default class MoodRenderer extends Component {
 
     setMood(mood) {
         this.setState({
-            imgForMood: mood === 'Happy' ? 'images/smiley.png' : 'images/smiley-sad.png'
+            imgForMood: mood === 'Happy' ? '/images/smiley.png' : '/images/smiley-sad.png'
         })
     };
 

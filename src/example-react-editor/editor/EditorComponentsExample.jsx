@@ -1,9 +1,9 @@
 import React, {Component} from "react";
 
 import {AgGridReact} from "ag-grid-react";
-import MoodRenderer from "./MoodRenderer";
-import MoodEditor from "./MoodEditor";
-import NumericEditor from "./NumericEditor";
+import MoodRenderer from "./MoodRenderer.jsx";
+import MoodEditor from "./MoodEditor.jsx";
+import NumericEditor from "./NumericEditor.jsx";
 
 export default class EditorComponentsExample extends Component {
     constructor(props) {
@@ -65,7 +65,7 @@ export default class EditorComponentsExample extends Component {
 
     render() {
         return (
-            <div style={{height: 400, width: 945}}
+            <div style={{height: 380, width: 900}}
                  className="ag-fresh">
                 <h1>Cell Editor Component Example</h1>
                 <AgGridReact

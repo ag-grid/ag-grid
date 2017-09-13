@@ -112,8 +112,8 @@ export default class MoodEditor extends Component {
                  style={mood}
                  tabIndex={1} // important - without this the keypresses wont be caught
             >
-                <img src="images/smiley.png" onClick={this.onHappyClick} style={happyStyle}/>
-                <img src="images/smiley-sad.png" onClick={this.onSadClick} style={sadStyle}/>
+                <img src="/images/smiley.png" onClick={this.onHappyClick} style={happyStyle}/>
+                <img src="/images/smiley-sad.png" onClick={this.onSadClick} style={sadStyle}/>
             </div>
         );
     }
