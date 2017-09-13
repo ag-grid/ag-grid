@@ -204,7 +204,7 @@ will be empty.
     second is on the Year column.
 </p>
 
-<show-example example="exampleCustomFilter"></show-example>
+<?= example('Filter Component', 'custom-filter') ?>
 
 <?php if (isFrameworkAngular2()) { ?>
     <?php include './angular.php';?>
