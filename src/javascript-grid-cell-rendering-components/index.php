@@ -301,7 +301,7 @@ colDef.cellRendererParams = {
     <li>'Days Sunshine' and 'Rainfall (10mm)' use simple functions to display icons.</li>
 </ul>
 
-<show-example example="example2"></show-example>
+<?= example('Cell Renderer', 'cell-renderer') ?>
 
 <h1 id="cell-renderers-and-row-groups">Cell Renderer's and Row Groups</h1>
 
