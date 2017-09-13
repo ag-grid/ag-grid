@@ -20,6 +20,8 @@ import {EnterpriseBlock} from "./enterpriseBlock";
 export interface EnterpriseCacheParams extends RowNodeCacheParams {
     rowGroupCols: ColumnVO[];
     valueCols: ColumnVO[];
+    pivotCols: ColumnVO[];
+    pivotMode: boolean;
     datasource: IEnterpriseDatasource;
     lastAccessedSequence: NumberSequence;
 }

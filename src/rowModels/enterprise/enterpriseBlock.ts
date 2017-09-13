@@ -340,6 +340,8 @@ export class EnterpriseBlock extends RowNodeBlock {
             endRow: this.getEndRow(),
             rowGroupCols: this.params.rowGroupCols,
             valueCols: this.params.valueCols,
+            pivotCols: this.params.pivotCols,
+            pivotMode: this.params.pivotMode,
             groupKeys: groupKeys,
             filterModel: this.params.filterModel,
             sortModel: this.params.sortModel

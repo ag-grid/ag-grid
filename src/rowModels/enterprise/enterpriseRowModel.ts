@@ -80,8 +80,10 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     private addEventListeners(): void {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     }
@@ -99,6 +101,14 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     private onColumnRowGroupChanged(): void {
+        this.reset();
+    }
+
+    private onColumnPivotChanged(): void {
+        this.reset();
+    }
+
+    private onPivotModeChanged(): void {
         this.reset();
     }
 
@@ -199,6 +209,7 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
 
         let rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
         let valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
+        let pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
 
         let dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
         let maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
@@ -212,6 +223,8 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
             rowGroupCols: rowGroupColumnVos,
+            pivotCols: pivotColumnVos,
+            pivotMode: this.columnController.isPivotMode(),
 
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
