@@ -13,6 +13,12 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+    <h2>NEXT</h2>
+
+    <ul>
+        <li>AG-770: pinnedBottomRowData and pinnedTopRowData were not getting changes updated when bound as component property (eg if using React or Angular bindings to change these)</li>
+    </ul>
+
 
     <h2>Version 13.1.x</h2>
     <h3>Version 13.1.2 [11-SEP-2017]</h3>
