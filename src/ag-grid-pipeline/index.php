@@ -67,25 +67,30 @@ include '../includes/headerRow.php'; ?>
                 return $reporter;
             }
 
+            function mapStatus($status) {
+                if($status === 'Selected for Development') {
+                    return 'Backlog';
+                }
+                return $status;
+            }
+
             function toDate($str_value)
             {
                 $date = new DateTime($str_value, new DateTimeZone('GMT'));
                 return $date->format('j M Y');
-//                return $date->format('j F Y H:i');
             }
 
             ?>
                     <table class="aui">
                         <tbody>
                         <?php
-                        $showFixVersion = false;
                         $firstReport = true;
-                        $reportTitle = "Completed - Will be in the Next Release";
+                        $reportTitle = "Completed - Will be Released Soon";
                         $csvFile = "next_version_done.json";
                         include './../jira_report.php';
                         ?>
                         <?php
-                        $reportTitle = "Scheduled for Dev - should be in a release soon";
+                        $reportTitle = "Open - Targeted For A Future Release";
                         $csvFile = "next_version_notdone.json";
                         include '../jira_report.php';
                         ?>

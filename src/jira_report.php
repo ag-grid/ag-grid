@@ -38,16 +38,9 @@ for ($i = 0; $i < $issue_count; $i++) {
                 class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
                     class="jim-table-header-content">Issue Type</span></th>
 
-            <?php
-            if ($showFixVersion) {
-                ?>
                 <th style="text-align: left; text-transform: capitalize;"
                     class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
                         class="jim-table-header-content">Fix Version</span></th>
-                <?php
-            }
-            ?>
-
             <th style="text-align: left; text-transform: capitalize;"
                 class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
                     class="jim-table-header-content">Summary</span></th>
@@ -64,9 +57,9 @@ for ($i = 0; $i < $issue_count; $i++) {
                 class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
                     class="jim-table-header-content">Reporter</span></th>
 
-            <th style="text-align: left; text-transform: capitalize;"
-                class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
-                    class="jim-table-header-content">Status</span></th>
+<!--            <th style="text-align: left; text-transform: capitalize;"-->
+<!--                class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span-->
+<!--                    class="jim-table-header-content">Status</span></th>-->
 
             <th nowrap="true" style="text-align: left; text-transform: capitalize;"
                 class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
@@ -108,16 +101,12 @@ for ($i = 0; $i < $issue_count; $i++) {
                 style="height: 100%"><?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?></span>
         </td>
         <td
-        <?php
-        if ($showFixVersion) {
-            ?>
             <td nowrap="true"
-                class="jira-macro-table-underline-pdfexport"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'fixVersions'}[0]->{'name'}, FILTER_SANITIZE_STRING) ?></td>
+                class="jira-macro-table-underline-pdfexport"><?=
+                count($json_decoded->{'issues'}[$i]->{'fields'}->{'fixVersions'}[0]->{'name'}) > 0 ?
+                filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'fixVersions'}[0]->{'name'}, FILTER_SANITIZE_STRING) :
+                'TBD'?></td>
             <!-- fix version -->
-            <?php
-        }
-        ?>
-
         <td
             class="jira-macro-table-underline-pdfexport"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'summary'}, FILTER_SANITIZE_STRING); ?></td>
         <!-- summary -->
@@ -130,10 +119,12 @@ for ($i = 0; $i < $issue_count; $i++) {
         <td nowrap="true"
             class="jira-macro-table-underline-pdfexport"><?= mapReporter(count($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10300'}) > 0 ? filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10300'}[0]->{'value'}, FILTER_SANITIZE_STRING) : '') ?></td>
         <!-- reporter/source -->
-        <td nowrap="true" class="jira-macro-table-underline-pdfexport">      <!-- status -->
-            <span
-                class="aui-lozenge aui-lozenge-subtle aui-lozenge-success"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING) ?></span>
-        </td>
+        <!-- status -->
+<!--        <td nowrap="true" class="jira-macro-table-underline-pdfexport">      -->
+<!--            <span-->
+<!--                class="aui-lozenge aui-lozenge-subtle aui-lozenge-success">--><?//= mapStatus(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING)) ?>
+<!--            </span>-->
+<!--        </td>-->
         <td nowrap="true"
             class="jira-macro-table-underline-pdfexport"
             align="center">
