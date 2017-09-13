@@ -12,15 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Master/Detail Components</h2>
     <p>A Master/Detail Example, with both the Master and the Detail elements being React Components.</p>
 
-    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=master-detail"
-                          sources="{
-                            [
-                                { root: '/framework-examples/react-examples/examples/src/masterDetailExample/', files: 'MasterDetailExample.jsx,DetailPanelComponent.jsx,DetailPanelComponent.css' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
-
+    <?= example('Master/Detail', 'master-detail', 'react', array( "exampleHeight" => 360, "showResult" => true )); ?></div>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

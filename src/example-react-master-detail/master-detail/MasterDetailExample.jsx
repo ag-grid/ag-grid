@@ -2,7 +2,7 @@ import React, {Component} from "react";
 
 import {AgGridReact} from "ag-grid-react";
 
-import DetailPanelComponent from "./DetailPanelComponent";
+import DetailPanelComponent from "./DetailPanelComponent.jsx";
 
 export default class MasterDetailExample extends Component {
     constructor(props) {
@@ -116,9 +116,7 @@ export default class MasterDetailExample extends Component {
 
     render() {
         return (
-            <div style={{height: 400, width: 945}}
-                 className="ag-fresh">
-                <h1>Master-Detail Example</h1>
+            <div style={{height: 400, width: 900}} className="ag-fresh">
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}
