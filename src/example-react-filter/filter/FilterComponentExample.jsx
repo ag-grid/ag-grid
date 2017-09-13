@@ -4,7 +4,7 @@ import {AgGridReact} from "ag-grid-react";
 
 import "ag-grid-enterprise";
 
-import PartialMatchFilter from "./PartialMatchFilter";
+import PartialMatchFilter from "./PartialMatchFilter.jsx";
 
 export default class FilterComponentExample extends Component {
     constructor(props) {
@@ -22,6 +22,7 @@ export default class FilterComponentExample extends Component {
     }
 
     onGridReady(params) {
+        console.log("here");
         this.gridApi = params.api;
         this.columnApi = params.columnApi;
 
@@ -34,12 +35,12 @@ export default class FilterComponentExample extends Component {
 
     createColumnDefs() {
         return [
-            {headerName: "Row", field: "row", width: 400},
+            {headerName: "Row", field: "row", width: 450},
             {
                 headerName: "Filter Component",
                 field: "name",
                 filterFramework: PartialMatchFilter,
-                width: 400,
+                width: 450,
                 menuTabs:['filterMenuTab']
             }
         ];
@@ -66,9 +67,7 @@ export default class FilterComponentExample extends Component {
 
     render() {
         return (
-            <div style={{height: 400, width: 945}}
-                 className="ag-fresh">
-                <h1>Filter Component Example</h1>
+            <div style={{height: 400, width: 900}} className="ag-fresh">
                 <button style={{marginBottom: 10}} onClick={this.onClicked}>Filter Instance Method</button>
                 <AgGridReact
                     // properties
