@@ -158,7 +158,7 @@ interface GridCellDef {
         to stick with the grid default behaviour. Return null/undefined to skip the navigation.
     </p>
 
-    <h4 id="example-customer-navigation">Example Customer Navigation</h4>
+    <h4 id="example-custom-navigation">Example Custom Navigation</h4>
 
     <p>
         The example below shows both <i>navigateToNextCell</i> and <i>tabToNextCell</i> in practice.
@@ -166,7 +166,7 @@ interface GridCellDef {
         to go up and down rather than right and left.
     </p>
 
-    <show-example example="exampleNavigation"></show-example>
+    <?= example('Custom Keyboard Navigation', 'custom-keyboard-navigation') ?>
 
 </div>
 

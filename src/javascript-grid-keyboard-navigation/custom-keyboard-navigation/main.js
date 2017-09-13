@@ -41,7 +41,7 @@ var gridOptions = {
         var tabIndex = 0;
         columns.forEach(function (column) {
             // for each column set a tabindex, otherwise it wont be able to get focus
-            let element = document.querySelector("div[col-id=" + column.colId + "] div.ag-header-cell-label");
+            var element = document.querySelector("div[col-id=" + column.colId + "] div.ag-header-cell-label");
             element.setAttribute("tabindex", tabIndex++);
 
             // register a listener for when a key is pressed on a column
@@ -139,10 +139,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '../olympicWinners.json');
+    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
         }
