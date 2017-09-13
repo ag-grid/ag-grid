@@ -1,7 +1,7 @@
 import React, {Component} from "react";
 
 import {AgGridReact} from "ag-grid-react";
-import NameAndAgeRenderer from "./NameAndAgeRenderer";
+import NameAndAgeRenderer from "./NameAndAgeRenderer.jsx";
 
 export default class FullWidthComponentExample extends Component {
     constructor(props) {
@@ -68,9 +68,8 @@ export default class FullWidthComponentExample extends Component {
 
     render() {
         return (
-            <div style={{height: 400, width: 945}}
+            <div style={{height: 500, width: 900}}
                  className="ag-fresh">
-                <h1>Full Width Renderer Example</h1>
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}

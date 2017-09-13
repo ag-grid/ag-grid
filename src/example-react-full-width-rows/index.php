@@ -12,14 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Full Width Renderer</h2>
     <p>A Full Width Renderer Example</p>
 
-    <show-complex-example example="../framework-examples/react-examples/examples/?fromDocs&example=full-width"
-                          sources="{
-                            [
-                                { root: '/framework-examples/react-examples/examples/src/fullWidthExample/', files: 'FullWidthComponentExample.jsx,NameAndAgeRenderer.jsx' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
+    <?= example('Full Width Renderer', 'full-width', 'react', array( "exampleHeight" => 500, "showResult" => true )); ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
