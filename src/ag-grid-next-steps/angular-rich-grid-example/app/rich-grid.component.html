@@ -1,0 +1,80 @@
+<div style="width: 800px;">
+    <div style="padding: 4px;">
+        <div style="float: right;">
+            <input (keyup)="onQuickFilterChanged($event)" type="text" id="quickFilterInput"
+                   placeholder="Type text to filter..."/>
+        </div>
+        <div>
+            <b>Employees Skills and Contact Details</b>
+            {{rowCount}}
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+
+    <div style="padding: 4px;" class="toolbar">
+            <span>
+                Grid API:
+                <button (click)="gridOptions.api.selectAll()">Select All</button>
+                <button (click)="gridOptions.api.deselectAll()">Clear Selection</button>
+            </span>
+        <span style="margin-left: 20px;">
+                Column API:
+                <button (click)="gridOptions.columnApi.setColumnVisible('country', false)">Hide Country Column</button>
+                <button (click)="gridOptions.columnApi.setColumnVisible('country', true)">Show Country Column</button>
+            </span>
+    </div>
+    <div style="clear: both;"></div>
+    <div style="padding: 4px;" class="toolbar">
+        <label>
+            <input type="checkbox" (change)="showToolPanel=$event.target.checked"/>
+            Show Tool Panel
+        </label>
+        <button (click)="createRowData()">Refresh Data</button>
+        <span style="marginLeft: 20">
+                Filter API:
+                <button (click)="dobFilter()">DOB equals to 01/01/2000</button>
+            </span>
+    </div>
+    <div style="clear: both;"></div>
+
+    <ag-grid-angular style="width: 900px; height: 440px;" class="ag-fresh"
+
+                     [gridOptions]="gridOptions"
+                     [columnDefs]="columnDefs"
+                     [showToolPanel]="showToolPanel"
+                     [rowData]="rowData"
+
+                     enableColResize
+                     enableSorting
+                     enableFilter
+                     groupHeaders
+                     suppressRowClickSelection
+                     toolPanelSuppressGroups
+                     toolPanelSuppressValues
+                     rowHeight="22"
+                     rowSelection="multiple"
+
+                     (modelUpdated)="onModelUpdated()"
+                     (cellClicked)="onCellClicked($event)"
+                     (cellDoubleClicked)="onCellDoubleClicked($event)"
+                     (cellContextMenu)="onCellContextMenu($event)"
+                     (cellValueChanged)="onCellValueChanged($event)"
+                     (cellFocused)="onCellFocused($event)"
+                     (rowSelected)="onRowSelected($event)"
+                     (selectionChanged)="onSelectionChanged()"
+                     (filterModified)="onFilterModified()"
+                     (virtualRowRemoved)="onVirtualRowRemoved($event)"
+                     (rowClicked)="onRowClicked($event)"
+                     (gridReady)="onReady($event)"
+
+                     (columnEverythingChanged)="onColumnEvent($event)"
+                     (columnRowGroupChanged)="onColumnEvent($event)"
+                     (columnValueChanged)="onColumnEvent($event)"
+                     (columnMoved)="onColumnEvent($event)"
+                     (columnVisible)="onColumnEvent($event)"
+                     (columnGroupOpened)="onColumnEvent($event)"
+                     (columnResized)="onColumnEvent($event)"
+                     (columnPinnedCountChanged)="onColumnEvent($event)">
+    </ag-grid-angular>
+</div>
+

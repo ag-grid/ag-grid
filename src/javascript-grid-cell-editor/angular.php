@@ -153,12 +153,4 @@ colDef = {
     <p>
         Using Angular Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=editor-component"
-                          sources="{
-                            [
-                                { root: '/framework-examples/angular-examples/app/editor-component-example/', files: 'editor.component.ts,editor.component.html,mood-editor.component.ts,mood-renderer.component.ts,numeric-editor.component.ts' },
-                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                          plunker="https://embed.plnkr.co/259RDD/">
-    </show-complex-example>
+    <?= example('Editor Components', 'angular-editor', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>

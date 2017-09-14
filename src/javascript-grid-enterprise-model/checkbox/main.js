@@ -27,6 +27,8 @@ var gridOptions = {
     enableSorting: true,
     debug: true,
     suppressAggFuncInHeader: true,
+    toolPanelSuppressPivotMode: true,
+    toolPanelSuppressValues: true,
     rowSelection: 'multiple',
     suppressRowClickSelection: true,
     // groupSelectsChildren: true, // not supported for Enterprise Model

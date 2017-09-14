@@ -1,0 +1,73 @@
+<div style="width: 800px;">
+    <h1>Rich Grid with Declarative Markup</h1>
+    <div style="padding: 4px;">
+        <div style="float: right;">
+            <input (keyup)="onQuickFilterChanged($event)" type="text" id="quickFilterInput"
+                   placeholder="Type text to filter..."/>
+        </div>
+        <div>
+            <b>Employees Skills and Contact Details</b>
+            {{rowCount}}
+        </div>
+    </div>
+    <div style="clear: both;"></div>
+
+    <div style="padding: 4px;" class="toolbar">
+            <span>
+                Grid API:
+                <button (click)="gridOptions.api.selectAll()">Select All</button>
+                <button (click)="gridOptions.api.deselectAll()">Clear Selection</button>
+            </span>
+        <span style="margin-left: 20px;">
+                Column API:
+                <button (click)="gridOptions.columnApi.setColumnVisible('country', false)">Hide Country Column</button>
+                <button (click)="gridOptions.columnApi.setColumnVisible('country', true)">Show Country Column</button>
+                <button (click)="gridOptions.api.sizeColumnsToFit()">Size to Fit</button>
+            </span>
+    </div>
+    <div style="clear: both;"></div>
+    <div style="padding: 4px;" class="toolbar">
+        <label>
+            <input type="checkbox" (change)="showToolPanel=$event.target.checked"/>
+            Show Tool Panel
+        </label>
+        <button (click)="createRowData()">Refresh Data</button>
+    </div>
+    <div style="clear: both;"></div>
+
+    <ag-grid-angular style="width: 900px; height: 380px;" class="ag-fresh"
+                     [gridOptions]="gridOptions"
+                     [showToolPanel]="showToolPanel"
+                     [rowData]="rowData"
+
+                     enableColResize
+                     enableSorting
+                     enableFilter
+                     groupHeaders
+                     suppressRowClickSelection
+                     toolPanelSuppressGroups
+                     toolPanelSuppressValues
+                     rowHeight="22"
+                     rowSelection="multiple">
+        <ag-grid-column headerName="Employee" [headerGroupComponentFramework]="components.headerGroupComponent">
+            <ag-grid-column headerName="#" [width]="30" [checkboxSelection]="true" [suppressSorting]="true"
+                            [suppressMenu]="true" [pinned]="true"></ag-grid-column>
+            <ag-grid-column headerName="Name" field="name" [width]="150" [pinned]="true"></ag-grid-column>
+            <ag-grid-column headerName="Country" field="country" [width]="150" [cellRenderer]="countryCellRenderer"
+                            [pinned]="true" [filterParams]="getCountryFilterParams()"></ag-grid-column>
+            <ag-grid-column headerName="DOB" field="dob" [width]="120" [pinned]="true" [columnGroupShow]="'open'"
+                            [cellRenderer]="parseDate" [filter]="'date'"></ag-grid-column>
+        </ag-grid-column>
+        <ag-grid-column headerName="IT Skills">
+            <ag-grid-column headerName="Skills" [width]="125" [suppressSorting]="true"
+                            [cellRenderer]="skillsCellRenderer" [filter]="getSkillFilter()"></ag-grid-column>
+            <ag-grid-column headerName="Proficiency" field="proficiency" [width]="150"
+                            [cellRenderer]="percentCellRenderer" [filter]="getProficiencyFilter()"></ag-grid-column>
+        </ag-grid-column>
+        <ag-grid-column headerName="Contact">
+            <ag-grid-column headerName="Mobile" field="mobile" [width]="150" filter="text"></ag-grid-column>
+            <ag-grid-column headerName="Land-line" field="landline" [width]="150" filter="text"></ag-grid-column>
+            <ag-grid-column headerName="Address" field="address" [width]="500" filter="text"></ag-grid-column>
+        </ag-grid-column>
+    </ag-grid-angular>
+</div>

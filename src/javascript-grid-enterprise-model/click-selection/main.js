@@ -22,6 +22,8 @@ var gridOptions = {
     animateRows: true,
     debug: true,
     enableSorting: true,
+    toolPanelSuppressPivotMode: true,
+    toolPanelSuppressValues: true,
     suppressAggFuncInHeader: true,
     rowSelection: 'multiple',
     // restrict to 2 server side calls concurrently

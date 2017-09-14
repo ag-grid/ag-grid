@@ -179,13 +179,4 @@ laterOnInYourApplicationSomewhere() {
     <p>
         Using Angular Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>
-<show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=filter"
-                      sources="{
-                            [
-                                { root: '/framework-examples/angular-examples/app/filter-component-example/', files: 'filter.component.ts,filter.component.html,partial-match-filter.component.ts' },
-                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                      plunker="https://embed.plnkr.co/ePKaio/"
-                      exampleHeight="525px">
-</show-complex-example>
+    <?= example('Angular Filter Component', 'angular-filter', 'angular', array("exampleHeight" => 435, "showResult" => true)); ?>
