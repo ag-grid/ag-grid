@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
             will then request to get the 'employees' for that manager.
         </li>
         <li>
-            <b>Server Side Grouping and Aggregation:</b> Because the data is coming back from the server one group
+            <b>Server Side Grouping, Pivot and Aggregation:</b> Because the data is coming back from the server one group
             level at a time, this allows you to do aggregation on the server, returning back the aggregated
             results for the top level parent rows. For example you could include 'employee count' as an attribute
             on the returned manager record, to say how many employees a manager manages.
@@ -109,11 +109,17 @@ interface IEnterpriseGetRowsParams {
 <snippet>
 interface IEnterpriseGetRowsRequest {
 
-    // details for the request
+    // row group columns
     rowGroupCols: ColumnVO[];
 
-    // columns that have aggregations on them
+    // value columns
     valueCols: ColumnVO[];
+
+    // pivot columns
+    pivotCols: ColumnVO[];
+
+    // true if pivot mode is one, otherwise false
+    pivotMode: boolean;
 
     // what groups the user is viewing
     groupKeys: string[];
@@ -185,33 +191,124 @@ export interface ColumnVO {
 <h1>Example - Slice and Dice - Mocked Server</h1>
 
 <p>
-    Below shows an example of slicing and dicing the olympic winners. The user
-    has full control over what they aggregate over by dragging the columns to the
-    group drop zone. For example, in the example below, you can remove the grouping
-    on 'country' and group by 'year' instead, or you can group by both.
+    The concept of 'Slice and Dice' means the user can decide what they want to group,
+    aggregate and pivot on by dragging the columns around in the grid.
 </p>
 
 <p>
+    When the user changes the status of the columns (ie the user changes how the data is
+    grouped, aggregated or pivoted) then the grid data is cleared out and loaded again
+    from scratch using the new configuration.
+</p>
+
+<p>
+    A mock data store running inside the browser is used in the below example. The purpose
+    of the mock server is to demonstrate the interaction between the grid and the server.
     For your application, your server side would need to understand the requests
-    from the client. Typically this would be used in a reporting scenario, where the
-    server side would build SQL (or the SQL equivalent if using a no-SQL data store)
-    and run it against the data store.
+    from the client and build SQL (or the SQL equivalent if using a no-SQL data store)
+    to run the relevant query against the data store.
 </p>
 
 <p>
-    This example also demonstrates filtering on the 'Age' Column.
+    The example demonstrates the following:
+    <ul>
+        <li>
+            Columns <i>Athlete, Age, Country, Year</i> and <i>Sport</i> all have <code>enableRowGroup=true</code>
+            which means they can be grouped on. To group you drag the columns to the row group panel section.
+            By default the example is grouping by <i>Country</i> and then <i>Year</i> as these columns have
+            <code>rowGroup=true</code>.
+        </li>
+        <li>
+            Columns <i>Gold, Silver</i> and <i>Bronze</i> all have <code>enableValue=true</code> which means
+            they can be aggregated on. To aggregate you drag the column to the <i>Values</i> section.
+            When you are grouping, then all columns in the <i>Values</i> section will be aggregated.
+        </li>
+        <li>
+            You can turn the grid into <i>Pivot Mode</i>. To do this, you click the pivot mode checkbox.
+            When the grid is in pivot mode, the grid behaves similar to an Excel grid. This extra information
+            is passed to your server as part of the request and it is your servers responsibility to return
+            the data in the correct structure.
+        </li>
+        <li>
+            Columns <i>Gold, Silver</i> and <i>Bronze</i> all have <code>enablePivot=true</code> which means
+            they can be pivoted on when <i>Pivot Mode</i> is active. To pivot you drag the column to the <i>Pivot</i>
+            section.
+        </li>
+        <li>
+            Note that when you pivot, it is not possible to drill all the way down the leaf levels.
+        </li>
+        <li>
+            In addition to grouping, aggregation and pivot, the example also demonstrates filtering.
+            The columns <i>Age, Country</i> and <i>Year</i> all have a filter.
+        </li>
+    </ul>
 </p>
 
-<note>When filtering using the Enterprise Row Model it's important to specify the filter parameter: <i>newRowsAction: 'keep'</i>.
-    This is to prevent the filter from being reset.
+<note>
+    When filtering using the Enterprise Row Model it's important to specify the filter parameter: <i>newRowsAction: 'keep'</i>.
+    This is to prevent the filter from being reset as data is loaded into the grid.
 </note>
 
+<?= example('Slice And Dice', 'slice-and-dice', 'vanilla', array("enterprise" => 1)) ?>
+
+<h1>Pivoting Challenges</h1>
 
 <p>
-    A mock data store is used in the following example for demonstration purposes.
+    Achieving pivot on the server side is difficult. If you manage to implement it, you deserve lots of credit from
+    your team and possibly a few hugs (disclaimer, we are not responsible for any inappropriate hugs you try). Here
+    are some quick references on how you can achieve pivot in different relational databases:
+    <ul>
+        <li>Oracle: Oracle has native support for filtering which they call
+            <a href="http://www.oracle.com/technetwork/articles/sql/11g-pivot-097235.html">pivot feature</a>.
+        </li>
+        <li>
+            MySQL: MySQL does not support pivot, however it is possible to achieve by building SQL using
+            inner select statements. See the following on Stack Overflow:
+            <a href="https://stackoverflow.com/questions/7674786/mysql-pivot-table">MySQL Pivot Table</a> and
+            <a href="https://stackoverflow.com/questions/12598120/mysql-pivot-table-query-with-dynamic-columns">
+                MySQL Pivot Table Query with Dynamic Columns
+            </a>.
+        </li>
+    </ul>
+    All databases will either implement pivot (like Oracle) or require you to fake it (like MySQL).
 </p>
 
-<?= example('Slice And Dice', 'slice-and-dice', 'vanilla', array("enterprise" => 1)) ?>
+<p>
+    To understand <a href="../javascript-grid-pivoting/#pivot-mode">Pivot Mode</a> and
+    <a href="../javascript-grid-pivoting/#secondary-columns">Secondary Columns</a> please refer to
+    the relevant sections on <a href="../javascript-grid-pivoting/">Pivoting in In Memory Row Model</a>.
+    The concepts mean the same in both In Memory Row Model and the Enterprise Row Model.
+</p>
+
+<p>
+    Secondary columns are the columns that are created as part of the pivot function. You must provide
+    these to the grid in order for the grid to display the correct columns for the active pivot function.
+    For example, if you pivot on <i>Year</i>, you need to tell the grid to create columns for
+    <i>2000, 2002, 2004, 2006, 2008, 2010</i> and <i>2012</i>.
+</p>
+
+<p>
+    Secondary columns are defined identically to primary columns, you provide a list of
+    <a href="../javascript-grid-column-definitions/">Column Definitions</a> to the grid. The columns are set
+    by calling <code>columnApi.setSecondaryColumns()</code> and passing a list of columns and / or column
+    groups. There is no limit or restriction as to the number of columns or groups you pass - the only
+    thing you should ensure is that the field (or value getter) that you set for the columns matches.
+</p>
+
+<p>
+    If you do pass in secondary columns with the server response, be aware that setting secondary columns
+    will reset all secondary column state. For example if resize or reorder the columns, then setting the
+    secondary columns again will reset this. In the example above, a hash function is applied to the secondary
+    columns to check if they are the same as the last time the server was asked to process a request. This
+    is the examples way to make sure the secondary columns are only set into the grid when they have actually
+    changed.
+</p>
+
+<p>
+    If you do not want pivot in your enterprise row model grid, then you can remove it from the tool
+    panel by setting <code>toolPanelSuppressPivotMode=true</code> and
+    <code>toolPanelSuppressValues=true</code>.
+</p>
 
 <h1>Example - Slice and Dice - Real Server</h1>
 
@@ -228,6 +325,11 @@ export interface ColumnVO {
     on the fly based on what the user is querying. This is a full end to end example of
     the type of slicing and dicing we want ag-Grid to be able to do in your enterprise
     applications.
+</p>
+
+<p>
+    The example does not demonstrate pivoting. This is because pivot is not easily achievable in
+    MySQL.
 </p>
 
 <note>

@@ -12,15 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Pinned Row Renderer</h2>
     <p>A Pinned Row Renderer Example</p>
 
-    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=pinned-row"
-                          sources="{
-                            [
-                                { root: '/framework-examples/angular-examples/app/pinned-row-example/', files: 'pinned-row-renderer.component.ts,pinned-row-renderer.component.html,styled-renderer.component.ts' },
-                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                          plunker="https://embed.plnkr.co/Of88H3/">
-    </show-complex-example>
+    <?= example('Pinned Row Component', 'pinned-row', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

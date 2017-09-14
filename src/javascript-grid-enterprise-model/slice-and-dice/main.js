@@ -13,7 +13,6 @@ var gridOptions = {
     rowGroupPanelShow: 'always',
     pivotPanelShow: 'always',
     enableFilter: true,
-    pivotMode: true,
     animateRows: true,
     debug: true,
     enableSorting: true,

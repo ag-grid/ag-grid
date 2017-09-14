@@ -105,7 +105,7 @@ gridOptions.columnDefs = [
         columns are ignored.
     </p>
 
-    <h2>Pivot Mode & Visible Columns</h2>
+    <h2 id="pivot-mode">Pivot Mode & Visible Columns</h2>
 
     <p>
         When not in pivot mode, only columns that are visible are shown in the grid. To remove a column
@@ -131,7 +131,7 @@ gridOptions.columnDefs = [
         effect when in pivot mode.
     </p>
 
-    <h2>Primary vs Secondary Columns</h2>
+    <h2 id="secondary-columns">Primary vs Secondary Columns</h2>
 
     <p>
         When pivot mode is off, the columns in the grid correspond to the column definitions provided in the

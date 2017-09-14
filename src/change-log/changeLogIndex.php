@@ -15,10 +15,20 @@ include '../documentation-main/documentation_header.php';
 
     <h2>NEXT</h2>
 
+    <h4>Enhancements</h4>
+    <ul>
+        <li>
+            AG-785: Pivoting is now possible in the <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a>.
+            If you are using the row model and do not want pivoting, then set grid properties
+            <code>toolPanelSuppressPivotMode=true</code> and <code>toolPanelSuppressValues=true</code> to remove the pivot
+            from the grid UI.
+        </li>
+    </ul>
+
+    <h4>Bug Fixes</h4>
     <ul>
         <li>AG-770: pinnedBottomRowData and pinnedTopRowData were not getting changes updated when bound as component property (eg if using React or Angular bindings to change these)</li>
     </ul>
-
 
     <h2>Version 13.1.x</h2>
     <h3>Version 13.1.2 [11-SEP-2017]</h3>
