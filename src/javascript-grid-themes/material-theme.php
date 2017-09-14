@@ -138,7 +138,7 @@ gridOptions = {
 
     <p/>
 
-    <show-example example="example-material"></show-example>
+    <?= example('Old Material Theme', 'theme-material-old') ?>
 
 </pre>
 
