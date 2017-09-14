@@ -211,7 +211,7 @@ export interface ColumnVO {
     A mock data store is used in the following example for demonstration purposes.
 </p>
 
-
+<?= example('Slice And Dice', 'slice-and-dice', 'vanilla', array("enterprise" => 1)) ?>
 
 <h1>Example - Slice and Dice - Real Server</h1>
 
@@ -269,7 +269,7 @@ export interface ColumnVO {
 
 </p>
 
-<?= example('Slice And Dice', 'slice-and-dice', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Click Selection', 'click-selection', 'vanilla', array("enterprise" => 1)) ?>
 
 <note>
     Performing multiple row selections using 'shift-click' has the following restrictions:
