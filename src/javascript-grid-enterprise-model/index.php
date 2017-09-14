@@ -383,13 +383,6 @@ export interface ColumnVO {
     <code>pagination=true</code>. Find below an example.
 </p>
 
-<show-complex-example example="exampleEnterpriseSimplePagination.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleEnterpriseSimplePagination.html,exampleEnterpriseSimplePagination.js,mockServerSimple.js' }
-                                ]
-                              }"
-                      exampleheight="500px">
-</show-complex-example>
+<?= example('Pagination Example', 'pagination', 'vanilla', array("enterprise" => 1)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
