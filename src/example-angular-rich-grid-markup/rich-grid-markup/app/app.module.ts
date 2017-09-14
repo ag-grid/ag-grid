@@ -5,7 +5,7 @@ import {FormsModule} from '@angular/forms'; // <-- NgModel lives here
 // ag-grid
 import {AgGridModule} from "ag-grid-angular";
 
-import {RichGridComponent} from "./rich-grid.component";
+import {RichGridDeclarativeComponent} from "./rich-grid-declarative.component";
 import {DateComponent} from "./date-component/date.component";
 import {HeaderComponent} from "./header-component/header.component";
 import {HeaderGroupComponent} from "./header-group-component/header-group.component";
@@ -21,12 +21,12 @@ import {HeaderGroupComponent} from "./header-group-component/header-group.compon
         ])
     ],
     declarations: [
-        RichGridComponent,
+        RichGridDeclarativeComponent,
         DateComponent,
         HeaderComponent,
         HeaderGroupComponent,
     ],
-    bootstrap: [RichGridComponent]
+    bootstrap: [RichGridDeclarativeComponent]
 })
 export class AppModule {
 }

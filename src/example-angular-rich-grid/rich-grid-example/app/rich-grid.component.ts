@@ -4,6 +4,7 @@ import {GridOptions} from "ag-grid/main";
 import ProficiencyFilter from "./filters/proficiencyFilter.ts";
 import SkillFilter from "./filters/skillFilter.ts";
 import RefData from "./data/refData.ts";
+
 // only import this if you are using the ag-Grid-Enterprise
 import "ag-grid-enterprise";
 

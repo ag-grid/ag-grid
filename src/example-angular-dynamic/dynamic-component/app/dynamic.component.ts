@@ -1,6 +1,6 @@
 import {Component} from "@angular/core";
 
-import {GridOptions} from "ag-grid/main";
+import {GridOptions} from "ag-grid";
 import {SquareComponent} from "./square.component";
 import {ParamsComponent} from "./params.component";
 import {CubeComponent} from "./cube.component";
@@ -8,9 +8,8 @@ import {CurrencyComponent} from "./currency.component";
 import {ChildMessageComponent} from "./child-message.component";
 
 @Component({
-    moduleId: module.id,
-    selector: 'ag-from-component',
-    templateUrl: 'dynamic.component.html'
+    selector: 'my-app',
+    templateUrl: './dynamic.component.html'
 })
 export class DynamicComponent {
     public gridOptions: GridOptions;
@@ -31,42 +30,42 @@ export class DynamicComponent {
 
     private createColumnDefs() {
         return [
-            {headerName: "Row", field: "row", width: 100},
+            {headerName: "Row", field: "row", width: 130},
             {
                 headerName: "Square",
                 field: "value",
                 cellRendererFramework: SquareComponent,
                 editable: true,
                 colId: "square",
-                width: 100
+                width: 130
             },
             {
                 headerName: "Cube",
                 field: "value",
                 cellRendererFramework: CubeComponent,
                 colId: "cube",
-                width: 100
+                width: 130
             },
             {
                 headerName: "Row Params",
                 field: "row",
                 cellRendererFramework: ParamsComponent,
                 colId: "params",
-                width: 215
+                width: 213
             },
             {
                 headerName: "Currency (Pipe)",
                 field: "currency",
                 cellRendererFramework: CurrencyComponent,
                 colId: "params",
-                width: 135
+                width: 130
             },
             {
                 headerName: "Child/Parent",
                 field: "value",
                 cellRendererFramework: ChildMessageComponent,
                 colId: "params",
-                width: 120
+                width: 150
             }
         ];
     }

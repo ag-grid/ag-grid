@@ -13,29 +13,12 @@ include '../documentation-main/documentation_header.php';
     <p>A simple Grid using Angular Components as Cell Renderers, with Child Components, Two-Way Binding and
         Parent to Child Components Events.</p>
 
-    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=from-component"
-                          sources="{
-                            [
-                                { root: '/framework-examples/angular-examples/app/dynamic-component-example/', files: 'dynamic.component.ts,dynamic.component.html,square.component.ts,cube.component.ts,params.component.ts,child-message.component.ts,currency.component.ts' },
-                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                          plunker="https://embed.plnkr.co/J04rdB/">
-    </show-complex-example>
+    <?= example('Simple Dynamic Component', 'dynamic-component', 'angular', array("exampleHeight" => 440, "showResult" => true)); ?>
 
     <h2 id="rich-dynamic">Richer Dynamic Components</h2>
     <p>A Richer Example using Angular Components as Cell Renderers, with Dynamic Components included via Modules.</p>
 
-    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=from-rich-component"
-                          sources="{
-                            [
-                                { root: '/framework-examples/angular-examples/app/rich-dynamic-component-example/', files: 'rich.component.ts,rich.component.html,ratio.module.ts,ratio.parent.component.ts,ratio.component.ts,clickable.module.ts,clickable.parent.component.ts,clickable.component.ts' },
-                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                          plunker="https://embed.plnkr.co/qmgvkW/">
-    </show-complex-example>
-
+    <?= example('Richer Dynamic Components', 'rich-dynamic-component', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>
 </div>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>
