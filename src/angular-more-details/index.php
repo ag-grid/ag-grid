@@ -348,7 +348,7 @@ this.params.context.componentParent</snippet>
 
     <h3 id="setting-column-properties">Setting Column Properties</h3>
     <p>There are some simple rules you should follow when setting column properties via Markup:</p>
-    <snippet>
+    <snippet ng-non-bindable>
 // string value
 propertyName="String Value"
 [propertyName]="'String Value'"
