@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p> The example below shows the grid with a rich set of features enabled.</p>
-    <show-example example="example-theme-material"></show-example>
+    <?= example('Material Theme', 'theme-material') ?>
 
 
     <p>
