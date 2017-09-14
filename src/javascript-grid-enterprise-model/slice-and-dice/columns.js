@@ -12,11 +12,12 @@ var listOfCountries = ['United States','Russia','Australia','Canada','Norway','C
     'Bahrain','Grenada','Uganda','Sudan','Ecuador','Panama','Eritrea','Sri Lanka', 'Mozambique','Barbados'];
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", enableRowGroup: true, suppressFilter: true},
+    {headerName: "Athlete", field: "athlete", enableRowGroup: true, enablePivot: true, suppressFilter: true},
     {headerName: "Age", field: "age", enablePivot: true, enableRowGroup: true, filter: 'number',
         filterParams: {
             filterOptions: ['equals','lessThan','greaterThan'],
-            newRowsAction: 'keep'}
+            newRowsAction: 'keep'
+        }
     },
     {headerName: "Country", field: "country", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'set',
         filterParams: {values: listOfCountries, newRowsAction: 'keep'}

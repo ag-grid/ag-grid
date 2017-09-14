@@ -39,6 +39,12 @@ EnterpriseDatasource.prototype.createColsHash = function(colDefs) {
     return parts.join(',');
 };
 
+// THIS IS NOT PRODUCTION CODE
+// in your application, you should be implementing the server logic in your server, maybe in JavaScript, but
+// also maybe in Java, C# or another server side language. The server side would then typically query a database
+// or another data store to get the data, and the grouping, aggregation and pivoting would be done by the data store.
+// This fake server is only intended to demonstrate the interface between ag-Grid and the server side. The
+// implementation details are not intended to be and example of how your server side should create results.
 function FakeServer(allData) {
     this.allData = allData;
 }
@@ -212,8 +218,6 @@ FakeServer.prototype.iterateObject = function(object, callback) {
 // ag-Gird, it's not supposed to be beautiful production quality code.
 FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) {
     // assume 1 pivot col and 1 value col for this example
-    // var pivotCol = pivotCols[0];
-    // var pivotField = pivotCol.id;
 
     var pivotData = [];
     var aggColsList = [];
@@ -228,8 +232,12 @@ FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) 
         var pivotValues = [];
         pivotCols.forEach( function(pivotCol) {
             var pivotField = pivotCol.id;
-            var pivotValue = item[pivotField].toString();
-            pivotValues.push(pivotValue);
+            var pivotValue = item[pivotField];
+            if (pivotValue!==null && pivotValue!==undefined && pivotValue.toString) {
+                pivotValues.push(pivotValue.toString());
+            } else {
+                pivotValues.push('-');
+            }
         });
 
         // var pivotValue = item[pivotField].toString();
