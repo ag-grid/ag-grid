@@ -224,7 +224,7 @@ interface IGetRowsParams {
         Notice that the grid will load more data when you bring the scroll all the way to the bottom.
     </p>
 
-    <show-example example="exampleInfinite"></show-example>
+    <?= example('Simple Example', 'simple') ?>
 
     <h3 id="selection">Selection</h3>
 
@@ -286,14 +286,7 @@ gridOptions.getRowNodeId: function(item) {
           This is to prevent the filter from being reset.
     </note>
 
-    <show-complex-example example="exampleInfiniteServerSide.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleInfiniteServerSide.html,exampleInfiniteServerSide.js' }
-                                ]
-                              }"
-                          exampleheight="350px">
-    </show-complex-example>
+    <?= example('Server Side Sorting And Filtering', 'server-side') ?>
 
     <note>
         When performing multiple row selections using 'shift-click', it is possible that not all rows are available in
@@ -309,14 +302,7 @@ gridOptions.getRowNodeId: function(item) {
         and creates a datasource Class. The example also just creates (makes up) data on the fly.
     </p>
 
-    <show-complex-example example="exampleInfiniteMadeUpData.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleInfiniteMadeUpData.html,exampleInfiniteMadeUpData.js' }
-                                ]
-                              }"
-                          exampleheight="350px">
-    </show-complex-example>
+    <?= example('Made Up Data', 'made-up-data') ?>
 
     <h3 id="loading-spinner">Loading Spinner</h3>
 
@@ -536,14 +522,7 @@ loadingSpinnerColumn = {
     get called after the data is set as well as when the row is created (when the data may not yet be available).
     </p>
 
-    <show-complex-example example="exampleInsertRemoveVirtualPaging.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleInsertRemoveVirtualPaging.html,exampleInsertRemoveVirtualPaging.js' }
-                                ]
-                              }"
-                          exampleheight="350px">
-    </show-complex-example>
+    <?= example('Insert And Remove Example', 'insert-remove') ?>
 
     <h2 id="pagination">Pagination with Infinite Scrolling</h2>
 
@@ -592,14 +571,7 @@ loadingSpinnerColumn = {
         sided call is needed.
     </p>
 
-    <show-complex-example example="examplePaginationInfinite1.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'examplePaginationInfinite1.html,examplePaginationInfinite1.js,exampleInfiniteServerSide.js' }
-                                ]
-                              }"
-                          exampleheight="350px">
-    </show-complex-example>
+    <?= example('Block Larger Than Page', 'block-larger-page') ?>
 
     <h3>Example 2: Equal Pagination Page Size and Large Infinite Block Size</h3>
 
@@ -608,14 +580,7 @@ loadingSpinnerColumn = {
         every time a new page is navigated to.
     </p>
 
-    <show-complex-example example="examplePaginationInfinite2.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'examplePaginationInfinite2.html,examplePaginationInfinite2.js,exampleInfiniteServerSide.js' }
-                                ]
-                              }"
-                          exampleheight="350px">
-    </show-complex-example>
+    <?= example('Block Equal Than Page', 'block-equal-page') ?>
 
 </div>
 
