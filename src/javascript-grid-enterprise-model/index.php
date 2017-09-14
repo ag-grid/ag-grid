@@ -211,14 +211,7 @@ export interface ColumnVO {
     A mock data store is used in the following example for demonstration purposes.
 </p>
 
-<show-complex-example example="exampleEnterpriseSliceAndDice.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleEnterpriseSliceAndDice.html,exampleEnterpriseSliceAndDice.js,columns.js,mockServerComplex.js' }
-                                ]
-                              }"
-                      exampleheight="500px">
-</show-complex-example>
+
 
 <h1>Example - Slice and Dice - Real Server</h1>
 
@@ -276,14 +269,7 @@ export interface ColumnVO {
 
 </p>
 
-<show-complex-example example="exampleEnterpriseSelection.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleEnterpriseSelection.html,exampleEnterpriseSelection.js,mockServerComplex.js' }
-                                ]
-                              }"
-                      exampleheight="500px">
-</show-complex-example>
+<?= example('Slice And Dice', 'slice-and-dice', 'vanilla', array("enterprise" => 1)) ?>
 
 <note>
     Performing multiple row selections using 'shift-click' has the following restrictions:
