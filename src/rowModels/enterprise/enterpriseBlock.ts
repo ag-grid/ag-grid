@@ -44,6 +44,7 @@ export class EnterpriseBlock extends RowNodeBlock {
 
     private level: number;
     private groupLevel: boolean;
+    private leafGroup: boolean;
     private groupField: string;
     private rowGroupColumn: Column;
     private nodeIdPrefix: string;
@@ -56,6 +57,7 @@ export class EnterpriseBlock extends RowNodeBlock {
 
         this.level = parentRowNode.level + 1;
         this.groupLevel = this.level < params.rowGroupCols.length;
+        this.leafGroup = this.level === (params.rowGroupCols.length - 1);
     }
 
     private createNodeIdPrefix(): void {
@@ -199,6 +201,7 @@ export class EnterpriseBlock extends RowNodeBlock {
         let rowNode = super.createBlankRowNode(rowIndex);
 
         rowNode.group = this.groupLevel;
+        rowNode.leafGroup = this.leafGroup;
         rowNode.level = this.level;
         rowNode.uiLevel = this.level;
         rowNode.parent = this.parentRowNode;
