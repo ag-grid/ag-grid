@@ -375,14 +375,7 @@ export interface ColumnVO {
 </ul>
 </p>
 
-<show-complex-example example="exampleEnterpriseApi.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleEnterpriseApi.html,exampleEnterpriseApi.js,columns.js,mockServerComplex.js' }
-                                ]
-                              }"
-                      exampleheight="500px">
-</show-complex-example>
+<?= example('API example', 'api', 'vanilla', array("enterprise" => 1)) ?>
 
 <h1 id="pagination">Pagination with Enterprise Row Model</h1>
 <p>
