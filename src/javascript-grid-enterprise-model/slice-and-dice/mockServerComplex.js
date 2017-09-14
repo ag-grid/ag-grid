@@ -194,9 +194,6 @@ FakeServer.prototype.iterateObject = function(object, callback) {
 FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) {
     // assume 1 pivot col and 1 value col for this example
     var pivotCol = pivotCols[0];
-    var valueCol = valueCols[0];
-
-    var valField = valueCol.id;
     var pivotField = pivotCol.id;
 
     var pivotData = [];
@@ -204,22 +201,28 @@ FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) 
     var aggColsMap = {};
 
     data.forEach( function(item) {
-        var value = item[valField];
+
         var pivotValue = item[pivotField].toString();
-
-        if (!aggColsMap[pivotValue]) {
-            var newCol = {
-                id: pivotValue,
-                displayName: valueCol.aggFunc + '(' + pivotValue + ')',
-                field: pivotValue,
-                aggFunc: valueCol.aggFunc
-            };
-            aggColsList.push(newCol);
-            aggColsMap[pivotValue] = true;
-        }
-
         var pivotItem = {};
-        pivotItem[pivotValue] = value;
+
+        valueCols.forEach( function(valueCol) {
+            var valField = valueCol.id;
+            var colKey = pivotValue + '|' + valField;
+
+            var value = item[valField];
+            pivotItem[colKey] = value;
+
+            if (!aggColsMap[colKey]) {
+                var newCol = {
+                    id: colKey,
+                    displayName: valueCol.aggFunc + '(' + colKey + ')',
+                    field: colKey,
+                    aggFunc: valueCol.aggFunc
+                };
+                aggColsList.push(newCol);
+                aggColsMap[colKey] = true;
+            }
+        });
 
         rowGroupCols.forEach( function(rowGroupCol) {
             var rowGroupField = rowGroupCol.id;
