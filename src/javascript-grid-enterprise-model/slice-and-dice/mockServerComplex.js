@@ -44,7 +44,8 @@ FakeServer.prototype.getData = function(request, callback) {
     // if pivoting, contains the columns we are pivoting by
     var pivotCols = request.pivotCols;
 
-    var pivotActive = request.pivotMode && pivotCols.length > 0 && valueCols.length > 0;
+    var pivotMode = request.pivotMode;
+    var pivotActive = pivotMode && pivotCols.length > 0 && valueCols.length > 0;
 
     // we are not doing sorting and filtering in this example, but if you did
     // want to sort or filter using your implementation, you would do it here.
@@ -69,12 +70,17 @@ FakeServer.prototype.getData = function(request, callback) {
         // we are looking at.
         rowData = this.filterOutOtherGroups(rowData, groupKeys, rowGroupCols);
 
-        // if grouping, return the group
-        var groupingActive = rowGroupCols.length > groupKeys.length;
+        // if we are showing a group level, we need to group, otherwise we are showing
+        // a leaf level.
+        var showingGroupLevel = rowGroupCols.length > groupKeys.length;
 
-        if (groupingActive) {
+        if (showingGroupLevel) {
             rowData = this.buildGroupsFromData(rowData, rowGroupCols, groupKeys, valueCols);
         }
+    } else if (pivotMode) {
+        // if pivot mode active, but no grouping, then we aggregate everything in to one group
+        var rootGroup = this.aggregateList(rowData, valueCols);
+        rowData = [rootGroup];
     }
 
     // sort data if needed
@@ -234,63 +240,70 @@ FakeServer.prototype.buildGroupsFromData = function(rowData, rowGroupCols, group
     var field = rowGroupCol.id;
     var mappedRowData = this.groupBy(rowData, field);
     var groups = [];
+    var that = this;
 
     this.iterateObject(mappedRowData, function(key, rowData) {
-        var groupItem = {};
+        var groupItem = that.aggregateList(rowData, valueCols);
         groupItem[field] = key;
-
-        valueCols.forEach(function(valueCol) {
-            var field = valueCol.id;
-
-            var values = [];
-            rowData.forEach( function(childItem) {
-                var value = childItem[field];
-                // if pivoting, value will be undefined if this row data has no value for the column
-                if (value!==undefined) {
-                    values.push(value);
-                }
-            });
-
-            // the aggregation we do depends on which agg func the user picked
-            switch (valueCol.aggFunc) {
-                case 'sum':
-                    var sum = 0;
-                    values.forEach( function(value) {
-                        sum += value;
-                    });
-                    groupItem[field] = sum;
-                    break;
-                case 'min':
-                    var min = null;
-                    values.forEach( function(value) {
-                        if (min===null || min > value) {
-                            min = value;
-                        }
-                    });
-                    groupItem[field] = min;
-                    break;
-                case 'max':
-                    var max = null;
-                    values.forEach( function(value) {
-                        if (max===null || max < value) {
-                            max = value;
-                        }
-                    });
-                    groupItem[field] = max;
-                    break;
-                case 'random':
-                    groupItem[field] = Math.random(); // just make up a number
-                    break;
-                default:
-                    console.warn('unrecognised aggregation function: ' + valueCol.aggFunc);
-                    break;
-            }
-
-        });
-
         groups.push(groupItem);
     });
     return groups;
+};
+
+FakeServer.prototype.aggregateList = function(rowData, valueCols) {
+
+    var result = {};
+
+    valueCols.forEach(function(valueCol) {
+        var field = valueCol.id;
+
+        var values = [];
+        rowData.forEach( function(childItem) {
+            var value = childItem[field];
+            // if pivoting, value will be undefined if this row data has no value for the column
+            if (value!==undefined) {
+                values.push(value);
+            }
+        });
+
+        // the aggregation we do depends on which agg func the user picked
+        switch (valueCol.aggFunc) {
+            case 'sum':
+                var sum = 0;
+                values.forEach( function(value) {
+                    sum += value;
+                });
+                result[field] = sum;
+                break;
+            case 'min':
+                var min = null;
+                values.forEach( function(value) {
+                    if (min===null || min > value) {
+                        min = value;
+                    }
+                });
+                result[field] = min;
+                break;
+            case 'max':
+                var max = null;
+                values.forEach( function(value) {
+                    if (max===null || max < value) {
+                        max = value;
+                    }
+                });
+                result[field] = max;
+                break;
+            case 'random':
+                result[field] = Math.random(); // just make up a number
+                break;
+            default:
+                console.warn('unrecognised aggregation function: ' + valueCol.aggFunc);
+                break;
+        }
+
+    });
+
+    return result;
 };
 
 // if user is down some group levels, we take everything else out. eg
