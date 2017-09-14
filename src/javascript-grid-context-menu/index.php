@@ -130,7 +130,7 @@ MenuItemDef {
     </ul>
     </p>
 
-    <show-example example="exampleContextMenu" example-height="450px"></show-example>
+    <?= example('Context Menu Example', 'context-menu', 'vanilla', array("enterprise" => 1)) ?>
 
 </div>
 
