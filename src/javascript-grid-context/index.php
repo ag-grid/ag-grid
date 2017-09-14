@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
     is placed inside the context object, which is subsequently used by the a) cell renderer to calculate
     the value to display and b) the header of the last column, to display a particular header value.
 
-    <show-example example="exampleContext"></show-example>
+    <?= example('Example context', 'context') ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
