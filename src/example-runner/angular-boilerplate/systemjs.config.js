@@ -66,6 +66,9 @@
             'ts':                        'npm:plugin-typescript@5.2.7/lib/plugin.js',
             'typescript':                'npm:typescript@2.3.2/lib/typescript.js',
 
+            // for some of the examples
+            'lodash':'npm:lodash@4.17.4/lodash.js',
+
             // our app is within the app folder, appLocation comes from index.html
             'app': appLocation + 'app'
         }, systemJsMap),

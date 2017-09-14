@@ -109,7 +109,7 @@ npm start</snippet>
         seed application here is the complete Component:</p>
 
     
-    <?= example('Simple Grid', 'hello-world', 'angular') ?>
+    <?= example('Simple Grid', 'hello-world', 'angular', array( "exampleHeight" => 150, "showResult" => true)) ?>
 
 
     <h3>Adding Features</h3>
@@ -171,14 +171,7 @@ npm start</snippet>
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-
-<?= preview(
-    'Advanced Angular ag-Grid Example', 
-    'rich-example', 
-    '../framework-examples/angular-examples/index.html?fromDocs=true&example=rich-grid', 
-    'https://github.com/ag-grid/ag-grid-docs/tree/master/src/framework-examples/angular-examples', 
-    array( 'exampleHeight' => 550 )) 
-?>
+    <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 
     <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
         <code>column grouping</code> as well as using <code>Angular Components</code> in the header. And even this rich

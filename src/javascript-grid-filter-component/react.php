@@ -145,4 +145,4 @@ laterOnInYourApplicationSomewhere() {
        Using React Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
    </p>
 
-   <?= example('Filter Component', 'react-filter', 'react', array( "exampleHeight" => 440, "showResult" => true )); ?>
+   <?= example('React Filter Component', 'react-filter', 'react', array( "exampleHeight" => 440, "showResult" => true )); ?>
