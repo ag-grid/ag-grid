@@ -8,8 +8,35 @@ EnterpriseDatasource.prototype.getRows = function(params) {
     this.fakeServer.getData(params.request,
         function successCallback(resultForGrid, lastRow, secondaryColDefs) {
             params.successCallback(resultForGrid, lastRow);
-            gridOptions.columnApi.setSecondaryColumns(secondaryColDefs);
+            that.setSecondaryColsIntoGrid(secondaryColDefs);
         });
+};
+
+// we only set the secondary cols if they have changed since the last time. otherwise
+// the cols would reset every time data comes back from the server (which means col
+// width, positioning etc would be lost every time we eg expand a group, or load another
+// block by scrolling down).
+EnterpriseDatasource.prototype.setSecondaryColsIntoGrid = function(secondaryColDefs) {
+    var colDefHash = this.createColsHash(secondaryColDefs);
+    if (this.colDefHash !== colDefHash) {
+        gridOptions.columnApi.setSecondaryColumns(secondaryColDefs);
+        this.colDefHash = colDefHash;
+    }
+};
+
+EnterpriseDatasource.prototype.createColsHash = function(colDefs) {
+    if (!colDefs) { return null; }
+    var parts = [];
+    var that = this;
+    colDefs.forEach( function(colDef) {
+        if (colDef.children) {
+            parts.push(colDef.groupId);
+            parts.push('[' + that.createColsHash(colDef.children) + ']');
+        } else {
+            parts.push(colDef.colId);
+        }
+    });
+    return parts.join(',');
 };
 
 function FakeServer(allData) {
@@ -185,8 +212,8 @@ FakeServer.prototype.iterateObject = function(object, callback) {
 // ag-Gird, it's not supposed to be beautiful production quality code.
 FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) {
     // assume 1 pivot col and 1 value col for this example
-    var pivotCol = pivotCols[0];
-    var pivotField = pivotCol.id;
+    // var pivotCol = pivotCols[0];
+    // var pivotField = pivotCol.id;
 
     var pivotData = [];
     var aggColsList = [];
@@ -198,19 +225,26 @@ FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) 
 
     data.forEach( function(item) {
 
-        var pivotValue = item[pivotField].toString();
+        var pivotValues = [];
+        pivotCols.forEach( function(pivotCol) {
+            var pivotField = pivotCol.id;
+            var pivotValue = item[pivotField].toString();
+            pivotValues.push(pivotValue);
+        });
+
+        // var pivotValue = item[pivotField].toString();
         var pivotItem = {};
 
         valueCols.forEach( function(valueCol) {
             var valField = valueCol.id;
-            var colKey = createColKey([pivotValue], valField);
+            var colKey = createColKey(pivotValues, valField);
 
             var value = item[valField];
             pivotItem[colKey] = value;
 
             if (!colKeyExistsMap[colKey]) {
                 addNewAggCol(colKey, valueCol);
-                addNewSecondaryColDef(colKey, [pivotValue], valueCol);
+                addNewSecondaryColDef(colKey, pivotValues, valueCol);
                 colKeyExistsMap[colKey] = true;
             }
         });
@@ -244,6 +278,7 @@ FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) 
             var groupColDef = secondaryColDefsMap[colKey];
             if (!groupColDef) {
                 groupColDef = {
+                    groupId: colKey,
                     headerName: pivotValue,
                     children: []
                 };
@@ -258,6 +293,7 @@ FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) 
         });
 
         parentGroup.children.push({
+            colId: colKey,
             headerName: valueCol.aggFunc + '(' + valueCol.displayName + ')',
             field: colKey
         });
