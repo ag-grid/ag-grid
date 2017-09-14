@@ -12,15 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Full Width Renderer</h2>
     <p>A Full Width Renderer Example</p>
 
-    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=full-width"
-                          sources="{
-                            [
-                                { root: '/framework-examples/angular-examples/app/full-width-example/', files: 'full-width-renderer.component.ts,full-width-renderer.component.html,name-age-renderer.component.ts' },
-                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                          plunker="https://embed.plnkr.co/DoMWeU/">
-    </show-complex-example>
+    <?= example('Full Width Renderer', 'full-width', 'angular', array("exampleHeight" => 490, "showResult" => true)); ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
