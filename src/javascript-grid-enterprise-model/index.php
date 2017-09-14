@@ -296,14 +296,7 @@ export interface ColumnVO {
     only. Normal applications generally have the checkbox only on one column.
 </p>
 
-<show-complex-example example="exampleEnterpriseCheckboxSelection.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleEnterpriseCheckboxSelection.html,exampleEnterpriseCheckboxSelection.js,mockServerComplex.js' }
-                                ]
-                              }"
-                      exampleheight="500px">
-</show-complex-example>
+<?= example('Checkbox Example', 'checkbox', 'vanilla', array("enterprise" => 1)) ?>
 
 
 <h1 id="selection">Providing Node ID's</h1>
