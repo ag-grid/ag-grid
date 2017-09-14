@@ -15,15 +15,7 @@ include '../documentation-main/documentation_header.php';
     <p>In this example the grid only receives the updated rows and uses the <a href="../javascript-grid-data-update">Transaction</a> method
         of row updates.</p>
 
-    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=rxjs-by-row"
-                          sources="{
-                            [
-                                { root: '/framework-examples/angular-examples/app/rxjs-component-example/', files: 'rxjs-by-row.component.ts,rxjs-by-row.component.html,mockServer.service.ts' },
-                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                          plunker="https://embed.plnkr.co/WhzFdC/">
-    </show-complex-example>
+    <?= example('RxJS - With updated rows only supplied to the grid', 'rxjs-row', 'angular', array("exampleHeight" => 435, "showResult" => true)); ?>
 
     <h2>Angular Component using RxJs Example</h2>
     <h3>With full data set supplied to the grid, with changed data within.</h3>
@@ -31,15 +23,7 @@ include '../documentation-main/documentation_header.php';
     <p>In this example the grid only receives the the full row data via the 2nd subscription but makes uses of the <a href="../javascript-grid-data-update">deltaRowDataMode</a> method
         of row updates for improved performance.</p>
 
-    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=rxjs-by-dataset"
-                          sources="{
-                            [
-                                { root: '/framework-examples/angular-examples/app/rxjs-component-example/', files: 'rxjs-by-bulk.component.ts,rxjs-by-bulk.component.html,mockServer.service.ts' },
-                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                          plunker="https://embed.plnkr.co/c43Hkm/">
-    </show-complex-example>
+    <?= example('RxJS - With full data set supplied to the grid, with changed data within.', 'rxjs-bulk', 'angular', array("exampleHeight" => 435, "showResult" => true)); ?>
 
 </div>
 
