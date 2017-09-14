@@ -6,25 +6,10 @@ EnterpriseDatasource.prototype.getRows = function(params) {
     // console.log('EnterpriseDatasource.getRows: params = ', params);
     var that = this;
     this.fakeServer.getData(params.request,
-        function successCallback(resultForGrid, lastRow, secondaryCols) {
+        function successCallback(resultForGrid, lastRow, secondaryColDefs) {
             params.successCallback(resultForGrid, lastRow);
-
-            let secondaryColumnDefinitions = that.buildSecondaryColumnDefinitions(secondaryCols);
-            gridOptions.columnApi.setSecondaryColumns(secondaryColumnDefinitions);
+            gridOptions.columnApi.setSecondaryColumns(secondaryColDefs);
         });
-};
-
-EnterpriseDatasource.prototype.buildSecondaryColumnDefinitions = function(valueCols) {
-    if (valueCols) {
-        return valueCols.map( function(col) {
-            return {
-                headerName: col.displayName,
-                field: col.field
-            }
-        } );
-    } else {
-        return null;
-    }
 };
 
 function FakeServer(allData) {
@@ -54,12 +39,16 @@ FakeServer.prototype.getData = function(request, callback) {
 
     var rowData = this.allData;
 
+    // if pivoting, this gets set
+    var secondaryColDefs = null;
+
     rowData = this.filterList(rowData, filterModel);
 
     if (pivotActive) {
         var pivotResult = this.pivot(pivotCols, rowGroupCols, valueCols, rowData);
         rowData = pivotResult.data;
         valueCols = pivotResult.aggCols;
+        secondaryColDefs = pivotResult.secondaryColDefs;
     }
 
     // if not grouping, just return the full set
@@ -98,8 +87,7 @@ FakeServer.prototype.getData = function(request, callback) {
     // so that the example behaves like a server side call, we put
     // it in a timeout to a) give a delay and b) make it asynchronous
     setTimeout( function() {
-        var secondaryCols = pivotActive ? valueCols : null;
-        callback(rowData, lastRow, secondaryCols);
+        callback(rowData, lastRow, secondaryColDefs);
     }, 1000);
 };
 
@@ -191,6 +179,10 @@ FakeServer.prototype.iterateObject = function(object, callback) {
     }
 };
 
+// function does pivoting. this is very funky logic, doing pivoting and creating secondary columns on the fly.
+// if you are using the ag-Grid Enterprise Row Model, remember this would all be done on your server side with a
+// database or something that does pivoting for you - this messy code is just for demo purposes on how to use
+// ag-Gird, it's not supposed to be beautiful production quality code.
 FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) {
     // assume 1 pivot col and 1 value col for this example
     var pivotCol = pivotCols[0];
@@ -198,7 +190,11 @@ FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) 
 
     var pivotData = [];
     var aggColsList = [];
-    var aggColsMap = {};
+
+    var colKeyExistsMap = {};
+
+    var secondaryColDefs = [];
+    var secondaryColDefsMap = {};
 
     data.forEach( function(item) {
 
@@ -207,20 +203,15 @@ FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) 
 
         valueCols.forEach( function(valueCol) {
             var valField = valueCol.id;
-            var colKey = pivotValue + '|' + valField;
+            var colKey = createColKey([pivotValue], valField);
 
             var value = item[valField];
             pivotItem[colKey] = value;
 
-            if (!aggColsMap[colKey]) {
-                var newCol = {
-                    id: colKey,
-                    displayName: valueCol.aggFunc + '(' + colKey + ')',
-                    field: colKey,
-                    aggFunc: valueCol.aggFunc
-                };
-                aggColsList.push(newCol);
-                aggColsMap[colKey] = true;
+            if (!colKeyExistsMap[colKey]) {
+                addNewAggCol(colKey, valueCol);
+                addNewSecondaryColDef(colKey, [pivotValue], valueCol);
+                colKeyExistsMap[colKey] = true;
             }
         });
 
@@ -232,9 +223,58 @@ FakeServer.prototype.pivot = function(pivotCols, rowGroupCols, valueCols, data) 
         pivotData.push(pivotItem);
     });
 
+    function addNewAggCol(colKey, valueCol) {
+        var newCol = {
+            id: colKey,
+            field: colKey,
+            aggFunc: valueCol.aggFunc
+        };
+        aggColsList.push(newCol);
+    }
+
+    function addNewSecondaryColDef(colKey, pivotValues, valueCol) {
+
+        var parentGroup = null;
+
+        var keyParts = [];
+
+        pivotValues.forEach( function(pivotValue) {
+            keyParts.push(pivotValue);
+            var colKey = createColKey(keyParts);
+            var groupColDef = secondaryColDefsMap[colKey];
+            if (!groupColDef) {
+                groupColDef = {
+                    headerName: pivotValue,
+                    children: []
+                };
+                secondaryColDefsMap[colKey] = groupColDef;
+                if (parentGroup) {
+                    parentGroup.children.push(groupColDef);
+                } else {
+                    secondaryColDefs.push(groupColDef);
+                }
+            }
+            parentGroup = groupColDef;
+        });
+
+        parentGroup.children.push({
+            headerName: valueCol.aggFunc + '(' + valueCol.displayName + ')',
+            field: colKey
+        });
+    }
+
+    function createColKey(pivotValues, valueField) {
+        var result = pivotValues.join('|');
+        if (valueField!==undefined) {
+            result += '|' + valueField;
+        }
+        return result;
+    }
+
     return {
         data: pivotData,
-        aggCols: aggColsList
+        aggCols: aggColsList,
+        secondaryColDefs: secondaryColDefs
     };
 };
 
