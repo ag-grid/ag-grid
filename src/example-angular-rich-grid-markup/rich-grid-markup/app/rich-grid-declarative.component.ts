@@ -1,21 +1,21 @@
 import {Component, ViewEncapsulation} from "@angular/core";
 
 import {GridOptions} from "ag-grid/main";
-
-import ProficiencyFilter from "../filters/proficiencyFilter";
-import SkillFilter from "../filters/skillFilter";
-import RefData from "../data/refData";
 // only import this if you are using the ag-Grid-Enterprise
-import "ag-grid-enterprise/main";
-import {HeaderGroupComponent} from "../header-group-component/header-group.component";
-import {DateComponent} from "../date-component/date.component";
-import {HeaderComponent} from "../header-component/header.component";
+import "ag-grid-enterprise";
+
+import ProficiencyFilter from "./filters/proficiencyFilter";
+import SkillFilter from "./filters/skillFilter";
+import RefData from "./data/refData";
+
+import {HeaderGroupComponent} from "./header-group-component/header-group.component";
+import {DateComponent} from "./date-component/date.component";
+import {HeaderComponent} from "./header-component/header.component";
 
 @Component({
-    moduleId: module.id,
-    selector: 'ag-rich-grid-declarative',
-    templateUrl: 'rich-grid-declarative.component.html',
-    styleUrls: ['rich-grid.css', 'proficiency-renderer.css'],
+    selector: 'my-app',
+    templateUrl: './rich-grid-declarative.component.html',
+    styleUrls: ['./rich-grid.css', './proficiency-renderer.css'],
     encapsulation: ViewEncapsulation.None
 })
 export class RichGridDeclarativeComponent {
@@ -45,7 +45,7 @@ export class RichGridDeclarativeComponent {
     private createRowData() {
         const rowData: any[] = [];
 
-        for (let i = 0; i < 10000; i++) {
+        for (let i = 0; i < 200; i++) {
             const countryData = RefData.countries[i % RefData.countries.length];
             rowData.push({
                 name: RefData.firstNames[i % RefData.firstNames.length] + ' ' + RefData.lastNames[i % RefData.lastNames.length],
@@ -95,7 +95,7 @@ export class RichGridDeclarativeComponent {
     }
 
     private countryCellRenderer(params) {
-        const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
+        const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='/images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
         return flag + " " + params.value;
     }
 
@@ -105,7 +105,7 @@ export class RichGridDeclarativeComponent {
         const skills = [];
         RefData.IT_SKILLS.forEach(function (skill) {
             if (data && data.skills && data.skills[skill]) {
-                skills.push('<img src="images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
+                skills.push('<img src="/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
             }
         });
         return skills.join(' ');
