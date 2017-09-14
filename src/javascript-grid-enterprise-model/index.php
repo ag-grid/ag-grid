@@ -321,14 +321,7 @@ export interface ColumnVO {
     for the 'getRowHeight' Grid Options property. This is demonstrated in the example below:
 </p>
 
-<show-complex-example example="exampleEnterpriseDynamicRowHeight.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleEnterpriseDynamicRowHeight.html,exampleEnterpriseDynamicRowHeight.js,columns.js,mockServerComplex.js' }
-                                ]
-                              }"
-                      exampleheight="500px">
-</show-complex-example>
+<?= example('Dynamic Row Height Example', 'dynamic-row-height', 'vanilla', array("enterprise" => 1)) ?>
 
 <note>
     Purging the cache and dynamic row heights do not work together for the Enterprise Row Model.
