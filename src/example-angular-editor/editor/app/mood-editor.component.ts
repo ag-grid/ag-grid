@@ -1,13 +1,13 @@
 import {AfterViewInit, Component, ViewChild, ViewContainerRef} from "@angular/core";
 
-import {ICellEditorAngularComp} from "ag-grid-angular/main";
+import {ICellEditorAngularComp} from "ag-grid-angular";
 
 @Component({
     selector: 'editor-cell',
     template: `
         <div #container class="mood" tabindex="0" (keydown)="onKeyDown($event)">
-            <img src="images/smiley.png" (click)="onClick(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
-            <img src="images/smiley-sad.png" (click)="onClick(false)"
+            <img src="/images/smiley.png" (click)="onClick(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
+            <img src="/images/smiley-sad.png" (click)="onClick(false)"
                  [ngClass]="{'selected' : !happy, 'default' : happy}">
         </div>
     `,

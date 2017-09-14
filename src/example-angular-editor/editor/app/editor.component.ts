@@ -1,13 +1,13 @@
 import {Component} from "@angular/core";
-import {GridOptions} from "ag-grid/main";
+import {GridOptions} from "ag-grid";
+
 import {NumericEditorComponent} from "./numeric-editor.component";
 import {MoodRendererComponent} from "./mood-renderer.component";
 import {MoodEditorComponent} from "./mood-editor.component";
 
 @Component({
-    moduleId: module.id,
-    selector: 'ag-editor-component',
-    templateUrl: 'editor.component.html'
+    selector: 'my-app',
+    templateUrl: './editor.component.html'
 })
 export class EditorComponent {
     public gridOptions: GridOptions;
@@ -27,14 +27,14 @@ export class EditorComponent {
                 cellRendererFramework: MoodRendererComponent,
                 cellEditorFramework: MoodEditorComponent,
                 editable: true,
-                width: 250
+                width: 300
             },
             {
                 headerName: "Numeric",
                 field: "number",
                 cellEditorFramework: NumericEditorComponent,
                 editable: true,
-                width: 250
+                width: 280
             }
         ];
     }

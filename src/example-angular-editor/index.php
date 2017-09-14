@@ -13,15 +13,7 @@ include '../documentation-main/documentation_header.php';
     <p>A Cell Editor example - one with a popup editor, and another with a numeric editor.</p>
     <p>Each component demonstrates different editor related features</p>
 
-    <show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=editor-component"
-                          sources="{
-                            [
-                                { root: '/framework-examples/angular-examples/app/editor-component-example/', files: 'editor.component.ts,editor.component.html,mood-editor.component.ts,mood-renderer.component.ts,numeric-editor.component.ts' },
-                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                          plunker="https://embed.plnkr.co/259RDD/">
-    </show-complex-example>
+    <?= example('Editor Components', 'editor', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
