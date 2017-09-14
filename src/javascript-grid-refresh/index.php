@@ -142,7 +142,7 @@ interface RefreshCellsParams {
         </li>
     </ul>
 
-    <show-example example="exampleRefreshApi"></show-example>
+    <?= example('Refresh Cells', 'refresh-cells') ?>
 
     <note>
         You may be wondering why would you want to force refresh, what is the point in refreshing a cell that
@@ -208,7 +208,7 @@ interface RedrawRowsParams {
 
     </ul>
 
-    <show-example example="exampleRedrawRows"></show-example>
+    <?= example('Redraw Rows', 'redraw-rows') ?>
 
 </div>
 

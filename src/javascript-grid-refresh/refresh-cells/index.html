@@ -1,0 +1,38 @@
+<style>
+    .ag-dark .ag-floating-top {
+        background-color: black;
+    }
+    .ag-dark .ag-floating-top .ag-row {
+        background-color: black;
+    }
+    .ag-dark .ag-floating-bottom {
+        background-color: black;
+    }
+    .ag-dark .ag-floating-bottom .ag-row {
+        background-color: black;
+    }
+</style>
+
+<div style="height: 100%; padding-top: 35px; box-sizing: border-box;">
+    <div id="myGrid" style="height: 100%;" class="ag-dark"></div>
+</div>
+<div style="position: absolute; top: 0; left: 0">
+
+    <button onclick="scrambleAndRefreshAll()">Scramble & Refresh All</button>
+
+    <button onclick="scrambleAndRefreshLeftToRight()">Scramble & Refresh Left to Right</button>
+
+    <button onclick="scrambleAndRefreshTopToBottom()">Scramble & Refresh Top to Bottom</button>
+
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    &nbsp;
+
+    <label>
+        <input id="forceRefresh" type="checkbox"/>
+        Force Refresh
+    </label>
+
+</div>
