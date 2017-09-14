@@ -180,14 +180,7 @@ export interface ColumnVO {
     </ul>
 </p>
 
-<show-complex-example example="exampleEnterpriseSimple.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleEnterpriseSimple.html,exampleEnterpriseSimple.js,mockServerSimple.js' }
-                                ]
-                              }"
-                      exampleheight="500px">
-</show-complex-example>
+<?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
 
 <h1>Example - Slice and Dice - Mocked Server</h1>
 
