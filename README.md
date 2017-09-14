@@ -9,12 +9,12 @@ ag-Grid
 
 #### Install with Bower
 ```sh
-$ bower install ag-grid
+$ bower install tf-ag-grid
 ```
 
 #### Install with Npm
 ```sh
-$ npm install ag-grid
+$ npm install tf-ag-grid
 ```
 
 See [www.ag-grid.com](http://www.ag-grid.com) for overview and documentation.

@@ -1,5 +1,5 @@
 {
-  "name": "ag-grid",
+  "name": "tf-ag-grid",
   "version": "13.1.2",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
@@ -10,7 +10,7 @@
   "typings": "./main.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ag-grid/ag-grid.git"
+    "url": "https://github.com/tf-fed/ag-grid.git"
   },
   "keywords": [
     "web-components",
