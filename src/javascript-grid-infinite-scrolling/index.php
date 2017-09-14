@@ -522,14 +522,7 @@ loadingSpinnerColumn = {
     get called after the data is set as well as when the row is created (when the data may not yet be available).
     </p>
 
-    <show-complex-example example="exampleInsertRemoveVirtualPaging.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleInsertRemoveVirtualPaging.html,exampleInsertRemoveVirtualPaging.js' }
-                                ]
-                              }"
-                          exampleheight="350px">
-    </show-complex-example>
+    <?= example('Insert And Remove Example', 'insert-remove') ?>
 
     <h2 id="pagination">Pagination with Infinite Scrolling</h2>
 
@@ -578,14 +571,7 @@ loadingSpinnerColumn = {
         sided call is needed.
     </p>
 
-    <show-complex-example example="examplePaginationInfinite1.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'examplePaginationInfinite1.html,examplePaginationInfinite1.js,exampleInfiniteServerSide.js' }
-                                ]
-                              }"
-                          exampleheight="350px">
-    </show-complex-example>
+    <?= example('Block Larger Than Page', 'block-larger-page') ?>
 
     <h3>Example 2: Equal Pagination Page Size and Large Infinite Block Size</h3>
 
@@ -594,14 +580,7 @@ loadingSpinnerColumn = {
         every time a new page is navigated to.
     </p>
 
-    <show-complex-example example="examplePaginationInfinite2.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'examplePaginationInfinite2.html,examplePaginationInfinite2.js,exampleInfiniteServerSide.js' }
-                                ]
-                              }"
-                          exampleheight="350px">
-    </show-complex-example>
+    <?= example('Block Equal Than Page', 'block-equal-page') ?>
 
 </div>
 
