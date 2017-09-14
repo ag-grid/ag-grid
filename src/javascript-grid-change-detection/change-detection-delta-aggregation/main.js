@@ -83,6 +83,7 @@ var gridOptions = {
             cellRenderer: 'animateShowChange', filter: 'number', valueParser: numberValueParser},
         totalColumn: { cellRenderer: 'animateShowChange', cellClass: 'number-cell'}
     },
+    autoGroupColumnDef: {width: 300},
     groupDefaultExpanded: 1,
     rowData: rowData,
     suppressAggFuncInHeader: true,
