@@ -99,15 +99,7 @@ include '../documentation-main/documentation_header.php';
         edit the data so the filter is broken (ie a row is present that should not be present), then hit this button to fix the filter.</li>
     </ul>
 
-    <show-complex-example example="exampleGetRowNode.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleGetRowNode.js,exampleGetRowNode.html' }
-                                ]
-                              }"
-                          exampleheight="250px">
-    </show-complex-example>
-
+    <?= example('Updating Row Nodes', 'updating-row-nodes') ?>
 
     <h2 id="bulk-updating">Bulk Updating</h2>
 
@@ -289,7 +281,7 @@ interface RowDataTransaction {
         </li>
     </ul>
 
-    <show-example example="exampleInsertRemove"></show-example>
+    <?= example('Updating with Transaction', 'updating-with-transaction') ?>
 
     <h3 id="example-updating-with-transaction-and-groups">Example - Updating with Transaction and Groups</h3>
 
@@ -316,7 +308,8 @@ interface RowDataTransaction {
             are always added to the top as they are ordered 'latest first'</li>
     </ul>
 
-    <show-example example="exampleInsertRemoveGroups"></show-example>
+    <?= example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'vanilla', array("enterprise" => 1)) ?>
+
 
     <h2>Bulk Method 2 - Row Data (Normal)</h2>
 
@@ -419,7 +412,8 @@ interface RowDataTransaction {
         selected items to that group. Notice how the rows animate to the new position.</li>
     </ul>
 
-    <show-example example="exampleSimpleImmutableStore"></show-example>
+    <?= example('Simple Immutable Store', 'simple-immutable-store', 'vanilla', array("enterprise" => 1)) ?>
+
 
     <h3>Example - Immutable Store - Updates via Feed</h3>
 
@@ -458,7 +452,7 @@ interface RowDataTransaction {
         even though the grid data is constantly updating.
     </p>
 
-    <show-example example="exampleComplexImmutableStore"></show-example>
+    <?= example('Complex Immutable Store', 'complex-immutable-store', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="flashing">Flashing Data Changes</h2>
 
@@ -477,7 +471,7 @@ interface RowDataTransaction {
         <a href="../javascript-grid-cell-rendering-components/">custom cell renderer</a>.
     </note>
 
-    <show-example example="exampleFlashingCells"></show-example>
+    <?= example('Flashing Data Changes', 'flashing-data-changes', 'vanilla', array("enterprise" => 1)) ?>
 
     <h3>How Flashing Works</h3>
 

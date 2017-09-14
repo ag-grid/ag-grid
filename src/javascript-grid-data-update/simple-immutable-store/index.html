@@ -1,0 +1,19 @@
+<div style="height: 100%; padding-top: 35px; box-sizing: border-box;">
+    <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+</div>
+
+<div style="position: absolute; top: 0; left: 0;">
+    <button onclick="addFiveItems()">Add Five Items</button>
+    <button onclick="removeSelected()">Remove Selected</button>
+    <button onclick="updatePrices()">Update Prices</button>
+
+    <button id="groupingOn" onclick="setGroupingEnabled(true)">Turn Grouping On</button>
+    <button id="groupingOff" onclick="setGroupingEnabled(false)">Turn Grouping Off</button>
+    <span style="padding: 10px;"/>
+    <span style="border: 1px solid lightgrey; padding: 8px;">
+        Group Selected:
+        <button onclick="setSelectedToGroup('A')">A</button>
+        <button onclick="setSelectedToGroup('B')">B</button>
+        <button onclick="setSelectedToGroup('C')">C</button>
+    </span>
+</div>
