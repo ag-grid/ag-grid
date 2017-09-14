@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
     This grouped example demonstrates some of the different facets of a theme - full, part and no checkbox selection for example, as well as general look and feel
     <p/>
 
-    <show-example example="example-dark" jsfile="common"></show-example>
+    <?= example('Dark Theme', 'theme-dark') ?>
 
 </pre>
 
