@@ -1,37 +1,39 @@
 var columnDefs = [
-    {headerName: "Group", field: 'group', cellRenderer: 'group',
-        // we don't allow editing on the first column when it's a group
-        // row, as this cell's value is taken from the group key, not the data
-        // editable: function(params) {
-        //     return !params.node.group;
-        // }
+    {
+        headerName: "Group", field: 'group', cellRenderer: 'group',
         editable: true
-        },
+    },
     {headerName: "Athlete", field: "athlete", editable: true},
     {headerName: "Year", field: "year", editable: true},
     {headerName: "Country", field: "country", editable: true}
 ];
 
 var rowData = [
-    {group: 'Group A', athlete: 'Edit this!', year: 'And this!', country: 'And also this!',
+    {
+        group: 'Group A', athlete: 'Edit this!', year: 'And this!', country: 'And also this!',
         participants: [
             {athlete: 'Michael Phelps', year: '2008', country: 'United States'},
             {athlete: 'Michael Phelps', year: '2008', country: 'United States'},
             {athlete: 'Michael Phelps', year: '2008', country: 'United States'}
-        ]},
-    {group: 'Group B', athlete: 'Sausage', year: 'Spaceman', country: 'Winklepicker',
+        ]
+    },
+    {
+        group: 'Group B', athlete: 'Sausage', year: 'Spaceman', country: 'Winklepicker',
         participants: [
             {athlete: 'Natalie Coughlin', year: '2008', country: 'United States'},
             {athlete: 'Missy Franklin ', year: '2012', country: 'United States'},
             {athlete: 'Ole Einar Qjorndalen', year: '2002', country: 'Norway'},
             {athlete: 'Marit Bjorgen', year: '2010', country: 'Norway'},
             {athlete: 'Ian Thorpe', year: '2000', country: 'Australia'}
-        ]},
-    {group: 'Group C',
+        ]
+    },
+    {
+        group: 'Group C',
         participants: [
             {athlete: 'Janica Kostelic', year: '2002', country: 'Crotia'},
             {athlete: 'An Hyeon-Su', year: '2006', country: 'South Korea'}
-        ]}
+        ]
+    }
 ];
 
 var gridOptions = {
@@ -41,7 +43,7 @@ var gridOptions = {
     debug: true,
     enableSorting: true,
     getNodeChildDetails: getNodeChildDetails,
-    onGridReady: function(params) {
+    onGridReady: function (params) {
         params.api.sizeColumnsToFit();
     }
 };
@@ -72,7 +74,7 @@ function onFilterChanged(value) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
