@@ -258,7 +258,7 @@ export interface ColumnVO {
     your team and possibly a few hugs (disclaimer, we are not responsible for any inappropriate hugs you try). Here
     are some quick references on how you can achieve pivot in different relational databases:
     <ul>
-        <li>Oracle: See the Oracle
+        <li>Oracle: Oracle has native support for filtering which they call
             <a href="http://www.oracle.com/technetwork/articles/sql/11g-pivot-097235.html">pivot feature</a>.
         </li>
         <li>
@@ -293,6 +293,21 @@ export interface ColumnVO {
     by calling <code>columnApi.setSecondaryColumns()</code> and passing a list of columns and / or column
     groups. There is no limit or restriction as to the number of columns or groups you pass - the only
     thing you should ensure is that the field (or value getter) that you set for the columns matches.
+</p>
+
+<p>
+    If you do pass in secondary columns with the server response, be aware that setting secondary columns
+    will reset all secondary column state. For example if resize or reorder the columns, then setting the
+    secondary columns again will reset this. In the example above, a hash function is applied to the secondary
+    columns to check if they are the same as the last time the server was asked to process a request. This
+    is the examples way to make sure the secondary columns are only set into the grid when they have actually
+    changed.
+</p>
+
+<p>
+    If you do not want pivot in your enterprise row model grid, then you can remove it from the tool
+    panel by setting <code>toolPanelSuppressPivotMode=true</code> and
+    <code>toolPanelSuppressValues=true</code>.
 </p>
 
 <h1>Example - Slice and Dice - Real Server</h1>
