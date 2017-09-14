@@ -10,7 +10,6 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableColResize: true,
     rowModelType: 'enterprise',
-    rowGroupPanelShow: 'always',
     enableFilter: true,
     animateRows: true,
     debug: true,
@@ -19,24 +18,44 @@ var gridOptions = {
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
     cacheBlockSize: 100,
-    maxBlocksInCache: 2,
+    // maxBlocksInCache: 2,
+    groupUseEntireRow: true,
     purgeClosedRowNodes: true,
+    groupRowInnerRenderer: GroupInnerRenderer,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     },
+    getRowHeight: function (params) {
+        // top level group gets height of 50
+        if (params.node.level === 0) {
+            return 40;
+        } else {
+            return 25;
+        }
+    },
     icons: {
-        groupLoading: '<img src="spinner.gif" style="width:22px;height:22px;">'
+        groupLoading: '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/javascript-grid-enterprise-model/spinner.gif" style="width:22px;height:22px;">'
     }
 };
 
-function purgeCache(route) {
-    gridOptions.api.purgeEnterpriseCache(route);
+function GroupInnerRenderer() {}
+
+GroupInnerRenderer.prototype.init = function(params) {
+    var cssClass = params.node.level === 0 ? 'group-inner-renderer-country' : 'group-inner-renderer-year';
+    var template = '<span class="'+cssClass+'">'+params.value+'</span>';
+    this.eGui  = loadTemplate(template);
+};
+
+GroupInnerRenderer.prototype.getGui = function() {
+    return this.eGui;
+};
+
+function loadTemplate(template) {
+    var tempDiv = document.createElement('div');
+    tempDiv.innerHTML = template;
+    return tempDiv.firstChild;
 }
 
-function getBlockState() {
-    var blockState = gridOptions.api.getCacheBlockState();
-    console.log(blockState);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
@@ -45,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: '../olympicWinners.json'})
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json'})
         .then( function(rows) {
                 var fakeServer = new FakeServer(rows);
                 var datasource = new EnterpriseDatasource(fakeServer);

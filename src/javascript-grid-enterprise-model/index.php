@@ -296,14 +296,7 @@ export interface ColumnVO {
     only. Normal applications generally have the checkbox only on one column.
 </p>
 
-<show-complex-example example="exampleEnterpriseCheckboxSelection.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleEnterpriseCheckboxSelection.html,exampleEnterpriseCheckboxSelection.js,mockServerComplex.js' }
-                                ]
-                              }"
-                      exampleheight="500px">
-</show-complex-example>
+<?= example('Checkbox Example', 'checkbox', 'vanilla', array("enterprise" => 1)) ?>
 
 
 <h1 id="selection">Providing Node ID's</h1>
@@ -328,14 +321,7 @@ export interface ColumnVO {
     for the 'getRowHeight' Grid Options property. This is demonstrated in the example below:
 </p>
 
-<show-complex-example example="exampleEnterpriseDynamicRowHeight.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleEnterpriseDynamicRowHeight.html,exampleEnterpriseDynamicRowHeight.js,columns.js,mockServerComplex.js' }
-                                ]
-                              }"
-                      exampleheight="500px">
-</show-complex-example>
+<?= example('Dynamic Row Height Example', 'dynamic-row-height', 'vanilla', array("enterprise" => 1)) ?>
 
 <note>
     Purging the cache and dynamic row heights do not work together for the Enterprise Row Model.
@@ -389,14 +375,7 @@ export interface ColumnVO {
 </ul>
 </p>
 
-<show-complex-example example="exampleEnterpriseApi.html"
-                      sources="{
-                                [
-                                    { root: './', files: 'exampleEnterpriseApi.html,exampleEnterpriseApi.js,columns.js,mockServerComplex.js' }
-                                ]
-                              }"
-                      exampleheight="500px">
-</show-complex-example>
+<?= example('API example', 'api', 'vanilla', array("enterprise" => 1)) ?>
 
 <h1 id="pagination">Pagination with Enterprise Row Model</h1>
 <p>
