@@ -1,12 +1,12 @@
 import {Component} from "@angular/core";
-import {GridOptions} from "ag-grid/main";
+import {GridOptions} from "ag-grid";
+
 import {RatioParentComponent} from "./ratio.parent.component";
 import {ClickableParentComponent} from "./clickable.parent.component";
 
 @Component({
-    moduleId: module.id,
-    selector: 'ag-from-rich-component',
-    templateUrl: 'rich.component.html'
+    selector: 'my-app',
+    templateUrl: './rich.component.html'
 })
 export class RichComponent {
     public gridOptions: GridOptions;
@@ -19,7 +19,7 @@ export class RichComponent {
 
     private createColumnDefs() {
         return [
-            {headerName: "Name", field: "name", width: 200},
+            {headerName: "Name", field: "name", width: 300},
             {
                 headerName: "Ratio Component",
                 field: "ratios",
@@ -30,7 +30,7 @@ export class RichComponent {
                 headerName: "Clickable Component",
                 field: "name",
                 cellRendererFramework: ClickableParentComponent,
-                width: 250
+                width: 233
             }
         ];
     }
