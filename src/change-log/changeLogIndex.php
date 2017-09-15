@@ -28,6 +28,7 @@ include '../documentation-main/documentation_header.php';
     <h4>Bug Fixes</h4>
     <ul>
         <li>AG-770: pinnedBottomRowData and pinnedTopRowData were not getting changes updated when bound as component property (eg if using React or Angular bindings to change these)</li>
+        <li>AG-667: unnecessary console log "not supported" when using infinite row model and scrolling after cell selection</li>
     </ul>
 
     <h2>Version 13.1.x</h2>
