@@ -1,16 +1,27 @@
 <html>
 <head>
-    <script src="../dist/ag-grid-enterprise/ag-grid-enterprise.js"></script>
-    <script src="exampleExcel.js"></script>
+    <script src="../../dist/ag-grid-enterprise/ag-grid-enterprise.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.3/xlsx.core.min.js"></script>
+    <script src="exampleXlsx.js"></script>
     <style>
         .greenBackground{
-            background-color: #008000;
-            color: #e0ffc1;
+            background-color: lightgreen;
         }
 
-        .blueBackground{
-            background-color: #00008B;
-            color: white;
+        .redFont{
+            color: red;
+        }
+
+        .darkGreyBackground{
+            background-color: #888888;
+        }
+
+        .boldBorders{
+            border: 3px solid black !important;
+        }
+
+        .notInExcel{
+            color: #1b6d85;
         }
     </style>
 </head>
@@ -26,7 +37,7 @@
             <input type="text" id="sheetName"/>
         </label>
         <label style="margin-left: 20px;">
-            <button onclick="onBtExport()">Export to Excel</button>
+            <button onclick="onBtExport()">Export to Excel (xlsx)</button>
         </label>
     </div>
     <div style="padding-bottom: 4px;">
@@ -38,7 +49,7 @@
             <br/>
             <label style="margin-right: 20px;">
                 <input type="checkbox" id="columnGroups"/>
-                Column groups
+                Column Groups
             </label>
             <br/>
             <label style="margin-right: 20px;">
