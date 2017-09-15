@@ -168,7 +168,7 @@ function getContextMenuItems(params) {
     result.push(
         {
             name: 'Custom Menu Item',
-            icon: '<img src="../images/lab.png" style="width: 14px;"/>',
+            icon: '<img src="../../images/lab.png" style="width: 14px;"/>',
             //shortcut: 'Alt + M',
             action: function () {
                 var value = params.value ? params.value : '<empty>';
@@ -736,7 +736,7 @@ function ratingRendererGeneral(value, forFilter) {
     var result = '<span>';
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="../images/goldStar.png"/>';
+            result += '<img src="../../images/goldStar.png"/>';
         }
     }
     if (forFilter && value === 0) {
