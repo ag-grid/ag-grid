@@ -24,7 +24,7 @@ include '../documentation-main/documentation_header.php';
     showing the aggregation values as you drag.</p>
 
 
-    <show-example example="exampleStatusBar"></show-example>
+    <?= example('Status Bar', 'status-bar', 'vanilla', array("enterprise" => 1)) ?>
 
 </div>
 

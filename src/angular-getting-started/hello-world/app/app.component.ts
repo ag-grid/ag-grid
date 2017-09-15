@@ -8,7 +8,7 @@ export class Hero {
 @Component({
   selector: 'my-app',
   template: `
-    <ag-grid-angular style="width: 500px; height: 115px;" class="ag-fresh"
+    <ag-grid-angular style="width: 900px; height: 115px;" class="ag-fresh"
                  [rowData]="rowData"
                  [columnDefs]="columnDefs">
 </ag-grid-angular>
@@ -20,9 +20,9 @@ export class AppComponent {
 
     constructor() {
         this.columnDefs = [
-            {headerName: "Make", field: "make"},
-            {headerName: "Model", field: "model"},
-            {headerName: "Price", field: "price"}
+            {headerName: "Make", field: "make", width: 300},
+            {headerName: "Model", field: "model", width: 300},
+            {headerName: "Price", field: "price", width: 300}
         ];
 
         this.rowData = [

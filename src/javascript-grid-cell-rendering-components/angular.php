@@ -93,15 +93,8 @@ the grid will know the framework to use is Angular.
 <p>
     Using Angular Components in the Cell Renderer's
 </p>
-<show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=from-component"
-                      sources="{
-                            [
-                                { root: '/framework-examples/angular-examples/app/dynamic-component-example/', files: 'dynamic.component.ts,dynamic.component.html,square.component.ts,cube.component.ts,params.component.ts,child-message.component.ts,currency.component.ts' },
-                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                      plunker="https://embed.plnkr.co/J04rdB/">
-</show-complex-example>
+
+<?= example('Simple Dynamic Component', 'angular-dynamic', 'angular', array("exampleHeight" => 440, "showResult" => true)); ?>
 
 <h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods /
     Lifecycle</h3>
@@ -130,15 +123,8 @@ the grid will know the framework to use is Angular.
 <p>
     Using more complex Angular Components in the Cell Renderer's
 </p>
-<show-complex-example example="../framework-examples/angular-examples/index.html?fromDocs=true&example=from-rich-component"
-                      sources="{
-                            [
-                                { root: '/framework-examples/angular-examples/app/rich-dynamic-component-example/', files: 'rich.component.ts,rich.component.html,ratio.module.ts,ratio.parent.component.ts,ratio.component.ts,clickable.module.ts,clickable.parent.component.ts,clickable.component.ts' },
-                                { root: '/framework-examples/angular-examples/app/', files: 'app.module.ts' }
-                            ]
-                          }"
-                      plunker="https://embed.plnkr.co/qmgvkW/">
-</show-complex-example>
+<?= example('Richer Dynamic Components', 'angular-rich-dynamic', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>
+
 
 <note>The full <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> repo shows many
     more examples for rendering, including grouped rows, full width renderer's
