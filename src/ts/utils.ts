@@ -671,6 +671,13 @@ export class Utils {
     static defaultComparator(valueA: any, valueB: any, accentedCompare: boolean = false): number {
         let valueAMissing = valueA === null || valueA === undefined;
         let valueBMissing = valueB === null || valueB === undefined;
+
+        // this is for aggregations sum and avg, where the result can be a number that is wrapped.
+        // if we didn't do this, then the toString() value would be used, which would result in
+        // the strings getting used instead of the numbers.
+        if (valueA && valueA.toNumber) { valueA = valueA.toNumber(); }
+        if (valueB && valueB.toNumber) { valueB = valueB.toNumber(); }
+
         if (valueAMissing && valueBMissing) {
             return 0;
         }
@@ -704,7 +711,6 @@ export class Utils {
         } else {
             return 0;
         }
-
 
         function doQuickCompare (a:string, b:string): number{
             return (a > b ? 1 : (a < b ? -1 : 0));
