@@ -29,6 +29,8 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li>AG-770: pinnedBottomRowData and pinnedTopRowData were not getting changes updated when bound as component property (eg if using React or Angular bindings to change these)</li>
         <li>AG-667: unnecessary console log "not supported" when using infinite row model and scrolling after cell selection</li>
+        <li>AG-400: rich select - when focus goes off the component, the selection was kept</li>
+        <li>AG-563: When sorting by count in pivot mode it does Alphabetical sort not numerical</li>
     </ul>
 
     <h2>Version 13.1.x</h2>

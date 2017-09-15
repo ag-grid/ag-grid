@@ -3,12 +3,7 @@ import {ICellRendererAngularComp} from "ag-grid-angular";
 
 @Component({
     selector: 'child-cell',
-    template: `<span><button style="height: 20px" (click)="invokeParentMethod()" class="btn btn-info">Invoke Parent</button></span>`,
-    styles: [
-        `.btn {
-            line-height: 0.5
-        }`
-    ]
+    template: `<span><button style="height: 20px" (click)="invokeParentMethod()">Invoke Parent</button></span>`
 })
 export class ChildMessageComponent implements ICellRendererAngularComp {
     public params: any;

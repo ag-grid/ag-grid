@@ -94,7 +94,7 @@ the grid will know the framework to use is Angular.
     Using Angular Components in the Cell Renderer's
 </p>
 
-<?= example('Simple Dynamic Component', 'angular-dynamic', 'angular', array("exampleHeight" => 440, "showResult" => true)); ?>
+<?= example('Simple Dynamic Component', 'angular-dynamic', 'angular', array("exampleHeight" => 440, "showResult" => true, "extras" => array("bootstrap"))); ?>
 
 <h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods /
     Lifecycle</h3>
@@ -123,7 +123,7 @@ the grid will know the framework to use is Angular.
 <p>
     Using more complex Angular Components in the Cell Renderer's
 </p>
-<?= example('Richer Dynamic Components', 'angular-rich-dynamic', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>
+<?= example('Richer Dynamic Components', 'angular-rich-dynamic', 'angular', array("exampleHeight" => 370, "showResult" => true, "extras" => array("bootstrap"))); ?>
 
 
 <note>The full <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> repo shows many
