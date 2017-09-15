@@ -68,7 +68,7 @@ gridOptions.api.hideOverlay()</snippet>
         The example also shows the api methods in action, so you can show / hide the panels at your will.
     </p>
 
-    <show-example example="example1"></show-example>
+    <?= example('Overlays', 'overlays') ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
