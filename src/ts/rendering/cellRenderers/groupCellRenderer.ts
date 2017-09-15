@@ -266,7 +266,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (checkboxNeeded) {
             let cbSelectionComponent = new CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);
-            cbSelectionComponent.init({rowNode: rowNode});
+            cbSelectionComponent.init({rowNode: rowNode, column: this.params.column});
             this.eCheckbox.appendChild(cbSelectionComponent.getHtmlElement());
             this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
         }
