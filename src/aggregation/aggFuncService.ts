@@ -154,6 +154,10 @@ function aggCount(input: any[]): any {
         value: 0,
         toString: function() {
             return this.value.toString();
+        },
+        // used for sorting
+        toNumber: function() {
+            return this.value;
         }
     };
     let length = input.length;
@@ -216,6 +220,10 @@ function aggAvg(input: any[]): any {
             } else {
                 return '';
             }
+        },
+        // used for sorting
+        toNumber: function() {
+            return this.value;
         }
     };
 
