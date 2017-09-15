@@ -31,42 +31,46 @@ export class DynamicComponent {
 
     private static createColumnDefs() {
         return [
-            {headerName: "Row", field: "row", width: 100},
+            {
+                headerName: "Row",
+                field: "row",
+                width: 150
+            },
             {
                 headerName: "Square",
                 field: "value",
                 cellRendererFramework: SquareComponent,
                 editable: true,
                 colId: "square",
-                width: 100
+                width: 150
             },
             {
                 headerName: "Cube",
                 field: "value",
                 cellRendererFramework: CubeComponent,
                 colId: "cube",
-                width: 100
+                width: 150
             },
             {
                 headerName: "Row Params",
                 field: "row",
                 cellRendererFramework: ParamsComponent,
                 colId: "params",
-                width: 215
+                width: 150
             },
             {
                 headerName: "Currency (Pipe)",
                 field: "currency",
                 cellRendererFramework: CurrencyComponent,
                 colId: "currency",
-                width: 135
+                width: 100
             },
             {
                 headerName: "Child/Parent",
                 field: "value",
                 cellRendererFramework: ChildMessageComponent,
                 colId: "params",
-                width: 120
+                width: 180
             }
         ];
     }

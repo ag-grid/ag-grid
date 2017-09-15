@@ -12,30 +12,38 @@ export class FilterComponentComponent {
     public gridOptions: GridOptions;
 
     constructor() {
-        this.gridOptions = <GridOptions>{};
-        this.gridOptions.rowData = this.createRowData();
-        this.gridOptions.columnDefs = this.createColumnDefs();
-        this.gridOptions.enableFilter = true;
+        this.gridOptions = <GridOptions>{
+            rowData: FilterComponentComponent.createRowData(),
+            columnDefs: FilterComponentComponent.createColumnDefs(),
+            onGridReady: () => {
+                this.gridOptions.api.sizeColumnsToFit();
+            },
+            enableFilter: true
+        };
     }
 
     onClicked(): void {
         this.gridOptions.api.getFilterInstance("name").getFrameworkComponentInstance().componentMethod("Hello World!");
     }
 
-    private createColumnDefs() {
+    private static createColumnDefs() {
         return [
-            {headerName: "Row", field: "row", width: 450},
+            {
+                headerName: "Row",
+                field: "row",
+                width: 400
+            },
             {
                 headerName: "Filter Component",
                 field: "name",
                 filterFramework: PartialMatchFilterComponent,
-                width: 440,
+                width: 400,
                 menuTabs: ['filterMenuTab']
             }
         ];
     }
 
-    private createRowData() {
+    private static createRowData() {
         return [
             {"row": "Row 1", "name": "Michael Phelps"},
             {"row": "Row 2", "name": "Natalie Coughlin"},

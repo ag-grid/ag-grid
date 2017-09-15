@@ -4,7 +4,14 @@ import {ICellRendererAngularComp} from "ag-grid-angular";
 
 @Component({
     selector: 'full-width-cell',
-    template: `<span>Full Width Column! {{ values }}</span>`
+    template: `<div class="full-width-cell">Full Width Row. Row Values: {{ values }}</div>`,
+    styles: [`
+        .full-width-cell {
+            border: 2px solid #22ff22;
+            border-radius: 5px;
+            background-color: #bbffbb;
+        }
+    `]
 })
 export class NameAndAgeRendererComponent implements ICellRendererAngularComp {
     private params: any;

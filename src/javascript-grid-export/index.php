@@ -125,7 +125,7 @@ include '../documentation-main/documentation_header.php';
         <li>Heading groups are exported as part of the csv.</li>
     </ul>
 
-    <show-example example="exampleExport"></show-example>
+    <?= example('CSV Export', 'csv-export') ?>
 
 </div>
 

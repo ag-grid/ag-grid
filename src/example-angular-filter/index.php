@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Filter Component</h2>
     <p>A Filter Example, with the Filter written as a Angular Component.</p>
 
-    <?= example('Filter Component', 'filter', 'angular', array("exampleHeight" => 435, "showResult" => true)); ?>
+    <?= example('Filter Component', 'filter', 'angular', array("exampleHeight" => 445, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ))); ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

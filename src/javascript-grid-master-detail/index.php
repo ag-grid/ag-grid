@@ -51,7 +51,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <show-example example="exampleMasterDetail"></show-example>
+    <?= example('Master Detail', 'master-detail') ?>
 
     <note>
         The example is using parent / child relationships and has exactly one child to each parent.

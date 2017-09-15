@@ -6,8 +6,24 @@ import {IFilterAngularComp} from "ag-grid-angular";
 @Component({
     selector: 'filter-cell',
     template: `
-        Filter: <input style="height: 20px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
-    `
+        <div class="container">
+            Partial Match Filter: <input #input (ngModelChange)="onChange($event)" [ngModel]="text" class="form-control">
+        </div>
+    `, styles: [
+        `
+            .container {
+                border: 2px solid #22ff22;
+                border-radius: 5px;
+                background-color: #bbffbb;
+                width: 200px;
+                height: 50px
+            }
+            
+            input {
+                height: 20px
+            }
+        `
+    ]
 })
 export class PartialMatchFilterComponent implements IFilterAngularComp {
     private params: IFilterParams;
@@ -45,6 +61,7 @@ export class PartialMatchFilterComponent implements IFilterAngularComp {
         this.input.element.nativeElement.focus();
     }
 
+    // noinspection JSMethodCanBeStatic
     componentMethod(message: string): void {
         alert(`Alert from PartialMatchFilterComponent ${message}`);
     }
