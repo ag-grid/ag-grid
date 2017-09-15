@@ -64,7 +64,7 @@ gridOptions.columnDefs = [
         pivot or value associated with them.
     </p>
 
-    <show-example example="examplePivot"></show-example>
+<?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2>Pivot Mode vs Pivot Active</h2>
 
@@ -98,7 +98,7 @@ gridOptions.columnDefs = [
     </ul>
     </p>
 
-    <show-example example="examplePivotMode"></show-example>
+    <?= example('Pivot Mode Vs Pivot Active', 'pivot-mode', 'vanilla', array("enterprise" => 1)) ?>
 
     <p>
         Note that a pivot can only be active if pivot mode is on. If pivot mode is off, all pivot
@@ -203,7 +203,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         as there is no records for Canada and Equestrian.
     </p>
 
-    <show-example example="exampleFilteringWithPivot"></show-example>
+    <?= example('Filtering With Pivot', 'filter', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2>Sorting with Pivot</h2>
 
@@ -217,8 +217,8 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         manually, the code below is only given to the curious who want to understand the column structure
         underneath the hood.
     </p>
-    
-    <show-example example="exampleSortingWithPivot"></show-example>
+
+    <?= example('Sorting With Pivot', 'sorting', 'vanilla', array("enterprise" => 1)) ?>
 
 
     <h2 id="totalPivotColumns">Total Pivot Columns</h2>
@@ -248,7 +248,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
        </ul>
     </p>
 
-    <show-example example="pivotTotalColumns"></show-example>
+    <?= example('Total Pivot Columns', 'totals', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2>Saving & Restoring Column State with Pivot</h2>
 
@@ -264,7 +264,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         needs to be stored separately.
     </p>
 
-    <show-example example="exampleColumnStateWithPivot"></show-example>
+    <?= example('Saving & Restoring Column State', 'state', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2>Pivot API</h2>
     
