@@ -65,15 +65,6 @@ private getCountryFilterParams():any {
 &lt;/ag-grid-column&gt;</snippet>
 <p>In this example we have a parent Column of "IT Skills", with two child columns.</p>
 
-<!--<h3 id="example-rich-grid-using-markup">Example: Rich Grid using Markup</h3>-->
-<!--<p>-->
-<!--    The example below shows the same rich grid as the example above, but with configuration done via Markup.-->
-<!--</p>-->
-<!--<show-example example="../framework-examples/aurelia-example/#/richgrid-declarative/true"-->
-<!--              jsfile="../framework-examples/aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.ts"-->
-<!--              html="../framework-examples/aurelia-example/components/rich-grid-declarative-example/rich-grid-declarative-example.html"-->
-<!--              exampleHeight="525px"></show-example>-->
-
 <h2 id="cell-rendering-cell-editing-using-aurelia">Cell Rendering & Cell Editing using Aurelia</h2>
 
 <p>

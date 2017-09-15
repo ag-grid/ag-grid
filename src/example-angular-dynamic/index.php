@@ -13,12 +13,18 @@ include '../documentation-main/documentation_header.php';
     <p>A simple Grid using Angular Components as Cell Renderers, with Child Components, Two-Way Binding and
         Parent to Child Components Events.</p>
 
-    <?= example('Simple Dynamic Component', 'dynamic-component', 'angular', array("exampleHeight" => 440, "showResult" => true)); ?>
+    <?= example('Simple Dynamic Component', 'dynamic-component', 'angular', array("exampleHeight" => 480, "showResult" => true, "extras" => array("bootstrap"))); ?>
 
     <h2 id="rich-dynamic">Richer Dynamic Components</h2>
     <p>A Richer Example using Angular Components as Cell Renderers, with Dynamic Components included via Modules.</p>
 
-    <?= example('Richer Dynamic Components', 'rich-dynamic-component', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>
+    <p>This example demonstrates Dynamic Angular Components with ag-Grid with nested <code>NgModules</code>.
+        Functionally similar
+        to the <a href="#dynamic">Simple Dynamic Component</a> example above, but demonstrating how the Angular
+        Components within the Grid can
+        be modular too.</p>
+
+    <?= example('Richer Dynamic Components', 'rich-dynamic-component', 'angular', array("exampleHeight" => 370, "showResult" => true, "extras" => array("bootstrap"))); ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

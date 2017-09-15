@@ -104,12 +104,3 @@ export class NumericEditor extends BaseAureliaEditor {
         All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()</i> etc)
         should be put onto your Aurelia component and will work as normal.
     </p>
-
-<!--    <h3 id="example-cell-editing-using-aurelia-components">Example: Cell Editing using Aurelia Components</h3>-->
-<!--    <p>-->
-<!--        Using Aurelia Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.-->
-<!--    </p>-->
-
-<!--    <show-example example="../framework-examples/aurelia-example/#/editor/true"-->
-<!--                  jsfile="../framework-examples/aurelia-example/components/editor-example/editor-example.ts"-->
-<!--                  html="../framework-examples/aurelia-example/components/editor-example/editor-example.html"></show-example>-->
