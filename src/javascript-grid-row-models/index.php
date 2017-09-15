@@ -210,6 +210,13 @@ include '../documentation-main/documentation_header.php';
             <td><span class="red-x">&#10005;</span></td>
         </tr>
         <tr class="item-row">
+            <td><a href="../javascript-grid-grouping/">Row Pivoting</a></td>
+            <td><span class="green-tick">&#10004;</span> (client)</td>
+            <td><span class="red-x">&#10005;</span></td>
+            <td><span class="green-tick">&#10004;</span> (server)</td>
+            <td><span class="red-x">&#10005;</span></td>
+        </tr>
+        <tr class="item-row">
             <td>Lazy Loading Row Groups</td>
             <td><span class="red-x">&#10005;</span></td>
             <td><span class="red-x">&#10005;</span></td>
