@@ -109,7 +109,7 @@ colDefs = {
         </ul>
     </p>
 
-    <show-example example="toolPanelExample"></show-example>
+    <?= example('Tool Panel Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
 
     <h3 id="suppressExample">Suppress Panels</h3>
 
@@ -124,8 +124,8 @@ colDefs = {
         This is useful when you have a column working in the background, eg a column you want to group by, but not present to the user.</li>
     </ul>
     </p>
-    
-    <show-example example="exampleToolPanelSuppress"></show-example>
+
+    <?= example('Suppress Panels', 'suppress', 'vanilla', array("enterprise" => 1)) ?>
 
     <h3 id="read-only-functions">Read Only Functions</h3>
 
@@ -135,7 +135,7 @@ colDefs = {
         so they can see what columns are used, but prevent them from making changes to the selection.
     </p>
 
-    <show-example example="exampleToolPanelReadOnly"></show-example>
+    <?= example('Read Only Example', 'read-only', 'vanilla', array("enterprise" => 1)) ?>
 
 </div>
 

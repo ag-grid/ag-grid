@@ -1,30 +1,38 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, enableRowGroup: true, enablePivot: true},
     {headerName: "Age", field: "age", width: 90, enableValue: true},
-    {headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true, rowGroupIndex: 1},
-    {headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true, pivotIndex: 1},
+    {headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true, headerValueGetter: countryHeaderValueGetter},
+    {headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true},
     {headerName: "Date", field: "date", width: 110, enableRowGroup: true, enablePivot: true},
-    {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true, rowGroupIndex: 2},
-    {headerName: "Gold", field: "gold", width: 100, hide: true, enableValue: true},
-    {headerName: "Silver", field: "silver", width: 100, hide: true, enableValue: true, aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", width: 100, hide: true, enableValue: true, aggFunc: 'sum'},
+    {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true},
+    {headerName: "Gold", field: "gold", width: 100, hide: true, enableValue: true, toolPanelClass: 'tp-gold'},
+    {headerName: "Silver", field: "silver", width: 100, hide: true, enableValue: true, toolPanelClass: ['tp-silver']},
+    {headerName: "Bronze", field: "bronze", width: 100, hide: true, enableValue: true,
+        toolPanelClass: function(params) {
+            return 'tp-bronze';
+        }},
     {headerName: "Total", field: "totalAgg", valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze", width: 100}
 ];
+
+function countryHeaderValueGetter(params) {
+    switch (params.location) {
+        case 'csv': return 'CSV Country';
+        case 'clipboard': return 'CLIP Country';
+        case 'toolPanel': return 'TP Country';
+        case 'columnDrop': return 'CD Country';
+        case 'header': return 'H Country';
+        default: return 'Should never happen!';
+    }
+}
 
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    pivotMode: true,
     enableSorting: true,
     showToolPanel: true,
-    rowGroupPanelShow: 'always',
-    pivotPanelShow: 'always',
-    functionsReadOnly: true
+    enableFilter: true,
+    rowGroupPanelShow: 'always'
 };
-
-function setReadOnly(value) {
-    gridOptions.api.setFunctionsReadOnly(value);
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
@@ -34,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '../olympicWinners.json');
+    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
