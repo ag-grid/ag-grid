@@ -55,7 +55,7 @@ gridOptionsSecond = {
         it demonstrates the features in an easy to understand way.
     </p>
 
-    <show-example example="exampleAlignedGrids"></show-example>
+    <?= example('Aligned Grids', 'aligned-grids') ?>
 
     <h2 id="events">Events</h2>
     <p>
@@ -95,7 +95,7 @@ gridOptionsSecond = {
             widths from the top grid.</li>
     </p>
 
-    <show-example example="exampleAlignedFloatingFooter"></show-example>
+    <?= example('Aligned Grid as Footer', 'aligned-floating-footer') ?>
 
     <h2 id="split-column-groups">Example - Align Column Groups</h2>
 
@@ -106,7 +106,7 @@ gridOptionsSecond = {
         group will open / close all the instances of that group in both tables.
     </p>
 
-    <show-example example="exampleAlignedGroups"></show-example>
+    <?= example('Aligned Column Groups', 'aligned-column-groups') ?>
 
     <h2 id="event-propagation">Event Propagation</h2>
 
