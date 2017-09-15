@@ -201,6 +201,51 @@ colDef.cellEditorParams = {
 }
 </snippet>
 
+<h3 id="editing-keyboard-navigation">Keyboard Navigation While Editing</h3>
+
+<p>
+    If you provide a cell editor, you may wish to disable some of the grids keyboard navigation.
+    For example, if you are providing a simple text editor, you may wish the grid to do nothing
+    when you press the right and left arrows (the default is the grid will move to the next / previous
+    cell) as you may want the right and left arrows to move the
+    cursor inside your editor. In other cell editors, you may wish the grid to behave as normal.
+</p>
+
+<p>
+    Because different cell editors will have different requirements on what the grid does,
+    it is up to the cell editor to decide which event it wants the grid to handle and which
+    it does not.
+</p>
+
+<p>
+    The follow code snippet is one you could include for a simple text editor, which would
+    stop the grid from doing navigation
+</p>
+
+<snippet>
+var KEY_LEFT = 37;
+var KEY_UP = 38;
+var KEY_RIGHT = 39;
+var KEY_DOWN = 40;
+var KEY_PAGE_UP = 33;
+var KEY_PAGE_DOWN = 34;
+var KEY_PAGE_HOME = 36;
+var KEY_PAGE_END = 35;
+
+eInputDomElement.addEventListener('keydown', function(event) {
+  var keyCode = event.keyCode;
+
+  var isNavigationKey = keyCode===KEY_LEFT || keyCode===KEY_RIGHT || keyCode===KEY_UP
+        || keyCode===KEY_DOWN || keyCode===KEY_PAGE_DOWN || keyCode===KEY_PAGE_UP
+        || keyCode===KEY_PAGE_HOME || keyCode===KEY_PAGE_END;
+
+  if (isNavigationKey) {
+    // this stops the grid from receiving the event and executing keyboard navigation
+    event.stopPropagation();
+  }
+}
+</snippet>
+
 <h3 id="cell-editing-example">Cell Editing Example</h3>
 
 <p>The example below illustrates:
