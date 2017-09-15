@@ -91,7 +91,8 @@ include '../documentation-main/documentation_header.php';
 </ul>
 </p>
 
-<show-example example="exampleFullWidth"></show-example>
+<?= example('Basic Full Width', 'basic-full-width') ?>
+
 
 <h3 id="parent-child-relationships">Parent / Child Relationships</h3>
 
@@ -186,7 +187,7 @@ gridOptions.doesDataFlower = function(dataItem) {
     you need to stop the mouse wheel events from bubbling up to the grid (as done in the example for the text area).
 </note>
 
-<show-example example="exampleFullWidthComponent"></show-example>
+<?= example('Full Width Component', 'full-width-component') ?>
 
 <h3 id="embeddedFullWidth">Embedded Full Width vs Normal Full Width</h3>
 
@@ -208,7 +209,6 @@ gridOptions.doesDataFlower = function(dataItem) {
     <li>Each fullWidth row horizontally scrolls with the main grid.</li>
 </ul>
 
-<show-example example="exampleFullWidthEmbedded"></show-example>
-
+<?= example('Full Width Embedded', 'full-width-embedded') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
