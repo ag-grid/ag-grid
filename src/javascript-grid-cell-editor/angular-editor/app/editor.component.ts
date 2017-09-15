@@ -1,6 +1,9 @@
 import {Component} from "@angular/core";
 import {GridOptions} from "ag-grid";
 
+// only import this if you are using the ag-Grid-Enterprise
+import "ag-grid-enterprise";
+
 import {NumericEditorComponent} from "./numeric-editor.component";
 import {MoodRendererComponent} from "./mood-renderer.component";
 import {MoodEditorComponent} from "./mood-editor.component";
@@ -13,14 +16,38 @@ export class EditorComponent {
     public gridOptions: GridOptions;
 
     constructor() {
-        this.gridOptions = <GridOptions>{};
-        this.gridOptions.rowData = this.createRowData();
-        this.gridOptions.columnDefs = this.createColumnDefs();
+        this.gridOptions = <GridOptions>{
+            rowData: EditorComponent.createRowData(),
+            columnDefs: EditorComponent.createColumnDefs()
+        };
     }
 
-    private createColumnDefs() {
+    private static createColumnDefs() {
         return [
-            {headerName: "Name", field: "name", width: 300},
+            {
+                headerName: "Name",
+                field: "name",
+                width: 300,
+                editable: true,
+                cellEditor: 'richSelect',
+                cellEditorParams: {
+                    values: [
+                        "Bob",
+                        "Harry",
+                        "Sally",
+                        "Mary",
+                        "John",
+                        "Jack",
+                        "Sue",
+                        "Sean",
+                        "Niall",
+                        "Albert",
+                        "Fred",
+                        "Jenny",
+                        "Larry"
+                    ]
+                }
+            },
             {
                 headerName: "Mood",
                 field: "mood",
@@ -39,7 +66,7 @@ export class EditorComponent {
         ];
     }
 
-    private createRowData() {
+    private static createRowData() {
         return [
             {name: "Bob", mood: "Happy", number: 10},
             {name: "Harry", mood: "Sad", number: 3},

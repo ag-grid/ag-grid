@@ -12,14 +12,15 @@ export class RichComponent {
     public gridOptions: GridOptions;
 
     constructor() {
-        this.gridOptions = <GridOptions>{};
-        this.gridOptions.rowData = this.createRowData();
-        this.gridOptions.columnDefs = this.createColumnDefs();
+        this.gridOptions = <GridOptions>{
+            rowData: RichComponent.createRowData(),
+            columnDefs: RichComponent.createColumnDefs()
+        };
     }
 
-    private createColumnDefs() {
+    private static createColumnDefs() {
         return [
-            {headerName: "Name", field: "name", width: 300},
+            {headerName: "Name", field: "name", width: 200},
             {
                 headerName: "Ratio Component",
                 field: "ratios",
@@ -30,12 +31,12 @@ export class RichComponent {
                 headerName: "Clickable Component",
                 field: "name",
                 cellRendererFramework: ClickableParentComponent,
-                width: 233
+                width: 330
             }
         ];
     }
 
-    private createRowData() {
+    private static createRowData() {
         return [
             {name: 'Homer Simpson', ratios: {top: 0.25, bottom: 0.75}},
             {name: 'Marge Simpson', ratios: {top: 0.67, bottom: 0.39}},
