@@ -442,7 +442,7 @@ export interface ColumnVO {
         <th>Description</th>
     </tr>
     <tr id="api-purge-virtual-page-cache">
-        <th>purgeInfinitePageCache(route)</th>
+        <th>purgeEnterprisePageCache(route)</th>
         <td><p>Purges the cache. If you pass no parameters, then the top level cache is purged. To
                 purge a child cache, then pass in the string of keys to get to the child cache.
                 For example, to purge the cache two levels down under 'Canada' and then '2002', pass
@@ -450,7 +450,7 @@ export interface ColumnVO {
             for that cache will be reset to the closed state, and all child caches will be destroyed.</p></td>
     </tr>
     <tr id="api-get-virtual-page-state">
-        <th>getInfinitePageState()</th>
+        <th>getEnterprisePageState()</th>
         <td>
             Returns an object representing the state of the cache. This is useful for debugging and understanding
             how the cache is working.</td>
