@@ -103,7 +103,7 @@ include '../documentation-main/documentation_header.php';
         <i>suppressCopyRowsToClipboard:true</i>
     </p>
 
-    <show-example example="exampleClipboard" example-height="450px"></show-example>
+    <?= example('Clipboard example', 'simple') ?>
 
     <h3 id="sendToClipboard">Controlling Clipboard Copy</h3>
 
@@ -119,7 +119,7 @@ include '../documentation-main/documentation_header.php';
         demonstrates the callback by just printing the data to the console.
     </p>
 
-    <show-example example="exampleClipboardCustom" example-height="450px"></show-example>
+    <?= example('Controlling Clipboard Copy', 'custom') ?>
 
     <h3 class="processClipboard">Processing Clipboard Data</h3>
 
@@ -165,7 +165,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <show-example example="exampleClipboardExtra"></show-example>
+    <?= example('Complex Example', 'complex') ?>
 
 </div>
 
