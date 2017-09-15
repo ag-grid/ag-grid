@@ -44,7 +44,7 @@ gridOptions.columnDefs = [
         by adding <code>hide: true</code> to their <i>colDef</i> as illustrated in the Multi Auto Column example.</li>
     </ul>
 
-    <show-example example="exampleSimpleRowGroup"></show-example>
+    <?= example('Auto Column Group', 'auto-column-group', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="multi-auto-column-group">Multi Auto Column Group</h2>
     <p>
@@ -61,7 +61,7 @@ gridOptions.columnDefs = [
             This is done by setting <code>colDef.hide = true</code>.</li>
     </ul>
 
-    <show-example example="exampleSimpleRowMultiGroup"></show-example>
+    <?= example('Multi Auto Column Group', 'multi-auto-column-group', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="configuring-auto-column">Configuring the Auto Group Column</h2>
 
@@ -110,8 +110,7 @@ gridOptions.columnDefs = [
         </li>
     </ul>
 
-
-    <show-example example="exampleGroupColumnDef"></show-example>
+    <?= example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2>Adding Values To Leaf Nodes</h2>
 
@@ -144,11 +143,10 @@ valueGetter: function (params){
         <li>Filtering is switched on so you can see how now you can filter the group column by athlete.</li>
     </ul>
 
-    <show-example example="exampleValueGettersSimple"></show-example>
-
+    <?= example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'vanilla', array("enterprise" => 1)) ?>
 
     <p>
-        Adding lead nodes data can also be achieved even if you provide your own group columns, this is illustrated
+        Adding leaf nodes data can also be achieved even if you provide your own group columns, this is illustrated
         in the following example. Note the following:
     </p>
 
@@ -168,7 +166,7 @@ valueGetter: function (params){
         grouping.</li>
     </ul>
 
-    <show-example example="exampleValueGetters"></show-example>
+    <?= example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2>Group Cell Rendering</h2>
 
@@ -228,8 +226,7 @@ columnDefs = [
         Year is grouped first and Country is grouped second.
     </p>
 
-    <show-example example="exampleRowGroupIndex"></show-example>
-
+    <?= example('Row Group Index', 'row-group-index', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="replacingChildren">Hide Open Parents</h2>
 
@@ -260,7 +257,7 @@ columnDefs = [
         are in it's place.
     </p>
 
-    <show-example example="exampleGroupingHideParentsAutoCol"></show-example>
+    <?= example('Hide Open Parents', 'hide-open-parents', 'vanilla', array("enterprise" => 1)) ?>
 
 
     <h2 id="fullWidthRows">Full Width Group Rows</h2>
