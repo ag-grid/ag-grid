@@ -294,7 +294,6 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        console.log('ag-Grid: not supported.');
         return false;
     }
 

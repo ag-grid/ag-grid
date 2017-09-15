@@ -144,10 +144,6 @@ export class PaginationProxy extends BeanStub implements IRowModel {
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        return this.isRowInPage(rowNode);
-    }
-
-    private isRowInPage(rowNode: RowNode): boolean {
         if (!this.rowModel.isRowPresent(rowNode)) {
             return false;
         }
