@@ -1,8 +1,10 @@
 <?php
 
-$pageTitle = "Squeezing the Browser - JavaScript Performance Hacks Inside ag-Grid";
-$pageDescription = "Explanation of the performance techniques used inside ag-Grid to make it render fast.";
-$pageKeyboards = "ag grid javascript datagrid performance";
+$pageTitle = "JavaScript Performance Hacks";
+$pageDescription = "Performance techniques explained used inside ag-Grid to make it render fast.";
+$pageKeyboards = "javascript performance";
+$socialUrl = "https://www.ag-grid.com/ag-grid-performance-hacks/";
+$socialImage = "https://www.ag-grid.com/ag-grid-performance-hacks/images/PerformanceHacks.png";
 
 include('../includes/mediaHeader.php');
 ?>
@@ -15,7 +17,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1>Squeezing the Browser - JavaScript Performance Hacks Inside ag-Grid</h1>
+        <h1>JavaScript Performance Hacks</h1>
     </div>
 </div>
 
