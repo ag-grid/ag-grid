@@ -37,7 +37,17 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
 
     private focusAfterAttached: boolean;
 
+    // as the user moves the mouse, the selectedValue changes
     private selectedValue: any;
+    // the original selection, as if the edit is not confirmed, getValue() will
+    // return back the selected value. 'not confirmed' can happen if the user
+    // opens the dropdown, hovers the mouse over a new value (selectedValue will
+    // change to the new value) but then click on another cell (which will stop
+    // the editing). in this instance, selectedValue will be a new value, however
+    // the editing was effectively cancelled.
+    private originalSelectedValue: any;
+
+    private selectionConfirmed = false;
 
     private cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
 
@@ -48,6 +58,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     public init(params: IRichCellEditorParams): void {
         this.params = params;
         this.selectedValue = params.value;
+        this.originalSelectedValue = params.value;
         this.cellRenderer = params.cellRenderer;
         this.focusAfterAttached = params.cellStartedEdit;
 
@@ -96,6 +107,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     }
 
     private onEnterKeyDown(): void {
+        this.selectionConfirmed = true;
         this.params.stopEditing();
     }
 
@@ -168,6 +180,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     }
 
     private onClick(): void {
+        this.selectionConfirmed = true;
         this.params.stopEditing();
     }
 
@@ -194,7 +207,11 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     }
 
     public getValue(): any {
-        return this.selectedValue;
+        if (this.selectionConfirmed) {
+            return this.selectedValue;
+        } else {
+            return this.originalSelectedValue;
+        }
     }
 
     public isPopup(): boolean {
