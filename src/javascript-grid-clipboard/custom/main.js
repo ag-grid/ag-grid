@@ -6,7 +6,7 @@ var columnDefs = [
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100, suppressPaste: true},
+    {headerName: "Silver", field: "silver", width: 100},
     {headerName: "Bronze", field: "bronze", width: 100},
     {headerName: "Total", field: "total", width: 100}
 ];
@@ -17,9 +17,20 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     enableRangeSelection: true,
-    rowSelection: 'multiple',
-    clipboardDeliminator: ','
+    sendToClipboard: function(params) {
+        console.log('send to clipboard called with data:');
+        console.log(params.data);
+    },
+    rowSelection: 'multiple'
 };
+
+function onBtCopyRows() {
+    gridOptions.api.copySelectedRowsToClipboard();
+}
+
+function onBtCopyRange() {
+    gridOptions.api.copySelectedRangeToClipboard();
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
@@ -29,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '../olympicWinners.json');
+    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
