@@ -268,7 +268,7 @@ this.params.context.componentParent</snippet>
     <p>
         The example below shows a rich configuration of ag-Grid.
     </p>
-    <?= example('ag-Grid in Angular', 'angular-rich-grid-example', 'angular', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
+    <?= example('ag-Grid in Angular', 'angular-rich-grid-example', 'angular', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
 
     <h2 id="ng2markup">Creating Grids with Markup</h2>
 

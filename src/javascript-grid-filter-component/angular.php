@@ -179,4 +179,4 @@ laterOnInYourApplicationSomewhere() {
     <p>
         Using Angular Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>
-    <?= example('Angular Filter Component', 'angular-filter', 'angular', array("exampleHeight" => 435, "showResult" => true)); ?>
+    <?= example('Angular Filter Component', 'angular-filter', 'angular', array("exampleHeight" => 445, "showResult" => true, "extras" => array("bootstrap"))); ?>

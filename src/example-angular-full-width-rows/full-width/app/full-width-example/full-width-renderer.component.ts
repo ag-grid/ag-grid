@@ -12,16 +12,17 @@ export class FullWidthComponent {
     public gridOptions: GridOptions;
 
     constructor() {
-        this.gridOptions = <GridOptions>{};
-        this.gridOptions.rowData = this.createRowData();
-        this.gridOptions.columnDefs = this.createColumnDefs();
-        this.gridOptions.isFullWidthCell = (rowNode: RowNode) => {
-            return (rowNode.id === "0") || (parseInt(rowNode.id) % 2 === 0);
+        this.gridOptions = <GridOptions>{
+            rowData: FullWidthComponent.createRowData(),
+            columnDefs: FullWidthComponent.createColumnDefs(),
+            isFullWidthCell: (rowNode: RowNode) => {
+                return (rowNode.id === "0") || (parseInt(rowNode.id) % 2 === 0);
+            },
+            fullWidthCellRendererFramework: NameAndAgeRendererComponent
         };
-        this.gridOptions.fullWidthCellRendererFramework = NameAndAgeRendererComponent;
     }
 
-    private createColumnDefs() {
+    private static createColumnDefs() {
         return [
             {
                 headerName: "Name",
@@ -31,12 +32,12 @@ export class FullWidthComponent {
             {
                 headerName: "Age",
                 field: "age",
-                width: 430
+                width: 432
             },
         ];
     }
 
-    private createRowData() {
+    private static createRowData() {
         return [
             {name: "Bob", age: 10},
             {name: "Harry", age: 3},

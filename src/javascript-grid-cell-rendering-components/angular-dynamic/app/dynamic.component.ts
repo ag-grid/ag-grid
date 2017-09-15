@@ -16,66 +16,78 @@ export class DynamicComponent {
 
     constructor() {
         this.gridOptions = <GridOptions>{
+            rowData: DynamicComponent.createRowData(),
+            columnDefs: DynamicComponent.createColumnDefs(),
             context: {
                 componentParent: this
             }
         };
-        this.gridOptions.rowData = this.createRowData();
-        this.gridOptions.columnDefs = this.createColumnDefs();
     }
 
+    // noinspection JSMethodCanBeStatic
     public methodFromParent(cell) {
         alert(`"Parent Component Method from ${cell}!`);
     }
 
-    private createColumnDefs() {
+    private static createColumnDefs() {
         return [
-            {headerName: "Row", field: "row", width: 130},
+            {
+                headerName: "Row",
+                field: "row",
+                width: 150
+            },
             {
                 headerName: "Square",
                 field: "value",
                 cellRendererFramework: SquareComponent,
                 editable: true,
                 colId: "square",
-                width: 130
+                width: 150
             },
             {
                 headerName: "Cube",
                 field: "value",
                 cellRendererFramework: CubeComponent,
                 colId: "cube",
-                width: 130
+                width: 150
             },
             {
                 headerName: "Row Params",
                 field: "row",
                 cellRendererFramework: ParamsComponent,
                 colId: "params",
-                width: 213
+                width: 150
             },
             {
                 headerName: "Currency (Pipe)",
                 field: "currency",
                 cellRendererFramework: CurrencyComponent,
-                colId: "params",
-                width: 130
+                colId: "currency",
+                width: 100
             },
             {
                 headerName: "Child/Parent",
                 field: "value",
                 cellRendererFramework: ChildMessageComponent,
                 colId: "params",
-                width: 150
+                width: 180
             }
         ];
     }
 
-    public refreshRowData() {
-        let rowData = this.createRowData();
-        this.gridOptions.api.setRowData(rowData);
+    public refreshEvenRowsCurrencyData() {
+        this.gridOptions.api.forEachNode(rowNode => {
+            if (rowNode.data.value % 2 === 0) {
+                rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)))
+            }
+        });
+
+        this.gridOptions.api.refreshCells({
+            columns: ['currency']
+        })
     }
 
-    private createRowData() {
+    private static createRowData() {
         let rowData: any[] = [];
 
         for (let i = 0; i < 15; i++) {
