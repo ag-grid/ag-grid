@@ -37,7 +37,7 @@ for (var i = 0; i<10; i++) {
 }
 
 function countryCellRenderer(params) {
-    var flag = '<img border="0" width="15" height="10" src="../images/flags/' + params.data.code + '.png">';
+    var flag = '<img border="0" width="15" height="10" src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/flags/' + params.data.code + '.png">';
     return '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>';
 }
 
@@ -59,7 +59,7 @@ FullWidthCellRenderer.prototype.getTemplate = function(params) {
     var template =
         '<div class="full-width-panel">' +
         '  <div class="full-width-flag">' +
-        '    <img border="0" src="../images/largeFlags/' + data.code + '.png">'+
+        '    <img border="0" src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/largeFlags/' + data.code + '.png">'+
         '  </div>' +
         '  <div class="full-width-summary">' +
         '    <span class="full-width-title">'+data.name+'</span><br/>' +
