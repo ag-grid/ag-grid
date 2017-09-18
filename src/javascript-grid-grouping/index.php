@@ -605,18 +605,18 @@ coldefs:[
 
     <p>The following example shows how to appoint individual columns to show individual groups</p>
 
-    <show-example example="exampleGroupingManyGroupColumns"></show-example>
+    <?= example('Custom Grouping Many Group Columns', 'custom-grouping-many-group-columns', 'vanilla', array("enterprise" => 1)) ?>
 
     <p>The following example shows how to display all the groups in a single column</p>
 
-    <show-example example="exampleGroupingOneGroupColumns"></show-example>
+    <?= example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'vanilla', array("enterprise" => 1)) ?>
 
     <p>
         The last example of explicitly setting groups shows an alternative for Hide Open Parents.
         The example below demonstrates hiding open parents using explicit group columns.
     </p>
 
-    <show-example example="exampleGroupingHideParents"></show-example>
+    <?= example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'vanilla', array("enterprise" => 1)) ?>
 
     <note>Remember these examples are achieving the same that you can achieve with
         the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases

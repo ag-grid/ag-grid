@@ -10,8 +10,8 @@ export default class FullWidthComponentExample extends Component {
         this.state = {
             gridOptions: {},
 
-            rowData: this.createRowData(),
-            columnDefs: this.createColumnDefs()
+            rowData: FullWidthComponentExample.createRowData(),
+            columnDefs: FullWidthComponentExample.createColumnDefs()
         };
 
         this.onGridReady = this.onGridReady.bind(this);
@@ -28,7 +28,7 @@ export default class FullWidthComponentExample extends Component {
         return (rowNode.id === "0") || (parseInt(rowNode.id) % 2 === 0);
     }
 
-    createColumnDefs() {
+    static createColumnDefs() {
         return [
             {
                 headerName: "Name",
@@ -43,7 +43,7 @@ export default class FullWidthComponentExample extends Component {
         ];
     }
 
-    createRowData() {
+    static createRowData() {
         return [
             {name: "Bob", age: 10},
             {name: "Harry", age: 3},
@@ -68,7 +68,7 @@ export default class FullWidthComponentExample extends Component {
 
     render() {
         return (
-            <div style={{height: 500, width: 900}}
+            <div style={{height: 490, width: 900}}
                  className="ag-fresh">
                 <AgGridReact
                     // properties

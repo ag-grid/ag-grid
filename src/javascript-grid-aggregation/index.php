@@ -108,7 +108,7 @@ colDef = {
     </ul>
     </p>
 
-    <show-example example="exampleAggregation"></show-example>
+    <?= example('Built-In Functions', 'built-in-functions', 'vanilla', array("enterprise" => 1)) ?>
 
     <h3 id="custom-aggregation-functions">Example 2 - Custom Aggregation Functions</h3>
 
@@ -196,7 +196,7 @@ colDef = {
         or make sure that <i>aggFunc</i> is not used in any column until it is configured into the grid.
     </p>
 
-    <show-example example="exampleAggFunc"></show-example>
+    <?= example('Custom Aggregation Functions', 'custom-agg-functions', 'vanilla', array("enterprise" => 1)) ?>
 
     <h3>Aggregation API</h3>
 
@@ -259,14 +259,13 @@ colDef = {
         sum and another by multiplying the result by Math.PI.
     </p>
 
-    <show-example example="exampleGroupRowAggNodes"></show-example>
-
+    <?= example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'vanilla', array("enterprise" => 1)) ?>
 
     <h3>Recomputing Aggregates</h3>
 
     <p>
-        If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates.
-        This is through throw the api method <i>recomputeAggregates</i>. For example, if you allow editing,
+        If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates through the
+        api method <i>recomputeAggregates</i>. For example, if you allow editing,
         and want the aggregates to update as new values are edited, then create code like the following:
 
         <snippet>

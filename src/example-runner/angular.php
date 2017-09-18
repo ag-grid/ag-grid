@@ -11,7 +11,7 @@ $example = getExampleInfo('angular');
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <?php if (isset($_GET['bootstrap'])) { ?>
-    <!-- font awesome -->
+    <!-- bootstrap -->
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 <?php } ?>
 

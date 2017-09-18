@@ -20,7 +20,7 @@ export default class ClickableRenderer extends Component {
 
     render() {
           return (
-            <button style={{height: 21}} onClick={this.clicked} >Click Me</button>
+            <button style={{lineHeight: 0.5, width: "98%"}} onClick={this.clicked} className="btn btn-info">Click Me</button>
         );
     }
 }

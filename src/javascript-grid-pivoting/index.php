@@ -33,8 +33,6 @@ include '../documentation-main/documentation_header.php';
         If pivot mode is off, then adding or removing pivot columns will have no effect.
     </p>
 
-
-
     <h2>Specifying Pivot Columns</h2>
 
     <p>
@@ -49,9 +47,6 @@ gridOptions.columnDefs = [
     </p>
 
 
-
-
-
     <h2>Example - Simple Pivot</h2>
 
     <p>
@@ -64,7 +59,7 @@ gridOptions.columnDefs = [
         pivot or value associated with them.
     </p>
 
-<?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2>Pivot Mode vs Pivot Active</h2>
 
@@ -277,7 +272,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         is what will be exported.
     </p>
 
-    <show-example example="examplePivotApi"></show-example>
+    <?= example('Pivot API', 'api', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="orderingPivotColumns">Ordering Pivot Columns</h2>
 
@@ -313,7 +308,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         as the field attribute is needed by the grid to pull out the value.
     </p>
 
-    <show-example example="examplePivotAdvancedColumns"></show-example>
+    <?= example('Secondary Columns', 'secondary-columns', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="hideOpenParents">Hide Open Parents</h2>
 
@@ -329,7 +324,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         </ul>
     </p>
 
-    <show-example example="examplePivotHideOpenParents"></show-example>
+    <?= example('Hide Open Parents', 'hide-open-parents', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="change-detection">Change Detection and Pivot</h2>
 

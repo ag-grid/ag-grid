@@ -17,19 +17,20 @@ export default class HeaderGroupComponent extends React.Component {
     }
 
     render() {
-        let arrowClassName = "customExpandButton " + (this.state.expanded ?  " expanded": " collapsed");
+        let arrowClassName = "customExpandButton " + (this.state.expanded ? " expanded" : " collapsed");
 
         return <div>
             <div className="customHeaderLabel"> {this.props.displayName}</div>
-            <div onClick={this.expandOrCollapse.bind(this)} className={arrowClassName}><i className="fa fa-arrow-right" /></div>
+            <div onClick={this.expandOrCollapse.bind(this)} className={arrowClassName}><i
+                className="fa fa-arrow-right"/></div>
         </div>
     }
 
-    expandOrCollapse (){
+    expandOrCollapse() {
         this.props.setExpanded(!this.state.expanded);
     };
 
-    onExpandChanged (){
+    onExpandChanged() {
         this.setState({
             expanded: this.props.columnGroup.getOriginalColumnGroup().isExpanded()
         })

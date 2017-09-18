@@ -6,7 +6,7 @@ import React from 'react';
 export default class ProficiencyCellRenderer extends React.Component {
 
     render() {
-        var backgroundColor;
+        let backgroundColor;
         if (this.props.value < 20) {
             backgroundColor = 'red';
         } else if (this.props.value < 60) {
@@ -16,7 +16,7 @@ export default class ProficiencyCellRenderer extends React.Component {
         }
 
         return (
-            <div className="div-percent-bar" style={{ width: this.props.value + '%', backgroundColor: backgroundColor }}>
+            <div className="div-percent-bar" style={{width: this.props.value + '%', backgroundColor: backgroundColor}}>
                 <div className="div-percent-value">{this.props.value}%</div>
             </div>
         );

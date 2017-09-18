@@ -13,6 +13,13 @@ include '../documentation-main/documentation_header.php';
     <p>A simple Grid using Angular Components as Cell Renderers, with Child Components, Two-Way Binding and
         Parent to Child Components Events.</p>
 
+    <p>This example demonstrates Dynamic Angular Components with ag-Grid, Parent/Child Communication (cell component to parent grid component), as well as
+        dynamic data updates of the <code>Currency</code> column.</p>
+    <p><span class="bold-roboto">Square, Cube, Row Params, Currency and Child/Parent</span>: Angular Components within the Grid</p>
+    <p><span class="bold-roboto">Currency (Pipe)</span>: An Angular Component utilising the Currency Pipe, dynamically updated with the button above.</p>
+    <p><span class="bold-roboto">Child/Parent</span>: Demonstrates the Child Cell Component communicating with the Parent Grid Component.</p>
+    <p><span class="bold-roboto">Refresh Even Row Currency Data</span>: Dynamically Updates Event Rows Currency Value. Only the Currency column will be re-rendered.</p>
+
     <?= example('Simple Dynamic Component', 'dynamic-component', 'angular', array("exampleHeight" => 480, "showResult" => true, "extras" => array("bootstrap"))); ?>
 
     <h2 id="rich-dynamic">Richer Dynamic Components</h2>

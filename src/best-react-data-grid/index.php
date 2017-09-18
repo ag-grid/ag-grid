@@ -16,31 +16,6 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('ag-Grid in React', 'rich', 'react', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 
-<!--
-    <div style="text-align: right;">
-        <div style="border: 1px solid #eee; display: inline-block;">
-            <span style="font-size: 20px; padding: 10px;">Next:</span>
-            <a href="../react-getting-started/" class="framework-select-item-parent">
-                <div class="framework-select-item-small">
-                    <img src="../images/react_large.png" width="20" alt="Getting Started" title="Getting Started"/>
-                    Getting Started
-                </div>
-            </a>
-            <a href="../react-more-details/" class="framework-select-item-parent">
-                <div class="framework-select-item-small">
-                    <img src="../images/react_large.png" width="20" alt="More Details" title="More Details"/>
-                    More Details
-                </div>
-            </a>
-            <a href="../example-react/" class="framework-select-item-parent">
-                <div class="framework-select-item-small">
-                    <img src="../images/react_large.png" width="20" alt="React Examples" title="React Examples"/>
-                    React Examples
-                </div>
-            </a>
-        </div>
-    </div>
--->
     <div class="list-group" style="margin-top: 20px;">
         <a href="../react-getting-started/" class="list-group-item">
             <div class="float-parent">
