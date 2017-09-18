@@ -57,6 +57,8 @@ include '../documentation-main/documentation_header.php';
         <li><i>api.paginationGoToPage(4)</i> is called to go to page 4 (0 based, so he 5th page)</li>
         <li>A dropdown to change the page size dynamically is available. This makes a call to
             <i>paginationSetPageSize(newPageSize)</i></li>
+        <li>The numbers in the pagination panel are formatted differently using the grid callback
+            <code>paginationNumberFormatter</code> and putting the numbers into square brackets i.e. [x].</li>
     </ul>
 
     <?= example('Custom Paging', 'custom-paging', 'vanilla', array("enterprise" => 1)) ?>
@@ -78,16 +80,20 @@ include '../documentation-main/documentation_header.php';
     <?= example('Custom Controls', 'custom-controls', 'vanilla', array("enterprise" => 1)) ?>
 
     <h1 id="properties">Pagination Properties</h1>
-    <?php include 'paginationProperties.php' ?>
+    <?php include_once 'paginationProperties.php' ?>
     <?php printPropertiesTable($paginationProperties) ?>
-
 
     <p>The following methods compose the pagination API are all available from <i>gridOptions.api</i></p>
 
     <h1 id="properties">Pagination API</h1>
 
-    <?php include 'paginationProperties.php' ?>
+    <?php include_once 'paginationProperties.php' ?>
     <?php printPropertiesTable($paginationApi) ?>
+
+    <h1 id="properties">Pagination Callbacks</h1>
+
+    <?php include_once 'paginationProperties.php' ?>
+    <?php printPropertiesTable($paginationCallbacks) ?>
 
     <br>
     <h1 id="events">Pagination Events</h1>

@@ -54,6 +54,9 @@ var gridOptions = {
     pagination: true,
     paginationPageSize:10,
     autoGroupColumnDef: groupColumn,
+    paginationNumberFormatter: function(params) {
+        return '[' + params.value.toLocaleString() + ']';
+    },
     defaultColDef:{
         editable: true,
         enableRowGroup:true,
