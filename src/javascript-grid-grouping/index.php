@@ -531,7 +531,7 @@ cellRendererParams: {
         only the filter is reapplied, the grouping is not reapplied.
     </note>
 
-    <show-example example="exampleRemoveSingleChildren"></show-example>
+    <?= example('Removing Single Children', 'remove-single-children', 'vanilla', array("enterprise" => 1)) ?>
 
     <note>
         It is not possible to mix <i>groupRemoveSingleChildren</i> and <i>groupHideOpenParents</i>.
@@ -547,7 +547,7 @@ cellRendererParams: {
         Sorting, for example, will sort by group.
     </p>
 
-    <show-example example="exampleSuppressGroupRow"></show-example>
+    <?= example('Suppress Group Row', 'suppress-group-row', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="showRowGroup">Creating Your Own Group Display Columns</h2>
 
