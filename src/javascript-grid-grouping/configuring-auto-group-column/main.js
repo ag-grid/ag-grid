@@ -24,7 +24,7 @@ var gridOptions = {
             checkbox:true
         },
         comparator : function (valueA, valueB) {
-            if (valueA === null || valueB === null) return valueA - valueB;
+            if (valueA == null || valueB == null) return valueA - valueB;
             if (!valueA.substring || !valueB.substring) return valueA - valueB;
             if (valueA.length < 1 || valueB.length < 1) return valueA - valueB;
             return strcmp(valueA.substring(1, valueA.length), valueB.substring(1, valueB.length));
