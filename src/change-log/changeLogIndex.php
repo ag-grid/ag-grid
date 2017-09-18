@@ -33,6 +33,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-563: When sorting by count in pivot mode it does Alphabetical sort not numerical</li>
         <li>AG-793: Group expand / contract was not working with double click, now it opens and closes quickly</li>
         <li>AG-649: Configuring checkbox icons was not getting applied when icons set at the column def level (ie colDef.checkboxSelection=true and colDef.icons = {customIcons})</li>
+        <li>AG-622: Copy Paste with Master Detail Grid was not working</li>
     </ul>
 
     <h2>Version 13.1.x</h2>
