@@ -233,6 +233,7 @@ export interface GridOptions {
      ****************************************************************/
 
     // callbacks
+    paginationNumberFormatter?: (params: PaginationNumberFormatterParams)=>string;
     postProcessPopup?:(params: PostProcessPopupParams)=>void;
     frameworkComponents?:{[p:string]:{new(): any}}
     components?:{[p:string]:AgGridRegisteredComponentInput<IComponent<any, IAfterGuiAttachedParams>>}
@@ -430,4 +431,8 @@ export interface PostProcessPopupParams {
     eventSource?: HTMLElement;
     // if the popup is as a result of a click or touch, this is the event - eg user showing context menu
     mouseEvent?: MouseEvent|Touch;
+}
+
+export interface PaginationNumberFormatterParams {
+    value: number;
 }

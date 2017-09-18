@@ -5,7 +5,7 @@ import {
     GetRowNodeIdFunc,
     GridOptions,
     NavigateToNextCellParams,
-    NodeChildDetails, PostProcessPopupParams,
+    NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams,
     ProcessRowParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
@@ -213,6 +213,7 @@ export class GridOptionsWrapper {
     public getRowClassFunc() { return this.gridOptions.getRowClass; }
     public getPostProcessPopupFunc(): (params: PostProcessPopupParams)=>void { return this.gridOptions.postProcessPopup; }
     public getDoesDataFlowerFunc(): (data: any)=>boolean { return this.gridOptions.doesDataFlower; }
+    public getPaginationNumberFormatterFunc(): (params: PaginationNumberFormatterParams)=>string { return this.gridOptions.paginationNumberFormatter; }
 
     public getIsFullWidthCellFunc(): (rowNode: RowNode)=> boolean { return this.gridOptions.isFullWidthCell; }
     public getFullWidthCellRendererParams() { return this.gridOptions.fullWidthCellRendererParams; }

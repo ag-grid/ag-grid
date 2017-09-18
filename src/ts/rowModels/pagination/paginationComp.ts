@@ -55,7 +55,16 @@ export class PaginationComp extends Component {
 
     private setCurrentPageLabel(): void {
         let currentPage = this.paginationProxy.getCurrentPage();
-        this.lbCurrent.innerHTML = _.formatNumberCommas(currentPage + 1);
+        this.lbCurrent.innerHTML = this.formatNumber(currentPage + 1);
+    }
+
+    private formatNumber(value: number): string {
+        var userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
+        if (userFunc) {
+            return userFunc({value: value});
+        } else {
+            return _.formatNumberCommas(value);
+        }
     }
 
     private getTemplate(): string {
@@ -138,8 +147,8 @@ export class PaginationComp extends Component {
                 endRow = rowCount;
             }
         }
-        this.lbFirstRowOnPage.innerHTML = _.formatNumberCommas(startRow);
-        this.lbLastRowOnPage.innerHTML = _.formatNumberCommas(endRow);
+        this.lbFirstRowOnPage.innerHTML = this.formatNumber(startRow);
+        this.lbLastRowOnPage.innerHTML = this.formatNumber(endRow);
     }
 
     private isZeroPagesToDisplay() {
@@ -155,8 +164,8 @@ export class PaginationComp extends Component {
             this.paginationProxy.getTotalRowCount() : null;
 
         if (lastPageFound) {
-            this.lbTotal.innerHTML = _.formatNumberCommas(totalPages);
-            this.lbRecordCount.innerHTML = _.formatNumberCommas(rowCount);
+            this.lbTotal.innerHTML = this.formatNumber(totalPages);
+            this.lbRecordCount.innerHTML = this.formatNumber(rowCount);
         } else {
             let moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
             this.lbTotal.innerHTML = moreText;
