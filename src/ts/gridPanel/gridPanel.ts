@@ -766,6 +766,12 @@ export class GridPanel extends BeanStub {
                     return;
                 }
 
+                // for copy / paste, we don't want to execute when the event
+                // was from a child grid (happens in master detail)
+                if (!this.mouseEventService.isEventFromThisGrid(event)) {
+                    return;
+                }
+
                 if (event.ctrlKey || event.metaKey) {
                     switch (event.which) {
                         case Constants.KEY_A: return this.onCtrlAndA(event);
