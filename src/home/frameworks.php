@@ -3,7 +3,7 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12" style="text-align: center; padding-bottom: 20px;">
-                <h4>'AG' Stands For AGnostic - Supporting All Major JavaScript Frameworks</h4>
+                <h4>Supporting All Major JavaScript Frameworks</h4>
             </div>
         </div>
         <div class="row HomeSection-framworkContainer">
