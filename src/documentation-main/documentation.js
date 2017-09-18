@@ -319,7 +319,10 @@
     }
 
     // close framework dropdown when clicking outside
-    document.body.addEventListener('click', hideFrameworkSelectionOnBodyClick, true);
+    if(document.body) {
+        document.body.addEventListener('click', hideFrameworkSelectionOnBodyClick, true);
+    }
+
     function hideFrameworkSelectionOnBodyClick() {
         var eFrameworkBox = document.querySelector('.frameworkBox');
         var ePopupButton = document.querySelector('.frameworkDropdownButton');

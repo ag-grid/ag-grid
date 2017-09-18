@@ -4,7 +4,7 @@ function createImageSpan(imageMultiplier, image) {
     var resultElement = document.createElement("span");
     for (var i = 0; i < imageMultiplier; i++) {
         var imageElement = document.createElement("img");
-        imageElement.src = "/images/" + image;
+        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/" + image;
         resultElement.appendChild(imageElement);
     }
     return resultElement;
@@ -40,9 +40,9 @@ function deltaIndicator(params, field) {
 
     // visually indicate if this months value is higher or lower than last months value
     if (params.value > rowsToDisplay[index].data[field]) {
-        imageElement.src = "/images/fire-plus.png"
+        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/fire-plus.png"
     } else {
-        imageElement.src = "/images/fire-minus.png"
+        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/fire-minus.png"
     }
     element.appendChild(imageElement);
     element.appendChild(document.createTextNode(params.value));
@@ -59,7 +59,7 @@ DaysFrostRenderer.prototype.init = function (params) {
     var daysFrost = params.value;
     for (var i = 0; i < daysFrost; i++) {
         var starImageElement = document.createElement("img");
-        starImageElement.src = "/images/" + params.rendererImage;
+        starImageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/" + params.rendererImage;
         this.eGui.appendChild(starImageElement);
     }
 };
@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/weather_se_england.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
         }
