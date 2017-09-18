@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
     data that when clicked on provides a simple time-series chart of the corresponding data. Multiple rows (or stocks) can be
     selected to provide a comparison between stocks.</p>
 
-    <?= example('Auto Height', 'stocks-master-detail') ?>
+    <?= example('Auto Height', 'stocks-master-detail', 'vanilla', array("enterprise" => 1, "exampleHeight" => 820)) ?>
 
     <h3>Inline Graphs using jQuery Sparklines</h3>
 
@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
         <li>Expenditure: Expenditure shown in a Pie Chart.</li>
     </ul>
 
-    <?= example('Auto Height', 'inline-graphs') ?>
+    <?= example('Auto Height', 'inline-graphs', 'vanilla', array("enterprise" => 1, "exampleHeight" => 850)) ?>
 
 </div>
 <?php include '../documentation-main/documentation_footer.php'; ?>
