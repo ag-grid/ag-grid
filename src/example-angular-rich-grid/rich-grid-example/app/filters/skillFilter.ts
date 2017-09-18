@@ -7,7 +7,7 @@ const SKILL_TEMPLATE =
     '    <div style="text-align: center;">SKILL_NAME</div>' +
     '    <div>' +
     '      <input type="checkbox"/>' +
-    '      <img src="/images/skills/SKILL.png" width="30px"/>' +
+    '      <img src="https://www.ag-grid.com/images/skills/SKILL.png" width="30px"/>' +
     '    </div>' +
     '  </span>' +
     '</label>';
@@ -84,6 +84,10 @@ export default class SkillFilter implements IFilter {
 
     public getModel(): any {
         return undefined;
+    }
+
+    public getModelAsString() : string {
+        return '';
     }
 
     public setModel(model: any): void {

@@ -9,7 +9,7 @@ export default class DetailPanelComponent extends Component {
         this.state = {
             columnDefs: this.createColumnDefs(),
             parentRecord: this.props.node.parent.data,
-            img: `/images/${this.props.node.parent.data.image}.png`
+            img: `https://www.ag-grid.com/images/${this.props.node.parent.data.image}.png`
         };
 
         this.onGridReady = this.onGridReady.bind(this);
