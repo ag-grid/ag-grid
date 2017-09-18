@@ -85,7 +85,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 @mixin icon-background($icon) {
     width: $ag-mat-icon-size;
     height: $ag-mat-icon-size;
-    background: transparent url('#{$ag-mat-icons-path}#{$icon}.svg') center no-repeat;
+    background-color: transparent;
+    background-image: url('#{$ag-mat-icons-path}#{$icon}.svg');
+    background-position: center no-repeat;
     background-size: $ag-mat-icon-size $ag-mat-icon-size;
     opacity: $ag-mat-foreground-opacity;
 }
@@ -100,7 +102,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 }
 
 @mixin colorful-icon($color, $icon) {
-    background: transparent url('#{$ag-mat-icons-path}#{$icon}.svg?color=#{encodecolor($color)}') center no-repeat;
+    background-image: url('#{$ag-mat-icons-path}#{$icon}.svg?color=#{encodecolor($color)}');
 }
 
 @mixin primary-icon($icon) {
