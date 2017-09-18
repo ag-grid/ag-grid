@@ -152,7 +152,7 @@ export class RichGridComponent {
 }
 
 function countryCellRenderer(params) {
-    const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='/images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
+    const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://www.ag-grid.com/images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
     return flag + " " + params.value;
 }
 

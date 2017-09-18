@@ -6,8 +6,8 @@ import {ICellEditorAngularComp} from "ag-grid-angular";
     selector: 'editor-cell',
     template: `
         <div #container class="mood" tabindex="0" (keydown)="onKeyDown($event)">
-            <img src="/images/smiley.png" (click)="onClick(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
-            <img src="/images/smiley-sad.png" (click)="onClick(false)"
+            <img src="https://www.ag-grid.com/images/smiley.png" (click)="onClick(true)" [ngClass]="{'selected' : happy, 'default' : !happy}">
+            <img src="https://www.ag-grid.com/images/smiley-sad.png" (click)="onClick(false)"
                  [ngClass]="{'selected' : !happy, 'default' : happy}">
         </div>
     `,
