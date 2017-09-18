@@ -230,7 +230,11 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 
     .ag-cell {
         @include grid-cell($ag-mat-row-height - 2);
+
+        /* adjust for transparent border */
         border: 1px solid transparent;
+        padding-left: $cell-horizontal-padding - 1px;
+        padding-right: $cell-horizontal-padding - 1px;
     }
 
 ////////////////////////////////////////
