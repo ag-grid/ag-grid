@@ -87,7 +87,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     height: $ag-mat-icon-size;
     background-color: transparent;
     background-image: url('#{$ag-mat-icons-path}#{$icon}.svg');
-    background-position: center no-repeat;
+    background-position: center;
+    background-repeat: no-repeat;
     background-size: $ag-mat-icon-size $ag-mat-icon-size;
     opacity: $ag-mat-foreground-opacity;
 }
@@ -100,6 +101,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     $string: '%23' + $string;
 	@return $string;
 }
+
 
 @mixin colorful-icon($color, $icon) {
     background-image: url('#{$ag-mat-icons-path}#{$icon}.svg?color=#{encodecolor($color)}');
@@ -921,13 +923,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         float: left;
     }
 
-
-    @for $level from 1 through 20 {
-        .ag-row-level-#{$level} > .ag-cell:first-child > span:first-child {
-            padding-left: $level * ($ag-mat-icon-size + $ag-mat-grid-size * 6) !important;
-        }
-    }
-
     // cell data changed
     .ag-cell-data-changed {
         background-color: $ag-mat-cell-data-changed;
@@ -1102,3 +1097,4 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 }
+

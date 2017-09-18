@@ -129,14 +129,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (rowNode.uiLevel<=0) {
             paddingPx = 0;
         } else {
-            let paddingFactor: number = (params.padding >= 0) ? params.padding : 10;
+            let paddingFactor: number = (params.padding >= 0) ? params.padding : this.gridOptionsWrapper.getGroupPaddingSize();
             paddingPx = rowNode.uiLevel * paddingFactor;
 
             let reducedLeafNode = this.columnController.isPivotMode() && params.node.leafGroup;
             if (rowNode.footer) {
-                paddingPx += 15;
+                paddingPx += this.gridOptionsWrapper.getFooterPaddingAddition();
             } else if (!rowNode.isExpandable() || reducedLeafNode) {
-                paddingPx += 10;
+                paddingPx += this.gridOptionsWrapper.getLeafNodePaddingAddition();
             }
         }
 

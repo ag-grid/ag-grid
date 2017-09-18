@@ -380,6 +380,18 @@ export class GridOptionsWrapper {
         }
     }
 
+    public getGroupPaddingSize(): number {
+       return this.specialForNewMaterial(10, 18 + 8 * 3);
+    }
+
+    public getFooterPaddingAddition(): number {
+       return this.specialForNewMaterial(15, 32);
+    }
+
+    public getLeafNodePaddingAddition(): number {
+       return this.specialForNewMaterial(10, 24);
+    }
+
     public getGroupHeaderHeight(): number {
         if (typeof this.gridOptions.groupHeaderHeight === 'number') {
             return this.gridOptions.groupHeaderHeight;
