@@ -103,7 +103,7 @@ DetailPanelCellRenderer.prototype.init = function(params) {
 
     this.setupDetailGrid(params.data);
     this.consumeMouseWheelOnDetailGrid();
-    this.addSeachFeature();
+    this.addSearchFeature();
     this.addButtonListeners();
 };
 
@@ -117,7 +117,11 @@ DetailPanelCellRenderer.prototype.setupDetailGrid = function(callRecords) {
         columnDefs: detailColumnDefs,
         onGridReady: function(params) {
             setTimeout( function() { params.api.sizeColumnsToFit(); }, 0);
-        }
+        },
+        defaultColDef: {
+            editable: true
+        },
+        enableRangeSelection: true
     };
 
     var eDetailGrid = this.eGui.querySelector('.full-width-grid');
@@ -156,7 +160,7 @@ DetailPanelCellRenderer.prototype.destroy = function() {
     this.detailGridOptions.api.destroy();
 };
 
-DetailPanelCellRenderer.prototype.addSeachFeature = function() {
+DetailPanelCellRenderer.prototype.addSearchFeature = function() {
     var tfSearch = this.eGui.querySelector('.full-width-search');
     var gridApi = this.detailGridOptions.api;
 

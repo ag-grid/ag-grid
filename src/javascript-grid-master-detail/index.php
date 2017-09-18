@@ -51,7 +51,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <?= example('Master Detail', 'master-detail') ?>
+    <?= example('Master Detail', 'master-detail', 'vanilla', array("enterprise" => 1)) ?>
 
     <note>
         The example is using parent / child relationships and has exactly one child to each parent.
