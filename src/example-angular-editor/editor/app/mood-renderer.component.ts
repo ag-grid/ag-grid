@@ -24,7 +24,7 @@ export class MoodRendererComponent implements ICellRendererAngularComp {
 
     private setMood(params) {
         this.mood = params.value;
-        this.imgForMood = this.mood === 'Happy' ? '/images/smiley.png' : '/images/smiley-sad.png';
+        this.imgForMood = this.mood === 'Happy' ? 'https://www.ag-grid.com/images/smiley.png' : 'https://www.ag-grid.com/images/smiley-sad.png';
     };
 }
 

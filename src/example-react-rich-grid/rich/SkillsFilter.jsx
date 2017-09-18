@@ -92,7 +92,7 @@ export default class SkillsFilter extends React.Component {
                         <div style={{textAlign: 'center'}}>{skillName}</div>
                         <div>
                             <input type="checkbox" onClick={this.onSkillChanged.bind(this, skill)}/>
-                            <img src={'/images/skills/' + skill + '.png'} width={30}/>
+                            <img src={'https://www.ag-grid.com/images/skills/' + skill + '.png'} width={30}/>
                         </div>
                     </span>
                 </label>

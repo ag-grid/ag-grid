@@ -84,6 +84,10 @@ export default class ProficiencyFilter implements IFilter {
         return undefined;
     }
 
+    public getModelAsString() : string {
+        return '';
+    }
+
     public setModel(model: any): void {
     }
 }

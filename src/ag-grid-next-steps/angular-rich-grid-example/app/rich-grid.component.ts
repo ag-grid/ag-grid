@@ -248,14 +248,14 @@ function skillsCellRenderer(params) {
     const skills = [];
     RefData.IT_SKILLS.forEach(function (skill) {
         if (data && data.skills && data.skills[skill]) {
-            skills.push('<img src="/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
+            skills.push('<img src="https://www.ag-grid.com/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
         }
     });
     return skills.join(' ');
 }
 
 function countryCellRenderer(params) {
-    const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='/images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
+    const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://www.ag-grid.com/images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
     return flag + " " + params.value;
 }
 

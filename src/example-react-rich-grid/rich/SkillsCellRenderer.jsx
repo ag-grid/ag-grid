@@ -9,7 +9,7 @@ export default class SkillsCellRenderer extends React.Component {
         const rowData = this.props.data;
         RefData.IT_SKILLS.forEach((skill) => {
             if (rowData && rowData.skills && rowData.skills[skill]) {
-                skills.push(<img key={skill} src={'/images/skills/' + skill + '.png'} width={16} title={skill}/>);
+                skills.push(<img key={skill} src={'https://www.ag-grid.com/images/skills/' + skill + '.png'} width={16} title={skill}/>);
             }
         });
 
