@@ -29,6 +29,7 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">20th September 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
         <a href="../ag-grid-performance-hacks/">
             <img src="../ag-grid-performance-hacks/images/PerformanceHacks.png" style="width: 100%;"/>
