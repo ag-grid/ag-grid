@@ -6,6 +6,7 @@ $pageKeyboards = "ag-Grid JavaScript Grid Documentation";
 include 'documentation_header.php';
 ?>
 
+
 <div class="row">
 
     <div class="col-md-9">
@@ -148,7 +149,7 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/row_models.svg" width="50" />
                     </div>
-                    <h4>Row Models</h4>
+                    <h4 class="list-group-item-heading">Row Models</h4>
                     <p class="list-group-item-text">
                         The grid supports many ways to load the data eg <i>pagination</i> and <i>virtual
                             scrolling</i>. Learn how to apply these techniques to manage large amounts of
@@ -176,7 +177,7 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/components.svg" width="50" />
                     </div>
-                    <h4>Components</h4>
+                    <h4 class="list-group-item-heading">Components</h4>
                     <p class="list-group-item-text">
                         Introduce your own behaviours into the grid by providing custom
                         components such as Cell Renderers, Cell Editors, Filters and
@@ -191,7 +192,7 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/examples.svg" width="50" />
                     </div>
-                    <h4>Examples</h4>
+                    <h4 class="list-group-item-heading">Examples</h4>
                     <p class="list-group-item-text">
                         End to end examples demonstrating many of the features of ag-Grid.
                     </p>
@@ -203,7 +204,7 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/abc.svg" width="50" />
                     </div>
-                    <h4>Third Party</h4>
+                    <h4 class="list-group-item-heading">Third Party</h4>
                     <p class="list-group-item-text">
                         End to end examples demonstrating integration of ag-Grid with Third Party products.
                     </p>
