@@ -90,13 +90,17 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     opacity: $ag-mat-foreground-opacity;
 }
 
-@mixin colorful-icon($color, $icon) {
-    background: $color none;
-    mask: url("#{$ag-mat-icons-path}#{$icon}.svg") no-repeat 50% 50%;
-
-    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-        background: transparent url("#{$ag-mat-icons-path}#{$icon}.svg");
+@function encodecolor($string) {
+	@if type-of($string) == 'color' {
+        $hex: str-slice(ie-hex-str($string), 4);
+        $string:unquote("#{$hex}");
     }
+    $string: '%23' + $string;
+	@return $string;
+}
+
+@mixin colorful-icon($color, $icon) {
+    background: transparent url('#{$ag-mat-icons-path}#{$icon}.svg?color=#{encodecolor($color)}') center no-repeat;
 }
 
 @mixin primary-icon($icon) {

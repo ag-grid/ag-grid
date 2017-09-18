@@ -211,6 +211,9 @@ function scssTask() {
                                 options: {
                                     svgo: svgMinOptions
                                 } 
+                            },
+                            { 
+                                loader: require.resolve('./src/styles/svg-loader.js') 
                             }
                         ]
                     }
