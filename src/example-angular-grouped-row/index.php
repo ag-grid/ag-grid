@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Group Row Inner Renderer</h2>
     <p>A Group Row Inner Renderer Example</p>
 
-    <?= example('Group Row Inner Renderer', 'grouped-row', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>
+    <?= example('Grouped Row Inner Renderer', 'grouped-row', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -12,8 +12,8 @@ include '../documentation-main/documentation_header.php';
     <h2>Filter Component</h2>
     <p>A Filter Example, with the Filter written as a React Component.</p>
 
-    <?= example('Filter Component', 'filter', 'react', array( "exampleHeight" => 440, "showResult" => true )); ?>
+    <?= example('Filter Component', 'filter', 'react', array("exampleHeight" => 440, "showResult" => true, "extras" => array("bootstrap"))); ?>
 
 </div>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

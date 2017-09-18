@@ -8,8 +8,14 @@ export default class NameAndAgeRenderer extends Component {
     }
 
     render() {
+        let style = {
+            border: "2px solid #22ff22",
+            borderRadius: "5px",
+            backgroundColor: "#bbffbb"
+        };
+
         return (
-            <span>Full Width Column! { this.values }</span>
+            <div style={style}>Full Width Column! { this.values }</div>
         );
     }
 };

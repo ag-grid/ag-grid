@@ -16,12 +16,8 @@ export default class ColDefFactory {
                 checkboxSelection: true,
                 suppressSorting: true,
                 suppressMenu: true,
-                pinned: true,
-                icons: {
-                    checkboxChecked: '<i class="fa fa-arrow-left"/>',
-                    checkboxUnchecked: '<i class="fa fa-arrow-right"/>',
-                    checkboxIndeterminate: '<i class="fa fa-arrow-up"/>'
-                }
+                suppressFilter: true,
+                pinned: true
             },
             {
                 headerName: 'Employee',
@@ -37,7 +33,8 @@ export default class ColDefFactory {
                         editable: true,
                         // use a React cellEditor
                         cellEditorFramework: NameCellEditor
-                    }, {
+                    },
+                    {
                         headerName: "Country",
                         field: "country",
                         width: 150,
@@ -50,7 +47,8 @@ export default class ColDefFactory {
                             cellRenderer: countryCellRenderer,
                             cellHeight: 20
                         }
-                    }, {
+                    },
+                    {
                         headerName: "DOB",
                         field: "dob",
                         width: 110,

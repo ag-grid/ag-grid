@@ -42,10 +42,10 @@ export default class SkillsFilter extends React.Component {
     // called by agGrid
     doesFilterPass(params) {
 
-        var rowSkills = params.data.skills;
-        var passed = true;
+        const rowSkills = params.data.skills;
+        let passed = true;
 
-        RefData.IT_SKILLS.forEach( (skill) => {
+        RefData.IT_SKILLS.forEach((skill) => {
             if (this.state[skill]) {
                 if (!rowSkills[skill]) {
                     passed = false;
@@ -56,19 +56,23 @@ export default class SkillsFilter extends React.Component {
         return passed;
     };
 
+    getModel() {
+        return ''
+    }
+
     // called by agGrid
     isFilterActive() {
-        var somethingSelected = this.state.android || this.state.css ||
+        const somethingSelected = this.state.android || this.state.css ||
             this.state.html5 || this.state.mac || this.state.windows;
         return somethingSelected;
     };
 
     onSkillChanged(skill, event) {
-        var newValue = event.target.checked;
-        var newModel = {};
+        const newValue = event.target.checked;
+        const newModel = {};
         newModel[skill] = newValue;
         // set the state, and once it is done, then call filterChangedCallback
-        this.setState(newModel, this.props.filterChangedCallback );
+        this.setState(newModel, this.props.filterChangedCallback);
     }
 
     helloFromSkillsFilter() {
@@ -77,17 +81,18 @@ export default class SkillsFilter extends React.Component {
 
     render() {
 
-        var skillsTemplates = [];
-        RefData.IT_SKILLS.forEach( (skill, index) => {
+        const skillsTemplates = [];
+        RefData.IT_SKILLS.forEach((skill, index) => {
 
-            var skillName = RefData.IT_SKILLS_NAMES[index];
-            var template = (
-                <label key={skill} style={{border: '1px solid lightgrey', margin: 4, padding: 4, display: 'inline-block'}}>
+            const skillName = RefData.IT_SKILLS_NAMES[index];
+            const template = (
+                <label key={skill}
+                       style={{border: '1px solid lightgrey', margin: 4, padding: 4, display: 'inline-block'}}>
                     <span>
                         <div style={{textAlign: 'center'}}>{skillName}</div>
                         <div>
                             <input type="checkbox" onClick={this.onSkillChanged.bind(this, skill)}/>
-                            <img src={'/images/skills/'+skill+'.png'} width={30}/>
+                            <img src={'/images/skills/' + skill + '.png'} width={30}/>
                         </div>
                     </span>
                 </label>
@@ -98,7 +103,13 @@ export default class SkillsFilter extends React.Component {
 
         return (
             <div style={{width: 380}}>
-                <div style={{textAlign: 'center', background: 'lightgray', width: '100%', display: 'block', borderBottom: '1px solid grey'}}>
+                <div style={{
+                    textAlign: 'center',
+                    background: 'lightgray',
+                    width: '100%',
+                    display: 'block',
+                    borderBottom: '1px solid grey'
+                }}>
                     <b>Custom Skills Filter</b>
                 </div>
                 {skillsTemplates}

@@ -18,13 +18,13 @@ export default class DynamicComponentsExample extends Component {
                 }
             },
 
-            rowData: this.createRowData(),
+            rowData: DynamicComponentsExample.createRowData(),
 
-            columnDefs: this.createColumnDefs()
+            columnDefs: DynamicComponentsExample.createColumnDefs()
         };
 
         this.onGridReady = this.onGridReady.bind(this);
-        this.refreshRowData = this.refreshRowData.bind(this);
+        this.refreshEvenRowsCurrencyData = this.refreshEvenRowsCurrencyData.bind(this);
     }
 
     onGridReady(params) {
@@ -34,22 +34,30 @@ export default class DynamicComponentsExample extends Component {
         this.gridApi.sizeColumnsToFit();
     }
 
-    onCellValueChanged($event) {
-        this.gridApi.refreshCells([$event.node],["cube"]);
-    }
-
     methodFromParent(cell) {
         alert(`Parent Component Method from ${cell}!`);
     }
 
-    createColumnDefs() {
+    refreshEvenRowsCurrencyData() {
+        this.gridApi.forEachNode(rowNode => {
+            if (rowNode.data.value % 2 === 0) {
+                rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)))
+            }
+        });
+
+        this.gridApi.refreshCells({
+            columns: ['currency']
+        })
+    }
+
+    static createColumnDefs() {
         return [
             {headerName: "Row", field: "row", width: 100},
             {
                 headerName: "Square",
                 field: "value",
                 cellRendererFramework: SquareRenderer,
-                editable:true,
+                editable: true,
                 colId: "square",
                 width: 100
             },
@@ -71,7 +79,7 @@ export default class DynamicComponentsExample extends Component {
                 headerName: "Currency",
                 field: "currency",
                 cellRendererFramework: CurrencyRenderer,
-                colId: "params",
+                colId: "currency",
                 width: 135
             },
             {
@@ -84,12 +92,7 @@ export default class DynamicComponentsExample extends Component {
         ];
     }
 
-    refreshRowData() {
-        let rowData = this.createRowData();
-        this.gridApi.setRowData(rowData);
-    }
-
-    createRowData() {
+    static createRowData() {
         let rowData = [];
 
         for (let i = 0; i < 15; i++) {
@@ -102,10 +105,11 @@ export default class DynamicComponentsExample extends Component {
 
         return rowData;
     }
+
     render() {
         return (
-            <div style={{height: 425, width: 900}} className="ag-fresh">
-                <button onClick={this.refreshRowData} style={{marginBottom: 10}}>Refresh Data</button>
+            <div style={{height: 400, width: 900}} className="ag-fresh">
+                <button onClick={this.refreshEvenRowsCurrencyData} style={{marginBottom: 10}} className="btn btn-primary">Refresh Even Row Currency Data</button>
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}

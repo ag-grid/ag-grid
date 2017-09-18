@@ -5,13 +5,16 @@ import MoodRenderer from "./MoodRenderer.jsx";
 import MoodEditor from "./MoodEditor.jsx";
 import NumericEditor from "./NumericEditor.jsx";
 
+// take this line out if you do not want to use ag-Grid-Enterprise
+import "ag-grid-enterprise";
+
 export default class EditorComponentsExample extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            rowData: this.createRowData(),
-            columnDefs: this.createColumnDefs()
+            rowData: EditorComponentsExample.createRowData(),
+            columnDefs: EditorComponentsExample.createColumnDefs()
         };
 
         this.onGridReady = this.onGridReady.bind(this);
@@ -24,28 +27,51 @@ export default class EditorComponentsExample extends Component {
         this.gridApi.sizeColumnsToFit();
     }
 
-    createColumnDefs() {
+    static createColumnDefs() {
         return [
-            {headerName: "Name", field: "name", width: 300},
+            {
+                headerName: "Name",
+                field: "name",
+                width: 300,
+                editable: true,
+                cellEditor: 'richSelect',
+                cellEditorParams: {
+                    values: [
+                        "Bob",
+                        "Harry",
+                        "Sally",
+                        "Mary",
+                        "John",
+                        "Jack",
+                        "Sue",
+                        "Sean",
+                        "Niall",
+                        "Albert",
+                        "Fred",
+                        "Jenny",
+                        "Larry"
+                    ]
+                }
+            },
             {
                 headerName: "Mood",
                 field: "mood",
                 cellRendererFramework: MoodRenderer,
                 cellEditorFramework: MoodEditor,
                 editable: true,
-                width: 250
+                width: 300
             },
             {
                 headerName: "Numeric",
                 field: "number",
                 cellEditorFramework: NumericEditor,
                 editable: true,
-                width: 250
+                width: 280
             }
         ];
     }
 
-    createRowData() {
+    static createRowData() {
         return [
             {name: "Bob", mood: "Happy", number: 10},
             {name: "Harry", mood: "Sad", number: 3},
@@ -65,9 +91,7 @@ export default class EditorComponentsExample extends Component {
 
     render() {
         return (
-            <div style={{height: 380, width: 900}}
-                 className="ag-fresh">
-                <h1>Cell Editor Component Example</h1>
+            <div style={{height: 370, width: 900}} className="ag-fresh">
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}

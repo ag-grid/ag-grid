@@ -94,4 +94,4 @@ colDef = {
     <p>
         Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <?= example('React Editor Components', 'react-editor', 'react', array( "exampleHeight" => 440, "showResult" => true )); ?>
+    <?= example('React Editor Components', 'react-editor', 'react', array( "exampleHeight" => 390, "showResult" => true, "extras" => array("bootstrap") )); ?>

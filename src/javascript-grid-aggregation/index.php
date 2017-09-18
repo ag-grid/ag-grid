@@ -264,8 +264,8 @@ colDef = {
     <h3>Recomputing Aggregates</h3>
 
     <p>
-        If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates.
-        This is through throw the api method <i>recomputeAggregates</i>. For example, if you allow editing,
+        If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates through the
+        api method <i>recomputeAggregates</i>. For example, if you allow editing,
         and want the aggregates to update as new values are edited, then create code like the following:
 
         <snippet>
