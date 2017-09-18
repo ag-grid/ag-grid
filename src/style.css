@@ -672,11 +672,18 @@ h1, h2, h3, h4, h5 {
     text-align: center;
 }
 
+.HomeSection-framework:hover {
+    background-color: #eee;
+}
+
 .HomeSection-framework {
-    padding: 0 25px;
+    padding: 25px 25px 2px 25px;
     text-align: center;
     display: inline-block;
-    width: 150px
+    width: 150px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 4px;
 }
 
 .HomeSection-framework a, .HomeSection-framework a:hover {
