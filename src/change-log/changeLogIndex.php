@@ -23,6 +23,10 @@ include '../documentation-main/documentation_header.php';
             <code>toolPanelSuppressPivotMode=true</code> and <code>toolPanelSuppressValues=true</code> to remove the pivot
             from the grid UI.
         </li>
+        <li>AG-795: New callback <code>paginationNumberFormatter</code> to format numbers in pagination panel, should you
+            no like the default formatting. See
+            <a href="../javascript-grid-pagination/#customising-pagination">Example: Customising Pagination</a>.
+        </li>
     </ul>
 
     <h4>Bug Fixes</h4>
