@@ -28,11 +28,14 @@ export default class SortableHeaderComponent extends React.Component {
             let upArrowClass = "customSortUpLabel " + (this.state.sorted === 'asc' ? " active" : "");
             let removeArrowClass = "customSortRemoveLabel " + (this.state.sorted === '' ? " active" : "");
 
-            sortElements.push(<div key={`up${this.props.displayName}`} className={downArrowClass} onClick={this.onSortRequested.bind(this, 'desc')}><i
-                className="fa fa-long-arrow-down"/></div>)
-            sortElements.push(<div key={`down${this.props.displayName}`} className={upArrowClass} onClick={this.onSortRequested.bind(this, 'asc')}><i
-                className="fa fa-long-arrow-up"/></div>)
-            sortElements.push(<div key={`minus${this.props.displayName}`} className={removeArrowClass} onClick={this.onSortRequested.bind(this, '')}><i
+            sortElements.push(<div key={`up${this.props.displayName}`} className={downArrowClass}
+                                   onClick={this.onSortRequested.bind(this, 'desc')}><i
+                className="fa fa-long-arrow-down"/></div>);
+            sortElements.push(<div key={`down${this.props.displayName}`} className={upArrowClass}
+                                   onClick={this.onSortRequested.bind(this, 'asc')}><i
+                className="fa fa-long-arrow-up"/></div>);
+            sortElements.push(<div key={`minus${this.props.displayName}`} className={removeArrowClass}
+                                   onClick={this.onSortRequested.bind(this, '')}><i
                 className="fa fa-times"/></div>)
         }
 

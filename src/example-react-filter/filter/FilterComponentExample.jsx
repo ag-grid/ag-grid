@@ -13,8 +13,8 @@ export default class FilterComponentExample extends Component {
         this.state = {
             gridOptions: {},
 
-            rowData: this.createRowData(),
-            columnDefs: this.createColumnDefs(),
+            rowData: FilterComponentExample.createRowData(),
+            columnDefs: FilterComponentExample.createColumnDefs(),
         };
 
         this.onGridReady = this.onGridReady.bind(this);
@@ -22,7 +22,6 @@ export default class FilterComponentExample extends Component {
     }
 
     onGridReady(params) {
-        console.log("here");
         this.gridApi = params.api;
         this.columnApi = params.columnApi;
 
@@ -33,20 +32,20 @@ export default class FilterComponentExample extends Component {
         this.gridApi.getFilterInstance("name").getFrameworkComponentInstance().componentMethod("Hello World!");
     }
 
-    createColumnDefs() {
+    static createColumnDefs() {
         return [
             {headerName: "Row", field: "row", width: 450},
             {
                 headerName: "Filter Component",
                 field: "name",
                 filterFramework: PartialMatchFilter,
-                width: 450,
+                width: 430,
                 menuTabs:['filterMenuTab']
             }
         ];
     }
 
-    createRowData() {
+    static createRowData() {
         return [
             {"row": "Row 1", "name": "Michael Phelps"},
             {"row": "Row 2", "name": "Natalie Coughlin"},
@@ -67,8 +66,8 @@ export default class FilterComponentExample extends Component {
 
     render() {
         return (
-            <div style={{height: 400, width: 900}} className="ag-fresh">
-                <button style={{marginBottom: 10}} onClick={this.onClicked}>Filter Instance Method</button>
+            <div style={{height: 390, width: 900}} className="ag-fresh">
+                <button style={{marginBottom: 10}} onClick={this.onClicked} className="btn btn-primary">Filter Instance Method</button>
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}

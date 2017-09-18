@@ -8,4 +8,4 @@ import Grid from './RichComponentsExample.jsx'
 render(
     <Grid></Grid>,
     document.querySelector('#root')
-)
+);

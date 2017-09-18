@@ -1,15 +1,18 @@
 import React, {Component} from "react";
-import ReactDOM from "react-dom";
 
 export default class MoodEditor extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            value: this.props.value
-        };
-
         this.cancelBeforeStart = this.props.charPress && ('1234567890'.indexOf(this.props.charPress) < 0);
+
+        let value = this.props.value;
+        if (!this.cancelBeforeStart && this.props.charPress) {
+            value = value + this.props.charPress;
+        }
+        this.state = {
+            value
+        };
 
         this.onKeyDown = this.onKeyDown.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -30,10 +33,9 @@ export default class MoodEditor extends Component {
 
     focus() {
         setTimeout(() => {
-            let container = ReactDOM.findDOMNode(this.refs.input);
-            if (container) {
-                container.focus();
-            }
+            this.refs.input.focus();
+            this.refs.input.setSelectionRange(this.state.value.length, this.state.value.length);
+
         })
     }
 
@@ -52,7 +54,7 @@ export default class MoodEditor extends Component {
     };
 
     onKeyDown(event) {
-        if(this.isLeftOrRight(event)) {
+        if (this.isLeftOrRight(event)) {
             event.stopPropagation();
             return;
         }
@@ -90,6 +92,7 @@ export default class MoodEditor extends Component {
             <input ref="input"
                    value={this.state.value}
                    onChange={this.handleChange}
+                   style={{width: "100%"}}
             />
         );
     }

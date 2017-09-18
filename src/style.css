@@ -134,6 +134,11 @@ body {
     font-family: 'Roboto', sans-serif !important;
 }
 
+.bold-roboto {
+    font-family: 'Roboto Bold', sans-serif;
+    font-weight: bold;
+}
+
 @media (min-width: 200px) and (max-width: 800px) {
     body {
 

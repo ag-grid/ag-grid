@@ -9,8 +9,8 @@ export default class RichComponentsExample extends Component {
         super(props);
 
         this.state = {
-            rowData: this.createRowData(),
-            columnDefs: this.createColumnDefs()
+            rowData: RichComponentsExample.createRowData(),
+            columnDefs: RichComponentsExample.createColumnDefs()
         };
 
         this.onGridReady = this.onGridReady.bind(this);
@@ -23,9 +23,13 @@ export default class RichComponentsExample extends Component {
         this.gridApi.sizeColumnsToFit();
     }
 
-    createColumnDefs() {
+    static createColumnDefs() {
         return [
-            {headerName: "Name", field: "name", width: 200},
+            {
+                headerName: "Name",
+                field: "name",
+                width: 200
+            },
             {
                 headerName: "Ratio Component",
                 field: "ratios",
@@ -40,7 +44,7 @@ export default class RichComponentsExample extends Component {
             }
         ];    }
 
-    createRowData() {
+    static createRowData() {
         return [
             {name: 'Homer Simpson', ratios: {top: 0.25, bottom: 0.75}},
             {name: 'Marge Simpson', ratios: {top: 0.67, bottom: 0.39}},
@@ -60,7 +64,7 @@ export default class RichComponentsExample extends Component {
 
     render() {
         return (
-            <div style={{height: 400, width: 900}} className="ag-fresh">
+            <div style={{height: 370, width: 900}} className="ag-fresh">
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}

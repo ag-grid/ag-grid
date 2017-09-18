@@ -7,7 +7,8 @@ export default class PartialMatchFilter extends Component {
 
         this.state = {
             text: ''
-        }
+        };
+
         this.valueGetter = this.props.valueGetter;
 
         this.onChange = this.onChange.bind(this);
@@ -63,8 +64,17 @@ export default class PartialMatchFilter extends Component {
     }
 
     render() {
+        let style = {
+            border: "2px solid #22ff22",
+            borderRadius: "5px",
+            backgroundColor: "#bbffbb",
+            width: "200px",
+            height: "50px"
+        };
+
         return (
-            <span>Filter: <input style={{height: "20px"}} ref="input" value={this.state.text} onChange={this.onChange}/></span>
+            <div style={style}>Filter: <input style={{height: "20px"}} ref="input" value={this.state.text}
+                                              onChange={this.onChange} className="form-control"/></div>
         );
     }
 };
