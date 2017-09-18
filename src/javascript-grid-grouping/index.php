@@ -273,8 +273,7 @@ columnDefs = [
         Note that all that is necessary to achieve this it to add <code>groupUseEntireRow:true</code> to your gridOptions
     </p>
 
-    <show-example example="exampleSimpleRowGroupFW"></show-example>
-
+    <?= example('Full Width Group Rows', 'full-width-group-rows', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2>Full Width Groups Rendering</h2>
 
@@ -354,9 +353,7 @@ gridOptions.groupRowRendererParams: {
         then using the entire row to give a summary.
     </p>
 
-    <show-example example="exampleGroupRowRendering"></show-example>
-
-
+    <?= example('Full Width Groups Rendering', 'full-width-groups-rendering', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2>Full Width Group Rows - Embedding</h2>
 
@@ -395,7 +392,7 @@ gridOptions.groupRowRendererParams: {
     </ul>
     </p>
 
-    <show-example example="exampleFullWidthRowsComparison"></show-example>
+    <?= example('Full Width Group Rows - Embedding', 'full-width-group-rows-embedding', 'vanilla', array("enterprise" => 1)) ?>
 
     <p>
         If you are using custom group row rendering (explained below) and embedFullWidthRows = true, the panel
@@ -482,7 +479,7 @@ cellRendererParams: {
         the next section but included here as footer rows only make sense when used with aggregation.
     </p>
 
-    <show-example example="groupingFooters"></show-example>
+    <?= example('Group Footers', 'grouping-footers', 'vanilla', array("enterprise" => 1)) ?>
 
     </p>
 
@@ -506,8 +503,7 @@ cellRendererParams: {
         as such the state is not maintained. A group like 'Australia' is in both sets and is maintained.
     </p>
 
-    <show-example example="exampleKeepingGroupState"></show-example>
-
+    <?= example('Keeping Group State', 'keeping-group-state', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2 id="removeSingleChildren">Removing Single Children</h2>
 
