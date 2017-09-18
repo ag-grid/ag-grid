@@ -699,7 +699,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         padding: $cell-horizontal-padding;
         line-height: normal;
 
-        input[type=text] {
+        input[type=text], input[type=tel], input[type=date], input[type=datetime-local] {
             @include simple-material-textbox;
         } 
 
