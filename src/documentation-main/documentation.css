@@ -1,3 +1,11 @@
+.list-group-item .list-group-item-heading {
+    color: #337ab7 !important;
+}
+
+.list-group-item .list-group-item-heading:hover {
+    text-decoration: underline;
+}
+
 .framework-select-item {
     width: 100%;
     border-radius: 4px;

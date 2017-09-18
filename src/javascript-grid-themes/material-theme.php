@@ -39,15 +39,15 @@ Put the following code in the HEAD element of your document: </p>
 &lt;link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"&gt;</snippet>
 
 
-    <h3>Change the Theme Primary / Secondary Colors through Scss</h3>
+<h3>Change the Theme Primary / Secondary Colors through Scss</h3>
 
-    <p>
-    The material theme uses Scss internally, exposing several variables which control its appearance. 
-    The ones you are likely looking into changing are the primary and secondary colors. The default ones are 
-    <a href="https://material.io/guidelines/style/color.html#color-color-palette">indigo-500 and pink-A200 from the Google color palette</a>, which match the indigo-pink Angular Material theme.
-    </p>
+<p>
+The material theme uses Scss internally, exposing several variables which control its appearance. 
+The ones you are likely looking into changing are the primary and secondary colors. The default ones are 
+<a href="https://material.io/guidelines/style/color.html#color-color-palette">indigo-500 and pink-A200 from the Google color palette</a>, which match the indigo-pink Angular Material theme.
+</p>
 
-    <p>To change the application colors, set the variables values to your colors of choice, and include the Scss theme file after that.<p>
+<p>To change the application colors, set the variables values to your colors of choice, and include the Scss theme file after that.<p>
 
 <snippet>
 // Set the colors to blue and amber
@@ -67,6 +67,15 @@ A working example for Angular 2 based on angular-cli can be found in <a href="ht
 <note>The ag grid icons path should be re-adjusted when importing the scss file. 
 This is a common problem, <a href="https://github.com/webpack-contrib/sass-loader#problems-with-url">described in the Sass(scss) loader project</a>. 
 The theme exposes the <code>$ag-mat-icons-path</code> variable to address that. The <a href="https://github.com/ag-grid/ag-grid-material/blob/master/angular-material/src/styles.scss#L22-L23">example from above</a> showcases how to override the variable.</note>
+
+<h3>Change the row height / header height / icon size </h3>
+
+<p>
+The material design guidelines specify the size of the icons, height of the headers and the rows. We recommend keeping them to the default values for "true" material look.
+However, In case you wish to change the sizing, you should do that both in the grid configuration 
+and by overriding the <code>$ag-mat-grid-size</code> and <code>$ag-mat-icon-size</code>.
+A working example that showcases this using webpack can be found <a href="https://github.com/ag-grid/ag-grid-material/tree/master/custom-sizing">ag-grid-material GitHub repository</a>.
+</p> 
 
 <h3>Change the Theme Icons</h3>
 
@@ -124,7 +133,8 @@ gridOptions = {
 }</snippet>
 
     Additionally, to be consistent with Googles guidelines, you should override the default checkbox behaviour - in the example
-    below we've overriden the selected checkbox state to be blue
+    below we've overriden the selected checkbox state to be blue:
+
     <snippet>
 gridOptions = {
     icons: {

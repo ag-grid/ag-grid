@@ -6,6 +6,7 @@ $pageKeyboards = "ag-Grid JavaScript Grid Documentation";
 include 'documentation_header.php';
 ?>
 
+
 <div class="row">
 
     <div class="col-md-9">
@@ -107,7 +108,7 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/getting_started.svg" width="50" />
                     </div>
-                    <h4 class="list-group-item-heading">Getting Started</h4>
+                    <h3 class="list-group-item-heading">Getting Started</h3>
                     <p class="list-group-item-text">
                         Learn how to get a simple
                         application working using ag-Grid with the framework that you have chosen.
@@ -121,7 +122,7 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/interfacing.svg" width="50" />
                     </div>
-                    <h4 class="list-group-item-heading">Reference</h4>
+                    <h3 class="list-group-item-heading">Reference</h3>
                     <p class="list-group-item-text">
                         Lists all the configuration options (properties, events, api etc) for ag-Grid.
                         Use this as a quick reference to look all available options.
@@ -134,7 +135,7 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/features.svg" width="50" />
                     </div>
-                    <h4 class="list-group-item-heading">Features</h4>
+                    <h3 class="list-group-item-heading">Features</h3>
                     <p class="list-group-item-text">
                         A detailed look at all the features. Go here for detailed explanations and examples
                         for all features. Items that are only available
@@ -148,7 +149,7 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/row_models.svg" width="50" />
                     </div>
-                    <h4>Row Models</h4>
+                    <h3 class="list-group-item-heading">Row Models</h3>
                     <p class="list-group-item-text">
                         The grid supports many ways to load the data eg <i>pagination</i> and <i>virtual
                             scrolling</i>. Learn how to apply these techniques to manage large amounts of
@@ -162,7 +163,7 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/themes.svg" width="50" />
                     </div>
-                    <h4 class="list-group-item-heading">Themes</h4>
+                    <h3 class="list-group-item-heading">Themes</h3>
                     <p class="list-group-item-text">
                         The grid comes with many built in themes and also the ability to design
                         your own theme. Get the grid to fit the overall look and feel of your
@@ -176,7 +177,7 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/components.svg" width="50" />
                     </div>
-                    <h4>Components</h4>
+                    <h3 class="list-group-item-heading">Components</h3>
                     <p class="list-group-item-text">
                         Introduce your own behaviours into the grid by providing custom
                         components such as Cell Renderers, Cell Editors, Filters and
@@ -191,7 +192,7 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/examples.svg" width="50" />
                     </div>
-                    <h4>Examples</h4>
+                    <h3 class="list-group-item-heading">Examples</h3>
                     <p class="list-group-item-text">
                         End to end examples demonstrating many of the features of ag-Grid.
                     </p>
@@ -203,7 +204,7 @@ include 'documentation_header.php';
                     <div class="section-icon-container">
                         <img src="../images/svg/docs/abc.svg" width="50" />
                     </div>
-                    <h4>Third Party</h4>
+                    <h3 class="list-group-item-heading">Third Party</h3>
                     <p class="list-group-item-text">
                         End to end examples demonstrating integration of ag-Grid with Third Party products.
                     </p>

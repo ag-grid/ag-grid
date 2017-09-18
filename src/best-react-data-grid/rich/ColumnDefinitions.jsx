@@ -16,12 +16,7 @@ export default class ColumnDefinitionFactory {
                     { field: "country", width: 150, pinned: true, filter: 'set', editable: true,
                         // an example of using a non-React cell renderer
                         cellRenderer: countryCellRenderer,
-                        cellEditorParams: {
-                            values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
-                                "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
-                                "Uruguay", "Venezuela", "Belgium", "Luxembourg"],
-                            cellRenderer: countryCellRenderer,
-                        },
+                        cellEditorParams: { values: COUNTRY_LIST, cellRenderer: countryCellRenderer},
                         filterParams: { cellRenderer: countryCellRenderer, cellHeight: 20},
                         cellEditor: 'richSelect'
                     },
@@ -54,6 +49,10 @@ export default class ColumnDefinitionFactory {
         ];
     }
 }
+
+var COUNTRY_LIST = ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
+    "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
+    "Uruguay", "Venezuela", "Belgium", "Luxembourg"];
 
 // this is a simple cell renderer, putting together static html, no
 // need to use React for it.

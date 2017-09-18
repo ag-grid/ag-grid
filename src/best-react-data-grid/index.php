@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
                 <div class="section-icon-container">
                     <img src="../images/svg/docs/getting_started.svg" width="50" />
                 </div>
-                <h4 class="list-group-item-heading">Getting Started</h4>
+                <h3 class="list-group-item-heading">Getting Started</h3>
                 <p class="list-group-item-text">
                     Learn how to get a simple application working using ag-Grid and ReactJS.
                     Start here to get a simple grid working in your application, then follow on
@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
                 <div class="section-icon-container">
                     <img src="../images/svg/docs/more-details2.svg" width="50" />
                 </div>
-                <h4 class="list-group-item-heading">More Details</h4>
+                <h3 class="list-group-item-heading">More Details</h3>
                 <p class="list-group-item-text">
                     Dive deeper in how to use ag-Grid with React, including referencing dependencies,
                     an overview on interfacing, integrating with redux, performance and more.
@@ -47,7 +47,7 @@ include '../documentation-main/documentation_header.php';
                 <div class="section-icon-container">
                     <img src="../images/svg/docs/examples.svg" width="50" />
                 </div>
-                <h4 class="list-group-item-heading">Full Examples with React</h4>
+                <h3 class="list-group-item-heading">Full Examples with React</h3>
                 <p class="list-group-item-text">
                     This page features examples of using ag-Grid and React together. It covers more of the features of ag-Grid.
                 </p>

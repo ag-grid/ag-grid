@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
                             <div class="section-icon-container">
                                 <img src="../images/components.png" width="50" />
                             </div>
-                            <h2 class="list-group-item-heading">Cell Renderer</h2>
+                            <h3 class="list-group-item-heading">Cell Renderer</h3>
                             <p class="list-group-item-text">
                                 A cell renderer customises the contents of a cell.
                             </p>
@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
                             <div class="section-icon-container">
                                 <img src="../images/components.png" width="50" />
                             </div>
-                            <h2 class="list-group-item-heading">Cell Editor</h2>
+                            <h3 class="list-group-item-heading">Cell Editor</h3>
                             <p class="list-group-item-text">
                                 A cell editor customises the editing of a cell.
                             </p>
@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
                             <div class="section-icon-container">
                                 <img src="../images/components.png" width="50" />
                             </div>
-                            <h2 class="list-group-item-heading">Filter Component</h2>
+                            <h3 class="list-group-item-heading">Filter Component</h3>
                             <p class="list-group-item-text">
                                 For custom column filter that appears inside the column menu.
                             </p>
@@ -89,7 +89,7 @@ include '../documentation-main/documentation_header.php';
                             <div class="section-icon-container">
                                 <img src="../images/components.png" width="50" />
                             </div>
-                            <h2 class="list-group-item-heading">Floating Filter Component</h2>
+                            <h3 class="list-group-item-heading">Floating Filter Component</h3>
                             <p class="list-group-item-text">
                                 For custom column floating filters that display in the header area.
                             </p>
@@ -109,7 +109,7 @@ include '../documentation-main/documentation_header.php';
                             <div class="section-icon-container">
                                 <img src="../images/components.png" width="50" />
                             </div>
-                            <h2 class="list-group-item-heading">Date Component</h2>
+                            <h3 class="list-group-item-heading">Date Component</h3>
                             <p class="list-group-item-text">
                                 To customise the date selection component in the date filter.
                             </p>
@@ -127,7 +127,7 @@ include '../documentation-main/documentation_header.php';
                             <div class="section-icon-container">
                                 <img src="../images/components.png" width="50" />
                             </div>
-                            <h2 class="list-group-item-heading">Header Component</h2>
+                            <h3 class="list-group-item-heading">Header Component</h3>
                             <p class="list-group-item-text">
                                 To customise column headers, including column groups.
                             </p>
