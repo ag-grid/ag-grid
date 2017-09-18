@@ -344,6 +344,12 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
             send us your CV!
         </p>
 
+        <h2>And Share!!!</h2>
+
+        <p>
+            Sharing is caring! So please take the time to share this article, or up-vote on Reddit (link below).
+        </p>
+
         <div style="background-color: #eee; padding: 10px; display: inline-block;">
 
             <div style="margin-bottom: 5px;">If you liked this article then please share</div>

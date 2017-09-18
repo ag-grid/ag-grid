@@ -14,47 +14,96 @@ include '../documentation-main/documentation_header.php';
         Reference
     </h1>
 
-<!--    <div style="">
-
-        <a href="../javascript-grid-properties/" class="select-item">
-            <img src="../images/svg/docs/interfacing.svg" width="20" />
-            Grid Properties
-        </a>
-
-        <a href="../javascript-grid-events/" class="select-item">
-            <img src="../images/svg/docs/interfacing.svg" width="20" />
-            Grid Events
-        </a>
-
-        <a href="../javascript-grid-callbacks/" class="select-item">
-            <img src="../images/svg/docs/interfacing.svg" width="20" />
-            Grid Callbacks
-        </a>
-
-        <a href="../javascript-grid-api/" class="select-item">
-            <img src="../images/svg/docs/interfacing.svg" width="20" />
-            Grid API
-        </a>
-
-    </div>
-
-    <div style="">
-
-        <a href="../javascript-grid-column-properties/" class="select-item">
-            <img src="../images/svg/docs/interfacing.svg" width="20" />
-            Column Properties
-        </a>
-
-        <a href="../javascript-grid-column-api/" class="select-item">
-            <img src="../images/svg/docs/interfacing.svg" width="20" />
-            Column API
-        </a>
-
-    </div>
--->
     <p>
         This section explains how to configure the the grid's properties, events, callbacks and API.
     </p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="list-group">
+                <a href="../javascript-grid-properties/" class="list-group-item">
+                    <div class="float-parent">
+                        <h3 class="list-group-item-heading" style="white-space: nowrap;">
+                            Grid Properties
+                        </h3>
+                        <p class="list-group-item-text">
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="list-group">
+                <a href="../javascript-grid-api/" class="list-group-item">
+                    <div class="float-parent">
+                        <h3 class="list-group-item-heading" style="white-space: nowrap;">
+                            Grid API
+                        </h3>
+                        <p class="list-group-item-text">
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="list-group">
+                <a href="../javascript-grid-events/" class="list-group-item">
+                    <div class="float-parent">
+                        <h3 class="list-group-item-heading" style="white-space: nowrap;">
+                            Grid Events
+                        </h3>
+                        <p class="list-group-item-text">
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="list-group">
+                <a href="../javascript-grid-callbacks/" class="list-group-item">
+                    <div class="float-parent">
+                        <h3 class="list-group-item-heading" style="white-space: nowrap;">
+                            Grid Callbacks
+                        </h3>
+                        <p class="list-group-item-text">
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="list-group">
+                <a href="../javascript-grid-column-properties/" class="list-group-item">
+                    <div class="float-parent">
+                        <h3 class="list-group-item-heading" style="white-space: nowrap;">
+                            Column Properties
+                        </h3>
+                        <p class="list-group-item-text">
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="list-group">
+                <a href="../javascript-grid-column-api/" class="list-group-item">
+                    <div class="float-parent">
+                        <h3 class="list-group-item-heading" style="white-space: nowrap;">
+                            Column API
+                        </h3>
+                        <p class="list-group-item-text">
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+    </div>
 
     <h2>
         <?php if (isFrameworkJavaScript()) { ?><img src="/images/javascript.png" height="50"/><?php } ?>
