@@ -235,6 +235,13 @@ docs.component('exampleRunner', {
                 on-click="$ctrl.selectedTab = 'code'">
             </example-tab>
 
+
+            <li role="presentation">
+                <a role="tab" ng-href="{{$ctrl.resultUrl}}" target="_blank">
+                    <i class="fa fa-arrows-alt" aria-hidden="true"></i> Open in new tab
+                </a>
+            </li>
+
             <example-tab 
                 value="'plunker'" 
                 current-value="$ctrl.selectedTab" 
@@ -251,7 +258,6 @@ docs.component('exampleRunner', {
 
         <div class="tab-contents" ng-if="$ctrl.ready">
             <div ng-show="$ctrl.selectedTab == 'result'" role="tabpanel" class="result">
-                <a ng-href={{$ctrl.resultUrl}} target="_blank" class="result-in-new-tab" title="Show result in new tab"><i class="fa fa-arrows-alt" aria-hidden="true"></i></a>
                 <iframe ng-src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" seamless="true"></iframe>
             </div>
 
