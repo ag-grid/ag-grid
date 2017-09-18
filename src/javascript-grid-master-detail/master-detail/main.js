@@ -135,16 +135,16 @@ DetailPanelCellRenderer.prototype.getTemplate = function(params) {
     var template =
         '<div class="full-width-panel">' +
         '  <div class="full-width-details">' +
-        '    <div class="full-width-detail"><img width="120px" src='+parentRecord.image+'"../../images/team"/></div>' +
+        '    <div class="full-width-detail"><img width="120px" src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/team/' + parentRecord.image + '"></div>' +
         '    <div class="full-width-detail"><b>Name: </b>'+parentRecord.name+'</div>' +
         '    <div class="full-width-detail"><b>Account: </b>'+parentRecord.account+'</div>' +
         '  </div>'+
         '  <div class="full-width-grid"></div>' +
         '  <div class="full-width-grid-toolbar">' +
-        '       <img class="full-width-phone-icon" src="../../images/phone.png"/>' +
-        '       <button><img src="../../images/fire.png"/></button>' +
-        '       <button><img src="../../images/frost.png"/></button>' +
-        '       <button><img src="../../images/sun.png"/></button>' +
+        '       <img class="full-width-phone-icon" src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/phone.png"/>' +
+        '       <button><img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/fire.png"/></button>' +
+        '       <button><img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/frost.png"/></button>' +
+        '       <button><img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/sun.png"/></button>' +
         '       <input class="full-width-search" placeholder="Search..."/>' +
         '  </div>'+
         '</div>';

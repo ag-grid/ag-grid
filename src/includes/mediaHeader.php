@@ -26,20 +26,26 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../dist/prism/prism.css">
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
+
 
     <link rel="stylesheet" type="text/css" href="/style.css">
 
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
+    <script src="../documentation-main/documentation.js"></script>
+    <script src="../dist/site.js"></script>
+
 </head>
 
-<body  class="big-text">
+<body  class="big-text" ng-app="documentation">
 <!--<body ng-app="index" class="big-text">-->
 
 <?php $navKey = "blog"; include 'navbar.php'; ?>
@@ -47,11 +53,5 @@
 <?php $headerTitle = "ag-Grid Blog"; include 'headerRow.php'; ?>
 
 <?php include '../example-runner/utils.php'; ?>
-
-
-
-
-
-
 
 <div class="container">
