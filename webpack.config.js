@@ -64,16 +64,12 @@ module.exports = {
                     { loader: 'sass-loader', options: { sourceMap: true } },
                     { loader: 'postcss-loader', options: { sourceMap: true, syntax: 'postcss-scss', plugins: [ autoprefixer() ] } },
                 ]
-            }, 
+            },
             {
                 test: /\.(svg)$/,
                 use: [
-                    {
-                        loader: 'url-loader',
-                        options: {
-                            limit: 8192
-                        }
-                    }
+                    { loader: 'url-loader', options: { limit: 8192 } },
+                    { loader: require.resolve('../ag-grid/src/styles/svg-loader.js') }
                 ]
             }
         ],
