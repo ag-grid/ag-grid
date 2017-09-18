@@ -28,24 +28,18 @@
 
 </style>
 
-
 <div class="news-box">
-    <div class="news-header">11th September 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
-        <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
-            v13.1.2
-        </span>
-        <img src="../images/logo-dark-hacked.svg"
-             style="width: 100%;"/>
-        <img src="../images/bandaid.png"
-             style="width: 33px; top: 64px; position: absolute; left: 79px;"/>
+        <a href="../ag-grid-performance-hacks/">
+            <img src="../ag-grid-performance-hacks/images/PerformanceHacks.png" style="width: 100%;"/>
+        </a>
     </div>
-    <br/>
     <div>
-        Minor release.
-        <a href="../change-log/changeLogIndex.php">Change Log</a> for full release details.
+        Read about the <a href="../ag-grid-performance-hacks/">JavaScript Performance Hacks</a>
+        used inside ag-Grid that makes it go really fast.
     </div>
 </div>
+
 <div class="news-box">
     <div class="news-header">1st September 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
