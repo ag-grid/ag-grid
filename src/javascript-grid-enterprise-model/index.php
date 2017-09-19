@@ -401,6 +401,24 @@ export interface ColumnVO {
 <?= example('Checkbox Example', 'checkbox', 'vanilla', array("enterprise" => 1)) ?>
 
 
+<h1 id="child-count">Providing Child Counts</h1>
+
+<p>
+    By default, the grid will not show row counts beside the group names. If you do want
+    row counts, you need to implement the <code>getChildCount()</code> callback for the
+    grid. The callback provides you with the row data, it is your applications responsibility
+    to know what the child row count is. The suggestion is you set this information into
+    the row data item you provide to the grid.
+</p>
+
+<snippet>
+gridOptions.getChildCount = function(data) {
+    // in this example, the data has the child count
+    // stored in the attribute 'childCount'.
+    return data.childCount;
+};
+</snippet>
+
 <h1 id="selection">Providing Node ID's</h1>
 <p>
     Providing node ID's is optional. If you provide your own node id's
@@ -473,6 +491,11 @@ export interface ColumnVO {
     </li>
     <li>
         Button <b>Print Block State</b> prints the state of the blocks in the cache to the console.
+    </li>
+    <li>
+        The example implements <code>getChildCount()</code> to set the child count for each group.
+        Your application is responsible for figuring out the child count (maybe it's an attribute you set
+        on the data?), the example sets a random number.
     </li>
 </ul>
 </p>

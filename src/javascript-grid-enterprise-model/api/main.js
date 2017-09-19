@@ -21,6 +21,12 @@ var gridOptions = {
     cacheBlockSize: 100,
     maxBlocksInCache: 2,
     purgeClosedRowNodes: true,
+    getChildCount: function(data) {
+        // return back a randam value, demonstrates how this can be set.
+        // in a real application, the child count would be set on the
+        // data item, and this method could simply be "return data.childCount"
+        return Math.round((Math.random() * 100) + 1);
+    },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     },
