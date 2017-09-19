@@ -149,9 +149,12 @@ function myEventListener(event) {
             as far as I know. In other words, ag-Grid has done this for a long time and has been tested in the field.
         </p>
 
-        <p>
-            This hack is also used by React . . . . . . #### reference needed
-        </p>
+        <note>
+            This is a similar pattern used by React using React's Synthetic Events.
+            React uses event delegation and listens for events at the
+            root of the application. React keeps track of which rendered nodes have listeners.
+            The synthetic event system implements its own bubbling and calls the appropriate handlers.
+        </note>
 
         <h2>Hack 4 - Throw Away DOM</h2>
 
