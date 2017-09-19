@@ -42,10 +42,10 @@ SCR;
     } else {
         if (USE_LOCAL) {
             $output = <<<SCR
-        <script src="$agGrid"></script>
-        <script> window['ag-grid'] = agGrid; </script>
-        <script src="$agGridEnterprise"></script>
-        <script> agGrid = window['ag-grid']; </script>
+    <script src="$agGrid"></script>
+    <script> window['ag-grid'] = agGrid; </script>
+    <script src="$agGridEnterprise"></script>
+    <script> agGrid = window['ag-grid']; </script>
 SCR;
         } else {
             $output = <<<SCR
@@ -213,5 +213,50 @@ function getExampleInfo($boilerplatePrefix) {
         "agGridScriptPath" => AG_SCRIPT_PATH,
         "styles" => $styles
     );
+}
+
+function renderExampleExtras($config) {
+    $extras = array(
+        'jquery' => array(
+            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js' )
+        ),
+        'jqueryui' => array(
+            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js' ),
+            'styles' => array ( 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css' )
+        ),
+        'lodash' => array(
+            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js' )
+        ),
+        'bootstrap' => array( 
+            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js' ),
+            'styles' => array( 
+                'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css' ,
+                'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css'
+            )
+        ),
+        'fontawesome' => array(
+            'styles' => array( 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' )
+        )
+    );
+
+    foreach ($extras as $lib => $resources) {
+        if (isset($config[$lib])) {
+            if (isset($resources['styles'])) {
+                foreach ($resources['styles'] as $style) {
+                    echo "    ";
+                    echo '<link rel="stylesheet" href="'.$style.'"/>';
+                    echo "\n";
+                }
+            }            
+
+            if (isset($resources['scripts'])) {
+                foreach ($resources['scripts'] as $script) {
+                    echo "\t";
+                    echo '<script src="'.$script.'"></script>';
+                    echo "\n";
+                }
+            }
+        }
+    }
 }
 ?>
