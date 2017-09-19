@@ -9,6 +9,9 @@ define('FULL_ENTERPRISE_BUNDLE', isset($_ENV['FULL_ENTERPRISE_BUNDLE']));
 //define('USE_LOCAL', false);
 
 if (USE_LOCAL) {
+    define(AG_GRID_SCRIPT_PATH, "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid/ag-grid.js");
+    define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-enterprise/ag-grid-enterprise.js");
+
     $systemJsMap = array(
         "ag-grid" =>                       "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid/ag-grid.js",
         "ag-grid/main" =>                  "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid/ag-grid.js",
@@ -20,6 +23,9 @@ if (USE_LOCAL) {
     );
 // production mode, return from unpkg
 } else {
+    define(AG_GRID_SCRIPT_PATH, "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js");
+    define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.js");
+
     $systemJsMap = array(
         "ag-grid" =>                        "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
         "ag-grid/main" =>                   "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
@@ -28,9 +34,6 @@ if (USE_LOCAL) {
         "ag-grid-angular" =>                "npm:ag-grid-angular@" . AG_GRID_VERSION . "/main.js"
     );
 }
-
-define(AG_GRID_SCRIPT_PATH, $systemJsMap['ag-grid']);
-define(AG_GRID_ENTERPRISE_SCRIPT_PATH, $systemJsMap['ag-grid-enterprise']);
 
 function globalAgGridScript($enteprise = false) {
 $agGrid = AG_GRID_SCRIPT_PATH;
