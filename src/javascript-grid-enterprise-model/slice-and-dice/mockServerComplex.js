@@ -34,6 +34,12 @@ EnterpriseDatasource.prototype.createColsHash = function(colDefs) {
             parts.push('[' + that.createColsHash(colDef.children) + ']');
         } else {
             parts.push(colDef.colId);
+            // headerName can change if the aggFunc was changed in a value col. if we didn't
+            // do this, then the grid would not pick up on new header names as we move from
+            // eg min to max.
+            if (colDef.headerName) {
+                parts.push(colDef.headerName);
+            }
         }
     });
     return parts.join(',');
