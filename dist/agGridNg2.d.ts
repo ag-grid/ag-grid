@@ -228,6 +228,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     suppressAnimationFrame: any;
     suppressExcelExport: any;
     suppressCsvExport: any;
+    getChildCount: any;
     /**
      * Outputs
      */
