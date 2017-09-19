@@ -31,12 +31,12 @@
 <div class="news-box">
     <div class="news-header">20th September 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
-        <a href="../ag-grid-performance-hacks/">
-            <img src="../ag-grid-performance-hacks/images/PerformanceHacks.png" style="width: 100%;"/>
+        <a href="../ag-grid-8-performance-hacks-for-javascript/">
+            <img src="../ag-grid-8-performance-hacks-for-javascript/images/PerformanceHacks.png" style="width: 100%;"/>
         </a>
     </div>
     <div>
-        Read about the <a href="../ag-grid-performance-hacks/">JavaScript Performance Hacks</a>
+        Read about the <a href="../ag-grid-8-performance-hacks-for-javascript/">JavaScript Performance Hacks</a>
         used inside ag-Grid that makes it go really fast.
     </div>
 </div>

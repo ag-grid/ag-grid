@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "JavaScript Performance Hacks";
-$pageDescription = "Explaining the performance techniques that we used to make ag-Grid render as quickly as possible.";
+$pageTitle = "8 Performance Hacks for JavaScript";
+$pageDescription = "Explaining the performance hacks and techniques used in ag-Grid to make it render really fast.";
 $pageKeyboards = "javascript performance";
 $socialUrl = "https://www.ag-grid.com/ag-grid-performance-hacks/";
 $socialImage = "https://www.ag-grid.com/ag-grid-performance-hacks/images/PerformanceHacks.png";
@@ -17,7 +17,7 @@ include('../includes/mediaHeader.php');
 
 <div class="row">
     <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1>JavaScript Performance Hacks</h1>
+        <h1>8 Performance Hacks for JavaScript</h1>
     </div>
 </div>
 
