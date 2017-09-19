@@ -42,10 +42,10 @@ SCR;
     } else {
         if (USE_LOCAL) {
             $output = <<<SCR
-        <script src="$agGrid"></script>
-        <script> window['ag-grid'] = agGrid; </script>
-        <script src="$agGridEnterprise"></script>
-        <script> agGrid = window['ag-grid']; </script>
+    <script src="$agGrid"></script>
+    <script> window['ag-grid'] = agGrid; </script>
+    <script src="$agGridEnterprise"></script>
+    <script> agGrid = window['ag-grid']; </script>
 SCR;
         } else {
             $output = <<<SCR
