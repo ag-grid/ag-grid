@@ -1,12 +1,12 @@
 <dom-module id="detail-panel-component">
     <template>
-        <link rel="stylesheet" href="../../../../dist/ag-grid/styles/ag-grid.css">
-        <link rel="stylesheet" href="../../../../dist/ag-grid/styles/theme-fresh.css">
+        <link rel="stylesheet" href="https://unpkg.com/ag-grid/dist/styles/ag-grid.css">
+        <link rel="stylesheet" href="https://unpkg.com/ag-grid/dist/styles/theme-fresh.css">
         <link rel="stylesheet" href="detail-panel-component.css">
 
         <div class="full-width-panel">
             <div class="full-width-details">
-                <div class="full-width-detail"><img width="120px" src="/images/{{parentRecord.image}}.png"/></div>
+                <div class="full-width-detail"><img width="120px" src="https://www.ag-grid.com/images/{{parentRecord.image}}.png"/></div>
                 <div class="full-width-detail"><b>Name: </b> {{parentRecord.name}}</div>
                 <div class="full-width-detail"><b>Account: </b> {{parentRecord.account}}</div>
             </div>
@@ -21,10 +21,10 @@
                              enableColResize
             ></ag-grid-polymer>
             <div class="full-width-grid-toolbar">
-                <img class="full-width-phone-icon" src="/images/phone.png"/>
-                <button on-click="onButtonClick"><img src="/images/fire.png"/></button>
-                <button on-click="onButtonClick"><img src="/images/frost.png"/></button>
-                <button on-click="onButtonClick"><img src="/images/sun.png"/></button>
+                <img class="full-width-phone-icon" src="https://www.ag-grid.com/images/phone.png"/>
+                <button on-click="onButtonClick"><img src="https://www.ag-grid.com/images/fire.png"/></button>
+                <button on-click="onButtonClick"><img src="https://www.ag-grid.com/images/frost.png"/></button>
+                <button on-click="onButtonClick"><img src="https://www.ag-grid.com/images/sun.png"/></button>
                 <input class="full-width-search" on-input="onSearchTextChange" placeholder="Search..."/>
             </div>
         </div>

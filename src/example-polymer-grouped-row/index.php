@@ -12,14 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Group Row Inner Renderer</h2>
     <p>A Group Row Inner Renderer Example</p>
 
-    <show-complex-example example="../framework-examples/polymer-examples/src/grouped-inner-row-components-example/index.html"
-                          sources="{
-                            [
-                                { root: '/framework-examples/polymer-examples/src/grouped-inner-row-components-example/', files: 'index.html,grouped-inner-row-components-example.html,medal-renderer.html' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
+    <?= example('Group Row Inner Renderer', 'grouped-inner-row-components', 'polymer', array("exampleHeight" => 350, "enterprise" => 1)) ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
