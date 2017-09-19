@@ -129,7 +129,7 @@ gulp.task('serve-release', () => {
 });
 
 gulp.task('serve-preview', () => {
-    const php = cp.spawn('php', ['-S', '127.0.0.1:9999', '-t', 'dist'], { stdio: 'inherit', env: { 'AG_DEV': 'true' } });
+    const php = cp.spawn('php', ['-S', '127.0.0.1:9999', '-t', 'dist'], { stdio: 'inherit', env: { 'AG_DEV': 'true', 'FULL_ENTERPRISE_BUNDLE': true } });
     process.on('exit', () => {
         php.kill();
     })
