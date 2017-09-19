@@ -23,7 +23,7 @@ do
     sed -i .old -e 's/.*"ag-grid-enterprise".*/    "ag-grid-enterprise": "'$2'",/g' package.json
     sed -i .old -e 's/.*"ag-grid-aurelia".*/    "ag-grid-aurelia": "'$3'",/g' package.json
     sed -i .old -e 's/.*"ag-grid-angular".*/    "ag-grid-angular": "'$3'",/g' package.json
-    sed -i .old -e 's/.*"ag-grid-react".*/    "ag-grid-react": "'$3'"/g' package.json
+    sed -i .old -e 's/.*"ag-grid-react".*/    "ag-grid-react": "'$3'",/g' package.json
     sed -i .old -e 's/.*"ag-grid-vue".*/    "ag-grid-vue": "'$3'",/g' package.json
 
     rm package.json.old
