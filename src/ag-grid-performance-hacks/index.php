@@ -1,7 +1,7 @@
 <?php
 
 $pageTitle = "JavaScript Performance Hacks";
-$pageDescription = "Performance techniques explained used inside ag-Grid to make it render fast.";
+$pageDescription = "Explaining the performance techniques that we used to make ag-Grid render as quickly as possible.";
 $pageKeyboards = "javascript performance";
 $socialUrl = "https://www.ag-grid.com/ag-grid-performance-hacks/";
 $socialImage = "https://www.ag-grid.com/ag-grid-performance-hacks/images/PerformanceHacks.png";
@@ -29,37 +29,39 @@ include('../includes/mediaHeader.php');
         <p>
             <a href="https://www.ag-grid.com/">ag-Grid</a>
             is a JavaScript data grid for displaying large amounts of data inside the browser
-            in a style similar to Excel.
+            in a style similar to Excel spreadsheets.
             ag-Grid is fast, even in Internet Explorer with large volumes of data.
             This blog presents performance patterns, or performance 'hacks', used in ag-Grid that puts
-            the grid on steroids. How we squeezed performance out of the browser is interesting to
-            anyone wanting to tune their own applications, but in particular a) users of ag-Grid so they can
-            best work with ag-Grid and b) competitors of ag-Grid - it's lonely at the top,
-            it would be more fun if some competitors challenged us a little!
+            the grid on steroids. 
+
+            We describe the methods we used to squeeze performance out of the browser, this can be applied to
+            anyone wanting to tune their own applications. It will be of particular interest to users of ag-Grid so they can
+            improve understanding of how to work with the grid. We also think that it will be of interest to anyone creating a grid. 
+            We relish the idea of healthy competition so we are happy to contribute to the wider community knowledge.
         </p>
 
         <h2>Hack 1 - Row Virtualisation</h2>
 
         <p>
-            Row virtualisation means only rendering rows that are visible on the screen. For example, if the
+            Row virtualisation means that we only render rows that are visible on the screen. For example, if the
             grid has 10,000 rows but only 40 can fit inside the screen, the grid will only render 40 rows (each
             row represented by a DIV element). As the user scrolls up and down, the grid will create new
-            DIV elements for the newly visible rows.
+            DIV elements for the newly visible rows on the fly.
         </p>
 
         <p>
-            If the grid was to render 10,000 rows, it would probably crash the browser as to many DOM elements
+            If the grid was to render 10,000 rows, it would probably crash the browser as too many DOM elements
             are getting created.
             Row virtualisation allows the display of a very large number of rows by only rendering what is
             currently visible to the user.
         </p>
 
         <p>
-            This image below shows row virtualisation - notice how the DOM only has 5 or 6 rows rendered,
+            The image below shows row virtualisation - notice how the DOM only has 5 or 6 rows rendered,
             matching the number of rows the user actually sees.
         </p>
 
-        <img src="./images/rowVirtualisation.gif" style="width: 100%; border:1px solid #aaa;"/>
+        <img src="./images/rowVirtualisation.gif" style="width: 100%; border:1px solid #aaa;" alt="Row Virtualisation"/>
 
 
         <h2>Hack 2 - Column Virtualisation</h2>
@@ -77,11 +79,11 @@ include('../includes/mediaHeader.php');
 
         <h2>Hack 3 - Exploit Event Propagation</h2>
 
-        <h3>Problem - To Much Event Listener Registration</h3>
+        <h3>Problem - Event Listener Registration</h3>
 
         <p>
             The grid needs to have mouse and keyboard listeners on
-            all the cells so that a) the grid can fire events such as 'cellClicked' and b) so that the grid
+            all the cells so that the grid can fire events such as 'cellClicked' and so that the grid
             can perform grid operations such as selection, range selection, keyboard navigation etc.
             In all there are 8 events that the grid requires at the cell level which are
             <i>click, dblclick, mousedown, contextmenu, mouseover,
@@ -89,20 +91,18 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            Adding event listeners to the DOM takes a small performance hit.
+            Adding event listeners to the DOM results in a small performance hit.
             A grid would naturally add thousands of such listeners
-            as even a simple grid of 20 visible columns and 50 visible rows means 20 (columns) x 50 (rows)
-            x 8 (events) = 8,000 event listeners. When
-            the user scrolls, due to row and column virtualisation, these listeners are getting constantly added and
+            as even 20 visible columns and 50 visible rows means 20 (columns) x 50 (rows)
+            x 8 (events) = 8,000 event listeners. As the user scrolls our row and column virtualisation kicks in and these listeners are getting constantly added and
             removed which adds a lag to scrolling.
         </p>
 
         <h3>Solution - Event Propagation</h3>
 
         <p>
-            6 of these 8 events propagate (the exceptions are <i>mouseenter</i> and <i>mouseleave</i> which do
-            not propagate). So instead of adding listeners to each cell, the grid instead adds each listener once to the container
-            that contains the cells. That way the listeners are added once as the grid initialises and not to
+            6 of these 8 events propagate (the exceptions are <i>mouseenter</i> and <i>mouseleave</i>). So instead of adding listeners to each cell, we add 
+            each listener once to the container that contains the cells. That way the listeners are added once when the grid initialises and not to
             each individual cell.
         </p>
 
@@ -144,9 +144,9 @@ function myEventListener(event) {
 }</snippet>
 
         <p>
-            Readers will notice we are attaching arbitrary attributes (<code>__col</code> and <code>__row</code>) onto the DOM element
+            You might have noticed that we are attaching arbitrary attributes (<code>__col</code> and <code>__row</code>) onto the DOM element
             and might be wondering is this safe? I hope so, as ag-Grid is used for air traffic control over Australia
-            as far as I know. In other words, ag-Grid has done this for a long time now and nobody has reported any issues.
+            as far as I know. In other words, ag-Grid has done this for a long time and has been tested in the field.
         </p>
 
         <p>
@@ -157,7 +157,7 @@ function myEventListener(event) {
 
         <p>
             Good programming sense tells you to de-construct everything you construct. This means any DOM item
-            you add to the browser you should remove from the browser in your clean down code. In framework land
+            you add to the browser you should remove in your clean down code. In the context of your framework, 
             it means removing components from their parents when the component is disposed.
         </p>
 

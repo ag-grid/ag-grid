@@ -44011,7 +44011,7 @@
 	        }
 	        this.doIeFocusHack();
 	    };
-	    // https://ag-grid.com/forum/showthread.php?tid=4362
+	    // https://www.ag-grid.com/forum/showthread.php?tid=4362
 	    // when in IE or Edge, when you are editing a cell, then click on another cell,
 	    // the other cell doesn't keep focus, so navigation keys, type to start edit etc
 	    // don't work. appears that when you update the dom in IE it looses focus
