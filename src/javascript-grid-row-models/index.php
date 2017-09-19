@@ -51,30 +51,65 @@ include '../documentation-main/documentation_header.php';
     </p>
     <p>
         The following is a summary of the different row models:
-        <ul>
-            <li>
-                <a href="../javascript-grid-in-memory/"><b>In Memory:</b></a> This is the default. The grid will load all of the data into the grid in one go.
-                The grid can then perform filtering, sorting, grouping, pivoting and aggregation all in memory.</li>
-            <li>
-                <a href="../javascript-grid-infinite-scrolling/"><b>Infinite:</b></a> This will present the data to
-                the user and load more data as the user scrolls down.
-                Use this if you want to display a large flat (not grouped) list of data.
-            </li>
-            <li>
-                <a href="../javascript-grid-enterprise-model/"><b>Enterprise:</b></a>
-                Enterprise builds on Infinite. It also lazy loads the data as the user scrolls down. In addition it
-                allows lazy loading of grouped data with server side grouping and aggregation.
-                Advanced users will use Enterprise Row Model to do ad-hoc slice and dice of data with server side aggregations.
-            </li>
-            <li>
-                <a href="../javascript-grid-viewport/"><b>Viewport:</b></a> This will present the data to the user on screen with a vertical scrollbar.
-                The grid will inform the server exactly what data it is displaying (first and last row) and the
-                server will provide data for exactly those rows only. Use this if you want the server to know exactly
-                what the user is viewing, typically used for updates in live datastreams (as server knows exactly
-                what each user is looking at).
-            </li>
-        </ul>
     </p>
+
+    <div class="list-group">
+        <a href="../javascript-grid-in-memory/" class="list-group-item">
+            <div class="float-parent">
+                <div class="section-icon-container">
+                    <img src="../images/svg/docs/row_models.svg" width="50" />
+                </div>
+                <h3 class="list-group-item-heading">In Memory</h3>
+                <p class="list-group-item-text">
+                    This is the default. The grid will load all of the data into the grid in one go.
+                    The grid can then perform filtering, sorting, grouping, pivoting and aggregation all in memory.</li>
+                </p>
+            </div>
+        </a>
+        <a href="../javascript-grid-infinite-scrolling/" class="list-group-item">
+            <div class="float-parent">
+                <div class="section-icon-container">
+                    <img src="../images/svg/docs/row_models.svg" width="50" />
+                </div>
+                <h3 class="list-group-item-heading">Infinite</h3>
+                <p class="list-group-item-text">
+                    This will present the data to
+                    the user and load more data as the user scrolls down.
+                    Use this if you want to display a large flat (not grouped) list of data.
+                </p>
+            </div>
+        </a>
+
+        <a href="../javascript-grid-enterprise-model/" class="list-group-item">
+            <div class="float-parent">
+                <div class="section-icon-container">
+                    <img src="../images/svg/docs/row_models.svg" width="50" />
+                </div>
+                <h3 class="list-group-item-heading">Enterprise</h3>
+                <p class="list-group-item-text">
+                    Enterprise builds on Infinite. It also lazy loads the data as the user scrolls down. In addition it
+                    allows lazy loading of grouped data with server side grouping and aggregation.
+                    Advanced users will use Enterprise Row Model to do ad-hoc slice and dice of data with server side aggregations.                </p>
+            </div>
+        </a>
+
+        <a href="../javascript-grid-viewport/" class="list-group-item">
+            <div class="float-parent">
+                <div class="section-icon-container">
+                    <img src="../images/svg/docs/row_models.svg" width="50" />
+                </div>
+                <h3 class="list-group-item-heading">Viewport</h3>
+                <p class="list-group-item-text">
+                    The grid will inform the server exactly what data it is displaying (first and last row) and the
+                    server will provide data for exactly those rows only. Use this if you want the server to know exactly
+                    what the user is viewing, useful for updates in very large live datastreams where server only
+                    sends updates to clients viewing the impacted rows.
+                </p>
+            </div>
+        </a>
+
+    </div>
+
 
     <p>
         What row model you use is set as a grid property <code>rowModelType</code>. Set it to one of

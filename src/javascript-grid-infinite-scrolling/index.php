@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="virtual-paging-infinite-scrolling">Infinite Scrolling Row Model</h2>
+    <h2 class="first-h1" id="virtual-paging-infinite-scrolling">Infinite Row Model</h2>
 
     <p>
         Infinite scrolling allows the grid to lazy load rows from the server depending on what

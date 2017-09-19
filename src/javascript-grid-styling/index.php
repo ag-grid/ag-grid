@@ -236,85 +236,84 @@ include '../documentation-main/documentation_header.php';
             attributes cannot be set as classes, they are set as dynamic styles by ag-Grid.</li>
     </ul>
 
-<snippet>
-&lt;div class='&lt;span class="agClass"&gt;ag-root ag-layout-normal&lt;/span&gt;'&gt;
-  &lt;!-- header --&gt;
+<snippet>&lt;div class='ag-root ag-layout-normal'>
 
-  &lt;div class="&lt;span class="agClass"&gt;ag-header&lt;/span&gt;"&gt;
-    &lt;div class="&lt;span class="agClass"&gt;ag-pinned-header&lt;/span&gt;"&gt;
+    &lt;!-- header -->
+    &lt;div class="ag-header">
+        &lt;div class="ag-pinned-header">
 
-      &lt;!-- pinned header cell --&gt;
-      &lt;div class="&lt;span class="agClass"&gt;ag-header-cell&lt;/span&gt;"&gt;
-        &lt;div class="&lt;span class="agClass"&gt;ag-header-label&lt;/span&gt;"&gt;Athlete&lt;/div&gt;
-      &lt;/div&gt;
-      &lt;!-- pinned header cell --&gt;
-      &lt;div class="&lt;span class="agClass"&gt;ag-header-cell&lt;/span&gt;"&gt;
-        &lt;div class="&lt;span class="agClass"&gt;ag-header-label&lt;/span&gt;"&gt;Age&lt;/div&gt;
-      &lt;/div&gt;
+            &lt;!-- pinned header cell -->
+            &lt;div class="ag-header-cell">
+                &lt;div class="ag-header-label">Athlete&lt;/div>
+            &lt;/div>
+            <!-- pinned header cell -->
+            &lt;div class="ag-header-cell">
+                &lt;div class="ag-header-label">Age&lt;/div>
+            &lt;/div>
 
-    &lt;/div&gt;
-    &lt;div class="&lt;span class="agClass"&gt;ag-header-viewport&lt;/span&gt;"&gt;
-      &lt;div class="&lt;span class="agClass"&gt;ag-header-container&lt;/span&gt;"&gt;
+        &lt;/div>
+        &lt;div class="ag-header-viewport">
+            &lt;div class="ag-header-container">
 
-        &lt;!-- main header cell --&gt;
-        &lt;div class="&lt;span class="agClass"&gt;ag-header-cell&lt;/span&gt;"&gt;
-          &lt;div class="&lt;span class="agClass"&gt;ag-header-label&lt;/span&gt;"&gt;County&lt;/div&gt;
-        &lt;/div&gt;
-        &lt;!-- main header cell --&gt;
-        &lt;div class="&lt;span class="agClass"&gt;ag-header-cell&lt;/span&gt;"&gt;
-          &lt;div class="&lt;span class="agClass"&gt;ag-header-label&lt;/span&gt;"&gt;Year&lt;/div&gt;
-        &lt;/div&gt;
+                &lt;!-- main header cell -->
+                &lt;div class="ag-header-cell">
+                    &lt;div class="ag-header-label">County&lt;/div>
+                &lt;/div>
+                &lt;!-- main header cell -->
+                &lt;div class="ag-header-cell">
+                    &lt;div class="ag-header-label">Year&lt;/div>
+                &lt;/div>
 
-        &lt;!-- the other header cells... --&gt;
+                &lt;!-- the other header cells... -->
+            &lt;/div>
+        &lt;/div>
+    &lt;/div>
 
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
+    &lt;!-- body -->
+    &lt;div class="ag-body">
+        &lt;div class="ag-pinned-cols-viewport">
+            &lt;div class="ag-pinned-cols-container">
 
-  &lt;!-- body --&gt;
-  &lt;div class="&lt;span class="agClass"&gt;ag-body&lt;/span&gt;"&gt;
-    &lt;div class="&lt;span class="agClass"&gt;ag-pinned-cols-viewport&lt;/span&gt;"&gt;
-      &lt;div class="&lt;span class="agClass"&gt;ag-pinned-cols-container&lt;/span&gt;"&gt;
+                &lt;div class="ag-row ag-row-even" row="0" style="top: 0px; height: 30px;">
+                    &lt;div class="ag-cell cell-col-0" col="0" style="width: 150px;">Michael Phelps&lt;/div>
+                    &lt;div class="ag-cell cell-col-1" col="1" style="width: 90px;">23&lt;/div>
+                &lt;/div>
 
-        &lt;div class="&lt;span class="agClass"&gt;ag-row ag-row-even&lt;/span&gt;" &lt;span class="agAttr"&gt;row="0"&lt;/span&gt; &lt;span class="agPos"&gt;style="top: 0px; height: 30px;"&lt;/span&gt;&gt;
-          &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-0&lt;/span&gt;" &lt;span class="agAttr"&gt;col="0"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 150px;"&lt;/span&gt;&gt;Michael Phelps&lt;/div&gt;
-          &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-1&lt;/span&gt;" &lt;span class="agAttr"&gt;col="1"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 90px;"&lt;/span&gt;&gt;23&lt;/div&gt;
-        &lt;/div&gt;
+                &lt;div class="ag-row ag-row-odd" row="1" style="top: 30px; height: 30px;">
+                    &lt;div class="ag-cell cell-col-0" col="0" style="width: 150px;">Michael Phelps&lt;/div>
+                    &lt;div class="ag-cell cell-col-1" col="1" style="width: 90px;">19&lt;/div>
+                &lt;/div>
 
-        &lt;div class="&lt;span class="agClass"&gt;ag-row ag-row-odd&lt;/span&gt;" &lt;span class="agAttr"&gt;row="1"&lt;/span&gt; &lt;span class="agPos"&gt;style="top: 30px; height: 30px;"&lt;/span&gt;&gt;
-          &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-0&lt;/span&gt;" &lt;span class="agAttr"&gt;col="0"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 150px;"&lt;/span&gt;&gt;Michael Phelps&lt;/div&gt;
-          &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-1&lt;/span&gt;" &lt;span class="agAttr"&gt;col="1"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 90px;"&lt;/span&gt;&gt;19&lt;/div&gt;
-        &lt;/div&gt;
+                &lt;!-- the other pinned rows... -->
 
-        &lt;!-- the other pinned rows... --&gt;
+            &lt;/div>
+        &lt;/div>
+        &lt;div class="ag-body-viewport-wrapper">
+            &lt;div class="ag-body-viewport">
+                &lt;div class="ag-body-container">
 
-      &lt;/div&gt;
-    &lt;/div&gt;
-    &lt;div class="&lt;span class="agClass"&gt;ag-body-viewport-wrapper&lt;/span&gt;"&gt;
-      &lt;div class="&lt;span class="agClass"&gt;ag-body-viewport&lt;/span&gt;"&gt;
-        &lt;div class="&lt;span class="agClass"&gt;ag-body-container&lt;/span&gt;"&gt;
+                    &lt;div class="ag-row ag-row-even" row="0" style="top: 0px; height: 30px; width: 830px;">
+                        &lt;div class="ag-cell cell-col-2" col="2" style="width: 120px;">United States&lt;/div>
+                        &lt;div class="ag-cell cell-col-3" col="3" style="width: 90px;">2008&lt;/div>
+                        &lt;div class="ag-cell cell-col-4" col="4" style="width: 110px;">24/08/2008&lt;/div>
+                        &lt;!-- the other row cells... -->
+                    &lt;/div>
 
-          &lt;div class="&lt;span class="agClass"&gt;ag-row ag-row-even&lt;/span&gt;" &lt;span class="agAttr"&gt;row="0"&lt;/span&gt; &lt;span class="agPos"&gt;style="top: 0px; height: 30px; width: 830px;"&lt;/span&gt;&gt;
-            &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-2&lt;/span&gt;" &lt;span class="agAttr"&gt;col="2"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 120px;"&lt;/span&gt;&gt;United States&lt;/div&gt;
-            &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-3&lt;/span&gt;" &lt;span class="agAttr"&gt;col="3"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 90px;"&lt;/span&gt;&gt;2008&lt;/div&gt;
-            &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-4&lt;/span&gt;" &lt;span class="agAttr"&gt;col="4"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 110px;"&lt;/span&gt;&gt;24/08/2008&lt;/div&gt;
-            &lt;!-- the other row cells... --&gt;
-          &lt;/div&gt;
+                    &lt;div class="ag-row ag-row-odd" row="1" style="top: 30px; height: 30px; width: 830px;">
+                        &lt;div class="ag-cell cell-col-2" col="2" style="width: 120px;">United States&lt;/div>
+                        &lt;div class="ag-cell cell-col-3" col="3" style="width: 90px;">2004&lt;/div>
+                        &lt;div class="ag-cell cell-col-4" col="4" style="width: 110px;">29/08/2004&lt;/div>
+                        &lt;!-- the other row cells... -->
+                    &lt;/div>
 
-          &lt;div class="&lt;span class="agClass"&gt;ag-row ag-row-odd&lt;/span&gt;" &lt;span class="agAttr"&gt;row="1"&lt;/span&gt; &lt;span class="agPos"&gt;style="top: 30px; height: 30px; width: 830px;"&lt;/span&gt;&gt;
-            &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-2&lt;/span&gt;" &lt;span class="agAttr"&gt;col="2"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 120px;"&lt;/span&gt;&gt;United States&lt;/div&gt;
-            &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-3&lt;/span&gt;" &lt;span class="agAttr"&gt;col="3"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 90px;"&lt;/span&gt;&gt;2004&lt;/div&gt;
-            &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-4&lt;/span&gt;" &lt;span class="agAttr"&gt;col="4"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 110px;"&lt;/span&gt;&gt;29/08/2004&lt;/div&gt;
-            &lt;!-- the other row cells... --&gt;
-          &lt;/div&gt;
+                    &lt;!-- the other body rows... -->
 
-          &lt;!-- the other body rows... --&gt;
-
-          &lt;/div&gt;
-      &lt;/div&gt;
-    &lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</snippet>
+                &lt;/div>
+            &lt;/div>
+        &lt;/div>
+    &lt;/div>
+&lt;/div>
+</snippet>
 
     <h2 id="styling-with-for-print">Styling with For Print</h2>
 
@@ -324,43 +323,43 @@ include '../documentation-main/documentation_header.php';
         When laying out for printing, there are no pinned columns and no viewports for scrolling.
     </p>
 
-<snippet>
-&lt;div class="&lt;span class="agClass"&gt;ag-root ag-layout-for-print&lt;/span&gt;"&gt;
+<snippet>&lt;div class="ag-root ag-layout-for-print">
 
-    &lt;!-- header --&gt;
-    &lt;div class="&lt;span class="agClass"&gt;ag-header-container&lt;/span&gt;"&gt;
-        &lt;div class="&lt;span class="agClass"&gt;ag-header-cell&lt;/span&gt;" style="width: 120px;"&gt;
-            &lt;span&gt;Athlete&lt;/span&gt;
-        &lt;/div&gt;
-        &lt;div class="&lt;span class="agClass"&gt;ag-header-cell&lt;/span&gt;" style="width: 90px;"&gt;
-            &lt;span&gt;Age&lt;/span&gt;
-        &lt;/div&gt;
+    &lt;!-- header -->
+    &lt;div class="ag-header-container">
+        &lt;div class="ag-header-cell" style="width: 120px;">
+            &lt;span>Athlete&lt;/span>
+        &lt;/div>
+        &lt;div class="ag-header-cell" style="width: 90px;">
+            &lt;span>Age&lt;/span>
+        &lt;/div>
 
-        &lt;!-- the other headers... --&gt;
+        &lt;!-- the other headers... -->
 
-    &lt;/div&gt;
+    &lt;/div>
 
-    &lt;!-- body --&gt;
-    &lt;div class="&lt;span class="agClass"&gt;ag-body-container&lt;/span&gt;"&gt;
-        &lt;div class="&lt;span class="agClass"&gt;ag-row ag-row-even&lt;/span&gt;" &lt;span class="agAttr"&gt;row="0"&lt;/span&gt; &lt;span class="agPos"&gt;style="height: 30px; width: 830px;"&lt;/span&gt;&gt;
-            &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-0&lt;/span&gt;" &lt;span class="agAttr"&gt;col="0"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 120px;"&lt;/span&gt;&gt;Michael Phelps&lt;/div&gt;
-            &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-1&lt;/span&gt;" &lt;span class="agAttr"&gt;col="1"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 90px;"&lt;/span&gt;&gt;United States&lt;/div&gt;
+    <!-- body -->
+    &lt;div class="ag-body-container">
+        &lt;div class="ag-row ag-row-even" row="0" style="height: 30px; width: 830px;">
+            &lt;div class="ag-cell cell-col-0" col="0" style="width: 120px;">Michael Phelps&lt;/div>
+            &lt;div class="ag-cell cell-col-1" col="1" style="width: 90px;">United States&lt;/div>
 
-            &lt;!-- the other row cells... --&gt;
+            &lt;!-- the other row cells... -->
 
-        &lt;/div&gt;
-        &lt;div class="&lt;span class="agClass"&gt;ag-row ag-row-odd&lt;/span&gt;" &lt;span class="agAttr"&gt;row="1"&lt;/span&gt; &lt;span class="agPos"&gt;style="height: 30px; width: 830px;"&lt;/span&gt;&gt;
-            &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-0&lt;/span&gt;" &lt;span class="agAttr"&gt;col="0"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 120px;"&lt;/span&gt;&gt;Michael Phelps&lt;/div&gt;
-            &lt;div class="&lt;span class="agClass"&gt;ag-cell cell-col-1&lt;/span&gt;" &lt;span class="agAttr"&gt;col="1"&lt;/span&gt; &lt;span class="agPos"&gt;style="width: 90px;"&lt;/span&gt;&gt;United States&lt;/div&gt;
+        &lt;/div>
+        &lt;div class="ag-row ag-row-odd" row="1" style="height: 30px; width: 830px;">
+            &lt;div class="ag-cell cell-col-0" col="0" style="width: 120px;">Michael Phelps&lt;/div>
+            &lt;div class="ag-cell cell-col-1" col="1" style="width: 90px;">United States&lt;/div>
 
-            &lt;!-- the other row cells... --&gt;
+            &lt;!-- the other row cells... -->
 
-        &lt;/div&gt;
+        &lt;/div>
 
-        &lt;!-- the other rows... --&gt;
+        &lt;!-- the other rows... -->
 
-    &lt;/div&gt;
-&lt;/div&gt;</snippet>
+    &lt;/div>
+&lt;/div>
+</snippet>
 
 
     <h2 id="customizing-sass-variables">Customizing the themes with Sass variables</h2>
