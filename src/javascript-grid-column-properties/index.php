@@ -251,6 +251,14 @@ include '../documentation-main/documentation_header.php';
                 Can also be a function to have different rows navigable.</td>
         </tr>
         <tr>
+            <th>suppressKeyboardEvent(params)</th>
+            <td>
+                Function to allow skipping default keyboard behaviour of the grid. Eg if you don't want the
+                grid to move focus up on up arrow key while editing, implement this method to return
+                true when params.editing=true and params.event.keyCode=[key code for up arrow key].
+            </td>
+        </tr>
+        <tr>
             <th>onCellClicked(params)</th>
             <td>Function callback, gets called when a cell is clicked.</td>
         </tr>
