@@ -94,7 +94,7 @@ function getDirContents($dir, &$results = array(), $prefix = ""){
 }
 
 function getBoilerplateConfig($type) {
-    if ($type == "vanilla") {
+    if ($type == "vanilla" || $type == "polymer") {
         return "";
     }
 
