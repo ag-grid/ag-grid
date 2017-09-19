@@ -194,11 +194,4 @@ colDef = {
     <p>
         Using Polymer Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <show-complex-example example="../framework-examples/polymer-examples/src/editor-components-grid/index.html"
-                          sources="{
-                            [
-                                { root: '/framework-examples/polymer-examples/src/editor-components-grid/', files: 'index.html,editor-components-example.html,mood-renderer.html,numeric-editor.html,mood-editor.html' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
+    <?= example('Polymer Editor Components', 'polymer-editor', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>
