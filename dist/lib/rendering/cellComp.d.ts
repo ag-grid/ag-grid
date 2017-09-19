@@ -101,6 +101,7 @@ export declare class CellComp extends Component {
     setFocusInOnEditor(): void;
     isEditing(): boolean;
     onKeyDown(event: KeyboardEvent): void;
+    doesUserWantToCancelKeyboardEvent(event: KeyboardEvent): boolean;
     setFocusOutOnEditor(): void;
     private onNavigationKeyPressed(event, key);
     private onTabKeyDown(event);
