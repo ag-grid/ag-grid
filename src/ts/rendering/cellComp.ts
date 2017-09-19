@@ -19,7 +19,7 @@ import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {Component} from "../widgets/component";
 import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
-import {NewValueParams} from "../entities/colDef";
+import {NewValueParams, SuppressKeyboardEventParams} from "../entities/colDef";
 import {Beans} from "./beans";
 import {IAfterGuiAttachedParams, ICellRendererAfterGuiAttachedParams} from "../interfaces/iComponent";
 import {RowComp} from "./rowComp";
@@ -1041,6 +1041,9 @@ export class CellComp extends Component {
     public onKeyDown(event: KeyboardEvent): void {
         let key = event.which || event.keyCode;
 
+        // give user a chance to cancel event processing
+        if (this.doesUserWantToCancelKeyboardEvent(event)) { return; }
+
         switch (key) {
             case Constants.KEY_ENTER:
                 this.onEnterKeyDown();
@@ -1064,6 +1067,27 @@ export class CellComp extends Component {
             case Constants.KEY_LEFT:
                 this.onNavigationKeyPressed(event, key);
                 break;
+        }
+    }
+
+    public doesUserWantToCancelKeyboardEvent(event: KeyboardEvent): boolean {
+        let callback = this.column.getColDef().suppressKeyboardEvent;
+        if (_.missing(callback)) {
+            return false;
+        } else {
+            // if editing is null or undefined, this sets it to false
+            let editing = this.editingCell === true;
+            let params: SuppressKeyboardEventParams = {
+                event: event,
+                editing: editing,
+                column: this.column,
+                api: this.beans.gridOptionsWrapper.getApi(),
+                node: this.rowNode,
+                colDef: this.column.getColDef(),
+                context: this.beans.gridOptionsWrapper.getContext(),
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi()
+            };
+            return callback(params);
         }
     }
 
