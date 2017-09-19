@@ -1,43 +1,55 @@
-import {autoinject, inlineView, customElement, children, child} from "aurelia-framework";
+import {autoinject, child, children, customElement, inlineView} from "aurelia-framework";
 import {ColDef} from "ag-grid/main";
 import {AgCellTemplate, AgEditorTemplate, AgFilterTemplate} from "./agTemplate";
 import {generateBindables} from "./agUtils";
 
 @customElement('ag-grid-column')
-@generateBindables(['colId','sort','sortedAt','sortingOrder','field','headerValueGetter','hide','pinned','tooltipField','headerTooltip',
-    'valueGetter','keyCreator','headerCellRenderer','headerCellTemplate','width','minWidth','maxWidth','cellClass',
-    'cellStyle','cellRenderer','cellRendererFramework','cellRendererParams','cellEditor','cellEditorFramework','cellEditorParams',
-    'floatingCellRenderer','floatingCellRendererFramework','floatingCellRendererParams','cellFormatter(','floatingCellFormatter',
-    'aggFunc','rowGroupIndex','pivotIndex','comparator','checkboxSelection','suppressMenu','suppressSorting','suppressMovable',
-    'suppressFilter','unSortIcon','suppressSizeToFit','suppressResize','suppressAutoSize','enableRowGroup','enablePivot',
-    'enableValue','editable','suppressNavigable','newValueHandler','volatile','filter','filterFramework','filterParams','cellClassRules',
-    'onCellValueChanged','onCellClicked','onCellDoubleClicked','onCellContextMenu','icons','enableCellChangeFlash','headerName',
-    'columnGroupShow','headerClass','children','groupId','openByDefault','marryChildren'])
+@generateBindables(["colId", "sort", "sortedAt", "sortingOrder", "field", "headerValueGetter", "hideCol", "pinned",
+    "tooltipField", "headerTooltip", "valueGetter", "keyCreator", "headerCellRenderer", "headerCellTemplate",
+    "width", "minWidth", "maxWidth", "cellClass", "cellStyle", "cellRenderer", "cellRendererFramework",
+    "cellRendererParams", "cellEditor", "cellEditorFramework", "cellEditorParams", "floatingCellRenderer",
+    "floatingCellRendererFramework", "floatingCellRendererParams", "cellFormatter(", "floatingCellFormatter",
+    "getQuickFilterText", "aggFunc", "rowGroupIndex", "pivotIndex", "comparator", "checkboxSelection", "suppressMenu",
+    "suppressSorting", "suppressMovable", "suppressFilter", "unSortIcon", "suppressSizeToFit", "suppressResize",
+    "suppressAutoSize", "enableRowGroup", "enablePivot", "enableValue", "editable", "suppressNavigable", "newValueHandler",
+    "volatile", "filter", "filterFramework", "filterParams", "cellClassRules", "onCellValueChanged", "onCellClicked",
+    "onCellDoubleClicked", "onCellContextMenu", "icons", "enableCellChangeFlash", "headerName", "columnGroupShow",
+    "headerClass", "children", "groupId", "openByDefault", "marryChildren", "headerCheckboxSelection",
+    "headerCheckboxSelectionFilteredOnly", "ype", "ooltipField", "valueSetter", "pinnedRowCellRenderer",
+    "pinnedRowCellRendererFramework", "pinnedRowCellRendererParams", "valueFormatter", "pinnedRowValueFormatter",
+    "valueParser", "allowedAggFuncs", "rowGroup", "showRowGroup", "pivot", "equals", "pivotComparator", "menuTabs",
+    "colSpan", "suppressPaste", "emplate", "emplateUrl", "pivotValueColumn", "pivotTotalColumnIds", "headerComponent",
+    "headerComponentFramework", "headerComponentParams", "floatingFilterComponent", "floatingFilterComponentParams",
+    "floatingFilterComponentFramework"])
 // <slot> is required for @children to work.  https://github.com/aurelia/templating/issues/451#issuecomment-254206622
 @inlineView(`<template><slot></slot></template>`)
 @autoinject()
 export class AgGridColumn {
+    private mappedColumnProperties: any = {
+        "hideCol": "hide"   // hide exists in aurelia-templating-resources and will conflict
+    };
+
     @children('ag-grid-column')
-    public childColumns:AgGridColumn[] = [];
+    public childColumns: AgGridColumn[] = [];
 
     @child('ag-cell-template')
-    public cellTemplate:AgCellTemplate;
+    public cellTemplate: AgCellTemplate;
 
     @child('ag-editor-template')
-    public editorTemplate:AgEditorTemplate;
+    public editorTemplate: AgEditorTemplate;
 
     @child('ag-filter-template')
-    public filterTemplate:AgFilterTemplate;
+    public filterTemplate: AgFilterTemplate;
 
-    constructor(){
+    constructor() {
     }
 
-    public hasChildColumns():boolean {
+    public hasChildColumns(): boolean {
         return this.childColumns && this.childColumns.length > 0;
     }
 
-    public toColDef():ColDef {
-        let colDef:ColDef = this.createColDefFromGridColumn();
+    public toColDef(): ColDef {
+        let colDef: ColDef = this.createColDefFromGridColumn();
 
         if (this.hasChildColumns()) {
             (<any>colDef)["children"] = AgGridColumn.getChildColDefs(this.childColumns);
@@ -49,7 +61,7 @@ export class AgGridColumn {
         }
 
         if (this.editorTemplate) {
-            if(colDef.editable === undefined) {
+            if (colDef.editable === undefined) {
                 colDef.editable = true;
             }
             colDef.cellEditorFramework = {template: this.editorTemplate.template};
@@ -64,18 +76,19 @@ export class AgGridColumn {
         return colDef;
     }
 
-    private static getChildColDefs(childColumns:AgGridColumn[]) {
+    private static getChildColDefs(childColumns: AgGridColumn[]) {
         return childColumns
             .filter(column => !column.hasChildColumns())
-            .map((column:AgGridColumn) => {
+            .map((column: AgGridColumn) => {
                 return column.toColDef();
             });
     };
 
-    private createColDefFromGridColumn():ColDef {
-        let colDef:ColDef = {};
+    private createColDefFromGridColumn(): ColDef {
+        let colDef: ColDef = {};
         for (let prop in this) {
-            (<any>colDef)[prop] = (<any>this)[prop];
+            let colDefProperty = this.mappedColumnProperties[prop] ? this.mappedColumnProperties[prop] : prop;
+            (<any>colDef)[colDefProperty] = (<any>this)[prop];
         }
         delete (<any>colDef).childColumns;
         return colDef;

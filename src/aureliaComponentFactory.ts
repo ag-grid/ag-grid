@@ -1,17 +1,17 @@
-import {autoinject, Container, transient, View, ViewFactory, TaskQueue} from "aurelia-framework";
+import {autoinject, Container, TaskQueue, transient, View, ViewFactory} from "aurelia-framework";
 
-import {ICellRendererComp, ICellEditorComp} from "ag-grid/main";
+import {ICellEditorComp, ICellRendererComp} from "ag-grid/main";
 
 import {IAureliaEditorViewModel} from "./editorViewModels";
 
 @autoinject()
 @transient()
 export class AureliaComponentFactory {
-    constructor(private taskQueue:TaskQueue) {
+    constructor(private taskQueue: TaskQueue) {
 
     }
 
-    public createRendererFromTemplate(container: Container, viewFactory: ViewFactory): {new(): ICellRendererComp} {
+    public createRendererFromTemplate(container: Container, viewFactory: ViewFactory): { new(): ICellRendererComp } {
         let componentFactory = this;
 
         class CellRendererComponent implements ICellRendererComp {
@@ -22,7 +22,7 @@ export class AureliaComponentFactory {
                 this.view = viewFactory.create(container);
                 let controllers: any[] = (<any> this.view).controllers;
                 //initialize each controller
-                if (controllers && controllers.length){
+                if (controllers && controllers.length) {
                     controllers.forEach((c) => {
                         c.viewModel.params = params;
                     });
@@ -45,7 +45,7 @@ export class AureliaComponentFactory {
                 this.view.returnToCache();
             }
 
-            refresh(params: any): boolean{
+            refresh(params: any): boolean {
                 return false;
             }
 
@@ -54,7 +54,7 @@ export class AureliaComponentFactory {
         return CellRendererComponent;
     }
 
-    public createEditorFromTemplate(container: Container, viewFactory: ViewFactory): {new(): ICellEditorComp} {
+    public createEditorFromTemplate(container: Container, viewFactory: ViewFactory): { new(): ICellEditorComp } {
 
         class CellEditor implements ICellEditorComp {
 

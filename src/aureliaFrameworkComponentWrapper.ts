@@ -89,7 +89,7 @@ abstract class BaseGuiComponent {
     }
 
     getGui(): HTMLElement {
-        return this._view.fragment as any;
+        return this._view.fragment as HTMLElement;
     }
 
 

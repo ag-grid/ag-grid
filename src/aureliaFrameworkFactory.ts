@@ -12,7 +12,7 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
     constructor(private _componentFactory: AureliaComponentFactory, private _viewCompiler: ViewCompiler) {
     }
 
-    public colDefCellEditor(colDef: ColDef): {new (): ICellEditorComp;} | string {
+    public colDefCellEditor(colDef: ColDef): { new (): ICellEditorComp; } | string {
         if (colDef.cellEditorFramework) {
             //cache the columnDef viewFactory
             if (!colDef.cellEditorFramework.$viewFactory) {
@@ -26,7 +26,7 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
     }
 
 
-    public colDefFilter(colDef: ColDef): {new (): IFilterComp;} | string {
+    public colDefFilter(colDef: ColDef): { new (): IFilterComp; } | string {
         return this._baseFrameworkFactory.colDefFilter(colDef);
     }
 
