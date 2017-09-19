@@ -12,14 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Full Width Renderer</h2>
     <p>A Full Width Renderer Example</p>
 
-    <show-complex-example example="../framework-examples/polymer-examples/src/full-width-components-example/index.html"
-                          sources="{
-                            [
-                                { root: '/framework-examples/polymer-examples/src/full-width-components-example/', files: 'index.html,full-width-components-example.html,full-width-renderer.html' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
+    <?= example('Full Width Renderer', 'full-width-components', 'polymer', array("exampleHeight" => 500)) ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

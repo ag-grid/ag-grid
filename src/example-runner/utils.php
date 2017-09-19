@@ -3,6 +3,7 @@
 //
 define('AG_GRID_VERSION', '$$VERSION$$');
 define('USE_LOCAL', isset($_ENV['AG_DEV']));
+define('FULL_ENTERPRISE_BUNDLE', isset($_ENV['FULL_ENTERPRISE_BUNDLE']));
 
 //define('AG_GRID_VERSION', '13.0.0');
 //define('USE_LOCAL', false);
@@ -40,7 +41,7 @@ $agGridEnterprise = AG_GRID_ENTERPRISE_SCRIPT_PATH;
     <script src="$agGrid"></script>
 SCR;
     } else {
-        if (USE_LOCAL) {
+        if (USE_LOCAL && !FULL_ENTERPRISE_BUNDLE) {
             $output = <<<SCR
     <script src="$agGrid"></script>
     <script> window['ag-grid'] = agGrid; </script>

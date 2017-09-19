@@ -111,14 +111,7 @@ the grid will know the framework to use is Polymer.
 <p>
     Using Polymer Components in the Cell Renderers
 </p>
-<show-complex-example example="../framework-examples/polymer-examples/src/dynamic-components-grid/index.html"
-                      sources="{
-                            [
-                                { root: '/framework-examples/polymer-examples/src/dynamic-components-grid/', files: 'index.html,cube-cell-renderer.html,params-cell-renderer.html,currency-cell-renderer.html,parent-child-renderer.html,dynamic-components-example.html,square-cell-renderer.html' }
-                            ]
-                          }"
-                      exampleHeight="525px">
-</show-complex-example>
+<?= example('Simple Dynamic Component', 'polymer-dynamic', 'polymer', array("exampleHeight" => 460)) ?>
 
 <h3 id="polymer-methods-lifecycle"><img src="../images/polymer-large.png" style="width: 20px;"/> Polymer Methods /
     Lifecycle</h3>
@@ -142,14 +135,7 @@ the grid will know the framework to use is Polymer.
 <p>
     Using more complex Polymer Components in the Cell Renderer's
 </p>
-<show-complex-example example="../framework-examples/polymer-examples/src/rich-dynamic-components-grid/index.html"
-                      sources="{
-                            [
-                                { root: '/framework-examples/polymer-examples/src/rich-dynamic-components-grid/', files: 'index.html,ratio-renderer.html,rich-dynamic-components-example.html' }
-                            ]
-                          }"
-                      exampleHeight="525px">
-</show-complex-example>
+<?= example('Richer Dynamic Components', 'polymer-rich-dynamic', 'polymer', array("exampleHeight" => 390) ) ?>
 
 <note>The full <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> repo shows many
     more examples for rendering, including grouped rows, full width renderer's

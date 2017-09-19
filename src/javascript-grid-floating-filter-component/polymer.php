@@ -14,14 +14,7 @@
     See example below on how to create a custom floating filter reusing the out of the box number filter with polymer
 </p>
 
-<show-complex-example example="../framework-examples/polymer-examples/src/floating-filter-components-grid/index.html"
-                      sources="{
-                            [
-                                { root: '/framework-examples/polymer-examples/src/floating-filter-components-grid/', files: 'index.html,floating-filter-components-example.html,sliding-floating-filter.html' }
-                            ]
-                          }"
-                      exampleHeight="525px">
-</show-complex-example>
+<?= example('Floating Filter Component', 'polymer-floating-filter', 'polymer', array("exampleHeight" => 410) ) ?>
 
 <note>The full <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> repo shows many
     more examples for rendering, including grouped rows, full width renderer's
