@@ -7,7 +7,7 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="cell-editors">Cell Editors</h2>
+<h1 class="first-h1" id="cell-editors">Cell Editors</h1>
 
 <p>
     Create your own cell editor by providing a cell editor component.
@@ -101,9 +101,9 @@ MyCellEditor.prototype.isPopup = function() {
 };</snippet>
 
 
-<h3 id="cell-editor-params">
+<h2 id="cell-editor-params">
     Cell Editor Params
-</h3>
+</h2>
 
 <p>
     The Cell Editor component takes parameters in its init() method and contain the following:
@@ -182,7 +182,7 @@ MyCellEditor.prototype.isPopup = function() {
     </tr>
 </table>
 
-<h3 id="complementing-cell-editor-params">Complementing Cell Editor Params</h3>
+<h2 id="complementing-cell-editor-params">Complementing Cell Editor Params</h2>
 
 <p>
     Again like cell renderer's, cell editors can also be provided with additional parameters.
@@ -201,7 +201,7 @@ colDef.cellEditorParams = {
 }
 </snippet>
 
-<h3 id="editing-keyboard-navigation">Keyboard Navigation While Editing</h3>
+<h2 id="editing-keyboard-navigation">Keyboard Navigation While Editing</h2>
 
 <p>
     If you provide a cell editor, you may wish to disable some of the grids keyboard navigation.
@@ -218,8 +218,24 @@ colDef.cellEditorParams = {
 </p>
 
 <p>
+    You have two options to stop the grid from doing it's default action on certain key events:
+    <ol>
+    <li>Stop propagation of the event to the grid in the cell editor.</li>
+    <li>Tell the grid to do nothing via the <code>colDef.suppressKeyEvent()</code> callback.</li>
+</ol>
+</p>
+
+<h3>Option 1 - Stop Propagation</h3>
+
+<p>
+    If you don't want the grid to act on an event, call <code>event.stopPropagation()</code>.
+    The advantage of this method is that your cell editor takes care of everything, good for
+    creating reusable cell editors.
+</p>
+
+<p>
     The follow code snippet is one you could include for a simple text editor, which would
-    stop the grid from doing navigation
+    stop the grid from doing navigation.
 </p>
 
 <snippet>
@@ -246,7 +262,53 @@ eInputDomElement.addEventListener('keydown', function(event) {
 }
 </snippet>
 
-<h3 id="cell-editing-example">Cell Editing Example</h3>
+<h3 id="suppress-keyboard-event">Option 2 - Suppress Keyboard Event</h3>
+
+<p>
+    If you implement <code>colDef.suppressKeyboardEvent()</code>, you can tell the grid
+    which events you want process and which not. The advantage of this method of the previous
+    method is it takes the responsibility out of the cell editor and into the column
+    definition. So if you are using a reusable, or third party, cell editor, and the editor doesn't have
+    this logic in it, you can add the logic via configuration.
+</p>
+
+<snippet>
+var KEY_UP = 38;
+var KEY_DOWN = 40;
+
+colDef.suppressKeyboardEvent = function(params) {
+    console.log('cell is editing: ' + params.editing);
+    console.log('keyboard event:', params.event);
+
+    // return true (to suppress) if editing and user hit up/down keys
+    var keyCode = params.event.keyCode;
+    var gridShouldDoNothing = params.editing && (keyCode===KEY_UP || keyCode===KEY_DOWN);
+    return gridShouldDoNothing;
+}
+</snippet>
+
+<p>The params for <code>suppressKeyboardEvent()</code> are as follows:</p>
+
+<snippet>
+interface SuppressKeyboardEventParams {
+
+    // the keyboard event the grid received
+    event: KeyboardEvent;
+
+    // whether the cell is editing or not
+    editing: boolean;
+
+    // these are same as normal
+    node: RowNode;
+    column: Column;
+    colDef: ColDef;
+    context: any;
+    api: GridApi;
+    columnApi: ColumnApi;
+}
+</snippet>
+
+<h2 id="cell-editing-example">Cell Editing Example</h2>
 
 <p>The example below illustrates:
 <ul>
