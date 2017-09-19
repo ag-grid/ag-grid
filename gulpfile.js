@@ -61,7 +61,6 @@ function processSrc() {
     return gulp.src(['./src/**/*','!./src/dist/ag-grid/','!./src/dist/ag-grid-enterprise/'])
         // inline the PHP part
         .pipe(phpFilter)
-        .pipe(replace('$$VERSION$$', version))
         // .pipe(debug())
         .pipe(gulpIf(!SKIP_INLINE, inlinesource()))
         .pipe(phpFilter.restore)
@@ -79,10 +78,9 @@ gulp.task('replace-to-cdn', () => {
     const version = require('../ag-grid/package.json').version;
 
     // replace the hard-coded scripts with unpkg
-    return gulp.src(['dist/**/*.html', 'dist/index.php'])
-        .pipe(replace('../dist/ag-grid/ag-grid.js', `https://unpkg.com/ag-grid@${version}/dist/ag-grid.min.js`))
-        .pipe(replace('../dist/ag-grid-enterprise/ag-grid-enterprise.js', `https://unpkg.com/ag-grid-enterprise@${version}/dist/ag-grid-enterprise.min.js`))
-        .pipe(gulp.dest('./dist'));
+    return gulp.src('dist/example-runner/utils.php')
+        .pipe(replace('$$VERSION$$', version))
+        .pipe(gulp.dest('./dist/example-runner/'));
 });
 
 function copyAgGridToDist() {
@@ -129,7 +127,7 @@ gulp.task('serve-release', () => {
 });
 
 gulp.task('serve-preview', () => {
-    const php = cp.spawn('php', ['-S', '127.0.0.1:9999', '-t', 'dist'], { stdio: 'inherit', env: { 'AG_DEV': 'true', 'FULL_ENTERPRISE_BUNDLE': true } });
+    const php = cp.spawn('php', ['-S', '127.0.0.1:9999', '-t', 'dist'], { stdio: 'inherit' });
     process.on('exit', () => {
         php.kill();
     })
