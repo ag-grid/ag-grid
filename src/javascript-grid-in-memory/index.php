@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="in-memory-row-model">In Memory Row Model</h2>
+    <h2 class="first-h1" id="in-memory-row-model">In Memory Row Model</h2>
 
     <p>
         The simplest row model to use is the In Memory Row Model. This row model takes
