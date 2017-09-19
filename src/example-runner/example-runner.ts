@@ -238,14 +238,14 @@ docs.component('exampleRunner', {
 
             <li role="presentation">
                 <a role="tab" ng-href="{{$ctrl.resultUrl}}" target="_blank">
-                    <i class="fa fa-arrows-alt" aria-hidden="true"></i> Open in new tab
+                    <i class="fa fa-arrows-alt" aria-hidden="true"></i> new tab
                 </a>
             </li>
 
             <example-tab 
                 value="'plunker'" 
                 current-value="$ctrl.selectedTab" 
-                title="'Open in Plunker'"
+                title="'Plunker'"
                 icon="'fa-external-link'" 
                 on-click="$ctrl.openPlunker($event); $event.preventDefault()">
             </example-tab>
