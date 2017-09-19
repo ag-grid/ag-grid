@@ -13,26 +13,13 @@ include '../documentation-main/documentation_header.php';
     <p>A simple Grid using Polymer Components as Cell Renderers, with Child Components, Two-Way Binding and
         Parent to Child Components Events.</p>
 
-    <show-complex-example example="../framework-examples/polymer-examples/src/dynamic-components-grid/index.html"
-                          sources="{
-                            [
-                                { root: '/framework-examples/polymer-examples/src/dynamic-components-grid/', files: 'index.html,cube-cell-renderer.html,params-cell-renderer.html,currency-cell-renderer.html,parent-child-renderer.html,dynamic-components-example.html,square-cell-renderer.html' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
+    <?= example('Simple Dynamic Component', 'dynamic-components', 'polymer', array("exampleHeight" => 460)) ?>
 
     <h2 id="rich-dynamic">Richer Dynamic Components</h2>
     <p>A Richer Example using Polymer Components as Cell Renderers, with Dynamic Components included via Modules.</p>
 
-    <show-complex-example example="../framework-examples/polymer-examples/src/rich-dynamic-components-grid/index.html"
-                          sources="{
-                            [
-                                { root: '/framework-examples/polymer-examples/src/rich-dynamic-components-grid/', files: 'index.html,ratio-renderer.html,rich-dynamic-components-example.html' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
+    <?= example('Richer Dynamic Components', 'rich-dynamic-components', 'polymer', array("exampleHeight" => 390) ) ?>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

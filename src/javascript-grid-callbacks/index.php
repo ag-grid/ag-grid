@@ -57,6 +57,13 @@ include '../documentation-main/documentation_header.php';
             <td>Allows you to pass tree structure data to the grid, or row data that is already grouped.</td>
         </tr>
         <tr>
+            <th>getChildCount(data)</th>
+            <td>
+                For <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a> only. Allows
+                setting the child count for a group row.
+            </td>
+        </tr>
+        <tr>
             <th>processRowPostCreate(params)</th>
             <td>Allows you to process rows after they are created. So you can do final adding of custom attributes etc.</td>
         </tr>

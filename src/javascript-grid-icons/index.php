@@ -174,7 +174,7 @@ valuePanel // beside where to drop columns for value</snippet>
         (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the icons for grouping only)
     </p>
 
-    <?= example('Icons', 'icons') ?>
+    <?= example('Icons', 'icons', 'vanilla', array('enterprise' => true, 'extras' => array('fontawesome') )) ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

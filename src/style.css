@@ -1,3 +1,10 @@
+.note {
+    border: 1px solid darkgrey;
+    padding: 5px;
+    margin: 5px;
+    background-color: lightyellow;
+}
+
 .table .title-row td {
     border: none;
     font-weight: bold;

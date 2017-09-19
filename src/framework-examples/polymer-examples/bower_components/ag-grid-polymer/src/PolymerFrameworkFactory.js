@@ -6,7 +6,7 @@ class PolymerFrameworkFactory {
 
     colDefFloatingCellRenderer(colDef) {
         if (colDef.pinnedRowCellRendererFramework && colDef.pinnedRowCellRendererFramework.component) {
-            console.warn("colDef.pinnedRowCellRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            console.warn("colDef.pinnedRowCellRendererFramework.component is deprecated - please refer to https://www.ag-grid.com/best-angular-2-data-grid/");
             colDef.pinnedRowCellRendererFramework = colDef.pinnedRowCellRendererFramework.component;
         }
 
@@ -19,7 +19,7 @@ class PolymerFrameworkFactory {
 
     colDefCellRenderer(colDef) {
         if (colDef.cellRendererFramework && colDef.cellRendererFramework.component) {
-            console.warn("colDef.cellRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            console.warn("colDef.cellRendererFramework.component is deprecated - please refer to https://www.ag-grid.com/best-angular-2-data-grid/");
             colDef.cellRendererFramework = colDef.cellRendererFramework.component;
         }
 
@@ -32,7 +32,7 @@ class PolymerFrameworkFactory {
 
     colDefCellEditor(colDef) {
         if (colDef.cellEditorFramework && colDef.cellEditorFramework.component) {
-            console.warn("colDef.cellEditorFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            console.warn("colDef.cellEditorFramework.component is deprecated - please refer to https://www.ag-grid.com/best-angular-2-data-grid/");
             colDef.cellEditorFramework = colDef.cellEditorFramework.component;
         }
 
@@ -45,7 +45,7 @@ class PolymerFrameworkFactory {
 
     gridOptionsFullWidthCellRenderer(gridOptions) {
         if (gridOptions.fullWidthCellRendererFramework && gridOptions.fullWidthCellRendererFramework.component) {
-            console.warn("gridOptions.fullWidthCellRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            console.warn("gridOptions.fullWidthCellRendererFramework.component is deprecated - please refer to https://www.ag-grid.com/best-angular-2-data-grid/");
             gridOptions.fullWidthCellRendererFramework = gridOptions.fullWidthCellRendererFramework.component;
         }
 
@@ -58,7 +58,7 @@ class PolymerFrameworkFactory {
 
     gridOptionsGroupRowRenderer(gridOptions) {
         if (gridOptions.groupRowRendererFramework && gridOptions.groupRowRendererFramework.component) {
-            console.warn("gridOptions.groupRowRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            console.warn("gridOptions.groupRowRendererFramework.component is deprecated - please refer to https://www.ag-grid.com/best-angular-2-data-grid/");
             gridOptions.groupRowRendererFramework = gridOptions.groupRowRendererFramework.component;
         }
 
@@ -71,7 +71,7 @@ class PolymerFrameworkFactory {
 
     gridOptionsGroupRowInnerRenderer(gridOptions) {
         if (gridOptions.groupRowInnerRendererFramework && gridOptions.groupRowInnerRendererFramework.component) {
-            console.warn("gridOptions.groupRowRendererFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            console.warn("gridOptions.groupRowRendererFramework.component is deprecated - please refer to https://www.ag-grid.com/best-angular-2-data-grid/");
             gridOptions.groupRowInnerRendererFramework = gridOptions.groupRowInnerRendererFramework.component;
         }
 
@@ -84,7 +84,7 @@ class PolymerFrameworkFactory {
 
     colDefFilter(colDef) {
         if (colDef.filterFramework && colDef.filterFramework.component) {
-            console.warn("colDef.filterFramework.component is deprecated - please refer to https://ag-grid.com/best-angular-2-data-grid/");
+            console.warn("colDef.filterFramework.component is deprecated - please refer to https://www.ag-grid.com/best-angular-2-data-grid/");
             colDef.filterFramework = colDef.filterFramework.component;
         }
 

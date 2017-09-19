@@ -41,11 +41,10 @@ include '../documentation-main/documentation_header.php';
         For example, the following will pivot the rows in the grid by country and then sport:
     <snippet>
 gridOptions.columnDefs = [
-    {headerName: "Country", field: "country", &lt;span class="codeHighlight"&gt;pivot: true&lt;/span&gt;},
-    {headerName: "Sport", field: "sport", &lt;span class="codeHighlight"&gt;pivot: true&lt;/span&gt;},
+    {headerName: "Country", field: "country", pivot: true},
+    {headerName: "Sport", field: "sport", pivot: true}
 ];</snippet>
     </p>
-
 
     <h2>Example - Simple Pivot</h2>
 

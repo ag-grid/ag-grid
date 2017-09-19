@@ -160,13 +160,6 @@
     color: grey;
 }
 
-.note {
-    border: 1px solid darkgrey;
-    padding: 5px;
-    margin: 5px;
-    background-color: lightyellow;
-}
-
 .sidebarLink {
     padding: 2px 4px 2px 10px;
     /* border-bottom: 1px solid #e8e8e8; */

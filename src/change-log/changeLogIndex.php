@@ -27,6 +27,9 @@ include '../documentation-main/documentation_header.php';
             no like the default formatting. See
             <a href="../javascript-grid-pagination/#customising-pagination">Example: Customising Pagination</a>.
         </li>
+        <li>
+            AG-693: <a href="../javascript-grid-enterprise-model/#child-count">Child Count</a> can now be set for Enterprise Row Model.
+        </li>
     </ul>
 
     <h4>Bug Fixes</h4>

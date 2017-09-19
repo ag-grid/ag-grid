@@ -22,24 +22,25 @@ foreach ($files as $file) {
 }
 ?>
 <html>
-<head>
+    <head>
 <?php if (!$preview) { ?>
+    <base href="<?= path_combine('..', $exampleSection, $exampleDir, '') ?>" />
     <style> html, body { margin: 0; padding: 0; } </style>
+
 <?php } ?>
 <?php renderExampleExtras($_GET) ?>
+    <!-- polymer polyfill - must be before any wc related javascript is executed -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.11/webcomponents-loader.js"></script>
+    <link rel="import"  href="https://polygit.org/components/polymer/polymer.html">
+
 <?= globalAgGridScript(isset($_GET["enterprise"])) ?>
-<?php renderStyles($styles); ?>
-</head>
+
+
+    <!-- the ag-grid-polymer component-->
+    <link rel="import" href="//bowercdn.net/c/ag-grid-polymer-13.0.1/ag-grid-polymer.html">
+    </head>
 <body>
 
-<?php
-include path_combine('..', $exampleSection, $exampleDir, 'index.html');
-
-echo "\n";
-
-foreach ($scripts as $script) {
-    echo '<script src="'.$script.'"></script>' . "\n";
-}
-?>
+<?php include path_combine('..', $exampleSection, $exampleDir, 'index.html'); ?>
 </body>
 </html>
