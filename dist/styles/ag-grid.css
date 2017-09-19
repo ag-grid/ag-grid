@@ -653,7 +653,8 @@ ag-grid-aurelia {
   overflow: hidden; }
 
 .ag-rich-select {
-  outline: none; }
+  outline: none;
+  cursor: default; }
 
 .ag-rich-select-row {
   white-space: nowrap; }

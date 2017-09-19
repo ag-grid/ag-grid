@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.1.2
+// Type definitions for ag-grid v13.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export interface ColumnVO {
@@ -12,6 +12,8 @@ export interface IEnterpriseGetRowsRequest {
     endRow: number;
     rowGroupCols: ColumnVO[];
     valueCols: ColumnVO[];
+    pivotCols: ColumnVO[];
+    pivotMode: boolean;
     groupKeys: string[];
     filterModel: any;
     sortModel: any;

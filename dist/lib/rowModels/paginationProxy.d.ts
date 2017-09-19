@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.1.2
+// Type definitions for ag-grid v13.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -41,7 +41,6 @@ export declare class PaginationProxy extends BeanStub implements IRowModel {
     getRowIndexAtPixel(pixel: number): number;
     getCurrentPageHeight(): number;
     isRowPresent(rowNode: RowNode): boolean;
-    private isRowInPage(rowNode);
     isEmpty(): boolean;
     isRowsToRender(): boolean;
     getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[];

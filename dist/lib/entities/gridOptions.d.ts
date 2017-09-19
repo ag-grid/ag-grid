@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.1.2
+// Type definitions for ag-grid v13.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -186,6 +186,7 @@ export interface GridOptions {
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
+    paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
     postProcessPopup?: (params: PostProcessPopupParams) => void;
     frameworkComponents?: {
         [p: string]: {
@@ -371,4 +372,7 @@ export interface PostProcessPopupParams {
     type: string;
     eventSource?: HTMLElement;
     mouseEvent?: MouseEvent | Touch;
+}
+export interface PaginationNumberFormatterParams {
+    value: number;
 }
