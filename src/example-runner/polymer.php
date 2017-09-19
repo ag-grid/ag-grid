@@ -1,0 +1,46 @@
+<?php
+include 'utils.php';
+
+$exampleDir = basename($_GET['example']);
+$exampleSection = basename($_GET['section']);
+$files = getDirContents(path_combine('..', $exampleSection, $exampleDir));
+$scripts = array();
+$styles = array();
+$preview = isset($_GET['preview']);
+
+foreach ($files as $file) {
+    $path = path_combine('..', $exampleSection, $exampleDir, $file);
+    $info = pathinfo($path);
+    switch ($info['extension']) {
+    case 'js':
+        $scripts[] = $preview ? $file : $path;
+        break;
+    case 'css':
+        $styles[] = $preview ? $file : $path;
+        break;
+    }
+}
+?>
+<html>
+    <head>
+<?php if (!$preview) { ?>
+    <base href="<?= path_combine('..', $exampleSection, $exampleDir, '') ?>" />
+    <style> html, body { margin: 0; padding: 0; } </style>
+
+<?php } ?>
+<?php renderExampleExtras($_GET) ?>
+    <!-- polymer polyfill - must be before any wc related javascript is executed -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.11/webcomponents-loader.js"></script>
+    <link rel="import"  href="https://polygit.org/components/polymer/polymer.html">
+
+<?= globalAgGridScript(isset($_GET["enterprise"])) ?>
+
+
+    <!-- the ag-grid-polymer component-->
+    <link rel="import" href="//bowercdn.net/c/ag-grid-polymer-13.0.1/ag-grid-polymer.html">
+    </head>
+<body>
+
+<?php include path_combine('..', $exampleSection, $exampleDir, 'index.html'); ?>
+</body>
+</html>
