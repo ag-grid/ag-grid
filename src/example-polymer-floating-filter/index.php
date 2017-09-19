@@ -9,10 +9,10 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2>Filter Component</h2>
-    <p>A Filter Example, with the Filter written as a Polymer Component.</p>
+    <h2>Floating Filter Component</h2>
+    <p>A Floating Filter Example, with the Floating Filter written as a Polymer Component.</p>
 
-    <?= example('Filter Component', 'filter-components', 'polymer', array("exampleHeight" => 410) ) ?>
+    <?= example('Floating Filter Component', 'floating-filter-components', 'polymer', array("exampleHeight" => 410) ) ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

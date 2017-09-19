@@ -204,73 +204,16 @@ colDef.cellEditorParams = {
 }</snippet>
     <p>If you have many instances of a grid, you must register the cell editors with each one.</p>
 
-    <h4 id="callback-new-value-handlers">Callback: New Value Handlers</h4>
+    <h3 id="parser-and-setter">Value Parser and Value Setter</h3>
 
     <p>
-        A <code>newValueHandler</code> is the inverse of a <code>valueGetter</code>. If you want to set the value into
-        the data yourself and not use the field, then use the <code>newValueHandler</code>. Return true if the update was
-        successful, to inform the grid to refresh the cell and fire updates. Return false if no update was done (cell
-        doesn't refresh and no updates). Use a <code>newValueHandler</code> if:
-        <ol>
-            <li>
-                A field value alone cannot be used, eg you want to place the new value into an array at a
-                particular index.
-            </li>
-            <li>
-                You want to do some formatting to the value before placing it.
-            </li>
-        </ol>
-    </p>
-    <snippet>
-// this does exactly what a field does, no difference,
-// but provided to demonstrate the equivalent of just using field
-colDef.newValueHandler = function(params) {
-
-    var field = params.colDef.field;
-    var data = params.data;
-    var value = params.newValue;
-
-    // see if values are different first
-    if (data[field] === value) {
-        // tell grid, no changes
-        return false;
-    } else {
-        // update and tell grid the change was made
-        data[field] = value;
-        return true;
-    }
-}
-
-// this one does some formatting first, and doesn't use the field
-colDef.newValueHandler = function(params) {
-
-    var data = params.data;
-    var value = params.newValue;
-
-    // change the value, maybe we want it in upper case
-    var value = formatTheValueSomehow(value);
-    data.iAmNotUsingTheField = value;
-
-    // we can always return true if not sure, this way the grid
-    // will always update the cell and fire change events
-    return true;
-}</snippet>
-     <p>
-        <code>newValueHandler</code> is provided a params object with the following attributes:
-
-        <ul>
-            <li><b>node: </b>The grid node in question.</li>
-            <li><b>data: </b>The row data in question.</li>
-            <li><b>oldValue: </b>If 'field' is in the column definition, contains the value in the data before the edit.</li>
-            <li><b>newValue: </b>The string value entered into the default editor.</li>
-            <li><b>rowIndex: </b>The index of the virtualised row.</li>
-            <li><b>colDef: </b>The column definition.</li>
-            <li><b>context: </b>The context as set in the gridOptions.</li>
-            <li><b>api: </b>A reference to the ag-Grid API.</li>
-        </ul>
+        <a href="../javascript-grid-value-setters/">Value setter and value parsers</a> are the inverse of a
+        value getters and formatters. If you want to parse the data, or set the value into your data in
+        ways other than just using the field, see the sections
+        <a href="../javascript-grid-value-setters/">Value setter and value parsers</a>.
     </p>
 
-    <h4 id="event-cell-value-changed">Event: Cell Value Changed</h4>
+    <h3 id="event-cell-value-changed">Event: Cell Value Changed</h3>
 
     <p>
         After a cell has been changed with default editing (ie not your own custom cell renderer),
