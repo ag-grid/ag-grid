@@ -176,18 +176,31 @@ export class EnterpriseBlock extends RowNodeBlock {
         }
 
         if (this.groupLevel) {
-            let groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
-
-            groupDisplayCols.forEach(col => {
-                if (col.isRowGroupDisplayed(this.rowGroupColumn.getId())) {
-                    let groupValue = this.valueService.getValue(this.rowGroupColumn, rowNode);
-                    if (_.missing(rowNode.groupData)) {
-                        rowNode.groupData = {};
-                    }
-                    rowNode.groupData[col.getColId()] = groupValue;
-                }
-            });
+            this.setGroupDataIntoRowNode(rowNode);
+            this.setChildCountIntoRowNode(rowNode);
         }
+    }
+
+    private setChildCountIntoRowNode(rowNode: RowNode): void {
+        let getChildCount = this.gridOptionsWrapper.getChildCountFunc();
+        if (getChildCount) {
+            rowNode.allChildrenCount = getChildCount(rowNode.data);
+        }
+    }
+
+    private setGroupDataIntoRowNode(rowNode: RowNode): void {
+        let groupDisplayCols: Column[] = this.columnController.getGroupDisplayColumns();
+
+        groupDisplayCols.forEach(col => {
+            if (col.isRowGroupDisplayed(this.rowGroupColumn.getId())) {
+                let groupValue = this.valueService.getValue(this.rowGroupColumn, rowNode);
+                if (_.missing(rowNode.groupData)) {
+                    rowNode.groupData = {};
+                }
+                rowNode.groupData[col.getColId()] = groupValue;
+            }
+        });
+
     }
 
     protected loadFromDatasource(): void {
