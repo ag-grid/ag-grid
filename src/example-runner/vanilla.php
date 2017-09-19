@@ -28,6 +28,7 @@ foreach ($files as $file) {
 <?php } ?>
 <?php renderExampleExtras($_GET) ?>
 <?= globalAgGridScript(isset($_GET["enterprise"])) ?>
+
 <?php renderStyles($styles); ?>
 </head>
 <body>
