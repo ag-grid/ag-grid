@@ -118,25 +118,25 @@ include 'includes/navbar.php'; ?>
 
 <div class="HomeSectionParent">
 
-    <?php include 'home/frameworks.php'; ?>
-
-    <?php include 'home/demo-1.php'; ?>
-
-    <?php include 'home/intro2.php'; ?>
+<!--    --><?php //include 'home/frameworks.php'; ?>
+<!---->
+<!--    --><?php //include 'home/demo-1.php'; ?>
+<!---->
+<!--    --><?php //include 'home/intro2.php'; ?>
 
     <!--            --><?php //include 'home/demo-3.php'; ?>
 
-    <?php include 'home/demo-4.php'; ?>
+<!--    --><?php //include 'home/demo-4.php'; ?>
 
-    <?php include 'home/testimonials-1.php'; ?>
+<!--    --><?php //include 'home/testimonials-1.php'; ?>
 
     <?php include 'home/demo-api.php'; ?>
 
-    <?php include 'home/testimonials-2.php'; ?>
-
-    <?php include 'home/demo-2.php'; ?>
-
-    <?php include 'home/features.php'; ?>
+<!--    --><?php //include 'home/testimonials-2.php'; ?>
+<!---->
+<!--    --><?php //include 'home/demo-2.php'; ?>
+<!---->
+<!--    --><?php //include 'home/features.php'; ?>
 
 </div>
 <script>
@@ -160,7 +160,7 @@ include './includes/footer.php'; ?>
 <script inline src="example-rich-grid/example.js"></script>
 <!--<script inline src="example-account-report/account.js"></script>-->
 <script inline src="example-file-browser/fileBrowser.js"></script>
-<script inline src="javascript-grid-animation/exampleAnimationSmall.js"></script>
+<script inline src="javascript-grid-animation/animation/main.js"></script>
 <!--<script inline src="home/example-themes.js"></script>-->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
