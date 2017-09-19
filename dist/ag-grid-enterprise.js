@@ -3619,7 +3619,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
 	        'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
 	        'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell',
-	        'processCellFromClipboard', 'getDocument', 'postProcessPopup'];
+	        'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount'];
 	    ComponentUtil.ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
 	        .concat(ComponentUtil.OBJECT_PROPERTIES)
 	        .concat(ComponentUtil.STRING_PROPERTIES)
@@ -13508,6 +13508,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    CellComp.prototype.onKeyDown = function (event) {
 	        var key = event.which || event.keyCode;
+	        // give user a chance to cancel event processing
+	        if (this.doesUserWantToCancelKeyboardEvent(event)) {
+	            return;
+	        }
 	        switch (key) {
 	            case constants_1.Constants.KEY_ENTER:
 	                this.onEnterKeyDown();
@@ -13531,6 +13535,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	            case constants_1.Constants.KEY_LEFT:
 	                this.onNavigationKeyPressed(event, key);
 	                break;
+	        }
+	    };
+	    CellComp.prototype.doesUserWantToCancelKeyboardEvent = function (event) {
+	        var callback = this.column.getColDef().suppressKeyboardEvent;
+	        if (utils_1._.missing(callback)) {
+	            return false;
+	        }
+	        else {
+	            // if editing is null or undefined, this sets it to false
+	            var editing = this.editingCell === true;
+	            var params = {
+	                event: event,
+	                editing: editing,
+	                column: this.column,
+	                api: this.beans.gridOptionsWrapper.getApi(),
+	                node: this.rowNode,
+	                colDef: this.column.getColDef(),
+	                context: this.beans.gridOptionsWrapper.getContext(),
+	                columnApi: this.beans.gridOptionsWrapper.getColumnApi()
+	            };
+	            return callback(params);
 	        }
 	    };
 	    CellComp.prototype.setFocusOutOnEditor = function () {
