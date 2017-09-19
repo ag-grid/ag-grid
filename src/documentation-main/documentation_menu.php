@@ -359,7 +359,7 @@
         menuItem(2, 'Polymer Editor', 'Editor Component', 'example-polymer-editor/');
         menuItem(2, 'Polymer Filter', 'Filter Component', 'example-polymer-filter/');
         menuItem(2, 'Polymer Floating Filter', 'Floating Filter', 'example-polymer-floating-filter/');
-        menuItem(2, 'Polymer Floating Row', 'Floating Rows', 'example-polymer-floating-row/');
+        menuItem(2, 'Polymer Pinned Row', 'Pinned Rows', 'example-polymer-floating-row/');
         menuItem(2, 'Polymer Full Width', 'Full Width Rows', 'example-polymer-full-width-rows/');
         menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');
         menuItem(2, 'Polymer MasterDetail', 'Master/Detail', 'example-polymer-master-detail/');

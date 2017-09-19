@@ -12,14 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Master/Detail Components</h2>
     <p>A Master/Detail Example, with both the Master and the Detail elements being Polymer Components.</p>
 
-    <show-complex-example example="../framework-examples/polymer-examples/src/master-detail-components-example/index.html"
-                          sources="{
-                            [
-                                { root: '/framework-examples/polymer-examples/src/master-detail-components-example/', files: 'index.html,master-detail-components-example.html,detail-panel-component.html,detail-panel-component.css,static-data.js' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
+    <?= example('Master/Detail Components', 'master-detail-components', 'polymer', array("exampleHeight" => 350)) ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
