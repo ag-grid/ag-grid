@@ -109,7 +109,6 @@ var EnterpriseBlock = (function (_super) {
         });
     };
     EnterpriseBlock.prototype.setDataAndId = function (rowNode, data, index) {
-        var _this = this;
         rowNode.stub = false;
         if (ag_grid_1._.exists(data)) {
             // if the user is not providing id's, then we build an id based on the index.
@@ -136,17 +135,28 @@ var EnterpriseBlock = (function (_super) {
             rowNode.key = null;
         }
         if (this.groupLevel) {
-            var groupDisplayCols = this.columnController.getGroupDisplayColumns();
-            groupDisplayCols.forEach(function (col) {
-                if (col.isRowGroupDisplayed(_this.rowGroupColumn.getId())) {
-                    var groupValue = _this.valueService.getValue(_this.rowGroupColumn, rowNode);
-                    if (ag_grid_1._.missing(rowNode.groupData)) {
-                        rowNode.groupData = {};
-                    }
-                    rowNode.groupData[col.getColId()] = groupValue;
-                }
-            });
+            this.setGroupDataIntoRowNode(rowNode);
+            this.setChildCountIntoRowNode(rowNode);
         }
+    };
+    EnterpriseBlock.prototype.setChildCountIntoRowNode = function (rowNode) {
+        var getChildCount = this.gridOptionsWrapper.getChildCountFunc();
+        if (getChildCount) {
+            rowNode.allChildrenCount = getChildCount(rowNode.data);
+        }
+    };
+    EnterpriseBlock.prototype.setGroupDataIntoRowNode = function (rowNode) {
+        var _this = this;
+        var groupDisplayCols = this.columnController.getGroupDisplayColumns();
+        groupDisplayCols.forEach(function (col) {
+            if (col.isRowGroupDisplayed(_this.rowGroupColumn.getId())) {
+                var groupValue = _this.valueService.getValue(_this.rowGroupColumn, rowNode);
+                if (ag_grid_1._.missing(rowNode.groupData)) {
+                    rowNode.groupData = {};
+                }
+                rowNode.groupData[col.getColId()] = groupValue;
+            }
+        });
     };
     EnterpriseBlock.prototype.loadFromDatasource = function () {
         var _this = this;

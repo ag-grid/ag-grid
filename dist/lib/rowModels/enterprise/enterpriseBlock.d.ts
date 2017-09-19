@@ -29,6 +29,8 @@ export declare class EnterpriseBlock extends RowNodeBlock {
     private setBeans(loggerFactory);
     protected init(): void;
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void;
+    private setChildCountIntoRowNode(rowNode);
+    private setGroupDataIntoRowNode(rowNode);
     protected loadFromDatasource(): void;
     protected createBlankRowNode(rowIndex: number): RowNode;
     private createGroupKeys(groupNode);

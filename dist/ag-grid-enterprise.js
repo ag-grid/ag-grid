@@ -786,6 +786,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    GridOptionsWrapper.prototype.getPostProcessPopupFunc = function () { return this.gridOptions.postProcessPopup; };
 	    GridOptionsWrapper.prototype.getDoesDataFlowerFunc = function () { return this.gridOptions.doesDataFlower; };
 	    GridOptionsWrapper.prototype.getPaginationNumberFormatterFunc = function () { return this.gridOptions.paginationNumberFormatter; };
+	    GridOptionsWrapper.prototype.getChildCountFunc = function () { return this.gridOptions.getChildCount; };
 	    GridOptionsWrapper.prototype.getIsFullWidthCellFunc = function () { return this.gridOptions.isFullWidthCell; };
 	    GridOptionsWrapper.prototype.getFullWidthCellRendererParams = function () { return this.gridOptions.fullWidthCellRendererParams; };
 	    GridOptionsWrapper.prototype.isEmbedFullWidthRows = function () {
@@ -37064,7 +37065,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    LicenseManager.setLicenseKey = function (licenseKey) {
 	        LicenseManager_1.licenseKey = licenseKey;
 	    };
-	    LicenseManager.RELEASE_INFORMATION = 'MTUwMzY3MjczNTk0OQ==';
+	    LicenseManager.RELEASE_INFORMATION = 'MTUwNTgxNDAzMTE4OQ==';
 	    __decorate([
 	        main_1.Autowired('md5'),
 	        __metadata("design:type", md5_1.MD5)
@@ -40679,7 +40680,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 	    };
 	    EnterpriseBlock.prototype.setDataAndId = function (rowNode, data, index) {
-	        var _this = this;
 	        rowNode.stub = false;
 	        if (ag_grid_1._.exists(data)) {
 	            // if the user is not providing id's, then we build an id based on the index.
@@ -40706,17 +40706,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	            rowNode.key = null;
 	        }
 	        if (this.groupLevel) {
-	            var groupDisplayCols = this.columnController.getGroupDisplayColumns();
-	            groupDisplayCols.forEach(function (col) {
-	                if (col.isRowGroupDisplayed(_this.rowGroupColumn.getId())) {
-	                    var groupValue = _this.valueService.getValue(_this.rowGroupColumn, rowNode);
-	                    if (ag_grid_1._.missing(rowNode.groupData)) {
-	                        rowNode.groupData = {};
-	                    }
-	                    rowNode.groupData[col.getColId()] = groupValue;
-	                }
-	            });
+	            this.setGroupDataIntoRowNode(rowNode);
+	            this.setChildCountIntoRowNode(rowNode);
 	        }
+	    };
+	    EnterpriseBlock.prototype.setChildCountIntoRowNode = function (rowNode) {
+	        var getChildCount = this.gridOptionsWrapper.getChildCountFunc();
+	        if (getChildCount) {
+	            rowNode.allChildrenCount = getChildCount(rowNode.data);
+	        }
+	    };
+	    EnterpriseBlock.prototype.setGroupDataIntoRowNode = function (rowNode) {
+	        var _this = this;
+	        var groupDisplayCols = this.columnController.getGroupDisplayColumns();
+	        groupDisplayCols.forEach(function (col) {
+	            if (col.isRowGroupDisplayed(_this.rowGroupColumn.getId())) {
+	                var groupValue = _this.valueService.getValue(_this.rowGroupColumn, rowNode);
+	                if (ag_grid_1._.missing(rowNode.groupData)) {
+	                    rowNode.groupData = {};
+	                }
+	                rowNode.groupData[col.getColId()] = groupValue;
+	            }
+	        });
 	    };
 	    EnterpriseBlock.prototype.loadFromDatasource = function () {
 	        var _this = this;
