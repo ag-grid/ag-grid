@@ -4,12 +4,11 @@
 <link rel="import" href="simple-cell-renderer.html">
 <dom-module id="rich-grid-example">
     <template>
-        <link rel="stylesheet" href="../../../../dist/ag-grid/styles/ag-grid.css">
-        <link rel="stylesheet" href="../../../../dist/ag-grid/styles/theme-fresh.css">
+        <link rel="stylesheet" href="https://unpkg.com/ag-grid/dist/styles/ag-grid.css">
+        <link rel="stylesheet" href="https://unpkg.com/ag-grid/dist/styles/theme-fresh.css">
         <link rel="stylesheet" href="rich-grid-example.css">
 
-        <div style="width: 800px;">
-            <h1>Rich ag-Grid Polymer Example</h1>
+        <div style="width: 900px;">
             <div style="padding: 4px">
                 <div style="float: right;">
                     <input type="text" on-input="quickFilterInput" placeholder="Type text to filter..."/>
@@ -45,7 +44,7 @@
 
                 <!-- Properties can be either hypenated or camelCased-->
                 <ag-grid-polymer id="myGrid"
-                                 style="height: 350px; width: 800px;display: block;"
+                                 style="height: 400px; width: 100%;display: block;"
                                  class="ag-fresh ag-basic"
                                  enableColResize
                                  enableSorting

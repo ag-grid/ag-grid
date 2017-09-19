@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     <h2>Polymer Rich Grid Example</h2>
     <p>A feature rich Grid example, demonstrating many of ag-Grid's features, including a Polymer Component for the "name" column.</p>
 
-<?= example('Rich Polymer Grid', 'rich-grid', 'polymer', array("exampleHeight" => 350, 'enterprise' => true)) ?>
+<?= example('Rich Polymer Grid', 'rich-grid', 'polymer', array("exampleHeight" => 500, 'enterprise' => true)) ?>
 
 </div>
 
