@@ -118,25 +118,25 @@ include 'includes/navbar.php'; ?>
 
 <div class="HomeSectionParent">
 
-<!--    --><?php //include 'home/frameworks.php'; ?>
-<!---->
-<!--    --><?php //include 'home/demo-1.php'; ?>
-<!---->
-<!--    --><?php //include 'home/intro2.php'; ?>
+    <?php include 'home/frameworks.php'; ?>
 
-    <!--            --><?php //include 'home/demo-3.php'; ?>
+    <?php include 'home/demo-1.php'; ?>
 
-<!--    --><?php //include 'home/demo-4.php'; ?>
+    <?php include 'home/intro2.php'; ?>
 
-<!--    --><?php //include 'home/testimonials-1.php'; ?>
+<!--    --><?php //include 'home/demo-3.php'; ?>
+
+    <?php include 'home/demo-4.php'; ?>
+
+    <?php include 'home/testimonials-1.php'; ?>
 
     <?php include 'home/demo-api.php'; ?>
 
-<!--    --><?php //include 'home/testimonials-2.php'; ?>
-<!---->
-<!--    --><?php //include 'home/demo-2.php'; ?>
-<!---->
-<!--    --><?php //include 'home/features.php'; ?>
+    <?php include 'home/testimonials-2.php'; ?>
+
+    <?php include 'home/demo-2.php'; ?>
+
+    <?php include 'home/features.php'; ?>
 
 </div>
 <script>
