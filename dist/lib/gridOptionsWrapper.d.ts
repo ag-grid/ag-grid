@@ -96,6 +96,7 @@ export declare class GridOptionsWrapper {
     getPostProcessPopupFunc(): (params: PostProcessPopupParams) => void;
     getDoesDataFlowerFunc(): (data: any) => boolean;
     getPaginationNumberFormatterFunc(): (params: PaginationNumberFormatterParams) => string;
+    getChildCountFunc(): (dataItem: any) => number;
     getIsFullWidthCellFunc(): (rowNode: RowNode) => boolean;
     getFullWidthCellRendererParams(): any;
     isEmbedFullWidthRows(): boolean;
