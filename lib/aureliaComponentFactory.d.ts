@@ -1,6 +1,6 @@
-// ag-grid-aurelia v13.0.2
-import { Container, ViewFactory, TaskQueue } from "aurelia-framework";
-import { ICellRendererComp, ICellEditorComp } from "ag-grid/main";
+// ag-grid-aurelia v13.2.0
+import { Container, TaskQueue, ViewFactory } from "aurelia-framework";
+import { ICellEditorComp, ICellRendererComp } from "ag-grid/main";
 export declare class AureliaComponentFactory {
     private taskQueue;
     constructor(taskQueue: TaskQueue);
