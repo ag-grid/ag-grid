@@ -23,8 +23,8 @@ foreach ($files as $file) {
 ?>
 <html>
     <head>
+    <base href="<?= "http://{$_SERVER['HTTP_HOST']}/${exampleSection}/$exampleDir/" ?>" />
 <?php if (!$preview) { ?>
-    <base href="<?= path_combine('..', $exampleSection, $exampleDir, '') ?>" />
     <style> html, body { margin: 0; padding: 0; } </style>
 
 <?php } ?>
