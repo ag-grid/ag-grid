@@ -7,25 +7,15 @@ $example = getExampleInfo('react');
     <title>ag-Grid React Example</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<?php if (isset($_GET['bootstrap'])) { ?>
-    <!-- bootstrap -->
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-<?php } ?>
-
-
-<?php if (isset($_GET['fontawesome'])) { ?>
-    <!-- font awesome -->
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<?php } ?>
-
 <?php if (!$example['preview']) { ?>
     <style> html, body { margin: 0; padding: 0; } </style>
 <?php } ?>
+<?php renderExampleExtras($_GET) ?>
 <?php renderStyles($example['styles']); ?>
+
 </head>
 <body>
-    <div id="root">Loading ...</div>
+    <div id="root">Loading ag-Grid React example&hellip;</div>
     
     <script>
         var appLocation = '<?= $example['appLocation'] ?>';

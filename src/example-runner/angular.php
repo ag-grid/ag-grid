@@ -10,23 +10,11 @@ $example = getExampleInfo('angular');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<?php if (isset($_GET['bootstrap'])) { ?>
-    <!-- bootstrap -->
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-<?php } ?>
-
-<?php if (isset($_GET['fontawesome'])) { ?>
-    <!-- font awesome -->
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
-<?php } ?>
-
 <?php if (!$example['preview']) { ?>
     <style> html, body { margin: 0; padding: 0; } </style>
 <?php } ?>
-
-<?php
-renderStyles($example['styles']);
-?>
+<?php renderExampleExtras($_GET); ?>
+<?php renderStyles($example['styles']); ?>
 
     <!-- Polyfills -->
     <script src="https://unpkg.com/core-js/client/shim.min.js"></script>
@@ -34,8 +22,8 @@ renderStyles($example['styles']);
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
 
     <script>
-        var appLocation = '<?= $example['appLocation'] ?>';
-        var boilerplatePath = '<?= $example['boilerplatePath'] ?>';
+        var appLocation = '<?= $example["appLocation"] ?>';
+        var boilerplatePath = '<?= $example["boilerplatePath"] ?>';
         var systemJsMap = <?= json_encode($systemJsMap) ?>;
     </script>
 
@@ -46,6 +34,6 @@ renderStyles($example['styles']);
     </script>
 </head>
 <body>
-    <my-app>Loading...</my-app>
+    <my-app>Loading ag-Grid example&hellip;<my-app>
 </body>
 </html>
