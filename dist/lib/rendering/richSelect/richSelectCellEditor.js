@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.2
+// ag-grid-enterprise v13.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -26,11 +26,14 @@ var virtualList_1 = require("../virtualList");
 var RichSelectCellEditor = (function (_super) {
     __extends(RichSelectCellEditor, _super);
     function RichSelectCellEditor() {
-        return _super.call(this, RichSelectCellEditor.TEMPLATE) || this;
+        var _this = _super.call(this, RichSelectCellEditor.TEMPLATE) || this;
+        _this.selectionConfirmed = false;
+        return _this;
     }
     RichSelectCellEditor.prototype.init = function (params) {
         this.params = params;
         this.selectedValue = params.value;
+        this.originalSelectedValue = params.value;
         this.cellRenderer = params.cellRenderer;
         this.focusAfterAttached = params.cellStartedEdit;
         this.virtualList = new virtualList_1.VirtualList();
@@ -67,6 +70,7 @@ var RichSelectCellEditor = (function (_super) {
         }
     };
     RichSelectCellEditor.prototype.onEnterKeyDown = function () {
+        this.selectionConfirmed = true;
         this.params.stopEditing();
     };
     RichSelectCellEditor.prototype.onNavigationKeyPressed = function (event, key) {
@@ -127,6 +131,7 @@ var RichSelectCellEditor = (function (_super) {
         }
     };
     RichSelectCellEditor.prototype.onClick = function () {
+        this.selectionConfirmed = true;
         this.params.stopEditing();
     };
     // we need to have the gui attached before we can draw the virtual rows, as the
@@ -146,7 +151,12 @@ var RichSelectCellEditor = (function (_super) {
         }
     };
     RichSelectCellEditor.prototype.getValue = function () {
-        return this.selectedValue;
+        if (this.selectionConfirmed) {
+            return this.selectedValue;
+        }
+        else {
+            return this.originalSelectedValue;
+        }
     };
     RichSelectCellEditor.prototype.isPopup = function () {
         return true;

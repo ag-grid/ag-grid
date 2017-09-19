@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.2
+// ag-grid-enterprise v13.2.0
 import { MenuItemDef, Component } from "ag-grid";
 export declare class MenuList extends Component {
     private context;

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.2
+// ag-grid-enterprise v13.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -52,7 +52,9 @@ var EnterpriseRowModel = (function (_super) {
     EnterpriseRowModel.prototype.addEventListeners = function () {
         this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, ag_grid_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     };
@@ -66,6 +68,12 @@ var EnterpriseRowModel = (function (_super) {
         this.reset();
     };
     EnterpriseRowModel.prototype.onColumnRowGroupChanged = function () {
+        this.reset();
+    };
+    EnterpriseRowModel.prototype.onColumnPivotChanged = function () {
+        this.reset();
+    };
+    EnterpriseRowModel.prototype.onPivotModeChanged = function () {
         this.reset();
     };
     EnterpriseRowModel.prototype.onRowGroupOpened = function (event) {
@@ -153,6 +161,7 @@ var EnterpriseRowModel = (function (_super) {
     EnterpriseRowModel.prototype.createCacheParams = function () {
         var rowGroupColumnVos = this.toValueObjects(this.columnController.getRowGroupColumns());
         var valueColumnVos = this.toValueObjects(this.columnController.getValueColumns());
+        var pivotColumnVos = this.toValueObjects(this.columnController.getPivotColumns());
         var dynamicRowHeight = this.gridOptionsWrapper.isDynamicRowHeight();
         var maxBlocksInCache = this.gridOptionsWrapper.getMaxBlocksInCache();
         if (dynamicRowHeight && maxBlocksInCache >= 0) {
@@ -164,6 +173,8 @@ var EnterpriseRowModel = (function (_super) {
             // the columns the user has grouped and aggregated by
             valueCols: valueColumnVos,
             rowGroupCols: rowGroupColumnVos,
+            pivotCols: pivotColumnVos,
+            pivotMode: this.columnController.isPivotMode(),
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
             sortModel: this.sortController.getSortModel(),

@@ -1,2 +1,2 @@
-// ag-grid-enterprise v13.1.2
+// ag-grid-enterprise v13.2.0
 export declare function populateClientExports(exports: any): void;

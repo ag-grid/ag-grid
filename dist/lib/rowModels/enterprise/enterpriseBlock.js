@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.2
+// ag-grid-enterprise v13.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -33,6 +33,7 @@ var EnterpriseBlock = (function (_super) {
         _this.parentCache = parentCache;
         _this.level = parentRowNode.level + 1;
         _this.groupLevel = _this.level < params.rowGroupCols.length;
+        _this.leafGroup = _this.level === (params.rowGroupCols.length - 1);
         return _this;
     }
     EnterpriseBlock.prototype.createNodeIdPrefix = function () {
@@ -157,6 +158,7 @@ var EnterpriseBlock = (function (_super) {
     EnterpriseBlock.prototype.createBlankRowNode = function (rowIndex) {
         var rowNode = _super.prototype.createBlankRowNode.call(this, rowIndex);
         rowNode.group = this.groupLevel;
+        rowNode.leafGroup = this.leafGroup;
         rowNode.level = this.level;
         rowNode.uiLevel = this.level;
         rowNode.parent = this.parentRowNode;
@@ -268,6 +270,8 @@ var EnterpriseBlock = (function (_super) {
             endRow: this.getEndRow(),
             rowGroupCols: this.params.rowGroupCols,
             valueCols: this.params.valueCols,
+            pivotCols: this.params.pivotCols,
+            pivotMode: this.params.pivotMode,
             groupKeys: groupKeys,
             filterModel: this.params.filterModel,
             sortModel: this.params.sortModel

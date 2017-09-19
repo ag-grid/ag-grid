@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.2
+// ag-grid-enterprise v13.2.0
 import { BeanStub, IEnterpriseDatasource, IEnterpriseRowModel, RowNode, RowBounds } from "ag-grid";
 export declare class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel {
     private gridOptionsWrapper;
@@ -23,6 +23,8 @@ export declare class EnterpriseRowModel extends BeanStub implements IEnterpriseR
     private onSortChanged();
     private onValueChanged();
     private onColumnRowGroupChanged();
+    private onColumnPivotChanged();
+    private onPivotModeChanged();
     private onRowGroupOpened(event);
     private reset();
     private createNewRowNodeBlockLoader();
