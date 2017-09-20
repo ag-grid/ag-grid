@@ -29,15 +29,15 @@ let columnDefs = [
         field: 'targetExpenditure',
         width: 150,
         editable: true,
-        // cellEditor: PieChartLineEditor,
-        // cellEditorParams: {
-        //     segments: {
-        //         "R&D": "#3366cc",
-        //         "Marketing": "#dc3912",
-        //         "Infrastructure": "#ff9900"
-        //     },
-        //     colToUseForRendering: "Expenditure"
-        // }
+        cellEditor: PieChartLineEditor,
+        cellEditorParams: {
+            segments: {
+                "R&D": "#3366cc",
+                "Marketing": "#dc3912",
+                "Infrastructure": "#ff9900"
+            },
+            colToUseForRendering: "Expenditure"
+        }
     },
     {
         headerName: 'Expenditure',
