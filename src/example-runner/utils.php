@@ -5,11 +5,11 @@ define('INCOMPLETE_ENTERPRISE_BUNDLE', isset($_ENV['AG_DEV']));
 define('USE_LOCAL', AG_GRID_VERSION == '$$LOCAL$$');
 
 if (USE_LOCAL) {
-    if (preg_match('/archive\/\d.\d.\d/', $_SERVER['PHP_SELF'], $matches)) {
+    if (preg_match('/archive\/\d+.\d+.\d+/', $_SERVER['PHP_SELF'], $matches)) {
         $archiveSegment = $matches[0];
-        $prefix =  "http://{$_SERVER['HTTP_HOST']}/$archiveSegment/dist";
+        $prefix =  "//{$_SERVER['HTTP_HOST']}/$archiveSegment/dist";
     } else {
-        $prefix =  "http://{$_SERVER['HTTP_HOST']}/dist";
+        $prefix =  "//{$_SERVER['HTTP_HOST']}/dist";
     }
 
     define(AG_GRID_SCRIPT_PATH, "$prefix/ag-grid/ag-grid.js");
