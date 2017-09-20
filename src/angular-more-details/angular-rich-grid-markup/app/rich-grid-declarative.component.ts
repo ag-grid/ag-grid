@@ -79,6 +79,15 @@ export class RichGridDeclarativeComponent {
         }
     }
 
+    public dobFilter() {
+        let dateFilterComponent = this.gridOptions.api.getFilterInstance('dob');
+        dateFilterComponent.setModel({
+            type: 'equals',
+            dateFrom: '2000-01-01'
+        });
+        this.gridOptions.api.onFilterChanged();
+    }
+
     private onModelUpdated() {
         console.log('onModelUpdated');
         this.calculateRowCount();

@@ -9,7 +9,6 @@ import {ProficiencyCellRenderer} from "./proficiency-renderer.component";
 @Component({
     selector: 'my-app',
     templateUrl: './rich-grid.component.html',
-    styleUrls: ['./rich-grid.css', './proficiency-renderer.css'],
     encapsulation: ViewEncapsulation.None
 })
 export class RichGridComponent {

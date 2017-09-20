@@ -163,7 +163,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
     <p>The final setup looks like this:</p>
 
-<?= example('Simple ag-Grid Example', 'hello-world', 'vanilla', array("showResult" => false)) ?>
+<?= example('Simple ag-Grid Example', 'hello-world', 'vanilla', array("showResult" => true,"exampleHeight" => 130)) ?>
 
     <p>We encourage you to experiment with the plunker above - try adding new rows of data for example or renaming
         column headers.</p>
@@ -236,8 +236,7 @@ var gridOptions = {
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-
-<?= preview('Advanced ag-Grid Example', 'rich-example', '../example-rich-grid/', 'https://github.com/ag-grid/ag-grid-docs/tree/master/src/example-rich-grid', array( 'exampleHeight' => 500 )) ?>
+    <?= example('Advanced ag-Grid Example', 'rich-grid', 'vanilla', array("showResult" => true, "exampleHeight" => 460)) ?>
 
 
     <p>This example makes use of custom <code>cell renderer's</code> to show data in a visually friendly way, demonstrates

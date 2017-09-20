@@ -86,6 +86,10 @@ export default class SkillFilter implements IFilter {
         return undefined;
     }
 
+    public getModelAsString() : string {
+        return '';
+    }
+
     public setModel(model: any): void {
     }
 }
