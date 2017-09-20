@@ -9,7 +9,9 @@
 	    navCollapse[0].classList.toggle('collapse');
 	};
 
-	navToggle.addEventListener('click', toggleClass, false);
+    if (navToggle) {
+        navToggle.addEventListener('click', toggleClass, false);
+    }
 
 	/*
 	* video link on demo

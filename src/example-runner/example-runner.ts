@@ -247,7 +247,7 @@ docs.component('exampleRunner', {
 
             <li role="presentation">
                 <a role="tab" ng-href="{{$ctrl.resultUrl}}" target="_blank">
-                    <i class="fa fa-arrows-alt" aria-hidden="true"></i> new tab
+                    <i class="fa fa-arrows-alt" aria-hidden="true"></i> New Tab
                 </a>
             </li>
 
@@ -362,7 +362,7 @@ docs.component('preview', {
 
         <div class="tab-contents" ng-if="$ctrl.ready">
             <div role="tabpanel" class="result">
-                <a ng-href={{$ctrl.resultUrl}} target="_blank" class="result-in-new-tab" title="Show result in new tab"><i class="fa fa-arrows-alt" aria-hidden="true"></i></a>
+                <a ng-href={{$ctrl.resultUrl}} target="_blank" class="result-in-new-tab" title="Show Result in New Tab"><i class="fa fa-arrows-alt" aria-hidden="true"></i></a>
                 <iframe src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" seamless="true"></iframe>
             </div>
         </div>
