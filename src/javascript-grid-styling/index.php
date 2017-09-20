@@ -26,12 +26,12 @@ include '../documentation-main/documentation_header.php';
     </p>
     <p>
         The following is an example of using the ag-fresh theme:<br/>
-        <snippet>
+        <snippet language="html">
 &lt;div ag-grid="gridOptions" class="ag-fresh"&gt;&lt;/div&gt;</snippet>
     </p>
     <p>
         The following is an example of using the ag-dark theme:<br/>
-        <snippet>
+        <snippet language="html">
 &lt;div ag-grid="gridOptions" class="ag-dark"&gt;&lt;/div&gt;</snippet>
     </p>
 
@@ -136,7 +136,7 @@ include '../documentation-main/documentation_header.php';
     However you should be cautious about overriding style that is associated outside of the theme.
 
     For example, the ag-pinned-cols-viewport, has the following style:
-    <snippet>
+    <snippet language="css">
    .ag-pinned-cols-viewport {
         float: left;
         position: absolute;
@@ -156,7 +156,8 @@ include '../documentation-main/documentation_header.php';
         The reader is encouraged to inspect the DOM (using your browsers developer tools) to dig deeper.
     </p>
 
-    <show-example example="exampleStyling"></show-example>
+<?= example("ag-Grid styling", 'styling') ?>
+    
 
     <h2 id="high-level-overview">High Level Overview</h2>
 
