@@ -1,38 +1,45 @@
 <?php
-// $$VERSION$$ gets replaced by gulp replace in prod
-//
-define('AG_GRID_VERSION', '$$VERSION$$');
-define('USE_LOCAL', isset($_ENV['AG_DEV']));
-define('FULL_ENTERPRISE_BUNDLE', isset($_ENV['FULL_ENTERPRISE_BUNDLE']));
+include dirname(__FILE__) . '/../config.php';
 
-//define('AG_GRID_VERSION', '13.0.0');
-//define('USE_LOCAL', false);
+define('INCOMPLETE_ENTERPRISE_BUNDLE', isset($_ENV['AG_DEV']));
+define('USE_LOCAL', AG_GRID_VERSION == '$$LOCAL$$');
 
 if (USE_LOCAL) {
+    if (preg_match('/archive\/\d.\d.\d/', $_SERVER['PHP_SELF'], $matches)) {
+        $archiveSegment = $matches[0];
+        $prefix =  "http://{$_SERVER['HTTP_HOST']}/$archiveSegment/dist";
+    } else {
+        $prefix =  "http://{$_SERVER['HTTP_HOST']}/dist";
+    }
+
+    define(AG_GRID_SCRIPT_PATH, "$prefix/ag-grid/ag-grid.js");
+    define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "$prefix/ag-grid-enterprise/ag-grid-enterprise.js");
+
     $systemJsMap = array(
-        "ag-grid" =>                       "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid/ag-grid.js",
-        "ag-grid/main" =>                  "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid/ag-grid.js",
-        "ag-grid-enterprise" =>            "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-enterprise/ag-grid-enterprise.js",
-        "ag-grid-react" =>                 "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-react/ag-grid-react.js",
-        // I can't make a bundle for angular , load it from NPM for now. This won't pick the local changes 
+        "ag-grid" =>                       "$prefix/ag-grid/ag-grid.js",
+        "ag-grid/main" =>                  "$prefix/ag-grid/ag-grid.js",
+        "ag-grid-enterprise" =>            "$prefix/ag-grid-enterprise/ag-grid-enterprise.js",
+        "ag-grid-react" =>                 "$prefix/ag-grid-react/ag-grid-react.js",
+        // I can't make a bundle for angular , load it from NPM for now. This won't pick the local changes
         // "ag-grid-angular" =>             "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-angular/ag-grid-angular.js"
         "ag-grid-angular" =>                "npm:ag-grid-angular@13.0.0/main.js"
     );
 // production mode, return from unpkg
 } else {
+    define(AG_GRID_SCRIPT_PATH, "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js");
+    define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.js");
+
     $systemJsMap = array(
         "ag-grid" =>                        "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
         "ag-grid/main" =>                   "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
-        "ag-grid-enterprise" =>             "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_VERSION . "/main.js",
-        "ag-grid-react" =>                  "npm:ag-grid-react@" . AG_GRID_VERSION . "/main.js",
-        "ag-grid-angular" =>                "npm:ag-grid-angular@" . AG_GRID_VERSION . "/main.js"
+        "ag-grid-enterprise" =>             "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/main.js",
+        "ag-grid-react" =>                  "npm:ag-grid-react@" . AG_GRID_REACT_VERSION . "/main.js",
+        "ag-grid-angular" =>                "npm:ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/main.js"
     );
 }
 
-define(AG_GRID_SCRIPT_PATH, $systemJsMap['ag-grid']);
-define(AG_GRID_ENTERPRISE_SCRIPT_PATH, $systemJsMap['ag-grid-enterprise']);
-
 function globalAgGridScript($enteprise = false) {
+
 $agGrid = AG_GRID_SCRIPT_PATH;
 $agGridEnterprise = AG_GRID_ENTERPRISE_SCRIPT_PATH;
 
@@ -41,7 +48,7 @@ $agGridEnterprise = AG_GRID_ENTERPRISE_SCRIPT_PATH;
     <script src="$agGrid"></script>
 SCR;
     } else {
-        if (USE_LOCAL && !FULL_ENTERPRISE_BUNDLE) {
+        if (INCOMPLETE_ENTERPRISE_BUNDLE) {
             $output = <<<SCR
     <script src="$agGrid"></script>
     <script> window['ag-grid'] = agGrid; </script>
@@ -79,7 +86,7 @@ function getDirContents($dir, &$results = array(), $prefix = ""){
 
     foreach($files as $key => $value){
         $path = realpath($dir."/".$value);
-        
+
         if (substr($value, 0, 1) == ".") {
             continue;
         }
@@ -138,11 +145,11 @@ function example($title, $dir, $type='vanilla', $options = array()) {
     $jsonOptions = json_encode($options);
 
     return <<<NG
-    <example-runner 
-        type="'$type'" 
-        name="'$dir'" 
-        section="'$section'" 
-        title="'$title'" 
+    <example-runner
+        type="'$type'"
+        name="'$dir'"
+        section="'$section'"
+        title="'$title'"
         files="$fileList"
         result-url="'$resultUrl'"
         options='$jsonOptions'
@@ -168,7 +175,7 @@ function preview($title, $name, $url, $sourceCodeUrl, $options = array()) {
 NG;
 }
 
-// helpers in the example render, shared between angular and react  
+// helpers in the example render, shared between angular and react
 function renderStyles($styles) {
     foreach ($styles as $style) {
         echo '    <link rel="stylesheet" href="'.$style.'">' . "\n";
@@ -228,9 +235,9 @@ function renderExampleExtras($config) {
         'lodash' => array(
             'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js' )
         ),
-        'bootstrap' => array( 
+        'bootstrap' => array(
             'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js' ),
-            'styles' => array( 
+            'styles' => array(
                 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css' ,
                 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css'
             )
@@ -248,7 +255,7 @@ function renderExampleExtras($config) {
                     echo '<link rel="stylesheet" href="'.$style.'"/>';
                     echo "\n";
                 }
-            }            
+            }
 
             if (isset($resources['scripts'])) {
                 foreach ($resources['scripts'] as $script) {

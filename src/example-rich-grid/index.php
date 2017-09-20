@@ -1,3 +1,6 @@
+<?php 
+include  '../example-runner/utils.php'
+?>
 <!DOCTYPE html>
 <html>
     <head lang="en">
@@ -11,7 +14,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
 
-        <script src="../dist/ag-grid/ag-grid.js"></script>
+        <?= globalAgGridScript(false) ?>
 
         <script src="./data.js"></script>
         <script src="./example.js"></script>
