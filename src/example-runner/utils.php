@@ -23,10 +23,11 @@ if (USE_LOCAL) {
         "ag-grid" =>                       "$prefix/ag-grid/ag-grid.js",
         "ag-grid/main" =>                  "$prefix/ag-grid/ag-grid.js",
         "ag-grid-enterprise" =>            "$prefix/ag-grid-enterprise/ag-grid-enterprise.js",
-        "ag-grid-react" =>                 "$prefix/ag-grid-react/ag-grid-react.js",
+        "ag-grid-react" =>                  "npm:ag-grid-react/main.js",
+        //"ag-grid-react" =>                 "$prefix/ag-grid-react/ag-grid-react.js",
         // I can't make a bundle for angular , load it from NPM for now. This won't pick the local changes
         // "ag-grid-angular" =>             "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-angular/ag-grid-angular.js"
-        "ag-grid-angular" =>                "npm:ag-grid-angular@13.0.0/main.js"
+        "ag-grid-angular" =>                "npm:ag-grid-angular/main.js"
     );
 // production mode, return from unpkg
 } else {
