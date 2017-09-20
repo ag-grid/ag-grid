@@ -8,12 +8,10 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-
     <h1 class="first-h1" id="implementing-the-angularjs-datagrid">
         <img style="vertical-align: middle" src="../images/angularjs_large.png" height="50px" alt="Angular"/>
         Angular Grid
     </h1>
-
 </div>
 
 <p>
@@ -169,8 +167,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </p>
 
 <h2 id="basic-angularjs-1-x-example">Basic AngularJS 1.x Example</h2>
-<show-example example="example-ajs" example-height="200px"></show-example>
-
+<?= example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', array( 'extras' => array('angularjs1'))) ?>
 <h2 class="components">Components</h2>
 
 <p>When using <a href="../javascript-grid-components">Components</a> within an AngularJS 1.x application you need to manage
@@ -188,6 +185,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     and releases all resources when the directive is destroyed.
 </p>
 
+<!--
 <h2 id="advanced-angularjs-1-x-example">Advanced AngularJS 1.x Example</h2>
 
 <p>
@@ -196,7 +194,8 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     different options are configured is explained in the relevant parts of the documentation.
 </p>
 
-<show-example example="basic-ajs"></show-example>
+<?= example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', array( 'extras' => array('angularjs1'))) ?>
+-->
 
 <h2 id="angular-compiling">Angular Compiling</h2>
 
@@ -249,7 +248,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     <li><b>Country:</b> Uses a custom Angular directive to display the country.</li>
 </ul>
 
-<show-example example="exampleAngularCompiling-ajs"></show-example>
+<?= example('Angular compiling', 'compiling', 'vanilla', array( 'extras' => array('angularjs1'))) ?>
 
 <note>
     When scrolling the example above up and down, the cells rendered using Angular are blank
@@ -292,7 +291,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     This is waiting for the AngularJS 1.x digest cycle to kick in to populate the values into these rows.
 </note>
 
-<show-example example="exampleCellTemplates-ajs"></show-example>
+<?= example('Cell Templates', 'cell-templates', 'vanilla', array( 'enterprise' => true, 'extras' => array('angularjs1'))) ?>
 
 <h2 id="ng1Components">Angular 1.x and ag-Grid Components</h2>
 
@@ -322,5 +321,4 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     to learn about accessing all the features of the grid.
 </p>
 
-
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>
