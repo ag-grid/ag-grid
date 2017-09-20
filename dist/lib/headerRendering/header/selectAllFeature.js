@@ -65,13 +65,13 @@ var SelectAllFeature = (function (_super) {
         }
     };
     SelectAllFeature.prototype.onModelChanged = function () {
-        if (!this.cbSelectAllVisible) {
+        if (!this.cbSelectAllVisible && !this.column.colDef.checkboxSelection) {
             return;
         }
         this.updateStateOfCheckbox();
     };
     SelectAllFeature.prototype.onSelectionChanged = function () {
-        if (!this.cbSelectAllVisible) {
+        if (!this.cbSelectAllVisible && !this.column.colDef.checkboxSelection) {
             return;
         }
         this.updateStateOfCheckbox();
@@ -135,6 +135,15 @@ var SelectAllFeature = (function (_super) {
     };
     SelectAllFeature.prototype.onCbSelectAll = function () {
         if (this.processingEventFromCheckbox) {
+            return;
+        }
+        if (this.column.colDef.checkboxSelection && !this.column.colDef.headerCheckboxSelection) {
+            const checked = this.cbSelectAll.isSelected();
+            this.gridApi.forEachNode((node) => {
+                if (node) {
+                    node.selectThisNode(checked);
+                }
+            });
             return;
         }
         if (!this.cbSelectAllVisible) {
