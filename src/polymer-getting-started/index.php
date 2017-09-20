@@ -222,14 +222,7 @@ npm start</snippet>
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-    <show-complex-example example="../framework-examples/polymer-examples/src/rich-grid/index.html"
-                          sources="{
-                            [
-                                { root: '/framework-examples/polymer-examples/src/rich-grid/', files: 'index.html,simple-cell-renderer.html,proficiencyFilter.js,skillsFilter.js,rich-grid-example.css,static-data.js,rich-grid-example.html' }
-                            ]
-                          }"
-                          exampleHeight="525px">
-    </show-complex-example>
+    <?= example('Rich Polymer Grid', 'rich-grid', 'polymer', array("exampleHeight" => 500, 'enterprise' => true)) ?>
 
     <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
         <code>column grouping</code> as well as using <code>Polymer Components</code> in the name column. And even this rich

@@ -23,10 +23,11 @@ if (USE_LOCAL) {
         "ag-grid" =>                       "$prefix/ag-grid/ag-grid.js",
         "ag-grid/main" =>                  "$prefix/ag-grid/ag-grid.js",
         "ag-grid-enterprise" =>            "$prefix/ag-grid-enterprise/ag-grid-enterprise.js",
-        "ag-grid-react" =>                 "$prefix/ag-grid-react/ag-grid-react.js",
+        "ag-grid-react" =>                  "npm:ag-grid-react/main.js",
+        //"ag-grid-react" =>                 "$prefix/ag-grid-react/ag-grid-react.js",
         // I can't make a bundle for angular , load it from NPM for now. This won't pick the local changes
         // "ag-grid-angular" =>             "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-angular/ag-grid-angular.js"
-        "ag-grid-angular" =>                "npm:ag-grid-angular@13.0.0/main.js"
+        "ag-grid-angular" =>                "npm:ag-grid-angular/main.js"
     );
 // production mode, return from unpkg
 } else {
@@ -238,8 +239,17 @@ function renderExampleExtras($config) {
             'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js' ),
             'styles' => array ( 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css' )
         ),
+        'rxjs' => array(
+            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.0/Rx.min.js' )
+        ),
         'lodash' => array(
             'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js' )
+        ),
+        'd3' => array(
+            'scripts' => array( 'https://d3js.org/d3.v4.min.js' )
+        ),
+        'sparkline' => array(
+            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js' )
         ),
         'bootstrap' => array(
             'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js' ),

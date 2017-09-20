@@ -74,12 +74,12 @@ interface RefreshCellsParams {
         <h3>Deprecated - Volatile Columns</h3>
 
         <p>
-            Volatile columns allow you to mark specific columns for refresh when you call
-            <code>api.refreshCells()</code>.
+            Volatile columns allowed you to mark specific columns for refresh when you called
+            <code>api.softRefresh()</code>.
         </p>
 
         <p>
-            Columns are marked as volatile by setting the column definition property
+            Columns were marked as volatile by setting the column definition property
             <code>volatile = true</code>.
         </p>
 
@@ -90,9 +90,9 @@ interface RefreshCellsParams {
 
         <p>
             If you are using volatile columns, instead of calling <code>api.softRefresh()</code>,
-            can call <code>api.refreshCells({volatile: true})</code> instead to achieve the same.
+            you can call <code>api.refreshCells({volatile: true})</code> instead to achieve the same.
             However volatile columns are deprecated so will be removed in a future release.
-            You should instead move to passing a list of columns to the <code>api.softRefresh()</code>
+            You should instead move to passing a list of columns to the <code>api.refreshCells()</code>
             method.
         </p>
 

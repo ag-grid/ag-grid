@@ -2,16 +2,16 @@
 const CELL_DIMENSION_SIZE = 90;
 
 let columnDefs = [
-    {headerName: 'Symbol', field: 'Symbol', width: 222},
-    {headerName: 'Date', field: 'Date', width: 190},
-    {headerName: 'Open', field: 'Open', width: 180},
-    {headerName: 'High', field: 'High', width: 160},
-    {headerName: 'Low', field: 'Low', width: 150},
-    {headerName: 'Close', field: 'Close', width: 170},
+    {headerName: 'Symbol', field: 'Symbol', width: 60},
+    {headerName: 'Date', field: 'Date', width: 70},
+    {headerName: 'Open', field: 'Open', width: 50},
+    {headerName: 'High', field: 'High', width: 50},
+    {headerName: 'Low', field: 'Low', width: 50},
+    {headerName: 'Close', field: 'Close', width: 50},
     {
         headerName: 'Close Trend',
         field: 'CloseTrends',
-        width: 110,
+        width: 150,
         suppressResize: true,
         suppressSizeToFit: true,
         cellRenderer: LineChartLineRenderer
@@ -19,7 +19,7 @@ let columnDefs = [
     {
         headerName: 'Average Volume',
         field: 'AverageVolume',
-        width: 130,
+        width: 150,
         suppressResize: true,
         suppressSizeToFit: true,
         cellRenderer: BarChartLineRenderer
@@ -27,7 +27,7 @@ let columnDefs = [
     {
         headerName: 'Target Expenditure',
         field: 'targetExpenditure',
-        width: 415,
+        width: 150,
         editable: true,
         cellEditor: PieChartLineEditor,
         cellEditorParams: {
@@ -42,7 +42,7 @@ let columnDefs = [
     {
         headerName: 'Expenditure',
         field: 'Expenditure',
-        width: 120,
+        width: 110,
         suppressResize: true,
         suppressSizeToFit: true,
         cellRenderer: PieChartLineRenderer,
@@ -62,9 +62,6 @@ let gridOptions = {
         enableColResize: false,
         rowSelection: 'single',
         rowHeight: 95,
-        onGridReady: function (params) {
-            params.api.sizeColumnsToFit();
-        },
         onModelUpdated: () => {
             let updatedNodes = [];
             gridOptions.api.forEachNode(function (node) {
@@ -142,6 +139,8 @@ function PieChartLineRenderer() {
 PieChartLineRenderer.prototype.init = function (params) {
     this.eGui = document.createElement('div');
     this.eGui.id = `${params.colDef.field}_${params.rowIndex}_pie`
+
+    this.segments = params.segments;
 };
 
 PieChartLineRenderer.prototype.getGui = function () {
@@ -149,7 +148,9 @@ PieChartLineRenderer.prototype.getGui = function () {
 };
 
 PieChartLineRenderer.prototype.refresh = function (params) {
-    let segments = params.segments;
+    let segments = this.segments;
+    // let segments = params.segments; alberto - used to be this
+
     let colourToNames = _.invert(segments);
     let values = Object.keys(segments).map((segment) => {
         return params.value[segment];

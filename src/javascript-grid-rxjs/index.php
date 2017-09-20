@@ -45,13 +45,7 @@ updates$.subscribe((updates) =&gt; {
     <p>With these two pieces of code we can supply the updates to ag-Grid and the grid will only re-render the changes rows, resulting
     in much improved performance.</p>
 
-    <show-complex-example example="rxjsExampleUpdatesOnly.html"
-                          sources="{
-                            [
-                                { root: './', files: 'rxjsExampleUpdatesOnly.js,rxjsExampleUpdatesOnly.html,mockServer.js' }
-                            ]
-                          }">
-    </show-complex-example>
+    <?= example('RxJS - Row Updates', 'rxjs-updates', 'vanilla', array("enterprise" => 1, "extras" => array("lodash", "rxjs"))) ?>
 
     <h2>Option 2 - Providing Full Row Data With Updates Within</h2>
 
@@ -78,13 +72,7 @@ const gridOptions = {
     <p>With these configuration we can supply the updates to ag-Grid and the grid will only re-render the changes rows, resulting
         in much improved performance.</p>
 
-    <show-complex-example example="rxjsExampleFullDataSet.html"
-                          sources="{
-                            [
-                                { root: './', files: 'rxjsExampleFullDataSet.js,rxjsExampleFullDataSet.html,mockServer.js' }
-                            ]
-                          }">
-    </show-complex-example>
+    <?= example('RxJS - Full Updates', 'rxjs-full', 'vanilla', array("enterprise" => 1, "extras" => array("lodash", "rxjs"))) ?>
 
 </div>
 
