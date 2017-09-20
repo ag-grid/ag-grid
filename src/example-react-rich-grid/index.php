@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
         using
         Header Components</p>
 
-    <?= example('ag-Grid in React', 'rich', 'react', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
+    <?= example('ag-Grid in React', 'rich', 'react', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
 
 </div>
 
