@@ -279,8 +279,7 @@ colDef.cellEditorParams = {
     <ul>
         <li>'Date' column uses a Component cell editor that allows you to pick a date using jQuery UI Datepicker.</li>
     </ul>
-
-    <?= example('Datepicker Cell Editing', 'datepicker-cell-editing', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Datepicker Cell Editing', 'datepicker-cell-editing', 'vanilla', array("enterprise" => 1, "extras" => array('jquery', 'jqueryui', 'bootstrap') )) ?>
 
     </p>
 
