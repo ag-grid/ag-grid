@@ -77,10 +77,9 @@ function processSrc() {
 gulp.task('replace-to-cdn', () => {
     const version = require('../ag-grid/package.json').version;
 
-    // replace the hard-coded scripts with unpkg
-    return gulp.src('dist/example-runner/utils.php')
-        .pipe(replace('$$VERSION$$', version))
-        .pipe(gulp.dest('./dist/example-runner/'));
+    return gulp.src('./dist/config.php')
+        .pipe(replace('$$LOCAL$$', version))
+        .pipe(gulp.dest('./dist'));
 });
 
 function copyAgGridToDist() {
@@ -107,7 +106,7 @@ function copyFromAgGridEnterprise() {
 gulp.task('serve', cb => {
     const webpackDevServerCmd = process.platform == 'win32' 
         ? '.\\node_modules\\.bin\\webpack-dev-server.cmd' 
-        : './node_modules/.bin/webpack-dev-server' 
+        : './node_modules/.bin/webpack-dev-server';
 
     const php = cp.spawn('php', ['-S', '127.0.0.1:8888', '-t', 'src'], { stdio: 'inherit', env: { 'AG_DEV': 'true' } });
     const gulp = cp.spawn(webpackDevServerCmd, { stdio: 'inherit' } );
