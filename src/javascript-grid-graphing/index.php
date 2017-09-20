@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
     data that when clicked on provides a simple time-series chart of the corresponding data. Multiple rows (or stocks) can be
     selected to provide a comparison between stocks.</p>
 
-<!--    --><?//= example('External Graphs using D3', 'stocks-master-detail', 'vanilla', array("enterprise" => 1, "exampleHeight" => 820)) ?>
+<?= example('External Graphs using D3', 'stocks-master-detail', 'vanilla', array("enterprise" => 1, "exampleHeight" => 820)) ?>
 
     <h3>Inline Graphs using jQuery Sparklines</h3>
 
