@@ -23,7 +23,8 @@ foreach ($files as $file) {
 ?>
 <html>
     <head>
-    <base href="<?= "http://{$_SERVER['HTTP_HOST']}/${exampleSection}/$exampleDir/" ?>" />
+<?php $prefix = POLYMER_BASE_HREF_PREFIX ?>
+    <base href="<?= "//{$_SERVER['HTTP_HOST']}/$prefix${exampleSection}/$exampleDir/" ?>" />
 <?php if (!$preview) { ?>
     <style> html, body { margin: 0; padding: 0; } </style>
 

@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
         Angular 2+ Datagrid
     </h1>
 
-    <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
+    <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 
     <div class="list-group">
         <a href="/angular-getting-started/" class="list-group-item">

@@ -24,7 +24,7 @@ include '../documentation-main/documentation_header.php';
         the Employee column to show the DOB column)</p>
     <p><span class="bold-roboto">Custom Headers</span>: Sort, Filter and Render Headers using Header Components</p>
 
-    <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
+    <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
 
 </div>
 

@@ -112,7 +112,7 @@ npm start
     <p>Of course there is much more we can do - in the following sections we will build on this starting point. For our
         seed application here is the complete example:</p>
 
-    <?= example('ag-Grid in React', 'hello-world', 'react'); ?>
+    <?= example('ag-Grid in React', 'hello-world', 'react',  array( "exampleHeight" => 130, "showResult" => true)); ?>
 
     <h2>Adding Features</h2>
 
@@ -175,7 +175,7 @@ npm start
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-    <?= example('ag-Grid in React', 'full-rich', 'react', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
+    <?= example('ag-Grid in React', 'full-rich', 'react', array("enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 
    <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
         <code>column grouping</code> as well as using <code>React Components</code> in the header. And even this rich

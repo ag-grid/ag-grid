@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
         will simply be hidden and available to the right via the scrollbar.
     </p>
 
-    <show-example example="example"></show-example>
+<?= example('Dynamic horizontal resizing with scroll', 'example') ?>
 
     <h3>Dynamic Resizing without Horizontal Scroll</h3>
 
@@ -36,72 +36,19 @@ include '../documentation-main/documentation_header.php';
     horizontal scrollbar.</p>
 
     <p>To achieve this determine the width of the grid and work out how many columns could fit in that space, hiding any that
-    don't fit, constantly updating based on the <code>gridSizeChanged</code> event firing:</p>
-
-<snippet>
-// get the current grids width
-var gridWidth = document.getElementById('myGrid').offsetWidth;
-
-// keep track of which columns to hide/show
-var columnsToShow = [];
-var columnsToHide = [];
-
-// iterate over all columns (visible or not) and work out
-// now many columns can fit (based on their minWidth)
-var totalColsWidth = 0;
-var allColumns = gridOptions.columnApi.getAllColumns();
-for (var i = 0; i &lt; allColumns.length; i++) {
-    let column = allColumns[i];
-    totalColsWidth += column.getMinWidth();
-    if(totalColsWidth &gt; gridWidth) {
-        columnsToHide.push(column.colId);
-    } else {
-        columnsToShow.push(column.colId);
-    }
-}
-
-// show/hide columns based on current grid width
-gridOptions.columnApi.setColumnsVisible(columnsToShow, true);
-gridOptions.columnApi.setColumnsVisible(columnsToHide, false);
-
-// fill out any available space to ensure there are no gaps
-gridOptions.api.sizeColumnsToFit();</snippet>
+    don't fit, constantly updating based on the <code>gridSizeChanged</code> event firing, like the next example shows.</p>
 
     <p>This example is best seen when opened in a new tab - then change the horizontal size of the browser and watch as
     columns hide/show based on the current grid size.</p>
 
-    <show-example example="example1"></show-example>
+<?= example('Dynamic horizontal resizing without scroll', 'example1') ?>
 
     <h3>Dynamic Vertical Resizing</h3>
 
     <p>Sometimes the vertical height of the grid is greater than the number of rows you have it in.  You can dynamically
-    set the row heights to fill the available height as follows:</p>
+    set the row heights to fill the available height as the following example shows:</p>
 
-<snippet>
-// get the height of the grid body - this excludes the height of the headers
-var gridHeight = document.getElementsByClassName('ag-body')[0].offsetHeight;
-
-// get the rendered rows
-var renderedRows = gridOptions.api.getRenderedNodes();
-
-// if the rendered rows * min height is greater than available height, just just set the height
-// to the min and let the scrollbar do its thing
-if(renderedRows.length * minRowHeight &gt;= gridHeight) {
-    if(currentRowHeight !== minRowHeight) {
-        currentRowHeight = minRowHeight;
-        gridOptions.api.resetRowHeights();
-    }
-} else {
-    // set the height of the row to the grid height / number of rows available
-    currentRowHeight = Math.floor(gridHeight / renderedRows.length);
-    console.log(gridHeight + " / " + currentRowHeight);
-    gridOptions.api.resetRowHeights();
-}</snippet>
-
-    <p>This example is best seen when opened in a new tab - then change the horizontal size of the browser and watch as
-        columns hide/show based on the current grid size.</p>
-
-    <show-example example="example2"></show-example>
+    <?= example('Dynamic vertical resizing', 'example2') ?>
 
 </div>
 
