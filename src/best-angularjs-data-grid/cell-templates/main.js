@@ -1,4 +1,3 @@
-agGrid.LicenseManager.setLicenseKey("your license key goes here");
 
 // this example uses Angular 1. cellTemplates doesn't make sense with any other framework
 agGrid.initialiseAgGridWithAngular1(angular);
@@ -9,7 +8,7 @@ module.controller('exampleCtrl', function($scope, $http) {
     var columnDefs = [
         {headerName: 'Useless', width: 100, template: '<span style="font-weight: bold;">BLAH</span>'},
         {headerName: 'Athlete', width: 150, template: '<span style="font-weight: bold;" ng-bind="data.athlete"></span>'},
-        {headerName: 'Age', width: 90, templateUrl: './ageTemplate-ajs.html'},
+        {headerName: 'Age', width: 90, template: '<span style="font-weight: bold;" ng-bind="data.age"></span>'},
         {headerName: 'Country', field: 'country', width: 120},
         {headerName: 'Year', field: 'year', width: 90},
         {headerName: 'Date', field: 'date', width: 110},
