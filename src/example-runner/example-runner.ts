@@ -96,6 +96,7 @@ class ExampleRunner {
     private boilerplatePath: string;
 
     private options: {
+        sourcePrefix: string,
         showResult?: boolean,
         initialFile?: string,
         exampleHeight?: number
@@ -178,7 +179,7 @@ class ExampleRunner {
         if (file == this.files[0]) {
             return this.resultUrl + "&preview=true";
         } else {
-            return ['', this.section, this.name, file].join('/');
+            return [this.options.sourcePrefix, this.section, this.name, file].join('/');
         }
     }
 
@@ -195,7 +196,7 @@ class ExampleRunner {
         });
 
 
-        this.formPostData('http://plnkr.co/edit/?p=preview', true, postData);
+        this.formPostData('//plnkr.co/edit/?p=preview', true, postData);
     }
 }
 

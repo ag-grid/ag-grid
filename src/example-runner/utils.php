@@ -3,14 +3,18 @@ include dirname(__FILE__) . '/../config.php';
 
 define('INCOMPLETE_ENTERPRISE_BUNDLE', isset($_ENV['AG_DEV']));
 define('USE_LOCAL', AG_GRID_VERSION == '$$LOCAL$$');
+$archiveMatch = '/archive\/\d+.\d+.\d+/';
+
+if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
+    $archiveSegment = $matches[0];
+    $prefix =  "//{$_SERVER['HTTP_HOST']}/$archiveSegment/dist";
+    define('RUNNER_SOURCE_PREFIX', "/$archiveSegment");
+} else {
+    $prefix =  "//{$_SERVER['HTTP_HOST']}/dist";
+    define('RUNNER_SOURCE_PREFIX', "");
+}
 
 if (USE_LOCAL) {
-    if (preg_match('/archive\/\d+.\d+.\d+/', $_SERVER['PHP_SELF'], $matches)) {
-        $archiveSegment = $matches[0];
-        $prefix =  "//{$_SERVER['HTTP_HOST']}/$archiveSegment/dist";
-    } else {
-        $prefix =  "//{$_SERVER['HTTP_HOST']}/dist";
-    }
 
     define(AG_GRID_SCRIPT_PATH, "$prefix/ag-grid/ag-grid.js");
     define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "$prefix/ag-grid-enterprise/ag-grid-enterprise.js");
@@ -123,6 +127,8 @@ function example($title, $dir, $type='vanilla', $options = array()) {
     $fileList = htmlspecialchars(json_encode(getDirContents($dir)));
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));
     $additional = getBoilerplateConfig($type);
+
+    $options['sourcePrefix'] = RUNNER_SOURCE_PREFIX;
 
     $query = array(
         "section" => $section,
