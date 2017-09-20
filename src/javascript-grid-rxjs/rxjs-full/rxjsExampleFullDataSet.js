@@ -67,7 +67,7 @@
 
     let mockServer = new MockServer();
     const initialLoad$ = mockServer.initialLoad();
-    const updates$ = mockServer.byRowupdates();
+    const updates$ = mockServer.allDataUpdates();
 
     document.addEventListener('DOMContentLoaded', function () {
         const gridDiv = document.querySelector('#liveStreamExample');

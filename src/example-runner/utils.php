@@ -238,6 +238,9 @@ function renderExampleExtras($config) {
             'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js' ),
             'styles' => array ( 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css' )
         ),
+        'rxjs' => array(
+            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.0/Rx.min.js' )
+        ),
         'lodash' => array(
             'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js' )
         ),

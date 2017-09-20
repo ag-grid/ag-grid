@@ -46,7 +46,7 @@ MockServer.prototype.byRowupdates = function () {
 // provides randomised data updates to some of the rows
 // only all the row data (with some rows changed)
 MockServer.prototype.allDataUpdates = function () {
-    return Observable.create((observer) => {
+    return Rx.Observable.create((observer) => {
         const interval = setInterval(() => {
             let changes = [];
 
