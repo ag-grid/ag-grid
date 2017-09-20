@@ -245,6 +245,12 @@ function renderExampleExtras($config) {
         'lodash' => array(
             'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js' )
         ),
+        'd3' => array(
+            'scripts' => array( 'https://d3js.org/d3.v4.min.js' )
+        ),
+        'sparkline' => array(
+            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js' )
+        ),
         'bootstrap' => array(
             'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js' ),
             'styles' => array(
