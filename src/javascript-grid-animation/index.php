@@ -85,7 +85,8 @@ include '../documentation-main/documentation_header.php';
         The example below shows the animations by the JavaScript calling the grid's api. So no touching, just looking!!!
     </p>
 
-    <?= example('Animation', 'animation') ?>
+    <?= example('Animation', 'animation', 'vanilla', array("enterprise" => 1)) ?>
+
 
 </div>
 

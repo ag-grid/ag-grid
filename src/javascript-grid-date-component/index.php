@@ -84,7 +84,8 @@ interface IDateParams {
     the date column for both the rich filter and the floating filter.
 </p>
 
-<?= example('Auto Height', 'custom-date') ?>
+<?= example('Auto Height', 'custom-date', 'vanilla', array("extras" => array("jquery", "jqueryui"))) ?>
+
 
 
 
