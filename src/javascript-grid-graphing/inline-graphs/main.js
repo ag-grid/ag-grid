@@ -57,32 +57,31 @@ let columnDefs = [
 ];
 
 let gridOptions = {
-        columnDefs: columnDefs,
-        enableSorting: true,
-        enableColResize: false,
-        rowSelection: 'single',
-        rowHeight: 95,
-        onModelUpdated: () => {
-            let updatedNodes = [];
-            gridOptions.api.forEachNode(function (node) {
-                updatedNodes.push(node);
-            });
-            // now tell the grid it needs refresh all these column, and let jquery do its thing
-            gridOptions.api.refreshCells({
-                rowNodes: updatedNodes,
-                columns: ['CloseTrends', 'AverageVolume', 'Expenditure'],
-                force: true
-            });
-        },
-        onCellClicked: (params) => {
-            if (params.colDef.field !== "CloseTrends") {
-                return;
-            }
-
-            renderLineGraph(params.data.Symbol);
+    columnDefs: columnDefs,
+    enableSorting: true,
+    enableColResize: false,
+    rowSelection: 'single',
+    rowHeight: 95,
+    onModelUpdated: () => {
+        let updatedNodes = [];
+        gridOptions.api.forEachNode(function (node) {
+            updatedNodes.push(node);
+        });
+        // now tell the grid it needs refresh all these column, and let jquery do its thing
+        gridOptions.api.refreshCells({
+            rowNodes: updatedNodes,
+            columns: ['CloseTrends', 'AverageVolume', 'Expenditure'],
+            force: true
+        });
+    },
+    onCellClicked: (params) => {
+        if (params.colDef.field !== "CloseTrends") {
+            return;
         }
+
+        renderLineGraph(params.data.Symbol);
     }
-;
+};
 
 
 function LineChartLineRenderer() {

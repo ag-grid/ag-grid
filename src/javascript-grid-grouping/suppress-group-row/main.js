@@ -1,23 +1,40 @@
+var classRules = {
+    // .parent because we target the 2nd group of 2
+    'background-odd': function(params) { return params.node.parent.childIndex % 2 === 0; },
+    'background-even': function(params) { return params.node.parent.childIndex % 2 !== 0; },
+    // we target the last row of the 2nd group
+    'border': function(params) { return params.node.parent.lastChild && params.node.lastChild; }
+};
+
 var columnDefs = [
-    {headerName: "Country", field: "country", width: 120, rowGroup:true},
-    {headerName: "Year", field: "year", width: 90, rowGroup:true},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Athlete", field: "athlete", width: 200},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Date", field: "date", width: 110}
+    {headerName: "Country", field: "country", width: 120, cellClassRules: classRules, rowGroup: true,
+        cellStyle: function(params) {
+            // color red for the first group
+            if (params.node.parent.parent.firstChild) {
+                return {color: "red"};
+            }
+        }},
+    {headerName: "Sport", field: "sport", width: 110, cellClassRules: classRules, rowGroup: true,
+        cellStyle: function(params) {
+            // color blue for the first in the current sub group
+            if (params.node.firstChild) {
+                return {color: "blue"};
+            }
+        }},
+    {headerName: "Athlete", field: "athlete", width: 150, cellClassRules: classRules},
+    {headerName: "Age", field: "age", width: 90, cellClassRules: classRules},
+    {headerName: "Year", field: "year", width: 90, cellClassRules: classRules},
+    {headerName: "Date", field: "date", width: 110, cellClassRules: classRules},
+    {headerName: "Gold", field: "gold", width: 100, cellClassRules: classRules},
+    {headerName: "Silver", field: "silver", width: 100, cellClassRules: classRules},
+    {headerName: "Bronze", field: "bronze", width: 100, cellClassRules: classRules},
+    {headerName: "Total", field: "total", width: 100, cellClassRules: classRules}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
-    animateRows: true,
-    enableRangeSelection: true,
-    rowData: null,
-    enableSorting:true,
-    enableFilter:true
+    groupSuppressRow: true,
+    enableSorting: true
 };
 
 // setup the grid after the page has finished loading
@@ -31,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
         }

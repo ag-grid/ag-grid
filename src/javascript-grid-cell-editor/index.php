@@ -320,7 +320,7 @@ interface SuppressKeyboardEventParams {
 </ul>
 </p>
 
-<?= example('Editor Component', 'editor-component') ?>
+<?= example('Editor Component', 'editor-component', 'vanilla', array("enterprise" => 1)) ?>
 
 <?php if (isFrameworkAngular2()) { ?>
     <?php include './angular.php';?>
