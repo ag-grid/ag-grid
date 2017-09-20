@@ -139,9 +139,20 @@ class ExampleRunner {
 
         whenInViewPort(this.$element, () => {
             this.$timeout(() => {
+                this.loadAllSources();
                 this.refreshSource();
                 this.ready = true;
             });
+        })
+    }
+
+    private sources: any;
+    private allFiles: any;
+
+    loadAllSources() {
+        this.allFiles = this.files.concat(this.boilerplateFiles);
+        this.$q.all(this.allFiles.map( (file: any) => this.$http.get(this.getSourceUrl(file)) )).then( (files: any) => {
+            this.sources = files;
         })
     }
 
@@ -172,22 +183,19 @@ class ExampleRunner {
     }
 
     openPlunker(clickEvent) {
-        const allFiles = this.files.concat(this.boilerplateFiles);
-        this.$q.all(allFiles.map( (file: any) => this.$http.get(this.getSourceUrl(file)) )).then( (files: any) => {
-            var postData: any = {
-                'tags[0]': "ag-grid",
-                'tags[1]': "example",
-                'private': true,
-                'description': this.title
-            };
+        var postData: any = {
+            'tags[0]': "ag-grid",
+            'tags[1]': "example",
+            'private': true,
+            'description': this.title
+        };
 
-            files.forEach( (file:any, index: number) => {
-                postData['files[' + allFiles[index] + ']'] = file.data;
-            });
-
-
-            this.formPostData('http://plnkr.co/edit/?p=preview', true, postData);
+        this.sources.forEach( (file:any, index: number) => {
+            postData['files[' + this.allFiles[index] + ']'] = file.data;
         });
+
+
+        this.formPostData('http://plnkr.co/edit/?p=preview', true, postData);
     }
 }
 
