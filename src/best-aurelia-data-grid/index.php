@@ -16,17 +16,6 @@ include '../documentation-main/documentation_header.php';
 
     <p>This page shows you how to get started with ag-Grid and Aurelia.</p>
 
-    <note>Version 13.0.2 of will be the last version of ag-Grid to support Aurelia.</br><br/>
-        We continually review where we spend our efforts and following a review of the Aurelia version of ag-Grid, we
-        feel that there is not sufficient demand to warrant the support overhead for this framework (based on NPM
-        downloads and feedback via our support channels).</br></br>
-        For those of you that use Aurelia, there are still options to continue using ag-Grid:</br></br>
-        <ul>
-            <li>Use the versions up to 13.0.2</li>
-            <li>Use the plain JavaScript version within your Aurelia application</li>
-        </ul>
-        If you would like to discuss this further with, please get in touch.</note>
-
     <?php
     $frameworkChild = 'aurelia';
     include '../javascript-grid-getting-started/ag-grid-dependency-framework.php'
@@ -315,7 +304,7 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
 
 <h3 id="setting-column-properties">Setting Column Properties</h3>
 <p>There are some simple rules you should follow when setting column properties via Markup:</p>
-<snippet>
+<snippet ng-non-bindable>
 // string value
 property-name="String Value"
 property-name="'String Value'"

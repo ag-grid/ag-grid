@@ -12,6 +12,6 @@ include '../documentation-main/documentation_header.php';
     <h2>Group Row Inner Renderer</h2>
     <p>A Group Row Inner Renderer Example</p>
 
-    <?= example('Grouped Row Inner Renderer', 'grouped', 'react', array( "exampleHeight" => 360, "showResult" => true )); ?></div>
+    <?= example('Grouped Row Inner Renderer', 'grouped', 'react', array( "enterprise" => 1, "exampleHeight" => 360, "showResult" => true )); ?></div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

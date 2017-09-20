@@ -9,9 +9,11 @@ if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
     $archiveSegment = $matches[0];
     $prefix =  "//{$_SERVER['HTTP_HOST']}/$archiveSegment/dist";
     define('RUNNER_SOURCE_PREFIX', "/$archiveSegment");
+    define('POLYMER_BASE_HREF_PREFIX', "$archiveSegment/");
 } else {
     $prefix =  "//{$_SERVER['HTTP_HOST']}/dist";
     define('RUNNER_SOURCE_PREFIX', "");
+    define('POLYMER_BASE_HREF_PREFIX', "");
 }
 
 if (USE_LOCAL) {
@@ -258,8 +260,18 @@ function renderExampleExtras($config) {
                 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css'
             )
         ),
+        'roboto' => array(
+            'styles' => array( 
+                'https://fonts.googleapis.com/css?family=Roboto' 
+            )
+        ),
         'fontawesome' => array(
             'styles' => array( 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' )
+        ),
+        'angularjs1' => array(
+            'scripts' => array(
+                'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js'
+            )
         )
     );
 

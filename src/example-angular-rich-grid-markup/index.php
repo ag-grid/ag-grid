@@ -25,7 +25,7 @@ include '../documentation-main/documentation_header.php';
         </div>
     </div>
 
-    <?= example('ag-Grid in Angular with Markup', 'rich-grid-markup', 'angular', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
+    <?= example('ag-Grid in Angular with Markup', 'rich-grid-markup', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
 
 </div>
 

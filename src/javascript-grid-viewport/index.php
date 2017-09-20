@@ -251,14 +251,7 @@ interface IViewportDatasourceParams {
         position and pushes data to the client based on the viewport position.
     </p>
 
-    <show-complex-example example="exampleViewport.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleViewport.html,exampleViewport.js,mockServer.js,viewportDatasource.js' }
-                                ]
-                              }"
-                          exampleheight="500px">
-    </show-complex-example>
+<?= example('Viewport Example', 'viewport', 'vanilla', array( 'enterprise'=> true )) ?>
 
     <h1 id="pagination">Example Viewport with Pagination</h1>
 
@@ -284,14 +277,7 @@ interface IViewportDatasourceParams {
         </ul>
     </p>
 
-    <show-complex-example example="examplePaginationViewport.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'examplePaginationViewport.html,examplePaginationViewport.js,mockServer.js,viewportDatasource.js' }
-                                ]
-                              }"
-                          exampleheight="500px">
-    </show-complex-example>
+<?= example('Pagination Viewport Example', 'pagination-viewport', 'vanilla', array( 'enterprise'=> true )) ?>
 
 </div>
 

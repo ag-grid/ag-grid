@@ -153,4 +153,4 @@ colDef = {
     <p>
         Using Angular Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
     </p>
-    <?= example('Editor Components', 'angular-editor', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>
+    <?= example('Editor Components', 'angular-editor', 'angular', array("enterprise" => 1, "exampleHeight" => 370, "showResult" => true)); ?>

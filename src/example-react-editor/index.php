@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
     <p><span class="bold-roboto">Numeric</span>: A Custom React Editor demonstrating pre & post validation. Only numeric characters are allowed,
         and numbers greater than 1000000 will be rejected.</p>
 
-    <?= example('Editor Components', 'editor', 'react', array( "exampleHeight" => 380, "showResult" => true )); ?>
+    <?= example('Editor Components', 'editor', 'react', array( "enterprise" => 1, "exampleHeight" => 380, "showResult" => true )); ?>
 
 </div>
 

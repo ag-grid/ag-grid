@@ -40,31 +40,29 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Step 1 - Basic Grid</h3>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/OEy2CL4jQvU" frameborder="0" allowfullscreen></iframe>
-    <show-example example="tutorialStart"></show-example>
+    <?= example('Basic Grid', 'start') ?>
 
     <h3>Step 2 - Loading Data</h3>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/BR-ARyQZm4E" frameborder="0" allowfullscreen></iframe>
-    <show-example example="tutorialLoadingData"></show-example>
+    <?= example('Loading Data', 'load-data') ?>
 
     <h3>Step 3 - Value Getters</h3>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/hZGHoo3RPGI" frameborder="0" allowfullscreen></iframe>
-    <show-example example="tutorialValueGetters"></show-example>
+    <?= example('Value Getters', 'value-getters') ?>
 
     <h3>Step 4 - Cell Class Rules</h3>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/MRDG741Wz0k" frameborder="0" allowfullscreen></iframe>
-    <show-example example="tutorialColors"></show-example>
+    <?= example('Cell Class Rules', 'cell-class-rules') ?>
 
     <h3>Step 5 - Cell Renderer</h3>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/6Ha1pEuYb6w" frameborder="0" allowfullscreen></iframe>
-    <show-example example="tutorialCellRenderer"></show-example>
+
+    <?= example('Cell Renderer', 'cell-renderer') ?>
 
     <h3>Step 6 - Expressions</h3>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/qPKG7KRNbnk" frameborder="0" allowfullscreen></iframe>
-    <show-example example="tutorialExpressions"></show-example>
 
-    <h3>Step 7 - Grouping</h3>
-    TODO - I'll get this done over the next few days.
-
+    <?= example('Expressions', 'expressions') ?>
 </div>
 
 <hr/>

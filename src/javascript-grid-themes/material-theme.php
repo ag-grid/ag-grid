@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p> The example below shows the grid with a rich set of features enabled.</p>
-    <?= example('Material Theme', 'theme-material') ?>
+    <?= example('Material Theme', 'theme-material', 'vanilla', array( 'extras' => array('roboto') )) ?>
 
 
     <p>
@@ -148,7 +148,7 @@ gridOptions = {
 
     <p/>
 
-    <?= example('Old Material Theme', 'theme-material-old') ?>
+    <?= example('Old Material Theme', 'theme-material-old', 'vanilla', array( 'extras' => array('roboto') )) ?>
 
 </pre>
 

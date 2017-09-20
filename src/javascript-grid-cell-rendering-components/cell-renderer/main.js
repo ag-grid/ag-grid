@@ -56,19 +56,26 @@ function DaysFrostRenderer() {
     this.eGui = document.createElement("span");
 }
 DaysFrostRenderer.prototype.init = function (params) {
-    var daysFrost = params.value;
-    for (var i = 0; i < daysFrost; i++) {
-        var starImageElement = document.createElement("img");
-        starImageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/" + params.rendererImage;
-        this.eGui.appendChild(starImageElement);
-    }
+    this.rendererImage = params.rendererImage;
+    this.value = params.value;
+    this.updateImages();
 };
+DaysFrostRenderer.prototype.updateImages = function() {
+    var daysFrost = this.value;
+    for (var i = 0; i < daysFrost; i++) {
+        var imageElement = document.createElement("img");
+        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/" + this.rendererImage;
+        this.eGui.appendChild(imageElement);
+    }
+}
 DaysFrostRenderer.prototype.getGui = function getGui() {
     return this.eGui;
 };
 DaysFrostRenderer.prototype.refresh = function (params) {
+    this.value = params.value;
+
     this.eGui.innerHTML = '';
-    this.init(params)
+    this.updateImages();
 };
 
 /**

@@ -171,7 +171,7 @@ npm start</snippet>
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-    <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
+    <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
 
     <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
         <code>column grouping</code> as well as using <code>Angular Components</code> in the header. And even this rich

@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
         and numbers greater than 1000000 will be rejected.</p>
 
 
-    <?= example('Editor Components', 'editor', 'angular', array("exampleHeight" => 370, "showResult" => true)); ?>
+    <?= example('Editor Components', 'editor', 'angular', array("enterprise" => 1, "exampleHeight" => 370, "showResult" => true)); ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
