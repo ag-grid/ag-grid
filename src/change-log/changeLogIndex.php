@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
     </note>
 
     <h2>13.2.x</h2>
-    <h3>Version 13.2.0 [19-SEP-2017]</h3>
+    <h3>Version 13.2.0 [21-SEP-2017]</h3>
 
     <h4>Enhancements</h4>
     <ul>
