@@ -1,8 +1,9 @@
 // Taken from the palette of angular material: https://github.com/angular/material2/blob/master/src/lib/core/theming/_palette.scss 
-$mat-grey-0: #FFFFFF;
-$mat-grey-100: #F5F5F5;
-$mat-grey-200: #EEEEEE;
-$mat-grey-300: #E0E0E0;
+$mat-grey-0:    #FFFFFF;
+$mat-grey-50:   #FAFAFA;
+$mat-grey-100:  #F5F5F5;
+$mat-grey-200:  #EEEEEE;
+$mat-grey-300:  #E0E0E0;
 
 // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
 $mat-indigo-500: #3f51b5;
@@ -46,6 +47,7 @@ $ag-mat-foreground-disabled: rgba(black, $ag-mat-foreground-disabled-opacity) !d
 $ag-mat-background: $mat-grey-0 !default;
 $ag-mat-background-editor: $mat-grey-100 !default;
 $ag-mat-panel-background: $mat-grey-200 !default;
+$ag-mat-tool-panel-background: $mat-grey-50 !default;
 $ag-mat-chip-background: $mat-grey-300 !default;
 $ag-mat-range-selection-background: $mat-indigo-50 !default; // this should be pink, but indigo looks better
 $ag-mat-range-selection-highlight: $mat-pink-50 !default; 
@@ -550,7 +552,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 
     .ag-tool-panel {
         border-right: 0;
-        background-color: #FAFAFA;
+        background-color: $ag-mat-tool-panel-background;
 
         .ag-pivot-mode {
             height: $ag-mat-header-height;
