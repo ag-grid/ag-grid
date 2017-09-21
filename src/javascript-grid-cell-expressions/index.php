@@ -36,15 +36,15 @@ include '../documentation-main/documentation_header.php';
     <snippet>
 // this is using standard functions
 colDef = {
-    valueGetter: function(params) { return params.&lt;span class="codeHighlight"&gt;data.firstName&lt;/span&gt;; },
-    valueFormatter: function(params) { return params.&lt;span class="codeHighlight"&gt;value.toUpperCase()&lt;/span&gt;; }
+    valueGetter: function(params) { return params.data.firstName; },
+    valueFormatter: function(params) { return params.value.toUpperCase(); }
     ...
 };
 
 // this is the same as above but using expressions
 colDef = {
-    valueGetter: '&lt;span class="codeHighlight"&gt;data.firstName&lt;/span&gt;',
-    valueFormatter: '&lt;span class="codeHighlight"&gt;value.toUpperCase()&lt;/span&gt;'
+    valueGetter: 'data.firstName',
+    valueFormatter: 'value.toUpperCase()'
     ...
 };</snippet>
 
@@ -171,17 +171,17 @@ colDef = {
     <p>
         When you provide and expression to the grid, the grid converts the expression into a function
         for you and then executes the function. Consider the example below, the example provides
-        <span class="codeHighlight">data.firstName</span> as the expression. This snippet of code
+        <code>data.firstName</code> as the expression. This snippet of code
         then gets wrapped into a function with all the params attributes as function attributes.
     </p>
 
     <snippet>
 // this is a simple expression on the column definition
-colDef.valueGetter = '&lt;span class="codeHighlight"&gt;data.firstName&lt;/span&gt;';
+colDef.valueGetter = 'data.firstName';
 
 // the grid will then compile the above to this:
 ___compiledValueGetter = function(node, data, colDef, column, api, columnApi, context, getValue) {
-    return &lt;span class="codeHighlight"&gt;data.firstName&lt;/span&gt;;
+    return data.firstName;
 }</snippet>
 
     <p>
