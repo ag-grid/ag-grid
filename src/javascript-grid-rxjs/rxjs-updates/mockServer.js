@@ -9,7 +9,7 @@ MockServer.prototype.initialLoad = function () {
         // do http request to get our sample data - not using any framework to keep the example self contained.
         // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
         let httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', '../stocks.json');
+        httpRequest.open('GET', 'https://rawgit.com/ag-grid/ag-grid-docs/master/src/stocks.json');
         httpRequest.send();
         httpRequest.onreadystatechange = () => {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {

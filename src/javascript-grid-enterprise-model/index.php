@@ -186,7 +186,7 @@ export interface ColumnVO {
     </ul>
 </p>
 
-<?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <h1>Example - Slice and Dice - Mocked Server</h1>
 
@@ -441,7 +441,7 @@ gridOptions.getChildCount = function(data) {
     for the 'getRowHeight' Grid Options property. This is demonstrated in the example below:
 </p>
 
-<?= example('Dynamic Row Height Example', 'dynamic-row-height', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Dynamic Row Height Example', 'dynamic-row-height', 'vanilla', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <note>
     Purging the cache and dynamic row heights do not work together for the Enterprise Row Model.
@@ -500,7 +500,7 @@ gridOptions.getChildCount = function(data) {
 </ul>
 </p>
 
-<?= example('API example', 'api', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('API example', 'api', 'vanilla', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <h1 id="pagination">Pagination with Enterprise Row Model</h1>
 <p>
@@ -508,6 +508,6 @@ gridOptions.getChildCount = function(data) {
     <code>pagination=true</code>. Find below an example.
 </p>
 
-<?= example('Pagination Example', 'pagination', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Pagination Example', 'pagination', 'vanilla', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -233,6 +233,17 @@ function getExampleInfo($boilerplatePrefix) {
 }
 
 function renderExampleExtras($config) {
+
+    // bootstrap script wants jQuery
+    if ($config['bootstrap']) {
+        $config['jquery'] = 1;
+    }
+
+    // jQuery UI wants jQuery
+    if ($config['jqueryui']) {
+        $config['jquery'] = 1;
+    }
+
     $extras = array(
         'jquery' => array(
             'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js' )

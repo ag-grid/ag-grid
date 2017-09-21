@@ -1,6 +1,35 @@
 
 <h1>Quick Overview of Features</h1>
 
+<style>
+    .feature-animated-gif-container {
+        float: right;
+        width: 300px;
+    }
+    .feature-animated-gif {
+        width: 100%;
+    }
+    .feature-item {
+        border: 1px solid #eee;
+        border-radius: 4px;
+        padding: 10px;
+        position: relative;
+        overflow: auto;
+    }
+    .feature-title {
+    }
+</style>
+
+<div class="feature-item">
+    <div class="feature-animated-gif-container">
+        <img src="./images/gridSize.gif" class="feature-animated-gif"/>
+    </div>
+    <h3><a href="../javascript-grid-column-definitions/" class="feature-title">Grid Size</a></h3>
+    <div class="feature-description">
+        Set the width and height of the grid using CSS.
+    </div>
+</div>
+
 <div class="feature-overview">
 
     <div class="feature-summary-item">
