@@ -201,8 +201,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
                     </div>
                     <div class="ag-filter-header-container">
                         <label id="selectAllContainer">
-                            <div id="selectAll" class="ag-filter-checkbox"></div>
-                            <span class="ag-filter-value">(${translate('selectAll')})</span>
+                            <div id="selectAll" class="ag-filter-checkbox"></div><span class="ag-filter-value">(${translate('selectAll')})</span>
                         </label>
                     </div>
                     <div id="richList" class="ag-set-filter-list"></div>                    
