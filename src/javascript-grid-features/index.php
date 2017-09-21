@@ -14,6 +14,7 @@ include '../documentation-main/documentation_header.php';
         Features
     </h1>
 
+    <!--
     <p>
         The features part of the documentation goes through all the features in detail
         along with examples.
@@ -37,7 +38,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         When you see this symbol, the feature is only available in ag-Grid Enterprise.
-    </p>
+    </p>-->
 
     <?php include './gridFeatures.php';?>
 
