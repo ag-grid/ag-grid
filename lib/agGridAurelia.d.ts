@@ -1,6 +1,6 @@
-// ag-grid-aurelia v13.0.2
-import { ComponentAttached, ComponentDetached, Container, ViewResources, TaskQueue } from "aurelia-framework";
-import { GridOptions, GridApi, ColumnApi } from "ag-grid/main";
+// ag-grid-aurelia v13.2.0
+import { ComponentAttached, ComponentDetached, Container, TaskQueue, ViewResources } from "aurelia-framework";
+import { ColumnApi, GridApi, GridOptions } from "ag-grid/main";
 import { AureliaFrameworkFactory } from "./aureliaFrameworkFactory";
 import { AgGridColumn } from "./agGridColumn";
 import { AgFullWidthRowTemplate } from './agTemplate';

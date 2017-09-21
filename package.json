@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-aurelia",
-  "version": "13.0.2",
+  "version": "13.2.0",
   "description": "ag-Grid Aurelia Component",
   "main": "./main.js",
   "typings": "./main.d.ts",
@@ -35,8 +35,8 @@
     "typescript": "^2.0.3"
   },
   "peerDependencies": {
-    "aurelia-framework": "1.0.x",
-    "ag-grid": "13.0.2"
+    "aurelia-framework": "1.x",
+    "ag-grid": "13.2.x"
   },
   "dependencies": {
 

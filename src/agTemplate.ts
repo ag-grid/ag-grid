@@ -1,4 +1,4 @@
-import {processContent, autoinject, noView, customElement, TargetInstruction} from "aurelia-framework";
+import {autoinject, customElement, noView, processContent, TargetInstruction} from "aurelia-framework";
 
 /**
  * Function will move the elements innerHtml to a template property
