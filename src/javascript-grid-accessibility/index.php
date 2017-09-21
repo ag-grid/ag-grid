@@ -201,9 +201,5 @@ gridOptions.rowBuffer = 9999</snippet>
     <note>
         Tested on Windows using JAWS (version 18) and Mac using VoiceOver (Sierra 10.12.4)
     </note>
-
-
-<?php include '../documentation-main/documentation_footer.php';?>
-
-
 </div>
+<?php include '../documentation-main/documentation_footer.php';?>
