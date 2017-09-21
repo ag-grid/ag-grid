@@ -16,12 +16,7 @@ export default class ColDefFactory {
                 checkboxSelection: true,
                 suppressSorting: true,
                 suppressMenu: true,
-                pinned: true,
-                icons: {
-                    checkboxChecked: '<i class="fa fa-arrow-left"/>',
-                    checkboxUnchecked: '<i class="fa fa-arrow-right"/>',
-                    checkboxIndeterminate: '<i class="fa fa-arrow-up"/>'
-                }
+                pinned: true
             },
             {
                 headerName: 'Employee',

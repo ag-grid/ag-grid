@@ -136,7 +136,7 @@
         var skills = [];
         IT_SKILLS.forEach(function (skill) {
             if (data && data.skills[skill]) {
-                skills.push('<img src="/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
+                skills.push('<img src="https://www.ag-grid.com/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
             }
         });
         return skills.join(' ');
@@ -190,7 +190,7 @@
         '    <div style="text-align: center;">SKILL_NAME</div>' +
         '    <div>' +
         '      <input type="checkbox"/>' +
-        '      <img src="/images/skills/SKILL.png" width="30px"/>' +
+        '      <img src="https://www.ag-grid.com/images/skills/SKILL.png" width="30px"/>' +
         '    </div>' +
         '  </span>' +
         '</label>';

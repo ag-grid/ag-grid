@@ -205,7 +205,7 @@ ExampleRunner.$inject = ['$http', '$timeout', '$sce', '$q', 'formPostData', '$el
 docs.component('exampleTab', {
     template: `
     <li role="presentation" ng-class="{ active: $ctrl.currentValue == $ctrl.value }">
-        <a role="tab" ng-click="$ctrl.onClick(); $event.preventDefault()" href="#">
+            <a role="tab" ng-click="$ctrl.onClick(); $event.preventDefault()" href="#" title="{{$ctrl.tooltip}}">
             <i ng-class="['fa', $ctrl.icon]" aria-hidden="true"></i> {{$ctrl.title}}
         </a>
     </li>
@@ -214,6 +214,7 @@ docs.component('exampleTab', {
     bindings: {
         icon: '<',
         title: '<',
+        tooltip: '<',
         value: '<',
         currentValue: '<',
         onClick: '&'
@@ -225,13 +226,14 @@ docs.component('exampleRunner', {
         <div  ng-class='["example-runner"]'>
         <ul role="tablist" class="primary">
             <li class="title">
-                <a href="#example-{{$ctrl.name}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
+                <a href="#example-{{$ctrl.name}}" title="link to {{$ctrl.title}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
             </li>
 
             <example-tab 
                 value="'result'" 
                 current-value="$ctrl.selectedTab" 
                 title="'Result'"
+                tooltip="'Live Result of the Example'"
                 icon="'fa-play'" 
                 on-click="$ctrl.selectedTab = 'result'">
             </example-tab>
@@ -240,13 +242,14 @@ docs.component('exampleRunner', {
                 value="'code'" 
                 current-value="$ctrl.selectedTab" 
                 title="'Code'"
+                tooltip="'Examine Example Source Code'"
                 icon="'fa-code'" 
                 on-click="$ctrl.selectedTab = 'code'">
             </example-tab>
 
 
             <li role="presentation">
-                <a role="tab" ng-href="{{$ctrl.resultUrl}}" target="_blank">
+                <a role="tab" ng-href="{{$ctrl.resultUrl}}" target="_blank" title="Open Example in New Tab">
                     <i class="fa fa-arrows-alt" aria-hidden="true"></i> New Tab
                 </a>
             </li>
@@ -255,6 +258,7 @@ docs.component('exampleRunner', {
                 value="'plunker'" 
                 current-value="$ctrl.selectedTab" 
                 title="'Plunker'"
+                tooltip="'Open Example in Plunker'"
                 icon="'fa-external-link'" 
                 on-click="$ctrl.openPlunker($event); $event.preventDefault()">
             </example-tab>

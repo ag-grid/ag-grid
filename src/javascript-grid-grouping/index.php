@@ -24,8 +24,8 @@ include '../documentation-main/documentation_header.php';
         For example, the following will group the rows in the grid by country and then sport:
     <snippet>
 gridOptions.columnDefs = [
-    {headerName: "Country", field: "country", &lt;span class="codeHighlight"&gt;rowGroup: true&lt;/span&gt;},
-    {headerName: "Sport", field: "sport", &lt;span class="codeHighlight"&gt;rowGroup: true&lt;/span&gt;},
+    {headerName: "Country", field: "country", rowGroup: true},
+    {headerName: "Sport", field: "sport", rowGroup: true},
 ];</snippet>
     </p>
 
@@ -191,9 +191,9 @@ valueGetter: function (params){
 <snippet>
 columnDefs = [
     // country listed first, gets grouped first
-    {headerName: "Country", field: "country", &lt;span class="codeHighlight"&gt;rowGroup: true&lt;/span&gt;},
+    {headerName: "Country", field: "country", rowGroup: true},
     // sport listed second, gets grouped second
-    {headerName: "Sport", field: "sport", &lt;span class="codeHighlight"&gt;rowGroup: true&lt;/span&gt;},
+    {headerName: "Sport", field: "sport", rowGroup: true},
 ];</snippet>
     </p>
 
@@ -203,9 +203,9 @@ columnDefs = [
     <snippet>
 columnDefs = [
     // index = 1, gets grouped second
-    {headerName: "Country", field: "country", &lt;span class="codeHighlight"&gt;rowGroupIndex: 1&lt;/span&gt;},
+    {headerName: "Country", field: "country", rowGroupIndex: 1},
     // index = 0, gets grouped first
-    {headerName: "Sport", field: "sport", &lt;span class="codeHighlight"&gt;rowGroupIndex: 0&lt;/span&gt;},
+    {headerName: "Sport", field: "sport", rowGroupIndex: 0},
 ];</snippet>
     </p>
 

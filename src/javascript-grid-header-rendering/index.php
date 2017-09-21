@@ -294,7 +294,7 @@ colDef = {
         </ul>
     </p>
 
-    <?= example('Header component', 'header-component') ?>
+    <?= example('Header component', 'header-component', 'vanilla', array("extras" => array("fontawesome"))) ?>
 
     <h2 id="headerGroupComponent">Header Group Component</h2>
 

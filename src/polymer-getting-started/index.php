@@ -234,5 +234,6 @@ npm start</snippet>
         use ag-Grid and Polymer, as well the <code>Enterprise
             Features</code>.</p>
 
-    <?php include '../documentation-main/documentation_footer.php'; ?>
 </div>
+
+<?php include '../documentation-main/documentation_footer.php'; ?>
