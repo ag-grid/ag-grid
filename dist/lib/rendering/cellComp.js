@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -881,6 +881,10 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.onKeyDown = function (event) {
         var key = event.which || event.keyCode;
+        // give user a chance to cancel event processing
+        if (this.doesUserWantToCancelKeyboardEvent(event)) {
+            return;
+        }
         switch (key) {
             case constants_1.Constants.KEY_ENTER:
                 this.onEnterKeyDown();
@@ -904,6 +908,27 @@ var CellComp = (function (_super) {
             case constants_1.Constants.KEY_LEFT:
                 this.onNavigationKeyPressed(event, key);
                 break;
+        }
+    };
+    CellComp.prototype.doesUserWantToCancelKeyboardEvent = function (event) {
+        var callback = this.column.getColDef().suppressKeyboardEvent;
+        if (utils_1._.missing(callback)) {
+            return false;
+        }
+        else {
+            // if editing is null or undefined, this sets it to false
+            var editing = this.editingCell === true;
+            var params = {
+                event: event,
+                editing: editing,
+                column: this.column,
+                api: this.beans.gridOptionsWrapper.getApi(),
+                node: this.rowNode,
+                colDef: this.column.getColDef(),
+                context: this.beans.gridOptionsWrapper.getContext(),
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi()
+            };
+            return callback(params);
         }
     };
     CellComp.prototype.setFocusOutOnEditor = function () {

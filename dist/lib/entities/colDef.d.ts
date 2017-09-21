@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.1.2
+// Type definitions for ag-grid v13.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -163,6 +163,7 @@ export interface ColDef extends AbstractColDef {
     suppressResize?: boolean;
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
+    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
     /** If true, GUI will allow adding this columns as a row group */
     enableRowGroup?: boolean;
     /** If true, GUI will allow adding this columns as a pivot */
@@ -284,4 +285,8 @@ export interface ValueParserParams extends NewValueParams {
 export interface ValueFormatterParams extends BaseWithValueColDefParams {
 }
 export interface ColSpanParams extends BaseColDefParams {
+}
+export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
+    event: KeyboardEvent;
+    editing: boolean;
 }

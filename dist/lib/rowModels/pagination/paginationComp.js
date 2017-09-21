@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56,7 +56,16 @@ var PaginationComp = (function (_super) {
     };
     PaginationComp.prototype.setCurrentPageLabel = function () {
         var currentPage = this.paginationProxy.getCurrentPage();
-        this.lbCurrent.innerHTML = utils_1._.formatNumberCommas(currentPage + 1);
+        this.lbCurrent.innerHTML = this.formatNumber(currentPage + 1);
+    };
+    PaginationComp.prototype.formatNumber = function (value) {
+        var userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
+        if (userFunc) {
+            return userFunc({ value: value });
+        }
+        else {
+            return utils_1._.formatNumberCommas(value);
+        }
     };
     PaginationComp.prototype.getTemplate = function () {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -114,8 +123,8 @@ var PaginationComp = (function (_super) {
                 endRow = rowCount;
             }
         }
-        this.lbFirstRowOnPage.innerHTML = utils_1._.formatNumberCommas(startRow);
-        this.lbLastRowOnPage.innerHTML = utils_1._.formatNumberCommas(endRow);
+        this.lbFirstRowOnPage.innerHTML = this.formatNumber(startRow);
+        this.lbLastRowOnPage.innerHTML = this.formatNumber(endRow);
     };
     PaginationComp.prototype.isZeroPagesToDisplay = function () {
         var maxRowFound = this.paginationProxy.isLastPageFound();
@@ -128,8 +137,8 @@ var PaginationComp = (function (_super) {
         var rowCount = this.paginationProxy.isLastPageFound() ?
             this.paginationProxy.getTotalRowCount() : null;
         if (lastPageFound) {
-            this.lbTotal.innerHTML = utils_1._.formatNumberCommas(totalPages);
-            this.lbRecordCount.innerHTML = utils_1._.formatNumberCommas(rowCount);
+            this.lbTotal.innerHTML = this.formatNumber(totalPages);
+            this.lbRecordCount.innerHTML = this.formatNumber(rowCount);
         }
         else {
             var moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');

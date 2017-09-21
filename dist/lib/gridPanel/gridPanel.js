@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -586,6 +586,11 @@ var GridPanel = (function (_super) {
                 // (eg a text field) would not be able to do the normal cut/copy/paste
                 var renderedCell = _this.mouseEventService.getRenderedCellForEvent(event);
                 if (renderedCell && renderedCell.isEditing()) {
+                    return;
+                }
+                // for copy / paste, we don't want to execute when the event
+                // was from a child grid (happens in master detail)
+                if (!_this.mouseEventService.isEventFromThisGrid(event)) {
                     return;
                 }
                 if (event.ctrlKey || event.metaKey) {

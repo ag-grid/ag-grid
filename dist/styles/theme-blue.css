@@ -445,7 +445,7 @@
   -webkit-filter: invert(100%);
   filter: invert(100%); }
 
-.ag-blue .ag-header .ag-icon-asc, .ag-blue .ag-header .ag-icon-desc, .ag-blue .ag-header .ag-icon-expanded, .ag-blue .ag-header .ag-icon-contracted, .ag-blue .ag-header .ag-icon-menu {
+.ag-blue .ag-header .ag-icon-asc, .ag-blue .ag-header .ag-icon-desc, .ag-blue .ag-header .ag-icon-expanded, .ag-blue .ag-header .ag-icon-contracted, .ag-blue .ag-header .ag-icon-menu, .ag-blue .ag-header .ag-icon-filter {
   -webkit-filter: invert(100%);
   filter: invert(100%); }
 

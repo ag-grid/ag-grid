@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -194,7 +194,6 @@ var RowRenderer = (function (_super) {
     // gets called after changes to the model.
     RowRenderer.prototype.redrawAfterModelUpdate = function (params) {
         if (params === void 0) { params = {}; }
-        this.logger.log('refreshView');
         this.getLockOnRefresh();
         var focusedCell = this.getCellToRestoreFocusToAfterRefresh(params);
         if (!this.forPrint) {

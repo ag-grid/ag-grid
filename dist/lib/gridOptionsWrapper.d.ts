@@ -1,8 +1,8 @@
-// Type definitions for ag-grid v13.1.2
+// Type definitions for ag-grid v13.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
-import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, NavigateToNextCellParams, NodeChildDetails, PostProcessPopupParams, ProcessRowParams, TabToNextCellParams } from "./entities/gridOptions";
+import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, NavigateToNextCellParams, NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessRowParams, TabToNextCellParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnController";
@@ -95,6 +95,8 @@ export declare class GridOptionsWrapper {
     getRowClassFunc(): (params: any) => string | string[];
     getPostProcessPopupFunc(): (params: PostProcessPopupParams) => void;
     getDoesDataFlowerFunc(): (data: any) => boolean;
+    getPaginationNumberFormatterFunc(): (params: PaginationNumberFormatterParams) => string;
+    getChildCountFunc(): (dataItem: any) => number;
     getIsFullWidthCellFunc(): (rowNode: RowNode) => boolean;
     getFullWidthCellRendererParams(): any;
     isEmbedFullWidthRows(): boolean;
@@ -204,6 +206,9 @@ export declare class GridOptionsWrapper {
     removeEventListener(key: string, listener: Function): void;
     getHeaderHeight(): number;
     getFloatingFiltersHeight(): number;
+    getGroupPaddingSize(): number;
+    getFooterPaddingAddition(): number;
+    getLeafNodePaddingAddition(): number;
     getGroupHeaderHeight(): number;
     getPivotHeaderHeight(): number;
     getPivotGroupHeaderHeight(): number;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -127,22 +127,8 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isShowToolPanel = function () { return isTrue(this.gridOptions.showToolPanel); };
     GridOptionsWrapper.prototype.isToolPanelSuppressRowGroups = function () { return isTrue(this.gridOptions.toolPanelSuppressRowGroups); };
     GridOptionsWrapper.prototype.isToolPanelSuppressValues = function () { return isTrue(this.gridOptions.toolPanelSuppressValues); };
-    GridOptionsWrapper.prototype.isToolPanelSuppressPivots = function () {
-        // never allow pivot mode when using enterprise model
-        if (this.isRowModelEnterprise()) {
-            return true;
-        }
-        // otherwise, let user decide
-        return isTrue(this.gridOptions.toolPanelSuppressPivots);
-    };
-    GridOptionsWrapper.prototype.isToolPanelSuppressPivotMode = function () {
-        // never allow pivot mode when using enterprise model
-        if (this.isRowModelEnterprise()) {
-            return true;
-        }
-        // otherwise, let user decide
-        return isTrue(this.gridOptions.toolPanelSuppressPivotMode);
-    };
+    GridOptionsWrapper.prototype.isToolPanelSuppressPivots = function () { return isTrue(this.gridOptions.toolPanelSuppressPivots); };
+    GridOptionsWrapper.prototype.isToolPanelSuppressPivotMode = function () { return isTrue(this.gridOptions.toolPanelSuppressPivotMode); };
     GridOptionsWrapper.prototype.isSuppressTouch = function () { return isTrue(this.gridOptions.suppressTouch); };
     GridOptionsWrapper.prototype.useAsyncEvents = function () { return !isTrue(this.gridOptions.suppressAsyncEvents); };
     GridOptionsWrapper.prototype.isEnableCellChangeFlash = function () { return isTrue(this.gridOptions.enableCellChangeFlash); };
@@ -182,6 +168,8 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getRowClassFunc = function () { return this.gridOptions.getRowClass; };
     GridOptionsWrapper.prototype.getPostProcessPopupFunc = function () { return this.gridOptions.postProcessPopup; };
     GridOptionsWrapper.prototype.getDoesDataFlowerFunc = function () { return this.gridOptions.doesDataFlower; };
+    GridOptionsWrapper.prototype.getPaginationNumberFormatterFunc = function () { return this.gridOptions.paginationNumberFormatter; };
+    GridOptionsWrapper.prototype.getChildCountFunc = function () { return this.gridOptions.getChildCount; };
     GridOptionsWrapper.prototype.getIsFullWidthCellFunc = function () { return this.gridOptions.isFullWidthCell; };
     GridOptionsWrapper.prototype.getFullWidthCellRendererParams = function () { return this.gridOptions.fullWidthCellRendererParams; };
     GridOptionsWrapper.prototype.isEmbedFullWidthRows = function () {
@@ -332,6 +320,15 @@ var GridOptionsWrapper = (function () {
         else {
             return this.specialForNewMaterial(25, 8 * 7);
         }
+    };
+    GridOptionsWrapper.prototype.getGroupPaddingSize = function () {
+        return this.specialForNewMaterial(10, 18 + 8 * 3);
+    };
+    GridOptionsWrapper.prototype.getFooterPaddingAddition = function () {
+        return this.specialForNewMaterial(15, 32);
+    };
+    GridOptionsWrapper.prototype.getLeafNodePaddingAddition = function () {
+        return this.specialForNewMaterial(10, 24);
     };
     GridOptionsWrapper.prototype.getGroupHeaderHeight = function () {
         if (typeof this.gridOptions.groupHeaderHeight === 'number') {
