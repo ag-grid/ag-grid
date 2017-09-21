@@ -27,7 +27,7 @@ module.controller('exampleCtrl', function($scope, $http) {
         rowData: null
     };
 
-    $http.get('../olympicWinners.json')
+    $http.get('https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json')
         .then(function(res){
             $scope.gridOptions.api.setRowData(res.data);
         });

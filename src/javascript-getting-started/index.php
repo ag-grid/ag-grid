@@ -236,7 +236,7 @@ var gridOptions = {
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-    <?= example('Advanced ag-Grid Example', 'rich-grid', 'vanilla', array("showResult" => true, "exampleHeight" => 460, "extras" => array("bootstrap", "jquery"))) ?>
+    <?= example('Advanced ag-Grid Example', 'rich-grid', 'vanilla', array("enterprise" => 1, "showResult" => true, "exampleHeight" => 460, "extras" => array("bootstrap", "jquery"))) ?>
 
 
     <p>This example makes use of custom <code>cell renderer's</code> to show data in a visually friendly way, demonstrates
