@@ -138,8 +138,8 @@ var SelectAllFeature = (function (_super) {
             return;
         }
         if (this.column.colDef.checkboxSelection && !this.column.colDef.headerCheckboxSelection) {
-            const checked = this.cbSelectAll.isSelected();
-            this.gridApi.forEachNode((node) => {
+            var checked = this.cbSelectAll.isSelected();
+            this.gridApi.forEachNode(function(node){
                 if (node) {
                     node.selectThisNode(checked);
                 }

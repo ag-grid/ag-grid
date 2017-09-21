@@ -1,6 +1,6 @@
 {
   "name": "tf-ag-grid",
-  "version": "13.1.2-1",
+  "version": "13.1.2-2",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./main.js",
   "scripts": {
