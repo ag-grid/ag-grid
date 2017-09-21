@@ -29,6 +29,37 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">21st September 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
+            v13.2
+        </span>
+        <img src="../images/logo-dark-hacked.svg"
+             style="width: 100%;"/>
+    </div>
+    <br/>
+    <div>
+        <div>
+            Featuring:
+        </div>
+        <div>
+            <ul style="padding-left: 20px;">
+                <li>
+                    All examples are now Plunkr friendly and load faster
+                </li>
+                <li>
+                    Pivoting enabled for <a href="../javascript-grid-enterprise-model/index.php">Enterprise Row Model</a>
+                </li>
+            </ul>
+        </div>
+        <div>
+            See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+            for full release details.
+        </div>
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">20th September 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
         <a href="../ag-grid-8-performance-hacks-for-javascript/">
