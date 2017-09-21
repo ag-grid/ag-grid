@@ -294,10 +294,10 @@ this.params.context.componentParent</snippet>
         above illustrates this in the Child/Parent column:</p>
     <ul>
         <li>
-            <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/from-component.component.ts"
+            <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/dynamic-component-example/dynamic.component.ts"
                target="_blank" class="fa fa-external-link"> Parent Component</a></li>
         <li>
-            <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/child-message.component.ts"
+            <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/dynamic-component-example/child-message.component.ts"
                target="_blank" class="fa fa-external-link"> Child Component</a></li>
     </ul>
 
