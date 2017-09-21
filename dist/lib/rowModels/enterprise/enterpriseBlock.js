@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.2
+// ag-grid-enterprise v13.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -33,6 +33,7 @@ var EnterpriseBlock = (function (_super) {
         _this.parentCache = parentCache;
         _this.level = parentRowNode.level + 1;
         _this.groupLevel = _this.level < params.rowGroupCols.length;
+        _this.leafGroup = _this.level === (params.rowGroupCols.length - 1);
         return _this;
     }
     EnterpriseBlock.prototype.createNodeIdPrefix = function () {
@@ -108,7 +109,6 @@ var EnterpriseBlock = (function (_super) {
         });
     };
     EnterpriseBlock.prototype.setDataAndId = function (rowNode, data, index) {
-        var _this = this;
         rowNode.stub = false;
         if (ag_grid_1._.exists(data)) {
             // if the user is not providing id's, then we build an id based on the index.
@@ -135,17 +135,28 @@ var EnterpriseBlock = (function (_super) {
             rowNode.key = null;
         }
         if (this.groupLevel) {
-            var groupDisplayCols = this.columnController.getGroupDisplayColumns();
-            groupDisplayCols.forEach(function (col) {
-                if (col.isRowGroupDisplayed(_this.rowGroupColumn.getId())) {
-                    var groupValue = _this.valueService.getValue(_this.rowGroupColumn, rowNode);
-                    if (ag_grid_1._.missing(rowNode.groupData)) {
-                        rowNode.groupData = {};
-                    }
-                    rowNode.groupData[col.getColId()] = groupValue;
-                }
-            });
+            this.setGroupDataIntoRowNode(rowNode);
+            this.setChildCountIntoRowNode(rowNode);
         }
+    };
+    EnterpriseBlock.prototype.setChildCountIntoRowNode = function (rowNode) {
+        var getChildCount = this.gridOptionsWrapper.getChildCountFunc();
+        if (getChildCount) {
+            rowNode.allChildrenCount = getChildCount(rowNode.data);
+        }
+    };
+    EnterpriseBlock.prototype.setGroupDataIntoRowNode = function (rowNode) {
+        var _this = this;
+        var groupDisplayCols = this.columnController.getGroupDisplayColumns();
+        groupDisplayCols.forEach(function (col) {
+            if (col.isRowGroupDisplayed(_this.rowGroupColumn.getId())) {
+                var groupValue = _this.valueService.getValue(_this.rowGroupColumn, rowNode);
+                if (ag_grid_1._.missing(rowNode.groupData)) {
+                    rowNode.groupData = {};
+                }
+                rowNode.groupData[col.getColId()] = groupValue;
+            }
+        });
     };
     EnterpriseBlock.prototype.loadFromDatasource = function () {
         var _this = this;
@@ -157,6 +168,7 @@ var EnterpriseBlock = (function (_super) {
     EnterpriseBlock.prototype.createBlankRowNode = function (rowIndex) {
         var rowNode = _super.prototype.createBlankRowNode.call(this, rowIndex);
         rowNode.group = this.groupLevel;
+        rowNode.leafGroup = this.leafGroup;
         rowNode.level = this.level;
         rowNode.uiLevel = this.level;
         rowNode.parent = this.parentRowNode;
@@ -268,6 +280,8 @@ var EnterpriseBlock = (function (_super) {
             endRow: this.getEndRow(),
             rowGroupCols: this.params.rowGroupCols,
             valueCols: this.params.valueCols,
+            pivotCols: this.params.pivotCols,
+            pivotMode: this.params.pivotMode,
             groupKeys: groupKeys,
             filterModel: this.params.filterModel,
             sortModel: this.params.sortModel

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.2
+// ag-grid-enterprise v13.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -166,6 +166,10 @@ function aggCount(input) {
         value: 0,
         toString: function () {
             return this.value.toString();
+        },
+        // used for sorting
+        toNumber: function () {
+            return this.value;
         }
     };
     var length = input.length;
@@ -223,6 +227,10 @@ function aggAvg(input) {
             else {
                 return '';
             }
+        },
+        // used for sorting
+        toNumber: function () {
+            return this.value;
         }
     };
     return result;

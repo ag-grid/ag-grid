@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.1.2
+// ag-grid-enterprise v13.2.0
 import { NumberSequence, RowNodeBlock, RowNode, RowBounds } from "ag-grid";
 import { EnterpriseCache, EnterpriseCacheParams } from "./enterpriseCache";
 export declare class EnterpriseBlock extends RowNodeBlock {
@@ -17,6 +17,7 @@ export declare class EnterpriseBlock extends RowNodeBlock {
     private parentRowNode;
     private level;
     private groupLevel;
+    private leafGroup;
     private groupField;
     private rowGroupColumn;
     private nodeIdPrefix;
@@ -28,6 +29,8 @@ export declare class EnterpriseBlock extends RowNodeBlock {
     private setBeans(loggerFactory);
     protected init(): void;
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void;
+    private setChildCountIntoRowNode(rowNode);
+    private setGroupDataIntoRowNode(rowNode);
     protected loadFromDatasource(): void;
     protected createBlankRowNode(rowIndex: number): RowNode;
     private createGroupKeys(groupNode);
