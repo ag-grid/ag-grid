@@ -182,6 +182,6 @@ npm start</snippet>
         how to
         use ag-Grid and Angular, as well as the options in installing dependencies and accessing the <code>Enterprise
             Features</code>.</p>
-
-    <?php include '../documentation-main/documentation_footer.php'; ?>
 </div>
+
+<?php include '../documentation-main/documentation_footer.php'; ?>
