@@ -1,17 +1,22 @@
 <?php
 include dirname(__FILE__) . '/../config.php';
 
-define('INCOMPLETE_ENTERPRISE_BUNDLE', isset($_ENV['AG_DEV']));
 define('USE_LOCAL', AG_GRID_VERSION == '$$LOCAL$$');
 $archiveMatch = '/archive\/\d+.\d+.\d+/';
 
+if (isset($_SERVER['HTTP_X_PROXY_HTTP_HOST'])) {
+    $host = $_SERVER['HTTP_X_PROXY_HTTP_HOST'];
+} else {
+    $host = $_SERVER['HTTP_HOST'];
+}
+
 if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
     $archiveSegment = $matches[0];
-    $prefix =  "//{$_SERVER['HTTP_HOST']}/$archiveSegment/dist";
+    $prefix =  "//$host/$archiveSegment/dist";
     define('RUNNER_SOURCE_PREFIX', "/$archiveSegment");
     define('POLYMER_BASE_HREF_PREFIX', "$archiveSegment/");
 } else {
-    $prefix =  "//{$_SERVER['HTTP_HOST']}/dist";
+    $prefix =  "//$host/dev";
     define('RUNNER_SOURCE_PREFIX', "");
     define('POLYMER_BASE_HREF_PREFIX', "");
 }
@@ -19,17 +24,14 @@ if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
 if (USE_LOCAL) {
 
     define(AG_GRID_SCRIPT_PATH, "$prefix/ag-grid/ag-grid.js");
-    define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "$prefix/ag-grid-enterprise/ag-grid-enterprise.js");
+    define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "$prefix/ag-grid-enterprise-bundle/ag-grid-enterprise.js");
 
     $systemJsMap = array(
         "ag-grid" =>                       "$prefix/ag-grid/ag-grid.js",
         "ag-grid/main" =>                  "$prefix/ag-grid/ag-grid.js",
-        "ag-grid-enterprise" =>            "$prefix/ag-grid-enterprise/ag-grid-enterprise.js",
-        "ag-grid-react" =>                  "npm:ag-grid-react/main.js",
-        //"ag-grid-react" =>                 "$prefix/ag-grid-react/ag-grid-react.js",
-        // I can't make a bundle for angular , load it from NPM for now. This won't pick the local changes
-        // "ag-grid-angular" =>             "http://{$_SERVER['HTTP_HOST']}/dist/ag-grid-angular/ag-grid-angular.js"
-        "ag-grid-angular" =>                "npm:ag-grid-angular/main.js"
+        "ag-grid-enterprise" =>            "$prefix/ag-grid-enterprise/main.js",
+        "ag-grid-react" =>                 "$prefix/ag-grid-react/ag-grid-react.js",
+        "ag-grid-angular" =>               "$prefix/ag-grid-angular"
     );
 // production mode, return from unpkg
 } else {
@@ -46,30 +48,10 @@ if (USE_LOCAL) {
 }
 
 function globalAgGridScript($enteprise = false) {
-
-$agGrid = AG_GRID_SCRIPT_PATH;
-$agGridEnterprise = AG_GRID_ENTERPRISE_SCRIPT_PATH;
-
-    if (!$enteprise) {
-        $output = <<<SCR
-    <script src="$agGrid"></script>
+$path = $enteprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
+    return <<<SCR
+    <script src="$path"></script>
 SCR;
-    } else {
-        if (INCOMPLETE_ENTERPRISE_BUNDLE) {
-            $output = <<<SCR
-    <script src="$agGrid"></script>
-    <script> window['ag-grid'] = agGrid; </script>
-    <script src="$agGridEnterprise"></script>
-    <script> agGrid = window['ag-grid']; </script>
-SCR;
-        } else {
-            $output = <<<SCR
-    <script src="$agGridEnterprise"></script>
-SCR;
-        }
-    }
-
-    return $output;
 }
 
 function path_combine(...$parts) {

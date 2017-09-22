@@ -83,6 +83,10 @@
                     }
                 }
             },
+            "ag-grid-angular": {
+                main: './main.js',
+                defaultExtension: 'js'
+            },
             rxjs: {
                 defaultExtension: false
             }

@@ -6,10 +6,21 @@
         "declaration": true,
         "target": "es5",
         "lib": [ "es5", "es6", "dom" ],
-        "noImplicitAny": false
+        "noImplicitAny": false,
+        "baseUrl": ".",
+        "paths": {
+            "ag-grid": ["./src/_dev/ag-grid/exports.ts"],
+            "ag-grid/main": ["./src/_dev/ag-grid/exports.ts"]
+        }
     },
 
-    "include": [ "./src/_assets/**/*.ts", "../ag-grid/src/ts/**/*.ts", "../ag-grid-enterprise/src/**/*.ts" ],
+    "include": [ 
+        "./src/_assets/**/*.ts", 
+        "./src/_dev/ag-grid/dist/lib/**/*.ts",
+        "./src/_dev/ag-grid-enterprise/src/**/*.ts",
+        "./src/_dev/ag-grid-angular/src/**/*.ts",
+        "./src/_dev/ag-grid-react/src/**/*.ts"
+    ],
 
     "exclude": [ "node_modules" ]
 }

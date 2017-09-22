@@ -34,8 +34,11 @@
     "@types/angular": "^1.6.32",
     "@types/highlight.js": "^9.1.10",
     "@types/prismjs": "^1.6.3",
+    "express-http-proxy": "^1.0.6",
     "file-loader": "^0.11.2",
-    "prismjs": "^1.6.0"
+    "prismjs": "^1.6.0",
+    "webpack-dev-middleware": "^1.12.0",
+    "webpack-merge": "^4.1.0"
   },
   "devDependencies": {
     "@types/core-js": "^0.9.43",
@@ -47,6 +50,7 @@
     "cache-loader": "^1.0.3",
     "concurrently": "3.5.0",
     "css-loader": "^0.28.4",
+    "express": "^4.15.4",
     "extract-text-webpack-plugin": "^3.0.0",
     "font-awesome": "4.5.0",
     "fork-ts-checker-webpack-plugin": "^0.2.7",
@@ -75,6 +79,7 @@
     "webdriver-manager": "12.0.x",
     "webpack": "^3.5.4",
     "webpack-dev-server": "^2.7.1",
+    "webpack-hot-middleware": "^2.19.1",
     "webpack-stream": "^4.0.0"
   }
 }

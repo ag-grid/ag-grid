@@ -1,5 +1,3 @@
-import './ag-grid';
-
 export * from "../../../../ag-grid-angular/src/aggrid.module";
 export * from "../../../../ag-grid-angular/src/agGridColumn";
 export * from "../../../../ag-grid-angular/src/agGridNg2";
