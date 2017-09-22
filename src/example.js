@@ -110,7 +110,7 @@ var gridOptions = {
     // },
     // suppressAsyncEvents: true,
     // suppressAggAtRootLevel: true,
-    floatingFilter:true,
+    // floatingFilter:true,
 //debug: true,
 //     editType: 'fullRow',
 //     debug: true,

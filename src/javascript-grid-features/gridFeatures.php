@@ -247,16 +247,14 @@ gridFeature('Pagination', '../javascript-grid-pagination/', 'pagination.gif', '<
 gridFeature('Tree Data', '../javascript-grid-tree/', 'treeData.gif', '<span class="feature-highlight"></span> ',
     null);
 
-gridFeature('Updating Data', '../javascript-grid-data-update/', '.gif', '<span class="feature-highlight"></span> ',
+gridFeature('Updating Data', '../javascript-grid-data-update/', 'dataUpdate.gif', '<span class="feature-highlight"></span> ',
     null);
 
-gridFeature('View Refresh', '../javascript-grid-refresh/', '.gif', '<span class="feature-highlight"></span> ',
+gridFeature('View Refresh', '../javascript-grid-refresh/', 'viewRefresh.gif', '<span class="feature-highlight"></span> ',
     null);
+
 
 /*
-
-
-
 
 gridFeature('Change Detection', '../javascript-grid-change-detection/', '.gif', '<span class="feature-highlight"></span> ',
 null);
