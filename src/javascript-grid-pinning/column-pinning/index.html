@@ -1,26 +1,28 @@
-<span style="padding-bottom: 4px; display: inline-block;">
-    <button onclick="clearPinned()">Clear Pinned</button>
-    <button onclick="resetPinned()">Left = {#, Athlete, Age} Right = {Total}</button>
-    <button onclick="pinCountry()">Left = {Country}</button>
-</span>
+<div style="height: 100%; padding-top: 60px; box-sizing: border-box;">
+    <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+</div>
+<div style="position: absolute; top: 0px; left: 0px;">
+    <div style="padding: 4px;">
+        <button onclick="clearPinned()">Clear Pinned</button>
+        <button onclick="resetPinned()">Left = {#, Athlete, Age} Right = {Total}</button>
+        <button onclick="pinCountry()">Left = {Country}</button>
+    </div>
 
-<span style="padding-left: 20px; padding-bottom: 4px; display: inline-block;">
-    Jump to:
-    <input placeholder="row" type="text" style="width: 40px"
-           onpaste="jumpToRow(this.value)"
-           oninput="jumpToRow(this.value)"
-           onchange="jumpToRow(this.value)"
-           onchange="jumpToRow(this.value)"
-           onkeydown="jumpToRow(this.value)"
-           onkeyup="jumpToRow(this.value)"/>
-    <input placeholder="col" type="text" style="width: 40px"
-           onpaste="jumpToRow(this.value)"
-           oninput="jumpToCol(this.value)"
-           onchange="jumpToCol(this.value)"
-           onchange="jumpToCol(this.value)"
-           onkeydown="jumpToCol(this.value)"
-           onkeyup="jumpToCol(this.value)"/>
-</span>
-
-<br/>
-<div id="myGrid" style="height: 450px;" class="ag-fresh"></div>
+    <div style="padding: 4px;">
+        Jump to:
+        <input placeholder="row" type="text" style="width: 40px"
+               onpaste="jumpToRow(this.value)"
+               oninput="jumpToRow(this.value)"
+               onchange="jumpToRow(this.value)"
+               onchange="jumpToRow(this.value)"
+               onkeydown="jumpToRow(this.value)"
+               onkeyup="jumpToRow(this.value)"/>
+        <input placeholder="col" type="text" style="width: 40px"
+               onpaste="jumpToRow(this.value)"
+               oninput="jumpToCol(this.value)"
+               onchange="jumpToCol(this.value)"
+               onchange="jumpToCol(this.value)"
+               onkeydown="jumpToCol(this.value)"
+               onkeyup="jumpToCol(this.value)"/>
+    </div>
+</div>

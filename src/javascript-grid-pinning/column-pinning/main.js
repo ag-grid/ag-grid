@@ -15,7 +15,8 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     debug: true,
-    rowData: null
+    rowData: null,
+    enableColResize: true
 };
 
 function clearPinned() {
