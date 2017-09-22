@@ -4,6 +4,7 @@ import * as Prism from "prismjs";
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-jsx';
+import 'prismjs/components/prism-java';
 
 const docs: angular.IModule = angular.module('documentation');
 
@@ -13,7 +14,8 @@ const LanguageMap: { [ key: string ]: Prism.LanguageDefinition } = {
     "css": Prism.languages.css,
     "sh": Prism.languages.bash,
     "html": Prism.languages.html,
-    "jsx": Prism.languages.jsx
+    "jsx": Prism.languages.jsx,
+    "java": Prism.languages.java
 }
 
 function highlight(code: string, language: string): string {
