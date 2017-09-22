@@ -253,29 +253,30 @@ gridFeature('Updating Data', '../javascript-grid-data-update/', 'dataUpdate.gif'
 gridFeature('View Refresh', '../javascript-grid-refresh/', 'viewRefresh.gif', '<span class="feature-highlight"></span> ',
     null);
 
+gridFeature('Change Detection', '../javascript-grid-change-detection/', 'changeDetection.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Internationalisation', '../javascript-grid-internationalisation/', 'internationalisation.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Performance', '../javascript-grid-performance/', 'performance.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Accessibility', '../javascript-grid-accessibility/', '.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Full Width Rows', '../javascript-grid-full-width-rows/', 'fullWidth.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Master Detail', '../javascript-grid-master-detail/', 'masterDetail.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Aligned Grids', '../javascript-grid-aligned-grids/', 'alignedGrids.gif', '<span class="feature-highlight"></span> ',
+    null);
 
 /*
 
-gridFeature('Change Detection', '../javascript-grid-change-detection/', '.gif', '<span class="feature-highlight"></span> ',
-null);
 
-gridFeature('Internationalisation', '../javascript-grid-internationalisation/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Performance', '../javascript-grid-performance/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Accessibility', '../javascript-grid-accessibility/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Full Width Rows', '../javascript-grid-full-width-rows/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Master Detail', '../javascript-grid-master-detail/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Aligned Grids', '../javascript-grid-aligned-grids/', '.gif', '<span class="feature-highlight"></span> ',
-null);
 
 gridFeature('CSV Export', '../javascript-grid-export/', '.gif', '<span class="feature-highlight"></span> ',
 null);

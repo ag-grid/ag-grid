@@ -8,15 +8,6 @@ var columnDefs = [
     // in the total col, we have a value getter, which usually means we don't need to provide a field
     // however the master/slave depends on the column id (which is derived from the field if provided) in
     // order to match up the columns
-    {headerName: 'Medals',
-        children: [
-            {headerName: "Total", columnGroupShow: 'closed', field: "total",
-                valueGetter: "data.gold + data.silver + data.bronze", width: 200},
-            {headerName: "Gold", columnGroupShow: 'open', field: "gold", width: 100},
-            {headerName: "Silver", columnGroupShow: 'open', field: "silver", width: 100},
-            {headerName: "Bronze", columnGroupShow: 'open', field: "bronze", width: 100}
-        ]
-    }
 ];
 
 // this is the grid options for the top grid
