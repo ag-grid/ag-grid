@@ -195,15 +195,16 @@ null);
 gridFeature('Row Pinning', '../javascript-grid-row-pinning/', 'rowPinning.gif', '<span class="feature-highlight"></span> ',
 null);
 
+gridFeature('Row Height', '../javascript-grid-row-height/', 'rowHeight.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Cell Styling', '../javascript-grid-cell-styling/', 'cellStyling.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Value Handlers ?????', '../javascript-grid-value-handlers/', '.gif', '<span class="feature-highlight"></span> ',
+    null);
+
 /*
-gridFeature('Row Height', '../javascript-grid-row-height/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Cell Styling', '../javascript-grid-cell-styling/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Value Handlers', '../javascript-grid-value-handlers/', '.gif', '<span class="feature-highlight"></span> ',
-null);
 
 gridFeature('Value Getters & Formatters', '../javascript-grid-value-getters/', '.gif', '<span class="feature-highlight"></span> ',
 null);
@@ -220,23 +221,29 @@ null);
 gridFeature('Reference Data', '../javascript-grid-reference-data/', '.gif', '<span class="feature-highlight"></span> ',
 null);
 
-gridFeature('Cell Rendering', '../javascript-grid-cell-rendering/', '.gif', '<span class="feature-highlight"></span> ',
-null);
+*/
 
-gridFeature('Cell Editing', '../javascript-grid-cell-editing/', '.gif', '<span class="feature-highlight"></span> ',
-null);
+gridFeature('Cell Rendering', '../javascript-grid-cell-rendering/', 'cellRendering.gif', '<span class="feature-highlight"></span> ',
+    null);
 
-gridFeature('Keyboard Navigation', '../javascript-grid-keyboard-navigation/', '.gif', '<span class="feature-highlight"></span> ',
-null);
+gridFeature('Cell Editing', '../javascript-grid-cell-editing/', 'cellEditing.gif', '<span class="feature-highlight"></span> ',
+    null);
 
-gridFeature('Touch Support', '../javascript-grid-touch/', '.gif', '<span class="feature-highlight"></span> ',
-null);
+gridFeature('Keyboard Navigation', '../javascript-grid-keyboard-navigation/', 'keyboardNavigation.gif', '<span class="feature-highlight"></span> ',
+    null);
 
-gridFeature('Animation', '../javascript-grid-animation/', '.gif', '<span class="feature-highlight"></span> ',
-null);
+gridFeature('Touch Support', '../javascript-grid-touch/', 'touchSupport.gif', '<span class="feature-highlight"></span> ',
+    null);
 
-gridFeature('Accessing Data', '../javascript-grid-accessing-data/', '.gif', '<span class="feature-highlight"></span> ',
-null);
+gridFeature('Animation', '../javascript-grid-animation/', 'animation.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Accessing Data', '../javascript-grid-accessing-data/', 'accessingData.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+/*
+
+
 
 gridFeature('Pagination', '../javascript-grid-pagination/', '.gif', '<span class="feature-highlight"></span> ',
 null);
