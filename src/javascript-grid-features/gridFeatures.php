@@ -241,21 +241,22 @@ gridFeature('Animation', '../javascript-grid-animation/', 'animation.gif', '<spa
 gridFeature('Accessing Data', '../javascript-grid-accessing-data/', 'accessingData.gif', '<span class="feature-highlight"></span> ',
     null);
 
+gridFeature('Pagination', '../javascript-grid-pagination/', 'pagination.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Tree Data', '../javascript-grid-tree/', 'treeData.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Updating Data', '../javascript-grid-data-update/', '.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('View Refresh', '../javascript-grid-refresh/', '.gif', '<span class="feature-highlight"></span> ',
+    null);
+
 /*
 
 
 
-gridFeature('Pagination', '../javascript-grid-pagination/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Tree Data', '../javascript-grid-tree/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Updating Data', '../javascript-grid-data-update/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('View Refresh', '../javascript-grid-refresh/', '.gif', '<span class="feature-highlight"></span> ',
-null);
 
 gridFeature('Change Detection', '../javascript-grid-change-detection/', '.gif', '<span class="feature-highlight"></span> ',
 null);
