@@ -289,22 +289,24 @@ gridFeature('Custom Icons', '../javascript-grid-icons/', 'customIcons.gif', '<sp
 gridFeature('Overlays', '../javascript-grid-overlays/', 'overlays.gif', '<span class="feature-highlight"></span> ',
     null);
 
+gridFeature('Layout For Print', '../javascript-grid-for-print/',  null, '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Data Functions', '../javascript-grid-data-functions/', null, '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Grouping Rows', '../javascript-grid-grouping/', 'rowGroup.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Aggregation', '../javascript-grid-aggregation/', 'aggregation.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Pivoting', '../javascript-grid-pivoting/', 'pivot.gif', '<span class="feature-highlight"></span> ',
+    null);
+
 /*
 
-gridFeature('Layout For Print', '../javascript-grid-for-print/', '.gif', '<span class="feature-highlight"></span> ',
-null);
 
-gridFeature('Data Functions', '../javascript-grid-data-functions/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Grouping Rows', '../javascript-grid-grouping/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Aggregation', '../javascript-grid-aggregation/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Pivoting', '../javascript-grid-pivoting/', '.gif', '<span class="feature-highlight"></span> ',
-null);
 
 gridFeature('Tool Panel', '../javascript-grid-tool-panel/', '.gif', '<span class="feature-highlight"></span> ',
 null);
