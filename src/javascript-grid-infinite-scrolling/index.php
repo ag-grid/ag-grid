@@ -356,7 +356,7 @@ loadingSpinnerColumn = {
             </td>
         </tr>
         <tr id="property-max-concurrent-requests">
-            <th>maxConcurrentRequests</th>
+            <th>maxConcurrentDatasourceRequests</th>
             <td><p>How many requests to hit the server with concurrently. If the max is reached, requests are queued.
                     Default is 1, thus by default, only one request will be active at any given time.</p></td>
         </tr>
