@@ -274,24 +274,22 @@ gridFeature('Master Detail', '../javascript-grid-master-detail/', 'masterDetail.
 gridFeature('Aligned Grids', '../javascript-grid-aligned-grids/', 'alignedGrids.gif', '<span class="feature-highlight"></span> ',
     null);
 
+gridFeature('CSV Export', '../javascript-grid-export/', 'csvExport.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Excel Export', '../javascript-grid-excel/', 'excelExport.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('RTL', '../javascript-grid-rtl/', 'rtl.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Custom Icons', '../javascript-grid-icons/', 'customIcons.gif', '<span class="feature-highlight"></span> ',
+    null);
+
+gridFeature('Overlays', '../javascript-grid-overlays/', 'overlays.gif', '<span class="feature-highlight"></span> ',
+    null);
+
 /*
-
-
-
-gridFeature('CSV Export', '../javascript-grid-export/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Excel Export', '../javascript-grid-excel/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('RTL', '../javascript-grid-rtl/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Custom Icons', '../javascript-grid-icons/', '.gif', '<span class="feature-highlight"></span> ',
-    null);
-
-gridFeature('Overlays', '../javascript-grid-overlays/', '.gif', '<span class="feature-highlight"></span> ',
-    null);
 
 gridFeature('Layout For Print', '../javascript-grid-for-print/', '.gif', '<span class="feature-highlight"></span> ',
 null);
