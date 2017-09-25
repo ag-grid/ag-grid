@@ -663,7 +663,7 @@ export class CellComp extends Component {
         let valueToRender = this.formatValue(this.value);
         let params = this.createCellRendererParams(valueToRender);
 
-        this.cellRenderer = this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType);
+        this.cellRenderer = <ICellRendererComp>this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType);
         this.cellRendererGui = this.cellRenderer.getGui();
 
         if (this.cellRendererGui===null || this.cellRendererGui===undefined) {
