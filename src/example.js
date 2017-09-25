@@ -114,8 +114,8 @@ var gridOptions = {
 //debug: true,
 //     editType: 'fullRow',
 //     debug: true,
-    rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
-    pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
+//     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
+//     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     pivotTotals: true,
 //minColWidth: 50,
 //maxColWidth: 300,
@@ -318,11 +318,6 @@ var defaultCols = [
     //     field: 'testDate'
     // },
     //{headerName: "", valueGetter: "node.id", width: 20}, // this row is for showing node id, handy for testing
-    {
-        // column group 'Participant
-        headerName: 'Participant',
-        // marryChildren: true,
-        children: [
             {
                 headerName: 'Name',
                 field: 'name',
@@ -398,12 +393,7 @@ var defaultCols = [
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
             }
-        ]
-    },
-    {
-        // column group 'Game of Choice'
-        headerName: 'Game of Choice',
-        children: [
+    ,
             {
                 headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'set',
                 tooltipField: 'game.name',
@@ -440,14 +430,7 @@ var defaultCols = [
                     newRowsAction: 'keep',
                     clearButton: true
                 }
-            }
-        ]
-    },
-    {
-        // column group 'Performance'
-        headerName: 'Performance',
-        groupId: 'performance',
-        children: [
+            },
             {headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
                 filter: WinningsFilter, valueFormatter: currencyFormatter,
                 type: 'numericColumn',
@@ -470,8 +453,7 @@ var defaultCols = [
                 suppressSorting: true, suppressMenu: true, cellStyle: {"text-align": "left"},
                 cellRenderer: function() { return '...cadabra!'; }
             }
-        ]
-    },
+        ,
     {
         headerName: "Rating", field: "rating", width: 120, editable: true, cellRenderer: ratingRenderer,
         floatCell: true,
@@ -492,29 +474,6 @@ var defaultCols = [
         }
     }
 ];
-//put in the month cols
-var monthGroup = {
-    headerName: 'Monthly Breakdown',
-    children: []
-};
-defaultCols.push(monthGroup);
-months.forEach(function (month) {
-    monthGroup.children.push({
-        headerName: month, field: month.toLocaleLowerCase(),
-        width: 110, filter: 'number', editable: true, type: 'numericColumn',
-        enableValue: true,
-        // aggFunc: 'sum',
-        //hide: true,
-        cellClassRules: {
-            'good-score': 'typeof x === "number" && x > 50000',
-            'bad-score': 'typeof x === "number" && x < 10000'
-        },
-        valueParser: numberParser, valueFormatter: currencyFormatter,
-        filterParams:{
-            clearButton: true
-        }
-    })
-});
 
 function filterDoubleClicked(event) {
     setInterval(function () {
