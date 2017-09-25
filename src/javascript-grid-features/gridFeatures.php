@@ -304,27 +304,23 @@ gridFeature('Aggregation', '../javascript-grid-aggregation/', 'aggregation.gif',
 gridFeature('Pivoting', '../javascript-grid-pivoting/', 'pivot.gif', '<span class="feature-highlight"></span> ',
     null);
 
-/*
+gridFeature('Tool Panel', '../javascript-grid-tool-panel/', 'toolPanel.gif', '<span class="feature-highlight"></span> ',
+    null);
 
+gridFeature('Clipboard', '../javascript-grid-clipboard/', 'clipboard.gif', '<span class="feature-highlight"></span> ',
+    null);
 
+gridFeature('Column Menu', '../javascript-grid-column-menu/', 'columnMenu.gif', '<span class="feature-highlight"></span> ',
+    null);
 
-gridFeature('Tool Panel', '../javascript-grid-tool-panel/', '.gif', '<span class="feature-highlight"></span> ',
-null);
+gridFeature('Context Menu', '../javascript-grid-context-menu/', 'contextMenu.gif', '<span class="feature-highlight"></span> ',
+    null);
 
-gridFeature('Clipboard', '../javascript-grid-clipboard/', '.gif', '<span class="feature-highlight"></span> ',
-null);
+gridFeature('Status Bar', '../javascript-grid-status-bar/', 'statusBar.gif', '<span class="feature-highlight"></span> ',
+    null);
 
-gridFeature('Column Menu', '../javascript-grid-column-menu/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Context Menu', '../javascript-grid-context-menu/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Status Bar', '../javascript-grid-status-bar/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('License Key', '../javascript-grid-set-license/', '.gif', '<span class="feature-highlight"></span> ',
-null);*/
+gridFeature('License Key', '../javascript-grid-set-license/', 'licenseKey.gif', '<span class="feature-highlight"></span> ',
+    null);
 
 ?>
 
