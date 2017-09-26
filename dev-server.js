@@ -47,6 +47,10 @@ function launchPhpCP(app) {
             }
         })
     );
+
+    process.on('exit', () => {
+        php.kill();
+    });
 }
 
 function serveAndWatchAngular(app) {
