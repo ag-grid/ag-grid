@@ -194,7 +194,8 @@
     menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
     menuItem(0, 'Row Pinning', 'Row Pinning', 'javascript-grid-row-pinning/');
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
-    menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
+    menuItem(0, 'Cell Styles', 'Cell Styles', 'javascript-grid-cell-styles/');
+    menuItem(0, 'Row Styles', 'Row Styles', 'javascript-grid-row-styles/');
 
     menuItem(0, 'Value Handlers', 'Value Handlers', 'javascript-grid-value-handlers/');
     menuItem(1, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');

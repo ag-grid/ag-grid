@@ -383,7 +383,7 @@
                 <li><a href="../javascript-grid-row-height/">Row Height</a></li>
 
 
-                <li><a href="../javascript-grid-cell-styling/">Cell Styling</a></li>
+                <li><a href="../javascript-grid-cell-styles/">Cell Styling</a></li>
                 <li><a href="../javascript-grid-value-handlers/">Value Handlers</a></li>
                 <li><a href="../javascript-grid-value-getters/">Getters & Formatters</a></li>
                 <li><a href="../javascript-grid-value-setters/">Setters and Parsers</a></li>
