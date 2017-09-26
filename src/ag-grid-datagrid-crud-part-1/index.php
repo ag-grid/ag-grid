@@ -61,11 +61,13 @@ include('../includes/mediaHeader.php');
 
             <note>The completed code for this blog series can be found <a
                         href="https://github.com/seanlandsman/ag-grid-crud">here</a>,
-                with this particular section being under <a href="https://github.com/seanlandsman/ag-grid-crud/tree/part-1">Part
+                with this particular section being under <a
+                        href="https://github.com/seanlandsman/ag-grid-crud/tree/part-1">Part
                     1</a></note>
 
             <p>Our application will be a reporting tool that looks at past Olympics results. Users will be able to see
-                historic results for the last TODO! years and be able to see who won the most medals for a given year,
+                historic results for the Olympic Games from 2000 to 2012 (7 games in all) and be able to see who won the
+                most medals for a given year,
                 who
                 won the most often, which country is - on average - the most successful, and so on</p>
 
@@ -134,38 +136,38 @@ include('../includes/mediaHeader.php');
 
             <p>You should see the following project structures:</p>
 
-<snippet>
-    ├── mvnw
-    ├── mvnw.cmd
-    ├── pom.xml
-    ├── src
-    │   ├── main
-    │   │   ├── java
-    │   │   │   └── com
-    │   │   │       └── aggrid
-    │   │   │           └── crudapp
-    │   │   │               ├── CrudAppApplication.java
-    │   │   └── resources
-    │   │       ├── application.properties
-    │   │       ├── static
-    │   │       └── templates
-    │   └── test
-    │       └── java
-    │           └── com
-    │               └── aggrid
-    │                   └── crudapp
-    │                       └── CrudAppApplicationTests.java
+            <snippet>
+                ├── mvnw
+                ├── mvnw.cmd
+                ├── pom.xml
+                ├── src
+                │   ├── main
+                │   │   ├── java
+                │   │   │   └── com
+                │   │   │   └── aggrid
+                │   │   │   └── crudapp
+                │   │   │   ├── CrudAppApplication.java
+                │   │   └── resources
+                │   │   ├── application.properties
+                │   │   ├── static
+                │   │   └── templates
+                │   └── test
+                │   └── java
+                │   └── com
+                │   └── aggrid
+                │   └── crudapp
+                │   └── CrudAppApplicationTests.java
 
-</snippet>
+            </snippet>
 
             <p>Maven provides a standard project structure, including a default Application file (<code>CrudAppApplication.java</code>)
                 and default, starting, test file (<code>CrudAppApplicationTests.java</code>).</p>
 
             <p>Let's download the dependencies and do a quick sanity check:</p>
 
-<snippet language="sh">
-mvn test
-</snippet>
+            <snippet language="sh">
+                mvn test
+            </snippet>
 
             <p>You should see a long output while mvn downloads all dependencies - this might take a little time
                 depending on your
@@ -181,13 +183,14 @@ mvn test
 
             <h4>In an IDE</h4>
 
-            <p>If you're using an IDE you can run <code>src/main/java/com/aggrid/crudapp/CrudAppApplication.java</code> - this will launch the application.</p>
+            <p>If you're using an IDE you can run <code>src/main/java/com/aggrid/crudapp/CrudAppApplication.java</code>
+                - this will launch the application.</p>
 
             <h4>Via Maven</h4>
 
-<snippet language="sh">
-mvn spring-boot:run
-</snippet>
+            <snippet language="sh">
+                mvn spring-boot:run
+            </snippet>
 
             <p>In either case the application will launch, but not actually do much at this stage.</p>
 
@@ -196,7 +199,9 @@ mvn spring-boot:run
             <p>Our database model is pretty simple - we have 4 entities here:</p>
 
             <ul>
-                <li><code>Athlete</code>: The main entity - from this we can get the Results and Country associated to the Athlete</li>
+                <li><code>Athlete</code>: The main entity - from this we can get the Results and Country associated to
+                    the Athlete
+                </li>
                 <li><code>Sport</code>: Sports completed in - static data</li>
                 <li><code>Country</code>: All Countries that completed - static data</li>
                 <li><code>Result</code>: Joins the tables above and captures each medal won, by which athlete in which
@@ -211,29 +216,37 @@ mvn spring-boot:run
                 date of birth, we wouldn't need the age row in <code>Result</code> - it could be computed).</p>
 
             <p>Converting this to our middle tier, we'll need the following four JPA Entities: <code>Athlete</code>,
-                <code>Sport</code>, <code>Medal</code> and <code>Country</code> </p>
+                <code>Sport</code>, <code>Medal</code> and <code>Country</code></p>
 
-            <p><code>Sport</code> and <code>Country</code> are simple entities as these are primarily there as static data.
-                <code>Result</code> is a bit more complicated in that it references <code>Country</code>. <code>Athlete</code>
-                is the most interesting of these entities - it has a <code>OneToOne</code> mapping to <code>Country</code>,
-            and a <code>OneToMany</code> mapping to <code>Result</code>.</p>
+            <p><code>Sport</code> and <code>Country</code> are simple entities as these are primarily there as static
+                data.
+                <code>Result</code> is a bit more complicated in that it references <code>Country</code>.
+                <code>Athlete</code>
+                is the most interesting of these entities - it has a <code>OneToOne</code> mapping to
+                <code>Country</code>,
+                and a <code>OneToMany</code> mapping to <code>Result</code>.</p>
 
-            <p style="margin-top: 20px">We define each of these as JPA Entities by annotating the class with <code>@Entity</code>. we
-                also let Spring know that we want the <code>id</code> field to be the ID by annotating the field with <code>@Id</code>
-                and finally annotate the field with <code>@GeneratedValue(strategy = GenerationType.AUTO)</code> to have Spring/H2
+            <p style="margin-top: 20px">We define each of these as JPA Entities by annotating the class with <code>@Entity</code>.
+                we
+                also let Spring know that we want the <code>id</code> field to be the ID by annotating the field with
+                <code>@Id</code>
+                and finally annotate the field with <code>@GeneratedValue(strategy = GenerationType.AUTO)</code> to have
+                Spring/H2
                 auto-generate IDs for us.</p>
 
-            <show-complex-example example=""
-                                  sourcesOnly="true"
-                                  sources="{
+            <show-sources example=""
+                          sources="{
                             [
                                 { root: './crud-app/model/', files: 'Sport.java,Country.java,Result.java,Athlete.java' },
                             ]
                           }"
-                                  exampleHeight="500px">
-            </show-complex-example>
+                          language="java"
+                          highlight="true"
+                          exampleHeight="500px">
+            </show-sources>
 
-            <p style="margin-top: 20px">There is obvious code duplication here which we could refactor, but for simplicities sake we've left the duplication in place.</p>
+            <p style="margin-top: 20px">There is obvious code duplication here which we could refactor, but for
+                simplicities sake we've left the duplication in place.</p>
 
             <p>With the above configuration Hibernate will create the following physical model for us:</p>
 
@@ -242,51 +255,61 @@ mvn spring-boot:run
             <h3>Repositories</h3>
 
             <p>So far we have entities and their mapping - this is great, but to be useful we need a facility to be able
-            to perform read/writes/deletions of data. Spring makes this easy for us by providing the <code>CrudRepository</code>
-            interface which we can extend. With very little effort we get a great deal of functionality - this is a real time saver.</p>
+                to perform read/writes/deletions of data. Spring makes this easy for us by providing the <code>CrudRepository</code>
+                interface which we can extend. With very little effort we get a great deal of functionality - this is a
+                real time saver.</p>
 
-            <p>Below are the 4 <code>Repositories</code> we'll use in this application - one for each of the entities described above:</p>
+            <p>Below are the 4 <code>Repositories</code> we'll use in this application - one for each of the entities
+                described above:</p>
 
-            <show-complex-example example=""
-                                  sourcesOnly="true"
-                                  sources="{
+            <show-sources example=""
+                          sources="{
                             [
                                 { root: './crud-app/repositories/', files: 'AthleteRepository.java,CountryRepository.java,ResultRepository.java,SportRepository.java' },
                             ]
                           }"
-                                  exampleHeight="170px">
-            </show-complex-example>
+                          language="java"
+                          highlight="true"
+                          exampleHeight="170px">
+            </show-sources>
 
             <h3>H2 Console</h3>
 
-            <p>We can take a look at the generated model for us in <code>H2</code> but opening up the <code>H2</code> Console.
-            This is disabled by default - we need to update <code>/src/main/resources/application.properties</code> to enable it:</p>
+            <p>We can take a look at the generated model for us in <code>H2</code> but opening up the <code>H2</code>
+                Console.
+                This is disabled by default - we need to update <code>/src/main/resources/application.properties</code>
+                to enable it:</p>
 
-<snippet>
-spring.h2.console.enabled=true
-</snippet>
+            <snippet>
+                spring.h2.console.enabled=true
+            </snippet>
             <p>We can then navigate to <a href="http://localhost:8080/h2-console/" target="_blank">http://localhost:8080/h2-console/</a>
                 and take a look at what we have.</p>
 
-            <note>Be sure that the JDBC URL field is set to <code>jdbc:h2:mem:testdb</code>. H2 will cache any previous URLs
-            you might have used, but the in memory H2 one we're using here will be <code>jdbc:h2:mem:testdb</code>.</note>
+            <note>Be sure that the JDBC URL field is set to <code>jdbc:h2:mem:testdb</code>. H2 will cache any previous
+                URLs
+                you might have used, but the in memory H2 one we're using here will be <code>jdbc:h2:mem:testdb</code>.
+            </note>
 
             <img src="./h2_console.png" style="width: 100%">
 
             <h3>Test Data - Bootstrapping</h3>
 
-            <p>In order to get the data we have (<code>src/main/resources/olympicWinners.csv</code>) into the <code>H2</code> database, we'll make use of Spring's
-            <code>ApplicationListener&lt;ContextRefreshedEvent&gt;</code> facility to load the test data and save it to the database:</p>
+            <p>In order to get the data we have (<code>src/main/resources/olympicWinners.csv</code>) into the
+                <code>H2</code> database, we'll make use of Spring's
+                <code>ApplicationListener&lt;ContextRefreshedEvent&gt;</code> facility to load the test data and save it
+                to the database:</p>
 
-            <show-complex-example example=""
-                                  sourcesOnly="true"
-                                  sources="{
-                            [
-                                { root: './crud-app/bootstrap/', files: 'Bootstrap.java,CsvLoader.java,RawOlympicWinnerRecord.java' },
-                            ]
-                          }"
-                                  exampleHeight="500px">
-            </show-complex-example>
+            <show-sources example=""
+                          sources="{
+                                        [
+                                            { root: './crud-app/bootstrap/', files: 'Bootstrap.java,CsvLoader.java,RawOlympicWinnerRecord.java' },
+                                        ]
+                                      }"
+                          language="java"
+                          highlight="true"
+                          exampleHeight="500px">
+            </show-sources>
 
             <p>On startup the data in <code>src/main/resources/olympicWinners.csv</code> will be loaded, parsed and
                 inserted in the database, ready for us to query.</p>
@@ -294,25 +317,28 @@ spring.h2.console.enabled=true
             <p>Let's start the application and then fire up the <code>H2</code> console to test what we have. If we run
                 the following query in the <code>H2</code> console:</p>
 
-<snippet>
-select a.name, c.name, r.age, c.name, r.year, r.date,s.name,r.gold,r.silver,r.bronze
-from athlete a, country c, athlete_result ar, result r, sport s
-where a.country_id = c.id
-and ar.athlete_id = a.id
-and ar.result_id = r.id
-and r.sport_id = s.id
-</snippet>
+            <snippet>
+                select a.name, c.name, r.age, c.name, r.year, r.date,s.name,r.gold,r.silver,r.bronze
+                from athlete a, country c, athlete_result ar, result r, sport s
+                where a.country_id = c.id
+                and ar.athlete_id = a.id
+                and ar.result_id = r.id
+                and r.sport_id = s.id
+            </snippet>
 
             <img src="./h2_query.png" style="width: 100%">
 
             <h2>Summary</h2>
 
-            <p>This first part of the series is by necessity a bit by the numbers. It's worth noting however if you simply run
-            the commands above (and created the Java classes listed) you'd be up and running with a fully fledged CRUD system -
-            all within no more than 30 minutes, which is pretty amazing.</p>
+            <p>This first part of the series is by necessity a bit by the numbers. It's worth noting however if you
+                simply run
+                the commands above (and created the Java classes listed) you'd be up and running with a fully fledged
+                CRUD system -
+                all within no more than 30 minutes, which is pretty amazing.</p>
 
-            <p>In order to access the CRUD features we've just implemented we need to provide this to the front end - we'll start
-            covering that in the next part of this series!</p>
+            <p>In order to access the CRUD features we've just implemented we need to provide this to the front end -
+                we'll start
+                covering that in the next part of this series!</p>
 
         </div>
         <div class="col-md-3">
