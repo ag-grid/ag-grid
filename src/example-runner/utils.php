@@ -14,23 +14,23 @@ if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
     $archiveSegment = $matches[0];
     $prefix =  "//$host/$archiveSegment/dist";
     define('RUNNER_SOURCE_PREFIX', "/$archiveSegment");
-    define('POLYMER_BASE_HREF_PREFIX', "$archiveSegment/");
+    define('POLYMER_BASE_HREF_PREFIX', "//$host/$archiveSegment/");
 } else {
     $prefix =  "//$host/dev";
     define('RUNNER_SOURCE_PREFIX', "");
-    define('POLYMER_BASE_HREF_PREFIX', "");
+    define('POLYMER_BASE_HREF_PREFIX', "//$host/");
 }
 
 if (USE_LOCAL) {
 
-    define(AG_GRID_SCRIPT_PATH, "$prefix/ag-grid/ag-grid.js");
+    define(AG_GRID_SCRIPT_PATH, "$prefix/ag-grid/dist/ag-grid.js");
     define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "$prefix/ag-grid-enterprise-bundle/ag-grid-enterprise.js");
 
     $systemJsMap = array(
-        "ag-grid" =>                       "$prefix/ag-grid/ag-grid.js",
-        "ag-grid/main" =>                  "$prefix/ag-grid/ag-grid.js",
+        "ag-grid" =>                       "$prefix/ag-grid/dist/ag-grid.js",
+        "ag-grid/main" =>                  "$prefix/ag-grid/dist/ag-grid.js",
         "ag-grid-enterprise" =>            "$prefix/ag-grid-enterprise/main.js",
-        "ag-grid-react" =>                 "$prefix/ag-grid-react/ag-grid-react.js",
+        "ag-grid-react" =>                 "$prefix/ag-grid-react",
         "ag-grid-angular" =>               "$prefix/ag-grid-angular"
     );
 // production mode, return from unpkg

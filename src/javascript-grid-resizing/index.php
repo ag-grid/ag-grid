@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         If you wish only some columns to be resizable, enable resizing for the grid,
-        then suppress resizing for the particular column by setting <i>suppressResize=true</i>
+        then suppress resizing for the particular column by setting <code>suppressResize=true</code>
         on the column definition.
     </p>
 
@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
     </p>
     <p>
         If you don't want a particular column to be included in the auto resize, then
-        set the column definition <i>suppressSizeToFit=true</i>. This is helpful
+        set the column definition <code>suppressSizeToFit=true</code>. This is helpful
         if, for example, you want the first column to remain fixed with, but all other
         columns to fill the width of the table.
     </p>
@@ -58,7 +58,7 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         <p>
-            <i>autoSizeColumns()</i> looks at the rendered cells on the screen, and works out the width based on what it sees.
+            <code>autoSizeColumns()</code> looks at the rendered cells on the screen, and works out the width based on what it sees.
             It cannot see the columns that are not rendered due to column virtualisation. Thus it is not possible to autosize
             a column that is not visible on the screen.
         </p>
@@ -70,7 +70,7 @@ include '../documentation-main/documentation_header.php';
         </p>
 
         <p>
-            To get around this, you can turn off column virtualisation by setting grid property <i>suppressColumnVirtualisation=true</i>.
+            To get around this, you can turn off column virtualisation by setting grid property <code>suppressColumnVirtualisation=true</code>.
             So choice is yours - what do you want - column virtualisation working OR auto-size working on off screen columns.
         </p>
     </note>
@@ -82,10 +82,10 @@ include '../documentation-main/documentation_header.php';
         <ul>
         <li>Each column can be resized by dragging (or double clicking or auto resize) the
             right side of its header.</li>
-        <li>The button 'Size to Fit' calls api.sizeColumnsToFit()</li>
-        <li>The button 'Auto-Size All' calls columnApi.autoSizeColumns()</li>
-        <li>The first column is fixed with (ie suppressSizeToFit = true),
-            which means its size does not change when sizeColumnsToFit is called.</li>
+        <li>The button 'Size to Fit' calls <code>api.sizeColumnsToFit()</code></li>
+        <li>The button 'Auto-Size All' calls <code>columnApi.autoSizeColumns()</code></li>
+        <li>The first column is fixed with (ie <code>suppressSizeToFit = true</code>),
+            which means its size does not change when <code>sizeColumnsToFit</code> is called.</li>
         <li>The 'age' column has both a min and max size set, so resizing the column
             will be restricted by these, regardless of dragging the header or using on
             of the API buttons.</li>
@@ -94,7 +94,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         In the example below,  Also of note
         is the second column, which has both a min and max size set, which is also respected
-        with sizeColumnsToFit. The remaining columns will spread to fill the remaining space
+        with <code>sizeColumnsToFit</code>. The remaining columns will spread to fill the remaining space
         after you press the button.
     </p>
 
@@ -104,13 +104,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         It is possible to have the grid auto size the columns to fill the width by default. Do
-        this by calling <i>api.sizeColumnsToFit()</i> on the <i>gridReady</i> event.
+        this by calling <code>api.sizeColumnsToFit()</code> on the <code>gridReady</code> event.
     </p>
 
     <p>
-        Note that <i>api.sizeColumnsToFit()</i> needs to know the grid width in order to do it's
+        Note that <code>api.sizeColumnsToFit()</code> needs to know the grid width in order to do its
         maths. If the grid is not attached to the DOM, then this will be unknown. In the example
-        below, the grid is not attached to the DOM when it is created (and hence api.sizeColumnsToFix()
+        below, the grid is not attached to the DOM when it is created (and hence <code>api.sizeColumnsToFix()</code>
         should fail). The grid checks again after 100ms, and tries to resize again. This is needed
         for some frameworks (eg Angular) as DOM objects are used before getting attached.
     </p>

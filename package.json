@@ -36,6 +36,9 @@
     "@types/prismjs": "^1.6.3",
     "express-http-proxy": "^1.0.6",
     "file-loader": "^0.11.2",
+    "lnk": "^1.1.0",
+    "merge-stream": "^1.0.1",
+    "mkdir-p": "0.0.7",
     "prismjs": "^1.6.0",
     "webpack-dev-middleware": "^1.12.0",
     "webpack-merge": "^4.1.0"
@@ -48,6 +51,7 @@
     "autoprefixer": "^7.1.2",
     "bootstrap": "3.3.6",
     "cache-loader": "^1.0.3",
+    "colors": "^1.1.2",
     "concurrently": "3.5.0",
     "css-loader": "^0.28.4",
     "express": "^4.15.4",

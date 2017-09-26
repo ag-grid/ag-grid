@@ -9,17 +9,17 @@
         "noImplicitAny": false,
         "baseUrl": ".",
         "paths": {
-            "ag-grid": ["./src/_dev/ag-grid/exports.ts"],
-            "ag-grid/main": ["./src/_dev/ag-grid/exports.ts"]
+            "ag-grid": ["./_dev/ag-grid/main.ts"],
+            "ag-grid/main": ["./_dev/ag-grid/main.ts"]
         }
     },
 
     "include": [ 
         "./src/_assets/**/*.ts", 
-        "./src/_dev/ag-grid/dist/lib/**/*.ts",
-        "./src/_dev/ag-grid-enterprise/src/**/*.ts",
-        "./src/_dev/ag-grid-angular/src/**/*.ts",
-        "./src/_dev/ag-grid-react/src/**/*.ts"
+        "./_dev/ag-grid/dist/lib/**/*.ts",
+        "./_dev/ag-grid-enterprise/src/**/*.ts",
+        "./_dev/ag-grid-angular/src/**/*.ts",
+        "./_dev/ag-grid-react/src/**/*.ts"
     ],
 
     "exclude": [ "node_modules" ]
