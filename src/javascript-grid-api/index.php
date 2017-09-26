@@ -350,22 +350,26 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Scrolling</td>
+            <td colspan="2" id="scrolling">Scrolling</td>
         </tr>
 
         <tr>
-            <th>ensureIndexVisible(index)</th>
-            <td>Ensures the index is visible, scrolling the table if needed.</td>
+            <th>ensureIndexVisible(index, position)</th>
+            <td>Ensures the index is visible, scrolling the table if needed. The valid values for positions are
+                <code>top</code>, <code>middle</code> and <code>bottom</code>. If not specified the default is
+                <code>top</code></td>
         </tr>
         <tr>
             <th>ensureColumnVisible(colId)</th>
             <td>Ensures the column is visible, scrolling the table if needed.</td>
         </tr>
         <tr>
-            <th>ensureNodeVisible(comparator)</th>
+            <th>ensureNodeVisible(comparator, position)</th>
             <td>Ensures a node is visible, scrolling the table if needed. Provide one of a) the node
                 b) the data object c) a comparator function (that takes the node as a parameter, and returns
-                true for match, false for no match)</td>
+                true for match, false for no match). The valid values for positions are
+                <code>top</code>, <code>middle</code> and <code>bottom</code>. If not specified the default is
+                <code>top</code></td></td>
         </tr>
         <tr id="getVerticalPixelRange">
             <th>getVerticalPixelRange()</th>

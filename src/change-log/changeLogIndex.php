@@ -13,6 +13,19 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+    <h2>NEXT</h2>
+    <h4>Enhancements</h4>
+        <li>AG-815: <a href="../javascript-grid-api#scrolling">Grid Api for scrolling</a> has been improved so that
+        <code>api.ensureNodeVisible</code> and <code>api.ensureIndexVisible</code> now take an optional
+        second parameter to specify where the node/index should be positioned on the screen. The valid values are:
+        <code>top</code>, <code>middle</code> and <code>bottom</code>. If not specified the default is <code>top</code></li>
+    <ul>
+    </ul>
+
+    <h4>Bug Fixes</h4>
+    <ul>
+    </ul>
+
     <h2>13.2.x</h2>
     <h3>Version 13.2.0 [21-SEP-2017]</h3>
 
