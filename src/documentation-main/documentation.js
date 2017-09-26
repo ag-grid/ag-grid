@@ -12,8 +12,8 @@
         }
     });
 
-    var removeFilenameFromPath = function(pathname) {
-        if(pathname.lastIndexOf('/') === 0) {
+    var removeFilenameFromPath = function (pathname) {
+        if (pathname.lastIndexOf('/') === 0) {
             // only the root slash present
             return pathname;
         }
@@ -52,7 +52,7 @@
         $scope.selectedTab = 'example';
         $scope.sourceLang = getSourceLang($scope.jsfile);
 
-        $scope.source = url ? url : pathname + example + ".html"    ;
+        $scope.source = url ? url : pathname + example + ".html";
 
         $scope.htmlFile = pathname + ($attrs['html'] ? $attrs['html'] : example + ".html");
 
@@ -129,7 +129,7 @@
         $scope.extraPages = [];
 
         var sources = eval($attrs.sources);
-        sources.forEach(function(source) {
+        sources.forEach(function (source) {
             var root = source.root;
             root = root === "./" ? pathname : root;
             var files = source.files.split(',');
@@ -168,6 +168,57 @@
         };
     }
 
+    module.directive("showSources", function () {
+        var ShowComplexScriptExampleController = ['$scope', '$http', '$attrs', '$sce', 'HighlightService', function ($scope, $http, $attrs, $sce, HighlightService) {
+            var pathname = getPathWithTrailingSlash();
+
+            $scope.source = $scope.sourcesOnly ? $attrs["example"] : (pathname + $attrs["example"]);
+
+            $scope.extraPages = [];
+
+            var sources = eval($attrs.sources);
+            sources.forEach(function (source) {
+                var root = source.root;
+                root = root === "./" ? pathname : root;
+                var files = source.files.split(',');
+
+                $scope.extraPages = $scope.extraPages.concat(files);
+
+                $scope.extraPageContent = {};
+                files.forEach(function (file) {
+                    $http.get(root + file).then(function (response) {
+                        var language = $attrs.language ? $attrs.language : 'js';
+                        var content = $attrs.highlight ? HighlightService.highlight(response.data, language) : response.data;
+                        $scope.extraPageContent[file] = $sce.trustAsHtml("<code><pre>" + content + "</code></pre>");
+                    }).catch(function (response) {
+                        $scope.extraPageContent[file] = response.data;
+                    });
+                });
+                $scope.extraPage = $scope.extraPages[0];
+            });
+
+            if ($attrs.exampleheight) {
+                $scope.iframeStyle = {height: $attrs.exampleheight};
+            } else {
+                $scope.iframeStyle = {height: '500px'}
+            }
+
+            $scope.isActivePage = function (item) {
+                return $scope.extraPage == item;
+            };
+            $scope.setActivePage = function (item) {
+                $scope.extraPage = item;
+            };
+        }];
+
+        return {
+            scope: true,
+            controller: ShowComplexScriptExampleController,
+            templateUrl: "/showSources.html"
+        }
+    });
+
+
     /*
      * plunker only example
      */
@@ -195,7 +246,7 @@
         $scope.extraPages = [];
 
         var sources = eval($attrs.sources);
-        sources.forEach(function(source) {
+        sources.forEach(function (source) {
             var root = source.root;
             var files = source.files.split(',');
 
@@ -319,7 +370,7 @@
     }
 
     // close framework dropdown when clicking outside
-    if(document.body) {
+    if (document.body) {
         document.body.addEventListener('click', hideFrameworkSelectionOnBodyClick, true);
     }
 
@@ -340,7 +391,7 @@
     function setCookie(cname, cvalue, exdays) {
         var d = new Date();
         d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        var expires = "expires="+d.toUTCString();
+        var expires = "expires=" + d.toUTCString();
         document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     }
 
@@ -364,7 +415,7 @@
 
     /* expand all dropdowns */
     if (eExpandAll) {
-        eExpandAll.addEventListener('click', function(){
+        eExpandAll.addEventListener('click', function () {
             if (this.text.indexOf('Expand') > -1) {
                 expandAll();
             } else {
