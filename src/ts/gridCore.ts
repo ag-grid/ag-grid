@@ -289,7 +289,8 @@ export class GridCore {
         this.destroyFunctions.forEach(func => func());
     }
 
-    public ensureNodeVisible(comparator: any) {
+    // Valid values for position are bottom, middle and top
+    public ensureNodeVisible(comparator: any, position:string = 'top') {
         if (this.doingVirtualPaging) {
             throw 'Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory';
         }
@@ -314,7 +315,7 @@ export class GridCore {
             }
         }
         if (indexToSelect >= 0) {
-            this.gridPanel.ensureIndexVisible(indexToSelect);
+            this.gridPanel.ensureIndexVisible(indexToSelect, position);
         }
     }
 
