@@ -66,6 +66,7 @@ export class HeaderGroupWrapperComp extends Component {
 
         this.appendHeaderGroupComp(displayName);
 
+        this.setupTooltip();
         this.setupResize();
         this.addClasses();
         this.setupWidth();
@@ -223,6 +224,15 @@ export class HeaderGroupWrapperComp extends Component {
 
     private onWidthChanged(): void {
         this.getGui().style.width = this.columnGroup.getActualWidth() + 'px';
+    }
+
+    private setupTooltip(): void {
+        let colDef = this.columnGroup.getColGroupDef();
+
+        // add tooltip if exists
+        if (colDef && colDef.headerTooltip) {
+            this.getGui().title = colDef.headerTooltip;
+        }
     }
 
     private setupResize(): void {
