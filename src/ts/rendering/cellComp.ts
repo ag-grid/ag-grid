@@ -575,8 +575,8 @@ export class CellComp extends Component {
     }
 
     private processCellClassRules(onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void): void {
-        this.beans.stylingService.processCellClassRules(
-            this.column.getColDef(),
+        this.beans.stylingService.processClassRules(
+            this.column.getColDef().cellClassRules,
             {
                 value: this.value,
                 data: this.rowNode.data,
@@ -1406,7 +1406,7 @@ export class CellComp extends Component {
             let userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
             if (!userWantsToCancel) {
                 let newValue = this.cellEditor.getValue();
-                this.beans.valueService.setValue(this.rowNode, this.column, newValue);
+                this.rowNode.setDataValue(this.column, newValue);
                 this.value = this.getValue();
             }
         }

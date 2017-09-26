@@ -1,6 +1,6 @@
 import {_} from "../utils";
 import {CellComp} from "./cellComp";
-import {DataChangedEvent, RowNode} from "../entities/rowNode";
+import {DataChangedEvent, RowNode, CellChangedEvent} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Column} from "../entities/column";
 import {
@@ -21,7 +21,6 @@ import {Component} from "../widgets/component";
 import {RefSelector} from "../widgets/componentAnnotations";
 import {Beans} from "./beans";
 import {ProcessRowParams} from "../entities/gridOptions";
-
 
 export class LoadingCellRenderer extends Component {
 
@@ -432,6 +431,8 @@ export class RowComp extends Component {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
 
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
+
         let eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
@@ -467,8 +468,19 @@ export class RowComp extends Component {
         this.onRowSelected();
 
         // as data has changed, then the style and class needs to be recomputed
+        this.postProcessCss();
+    }
+
+
+    private onRowNodeCellChanged(event: CellChangedEvent): void {
+        // as data has changed, then the style and class needs to be recomputed
+        this.postProcessCss();
+    }
+
+    private postProcessCss(): void {
         this.postProcessStylesFromGridOptions();
         this.postProcessClassesFromGridOptions();
+        this.postProcessRowClassRules();
     }
 
     private onExpandedChanged(): void {
@@ -872,8 +884,37 @@ export class RowComp extends Component {
         }
 
         _.pushAll(classes, this.processClassesFromGridOptions());
+        _.pushAll(classes, this.preProcessRowClassRules());
 
         return classes;
+    }
+
+    private preProcessRowClassRules(): string[] {
+        let res: string[] = [];
+
+        this.processRowClassRules(
+            (className:string)=>{
+                res.push(className);
+            },
+            (className:string)=>{
+                // not catered for, if creating, no need
+                // to remove class as it was never there
+            }
+        );
+
+        return res;
+    }
+
+    private processRowClassRules(onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void): void {
+        this.beans.stylingService.processClassRules(
+            this.beans.gridOptionsWrapper.rowClassRules(),
+            {
+                data: this.rowNode.data,
+                node: this.rowNode,
+                rowIndex: this.rowNode.rowIndex,
+                api: this.beans.gridOptionsWrapper.getApi(),
+                context: this.beans.gridOptionsWrapper.getContext()
+            }, onApplicableClass, onNotApplicableClass);
     }
 
     public stopEditing(cancel = false): void {
@@ -930,6 +971,17 @@ export class RowComp extends Component {
                 this.eAllRowContainers.forEach( row => _.addCssClass(row, classStr));
             });
         }
+    }
+
+    private postProcessRowClassRules(): void {
+        this.processRowClassRules(
+            (className:string)=>{
+                this.eAllRowContainers.forEach( row => _.addCssClass(row, className));
+            },
+            (className:string)=>{
+                this.eAllRowContainers.forEach( row => _.removeCssClass(row, className));
+            }
+        );
     }
 
     private processClassesFromGridOptions(): string[] {
