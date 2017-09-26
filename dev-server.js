@@ -62,6 +62,10 @@ function serveAndWatchAngular(app) {
     });
 
     app.use('/dev/ag-grid-angular', express.static('../ag-grid-angular'));
+
+    process.on('exit', () => {
+        angularWatch.kill();
+    });
 }
 
 function launchTSCCheck() {
@@ -69,7 +73,7 @@ function launchTSCCheck() {
         console.log('_dev not present, creating links...');
 
         const linkType = 'symbolic';
-        
+
         mkdirp('_dev/ag-grid/dist');
         lnk('../ag-grid/exports.ts', '_dev/ag-grid/', {force: true, type: linkType, rename: 'main.ts'});
         lnk('../ag-grid/src/ts', '_dev/ag-grid/dist', {force: true, type: linkType, rename: 'lib'});
@@ -79,7 +83,7 @@ function launchTSCCheck() {
     }
 
     const tscPath = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
-    
+
     const tsChecker = cp.spawn(tscPath, ['--watch', '--noEmit']);
 
     tsChecker.stdout.on('data', data => {
@@ -88,9 +92,7 @@ function launchTSCCheck() {
             .trim()
             .split('\n')
             .filter(line => line.indexOf('Watching for') === -1 && line.indexOf('File change') === -1)
-            .forEach(line =>
-                console.log('ts-checker:'.green, line.replace('_dev', '..').replace('/dist/lib/', '/src/ts/').red)
-            );
+            .forEach(line => console.log('ts-checker:'.green, line.replace('_dev', '..').replace('/dist/lib/', '/src/ts/').red));
     });
 }
 
