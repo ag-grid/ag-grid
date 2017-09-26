@@ -1,6 +1,12 @@
 import {autoinject, child, children, customElement, inlineView} from "aurelia-framework";
 import {ColDef} from "ag-grid/main";
-import {AgCellTemplate, AgEditorTemplate, AgFilterTemplate} from "./agTemplate";
+import {
+    AgCellTemplate,
+    AgEditorTemplate,
+    AgFilterTemplate,
+    AgHeaderGroupTemplate,
+    AgHeaderTemplate
+} from "./agTemplate";
 import {generateBindables} from "./agUtils";
 
 @customElement('ag-grid-column')
@@ -15,10 +21,10 @@ import {generateBindables} from "./agUtils";
     "volatile", "filter", "filterFramework", "filterParams", "cellClassRules", "onCellValueChanged", "onCellClicked",
     "onCellDoubleClicked", "onCellContextMenu", "icons", "enableCellChangeFlash", "headerName", "columnGroupShow",
     "headerClass", "children", "groupId", "openByDefault", "marryChildren", "headerCheckboxSelection",
-    "headerCheckboxSelectionFilteredOnly", "ype", "ooltipField", "valueSetter", "pinnedRowCellRenderer",
+    "headerCheckboxSelectionFilteredOnly", "type", "tooltipField", "valueSetter", "pinnedRowCellRenderer",
     "pinnedRowCellRendererFramework", "pinnedRowCellRendererParams", "valueFormatter", "pinnedRowValueFormatter",
     "valueParser", "allowedAggFuncs", "rowGroup", "showRowGroup", "pivot", "equals", "pivotComparator", "menuTabs",
-    "colSpan", "suppressPaste", "emplate", "emplateUrl", "pivotValueColumn", "pivotTotalColumnIds", "headerComponent",
+    "colSpan", "suppressPaste", "template", "templateUrl", "pivotValueColumn", "pivotTotalColumnIds", "headerComponent",
     "headerComponentFramework", "headerComponentParams", "floatingFilterComponent", "floatingFilterComponentParams",
     "floatingFilterComponentFramework"])
 // <slot> is required for @children to work.  https://github.com/aurelia/templating/issues/451#issuecomment-254206622
@@ -40,6 +46,12 @@ export class AgGridColumn {
 
     @child('ag-filter-template')
     public filterTemplate: AgFilterTemplate;
+
+    @child('ag-header-template')
+    public headerTemplate: AgHeaderTemplate;
+
+    @child('ag-header-group-template')
+    public headerGroupTemplate: AgHeaderGroupTemplate;
 
     constructor() {
     }
@@ -72,6 +84,16 @@ export class AgGridColumn {
             colDef.filterFramework = {template: this.filterTemplate.template};
             delete (<any>colDef).filterTemplate;
         }
+
+        if (this.headerTemplate) {
+            (<any>colDef).headerComponentFramework = {template: this.headerTemplate.template};
+            delete (<any>colDef).headerTemplate;
+        }
+
+        // if (this.headerGroupTemplate) {
+        //     colDef.headerGroupComponent = {template: this.headerTemplate.template};
+        //     delete (<any>colDef).headerGroupTemplate;
+        // }
 
         return colDef;
     }

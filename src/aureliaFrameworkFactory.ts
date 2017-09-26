@@ -25,7 +25,6 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
         }
     }
 
-
     public colDefFilter(colDef: ColDef): { new (): IFilterComp; } | string {
         return this._baseFrameworkFactory.colDefFilter(colDef);
     }

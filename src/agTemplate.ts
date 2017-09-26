@@ -57,6 +57,30 @@ export class AgFilterTemplate {
     }
 }
 
+@customElement('ag-header-template')
+@noView()
+@autoinject()
+@processContent(parseElement)
+export class AgHeaderTemplate {
+    template: string;
+
+    constructor(targetInstruction: TargetInstruction) {
+        this.template = getTemplate(targetInstruction);
+    }
+}
+
+@customElement('ag-header-group-template')
+@noView()
+@autoinject()
+@processContent(parseElement)
+export class AgHeaderGroupTemplate {
+    template: string;
+
+    constructor(targetInstruction: TargetInstruction) {
+        this.template = getTemplate(targetInstruction);
+    }
+}
+
 @customElement('ag-full-width-row-template')
 @noView()
 @autoinject()
