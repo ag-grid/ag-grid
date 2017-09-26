@@ -18,6 +18,14 @@ Please see files:
 LICENSE.md
 SUPPORT_AND_MAINTENANCE.md
 
+Issue Reporting
+==============
+
+If you are an Enterprise customer (or are Evaluating ag-Grid Enterprise) and wish to report a Bug or raise a new Feature Request please do so on our [Members Forum](https://ag-grid.com/forum/forumdisplay.php?fid=5).
+
+To Sign Up:
+Send an email to accounts@ag-grid.com with your license key
+
 Building
 ==============
 
