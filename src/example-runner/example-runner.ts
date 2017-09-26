@@ -18,10 +18,18 @@ const LanguageMap: { [ key: string ]: Prism.LanguageDefinition } = {
     "java": Prism.languages.java
 }
 
+
 function highlight(code: string, language: string): string {
     const prismLanguage = LanguageMap[language];
     return Prism.highlight(code, prismLanguage);
 }
+
+docs.service('HighlightService', function () {
+        this.highlight = function (code: string, language: string) {
+            return highlight(code, language);
+        }
+    }
+);
 
 function whenInViewPort(element, callback) {
     function comparePosition() {
@@ -29,7 +37,7 @@ function whenInViewPort(element, callback) {
         var scrollPos = scrollTop + document.documentElement.clientHeight;
         var elemTop = element[0].offsetTop;
 
-        if (scrollPos >= elemTop) { 
+        if (scrollPos >= elemTop) {
             window.removeEventListener('scroll', comparePosition);
             callback();
             // setTimeout(callback, 2000);
@@ -40,14 +48,14 @@ function whenInViewPort(element, callback) {
     window.addEventListener('scroll', comparePosition);
 }
 
-docs.directive('snippet', function() {
+docs.directive('snippet', function () {
     return {
         restrict: 'E',
         scope: {
             language: '='
-        }, 
-        link: function(scope, element, attrs) {
-            whenInViewPort(element, function() {
+        },
+        link: function (scope, element, attrs) {
+            whenInViewPort(element, function () {
                 const language = attrs.language || "js";
                 const highlightedSource = highlight(element.text(), language);
                 element.empty().html('<pre><code>' + highlightedSource + '</code></pre>');
@@ -57,8 +65,8 @@ docs.directive('snippet', function() {
 });
 
 // taken from https://github.com/angular/angular.js/blob/489835dd0b36a108bedd5ded439a186aca4fa739/docs/app/src/examples.js#L53
-docs.factory('formPostData', ['$document', function($document) {
-    return function(url, newWindow, fields) {
+docs.factory('formPostData', ['$document', function ($document) {
+    return function (url, newWindow, fields) {
         /**
          * If the form posts to target="_blank", pop-up blockers can cause it not to work.
          * If a user choses to bypass pop-up blocker one time and click the link, they will arrive at
@@ -67,9 +75,9 @@ docs.factory('formPostData', ['$document', function($document) {
          * newWindow param allows for this possibility.
          */
         var target = newWindow ? '_blank' : '_self';
-        var form:any = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
-        angular.forEach(fields, function(value, name) {
-            var input = angular.element('<input type="hidden" name="' +  name + '">');
+        var form: any = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
+        angular.forEach(fields, function (value, name) {
+            var input = angular.element('<input type="hidden" name="' + name + '">');
             input.attr('value', value);
             form.append(input);
         });
@@ -83,7 +91,7 @@ docs.factory('formPostData', ['$document', function($document) {
 class ExampleRunner {
     ready: boolean = false;
     private source: any;
-    private loadingSource:boolean;
+    private loadingSource: boolean;
     private selectedTab: string;
 
     private selectedFile: string;
@@ -106,15 +114,13 @@ class ExampleRunner {
 
     private iframeStyle: any;
 
-    constructor(
-        private $http: angular.IHttpService,
-        private $timeout:angular.ITimeoutService,
-        private $sce: angular.ISCEService,
-        private $q:angular.IQService,
-        private formPostData, 
-        private $element: Element
-    ) {
-            $http.defaults.cache = true;
+    constructor(private $http: angular.IHttpService,
+                private $timeout: angular.ITimeoutService,
+                private $sce: angular.ISCEService,
+                private $q: angular.IQService,
+                private formPostData,
+                private $element: Element) {
+        $http.defaults.cache = true;
     }
 
     $onInit() {
@@ -129,7 +135,7 @@ class ExampleRunner {
 
         // for angular and react, index.html is part of the boilerplate
         if (this.files[0] != "index.html") {
-            this.files = [ 'index.html' ].concat(this.files);
+            this.files = ['index.html'].concat(this.files);
         }
 
         this.selectedTab = this.options.showResult === false ? 'code' : 'result';
@@ -154,7 +160,7 @@ class ExampleRunner {
 
     loadAllSources() {
         this.allFiles = this.files.concat(this.boilerplateFiles);
-        this.$q.all(this.allFiles.map( (file: any) => this.$http.get(this.getSourceUrl(file)) )).then( (files: any) => {
+        this.$q.all(this.allFiles.map((file: any) => this.$http.get(this.getSourceUrl(file)))).then((files: any) => {
             this.sources = files;
         })
     }
@@ -166,17 +172,17 @@ class ExampleRunner {
         const sourceUrl = this.getSourceUrl(this.selectedFile);
 
         this.$http.get(sourceUrl)
-        .then((response: angular.IHttpResponse<{}>) => {
-            this.loadingSource = false;
-            const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
-            const highlightedSource = highlight((response.data as string).trim(), extension);
-            this.source = this.$sce.trustAsHtml(highlightedSource);
-        });
+            .then((response: angular.IHttpResponse<{}>) => {
+                this.loadingSource = false;
+                const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
+                const highlightedSource = highlight((response.data as string).trim(), extension);
+                this.source = this.$sce.trustAsHtml(highlightedSource);
+            });
     }
 
-    getSourceUrl(file:string) {
-        if (this.boilerplateFiles.indexOf(file) > -1 ) {
-            return [ this.boilerplatePath, file ].join('/');
+    getSourceUrl(file: string) {
+        if (this.boilerplateFiles.indexOf(file) > -1) {
+            return [this.boilerplatePath, file].join('/');
         }
         if (file == this.files[0]) {
             return this.resultUrl + "&preview=true";
@@ -193,7 +199,7 @@ class ExampleRunner {
             'description': this.title
         };
 
-        this.sources.forEach( (file:any, index: number) => {
+        this.sources.forEach((file: any, index: number) => {
             postData['files[' + this.allFiles[index] + ']'] = file.data;
         });
 
@@ -376,17 +382,17 @@ docs.component('preview', {
     </div>
     `,
 
-    controller: [ '$timeout', '$element', function($timeout, $element) {
+    controller: ['$timeout', '$element', function ($timeout, $element) {
         this.ready = false;
 
-        this.$onInit = function() {
+        this.$onInit = function () {
             this.iframeStyle = {};
 
             if (this.options.exampleHeight) {
                 this.iframeStyle.height = this.options.exampleHeight + "px";
             }
 
-            whenInViewPort($element, () => { 
+            whenInViewPort($element, () => {
                 $timeout(() => this.ready = true);
             });
         }
