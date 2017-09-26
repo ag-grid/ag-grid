@@ -3,20 +3,29 @@ include 'utils.php';
 
 $exampleDir = basename($_GET['example']);
 $exampleSection = basename($_GET['section']);
-$files = getDirContents(path_combine('..', $exampleSection, $exampleDir));
-$scripts = array();
-$styles = array();
+$multi = isset($_GET['multi']);
 $preview = isset($_GET['preview']);
 
+if ($multi) {
+    $path = path_combine('..', $exampleSection, $exampleDir, 'vanilla');
+} else {
+    $path = path_combine('..', $exampleSection, $exampleDir);
+}
+
+$files = getDirContents($path);
+
+$scripts = array();
+$styles = array();
+
 foreach ($files as $file) {
-    $path = path_combine('..', $exampleSection, $exampleDir, $file);
-    $info = pathinfo($path);
+    $filePath = path_combine($path, $file);
+    $info = pathinfo($filePath);
     switch ($info['extension']) {
     case 'js':
-        $scripts[] = $preview ? $file : $path;
+        $scripts[] = $preview ? $file : $filePath;
         break;
     case 'css':
-        $styles[] = $preview ? $file : $path;
+        $styles[] = $preview ? $file : $filePath;
         break;
     }
 }
@@ -34,7 +43,7 @@ foreach ($files as $file) {
 <body>
 
 <?php
-include path_combine('..', $exampleSection, $exampleDir, 'index.html');
+include path_combine($path, 'index.html');
 
 echo "\n";
 
