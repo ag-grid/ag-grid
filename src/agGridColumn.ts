@@ -90,10 +90,10 @@ export class AgGridColumn {
             delete (<any>colDef).headerTemplate;
         }
 
-        // if (this.headerGroupTemplate) {
-        //     colDef.headerGroupComponent = {template: this.headerTemplate.template};
-        //     delete (<any>colDef).headerGroupTemplate;
-        // }
+        if (this.headerGroupTemplate) {
+            (<any>colDef).headerGroupComponentFramework = {template: this.headerGroupTemplate.template};
+            delete (<any>colDef).headerGroupTemplate;
+        }
 
         return colDef;
     }
