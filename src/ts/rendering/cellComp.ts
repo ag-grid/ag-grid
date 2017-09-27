@@ -1438,7 +1438,12 @@ export class CellComp extends Component {
                     // we know it's a dom element (not a string) because we converted
                     // it after the gui was attached if it was a string.
                     let eCell = <HTMLElement>this.cellRendererGui;
-                    this.getHtmlElement().appendChild(eCell);
+
+                    // can be null if cell was previously null / contained empty string,
+                    // this will result in new value not being rendered.
+                    if(eCell) {
+                        this.getHtmlElement().appendChild(eCell);
+                    }
                 }
             }
         }
