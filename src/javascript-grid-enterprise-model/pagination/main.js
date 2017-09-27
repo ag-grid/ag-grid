@@ -20,6 +20,8 @@ var gridOptions = {
     rowGroupPanelShow: 'never',
     enableSorting: true,
     functionsReadOnly: true,
+    toolPanelSuppressPivotMode: true,
+    toolPanelSuppressValues: true,
     animateRows: true,
     debug: true,
     pagination: true,

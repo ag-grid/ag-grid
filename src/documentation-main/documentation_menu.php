@@ -403,7 +403,6 @@
     <div class="docsMenu-content">
         <?php
         menuItem(0, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php');
-        menuItem(0, 'Roadmap', 'Roadmap', 'javascript-grid-roadmap');
         menuItem(0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/');
         menuItem(0, 'Responsiveness', 'Responsive Design', 'javascript-grid-responsiveness/');
         menuItem(0, 'Testing', 'Testing', 'javascript-grid-testing/');
