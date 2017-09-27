@@ -231,15 +231,18 @@ $border-radius: $unit;
     }
 
     .runner-item-angular {
-        background: transparent url('./framework-logos/angular.svg') 0px center no-repeat;
+        background: transparent url('../images/svg/angular.svg') 0px center no-repeat;
+        background-size: 25px 25px;
     }
 
     .runner-item-vanilla {
-        background: transparent url('./framework-logos/vanilla.svg') 0px center no-repeat;
+        background: transparent url('../images/svg/javascript.svg') 0px center no-repeat;
+        background-size: 25px 25px;
     }
 
     .runner-item-react {
-        background: transparent url('./framework-logos/react.svg') 0px center no-repeat;
+        background: transparent url('../images/svg/react.svg') 0px center no-repeat;
+        background-size: 25px 25px;
     }
 
     .example-wrapper {
