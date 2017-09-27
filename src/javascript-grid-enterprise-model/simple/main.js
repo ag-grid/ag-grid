@@ -23,6 +23,8 @@ var gridOptions = {
     cacheBlockSize: 50,
     // don't show the grouping in a panel at the top
     rowGroupPanelShow: 'never',
+    toolPanelSuppressPivotMode: true,
+    toolPanelSuppressValues: true,
     animateRows: true,
     debug: true,
     icons: {

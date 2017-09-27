@@ -15,6 +15,8 @@ var gridOptions = {
     debug: true,
     enableSorting: true,
     suppressAggFuncInHeader: true,
+    toolPanelSuppressPivotMode: true,
+    toolPanelSuppressValues: true,
     // restrict to 2 server side calls concurrently
     maxConcurrentDatasourceRequests: 2,
     cacheBlockSize: 100,
