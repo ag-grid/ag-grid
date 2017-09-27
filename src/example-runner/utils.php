@@ -236,12 +236,19 @@ function getStyles($files, $root, $preview) {
 }
 
 function getExampleInfo($boilerplatePrefix) {
+    $preview = isset($_GET['preview']);
+    $multi = isset($_GET['multi']);
+
     $exampleDir = basename($_GET['example']);
     $exampleSection = basename($_GET['section']);
-    $appRoot = path_combine('..', $exampleSection, $exampleDir);
-    $files = getDirContents($appRoot);
 
-    $preview = isset($_GET['preview']);
+    if ($multi) {
+        $appRoot = path_combine('..', $exampleSection, $exampleDir, $boilerplatePrefix);
+    } else {
+        $appRoot = path_combine('..', $exampleSection, $exampleDir);
+    }
+
+    $files = getDirContents($appRoot);
 
     $styles = getStyles($files, $appRoot, $preview);
 

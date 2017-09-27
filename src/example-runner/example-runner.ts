@@ -6,7 +6,7 @@ import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-java';
 
-const docs: angular.IModule = angular.module('documentation');
+const docs: angular.IModule = angular.module('documentation', ['ngCookies']);
 
 const LanguageMap: {[key: string]: Prism.LanguageDefinition} = {
     js: Prism.languages.javascript,
@@ -67,13 +67,13 @@ docs.factory('formPostData', [
     '$document',
     function($document) {
         return function(url, newWindow, fields) {
-            /**
-         * If the form posts to target="_blank", pop-up blockers can cause it not to work.
-         * If a user choses to bypass pop-up blocker one time and click the link, they will arrive at
-         * a new default plnkr, not a plnkr with the desired template.  Given this undesired behavior,
-         * some may still want to open the plnk in a new window by opting-in via ctrl+click.  The
-         * newWindow param allows for this possibility.
-         */
+            /*
+             * If the form posts to target="_blank", pop-up blockers can cause it not to work.
+             * If a user choses to bypass pop-up blocker one time and click the link, they will arrive at
+             * a new default plnkr, not a plnkr with the desired template.  Given this undesired behavior,
+             * some may still want to open the plnk in a new window by opting-in via ctrl+click.  The
+             * newWindow param allows for this possibility.
+             */
             var target = newWindow ? '_blank' : '_self';
             var form: any = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
             angular.forEach(fields, function(value, name) {
@@ -123,7 +123,8 @@ class ExampleRunner {
         private $sce: angular.ISCEService,
         private $q: angular.IQService,
         private formPostData,
-        private $element: Element
+        private $element: Element,
+        private $cookies: angular.cookies.ICookiesService
     ) {
         $http.defaults.cache = true;
     }
@@ -159,11 +160,32 @@ class ExampleRunner {
 
         whenInViewPort(this.$element, () => {
             this.$timeout(() => {
-                this.setType(this.availableTypes[0]);
-                this.loadAllSources();
-                this.refreshSource();
+                console.log(this.getInitialType())
+                this.setType(this.getInitialType());
                 this.ready = true;
             });
+        });
+    }
+
+    getInitialType(): string {
+        const selectedFramework = this.$cookies.get('agGridFramework');
+        const selectedRunnerVersion = this.$cookies.get('agGridRunnerVersion');
+
+        if (this.availableTypes.indexOf(selectedRunnerVersion) > -1) {
+            return selectedRunnerVersion;
+        } else if (this.availableTypes.indexOf(selectedFramework) > -1) {
+            return selectedFramework;
+        } else {
+            return this.availableTypes[0];
+        }
+    }
+
+    setAndPersistType(type: string) {
+        this.setType(type);
+        const tenYearsFromNow = new Date();
+        tenYearsFromNow.setFullYear(tenYearsFromNow.getFullYear() + 10);
+        this.$cookies.put('agGridRunnerVersion', type, {
+            expires: tenYearsFromNow
         });
     }
 
@@ -182,6 +204,9 @@ class ExampleRunner {
         this.resultUrl = typeConfig.resultUrl;
 
         this.currentType = type;
+
+        this.loadAllSources();
+        this.refreshSource();
 
         this.openFwDropdown = false;
     }
@@ -241,7 +266,7 @@ class ExampleRunner {
     }
 
     titles: {[key: string]: string} = {
-        vanilla: 'Plain JavaScript',
+        vanilla: 'JavaScript',
         react: 'React',
         angular: 'Angular'
     };
@@ -251,7 +276,7 @@ class ExampleRunner {
     }
 }
 
-ExampleRunner.$inject = ['$http', '$timeout', '$sce', '$q', 'formPostData', '$element'];
+ExampleRunner.$inject = ['$http', '$timeout', '$sce', '$q', 'formPostData', '$element', '$cookies'];
 
 docs.component('exampleTab', {
     template: `
@@ -276,7 +301,7 @@ docs.component('exampleRunner', {
     template: ` 
         <div ng-class='["example-runner"]'>
 
-        <div class="framework-chooser">
+        <div class="framework-chooser" ng-if="$ctrl.config.type === 'multi'">
             <span> Example version: </span>
             <div ng-class="{ 'btn-group': true, 'open': $ctrl.openFwDropdown }">
 
@@ -295,7 +320,7 @@ docs.component('exampleRunner', {
 
                 <ul class="dropdown-menu">
     <li ng-repeat="type in $ctrl.availableTypes">
-        <a href="#" ng-click="$ctrl.setType(type); $event.preventDefault();" ng-class="['runner-item', 'runner-item-' + type ]">{{$ctrl.typeTitle(type)}}</a>
+        <a href="#" ng-click="$ctrl.setAndPersistType(type); $event.preventDefault();" ng-class="['runner-item', 'runner-item-' + type ]">{{$ctrl.typeTitle(type)}}</a>
     </li>
                 </ul>
             </div>
