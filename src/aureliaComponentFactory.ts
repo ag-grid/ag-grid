@@ -8,7 +8,6 @@ import {IAureliaEditorViewModel} from "./editorViewModels";
 @transient()
 export class AureliaComponentFactory {
     constructor(private taskQueue: TaskQueue) {
-
     }
 
     public createRendererFromTemplate(container: Container, viewFactory: ViewFactory): { new(): ICellRendererComp } {
@@ -60,7 +59,6 @@ export class AureliaComponentFactory {
 
             private view: View;
             private editorVm: IAureliaEditorViewModel;
-
 
             init(params: any): void {
                 let bindingContext = {params: params};
@@ -132,7 +130,6 @@ export class AureliaComponentFactory {
                     this.editorVm.focusOut();
                 }
             }
-
         }
 
         return CellEditor;
