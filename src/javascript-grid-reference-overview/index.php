@@ -106,7 +106,7 @@ include '../documentation-main/documentation_header.php';
     </div>
 
     <h2>
-        <?php if (isFrameworkJavaScript()) { ?><img src="/images/javascript.png" height="50"/><?php } ?>
+        <?php if (isFrameworkJavaScript()) { ?><img src="/images/svg/javascript.svg" height="50"/><?php } ?>
         <?php if (isFrameworkReact()) { ?><img src="/images/react.png" height="50"/><?php } ?>
         <?php if (isFrameworkAngular1()) { ?><img src="/images/angularjs.png" height="50"/><?php } ?>
         <?php if (isFrameworkPolymer()) { ?><img src="/images/polymer-large.png" height="50"/><?php } ?>
@@ -199,7 +199,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     <?php if (isFrameworkJavaScript()) { ?>
         <div>
             <h2>
-                <img src="/images/javascript.png" height="50"/>
+                <img src="/images/svg/javascript.svg" height="50"/>
                 Native Javascript
             </h2>
 

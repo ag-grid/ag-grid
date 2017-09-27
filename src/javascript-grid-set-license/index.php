@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
     </note>
 
 <?php if (isFrameworkJavaScript()) { ?>
-    <h4><img src="../images/javascript_large.png" style="height: 25px" title="JavaScript"/> JavaScript</h4>
+    <h4><img src="../images/svg/javascript.svg" style="height: 25px" title="JavaScript"/> JavaScript</h4>
 
     <p>
         Use this if you are using the bundled version of ag-Grid (eg you are using <i>ag-grid-enterprise.js</i>).

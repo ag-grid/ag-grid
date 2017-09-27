@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
     <div>
 
         <h1 class="first-h1">
-            <img style="vertical-align: middle" src="/images/javascript_large.png" height="50px"/>
+            <img style="vertical-align: middle" src="/images/svg/javascript.svg" height="50px"/>
             JavaScript Grid
         </h1>
 
