@@ -163,7 +163,7 @@ export class ComponentResolver {
         if (hardcodedJsFunction){
             // console.warn(`ag-grid: Since version 12.1.0 specifying a function directly is deprecated, you should register the component by name`);
             // console.warn(`${hardcodedJsFunction}`);
-            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.AG_GRID, ComponentSource.HARDCODED);
+            return <ResolvedComponent<A,B>>this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.AG_GRID, ComponentSource.HARDCODED);
         }
 
 
@@ -175,7 +175,7 @@ export class ComponentResolver {
             componentNameToUse = componentName;
         }
 
-        return this.namedComponentResolver.resolve(propertyName, componentNameToUse);
+        return <ResolvedComponent<A,B>>this.namedComponentResolver.resolve(propertyName, componentNameToUse);
     }
 
     /**

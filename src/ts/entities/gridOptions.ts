@@ -248,6 +248,7 @@ export interface GridOptions {
     doesExternalFilterPass?(node: RowNode): boolean;
     getRowStyle?: Function;
     getRowClass?: (params: any) => (string | string[]);
+    rowClassRules?: { [cssClassName: string]: (Function | string) };
     getRowHeight?: Function;
     sendToClipboard?: (params: any)=>void;
     navigateToNextCell?: (params: NavigateToNextCellParams)=>GridCellDef;

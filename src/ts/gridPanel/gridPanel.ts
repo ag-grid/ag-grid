@@ -894,7 +894,8 @@ export class GridPanel extends BeanStub {
         return templateLocalised;
     }
 
-    public ensureIndexVisible(index: any) {
+    // Valid values for position are bottom, middle and top
+    public ensureIndexVisible(index: any, position:string = 'top') {
         // if for print, everything is always visible
         if (this.gridOptionsWrapper.isForPrint()) { return; }
 
@@ -918,26 +919,39 @@ export class GridPanel extends BeanStub {
         let vRangeBottom = vRange.bottom;
 
         let scrollShowing = this.isHorizontalScrollShowing();
+
         if (scrollShowing) {
             vRangeBottom -= this.scrollWidth;
         }
 
-        let viewportScrolledPastRow = vRangeTop > rowTopPixel;
-        let viewportScrolledBeforeRow = vRangeBottom < rowBottomPixel;
+        let rowToHighlightHeight: number = rowBottomPixel - rowTopPixel;
+        let viewportHeight = vRangeBottom - vRangeTop;
+        let halfScreenHeight: number = (viewportHeight /2) + (rowToHighlightHeight / 2);
 
         let eViewportToScroll = this.getPrimaryScrollViewport();
+        let newScrollPosition:number;
 
-        if (viewportScrolledPastRow) {
-            // if row is before, scroll up with row at top
-            eViewportToScroll.scrollTop = rowTopPixel;
-            this.rowRenderer.redrawAfterScroll();
-        } else if (viewportScrolledBeforeRow) {
-            // if row is below, scroll down with row at bottom
-            let viewportHeight = vRangeBottom - vRangeTop;
-            let newScrollPosition = rowBottomPixel - viewportHeight;
-            eViewportToScroll.scrollTop = newScrollPosition;
-            this.rowRenderer.redrawAfterScroll();
+        switch (position.toLowerCase()){
+            case 'top':
+                newScrollPosition = rowTopPixel;
+                break;
+            case 'bottom':
+                newScrollPosition = rowBottomPixel - viewportHeight;
+                break;
+            case 'middle':
+                newScrollPosition = rowTopPixel + halfScreenHeight;
+                // The if/else logic here protects us from over scrolling
+                // ie: Trying to scroll past the row (ie ensureNodeVisible (0, 'middle'))
+                newScrollPosition = newScrollPosition > rowTopPixel ? rowTopPixel : newScrollPosition;
+                break;
+            default:
+                console.warn(`ag-grid: Invalid option for ensureNodeVisible [${position}]: valid options are: 'top','bottom' and 'middle'`);
+                newScrollPosition = rowTopPixel;
+                break;
         }
+
+        eViewportToScroll.scrollTop =newScrollPosition;
+        this.rowRenderer.redrawAfterScroll();
         // otherwise, row is already in view, so do nothing
     }
 

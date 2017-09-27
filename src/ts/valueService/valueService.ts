@@ -82,6 +82,7 @@ export class ValueService {
             rowNode.data = {};
         }
 
+        // for backwards compatibility we are also retrieving the newValueHandler as well as the valueSetter
         let {field, newValueHandler, valueSetter} = column.getColDef();
 
         // need either a field or a newValueHandler for this to work
