@@ -45,7 +45,7 @@ $linkHref = "<a href='" . $link . "'>here</a>";
         <div class="col-md-3">
             <a href="../best-javascript-data-grid/">
                 <div class="framework-select-item">
-                    <img src="../images/javascript_large.png" alt="JavaScript Datagrid" title="JavaScript"/>
+                    <img src="../images/svg/javascript.svg" alt="JavaScript Datagrid" title="JavaScript" width="100" />
                     <div class="framework-select-label">
                         JavaScript
                     </div>

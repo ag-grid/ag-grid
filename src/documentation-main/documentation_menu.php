@@ -24,7 +24,7 @@
                 <img src="/images/vue_small.png" alt="Vue"/>
                 Vue JS
             <?php } elseif (isFrameworkJavaScript()) { ?>
-                <img src="/images/javascript_small.png" alt="JavaScript"/>
+                <img src="/images/svg/javascript.svg" alt="JavaScript" width="20" />
                 JavaScript
             <?php } elseif (isFrameworkWebComponents()) { ?>
                 <img src="/images/webComponents_small.png" alt="Web Components"/>
@@ -37,7 +37,7 @@
                 out.
             </li>
             <li class="divider"></li>
-            <li><a class="frameworkDropdown-link" data-id="javascript" href="#"><img src="/images/javascript_small.png"
+            <li><a class="frameworkDropdown-link" data-id="javascript" href="#"><img src="/images/svg/javascript.svg" width="20"
                                                                                      alt="JavaScript"/> Just JavaScript
                     (no framework)</a></li>
             <li><a class="frameworkDropdown-link" data-id="react" href="#"><img src="/images/svg/react.alt.svg"
@@ -365,7 +365,7 @@
         menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');
         menuItem(2, 'Polymer MasterDetail', 'Master/Detail', 'example-polymer-master-detail/');
     }
-    menuItemWithIcon('javascript_small.png', 1, 'JavaScript Examples', 'Plain JavaScript', 'example-javascript/', true);
+    menuItemWithIcon('svg/javascript.svg', 1, 'JavaScript Examples', 'Plain JavaScript', 'example-javascript/', true);
     menuItem(2, 'Styled Report', 'Styled Report', 'example-account-report/');
     menuItem(2, 'File Browser', 'File Browser', 'example-file-browser/');
     menuItem(2, 'Expressions and Context', 'Expressions', 'example-expressions-and-context/');

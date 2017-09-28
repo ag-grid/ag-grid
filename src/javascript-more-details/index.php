@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
 
     <h1>
         <img src="../images/svg/docs/getting_started.svg" width="50"/>
-        <img style="vertical-align: middle" src="/images/javascript.png" height="25px"/>
+        <img style="vertical-align: middle" src="/images/svg/javascript.svg" height="25px"/>
         JavaScript Grid
     </h1>
 

@@ -1,7 +1,7 @@
 <?php if (!isFrameworkAll()) { ?>
     <h2>
         <img src="../images/svg/docs/getting_started.svg" width="50" />
-        <img style="vertical-align: middle" src="../images/javascript.png" height="25px"/>
+        <img style="vertical-align: middle" src="../images/svg/javascript.svg" height="25px"/>
         Getting Started
     </h2>
 <?php } ?>

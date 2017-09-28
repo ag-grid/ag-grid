@@ -1,35 +1,33 @@
 import './example-runner.scss';
-import * as angular from "angular";
-import * as Prism from "prismjs";
+import * as angular from 'angular';
+import * as Prism from 'prismjs';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-java';
 
-const docs: angular.IModule = angular.module('documentation');
+const docs: angular.IModule = angular.module('documentation', ['ngCookies']);
 
-const LanguageMap: { [ key: string ]: Prism.LanguageDefinition } = {
-    "js": Prism.languages.javascript,
-    "ts": Prism.languages.typescript,
-    "css": Prism.languages.css,
-    "sh": Prism.languages.bash,
-    "html": Prism.languages.html,
-    "jsx": Prism.languages.jsx,
-    "java": Prism.languages.java
-}
-
+const LanguageMap: {[key: string]: Prism.LanguageDefinition} = {
+    js: Prism.languages.javascript,
+    ts: Prism.languages.typescript,
+    css: Prism.languages.css,
+    sh: Prism.languages.bash,
+    html: Prism.languages.html,
+    jsx: Prism.languages.jsx,
+    java: Prism.languages.java
+};
 
 function highlight(code: string, language: string): string {
     const prismLanguage = LanguageMap[language];
     return Prism.highlight(code, prismLanguage);
 }
 
-docs.service('HighlightService', function () {
-        this.highlight = function (code: string, language: string) {
-            return highlight(code, language);
-        }
-    }
-);
+docs.service('HighlightService', function() {
+    this.highlight = function(code: string, language: string) {
+        return highlight(code, language);
+    };
+});
 
 function whenInViewPort(element, callback) {
     function comparePosition() {
@@ -48,45 +46,47 @@ function whenInViewPort(element, callback) {
     window.addEventListener('scroll', comparePosition);
 }
 
-docs.directive('snippet', function () {
+docs.directive('snippet', function() {
     return {
         restrict: 'E',
         scope: {
             language: '='
         },
-        link: function (scope, element, attrs) {
-            whenInViewPort(element, function () {
-                const language = attrs.language || "js";
+        link: function(scope, element, attrs) {
+            whenInViewPort(element, function() {
+                const language = attrs.language || 'js';
                 const highlightedSource = highlight(element.text(), language);
                 element.empty().html('<pre><code>' + highlightedSource + '</code></pre>');
-            })
+            });
         }
-    }
+    };
 });
 
 // taken from https://github.com/angular/angular.js/blob/489835dd0b36a108bedd5ded439a186aca4fa739/docs/app/src/examples.js#L53
-docs.factory('formPostData', ['$document', function ($document) {
-    return function (url, newWindow, fields) {
-        /**
-         * If the form posts to target="_blank", pop-up blockers can cause it not to work.
-         * If a user choses to bypass pop-up blocker one time and click the link, they will arrive at
-         * a new default plnkr, not a plnkr with the desired template.  Given this undesired behavior,
-         * some may still want to open the plnk in a new window by opting-in via ctrl+click.  The
-         * newWindow param allows for this possibility.
-         */
-        var target = newWindow ? '_blank' : '_self';
-        var form: any = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
-        angular.forEach(fields, function (value, name) {
-            var input = angular.element('<input type="hidden" name="' + name + '">');
-            input.attr('value', value);
-            form.append(input);
-        });
-        $document.find('body').append(form);
-        form[0].submit();
-        form.remove();
-    };
-}])
-
+docs.factory('formPostData', [
+    '$document',
+    function($document) {
+        return function(url, newWindow, fields) {
+            /*
+             * If the form posts to target="_blank", pop-up blockers can cause it not to work.
+             * If a user choses to bypass pop-up blocker one time and click the link, they will arrive at
+             * a new default plnkr, not a plnkr with the desired template.  Given this undesired behavior,
+             * some may still want to open the plnk in a new window by opting-in via ctrl+click.  The
+             * newWindow param allows for this possibility.
+             */
+            var target = newWindow ? '_blank' : '_self';
+            var form: any = angular.element('<form style="display: none;" method="post" action="' + url + '" target="' + target + '"></form>');
+            angular.forEach(fields, function(value, name) {
+                var input = angular.element('<input type="hidden" name="' + name + '">');
+                input.attr('value', value);
+                form.append(input);
+            });
+            $document.find('body').append(form);
+            form[0].submit();
+            form.remove();
+        };
+    }
+]);
 
 class ExampleRunner {
     ready: boolean = false;
@@ -102,57 +102,113 @@ class ExampleRunner {
     private section: string;
     private name: string;
     private type: string;
+    private currentType: string;
     private boilerplateFiles: string[];
     private boilerplatePath: string;
 
     private options: {
-        sourcePrefix: string,
-        showResult?: boolean,
-        initialFile?: string,
-        exampleHeight?: number
+        sourcePrefix: string;
+        showResult?: boolean;
+        initialFile?: string;
+        exampleHeight?: number;
     };
+
+    private config: any;
 
     private iframeStyle: any;
 
-    constructor(private $http: angular.IHttpService,
-                private $timeout: angular.ITimeoutService,
-                private $sce: angular.ISCEService,
-                private $q: angular.IQService,
-                private formPostData,
-                private $element: Element) {
+    constructor(
+        private $http: angular.IHttpService,
+        private $timeout: angular.ITimeoutService,
+        private $sce: angular.ISCEService,
+        private $q: angular.IQService,
+        private formPostData,
+        private $element: Element,
+        private $cookies: angular.cookies.ICookiesService
+    ) {
         $http.defaults.cache = true;
+    }
+
+    private availableTypes: string[];
+
+    private openFwDropdown: boolean = false;
+
+    toggleFwDropdown() {
+        this.openFwDropdown = !this.openFwDropdown;
+    }
+
+    hideFwDropdown() {
+        this.$timeout(() => (this.openFwDropdown = false), 200);
     }
 
     $onInit() {
         this.iframeStyle = {};
 
-        if (this.options.exampleHeight) {
-            this.iframeStyle.height = this.options.exampleHeight + "px";
-        }
-        if (!this.boilerplateFiles) {
-            this.boilerplateFiles = [];
+        const options = this.config.options;
+
+        if (options.exampleHeight) {
+            this.iframeStyle.height = options.exampleHeight + 'px';
         }
 
-        // for angular and react, index.html is part of the boilerplate
-        if (this.files[0] != "index.html") {
-            this.files = ['index.html'].concat(this.files);
-        }
+        this.selectedTab = options.showResult === false ? 'code' : 'result';
 
-        this.selectedTab = this.options.showResult === false ? 'code' : 'result';
+        this.title = this.config.title;
+        this.name = this.config.name;
+        this.section = this.config.section;
 
-        if (this.options.initialFile) {
-            this.selectedFile = this.options.initialFile;
-        } else {
-            this.selectedFile = this.files[1];
-        }
+        this.availableTypes = Object.keys(this.config.types);
 
         whenInViewPort(this.$element, () => {
             this.$timeout(() => {
-                this.loadAllSources();
-                this.refreshSource();
+                console.log(this.getInitialType())
+                this.setType(this.getInitialType());
                 this.ready = true;
             });
-        })
+        });
+    }
+
+    getInitialType(): string {
+        const selectedFramework = this.$cookies.get('agGridFramework');
+        const selectedRunnerVersion = this.$cookies.get('agGridRunnerVersion');
+
+        if (this.availableTypes.indexOf(selectedRunnerVersion) > -1) {
+            return selectedRunnerVersion;
+        } else if (this.availableTypes.indexOf(selectedFramework) > -1) {
+            return selectedFramework;
+        } else {
+            return this.availableTypes[0];
+        }
+    }
+
+    setAndPersistType(type: string) {
+        this.setType(type);
+        const tenYearsFromNow = new Date();
+        tenYearsFromNow.setFullYear(tenYearsFromNow.getFullYear() + 10);
+        this.$cookies.put('agGridRunnerVersion', type, {
+            expires: tenYearsFromNow
+        });
+    }
+
+    setType(type: string) {
+        const typeConfig = this.config.types[type];
+
+        this.boilerplateFiles = typeConfig.boilerplateFiles || [];
+        this.boilerplatePath = typeConfig.boilerplatePath;
+
+        const files = typeConfig.files;
+
+        this.files = files[0] === 'index.html' ? files : ['index.html'].concat(files);
+
+        this.selectedFile = this.files[1];
+
+        this.resultUrl = typeConfig.resultUrl;
+
+        this.currentType = type;
+
+        this.loadAllSources();
+        this.refreshSource();
+
+        this.openFwDropdown = false;
     }
 
     private sources: any;
@@ -162,22 +218,21 @@ class ExampleRunner {
         this.allFiles = this.files.concat(this.boilerplateFiles);
         this.$q.all(this.allFiles.map((file: any) => this.$http.get(this.getSourceUrl(file)))).then((files: any) => {
             this.sources = files;
-        })
+        });
     }
 
     refreshSource() {
         this.loadingSource = true;
-        this.source = this.$sce.trustAsHtml("Loading...");
+        this.source = this.$sce.trustAsHtml('Loading...');
 
         const sourceUrl = this.getSourceUrl(this.selectedFile);
 
-        this.$http.get(sourceUrl)
-            .then((response: angular.IHttpResponse<{}>) => {
-                this.loadingSource = false;
-                const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
-                const highlightedSource = highlight((response.data as string).trim(), extension);
-                this.source = this.$sce.trustAsHtml(highlightedSource);
-            });
+        this.$http.get(sourceUrl).then((response: angular.IHttpResponse<{}>) => {
+            this.loadingSource = false;
+            const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
+            const highlightedSource = highlight((response.data as string).trim(), extension);
+            this.source = this.$sce.trustAsHtml(highlightedSource);
+        });
     }
 
     getSourceUrl(file: string) {
@@ -185,30 +240,43 @@ class ExampleRunner {
             return [this.boilerplatePath, file].join('/');
         }
         if (file == this.files[0]) {
-            return this.resultUrl + "&preview=true";
+            return this.resultUrl + '&preview=true';
         } else {
-            return [this.options.sourcePrefix, this.section, this.name, file].join('/');
+            if (this.config.type === 'multi') {
+                return [this.config.options.sourcePrefix, this.section, this.name, this.currentType, file].join('/');
+            } else {
+                return [this.config.options.sourcePrefix, this.section, this.name, file].join('/');
+            }
         }
     }
 
     openPlunker(clickEvent) {
         var postData: any = {
-            'tags[0]': "ag-grid",
-            'tags[1]': "example",
-            'private': true,
-            'description': this.title
+            'tags[0]': 'ag-grid',
+            'tags[1]': 'example',
+            private: true,
+            description: this.title
         };
 
         this.sources.forEach((file: any, index: number) => {
             postData['files[' + this.allFiles[index] + ']'] = file.data;
         });
 
-
         this.formPostData('//plnkr.co/edit/?p=preview', true, postData);
+    }
+
+    titles: {[key: string]: string} = {
+        vanilla: 'JavaScript',
+        react: 'React',
+        angular: 'Angular'
+    };
+
+    typeTitle(title: string) {
+        return this.titles[title];
     }
 }
 
-ExampleRunner.$inject = ['$http', '$timeout', '$sce', '$q', 'formPostData', '$element'];
+ExampleRunner.$inject = ['$http', '$timeout', '$sce', '$q', 'formPostData', '$element', '$cookies'];
 
 docs.component('exampleTab', {
     template: `
@@ -227,11 +295,39 @@ docs.component('exampleTab', {
         currentValue: '<',
         onClick: '&'
     }
-})
+});
 
 docs.component('exampleRunner', {
     template: ` 
-        <div  ng-class='["example-runner"]'>
+        <div ng-class='["example-runner"]'>
+
+        <div class="framework-chooser" ng-if="$ctrl.config.type === 'multi'">
+            <span> Example version: </span>
+            <div ng-class="{ 'btn-group': true, 'open': $ctrl.openFwDropdown }">
+
+    <button type="button" 
+    ng-click="$ctrl.toggleFwDropdown()" 
+    ng-blur="$ctrl.hideFwDropdown()"
+    class="btn btn-default dropdown-toggle" 
+    data-toggle="dropdown" 
+    aria-haspopup="true" 
+    aria-expanded="false"> 
+
+    <span ng-class="[ 'runner-item-' + $ctrl.currentType, 'runner-item' ]">{{$ctrl.typeTitle($ctrl.currentType)}} </span>
+    <span class="caret"></span> 
+
+    </button>
+
+                <ul class="dropdown-menu">
+    <li ng-repeat="type in $ctrl.availableTypes">
+        <a href="#" ng-click="$ctrl.setAndPersistType(type); $event.preventDefault();" ng-class="['runner-item', 'runner-item-' + type ]">{{$ctrl.typeTitle(type)}}</a>
+    </li>
+                </ul>
+            </div>
+        </div>
+
+
+    <div class="example-wrapper">
         <ul role="tablist" class="primary">
             <li class="title">
                 <a href="#example-{{$ctrl.name}}" title="link to {{$ctrl.title}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>
@@ -316,18 +412,11 @@ docs.component('exampleRunner', {
             </div>
         </div>
 
+        </div>
     </div>
     `,
     bindings: {
-        files: '<',
-        boilerplateFiles: '<',
-        boilerplatePath: '<',
-        title: '<',
-        section: '<',
-        resultUrl: '<',
-        name: '<',
-        type: '<',
-        options: '<'
+        config: '<'
     },
 
     controller: ExampleRunner
@@ -382,19 +471,23 @@ docs.component('preview', {
     </div>
     `,
 
-    controller: ['$timeout', '$element', function ($timeout, $element) {
-        this.ready = false;
+    controller: [
+        '$timeout',
+        '$element',
+        function($timeout, $element) {
+            this.ready = false;
 
-        this.$onInit = function () {
-            this.iframeStyle = {};
+            this.$onInit = function() {
+                this.iframeStyle = {};
 
-            if (this.options.exampleHeight) {
-                this.iframeStyle.height = this.options.exampleHeight + "px";
-            }
+                if (this.options.exampleHeight) {
+                    this.iframeStyle.height = this.options.exampleHeight + 'px';
+                }
 
-            whenInViewPort($element, () => {
-                $timeout(() => this.ready = true);
-            });
+                whenInViewPort($element, () => {
+                    $timeout(() => (this.ready = true));
+                });
+            };
         }
-    }]
+    ]
 });

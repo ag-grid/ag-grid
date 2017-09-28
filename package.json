@@ -32,9 +32,11 @@
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
     "@types/angular": "^1.6.32",
+    "@types/angular-cookies": "^1.4.5",
     "@types/highlight.js": "^9.1.10",
     "@types/prismjs": "^1.6.3",
     "express-http-proxy": "^1.0.6",
+    "express-urlrewrite": "^1.2.0",
     "file-loader": "^0.11.2",
     "lnk": "^1.1.0",
     "merge-stream": "^1.0.1",

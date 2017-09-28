@@ -57,7 +57,7 @@ module.exports = {
             {
                 test: /\.(svg)$/,
                 use: [
-                    {loader: 'url-loader', options: {limit: 8192}},
+                    {loader: 'url-loader', options: {limit: 20000}},
                     {
                         loader: require.resolve('../../ag-grid/src/styles/svg-loader.js')
                     }
