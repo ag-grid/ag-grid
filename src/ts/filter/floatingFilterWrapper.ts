@@ -89,12 +89,13 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
             _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
             _.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body')
         } else {
-            // let icon:HTMLElement = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12);
             floatingFilterBody.appendChild(floatingFilterComp);
             body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button" aria-hidden="true">
-                    <button ref="eButtonShowMainFilter">...</button>            
+                    <button ref="eButtonShowMainFilter"></button>
             </div>`));
-            // body.querySelector('button').appendChild(icon);
+
+            let eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
+            body.querySelector('button').appendChild(eIcon);
         }
         if (this.floatingFilterComp.afterGuiAttached){
             this.floatingFilterComp.afterGuiAttached({
