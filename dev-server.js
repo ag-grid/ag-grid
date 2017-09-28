@@ -38,7 +38,7 @@ function addWebpackMiddleware(app, configPath, prefix) {
 
 function launchPhpCP(app) {
     const php = cp.spawn('php', ['-S', `${HOST}:${PHP_PORT}`, '-t', 'src'], {
-        stdio: 'inherit',
+        stdio: ['ignore', 'ignore', 'ignore'],
         env: {AG_DEV: 'true'}
     });
 
