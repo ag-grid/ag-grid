@@ -17,9 +17,13 @@ const PHP_PORT = 8888;
 const HOST = '127.0.0.1';
 const WINDOWS = /^win/.test(os.platform());
 
+const rewrite = require('express-urlrewrite');
+
 function addWebpackMiddleware(app, configPath, prefix) {
     const webpackConfig = require(path.resolve('./webpack-config/', configPath + '.js'));
     const compiler = realWebpack(webpackConfig);
+
+    app.use(rewrite(new RegExp(`^${prefix}/(.+).hot-update.(json|js)`), `${prefix}${prefix}/$1.hot-update.$2`));
 
     app.use(
         prefix,
@@ -34,7 +38,7 @@ function addWebpackMiddleware(app, configPath, prefix) {
 
 function launchPhpCP(app) {
     const php = cp.spawn('php', ['-S', `${HOST}:${PHP_PORT}`, '-t', 'src'], {
-        stdio: 'inherit',
+        stdio: ['ignore', 'ignore', 'ignore'],
         env: {AG_DEV: 'true'}
     });
 
@@ -71,9 +75,7 @@ function serveAndWatchAngular(app) {
 function launchTSCCheck() {
     if (!fs.existsSync('_dev')) {
         console.log('_dev not present, creating links...');
-
         const linkType = 'symbolic';
-
         mkdirp('_dev/ag-grid/dist');
         lnk('../ag-grid/exports.ts', '_dev/ag-grid/', {force: true, type: linkType, rename: 'main.ts'});
         lnk('../ag-grid/src/ts', '_dev/ag-grid/dist', {force: true, type: linkType, rename: 'lib'});
@@ -106,8 +108,8 @@ module.exports = callback => {
     });
 
     // serve ag-grid, enterprise and react
-    addWebpackMiddleware(app, 'standard', '/dev/ag-grid/');
-    addWebpackMiddleware(app, 'site', '/dist/');
+    addWebpackMiddleware(app, 'standard', '/dev/ag-grid');
+    addWebpackMiddleware(app, 'site', '/dist');
     addWebpackMiddleware(app, 'enterprise', '/dev/ag-grid-enterprise');
     addWebpackMiddleware(app, 'enterprise-bundle', '/dev/ag-grid-enterprise-bundle');
     addWebpackMiddleware(app, 'react', '/dev/ag-grid-react');

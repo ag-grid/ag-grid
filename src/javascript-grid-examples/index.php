@@ -36,7 +36,7 @@ include '../documentation-main/documentation_header.php';
                 <a href="../example-javascript/" class="list-group-item">
                     <div class="float-parent">
                         <div class="section-icon-container">
-                            <img src="../images/javascript_large.png" width="50" />
+                            <img src="../images/svg/javascript.svg" width="50" />
                         </div>
                         <h2 class="list-group-item-heading">JavaScript</h2>
                         <p class="list-group-item-text">

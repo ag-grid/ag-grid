@@ -108,12 +108,53 @@ function toQueryString($key, $value) {
     return "$key=$value";
 }
 
-function example($title, $dir, $type='vanilla', $options = array()) {
-    $fileList = htmlspecialchars(json_encode(getDirContents($dir)));
-    $section = basename(dirname($_SERVER['SCRIPT_NAME']));
-    $additional = getBoilerplateConfig($type);
+function moveVanillaFirst($a, $b) {
+    if ($a == "vanilla") {
+        return -1;
+    } elseif ($b == "vanilla") {
+        return 1;
+    } else {
+        return strcmp($a, $b);
+    }
+}
 
-    $options['sourcePrefix'] = RUNNER_SOURCE_PREFIX;
+function getTypes($dir)
+{
+    $types = array();
+    $files = scandir($dir);
+    foreach($files as $file) {
+        if(substr($file, 0, 1) == ".") {
+            continue;
+        }
+        if (is_dir(realpath($dir . "/" . $file))) {
+            $types[] = $file;
+        }
+    }
+
+    usort($types, 'moveVanillaFirst');
+
+    return $types;
+}
+
+function example($title, $dir, $type='vanilla', $options = array()) {
+    $section = basename(dirname($_SERVER['SCRIPT_NAME']));
+    $multi = $type === 'multi';
+
+    $config = array(
+        'type' => $type,
+        'name' => $dir, 
+        'section' => $section,
+        'types' => array(),
+        'title' => $title,
+        'sourcePrefix' => RUNNER_SOURCE_PREFIX,
+        'options' => $options 
+    );
+
+    if ($multi) {
+        $types = getTypes($dir);
+    } else {
+        $types = [ $type ];
+    }
 
     $query = array(
         "section" => $section,
@@ -132,21 +173,28 @@ function example($title, $dir, $type='vanilla', $options = array()) {
 
     $queryString = join("&", array_map('toQueryString', array_keys($query), $query));
 
-    $resultUrl = "../example-runner/$type.php?$queryString";
-    $jsonOptions = json_encode($options);
+    foreach ($types as $theType) {
+        $entry = array();
+        if ($multi) {
+            $entry['files'] = getDirContents($dir . "/" . $theType); 
+        }  else {
+            $entry['files'] = getDirContents($dir); 
+        }
+
+        if ($theType != "vanilla" && $theType != "polymer") {
+            $entry['boilerplatePath'] =  "../example-runner/$theType-boilerplate/";
+            $entry['boilerplateFiles'] = getDirContents($entry['boilerplatePath']);
+        }
+        
+        $entry['resultUrl'] = "../example-runner/$theType.php?$queryString" . ($multi ? '&multi=1' : '');
+
+        $config['types'][$theType] = $entry;
+    }
+
+    $jsonConfig = htmlspecialchars(json_encode($config));
 
     return <<<NG
-    <example-runner
-        type="'$type'"
-        name="'$dir'"
-        section="'$section'"
-        title="'$title'"
-        files="$fileList"
-        result-url="'$resultUrl'"
-        options='$jsonOptions'
-        $additional
-        >
-    </example-runner>
+    <example-runner config="$jsonConfig"></example-runner>
 NG;
 }
 
@@ -188,12 +236,19 @@ function getStyles($files, $root, $preview) {
 }
 
 function getExampleInfo($boilerplatePrefix) {
+    $preview = isset($_GET['preview']);
+    $multi = isset($_GET['multi']);
+
     $exampleDir = basename($_GET['example']);
     $exampleSection = basename($_GET['section']);
-    $appRoot = path_combine('..', $exampleSection, $exampleDir);
-    $files = getDirContents($appRoot);
 
-    $preview = isset($_GET['preview']);
+    if ($multi) {
+        $appRoot = path_combine('..', $exampleSection, $exampleDir, $boilerplatePrefix);
+    } else {
+        $appRoot = path_combine('..', $exampleSection, $exampleDir);
+    }
+
+    $files = getDirContents($appRoot);
 
     $styles = getStyles($files, $appRoot, $preview);
 
