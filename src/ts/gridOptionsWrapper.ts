@@ -235,7 +235,6 @@ export class GridOptionsWrapper {
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
     public isStopEditingWhenGridLosesFocus() { return isTrue(this.gridOptions.stopEditingWhenGridLosesFocus); }
     public getGroupDefaultExpanded(): number { return this.gridOptions.groupDefaultExpanded; }
-    public getAutoSizePadding(): number { return this.gridOptions.autoSizePadding; }
 
     public getMaxConcurrentDatasourceRequests(): number { return this.gridOptions.maxConcurrentDatasourceRequests; }
     public getMaxBlocksInCache(): number { return this.gridOptions.maxBlocksInCache; }
@@ -365,6 +364,14 @@ export class GridOptionsWrapper {
         this.propertyEventService.removeEventListener(key, listener);
     }
 
+    public getAutoSizePadding(): number {
+        const padding = this.gridOptions.autoSizePadding;
+        if (typeof padding === 'number' && padding > 0) {
+            return padding;
+        } else {
+            return this.specialForNewMaterial(4, 8 * 3);
+        }
+    }
     // properties
     public getHeaderHeight(): number {
         if (typeof this.gridOptions.headerHeight === 'number') {
