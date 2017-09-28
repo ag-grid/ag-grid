@@ -56,7 +56,7 @@ include '../documentation-main/documentation_header.php';
         the resize to avoid a flicker.
     </p>
 
-    <?= example('Width & Height', 'width-and-height', 'multi') ?>
+    <?= example('Width & Height', 'width-and-height', 'multi', array( 'exampleHeight' => 600 )) ?>
 
     <h2 id="dom-layout">DOM Layout</h2>
 

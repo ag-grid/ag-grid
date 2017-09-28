@@ -147,7 +147,7 @@ function example($title, $dir, $type='vanilla', $options = array()) {
         'types' => array(),
         'title' => $title,
         'sourcePrefix' => RUNNER_SOURCE_PREFIX,
-        'options' => json_encode($options) 
+        'options' => $options 
     );
 
     if ($multi) {
