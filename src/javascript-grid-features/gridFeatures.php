@@ -62,16 +62,6 @@ function gridFeature($name, $url, $image, $description, $snippet) {
     print('</div>');
 }
 
-gridFeature('Grid Size', '../javascript-grid-width-and-height/', 'gridSize.gif',
-    'Set the <span class="feature-highlight">Width and Height</span> of the grid using CSS. If your application
-changes the size of the grid at run time, the grid will dynamically adjust to the new size.',
-    '
-&lt;!-- set using exact pixel -->
-&lt;ag-grid style="height: 200px; width: 400px;"/>
-
-&lt;!-- or set using percent -->
-&lt;ag-grid style="height: 100%; width: 100%;"/>');
-
 gridFeature('Column Definitions', '../javascript-grid-column-definitions/', 'columns.gif',
     'Columns are configured in the grid by providing a list of <span class="feature-highlight">Column Definitions</span>.
 The attributes you set on the column definitions define how the columns behave eg title, width etc.',
@@ -239,6 +229,16 @@ gridOptions = {
     ...
 }');
 
+gridFeature('Grid Size', '../javascript-grid-width-and-height/', 'gridSize.gif',
+    'Set the <span class="feature-highlight">Width and Height</span> of the grid using CSS. If your application
+changes the size of the grid at run time, the grid will dynamically adjust to the new size.',
+    '
+&lt;!-- set using exact pixel -->
+&lt;ag-grid style="height: 200px; width: 400px;"/>
+
+&lt;!-- or set using percent -->
+&lt;ag-grid style="height: 100%; width: 100%;"/>');
+
 gridFeature('Column Spanning', '../javascript-grid-column-spanning/', 'columnSpanning.gif',
     '<span class="feature-highlight">Column Spanning</span> allows cells to span columns, similar to cell span in Excel',
 'colDef = {
@@ -398,70 +398,159 @@ check if any other cells need to be updated to reflect the change.',
     null);
 
 gridFeature('Internationalisation', '../javascript-grid-internationalisation/', 'internationalisation.gif',
-    '<span class="feature-highlight"></span> ',
-    '');
+    'Support multiple languages with <span class="feature-highlight">Internationalisation</span>.',
+    'gridOptions = {
+    localeText: {
+        lessThanOrEqual: \'menor o igual\',
+        greaterThanOrEqual: \'mayor o igual\',
+        ...
+    }
+}');
 
-gridFeature('Performance', '../javascript-grid-performance/', 'performance.gif', '<span class="feature-highlight"></span> ',
+gridFeature('Performance', '../javascript-grid-performance/', 'performance.gif',
+    'The core grid engine gives <span class="feature-highlight">performance</span> unlike
+that seen before. The grid uses row and column virtualisation, animation frames and many other 
+techniques.',
     null);
 
-gridFeature('Accessibility', '../javascript-grid-accessibility/', '.gif', '<span class="feature-highlight"></span> ',
+gridFeature('Accessibility', '../javascript-grid-accessibility/', '.gif',
+    'The grid has ARIA roles inside the cells for <span class="feature-highlight">Accessibility</span> 
+to enable navigation with screen readers.',
+    '&lt;div role="row">
+    &lt;div role="gridcell">&lt;/div>
+    &lt;div role="gridcell">&lt;/div>
+&lt;/div>');
+
+gridFeature('Full Width Rows', '../javascript-grid-full-width-rows/', 'fullWidth.gif',
+    '<span class="feature-highlight">Full Width Rows</span> allow you to have one cell that
+spans the entire width of the tables. This allows a card layout to work alongside the normal cells.',
+    'gridOptions = {
+     isFullWidthCell: function(rowNode) {
+        // return every second row as full width
+        return rowNode.rowIndex % 2 === 0;
+    },
+    // use custom component for the full width row
+    fullWidthCellRenderer: MyCardComponent
+}');
+
+gridFeature('Master Detail', '../javascript-grid-master-detail/', 'masterDetail.gif',
+    'Use <span class="feature-highlight">Master Detail</span> to expand rows and have another grid
+with different columns inside.',
     null);
 
-gridFeature('Full Width Rows', '../javascript-grid-full-width-rows/', 'fullWidth.gif', '<span class="feature-highlight"></span> ',
+gridFeature('Aligned Grids', '../javascript-grid-aligned-grids/', 'alignedGrids.gif',
+    'Have one or more grids horizontally <span class="feature-highlight">Aligned</span> so that any
+column changes in one grid impact the other grid. This allows two girds with different data to be kept horizontally
+in sync.',
     null);
 
-gridFeature('Master Detail', '../javascript-grid-master-detail/', 'masterDetail.gif', '<span class="feature-highlight"></span> ',
+gridFeature('CSV Export', '../javascript-grid-export/', 'csvExport.gif',
+    'Use <span class="feature-highlight">CSV Export</span> to take data out of the grid and into another
+application for further processing, eg Excel.',
     null);
 
-gridFeature('Aligned Grids', '../javascript-grid-aligned-grids/', 'alignedGrids.gif', '<span class="feature-highlight"></span> ',
+gridFeature('Excel Export', '../javascript-grid-excel/', 'excelExport.gif',
+    'Export in native <span class="feature-highlight">Excel Format</span> which will maintain the column
+widths and also allow exporting of styles. For example, you can color cells in the grid and have the equivalent cells
+colored in the Excel export.',
     null);
 
-gridFeature('CSV Export', '../javascript-grid-export/', 'csvExport.gif', '<span class="feature-highlight"></span> ',
+gridFeature('RTL', '../javascript-grid-rtl/', 'rtl.gif',
+    'Use <span class="feature-highlight">Right to Left</span> alignment to allow languages such as 
+Arabic & Hebrew.',
     null);
 
-gridFeature('Excel Export', '../javascript-grid-excel/', 'excelExport.gif', '<span class="feature-highlight"></span> ',
+gridFeature('Custom Icons', '../javascript-grid-icons/', 'customIcons.gif',
+    'All the icons in the grid can be replace with your own <span class="feature-highlight">Custom Icons</span>.
+You can use either CSS or provide your own images.',
+    'gridOptions = {
+    icons: {
+        // use font awesome for menu icons
+        menu: \'&lt;i class="fa fa-bath"/>\',
+        filter: \'&lt;i class="fa fa-long-arrow-down"/>\',
+        columns: \'&lt;i class="fa fa-handshake-o"/>\'
+    }
+    ...
+}');
+
+gridFeature('Overlays', '../javascript-grid-overlays/', 'overlays.gif',
+    'Full control of <span class="feature-highlight">Overlays</span> to display to the user
+messages on top of the grid',
     null);
 
-gridFeature('RTL', '../javascript-grid-rtl/', 'rtl.gif', '<span class="feature-highlight"></span> ',
+gridFeature('Layout For Print', '../javascript-grid-for-print/',  null,
+    'Use <span class="feature-highlight">For Print</span> to have the grid render without using
+any scrollbars. This is useful for printing the grid, where all rows should be printed, not just what\'s
+visible on the screen.',
     null);
 
-gridFeature('Custom Icons', '../javascript-grid-icons/', 'customIcons.gif', '<span class="feature-highlight"></span> ',
+gridFeature('Data Functions', '../javascript-grid-data-functions/', null,
+    '<span class="feature-highlight">Data Functions</span> allow you to manipulate the data using
+<span class="feature-highlight">Grouping</span>, <span class="feature-highlight">Aggregation</span> 
+and <span class="feature-highlight">Pivoting</span>.',
     null);
 
-gridFeature('Overlays', '../javascript-grid-overlays/', 'overlays.gif', '<span class="feature-highlight"></span> ',
+gridFeature('Grouping Rows', '../javascript-grid-grouping/', 'rowGroup.gif',
+    'Use <span class="feature-highlight">Grouping Rows</span> to group the data over selected
+dimensions. You can set the data to group by specific columns, or allow the user to drag and drop columns
+of their choice and have it grouped on the fly.',
+    'columnDefs = [
+    {field: \'country\', rowGroup: true},
+    {field: \'sport\'},
+    ...
+]');
+
+gridFeature('Aggregation', '../javascript-grid-aggregation/', 'aggregation.gif',
+    'When grouping you can also do <span class="feature-highlight">Aggregation</span> to get aggregate
+values for the data ie sum, min, max etc. Use the built in aggregate functions or create your own.',
+    'columnDefs = [
+    {field: \'country\', rowGroup: true},
+    {field: \'gold\', aggFunc: \'sum\'},
+    ...
+]');
+
+gridFeature('Pivoting', '../javascript-grid-pivoting/', 'pivot.gif',
+    'Make columns out of values by <span class="feature-highlight">Pivoting</span> on the data,
+similar to Pivot in Excel.',
+    'columnDefs = [
+    {field: \'country\', rowGroup: true},
+    {field: \'sport\', pivot: true},
+    {field: \'gold\', aggFunc: \'sum\'},
+    ...
+]');
+
+gridFeature('Tool Panel', '../javascript-grid-tool-panel/', 'toolPanel.gif',
+    'The <span class="feature-highlight">Tool Panel</span> allows the user to maniuplate the
+list of columns, such as show and hide, or drag columns to group or pivot.',
+    'gridOptions: {
+    showToolPanel: true,
+    ...
+}');
+
+gridFeature('Clipboard', '../javascript-grid-clipboard/', 'clipboard.gif',
+    'Copy and paste data to and from the <span class="feature-highlight">Clipboard</span>. Users will be
+able to edit data in Excel, then copy the data back into the grid when done.',
     null);
 
-gridFeature('Layout For Print', '../javascript-grid-for-print/',  null, '<span class="feature-highlight"></span> ',
+gridFeature('Column Menu', '../javascript-grid-column-menu/', 'columnMenu.gif',
+    'The <span class="feature-highlight">Column Menu</span> drops down from the column header. Use the default
+options or provide your own.',
     null);
 
-gridFeature('Data Functions', '../javascript-grid-data-functions/', null, '<span class="feature-highlight"></span> ',
+gridFeature('Context Menu', '../javascript-grid-context-menu/', 'contextMenu.gif',
+    'The <span class="feature-highlight">Context Menu</span> appears when you right click on a cell. Use the
+default options or provide your own.',
     null);
 
-gridFeature('Grouping Rows', '../javascript-grid-grouping/', 'rowGroup.gif', '<span class="feature-highlight"></span> ',
+gridFeature('Status Bar', '../javascript-grid-status-bar/', 'statusBar.gif',
+    'The <span class="feature-highlight">Status Panel</span> appears on the bottom of the grid and shows 
+aggregations (sum, min, max etc) when you select a range of cells using range selection. This is similar to what
+happens in Excel.',
     null);
 
-gridFeature('Aggregation', '../javascript-grid-aggregation/', 'aggregation.gif', '<span class="feature-highlight"></span> ',
-    null);
-
-gridFeature('Pivoting', '../javascript-grid-pivoting/', 'pivot.gif', '<span class="feature-highlight"></span> ',
-    null);
-
-gridFeature('Tool Panel', '../javascript-grid-tool-panel/', 'toolPanel.gif', '<span class="feature-highlight"></span> ',
-    null);
-
-gridFeature('Clipboard', '../javascript-grid-clipboard/', 'clipboard.gif', '<span class="feature-highlight"></span> ',
-    null);
-
-gridFeature('Column Menu', '../javascript-grid-column-menu/', 'columnMenu.gif', '<span class="feature-highlight"></span> ',
-    null);
-
-gridFeature('Context Menu', '../javascript-grid-context-menu/', 'contextMenu.gif', '<span class="feature-highlight"></span> ',
-    null);
-
-gridFeature('Status Bar', '../javascript-grid-status-bar/', 'statusBar.gif', '<span class="feature-highlight"></span> ',
-    null);
-
-gridFeature('License Key', '../javascript-grid-set-license/', 'licenseKey.gif', '<span class="feature-highlight"></span> ',
+gridFeature('License Key', '../javascript-grid-set-license/', 'licenseKey.gif',
+    'Each customer of ag-Grid Enterprise will be given a <span class="feature-highlight">License Key</span> to
+put into their application.',
     null);
 
 ?>
