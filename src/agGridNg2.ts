@@ -333,6 +333,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressExcelExport: any = undefined;
     @Input() public suppressCsvExport: any = undefined;
     @Input() public getChildCount: any = undefined;
+    @Input() public rowClassRules: any = undefined;
 
 
 
