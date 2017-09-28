@@ -1,9 +1,9 @@
 import {AgReactFrameworkComponent} from "./interfaces";
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as AgGrid from 'ag-grid';
+import * as AgGrid from 'ag-grid/main';
 
-export class AgReactComponent implements AgReactFrameworkComponent<any>{
+export class AgReactComponent implements AgReactFrameworkComponent<any> {
 
     private eParentElement: HTMLElement;
     private componentRef: any;
@@ -28,11 +28,22 @@ export class AgReactComponent implements AgReactFrameworkComponent<any>{
         // to add css class or style
         params.reactContainer = this.eParentElement;
 
+        let self = this;
         const ReactComponent = React.createElement(this.reactComponent, params);
         if (!this.parentComponent) {
-            this.componentRef = ReactDOM.render(ReactComponent, this.eParentElement);
+
+            // MUST be a function, not an arrow function
+            ReactDOM.render(ReactComponent, this.eParentElement, function () {
+                console.debug('in a different thread');
+                self.componentRef = this;
+            });
         } else {
-            this.componentRef = ReactDOM.unstable_renderSubtreeIntoContainer(this.parentComponent, ReactComponent, this.eParentElement);
+
+            // MUST be a function, not an arrow function
+            ReactDOM.unstable_renderSubtreeIntoContainer(this.parentComponent, ReactComponent, this.eParentElement, function () {
+                console.debug('in the same thread?');
+                self.componentRef = this;
+            });
         }
     }
 

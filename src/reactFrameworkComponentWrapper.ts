@@ -20,12 +20,24 @@ export class ReactFrameworkComponentWrapper extends BaseComponentWrapper<Wrapabl
             }
 
             hasMethod(name: string): boolean {
-                return wrapper.getFrameworkComponentInstance()[name] != null;
+                let frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
+                if (frameworkComponentInstance == null){
+                    console.debug(`ag grid: ${name} It seems like you are using react fiber (>v16.0.0). Ag-grid has experimental support for it, please if there is any issue that you find let us know`);
+                    return true;
+                }
+                return frameworkComponentInstance[name] != null;
             }
 
             callMethod(name: string, args: IArguments): void {
-                var componentRef = this.getFrameworkComponentInstance();
-                return wrapper.getFrameworkComponentInstance()[name].apply(componentRef, args)
+                let frameworkComponentInstance = this.getFrameworkComponentInstance();
+
+                if (frameworkComponentInstance == null){
+                    setTimeout(()=>this.callMethod(name, args), 100);
+                }else{
+                    let method = wrapper.getFrameworkComponentInstance()[name];
+                    if (method == null) return null;
+                    return method.apply(frameworkComponentInstance, args)
+                }
 
             }
 
