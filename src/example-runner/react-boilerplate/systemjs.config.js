@@ -12,8 +12,8 @@
                 'systemjs-babel-build': 'npm:systemjs-plugin-babel@0.0.25/systemjs-babel-browser.js',
 
                 // react
-                react: 'npm:react@15.6.1',
-                'react-dom': 'npm:react-dom@15.6.1',
+                react: 'npm:react@16.0.0',
+                'react-dom': 'npm:react-dom@16.0.0',
                 'react-dom-factories': 'npm:react-dom-factories',
                 redux: 'npm:redux@3.6.0',
                 'react-redux': 'npm:react-redux@5.0.6',
@@ -26,10 +26,10 @@
 
         packages: {
             react: {
-                main: './dist/react.min.js'
+                main: './umd/react.production.min.js'
             },
             'react-dom': {
-                main: './dist/react-dom.min.js'
+                main: './umd/react-dom.production.min.js'
             },
             'prop-types': {
                 main: './prop-types.min.js',
