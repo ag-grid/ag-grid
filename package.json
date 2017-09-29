@@ -33,8 +33,12 @@
   "dependencies": {
     "@types/angular": "^1.6.32",
     "@types/angular-cookies": "^1.4.5",
+    "@types/escodegen": "0.0.6",
+    "@types/esprima": "^4.0.1",
     "@types/highlight.js": "^9.1.10",
     "@types/prismjs": "^1.6.3",
+    "escodegen": "^1.9.0",
+    "esprima": "^4.0.0",
     "express-http-proxy": "^1.0.6",
     "express-urlrewrite": "^1.2.0",
     "file-loader": "^0.11.2",

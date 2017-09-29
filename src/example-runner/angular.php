@@ -1,8 +1,9 @@
 <?php
 include 'utils.php';
-
 $example = getExampleInfo('angular');
+$generated = isset($_GET['generated']);
 ?>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Angular 2 ag-Grid starter</title>
@@ -29,9 +30,34 @@ $example = getExampleInfo('angular');
 
     <script src="<?=$example['boilerplatePath']?>systemjs.config.js"></script>
 
+<?php 
+if ($generated && !$example['preview']) { ?>
+    <script src="<?=$example['boilerplatePath']?>../systemjs-fetch-override.js"></script>
+    <script src="../dist/vanilla-to-angular.js"></script>
+    <script>
+
+    var filesToMock = [
+        {
+            name: 'app/app.module.ts',
+            url: 'angular-generated-app-module.ts'
+        },
+        {
+            name: 'app/app.component.ts',
+            url: '<?=$example["scripts"][0] ?>',
+            transform: vanillaToAngular
+        },
+    ];
+
+    registerMockedFiles(filesToMock, function() {
+        System.import('<?=$example['boilerplatePath']?>main.ts').catch(function(err){ console.error(err); });
+    });
+    </script>
+<?php } else { ?>
     <script>
     System.import('<?=$example['boilerplatePath']?>main.ts').catch(function(err){ console.error(err); });
     </script>
+<?php } ?>
+
 </head>
 <body>
     <my-app>Loading ag-Grid example&hellip;<my-app>

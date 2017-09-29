@@ -221,18 +221,26 @@ function renderStyles($styles) {
     }
 }
 
-function getStyles($files, $root, $preview) {
-    $styles = array();
+function filterByExt($files, $root, $preview, $ext) {
+    $matching = array();
     foreach ($files as $file) {
         $path = path_combine($root, $file);
         $info = pathinfo($path);
 
-        if ($info['extension'] == 'css') {
-            $styles[] = $preview ? $file : $path;
+        if ($info['extension'] == $ext) {
+            $matching[] = $preview ? $file : $path;
         }
     }
 
-    return $styles;
+    return $matching;
+}
+
+function getStyles($files, $root, $preview) {
+    return filterByExt($files, $root, $preview, 'css');
+}
+
+function getScripts($files, $root, $preview) {
+    return filterByExt($files, $root, $preview, 'js');
 }
 
 function getExampleInfo($boilerplatePrefix) {
@@ -251,6 +259,7 @@ function getExampleInfo($boilerplatePrefix) {
     $files = getDirContents($appRoot);
 
     $styles = getStyles($files, $appRoot, $preview);
+    $scripts = getScripts($files, $appRoot, $preview);
 
     if ($preview) {
         $boilerplatePath = "";
@@ -265,7 +274,8 @@ function getExampleInfo($boilerplatePrefix) {
         "boilerplatePath" => $boilerplatePath,
         "appLocation" => $appLocation,
         "agGridScriptPath" => AG_SCRIPT_PATH,
-        "styles" => $styles
+        "styles" => $styles,
+        "scripts" => $scripts
     );
 }
 
