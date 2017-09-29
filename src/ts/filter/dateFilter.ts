@@ -155,7 +155,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     public resetState():void{
         this.setDateFrom(null);
         this.setDateTo(null);
-        this.setFilterType("equals");
+        this.setFilterType(this.defaultFilter);
     }
 
     public parse(model: SerializedDateFilter): void {
