@@ -967,7 +967,7 @@ export class CellComp extends Component {
 
         let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
 
-        let cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getCellEditor(), params);
+        let cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getColDef(), params);
 
         return cellEditor;
     }

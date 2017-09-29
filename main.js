@@ -28,6 +28,8 @@ exports.GroupInstanceIdCreator = groupInstanceIdCreator_1.GroupInstanceIdCreator
 // components
 var componentUtil_1 = require("./dist/lib/components/componentUtil");
 exports.ComponentUtil = componentUtil_1.ComponentUtil;
+var componentProvider_1 = require("./dist/lib/components/framework/componentProvider");
+exports.ComponentProvider = componentProvider_1.ComponentProvider;
 var agGridNg1_1 = require("./dist/lib/components/agGridNg1");
 exports.initialiseAgGridWithAngular1 = agGridNg1_1.initialiseAgGridWithAngular1;
 var agGridWebComponent_1 = require("./dist/lib/components/agGridWebComponent");

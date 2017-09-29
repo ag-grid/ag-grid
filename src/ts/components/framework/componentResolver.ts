@@ -208,7 +208,7 @@ export class ComponentResolver {
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
      * It takes
-     *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
+     *  @param holderOpt: This is the context for which this component needs to be created, it can be gridOptions
      *      (global) or columnDef mostly.
      *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
      *      specified by the user in the configuration
@@ -235,9 +235,9 @@ export class ComponentResolver {
 
         //Wire the component and call the init mehtod with the correct params
         let finalParams = this.mergeParams(holder, propertyName, agGridParams);
-
         this.context.wireBean(component);
         component.init(finalParams);
+
         return component;
     }
 
@@ -253,6 +253,7 @@ export class ComponentResolver {
 
         if (!componentToUse || !componentToUse.component) {
             if (mandatory){
+                debugger;
                 console.error(`Error creating component ${propertyName}=>${componentName}`);
             }
             return null;

@@ -1,3 +1,5 @@
+import {TextCellEditor} from "../../rendering/cellEditors/textCellEditor";
+
 import {Bean, PostConstruct} from "../../context/context";
 import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
 import {DefaultDateComponent} from "../../filter/dateFilter";
@@ -15,8 +17,11 @@ import {ComponentType} from "./componentResolver";
 import {GroupCellRenderer} from "../../rendering/cellRenderers/groupCellRenderer";
 import {AnimateShowChangeCellRenderer} from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
 import {AnimateSlideCellRenderer} from "../../rendering/cellRenderers/animateSlideCellRenderer";
-import {DefaultCellRenderer} from "./agComponentUtils";
 import {LoadingCellRenderer} from "../../rendering/rowComp";
+import {SelectCellEditor} from "../../rendering/cellEditors/selectCellEditor";
+import {PopupTextCellEditor} from "../../rendering/cellEditors/popupTextCellEditor";
+import {PopupSelectCellEditor} from "../../rendering/cellEditors/popupSelectCellEditor";
+import {LargeTextCellEditor} from "../../rendering/cellEditors/largeTextCellEditor";
 
 
 export enum RegisteredComponentSource {
@@ -80,7 +85,20 @@ export class ComponentProvider {
             group: GroupCellRenderer,
             groupRowRenderer: GroupCellRenderer,
             loadingCellRenderer: LoadingCellRenderer,
-            pinnedRowCellRenderer: null
+            pinnedRowCellRenderer: null,
+
+            //editors
+            cellEditor: TextCellEditor,
+            textCellEditor: TextCellEditor,
+            text: TextCellEditor,
+            selectCellEditor: SelectCellEditor,
+            select: SelectCellEditor,
+            popupTextCellEditor: PopupTextCellEditor,
+            popupText: PopupTextCellEditor,
+            popupSelectCellEditor: PopupSelectCellEditor,
+            popupSelect: PopupSelectCellEditor,
+            largeTextCellEditor: LargeTextCellEditor,
+            largeText: LargeTextCellEditor
         }
     }
 

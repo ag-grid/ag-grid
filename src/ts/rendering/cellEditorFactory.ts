@@ -1,39 +1,24 @@
-import {Bean, PostConstruct, Autowired, Context} from "../context/context";
-import {Utils} from '../utils';
+import {Autowired, Bean, Context, PostConstruct} from "../context/context";
 import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
-import {TextCellEditor} from "./cellEditors/textCellEditor";
-import {SelectCellEditor} from "./cellEditors/selectCellEditor";
 import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
-import {PopupTextCellEditor} from "./cellEditors/popupTextCellEditor";
-import {PopupSelectCellEditor} from "./cellEditors/popupSelectCellEditor";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {LargeTextCellEditor} from "./cellEditors/largeTextCellEditor";
+import {ColDef} from "../entities/colDef";
+import {ComponentResolver} from "../components/framework/componentResolver";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {
 
-    private static TEXT = 'text';
-    private static SELECT = 'select';
-    private static POPUP_TEXT = 'popupText';
-    private static POPUP_SELECT = 'popupSelect';
-    private static LARGE_TEXT = 'largeText';
-
     @Autowired('context') private context: Context;
+    @Autowired('componentResolver') private componentResolver: ComponentResolver;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private cellEditorMap: {[key: string]: {new(): ICellEditorComp}} = {};
 
     @PostConstruct
     private init(): void {
-        this.cellEditorMap[CellEditorFactory.TEXT] = TextCellEditor;
-        this.cellEditorMap[CellEditorFactory.SELECT] = SelectCellEditor;
-        this.cellEditorMap[CellEditorFactory.POPUP_TEXT] = PopupTextCellEditor;
-        this.cellEditorMap[CellEditorFactory.POPUP_SELECT] = PopupSelectCellEditor;
-        this.cellEditorMap[CellEditorFactory.LARGE_TEXT] = LargeTextCellEditor;
     }
     
     public addCellEditor(key: string, cellEditor: {new(): ICellEditorComp}): void {
-        this.cellEditorMap[key] = cellEditor;
+        console.warn(`Ignoring this bwahahahahahaha!`)
     }
 
     // private registerEditorsFromGridOptions(): void {
@@ -43,31 +28,12 @@ export class CellEditorFactory {
     //     });
     // }
 
-    public createCellEditor(key: string|{new(): ICellEditorComp}, params: ICellEditorParams): ICellEditorComp {
-
-        let CellEditorClass: {new(): ICellEditorComp};
-
-        if (Utils.missing(key)) {
-            CellEditorClass = this.cellEditorMap[CellEditorFactory.TEXT];
-        } else if (typeof key === 'string') {
-            CellEditorClass = this.cellEditorMap[key];
-            if (Utils.missing(CellEditorClass)) {
-                console.warn('ag-Grid: unable to find cellEditor for key ' + key);
-                CellEditorClass = this.cellEditorMap[CellEditorFactory.TEXT];
-            }
-        } else {
-            CellEditorClass = <{new(): ICellEditorComp}> key;
-        }
-
-        let cellEditor = new CellEditorClass();
-        this.context.wireBean(cellEditor);
-
-        // we have to call init first, otherwise when using the frameworks, the wrapper
-        // classes won't be set up
-        if (cellEditor.init) {
-            cellEditor.init(params);
-        }
-
+    public createCellEditor(column:ColDef, params: ICellEditorParams): ICellEditorComp {
+        let cellEditor:ICellEditorComp = this.componentResolver.createAgGridComponent (
+            column,
+            params,
+            'cellEditor'
+        );
         if (cellEditor.isPopup && cellEditor.isPopup()) {
 
             if (this.gridOptionsWrapper.isFullRowEdit()) {
@@ -79,7 +45,7 @@ export class CellEditorFactory {
             this.context.wireBean(cellEditor);
             cellEditor.init(params);
         }
-        
+
         return cellEditor;
     }
 }
