@@ -17,17 +17,6 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
         super();
     }
 
-    public createRendererFromComponent(componentType: { new(...args: any[]): ICellRendererAngularComp; },
-                                       viewContainerRef: ViewContainerRef): {new(): ICellRendererComp} {
-        return this.adaptComponentToRenderer(componentType,
-            viewContainerRef);
-    }
-
-    public createEditorFromComponent(componentType: { new(...args: any[]): ICellEditorAngularComp; },
-                                     viewContainerRef: ViewContainerRef): {new(): ICellEditorComp} {
-        return this.adaptComponentToEditor(componentType,
-            viewContainerRef);
-    }
 
     public createFilterFromComponent(componentType: { new(...args: any[]): IFilterAngularComp; },
                                      viewContainerRef: ViewContainerRef) {
@@ -35,88 +24,6 @@ export class Ng2ComponentFactory extends BaseComponentFactory {
             viewContainerRef);
     }
 
-
-    private adaptComponentToRenderer(componentType: { new(...args: any[]): ICellRendererAngularComp; },
-                                     viewContainerRef: ViewContainerRef): {new(): ICellRendererComp} {
-
-        let that = this;
-        class CellRenderer extends BaseGuiComponent<any, ICellRendererAngularComp> implements ICellRendererComp {
-            init(params: any): void {
-                super.init(params);
-                this._componentRef.changeDetectorRef.detectChanges();
-            }
-
-            refresh(params: any): boolean {
-                this._params = params;
-
-                if (this._agAwareComponent.refresh) {
-                    this._agAwareComponent.refresh(params);
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-
-            protected createComponent(): ComponentRef<ICellRendererAngularComp> {
-                return that.createComponent(componentType,
-                    viewContainerRef);
-            }
-
-        }
-
-        return CellRenderer;
-    }
-
-    private adaptComponentToEditor(componentType: { new(...args: any[]): ICellEditorAngularComp; },
-                                   viewContainerRef: ViewContainerRef): {new(): ICellEditorComp} {
-
-        let that = this;
-        class CellEditor extends BaseGuiComponent<any, ICellEditorAngularComp> implements ICellEditorComp {
-
-            init(params: any): void {
-                super.init(params);
-            }
-
-            getValue(): any {
-                return this._agAwareComponent.getValue();
-            }
-
-            isPopup(): boolean {
-                return this._agAwareComponent.isPopup ?
-                    this._agAwareComponent.isPopup() : false;
-            }
-
-            isCancelBeforeStart(): boolean {
-                return this._agAwareComponent.isCancelBeforeStart ?
-                    this._agAwareComponent.isCancelBeforeStart() : false;
-            }
-
-            isCancelAfterEnd(): boolean {
-                return this._agAwareComponent.isCancelAfterEnd ?
-                    this._agAwareComponent.isCancelAfterEnd() : false;
-            }
-
-            focusIn(): void {
-                if (this._agAwareComponent.focusIn) {
-                    this._agAwareComponent.focusIn();
-                }
-            }
-
-            focusOut(): void {
-                if (this._agAwareComponent.focusOut) {
-                    this._agAwareComponent.focusOut();
-                }
-            }
-
-
-            protected createComponent(): ComponentRef<ICellEditorAngularComp> {
-                return that.createComponent(componentType,
-                    viewContainerRef);
-            }
-        }
-
-        return CellEditor;
-    }
 
     private adaptComponentToFilter(componentType: { new(...args: any[]): IFilterAngularComp; },
                                    viewContainerRef: ViewContainerRef): {new(): IFilterComp} {
