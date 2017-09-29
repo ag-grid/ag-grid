@@ -63,9 +63,6 @@ export class AutoWidthCalculator {
 
         // we add padding as I found without it, the gui still put '...' after some of the texts
         let autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
-        if (typeof autoSizePadding !== 'number' || autoSizePadding < 0) {
-            autoSizePadding = 4;
-        }
         return dummyContainerWidth + autoSizePadding;
     }
 

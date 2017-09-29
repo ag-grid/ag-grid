@@ -784,8 +784,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         float: right;
         button {
             @include simple-material-flat-button;
-            @include icon-background('filter');
-            @include hide-text;
         }
     }
 
