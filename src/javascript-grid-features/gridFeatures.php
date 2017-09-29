@@ -10,12 +10,12 @@
         background-color: #f4f4f4;
     }
     .feature-item {
+        display: flow-root;
         background-color: #fafafa;
         border: 1px solid #eee;
         border-radius: 4px;
         padding: 10px;
         position: relative;
-        overflow: auto;
         margin-bottom: 50px;
     }
     .feature-title {
@@ -39,6 +39,10 @@
     }
     .small-feature .feature-snippet {
         margin-top: 10px;
+    }
+    .small-feature .feature-item {
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
     }
 
 </style>
@@ -109,83 +113,89 @@ api.sizeColumnsToFit();
 columnApi.autoSizeAllColumns();
 ');
 
-gridFeature('Column Filter', '../javascript-grid-filtering/', 'columnFilter.gif',
-    '<span class="feature-highlight">Column Filter\'s</span> appear in the column menu. 
-The grid provides filters out of the box (text, number, date and set filters) or create your
-own customer filter.',
-    '
-gridOptions = {
+?>
+
+<div class="feature-item">
+
+    <h2><a href="../javascript-grid-filtering/" class="feature-title">Column Filter</a></h2>
+    <div class="feature-description">
+        <span class="feature-highlight">Column Filter's</span> appear in the column menu.
+        The grid provides filters out of the box (text, number, date and set filters) or create your
+        own customer filter.
+    </div>
+    <div class="feature-snippet">
+        <snippet>gridOptions = {
     // turn on filtering
     enableFilter: true,
     ...
     columnDefs: [
-        {field: "athlete", filter: "text"},
-        {field: "age",     filter: "number"},
-        {field: "sport",   filter: MyCustomerFilter}
-    ]
-}');
+    {field: "athlete", filter: "text"},
+    {field: "age",     filter: "number"},
+    {field: "sport",   filter: MyCustomerFilter}
+]}</snippet>
+    </div>
 
-?>
-
-<div class="row small-feature">
-    <div class="col-md-6">
-        <?php gridFeature('Text Filter', '../javascript-grid-filter-text/', 'textFilter.gif',
-'<span class="feature-highlight">Text Filter</span> allows filtering text strings with 
+    <div class="row small-feature">
+        <div class="col-md-6">
+            <?php gridFeature('Text Filter', '../javascript-grid-filter-text/', 'textFilter.gif',
+                '<span class="feature-highlight">Text Filter</span> allows filtering text strings with 
 {equals, notEqual, contains, notContains, startsWith, endsWith}.',
-            '
+                '
 colDef = {
     field: \'athlete\',
     filter: \'text\',
     filterOptions: {\'equals\', \'contains\'}
 }
 '); ?>
-    </div>
-    <div class="col-md-6">
-        <?php gridFeature('Number Filter', '../javascript-grid-filter-number/', 'numberFilter.gif',
-'<span class="feature-highlight">Number Filter</span> allows filtering numbers with 
+        </div>
+        <div class="col-md-6">
+            <?php gridFeature('Number Filter', '../javascript-grid-filter-number/', 'numberFilter.gif',
+                '<span class="feature-highlight">Number Filter</span> allows filtering numbers with 
 {equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}',
-            '
+                '
 colDef = {
     field: \'totalWinnings\',
     filter: \'number\'
 }
 '); ?>
+        </div>
     </div>
-</div>
-<div class="row small-feature">
-    <div class="col-md-6">
-        <?php gridFeature('Date Filter', '../javascript-grid-filter-date/', 'dateFilter.gif',
-            '<span class="feature-highlight">Date Filter</span> allows filtering dates with 
+    <div class="row small-feature">
+        <div class="col-md-6">
+            <?php gridFeature('Date Filter', '../javascript-grid-filter-date/', 'dateFilter.gif',
+                '<span class="feature-highlight">Date Filter</span> allows filtering dates with 
 {equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}.',
-            '
+                '
 colDef = {
     field: \'date\',
     filter: \'date\'
 }
 '); ?>
-    </div>
-    <div class="col-md-6">
-        <?php gridFeature('Set Filter', '../javascript-grid-filter-set/', 'setFilter.gif',
-            '<span class="feature-highlight">Set Filter</span> works like excel, providing checkboxes to select values from a set.',
-            '
+        </div>
+        <div class="col-md-6">
+            <?php gridFeature('Set Filter', '../javascript-grid-filter-set/', 'setFilter.gif',
+                '<span class="feature-highlight">Set Filter</span> works like excel, providing checkboxes to select values from a set.',
+                '
 colDef = {
     field: \'country\',
     filter: \'set\'
 }
 '); ?>
+        </div>
     </div>
-</div>
-<div class="row small-feature">
-    <div class="col-md-6">
-        <?php gridFeature('Custom Filter', '../javascript-grid-filter-custom/', 'customFilter.gif',
-            'Create your own filter to match your own business requirements.',
-            '
+    <div class="row small-feature">
+        <div class="col-md-6">
+            <?php gridFeature('Custom Filter', '../javascript-grid-filter-custom/', 'customFilter.gif',
+                'Create your own filter to match your own business requirements.',
+                '
 colDef = {
     field: \'name\',
     filter: MyCustomFilter
 }
 '); ?>
+        </div>
     </div>
+
 </div>
 
 <?php
@@ -200,7 +210,7 @@ api.setQuickFilter(searchText)
 
 gridFeature('External Filter', '../javascript-grid-filter-external/', 'externalFilter.gif',
     '<span class="feature-highlight">External Filter</span> allows you to build filters that live
-outside of the grid. For example you can include your own widgets before the grid for your own filter.',
+outside of the grid. For example you can include your own widgets outside the grid for your own filter.',
 null);
 
 gridFeature('Row Sorting', '../javascript-grid-sorting/', 'rowSorting.gif',
@@ -292,28 +302,105 @@ greater than 100.',
     \'highlight-negative\': \'x < 0\'
     \'highlight-large-value\': \'x > 100\'
 }');
+?>
 
-gridFeature('Value Handlers ?????', '../javascript-grid-value-handlers/', '.gif', '<span class="feature-highlight"></span> ',
-    null);
+<div class="feature-item">
+    <h2><a href="../javascript-grid-value-handlers/" class="feature-title">Value Handlers</a></h2>
+    <div class="feature-description">
+        Each grid column typically has a field where it gets the value to display. However you can
+        provide more logic here to get finer control over how data is retrevied (for display) and stored (after editing)
+        with the family of <span class="feature-highlight">Value Handlers</span>.
+    </div>
 
-/*
+    <div class="row small-feature">
+        <div class="col-md-6">
+            <?php gridFeature('Value Getters & Value Formatters', '../javascript-grid-value-getters/', null,
+                '<span class="feature-highlight">Value Getters & Value Formatters</span> are about getting and formatting the
+data to display. Use <span class="feature-highlight">Value Getters</span> when the data is not a simple field.
+Use <span class="feature-highlight">Value Formatters</span> to format values for display.',
+                'var columns = [
+    // two simple cols, A and B
+    {field: \'a\'},
+    {field: \'b\'},
+    // total column, giving sum of A and B
+    {headerName: \'Total\', 
+        valueGetter: function(params) {
+            var data = params.data;
+            return data.a + data.b;
+        }
+    },
+    {field: \'price\', 
+        // simple currency formatter putting in dollar sign
+        valueFormatter: function(params){
+            return \'$\' + params.value;
+        },
+    }
+];'); ?>
+        </div>
+        <div class="col-md-6">
+            <?php gridFeature('Setters and Parsers', '../javascript-grid-value-setters/', null,
+                '<span class="feature-highlight">Value Setters and Value Parsers</span> are the inverse of value getters
+and value formatters. Value setters are for placing values into data when field cannot be used. Value parser is for parsing
+edited values, eg removing formatting before storing into the data.',
+                'var columns = [
+    // this example assumes the data is in an array,
+    // so you want to access indexes of the array rather
+    // than using field
+    {
+        // value getter returns first array element
+        valueGetter: function(params) {
+            var data = params.data;
+            return data[0];
+        },
+        // value setter sets first array element
+        valueSetter: function(params) {
+            var data = params.data;
+            data[0] = params.newValue;
+        }
+    },
+    // this column is for a number, the default editor sets
+    // strings, so we convert the string to a number
+    {
+        field: \'amount\',
+        valueFormatter: function(params){
+            return Number(params.newValue);
+        }
+    }
+];'); ?>
+        </div>
+        <div class="col-md-6">
+            <?php gridFeature('Expressions', '../javascript-grid-cell-expressions/', null,
+                '<span class="feature-highlight">Expressions</span> allow you to use simple strings instead
+of functions for value getters, setters, formatters and parsers.',
+                'var columns = [
+    {        
+        valueGetter: \'data[0]\',
+        valueSetter: \'data[0] = newValue\',
+        valueFormatter: \'"$"+value\',
+        valueParser: \'Number(params.newValue)\'
+    }
+];'); ?>
+        </div>
+        <div class="col-md-6">
+            <?php gridFeature('Value Cache', '../javascript-grid-value-cache/', null,
+                'The <span class="feature-highlight">Value Cache</span> is used to store
+results of value getters. It is always on enhancing the performance of the grid.',
+                null); ?>
+        </div>
+        <div class="col-md-6">
+            <?php gridFeature('Reference Data', '../javascript-grid-reference-data/', null,
+                'Use <span class="feature-highlight">Reference Data</span> for easier editing
+of data that uses reference data for display. For example, you might have country codes in your data eg
+{IE, UK, USA} but you display values eg {Ireland, Great Britain, United States of America}). Using reference
+data simplifies this, especially if editing.',
+                null); ?>
+        </div>
+    </div>
 
-gridFeature('Value Getters & Formatters', '../javascript-grid-value-getters/', '.gif', '<span class="feature-highlight"></span> ',
-null);
+</div>
 
-gridFeature('Value Setters & Parsers', '../javascript-grid-value-setters/', '.gif', '<span class="feature-highlight"></span> ',
-null);
 
-gridFeature('Expressions', '../javascript-grid-cell-expressions/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Value Cache', '../javascript-grid-value-cache/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-gridFeature('Reference Data', '../javascript-grid-reference-data/', '.gif', '<span class="feature-highlight"></span> ',
-null);
-
-*/
+<?php
 
 gridFeature('Cell Rendering', '../javascript-grid-cell-rendering/', 'cellRendering.gif',
     'Use <span class="feature-highlight">Cell Rendering</span> to have cells rendering values other than simple strings.
