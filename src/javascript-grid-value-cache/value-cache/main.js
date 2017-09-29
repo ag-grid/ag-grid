@@ -91,7 +91,9 @@ function createGrid(valueCacheOn) {
     // then similar to all the other examples, create the grid
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.api.sizeColumnsToFit();
+    gridOptions.onGridReady = function() {
+        gridOptions.api.sizeColumnsToFit();
+    }
 }
 
 // setup the grid after the page has finished loading
