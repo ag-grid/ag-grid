@@ -12,19 +12,6 @@ export class AureliaFrameworkFactory implements IFrameworkFactory {
     constructor(private _componentFactory: AureliaComponentFactory, private _viewCompiler: ViewCompiler) {
     }
 
-    public colDefCellEditor(colDef: ColDef): { new (): ICellEditorComp; } | string {
-        if (colDef.cellEditorFramework) {
-            //cache the columnDef viewFactory
-            if (!colDef.cellEditorFramework.$viewFactory) {
-                colDef.cellEditorFramework.$viewFactory = this._viewCompiler.compile(colDef.cellEditorFramework.template, this._viewResources);
-            }
-            return this._componentFactory.createEditorFromTemplate(this._container, colDef.cellEditorFramework.$viewFactory);
-
-        } else {
-            return this._baseFrameworkFactory.colDefCellEditor(colDef);
-        }
-    }
-
     public colDefFilter(colDef: ColDef): { new (): IFilterComp; } | string {
         return this._baseFrameworkFactory.colDefFilter(colDef);
     }
