@@ -20,29 +20,52 @@
     }
     .feature-title {
         margin-top: 0px;
+        margin-bottom: 14px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #ccc;
     }
     .feature-snippet {
         display: inline-block;
+        margin-top: 10px;
     }
     .feature-description {
         margin-bottom: 4px;
+        padding-right: 12px;
+        display: inherit;
     }
     .feature-highlight {
         font-weight: bold;
     }
-    .small-feature .feature-animated-gif-container {
+    
+    /* used for column filter and value handlers, with half width child features */
+    .half-width-child-features .feature-animated-gif-container {
         float: none;
         width: 100%;
     }
-    .small-feature h2 {
+    .half-width-child-features h2 {
         font-size: 20px;
     }
-    .small-feature .feature-snippet {
+    .half-width-child-features .feature-snippet {
         margin-top: 10px;
     }
-    .small-feature .feature-item {
+    .half-width-child-features .feature-item {
         margin-bottom: 10px;
         border: 1px solid #ddd;
+        margin-top: 10px;
+    }
+    .half-width-child-features .feature-description {
+        margin-top: 10px;
+    }
+
+
+    /* used in data functions, with full width child feature */
+    .full-width-child-features h2 {
+        font-size: 20px;
+    }
+    .full-width-child-features .feature-item {
+        margin-bottom: 20px;
+        border: 1px solid #ddd;
+        margin-top: 10px;
     }
 
 </style>
@@ -117,7 +140,7 @@ columnApi.autoSizeAllColumns();
 
 <div class="feature-item">
 
-    <h2><a href="../javascript-grid-filtering/" class="feature-title">Column Filter</a></h2>
+    <h2 class="feature-title"><a href="../javascript-grid-filtering/">Column Filter</a></h2>
     <div class="feature-description">
         <span class="feature-highlight">Column Filter's</span> appear in the column menu.
         The grid provides filters out of the box (text, number, date and set filters) or create your
@@ -135,7 +158,7 @@ columnApi.autoSizeAllColumns();
 ]}</snippet>
     </div>
 
-    <div class="row small-feature">
+    <div class="row half-width-child-features">
         <div class="col-md-6">
             <?php gridFeature('Text Filter', '../javascript-grid-filter-text/', 'textFilter.gif',
                 '<span class="feature-highlight">Text Filter</span> allows filtering text strings with 
@@ -160,7 +183,7 @@ colDef = {
 '); ?>
         </div>
     </div>
-    <div class="row small-feature">
+    <div class="row half-width-child-features">
         <div class="col-md-6">
             <?php gridFeature('Date Filter', '../javascript-grid-filter-date/', 'dateFilter.gif',
                 '<span class="feature-highlight">Date Filter</span> allows filtering dates with 
@@ -183,7 +206,7 @@ colDef = {
 '); ?>
         </div>
     </div>
-    <div class="row small-feature">
+    <div class="row half-width-child-features">
         <div class="col-md-6">
             <?php gridFeature('Custom Filter', '../javascript-grid-filter-custom/', 'customFilter.gif',
                 'Create your own filter to match your own business requirements.',
@@ -305,14 +328,14 @@ greater than 100.',
 ?>
 
 <div class="feature-item">
-    <h2><a href="../javascript-grid-value-handlers/" class="feature-title">Value Handlers</a></h2>
+    <h2 class="feature-title"><a href="../javascript-grid-value-handlers/">Value Handlers</a></h2>
     <div class="feature-description">
         Each grid column typically has a field where it gets the value to display. However you can
         provide more logic here to get finer control over how data is retrevied (for display) and stored (after editing)
         with the family of <span class="feature-highlight">Value Handlers</span>.
     </div>
 
-    <div class="row small-feature">
+    <div class="row half-width-child-features">
         <div class="col-md-6">
             <?php gridFeature('Value Getters & Value Formatters', '../javascript-grid-value-getters/', null,
                 '<span class="feature-highlight">Value Getters & Value Formatters</span> are about getting and formatting the
@@ -571,6 +594,53 @@ any scrollbars. This is useful for printing the grid, where all rows should be p
 visible on the screen.',
     null);
 
+?>
+
+<div class="feature-item">
+    <h2 class="feature-title"><a href="../javascript-grid-data-functions/">Data Functions</a></h2>
+    <div class="feature-description">
+        <span class="feature-highlight">Data Functions</span> allow you to manipulate the data using
+        <span class="feature-highlight">Grouping</span>, <span class="feature-highlight">Aggregation</span>
+        and <span class="feature-highlight">Pivoting</span>.
+    </div>
+
+    <div class="full-width-child-features">
+    <?php
+    gridFeature('Grouping Rows', '../javascript-grid-grouping/', 'rowGroup.gif',
+        'Use <span class="feature-highlight">Grouping Rows</span> to group the data over selected
+dimensions. You can set the data to group by specific columns, or allow the user to drag and drop columns
+of their choice and have it grouped on the fly.',
+        'columnDefs = [
+    {field: \'country\', rowGroup: true},
+    {field: \'sport\'},
+    ...
+]');
+
+    gridFeature('Aggregation', '../javascript-grid-aggregation/', 'aggregation.gif',
+        'When grouping you can also do <span class="feature-highlight">Aggregation</span> to get aggregate
+values for the data ie sum, min, max etc. Use the built in aggregate functions or create your own.',
+        'columnDefs = [
+    {field: \'country\', rowGroup: true},
+    {field: \'gold\', aggFunc: \'sum\'},
+    ...
+]');
+
+    gridFeature('Pivoting', '../javascript-grid-pivoting/', 'pivot.gif',
+        'Make columns out of values by <span class="feature-highlight">Pivoting</span> on the data,
+similar to Pivot in Excel.',
+        'columnDefs = [
+    {field: \'country\', rowGroup: true},
+    {field: \'sport\', pivot: true},
+    {field: \'gold\', aggFunc: \'sum\'},
+    ...
+]');
+    ?>
+
+    </div>
+</div>
+
+<?php
+
 gridFeature('Data Functions', '../javascript-grid-data-functions/', null,
     '<span class="feature-highlight">Data Functions</span> allow you to manipulate the data using
 <span class="feature-highlight">Grouping</span>, <span class="feature-highlight">Aggregation</span> 
@@ -647,7 +717,7 @@ put into their application.',
     <div class="feature-animated-gif-container">
         <img src="./images/gridSize.gif" class="feature-animated-gif"/>
     </div>
-    <h3><a href="../javascript-grid-column-definitions/" class="feature-title">Grid Size</a></h3>
+    <h3 class="feature-title"><a href="../javascript-grid-column-definitions/">Grid Size</a></h3>
     <div class="feature-description">
         Set the width and height of the grid using CSS.
     </div>
