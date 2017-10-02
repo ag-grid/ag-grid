@@ -1054,6 +1054,19 @@ export class Utils {
         return eventNoType.target || eventNoType.srcElement;
     }
 
+    static isElementInEventPath(element: HTMLElement, event: MouseEvent | KeyboardEvent): boolean {
+        let sourceElement = _.getTarget(event);
+
+        while (sourceElement) {
+            if (sourceElement===element) {
+                return true;
+            }
+            sourceElement = sourceElement.parentElement;
+        }
+
+        return false;
+    }
+
     static forEachSnapshotFirst(list: any[], callback: (item: any)=>void ): void {
         if (list) {
             let arrayCopy = list.slice(0);
