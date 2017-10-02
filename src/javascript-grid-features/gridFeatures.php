@@ -70,14 +70,42 @@
 
 </style>
 
+<script>
+    var imagesToLazyLoad = [];
+
+    function addLazyLoadImage(featureId, imageId, imageSource) {
+        imagesToLazyLoad.push({
+            featureId: featureId,
+            imageId: imageId,
+            imageSource: imageSource
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        imagesToLazyLoad.forEach( function(item) {
+            var eImage = document.querySelector('#'+item.imageId);
+            var eFeature = document.querySelector('#'+item.featureId);
+            whenInViewPort([eFeature], function() {
+                eImage.src = './images/' + item.imageSource;
+            });
+        });
+    });
+</script>
+
 <?php
 function gridFeature($name, $url, $image, $description, $snippet) {
-    print('<div class="feature-item">');
+
+    $id = str_replace(' ', '', $name);
+    $imageId = 'img-'.$id;
+    $featureId = 'parent-'.$id;
+
+    print('<div id="'.$featureId.'" class="feature-item">');
     print('  <h2 class="feature-title"><a href="'.$url.'">'.$name.'</a></h2>');
     if (isset($image)) {
         print('  <div class="feature-animated-gif-container">');
-        print('    <img src="./images/' . $image . '" class="feature-animated-gif"/>');
+        print('    <img id="'.$imageId.'" class="feature-animated-gif"/>');
         print('  </div>');
+        print('<script>addLazyLoadImage("'.$featureId.'", "'.$imageId.'", "'.$image.'");</script>');
     }
     print('  <div class="feature-description">'.$description.'</div>');
     if (isset($snippet)) {
@@ -705,7 +733,7 @@ aggregations (sum, min, max etc) when you select a range of cells using range se
 happens in Excel.',
     null);
 
-gridFeature('License Key', '../javascript-grid-set-license/', 'licenseKey.gif',
+gridFeature('License Key', '../javascript-grid-set-license/', null,
     'Each customer of ag-Grid Enterprise will be given a <span class="feature-highlight">License Key</span> to
 put into their application.',
     null);

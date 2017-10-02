@@ -29,11 +29,11 @@ docs.service('HighlightService', function() {
     };
 });
 
-function whenInViewPort(element, callback) {
+export function whenInViewPort(element, callback) {
     function comparePosition() {
         var scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
         var scrollPos = scrollTop + document.documentElement.clientHeight;
-        var elemTop = element[0].offsetTop;
+        var elemTop = element[0].getBoundingClientRect().top;
 
         if (scrollPos >= elemTop) {
             window.removeEventListener('scroll', comparePosition);
