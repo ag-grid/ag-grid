@@ -87,12 +87,29 @@
         });
     }
 
+    function whenInViewPort(element, callback) {
+        function comparePosition() {
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
+            var scrollPos = scrollTop + document.documentElement.clientHeight;
+            var elemTop = element[0].getBoundingClientRect().top;
+
+            if (scrollPos >= elemTop) {
+                window.removeEventListener('scroll', comparePosition);
+                callback();
+                // setTimeout(callback, 2000);
+            }
+        }
+
+        comparePosition();
+        window.addEventListener('scroll', comparePosition);
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         imagesToLazyLoad.forEach( function(item) {
             var eImage = document.querySelector('#'+item.imageId);
             var eFeature = document.querySelector('#'+item.featureId);
             whenInViewPort([eFeature], function() {
-                eImage.src = './images/' + item.imageSource;
+                eImage.src = item.imageSource;
             });
         });
     });
@@ -107,7 +124,7 @@ function gridFeature($enterprise, $name, $url, $image, $description, $snippet) {
     $imageId = 'img-'.$id;
     $featureId = 'parent-'.$id;
 
-    $enterpriseImage = $enterprise ? '<img src="../images/enterprise_50.png" class="feature-enterprise-image"/>' : '';
+    $enterpriseImage = $enterprise ? '<img src="../images/enterprise_50.png" class="feature-enterprise-image" title="ag-Grid Enterprise Feature" alt="ag-Grid Enterprise"/>' : '';
 //        : '<img src="../images/svg/docs/features.svg" class="feature-enterprise-image"/>';
 
     print('<div id="'.$featureId.'" class="feature-item">');
@@ -116,7 +133,8 @@ function gridFeature($enterprise, $name, $url, $image, $description, $snippet) {
         print('  <div class="feature-animated-gif-container">');
         print('    <img id="'.$imageId.'" class="feature-animated-gif"/>');
         print('  </div>');
-        print('<script>addLazyLoadImage("'.$featureId.'", "'.$imageId.'", "'.$image.'");</script>');
+        $imageFullPath = $GLOBALS['featuresRoot'].'/images/' . $image;
+        print('<script>addLazyLoadImage("'.$featureId.'", "'.$imageId.'", "'.$imageFullPath.'");</script>');
     }
     print('  <div class="feature-description">'.$description.'</div>');
     if (isset($snippet)) {

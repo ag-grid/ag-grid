@@ -29,7 +29,7 @@ docs.service('HighlightService', function() {
     };
 });
 
-export function whenInViewPort(element, callback) {
+function whenInViewPort(element, callback) {
     function comparePosition() {
         var scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
         var scrollPos = scrollTop + document.documentElement.clientHeight;

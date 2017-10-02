@@ -29,7 +29,7 @@ include '../documentation-main/documentation_header.php';
     <h2 id="examples">ag-Grid Free vs ag-Grid Enterprise</h2>
 
     <p>
-        All features that are only availabe in ag-Grid Enterprise are marked with the enterprise symbol:
+        All features that are only available in ag-Grid Enterprise are marked with the enterprise symbol:
         <img style="padding: 5px; border: 1px solid lightgrey;" src="../images/enterprise.png"/>
     </p>
 
@@ -42,7 +42,10 @@ include '../documentation-main/documentation_header.php';
     </div>
 
 
-    <?php include './gridFeatures.php';?>
+    <?php
+        $featuresRoot = '.';
+        include './gridFeatures.php';
+    ?>
 
 </div>
 

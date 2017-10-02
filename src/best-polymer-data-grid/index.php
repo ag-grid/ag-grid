@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
         It is broken down into the following sections:
     </p>
 
-    <div class="list-group">
+    <div class="list-group" style="margin-top: 50px; margin-bottom: 50px;">
         <a href="/polymer-getting-started/" class="list-group-item">
             <div class="float-parent">
                 <div class="section-icon-container">
@@ -46,6 +46,16 @@ include '../documentation-main/documentation_header.php';
             </div>
         </a>
     </div>
+
+    <div style="text-align: center;">
+        <h2>Feature Roadshow</h2>
+    </div>
+
+    <?php
+    $featuresRoot = '../javascript-grid-features';
+    include '../javascript-grid-features/gridFeatures.php';
+    ?>
+
 </div>
 
 

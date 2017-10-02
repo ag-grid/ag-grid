@@ -126,17 +126,24 @@ include 'includes/navbar.php'; ?>
 
 <!--    --><?php //include 'home/demo-3.php'; ?>
 
-    <?php include 'home/demo-4.php'; ?>
+    <?php include './home/demo-4.php'; ?>
 
-    <?php include 'home/testimonials-1.php'; ?>
+    <?php include './home/testimonials-1.php'; ?>
 
-    <?php include 'home/demo-api.php'; ?>
+    <?php include './home/demo-api.php'; ?>
 
-    <?php include 'home/testimonials-2.php'; ?>
+    <?php include './home/testimonials-2.php'; ?>
 
-    <?php include 'home/demo-2.php'; ?>
+    <?php include './home/demo-2.php'; ?>
 
-    <?php include 'home/features.php'; ?>
+    <section>
+        <div class="container">
+            <?php
+            $featuresRoot = './javascript-grid-features';
+            include './javascript-grid-features/gridFeatures.php';
+            ?>
+        </div>
+    </section>
 
 </div>
 <script>

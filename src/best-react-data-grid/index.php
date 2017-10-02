@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('ag-Grid in React', 'rich', 'react', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 
-    <div class="list-group" style="margin-top: 20px;">
+    <div class="list-group" style="margin-top: 50px; margin-bottom: 50px;">
         <a href="../react-getting-started/" class="list-group-item">
             <div class="float-parent">
                 <div class="section-icon-container">
@@ -55,7 +55,14 @@ include '../documentation-main/documentation_header.php';
         </a>
     </div>
 
-    <?php include '../home/features-detail.php'; ?>
+    <div style="text-align: center;">
+        <h2>Feature Roadshow</h2>
+    </div>
+
+    <?php
+    $featuresRoot = '../javascript-grid-features';
+    include '../javascript-grid-features/gridFeatures.php';
+    ?>
 
 </div>
 
