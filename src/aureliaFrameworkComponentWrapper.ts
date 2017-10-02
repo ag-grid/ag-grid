@@ -57,7 +57,6 @@ abstract class BaseGuiComponent {
     private _viewCompiler: ViewCompiler;
 
     protected _params: any;
-    protected _frameworkComponentInstance: any;  // the users component - for accessing methods they create
     protected _view: View;
 
     constructor(taskQueue: TaskQueue, viewCompiler: ViewCompiler) {
@@ -102,7 +101,19 @@ abstract class BaseGuiComponent {
     }
 
     public getFrameworkComponentInstance(): any {
-        return this._frameworkComponentInstance;
+        let controllers: any[] = (<any> this._view).controllers;
+
+        //only one controller is allowed in editor template
+        if (controllers &&
+            controllers.length == 1 &&
+            controllers[0].viewModel) {
+            let editorVm = controllers[0].viewModel;
+            //this is a 'hack' because we don't have params.bind="" in the template
+            //must reset params or it will be nothing
+            editorVm.params = this._params;
+            return editorVm;
+        }
+        return null;
     }
 
 }
