@@ -29,7 +29,7 @@ if (USE_LOCAL) {
     $systemJsMap = array(
         "ag-grid" =>                       "$prefix/ag-grid/dist/ag-grid.js",
         "ag-grid/main" =>                  "$prefix/ag-grid/dist/ag-grid.js",
-        "ag-grid-enterprise" =>            "$prefix/ag-grid-enterprise/main.js",
+        "ag-grid-enterprise" =>            "$prefix/ag-grid-enterprise",
         "ag-grid-react" =>                 "$prefix/ag-grid-react",
         "ag-grid-angular" =>               "$prefix/ag-grid-angular"
     );
