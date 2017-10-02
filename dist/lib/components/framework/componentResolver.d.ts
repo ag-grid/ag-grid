@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.2.0
+// Type definitions for ag-grid v13.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "../../entities/gridOptions";
@@ -71,7 +71,7 @@ export declare class ComponentResolver {
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
      * It takes
-     *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
+     *  @param holderOpt: This is the context for which this component needs to be created, it can be gridOptions
      *      (global) or columnDef mostly.
      *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
      *      specified by the user in the configuration

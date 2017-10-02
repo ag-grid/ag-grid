@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,28 +16,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
-var utils_1 = require("../utils");
-var textCellEditor_1 = require("./cellEditors/textCellEditor");
-var selectCellEditor_1 = require("./cellEditors/selectCellEditor");
 var popupEditorWrapper_1 = require("./cellEditors/popupEditorWrapper");
-var popupTextCellEditor_1 = require("./cellEditors/popupTextCellEditor");
-var popupSelectCellEditor_1 = require("./cellEditors/popupSelectCellEditor");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var largeTextCellEditor_1 = require("./cellEditors/largeTextCellEditor");
+var componentResolver_1 = require("../components/framework/componentResolver");
 var CellEditorFactory = (function () {
     function CellEditorFactory() {
-        this.cellEditorMap = {};
     }
-    CellEditorFactory_1 = CellEditorFactory;
     CellEditorFactory.prototype.init = function () {
-        this.cellEditorMap[CellEditorFactory_1.TEXT] = textCellEditor_1.TextCellEditor;
-        this.cellEditorMap[CellEditorFactory_1.SELECT] = selectCellEditor_1.SelectCellEditor;
-        this.cellEditorMap[CellEditorFactory_1.POPUP_TEXT] = popupTextCellEditor_1.PopupTextCellEditor;
-        this.cellEditorMap[CellEditorFactory_1.POPUP_SELECT] = popupSelectCellEditor_1.PopupSelectCellEditor;
-        this.cellEditorMap[CellEditorFactory_1.LARGE_TEXT] = largeTextCellEditor_1.LargeTextCellEditor;
     };
     CellEditorFactory.prototype.addCellEditor = function (key, cellEditor) {
-        this.cellEditorMap[key] = cellEditor;
+        console.warn("Ignoring this bwahahahahahaha!");
     };
     // private registerEditorsFromGridOptions(): void {
     //     let userProvidedCellEditors = this.gridOptionsWrapper.getCellEditors();
@@ -45,28 +33,8 @@ var CellEditorFactory = (function () {
     //         this.addCellEditor(key, cellEditor);
     //     });
     // }
-    CellEditorFactory.prototype.createCellEditor = function (key, params) {
-        var CellEditorClass;
-        if (utils_1.Utils.missing(key)) {
-            CellEditorClass = this.cellEditorMap[CellEditorFactory_1.TEXT];
-        }
-        else if (typeof key === 'string') {
-            CellEditorClass = this.cellEditorMap[key];
-            if (utils_1.Utils.missing(CellEditorClass)) {
-                console.warn('ag-Grid: unable to find cellEditor for key ' + key);
-                CellEditorClass = this.cellEditorMap[CellEditorFactory_1.TEXT];
-            }
-        }
-        else {
-            CellEditorClass = key;
-        }
-        var cellEditor = new CellEditorClass();
-        this.context.wireBean(cellEditor);
-        // we have to call init first, otherwise when using the frameworks, the wrapper
-        // classes won't be set up
-        if (cellEditor.init) {
-            cellEditor.init(params);
-        }
+    CellEditorFactory.prototype.createCellEditor = function (column, params) {
+        var cellEditor = this.componentResolver.createAgGridComponent(column, params, 'cellEditor');
         if (cellEditor.isPopup && cellEditor.isPopup()) {
             if (this.gridOptionsWrapper.isFullRowEdit()) {
                 console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
@@ -78,15 +46,14 @@ var CellEditorFactory = (function () {
         }
         return cellEditor;
     };
-    CellEditorFactory.TEXT = 'text';
-    CellEditorFactory.SELECT = 'select';
-    CellEditorFactory.POPUP_TEXT = 'popupText';
-    CellEditorFactory.POPUP_SELECT = 'popupSelect';
-    CellEditorFactory.LARGE_TEXT = 'largeText';
     __decorate([
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)
     ], CellEditorFactory.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('componentResolver'),
+        __metadata("design:type", componentResolver_1.ComponentResolver)
+    ], CellEditorFactory.prototype, "componentResolver", void 0);
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
@@ -97,10 +64,9 @@ var CellEditorFactory = (function () {
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], CellEditorFactory.prototype, "init", null);
-    CellEditorFactory = CellEditorFactory_1 = __decorate([
+    CellEditorFactory = __decorate([
         context_1.Bean('cellEditorFactory')
     ], CellEditorFactory);
     return CellEditorFactory;
-    var CellEditorFactory_1;
 }());
 exports.CellEditorFactory = CellEditorFactory;

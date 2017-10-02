@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -472,7 +472,7 @@ var CellComp = (function (_super) {
         }
     };
     CellComp.prototype.processCellClassRules = function (onApplicableClass, onNotApplicableClass) {
-        this.beans.stylingService.processCellClassRules(this.column.getColDef(), {
+        this.beans.stylingService.processClassRules(this.column.getColDef().cellClassRules, {
             value: this.value,
             data: this.rowNode.data,
             node: this.rowNode,
@@ -818,7 +818,7 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.createCellEditor = function (keyPress, charPress, cellStartedEdit) {
         var params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-        var cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getCellEditor(), params);
+        var cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getColDef(), params);
         return cellEditor;
     };
     CellComp.prototype.createCellEditorParams = function (keyPress, charPress, cellStartedEdit) {
@@ -1224,7 +1224,7 @@ var CellComp = (function (_super) {
             var userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
             if (!userWantsToCancel) {
                 var newValue = this.cellEditor.getValue();
-                this.beans.valueService.setValue(this.rowNode, this.column, newValue);
+                this.rowNode.setDataValue(this.column, newValue);
                 this.value = this.getValue();
             }
         }
@@ -1255,7 +1255,11 @@ var CellComp = (function (_super) {
                     // we know it's a dom element (not a string) because we converted
                     // it after the gui was attached if it was a string.
                     var eCell = this.cellRendererGui;
-                    this.getHtmlElement().appendChild(eCell);
+                    // can be null if cell was previously null / contained empty string,
+                    // this will result in new value not being rendered.
+                    if (eCell) {
+                        this.getHtmlElement().appendChild(eCell);
+                    }
                 }
             }
         }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -225,7 +225,9 @@ var GridCore = (function () {
         this.logger.log('Grid DOM removed');
         this.destroyFunctions.forEach(function (func) { return func(); });
     };
-    GridCore.prototype.ensureNodeVisible = function (comparator) {
+    // Valid values for position are bottom, middle and top
+    GridCore.prototype.ensureNodeVisible = function (comparator, position) {
+        if (position === void 0) { position = 'top'; }
         if (this.doingVirtualPaging) {
             throw 'Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory';
         }
@@ -251,7 +253,7 @@ var GridCore = (function () {
             }
         }
         if (indexToSelect >= 0) {
-            this.gridPanel.ensureIndexVisible(indexToSelect);
+            this.gridPanel.ensureIndexVisible(indexToSelect, position);
         }
     };
     GridCore.prototype.doLayout = function () {

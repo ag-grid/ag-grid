@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -337,6 +337,7 @@ var RowComp = (function (_super) {
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
         var eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
@@ -368,8 +369,16 @@ var RowComp = (function (_super) {
         // the stub component now replaces the entire row
         this.onRowSelected();
         // as data has changed, then the style and class needs to be recomputed
+        this.postProcessCss();
+    };
+    RowComp.prototype.onRowNodeCellChanged = function (event) {
+        // as data has changed, then the style and class needs to be recomputed
+        this.postProcessCss();
+    };
+    RowComp.prototype.postProcessCss = function () {
         this.postProcessStylesFromGridOptions();
         this.postProcessClassesFromGridOptions();
+        this.postProcessRowClassRules();
     };
     RowComp.prototype.onExpandedChanged = function () {
         if (this.rowNode.group && !this.rowNode.footer) {
@@ -723,7 +732,27 @@ var RowComp = (function (_super) {
             classes.push(this.rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
         }
         utils_1._.pushAll(classes, this.processClassesFromGridOptions());
+        utils_1._.pushAll(classes, this.preProcessRowClassRules());
         return classes;
+    };
+    RowComp.prototype.preProcessRowClassRules = function () {
+        var res = [];
+        this.processRowClassRules(function (className) {
+            res.push(className);
+        }, function (className) {
+            // not catered for, if creating, no need
+            // to remove class as it was never there
+        });
+        return res;
+    };
+    RowComp.prototype.processRowClassRules = function (onApplicableClass, onNotApplicableClass) {
+        this.beans.stylingService.processClassRules(this.beans.gridOptionsWrapper.rowClassRules(), {
+            data: this.rowNode.data,
+            node: this.rowNode,
+            rowIndex: this.rowNode.rowIndex,
+            api: this.beans.gridOptionsWrapper.getApi(),
+            context: this.beans.gridOptionsWrapper.getContext()
+        }, onApplicableClass, onNotApplicableClass);
     };
     RowComp.prototype.stopEditing = function (cancel) {
         if (cancel === void 0) { cancel = false; }
@@ -780,6 +809,14 @@ var RowComp = (function (_super) {
                 _this.eAllRowContainers.forEach(function (row) { return utils_1._.addCssClass(row, classStr); });
             });
         }
+    };
+    RowComp.prototype.postProcessRowClassRules = function () {
+        var _this = this;
+        this.processRowClassRules(function (className) {
+            _this.eAllRowContainers.forEach(function (row) { return utils_1._.addCssClass(row, className); });
+        }, function (className) {
+            _this.eAllRowContainers.forEach(function (row) { return utils_1._.removeCssClass(row, className); });
+        });
     };
     RowComp.prototype.processClassesFromGridOptions = function () {
         var res = [];

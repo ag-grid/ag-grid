@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -694,7 +694,9 @@ var GridPanel = (function (_super) {
         var templateLocalised = templateNotLocalised.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
         return templateLocalised;
     };
-    GridPanel.prototype.ensureIndexVisible = function (index) {
+    // Valid values for position are bottom, middle and top
+    GridPanel.prototype.ensureIndexVisible = function (index, position) {
+        if (position === void 0) { position = 'top'; }
         // if for print, everything is always visible
         if (this.gridOptionsWrapper.isForPrint()) {
             return;
@@ -717,21 +719,31 @@ var GridPanel = (function (_super) {
         if (scrollShowing) {
             vRangeBottom -= this.scrollWidth;
         }
-        var viewportScrolledPastRow = vRangeTop > rowTopPixel;
-        var viewportScrolledBeforeRow = vRangeBottom < rowBottomPixel;
+        var rowToHighlightHeight = rowBottomPixel - rowTopPixel;
+        var viewportHeight = vRangeBottom - vRangeTop;
+        var halfScreenHeight = (viewportHeight / 2) + (rowToHighlightHeight / 2);
         var eViewportToScroll = this.getPrimaryScrollViewport();
-        if (viewportScrolledPastRow) {
-            // if row is before, scroll up with row at top
-            eViewportToScroll.scrollTop = rowTopPixel;
-            this.rowRenderer.redrawAfterScroll();
+        var newScrollPosition;
+        switch (position.toLowerCase()) {
+            case 'top':
+                newScrollPosition = rowTopPixel;
+                break;
+            case 'bottom':
+                newScrollPosition = rowBottomPixel - viewportHeight;
+                break;
+            case 'middle':
+                newScrollPosition = rowTopPixel + halfScreenHeight;
+                // The if/else logic here protects us from over scrolling
+                // ie: Trying to scroll past the row (ie ensureNodeVisible (0, 'middle'))
+                newScrollPosition = newScrollPosition > rowTopPixel ? rowTopPixel : newScrollPosition;
+                break;
+            default:
+                console.warn("ag-grid: Invalid option for ensureNodeVisible [" + position + "]: valid options are: 'top','bottom' and 'middle'");
+                newScrollPosition = rowTopPixel;
+                break;
         }
-        else if (viewportScrolledBeforeRow) {
-            // if row is below, scroll down with row at bottom
-            var viewportHeight = vRangeBottom - vRangeTop;
-            var newScrollPosition = rowBottomPixel - viewportHeight;
-            eViewportToScroll.scrollTop = newScrollPosition;
-            this.rowRenderer.redrawAfterScroll();
-        }
+        eViewportToScroll.scrollTop = newScrollPosition;
+        this.rowRenderer.redrawAfterScroll();
         // otherwise, row is already in view, so do nothing
     };
     GridPanel.prototype.getPrimaryScrollViewport = function () {

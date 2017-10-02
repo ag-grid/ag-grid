@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -81,6 +81,7 @@ var ValueService = (function () {
         if (utils_1._.missing(data)) {
             rowNode.data = {};
         }
+        // for backwards compatibility we are also retrieving the newValueHandler as well as the valueSetter
         var _a = column.getColDef(), field = _a.field, newValueHandler = _a.newValueHandler, valueSetter = _a.valueSetter;
         // need either a field or a newValueHandler for this to work
         if (utils_1._.missing(field) && utils_1._.missing(newValueHandler) && utils_1._.missing(valueSetter)) {

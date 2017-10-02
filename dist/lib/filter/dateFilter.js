@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -130,7 +130,7 @@ var DateFilter = (function (_super) {
     DateFilter.prototype.resetState = function () {
         this.setDateFrom(null);
         this.setDateTo(null);
-        this.setFilterType("equals");
+        this.setFilterType(this.defaultFilter);
     };
     DateFilter.prototype.parse = function (model) {
         this.setDateFrom(model.dateFrom);

@@ -410,17 +410,10 @@
     display: inline-block;
     float: right; }
     .ag-material .ag-floating-filter-button button {
-      width: 12px;
-      height: 12px;
-      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;
-      background-size: 12px 12px;
-      filter: "initial";
-      height: 20px;
-      width: 20px;
-      background-position-y: 2px;
       border: 0;
-      text-indent: 10000px;
-      overflow: hidden; }
+      background: transparent;
+      padding: 3px;
+      margin: 0; }
   .ag-material .ag-rtl .ag-floating-filter-body {
     margin-right: 0;
     margin-left: 20px;
