@@ -1,12 +1,27 @@
 #!/usr/bin/env bash
 
 cd ag-grid
-#./node_modules/.bin/gulp stylus
-#./node_modules/.bin/webpack
 gulp webpack
 
 cd ../ag-grid-enterprise
-#./node_modules/.bin/webpack
 gulp webpack
 
-cd ..
+if [ -d "../ag-grid-angular" ]; then
+  cd ../ag-grid-angular
+  npm run clean-build
+fi
+
+if [ -d "../ag-grid-react" ]; then
+  cd ../ag-grid-react
+  gulp
+fi
+
+if [ -d "../ag-grid-vue" ]; then
+  cd ../ag-grid-vue
+  gulp
+fi
+
+if [ -d "../ag-grid-aurelia" ]; then
+  cd ../ag-grid-aurelia
+  npm run build
+fi
