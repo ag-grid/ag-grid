@@ -5,7 +5,7 @@ class VueFrameworkComponentWrapper {
         this._parent = parent;
     }
 
-    wrap(component, methodList) {
+    wrap(component, methodList, optionalMethods) {
         let componentType = VueComponentFactory.getComponentType(this._parent, component);
         if (!componentType) {
             return;
@@ -40,7 +40,14 @@ class VueFrameworkComponentWrapper {
                     return null;
                 }
             }
-
+        }));
+        optionalMethods.forEach((methodName => {
+            wrapper[methodName] = function () {
+                if (wrapper.getFrameworkComponentInstance()[methodName]) {
+                    const componentRef = this.getFrameworkComponentInstance();
+                    return wrapper.getFrameworkComponentInstance()[methodName].apply(componentRef, arguments)
+                }
+            }
         }));
 
         return wrapper;
@@ -51,4 +58,4 @@ VueFrameworkComponentWrapper.prototype.__agBeanMetaData = {
     beanName: "frameworkComponentWrapper"
 };
 
-export { VueFrameworkComponentWrapper as VueFrameworkComponentWrapper };
+export {VueFrameworkComponentWrapper as VueFrameworkComponentWrapper};
