@@ -49,6 +49,10 @@
             'ag-grid-react': {
                 main: './main.js',
                 defaultExtension: 'js'
+            },
+            'ag-grid-enterprise': {
+                main: './main.js',
+                defaultExtension: 'js'
             }
         },
         meta: {

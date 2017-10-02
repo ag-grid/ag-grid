@@ -40,6 +40,7 @@
     <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular-cookies.min.js"></script>
     <script src="../documentation-main/documentation.js"></script>
     <script src="../dist/site.js"></script>
 
