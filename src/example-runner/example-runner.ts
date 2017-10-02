@@ -33,13 +33,31 @@ function whenInViewPort(element, callback) {
     function comparePosition() {
         var scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
         var scrollPos = scrollTop + document.documentElement.clientHeight;
-        var elemTop = element[0].getBoundingClientRect().top;
+        var elemTop = element[0].offsetTop;
 
         if (scrollPos >= elemTop) {
             window.removeEventListener('scroll', comparePosition);
             callback();
             // setTimeout(callback, 2000);
         }
+    }
+
+    comparePosition();
+    window.addEventListener('scroll', comparePosition);
+}
+
+function trackIfInViewPort(element, callback) {
+    function comparePosition() {
+        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
+        var scrollPos = scrollTop + document.documentElement.clientHeight;
+        var elemTop = element[0].offsetTop;
+        var elemBottom = elemTop + element[0].querySelector('div').offsetHeight;
+
+        const adjustment = 100;
+
+        var inViewPort = scrollPos >= elemTop - adjustment && scrollTop <= elemBottom + adjustment;
+
+        callback(inViewPort);
     }
 
     comparePosition();
@@ -132,6 +150,7 @@ class ExampleRunner {
     private availableTypes: string[];
 
     private openFwDropdown: boolean = false;
+    private visible: boolean = false;
 
     toggleFwDropdown() {
         this.openFwDropdown = !this.openFwDropdown;
@@ -158,9 +177,19 @@ class ExampleRunner {
 
         this.availableTypes = Object.keys(this.config.types);
 
+        this.$timeout( () =>  {
+            trackIfInViewPort(this.$element, ( visible ) => {
+                if (this.visible !== visible) {
+                    console.log('toggling visible', visible)
+                    this.$timeout(() => {
+                        this.visible = visible;
+                    });
+                }
+            });
+        }, 1000);
+
         whenInViewPort(this.$element, () => {
             this.$timeout(() => {
-                console.log(this.getInitialType())
                 this.setType(this.getInitialType());
                 this.ready = true;
             });
@@ -375,7 +404,10 @@ docs.component('exampleRunner', {
 
         <div class="tab-contents" ng-if="$ctrl.ready">
             <div ng-show="$ctrl.selectedTab == 'result'" role="tabpanel" class="result">
-                <iframe ng-src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" seamless="true"></iframe>
+                <iframe ng-if="$ctrl.visible" ng-src="{{$ctrl.resultUrl}}" ng-style="$ctrl.iframeStyle" seamless="true"></iframe>
+                <div ng-show="!$ctrl.visible" class="iframe-placeholder" ng-style="$ctrl.iframeStyle">
+                    <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                </div>
             </div>
 
             <div ng-if="$ctrl.selectedTab == 'code'" role="tabpanel" class="code-browser">
@@ -431,8 +463,7 @@ docs.component('preview', {
         options: '<'
     },
 
-    template: ` 
-        <div ng-class='["example-runner"]'>
+    template: `<div ng-class='["example-runner"]'>
         <ul role="tablist" class="primary">
             <li class="title">
                 <a href="#example-{{$ctrl.name}}" id="example-{{$ctrl.name}}"> <i class="fa fa-link" aria-hidden="true"></i> {{$ctrl.title}} </a>

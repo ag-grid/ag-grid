@@ -160,7 +160,7 @@ $border-radius: $unit;
             position: relative;
         }
 
-        iframe {
+        iframe, .iframe-placeholder {
             height: 500px;
             width: 100%;
             background-color: transparent;
