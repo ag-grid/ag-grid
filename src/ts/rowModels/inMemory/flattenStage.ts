@@ -71,8 +71,12 @@ export class FlattenStage implements IRowNodeStage {
             // check all these cases, for working out if this row should be included in the final mapped list
             let isGroupSuppressedNode = groupSuppressRow && rowNode.group;
             let isSkippedLeafNode = skipLeafNodes && !rowNode.group;
-            let isHiddenOpenParent = hideOpenParents && rowNode.expanded;
             let isRemovedSingleChildrenGroup = removeSingleChildrenGroups && rowNode.group && rowNode.childrenAfterGroup.length === 1;
+            // hide open parents means when group is open, we don't show it. we also need to make sure the
+            // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
+            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
+            let neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
+            let isHiddenOpenParent = hideOpenParents && rowNode.expanded && (!neverAllowToExpand);
 
             let thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup;
 
