@@ -171,7 +171,6 @@
 <div class="docsMenu-content">
     <?php
     menuItem(0, 'Features', 'Overview', 'javascript-grid-features/');
-    menuItem(0, 'Width & Height', 'Grid Size', 'javascript-grid-width-and-height/');
     menuItem(0, 'ColumnDefs', 'Column Definitions', 'javascript-grid-column-definitions/');
     menuItem(0, 'Grouping Columns', 'Column Groups', 'javascript-grid-grouping-headers/');
     menuItem(0, 'Column Header', 'Column Headers', 'javascript-grid-column-header/');
@@ -190,6 +189,7 @@
     menuItem(0, 'Sorting', 'Row Sorting', 'javascript-grid-sorting/');
     menuItem(0, 'Selection', 'Row Selection', 'javascript-grid-selection/');
     menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
+    menuItem(0, 'Width & Height', 'Grid Size', 'javascript-grid-width-and-height/');
     menuItem(0, 'Column Spanning', 'Column Spanning', 'javascript-grid-column-spanning/');
     menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
     menuItem(0, 'Row Pinning', 'Row Pinning', 'javascript-grid-row-pinning/');
@@ -217,7 +217,7 @@
     menuItem(0, 'Refresh', 'View Refresh', 'javascript-grid-refresh/');
     menuItem(0, 'Change Detection', 'Change Detection', 'javascript-grid-change-detection/');
     menuItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
-    menuItem(0, 'Performance', 'Performance <sup class="new">new</sup>', 'javascript-grid-performance/');
+    menuItem(0, 'Performance', 'Performance', 'javascript-grid-performance/');
     menuItem(0, 'Accessibility', 'Accessibility', 'javascript-grid-accessibility/');
     menuItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
     menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');

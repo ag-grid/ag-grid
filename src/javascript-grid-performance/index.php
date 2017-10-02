@@ -90,6 +90,12 @@ include '../documentation-main/documentation_header.php';
         The grid works fastest on Google Chrome. If you can, tell your users.
     </p>
 
+    <h2>7. Understand</h2>
+
+    <p>
+        Read the article <a href="../ag-grid-8-performance-hacks-for-javascript/">8 Performance Hacks for JavaScript</a>
+        so you know what the grid is doing, that way you will be able to reason with it.
+    </p>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
