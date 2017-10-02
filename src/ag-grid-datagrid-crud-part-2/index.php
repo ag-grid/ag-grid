@@ -7,9 +7,6 @@ $pageKeyboards = "ag-grid datagrid crud enterprise";
 include('../includes/mediaHeader.php');
 ?>
 
-<link rel="stylesheet" href="../documentation-main/documentation.css">
-<script src="../documentation-main/documentation.js"></script>
-
 <div class="row">
     <div class="col-sm-2" style="padding-top: 20px;">
         <img style="vertical-align: baseline;" src="../images/logo/SVG_ag_grid_bright-bg.svg" width="120px"/>
@@ -22,20 +19,74 @@ include('../includes/mediaHeader.php');
 
             <h2>Summary</h2>
 
-            <p>In Part 2 of this Series, we go into detail into the Backend - the model and how to use the H2 database.</p>
+            <p>In Part 2 of this Series, we go into more detail into the Middle Tier, exposing our data via a REST service.</p>
 
             <h2>Series Chapters</h2>
 
             <ul>
-                <li><a href="../ag-grid-datagrid-crud-part-1">Part 1</a>: Introduction & Initial Setup</li>
-                <li>Part 2: Backend (Database)</li>
-                <li><a href="../ag-grid-datagrid-crud-part-3">Part 3</a>: Middle Tier (Java, Spring, Hibernate)</li>
-                <li><a href="../ag-grid-datagrid-crud-part-4">Part 4</a>: Front End - Initial Implementation</li>
-                <li><a href="../ag-grid-datagrid-crud-part-5">Part 5</a>: Front End - Aggregation & Pivoting</li>
-                <li><a href="../ag-grid-datagrid-crud-part-6">Part 6</a>: Front End - Enterprise Row Model</li>
-                <li><a href="../ag-grid-datagrid-crud-part-7">Part 7</a>: Back End (Optional) - Using Oracle DB</li>
+                <li><a href="../ag-grid-datagrid-crud-part-1">Part 1</a>: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)</li>
+                <li>Part 2: Middle Tier: Exposing our data with a REST Service</li>
+                <li><a href="../ag-grid-datagrid-crud-part-3">Part 3</a>: Front End - Initial Implementation</li>
+                <li><a href="../ag-grid-datagrid-crud-part-4">Part 4</a>: Front End - Aggregation & Pivoting</li>
+                <li><a href="../ag-grid-datagrid-crud-part-5">Part 5</a>: Front End - Enterprise Row Model</li>
+                <li><a href="../ag-grid-datagrid-crud-part-6">Part 6</a>: Back End (Optional) - Using Oracle DB</li>
             </ul>
 
+            <h2>Introduction</h2>
+            <p>
+                In order for our data to be useful we need to make it available to users. One of hte easiest ways to do that
+                is to expose it as a <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST Service</a>,
+                which ties in nicely with CRUD operations - there is a one to one mapping with each of the Create, Retrieve, Update and Delete
+                operations that CRUD specifies.
+            </p>
+
+            <p>We'll again make use of Spring to expose the data via a REST service. Again we do this as Spring will remove a great
+            deal of the boilerplate that providing this functionality by hand would necessitate.</p>
+
+            <h3>Rest Controllers</h3>
+
+            <p>We can provide REST services via Rest Controllers. In most of the services we'll expose we'll generally just
+            pass through to one of the methods provided by our <code>Repositories</code>. In a real world application you'd
+            want to provide authentication of user requests and so on. </p>
+
+            <p>To define a <code>RestController</code> all we need to do is annotate a class as follows:</p>
+
+<snippet language="java">
+@RestController
+public class OlympicResultsController {
+</snippet>
+
+            <p>With this in place Spring is aware of the role we want this class to play. Now let's add method to this class
+                and annotate it with <code>RequestMapping</code>:</p>
+
+<snippet language="java">
+@RequestMapping("/olympicData")
+public Iterable<Athlete> getOlympicData() {
+    return athleteRepository.findAll();
+}
+</snippet>
+
+            <p>What the <code>RequestMapping</code> does is provide a mapping to our application via a URL.</p>
+            <p>In our case the full mapping would be:</p>
+
+<snippet>http://localhost:8080/olympicData</snippet>
+
+            <p>The base URL (http://localhost:8080) can vary based on how you deploy your application, but the actual mapping
+            (/olympicData) would be the same.</p>
+
+            <p>As you can see from our implementation we're simply delegating down to the repository in this case, returning the data
+            it provides. Again in a real world application you might want to secure your information in some way.</p>
+
+            <show-sources example=""
+                          sources="{
+                            [
+                                { root: './crud-app/controllers/', files: 'OlympicResultsController.java' },
+                            ]
+                          }"
+                          language="java"
+                          highlight="true"
+                          exampleHeight="500px">
+            </show-sources>
         </div>
         <div class="col-md-3">
 

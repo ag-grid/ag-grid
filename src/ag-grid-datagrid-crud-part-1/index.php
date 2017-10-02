@@ -40,7 +40,7 @@ include('../includes/mediaHeader.php');
 
             <ul>
                 <li>Part 1: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)</li>
-                <li><a href="../ag-grid-datagrid-crud-part-2">Part 2</a>: Middle Tier (Java, Spring, Hibernate)</li>
+                <li><a href="../ag-grid-datagrid-crud-part-2">Part 2</a>: Middle Tier: Exposing our data with a REST Service</li>
                 <li><a href="../ag-grid-datagrid-crud-part-3">Part 3</a>: Front End - Initial Implementation</li>
                 <li><a href="../ag-grid-datagrid-crud-part-4">Part 4</a>: Front End - Aggregation & Pivoting</li>
                 <li><a href="../ag-grid-datagrid-crud-part-5">Part 5</a>: Front End - Enterprise Row Model</li>
@@ -197,16 +197,26 @@ mvn spring-boot:run
 
             <p>Our database model is pretty simple - we have 4 entities here:</p>
 
-            <ul>
-                <li><code>Athlete</code>: The main entity - from this we can get the Results and Country associated to
-                    the Athlete
-                </li>
-                <li><code>Sport</code>: Sports completed in - static data</li>
-                <li><code>Country</code>: All Countries that completed - static data</li>
-                <li><code>Result</code>: Joins the tables above and captures each medal won, by which athlete in which
-                    sport, as well as the year, date and age of the athlete at the time of the event
-                </li>
-            </ul>
+            <table>
+                <tr style="vertical-align: top">
+                    <td><code>Athlete</code></td>
+                    <td>The main entity - from this we can get the Results and Country associated to
+                        the Athlete</td>
+                </tr>
+                <tr style="vertical-align: top">
+                    <td><code>Sport</code></td>
+                    <td>Sports completed in - static data</td>
+                </tr>
+                <tr style="vertical-align: top">
+                    <td><code>Country</code></td>
+                    <td>All Countries that completed - static data</td>
+                </tr>
+                <tr style="vertical-align: top">
+                    <td><code>Result</code></td>
+                    <td>Joins the tables above and captures each medal won, by which athlete in which
+                        sport, as well as the year, date and age of the athlete at the time of the event</td>
+                </tr>
+            </table>
 
             <img src="./erd_model.png" style="width: 100%">
 

@@ -1,6 +1,6 @@
 (function () {
 
-    var module = angular.module("documentation", []);
+    var module = angular.module("documentation", ['ngCookies']);
     /*
      * Show Example directive
      */
@@ -167,57 +167,6 @@
             $scope.extraPage = item;
         };
     }
-
-    module.directive("showSources", function () {
-        var ShowComplexScriptExampleController = ['$scope', '$http', '$attrs', '$sce', 'HighlightService', function ($scope, $http, $attrs, $sce, HighlightService) {
-            var pathname = getPathWithTrailingSlash();
-
-            $scope.source = $scope.sourcesOnly ? $attrs["example"] : (pathname + $attrs["example"]);
-
-            $scope.extraPages = [];
-
-            var sources = eval($attrs.sources);
-            sources.forEach(function (source) {
-                var root = source.root;
-                root = root === "./" ? pathname : root;
-                var files = source.files.split(',');
-
-                $scope.extraPages = $scope.extraPages.concat(files);
-
-                $scope.extraPageContent = {};
-                files.forEach(function (file) {
-                    $http.get(root + file).then(function (response) {
-                        var language = $attrs.language ? $attrs.language : 'js';
-                        var content = $attrs.highlight ? HighlightService.highlight(response.data, language) : response.data;
-                        $scope.extraPageContent[file] = $sce.trustAsHtml("<code><pre>" + content + "</code></pre>");
-                    }).catch(function (response) {
-                        $scope.extraPageContent[file] = response.data;
-                    });
-                });
-                $scope.extraPage = $scope.extraPages[0];
-            });
-
-            if ($attrs.exampleheight) {
-                $scope.iframeStyle = {height: $attrs.exampleheight};
-            } else {
-                $scope.iframeStyle = {height: '500px'}
-            }
-
-            $scope.isActivePage = function (item) {
-                return $scope.extraPage == item;
-            };
-            $scope.setActivePage = function (item) {
-                $scope.extraPage = item;
-            };
-        }];
-
-        return {
-            scope: true,
-            controller: ShowComplexScriptExampleController,
-            templateUrl: "/showSources.html"
-        }
-    });
-
 
     /*
      * plunker only example

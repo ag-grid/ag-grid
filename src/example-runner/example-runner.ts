@@ -5,6 +5,7 @@ import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-sql';
 
 const docs: angular.IModule = angular.module('documentation', ['ngCookies']);
 
@@ -15,7 +16,8 @@ const LanguageMap: {[key: string]: Prism.LanguageDefinition} = {
     sh: Prism.languages.bash,
     html: Prism.languages.html,
     jsx: Prism.languages.jsx,
-    java: Prism.languages.java
+    java: Prism.languages.java,
+    sql: Prism.languages.sql
 };
 
 function highlight(code: string, language: string): string {
@@ -31,9 +33,9 @@ docs.service('HighlightService', function() {
 
 function whenInViewPort(element, callback) {
     function comparePosition() {
-        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
-        var scrollPos = scrollTop + document.documentElement.clientHeight;
-        var elemTop = element[0].offsetTop;
+        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
+        const scrollPos = scrollTop + document.documentElement.clientHeight;
+        const elemTop = element[0].offsetTop;
 
         if (scrollPos >= elemTop) {
             window.removeEventListener('scroll', comparePosition);
@@ -280,7 +282,7 @@ class ExampleRunner {
     }
 
     openPlunker(clickEvent) {
-        var postData: any = {
+        const postData: any = {
             'tags[0]': 'ag-grid',
             'tags[1]': 'example',
             private: true,
@@ -521,4 +523,69 @@ docs.component('preview', {
             };
         }
     ]
+});
+
+let removeFilenameFromPath = function (pathname) {
+    if (pathname.lastIndexOf('/') === 0) {
+        // only the root slash present
+        return pathname;
+    }
+    return pathname.slice(0, pathname.lastIndexOf('/'));
+};
+
+let getPathWithTrailingSlash = function () {
+    let pathname = removeFilenameFromPath(window.location.pathname);
+    let trailingSlash = (pathname.indexOf("/", 1) === pathname.length - 1);
+    pathname += trailingSlash ? "" : "/";
+    return pathname;
+};
+
+docs.directive("showSources", function () {
+    const ShowComplexScriptExampleController = ['$scope', '$http', '$attrs', '$sce', 'HighlightService', function ($scope, $http, $attrs, $sce, HighlightService) {
+        const pathname = getPathWithTrailingSlash();
+
+        $scope.source = $scope.sourcesOnly ? $attrs["example"] : (pathname + $attrs["example"]);
+
+        $scope.extraPages = [];
+
+        const sources = eval($attrs.sources);
+        sources.forEach(function (source) {
+            let root = source.root;
+            root = root === "./" ? pathname : root;
+            const files = source.files.split(',');
+
+            $scope.extraPages = $scope.extraPages.concat(files);
+
+            $scope.extraPageContent = {};
+            files.forEach(function (file) {
+                $http.get(root + file).then(function (response) {
+                    const language = $attrs.language ? $attrs.language : 'js';
+                    const content = $attrs.highlight ? HighlightService.highlight(response.data, language) : response.data;
+                    $scope.extraPageContent[file] = $sce.trustAsHtml("<code><pre>" + content + "</code></pre>");
+                }).catch(function (response) {
+                    $scope.extraPageContent[file] = response.data;
+                });
+            });
+            $scope.extraPage = $scope.extraPages[0];
+        });
+
+        if ($attrs.exampleheight) {
+            $scope.iframeStyle = {height: $attrs.exampleheight};
+        } else {
+            $scope.iframeStyle = {height: '500px'}
+        }
+
+        $scope.isActivePage = function (item) {
+            return $scope.extraPage == item;
+        };
+        $scope.setActivePage = function (item) {
+            $scope.extraPage = item;
+        };
+    }];
+
+    return {
+        scope: true,
+        controller: ShowComplexScriptExampleController,
+        templateUrl: "/showSources.html"
+    }
 });
