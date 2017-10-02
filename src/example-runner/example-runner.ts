@@ -2,6 +2,8 @@ import './example-runner.scss';
 import * as angular from 'angular';
 import * as Prism from 'prismjs';
 import * as jQuery from 'jquery';
+import {vanillaToAngular} from './vanilla-to-angular';
+
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-jsx';
@@ -130,6 +132,7 @@ class ExampleRunner {
     ready: boolean = false;
     private source: any;
     private loadingSource: boolean;
+    private showFrameworksDropdown: boolean;
     private selectedTab: string;
 
     private selectedFile: string;
@@ -194,6 +197,7 @@ class ExampleRunner {
         this.title = this.config.title;
         this.name = this.config.name;
         this.section = this.config.section;
+        this.showFrameworksDropdown = this.config.type === 'multi' || this.config.type === 'generated';
 
         this.availableTypes = Object.keys(this.config.types);
 
@@ -269,43 +273,80 @@ class ExampleRunner {
         this.currentType = type;
 
         this.loadAllSources();
+
         this.refreshSource();
 
         this.openFwDropdown = false;
     }
 
-    private sources: any;
+    private sources: string[];
     private allFiles: any;
 
     loadAllSources() {
         this.allFiles = this.files.concat(this.boilerplateFiles);
-        this.$q.all(this.allFiles.map((file: any) => this.$http.get(this.getSourceUrl(file)))).then((files: any) => {
-            this.sources = files;
-        });
+
+        this.$q
+            .all(
+                this.allFiles.map((file: string) => {
+                    return this.loadSource(file);
+                })
+            )
+            .then((sources: any) => {
+                this.sources = sources;
+            });
     }
 
     refreshSource() {
         this.loadingSource = true;
         this.source = this.$sce.trustAsHtml('Loading...');
 
-        const sourceUrl = this.getSourceUrl(this.selectedFile);
-
-        this.$http.get(sourceUrl).then((response: angular.IHttpResponse<{}>) => {
+        this.loadSource(this.selectedFile).then(source => {
             this.loadingSource = false;
             const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
-            const highlightedSource = highlight((response.data as string).trim(), extension);
+            const highlightedSource = highlight(source.trim(), extension);
             this.source = this.$sce.trustAsHtml(highlightedSource);
         });
     }
 
-    getSourceUrl(file: string) {
+    loadSource(file: string): angular.IPromise<string> {
+        let source = this.getSource(file);
+        let process: (string) => string;
+        let sourceUrl;
+
+        if (typeof source === 'string') {
+            sourceUrl = source;
+        } else {
+            sourceUrl = source.url;
+            process = source.process;
+        }
+
+        return this.$http.get(sourceUrl).then((response: angular.IHttpResponse<string>) => {
+            return process ? process(response.data) : response.data;
+        });
+    }
+
+    getSource(file: string): string | {url: string; process: (string) => string} {
         if (this.boilerplateFiles.indexOf(file) > -1) {
             return [this.boilerplatePath, file].join('/');
         }
         if (file == this.files[0]) {
             return this.resultUrl + '&preview=true';
         } else {
-            if (this.config.type === 'multi') {
+            if (this.config.type === 'generated' && this.currentType !== 'vanilla') {
+                if (this.currentType === 'angular') {
+                    if (file == 'app/app.module.ts') {
+                        return [this.boilerplatePath, '..', 'angular-generated-app-module.ts'].join('/');
+                    } else {
+                        // app.component.ts
+                        const vanillaScript = this.config.types.vanilla.files.filter(file => file.endsWith('.js'))[0];
+
+                        return {
+                            url: [this.config.options.sourcePrefix, this.section, this.name, vanillaScript].join('/'),
+                            process: source => vanillaToAngular(source, this.config.options.grid)
+                        };
+                    }
+                }
+            } else if (this.config.type === 'multi') {
                 return [this.config.options.sourcePrefix, this.section, this.name, this.currentType, file].join('/');
             } else {
                 return [this.config.options.sourcePrefix, this.section, this.name, file].join('/');
@@ -322,7 +363,7 @@ class ExampleRunner {
         };
 
         this.sources.forEach((file: any, index: number) => {
-            postData['files[' + this.allFiles[index] + ']'] = file.data;
+            postData['files[' + this.allFiles[index] + ']'] = file;
         });
 
         this.formPostData('//plnkr.co/edit/?p=preview', true, postData);
@@ -364,7 +405,7 @@ docs.component('exampleRunner', {
     template: ` 
         <div ng-class='["example-runner"]'>
 
-        <div class="framework-chooser" ng-if="$ctrl.config.type === 'multi'">
+        <div class="framework-chooser" ng-if="$ctrl.showFrameworksDropdown">
             <span> Example version: </span>
             <div ng-class="{ 'btn-group': true, 'open': $ctrl.openFwDropdown }">
 

@@ -1,5 +1,4 @@
-import {generate} from 'escodegen';
-import * as esprima from 'esprima';
+import parser from './vanilla-src-parser';
 
 function stripOnPrefix(eventName) {
     return eventName.replace(/on([A-Z])/, function(...matches) {
@@ -12,97 +11,80 @@ function convertFunctionToMethod(func, methodName) {
 }
 
 function appComponentTemplate(bindings) {
-    const eventAttributes = bindings.eventHandlers
-        .filter(event => event.name != 'onGridReady')
-        .map(event => {
-            return `(${stripOnPrefix(event.name)})="${event.name}($event)"`;
-        })
-        .join(' ');
+    const diParams = [];
+    const imports = [];
+    const additional = [];
 
-    const eventHandlers = bindings.eventHandlers
-        .map(event => {
-            return convertFunctionToMethod(event.handler, event.name);
-        })
-        .join('\n\n');
+    if (bindings.data) {
+        imports.push('import { HttpClient } from "@angular/common/http";');
+        diParams.push('private http: HttpClient');
+    }
+
+    if (bindings.gridSettings.enterprise) {
+        imports.push('import "ag-grid-enterprise";');
+    }
+
+    const propertyAttributes = bindings.properties.map(property => {
+        return `[${property.name}]="${property.name}"`;
+    });
+
+    const propertyVars = bindings.properties.map(property => `${property.name};`);
+
+    const propertyAssignments = bindings.properties.map(property => `this.${property.name} = ${property.value}`);
+
+    const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(event => {
+        return `(${stripOnPrefix(event.name)})="${event.name}($event)"`;
+    });
+
+    const eventHandlers = bindings.eventHandlers.map(event => {
+        return convertFunctionToMethod(event.handler, event.name);
+    });
+
+    if (bindings.data) {
+        additional.push(`
+    ngOnInit() {
+        const gridOptions = this.agGrid;
+        this.http.get(${bindings.data.url}).subscribe( data => ${bindings.data.callback});
+    }
+        `);
+    }
 
     return `
 import { Component, ViewChild } from '@angular/core';
+${imports.join('\n')}
 
 @Component({
-  selector: 'my-app',
-  template: '<ag-grid-angular #agGrid style="width: 900px; height: 115px;" class="ag-fresh" ${eventAttributes} [rowData]="rowData" [columnDefs]="columnDefs"></ag-grid-angular>'
+    selector: 'my-app',
+    template: \`<ag-grid-angular
+    #agGrid
+    style="width: ${bindings.gridSettings.width}; height: ${bindings.gridSettings.height};"
+    class="${bindings.gridSettings.theme}"
+    ${propertyAttributes.concat(eventAttributes).join('\n    ')}
+    ></ag-grid-angular>\`
 })
 export class AppComponent {
     @ViewChild('agGrid') agGrid;
-    columnDefs;
-    rowData;
 
-    constructor() {
-        this.columnDefs = ${bindings.columnDefs};
-        this.rowData = ${bindings.rowData};
+    ${propertyVars.join('\n    ')}
+
+    constructor(${diParams.join(', ')}) {
+        ${propertyAssignments.join(';\n    ')}
     }
 
-    ${eventHandlers}
-
+    ${eventHandlers.concat(additional).map( snippet => snippet.trim() ).join('\n\n')}
+/*
     ngAfterViewInit() {
         // necessary for the layout to kick in
         setTimeout( () => this.onGridReady(this.agGrid), 400);
     }
+*/
 }
 `;
 }
 
-const EVENTS = ['onGridReady'];
-
-function getPropertyValue(objectExpression, key) {
-    let found;
-
-    for (let prop of objectExpression.init.properties) {
-        if (prop.key.name == key) {
-            found = prop;
-        }
-    }
-
-    return found && found.value;
-}
-
-function vanillaToAngular(src, callback) {
-    const tree = esprima.parseScript(src);
-
-    function findVar(varName) {
-        let found;
-
-        for (let node of tree.body) {
-            if (node.type === 'VariableDeclaration' && (<any>node.declarations[0].id).name === varName) {
-                found = node;
-            }
-        }
-
-        return found && found.declarations[0];
-    }
-
-    const gridOptions = findVar('gridOptions');
-    const eventHandlers = [];
-
-    if (gridOptions) {
-        EVENTS.forEach(eventName => {
-            const eventHandler = getPropertyValue(gridOptions, eventName);
-            if (eventHandler) {
-                eventHandlers.push({
-                    name: eventName,
-                    handler: generate(eventHandler)
-                });
-            }
-        });
-    }
-
-    const bindings = {
-        eventHandlers: eventHandlers,
-        columnDefs: generate(findVar('columnDefs').init),
-        rowData: generate(findVar('rowData').init)
-    };
-
-    callback(appComponentTemplate(bindings));
+export function vanillaToAngular(src, gridSettings) {
+    const bindings = parser(src, gridSettings);
+    return appComponentTemplate(bindings);
 }
 
 (<any>window).vanillaToAngular = vanillaToAngular;

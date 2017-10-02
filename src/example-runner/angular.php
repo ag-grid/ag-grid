@@ -2,8 +2,10 @@
 include 'utils.php';
 $example = getExampleInfo('angular');
 $generated = isset($_GET['generated']);
+if ($generated) { 
+    echo '<!DOCTYPE html>';
+};
 ?>
-<!DOCTYPE html>
 <html>
 <head>
     <title>Angular 2 ag-Grid starter</title>
@@ -30,11 +32,12 @@ $generated = isset($_GET['generated']);
 
     <script src="<?=$example['boilerplatePath']?>systemjs.config.js"></script>
 
-<?php 
-if ($generated && !$example['preview']) { ?>
+<?php if ($generated && !$example['preview']) { ?>
     <script src="<?=$example['boilerplatePath']?>../systemjs-fetch-override.js"></script>
     <script src="../dist/vanilla-to-angular.js"></script>
     <script>
+
+    var gridSettings = <?=json_encode($example['gridSettings']) ?>;
 
     var filesToMock = [
         {
@@ -44,7 +47,9 @@ if ($generated && !$example['preview']) { ?>
         {
             name: 'app/app.component.ts',
             url: '<?=$example["scripts"][0] ?>',
-            transform: vanillaToAngular
+            transform: function(source) { 
+                return vanillaToAngular(source, gridSettings);
+            }
         },
     ];
 

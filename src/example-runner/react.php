@@ -1,6 +1,10 @@
 <?php
 include 'utils.php';
 $example = getExampleInfo('react');
+$generated = isset($_GET['generated']);
+if ($generated) { 
+    echo '<!DOCTYPE html>';
+};
 ?>
 <html>
 <head>

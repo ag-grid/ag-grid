@@ -17,23 +17,15 @@ System.fetch = function(metadata) {
 };
 
 function registerMockedFile(file, callback) {
-    function resolveWith(content) {
-        mockedFiles.push({
-            name: file.name,
-            content: content
-        });
-        callback();
-    }
-
     var xhr = new XMLHttpRequest();
 
     xhr.onreadystatechange = function() {
         if (xhr.readyState == XMLHttpRequest.DONE) {
-            if (file.transform) {
-                file.transform(xhr.responseText, resolveWith);
-            } else {
-                resolveWith(xhr.responseText);
-            }
+            var content = file.transform ? file.transform(xhr.responseText) : xhr.responseText;
+
+            mockedFiles.push({name: file.name, content: content});
+
+            callback();
         }
     };
 

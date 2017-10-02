@@ -90,21 +90,8 @@ function getDirContents($dir, &$results = array(), $prefix = ""){
     return $results;
 }
 
-function getBoilerplateConfig($type) {
-    if ($type == "vanilla" || $type == "polymer") {
-        return "";
-    }
-
-    $boilerplatePath = "../example-runner/$type-boilerplate/";
-    $files = htmlspecialchars(json_encode(getDirContents($boilerplatePath)));
-
-    return <<<ATTR
-    boilerplate-path="'$boilerplatePath'"
-    boilerplate-files="$files"
-ATTR;
-}
-
 function toQueryString($key, $value) {
+    $value = urlencode($value);
     return "$key=$value";
 }
 
@@ -139,6 +126,7 @@ function getTypes($dir)
 function example($title, $dir, $type='vanilla', $options = array()) {
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));
     $multi = $type === 'multi';
+    $generated = $type === 'generated';
 
     $config = array(
         'type' => $type,
@@ -150,7 +138,10 @@ function example($title, $dir, $type='vanilla', $options = array()) {
         'options' => $options 
     );
 
-    if ($multi) {
+    if ($generated) {
+        $types = array( 'vanilla', 'angular', 'react' );
+    }
+    else if ($multi) {
         $types = getTypes($dir);
     } else {
         $types = [ $type ];
@@ -171,22 +162,56 @@ function example($title, $dir, $type='vanilla', $options = array()) {
         $query['enterprise'] = true;
     }
 
+    if ($multi) {
+        $query['multi'] = 1;
+    }
+
+    if ($generated) {
+        $query['generated'] = 1;
+    }
+
+    $gridSettings = array(
+        'theme' => 'ag-fresh',
+        'height' => '100%',
+        'width' => '100%',
+        'enterprise' => isset($_GET['enterprise'])
+    );
+
+    if (isset($options['grid'])) {
+        $gridSettings = array_merge($gridSettings, $options['grid']);
+    }
+
+    $config['options']['grid'] = $gridSettings;
+    
+    $query['grid'] = json_encode($gridSettings);
+
     $queryString = join("&", array_map('toQueryString', array_keys($query), $query));
 
     foreach ($types as $theType) {
         $entry = array();
         if ($multi) {
             $entry['files'] = getDirContents($dir . "/" . $theType); 
-        }  else {
-            $entry['files'] = getDirContents($dir); 
+        } else {
+            $contents = getDirContents($dir);
+            $styles = getStyles($contents, '', true);
+            switch ($theType) {
+                case 'vanilla':
+                    $entry['files'] = $contents; 
+                    break;
+                case 'react':
+                    $entry['files'] =  array_merge( array( 'index.jsx' ), $styles);
+                default:
+                    $entry['files'] =  array_merge( array( 'app/app.component.ts', 'app/app.module.ts' ), $styles);
+                    break;
+            }
         }
 
         if ($theType != "vanilla" && $theType != "polymer") {
-            $entry['boilerplatePath'] =  "../example-runner/$theType-boilerplate/";
+            $entry['boilerplatePath'] =  "../example-runner/$theType-boilerplate";
             $entry['boilerplateFiles'] = getDirContents($entry['boilerplatePath']);
         }
         
-        $entry['resultUrl'] = "../example-runner/$theType.php?$queryString" . ($multi ? '&multi=1' : '');
+        $entry['resultUrl'] = "../example-runner/$theType.php?$queryString";
 
         $config['types'][$theType] = $entry;
     }
@@ -243,6 +268,10 @@ function getScripts($files, $root, $preview) {
     return filterByExt($files, $root, $preview, 'js');
 }
 
+function getGridSettings() {
+    return json_decode($_GET['grid'], true);
+}
+
 function getExampleInfo($boilerplatePrefix) {
     $preview = isset($_GET['preview']);
     $multi = isset($_GET['multi']);
@@ -275,7 +304,8 @@ function getExampleInfo($boilerplatePrefix) {
         "appLocation" => $appLocation,
         "agGridScriptPath" => AG_SCRIPT_PATH,
         "styles" => $styles,
-        "scripts" => $scripts
+        "scripts" => $scripts,
+        "gridSettings" => getGridSettings()
     );
 }
 

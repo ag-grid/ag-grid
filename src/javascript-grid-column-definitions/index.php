@@ -147,7 +147,7 @@ var gridOptions = {
         The following examples demonstrates this configuration.
     </p>
 
-<?= example('Column Definition Example', 'column-definition', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Column Definition Example', 'column-definition', 'generated', array('enterprise' => 1, 'grid' => array('height' => '100%'))) ?>
 
 <h1>Provided Column Types</h1>
 
