@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.2.0
+// ag-grid-enterprise v13.3.0
 import { ColDef, ColGroupDef } from "ag-grid/main";
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.2.0
+// ag-grid-enterprise v13.3.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -17,13 +17,12 @@ var licenseManager_1 = require("./licenseManager");
 var EnterpriseBoot = (function () {
     function EnterpriseBoot() {
     }
-    EnterpriseBoot_1 = EnterpriseBoot;
     EnterpriseBoot.prototype.init = function () {
         this.filterManager.registerFilter('set', setFilter_1.SetFilter);
-        this.cellEditorFactory.addCellEditor(EnterpriseBoot_1.RICH_SELECT, richSelectCellEditor_1.RichSelectCellEditor);
+        this.componentProvider.registerComponent('richSelect', richSelectCellEditor_1.RichSelectCellEditor);
+        this.componentProvider.registerComponent('richSelectCellEditor', richSelectCellEditor_1.RichSelectCellEditor);
         this.licenseManager.validateLicense();
     };
-    EnterpriseBoot.RICH_SELECT = 'richSelect';
     __decorate([
         main_1.Autowired('filterManager'),
         __metadata("design:type", main_1.FilterManager)
@@ -37,15 +36,18 @@ var EnterpriseBoot = (function () {
         __metadata("design:type", licenseManager_1.LicenseManager)
     ], EnterpriseBoot.prototype, "licenseManager", void 0);
     __decorate([
+        main_1.Autowired('componentProvider'),
+        __metadata("design:type", main_1.ComponentProvider)
+    ], EnterpriseBoot.prototype, "componentProvider", void 0);
+    __decorate([
         main_1.PreConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], EnterpriseBoot.prototype, "init", null);
-    EnterpriseBoot = EnterpriseBoot_1 = __decorate([
+    EnterpriseBoot = __decorate([
         main_1.Bean('enterpriseBoot')
     ], EnterpriseBoot);
     return EnterpriseBoot;
-    var EnterpriseBoot_1;
 }());
 exports.EnterpriseBoot = EnterpriseBoot;
