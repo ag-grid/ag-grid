@@ -355,7 +355,7 @@ and r.sport_id = s.id
             <div>
                 <a href="https://twitter.com/share" class="twitter-share-button"
                    data-url="https://www.ag-grid.com/ag-grid-react-datagrid/"
-                   data-text="Building a React Datagrid Using Redux and ag-Grid" data-via="seanlandsman"
+                   data-text="Building a CRUD application with ag-Grid" data-via="seanlandsman"
                    data-size="large">Tweet</a>
                 <script>!function (d, s, id) {
                         var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';

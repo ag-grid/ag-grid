@@ -219,7 +219,7 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <?= example('Filter API', 'filter-api') ?>
+    <?= example('Filter API', 'filter-api', 'vanilla', array("enterprise" => 1)) ?>
 
     <h4 id="reset_filters">Reset Individual Filters</h4>
 
@@ -282,7 +282,7 @@ gridOptions.api.setFilterModel(null);</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <?= example('Filter Model', 'filter-model') ?>
+    <?= example('Filter Model', 'filter-model', 'vanilla', array("enterprise" => 1)) ?>
 
 <h3 id="floatingFilter">Floating filters</h3>
 
@@ -342,7 +342,7 @@ gridOptions = {
     </ul>
 </p>
 
-<?= example('Floating Filter', 'floating-filter') ?>
+<?= example('Floating Filter', 'floating-filter', 'vanilla', array("enterprise" => 1)) ?>
 
 <h3>Server Side Filtering</h3>
 
