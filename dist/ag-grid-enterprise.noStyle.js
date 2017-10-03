@@ -2837,6 +2837,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var eventNoType = event;
 	        return eventNoType.target || eventNoType.srcElement;
 	    };
+	    Utils.isElementInEventPath = function (element, event) {
+	        var sourceElement = exports._.getTarget(event);
+	        while (sourceElement) {
+	            if (sourceElement === element) {
+	                return true;
+	            }
+	            sourceElement = sourceElement.parentElement;
+	        }
+	        return false;
+	    };
 	    Utils.forEachSnapshotFirst = function (list, callback) {
 	        if (list) {
 	            var arrayCopy = list.slice(0);
@@ -20852,7 +20862,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        };
 	    };
 	    ComponentProvider.prototype.registerComponent = function (name, component) {
-	        console.warn("ag-grid: registering components is a lab feature, is not intended to be used or supported yet.");
+	        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
 	        if (this.frameworkComponents[name]) {
 	            console.error("Trying to register a component that you have already registered for frameworks: " + name);
 	            return;
@@ -20864,7 +20874,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
 	     */
 	    ComponentProvider.prototype.registerFwComponent = function (name, component) {
-	        console.warn("ag-grid: registering components is a lab feature, is not intended to be used or supported yet.");
+	        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
 	        if (this.jsComponents[name]) {
 	            console.error("Trying to register a component that you have already registered for plain javascript: " + name);
 	            return;
@@ -22969,6 +22979,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var columnController_1 = __webpack_require__(15);
 	var column_1 = __webpack_require__(17);
 	var componentAnnotations_1 = __webpack_require__(48);
+	var mouseEventService_1 = __webpack_require__(28);
 	var GroupCellRenderer = (function (_super) {
 	    __extends(GroupCellRenderer, _super);
 	    function GroupCellRenderer() {
@@ -23229,8 +23240,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // as that icons already has expand / collapse functionality on it. otherwise if
 	        // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
 	        // is open->close->open, however double click should be open->close only.
-	        var target = utils_1.Utils.getTarget(event);
-	        var targetIsExpandIcon = target !== this.eExpanded && target !== this.eContracted;
+	        var targetIsExpandIcon = utils_1.Utils.isElementInEventPath(this.eExpanded, event)
+	            || utils_1.Utils.isElementInEventPath(this.eContracted, event);
 	        if (!targetIsExpandIcon) {
 	            this.onExpandOrContract();
 	        }
@@ -23301,6 +23312,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        context_1.Autowired('columnController'),
 	        __metadata("design:type", columnController_1.ColumnController)
 	    ], GroupCellRenderer.prototype, "columnController", void 0);
+	    __decorate([
+	        context_1.Autowired('mouseEventService'),
+	        __metadata("design:type", mouseEventService_1.MouseEventService)
+	    ], GroupCellRenderer.prototype, "mouseEventService", void 0);
 	    __decorate([
 	        componentAnnotations_1.RefSelector('eExpanded'),
 	        __metadata("design:type", HTMLElement)
@@ -24111,7 +24126,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            cellEditor: {
 	                mandatoryMethodList: ['getValue'],
-	                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'focusIn', 'focusOut']
+	                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'focusIn', 'focusOut', 'afterGuiAttached']
 	            },
 	            innerRenderer: {
 	                mandatoryMethodList: [],
@@ -29248,8 +29263,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // check all these cases, for working out if this row should be included in the final mapped list
 	            var isGroupSuppressedNode = groupSuppressRow && rowNode.group;
 	            var isSkippedLeafNode = skipLeafNodes && !rowNode.group;
-	            var isHiddenOpenParent = hideOpenParents && rowNode.expanded;
 	            var isRemovedSingleChildrenGroup = removeSingleChildrenGroups && rowNode.group && rowNode.childrenAfterGroup.length === 1;
+	            // hide open parents means when group is open, we don't show it. we also need to make sure the
+	            // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
+	            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
+	            var neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
+	            var isHiddenOpenParent = hideOpenParents && rowNode.expanded && (!neverAllowToExpand);
 	            var thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup;
 	            if (thisRowShouldBeRendered) {
 	                this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
