@@ -1,6 +1,7 @@
 import './example-runner.scss';
 import * as angular from 'angular';
 import * as Prism from 'prismjs';
+import * as jQuery from 'jquery';
 import 'prismjs/components/prism-typescript';
 import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-jsx';
@@ -31,13 +32,35 @@ docs.service('HighlightService', function() {
     };
 });
 
+const win = jQuery(window);
+
+function getCurrentViewPort() {
+    const viewport = {
+        top : win.scrollTop(),
+        left : win.scrollLeft(),
+        right: NaN,
+        bottom: NaN
+    };
+
+    viewport.right = viewport.left + win.width();
+    viewport.bottom = viewport.top + win.height();
+
+    return viewport;
+}
+
+function getRect(element) {
+    const bounds = element.offset();
+    bounds.right = bounds.left + element.outerWidth();
+    bounds.bottom = bounds.top + element.outerHeight();
+    return bounds;
+}
+
 function whenInViewPort(element, callback) {
     function comparePosition() {
-        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
-        const scrollPos = scrollTop + document.documentElement.clientHeight;
-        const elemTop = element[0].offsetTop;
+        const viewPort = getCurrentViewPort();
+        const box = getRect(element);
 
-        if (scrollPos >= elemTop) {
+        if (viewPort.bottom >= box.top) {
             window.removeEventListener('scroll', comparePosition);
             callback();
             // setTimeout(callback, 2000);
@@ -50,14 +73,9 @@ function whenInViewPort(element, callback) {
 
 function trackIfInViewPort(element, callback) {
     function comparePosition() {
-        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
-        var scrollPos = scrollTop + document.documentElement.clientHeight;
-        var elemTop = element[0].offsetTop;
-        var elemBottom = elemTop + element[0].querySelector('div').offsetHeight;
-
-        const adjustment = 100;
-
-        var inViewPort = scrollPos >= elemTop - adjustment && scrollTop <= elemBottom + adjustment;
+        const viewPort = getCurrentViewPort();
+        const box = getRect(element);
+        var inViewPort = viewPort.bottom >= box.top && viewPort.top <= box.bottom;
 
         callback(inViewPort);
     }
@@ -73,7 +91,7 @@ docs.directive('snippet', function() {
             language: '='
         },
         link: function(scope, element, attrs) {
-            whenInViewPort(element, function() {
+            whenInViewPort(jQuery(element), function() {
                 const language = attrs.language || 'js';
                 const highlightedSource = highlight(element.text(), language);
                 element.empty().html('<pre><code>' + highlightedSource + '</code></pre>');
@@ -179,11 +197,13 @@ class ExampleRunner {
 
         this.availableTypes = Object.keys(this.config.types);
 
+        const divWrapper = jQuery(this.$element).find('div.example-wrapper');
+
         this.$timeout( () =>  {
             let visibleToggle: angular.IPromise<void>;
             let nextVisible: boolean = false;
 
-            trackIfInViewPort(this.$element, ( visible ) => {
+            trackIfInViewPort(divWrapper, ( visible ) => {
                 if (nextVisible !== visible) {
                     nextVisible = visible;
                     this.$timeout.cancel(visibleToggle);
@@ -195,7 +215,7 @@ class ExampleRunner {
             });
         }, 500);
 
-        whenInViewPort(this.$element, () => {
+        whenInViewPort(divWrapper, () => {
             this.$timeout(() => {
                 this.setType(this.getInitialType());
                 this.ready = true;
@@ -522,7 +542,7 @@ docs.component('preview', {
                     this.iframeStyle.height = this.options.exampleHeight + 'px';
                 }
 
-                whenInViewPort($element, () => {
+                whenInViewPort(jQuery($element), () => {
                     $timeout(() => (this.ready = true));
                 });
             };

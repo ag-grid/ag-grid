@@ -38,6 +38,7 @@
     "express-http-proxy": "^1.0.6",
     "express-urlrewrite": "^1.2.0",
     "file-loader": "^0.11.2",
+    "jquery": "^3.2.1",
     "lnk": "^1.1.0",
     "merge-stream": "^1.0.1",
     "mkdir-p": "0.0.7",
