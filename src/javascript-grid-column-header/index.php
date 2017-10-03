@@ -238,7 +238,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </pre>
 
-    <?= example('Header Height and Text Orientation', 'text-orientation', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Header Height and Text Orientation', 'text-orientation', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="headerHeight">Dynamic Header Heights</h2>
 

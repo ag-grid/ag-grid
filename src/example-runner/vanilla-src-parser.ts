@@ -1,8 +1,10 @@
 import {generate} from 'escodegen';
 import * as esprima from 'esprima';
+import { Events } from '../../../ag-grid/src/ts/eventKeys';
+import { PropertyKeys } from '../../../ag-grid/src/ts/propertyKeys';
 
-const EVENTS = ['onGridReady'];
-const PROPERTIES = ['columnDefs', 'defaultColDef', 'defaultColGroupDef', 'columnTypes', 'rowData', 'enableFilter', 'floatingFilter', 'debug', 'enableSorting', 'enableColResize'];
+const EVENTS = (<any> Object).values(Events);
+const PROPERTIES = PropertyKeys.ALL_PROPERTIES;
 
 function collect(iterable, accumulator, collectors) {
     return iterable.reduce((col, value) => {
