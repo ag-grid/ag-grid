@@ -11,12 +11,12 @@ include '../documentation-main/documentation_header.php';
     <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Viewport Row Model</h1>
 
     <note>
-        Don't use Viewport Row Model unless you understand what it's advantages are and you need them.
-        We find a lot of users of ag-Grid are using Viewport Row Model when they don't need to and end up with more
-        complicated applications as a result. Have a look at our most powerful row model the
-        <a href="../javascript-grid-enterprise-model/">enterprise row model</a>
+        Don't use Viewport Row Model unless you understand what advantages it offers and whether or not you need them.</p>
+        We find many of our users are using Viewport Row Model when they don't need to and end up with unnecessarily
+        complicated applications as a result. We'd recommend taking a look at our most powerful row model the
+        <a href="../javascript-grid-enterprise-model/">enterprise row model</a> as an alternative.
         <br><br>
-        Check the differences between row models in our <a href="../javascript-grid-row-models/">row models summary page</a>
+        The differences between row models can be found in our <a href="../javascript-grid-row-models/">row models summary page</a>
     </note>
 
     <p>

@@ -12,9 +12,9 @@ include '../documentation-main/documentation_header.php';
     <h2 class="first-h1" id="virtual-paging-infinite-scrolling">Infinite Row Model</h2>
 
     <note>
-        If you are an enterprise user, you should use the <a href="../javascript-grid-enterprise-model/">enterprise row model</a> instead of the infinite
-        row model. It offers the same functionality plus much more features.<br><br>
-        Check the differences between row models in our <a href="../javascript-grid-row-models/">row models summary page</a>
+        If you are an enterprise user you should consider using the <a href="../javascript-grid-enterprise-model/">enterprise row model</a> instead of the infinite
+        row model. It offers the same functionality with many more features.<br><br>
+        The differences between row models can be found in our <a href="../javascript-grid-row-models/">row models summary page</a>
     </note>
 
     <p>

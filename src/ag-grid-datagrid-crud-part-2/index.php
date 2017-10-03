@@ -51,16 +51,14 @@ include('../includes/mediaHeader.php');
 
             <p>To define a <code>RestController</code> all we need to do is annotate a class as follows:</p>
 
-<snippet language="java">
-@RestController
+<snippet language="java">@RestController
 public class OlympicResultsController {
 </snippet>
 
             <p>With this in place Spring is aware of the role we want this class to play. Now let's add method to this class
                 and annotate it with <code>RequestMapping</code>:</p>
 
-<snippet language="java">
-@RequestMapping("/olympicData")
+<snippet language="java">@RequestMapping("/olympicData")
 public Iterable<Athlete> getOlympicData() {
     return athleteRepository.findAll();
 }
@@ -71,8 +69,8 @@ public Iterable<Athlete> getOlympicData() {
 
 <snippet>http://localhost:8080/olympicData</snippet>
 
-            <p>The base URL (http://localhost:8080) can vary based on how you deploy your application, but the actual mapping
-            (/olympicData) would be the same.</p>
+            <p>The base URL (<code>http://localhost:8080</code>) can vary based on how you deploy your application, but the actual mapping
+            (<code>/olympicData</code>) would be the same.</p>
 
             <p>As you can see from our implementation we're simply delegating down to the repository in this case, returning the data
             it provides. Again in a real world application you might want to secure your information in some way.</p>
@@ -85,15 +83,156 @@ public Iterable<Athlete> getOlympicData() {
                           }"
                           language="java"
                           highlight="true"
-                          exampleHeight="500px">
+                          exampleHeight="400px">
             </show-sources>
+
+            <p>With this in place if we now start our application and navigate to <code>http://localhost:8080/olympicData</code> in
+            a browser you should see something like this (formatted here for clarity):</p>
+
+<snippet>
+[
+    {
+        "name": "Robin Beauregard",
+        "country": {
+            "id": 33,
+            "name": "United States"
+        },
+        "results": [
+            {
+                "age": 25,
+                "year": 2004,
+                "date": "29/08/2004",
+                "gold": 0,
+                "silver": 0,
+                "bronze": 1,
+                "sport": {
+                    "id": 112,
+                    "name": "Waterpolo"
+                }
+            },
+            {
+                "age": 21,
+                "year": 2000,
+                "date": "01/10/2000",
+                "gold": 0,
+                "silver": 1,
+                "bronze": 0,
+                "sport": {
+                    "id": 112,
+                    "name": "Waterpolo"
+                }
+            }
+        ]
+    },
+    ...further records
+</snippet>
+
+        <p>Great, so far so good!</p>
+
+        <h3>Updating Data</h3>
+
+        <p>So far we've been concentrating on getting data out of our database. Let's switch focus to the remaining Create,
+            Update and Delete operations that CRUD provides.</p>
+
+        <p>Before we can do so we need to consider what sort of updates we want to perform in our application.</p>
+
+        <p>For our purposes we're going to implement the following sorts of updates:</p>
+
+<div style="border: solid 1px lightgrey;border-radius: 5px;padding: 10px">
+        <table style="width: 100%;">
+            <tr>
+                <th>Type of Update</th>
+                <th>Parameter(s) Required</th>
+            </tr>
+            <tr>
+                <td>Create a new <code>Result</code> for a given <code>Athlete</code></td>
+                <td><code>Athlete</code>'s ID, new <code>Result</code> object to be created</td>
+            </tr>
+            <tr>
+                <td>Update an existing <code>Result</code></td>
+                <td><code>Result</code> Object</td>
+            </tr>
+            <tr>
+                <td>Update multiple existing <code style="padding-right: 0">Result</code><span style="font-size: small">s</span></td>
+                <td>List of <code>Result</code> Objects</td>
+            </tr>
+            <tr>
+                <td>Delete an existing <code>Result</code></td>
+                <td><code>Result</code> ID</td>
+            </tr>
+        </table>
+</div>
+
+            <p>There are of course many more types of updates you might wish to perform. The above should however illustrate
+            the different types of update which you can then use in other scenarios.</p>
+
+            <p>Let's take a look at what operations the <code>CrudRepository</code> provides for us:</p>
+            
+<snippet language="java">
+public interface CrudRepository &lt;T, ID&gt; extends Repository&lt;T,ID&gt; {
+    &lt;S extends T&gt; S save(S s);
+    
+    &lt;S extends T&gt; Iterable&lt;S&gt; saveAll(Iterable&lt;S&gt; iterable);
+    
+    Optional&lt;T&gt; findById(ID id);
+    
+    boolean existsById(ID id);
+    
+    Iterable&lt;T&gt; findAll();
+    
+    Iterable&lt;T&gt; findAllById(Iterable&lt;ID&gt; iterable);
+    
+    long count();
+    
+    void deleteById(ID id);
+    
+    void delete(T t);
+    
+    void deleteAll(Iterable&lt;? extends T&gt; iterable);
+
+    void deleteAll();
+}
+</snippet>
+            <p>As you can see, just about any operation you're likely to need has been provided here, which is great.</p>
+
+            <p>In our simple application however, we can map our user cases to the following two methods:</p>
+
+            <div style="border: solid 1px lightgrey;border-radius: 5px;padding: 10px;margin-bottom: 10px">
+                <table style="width: 100%;">
+                    <tr>
+                        <th>Type of Update</th>
+                        <th><code>CrudRepository</code> Method</th>
+                    </tr>
+                    <tr>
+                        <td>Create a new <code>Result</code> for a given <code>Athlete</code></td>
+                        <td><code>&lt;S extends T&gt; S save(S s);</code></td>
+                    </tr>
+                    <tr>
+                        <td>Update an existing <code>Result</code></td>
+                        <td><code>&lt;S extends T&gt; S save(S s);</code></td>
+                    </tr>
+                    <tr>
+                        <td>Update multiple existing <code style="padding-right: 0">Result</code><span style="font-size: small">s</span></td>
+                        <td><code>&lt;S extends T&gt; Iterable&lt;S&gt; saveAll(Iterable&lt;S&gt; iterable);</code></td>
+                    </tr>
+                    <tr>
+                        <td>Delete an existing <code>Result</code></td>
+                        <td><code>void deleteById(ID id);</code></td>
+                    </tr>
+                </table>
+            </div>
+
+            <p>In an application with more real-world requirements you'd almost certainly make use of some of the other methods provided.</p>
+
+            <p>As all four operations effect existing <code>Athlete</code> objects, we'll expose these operation on the
+            <code>AthleteController</code>.</p>
         </div>
         <div class="col-md-3">
 
             <div>
                 <a href="https://twitter.com/share" class="twitter-share-button"
                    data-url="https://www.ag-grid.com/ag-grid-react-datagrid/"
-                   data-text="Building a React Datagrid Using Redux and ag-Grid" data-via="seanlandsman"
+                   data-text="Building a CRUD application with ag-Grid" data-via="seanlandsman"
                    data-size="large">Tweet</a>
                 <script>!function (d, s, id) {
                         var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
@@ -120,7 +259,7 @@ public Iterable<Athlete> getOlympicData() {
                     belies his years of experience.
                 </p>
                 <p>
-                    Lead Developer - Frameworks
+                    it'llLead Developer - Frameworks
                 </p>
 
                 <div>
