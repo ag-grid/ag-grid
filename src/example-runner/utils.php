@@ -12,7 +12,7 @@ if (isset($_SERVER['HTTP_X_PROXY_HTTP_HOST'])) {
 
 if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
     $archiveSegment = $matches[0];
-    $prefix =  "//$host/$archiveSegment/dist";
+    $prefix =  "//$host/$archiveSegment/dev";
     define('RUNNER_SOURCE_PREFIX', "/$archiveSegment");
     define('POLYMER_BASE_HREF_PREFIX', "//$host/$archiveSegment/");
 } else {
