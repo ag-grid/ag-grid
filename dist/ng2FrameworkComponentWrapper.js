@@ -32,8 +32,9 @@ var Ng2FrameworkComponentWrapper = (function (_super) {
                 return _super !== null && _super.apply(this, arguments) || this;
             }
             DynamicAgNg2Component.prototype.init = function (params) {
+                var _this = this;
                 _super.prototype.init.call(this, params);
-                this._componentRef.changeDetectorRef.detectChanges();
+                setTimeout(function () { return _this._componentRef.changeDetectorRef.detectChanges(); }, 0);
             };
             DynamicAgNg2Component.prototype.createComponent = function () {
                 return that.createComponent(OriginalConstructor, that.viewContainerRef);
