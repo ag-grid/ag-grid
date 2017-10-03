@@ -22,7 +22,7 @@ export class Ng2FrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
         class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrapableInterface{
             init(params: any): void {
                 super.init(params);
-                this._componentRef.changeDetectorRef.detectChanges();
+                setTimeout(()=>this._componentRef.changeDetectorRef.detectChanges(), 0);
             }
 
             protected createComponent(): ComponentRef<AgFrameworkComponent<any>> {
