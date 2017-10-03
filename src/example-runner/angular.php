@@ -3,7 +3,7 @@ include 'utils.php';
 $example = getExampleInfo('angular');
 $generated = isset($_GET['generated']);
 if ($generated) { 
-    echo '<!DOCTYPE html>';
+    echo "<!DOCTYPE html>\n";
 };
 ?>
 <html>
@@ -13,9 +13,7 @@ if ($generated) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<?php if (!$example['preview']) { ?>
-    <style> html, body { margin: 0; padding: 0; } </style>
-<?php } ?>
+    <style> html, body { margin: 0; padding: 0; height: 100%; } </style>
 <?php renderExampleExtras($_GET); ?>
 <?php renderStyles($example['styles']); ?>
 

@@ -32,12 +32,10 @@ foreach ($files as $file) {
     }
 }
 ?>
-<?php if ($generated) { echo '<!DOCTYPE html>'; } ?>
+<?php if ($generated) { echo "<!DOCTYPE html>\n"; } ?>
 <html>
 <head>
-<?php if (!$preview) { ?>
-    <style> html, body { margin: 0; padding: 0; height: 100%; } </style>
-<?php } ?>
+<style> html, body { margin: 0; padding: 0; height: 100%; } </style>
 <?php renderExampleExtras($_GET) ?>
 <?= globalAgGridScript(isset($_GET["enterprise"])) ?>
 
