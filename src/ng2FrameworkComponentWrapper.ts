@@ -17,12 +17,14 @@ export class Ng2FrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
         this.componentFactoryResolver = componentFactoryResolver;
     }
 
-    createWrapper(OriginalConstructor: { new (): any }): WrapableInterface{
+    createWrapper(OriginalConstructor: { new (): any }, componentName?:string): WrapableInterface{
         let that = this;
         class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrapableInterface{
             init(params: any): void {
                 super.init(params);
-                setTimeout(()=>this._componentRef.changeDetectorRef.detectChanges(), 0);
+                if (componentName != null && componentName !== 'cellEditor'){
+                    this._componentRef.changeDetectorRef.detectChanges();
+                }
             }
 
             protected createComponent(): ComponentRef<AgFrameworkComponent<any>> {
