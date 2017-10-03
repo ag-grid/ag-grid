@@ -20,7 +20,6 @@ var EnterpriseMenuFactory = (function () {
     }
     EnterpriseMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent, defaultTab) {
         var _this = this;
-        console.log("event = ", mouseEvent);
         this.showMenu(column, function (menu) {
             _this.popupService.positionPopupUnderMouseEvent({
                 column: column,

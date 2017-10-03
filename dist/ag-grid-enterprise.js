@@ -2835,7 +2835,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (this.isFirefox === undefined) {
 	            var anyWindow = window;
 	            this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';
-	            ;
 	        }
 	        return this.isFirefox;
 	    };
@@ -2846,6 +2845,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return eventNoType.target || eventNoType.srcElement;
 	    };
 	    Utils.isElementInEventPath = function (element, event) {
+	        if (!event || !element) {
+	            return false;
+	        }
 	        var sourceElement = exports._.getTarget(event);
 	        while (sourceElement) {
 	            if (sourceElement === element) {
@@ -10622,8 +10624,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return templateLocalised;
 	    };
 	    // Valid values for position are bottom, middle and top
+	    // position should be {'top','middle','bottom', or undefined/null}.
+	    // if undefined/null, then the grid will to the minimal amount of scrolling,
+	    // eg if grid needs to scroll up, it scrolls until row is on top,
+	    //    if grid needs to scroll down, it scrolls until row is on bottom,
+	    //    if row is already in view, grid does not scroll
 	    GridPanel.prototype.ensureIndexVisible = function (index, position) {
-	        if (position === void 0) { position = 'top'; }
 	        // if for print, everything is always visible
 	        if (this.gridOptionsWrapper.isForPrint()) {
 	            return;
@@ -10651,7 +10657,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var halfScreenHeight = (viewportHeight / 2) + (rowToHighlightHeight / 2);
 	        var eViewportToScroll = this.getPrimaryScrollViewport();
 	        var newScrollPosition;
-	        switch (position.toLowerCase()) {
+	        switch (position) {
 	            case 'top':
 	                newScrollPosition = rowTopPixel;
 	                break;
@@ -10665,13 +10671,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	                newScrollPosition = newScrollPosition > rowTopPixel ? rowTopPixel : newScrollPosition;
 	                break;
 	            default:
-	                console.warn("ag-grid: Invalid option for ensureNodeVisible [" + position + "]: valid options are: 'top','bottom' and 'middle'");
 	                newScrollPosition = rowTopPixel;
+	                var viewportScrolledPastRow = vRangeTop > rowTopPixel;
+	                var viewportScrolledBeforeRow = vRangeBottom < rowBottomPixel;
+	                if (viewportScrolledPastRow) {
+	                    // if row is before, scroll up with row at top
+	                    newScrollPosition = rowTopPixel;
+	                }
+	                else if (viewportScrolledBeforeRow) {
+	                    // if row is below, scroll down with row at bottom
+	                    var viewportHeight_1 = vRangeBottom - vRangeTop;
+	                    newScrollPosition = rowBottomPixel - viewportHeight_1;
+	                }
+	                else {
+	                    // row already in view, and top/middle/bottom not specified, so do nothing.
+	                    newScrollPosition = null;
+	                }
 	                break;
+	        }
+	        // this means the row is already in view, and we don't need to scroll
+	        if (newScrollPosition === null) {
+	            return;
 	        }
 	        eViewportToScroll.scrollTop = newScrollPosition;
 	        this.rowRenderer.redrawAfterScroll();
-	        // otherwise, row is already in view, so do nothing
 	    };
 	    GridPanel.prototype.getPrimaryScrollViewport = function () {
 	        if (this.enableRtl && this.columnController.isPinningLeft()) {
@@ -19181,8 +19204,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var gridOptionsWrapper_1 = __webpack_require__(4);
 	var PopupService = (function () {
 	    function PopupService() {
+	        // this.popupService.setPopupParent(this.eRootPanel.getGui());
+	        this.activePopupElements = [];
 	    }
-	    // this.popupService.setPopupParent(this.eRootPanel.getGui());
 	    PopupService.prototype.getPopupParent = function () {
 	        return this.gridCore.getRootGui();
 	    };
@@ -19345,6 +19369,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    //so that when the background is clicked, the child is removed again, giving
 	    //a model look to popups.
 	    PopupService.prototype.addAsModalPopup = function (eChild, closeOnEsc, closedCallback) {
+	        var _this = this;
 	        var eBody = this.gridOptionsWrapper.getDocument();
 	        if (!eBody) {
 	            console.warn('ag-grid: could not find the body of the document, document.body is empty');
@@ -19356,9 +19381,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (popupAlreadyShown) {
 	            return;
 	        }
-	        this.getPopupParent().appendChild(eChild);
-	        var that = this;
+	        var ePopupParent = this.getPopupParent();
+	        ePopupParent.appendChild(eChild);
+	        this.activePopupElements.push(eChild);
 	        var popupHidden = false;
+	        // let timeOfMouseEventOnChild = new Date().getTime();
+	        // let childMouseClick: MouseEvent = null;
+	        // let childTouch: TouchEvent = null;
+	        var hidePopupOnEsc = function (event) {
+	            var key = event.which || event.keyCode;
+	            if (key === constants_1.Constants.KEY_ESCAPE) {
+	                hidePopup(null);
+	            }
+	        };
+	        var hidePopup = function (event) {
+	            // we don't hide popup if the event was on the child, or any
+	            // children of this child
+	            var indexOfThisChild = _this.activePopupElements.indexOf(eChild);
+	            for (var i = indexOfThisChild; i < _this.activePopupElements.length; i++) {
+	                var element = _this.activePopupElements[i];
+	                if (utils_1.Utils.isElementInEventPath(element, event)) {
+	                    return;
+	                }
+	            }
+	            // this method should only be called once. the client can have different
+	            // paths, each one wanting to close, so this method may be called multiple
+	            // times.
+	            if (popupHidden) {
+	                return;
+	            }
+	            popupHidden = true;
+	            ePopupParent.removeChild(eChild);
+	            utils_1.Utils.removeFromArray(_this.activePopupElements, eChild);
+	            eBody.removeEventListener('keydown', hidePopupOnEsc);
+	            eBody.removeEventListener('click', hidePopup);
+	            eBody.removeEventListener('touchstart', hidePopup);
+	            eBody.removeEventListener('contextmenu', hidePopup);
+	            // eChild.removeEventListener('click', consumeMouseClick);
+	            // eChild.removeEventListener('touchstart', consumeTouchClick);
+	            if (closedCallback) {
+	                closedCallback();
+	            }
+	        };
 	        // if we add these listeners now, then the current mouse
 	        // click will be included, which we don't want
 	        setTimeout(function () {
@@ -19368,54 +19432,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            eBody.addEventListener('click', hidePopup);
 	            eBody.addEventListener('touchstart', hidePopup);
 	            eBody.addEventListener('contextmenu', hidePopup);
-	            //eBody.addEventListener('mousedown', hidePopup);
-	            eChild.addEventListener('click', consumeMouseClick);
-	            eChild.addEventListener('touchstart', consumeTouchClick);
-	            //eChild.addEventListener('mousedown', consumeClick);
 	        }, 0);
-	        // let timeOfMouseEventOnChild = new Date().getTime();
-	        var childMouseClick = null;
-	        var childTouch = null;
-	        function hidePopupOnEsc(event) {
-	            var key = event.which || event.keyCode;
-	            if (key === constants_1.Constants.KEY_ESCAPE) {
-	                hidePopup(null);
-	            }
-	        }
-	        function hidePopup(event) {
-	            // we don't hide popup if the event was on the child
-	            if (event && event === childMouseClick) {
-	                return;
-	            }
-	            if (event && event === childTouch) {
-	                return;
-	            }
-	            // this method should only be called once. the client can have different
-	            // paths, each one wanting to close, so this method may be called multiple
-	            // times.
-	            if (popupHidden) {
-	                return;
-	            }
-	            popupHidden = true;
-	            that.getPopupParent().removeChild(eChild);
-	            eBody.removeEventListener('keydown', hidePopupOnEsc);
-	            //eBody.removeEventListener('mousedown', hidePopupOnEsc);
-	            eBody.removeEventListener('click', hidePopup);
-	            eBody.removeEventListener('touchstart', hidePopup);
-	            eBody.removeEventListener('contextmenu', hidePopup);
-	            eChild.removeEventListener('click', consumeMouseClick);
-	            eChild.removeEventListener('touchstart', consumeTouchClick);
-	            //eChild.removeEventListener('mousedown', consumeClick);
-	            if (closedCallback) {
-	                closedCallback();
-	            }
-	        }
-	        function consumeMouseClick(event) {
-	            childMouseClick = event;
-	        }
-	        function consumeTouchClick(event) {
-	            childTouch = event;
-	        }
 	        return hidePopup;
 	    };
 	    __decorate([
@@ -32284,7 +32301,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    EnterpriseMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent, defaultTab) {
 	        var _this = this;
-	        console.log("event = ", mouseEvent);
 	        this.showMenu(column, function (menu) {
 	            _this.popupService.positionPopupUnderMouseEvent({
 	                column: column,
