@@ -206,11 +206,18 @@ class ExampleRunner {
             trackIfInViewPort(divWrapper, ( visible ) => {
                 if (nextVisible !== visible) {
                     nextVisible = visible;
+
+                    // show immediately, unload after a while
+                    const delay = nextVisible ? 0 : 10000;
+                    
                     this.$timeout.cancel(visibleToggle);
 
                     visibleToggle = this.$timeout(() => {
+                        if (!nextVisible) {
+                            // console.debug('Unloading example');
+                        }
                         this.visible = nextVisible;
-                    }, 1000);
+                    }, delay);
                 }
             });
         }, 500);
