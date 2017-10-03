@@ -117,14 +117,14 @@ export const AgGridNg2NgFactory:i0.ComponentFactory<i4.AgGridNg2> = i0.ɵccf('ag
         ensureDomOrder:'ensureDomOrder',components:'components',frameworkComponents:'frameworkComponents',
         rowHoverClass:'rowHoverClass',suppressAnimationFrame:'suppressAnimationFrame',
         suppressExcelExport:'suppressExcelExport',suppressCsvExport:'suppressCsvExport',
-        getChildCount:'getChildCount'},{gridReady:'gridReady',columnEverythingChanged:'columnEverythingChanged',
-        newColumnsLoaded:'newColumnsLoaded',columnPivotModeChanged:'columnPivotModeChanged',
-        columnRowGroupChanged:'columnRowGroupChanged',columnPivotChanged:'columnPivotChanged',
-        gridColumnsChanged:'gridColumnsChanged',columnValueChanged:'columnValueChanged',
-        columnMoved:'columnMoved',columnVisible:'columnVisible',columnPinned:'columnPinned',
-        columnGroupOpened:'columnGroupOpened',columnResized:'columnResized',displayedColumnsChanged:'displayedColumnsChanged',
-        virtualColumnsChanged:'virtualColumnsChanged',rowGroupOpened:'rowGroupOpened',
-        rowDataChanged:'rowDataChanged',floatingRowDataChanged:'floatingRowDataChanged',
+        getChildCount:'getChildCount',rowClassRules:'rowClassRules'},{gridReady:'gridReady',
+        columnEverythingChanged:'columnEverythingChanged',newColumnsLoaded:'newColumnsLoaded',
+        columnPivotModeChanged:'columnPivotModeChanged',columnRowGroupChanged:'columnRowGroupChanged',
+        columnPivotChanged:'columnPivotChanged',gridColumnsChanged:'gridColumnsChanged',
+        columnValueChanged:'columnValueChanged',columnMoved:'columnMoved',columnVisible:'columnVisible',
+        columnPinned:'columnPinned',columnGroupOpened:'columnGroupOpened',columnResized:'columnResized',
+        displayedColumnsChanged:'displayedColumnsChanged',virtualColumnsChanged:'virtualColumnsChanged',
+        rowGroupOpened:'rowGroupOpened',rowDataChanged:'rowDataChanged',floatingRowDataChanged:'floatingRowDataChanged',
         rangeSelectionChanged:'rangeSelectionChanged',columnRowGroupAddRequest:'columnRowGroupAddRequest',
         columnRowGroupRemoveRequest:'columnRowGroupRemoveRequest',columnPivotAddRequest:'columnPivotAddRequest',
         columnPivotRemoveRequest:'columnPivotRemoveRequest',columnValueAddRequest:'columnValueAddRequest',
@@ -148,4 +148,4 @@ export const AgGridNg2NgFactory:i0.ComponentFactory<i4.AgGridNg2> = i0.ɵccf('ag
         componentStateChanged:'componentStateChanged',beforeFilterChanged:'beforeFilterChanged',
         afterFilterChanged:'afterFilterChanged',beforeSortChanged:'beforeSortChanged',
         afterSortChanged:'afterSortChanged'},([] as any[]));
-//# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVsZWFzZXMvMTMuMi4wL2FnLWdyaWQtYW5ndWxhci9kaXN0L2FnR3JpZE5nMi5uZ2ZhY3RvcnkudHMiLCJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJuZzovLy9Vc2Vycy9hbGJlcnRvL3ZvbGF0aWxlL3JlbGVhc2VzLzEzLjIuMC9hZy1ncmlkLWFuZ3VsYXIvZGlzdC9hZ0dyaWROZzIuZC50cyIsIm5nOi8vL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVsZWFzZXMvMTMuMi4wL2FnLWdyaWQtYW5ndWxhci9kaXN0L2FnR3JpZE5nMi5kLnRzLkFnR3JpZE5nMl9Ib3N0Lmh0bWwiXSwic291cmNlc0NvbnRlbnQiOlsiICIsIjxhZy1ncmlkLWFuZ3VsYXI+PC9hZy1ncmlkLWFuZ3VsYXI+Il0sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7b0JDQUE7TUFBQTthQUFBO21CQUFBO1VBQUEsc0JBQUE7O3FDQUFBO1VBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OyJ9
+//# sourceMappingURL=data:application/json;base64,eyJmaWxlIjoiL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVwb3MvbGF0ZXN0L2FnLWdyaWQtYW5ndWxhci9kaXN0L2FnR3JpZE5nMi5uZ2ZhY3RvcnkudHMiLCJ2ZXJzaW9uIjozLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJuZzovLy9Vc2Vycy9hbGJlcnRvL3ZvbGF0aWxlL3JlcG9zL2xhdGVzdC9hZy1ncmlkLWFuZ3VsYXIvZGlzdC9hZ0dyaWROZzIuZC50cyIsIm5nOi8vL1VzZXJzL2FsYmVydG8vdm9sYXRpbGUvcmVwb3MvbGF0ZXN0L2FnLWdyaWQtYW5ndWxhci9kaXN0L2FnR3JpZE5nMi5kLnRzLkFnR3JpZE5nMl9Ib3N0Lmh0bWwiXSwic291cmNlc0NvbnRlbnQiOlsiICIsIjxhZy1ncmlkLWFuZ3VsYXI+PC9hZy1ncmlkLWFuZ3VsYXI+Il0sIm1hcHBpbmdzIjoiQUFBQTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7b0JDQUE7TUFBQTthQUFBO21CQUFBO1VBQUEsc0JBQUE7O3FDQUFBO1VBQUE7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OyJ9

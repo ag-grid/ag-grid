@@ -229,6 +229,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     suppressExcelExport: any;
     suppressCsvExport: any;
     getChildCount: any;
+    rowClassRules: any;
     /**
      * Outputs
      */

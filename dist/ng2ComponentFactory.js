@@ -13,84 +13,8 @@ var Ng2ComponentFactory = (function (_super) {
         _this._componentFactoryResolver = _componentFactoryResolver;
         return _this;
     }
-    Ng2ComponentFactory.prototype.createRendererFromComponent = function (componentType, viewContainerRef) {
-        return this.adaptComponentToRenderer(componentType, viewContainerRef);
-    };
-    Ng2ComponentFactory.prototype.createEditorFromComponent = function (componentType, viewContainerRef) {
-        return this.adaptComponentToEditor(componentType, viewContainerRef);
-    };
     Ng2ComponentFactory.prototype.createFilterFromComponent = function (componentType, viewContainerRef) {
         return this.adaptComponentToFilter(componentType, viewContainerRef);
-    };
-    Ng2ComponentFactory.prototype.adaptComponentToRenderer = function (componentType, viewContainerRef) {
-        var that = this;
-        var CellRenderer = (function (_super) {
-            __extends(CellRenderer, _super);
-            function CellRenderer() {
-                return _super !== null && _super.apply(this, arguments) || this;
-            }
-            CellRenderer.prototype.init = function (params) {
-                _super.prototype.init.call(this, params);
-                this._componentRef.changeDetectorRef.detectChanges();
-            };
-            CellRenderer.prototype.refresh = function (params) {
-                this._params = params;
-                if (this._agAwareComponent.refresh) {
-                    this._agAwareComponent.refresh(params);
-                    return true;
-                }
-                else {
-                    return false;
-                }
-            };
-            CellRenderer.prototype.createComponent = function () {
-                return that.createComponent(componentType, viewContainerRef);
-            };
-            return CellRenderer;
-        }(BaseGuiComponent));
-        return CellRenderer;
-    };
-    Ng2ComponentFactory.prototype.adaptComponentToEditor = function (componentType, viewContainerRef) {
-        var that = this;
-        var CellEditor = (function (_super) {
-            __extends(CellEditor, _super);
-            function CellEditor() {
-                return _super !== null && _super.apply(this, arguments) || this;
-            }
-            CellEditor.prototype.init = function (params) {
-                _super.prototype.init.call(this, params);
-            };
-            CellEditor.prototype.getValue = function () {
-                return this._agAwareComponent.getValue();
-            };
-            CellEditor.prototype.isPopup = function () {
-                return this._agAwareComponent.isPopup ?
-                    this._agAwareComponent.isPopup() : false;
-            };
-            CellEditor.prototype.isCancelBeforeStart = function () {
-                return this._agAwareComponent.isCancelBeforeStart ?
-                    this._agAwareComponent.isCancelBeforeStart() : false;
-            };
-            CellEditor.prototype.isCancelAfterEnd = function () {
-                return this._agAwareComponent.isCancelAfterEnd ?
-                    this._agAwareComponent.isCancelAfterEnd() : false;
-            };
-            CellEditor.prototype.focusIn = function () {
-                if (this._agAwareComponent.focusIn) {
-                    this._agAwareComponent.focusIn();
-                }
-            };
-            CellEditor.prototype.focusOut = function () {
-                if (this._agAwareComponent.focusOut) {
-                    this._agAwareComponent.focusOut();
-                }
-            };
-            CellEditor.prototype.createComponent = function () {
-                return that.createComponent(componentType, viewContainerRef);
-            };
-            return CellEditor;
-        }(BaseGuiComponent));
-        return CellEditor;
     };
     Ng2ComponentFactory.prototype.adaptComponentToFilter = function (componentType, viewContainerRef) {
         var that = this;

@@ -216,6 +216,7 @@ var AgGridNg2 = (function () {
         this.suppressExcelExport = undefined;
         this.suppressCsvExport = undefined;
         this.getChildCount = undefined;
+        this.rowClassRules = undefined;
         /**
          * Outputs
          */
@@ -587,6 +588,7 @@ AgGridNg2.propDecorators = {
     'suppressExcelExport': [{ type: core_1.Input },],
     'suppressCsvExport': [{ type: core_1.Input },],
     'getChildCount': [{ type: core_1.Input },],
+    'rowClassRules': [{ type: core_1.Input },],
     'gridReady': [{ type: core_1.Output },],
     'columnEverythingChanged': [{ type: core_1.Output },],
     'newColumnsLoaded': [{ type: core_1.Output },],
