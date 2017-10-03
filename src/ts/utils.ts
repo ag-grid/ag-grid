@@ -1042,7 +1042,6 @@ export class Utils {
         if (this.isFirefox === undefined) {
             let anyWindow = <any> window;
             this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';
-            ;
         }
         return this.isFirefox;
     }
@@ -1054,7 +1053,9 @@ export class Utils {
         return eventNoType.target || eventNoType.srcElement;
     }
 
-    static isElementInEventPath(element: HTMLElement, event: MouseEvent | KeyboardEvent): boolean {
+    static isElementInEventPath(element: HTMLElement, event: Event): boolean {
+        if (!event || !element) { return false; }
+
         let sourceElement = _.getTarget(event);
 
         while (sourceElement) {
