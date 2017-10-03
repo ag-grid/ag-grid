@@ -355,21 +355,24 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>ensureIndexVisible(index, position)</th>
-            <td>Ensures the index is visible, scrolling the table if needed. The valid values for positions are
-                <code>top</code>, <code>middle</code> and <code>bottom</code>. If not specified the default is
-                <code>top</code></td>
-        </tr>
-        <tr>
-            <th>ensureColumnVisible(colId)</th>
-            <td>Ensures the column is visible, scrolling the table if needed.</td>
+            <td>Ensures the row index is visible by vertically scrolling the grid. The valid values for positions are
+                <code>{'top', 'middle', 'bottom', undefined/null}</code>. If <code>top</code>, <code>middle</code>
+                or <code>bottom</code>, the grid will scroll the row to place the row at top, middle or bottom.
+                If <code>undefined</code> or <code>null</code> then grid will do the minimum scrolling to show
+                the row, ie if grid needs to scroll up then it will scroll so that the row is at the top, if the grid
+                needs to scroll down then it will scroll so that the row is at the bottom, if the row is already in view
+                then the grid will do nothing.
         </tr>
         <tr>
             <th>ensureNodeVisible(comparator, position)</th>
             <td>Ensures a node is visible, scrolling the table if needed. Provide one of a) the node
                 b) the data object c) a comparator function (that takes the node as a parameter, and returns
-                true for match, false for no match). The valid values for positions are
-                <code>top</code>, <code>middle</code> and <code>bottom</code>. If not specified the default is
-                <code>top</code></td></td>
+                true for match, false for no match). The valid values for positions are same as for
+                <code>api.ensureIndexVisible()</code>.
+        </tr>
+        <tr>
+            <th>ensureColumnVisible(colId)</th>
+            <td>Ensures the column is visible, scrolling the table if needed.</td>
         </tr>
         <tr id="getVerticalPixelRange">
             <th>getVerticalPixelRange()</th>
