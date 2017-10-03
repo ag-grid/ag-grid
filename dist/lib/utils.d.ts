@@ -116,6 +116,7 @@ export declare class Utils {
     static isBrowserChrome(): boolean;
     static isBrowserFirefox(): boolean;
     static getTarget(event: Event): Element;
+    static isElementInEventPath(element: HTMLElement, event: MouseEvent | KeyboardEvent): boolean;
     static forEachSnapshotFirst(list: any[], callback: (item: any) => void): void;
     static getBodyWidth(): number;
     static getBodyHeight(): number;

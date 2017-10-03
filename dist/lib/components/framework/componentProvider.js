@@ -87,7 +87,7 @@ var ComponentProvider = (function () {
         };
     };
     ComponentProvider.prototype.registerComponent = function (name, component) {
-        console.warn("ag-grid: registering components is a lab feature, is not intended to be used or supported yet.");
+        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
         if (this.frameworkComponents[name]) {
             console.error("Trying to register a component that you have already registered for frameworks: " + name);
             return;
@@ -99,7 +99,7 @@ var ComponentProvider = (function () {
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
     ComponentProvider.prototype.registerFwComponent = function (name, component) {
-        console.warn("ag-grid: registering components is a lab feature, is not intended to be used or supported yet.");
+        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
         if (this.jsComponents[name]) {
             console.error("Trying to register a component that you have already registered for plain javascript: " + name);
             return;

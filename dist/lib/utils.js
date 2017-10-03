@@ -926,6 +926,16 @@ var Utils = (function () {
         var eventNoType = event;
         return eventNoType.target || eventNoType.srcElement;
     };
+    Utils.isElementInEventPath = function (element, event) {
+        var sourceElement = exports._.getTarget(event);
+        while (sourceElement) {
+            if (sourceElement === element) {
+                return true;
+            }
+            sourceElement = sourceElement.parentElement;
+        }
+        return false;
+    };
     Utils.forEachSnapshotFirst = function (list, callback) {
         if (list) {
             var arrayCopy = list.slice(0);

@@ -53,7 +53,7 @@ var ComponentMetadataProvider = (function () {
             },
             cellEditor: {
                 mandatoryMethodList: ['getValue'],
-                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'focusIn', 'focusOut']
+                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'focusIn', 'focusOut', 'afterGuiAttached']
             },
             innerRenderer: {
                 mandatoryMethodList: [],

@@ -23,6 +23,7 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private valueFormatterService;
     private context;
     private columnController;
+    private mouseEventService;
     private eExpanded;
     private eContracted;
     private eCheckbox;
