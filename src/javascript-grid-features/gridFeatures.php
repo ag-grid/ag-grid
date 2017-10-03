@@ -560,7 +560,7 @@ to update the UI to the latest values. The grid will use change detection to onl
 gridApi.refreshCells();');
 
 gridFeature(false, 'Change Detection', '../javascript-grid-change-detection/', 'changeDetection.gif',
-    'As you change dat inside the grid, the grid runs <span class="feature-highlight">Change Detection</span> to
+    'As you change data inside the grid, the grid runs <span class="feature-highlight">Change Detection</span> to
 check if any other cells need to be updated to reflect the change.',
     null);
 
