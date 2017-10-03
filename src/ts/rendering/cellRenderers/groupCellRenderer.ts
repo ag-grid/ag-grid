@@ -14,6 +14,7 @@ import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {ICellRendererAfterGuiAttachedParams} from "../../interfaces/iComponent";
+import {MouseEventService} from "../../gridPanel/mouseEventService";
 
 export interface GroupCellRendererParams extends ICellRendererParams{
     pinned:string,
@@ -45,6 +46,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
 
     @RefSelector('eExpanded') private eExpanded: HTMLElement;
     @RefSelector('eContracted') private eContracted: HTMLElement;
@@ -352,8 +354,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // as that icons already has expand / collapse functionality on it. otherwise if
         // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
         // is open->close->open, however double click should be open->close only.
-        let target = _.getTarget(event);
-        let targetIsExpandIcon = target!==this.eExpanded && target!==this.eContracted;
+        let targetIsExpandIcon
+            = _.isElementInEventPath(this.eExpanded, event)
+            || _.isElementInEventPath(this.eContracted, event);
+
         if (!targetIsExpandIcon) {
             this.onExpandOrContract();
         }
