@@ -23,16 +23,19 @@ include '../documentation-main/documentation_header.php';
         <li>AG-815: <a href="../javascript-grid-api#scrolling">Grid Api for scrolling</a> has been improved so that
         <code>api.ensureNodeVisible</code> and <code>api.ensureIndexVisible</code> now take an optional
         second parameter to specify where the node/index should be positioned on the screen. The valid values are:
-        <code>top</code>, <code>middle</code> and <code>bottom</code>. If not specified the default is <code>top</code></li>
+        <code>top</code>, <code>middle</code> and <code>bottom</code>. If not specified, would not scroll into the
+        row if already visible in the current viewport.</li>
     <ul>
     </ul>
 
     <h4>Bug Fixes</h4>
         <li>AG-862: Double clicking a group cell was not expanding the group</li>
+        <li>AG-861: Fixed issue with expandAll when using <code>hideOpenParents:true</code></li>
         <li>AG-759: Clear button does not work well when also providing filterOptions</li>
         <li>AG-547: Set filter tristate was not working</li>
         <li>AG-842: Fix issue with autosize for the columns and the new matherial theme</li>
         <li>AG-829: Fix error in CellComp.prototype.stopEditing in certain cases</li>
+        <li>AG-406: Fix issue on touch devices where sub menus and custom menu items wouldn't work.</li>
     <ul>
     </ul>
 
