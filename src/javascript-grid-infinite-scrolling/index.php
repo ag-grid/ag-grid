@@ -11,6 +11,12 @@ include '../documentation-main/documentation_header.php';
 
     <h2 class="first-h1" id="virtual-paging-infinite-scrolling">Infinite Row Model</h2>
 
+    <note>
+        If you are an enterprise user, you should use the <a href="../javascript-grid-enterprise-model/">enterprise row model</a> instead of the infinite
+        row model. It offers the same functionality plus much more features.<br><br>
+        Check the differences between row models in our <a href="../javascript-grid-row-models/">row models summary page</a>
+    </note>
+
     <p>
         Infinite scrolling allows the grid to lazy load rows from the server depending on what
         the scroll position is of the grid. In its simplest form, the more the user scrolls

@@ -9,6 +9,16 @@ include '../documentation-main/documentation_header.php';
 
 <div>
     <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Viewport Row Model</h1>
+
+    <note>
+        Don't use Viewport Row Model unless you understand what it's advantages are and you need them.
+        We find a lot of users of ag-Grid are using Viewport Row Model when they don't need to and end up with more
+        complicated applications as a result. Have a look at our most powerful row model the
+        <a href="../javascript-grid-enterprise-model/">enterprise row model</a>
+        <br><br>
+        Check the differences between row models in our <a href="../javascript-grid-row-models/">row models summary page</a>
+    </note>
+
     <p>
         A Viewport is a rowModel that allows showing a 'window' of data in your client. Typically all the data
         will reside on the server and the server will know what data is displayed in the client. This is again
