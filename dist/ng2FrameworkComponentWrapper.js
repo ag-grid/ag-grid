@@ -24,7 +24,7 @@ var Ng2FrameworkComponentWrapper = (function (_super) {
     Ng2FrameworkComponentWrapper.prototype.setComponentFactoryResolver = function (componentFactoryResolver) {
         this.componentFactoryResolver = componentFactoryResolver;
     };
-    Ng2FrameworkComponentWrapper.prototype.createWrapper = function (OriginalConstructor) {
+    Ng2FrameworkComponentWrapper.prototype.createWrapper = function (OriginalConstructor, componentName) {
         var that = this;
         var DynamicAgNg2Component = (function (_super) {
             __extends(DynamicAgNg2Component, _super);
@@ -32,9 +32,10 @@ var Ng2FrameworkComponentWrapper = (function (_super) {
                 return _super !== null && _super.apply(this, arguments) || this;
             }
             DynamicAgNg2Component.prototype.init = function (params) {
-                var _this = this;
                 _super.prototype.init.call(this, params);
-                setTimeout(function () { return _this._componentRef.changeDetectorRef.detectChanges(); }, 0);
+                if (componentName != null && componentName !== 'cellEditor') {
+                    this._componentRef.changeDetectorRef.detectChanges();
+                }
             };
             DynamicAgNg2Component.prototype.createComponent = function () {
                 return that.createComponent(OriginalConstructor, that.viewContainerRef);

@@ -7,7 +7,7 @@ export declare class Ng2FrameworkComponentWrapper extends BaseComponentWrapper<W
     setComponentFactoryResolver(componentFactoryResolver: ComponentFactoryResolver): void;
     createWrapper(OriginalConstructor: {
         new (): any;
-    }): WrapableInterface;
+    }, componentName?: string): WrapableInterface;
     createComponent<T>(componentType: {
         new (...args: any[]): T;
     }, viewContainerRef: ViewContainerRef): ComponentRef<T>;
