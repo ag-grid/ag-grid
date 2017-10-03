@@ -267,7 +267,7 @@ export class ComponentResolver {
         let FrameworkComponentRaw: {new(): B} = componentToUse.component;
 
         let thisComponentConfig: ComponentMetadata= this.componentMetadataProvider.retrieve(propertyName);
-        return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList);
+        return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, componentName);
     }
 
 }
