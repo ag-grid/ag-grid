@@ -174,7 +174,7 @@ function example($title, $dir, $type='vanilla', $options = array()) {
         'theme' => 'ag-fresh',
         'height' => '100%',
         'width' => '100%',
-        'enterprise' => isset($_GET['enterprise'])
+        'enterprise' => $options['enterprise']
     );
 
     if (isset($options['grid'])) {
@@ -200,8 +200,12 @@ function example($title, $dir, $type='vanilla', $options = array()) {
                     break;
                 case 'react':
                     $entry['files'] =  array_merge( array( 'index.jsx' ), $styles);
-                default:
+                    break;
+                case 'angular':
                     $entry['files'] =  array_merge( array( 'app/app.component.ts', 'app/app.module.ts' ), $styles);
+                    break;
+                default:
+                    die('should not end up here');
                     break;
             }
         }

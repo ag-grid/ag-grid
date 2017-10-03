@@ -1,7 +1,10 @@
 import './example-runner.scss';
+
 import * as angular from 'angular';
-import {vanillaToAngular} from './vanilla-to-angular';
 import * as jQuery from 'jquery';
+
+import {vanillaToAngular} from './vanilla-to-angular';
+import {vanillaToReact} from './vanilla-to-react';
 
 import {whenInViewPort, trackIfInViewPort} from './lib/viewport';
 import {highlight} from './lib/highlight';
@@ -266,20 +269,30 @@ class ExampleRunner {
                         return [this.boilerplatePath, '..', 'angular-generated-app-module.ts'].join('/');
                     } else {
                         // app.component.ts
-                        const vanillaScript = this.config.types.vanilla.files.filter(file => file.endsWith('.js'))[0];
-
                         return {
-                            url: [this.config.options.sourcePrefix, this.section, this.name, vanillaScript].join('/'),
+                            url: this.appFilePath(this.firstVanillaScript()),
                             process: source => vanillaToAngular(source, this.config.options.grid)
                         };
                     }
+                } else if (this.currentType === 'react') {
+                    // index.jsx
+                    return {
+                        url: this.appFilePath(this.firstVanillaScript()),
+                        process: source => vanillaToReact(source, this.config.options.grid)
+                    };
                 }
-            } else if (this.config.type === 'multi') {
-                return [this.config.options.sourcePrefix, this.section, this.name, this.currentType, file].join('/');
             } else {
-                return [this.config.options.sourcePrefix, this.section, this.name, file].join('/');
+                return this.appFilePath(file);
             }
         }
+    }
+
+    appFilePath(file) {
+        return [this.config.options.sourcePrefix, this.section, this.name].concat(this.config.type == 'multi' ? [this.currentType, file] : file).join('/');
+    }
+
+    firstVanillaScript(): string {
+        return this.config.types.vanilla.files.filter(file => file.endsWith('.js'))[0];
     }
 
     openPlunker(clickEvent) {

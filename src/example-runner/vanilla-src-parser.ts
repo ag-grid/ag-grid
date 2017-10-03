@@ -2,7 +2,7 @@ import {generate} from 'escodegen';
 import * as esprima from 'esprima';
 
 const EVENTS = ['onGridReady'];
-const PROPERTIES = ['columnDefs', 'defaultColumnDef', 'defaultColGroupDef', 'columnTypes', 'rowData', 'enableFilter', 'floatingFilter'];
+const PROPERTIES = ['columnDefs', 'defaultColDef', 'defaultColGroupDef', 'columnTypes', 'rowData', 'enableFilter', 'floatingFilter'];
 
 function collect(iterable, accumulator, collectors) {
     return iterable.reduce((col, value) => {
