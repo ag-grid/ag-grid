@@ -2,7 +2,7 @@ import {generate} from 'escodegen';
 import * as esprima from 'esprima';
 
 const EVENTS = ['onGridReady'];
-const PROPERTIES = ['columnDefs', 'defaultColDef', 'defaultColGroupDef', 'columnTypes', 'rowData', 'enableFilter', 'floatingFilter'];
+const PROPERTIES = ['columnDefs', 'defaultColDef', 'defaultColGroupDef', 'columnTypes', 'rowData', 'enableFilter', 'floatingFilter', 'debug', 'enableSorting', 'enableColResize'];
 
 function collect(iterable, accumulator, collectors) {
     return iterable.reduce((col, value) => {
@@ -21,7 +21,9 @@ function nodeIsVarNamed(node, name) {
 }
 
 function nodeIsPropertyNamed(node, name) {
-    return node.key.name == name;
+    // we skip { property: variable }
+    // and get only inline property assignments
+    return node.key.name == name && node.value.type != 'Identifier';
 }
 
 function nodeIsDocumentContentLoaded(node) {
@@ -34,7 +36,12 @@ function nodeIsDocumentContentLoaded(node) {
 }
 
 function nodeIsFetchDataCall(node) {
-    return node.type === 'ExpressionStatement' && node.expression.callee.name === 'fetchData';
+    return node.type === 'ExpressionStatement' && node.expression.callee && node.expression.callee.name === 'fetchData';
+}
+
+function nodeIsHttpOpen(node) {
+    const calleeObject = node.expression && node.expression.callee && node.expression.callee.object;
+    return node.type === 'ExpressionStatement' && calleeObject && calleeObject.name === 'httpRequest' && node.expression.callee.property.name === 'open';
 }
 
 export default function parser(src, gridSettings) {
@@ -59,10 +66,24 @@ export default function parser(src, gridSettings) {
         }
     });
 
+    // extract the fetchData call
+    onReadyCollectors.push({
+        matches: nodeIsHttpOpen,
+        apply: (col, node) => {
+            const dataUrl = node.expression.arguments[1].raw;
+            // Let's try this for now
+            const callback = '      { gridOptions.api.setRowData(data) }';
+
+            col.data = {url: dataUrl, callback: callback};
+        }
+    });
+
     // extract onready
     collectors.push({
         matches: nodeIsDocumentContentLoaded,
-        apply: (col, node) => collect(node.expression.arguments[1].body.body, col, onReadyCollectors)
+        apply: (col, node) => {
+            collect(node.expression.arguments[1].body.body, col, onReadyCollectors);
+        }
     });
 
     PROPERTIES.forEach(propertyName => {
