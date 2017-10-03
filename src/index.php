@@ -136,7 +136,15 @@ include 'includes/navbar.php'; ?>
 
     <?php include './home/demo-2.php'; ?>
 
-    <section>
+    <section style="background-color: #f6f8fa;">
+        <div class="container">
+            <div class="row" style="margin-top: 20px; margin-bottom: 20px; text-align: center;">
+                <h4>ag-Grid Feature Overview</h4>
+            </div>
+        </div>
+    </section>
+
+    <section style="margin-top: 50px;">
         <div class="container">
             <?php
             $featuresRoot = './javascript-grid-features';
