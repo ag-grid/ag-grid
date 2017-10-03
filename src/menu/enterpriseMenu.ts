@@ -40,8 +40,6 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent, defaultTab?:string): void {
 
-        console.log(`event = `, mouseEvent);
-
         this.showMenu(column, (menu: EnterpriseMenu)=> {
             this.popupService.positionPopupUnderMouseEvent({
                 column: column,
