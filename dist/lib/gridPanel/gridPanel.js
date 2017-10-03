@@ -695,8 +695,12 @@ var GridPanel = (function (_super) {
         return templateLocalised;
     };
     // Valid values for position are bottom, middle and top
+    // position should be {'top','middle','bottom', or undefined/null}.
+    // if undefined/null, then the grid will to the minimal amount of scrolling,
+    // eg if grid needs to scroll up, it scrolls until row is on top,
+    //    if grid needs to scroll down, it scrolls until row is on bottom,
+    //    if row is already in view, grid does not scroll
     GridPanel.prototype.ensureIndexVisible = function (index, position) {
-        if (position === void 0) { position = 'top'; }
         // if for print, everything is always visible
         if (this.gridOptionsWrapper.isForPrint()) {
             return;
@@ -724,7 +728,7 @@ var GridPanel = (function (_super) {
         var halfScreenHeight = (viewportHeight / 2) + (rowToHighlightHeight / 2);
         var eViewportToScroll = this.getPrimaryScrollViewport();
         var newScrollPosition;
-        switch (position.toLowerCase()) {
+        switch (position) {
             case 'top':
                 newScrollPosition = rowTopPixel;
                 break;
@@ -738,13 +742,30 @@ var GridPanel = (function (_super) {
                 newScrollPosition = newScrollPosition > rowTopPixel ? rowTopPixel : newScrollPosition;
                 break;
             default:
-                console.warn("ag-grid: Invalid option for ensureNodeVisible [" + position + "]: valid options are: 'top','bottom' and 'middle'");
                 newScrollPosition = rowTopPixel;
+                var viewportScrolledPastRow = vRangeTop > rowTopPixel;
+                var viewportScrolledBeforeRow = vRangeBottom < rowBottomPixel;
+                if (viewportScrolledPastRow) {
+                    // if row is before, scroll up with row at top
+                    newScrollPosition = rowTopPixel;
+                }
+                else if (viewportScrolledBeforeRow) {
+                    // if row is below, scroll down with row at bottom
+                    var viewportHeight_1 = vRangeBottom - vRangeTop;
+                    newScrollPosition = rowBottomPixel - viewportHeight_1;
+                }
+                else {
+                    // row already in view, and top/middle/bottom not specified, so do nothing.
+                    newScrollPosition = null;
+                }
                 break;
+        }
+        // this means the row is already in view, and we don't need to scroll
+        if (newScrollPosition === null) {
+            return;
         }
         eViewportToScroll.scrollTop = newScrollPosition;
         this.rowRenderer.redrawAfterScroll();
-        // otherwise, row is already in view, so do nothing
     };
     GridPanel.prototype.getPrimaryScrollViewport = function () {
         if (this.enableRtl && this.columnController.isPinningLeft()) {

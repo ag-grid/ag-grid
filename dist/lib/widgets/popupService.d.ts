@@ -6,6 +6,7 @@ import { Column } from "../entities/column";
 export declare class PopupService {
     private gridCore;
     private gridOptionsWrapper;
+    private activePopupElements;
     private getPopupParent();
     positionPopupForMenu(params: {
         eventSource: any;

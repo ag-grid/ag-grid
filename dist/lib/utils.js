@@ -916,7 +916,6 @@ var Utils = (function () {
         if (this.isFirefox === undefined) {
             var anyWindow = window;
             this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';
-            ;
         }
         return this.isFirefox;
     };
@@ -927,6 +926,9 @@ var Utils = (function () {
         return eventNoType.target || eventNoType.srcElement;
     };
     Utils.isElementInEventPath = function (element, event) {
+        if (!event || !element) {
+            return false;
+        }
         var sourceElement = exports._.getTarget(event);
         while (sourceElement) {
             if (sourceElement === element) {
