@@ -17,6 +17,8 @@ export class PopupService {
 
     // this.popupService.setPopupParent(this.eRootPanel.getGui());
 
+    private activePopupElements: HTMLElement[] = [];
+
     private getPopupParent(): HTMLElement {
         return this.gridCore.getRootGui();
     }
@@ -250,11 +252,56 @@ export class PopupService {
             return;
         }
 
-        this.getPopupParent().appendChild(eChild);
+        let ePopupParent = this.getPopupParent();
 
-        let that = this;
+        ePopupParent.appendChild(eChild);
+        this.activePopupElements.push(eChild);
 
         let popupHidden = false;
+
+        // let timeOfMouseEventOnChild = new Date().getTime();
+        // let childMouseClick: MouseEvent = null;
+        // let childTouch: TouchEvent = null;
+
+        let hidePopupOnEsc = (event: any) => {
+            let key = event.which || event.keyCode;
+            if (key === Constants.KEY_ESCAPE) {
+                hidePopup(null);
+            }
+        };
+
+        let hidePopup = (event?: Event) => {
+            // we don't hide popup if the event was on the child, or any
+            // children of this child
+            let indexOfThisChild = this.activePopupElements.indexOf(eChild);
+            for (let i = indexOfThisChild; i<this.activePopupElements.length; i++) {
+                let element = this.activePopupElements[i];
+                if (_.isElementInEventPath(element, event)) {
+                    return;
+                }
+            }
+
+            // this method should only be called once. the client can have different
+            // paths, each one wanting to close, so this method may be called multiple
+            // times.
+            if (popupHidden) {
+                return;
+            }
+            popupHidden = true;
+
+            ePopupParent.removeChild(eChild);
+            _.removeFromArray(this.activePopupElements, eChild);
+
+            eBody.removeEventListener('keydown', hidePopupOnEsc);
+            eBody.removeEventListener('click', hidePopup);
+            eBody.removeEventListener('touchstart', hidePopup);
+            eBody.removeEventListener('contextmenu', hidePopup);
+            // eChild.removeEventListener('click', consumeMouseClick);
+            // eChild.removeEventListener('touchstart', consumeTouchClick);
+            if (closedCallback) {
+                closedCallback();
+            }
+        };
 
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
@@ -265,55 +312,7 @@ export class PopupService {
             eBody.addEventListener('click', hidePopup);
             eBody.addEventListener('touchstart', hidePopup);
             eBody.addEventListener('contextmenu', hidePopup);
-            //eBody.addEventListener('mousedown', hidePopup);
-            eChild.addEventListener('click', consumeMouseClick);
-            eChild.addEventListener('touchstart', consumeTouchClick);
-            //eChild.addEventListener('mousedown', consumeClick);
         }, 0);
-
-        // let timeOfMouseEventOnChild = new Date().getTime();
-        let childMouseClick: MouseEvent = null;
-        let childTouch: TouchEvent = null;
-
-        function hidePopupOnEsc(event: any) {
-            let key = event.which || event.keyCode;
-            if (key === Constants.KEY_ESCAPE) {
-                hidePopup(null);
-            }
-        }
-
-        function hidePopup(event?: any) {
-            // we don't hide popup if the event was on the child
-            if (event && event === childMouseClick) { return; }
-            if (event && event === childTouch) { return; }
-            // this method should only be called once. the client can have different
-            // paths, each one wanting to close, so this method may be called multiple
-            // times.
-            if (popupHidden) {
-                return;
-            }
-            popupHidden = true;
-
-            that.getPopupParent().removeChild(eChild);
-            eBody.removeEventListener('keydown', hidePopupOnEsc);
-            //eBody.removeEventListener('mousedown', hidePopupOnEsc);
-            eBody.removeEventListener('click', hidePopup);
-            eBody.removeEventListener('touchstart', hidePopup);
-            eBody.removeEventListener('contextmenu', hidePopup);
-            eChild.removeEventListener('click', consumeMouseClick);
-            eChild.removeEventListener('touchstart', consumeTouchClick);
-            //eChild.removeEventListener('mousedown', consumeClick);
-            if (closedCallback) {
-                closedCallback();
-            }
-        }
-
-        function consumeMouseClick(event: any) {
-            childMouseClick = event;
-        }
-        function consumeTouchClick(event: any) {
-            childTouch = event;
-        }
 
         return hidePopup;
     }
