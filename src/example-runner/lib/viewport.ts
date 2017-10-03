@@ -1,10 +1,34 @@
+import * as jQuery from 'jquery';
+
+const win = jQuery(window);
+
+function getCurrentViewPort() {
+    const viewport = {
+        top : win.scrollTop(),
+        left : win.scrollLeft(),
+        right: NaN,
+        bottom: NaN
+    };
+
+    viewport.right = viewport.left + win.width();
+    viewport.bottom = viewport.top + win.height();
+
+    return viewport;
+}
+
+function getRect(element) {
+    const bounds = element.offset();
+    bounds.right = bounds.left + element.outerWidth();
+    bounds.bottom = bounds.top + element.outerHeight();
+    return bounds;
+}
+
 export function whenInViewPort(element, callback) {
     function comparePosition() {
-        const scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
-        const scrollPos = scrollTop + document.documentElement.clientHeight;
-        const elemTop = element[0].offsetTop;
+        const viewPort = getCurrentViewPort();
+        const box = getRect(element);
 
-        if (scrollPos >= elemTop) {
+        if (viewPort.bottom >= box.top) {
             window.removeEventListener('scroll', comparePosition);
             callback();
             // setTimeout(callback, 2000);
@@ -17,14 +41,9 @@ export function whenInViewPort(element, callback) {
 
 export function trackIfInViewPort(element, callback) {
     function comparePosition() {
-        var scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
-        var scrollPos = scrollTop + document.documentElement.clientHeight;
-        var elemTop = element[0].offsetTop;
-        var elemBottom = elemTop + element[0].querySelector('div').offsetHeight;
-
-        const adjustment = 100;
-
-        var inViewPort = scrollPos >= elemTop - adjustment && scrollTop <= elemBottom + adjustment;
+        const viewPort = getCurrentViewPort();
+        const box = getRect(element);
+        var inViewPort = viewPort.bottom >= box.top && viewPort.top <= box.bottom;
 
         callback(inViewPort);
     }
@@ -32,4 +51,3 @@ export function trackIfInViewPort(element, callback) {
     comparePosition();
     window.addEventListener('scroll', comparePosition);
 }
-
