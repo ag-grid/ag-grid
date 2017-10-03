@@ -201,7 +201,7 @@ var ComponentResolver = (function () {
         //Using framework component
         var FrameworkComponentRaw = componentToUse.component;
         var thisComponentConfig = this.componentMetadataProvider.retrieve(propertyName);
-        return this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList);
+        return this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, componentName);
     };
     __decorate([
         context_1.Autowired("gridOptions"),

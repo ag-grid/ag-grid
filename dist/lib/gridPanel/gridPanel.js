@@ -401,7 +401,18 @@ var GridPanel = (function (_super) {
         };
         this.performScroll(horizontalScroll);
     };
-    //Either HOME OR END
+    // Either HOME OR END
+    GridPanel.prototype.pageDiagonally_new = function (pagingKey) {
+        var homeKey = pagingKey === constants_1.Constants.KEY_PAGE_HOME_NAME;
+        var allColumns = this.columnController.getAllDisplayedColumns();
+        var columnToSelect = homeKey ? allColumns[0] : allColumns[allColumns.length - 1];
+        var rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
+        this.ensureColumnVisible(columnToSelect);
+        this.ensureIndexVisible(rowIndexToScrollTo);
+        // make sure the cell is rendered, needed if we are to focus
+        this.animationFrameService.flushAllFrames();
+        this.focusedCellController.setFocusedCell(rowIndexToScrollTo, columnToSelect, null, true);
+    };
     GridPanel.prototype.pageDiagonally = function (pagingKey) {
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll

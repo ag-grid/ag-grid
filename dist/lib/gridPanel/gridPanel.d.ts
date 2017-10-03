@@ -108,6 +108,7 @@ export declare class GridPanel extends BeanStub {
     private processKeyboardEvent(eventName, keyboardEvent);
     private handlePageScrollingKey(pagingKeyGroup, pagingKey, keyboardEvent);
     private pageHorizontally(pagingKey);
+    private pageDiagonally_new(pagingKey);
     private pageDiagonally(pagingKey);
     private pageVertically(pagingKey);
     scrollToTop(): void;

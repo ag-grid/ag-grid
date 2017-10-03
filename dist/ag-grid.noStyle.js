@@ -1840,7 +1840,7 @@ var gridApi_1 = __webpack_require__(6);
 var context_1 = __webpack_require__(0);
 var columnController_1 = __webpack_require__(3);
 var utils_1 = __webpack_require__(1);
-var defaultColumnTypes_1 = __webpack_require__(124);
+var defaultColumnTypes_1 = __webpack_require__(126);
 var environment_1 = __webpack_require__(57);
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -4768,109 +4768,8 @@ exports.EventService = EventService;
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Events = (function () {
-    function Events() {
-    }
-    /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
-    Events.EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
-    /** User has set in new columns. */
-    Events.EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
-    /** The pivot mode flag was changed */
-    Events.EVENT_COLUMN_PIVOT_MODE_CHANGED = 'columnPivotModeChanged';
-    /** A row group column was added, removed or order changed. */
-    Events.EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
-    /** A pivot column was added, removed or order changed. */
-    Events.EVENT_COLUMN_PIVOT_CHANGED = 'columnPivotChanged';
-    /** The list of grid columns has changed. */
-    Events.EVENT_GRID_COLUMNS_CHANGED = 'gridColumnsChanged';
-    /** A value column was added, removed or agg function was changed. */
-    Events.EVENT_COLUMN_VALUE_CHANGED = 'columnValueChanged';
-    /** A column was moved */
-    Events.EVENT_COLUMN_MOVED = 'columnMoved';
-    /** One or more columns was shown / hidden */
-    Events.EVENT_COLUMN_VISIBLE = 'columnVisible';
-    /** One or more columns was pinned / unpinned*/
-    Events.EVENT_COLUMN_PINNED = 'columnPinned';
-    /** A column group was opened / closed */
-    Events.EVENT_COLUMN_GROUP_OPENED = 'columnGroupOpened';
-    /** One or more columns was resized. If just one, the column in the event is set. */
-    Events.EVENT_COLUMN_RESIZED = 'columnResized';
-    /** The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc */
-    Events.EVENT_DISPLAYED_COLUMNS_CHANGED = 'displayedColumnsChanged';
-    /** The list of virtual columns has changed, results from viewport changing */
-    Events.EVENT_VIRTUAL_COLUMNS_CHANGED = 'virtualColumnsChanged';
-    /** A row group was opened / closed */
-    Events.EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
-    /** The client has set new data into the grid */
-    Events.EVENT_ROW_DATA_CHANGED = 'rowDataChanged';
-    /** The client has updated data for the grid */
-    Events.EVENT_ROW_DATA_UPDATED = 'rowDataUpdated';
-    /** The client has set new floating data into the grid */
-    Events.EVENT_PINNED_ROW_DATA_CHANGED = 'pinnedRowDataChanged';
-    /** Range selection has changed */
-    Events.EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
-    /** Model was updated - grid updates the drawn rows when this happens */
-    Events.EVENT_MODEL_UPDATED = 'modelUpdated';
-    Events.EVENT_CELL_CLICKED = 'cellClicked';
-    Events.EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
-    Events.EVENT_CELL_CONTEXT_MENU = 'cellContextMenu';
-    Events.EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
-    Events.EVENT_ROW_VALUE_CHANGED = 'rowValueChanged';
-    Events.EVENT_CELL_FOCUSED = 'cellFocused';
-    Events.EVENT_ROW_SELECTED = 'rowSelected';
-    Events.EVENT_SELECTION_CHANGED = 'selectionChanged';
-    Events.EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
-    Events.EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
-    /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
-    Events.EVENT_FILTER_CHANGED = 'filterChanged';
-    /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
-    Events.EVENT_FILTER_MODIFIED = 'filterModified';
-    Events.EVENT_SORT_CHANGED = 'sortChanged';
-    /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
-    Events.EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
-    Events.EVENT_ROW_CLICKED = 'rowClicked';
-    Events.EVENT_ROW_DOUBLE_CLICKED = 'rowDoubleClicked';
-    /** Gets called once after the grid has finished initialising. */
-    Events.EVENT_GRID_READY = 'gridReady';
-    /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
-     * changed, so always filling the space it was given. */
-    Events.EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
-    /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
-    Events.EVENT_VIEWPORT_CHANGED = 'viewportChanged';
-    /** A column drag has started, either resizing a column or moving a column. */
-    Events.EVENT_DRAG_STARTED = 'dragStarted';
-    /** A column drag has stopped */
-    Events.EVENT_DRAG_STOPPED = 'dragStopped';
-    Events.EVENT_ROW_EDITING_STARTED = 'rowEditingStarted';
-    Events.EVENT_ROW_EDITING_STOPPED = 'rowEditingStopped';
-    Events.EVENT_CELL_EDITING_STARTED = 'cellEditingStarted';
-    Events.EVENT_CELL_EDITING_STOPPED = 'cellEditingStopped';
-    /** Main body of grid has scrolled, either horizontally or vertically */
-    Events.EVENT_BODY_SCROLL = 'bodyScroll';
-    /** The displayed page for pagination has changed. For example the data was filtered or sorted,
-     * or the user has moved to a different page. */
-    Events.EVENT_PAGINATION_CHANGED = 'paginationChanged';
-    /** Only used by React, Angular 2+, Web Components, Aurelia and VueJS ag-Grid components
-     * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
-     * to bound properties, this event fires after the grid has finished processing the change. */
-    Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
-    /** All items from here down are used internally by the grid, not intended for external use. */
-    // not documented, either experimental, or we just don't want users using an ddepending on them
-    Events.EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
-    Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
-    Events.EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
-    Events.EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
-    Events.EVENT_FLASH_CELLS = 'flashCells';
-    // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
-    // to design these better around server side functions and then release to general public when fully working with
-    // all the row models.
-    Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST = 'columnRowGroupChangeRequest';
-    Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST = 'columnPivotChangeRequest';
-    Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
-    Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
-    return Events;
-}());
-exports.Events = Events;
+var eventKeys_1 = __webpack_require__(115);
+exports.Events = eventKeys_1.Events;
 
 
 /***/ }),
@@ -6949,7 +6848,7 @@ var mouseEventService_1 = __webpack_require__(44);
 var focusedCellController_1 = __webpack_require__(24);
 var scrollVisibleService_1 = __webpack_require__(31);
 var beanStub_1 = __webpack_require__(13);
-var rowContainerComponent_1 = __webpack_require__(115);
+var rowContainerComponent_1 = __webpack_require__(117);
 var paginationProxy_1 = __webpack_require__(32);
 var popupEditorWrapper_1 = __webpack_require__(67);
 var alignedGridsService_1 = __webpack_require__(45);
@@ -7305,7 +7204,18 @@ var GridPanel = (function (_super) {
         };
         this.performScroll(horizontalScroll);
     };
-    //Either HOME OR END
+    // Either HOME OR END
+    GridPanel.prototype.pageDiagonally_new = function (pagingKey) {
+        var homeKey = pagingKey === constants_1.Constants.KEY_PAGE_HOME_NAME;
+        var allColumns = this.columnController.getAllDisplayedColumns();
+        var columnToSelect = homeKey ? allColumns[0] : allColumns[allColumns.length - 1];
+        var rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
+        this.ensureColumnVisible(columnToSelect);
+        this.ensureIndexVisible(rowIndexToScrollTo);
+        // make sure the cell is rendered, needed if we are to focus
+        this.animationFrameService.flushAllFrames();
+        this.focusedCellController.setFocusedCell(rowIndexToScrollTo, columnToSelect, null, true);
+    };
     GridPanel.prototype.pageDiagonally = function (pagingKey) {
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
@@ -13216,7 +13126,7 @@ var ComponentResolver = (function () {
         //Using framework component
         var FrameworkComponentRaw = componentToUse.component;
         var thisComponentConfig = this.componentMetadataProvider.retrieve(propertyName);
-        return this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList);
+        return this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, componentName);
     };
     __decorate([
         context_1.Autowired("gridOptions"),
@@ -14133,7 +14043,7 @@ var borderLayout_1 = __webpack_require__(64);
 var context_1 = __webpack_require__(0);
 var focusedCellController_1 = __webpack_require__(24);
 var component_1 = __webpack_require__(8);
-var paginationComp_1 = __webpack_require__(121);
+var paginationComp_1 = __webpack_require__(123);
 var gridApi_1 = __webpack_require__(6);
 var GridCore = (function () {
     function GridCore(loggerFactory) {
@@ -17811,7 +17721,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = __webpack_require__(0);
 var gridPanel_1 = __webpack_require__(11);
-var linkedList_1 = __webpack_require__(116);
+var linkedList_1 = __webpack_require__(118);
 var AnimationFrameService = (function () {
     function AnimationFrameService() {
         this.p1Tasks = new linkedList_1.LinkedList();
@@ -20885,6 +20795,7 @@ exports.RowNodeBlock = RowNodeBlock;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var events_1 = __webpack_require__(5);
+var propertyKeys_1 = __webpack_require__(116);
 var utils_1 = __webpack_require__(1);
 var ComponentUtil = (function () {
     function ComponentUtil() {
@@ -20912,22 +20823,22 @@ var ComponentUtil = (function () {
             .concat(ComponentUtil.OBJECT_PROPERTIES)
             .concat(ComponentUtil.FUNCTION_PROPERTIES)
             .forEach(function (key) {
-            if (typeof (component)[key] !== 'undefined') {
+            if (typeof component[key] !== 'undefined') {
                 pGridOptions[key] = component[key];
             }
         });
         ComponentUtil.BOOLEAN_PROPERTIES.forEach(function (key) {
-            if (typeof (component)[key] !== 'undefined') {
+            if (typeof component[key] !== 'undefined') {
                 pGridOptions[key] = ComponentUtil.toBoolean(component[key]);
             }
         });
         ComponentUtil.NUMBER_PROPERTIES.forEach(function (key) {
-            if (typeof (component)[key] !== 'undefined') {
+            if (typeof component[key] !== 'undefined') {
                 pGridOptions[key] = ComponentUtil.toNumber(component[key]);
             }
         });
         ComponentUtil.getEventCallbacks().forEach(function (funcName) {
-            if (typeof (component)[funcName] !== 'undefined') {
+            if (typeof component[funcName] !== 'undefined') {
                 pGridOptions[funcName] = component[funcName];
             }
         });
@@ -21045,70 +20956,13 @@ var ComponentUtil = (function () {
     };
     // all the events are populated in here AFTER this class (at the bottom of the file).
     ComponentUtil.EVENTS = [];
-    ComponentUtil.STRING_PROPERTIES = [
-        'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
-        'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType',
-        'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow'
-    ];
-    ComponentUtil.OBJECT_PROPERTIES = [
-        'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText',
-        'icons', 'datasource', 'enterpriseDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
-        'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
-        'rowClassRules'
-        //,'cellRenderers','cellEditors'
-    ];
-    ComponentUtil.ARRAY_PROPERTIES = [
-        'slaveGrids', 'alignedGrids', 'rowData',
-        'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
-        // deprecated
-    ];
-    ComponentUtil.NUMBER_PROPERTIES = [
-        'rowHeight', 'rowBuffer', 'colWidth', 'headerHeight', 'groupHeaderHeight', 'floatingFiltersHeight',
-        'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded',
-        'minColWidth', 'maxColWidth', 'viewportRowModelPageSize', 'viewportRowModelBufferSize',
-        'layoutInterval', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
-        'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount',
-        'scrollbarWidth', 'paginationStartPage', 'infiniteBlockSize'
-    ];
-    ComponentUtil.BOOLEAN_PROPERTIES = [
-        'toolPanelSuppressRowGroups', 'toolPanelSuppressValues', 'toolPanelSuppressPivots', 'toolPanelSuppressPivotMode',
-        'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll', 'debug',
-        'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
-        'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
-        'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren',
-        'groupIncludeFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader', 'forPrint',
-        'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort',
-        'singleClickEdit', 'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize',
-        'suppressParentsInRowNodes', 'showToolPanel', 'suppressColumnMoveAnimation', 'suppressMovableColumns',
-        'suppressFieldDotNotation', 'enableRangeSelection',
-        'pivotPanelShow', 'suppressTouch', 'suppressAsyncEvents', 'allowContextMenuWithControlKey',
-        'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel',
-        'enableStatusBar', 'alwaysShowStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
-        'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
-        'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation', 'suppressAggAtRootLevel',
-        'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly',
-        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtl', 'suppressClickEdit',
-        'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
-        'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus',
-        'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
-        'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection',
-        'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame',
-        'suppressExcelExport', 'suppressCsvExport'
-    ];
-    ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
-        'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent',
-        'getRowHeight', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
-        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
-        'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
-        'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
-        'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell',
-        'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount'];
-    ComponentUtil.ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
-        .concat(ComponentUtil.OBJECT_PROPERTIES)
-        .concat(ComponentUtil.STRING_PROPERTIES)
-        .concat(ComponentUtil.NUMBER_PROPERTIES)
-        .concat(ComponentUtil.FUNCTION_PROPERTIES)
-        .concat(ComponentUtil.BOOLEAN_PROPERTIES);
+    ComponentUtil.STRING_PROPERTIES = propertyKeys_1.PropertyKeys.STRING_PROPERTIES;
+    ComponentUtil.OBJECT_PROPERTIES = propertyKeys_1.PropertyKeys.OBJECT_PROPERTIES;
+    ComponentUtil.ARRAY_PROPERTIES = propertyKeys_1.PropertyKeys.ARRAY_PROPERTIES;
+    ComponentUtil.NUMBER_PROPERTIES = propertyKeys_1.PropertyKeys.NUMBER_PROPERTIES;
+    ComponentUtil.BOOLEAN_PROPERTIES = propertyKeys_1.PropertyKeys.BOOLEAN_PROPERTIES;
+    ComponentUtil.FUNCTION_PROPERTIES = propertyKeys_1.PropertyKeys.FUNCTION_PROPERTIES;
+    ComponentUtil.ALL_PROPERTIES = propertyKeys_1.PropertyKeys.ALL_PROPERTIES;
     return ComponentUtil;
 }());
 exports.ComponentUtil = ComponentUtil;
@@ -22186,10 +22040,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var textCellEditor_1 = __webpack_require__(69);
 var context_1 = __webpack_require__(0);
 var dateFilter_1 = __webpack_require__(50);
-var headerComp_1 = __webpack_require__(117);
-var headerGroupComp_1 = __webpack_require__(118);
-var floatingFilter_1 = __webpack_require__(119);
-var floatingFilterWrapper_1 = __webpack_require__(120);
+var headerComp_1 = __webpack_require__(119);
+var headerGroupComp_1 = __webpack_require__(120);
+var floatingFilter_1 = __webpack_require__(121);
+var floatingFilterWrapper_1 = __webpack_require__(122);
 var componentResolver_1 = __webpack_require__(27);
 var groupCellRenderer_1 = __webpack_require__(73);
 var animateShowChangeCellRenderer_1 = __webpack_require__(72);
@@ -24497,13 +24351,13 @@ var columnHoverService_1 = __webpack_require__(75);
 var columnAnimationService_1 = __webpack_require__(70);
 var sortService_1 = __webpack_require__(106);
 var filterService_1 = __webpack_require__(104);
-var rowNodeFactory_1 = __webpack_require__(128);
+var rowNodeFactory_1 = __webpack_require__(130);
 var autoGroupColService_1 = __webpack_require__(99);
 var paginationProxy_1 = __webpack_require__(32);
 var immutableService_1 = __webpack_require__(100);
 var constants_1 = __webpack_require__(7);
 var valueCache_1 = __webpack_require__(30);
-var changeDetectionService_1 = __webpack_require__(129);
+var changeDetectionService_1 = __webpack_require__(131);
 var alignedGridsService_1 = __webpack_require__(45);
 var pinnedRowModel_1 = __webpack_require__(25);
 var componentResolver_1 = __webpack_require__(27);
@@ -26063,7 +25917,7 @@ var eventService_1 = __webpack_require__(4);
 var events_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(1);
 var headerWrapperComp_1 = __webpack_require__(95);
-var headerGroupWrapperComp_1 = __webpack_require__(123);
+var headerGroupWrapperComp_1 = __webpack_require__(125);
 var filterManager_1 = __webpack_require__(16);
 var componentRecipes_1 = __webpack_require__(26);
 var HeaderRowType;
@@ -26389,7 +26243,7 @@ var eventService_1 = __webpack_require__(4);
 var componentRecipes_1 = __webpack_require__(26);
 var agCheckbox_1 = __webpack_require__(59);
 var componentAnnotations_1 = __webpack_require__(12);
-var selectAllFeature_1 = __webpack_require__(122);
+var selectAllFeature_1 = __webpack_require__(124);
 var events_1 = __webpack_require__(5);
 var columnHoverService_1 = __webpack_require__(75);
 var beans_1 = __webpack_require__(35);
@@ -28221,7 +28075,7 @@ var events_1 = __webpack_require__(5);
 var sortController_1 = __webpack_require__(21);
 var filterManager_1 = __webpack_require__(16);
 var constants_1 = __webpack_require__(7);
-var infiniteCache_1 = __webpack_require__(126);
+var infiniteCache_1 = __webpack_require__(128);
 var beanStub_1 = __webpack_require__(13);
 var rowNodeCache_1 = __webpack_require__(84);
 var rowNodeBlockLoader_1 = __webpack_require__(109);
@@ -29402,9 +29256,9 @@ var componentUtil_1 = __webpack_require__(61);
 exports.ComponentUtil = componentUtil_1.ComponentUtil;
 var componentProvider_1 = __webpack_require__(68);
 exports.ComponentProvider = componentProvider_1.ComponentProvider;
-var agGridNg1_1 = __webpack_require__(125);
+var agGridNg1_1 = __webpack_require__(127);
 exports.initialiseAgGridWithAngular1 = agGridNg1_1.initialiseAgGridWithAngular1;
-var agGridWebComponent_1 = __webpack_require__(130);
+var agGridWebComponent_1 = __webpack_require__(132);
 exports.initialiseAgGridWithWebComponents = agGridWebComponent_1.initialiseAgGridWithWebComponents;
 // context
 var beanStub_1 = __webpack_require__(13);
@@ -29487,12 +29341,12 @@ exports.StandardMenuFactory = standardMenu_1.StandardMenuFactory;
 // layout
 var borderLayout_1 = __webpack_require__(64);
 exports.BorderLayout = borderLayout_1.BorderLayout;
-var tabbedLayout_1 = __webpack_require__(131);
+var tabbedLayout_1 = __webpack_require__(133);
 exports.TabbedLayout = tabbedLayout_1.TabbedLayout;
-var verticalStack_1 = __webpack_require__(132);
+var verticalStack_1 = __webpack_require__(134);
 exports.VerticalStack = verticalStack_1.VerticalStack;
 // misc
-var simpleHttpRequest_1 = __webpack_require__(133);
+var simpleHttpRequest_1 = __webpack_require__(135);
 exports.simpleHttpRequest = simpleHttpRequest_1.simpleHttpRequest;
 var largeTextCellEditor_1 = __webpack_require__(92);
 exports.LargeTextCellEditor = largeTextCellEditor_1.LargeTextCellEditor;
@@ -29592,7 +29446,7 @@ var events_1 = __webpack_require__(5);
 exports.Events = events_1.Events;
 var focusedCellController_1 = __webpack_require__(24);
 exports.FocusedCellController = focusedCellController_1.FocusedCellController;
-var functions_1 = __webpack_require__(134);
+var functions_1 = __webpack_require__(136);
 exports.defaultGroupComparator = functions_1.defaultGroupComparator;
 var gridOptionsWrapper_1 = __webpack_require__(2);
 exports.GridOptionsWrapper = gridOptionsWrapper_1.GridOptionsWrapper;
@@ -29626,7 +29480,7 @@ var logger_2 = __webpack_require__(10);
 exports.LoggerFactory = logger_2.LoggerFactory;
 var columnController_2 = __webpack_require__(3);
 exports.ColumnApi = columnController_2.ColumnApi;
-var frameworkComponentWrapper_1 = __webpack_require__(135);
+var frameworkComponentWrapper_1 = __webpack_require__(137);
 exports.BaseComponentWrapper = frameworkComponentWrapper_1.BaseComponentWrapper;
 var environment_1 = __webpack_require__(57);
 exports.Environment = environment_1.Environment;
@@ -29662,6 +29516,209 @@ module.exports = g;
 
 /***/ }),
 /* 115 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v13.3.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Events = (function () {
+    function Events() {
+    }
+    /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
+    Events.EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
+    /** User has set in new columns. */
+    Events.EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
+    /** The pivot mode flag was changed */
+    Events.EVENT_COLUMN_PIVOT_MODE_CHANGED = 'columnPivotModeChanged';
+    /** A row group column was added, removed or order changed. */
+    Events.EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
+    /** A pivot column was added, removed or order changed. */
+    Events.EVENT_COLUMN_PIVOT_CHANGED = 'columnPivotChanged';
+    /** The list of grid columns has changed. */
+    Events.EVENT_GRID_COLUMNS_CHANGED = 'gridColumnsChanged';
+    /** A value column was added, removed or agg function was changed. */
+    Events.EVENT_COLUMN_VALUE_CHANGED = 'columnValueChanged';
+    /** A column was moved */
+    Events.EVENT_COLUMN_MOVED = 'columnMoved';
+    /** One or more columns was shown / hidden */
+    Events.EVENT_COLUMN_VISIBLE = 'columnVisible';
+    /** One or more columns was pinned / unpinned*/
+    Events.EVENT_COLUMN_PINNED = 'columnPinned';
+    /** A column group was opened / closed */
+    Events.EVENT_COLUMN_GROUP_OPENED = 'columnGroupOpened';
+    /** One or more columns was resized. If just one, the column in the event is set. */
+    Events.EVENT_COLUMN_RESIZED = 'columnResized';
+    /** The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc */
+    Events.EVENT_DISPLAYED_COLUMNS_CHANGED = 'displayedColumnsChanged';
+    /** The list of virtual columns has changed, results from viewport changing */
+    Events.EVENT_VIRTUAL_COLUMNS_CHANGED = 'virtualColumnsChanged';
+    /** A row group was opened / closed */
+    Events.EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
+    /** The client has set new data into the grid */
+    Events.EVENT_ROW_DATA_CHANGED = 'rowDataChanged';
+    /** The client has updated data for the grid */
+    Events.EVENT_ROW_DATA_UPDATED = 'rowDataUpdated';
+    /** The client has set new floating data into the grid */
+    Events.EVENT_PINNED_ROW_DATA_CHANGED = 'pinnedRowDataChanged';
+    /** Range selection has changed */
+    Events.EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
+    /** Model was updated - grid updates the drawn rows when this happens */
+    Events.EVENT_MODEL_UPDATED = 'modelUpdated';
+    Events.EVENT_CELL_CLICKED = 'cellClicked';
+    Events.EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
+    Events.EVENT_CELL_CONTEXT_MENU = 'cellContextMenu';
+    Events.EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
+    Events.EVENT_ROW_VALUE_CHANGED = 'rowValueChanged';
+    Events.EVENT_CELL_FOCUSED = 'cellFocused';
+    Events.EVENT_ROW_SELECTED = 'rowSelected';
+    Events.EVENT_SELECTION_CHANGED = 'selectionChanged';
+    Events.EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
+    Events.EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
+    /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
+    Events.EVENT_FILTER_CHANGED = 'filterChanged';
+    /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
+    Events.EVENT_FILTER_MODIFIED = 'filterModified';
+    Events.EVENT_SORT_CHANGED = 'sortChanged';
+    /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
+    Events.EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
+    Events.EVENT_ROW_CLICKED = 'rowClicked';
+    Events.EVENT_ROW_DOUBLE_CLICKED = 'rowDoubleClicked';
+    /** Gets called once after the grid has finished initialising. */
+    Events.EVENT_GRID_READY = 'gridReady';
+    /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
+     * changed, so always filling the space it was given. */
+    Events.EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
+    /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
+    Events.EVENT_VIEWPORT_CHANGED = 'viewportChanged';
+    /** A column drag has started, either resizing a column or moving a column. */
+    Events.EVENT_DRAG_STARTED = 'dragStarted';
+    /** A column drag has stopped */
+    Events.EVENT_DRAG_STOPPED = 'dragStopped';
+    Events.EVENT_ROW_EDITING_STARTED = 'rowEditingStarted';
+    Events.EVENT_ROW_EDITING_STOPPED = 'rowEditingStopped';
+    Events.EVENT_CELL_EDITING_STARTED = 'cellEditingStarted';
+    Events.EVENT_CELL_EDITING_STOPPED = 'cellEditingStopped';
+    /** Main body of grid has scrolled, either horizontally or vertically */
+    Events.EVENT_BODY_SCROLL = 'bodyScroll';
+    /** The displayed page for pagination has changed. For example the data was filtered or sorted,
+     * or the user has moved to a different page. */
+    Events.EVENT_PAGINATION_CHANGED = 'paginationChanged';
+    /** Only used by React, Angular 2+, Web Components, Aurelia and VueJS ag-Grid components
+     * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
+     * to bound properties, this event fires after the grid has finished processing the change. */
+    Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
+    /** All items from here down are used internally by the grid, not intended for external use. */
+    // not documented, either experimental, or we just don't want users using an ddepending on them
+    Events.EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
+    Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
+    Events.EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
+    Events.EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
+    Events.EVENT_FLASH_CELLS = 'flashCells';
+    // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
+    // to design these better around server side functions and then release to general public when fully working with
+    // all the row models.
+    Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST = 'columnRowGroupChangeRequest';
+    Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST = 'columnPivotChangeRequest';
+    Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
+    Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
+    return Events;
+}());
+exports.Events = Events;
+
+
+/***/ }),
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v13.3.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var PropertyKeys = (function () {
+    function PropertyKeys() {
+    }
+    PropertyKeys.STRING_PROPERTIES = [
+        'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
+        'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType',
+        'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow'
+    ];
+    PropertyKeys.OBJECT_PROPERTIES = [
+        'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText',
+        'icons', 'datasource', 'enterpriseDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
+        'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
+        'rowClassRules'
+        //,'cellRenderers','cellEditors'
+    ];
+    PropertyKeys.ARRAY_PROPERTIES = [
+        'slaveGrids', 'alignedGrids', 'rowData',
+        'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
+        // deprecated
+    ];
+    PropertyKeys.NUMBER_PROPERTIES = [
+        'rowHeight', 'rowBuffer', 'colWidth', 'headerHeight', 'groupHeaderHeight', 'floatingFiltersHeight',
+        'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded',
+        'minColWidth', 'maxColWidth', 'viewportRowModelPageSize', 'viewportRowModelBufferSize',
+        'layoutInterval', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
+        'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount',
+        'scrollbarWidth', 'paginationStartPage', 'infiniteBlockSize'
+    ];
+    PropertyKeys.BOOLEAN_PROPERTIES = [
+        'toolPanelSuppressRowGroups', 'toolPanelSuppressValues', 'toolPanelSuppressPivots', 'toolPanelSuppressPivotMode',
+        'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll', 'debug',
+        'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
+        'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
+        'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren',
+        'groupIncludeFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader', 'forPrint',
+        'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort',
+        'singleClickEdit', 'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize',
+        'suppressParentsInRowNodes', 'showToolPanel', 'suppressColumnMoveAnimation', 'suppressMovableColumns',
+        'suppressFieldDotNotation', 'enableRangeSelection',
+        'pivotPanelShow', 'suppressTouch', 'suppressAsyncEvents', 'allowContextMenuWithControlKey',
+        'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel',
+        'enableStatusBar', 'alwaysShowStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
+        'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
+        'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation', 'suppressAggAtRootLevel',
+        'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly',
+        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtl', 'suppressClickEdit',
+        'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
+        'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus',
+        'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
+        'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection',
+        'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame',
+        'suppressExcelExport', 'suppressCsvExport'
+    ];
+    PropertyKeys.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
+        'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent',
+        'getRowHeight', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
+        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
+        'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
+        'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
+        'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell',
+        'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount'];
+    PropertyKeys.ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
+        .concat(PropertyKeys.OBJECT_PROPERTIES)
+        .concat(PropertyKeys.STRING_PROPERTIES)
+        .concat(PropertyKeys.NUMBER_PROPERTIES)
+        .concat(PropertyKeys.FUNCTION_PROPERTIES)
+        .concat(PropertyKeys.BOOLEAN_PROPERTIES);
+    return PropertyKeys;
+}());
+exports.PropertyKeys = PropertyKeys;
+
+
+/***/ }),
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29777,7 +29834,7 @@ exports.RowContainerComponent = RowContainerComponent;
 
 
 /***/ }),
-/* 116 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -29831,7 +29888,7 @@ var LinkedListItem = (function () {
 
 
 /***/ }),
-/* 117 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30082,7 +30139,7 @@ exports.HeaderComp = HeaderComp;
 
 
 /***/ }),
-/* 118 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30213,7 +30270,7 @@ exports.HeaderGroupComp = HeaderGroupComp;
 
 
 /***/ }),
-/* 119 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30515,7 +30572,7 @@ exports.ReadModelAsStringFloatingFilterComp = ReadModelAsStringFloatingFilterCom
 
 
 /***/ }),
-/* 120 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30656,7 +30713,7 @@ exports.EmptyFloatingFilterWrapperComp = EmptyFloatingFilterWrapperComp;
 
 
 /***/ }),
-/* 121 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -30876,7 +30933,7 @@ exports.PaginationComp = PaginationComp;
 
 
 /***/ }),
-/* 122 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31097,7 +31154,7 @@ exports.SelectAllFeature = SelectAllFeature;
 
 
 /***/ }),
-/* 123 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31445,7 +31502,7 @@ exports.HeaderGroupWrapperComp = HeaderGroupWrapperComp;
 
 
 /***/ }),
-/* 124 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31466,7 +31523,7 @@ exports.DefaultColumnTypes = {
 
 
 /***/ }),
-/* 125 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31514,7 +31571,7 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
 
 
 /***/ }),
-/* 126 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31552,7 +31609,7 @@ var context_1 = __webpack_require__(0);
 var eventService_1 = __webpack_require__(4);
 var events_1 = __webpack_require__(5);
 var logger_1 = __webpack_require__(10);
-var infiniteBlock_1 = __webpack_require__(127);
+var infiniteBlock_1 = __webpack_require__(129);
 var rowNodeCache_1 = __webpack_require__(84);
 var gridApi_1 = __webpack_require__(6);
 var columnController_1 = __webpack_require__(3);
@@ -31697,7 +31754,7 @@ exports.InfiniteCache = InfiniteCache;
 
 
 /***/ }),
-/* 127 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31832,7 +31889,7 @@ exports.InfiniteBlock = InfiniteBlock;
 
 
 /***/ }),
-/* 128 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31894,7 +31951,7 @@ exports.RowNodeFactory = RowNodeFactory;
 
 
 /***/ }),
-/* 129 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -31995,7 +32052,7 @@ exports.ChangeDetectionService = ChangeDetectionService;
 
 
 /***/ }),
-/* 130 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32118,7 +32175,7 @@ function toCamelCase(myString) {
 
 
 /***/ }),
-/* 131 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32224,7 +32281,7 @@ exports.TabbedLayout = TabbedLayout;
 
 
 /***/ }),
-/* 132 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32271,7 +32328,7 @@ exports.VerticalStack = VerticalStack;
 
 
 /***/ }),
-/* 133 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32314,7 +32371,7 @@ exports.Promise = Promise;
 
 
 /***/ }),
-/* 134 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32351,7 +32408,7 @@ exports.defaultGroupComparator = defaultGroupComparator;
 
 
 /***/ }),
-/* 135 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -32366,9 +32423,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var BaseComponentWrapper = (function () {
     function BaseComponentWrapper() {
     }
-    BaseComponentWrapper.prototype.wrap = function (OriginalConstructor, mandatoryMethodList, optionalMethodList) {
+    BaseComponentWrapper.prototype.wrap = function (OriginalConstructor, mandatoryMethodList, optionalMethodList, componentName) {
         var _this = this;
-        var wrapper = this.createWrapper(OriginalConstructor);
+        var wrapper = this.createWrapper(OriginalConstructor, componentName);
         mandatoryMethodList.forEach((function (methodName) {
             _this.createMethod(wrapper, methodName, true);
         }));
