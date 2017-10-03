@@ -180,15 +180,20 @@ class ExampleRunner {
         this.availableTypes = Object.keys(this.config.types);
 
         this.$timeout( () =>  {
+            let visibleToggle: angular.IPromise<void>;
+            let nextVisible: boolean = false;
+
             trackIfInViewPort(this.$element, ( visible ) => {
-                if (this.visible !== visible) {
-                    console.log('toggling visible', visible)
-                    this.$timeout(() => {
-                        this.visible = visible;
-                    });
+                if (nextVisible !== visible) {
+                    nextVisible = visible;
+                    this.$timeout.cancel(visibleToggle);
+
+                    visibleToggle = this.$timeout(() => {
+                        this.visible = nextVisible;
+                    }, 1000);
                 }
             });
-        }, 1000);
+        }, 500);
 
         whenInViewPort(this.$element, () => {
             this.$timeout(() => {

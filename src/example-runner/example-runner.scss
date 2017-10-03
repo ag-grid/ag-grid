@@ -144,7 +144,7 @@ $border-radius: $unit;
         }
     }
 
-    .loading-placeholder {
+    .loading-placeholder, .iframe-placeholder {
         height: 450px;
         display: flex;
         align-items: center;
