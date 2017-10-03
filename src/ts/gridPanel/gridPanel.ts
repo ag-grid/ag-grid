@@ -491,7 +491,7 @@ export class GridPanel extends BeanStub {
                 let result: TestKeyboardBindingGroupsResult = testKeyboardBindingGroups(pageScrollingKeys, keyboardEvent);
 
                 if (result){
-                    this.handlePageScrollingKey (result.trappedKeyboardBindingGroup.id, result.trappedKeyboardBinding.id, keyboardEvent);
+                    this.handlePageScrollingKey(result.trappedKeyboardBindingGroup.id, result.trappedKeyboardBinding.id, keyboardEvent);
                 } else {
                     renderedCell.onKeyDown(keyboardEvent);
                 }
@@ -502,7 +502,7 @@ export class GridPanel extends BeanStub {
         }
     }
 
-    private handlePageScrollingKey (pagingKeyGroup:string, pagingKey:string, keyboardEvent:KeyboardEvent): void{
+    private handlePageScrollingKey(pagingKeyGroup:string, pagingKey:string, keyboardEvent:KeyboardEvent): void{
         switch (pagingKeyGroup){
             case Constants.DIAGONAL_SCROLL_KEYS_ID:
                 this.pageDiagonally(pagingKey);
@@ -521,7 +521,7 @@ export class GridPanel extends BeanStub {
     }
 
     //Either CTL LEFT/RIGHT
-    private pageHorizontally (pagingKey:string): void{
+    private pageHorizontally(pagingKey:string): void{
         //***************************************************************************
         //column to select
         let allColumns: Column[] = this.columnController.getAllDisplayedColumns();
@@ -538,10 +538,26 @@ export class GridPanel extends BeanStub {
         this.performScroll(horizontalScroll);
     }
 
+    // Either HOME OR END
+    private pageDiagonally_new(pagingKey:string): void {
 
+        let homeKey = pagingKey === Constants.KEY_PAGE_HOME_NAME;
 
-    //Either HOME OR END
-    private pageDiagonally (pagingKey:string): void{
+        let allColumns: Column[] = this.columnController.getAllDisplayedColumns();
+        let columnToSelect = homeKey ? allColumns[0] : allColumns[allColumns.length - 1];
+        let rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
+
+        this.ensureColumnVisible(columnToSelect);
+        this.ensureIndexVisible(rowIndexToScrollTo);
+
+        // make sure the cell is rendered, needed if we are to focus
+        this.animationFrameService.flushAllFrames();
+
+        this.focusedCellController.setFocusedCell(rowIndexToScrollTo, columnToSelect, null, true);
+    }
+
+    private pageDiagonally(pagingKey:string): void {
+
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
         let pageSize: number = this.getPrimaryScrollViewport().offsetHeight;
@@ -684,8 +700,8 @@ export class GridPanel extends BeanStub {
             onlyBody: true,
             suppressKeepFocus: true
         };
-        this.rowRenderer.redrawAfterModelUpdate(refreshViewParams);
 
+        this.rowRenderer.redrawAfterModelUpdate(refreshViewParams);
 
         //***************************************************************************
         // New focused cell
