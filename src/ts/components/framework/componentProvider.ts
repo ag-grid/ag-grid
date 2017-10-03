@@ -103,7 +103,7 @@ export class ComponentProvider {
     }
 
     public registerComponent<A extends IComponent<any, IAfterGuiAttachedParams>> (name:string, component:AgGridRegisteredComponentInput<A>){
-        console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
+        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
         if (this.frameworkComponents[name]){
             console.error(`Trying to register a component that you have already registered for frameworks: ${name}`);
             return;
@@ -117,7 +117,7 @@ export class ComponentProvider {
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
     public registerFwComponent<A extends IComponent<any, IAfterGuiAttachedParams> & B, B> (name:string, component:{new(): IComponent<B, IAfterGuiAttachedParams>}){
-        console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
+        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
         if (this.jsComponents[name]){
             console.error(`Trying to register a component that you have already registered for plain javascript: ${name}`);
             return;
