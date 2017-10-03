@@ -20,7 +20,7 @@ var VueFrameworkComponentWrapper = function () {
 
     _createClass(VueFrameworkComponentWrapper, [{
         key: 'wrap',
-        value: function wrap(component, methodList) {
+        value: function wrap(component, methodList, optionalMethods) {
             var componentType = _vueComponentFactory.VueComponentFactory.getComponentType(this._parent, component);
             if (!componentType) {
                 return;
@@ -65,6 +65,14 @@ var VueFrameworkComponentWrapper = function () {
                     } else {
                         console.warn('ag-Grid: Vue component is missing the method ' + methodName + '()');
                         return null;
+                    }
+                };
+            });
+            optionalMethods.forEach(function (methodName) {
+                wrapper[methodName] = function () {
+                    if (wrapper.getFrameworkComponentInstance()[methodName]) {
+                        var componentRef = this.getFrameworkComponentInstance();
+                        return wrapper.getFrameworkComponentInstance()[methodName].apply(componentRef, arguments);
                     }
                 };
             });
