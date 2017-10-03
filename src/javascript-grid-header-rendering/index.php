@@ -403,7 +403,7 @@ columnGroup.removeEventListener('expandedChanged', listener);</snippet>
 
     <h3 id="example-header-group-cells">Example - Header Group Cells</h3>
 
-    <?= example('Header Group', 'header-group-component') ?>
+    <?= example('Header Group', 'header-group-component', 'vanilla', array("extras" => array("fontawesome"))) ?>
 
     <?php if (isFrameworkAngular2()) { ?>
         <?php include './angular.php';?>

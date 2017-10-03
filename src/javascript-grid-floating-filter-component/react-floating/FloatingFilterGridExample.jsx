@@ -2,6 +2,8 @@ import React, {Component} from "react";
 import {AgGridReact} from "ag-grid-react";
 import FloatingFilter from "./floatingFilter.jsx";
 
+import "ag-grid-enterprise";
+
 export default class FloatingFilterGridExample extends Component {
     constructor(props) {
         super(props);
