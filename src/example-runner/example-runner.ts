@@ -7,7 +7,7 @@ import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-java';
 import 'prismjs/components/prism-sql';
 
-const docs: angular.IModule = angular.module('documentation', ['ngCookies']);
+const docs: angular.IModule = angular.module('documentation');
 
 const LanguageMap: {[key: string]: Prism.LanguageDefinition} = {
     js: Prism.languages.javascript,
