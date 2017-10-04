@@ -16,7 +16,8 @@ include '../documentation-main/documentation_header.php';
     <h2>NEXT</h2>
     <h4>Bug Fixes</h4>
     <ul>
-        <li>AG-672 Navigating with arrow keys now uses <code>suppressNavigable</code> property to </li>
+        <li>AG-672 Navigating with arrow keys now uses <code>suppressNavigable</code> property to skip cells that are not navigable.</li>
+        <li>AG-311 When using keyboard navigation, and col width is greater than grid with, the navigation was jumping the col from left to right.</li>
     </ul>
 
     <h2>13.3.x</h2>
