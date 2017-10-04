@@ -27,6 +27,10 @@ function nodeIsFunctionNamed(node, name) {
     return node.type === 'FunctionDeclaration' && (<any>node.id).name === name;
 }
 
+function nodeIsUnusedFunction(node, used) {
+    return node.type === 'FunctionDeclaration' && used.indexOf((<any>node.id).name) === -1;
+}
+
 function nodeIsPropertyNamed(node, name) {
     // we skip { property: variable }
     // and get only inline property assignments
@@ -86,6 +90,14 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
         });
     });
 
+    collectors.push({
+        matches: node => nodeIsUnusedFunction(node, registered),
+        apply: (col, node) => {
+            console.log('unused function', generate(node));
+            col.utils.push(generate(node));
+        }
+    })
+
     // extract the fetchData call
     onReadyCollectors.push({
         matches: nodeIsFetchDataCall,
@@ -144,7 +156,8 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
         {
             eventHandlers: [],
             properties: [],
-            externalEventHandlers: []
+            externalEventHandlers: [],
+            utils: []
         },
         collectors
     );

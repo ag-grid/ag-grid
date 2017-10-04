@@ -63,6 +63,8 @@ function appComponentTemplate(bindings) {
 import { Component, ViewChild } from '@angular/core';
 ${imports.join('\n')}
 
+${bindings.utils.join('\n')}
+
 @Component({
     selector: 'my-app',
     template: \`${template}\`

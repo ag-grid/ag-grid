@@ -54,6 +54,8 @@ import {render} from "react-dom"
 import {AgGridReact} from 'ag-grid-react';
 ${imports.join('\n')}
 
+${bindings.utils.join('\n')}
+
 class GridExample extends Component {
     constructor(props) {
         super(props);
