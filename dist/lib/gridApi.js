@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -449,11 +449,15 @@ var GridApi = (function () {
     GridApi.prototype.ensureColumnVisible = function (key) {
         this.gridPanel.ensureColumnVisible(key);
     };
-    GridApi.prototype.ensureIndexVisible = function (index) {
-        this.gridPanel.ensureIndexVisible(index);
+    // Valid values for position are bottom, middle and top
+    GridApi.prototype.ensureIndexVisible = function (index, position) {
+        if (position === void 0) { position = 'top'; }
+        this.gridPanel.ensureIndexVisible(index, position);
     };
-    GridApi.prototype.ensureNodeVisible = function (comparator) {
-        this.gridCore.ensureNodeVisible(comparator);
+    // Valid values for position are bottom, middle and top
+    GridApi.prototype.ensureNodeVisible = function (comparator, position) {
+        if (position === void 0) { position = 'top'; }
+        this.gridCore.ensureNodeVisible(comparator, position);
     };
     GridApi.prototype.forEachLeafNode = function (callback) {
         if (utils_1.Utils.missing(this.inMemoryRowModel)) {

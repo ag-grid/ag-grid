@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -160,7 +160,7 @@ var ComponentResolver = (function () {
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
      * It takes
-     *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
+     *  @param holderOpt: This is the context for which this component needs to be created, it can be gridOptions
      *      (global) or columnDef mostly.
      *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
      *      specified by the user in the configuration
@@ -190,6 +190,7 @@ var ComponentResolver = (function () {
         var componentToUse = this.getComponentToUse(holder, propertyName, componentName);
         if (!componentToUse || !componentToUse.component) {
             if (mandatory) {
+                debugger;
                 console.error("Error creating component " + propertyName + "=>" + componentName);
             }
             return null;
@@ -200,7 +201,7 @@ var ComponentResolver = (function () {
         //Using framework component
         var FrameworkComponentRaw = componentToUse.component;
         var thisComponentConfig = this.componentMetadataProvider.retrieve(propertyName);
-        return this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList);
+        return this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, componentName);
     };
     __decorate([
         context_1.Autowired("gridOptions"),

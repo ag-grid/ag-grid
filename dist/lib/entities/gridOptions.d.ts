@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.2.0
+// Type definitions for ag-grid v13.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -213,6 +213,9 @@ export interface GridOptions {
     doesExternalFilterPass?(node: RowNode): boolean;
     getRowStyle?: Function;
     getRowClass?: (params: any) => (string | string[]);
+    rowClassRules?: {
+        [cssClassName: string]: (Function | string);
+    };
     getRowHeight?: Function;
     sendToClipboard?: (params: any) => void;
     navigateToNextCell?: (params: NavigateToNextCellParams) => GridCellDef;

@@ -960,17 +960,7 @@
       font-family: inherit;
       font-size: inherit;
       padding: 0;
-      margin: 0;
-      width: 18px;
-      height: 18px;
-      background-color: transparent;
-      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+);
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: 18px 18px;
-      opacity: 0.87;
-      text-indent: 100%;
-      overflow: hidden; }
+      margin: 0; }
   .ag-theme-material .ag-cell-label-container {
     height: 100%; }
   .ag-theme-material .ag-header-cell-label {

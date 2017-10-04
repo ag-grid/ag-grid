@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,6 +39,7 @@ var checkboxSelectionComponent_1 = require("../checkboxSelectionComponent");
 var columnController_1 = require("../../columnController/columnController");
 var column_1 = require("../../entities/column");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
+var mouseEventService_1 = require("../../gridPanel/mouseEventService");
 var GroupCellRenderer = (function (_super) {
     __extends(GroupCellRenderer, _super);
     function GroupCellRenderer() {
@@ -299,8 +300,8 @@ var GroupCellRenderer = (function (_super) {
         // as that icons already has expand / collapse functionality on it. otherwise if
         // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
         // is open->close->open, however double click should be open->close only.
-        var target = utils_1.Utils.getTarget(event);
-        var targetIsExpandIcon = target !== this.eExpanded && target !== this.eContracted;
+        var targetIsExpandIcon = utils_1.Utils.isElementInEventPath(this.eExpanded, event)
+            || utils_1.Utils.isElementInEventPath(this.eContracted, event);
         if (!targetIsExpandIcon) {
             this.onExpandOrContract();
         }
@@ -371,6 +372,10 @@ var GroupCellRenderer = (function (_super) {
         context_1.Autowired('columnController'),
         __metadata("design:type", columnController_1.ColumnController)
     ], GroupCellRenderer.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('mouseEventService'),
+        __metadata("design:type", mouseEventService_1.MouseEventService)
+    ], GroupCellRenderer.prototype, "mouseEventService", void 0);
     __decorate([
         componentAnnotations_1.RefSelector('eExpanded'),
         __metadata("design:type", HTMLElement)

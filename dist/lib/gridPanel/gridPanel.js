@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -401,7 +401,18 @@ var GridPanel = (function (_super) {
         };
         this.performScroll(horizontalScroll);
     };
-    //Either HOME OR END
+    // Either HOME OR END
+    GridPanel.prototype.pageDiagonally_new = function (pagingKey) {
+        var homeKey = pagingKey === constants_1.Constants.KEY_PAGE_HOME_NAME;
+        var allColumns = this.columnController.getAllDisplayedColumns();
+        var columnToSelect = homeKey ? allColumns[0] : allColumns[allColumns.length - 1];
+        var rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
+        this.ensureColumnVisible(columnToSelect);
+        this.ensureIndexVisible(rowIndexToScrollTo);
+        // make sure the cell is rendered, needed if we are to focus
+        this.animationFrameService.flushAllFrames();
+        this.focusedCellController.setFocusedCell(rowIndexToScrollTo, columnToSelect, null, true);
+    };
     GridPanel.prototype.pageDiagonally = function (pagingKey) {
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
@@ -694,7 +705,13 @@ var GridPanel = (function (_super) {
         var templateLocalised = templateNotLocalised.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
         return templateLocalised;
     };
-    GridPanel.prototype.ensureIndexVisible = function (index) {
+    // Valid values for position are bottom, middle and top
+    // position should be {'top','middle','bottom', or undefined/null}.
+    // if undefined/null, then the grid will to the minimal amount of scrolling,
+    // eg if grid needs to scroll up, it scrolls until row is on top,
+    //    if grid needs to scroll down, it scrolls until row is on bottom,
+    //    if row is already in view, grid does not scroll
+    GridPanel.prototype.ensureIndexVisible = function (index, position) {
         // if for print, everything is always visible
         if (this.gridOptionsWrapper.isForPrint()) {
             return;
@@ -717,22 +734,49 @@ var GridPanel = (function (_super) {
         if (scrollShowing) {
             vRangeBottom -= this.scrollWidth;
         }
-        var viewportScrolledPastRow = vRangeTop > rowTopPixel;
-        var viewportScrolledBeforeRow = vRangeBottom < rowBottomPixel;
+        var rowToHighlightHeight = rowBottomPixel - rowTopPixel;
+        var viewportHeight = vRangeBottom - vRangeTop;
+        var halfScreenHeight = (viewportHeight / 2) + (rowToHighlightHeight / 2);
         var eViewportToScroll = this.getPrimaryScrollViewport();
-        if (viewportScrolledPastRow) {
-            // if row is before, scroll up with row at top
-            eViewportToScroll.scrollTop = rowTopPixel;
-            this.rowRenderer.redrawAfterScroll();
+        var newScrollPosition;
+        switch (position) {
+            case 'top':
+                newScrollPosition = rowTopPixel;
+                break;
+            case 'bottom':
+                newScrollPosition = rowBottomPixel - viewportHeight;
+                break;
+            case 'middle':
+                newScrollPosition = rowTopPixel + halfScreenHeight;
+                // The if/else logic here protects us from over scrolling
+                // ie: Trying to scroll past the row (ie ensureNodeVisible (0, 'middle'))
+                newScrollPosition = newScrollPosition > rowTopPixel ? rowTopPixel : newScrollPosition;
+                break;
+            default:
+                newScrollPosition = rowTopPixel;
+                var viewportScrolledPastRow = vRangeTop > rowTopPixel;
+                var viewportScrolledBeforeRow = vRangeBottom < rowBottomPixel;
+                if (viewportScrolledPastRow) {
+                    // if row is before, scroll up with row at top
+                    newScrollPosition = rowTopPixel;
+                }
+                else if (viewportScrolledBeforeRow) {
+                    // if row is below, scroll down with row at bottom
+                    var viewportHeight_1 = vRangeBottom - vRangeTop;
+                    newScrollPosition = rowBottomPixel - viewportHeight_1;
+                }
+                else {
+                    // row already in view, and top/middle/bottom not specified, so do nothing.
+                    newScrollPosition = null;
+                }
+                break;
         }
-        else if (viewportScrolledBeforeRow) {
-            // if row is below, scroll down with row at bottom
-            var viewportHeight = vRangeBottom - vRangeTop;
-            var newScrollPosition = rowBottomPixel - viewportHeight;
-            eViewportToScroll.scrollTop = newScrollPosition;
-            this.rowRenderer.redrawAfterScroll();
+        // this means the row is already in view, and we don't need to scroll
+        if (newScrollPosition === null) {
+            return;
         }
-        // otherwise, row is already in view, so do nothing
+        eViewportToScroll.scrollTop = newScrollPosition;
+        this.rowRenderer.redrawAfterScroll();
     };
     GridPanel.prototype.getPrimaryScrollViewport = function () {
         if (this.enableRtl && this.columnController.isPinningLeft()) {

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.2.0
+// Type definitions for ag-grid v13.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
@@ -133,8 +133,8 @@ export declare class GridApi {
     getRenderedNodes(): RowNode[];
     ensureColIndexVisible(index: any): void;
     ensureColumnVisible(key: string | Column): void;
-    ensureIndexVisible(index: any): void;
-    ensureNodeVisible(comparator: any): void;
+    ensureIndexVisible(index: any, position?: string): void;
+    ensureNodeVisible(comparator: any, position?: string): void;
     forEachLeafNode(callback: (rowNode: RowNode) => void): void;
     forEachNode(callback: (rowNode: RowNode) => void): void;
     forEachNodeAfterFilter(callback: (rowNode: RowNode) => void): void;

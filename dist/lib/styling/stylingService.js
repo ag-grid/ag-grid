@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,11 +21,10 @@ var StylingService = (function () {
     function StylingService() {
     }
     StylingService.prototype.processAllCellClasses = function (colDef, params, onApplicableClass, onNotApplicableClass) {
-        this.processCellClassRules(colDef, params, onApplicableClass, onNotApplicableClass);
+        this.processClassRules(colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
         this.processStaticCellClasses(colDef, params, onApplicableClass);
     };
-    StylingService.prototype.processCellClassRules = function (colDef, params, onApplicableClass, onNotApplicableClass) {
-        var classRules = colDef.cellClassRules;
+    StylingService.prototype.processClassRules = function (classRules, params, onApplicableClass, onNotApplicableClass) {
         if (typeof classRules === 'object' && classRules !== null) {
             var classNames = Object.keys(classRules);
             for (var i = 0; i < classNames.length; i++) {

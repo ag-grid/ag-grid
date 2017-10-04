@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.2.0
+// Type definitions for ag-grid v13.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IAfterGuiAttachedParams, IComponent } from "../../interfaces/iComponent";
@@ -9,7 +9,7 @@ import { IAfterGuiAttachedParams, IComponent } from "../../interfaces/iComponent
 export interface FrameworkComponentWrapper {
     wrap<A extends IComponent<any, IAfterGuiAttachedParams>>(frameworkComponent: {
         new (): any;
-    }, methodList: string[], optionalMethodList?: string[]): A;
+    }, methodList: string[], optionalMethodList?: string[], componentName?: string): A;
 }
 export interface WrapableInterface {
     hasMethod(name: string): boolean;
@@ -19,10 +19,10 @@ export interface WrapableInterface {
 export declare abstract class BaseComponentWrapper<F extends WrapableInterface> implements FrameworkComponentWrapper {
     wrap<A extends IComponent<any, IAfterGuiAttachedParams>>(OriginalConstructor: {
         new (): any;
-    }, mandatoryMethodList: string[], optionalMethodList?: string[]): A;
+    }, mandatoryMethodList: string[], optionalMethodList?: string[], componentName?: string): A;
     abstract createWrapper(OriginalConstructor: {
         new (): any;
-    }): F;
+    }, componentName?: string): F;
     private createMethod(wrapper, methodName, mandatory);
     private createMethodProxy(wrapper, methodName, mandatory);
 }

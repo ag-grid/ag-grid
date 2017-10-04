@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.2.0
+// Type definitions for ag-grid v13.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -93,6 +93,9 @@ export declare class GridOptionsWrapper {
     getRowClass(): string | string[];
     getRowStyleFunc(): Function;
     getRowClassFunc(): (params: any) => string | string[];
+    rowClassRules(): {
+        [cssClassName: string]: string | Function;
+    };
     getPostProcessPopupFunc(): (params: PostProcessPopupParams) => void;
     getDoesDataFlowerFunc(): (data: any) => boolean;
     getPaginationNumberFormatterFunc(): (params: PaginationNumberFormatterParams) => string;
@@ -111,7 +114,6 @@ export declare class GridOptionsWrapper {
     isSuppressClickEdit(): boolean;
     isStopEditingWhenGridLosesFocus(): boolean;
     getGroupDefaultExpanded(): number;
-    getAutoSizePadding(): number;
     getMaxConcurrentDatasourceRequests(): number;
     getMaxBlocksInCache(): number;
     getCacheOverflowSize(): number;
@@ -204,6 +206,7 @@ export declare class GridOptionsWrapper {
     setProperty(key: string, value: any): void;
     addEventListener(key: string, listener: Function): void;
     removeEventListener(key: string, listener: Function): void;
+    getAutoSizePadding(): number;
     getHeaderHeight(): number;
     getFloatingFiltersHeight(): number;
     getGroupPaddingSize(): number;

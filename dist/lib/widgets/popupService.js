@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,8 +22,9 @@ var gridCore_1 = require("../gridCore");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var PopupService = (function () {
     function PopupService() {
+        // this.popupService.setPopupParent(this.eRootPanel.getGui());
+        this.activePopupElements = [];
     }
-    // this.popupService.setPopupParent(this.eRootPanel.getGui());
     PopupService.prototype.getPopupParent = function () {
         return this.gridCore.getRootGui();
     };
@@ -186,6 +187,7 @@ var PopupService = (function () {
     //so that when the background is clicked, the child is removed again, giving
     //a model look to popups.
     PopupService.prototype.addAsModalPopup = function (eChild, closeOnEsc, closedCallback) {
+        var _this = this;
         var eBody = this.gridOptionsWrapper.getDocument();
         if (!eBody) {
             console.warn('ag-grid: could not find the body of the document, document.body is empty');
@@ -197,9 +199,48 @@ var PopupService = (function () {
         if (popupAlreadyShown) {
             return;
         }
-        this.getPopupParent().appendChild(eChild);
-        var that = this;
+        var ePopupParent = this.getPopupParent();
+        ePopupParent.appendChild(eChild);
+        this.activePopupElements.push(eChild);
         var popupHidden = false;
+        // let timeOfMouseEventOnChild = new Date().getTime();
+        // let childMouseClick: MouseEvent = null;
+        // let childTouch: TouchEvent = null;
+        var hidePopupOnEsc = function (event) {
+            var key = event.which || event.keyCode;
+            if (key === constants_1.Constants.KEY_ESCAPE) {
+                hidePopup(null);
+            }
+        };
+        var hidePopup = function (event) {
+            // we don't hide popup if the event was on the child, or any
+            // children of this child
+            var indexOfThisChild = _this.activePopupElements.indexOf(eChild);
+            for (var i = indexOfThisChild; i < _this.activePopupElements.length; i++) {
+                var element = _this.activePopupElements[i];
+                if (utils_1.Utils.isElementInEventPath(element, event)) {
+                    return;
+                }
+            }
+            // this method should only be called once. the client can have different
+            // paths, each one wanting to close, so this method may be called multiple
+            // times.
+            if (popupHidden) {
+                return;
+            }
+            popupHidden = true;
+            ePopupParent.removeChild(eChild);
+            utils_1.Utils.removeFromArray(_this.activePopupElements, eChild);
+            eBody.removeEventListener('keydown', hidePopupOnEsc);
+            eBody.removeEventListener('click', hidePopup);
+            eBody.removeEventListener('touchstart', hidePopup);
+            eBody.removeEventListener('contextmenu', hidePopup);
+            // eChild.removeEventListener('click', consumeMouseClick);
+            // eChild.removeEventListener('touchstart', consumeTouchClick);
+            if (closedCallback) {
+                closedCallback();
+            }
+        };
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
         setTimeout(function () {
@@ -209,54 +250,7 @@ var PopupService = (function () {
             eBody.addEventListener('click', hidePopup);
             eBody.addEventListener('touchstart', hidePopup);
             eBody.addEventListener('contextmenu', hidePopup);
-            //eBody.addEventListener('mousedown', hidePopup);
-            eChild.addEventListener('click', consumeMouseClick);
-            eChild.addEventListener('touchstart', consumeTouchClick);
-            //eChild.addEventListener('mousedown', consumeClick);
         }, 0);
-        // let timeOfMouseEventOnChild = new Date().getTime();
-        var childMouseClick = null;
-        var childTouch = null;
-        function hidePopupOnEsc(event) {
-            var key = event.which || event.keyCode;
-            if (key === constants_1.Constants.KEY_ESCAPE) {
-                hidePopup(null);
-            }
-        }
-        function hidePopup(event) {
-            // we don't hide popup if the event was on the child
-            if (event && event === childMouseClick) {
-                return;
-            }
-            if (event && event === childTouch) {
-                return;
-            }
-            // this method should only be called once. the client can have different
-            // paths, each one wanting to close, so this method may be called multiple
-            // times.
-            if (popupHidden) {
-                return;
-            }
-            popupHidden = true;
-            that.getPopupParent().removeChild(eChild);
-            eBody.removeEventListener('keydown', hidePopupOnEsc);
-            //eBody.removeEventListener('mousedown', hidePopupOnEsc);
-            eBody.removeEventListener('click', hidePopup);
-            eBody.removeEventListener('touchstart', hidePopup);
-            eBody.removeEventListener('contextmenu', hidePopup);
-            eChild.removeEventListener('click', consumeMouseClick);
-            eChild.removeEventListener('touchstart', consumeTouchClick);
-            //eChild.removeEventListener('mousedown', consumeClick);
-            if (closedCallback) {
-                closedCallback();
-            }
-        }
-        function consumeMouseClick(event) {
-            childMouseClick = event;
-        }
-        function consumeTouchClick(event) {
-            childTouch = event;
-        }
         return hidePopup;
     };
     __decorate([

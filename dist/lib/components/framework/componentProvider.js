@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,6 +15,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var textCellEditor_1 = require("../../rendering/cellEditors/textCellEditor");
 var context_1 = require("../../context/context");
 var dateFilter_1 = require("../../filter/dateFilter");
 var headerComp_1 = require("../../headerRendering/header/headerComp");
@@ -26,6 +27,10 @@ var groupCellRenderer_1 = require("../../rendering/cellRenderers/groupCellRender
 var animateShowChangeCellRenderer_1 = require("../../rendering/cellRenderers/animateShowChangeCellRenderer");
 var animateSlideCellRenderer_1 = require("../../rendering/cellRenderers/animateSlideCellRenderer");
 var rowComp_1 = require("../../rendering/rowComp");
+var selectCellEditor_1 = require("../../rendering/cellEditors/selectCellEditor");
+var popupTextCellEditor_1 = require("../../rendering/cellEditors/popupTextCellEditor");
+var popupSelectCellEditor_1 = require("../../rendering/cellEditors/popupSelectCellEditor");
+var largeTextCellEditor_1 = require("../../rendering/cellEditors/largeTextCellEditor");
 var RegisteredComponentSource;
 (function (RegisteredComponentSource) {
     RegisteredComponentSource[RegisteredComponentSource["DEFAULT"] = 0] = "DEFAULT";
@@ -66,11 +71,23 @@ var ComponentProvider = (function () {
             group: groupCellRenderer_1.GroupCellRenderer,
             groupRowRenderer: groupCellRenderer_1.GroupCellRenderer,
             loadingCellRenderer: rowComp_1.LoadingCellRenderer,
-            pinnedRowCellRenderer: null
+            pinnedRowCellRenderer: null,
+            //editors
+            cellEditor: textCellEditor_1.TextCellEditor,
+            textCellEditor: textCellEditor_1.TextCellEditor,
+            text: textCellEditor_1.TextCellEditor,
+            selectCellEditor: selectCellEditor_1.SelectCellEditor,
+            select: selectCellEditor_1.SelectCellEditor,
+            popupTextCellEditor: popupTextCellEditor_1.PopupTextCellEditor,
+            popupText: popupTextCellEditor_1.PopupTextCellEditor,
+            popupSelectCellEditor: popupSelectCellEditor_1.PopupSelectCellEditor,
+            popupSelect: popupSelectCellEditor_1.PopupSelectCellEditor,
+            largeTextCellEditor: largeTextCellEditor_1.LargeTextCellEditor,
+            largeText: largeTextCellEditor_1.LargeTextCellEditor
         };
     };
     ComponentProvider.prototype.registerComponent = function (name, component) {
-        console.warn("ag-grid: registering components is a lab feature, is not intended to be used or supported yet.");
+        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
         if (this.frameworkComponents[name]) {
             console.error("Trying to register a component that you have already registered for frameworks: " + name);
             return;
@@ -82,7 +99,7 @@ var ComponentProvider = (function () {
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
     ComponentProvider.prototype.registerFwComponent = function (name, component) {
-        console.warn("ag-grid: registering components is a lab feature, is not intended to be used or supported yet.");
+        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
         if (this.jsComponents[name]) {
             console.error("Trying to register a component that you have already registered for plain javascript: " + name);
             return;

@@ -1,11 +1,10 @@
-// Type definitions for ag-grid v13.2.0
+// Type definitions for ag-grid v13.3.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
 import { AbstractColDef, ColDef, IAggFunc } from "./colDef";
 import { RowNode } from "./rowNode";
-import { ICellEditorComp } from "../rendering/cellEditors/iCellEditor";
 import { IFilter } from "../interfaces/iFilter";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEventEmitter {
@@ -55,7 +54,6 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private pivotActive;
     private aggregationActive;
     private primary;
-    private cellEditor;
     private filter;
     private parent;
     constructor(colDef: ColDef, colId: String, primary: boolean);
@@ -64,9 +62,6 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     initialise(): void;
     isEmptyGroup(): boolean;
     isRowGroupDisplayed(colId: string): boolean;
-    getCellEditor(): {
-        new (): ICellEditorComp;
-    } | string;
     getFilter(): {
         new (): IFilter;
     } | string;

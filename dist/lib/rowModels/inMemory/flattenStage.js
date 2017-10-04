@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.2.0
+ * @version v13.3.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -69,8 +69,12 @@ var FlattenStage = (function () {
             // check all these cases, for working out if this row should be included in the final mapped list
             var isGroupSuppressedNode = groupSuppressRow && rowNode.group;
             var isSkippedLeafNode = skipLeafNodes && !rowNode.group;
-            var isHiddenOpenParent = hideOpenParents && rowNode.expanded;
             var isRemovedSingleChildrenGroup = removeSingleChildrenGroups && rowNode.group && rowNode.childrenAfterGroup.length === 1;
+            // hide open parents means when group is open, we don't show it. we also need to make sure the
+            // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
+            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
+            var neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
+            var isHiddenOpenParent = hideOpenParents && rowNode.expanded && (!neverAllowToExpand);
             var thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup;
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
