@@ -1055,17 +1055,49 @@ export class Utils {
 
     static isElementInEventPath(element: HTMLElement, event: Event): boolean {
         if (!event || !element) { return false; }
+        let path = _.getEventPath(event);
+        return path.indexOf(element) >= 0;
+    }
 
-        let sourceElement = _.getTarget(event);
-
-        while (sourceElement) {
-            if (sourceElement===element) {
-                return true;
-            }
-            sourceElement = sourceElement.parentElement;
+    static createEventPath(event: Event): EventTarget[] {
+        let res: EventTarget[] = [];
+        let pointer = _.getTarget(event);
+        while (pointer) {
+            res.push(pointer);
+            pointer = pointer.parentElement;
         }
+        return res;
+    }
 
-        return false;
+    // firefox doesn't have event.path set, or any alternative to it, so we hack
+    // it in. this is needed as it's to late to work out the path when the item is
+    // removed from the dom
+    static addAgGridEventPath(event: Event): void {
+        (<any>event).__agGridEventPath = this.getEventPath(event);
+    }
+
+    static getEventPath(event: Event): EventTarget[] {
+        // https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
+        // https://developer.mozilla.org/en-US/docs/Web/API/Event
+
+        let eventNoType = <any> event;
+        if (event.deepPath) {
+            // IE supports deep path
+            return event.deepPath();
+        } else if (eventNoType.path) {
+            // Chrome supports path
+            return eventNoType.path;
+        } else if (eventNoType.composedPath) {
+            // Firefox supports composePath
+            return eventNoType.composedPath();
+        } else if (eventNoType.__agGridEventPath) {
+            // Firefox supports composePath
+            return eventNoType.__agGridEventPath;
+        } else {
+            // and finally, if none of the above worked,
+            // we create the path ourselves
+            return this.createEventPath(event);
+        }
     }
 
     static forEachSnapshotFirst(list: any[], callback: (item: any)=>void ): void {
