@@ -93,7 +93,6 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
     collectors.push({
         matches: node => nodeIsUnusedFunction(node, registered),
         apply: (col, node) => {
-            console.log('unused function', generate(node));
             col.utils.push(generate(node));
         }
     })
