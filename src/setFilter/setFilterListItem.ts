@@ -56,7 +56,8 @@ export class SetFilterListItem extends Component {
         this.updateCheckboxIcon();
         this.render();
 
-        let listener = () => {
+        let listener = (mouseEvent: MouseEvent) => {
+            _.addAgGridEventPath(mouseEvent);
             this.selected = !this.selected;
             this.updateCheckboxIcon();
             let event: SelectedEvent = {

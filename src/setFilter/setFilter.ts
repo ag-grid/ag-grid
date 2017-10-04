@@ -86,7 +86,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
         this.updateCheckboxIcon();
 
-        this.eSelectAllContainer.onclick = this.onSelectAll.bind(this);
+        this.addDestroyableEventListener(this.eSelectAllContainer, 'click', this.onSelectAll.bind(this));
         this.updateSelectAll();
         this.virtualList.refresh();
     }
@@ -229,7 +229,8 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.updateSelectAll();
     }
 
-    private onSelectAll() {
+    private onSelectAll(event: Event) {
+        _.addAgGridEventPath(event);
         this.eSelectAll.checked = !this.eSelectAll.checked;
         let checked = this.eSelectAll.checked;
         if (checked) {
