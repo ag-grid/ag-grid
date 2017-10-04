@@ -32,7 +32,7 @@
     <div class="news-header">03rd October 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
         <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
-            v13.3
+            v13.3.x
         </span>
         <img src="../images/logo-dark-hacked.svg"
              style="width: 100%;"/>

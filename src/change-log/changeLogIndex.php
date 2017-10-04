@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
     </note>
 
     <h2>13.3.x</h2>
-    <h3>Version 13.3.0 [03-OCT-2017]</h3>
+    <h3>Version 13.3.1 [04-OCT-2017]</h3>
     <h4>Enhancements</h4>
         <li>AG-851: Added support for React 16</li>
         <li>AG-698: Added support for <a href="../javascript-grid-row-styles">row class rules</a></li>
