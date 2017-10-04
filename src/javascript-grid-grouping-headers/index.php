@@ -211,7 +211,7 @@ gridOptions.columnDefs = [
     <p>
     </p>
 
-    <?= example('Advanced Grouping', 'advanced-grouping', 'vanilla', array("extras" => array("fontawesome"))) ?>
+    <?= example('Advanced Grouping', 'advanced-grouping', 'generated', array("extras" => array("fontawesome"))) ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
