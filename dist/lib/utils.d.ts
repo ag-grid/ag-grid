@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.0
+// Type definitions for ag-grid v13.3.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -117,6 +117,9 @@ export declare class Utils {
     static isBrowserFirefox(): boolean;
     static getTarget(event: Event): Element;
     static isElementInEventPath(element: HTMLElement, event: Event): boolean;
+    static createEventPath(event: Event): EventTarget[];
+    static addAgGridEventPath(event: Event): void;
+    static getEventPath(event: Event): EventTarget[];
     static forEachSnapshotFirst(list: any[], callback: (item: any) => void): void;
     static getBodyWidth(): number;
     static getBodyHeight(): number;
