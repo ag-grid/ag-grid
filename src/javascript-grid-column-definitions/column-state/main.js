@@ -29,11 +29,6 @@ var gridOptions = {
     }
 };
 
-var colState;
-var groupState;
-var sortState;
-var filterState;
-
 function printState() {
     var colState = gridOptions.columnApi.getColumnState();
     var groupState = gridOptions.columnApi.getColumnGroupState();
@@ -49,18 +44,18 @@ function printState() {
 }
 
 function saveState() {
-    colState = gridOptions.columnApi.getColumnState();
-    groupState = gridOptions.columnApi.getColumnGroupState();
-    sortState = gridOptions.api.getSortModel();
-    filterState = gridOptions.api.getFilterModel();
+    window.colState = gridOptions.columnApi.getColumnState();
+    window.groupState = gridOptions.columnApi.getColumnGroupState();
+    window.sortState = gridOptions.api.getSortModel();
+    window.filterState = gridOptions.api.getFilterModel();
     console.log('column state saved');
 }
 
 function restoreState() {
-    gridOptions.columnApi.setColumnState(colState);
-    gridOptions.columnApi.setColumnGroupState(groupState);
-    gridOptions.api.setSortModel(sortState);
-    gridOptions.api.setFilterModel(filterState);
+    gridOptions.columnApi.setColumnState(window.colState);
+    gridOptions.columnApi.setColumnGroupState(window.groupState);
+    gridOptions.api.setSortModel(window.sortState);
+    gridOptions.api.setFilterModel(window.filterState);
     console.log('column state restored');
 }
 

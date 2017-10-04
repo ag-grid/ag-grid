@@ -249,7 +249,7 @@ Examples of state include column visibility, width, row groups and values.
     <li><b>registering for column events, the result of which are printed to the console.</b></li>
 </ul>
 
-<?= example('Column State Example', 'column-state', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Column State Example', 'column-state', 'generated', array("enterprise" => 1)) ?>
 
 <note>
     This example also includes <a href="../javascript-grid-grouping-headers/">Column Groups</a> which are
