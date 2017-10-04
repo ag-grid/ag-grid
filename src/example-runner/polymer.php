@@ -23,8 +23,8 @@ foreach ($files as $file) {
 ?>
 <html>
     <head>
-<?php if (!$preview) { ?>
     <base href="<?= POLYMER_BASE_HREF_PREFIX ."${exampleSection}/$exampleDir/" ?>" />
+<?php if (!$preview) { ?>
     <style> html, body { margin: 0; padding: 0; } </style>
 <?php } ?>
 <?php renderExampleExtras($_GET) ?>
