@@ -1149,17 +1149,21 @@ export class GridPanel extends BeanStub {
 
         let viewportScrolledPastCol = viewportLeftPixel > colLeftPixel;
         let viewportScrolledBeforeCol = viewportRightPixel < colRightPixel;
+        let colToSmallForViewport = viewportWidth < column.getActualWidth();
 
-        if (viewportScrolledPastCol) {
-            // if viewport's left side is after col's left side, scroll right to pull col into viewport at left
+        let alignColToLeft = viewportScrolledPastCol || colToSmallForViewport;
+        let alignColToRight = viewportScrolledBeforeCol;
+
+        if (alignColToLeft) {
+            // if viewport's left side is after col's left side, scroll left to pull col into viewport at left
             if (this.enableRtl) {
                 let newScrollPosition = bodyWidth - viewportWidth - colLeftPixel;
                 this.setBodyViewportScrollLeft(newScrollPosition);
             } else {
                 this.setBodyViewportScrollLeft(colLeftPixel);
             }
-        } else if (viewportScrolledBeforeCol) {
-            // if viewport's right side is before col's right side, scroll left to pull col into viewport at right
+        } else if (alignColToRight) {
+            // if viewport's right side is before col's right side, scroll right to pull col into viewport at right
             if (this.enableRtl) {
                 let newScrollPosition = bodyWidth - colRightPixel;
                 this.setBodyViewportScrollLeft(newScrollPosition);
