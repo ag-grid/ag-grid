@@ -277,8 +277,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         // if function, then call the function to find out
         if (typeof this.colDef.suppressNavigable === 'function') {
             let params = this.createIsColumnFuncParams(rowNode);
-            let suppressNaviableFunc = <IsColumnFunc> this.colDef.suppressNavigable;
-            return suppressNaviableFunc(params);
+            let userFunc = <IsColumnFunc> this.colDef.suppressNavigable;
+            return userFunc(params);
         }
 
         return false;
