@@ -41,9 +41,9 @@ if (USE_LOCAL) {
     $systemJsMap = array(
         "ag-grid" =>                        "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
         "ag-grid/main" =>                   "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
-        "ag-grid-enterprise" =>             "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/main.js",
-        "ag-grid-react" =>                  "npm:ag-grid-react@" . AG_GRID_REACT_VERSION . "/main.js",
-        "ag-grid-angular" =>                "npm:ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/main.js"
+        "ag-grid-enterprise" =>             "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/",
+        "ag-grid-react" =>                  "npm:ag-grid-react@" . AG_GRID_REACT_VERSION . "/",
+        "ag-grid-angular" =>                "npm:ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/"
     );
 }
 
