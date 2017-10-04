@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.3.0
+// ag-grid-enterprise v13.3.1
 import { BaseFilter, IDoesFilterPassParams, ISetFilterParams } from "ag-grid/main";
 export declare class SetFilter extends BaseFilter<string, ISetFilterParams, string[]> {
     private model;
@@ -38,7 +38,7 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
     bodyTemplate(): string;
     private updateSelectAll();
     private onMiniFilterChanged();
-    private onSelectAll();
+    private onSelectAll(event);
     private onItemSelected(value, selected);
     setMiniFilter(newMiniFilter: any): void;
     getMiniFilter(): any;

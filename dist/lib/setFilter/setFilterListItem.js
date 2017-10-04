@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.3.0
+// ag-grid-enterprise v13.3.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -38,7 +38,8 @@ var SetFilterListItem = (function (_super) {
         this.eClickableArea = this.getHtmlElement();
         this.updateCheckboxIcon();
         this.render();
-        var listener = function () {
+        var listener = function (mouseEvent) {
+            main_1._.addAgGridEventPath(mouseEvent);
             _this.selected = !_this.selected;
             _this.updateCheckboxIcon();
             var event = {

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v13.3.0
+// ag-grid-enterprise v13.3.1
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -73,7 +73,7 @@ var SetFilter = (function (_super) {
         this.eMiniFilter.value = this.model.getMiniFilter();
         this.addDestroyableEventListener(this.eMiniFilter, 'input', function () { return _this.onMiniFilterChanged(); });
         this.updateCheckboxIcon();
-        this.eSelectAllContainer.onclick = this.onSelectAll.bind(this);
+        this.addDestroyableEventListener(this.eSelectAllContainer, 'click', this.onSelectAll.bind(this));
         this.updateSelectAll();
         this.virtualList.refresh();
     };
@@ -187,7 +187,8 @@ var SetFilter = (function (_super) {
         }
         this.updateSelectAll();
     };
-    SetFilter.prototype.onSelectAll = function () {
+    SetFilter.prototype.onSelectAll = function (event) {
+        main_1._.addAgGridEventPath(event);
         this.eSelectAll.checked = !this.eSelectAll.checked;
         var checked = this.eSelectAll.checked;
         if (checked) {
