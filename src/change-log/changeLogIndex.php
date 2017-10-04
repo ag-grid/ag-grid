@@ -13,6 +13,12 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+    <h2>NEXT</h2>
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>AG-672 Navigating with arrow keys now uses <code>suppressNavigable</code> property to </li>
+    </ul>
+
     <h2>13.3.x</h2>
     <h3>Version 13.3.1 [04-OCT-2017]</h3>
     <h4>Enhancements</h4>
