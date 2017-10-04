@@ -59,6 +59,9 @@ docs.factory('formPostData', [
     }
 ]);
 
+const ACTIVE_EXAMPLE_RUNNERS = [];
+const MAX_ACTIVE_RUNNERS = 5;
+
 class ExampleRunner {
     private ready: boolean = false;
     private source: any;
@@ -134,28 +137,22 @@ class ExampleRunner {
 
         const divWrapper = jQuery(this.$element).find('div.example-wrapper');
 
-        this.$timeout( () =>  {
+        this.$timeout(() =>  {
             let visibleToggle: angular.IPromise<void>;
             let nextVisible: boolean = false;
 
             trackIfInViewPort(divWrapper, ( visible ) => {
-                if (nextVisible !== visible) {
-                    nextVisible = visible;
-
-                    // show immediately, unload after a while
-                    const delay = nextVisible ? 0 : 10000;
-                    
-                    this.$timeout.cancel(visibleToggle);
-
-                    visibleToggle = this.$timeout(() => {
-                        if (!nextVisible) {
-                            // console.debug('Unloading example');
+                this.$timeout(() => {
+                    if (visible && !this.visible) {
+                        this.visible = true;
+                        ACTIVE_EXAMPLE_RUNNERS.push(this);
+                        if (ACTIVE_EXAMPLE_RUNNERS.length > MAX_ACTIVE_RUNNERS) {
+                            ACTIVE_EXAMPLE_RUNNERS.shift().visible = false;
                         }
-                        this.visible = nextVisible;
-                    }, delay);
-                }
+                    }
+                });
             });
-        }, 500);
+        });
 
         whenInViewPort(divWrapper, () => {
             this.$timeout(() => {
