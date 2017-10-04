@@ -138,9 +138,9 @@ public Iterable<Athlete> getOlympicData() {
 
         <p>For our purposes we're going to implement the following sorts of updates:</p>
 
-<div style="border: solid 1px lightgrey;border-radius: 5px;padding: 10px">
-        <table style="width: 100%;">
-            <tr>
+<div style="border: solid 1px lightgrey;border-radius: 5px;padding: 10px;margin-bottom: 10px">
+        <table style="border-collapse:collapse;width: 100%;">
+            <tr style="border-bottom:1pt solid black;">
                 <th>Type of Update</th>
                 <th>Parameter(s) Required</th>
             </tr>
@@ -198,8 +198,8 @@ public interface CrudRepository &lt;T, ID&gt; extends Repository&lt;T,ID&gt; {
             <p>In our simple application however, we can map our user cases to the following two methods:</p>
 
             <div style="border: solid 1px lightgrey;border-radius: 5px;padding: 10px;margin-bottom: 10px">
-                <table style="width: 100%;">
-                    <tr>
+                <table style="border-collapse:collapse;width: 100%;">
+                    <tr style="border-bottom:1pt solid black;">
                         <th>Type of Update</th>
                         <th><code>CrudRepository</code> Method</th>
                     </tr>
@@ -224,8 +224,45 @@ public interface CrudRepository &lt;T, ID&gt; extends Repository&lt;T,ID&gt; {
 
             <p>In an application with more real-world requirements you'd almost certainly make use of some of the other methods provided.</p>
 
-            <p>As all four operations effect existing <code>Athlete</code> objects, we'll expose these operation on the
-            <code>AthleteController</code>.</p>
+            <p>As all four operations affect existing <code>Athlete</code> objects, we'll expose these operation on the
+            <code>AthleteController</code> (although you might want update <code>Results</code> directly).</p>
+
+            <h4>Testing</h4>
+
+            <p>Before we start making changes to our <code>AthleteController</code>, how are going to test them?  We don't
+            have a front end in place yet after all!</p>
+
+            <p>We'll make use of the supplied packaged <code>jUnit</code> testing framework. The Spring Boot project we
+            downloaded already includes a single test class: <code>CrudAppApplicationTests</code>. Let's rename this to
+            <code>AthleteControllerTests</code> and empty the contents of the class.</p>
+
+            <p>Let's start off with a simple test that confirms that we have the expected number of <code>Athlete</code> records in our database.
+            As our controller is nothing more than a REST Service with little logic within we can make use of the Spring
+                supplied <code>TestRestTemplate</code>.</p>
+
+            <p>This class makes it very easy to perform high level REST calls, which is exactly what we're after here.</p>
+
+            <p>Note that in a real world application you'd almost certainly want to write unit tests all the way up to integration tests.
+            In this guide we're focusing more on illustrating how to do front to back end with ag-Grid, so will not delve too
+            deeply into the testing side of things.</p>
+
+            TODO AthleteControllerTests source code goes here
+
+<snippet language="java">
+// makes the rest call, converting the results within the response body to an array of Athletes
+ResponseEntity<Athlete[]> response = restTemplate.getForEntity(createURLWithPort("/olympicData"), Athlete[].class);
+
+// unpack the result
+Athlete[] athletes = response.getBody();
+</snippet>
+
+            <p>We can now run the test as follows:</p>
+
+<snippet>mvn clean test</snippet>
+
+            <p>Great, so far so good. We've verified that we will return the expected results for first service we wrote.</p>
+
+            <p>Let's move onto writing a test for a service we've not yet written - creating a new <code>Athlete</code>:</p>
         </div>
         <div class="col-md-3">
 
