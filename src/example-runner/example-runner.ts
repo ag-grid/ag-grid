@@ -60,7 +60,7 @@ docs.factory('formPostData', [
 ]);
 
 const ACTIVE_EXAMPLE_RUNNERS = [];
-const MAX_ACTIVE_RUNNERS = 5;
+const MAX_ACTIVE_RUNNERS = 4;
 
 class ExampleRunner {
     private ready: boolean = false;
