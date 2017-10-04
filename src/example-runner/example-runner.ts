@@ -137,11 +137,11 @@ class ExampleRunner {
 
         const divWrapper = jQuery(this.$element).find('div.example-wrapper');
 
-        this.$timeout(() =>  {
+        this.$timeout(() => {
             let visibleToggle: angular.IPromise<void>;
             let nextVisible: boolean = false;
 
-            trackIfInViewPort(divWrapper, ( visible ) => {
+            trackIfInViewPort(divWrapper, visible => {
                 this.$timeout(() => {
                     if (visible && !this.visible) {
                         this.visible = true;
@@ -238,22 +238,22 @@ class ExampleRunner {
 
     loadSource(file: string): angular.IPromise<string> {
         let source = this.getSource(file);
-        let process: (string) => string;
         let sourceUrl;
 
         if (typeof source === 'string') {
-            sourceUrl = source;
+            return this.$http.get(source).then((response: angular.IHttpResponse<string>) => {
+                return response.data;
+            });
         } else {
-            sourceUrl = source.url;
-            process = source.process;
+            const sourcePromises = source.sources.map(source => source ? this.$http.get(source).then(response => response.data) : '');
+            return this.$q.all(sourcePromises).then(responses => {
+                // stupid typescript
+                return (<any>source).process(responses);
+            });
         }
-
-        return this.$http.get(sourceUrl).then((response: angular.IHttpResponse<string>) => {
-            return process ? process(response.data) : response.data;
-        });
     }
 
-    getSource(file: string): string | {url: string; process: (string) => string} {
+    getSource(file: string): string | {sources: string[]; process: (string) => string} {
         if (this.boilerplateFiles.indexOf(file) > -1) {
             return [this.boilerplatePath, file].join('/');
         }
@@ -265,17 +265,16 @@ class ExampleRunner {
                     if (file == 'app/app.module.ts') {
                         return [this.boilerplatePath, '..', 'angular-generated-app-module.ts'].join('/');
                     } else {
-                        // app.component.ts
                         return {
-                            url: this.appFilePath(this.firstVanillaScript()),
-                            process: source => vanillaToAngular(source, this.config.options.grid)
+                            sources: this.sourcesForGeneration(),
+                            process: sources => vanillaToAngular(sources, this.config.options.grid)
                         };
                     }
                 } else if (this.currentType === 'react') {
                     // index.jsx
                     return {
-                        url: this.appFilePath(this.firstVanillaScript()),
-                        process: source => vanillaToReact(source, this.config.options.grid)
+                        sources: this.sourcesForGeneration(),
+                        process: sources => vanillaToReact(sources, this.config.options.grid)
                     };
                 }
             } else {
@@ -284,12 +283,20 @@ class ExampleRunner {
         }
     }
 
-    appFilePath(file) {
-        return [this.config.options.sourcePrefix, this.section, this.name].concat(this.config.type == 'multi' ? [this.currentType, file] : file).join('/');
+    sourcesForGeneration(): string[] {
+        const vanillaTypes = this.config.types.vanilla.files;
+
+        return [
+            this.appFilePath(vanillaTypes.filter(file => file.endsWith('.js'))[0]),
+            this.appFilePath(vanillaTypes.filter(file => file.endsWith('.html'))[0]) 
+        ];
     }
 
-    firstVanillaScript(): string {
-        return this.config.types.vanilla.files.filter(file => file.endsWith('.js'))[0];
+    appFilePath(file) {
+        if (!file) {
+            return '';
+        }
+        return [this.config.options.sourcePrefix, this.section, this.name].concat(this.config.type == 'multi' ? [this.currentType, file] : file).join('/');
     }
 
     openPlunker(clickEvent) {

@@ -37,9 +37,9 @@ if ($generated) {
     var filesToMock = [
         {
             name: 'index.jsx',
-            url: '<?=$example["scripts"][0] ?>',
-            transform: function(source) { 
-                return vanillaToReact(source, gridSettings);
+            urls: ['<?=$example["scripts"][0] ?>', '<?=$example["documents"][0] ?>'],
+            transform: function(sources) { 
+                return vanillaToReact(sources, gridSettings);
             }
         },
     ];

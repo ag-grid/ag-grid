@@ -272,6 +272,10 @@ function getScripts($files, $root, $preview) {
     return filterByExt($files, $root, $preview, 'js');
 }
 
+function getDocuments($files, $root, $preview) {
+    return filterByExt($files, $root, $preview, 'html');
+}
+
 function getGridSettings() {
     return json_decode($_GET['grid'], true);
 }
@@ -293,6 +297,7 @@ function getExampleInfo($boilerplatePrefix) {
 
     $styles = getStyles($files, $appRoot, $preview);
     $scripts = getScripts($files, $appRoot, $preview);
+    $documents = getDocuments($files, $appRoot, $preview);
 
     if ($preview) {
         $boilerplatePath = "";
@@ -309,6 +314,7 @@ function getExampleInfo($boilerplatePrefix) {
         "agGridScriptPath" => AG_SCRIPT_PATH,
         "styles" => $styles,
         "scripts" => $scripts,
+        "documents" => $documents,
         "gridSettings" => getGridSettings()
     );
 }

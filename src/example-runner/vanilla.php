@@ -44,13 +44,7 @@ foreach ($files as $file) {
 <body>
 
 <?php
-if ($generated) {
-?>
-    <div id="myGrid" style="height: <?= $gridDefaults['height'] ?>; width: <?= $gridDefaults['width'] ?>" class="<?= $gridDefaults['theme'] ?>"></div>
-<?
-} else {
-    include path_combine($path, 'index.html');
-}
+include path_combine($path, 'index.html');
 echo "\n";
 foreach ($scripts as $script) {
 echo '    <script src="'.$script.'"></script>' . "\n";

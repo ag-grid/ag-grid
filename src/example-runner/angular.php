@@ -40,13 +40,13 @@ if ($generated) {
     var filesToMock = [
         {
             name: 'app/app.module.ts',
-            url: 'angular-generated-app-module.ts'
+            urls: ['angular-generated-app-module.ts']
         },
         {
             name: 'app/app.component.ts',
-            url: '<?=$example["scripts"][0] ?>',
-            transform: function(source) { 
-                return vanillaToAngular(source, gridSettings);
+            urls: ['<?=$example["scripts"][0] ?>', '<?=$example["documents"][0] ?>'],
+            transform: function(sources) { 
+                return vanillaToAngular(sources, gridSettings);
             }
         },
     ];

@@ -49,18 +49,23 @@ function appComponentTemplate(bindings) {
         `);
     }
 
+    const agGridTag = `<ag-grid-angular
+    #agGrid
+    style="width: ${bindings.gridSettings.width}; height: ${bindings.gridSettings.height};"
+    class="${bindings.gridSettings.theme}"
+    ${propertyAttributes.concat(eventAttributes).join('\n    ')}
+    ></ag-grid-angular>`;
+
+    const template = bindings.template ? bindings.template.replace(/onclick=/g, '(click)=').replace('$$GRID$$', agGridTag) : agGridTag;
+    const externalEventHandlers = bindings.externalEventHandlers.map(handler => handler.body.replace(/^function /, ''));
+
     return `
 import { Component, ViewChild } from '@angular/core';
 ${imports.join('\n')}
 
 @Component({
     selector: 'my-app',
-    template: \`<ag-grid-angular
-    #agGrid
-    style="width: ${bindings.gridSettings.width}; height: ${bindings.gridSettings.height};"
-    class="${bindings.gridSettings.theme}"
-    ${propertyAttributes.concat(eventAttributes).join('\n    ')}
-    ></ag-grid-angular>\`
+    template: \`${template}\`
 })
 export class AppComponent {
     @ViewChild('agGrid') agGrid;
@@ -71,7 +76,11 @@ export class AppComponent {
         ${propertyAssignments.join(';\n    ')}
     }
 
-    ${eventHandlers.concat(additional).map( snippet => snippet.trim() ).join('\n\n')}
+    ${eventHandlers
+        .concat(externalEventHandlers)
+        .concat(additional)
+        .map(snippet => snippet.trim())
+        .join('\n\n')}
 /*
     ngAfterViewInit() {
         // necessary for the layout to kick in
@@ -83,7 +92,7 @@ export class AppComponent {
 }
 
 export function vanillaToAngular(src, gridSettings) {
-    const bindings = parser(src, gridSettings);
+    const bindings = parser(src, gridSettings, {gridOptionsLocalVar: 'const gridOptions = this.agGrid'});
     return appComponentTemplate(bindings);
 }
 
