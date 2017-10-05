@@ -131,7 +131,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Resizing Groups', 'resizing-groups') ?>
+    <?= example('Resizing Groups', 'resizing-groups', 'generated') ?>
 
 </div>
 
