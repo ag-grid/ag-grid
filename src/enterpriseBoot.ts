@@ -13,9 +13,9 @@ export class EnterpriseBoot {
 
     @PreConstruct
     private init(): void {
-        this.filterManager.registerFilter('set', SetFilter);
         this.componentProvider.registerComponent('richSelect', RichSelectCellEditor);
         this.componentProvider.registerComponent('richSelectCellEditor', RichSelectCellEditor);
+        this.componentProvider.registerComponent('setColumnFilter', SetFilter);
 
         this.licenseManager.validateLicense();
     }
