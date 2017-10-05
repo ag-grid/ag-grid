@@ -9,6 +9,20 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <meta property="og:image" content="<?php echo $socialImage; ?>" />
+    <meta name="twitter:image" content="<?php echo $socialImage; ?>" />
+    <meta property="og:site_name" content="www.ag-grid.com" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:site" content="@ceolter" />
+    <meta name="twitter:creator" content="@ceolter" />
+    <meta property="og:url" content="<?php echo $socialUrl; ?>" />
+    <meta property="twitter:url" content="<?php echo $socialUrl; ?>" />
+    <meta property="og:title" content="<?php echo $pageTitle; ?>" />
+    <meta name="twitter:title" content="<?php echo $pageTitle; ?>" />
+    <meta property="og:description" content="<?php echo $pageDescription; ?>" />
+    <meta name="twitter:description" content="<?php echo $pageDescription; ?>" />
+    <meta name="twitter:card" content="summary_large_image" />
+
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">

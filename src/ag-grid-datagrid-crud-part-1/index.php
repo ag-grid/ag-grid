@@ -21,19 +21,19 @@ include('../includes/mediaHeader.php');
 
             <p>
                 One of the most common scenarios in an Enterprise application is the
-                <span class="bold-roboto" style="font-size: larger">c</span>reation,
-                <span class="bold-roboto" style="font-size: larger">r</span>etrieval,
-                <span class="bold-roboto" style="font-size: larger">u</span>pdating and
-                <span class="bold-roboto" style="font-size: larger">d</span>eletion (CRUD!) of records in some backend
+                <span class="bold-roboto" style="font-size: larger">C</span>reation,
+                <span class="bold-roboto" style="font-size: larger">R</span>etrieval,
+                <span class="bold-roboto" style="font-size: larger">U</span>pdating and
+                <span class="bold-roboto" style="font-size: larger">D</span>eletion (CRUD!) of records in some backend
                 somewhere.
             </p>
 
-            <p>Although there are many ways to implement the backend in a system like this, I describe a fairly simple
+            <p>Although there are many ways to implement the backend in a system like this, I describe a simple
                 setup here.
-                The idea here is that I want to convey how simple this can be - and once you're happy with the overall
-                idea it should
-                be a trivial exercise to swap out the backend for the one your Enterprise uses, while being able to
-                maintain & reuse most
+                The idea is that I want to convey how simple this can be. Once you're happy with the overall
+                concepts it should
+                be a trivial exercise to swap out the backend for your preferred one. You will then be able to
+                maintain and reuse most
                 of the middle and front tiers of the application described.</p>
 
             <h2>Series Chapters</h2>
@@ -69,11 +69,11 @@ include('../includes/mediaHeader.php');
                 historic results for the Olympic Games from 2000 to 2012 (7 games in all) and be able to see who won the
                 most medals for a given year,
                 who
-                won the most often, which country is - on average - the most successful, and so on</p>
+                won the most often, which country is - on average - the most successful, and so on.</p>
 
-            <p>In order to focus on the concepts being discussed our application is deliberately simple - we'll
+            <p>In order to focus on the concepts being discussed, the application is deliberately simple - we'll
                 implement
-                this using a traditional 3 tier model for this:</p>
+                this using a traditional 3 tier model:</p>
 
             <div style="width:100%;display: flex;justify-content: center;">
                 <img src="./three_tier.png" style="margin-left: -150px;height: 325px">
@@ -82,10 +82,10 @@ include('../includes/mediaHeader.php');
 
             <h2>Initial Setup</h2>
 
-            <h3>Pre-requisites</h3>
+            <h3>Prerequisites</h3>
 
-            <p>In order to follow through this series a number of tools are required. Please see each tools
-                documentation on
+            <p>In order to follow through this series, a number of tools are required. Please see their
+               documentation on
                 how to download and install it for your particular Operating System.</p>
 
             <p>Subsequent sections will assume these tools have been installed and are available for use.</p>
@@ -103,8 +103,8 @@ include('../includes/mediaHeader.php');
 
             <h3>Spring Initializr</h3>
 
-            <p>For the Backend and Middle Tier we'll be making use of both Maven and Spring (covered more later in the
-                Series). In order to get up and running quickly we'll make use of Spring Initializr.</p>
+            <p>For the Backend and Middle Tier, we'll be making use of both Maven and Spring (covered more later in the
+                Series). In order to get up and running quickly, we'll make use of Spring Initializr.</p>
 
             <p>Spring Initializr provides a mechanism to get a Maven setup with specified key dependencies up and
                 running
