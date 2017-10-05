@@ -1,33 +1,30 @@
 <?php
-$key = "Cell Styling";
-$pageTitle = "ag-Grid Cell Styling";
-$pageDescription = "You can change the CSS style in ag-Grid. This is done by providing style and class callbacks in the column definition.";
-$pageKeyboards = "ag-Grid Cell Styling CSS";
+$key = "Cell Styles";
+$pageTitle = "ag-Grid Cell Styles";
+$pageDescription = "You can change the CSS cell styles in ag-Grid. This is done by providing style and class callbacks in the column definition.";
+$pageKeyboards = "ag-Grid Cell Styles";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-
-    <h2 id="cell-styling">Cell Styling</h2>
+    <h2 id="cell-styling">Cell Styles</h2>
 
     <p>
         Cell customisation is done a the column level via the column definition. You can mix and match any
         of the following mechanisms:
         <ul>
+            <li><b>Cell Style:</b> Providing a CSS style for the cells.</li>
             <li><b>Cell Class:</b> Providing a CSS class for the cells.</li>
             <li><b>Cell Class Rules:</b> Providing rules for applying CSS classes.</li>
-            <li><b>Cell Style:</b> Providing a CSS style for the cells.</li>
-            <li><b>Cell Renderer:</b> Take complete control and provide how the cell should look.</li>
         </ul>
     </p>
 
     <p>
-        This section discusses the first three, setting style via cellClass, cellClasRules and cellStyle attributes of
-        the column definition.
+        Each of these approaches are presented in the following sections.
     </p>
 
-    <h3 id="column-definition-cellstyle">Column Definition cellStyle</h3>
+    <h3 id="column-definition-cellstyle">Cell Style</h3>
 
     <p>
         Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
@@ -54,11 +51,10 @@ var colDef = {
             return null;
         }
     }
-}
-    </snippet>
+}</snippet>
 
 
-    <h3 id="cellClass">Column Definition cellClass</h3>
+    <h3 id="cellClass">Cell Class</h3>
 
     <p>
         Provides a class for the cells in this column. Can be a string (a class), array of strings
@@ -91,8 +87,7 @@ var colDef4 = {
     name: 'Function Returns Array',
     field' 'field4',
     cellClass: function(params) { return ['my-class-1','my-class-2']; }
-}
-        </snippet>
+}</snippet>
 
     </p>
 
@@ -111,11 +106,11 @@ var colDef4 = {
         $scope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
     </p>
 
-    <h3 id="cellClassRules">Column Definition cellClassRules</h3>
+    <h3 id="cellClassRules">Cell Class Rules</h3>
 
     <p>
-        ag-Grid allows rules to be applied to include certain CSS classes The Rules are provided
-        as a JavaScript map. The keys are class names and the values are expressions
+        You can define rules which can be applied to include certain CSS classes via via <code>colDef.cellClassRules</code>.
+        These rules are provided as a JavaScript map where the keys are the class names and the values are expressions
         that if evaluated to true, the class gets used. The expression can either be a JavaScript function,
         or a string which is treated as a shorthand for a function by the grid.
     </p>
@@ -206,44 +201,6 @@ cellClassRules: {
     </p>
 
     <?= example('Cell Styling', 'cell-styling') ?>
-
-    <h1 id="rowStyling">Row Styling</h1>
-
-    <p>
-        You can add CSS styles and classes to each row. This is done with with the following:
-
-        <ul>
-        <li><b>rowStyle</b>: Property to set style for all rows. Set to an object of key (style names) and values (style values).</li>
-        <li><b>getRowStyle</b>: Callback to set style for each row individually.</li>
-        <li><b>rowClass</b>: Property to set CSS class for all rows. Provide either a string (class name) or array of string (array
-            of class names).</li>
-        <li><b>getRowClass</b>: Callback to set class for each row individually.</li>
-    </ul>
-    </p>
-
-    <snippet>
-// set background color on every row
-// this is probably bad, should be using CSS classes
-gridOptions.rowStyle = {background: 'black'};
-
-// set background color on odd rows
-// again, this looks bad, should be using CSS classes
-gridOptions.getRowStyle = function(params) {
-    if (params.node.rowIndex % 2 === 0) {
-    return { background: 'red' }
-    }
-}
-
-// all rows assigned CSS class 'my-green-class'
-gridOptions.rowClass = 'my-green-class';
-
-// all odd rows assigned 'my-shaded-effect'
-gridOptions.getRowClass = function(params) {
-    if (params.node.rowIndex % 2 === 0) {
-        return 'my-shaded-effect';
-    }
-}</snippet>
-
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

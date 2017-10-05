@@ -24,7 +24,7 @@
                 <img src="/images/vue_small.png" alt="Vue"/>
                 Vue JS
             <?php } elseif (isFrameworkJavaScript()) { ?>
-                <img src="/images/javascript_small.png" alt="JavaScript"/>
+                <img src="/images/svg/javascript.svg" alt="JavaScript" width="20" />
                 JavaScript
             <?php } elseif (isFrameworkWebComponents()) { ?>
                 <img src="/images/webComponents_small.png" alt="Web Components"/>
@@ -37,7 +37,7 @@
                 out.
             </li>
             <li class="divider"></li>
-            <li><a class="frameworkDropdown-link" data-id="javascript" href="#"><img src="/images/javascript_small.png"
+            <li><a class="frameworkDropdown-link" data-id="javascript" href="#"><img src="/images/svg/javascript.svg" width="20"
                                                                                      alt="JavaScript"/> Just JavaScript
                     (no framework)</a></li>
             <li><a class="frameworkDropdown-link" data-id="react" href="#"><img src="/images/svg/react.alt.svg"
@@ -171,7 +171,6 @@
 <div class="docsMenu-content">
     <?php
     menuItem(0, 'Features', 'Overview', 'javascript-grid-features/');
-    menuItem(0, 'Width & Height', 'Grid Size', 'javascript-grid-width-and-height/');
     menuItem(0, 'ColumnDefs', 'Column Definitions', 'javascript-grid-column-definitions/');
     menuItem(0, 'Grouping Columns', 'Column Groups', 'javascript-grid-grouping-headers/');
     menuItem(0, 'Column Header', 'Column Headers', 'javascript-grid-column-header/');
@@ -190,11 +189,13 @@
     menuItem(0, 'Sorting', 'Row Sorting', 'javascript-grid-sorting/');
     menuItem(0, 'Selection', 'Row Selection', 'javascript-grid-selection/');
     menuItemWithIcon('enterprise.png', 0, 'Range Selection', 'Range Selection', 'javascript-grid-range-selection/');
+    menuItem(0, 'Width & Height', 'Grid Size', 'javascript-grid-width-and-height/');
     menuItem(0, 'Column Spanning', 'Column Spanning', 'javascript-grid-column-spanning/');
     menuItem(0, 'Pinning', 'Column Pinning', 'javascript-grid-pinning/');
     menuItem(0, 'Row Pinning', 'Row Pinning', 'javascript-grid-row-pinning/');
     menuItem(0, 'Row Height', 'Row Height', 'javascript-grid-row-height/');
-    menuItem(0, 'Cell Styling', 'Cell Styling', 'javascript-grid-cell-styling/');
+    menuItem(0, 'Cell Styles', 'Cell Styles', 'javascript-grid-cell-styles/');
+    menuItem(0, 'Row Styles', 'Row Styles', 'javascript-grid-row-styles/');
 
     menuItem(0, 'Value Handlers', 'Value Handlers', 'javascript-grid-value-handlers/');
     menuItem(1, 'Getters and Formatters', 'Getters & Formatters', 'javascript-grid-value-getters/');
@@ -216,7 +217,7 @@
     menuItem(0, 'Refresh', 'View Refresh', 'javascript-grid-refresh/');
     menuItem(0, 'Change Detection', 'Change Detection', 'javascript-grid-change-detection/');
     menuItem(0, 'Internationalisation', 'Internationalisation', 'javascript-grid-internationalisation/');
-    menuItem(0, 'Performance', 'Performance <sup class="new">new</sup>', 'javascript-grid-performance/');
+    menuItem(0, 'Performance', 'Performance', 'javascript-grid-performance/');
     menuItem(0, 'Accessibility', 'Accessibility', 'javascript-grid-accessibility/');
     menuItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
     menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
@@ -364,7 +365,7 @@
         menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');
         menuItem(2, 'Polymer MasterDetail', 'Master/Detail', 'example-polymer-master-detail/');
     }
-    menuItemWithIcon('javascript_small.png', 1, 'JavaScript Examples', 'Plain JavaScript', 'example-javascript/', true);
+    menuItemWithIcon('svg/javascript.svg', 1, 'JavaScript Examples', 'Plain JavaScript', 'example-javascript/', true);
     menuItem(2, 'Styled Report', 'Styled Report', 'example-account-report/');
     menuItem(2, 'File Browser', 'File Browser', 'example-file-browser/');
     menuItem(2, 'Expressions and Context', 'Expressions', 'example-expressions-and-context/');
@@ -402,7 +403,6 @@
     <div class="docsMenu-content">
         <?php
         menuItem(0, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php');
-        menuItem(0, 'Roadmap', 'Roadmap', 'javascript-grid-roadmap');
         menuItem(0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/');
         menuItem(0, 'Responsiveness', 'Responsive Design', 'javascript-grid-responsiveness/');
         menuItem(0, 'Testing', 'Testing', 'javascript-grid-testing/');

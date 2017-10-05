@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
     <div>
 
         <h1 class="first-h1">
-            <img style="vertical-align: middle" src="/images/javascript_large.png" height="50px"/>
+            <img style="vertical-align: middle" src="/images/svg/javascript.svg" height="50px"/>
             JavaScript Grid
         </h1>
 
@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
             The section is broken down into the following:
         </p>
 
-        <div class="list-group">
+        <div class="list-group" style="margin-top: 50px; margin-bottom: 50px;">
             <a href="/javascript-getting-started/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
@@ -47,6 +47,15 @@ include '../documentation-main/documentation_header.php';
             </a>
         </div>
     </div>
+
+    <div style="text-align: center;">
+        <h2>Feature Roadshow</h2>
+    </div>
+
+    <?php
+    $featuresRoot = '../javascript-grid-features';
+    include '../javascript-grid-features/gridFeatures.php';
+    ?>
 
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

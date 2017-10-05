@@ -24,6 +24,8 @@ gulp.task('default', ['release']);
 
 gulp.task('bundle-site', () => {
     const webpackConfig = require('./webpack-config/site.js');
+    webpackConfig.entry.site = './src/_assets/ts/site';
+    webpackConfig.plugins = [];
     webpackConfig.output.filename = 'site.js'
 
     return gulp

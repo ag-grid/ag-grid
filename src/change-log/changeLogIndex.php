@@ -13,6 +13,39 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+    <h2>NEXT</h2>
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>AG-672 Navigating with arrow keys now uses <code>suppressNavigable</code> property to skip cells that are not navigable.</li>
+        <li>AG-311 When using keyboard navigation, and col width is greater than grid with, the navigation was jumping the col from left to right.</li>
+    </ul>
+
+    <h2>13.3.x</h2>
+    <h3>Version 13.3.1 [04-OCT-2017]</h3>
+    <h4>Enhancements</h4>
+        <li>AG-851: Added support for React 16</li>
+        <li>AG-698: Added support for <a href="../javascript-grid-row-styles">row class rules</a></li>
+        <li>AG-754: The <a href="../javascript-grid-icons">floating filter icon</a> now can be configured.</li>
+        <li>AG-776: Aurelia now supports <a href="../javascript-grid-header-rendering">header components and header group components</a>.</li>
+        <li>AG-815: <a href="../javascript-grid-api#scrolling">Grid Api for scrolling</a> has been improved so that
+        <code>api.ensureNodeVisible</code> and <code>api.ensureIndexVisible</code> now take an optional
+        second parameter to specify where the node/index should be positioned on the screen. The valid values are:
+        <code>top</code>, <code>middle</code> and <code>bottom</code>. If not specified, would not scroll into the
+        row if already visible in the current viewport.</li>
+    <ul>
+    </ul>
+
+    <h4>Bug Fixes</h4>
+        <li>AG-862: Double clicking a group cell was not expanding the group</li>
+        <li>AG-861: Fixed issue with expandAll when using <code>hideOpenParents:true</code></li>
+        <li>AG-759: Clear button does not work well when also providing filterOptions</li>
+        <li>AG-547: Set filter tristate was not working</li>
+        <li>AG-842: Fix issue with autosize for the columns and the new matherial theme</li>
+        <li>AG-829: Fix error in CellComp.prototype.stopEditing in certain cases</li>
+        <li>AG-406: Fix issue on touch devices where sub menus and custom menu items wouldn't work.</li>
+    <ul>
+    </ul>
+
     <h2>13.2.x</h2>
     <h3>Version 13.2.0 [21-SEP-2017]</h3>
 

@@ -126,7 +126,7 @@
                 </div>
             </div>
             <div class="HomeSection-framework">
-                <a href="/best-javascript-data-grid/"><img src="../images/javascript_large.png" alt="JavaScript Datagrid" title="Vanilla JavaScript" width="75%"/></a>
+                <a href="/best-javascript-data-grid/"><img src="../images/svg/javascript.svg" alt="JavaScript Datagrid" title="Vanilla JavaScript" width="75%"/></a>
                 <div class="framework-name">
                     <a href="/best-javascript-data-grid/">JavaScript</a>
                 </div>

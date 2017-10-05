@@ -18,6 +18,95 @@ include '../documentation-main/documentation_header.php';
         This section explains how to configure the the grid's properties, events, callbacks and API.
     </p>
 
+
+
+
+
+    <div class="list-group">
+        <a href="../javascript-grid-properties/" class="list-group-item">
+            <div class="float-parent">
+                <div class="section-icon-container">
+                    <img src="../images/svg/docs/interfacing.svg" width="50" />
+                </div>
+                <h3 class="list-group-item-heading">Grid Properties</h3>
+                <p class="list-group-item-text">
+                    Most features of the grid are set using grid properties. Eg turn on sorting by setting
+                    <code>enableSorting=true</code>, or turn on filtering with <code>enableFilter=true</code>.
+                </p>
+            </div>
+        </a>
+
+        <a href="../javascript-grid-api/" class="list-group-item">
+            <div class="float-parent">
+                <div class="section-icon-container">
+                    <img src="../images/svg/docs/interfacing.svg" width="50" />
+                </div>
+                <h3 class="list-group-item-heading">Grid API</h3>
+                <p class="list-group-item-text">
+                    Interacting with the grid at run time is done through the grid API. Eg to get all the
+                    selected rows, call <code>api.getSelectedRows()</code>.
+                </p>
+            </div>
+        </a>
+
+        <a href="../javascript-grid-events/" class="list-group-item">
+            <div class="float-parent">
+                <div class="section-icon-container">
+                    <img src="../images/svg/docs/interfacing.svg" width="50" />
+                </div>
+                <h3 class="list-group-item-heading">Grid Events</h3>
+                <p class="list-group-item-text">
+                    Your application can listen for certain events within the grid to act on them.
+                    Eg <code>sortChanged</code> gets fired when the grid is sorted, <code>rowSelected</code>
+                    gets fired when a row is selected.
+                </p>
+            </div>
+        </a>
+
+        <a href="../javascript-grid-callbacks/" class="list-group-item">
+            <div class="float-parent">
+                <div class="section-icon-container">
+                    <img src="../images/svg/docs/interfacing.svg" width="50" />
+                </div>
+                <h3 class="list-group-item-heading">Grid Callbacks</h3>
+                <p class="list-group-item-text">
+                    If the grid requires information from your application it is done through a grid callback.
+                    Eg <code>getMainMenuItems()</code> is called each time a menu is shown and allows your application
+                    to customise the menu.
+                </p>
+            </div>
+        </a>
+
+        <a href="../javascript-grid-column-properties/" class="list-group-item">
+            <div class="float-parent">
+                <div class="section-icon-container">
+                    <img src="../images/svg/docs/interfacing.svg" width="50" />
+                </div>
+                <h3 class="list-group-item-heading">Column Properties</h3>
+                <p class="list-group-item-text">
+                    Columns are configured through column definitions. A column definition contains the column
+                    properties. Eg <code>colDef.pinned='left'</code> will set a column to be pinned to the left.
+                </p>
+            </div>
+        </a>
+
+        <a href="../javascript-grid-column-api/" class="list-group-item">
+            <div class="float-parent">
+                <div class="section-icon-container">
+                    <img src="../images/svg/docs/interfacing.svg" width="50" />
+                </div>
+                <h3 class="list-group-item-heading">Column API</h3>
+                <p class="list-group-item-text">
+                    The column API is similar to the grid API, the difference is that the column API groups
+                    a set of API methods relevant to columns. Eg the method <code>columnApi.setColumnVisible('country',false)</code>
+                    will cause the 'country' column to be hidden.
+                </p>
+            </div>
+        </a>
+
+    </div>
+
+<!--
     <div class="row">
         <div class="col-md-4">
             <div class="list-group">
@@ -103,10 +192,10 @@ include '../documentation-main/documentation_header.php';
             </div>
         </div>
 
-    </div>
+    </div>-->
 
     <h2>
-        <?php if (isFrameworkJavaScript()) { ?><img src="/images/javascript.png" height="50"/><?php } ?>
+        <?php if (isFrameworkJavaScript()) { ?><img src="/images/svg/javascript.svg" height="50"/><?php } ?>
         <?php if (isFrameworkReact()) { ?><img src="/images/react.png" height="50"/><?php } ?>
         <?php if (isFrameworkAngular1()) { ?><img src="/images/angularjs.png" height="50"/><?php } ?>
         <?php if (isFrameworkPolymer()) { ?><img src="/images/polymer-large.png" height="50"/><?php } ?>
@@ -199,7 +288,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     <?php if (isFrameworkJavaScript()) { ?>
         <div>
             <h2>
-                <img src="/images/javascript.png" height="50"/>
+                <img src="/images/svg/javascript.svg" height="50"/>
                 Native Javascript
             </h2>
 

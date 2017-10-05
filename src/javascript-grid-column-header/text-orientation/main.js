@@ -23,7 +23,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     enableColResize: true,
-    floatingFilter:true,
+    //floatingFilter:true,
     groupHeaderHeight:75,
     headerHeight: 150,
     floatingFiltersHeight:50,

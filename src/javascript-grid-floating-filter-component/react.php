@@ -15,7 +15,7 @@
     See example below on how to create a custom floating filter reusing the out of the box number filter with React
 </p>
 
-<?= example('React Floating Filter', 'react-floating', 'react', array( "exampleHeight" => 200, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
+<?= example('React Floating Filter', 'react-floating', 'react', array("enterprise" => 1, "exampleHeight" => 200, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 
 <note>The full <a href="https://github.com/ag-grid/ag-grid-react-example">ag-grid-react-example</a> repo shows many
     more examples for rendering, including grouped rows, full width renderer's

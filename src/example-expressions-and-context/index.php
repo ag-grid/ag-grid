@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        <b>Months</b> are effected by the context. The data displayed is either x_act or x_bud data for the month
+        <b>Months</b> are affected by the context. The data displayed is either x_act or x_bud data for the month
         (eg jan_act when jan is green, or jan_bud when jan is red). Likewise the background color is also
         changed using class rules dependent on the selected month.
     </p>

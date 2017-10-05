@@ -131,9 +131,18 @@ gridOptions.columnDefs = [
     <p>
         The grid doesn't color the groups for you. However you can use the column definition
         <i>headerClass</i> for this purpose. The <i>headerClass</i> attribute is available
-        on both columns and column groups. The example below shows using the headerClass
-        to set the header name based on the group the column is inside.
+        on both columns and column groups.
     </p>
+
+    <snippet>columnDefs = [
+    {
+        headerName: 'Athlete Details',
+        // this CSS class will get applied to the header group
+        headerClass: 'my-css-class',
+        // then children as normal
+        children: [ ... ]
+    }
+]</snippet>
 
     <h2 id="grouping-example">Grouping Example</h2>
 

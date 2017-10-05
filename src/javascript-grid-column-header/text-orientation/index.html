@@ -16,18 +16,16 @@
             /*Force the width corresponding at how much widht
             we need once the text is layed out vertically*/
             width: 55px;
-            transform: rotate(90deg);
+            writing-mode: vertical-lr;
+            line-height: 2em;
             margin-top: 60px;
-            /*Since we are rotating a span*/
-            display: inline-block;
         }
 
         .ag-pivot-off .ag-header-group-cell{
             font-size: 50px;
-            color: red;
         }
 
-        .ag-pivot-on .ag-header-group-cell{
+        .ag-pivot-on .ag-header-group-cell {
             font-size: 10px;
             color: green;
         }

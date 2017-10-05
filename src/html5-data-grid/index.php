@@ -225,7 +225,7 @@
                 </div>
             </div>
             <div class="HomeSection-framework">
-                <a href="/best-javascript-data-grid/"><img src="../images/javascript_large.png" alt="JavaScript Datagrid" title="Vanilla JavaScript" width="75%"/></a>
+                <a href="/best-javascript-data-grid/"><img src="../images/svg/javascript.svg" alt="JavaScript Datagrid" title="Vanilla JavaScript" width="75%"/></a>
                 <div class="framework-name">
                     <a href="/best-javascript-data-grid/">JavaScript</a>
                 </div>
@@ -383,7 +383,7 @@
                 <li><a href="../javascript-grid-row-height/">Row Height</a></li>
 
 
-                <li><a href="../javascript-grid-cell-styling/">Cell Styling</a></li>
+                <li><a href="../javascript-grid-cell-styles/">Cell Styling</a></li>
                 <li><a href="../javascript-grid-value-handlers/">Value Handlers</a></li>
                 <li><a href="../javascript-grid-value-getters/">Getters & Formatters</a></li>
                 <li><a href="../javascript-grid-value-setters/">Setters and Parsers</a></li>

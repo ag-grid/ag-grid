@@ -165,6 +165,13 @@ colDef.valueFormatter = function(params) {
         passed to the <code>cellRenderer</code>.
     </p>
 
+    <note>
+        Be aware that the Value Formatter params won't always have 'data' and 'node' supplied, e.g. the
+        params supplied to the Value Formatter in the <a href="../javascript-grid-filter-set/">Set Filter</a>.
+        As a result favour formatter implementations that rely upon the 'value' argument instead, as this
+        will lead to better reuse of your Value Formatter's.
+    </note>
+
     <h2>Header Value Getters</h2>
 
     <p>

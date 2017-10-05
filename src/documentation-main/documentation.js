@@ -1,6 +1,6 @@
 (function () {
 
-    var module = angular.module("documentation", []);
+    var module = angular.module("documentation", ['ngCookies']);
     /*
      * Show Example directive
      */
@@ -12,8 +12,8 @@
         }
     });
 
-    var removeFilenameFromPath = function(pathname) {
-        if(pathname.lastIndexOf('/') === 0) {
+    var removeFilenameFromPath = function (pathname) {
+        if (pathname.lastIndexOf('/') === 0) {
             // only the root slash present
             return pathname;
         }
@@ -52,7 +52,7 @@
         $scope.selectedTab = 'example';
         $scope.sourceLang = getSourceLang($scope.jsfile);
 
-        $scope.source = url ? url : pathname + example + ".html"    ;
+        $scope.source = url ? url : pathname + example + ".html";
 
         $scope.htmlFile = pathname + ($attrs['html'] ? $attrs['html'] : example + ".html");
 
@@ -129,7 +129,7 @@
         $scope.extraPages = [];
 
         var sources = eval($attrs.sources);
-        sources.forEach(function(source) {
+        sources.forEach(function (source) {
             var root = source.root;
             root = root === "./" ? pathname : root;
             var files = source.files.split(',');
@@ -195,7 +195,7 @@
         $scope.extraPages = [];
 
         var sources = eval($attrs.sources);
-        sources.forEach(function(source) {
+        sources.forEach(function (source) {
             var root = source.root;
             var files = source.files.split(',');
 
@@ -319,7 +319,7 @@
     }
 
     // close framework dropdown when clicking outside
-    if(document.body) {
+    if (document.body) {
         document.body.addEventListener('click', hideFrameworkSelectionOnBodyClick, true);
     }
 
@@ -340,7 +340,7 @@
     function setCookie(cname, cvalue, exdays) {
         var d = new Date();
         d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-        var expires = "expires="+d.toUTCString();
+        var expires = "expires=" + d.toUTCString();
         document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
     }
 
@@ -364,7 +364,7 @@
 
     /* expand all dropdowns */
     if (eExpandAll) {
-        eExpandAll.addEventListener('click', function(){
+        eExpandAll.addEventListener('click', function () {
             if (this.text.indexOf('Expand') > -1) {
                 expandAll();
             } else {

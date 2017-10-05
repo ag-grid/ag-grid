@@ -26,12 +26,11 @@ foreach ($files as $file) {
     <base href="<?= POLYMER_BASE_HREF_PREFIX ."${exampleSection}/$exampleDir/" ?>" />
 <?php if (!$preview) { ?>
     <style> html, body { margin: 0; padding: 0; } </style>
-
 <?php } ?>
 <?php renderExampleExtras($_GET) ?>
     <!-- polymer polyfill - must be before any wc related javascript is executed -->
     <script src="//cdnjs.cloudflare.com/ajax/libs/webcomponentsjs/1.0.11/webcomponents-loader.js"></script>
-    <link rel="import"  href="../../framework-examples/polymer-examples/bower_components/polymer/polymer.html">
+    <link rel="import"  href="<?= POLYMER_BASE_HREF_PREFIX ?>framework-examples/polymer-examples/bower_components/polymer/polymer.html">
 
 <?= globalAgGridScript(isset($_GET["enterprise"])) ?>
 

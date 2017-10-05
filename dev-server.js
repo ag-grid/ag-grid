@@ -17,9 +17,13 @@ const PHP_PORT = 8888;
 const HOST = '127.0.0.1';
 const WINDOWS = /^win/.test(os.platform());
 
+const rewrite = require('express-urlrewrite');
+
 function addWebpackMiddleware(app, configPath, prefix) {
     const webpackConfig = require(path.resolve('./webpack-config/', configPath + '.js'));
     const compiler = realWebpack(webpackConfig);
+
+    app.use(rewrite(new RegExp(`^${prefix}/(.+).hot-update.(json|js)`), `${prefix}${prefix}/$1.hot-update.$2`));
 
     app.use(
         prefix,
@@ -34,7 +38,7 @@ function addWebpackMiddleware(app, configPath, prefix) {
 
 function launchPhpCP(app) {
     const php = cp.spawn('php', ['-S', `${HOST}:${PHP_PORT}`, '-t', 'src'], {
-        stdio: 'inherit',
+        stdio: ['ignore', 'ignore', 'ignore'],
         env: {AG_DEV: 'true'}
     });
 
@@ -47,6 +51,10 @@ function launchPhpCP(app) {
             }
         })
     );
+
+    process.on('exit', () => {
+        php.kill();
+    });
 }
 
 function serveAndWatchAngular(app) {
@@ -58,14 +66,16 @@ function serveAndWatchAngular(app) {
     });
 
     app.use('/dev/ag-grid-angular', express.static('../ag-grid-angular'));
+
+    process.on('exit', () => {
+        angularWatch.kill();
+    });
 }
 
 function launchTSCCheck() {
     if (!fs.existsSync('_dev')) {
         console.log('_dev not present, creating links...');
-
         const linkType = 'symbolic';
-        
         mkdirp('_dev/ag-grid/dist');
         lnk('../ag-grid/exports.ts', '_dev/ag-grid/', {force: true, type: linkType, rename: 'main.ts'});
         lnk('../ag-grid/src/ts', '_dev/ag-grid/dist', {force: true, type: linkType, rename: 'lib'});
@@ -75,7 +85,7 @@ function launchTSCCheck() {
     }
 
     const tscPath = WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
-    
+
     const tsChecker = cp.spawn(tscPath, ['--watch', '--noEmit']);
 
     tsChecker.stdout.on('data', data => {
@@ -84,9 +94,7 @@ function launchTSCCheck() {
             .trim()
             .split('\n')
             .filter(line => line.indexOf('Watching for') === -1 && line.indexOf('File change') === -1)
-            .forEach(line =>
-                console.log('ts-checker:'.green, line.replace('_dev', '..').replace('/dist/lib/', '/src/ts/').red)
-            );
+            .forEach(line => console.log('ts-checker:'.green, line.replace('_dev', '..').replace('/dist/lib/', '/src/ts/').red));
     });
 }
 
@@ -100,8 +108,8 @@ module.exports = callback => {
     });
 
     // serve ag-grid, enterprise and react
-    addWebpackMiddleware(app, 'standard', '/dev/ag-grid/');
-    addWebpackMiddleware(app, 'site', '/dist/');
+    addWebpackMiddleware(app, 'standard', '/dev/ag-grid');
+    addWebpackMiddleware(app, 'site', '/dist');
     addWebpackMiddleware(app, 'enterprise', '/dev/ag-grid-enterprise');
     addWebpackMiddleware(app, 'enterprise-bundle', '/dev/ag-grid-enterprise-bundle');
     addWebpackMiddleware(app, 'react', '/dev/ag-grid-react');

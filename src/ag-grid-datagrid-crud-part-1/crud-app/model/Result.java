@@ -1,6 +1,5 @@
 package com.aggrid.crudapp.model;
 
-
 import javax.persistence.*;
 
 @Entity

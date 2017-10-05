@@ -133,5 +133,3 @@ class NameCellRenderer extends React.Component {
 </p>
 
 <?= example('Richer Dynamic Components', 'react-rich-dynamic', 'react', array( "exampleHeight" => 380, "showResult" => true, "extras" => array("bootstrap") )); ?>
-
-</show-complex-example>

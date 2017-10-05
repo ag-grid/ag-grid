@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 
-    <div class="list-group">
+    <div class="list-group" style="margin-bottom: 50px; margin-top: 50px;">
         <a href="/angular-getting-started/" class="list-group-item">
             <div class="float-parent">
                 <div class="section-icon-container">
@@ -65,7 +65,15 @@ include '../documentation-main/documentation_header.php';
         </a>
     </div>
 
-    <?php include '../home/features-detail.php'; ?>
+    <div style="text-align: center;">
+        <h2>Feature Roadshow</h2>
+    </div>
+
+    <?php
+    $featuresRoot = '../javascript-grid-features';
+    include '../javascript-grid-features/gridFeatures.php';
+    ?>
+
 </div>
 
 
