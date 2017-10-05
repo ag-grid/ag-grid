@@ -19,6 +19,7 @@ include '../documentation-main/documentation_header.php';
         <li>AG-672 Navigating with arrow keys now uses <code>suppressNavigable</code> property to skip cells that are not navigable.</li>
         <li>AG-311 When using keyboard navigation, and col width is greater than grid with, the navigation was jumping the col from left to right.</li>
         <li>AG-878 When in master / detail, and editing detail grid, console error was printed - no functional problem, the error should not of gotten printed</li>
+        <li>AG-433 Keyboard navigation with home & end as loosing cell focus, now fixed, focus is put to correct cell.</li>
     </ul>
 
     <h2>13.3.x</h2>
