@@ -1,47 +1,67 @@
+function getAllAges() {
+    var allAges = [];
+    for (var i = 0; i < 100; i++) {
+        allAges.push('' + i);
+    }
+    return allAges;
+}
 
-var allAges = [];
-for (var i = 0; i<100; i++) {
-    allAges.push(''+i);
+function replaceAccents(s) {
+    var r = s.toLowerCase();
+    r = r.replace(new RegExp('[àáâãäå]', 'g'), 'a');
+    r = r.replace(new RegExp('æ', 'g'), 'ae');
+    r = r.replace(new RegExp('ç', 'g'), 'c');
+    r = r.replace(new RegExp('[èéêë]', 'g'), 'e');
+    r = r.replace(new RegExp('[ìíîï]', 'g'), 'i');
+    r = r.replace(new RegExp('ñ', 'g'), 'n');
+    r = r.replace(new RegExp('[òóôõøö]', 'g'), 'o');
+    r = r.replace(new RegExp('œ', 'g'), 'oe');
+    r = r.replace(new RegExp('[ùúûü]', 'g'), 'u');
+    r = r.replace(new RegExp('[ýÿ]', 'g'), 'y');
+    r = r.replace(new RegExp('\\W', 'g'), '');
+    return r;
 }
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'set', filterParams: {
-        textFormatter: function(s){
-            var r=s.toLowerCase();
-            r = r.replace(new RegExp("[àáâãäå]", 'g'),"a");
-            r = r.replace(new RegExp("æ", 'g'),"ae");
-            r = r.replace(new RegExp("ç", 'g'),"c");
-            r = r.replace(new RegExp("[èéêë]", 'g'),"e");
-            r = r.replace(new RegExp("[ìíîï]", 'g'),"i");
-            r = r.replace(new RegExp("ñ", 'g'),"n");
-            r = r.replace(new RegExp("[òóôõøö]", 'g'),"o");
-            r = r.replace(new RegExp("œ", 'g'),"oe");
-            r = r.replace(new RegExp("[ùúûü]", 'g'),"u");
-            r = r.replace(new RegExp("[ýÿ]", 'g'),"y");
-            r = r.replace(new RegExp("\\W", 'g'),"");
-            return r;
-        }
-    }},
-    {headerName: "Age - Comparator", field: "age", width: 200, filter: 'set',
+    {
+        headerName: 'Athlete',
+        field: 'athlete',
+        width: 150,
+        filter: 'set',
         filterParams: {
-            values: allAges,
-            comparator: function(a,b) {
+            textFormatter: replaceAccents
+        }
+    },
+    {
+        headerName: 'Age - Comparator',
+        field: 'age',
+        width: 200,
+        filter: 'set',
+        filterParams: {
+            values: getAllAges(),
+            comparator: function(a, b) {
                 var numA = parseInt(a);
                 var numB = parseInt(b);
-                if (numA>numB) {
+                if (numA > numB) {
                     return 1;
-                } else if (numA<numB) {
+                } else if (numA < numB) {
                     return -1;
                 } else {
                     return 0;
                 }
             }
-        }},
-    {headerName: "Age - No Comparator", field: "age", width: 200, filter: 'set',
+        }
+    },
+    {
+        headerName: 'Age - No Comparator',
+        field: 'age',
+        width: 200,
+        filter: 'set',
         filterParams: {
-            values: allAges
-        }},
-    {headerName: "Country", field: "country", width: 140}
+            values: getAllAges()
+        }
+    },
+    {headerName: 'Country', field: 'country', width: 140}
 ];
 
 var gridOptions = {
