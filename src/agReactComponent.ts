@@ -34,14 +34,12 @@ export class AgReactComponent implements AgReactFrameworkComponent<any> {
 
             // MUST be a function, not an arrow function
             ReactDOM.render(ReactComponent, this.eParentElement, function () {
-                console.debug('in a different thread');
                 self.componentRef = this;
             });
         } else {
 
             // MUST be a function, not an arrow function
             ReactDOM.unstable_renderSubtreeIntoContainer(this.parentComponent, ReactComponent, this.eParentElement, function () {
-                console.debug('in the same thread?');
                 self.componentRef = this;
             });
         }
