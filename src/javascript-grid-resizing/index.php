@@ -115,7 +115,7 @@ include '../documentation-main/documentation_header.php';
         for some frameworks (eg Angular) as DOM objects are used before getting attached.
     </p>
 
-    <?= example('Default Resizing', 'default-resizing') ?>
+    <?= example('Default Resizing', 'default-resizing', 'generated') ?>
 
     <h3 id="resizing-groups">Resizing Groups</h3>
 
