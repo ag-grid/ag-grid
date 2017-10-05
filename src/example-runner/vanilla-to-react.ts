@@ -1,4 +1,5 @@
 import parser from './vanilla-src-parser';
+import styleConvertor from './lib/convert-style-to-react';
 
 function indexTemplate(bindings) {
     const imports = [];
@@ -48,6 +49,10 @@ function indexTemplate(bindings) {
     let template = bindings.template ? bindings.template.replace('$$GRID$$', agGridTag) : agGridTag;
 
     template = template.replace(/onclick="(\w+)\((.*)\)"/g, 'onClick={this.$1.bind(this, $2)}');
+
+    template = template.replace(/<input type="radio" (.+?)>/g, '<input type="radio" $1 />');
+
+    template = styleConvertor(template);
 
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => handler.body.replace(/^function /, ''));
 

@@ -186,11 +186,6 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
         collectors
     );
 
-    if (domTree.find("[style]:not('#myGrid')").length) {
-        console.error(domTree.html());
-        throw new Error('The template contains inline styles - I cannot conver those to react');
-    }
-
     const gridElement = domTree.find('#myGrid').replaceWith('$$GRID$$');
     const inlineClass = gridElement.attr('class');
     const inlineHeight = gridElement.css('height');
@@ -207,7 +202,7 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
         gridSettings.width = inlineWidth;
     }
 
-    bindings.template = domTree.html();
+    bindings.template = domTree.html().replace(/<br>/g, '<br />');
 
     bindings.gridSettings = gridSettings;
     return bindings;
