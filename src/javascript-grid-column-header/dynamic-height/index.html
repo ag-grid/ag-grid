@@ -1,7 +1,7 @@
-<div style="height: 100%; box-sizing: border-box; padding-top: 90px;">
+<div class="grid-wrapper">
     <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
 </div>
-<div style="position: absolute; top: 0px; left: 0px; margin-left: 10px; margin-top: 0px;">
+<div class="button-bar">
     <table>
         <tr>
             <td>pivot (<span id="pivot">off</span>)</td>
@@ -24,7 +24,7 @@
                 <button onclick="setHeaderHeight(null)">null</button>
             </td>
         </tr>
-        <tr class="requiresPivot" style="display: none">
+        <tr id="requiresPivot" class="hidden">
             <td>pivotGroupHeaderHeight (<span id="pivotGroupHeaderHeight">null</span>)</td>
             <td>
                 <button onclick="setPivotGroupHeaderHeight(50)">50px</button>
@@ -38,7 +38,7 @@
                 <button onclick="setPivotHeaderHeight(null)">null</button>
             </td>
         </tr>
-        <tr class="requiresNotPivot">
+        <tr id="requiresNotPivot">
             <td>floatingFiltersHeight (<span id="floatingFiltersHeight">null</span>)</td>
             <td>
                 <button onclick="setFloatingFiltersHeight(35)">35px</button>

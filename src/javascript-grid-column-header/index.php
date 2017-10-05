@@ -249,7 +249,7 @@ include '../documentation-main/documentation_header.php';
         descriptions at the top of the page
     </p>
 
-    <?= example('Dynamic Header Height', 'dynamic-height','vanilla', array("enterprise" => 1)) ?>
+    <?= example('Dynamic Header Height', 'dynamic-height', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="refresh-headers-and-footers">Refresh Headers and Footers</h2>
 
