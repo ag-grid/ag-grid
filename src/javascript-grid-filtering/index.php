@@ -282,7 +282,7 @@ gridOptions.api.setFilterModel(null);</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <?= example('Filter Model', 'filter-model', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Filter Model', 'filter-model', 'generated', array("enterprise" => 1)) ?>
 
 <h3 id="floatingFilter">Floating filters</h3>
 
