@@ -342,7 +342,7 @@ gridOptions = {
     </ul>
 </p>
 
-<?= example('Floating Filter', 'floating-filter', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Floating Filter', 'floating-filter', 'generated', array("enterprise" => 1)) ?>
 
 <h3>Server Side Filtering</h3>
 
@@ -380,7 +380,7 @@ In the following example you can filter by age or date and see how <code>null</c
 on the combination of filter type and your <code>columnDef.filterParams.nullComparator</code>
 </p>
 
-<?= example('Null Filtering', 'null-filtering') ?>
+<?= example('Null Filtering', 'null-filtering', 'generated') ?>
 
 <p>
     Note that <code>inRange</code> will never include <code>null</code>.
