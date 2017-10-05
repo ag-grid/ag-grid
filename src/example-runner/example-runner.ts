@@ -264,18 +264,23 @@ class ExampleRunner {
                 if (this.currentType === 'angular') {
                     if (file == 'app/app.module.ts') {
                         return [this.boilerplatePath, '..', 'angular-generated-app-module.ts'].join('/');
-                    } else {
+                    } else if (file == 'app/app.component.ts'){
                         return {
                             sources: this.sourcesForGeneration(),
                             process: sources => vanillaToAngular(sources, this.config.options.grid)
                         };
+                    } else {
+                        return this.appFilePath(file);
                     }
                 } else if (this.currentType === 'react') {
-                    // index.jsx
-                    return {
-                        sources: this.sourcesForGeneration(),
-                        process: sources => vanillaToReact(sources, this.config.options.grid)
-                    };
+                    if (file == 'index.jsx') {
+                        return {
+                            sources: this.sourcesForGeneration(),
+                            process: sources => vanillaToReact(sources, this.config.options.grid)
+                        };
+                    } else {
+                        return this.appFilePath(file);
+                    }
                 }
             } else {
                 return this.appFilePath(file);
