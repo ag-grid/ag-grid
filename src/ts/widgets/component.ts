@@ -42,7 +42,7 @@ export class Component extends BeanStub implements IComponent<any, IAfterGuiAtta
         this.template = template;
     }
 
-    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         if (!this.eHtmlElement && params.eComponent) {
             this.setHtmlElement(params.eComponent);
         }
