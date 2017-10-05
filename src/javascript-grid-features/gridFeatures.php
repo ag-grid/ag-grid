@@ -148,7 +148,7 @@ function gridFeature($enterprise, $name, $url, $image, $description, $snippet) {
 
 gridFeature(false, 'Column Definitions', '../javascript-grid-column-definitions/', 'columns.gif',
     'Columns are configured in the grid by providing a list of <span class="feature-highlight">Column Definitions</span>.
-The attributes you set on the column definitions define how the columns behave eg title, width etc.',
+The attributes you set on the column definitions define how the columns behave e.g. title, width etc.',
     '
 columnDefinitions = [
     {field: \'firstName\', width: 100px},
@@ -169,8 +169,8 @@ columnDefinitions = [
 ];');
 
 gridFeature(false, 'Column Headers', '../javascript-grid-column-header/', 'columnHeaders.gif',
-    'The display of column headers can be fine tuned to change for example 
-    <span class="feature-highlight">Header Height</span> and <span class="feature-highlight">Text Orientation</span>.',
+    'The display of column headers can be fine-tuned to change <span class="feature-highlight">Header Height</span> and 
+    <span class="feature-highlight">Text Orientation</span> for example.',
     '
 // set heights as a grid option
 gridOptions = {
@@ -199,8 +199,8 @@ columnApi.autoSizeAllColumns();
 
     <h2 class="feature-title"><a href="../javascript-grid-filtering/">Column Filter</a></h2>
     <div class="feature-description">
-        <span class="feature-highlight">Column Filter's</span> appear in the column menu.
-        The grid provides filters out of the box (text, number, date and set filters) or create your
+        <span class="feature-highlight">Column Filters</span> appear in the column menu.
+        The grid comes with filters out of the box: text, number, date and set filters. You can also create your
         own customer filter.
     </div>
     <div class="feature-snippet">
@@ -254,7 +254,7 @@ colDef = {
         </div>
         <div class="col-md-6">
             <?php gridFeature(true, 'Set Filter', '../javascript-grid-filter-set/', 'setFilter.gif',
-                '<span class="feature-highlight">Set Filter</span> works like excel, providing checkboxes to select values from a set.',
+                '<span class="feature-highlight">Set Filter</span> works like Excel, providing checkboxes to select values from a set.',
                 '
 colDef = {
     field: \'country\',
@@ -266,7 +266,7 @@ colDef = {
     <div class="row half-width-child-features">
         <div class="col-md-6">
             <?php gridFeature(false, 'Custom Filter', '../javascript-grid-filter-custom/', 'customFilter.gif',
-                'Create your own filter to match your own business requirements.',
+                'Create your own Custom Filter to match your own business requirements.',
                 '
 colDef = {
     field: \'name\',
@@ -282,7 +282,7 @@ colDef = {
 
 gridFeature(false, 'Quick Filter', '../javascript-grid-filter-quick/', 'quickFilter.gif',
     '<span class="feature-highlight">Quick Filter</span> filters all columns simultaneously with a simple text search,
-just like how you filter your GMail.',
+just like how you filter your Gmail.',
 '// you pass the filter text to the grid
 // via the grid\'s API
 api.setQuickFilter(searchText)
@@ -290,7 +290,7 @@ api.setQuickFilter(searchText)
 
 gridFeature(false, 'External Filter', '../javascript-grid-filter-external/', 'externalFilter.gif',
     '<span class="feature-highlight">External Filter</span> allows you to build filters that live
-outside of the grid. For example you can include your own widgets outside the grid for your own filter.',
+outside of the grid. For example, you can include your own widgets outside the grid for your own filter.',
 null);
 
 gridFeature(false, 'Row Sorting', '../javascript-grid-sorting/', 'rowSorting.gif',
@@ -352,7 +352,7 @@ or to the right. Pinned columns are always present and not impacted by horizonta
 
 gridFeature(false, 'Row Pinning', '../javascript-grid-row-pinning/', 'rowPinning.gif',
     'Use <span class="feature-highlight">Pinned Rows</span> to pin one or more rows to the top
-or the bottom. Pinned rows are always present and not impacted by vertical.',
+or the bottom. Pinned rows are always present and not impacted by vertical scroll.',
 '// set pinned column using grid property
 gridOptions = {
     pinnedTopRowData: [],
@@ -374,7 +374,7 @@ even change the row height dynamically at run time.',
 
 gridFeature(false, 'Cell Styling', '../javascript-grid-cell-styling/', 'cellStyling.gif',
     'Use CSS rules to define <span class="feature-highlight">Cell Style</span> based on
-data content, eg put a red background onto cells that have negative values, and green on values
+data content, e.g. put a red background onto cells that have negative values, and green on values
 greater than 100.',
     'cellClassRules = {
     // put CSS class \'highlight-negative\' onto cells
@@ -388,7 +388,7 @@ greater than 100.',
     <h2 class="feature-title"><a href="../javascript-grid-value-handlers/">Value Handlers</a></h2>
     <div class="feature-description">
         Each grid column typically has a field where it gets the value to display. However you can
-        provide more logic here to get finer control over how data is retrevied (for display) and stored (after editing)
+        provide more logic here to get finer control over how data is retrieved (for display) and stored (after editing)
         with the family of <span class="feature-highlight">Value Handlers</span>.
     </div>
 
@@ -421,7 +421,7 @@ Use <span class="feature-highlight">Value Formatters</span> to format values for
             <?php gridFeature(false, 'Setters and Parsers', '../javascript-grid-value-setters/', null,
                 '<span class="feature-highlight">Value Setters and Value Parsers</span> are the inverse of value getters
 and value formatters. Value setters are for placing values into data when field cannot be used. Value parser is for parsing
-edited values, eg removing formatting before storing into the data.',
+edited values, e.g. removing formatting before storing into the data.',
                 'var columns = [
     // this example assumes the data is in an array,
     // so you want to access indexes of the array rather
@@ -464,14 +464,14 @@ of functions for value getters, setters, formatters and parsers.',
         <div class="col-md-6">
             <?php gridFeature(false, 'Value Cache', '../javascript-grid-value-cache/', null,
                 'The <span class="feature-highlight">Value Cache</span> is used to store
-results of value getters. It is always on enhancing the performance of the grid.',
+results of value getters. It is always on, enhancing the performance of the grid.',
                 null); ?>
         </div>
         <div class="col-md-6">
             <?php gridFeature(false, 'Reference Data', '../javascript-grid-reference-data/', null,
                 'Use <span class="feature-highlight">Reference Data</span> for easier editing
-of data that uses reference data for display. For example, you might have country codes in your data eg
-{IE, UK, USA} but you display values eg {Ireland, Great Britain, United States of America}). Using reference
+of data that uses reference data for display. For example, you might have country codes in your data e.g.
+{IE, UK, USA} but you display values e.g. {Ireland, Great Britain, United States of America}). Using reference
 data simplifies this, especially if editing.',
                 null); ?>
         </div>
@@ -492,8 +492,8 @@ For example, put country flags beside country names, or push buttons for actions
 }');
 
 gridFeature(false, 'Cell Editing', '../javascript-grid-cell-editing/', 'cellEditing.gif',
-    'Users can updated data with <span class="feature-highlight">Cell Editing</span>. Use some one of the provided
-cell editors, or create your own to suit your business needs.',
+    'Users can update data with <span class="feature-highlight">Cell Editing</span>. Use one of the provided
+cell editors or create your own to suit your business needs.',
     'colDef = {
     field: \'country\',
     cellEditor: \'richSelect\',
@@ -509,7 +509,7 @@ to navigate between cells.',
     null);
 
 gridFeature(false, 'Touch Support', '../javascript-grid-touch/', 'touchSupport.gif',
-    'User can navigate the features of the grid on a touch device with teh build in 
+    'User can navigate the features of the grid on a touch device with the built-in 
 <span class="feature-highlight">Touch Support</span>. You don\'t need to do anything, it works
 out of the box.',
     null);
@@ -575,7 +575,7 @@ gridFeature(false, 'Internationalisation', '../javascript-grid-internationalisat
 }');
 
 gridFeature(false, 'Performance', '../javascript-grid-performance/', 'performance.gif',
-    'The core grid engine gives <span class="feature-highlight">performance</span> unlike
+    'The core grid engine gives <span class="feature-highlight">Performance</span> unlike
 that seen before. The grid uses row and column virtualisation, animation frames and many other 
 techniques.',
     null);
@@ -607,13 +607,13 @@ with different columns inside.',
 
 gridFeature(false, 'Aligned Grids', '../javascript-grid-aligned-grids/', 'alignedGrids.gif',
     'Have one or more grids horizontally <span class="feature-highlight">Aligned</span> so that any
-column changes in one grid impact the other grid. This allows two girds with different data to be kept horizontally
+column changes in one grid impact the other grid. This allows two grids with different data to be kept horizontally
 in sync.',
     null);
 
 gridFeature(false, 'CSV Export', '../javascript-grid-export/', 'csvExport.gif',
     'Use <span class="feature-highlight">CSV Export</span> to take data out of the grid and into another
-application for further processing, eg Excel.',
+application for further processing such as Excel.',
     null);
 
 gridFeature(true, 'Excel Export', '../javascript-grid-excel/', 'excelExport.gif',
@@ -628,8 +628,8 @@ Arabic & Hebrew.',
     null);
 
 gridFeature(false, 'Custom Icons', '../javascript-grid-icons/', 'customIcons.gif',
-    'All the icons in the grid can be replace with your own <span class="feature-highlight">Custom Icons</span>.
-You can use either CSS or provide your own images.',
+    'All the icons in the grid can be replaced with your own <span class="feature-highlight">Custom Icons</span>.
+You can either use CSS or provide your own images.',
     'gridOptions = {
     icons: {
         // use font awesome for menu icons
@@ -641,8 +641,8 @@ You can use either CSS or provide your own images.',
 }');
 
 gridFeature(false, 'Overlays', '../javascript-grid-overlays/', 'overlays.gif',
-    'Full control of <span class="feature-highlight">Overlays</span> to display to the user
-messages on top of the grid',
+    'Full control of <span class="feature-highlight">Overlays</span> to display messages to the user
+on top of the grid',
     null);
 
 gridFeature(false, 'Layout For Print', '../javascript-grid-for-print/',  null,
@@ -678,7 +678,7 @@ of their choice and have it grouped on the fly.',
 
     gridFeature(true, 'Aggregation', '../javascript-grid-aggregation/', 'aggregation.gif',
         'When grouping you can also do <span class="feature-highlight">Aggregation</span> to get aggregate
-values for the data ie sum, min, max etc. Use the built in aggregate functions or create your own.',
+values for the data i.e. sum, min, max etc. Use the built in aggregate functions or create your own.',
         'columnDefs = [
     {field: \'country\', rowGroup: true},
     {field: \'gold\', aggFunc: \'sum\'},
@@ -687,7 +687,7 @@ values for the data ie sum, min, max etc. Use the built in aggregate functions o
 
     gridFeature(true, 'Pivoting', '../javascript-grid-pivoting/', 'pivot.gif',
         'Make columns out of values by <span class="feature-highlight">Pivoting</span> on the data,
-similar to Pivot in Excel.',
+similar to Pivot Tables in Excel.',
         'columnDefs = [
     {field: \'country\', rowGroup: true},
     {field: \'sport\', pivot: true},
@@ -702,7 +702,7 @@ similar to Pivot in Excel.',
 <?php
 
 gridFeature(true, 'Tool Panel', '../javascript-grid-tool-panel/', 'toolPanel.gif',
-    'The <span class="feature-highlight">Tool Panel</span> allows the user to maniuplate the
+    'The <span class="feature-highlight">Tool Panel</span> allows the user to manipulate the
 list of columns, such as show and hide, or drag columns to group or pivot.',
     'gridOptions: {
     showToolPanel: true,
@@ -726,7 +726,7 @@ default options or provide your own.',
 
 gridFeature(true, 'Status Bar', '../javascript-grid-status-bar/', 'statusBar.gif',
     'The <span class="feature-highlight">Status Panel</span> appears on the bottom of the grid and shows 
-aggregations (sum, min, max etc) when you select a range of cells using range selection. This is similar to what
+aggregations (sum, min, max etc.) when you select a range of cells using range selection. This is similar to what
 happens in Excel.',
     null);
 
