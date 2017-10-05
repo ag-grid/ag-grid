@@ -55,6 +55,14 @@ function nodeIsHttpOpen(node) {
     return node.type === 'ExpressionStatement' && calleeObject && calleeObject.name === 'httpRequest' && node.expression.callee.property.name === 'open';
 }
 
+function nodeIsSimpleHttpRequest(node) {
+    const calleeObject = node.expression && node.expression.callee && node.expression.callee.object;
+    const innerCallee = calleeObject && calleeObject.callee && calleeObject.callee.object;
+    const innerProperty = calleeObject && calleeObject.callee && calleeObject.callee.property;
+
+    return innerCallee && innerProperty && innerCallee.name == 'agGrid' && innerProperty.name == 'simpleHttpRequest';
+}
+
 export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) {
     const localGridOptions = esprima.parseScript(gridOptionsLocalVar).body[0];
 
@@ -116,6 +124,18 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
         matches: nodeIsHttpOpen,
         apply: (col, node) => {
             const dataUrl = node.expression.arguments[1].raw;
+            // Let's try this for now
+            const callback = '      { gridOptions.api.setRowData(data) }';
+
+            col.data = {url: dataUrl, callback: callback};
+        }
+    });
+
+    // extract the xmlhttpreq call
+    onReadyCollectors.push({
+        matches: nodeIsSimpleHttpRequest,
+        apply: (col, node) => {
+            const dataUrl = node.expression.callee.object.arguments[0].properties[0].value.raw;
             // Let's try this for now
             const callback = '      { gridOptions.api.setRowData(data) }';
 
