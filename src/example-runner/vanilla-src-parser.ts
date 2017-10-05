@@ -31,6 +31,10 @@ function nodeIsUnusedFunction(node, used) {
     return node.type === 'FunctionDeclaration' && used.indexOf((<any>node.id).name) === -1;
 }
 
+function nodeIsUnusedVar(node, used) {
+    return node.type === 'VariableDeclaration' && used.indexOf((<any>node.declarations[0].id).name) === -1;
+}
+
 function nodeIsPropertyNamed(node, name) {
     // we skip { property: variable }
     // and get only inline property assignments
@@ -75,7 +79,7 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
 
     const indentOne = {format: {indent: {base: 1}}};
 
-    const registered = [];
+    const registered = [ 'gridOptions' ];
     clickHandlers.forEach(([_, handler, params]) => {
         if (registered.indexOf(handler) > -1) {
             return;
@@ -100,6 +104,13 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
 
     collectors.push({
         matches: node => nodeIsUnusedFunction(node, registered),
+        apply: (col, node) => {
+            col.utils.push(generate(node));
+        }
+    })
+
+    collectors.push({
+        matches: node => nodeIsUnusedVar(node, registered),
         apply: (col, node) => {
             col.utils.push(generate(node));
         }
@@ -152,19 +163,19 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
     });
 
     PROPERTIES.forEach(propertyName => {
+        registered.push(propertyName);
         // grab global variables named as grid properties
         collectors.push({
             matches: node => nodeIsVarNamed(node, propertyName),
             apply: (col, node) => col.properties.push({name: propertyName, value: generate(node.declarations[0].init, indentOne)})
         });
 
-        // get stuff from gridOptions. TODO: ignore if node.value is just a variable ref
         gridOptionsCollectors.push({
             matches: node => nodeIsPropertyNamed(node, propertyName),
             apply: (col, node) => col.properties.push({name: propertyName, value: generate(node.value, indentOne)})
         });
     });
-    // get stuff from gridOptions. TODO: ignore if node.value is just a variable ref
+
     gridOptionsCollectors.push({
         matches: node => nodeIsPropertyNamed(node, 'onGridReady'),
         apply: (col, node) => { col.onGridReady = generate(node.value.body); }
