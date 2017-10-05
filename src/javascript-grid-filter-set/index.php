@@ -133,7 +133,7 @@ columnDefinition = {
         The column athlete has a debounce of 1000ms before the selected options are filtered out
     </p>
 
-    <?= example('Set Filter', 'set-filter', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1)) ?>
 
     <h3 id="sortingSetFilter">Sorting And Formatting Set Filter Values List</h3>
 
