@@ -218,13 +218,16 @@ export class ComponentResolver {
      *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
      *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
+     *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
+     *  params are and the component that init is about to get called for
      */
     public createAgGridComponent<A extends IComponent<any, IAfterGuiAttachedParams>> (
         holderOpt:ComponentHolder,
         agGridParams:any,
         propertyName:string,
         componentNameOpt?:string,
-        mandatory:boolean = true
+        mandatory:boolean = true,
+        customInitParamsCb?:(params:any, component:A)=>any
     ): A{
         let holder:ComponentHolder = holderOpt == null ? this.gridOptions : holderOpt;
         let componentName:string = componentNameOpt == null ? propertyName : componentNameOpt;
@@ -236,7 +239,11 @@ export class ComponentResolver {
         //Wire the component and call the init mehtod with the correct params
         let finalParams = this.mergeParams(holder, propertyName, agGridParams);
         this.context.wireBean(component);
-        component.init(finalParams);
+        if (customInitParamsCb == null){
+            component.init(finalParams);
+        } else {
+            component.init(customInitParamsCb(finalParams, component));
+        }
 
         return component;
     }
@@ -253,7 +260,6 @@ export class ComponentResolver {
 
         if (!componentToUse || !componentToUse.component) {
             if (mandatory){
-                debugger;
                 console.error(`Error creating component ${propertyName}=>${componentName}`);
             }
             return null;

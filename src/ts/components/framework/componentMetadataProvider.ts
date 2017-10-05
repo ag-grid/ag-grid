@@ -72,6 +72,11 @@ export class ComponentMetadataProvider {
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+            },
+            filter:{
+                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
+                optionalMethodList: ['onNewRowsLoaded', 'onFloatingFilterChanged'],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             }
         }
     }
