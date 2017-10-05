@@ -144,6 +144,11 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
             apply: (col, node) => col.properties.push({name: propertyName, value: generate(node.value, indentOne)})
         });
     });
+    // get stuff from gridOptions. TODO: ignore if node.value is just a variable ref
+    gridOptionsCollectors.push({
+        matches: node => nodeIsPropertyNamed(node, 'onGridReady'),
+        apply: (col, node) => { col.onGridReady = generate(node.value.body); }
+    });
 
     collectors.push({
         matches: node => nodeIsVarNamed(node, 'gridOptions'),

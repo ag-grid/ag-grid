@@ -46,7 +46,17 @@ function appComponentTemplate(bindings) {
         const gridOptions = this.agGrid;
         this.http.get(${bindings.data.url}).subscribe( data => ${bindings.data.callback});
     }
+
         `);
+    }
+
+    if (bindings.onGridReady) {
+        additional.push(`onGridReady(params) ${bindings.onGridReady}
+
+    ngAfterViewInit() {
+        setTimeout( () => this.onGridReady(this.agGrid), 400);
+    }
+            `)
     }
 
     const agGridTag = `<ag-grid-angular
@@ -83,12 +93,6 @@ export class AppComponent {
         .concat(additional)
         .map(snippet => snippet.trim())
         .join('\n\n')}
-/*
-    ngAfterViewInit() {
-        // necessary for the layout to kick in
-        setTimeout( () => this.onGridReady(this.agGrid), 400);
-    }
-*/
 }
 `;
 }

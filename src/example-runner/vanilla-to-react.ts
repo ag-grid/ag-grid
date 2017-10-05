@@ -28,6 +28,11 @@ function indexTemplate(bindings) {
         };`);
     }
 
+    if (bindings.onGridReady) {
+        const hackedHandler = bindings.onGridReady.replace(/^\{|\}$/g, '');
+        additionalInReady.push(hackedHandler);
+    }
+
     const agGridTag = `<div style={{
                 boxSizing: 'border-box', 
                 height: '${bindings.gridSettings.height}', 
@@ -67,8 +72,8 @@ class GridExample extends Component {
 
     onGridReady(params) {
         this.agGrid = params;
-
         const gridOptions = params;
+
         ${additionalInReady.join('\n')}
     }
 
