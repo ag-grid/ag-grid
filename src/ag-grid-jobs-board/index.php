@@ -1,8 +1,11 @@
 <?php
 
-$pageTitle = "ag-Grid Jobs";
-$pageDescription = "ag-Grid is growing as a company. This page details positions we currently have.";
+$pageTitle = "Jobs at ag-Grid";
+$pageDescription = "We are looking for the best and the brightest to join us on our mission to create the best datagrid in the world.";
 $pageKeyboards = "ag-Grid jobs";
+
+$socialUrl = "https://www.ag-grid.com/ag-grid-jobs-board/";
+$socialImage = "https://www.ag-grid.com/ag-grid-jobs-board/images/jobs_board.png";
 
 include('../includes/jobsHeader.php');
 ?>
