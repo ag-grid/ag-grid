@@ -19,7 +19,7 @@ export declare class Component extends BeanStub implements IComponent<any, IAfte
     private compId;
     constructor(template?: string);
     setTemplateNoHydrate(template: string): void;
-    afterGuiAttached(params: IAfterGuiAttachedParams): void;
+    afterGuiAttached(params?: IAfterGuiAttachedParams): void;
     getCompId(): number;
     instantiate(context: Context): void;
     private instantiateRecurse(parentNode, context);
