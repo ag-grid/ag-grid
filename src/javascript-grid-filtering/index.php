@@ -219,7 +219,7 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <?= example('Filter API', 'filter-api', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Filter API', 'filter-api', 'generated', array("enterprise" => 1)) ?>
 
     <h4 id="reset_filters">Reset Individual Filters</h4>
 
