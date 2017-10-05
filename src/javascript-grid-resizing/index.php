@@ -98,7 +98,7 @@ include '../documentation-main/documentation_header.php';
         after you press the button.
     </p>
 
-    <?= example('Column Resizing', 'column-resizing') ?>
+    <?= example('Column Resizing', 'column-resizing', 'generated') ?>
 
     <h3 id="resizing-example">Sizing Columns By Default</h3>
 
