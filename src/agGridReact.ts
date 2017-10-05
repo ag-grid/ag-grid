@@ -155,8 +155,12 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         b = AgGridReact.unwrapStringOrNumber(b);
         if (a === b) return true; //e.g. a and b both null
         if (a === null || b === null || typeof (a) !== typeof (b)) return false;
-        if (a instanceof Date)
+        if (a instanceof Date) {
             return b instanceof Date && a.valueOf() === b.valueOf();
+        }
+        if(typeof a === "function") {
+            return a.toString() === b.toString();
+        }
         if (typeof (a) !== "object") {
             return a == b; //for boolean, number, string, function, xml
         }
