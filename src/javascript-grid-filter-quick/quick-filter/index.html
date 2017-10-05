@@ -6,11 +6,11 @@
     <button style="margin-left: 20px;" onclick="onPrintQuickFilterTexts(this.value)">Print Quick Filter Texts</button>
     <span style="margin-left: 50px">
         <label>
-            <input onchange="reset()" type="radio" id="cbNormal" name="cache" checked />
+            <input onchange="onQuickFilterTypeChanged()" type="radio" id="cbNormal" name="cache" checked />
             Normal Quick Filter
         </label>
         <label>
-            <input onchange="reset()" type="radio" id="cbCache" name="cache"/>
+            <input onchange="onQuickFilterTypeChanged()" type="radio" id="cbCache" name="cache"/>
             Cache Quick Filter
         </label>
     </span>
