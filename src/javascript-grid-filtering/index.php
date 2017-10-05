@@ -129,7 +129,7 @@ columnDefinition = {
     </ul>
     </p>
 
-    <?= example('Built-In Filters', 'built-in-filters') ?>
+    <?= example('Built-In Filters', 'built-in-filters', 'generated') ?>
 
     <h3 id="apply-function">Apply Function</h3>
 
