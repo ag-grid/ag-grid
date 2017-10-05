@@ -1,6 +1,6 @@
-import {ComponentRef, ViewContainerRef, Injectable, ComponentFactoryResolver} from "@angular/core";
-import {IComponent, Bean}  from "ag-grid/main";
-import {FrameworkComponentWrapper, BaseComponentWrapper, WrapableInterface}  from 'ag-grid';
+import {ComponentFactoryResolver, ComponentRef, Injectable, ViewContainerRef} from "@angular/core";
+import {Bean} from "ag-grid/main";
+import {BaseComponentWrapper, FrameworkComponentWrapper, WrapableInterface} from 'ag-grid';
 import {AgFrameworkComponent} from "./interfaces";
 
 @Injectable()
@@ -17,31 +17,30 @@ export class Ng2FrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
         this.componentFactoryResolver = componentFactoryResolver;
     }
 
-    createWrapper(OriginalConstructor: { new (): any }, componentName?:string): WrapableInterface{
+    createWrapper(OriginalConstructor: { new (): any }): WrapableInterface {
         let that = this;
-        class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrapableInterface{
+
+        class DynamicAgNg2Component extends BaseGuiComponent<any, AgFrameworkComponent<any>> implements WrapableInterface {
             init(params: any): void {
                 super.init(params);
-                if (componentName != null && componentName !== 'cellEditor'){
-                    this._componentRef.changeDetectorRef.detectChanges();
-                }
+                this._componentRef.changeDetectorRef.detectChanges();
             }
 
             protected createComponent(): ComponentRef<AgFrameworkComponent<any>> {
-                return that.createComponent(OriginalConstructor,
-                    that.viewContainerRef);
+                return that.createComponent(OriginalConstructor);
             }
 
-            hasMethod(name: string): boolean{
+            hasMethod(name: string): boolean {
                 return wrapper.getFrameworkComponentInstance()[name] != null;
             }
 
-            callMethod(name: string, args: IArguments): void{
-                var componentRef = this.getFrameworkComponentInstance();
+            callMethod(name: string, args: IArguments): void {
+                const componentRef = this.getFrameworkComponentInstance();
                 return wrapper.getFrameworkComponentInstance()[name].apply(componentRef, args)
 
             }
-            addMethod(name:string, callback:Function): void {
+
+            addMethod(name: string, callback: Function): void {
                 wrapper[name] = callback
             }
         }
@@ -52,8 +51,7 @@ export class Ng2FrameworkComponentWrapper extends BaseComponentWrapper<WrapableI
     }
 
 
-    public createComponent<T>(componentType: {new(...args: any[]): T;},
-                              viewContainerRef: ViewContainerRef): ComponentRef<T> {
+    public createComponent<T>(componentType: { new(...args: any[]): T; }): ComponentRef<T> {
         // used to cache the factory, but this a) caused issues when used with either webpack/angularcli with --prod
         // but more significantly, the underlying implementation of resolveComponentFactory uses a map too, so us
         // caching the factory here yields no performance benefits
