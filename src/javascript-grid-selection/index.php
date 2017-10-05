@@ -47,7 +47,7 @@ include '../documentation-main/documentation_header.php';
         The example below shows single row selection.
     </p>
 
-    <?= example('Single Row Selection', 'single-row-selection') ?>
+    <?= example('Single Row Selection', 'single-row-selection', 'generated') ?>
 
     <h3 id="multiRowSelectionExample">Example - Multiple Row Selection</h3>
 
