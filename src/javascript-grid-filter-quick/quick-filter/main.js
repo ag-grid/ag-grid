@@ -1,14 +1,16 @@
 var columnDefs = [
     // simple column, easy to understand
-    {headerName: "A", field: "a"},
+    {headerName: 'A', field: 'a'},
     // the grid works with embedded fields
-    {headerName: "B", field: "b.name"},
+    {headerName: 'B', field: 'b.name'},
     // or use value getter, all works with quick filter
-    {headerName: "C", valueGetter: "'zz' + data.c.name"},
+    {headerName: 'C', valueGetter: "'zz' + data.c.name"},
     // or use the object value, so value passed around is an object
-    {headerName: "D", field: "d",
+    {
+        headerName: 'D',
+        field: 'd',
         cellRenderer: function(params) {
-            return '<b>'+params.value.name+'</b>';
+            return '<b>' + params.value.name + '</b>';
         },
         // this is needed to avoid toString=[object,object] result with objects
         getQuickFilterText: function(params) {
@@ -17,44 +19,47 @@ var columnDefs = [
     },
     // this fails filter - it's working with a complex object, so the quick filter
     // text gets [object,object]
-    {headerName: "E", field: "e",
+    {
+        headerName: 'E',
+        field: 'e',
         cellRenderer: function(params) {
-            return '<b>'+params.value.name+'</b>';
+            return '<b>' + params.value.name + '</b>';
         }
     }
 ];
 
 function createRowData() {
     var rowData = [];
-    for (var i = 0; i<100; i++) {
+    for (var i = 0; i < 100; i++) {
         // create sample row item
         var rowItem = {
             // is is simple
-            a: 'aa' + Math.floor(Math.random()*10000),
+            a: 'aa' + Math.floor(Math.random() * 10000),
             // but b, c, d and e are all complex objects
             b: {
-                name: 'bb' + Math.floor(Math.random()*10000)
+                name: 'bb' + Math.floor(Math.random() * 10000)
             },
             c: {
-                name: 'cc' + Math.floor(Math.random()*10000)
+                name: 'cc' + Math.floor(Math.random() * 10000)
             },
             d: {
-                name: 'dd' + Math.floor(Math.random()*10000)
+                name: 'dd' + Math.floor(Math.random() * 10000)
             },
             e: {
-                name: 'ee' + Math.floor(Math.random()*10000)
+                name: 'ee' + Math.floor(Math.random() * 10000)
             }
         };
         rowData.push(rowItem);
     }
     return rowData;
-};
+}
 
 var gridOptions = {
     defaultColDef: {
         editable: true
     },
-    columnDefs: columnDefs
+    columnDefs: columnDefs,
+    rowData: createRowData()
 };
 
 function onFilterChanged(value) {
@@ -68,7 +73,6 @@ function onPrintQuickFilterTexts() {
 }
 
 function onQuickFilterTypeChanged() {
-
     var rbCache = document.querySelector('#cbCache');
     var cacheActive = rbCache.checked;
     console.log('using cache = ' + cacheActive);
@@ -82,5 +86,4 @@ function onQuickFilterTypeChanged() {
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.api.setRowData(createRowData());
 });
