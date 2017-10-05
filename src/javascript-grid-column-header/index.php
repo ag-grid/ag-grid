@@ -146,7 +146,7 @@ include '../documentation-main/documentation_header.php';
         The following example shows how you can provide a unique look & feel to the headers. Note that:
     <ul>
         <li>The header heights have all been changed in the gridOptions:
-            <snippet>
+            <snippet language="css">
 ...
 
     //Group columns
@@ -181,7 +181,7 @@ include '../documentation-main/documentation_header.php';
         </li>
         <li>
             The column labels have CSS applied to them so they are displayed vertically.
-<snippet>
+<snippet language="css">
 .ag-cell-label-container{
     /*Necessary to allow for text to grow vertically*/
     height: 100%;
@@ -205,7 +205,8 @@ include '../documentation-main/documentation_header.php';
         </li>
         <li>
             The floating filters are using a much bigger area and the font used is bigger and bolder.
-            <snippet>
+
+<snippet language="css">
 .ag-floating-filter-body input {
     height:49px
 }
@@ -225,7 +226,7 @@ include '../documentation-main/documentation_header.php';
         </li>
         <li>
             The styling of the column labels have also be tweaked depending if pivoting or not
-<snippet>
+<snippet language="css">
 .ag-pivot-off .ag-header-cell-label{
     color:#8a6d3b;
 }
