@@ -55,7 +55,7 @@ include '../documentation-main/documentation_header.php';
         The example below shows multi-row selection.
     </p>
 
-    <?= example('Multiple Row Selection', 'multiple-row-selection') ?>
+    <?= example('Multiple Row Selection', 'multiple-row-selection', 'generated') ?>
 
     <h3 id="checkboxSelection">Checkbox Selection</h3>
 
@@ -116,7 +116,7 @@ include '../documentation-main/documentation_header.php';
         Having a checkbox within a non-group row is best for grids that are not using grouping.
     </p>
 
-    <?= example('Group Selection', 'group-selection', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Group Selection', 'group-selection', 'generated', array("enterprise" => 1)) ?>
 
     <h4 id="groupsSelectionExample2"><img src="../images/enterprise_50.png" title="Enterprise Feature" /> Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h4>
 
@@ -127,7 +127,7 @@ include '../documentation-main/documentation_header.php';
         <i>colDef.checkboxSelection</i> and <i>autoGroupColumnDef.cellRendererParams.checkbox</i>.
     </p>
 
-    <?= example('Selection Checkbox', 'selection-checkbox', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Selection Checkbox', 'selection-checkbox', 'generated', array("enterprise" => 1)) ?>
 
     <h4 id="groupsSelectionExample3">Groups & Checkbox Selection Example 3 - Only Filtered</h4>
 
@@ -148,7 +148,7 @@ include '../documentation-main/documentation_header.php';
     </ol>
     </p>
 
-    <?= example('Selection Checkbox Filtered', 'selection-checkbox-filtered', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Selection Checkbox Filtered', 'selection-checkbox-filtered', 'generated', array("enterprise" => 1)) ?>
 
     <h3 id="headerCheckboxSelection">Header Checkbox Selection</h3>
 
@@ -239,7 +239,7 @@ colDef = {
         </ul>
     </p>
 
-    <?= example('Selection Events', 'selection-events') ?>
+    <?= example('Selection Events', 'selection-events', 'generated') ?>
 
     <h3 id="nodeSelectionApi">Node Selection API</h3>
 
@@ -302,7 +302,7 @@ api.forEachNodeAfterFilter( function(node) {
         data for selection purposes.
     </p>
 
-    <?= example('Using forEachNode', 'using-foreachnode') ?>
+    <?= example('Using forEachNode', 'using-foreachnode', 'generated') ?>
 
     <h3 id="selectionArrowKeys">Selection with Keyboard Arrow Keys</h3>
 
@@ -370,7 +370,7 @@ function myNavigation(params) {
    }
 }</snippet>
 
-    <?= example('Selection with Keyboard Arrow Keys', 'selection-with-arrow-keys') ?>
+    <?= example('Selection with Keyboard Arrow Keys', 'selection-with-arrow-keys', 'generated') ?>
 
 </div>
 

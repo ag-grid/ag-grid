@@ -15,16 +15,16 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowSelection: 'multiple',
     rowData: null,
-    onRowSelected: rowSelectedFunc,
-    onSelectionChanged: selectionChangedFunc
+    onRowSelected: onRowSelected,
+    onSelectionChanged: onSelectionChanged
 };
 
-function rowSelectedFunc(event) {
+function onRowSelected(event) {
     window.alert("row " + event.node.data.athlete + " selected = " + event.node.selected);
 }
 
-function selectionChangedFunc() {
-    var rowCount = gridOptions.api.getSelectedNodes().length;
+function onSelectionChanged(event) {
+    var rowCount = event.api.getSelectedNodes().length;
     window.alert('selection changed, ' + rowCount + ' rows selected');
 }
 
