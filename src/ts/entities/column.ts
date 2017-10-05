@@ -98,8 +98,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private primary: boolean;
 
-    private filter: {new(): IFilter} | string;
-
     private parent: ColumnGroupChild;
 
     constructor(colDef: ColDef, colId: String, primary: boolean) {
@@ -122,8 +120,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
     public initialise(): void {
-        this.filter = this.frameworkFactory.colDefFilter(this.colDef);
-
         this.setPinned(this.colDef.pinned);
 
         let minColWidth = this.gridOptionsWrapper.getMinColWidth();
@@ -164,10 +160,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
 
-
-    public getFilter(): {new(): IFilter} | string {
-        return this.filter;
-    }
 
     public getUniqueId(): string {
         return this.getId();

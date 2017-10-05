@@ -2,7 +2,7 @@ import {TextCellEditor} from "../../rendering/cellEditors/textCellEditor";
 
 import {Bean, PostConstruct} from "../../context/context";
 import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
-import {DefaultDateComponent} from "../../filter/dateFilter";
+import {DateFilter, DefaultDateComponent} from "../../filter/dateFilter";
 import {HeaderComp} from "../../headerRendering/header/headerComp";
 import {HeaderGroupComp} from "../../headerRendering/headerGroup/headerGroupComp";
 import {
@@ -22,6 +22,8 @@ import {SelectCellEditor} from "../../rendering/cellEditors/selectCellEditor";
 import {PopupTextCellEditor} from "../../rendering/cellEditors/popupTextCellEditor";
 import {PopupSelectCellEditor} from "../../rendering/cellEditors/popupSelectCellEditor";
 import {LargeTextCellEditor} from "../../rendering/cellEditors/largeTextCellEditor";
+import {TextFilter} from "../../filter/textFilter";
+import {NumberFilter} from "../../filter/numberFilter";
 
 
 export enum RegisteredComponentSource {
@@ -98,7 +100,12 @@ export class ComponentProvider {
             popupSelectCellEditor: PopupSelectCellEditor,
             popupSelect: PopupSelectCellEditor,
             largeTextCellEditor: LargeTextCellEditor,
-            largeText: LargeTextCellEditor
+            largeText: LargeTextCellEditor,
+
+            //filter
+            textColumnFilter: TextFilter,
+            numberColumnFilter: NumberFilter,
+            dateColumnFilter: DateFilter,
         }
     }
 
