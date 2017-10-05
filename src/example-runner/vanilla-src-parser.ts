@@ -6,6 +6,7 @@ import * as $ from 'jquery';
 
 const EVENTS = (<any>Object).values(Events);
 const PROPERTIES = PropertyKeys.ALL_PROPERTIES;
+const FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
 
 function collect(iterable, accumulator, collectors) {
     return iterable.reduce((col, value) => {
@@ -67,11 +68,18 @@ function nodeIsSimpleHttpRequest(node) {
     return innerCallee && innerProperty && innerCallee.name == 'agGrid' && innerProperty.name == 'simpleHttpRequest';
 }
 
+function extractEventHandlers(tree, eventName) {
+    var elements = tree.find('[' + eventName + ']');
+    var map = Array.prototype.map;
+    return map.call(elements, el => el.getAttribute(eventName)).map(call => call.match(/^([\w]+)\((.*)\)/));
+}
+
 export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) {
     const localGridOptions = esprima.parseScript(gridOptionsLocalVar).body[0];
 
     const domTree = $(`<div>${html}</div>`);
-    const clickHandlers = Array.prototype.map.call(domTree.find('[onclick]'), el => el.getAttribute('onclick')).map(call => call.match(/^([\w]+)\((.*)\)/));
+    const clickHandlers = extractEventHandlers(domTree, 'onclick');
+    const changeHandlers = extractEventHandlers(domTree, 'onchange');
     const tree = esprima.parseScript(js);
     const collectors = [];
     const gridOptionsCollectors = [];
@@ -79,8 +87,9 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
 
     const indentOne = {format: {indent: {base: 1}}};
 
-    const registered = [ 'gridOptions' ];
-    clickHandlers.forEach(([_, handler, params]) => {
+    const registered = ['gridOptions'];
+
+    clickHandlers.concat(changeHandlers).forEach(([_, handler, params]) => {
         if (registered.indexOf(handler) > -1) {
             return;
         }
@@ -107,14 +116,14 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
         apply: (col, node) => {
             col.utils.push(generate(node));
         }
-    })
+    });
 
     collectors.push({
         matches: node => nodeIsUnusedVar(node, registered),
         apply: (col, node) => {
             col.utils.push(generate(node));
         }
-    })
+    });
 
     // extract the fetchData call
     onReadyCollectors.push({
@@ -162,6 +171,17 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
         }
     });
 
+    FUNCTION_PROPERTIES.forEach( functionName => {
+        registered.push(functionName);
+        collectors.push({
+            matches: node => nodeIsFunctionNamed(node, functionName),
+            apply: (col, node) => {
+                col.properties.push({name: functionName, value: generate(node, indentOne)})
+            }
+        });
+
+    })
+
     PROPERTIES.forEach(propertyName => {
         registered.push(propertyName);
         // grab global variables named as grid properties
@@ -178,7 +198,9 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
 
     gridOptionsCollectors.push({
         matches: node => nodeIsPropertyNamed(node, 'onGridReady'),
-        apply: (col, node) => { col.onGridReady = generate(node.value.body); }
+        apply: (col, node) => {
+            col.onGridReady = generate(node.value.body);
+        }
     });
 
     collectors.push({

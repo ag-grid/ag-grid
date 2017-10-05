@@ -49,6 +49,7 @@ function indexTemplate(bindings) {
     let template = bindings.template ? bindings.template.replace('$$GRID$$', agGridTag) : agGridTag;
 
     template = template.replace(/onclick="(\w+)\((.*)\)"/g, 'onClick={this.$1.bind(this, $2)}');
+    template = template.replace(/onchange="(\w+)\((.*)\)"/g, 'onChange={this.$1.bind(this, $2)}');
 
     template = template.replace(/<input type="radio" (.+?)>/g, '<input type="radio" $1 />');
 

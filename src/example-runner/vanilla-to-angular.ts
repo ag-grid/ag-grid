@@ -56,7 +56,7 @@ function appComponentTemplate(bindings) {
     ngAfterViewInit() {
         setTimeout( () => this.onGridReady(this.agGrid), 400);
     }
-            `)
+            `);
     }
 
     const agGridTag = `<ag-grid-angular
@@ -66,7 +66,13 @@ function appComponentTemplate(bindings) {
     ${propertyAttributes.concat(eventAttributes).join('\n    ')}
     ></ag-grid-angular>`;
 
-    const template = bindings.template ? bindings.template.replace(/onclick=/g, '(click)=').replace('$$GRID$$', agGridTag) : agGridTag;
+    const template = bindings.template
+        ? bindings.template
+              .replace(/onclick=/g, '(click)=')
+              .replace(/onchange=/g, '(change)=')
+              .replace('$$GRID$$', agGridTag)
+        : agGridTag;
+
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => handler.body.replace(/^function /, ''));
 
     return `
