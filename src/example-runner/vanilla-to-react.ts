@@ -5,9 +5,12 @@ function indexTemplate(bindings) {
     const imports = [];
     const propertyAssignments = bindings.properties.map(property => `${property.name}: ${property.value}`);
     const componentAttributes = bindings.properties.map(property => `${property.name}={this.state.${property.name}}`);
-    const additional = [];
+    const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={this.${event.handlerName}.bind(this)}`);
 
     componentAttributes.push('onGridReady={this.onGridReady.bind(this)}');
+    componentAttributes.push.apply(componentAttributes, componentEventAttributes);
+
+    const additional = [];
 
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');
@@ -55,6 +58,7 @@ function indexTemplate(bindings) {
 
     template = styleConvertor(template);
 
+    const eventHandlers = bindings.eventHandlers.map(event => event.handler.replace(/^function /, ''));
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => handler.body.replace(/^function /, ''));
 
     return `
@@ -83,7 +87,7 @@ class GridExample extends Component {
         ${additionalInReady.join('\n')}
     }
 
-${additional.concat(externalEventHandlers).join('\n    ')}
+${additional.concat(eventHandlers, externalEventHandlers).join('\n    ')}
 
     render() {
         return (

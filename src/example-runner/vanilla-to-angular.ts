@@ -1,14 +1,37 @@
 import parser from './vanilla-src-parser';
 
-function stripOnPrefix(eventName) {
-    return eventName.replace(/on([A-Z])/, function(...matches) {
-        return matches[1].toLowerCase();
-    });
+function removeFunction(code) {
+    return code.replace(/^function /, '');
 }
 
-function convertFunctionToMethod(func, methodName) {
-    return methodName + func.replace('function ', '');
+function convertFunctionToMethod(code, methodName) {
+    return methodName + removeFunction(code);
 }
+
+function ngOnInitTemplate(url, callback) {
+    return `
+    ngOnInit() {
+        const gridOptions = this.agGrid;
+        this.http.get(${url}).subscribe( data => ${callback});
+    }`;
+}
+
+function ngAfterViewInitTemplate(readyCode) {
+    return `onGridReady(params) ${readyCode}
+
+    ngAfterViewInit() {
+        setTimeout( () => this.onGridReady(this.agGrid), 400);
+    }`;
+}
+
+const toInput = property => `[${property.name}]="${property.name}"`;
+
+const toOutput = event => `(${event.name})="${event.handlerName}($event)"`;
+
+const toMember = property => `private ${property.name};`;
+
+const toAssignment = property => `this.${property.name} = ${property.value}`;
+
 
 function appComponentTemplate(bindings) {
     const diParams = [];
@@ -24,39 +47,22 @@ function appComponentTemplate(bindings) {
         imports.push('import "ag-grid-enterprise";');
     }
 
-    const propertyAttributes = bindings.properties.map(property => {
-        return `[${property.name}]="${property.name}"`;
-    });
+    const propertyAttributes = bindings.properties.map(toInput);
 
-    const propertyVars = bindings.properties.map(property => `${property.name};`);
+    const propertyVars = bindings.properties.map(toMember);
 
-    const propertyAssignments = bindings.properties.map(property => `this.${property.name} = ${property.value}`);
+    const propertyAssignments = bindings.properties.map(toAssignment);
 
-    const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(event => {
-        return `(${stripOnPrefix(event.name)})="${event.name}($event)"`;
-    });
+    const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(toOutput);
 
-    const eventHandlers = bindings.eventHandlers.map(event => {
-        return convertFunctionToMethod(event.handler, event.name);
-    });
+    const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunction);
 
     if (bindings.data) {
-        additional.push(`
-    ngOnInit() {
-        const gridOptions = this.agGrid;
-        this.http.get(${bindings.data.url}).subscribe( data => ${bindings.data.callback});
-    }
-
-        `);
+        additional.push(ngOnInitTemplate(bindings.data.url, bindings.data.callback));
     }
 
     if (bindings.onGridReady) {
-        additional.push(`onGridReady(params) ${bindings.onGridReady}
-
-    ngAfterViewInit() {
-        setTimeout( () => this.onGridReady(this.agGrid), 400);
-    }
-            `);
+        additional.push(ngAfterViewInitTemplate(bindings.onGridReady));
     }
 
     const agGridTag = `<ag-grid-angular
@@ -73,7 +79,7 @@ function appComponentTemplate(bindings) {
               .replace('$$GRID$$', agGridTag)
         : agGridTag;
 
-    const externalEventHandlers = bindings.externalEventHandlers.map(handler => handler.body.replace(/^function /, ''));
+    const externalEventHandlers = bindings.externalEventHandlers.map(handler => removeFunction(handler.body));
 
     return `
 import { Component, ViewChild } from '@angular/core';

@@ -74,6 +74,7 @@ function extractEventHandlers(tree, eventName) {
     return map.call(elements, el => el.getAttribute(eventName)).map(call => call.match(/^([\w]+)\((.*)\)/));
 }
 
+
 export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) {
     const localGridOptions = esprima.parseScript(gridOptionsLocalVar).body[0];
 
@@ -171,16 +172,29 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
         }
     });
 
-    FUNCTION_PROPERTIES.forEach( functionName => {
+    EVENTS.forEach(eventName => {
+        var onEventName = 'on' + eventName.replace(/^\w/, w => w.toUpperCase());
+
+        registered.push(onEventName);
+
+        collectors.push({
+            matches: node => nodeIsFunctionNamed(node, onEventName),
+            apply: (col, node) => {
+                node.body.body.unshift(localGridOptions);
+                col.eventHandlers.push({name: eventName, handlerName: onEventName, handler: generate(node, indentOne)});
+            }
+        });
+    });
+
+    FUNCTION_PROPERTIES.forEach(functionName => {
         registered.push(functionName);
         collectors.push({
             matches: node => nodeIsFunctionNamed(node, functionName),
             apply: (col, node) => {
-                col.properties.push({name: functionName, value: generate(node, indentOne)})
+                col.properties.push({name: functionName, value: generate(node, indentOne)});
             }
         });
-
-    })
+    });
 
     PROPERTIES.forEach(propertyName => {
         registered.push(propertyName);
