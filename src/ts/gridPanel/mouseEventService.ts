@@ -47,21 +47,19 @@ export class MouseEventService {
     // master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste
     // getting executed on many grids at the same time.
     public isEventFromThisGrid(event: MouseEvent | KeyboardEvent): boolean {
-        let ePointer = _.getTarget(event);
-        let eventFromThisGrid = false;
-        let finished = _.missing(ePointer);
 
-        // while we have not found a grid, look for one
-        while (!finished) {
-            let instanceId = (<any>ePointer)[MouseEventService.GRID_DOM_KEY];
+        let path = _.getEventPath(event);
+
+        for (let i = 0; i<path.length; i++) {
+            let element = path[i];
+            let instanceId = (<any>element)[MouseEventService.GRID_DOM_KEY];
             if (_.exists(instanceId)) {
-                eventFromThisGrid = instanceId === this.gridInstanceId;
-                finished = true;
+                let eventFromThisGrid = instanceId === this.gridInstanceId;
+                return eventFromThisGrid;
             }
-            ePointer = ePointer.parentElement;
         }
 
-        return eventFromThisGrid;
+        return false;
     }
 
     public getGridCellForEvent(event: MouseEvent | KeyboardEvent): GridCell {
