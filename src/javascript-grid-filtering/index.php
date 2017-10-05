@@ -177,7 +177,7 @@ columnDefinition = {
         </ul>
     </p>
 
-    <?= example('Apply Button and Filter Events', 'apply-and-filter-events') ?>
+    <?= example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated') ?>
 
     <h3 id="filtering-animation">Filtering Animation</h3>
 
