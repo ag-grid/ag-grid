@@ -50,7 +50,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
 
         const gridParams = {
             frameworkFactory: reactFrameworkFactory,
-            seedBeanInstances:{
+            seedBeanInstances: {
                 agGridReact: this
             }
         };
@@ -108,7 +108,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     componentWillUnmount() {
-        if (this.api){
+        if (this.api) {
             this.api.destroy();
         }
     }
@@ -123,11 +123,22 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     // sigh, here for ie compatibility
-    copyObject(obj) {
-        if (!obj) {
-            return obj;
+    copy(value) {
+        if (!value) {
+            return value;
         }
-        return [{}, obj].reduce(function (r, o) {
+
+        if (Array.isArray(value)) {
+            return value.slice();
+        }
+
+        // for anything without keys (boolean, string etc).
+        // Object.keys - chrome will swallow them, IE will fail (correctly, imho)
+        if (typeof value !== "object") {
+            return value;
+        }
+
+        return [{}, value].reduce((r, o) => {
             Object.keys(o).forEach(function (k) {
                 r[k] = o[k];
             });
@@ -136,7 +147,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     areEquivalent(a, b) {
-        return AgGridReact.areEquivalent(this.copyObject(a), this.copyObject(b))
+        return AgGridReact.areEquivalent(this.copy(a), this.copy(b))
     }
 
     static areEquivalent(a, b) {
@@ -146,38 +157,45 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         if (a === null || b === null || typeof (a) !== typeof (b)) return false;
         if (a instanceof Date)
             return b instanceof Date && a.valueOf() === b.valueOf();
-        if (typeof (a) !== "object")
-            return a == b; //for boolean, number, string, xml
+        if (typeof (a) !== "object") {
+            return a == b; //for boolean, number, string, function, xml
+        }
 
         const newA = (a.areEquivalent_Eq_91_2_34 === undefined),
             newB = (b.areEquivalent_Eq_91_2_34 === undefined);
         try {
             let prop;
-            if (newA) a.areEquivalent_Eq_91_2_34 = [];
+            if (newA) {
+                a.areEquivalent_Eq_91_2_34 = [];
+            }
             else if (a.areEquivalent_Eq_91_2_34.some(
                     function (other) {
                         return other === b;
                     })) return true;
-            if (newB) b.areEquivalent_Eq_91_2_34 = [];
-            else if (b.areEquivalent_Eq_91_2_34.some(
-                    function (other) {
-                        return other === a;
-                    })) return true;
+            if (newB) {
+                b.areEquivalent_Eq_91_2_34 = [];
+            }
+            else if (b.areEquivalent_Eq_91_2_34.some((other) => other === a)) {
+                return true;
+            }
             a.areEquivalent_Eq_91_2_34.push(b);
             b.areEquivalent_Eq_91_2_34.push(a);
 
             const tmp = {};
             for (prop in a)
-                if (prop !=
-                    "areEquivalent_Eq_91_2_34")
+                if (prop != "areEquivalent_Eq_91_2_34") {
                     tmp[prop] = null;
+                }
             for (prop in b)
-                if (prop != "areEquivalent_Eq_91_2_34")
+                if (prop != "areEquivalent_Eq_91_2_34") {
                     tmp[prop] = null;
+                }
 
-            for (prop in tmp)
-                if (!this.areEquivalent(a[prop], b[prop]))
+            for (prop in tmp) {
+                if (!this.areEquivalent(a[prop], b[prop])) {
                     return false;
+                }
+            }
             return true;
         } finally {
             if (newA) delete a.areEquivalent_Eq_91_2_34;
