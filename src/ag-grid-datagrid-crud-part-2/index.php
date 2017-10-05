@@ -52,14 +52,14 @@ include('../includes/mediaHeader.php');
             <p>To define a <code>RestController</code> all we need to do is annotate a class as follows:</p>
 
 <snippet language="java">@RestController
-public class OlympicResultsController {
+public class AthleteController {
 </snippet>
 
             <p>With this in place Spring is aware of the role we want this class to play. Now let's add method to this class
                 and annotate it with <code>RequestMapping</code>:</p>
 
-<snippet language="java">@RequestMapping("/olympicData")
-public Iterable<Athlete> getOlympicData() {
+<snippet language="java">@RequestMapping("/athletes")
+public Iterable<Athlete> getAthletes() {
     return athleteRepository.findAll();
 }
 </snippet>
@@ -67,26 +67,17 @@ public Iterable<Athlete> getOlympicData() {
             <p>What the <code>RequestMapping</code> does is provide a mapping to our application via a URL.</p>
             <p>In our case the full mapping would be:</p>
 
-<snippet>http://localhost:8080/olympicData</snippet>
+<snippet>http://localhost:8080/athletes</snippet>
 
             <p>The base URL (<code>http://localhost:8080</code>) can vary based on how you deploy your application, but the actual mapping
-            (<code>/olympicData</code>) would be the same.</p>
+            (<code>/athletes</code>) would be the same.</p>
 
             <p>As you can see from our implementation we're simply delegating down to the repository in this case, returning the data
             it provides. Again in a real world application you might want to secure your information in some way.</p>
 
-            <show-sources example=""
-                          sources="{
-                            [
-                                { root: './crud-app/controllers/', files: 'OlympicResultsController.java' },
-                            ]
-                          }"
-                          language="java"
-                          highlight="true"
-                          exampleHeight="400px">
-            </show-sources>
+            <p>(Scroll <a href="#athleteController">down</a> to see the full source code for <code>AthleteController</code>.)</p>
 
-            <p>With this in place if we now start our application and navigate to <code>http://localhost:8080/olympicData</code> in
+            <p>With this in place if we now start our application and navigate to <code>http://localhost:8080/athletes</code> in
             a browser you should see something like this (formatted here for clarity):</p>
 
 <snippet>
@@ -227,10 +218,16 @@ public interface CrudRepository &lt;T, ID&gt; extends Repository&lt;T,ID&gt; {
             <p>As all four operations affect existing <code>Athlete</code> objects, we'll expose these operation on the
             <code>AthleteController</code> (although you might want update <code>Results</code> directly).</p>
 
-            <h4>Testing</h4>
+            <h3>AthleteController</h3>
 
-            <p>Before we start making changes to our <code>AthleteController</code>, how are going to test them?  We don't
-            have a front end in place yet after all!</p>
+            <p>The completed controller is pretty simple - each of the calls for the above requirements simply delegates
+                to the <code>AthleteRepository</code>.</p>
+
+            <p>Again, in a real-world application your controller would probably delegate to a <code>Service</code> that might
+            perform some business specific logic.</p>
+
+
+            <h4>Testing</h4>
 
             <p>We'll make use of the supplied packaged <code>jUnit</code> testing framework. The Spring Boot project we
             downloaded already includes a single test class: <code>CrudAppApplicationTests</code>. Let's rename this to
@@ -246,23 +243,57 @@ public interface CrudRepository &lt;T, ID&gt; extends Repository&lt;T,ID&gt; {
             In this guide we're focusing more on illustrating how to do front to back end with ag-Grid, so will not delve too
             deeply into the testing side of things.</p>
 
-            TODO AthleteControllerTests source code goes here
-
 <snippet language="java">
 // makes the rest call, converting the results within the response body to an array of Athletes
-ResponseEntity<Athlete[]> response = restTemplate.getForEntity(createURLWithPort("/olympicData"), Athlete[].class);
+ResponseEntity<Athlete[]> response = restTemplate.getForEntity(createURLWithPort("/athletes"), Athlete[].class);
 
 // unpack the result
 Athlete[] athletes = response.getBody();
 </snippet>
 
-            <p>We can now run the test as follows:</p>
+            <p>The rest of the tests follow the same pattern - the completed <code>AthleteController</code> and
+            <code>AthleteControllerTests</code> can be seen here:</p>
+
+            <show-sources id="athleteController"
+                          example=""
+                          sources="{
+                            [
+                                { root: './crud-app/controllers/', files: 'AthleteController.java,AthleteControllerTests.java' },
+                            ]
+                          }"
+                          language="java"
+                          highlight="true"
+                          exampleHeight="665px">
+            </show-sources>
+
+            <p style="margin-top: 15px">With all of that in place, we can now run the test as follows:</p>
 
 <snippet>mvn clean test</snippet>
 
-            <p>Great, so far so good. We've verified that we will return the expected results for first service we wrote.</p>
+<snippet>
+Results :
 
-            <p>Let's move onto writing a test for a service we've not yet written - creating a new <code>Athlete</code>:</p>
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 14.679 s
+[INFO] Finished at: 2017-10-04T15:37:17+01:00
+[INFO] Final Memory: 31M/321M
+[INFO] ------------------------------------------------------------------------
+</snippet>
+            <p>Great, so far so good. We've verified that the middle tier code we've written for the 4 use-cases above will work
+                once invoked by the front end!</p>
+
+            <h2>Summary</h2>
+
+            <p>We have now completed our backend and middle tier implementation, all ready to make a start on the front end!</p>
+
+            <p>In the next part we'll complete the scaffolding for our Angular application, including displaying our data in our
+            first grid.</p>
+
+            <p>See you next time!</p>
         </div>
         <div class="col-md-3">
 
