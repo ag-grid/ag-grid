@@ -47,7 +47,7 @@ include('../includes/jobsHeader.php');
         We are a young successful start-up where you will experience our growth from small to very big. The current development team
         have a background building enterprise applications with extensive experience using Java, C# and C++. There are plenty of opportunities 
         to learn from experienced team members. We now would like to grow our team with people at all levels of experience. Our culture is 
-        friendly and relaxed with any emphasis on continuing to deliver world leading product, customer support and service level.
+        friendly and relaxed with an emphasis on continuing to deliver our world leading product, customer support and service level.
         </p>
         <p>
         Perks of working for ag-Grid:
@@ -60,6 +60,11 @@ include('../includes/jobsHeader.php');
             </ul>
         </p>
 
+        <h2>How to Apply</h2>
+        <p>
+        If you think this sounds like the place for you, please send your CV to info@ag-grid.com
+        </p>
+        <h2>Current Opportunities</h2>
     </div>
 </div>
 
@@ -257,95 +262,6 @@ include('../includes/jobsHeader.php');
         </div>
     </div>
 </div>
-
-        <!-- <div class="job">
-            <p class="job-title">
-                Senior Enterprise Developer
-                <span class="job-location">London, UK.</span>
-            </p>
-
-            <p>
-                Your core responsibility will be to take ownership of large parts of ag-Grid development.
-                In addition, given ag-Grid is a small company, you will be expected to be dynamic
-                and help out with everything from attending and speaking at conferences,
-                take ownership of documentation and examples for features, blog to generate traffic
-                onto www.ag-grid.com, end-to-end testing of product, help with support issues,
-                bring new ideas into the product.
-            </p>
-            <p>
-                <b>Desirable Skills</b>
-            <ul>
-                <li>Experience using ag-Grid and / or other JavaScript grid frameworks.</li>
-                <li>At least 5 years experience building enterprise software.</li>
-                <li>JavaScript UI frameworks e.g. Angular, React.</li>
-                <li>JavaScript / TypeScript.</li>
-                <li>HTML / CSS / DOM.</li>
-                <li>Experience with other enterprise programming languages e.g, C++, C# or Java.</li>
-                <li>Understanding of Object Oriented and Functional Programming.</li>
-                <li>Understanding of Enterprise Design Patterns</li>
-                <li>Experience developing large enterprise systems.</li>
-                <li>Track record of taking ownership of modules and delivery.</li>
-                <li>Excellent written skills to document features as you develop.</li>
-                <li>Ability to code complex systems, beyond simple CRUD screens.</li>
-            </ul>
-            </p>
-        </div>
-
-        <div class="job">
-
-            <p class="job-title">
-                Mid-Level Enterprise Developer
-                <span class="job-location">London, UK.</span>
-            </p>
-            <b>Location: London, UK</b>
-            <p>
-                Similar role to Senior Enterprise Developer, however we will consider candiates with less experience. You will be a strong contributor to the code base and willing to learn in other areas.
-            </p>
-            <p>
-                <b>Desirable Skills</b>
-                <ul>
-                    <li>Experience using ag-Grid and / or other JavaScript grid frameworks.</li>
-                    <li>JavaScript UI frameworks e.g. Angular, React.</li>
-                    <li>At least 2 years experience building enterprise software.</li>
-                    <li>JavaScript / TypeScript.</li>
-                    <li>HTML / CSS / DOM.</li>
-                    <li>Understanding of Object Oriented and Functional Programming.</li>
-                    <li>Willing to take ownership of modules and delivery.</li>
-                    <li>Excellent written skills to document features as you develop.</li>
-                    <li>Ability to code complex systems, beyond simple CRUD screens.</li>
-                </ul>
-            </p>
-
-        </div>
-
-        <div class="job">
-
-            <p class="job-title">
-                Support Engineer / ag-Grid Consultant
-                <span class="job-location">London, UK.</span>
-            </p>
-            <b>Location: London, UK</b>
-            <p>
-                We are looking for people to become experts in ag-Grid. This role will see you help our customers with their
-                queries. You will also create examples demonstrating ag-Grid features with current frameworks. 
-                The role includes writing blogs about ag-Grid and other ways to get people interested. When required you will act as a consultant
-                when our customers need hands on help. An important part of this role will be
-                co-owning the support forum with the rest of the team.
-            </p>
-            <p>
-                <b>Desirable Skills</b>
-                <ul>
-                    <li>Experience using ag-Grid and / or other JavaScript grid frameworks.</li>
-                    <li>JavaScript UI frameworks eg Angular, React.</li>
-                    <li>At least 2 years experience building software.</li>
-                    <li>JavaScript / TypeScript.</li>
-                    <li>HTML / CSS / DOM.</li>
-                    <li>Take ownership of modules and deliver.</li>
-                    <li>Excellent written skills, so you can explain things to customers.</li>
-                </ul>
-            </p>
-
-        </div> -->
 
 <hr/>
 
