@@ -16,11 +16,108 @@ include '../documentation-main/documentation_header.php';
         features, such as sorting, filtering and a column menu. This page explains how you can manage the headers.
     </p>
 
-    <h2 id="customHeader">Custom Header</h2>
+    <h2 id="header-template">Header Templates</h2>
+
     <p>
-        If you want to customise the contents and / or behaviour of the header, then please refer to the
-        section on <a href="../javascript-grid-header-rendering/">Header Components</a>.
+        You can provide a header template to change the overall layout of a header cell.The template for the header is
+        specified in <code>columnDef.headerParams.template</code>
     </p>
+
+    <p>
+        This is the default template used in ag-grid
+    </p>
+    <snippet>
+        &lt;div class="ag-cell-label-container" role="presentation"&gt;
+        &lt;span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" &gt;&lt;/span&gt;
+        &lt;div ref="eLabel" class="ag-header-cell-label" role="presentation"&gt;
+        &lt;span ref="eText" class="ag-header-cell-text" role="columnheader"&gt;&lt;/span&gt;
+        &lt;span ref="eFilter" class="ag-header-icon ag-filter-icon"&gt;&lt;/span&gt;
+        &lt;span ref="eSortOrder" class="ag-header-icon ag-sort-order" &gt;&lt;/span&gt;
+        &lt;span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" &gt;&lt;/span&gt;
+        &lt;span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon" &gt;&lt;/span&gt;
+        &lt;span ref="eSortNone" class="ag-header-icon ag-sort-none-icon" &gt;&lt;/span&gt;&lt;/div&gt;
+        &lt;/div&gt;
+    </snippet>
+
+    <p>When you provide your own template, everything should work as expected as long as you reuse the same refs.</p>
+    <table class="table">
+        <tr>
+            <th>Ref</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>eLabel</th>
+            <td>The container where there is going to be an onClick mouse listener to trigger the sort.</td>
+        </tr>
+        <tr>
+            <th>eText</th>
+            <td>The text displayed on the column</td>
+        </tr>
+        <tr>
+            <th>eFilter</th>
+            <td>The container with the icon that will appear if the user filters this column.</td>
+        </tr>
+        <tr>
+            <th>eSortOrder</th>
+            <td>In case of sorting my multiple columns, this shows the index that represents the position
+                of this column in the order.</td>
+        </tr>
+        <tr>
+            <th>eSortAsc</th>
+            <td>In case of sorting ascending the data in the column, this shows the associated icon.</td>
+        </tr>
+        <tr>
+            <th>eSortDesc</th>
+            <td>In case of sorting descending the data in the column, this shows the descending icon.</td>
+        </tr>
+        <tr>
+            <th>eSortNone</th>
+            <td>In case of no sort being applied, this shows the associatad icon. Note this icon by default is empty</td>
+        </tr>
+    </table>
+
+    <note>
+        Templates are not meant to let you configure icons, If you are
+        looking to change the icons, check our <a href="../javascript-grid-icons">icon docs</a>
+    </note>
+
+    <h3 id="example-header-template">Example - Simple Header Templates</h3>
+
+    <p>
+        In the following example you can see how we are reusing the default grid template to change the layout of
+        the elements.
+    </p>
+
+    <snippet>
+        defaultColDef : {
+        width: 100,
+        headerComponentParams : {
+        template:
+        '&lt;div class="ag-cell-label-container" role="presentation"&gt;' +
+        '  &lt;span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"&gt;&lt;/span&gt;' +
+        '  &lt;div ref="eLabel" class="ag-header-cell-label" role="presentation"&gt;' +
+        '    &lt;span ref="eSortOrder" class="ag-header-icon ag-sort-order" &gt;&lt;/span&gt;' +
+        '    &lt;span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" &gt;&lt;/span&gt;' +
+        '    &lt;span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon" &gt;&lt;/span&gt;' +
+        '    &lt;span ref="eSortNone" class="ag-header-icon ag-sort-none-icon" &gt;&lt;/span&gt;' +
+        '    ** &lt;span ref="eText" class="ag-header-cell-text" role="columnheader"&gt;&lt;/span&gt;' +
+        '    &lt;span ref="eFilter" class="ag-header-icon ag-filter-icon"&gt;&lt;/span&gt;' +
+        '  &lt;/div&gt;' +
+        '&lt;/div&gt;'
+        }
+        }
+
+    </snippet>
+
+    <p>
+        Note that specifying your own templates is compatible with other configurations: <ul>
+        <li>suppressMenu is especified in: Athlete, Country, Date and Bronze columns</li>
+        <li>suppressSorting is especified in: Age, Year, Sport Silver and Total columns</li>
+        <li>Gold is the only column that doesn't have suppressSorting or suppressSort</li>
+    </ul>
+    </p>
+
+    <?= example('Header template', 'header-template', 'vanilla', array("extras" => array("fontawesome"))) ?>
 
     <h2 id="headerHeight">Header Height</h2>
     <p>
@@ -160,6 +257,12 @@ include '../documentation-main/documentation_header.php';
         out and redrawn to show the new aggregate values. If you want to refresh all headers and footers without
         recomputing the aggregates, you can call <code>api.refreshCells()</code> - useful if you want to refresh
         for reasons other than the aggregates being recomputed.
+    </p>
+
+    <h2 id="customHeader">Custom Header</h2>
+    <p>
+        Header templates are meant to be used for simple UI customisation, if you need to have more control over the
+        header check how to create your own <a href="../javascript-grid-header-rendering/">Header Components</a>.
     </p>
 
 </div>
