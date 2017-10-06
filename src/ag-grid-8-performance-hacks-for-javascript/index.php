@@ -183,18 +183,20 @@ function myEventListener(event) {
             JavaScript (i.e. <code>document.createElement()</code>) to create each element, update the attributes of each element
             and use <code>appendChild()</code> to plug all the elements together? Or should you work off
             document fragments? Alternatively should you create all the document in a large piece of HTML and then
-            insert it into the dom using <code>.innerHTML()</code>?
+            insert it into the dom by setting the property <code>.innerHTML</code>?
         </p>
 
         <p>
-            We have done many tests. The answer is to use <code>.innerHTML()</code>.
+            We have done many tests. The answer is to use <code>.innerHTML</code>.
         </p>
 
         <p>
-            So ag-Grid leverages the speed of <code>.innerHTML()</code> by creating the HTML in one big string
-            and then inserting it into the DOM using <code>element.insertAdjacentHTML()</code>. We have found that using
-            <code>insertAdjacentHTML()</code> rather than <code>.innerHTML()</code> appends the HTML rather than
-            replacing the current content.
+            So ag-Grid leverages the speed of <code>.innerHTML</code> by creating the HTML in one big string
+            and then inserting it into the DOM using the method <code>element.insertAdjacentHTML()</code>.
+            The method <code>element.insertAdjacentHTML()</code> is similar but slightly less well known
+            equivalent of the property <code>.innerHTML</code>. The difference is that
+            <code>insertAdjacentHTML()</code> appends to existing HTML where as <code>.innerHTML()</code>
+            replacing the current content. Both work just as fast.
         </p>
 
         <snippet>
@@ -338,6 +340,12 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
             out of the browser. If you have more ideas to make things faster, or have any improvements suggestions on this blog,
             then please comment below. Even better, if this all seems easy to you and you could do better, get in touch as we are always looking to hire
             the right people.
+        </p>
+
+        <p>
+            One lasting note - these are performance hacks that worked for us in ag-Grid. You should understand them
+            and consider them. They may not be suitable to your application (an application
+            has different concerns to a data grid).
         </p>
 
         <h2>And Share!!!</h2>
