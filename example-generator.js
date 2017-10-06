@@ -70,7 +70,7 @@ module.exports = cb => {
         } catch (e) {
             console.error(`Failed at ./src/${section}/${example}`, e);
             console.error(source);
-            throw new Error('Failed generating the react version');
+            //throw new Error('Failed generating the react version');
         }
 
         try {
@@ -79,7 +79,7 @@ module.exports = cb => {
         } catch (e) {
             console.error(`Failed at ./src/${section}/${example}`, e);
             console.error(source);
-            throw new Error('Failed generating the angular version');
+            //throw new Error('Failed generating the angular version');
         }
 
         const reactPath = path.join(_gen, 'react');
