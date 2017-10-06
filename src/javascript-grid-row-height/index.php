@@ -72,7 +72,7 @@ gridOptions.getRowHeight = function(params) {
         It uses the <i>getRowHeight()</i> callback to achieve this.
     </p>
 
-    <?= example('Row Height Simple', 'row-height-simple') ?>
+    <?= example('Row Height Simple', 'row-height-simple', 'generated') ?>
 
     <h3 id="row-height-more-complex-example">Row Height More Complex Example</h3>
 
@@ -84,7 +84,7 @@ gridOptions.getRowHeight = function(params) {
         the contents of the cell.
     </p>
 
-    <?= example('Row Height Complex', 'row-height-complex') ?>
+    <?= example('Row Height Complex', 'row-height-complex', 'generated') ?>
 
     <h3 id="changingRowHeight">Changing Row Height</h3>
 
