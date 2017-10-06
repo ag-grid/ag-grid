@@ -368,7 +368,7 @@ export class EnterpriseMenu {
 
         this.tabItemGeneral = {
             title: Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
-            body: this.mainMenuList.getHtmlElement(),
+            body: this.mainMenuList.getGui(),
             name: EnterpriseMenu.TAB_GENERAL
         };
 
@@ -406,7 +406,7 @@ export class EnterpriseMenu {
         this.columnSelectPanel = new ColumnSelectPanel(false);
         this.context.wireBean(this.columnSelectPanel);
 
-        eWrapperDiv.appendChild(this.columnSelectPanel.getHtmlElement());
+        eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
 
         this.tabItemColumns = {
             title: Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),//createColumnsIcon(),

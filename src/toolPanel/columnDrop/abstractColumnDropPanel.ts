@@ -88,7 +88,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         this.guiDestroyFunctions.forEach( (func) => func() );
         this.guiDestroyFunctions.length = 0;
         this.childColumnComponents.length = 0;
-        Utils.removeAllChildren(this.getHtmlElement());
+        Utils.removeAllChildren(this.getGui());
     }
 
     public init(params: AbstractColumnDropPanelParams): void {
@@ -151,7 +151,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         let mouseX = mouseEvent.clientX;
 
         this.childColumnComponents.forEach( childColumn => {
-            let rect = childColumn.getHtmlElement().getBoundingClientRect();
+            let rect = childColumn.getGui().getBoundingClientRect();
             let rectX = goingLeft ? rect.right : rect.left;
             let horizontalFit = enableRtl ? (mouseX <= rectX) : (mouseX >= rectX);
             if (horizontalFit) {
@@ -170,7 +170,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         let mouseEvent = draggingEvent.event;
 
         this.childColumnComponents.forEach( childColumn => {
-            let rect = childColumn.getHtmlElement().getBoundingClientRect();
+            let rect = childColumn.getGui().getBoundingClientRect();
             if (draggingEvent.vDirection===VDirection.Down) {
                 let verticalFit = mouseEvent.clientY >= rect.top;
                 if (verticalFit) {
@@ -349,7 +349,7 @@ export abstract class AbstractColumnDropPanel extends Component {
             if (needSeparator) {
                 this.addArrowToGui();
             }
-            this.getHtmlElement().appendChild(columnComponent.getHtmlElement());
+            this.getGui().appendChild(columnComponent.getGui());
         });
 
     }
@@ -374,14 +374,14 @@ export abstract class AbstractColumnDropPanel extends Component {
         
         Utils.addCssClass(eGroupIcon, 'ag-column-drop-icon');
         Utils.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
-        this.getHtmlElement().appendChild(eGroupIcon);
+        this.getGui().appendChild(eGroupIcon);
 
         if (!this.horizontal) {
             let eTitle = document.createElement('span');
             eTitle.innerHTML = this.params.title;
             Utils.addCssClass(eTitle, 'ag-column-drop-title');
             Utils.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
-            this.getHtmlElement().appendChild(eTitle);
+            this.getGui().appendChild(eTitle);
         }
 
     }
@@ -397,7 +397,7 @@ export abstract class AbstractColumnDropPanel extends Component {
         let eMessage = document.createElement('span');
         eMessage.innerHTML = this.params.emptyMessage;
         Utils.addCssClass(eMessage, 'ag-column-drop-empty-message');
-        this.getHtmlElement().appendChild(eMessage);
+        this.getGui().appendChild(eMessage);
     }
 
     private addArrowToGui(): void {
@@ -412,7 +412,7 @@ export abstract class AbstractColumnDropPanel extends Component {
 
             eArrow.className = spanClass;
             eArrow.innerHTML = charCode;
-            this.getHtmlElement().appendChild(eArrow);
+            this.getGui().appendChild(eArrow);
         }
     }
 }

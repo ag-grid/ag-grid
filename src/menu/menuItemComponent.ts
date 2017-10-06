@@ -56,7 +56,7 @@ export class MenuItemComponent extends Component {
         }
 
         if (this.params.tooltip){
-            this.getHtmlElement().setAttribute('title', this.params.tooltip)
+            this.getGui().setAttribute('title', this.params.tooltip)
         }
 
         if (this.params.shortcut) {
@@ -76,13 +76,13 @@ export class MenuItemComponent extends Component {
         this.queryForHtmlElement('#eName').innerHTML = this.params.name;
 
         if (this.params.disabled) {
-            _.addCssClass(this.getHtmlElement(), 'ag-menu-option-disabled');
+            _.addCssClass(this.getGui(), 'ag-menu-option-disabled');
         } else {
             this.addGuiEventListener('click', this.onOptionSelected.bind(this));
         }
 
         if (this.params.cssClasses){
-            this.params.cssClasses.forEach(it=>_.addCssClass(this.getHtmlElement(), it));
+            this.params.cssClasses.forEach(it=>_.addCssClass(this.getGui(), it));
         }
     }
 

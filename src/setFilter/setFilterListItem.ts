@@ -1,12 +1,10 @@
 import {
     Component,
-    ICellRendererFunc,
     CellRendererService,
     ValueFormatterService,
     Autowired,
     PostConstruct,
     GridOptionsWrapper,
-    ICellRendererComp,
     _,
     Column,
     AgEvent
@@ -51,7 +49,7 @@ export class SetFilterListItem extends Component {
         this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
         this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
         this.eCheckbox = this.queryForHtmlElement(".ag-filter-checkbox");
-        this.eClickableArea = this.getHtmlElement();
+        this.eClickableArea = this.getGui();
 
         this.updateCheckboxIcon();
         this.render();

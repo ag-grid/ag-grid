@@ -76,7 +76,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         let menu = new ContextMenu(menuItems);
         this.context.wireBean(menu);
 
-        let eMenuGui =  menu.getHtmlElement();
+        let eMenuGui =  menu.getGui();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
@@ -95,18 +95,13 @@ export class ContextMenuFactory implements IContextMenuFactory {
         });
 
         menu.afterGuiAttached({
-            eComponent: eMenuGui,
-            hidePopupCallback: hidePopup
+            hidePopup: hidePopup
         });
     }
 
 }
 
-export interface IContextMenuAfterGuiAttachedParams extends IAfterGuiAttachedParams {
-    hidePopupCallback: (event?: any)=>void;
-}
-
-class ContextMenu extends Component implements IComponent<any, IContextMenuAfterGuiAttachedParams>{
+class ContextMenu extends Component implements IComponent<any>{
 
     @Autowired('context') private context: Context;
     @Autowired('clipboardService') private clipboardService: ClipboardService;
@@ -137,9 +132,9 @@ class ContextMenu extends Component implements IComponent<any, IContextMenuAfter
         menuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
     }
 
-    public afterGuiAttached(params: IContextMenuAfterGuiAttachedParams): void {
+    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
 
-        this.addDestroyFunc(params.hidePopupCallback);
+        this.addDestroyFunc(params.hidePopup);
 
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));

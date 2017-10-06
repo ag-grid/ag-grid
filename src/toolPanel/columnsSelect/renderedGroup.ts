@@ -104,7 +104,7 @@ export class RenderedGroup extends Component {
         this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
 
-        CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getHtmlElement(), this.gridOptionsWrapper, null, this.columnGroup);
+        CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     }
 
     private addVisibilityListenersToAllChildren(): void {
@@ -119,7 +119,7 @@ export class RenderedGroup extends Component {
     private addDragSource(): void {
         let dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
-            eElement: this.getHtmlElement(),
+            eElement: this.getGui(),
             dragItemName: this.displayName,
             dragItemCallback: () => this.createDragItem()
         };

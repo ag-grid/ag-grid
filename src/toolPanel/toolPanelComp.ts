@@ -52,7 +52,7 @@ export class ToolPanelComp extends Component {
 
     private addComponent(component: Component): void {
         this.context.wireBean(component);
-        this.getHtmlElement().appendChild(component.getHtmlElement());
+        this.getGui().appendChild(component.getGui());
         this.addDestroyFunc( ()=> {
             component.destroy();
         });
