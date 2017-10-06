@@ -88,13 +88,19 @@ function launchTSCCheck() {
 
     const tsChecker = cp.spawn(tscPath, ['--watch', '--noEmit']);
 
+
+    // works:
+    //    ..\ag-grid\src\ts\rendering\cellComp.ts(689,9): error TS2304: Cannot find name 'asfdsdf'.
+    //    @ ../ag-grid-react/src/reactFrameworkFactory.ts 4:33-75
+
     tsChecker.stdout.on('data', data => {
         data
             .toString()
             .trim()
             .split('\n')
             .filter(line => line.indexOf('Watching for') === -1 && line.indexOf('File change') === -1)
-            .forEach(line => console.log('ts-checker:'.green, line.replace('_dev', '..').replace('/dist/lib/', '/src/ts/').red));
+            .forEach(line => console.log(line.replace('_dev', '..').replace('/dist/lib/', '/src/ts/').red));
+
     });
 }
 
