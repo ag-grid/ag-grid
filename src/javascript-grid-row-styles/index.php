@@ -155,7 +155,7 @@ gridOptions.rowClassRules: {
         </ul>
     </p>
 
-    <?= example('Row Class Rules', 'row-class-rules') ?>
+    <?= example('Row Class Rules', 'row-class-rules', 'generated') ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
