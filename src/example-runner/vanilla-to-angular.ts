@@ -114,4 +114,6 @@ export function vanillaToAngular(src, gridSettings) {
     return appComponentTemplate(bindings);
 }
 
-(<any>window).vanillaToAngular = vanillaToAngular;
+if (typeof window !== 'undefined') {
+    (<any>window).vanillaToAngular = vanillaToAngular;
+}

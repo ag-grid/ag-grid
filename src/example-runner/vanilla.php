@@ -10,6 +10,8 @@ $gridDefaults = getGridSettings();
 
 if ($multi) {
     $path = path_combine('..', $exampleSection, $exampleDir, 'vanilla');
+} else if ($generated) {
+    $path = path_combine('..', $exampleSection, $exampleDir, '_gen', 'vanilla');
 } else {
     $path = path_combine('..', $exampleSection, $exampleDir);
 }

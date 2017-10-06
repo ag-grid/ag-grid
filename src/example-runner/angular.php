@@ -30,36 +30,9 @@ if ($generated) {
 
     <script src="<?=$example['boilerplatePath']?>systemjs.config.js"></script>
 
-<?php if ($generated && !$example['preview']) { ?>
-    <script src="<?=$example['boilerplatePath']?>../systemjs-fetch-override.js"></script>
-    <script src="../dist/vanilla-to-angular.js"></script>
-    <script>
-
-    var gridSettings = <?=json_encode($example['gridSettings']) ?>;
-
-    var filesToMock = [
-        {
-            name: 'app/app.module.ts',
-            urls: ['angular-generated-app-module.ts']
-        },
-        {
-            name: 'app/app.component.ts',
-            urls: ['<?=$example["scripts"][0] ?>', '<?=$example["documents"][0] ?>'],
-            transform: function(sources) { 
-                return vanillaToAngular(sources, gridSettings);
-            }
-        },
-    ];
-
-    registerMockedFiles(filesToMock, function() {
-        System.import('<?=$example['boilerplatePath']?>main.ts').catch(function(err){ console.error(err); });
-    });
-    </script>
-<?php } else { ?>
     <script>
     System.import('<?=$example['boilerplatePath']?>main.ts').catch(function(err){ console.error(err); });
     </script>
-<?php } ?>
 
 </head>
 <body>

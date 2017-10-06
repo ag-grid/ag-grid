@@ -191,23 +191,10 @@ function example($title, $dir, $type='vanilla', $options = array()) {
         $entry = array();
         if ($multi) {
             $entry['files'] = getDirContents($dir . "/" . $theType); 
+        } else if ($generated) {
+            $entry['files'] = getDirContents($dir . "/_gen/" . $theType); 
         } else {
-            $contents = getDirContents($dir);
-            $styles = getStyles($contents, '', true);
-            switch ($theType) {
-                case 'vanilla':
-                    $entry['files'] = $contents; 
-                    break;
-                case 'react':
-                    $entry['files'] =  array_merge( array( 'index.jsx' ), $styles);
-                    break;
-                case 'angular':
-                    $entry['files'] =  array_merge( array( 'app/app.component.ts', 'app/app.module.ts' ), $styles);
-                    break;
-                default:
-                    die('should not end up here');
-                    break;
-            }
+            $entry['files'] = getDirContents($dir); 
         }
 
         if ($theType != "vanilla" && $theType != "polymer") {
@@ -283,12 +270,15 @@ function getGridSettings() {
 function getExampleInfo($boilerplatePrefix) {
     $preview = isset($_GET['preview']);
     $multi = isset($_GET['multi']);
+    $generated = isset($_GET['generated']);
 
     $exampleDir = basename($_GET['example']);
     $exampleSection = basename($_GET['section']);
 
     if ($multi) {
         $appRoot = path_combine('..', $exampleSection, $exampleDir, $boilerplatePrefix);
+    } else if ($generated) {
+        $appRoot = path_combine('..', $exampleSection, $exampleDir, '_gen', $boilerplatePrefix);
     } else {
         $appRoot = path_combine('..', $exampleSection, $exampleDir);
     }

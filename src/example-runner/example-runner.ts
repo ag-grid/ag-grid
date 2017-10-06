@@ -180,6 +180,7 @@ class ExampleRunner {
         const tenYearsFromNow = new Date();
         tenYearsFromNow.setFullYear(tenYearsFromNow.getFullYear() + 10);
         this.$cookies.put('agGridRunnerVersion', type, {
+            path: '/',
             expires: tenYearsFromNow
         });
     }
@@ -257,34 +258,11 @@ class ExampleRunner {
         if (this.boilerplateFiles.indexOf(file) > -1) {
             return [this.boilerplatePath, file].join('/');
         }
+
         if (file == this.files[0]) {
             return this.resultUrl + '&preview=true';
         } else {
-            if (this.config.type === 'generated' && this.currentType !== 'vanilla') {
-                if (this.currentType === 'angular') {
-                    if (file == 'app/app.module.ts') {
-                        return [this.boilerplatePath, '..', 'angular-generated-app-module.ts'].join('/');
-                    } else if (file == 'app/app.component.ts'){
-                        return {
-                            sources: this.sourcesForGeneration(),
-                            process: sources => vanillaToAngular(sources, this.config.options.grid)
-                        };
-                    } else {
-                        return this.appFilePath(file);
-                    }
-                } else if (this.currentType === 'react') {
-                    if (file == 'index.jsx') {
-                        return {
-                            sources: this.sourcesForGeneration(),
-                            process: sources => vanillaToReact(sources, this.config.options.grid)
-                        };
-                    } else {
-                        return this.appFilePath(file);
-                    }
-                }
-            } else {
-                return this.appFilePath(file);
-            }
+            return this.appFilePath(file);
         }
     }
 
@@ -301,7 +279,15 @@ class ExampleRunner {
         if (!file) {
             return '';
         }
-        return [this.config.options.sourcePrefix, this.section, this.name].concat(this.config.type == 'multi' ? [this.currentType, file] : file).join('/');
+
+        let endSegment = [ file ];
+        if (this.config.type === 'multi') {
+            endSegment = [this.currentType, file];
+        } else if (this.config.type === 'generated') {
+            endSegment = ["_gen", this.currentType, file];
+        }
+
+        return [this.config.options.sourcePrefix, this.section, this.name].concat(endSegment).join('/');
     }
 
     openPlunker(clickEvent) {

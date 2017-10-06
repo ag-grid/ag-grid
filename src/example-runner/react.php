@@ -27,31 +27,8 @@ if ($generated) {
     <script src="https://unpkg.com/systemjs@0.19.39/dist/system.src.js"></script>
     <script src="<?=$example['boilerplatePath']?>systemjs.config.js"></script>
 
-<?php if ($generated && !$example['preview']) { ?>
-    <script src="<?=$example['boilerplatePath']?>../systemjs-fetch-override.js"></script>
-    <script src="../dist/vanilla-to-react.js"></script>
-    <script>
-
-    var gridSettings = <?=json_encode($example['gridSettings']) ?>;
-
-    var filesToMock = [
-        {
-            name: 'index.jsx',
-            urls: ['<?=$example["scripts"][0] ?>', '<?=$example["documents"][0] ?>'],
-            transform: function(sources) { 
-                return vanillaToReact(sources, gridSettings);
-            }
-        },
-    ];
-
-    registerMockedFiles(filesToMock, function() {
-        System.import('<?=$example['appLocation']?>index.jsx').catch(function(err){ console.error(err); });
-    });
-    </script>
-<?php } else { ?>
     <script>
       System.import('<?=$example['appLocation']?>index.jsx').catch( function(err) { console.error(err); })
     </script>
-<?php } ?>
 </body>
 </html>

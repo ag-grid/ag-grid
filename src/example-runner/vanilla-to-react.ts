@@ -112,4 +112,6 @@ export function vanillaToReact(src, gridSettings) {
     return indexTemplate(bindings);
 }
 
-(<any>window).vanillaToReact = vanillaToReact;
+if (typeof window !== 'undefined') {
+    (<any>window).vanillaToReact = vanillaToReact;
+}
