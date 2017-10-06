@@ -88,10 +88,10 @@ module.exports = cb => {
             copy(stylesGlob, reactPath, () => {});
         });
 
-        const angularPath = path.join(_gen, 'angular', 'app');
-        mkdirp(angularPath, () => {
-            fs.writeFileSync(path.join(angularPath, 'app.component.ts'), appComponentTS);
-            fs.writeFileSync(path.join(angularPath, 'app.module.ts'), appModuleTS);
+        const angularPath = path.join(_gen, 'angular');
+        mkdirp(path.join(angularPath, 'app'), () => {
+            fs.writeFileSync(path.join(angularPath, 'app', 'app.component.ts'), appComponentTS);
+            fs.writeFileSync(path.join(angularPath, 'app', 'app.module.ts'), appModuleTS);
             copy(stylesGlob, angularPath, () => {});
         });
 
