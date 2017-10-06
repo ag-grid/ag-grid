@@ -34,7 +34,7 @@ Framework specific Getting Started guides:
 - `npm install npm-install-peers -g`
 - `npm install`
 - `npm-install-peers`
-- `npm run clean-build`
+- `npm run build`
 
 ## Examples
 

@@ -4,17 +4,18 @@ HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? function () {} : 
 HTMLInputElement = typeof HTMLInputElement === 'undefined' ? function () {} : HTMLInputElement;
 HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function () {} : HTMLButtonElement;
 
-var {AgGridNg2} = require('./dist/agGridNg2');
-var {ComponentUtil} = require("ag-grid/main");
+/* Checks for missing gridOptions on agGridNg2 */
+const {AgGridNg2} = require('./dist/agGridNg2');
+const {ComponentUtil} = require("ag-grid");
 
-var missingProperties = [];
+const missingProperties = [];
 ComponentUtil.ALL_PROPERTIES.forEach((property) => {
     if (!AgGridNg2.propDecorators.hasOwnProperty(property)) {
         missingProperties.push(`Grid property ${property} does not exist on AgGridNg2`)
     }
 });
 
-var missingEvents = [];
+const missingEvents = [];
 ComponentUtil.EVENTS.forEach((event) => {
     if (!AgGridNg2.propDecorators.hasOwnProperty(event)) {
         missingEvents.push(`Grid event ${event} does not exist on AgGridNg2`)
@@ -28,5 +29,32 @@ if(missingProperties.length || missingEvents.length) {
 
     throw("Build Properties Check Failed");
 } else {
-    console.info("*************************** BUILD OK ***************************");
+    console.info("*************************** GridOptions - BUILD OK ***************************");
 }
+
+/* Checks for missing colDef properties on agGridColumn.ts */
+const {AgGridColumn} = require('./dist/agGridColumn');
+const {ColDefUtil} = require("ag-grid");
+
+// colDef properties that dont make sense in an angular context (or are private)
+const skippableProperties = ['template', 'templateUrl', 'pivotKeys', 'pivotValueColumn', 'pivotTotalColumnIds', 'templateUrl'];
+
+const missingColDefProperties = [];
+ColDefUtil.ALL_PROPERTIES.forEach((property) => {
+    if (skippableProperties.indexOf(property) === -1 && !AgGridColumn.propDecorators.hasOwnProperty(property)) {
+        missingColDefProperties.push(`ColDef property ${property} does not exist on AgGridColumn`)
+    }
+});
+
+if(missingColDefProperties.length) {
+    console.error("*************************** BUILD FAILED ***************************");
+    missingColDefProperties.forEach((message) => console.error(message));
+    console.error("*************************** BUILD FAILED ***************************");
+
+    throw("Build Properties Check Failed");
+} else {
+    console.info("*************************** ColDef - BUILD OK ***************************");
+}
+
+
+
