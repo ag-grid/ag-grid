@@ -11,7 +11,7 @@ import {
     ICellEditorComp
 } from 'ag-grid';
 
-import {reactCellRendererFactory} from '../lib/reactCellRendererFactory';
+import {reactCellRendererFactory} from './reactCellRendererFactory';
 import {reactCellEditorFactory} from './reactCellEditorFactory';
 import {reactFilterFactory} from './reactFilterFactory';
 
