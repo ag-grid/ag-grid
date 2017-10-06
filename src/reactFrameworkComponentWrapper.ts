@@ -9,7 +9,7 @@ export class ReactFrameworkComponentWrapper extends BaseComponentWrapper<Wrapabl
 
     createWrapper(ReactComponent: { new (): any }): WrapableInterface {
         let _self = this;
-        class DynamicAgReactComponent extends AgReactComponent implements IComponent<any, IAfterGuiAttachedParams>, WrapableInterface {
+        class DynamicAgReactComponent extends AgReactComponent implements IComponent<any>, WrapableInterface {
 
             constructor() {
                 super(ReactComponent, _self.agGridReact);
