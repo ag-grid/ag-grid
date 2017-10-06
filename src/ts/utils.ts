@@ -434,6 +434,15 @@ export class Utils {
         }
     }
 
+    static firstExistingValue<A>(...values: A[]): A {
+        for (let i = 0; i<values.length; i++){
+            let value:A = values[i];
+            if (_.exists(value)) return value;
+        }
+
+        return null;
+    }
+
     static anyExists(values: any[]): boolean {
         if (values) {
             for (let i = 0; i < values.length; i++) {

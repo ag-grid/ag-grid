@@ -23,7 +23,8 @@ export interface IHeaderParams {
     setSort: (sort: string, multiSort?: boolean)=>void;
     columnApi: ColumnApi,
     api: GridApi,
-    context: any
+    context: any,
+    template: string
 }
 
 export interface IHeader {
@@ -66,11 +67,14 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private params:IHeaderParams;
 
-    constructor() {
-        super(HeaderComp.TEMPLATE);
-    }
 
     public init(params: IHeaderParams): void {
+        let template:string = _.firstExistingValue(
+            params.template,
+            HeaderComp.TEMPLATE
+        );
+
+        this.setTemplate(template);
         this.params = params;
 
         this.setupTap();
@@ -94,6 +98,8 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
+        if (eParent == null) return;
+
         let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eParent.appendChild(eIcon);
     }
