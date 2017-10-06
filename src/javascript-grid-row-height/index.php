@@ -141,7 +141,7 @@ gridOptions.getRowHeight = function(params) {
     height is an ag-Grid free feature, we just demonstrate it against groups and normal
     rows below.</p>
 
-    <?= example('Changing Row Height', 'row-height-change', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Changing Row Height', 'row-height-change', 'generated', array("enterprise" => 1)) ?>
 
     <h3 id="height-for-floating-rows">Height for Pinned Rows</h3>
 
