@@ -6,7 +6,7 @@ import {AgComponentUtils} from "./agComponentUtils";
 export interface ComponentMetadata {
     mandatoryMethodList:string[],
     optionalMethodList:string[],
-    functionAdapter?:(callback:AgGridComponentFunctionInput)=>{new(): IComponent<any, IAfterGuiAttachedParams>}
+    functionAdapter?:(callback:AgGridComponentFunctionInput)=>{new(): IComponent<any>}
 }
 
 

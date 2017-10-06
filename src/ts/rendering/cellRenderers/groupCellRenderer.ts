@@ -13,7 +13,6 @@ import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
-import {ICellRendererAfterGuiAttachedParams} from "../../interfaces/iComponent";
 import {MouseEventService} from "../../gridPanel/mouseEventService";
 
 export interface GroupCellRendererParams extends ICellRendererParams{
@@ -144,10 +143,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // if doing rtl, padding is on the right
-            this.getHtmlElement().style.paddingRight = paddingPx + 'px';
+            this.getGui().style.paddingRight = paddingPx + 'px';
         } else {
             // otherwise it is on the left
-            this.getHtmlElement().style.paddingLeft = paddingPx + 'px';
+            this.getGui().style.paddingLeft = paddingPx + 'px';
         }
     }
 
@@ -269,7 +268,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             let cbSelectionComponent = new CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);
             cbSelectionComponent.init({rowNode: rowNode, column: this.params.column});
-            this.eCheckbox.appendChild(cbSelectionComponent.getHtmlElement());
+            this.eCheckbox.appendChild(cbSelectionComponent.getGui());
             this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
         }
     }

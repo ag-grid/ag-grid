@@ -16,7 +16,7 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
 
     constructor() {
         super('<div class="ag-cell-edit-input"><select class="ag-cell-edit-input"/></div>');
-        this.eSelect = <HTMLSelectElement> this.getHtmlElement().querySelector('select');
+        this.eSelect = <HTMLSelectElement> this.getGui().querySelector('select');
     }
 
     public init(params: any) {

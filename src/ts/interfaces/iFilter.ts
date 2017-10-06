@@ -2,7 +2,7 @@ import {Column} from "../entities/column";
 import {ColDef} from "../entities/colDef";
 import {IRowModel} from "./iRowModel";
 import {RowNode} from "../entities/rowNode";
-import {IComponent, IFilterAfterGuiAttachedParams} from "./iComponent";
+import {IComponent} from "./iComponent";
 
 export interface IFilter {
     /** This is used to show the filter icon in the header. If true, the filter icon will be shown. */
@@ -52,7 +52,7 @@ export interface SerializedFilter {
     filterType: string;
 }
 
-export interface IFilterComp extends IFilter, IComponent<IFilterParams, IFilterAfterGuiAttachedParams> {
+export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
 }
 
 export interface IDoesFilterPassParams {

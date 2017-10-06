@@ -15,7 +15,7 @@ import {HeaderGroupWrapperComp} from "./headerGroup/headerGroupWrapperComp";
 import {FilterManager} from "../filter/filterManager";
 import {BaseFilter} from "../filter/baseFilter";
 import {IFloatingFilterWrapperComp} from "../filter/floatingFilterWrapper";
-import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
+import {IComponent} from "../interfaces/iComponent";
 import {FloatingFilterChange, IFloatingFilterParams} from "../filter/floatingFilter";
 import {ComponentRecipes} from "../components/framework/componentRecipes";
 
@@ -35,7 +35,7 @@ export class HeaderRowComp extends Component {
     private dept: number;
     private pinned: string;
 
-    private headerComps: {[key: string]: IComponent<any, IAfterGuiAttachedParams>} = {};
+    private headerComps: {[key: string]: IComponent<any>} = {};
 
     private eRoot: HTMLElement;
     private dropTarget: DropTarget;
@@ -51,7 +51,7 @@ export class HeaderRowComp extends Component {
         this.dropTarget = dropTarget;
     }
 
-    public forEachHeaderElement(callback: (comp: IComponent<any, IAfterGuiAttachedParams>)=>void): void {
+    public forEachHeaderElement(callback: (comp: IComponent<any>)=>void): void {
         Object.keys(this.headerComps).forEach( key => {
             let headerElement = this.headerComps[key];
             callback(headerElement);
@@ -67,7 +67,7 @@ export class HeaderRowComp extends Component {
     private removeAndDestroyChildComponents(idsToDestroy: string[]): void {
         idsToDestroy.forEach( id => {
             let child = this.headerComps[id];
-            this.getHtmlElement().removeChild(_.assertHtmlElement(child.getGui()));
+            this.getGui().removeChild(child.getGui());
             if (child.destroy){
                 child.destroy();
             }
@@ -104,8 +104,8 @@ export class HeaderRowComp extends Component {
         let rowHeight = 0;
         for (let i=0; i<this.dept; i++) rowHeight+=sizes[i];
 
-        this.getHtmlElement().style.top = rowHeight + 'px';
-        this.getHtmlElement().style.height = sizes[this.dept] + 'px';
+        this.getGui().style.top = rowHeight + 'px';
+        this.getGui().style.height = sizes[this.dept] + 'px';
     }
 
     //noinspection JSUnusedLocalSymbols
@@ -136,7 +136,7 @@ export class HeaderRowComp extends Component {
 
     private setWidth(): void {
         let mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
-        this.getHtmlElement().style.width = mainRowWidth;
+        this.getGui().style.width = mainRowWidth;
     }
 
     private onGridColumnsChanged(): void {
@@ -175,23 +175,23 @@ export class HeaderRowComp extends Component {
             if (child.isEmptyGroup()) { return; }
 
             let idOfChild = child.getUniqueId();
-            let eParentContainer = this.getHtmlElement();
+            let eParentContainer = this.getGui();
 
             // if we already have this cell rendered, do nothing
             let colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
-            let headerComp: IComponent<any, IAfterGuiAttachedParams>;
+            let headerComp: IComponent<any>;
             let eHeaderCompGui: HTMLElement;
             if (colAlreadyInDom) {
                 _.removeFromArray(currentChildIds, idOfChild);
                 headerComp = this.headerComps[idOfChild];
-                eHeaderCompGui = _.assertHtmlElement(headerComp.getGui());
+                eHeaderCompGui = headerComp.getGui();
                 if (ensureDomOrder) {
                     _.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                 }
             } else {
                 headerComp = this.createHeaderComp(child);
                 this.headerComps[idOfChild] = headerComp;
-                eHeaderCompGui = _.assertHtmlElement(headerComp.getGui());
+                eHeaderCompGui = headerComp.getGui();
                 if (ensureDomOrder) {
                     _.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                 } else {
@@ -221,8 +221,8 @@ export class HeaderRowComp extends Component {
 
     }
 
-    private createHeaderComp(columnGroupChild:ColumnGroupChild): IComponent<any, IAfterGuiAttachedParams> {
-        let result: IComponent<any, IAfterGuiAttachedParams>;
+    private createHeaderComp(columnGroupChild:ColumnGroupChild): IComponent<any> {
+        let result: IComponent<any>;
 
         switch (this.type) {
             case HeaderRowType.COLUMN :

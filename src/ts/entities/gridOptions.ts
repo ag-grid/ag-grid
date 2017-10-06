@@ -236,7 +236,7 @@ export interface GridOptions {
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams)=>string;
     postProcessPopup?:(params: PostProcessPopupParams)=>void;
     frameworkComponents?:{[p:string]:{new(): any}}
-    components?:{[p:string]:AgGridRegisteredComponentInput<IComponent<any, IAfterGuiAttachedParams>>}
+    components?:{[p:string]:AgGridRegisteredComponentInput<IComponent<any>>}
     dateComponent?:{new(): IDateComp};
     dateComponentFramework?: any;
     groupRowRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;

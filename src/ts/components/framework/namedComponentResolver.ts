@@ -1,10 +1,13 @@
 import {ComponentSource, ComponentType, ResolvedComponent} from "./componentResolver";
 import {Autowired, Bean} from "../../context/context";
 import {
-    AgGridComponentFunctionInput, AgGridRegisteredComponentInput, ComponentProvider,
-    RegisteredComponent, RegisteredComponentSource
+    AgGridComponentFunctionInput,
+    AgGridRegisteredComponentInput,
+    ComponentProvider,
+    RegisteredComponent,
+    RegisteredComponentSource
 } from "./componentProvider";
-import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
+import {IComponent} from "../../interfaces/iComponent";
 import {AgComponentUtils} from "./agComponentUtils";
 
 @Bean("namedComponentResolver")
@@ -16,7 +19,7 @@ export class NamedComponentResolver {
     private agComponentUtils: AgComponentUtils;
 
 
-    public resolve<A extends IComponent<any, IAfterGuiAttachedParams> & B, B> (
+    public resolve<A extends IComponent<any> & B, B> (
         propertyName:string,
         componentNameOpt?:string
     ):ResolvedComponent<A, B>{

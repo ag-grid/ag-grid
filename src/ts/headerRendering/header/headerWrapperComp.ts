@@ -85,7 +85,7 @@ export class HeaderWrapperComp extends Component {
         this.setupTooltip();
         this.setupResize();
         this.setupMenuClass();
-        this.setupMove(_.ensureElement(headerComp.getGui()), displayName);
+        this.setupMove(headerComp.getGui(), displayName);
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
 
@@ -94,12 +94,12 @@ export class HeaderWrapperComp extends Component {
 
         this.addFeature(this.context, new SelectAllFeature(this.cbSelectAll, this.column));
 
-        let setLeftFeature = new SetLeftFeature(this.column, this.getHtmlElement(), this.beans);
+        let setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
 
         this.addAttributes();
-        CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getHtmlElement(), this.gridOptionsWrapper, this.column, null);
+        CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     }
 
     private addColumnHoverListener(): void {
@@ -109,22 +109,22 @@ export class HeaderWrapperComp extends Component {
 
     private onColumnHover(): void {
         let isHovered = this.columnHoverService.isHovered(this.column);
-        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-column-hover', isHovered)
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered)
     }
 
     private setupSortableClass(enableSorting:boolean):void{
         if (enableSorting) {
-            let element = this.getHtmlElement();
+            let element = this.getGui();
             _.addCssClass(element, 'ag-header-cell-sortable');
         }
     }
 
     private onFilterChanged(): void {
         let filterPresent = this.column.isFilterActive();
-        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-filtered', filterPresent);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
     }
 
-    private appendHeaderComp(displayName: string, enableSorting: boolean, enableMenu: boolean): IComponent<any, IAfterGuiAttachedParams> {
+    private appendHeaderComp(displayName: string, enableSorting: boolean, enableMenu: boolean): IComponent<any> {
         let params = <IHeaderParams> {
             column: this.column,
             displayName: displayName,
@@ -155,9 +155,9 @@ export class HeaderWrapperComp extends Component {
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
         if (this.column.isMoving()) {
-            _.addCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
+            _.addCssClass(this.getGui(), 'ag-header-cell-moving');
         } else {
-            _.removeCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
+            _.removeCssClass(this.getGui(), 'ag-header-cell-moving');
         }
     }
 
@@ -236,7 +236,7 @@ export class HeaderWrapperComp extends Component {
 
         // add tooltip if exists
         if (colDef.headerTooltip) {
-            this.getHtmlElement().title = colDef.headerTooltip;
+            this.getGui().title = colDef.headerTooltip;
         }
     }
 
@@ -246,7 +246,7 @@ export class HeaderWrapperComp extends Component {
     }
 
     private addAttributes(): void {
-        this.getHtmlElement().setAttribute("col-id", this.column.getColId());
+        this.getGui().setAttribute("col-id", this.column.getColId());
     }
 
     private setupWidth(): void {
@@ -264,7 +264,7 @@ export class HeaderWrapperComp extends Component {
     }
 
     private onColumnWidthChanged(): void {
-        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
+        this.getGui().style.width = this.column.getActualWidth() + 'px';
     }
 
     // optionally inverts the drag, depending on pinned and RTL

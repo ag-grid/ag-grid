@@ -2,7 +2,7 @@ import {Column} from "../../entities/column";
 import {RowNode} from "../../entities/rowNode";
 import {GridApi} from "../../gridApi";
 import {ColumnApi} from "../../columnController/columnController";
-import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
+import {IComponent} from "../../interfaces/iComponent";
 
 
 export interface ICellEditor {
@@ -32,7 +32,7 @@ export interface ICellEditor {
     focusOut?(): void;
 }
 
-export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams, IAfterGuiAttachedParams> {
+export interface ICellEditorComp extends ICellEditor, IComponent<ICellEditorParams> {
 
 }
 

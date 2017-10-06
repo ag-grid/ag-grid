@@ -26,7 +26,7 @@ export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IF
     onParentModelChanged(parentModel: M): void;
 }
 
-export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P, IAfterGuiAttachedParams> {
+export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P> {
 }
 
 export interface BaseFloatingFilterChange<M> extends FloatingFilterChange {
@@ -144,9 +144,10 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
             onDateChanged: toDebounce
         };
         this.dateComponent = this.componentRecipes.newDateComponent(dateComponentParams);
+
         let body: HTMLElement = _.loadTemplate(`<div></div>`);
-        body.appendChild(_.ensureElement(this.dateComponent.getGui()));
-        this.setHtmlElement(body);
+        body.appendChild(this.dateComponent.getGui());
+        this.setTemplateFromElement(body);
     }
 
     private onDateChanged(): void {

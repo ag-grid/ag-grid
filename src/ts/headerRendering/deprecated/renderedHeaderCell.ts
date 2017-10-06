@@ -68,7 +68,7 @@ export class RenderedHeaderCell extends Component {
     @PostConstruct
     public init(): void {
         let eGui = this.headerTemplateLoader.createHeaderElement(this.column);
-        this.setHtmlElementNoHydrate(eGui);
+        this.setGui(eGui);
 
         this.createScope();
         this.addAttributes();
@@ -102,7 +102,7 @@ export class RenderedHeaderCell extends Component {
 
         // add tooltip if exists
         if (colDef.headerTooltip) {
-            this.getHtmlElement().title = colDef.headerTooltip;
+            this.getGui().title = colDef.headerTooltip;
         }
     }
 
@@ -143,7 +143,7 @@ export class RenderedHeaderCell extends Component {
 
     private onFilterChanged(): void {
         let filterPresent = this.column.isFilterActive();
-        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-filtered', filterPresent);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !filterPresent);
     }
 
@@ -153,7 +153,7 @@ export class RenderedHeaderCell extends Component {
     }
 
     private onColumnWidthChanged(): void {
-        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
+        this.getGui().style.width = this.column.getActualWidth() + 'px';
     }
 
     private createScope(): void {
@@ -170,7 +170,7 @@ export class RenderedHeaderCell extends Component {
     }
 
     private addAttributes(): void {
-        this.getHtmlElement().setAttribute("colId", this.column.getColId());
+        this.getGui().setAttribute("colId", this.column.getColId());
     }
 
     private setupMenu(): void {
@@ -218,9 +218,9 @@ export class RenderedHeaderCell extends Component {
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
         if (this.column.isMoving()) {
-            _.addCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
+            _.addCssClass(this.getGui(), 'ag-header-cell-moving');
         } else {
-            _.removeCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
+            _.removeCssClass(this.getGui(), 'ag-header-cell-moving');
         }
     }
 
@@ -258,7 +258,7 @@ export class RenderedHeaderCell extends Component {
 
         if (this.gridOptionsWrapper.isSuppressTouch()) { return; }
 
-        let touchListener = new TouchListener(this.getHtmlElement());
+        let touchListener = new TouchListener(this.getGui());
         let tapListener = (event: TapEvent)=> {
             this.sortController.progressSort(this.column, false);
         };
@@ -336,7 +336,7 @@ export class RenderedHeaderCell extends Component {
 
     public setupSort(eHeaderCellLabel: HTMLElement): void {
         let enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
-        let element = this.getHtmlElement();
+        let element = this.getGui();
         if (!enableSorting) {
             _.removeFromParent(element.querySelector('#agSortAsc'));
             _.removeFromParent(element.querySelector('#agSortDesc'));
@@ -365,9 +365,9 @@ export class RenderedHeaderCell extends Component {
 
     private onSortChanged(): void {
 
-        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-asc', this.column.isSortAscending());
-        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-desc', this.column.isSortDescending());
-        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-none', this.column.isSortNone());
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.column.isSortAscending());
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.column.isSortDescending());
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.column.isSortNone());
 
         if (this.eSortAsc) {
             _.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.column.isSortAscending());

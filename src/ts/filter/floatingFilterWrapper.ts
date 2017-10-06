@@ -20,7 +20,7 @@ export interface IFloatingFilterWrapper <M>{
     onParentModelChanged(parentModel:M):void;
 }
 
-export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P, IAfterGuiAttachedParams> { }
+export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> { }
 
 export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
 
@@ -36,10 +36,10 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
         let base:HTMLElement = _.loadTemplate(`<div class="ag-header-cell" aria-hidden="true"><div class="ag-floating-filter-body" aria-hidden="true"></div></div>`);
         this.enrichBody(base);
 
-        this.setHtmlElement(base);
+        this.setTemplateFromElement(base);
         this.setupWidth();
 
-        let setLeftFeature = new SetLeftFeature(this.column, this.getHtmlElement(), this.beans);
+        let setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     }
@@ -54,12 +54,13 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
     }
 
     private onColumnWidthChanged(): void {
-        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
+        this.getGui().style.width = this.column.getActualWidth() + 'px';
     }
 }
 
 
 export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends BaseFilterWrapperComp<M, F, PC, P> {
+
     @RefSelector('eButtonShowMainFilter')
     eButtonShowMainFilter: HTMLInputElement;
 
@@ -72,7 +73,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     suppressFilterButton:boolean;
 
 
-    init (params:P):void{
+    init(params: P): void{
         this.floatingFilterComp = params.floatingFilterComp;
         this.suppressFilterButton = params.suppressFilterButton;
         super.init(params);
@@ -83,7 +84,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
 
     enrichBody(body:HTMLElement):void{
         let floatingFilterBody:HTMLElement = <HTMLElement>body.querySelector('.ag-floating-filter-body');
-        let floatingFilterComp = _.ensureElement(this.floatingFilterComp.getGui());
+        let floatingFilterComp = this.floatingFilterComp.getGui();
         if (this.suppressFilterButton){
             floatingFilterBody.appendChild(floatingFilterComp);
             _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
@@ -98,9 +99,7 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
             body.querySelector('button').appendChild(eIcon);
         }
         if (this.floatingFilterComp.afterGuiAttached){
-            this.floatingFilterComp.afterGuiAttached({
-                eComponent: floatingFilterComp
-            });
+            this.floatingFilterComp.afterGuiAttached();
         }
     }
 

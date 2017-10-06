@@ -205,7 +205,7 @@ export class RowComp extends Component {
     public getCellForCol(column: Column): HTMLElement {
         let cellComp = this.cellComps[column.getColId()];
         if (cellComp) {
-            return cellComp.getHtmlElement();
+            return cellComp.getGui();
         } else {
             return null;
         }
@@ -619,7 +619,7 @@ export class RowComp extends Component {
     }
 
     private ensureCellInCorrectContainer(cellComp: CellComp): void {
-        let element = cellComp.getHtmlElement();
+        let element = cellComp.getGui();
         let column = cellComp.getColumn();
         let pinnedType = column.getPinned();
         let eContainer = this.getContainerForCell(pinnedType);
@@ -787,7 +787,7 @@ export class RowComp extends Component {
             let params = this.createFullWidthParams(eRow, pinned);
 
             let cellRenderer = this.beans.componentResolver.createAgGridComponent<ICellRendererComp>(null, params, cellRendererType);
-            let gui = _.ensureElement(cellRenderer.getGui());
+            let gui = cellRenderer.getGui();
             eRow.appendChild(gui);
 
             this.afterRowAttached(rowContainerComp, eRow);
@@ -1082,6 +1082,9 @@ export class RowComp extends Component {
         this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
     }
 
+    // called:
+    // + after row created for first time
+    // + after horizontal scroll, so new cells due to column virtualisation
     private callAfterRowAttachedOnCells(newCellComps: CellComp[], eRow: HTMLElement): void {
         newCellComps.forEach( cellComp => {
             cellComp.setParentRow(eRow);

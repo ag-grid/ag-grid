@@ -481,25 +481,6 @@ export class Utils {
         return <HTMLElement> tempDiv.firstChild;
     }
 
-    static assertHtmlElement(item: HTMLElement|string): HTMLElement {
-        if (typeof item === 'string') {
-            console.error(`ag-grid: Found a string template for a component type where only HTMLElements are allow. 
-            Please change the component to return back an HTMLElement from getGui(). Only some element types can return back strings.
-            The found template is ${item}`);
-            return null;
-        } else {
-            return <HTMLElement> item;
-        }
-    }
-
-    static ensureElement(item: HTMLElement|string): HTMLElement {
-        if (typeof item === 'string') {
-            return this.loadTemplate(item);
-        } else {
-            return <HTMLElement> item;
-        }
-    }
-
     static appendHtml(eContainer: HTMLElement, htmlTemplate: string) {
         if (eContainer.lastChild) {
             // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML

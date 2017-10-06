@@ -51,7 +51,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
 
     public initialiseFilterBodyUi() {
         this.filterNumber = null;
-        this.eFilterTextField = <HTMLInputElement> this.getHtmlElement().querySelector("#filterText");
+        this.eFilterTextField = this.queryForHtmlInputElement("#filterText");
 
         let debounceMs: number = this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 500;
         let toDebounce:()=>void = _.debounce(this.onTextFieldsChanged.bind(this), debounceMs);

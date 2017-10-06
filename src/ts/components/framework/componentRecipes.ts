@@ -27,7 +27,7 @@ enum ComponentType {
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
-interface ComponentToUse<A extends IComponent<any, IAfterGuiAttachedParams> & B, B> {
+interface ComponentToUse<A extends IComponent<any> & B, B> {
     component:{new(): A}|{new(): B},
     type:ComponentType
 }
@@ -136,7 +136,7 @@ export class ComponentRecipes {
         return <ICellRendererComp>this.componentResolver.createAgGridComponent(this.gridOptionsWrapper, params, "fullWidthCellRenderer");
     }
 
-    private getFilterComponentPrototype<A extends IComponent<any, IAfterGuiAttachedParams> & B, B>
+    private getFilterComponentPrototype<A extends IComponent<any> & B, B>
     (colDef: ColDef): ComponentToUse<A, B> {
         return <ComponentToUse<A, B>>this.componentResolver.getComponentToUse(colDef, "filterComponent");
     }
