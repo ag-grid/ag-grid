@@ -17,11 +17,11 @@ function phpArrayToJSON(string) {
     }
     const replaced = string
         .replace(/^, /, '')
+        .replace(/'/g, '"')
         .replace(/array\(("\w+"(, )?)+\)/, '[$1]')
         .replace(/array/g, '')
         .replace(/\(/g, '{')
         .replace(/\)/g, '}')
-        .replace(/'/g, '"')
         .replace(/\=\>/g, ':');
     try {
         return JSON.parse(replaced);
