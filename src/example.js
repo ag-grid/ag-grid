@@ -371,14 +371,14 @@ var defaultCols = [
             },
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
-                cellRenderer: CountryCellRenderer,
+                cellRenderer: countryCellRenderer,
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
                 cellEditor: 'richSelect',
                 cellEditorParams: {
-                    cellRenderer: CountryCellRenderer,
+                    cellRenderer: countryCellRenderer,
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
                         "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                         "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
@@ -386,7 +386,7 @@ var defaultCols = [
                 // pinned: 'left',
                 floatCell: true,
                 filterParams: {
-                    cellRenderer: CountryCellRenderer,
+                    cellRenderer: countryCellRenderer,
                     cellHeight: 20,
                     newRowsAction: 'keep',
                     selectAllOnMiniFilter: true,
@@ -1077,19 +1077,12 @@ CountryFloatingFilterComponent.prototype.onParentModelChanged = function(model) 
     }
 };
 
-function CountryCellRenderer() {
-}
-
-CountryCellRenderer.prototype.init = function (params) {
+function countryCellRenderer(params) {
     //get flags from here: http://www.freeflagicons.com/
     if (params.value === "" || params.value === undefined || params.value === null) {
-        this.eGui = '';
+        return '';
     } else {
         var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
-        this.eGui = flag + ' ' + params.value;
+        return flag + ' ' + params.value;
     }
-};
-
-CountryCellRenderer.prototype.getGui = function () {
-    return this.eGui;
-};
+}
