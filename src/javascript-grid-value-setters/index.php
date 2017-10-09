@@ -76,7 +76,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Setters and Parsers', 'setters-and-parsers') ?>
+    <?= example('Setters and Parsers', 'setters-and-parsers', 'generated') ?>
 
     <h2>Value Saving Flow</h2>
 
