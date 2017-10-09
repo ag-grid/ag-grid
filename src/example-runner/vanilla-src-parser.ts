@@ -55,6 +55,10 @@ function nodeIsFetchDataCall(node) {
     return node.type === 'ExpressionStatement' && node.expression.callee && node.expression.callee.name === 'fetchData';
 }
 
+function nodeIsResizeColumnsToFit(node) {
+    return node.expression && node.expression.callee && node.expression.callee.property && node.expression.callee.property.name == 'sizeColumnsToFit';
+}
+
 function nodeIsHttpOpen(node) {
     const calleeObject = node.expression && node.expression.callee && node.expression.callee.object;
     return node.type === 'ExpressionStatement' && calleeObject && calleeObject.name === 'httpRequest' && node.expression.callee.property.name === 'open';
@@ -91,7 +95,7 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
 
     const indentOne = {format: {indent: {base: 1}}};
 
-    const registered = ['gridOptions'];
+    const registered = ['gridOptions', 'fetchData'];
 
     clickHandlers.concat(changeHandlers).forEach(([_, handler, params]) => {
         if (registered.indexOf(handler) > -1) {
@@ -164,6 +168,14 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
             const callback = '      { gridOptions.api.setRowData(data) }';
 
             col.data = {url: dataUrl, callback: callback};
+        }
+    });
+
+    // extract the resizeColumnsToFit
+    onReadyCollectors.push({
+        matches: nodeIsResizeColumnsToFit,
+        apply: (col, node) => {
+            col.resizeToFit = true;
         }
     });
 

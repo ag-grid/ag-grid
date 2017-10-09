@@ -37,6 +37,10 @@ function indexTemplate(bindings) {
         additionalInReady.push(hackedHandler);
     }
 
+    if (bindings.resizeToFit) {
+        additionalInReady.push('this.agGrid.api.sizeColumnsToFit();');
+    }
+
     const agGridTag = `<div style={{
                 boxSizing: 'border-box', 
                 height: '${bindings.gridSettings.height}', 

@@ -16,11 +16,26 @@ function ngOnInitTemplate(url, callback) {
     }`;
 }
 
-function ngAfterViewInitTemplate(readyCode) {
-    return `onGridReady(params) ${readyCode}
+function ngAfterViewInitTemplate(readyCode: string, resizeToFit: boolean) {
+    let readyMethod = '', readyCall = '', resize = '';
+
+    if (readyCode) {
+        readyMethod = `onGridReady(params) ${readyCode}`;
+        readyCall = `this.onGridReady(this.agGrid)`;
+    }
+
+    if (resizeToFit) {
+        resize = `this.agGrid.api.sizeColumnsToFit();`;
+    }
+
+    return `
+    ${readyMethod}
 
     ngAfterViewInit() {
-        setTimeout( () => this.onGridReady(this.agGrid), 400);
+        setTimeout(() => {
+            ${resize}
+            ${readyCall}
+        }, 400);
     }`;
 }
 
@@ -31,7 +46,6 @@ const toOutput = event => `(${event.name})="${event.handlerName}($event)"`;
 const toMember = property => `private ${property.name};`;
 
 const toAssignment = property => `this.${property.name} = ${property.value}`;
-
 
 function appComponentTemplate(bindings) {
     const diParams = [];
@@ -61,8 +75,8 @@ function appComponentTemplate(bindings) {
         additional.push(ngOnInitTemplate(bindings.data.url, bindings.data.callback));
     }
 
-    if (bindings.onGridReady) {
-        additional.push(ngAfterViewInitTemplate(bindings.onGridReady));
+    if (bindings.onGridReady || bindings.resizeToFit) {
+        additional.push(ngAfterViewInitTemplate(bindings.onGridReady, bindings.resizeToFit));
     }
 
     const agGridTag = `<ag-grid-angular
