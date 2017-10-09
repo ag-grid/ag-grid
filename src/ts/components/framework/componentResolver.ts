@@ -204,8 +204,21 @@ export class ComponentResolver {
         return finalParams;
     }
 
+    public createAgGridComponent_async<A extends IComponent<any>> (
+        callback: (comp: A)=>void,
+        holderOpt:ComponentHolder,
+        agGridParams:any,
+        propertyName:string,
+        componentNameOpt?:string,
+        mandatory:boolean = true,
+        customInitParamsCb?:(params:any, component:A)=>any
+    ): void {
+        let result = this.createAgGridComponent(holderOpt, agGridParams, propertyName, componentNameOpt, mandatory, customInitParamsCb);
 
-    /**
+        _.mimicAsync( ()=> callback(result) );
+    }
+
+        /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
      * It takes
      *  @param holderOpt: This is the context for which this component needs to be created, it can be gridOptions

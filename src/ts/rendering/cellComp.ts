@@ -17,7 +17,7 @@ import {
 import {GridCell, GridCellDef} from "../entities/gridCell";
 import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {Component} from "../widgets/component";
-import {ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
+import {ICellRenderer, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {NewValueParams, SuppressKeyboardEventParams} from "../entities/colDef";
 import {Beans} from "./beans";
@@ -40,7 +40,7 @@ export class CellComp extends Component {
     private usingWrapper: boolean;
 
     private cellFocused: boolean;
-    private editingCell: boolean;
+    private editingCell = false;
     private cellEditorInPopup: boolean;
     private hideEditorPopup: Function;
 
@@ -52,7 +52,7 @@ export class CellComp extends Component {
     // instance of the cellRenderer class
     private cellRenderer: ICellRendererComp;
     // the GUI is initially element or string, however once the UI is created, it becomes UI
-    private cellRendererGui: HTMLElement | string;
+    private cellRendererGui: HTMLElement;
     private cellEditor: ICellEditorComp;
 
     private firstRightPinned: boolean;
@@ -670,31 +670,37 @@ export class CellComp extends Component {
         let valueToRender = this.formatValue(this.value);
         let params = this.createCellRendererParams(valueToRender);
 
-        this.cellRenderer = <ICellRendererComp>this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType);
+        this.stateId++;
+        let callback = this.afterCellRendererCreated.bind(this, this.stateId);
+
+        this.beans.componentResolver.createAgGridComponent_async(callback, this.column.getColDef(), params, this.cellRendererType);
+    }
+
+    private afterCellRendererCreated(stateId: number, cellRenderer: ICellRendererComp): void {
+
+        // see if daemon
+        if (stateId !== this.stateId) {
+            if (cellRenderer.destroy) {
+                cellRenderer.destroy();
+            }
+            return;
+        }
+
+        this.cellRenderer = cellRenderer;
         this.cellRendererGui = this.cellRenderer.getGui();
 
-        if (this.cellRendererGui===null || this.cellRendererGui===undefined) {
-            console.warn('ag-Grid: cellRenderer should return back a string or a DOM object, but got ' + this.cellRendererGui);
+        if (_.missing(this.cellRendererGui)) {
+            console.warn('ag-Grid: cellRenderer.getGui() returned back nothing');
+            return;
         }
+
+        this.eParentOfValue.appendChild(this.cellRendererGui);
     }
 
     private attachCellRenderer(): void {
         if (!this.usingCellRenderer) { return; }
 
         this.createCellRendererInstance();
-
-        if (typeof this.cellRendererGui !== 'object') {
-            //First check for simple return types
-            this.eParentOfValue.innerHTML = this.cellRendererGui + '';
-            this.cellRendererGui = <HTMLElement> this.eParentOfValue.firstChild;
-        } else if (this.cellRendererGui instanceof Node){
-            //Is this an HTML Element
-            this.eParentOfValue.appendChild(this.cellRendererGui);
-        } else if ((<any>this.cellRendererGui).toString) {
-            //Lastly before given up... Does it have a toString
-            this.eParentOfValue.innerHTML = (<any>this.cellRendererGui).toString() + '';
-            this.cellRendererGui = <HTMLElement> this.eParentOfValue.firstChild;
-        }
     }
 
     private createCellRendererParams(valueFormatted: string): ICellRendererParams {
@@ -862,7 +868,7 @@ export class CellComp extends Component {
     }
 
     // either called internally if single cell editing, or called by rowRenderer if row editing
-    public startEditingIfEnabled(keyPress: number = null, charPress: string = null, cellStartedEdit = false) {
+    public startEditingIfEnabled(keyPress: number = null, charPress: string = null, cellStartedEdit = false): void {
 
         // don't do it if not editable
         if (!this.isCellEditable()) { return; }
@@ -870,12 +876,36 @@ export class CellComp extends Component {
         // don't do it if already editing
         if (this.editingCell) { return; }
 
-        let cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit);
+        this.setEditingCell(true);
+
+        let callback = this.afterCellEditorCreated.bind(this, this.stateId);
+
+        let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
+        this.beans.cellEditorFactory.createCellEditor_async(callback, this.column.getColDef(), params);
+
+        // if we don't do this, and editor component is async, then there will be a period
+        // when the component isn't present and keyboard navigation won't work - so example
+        // of user hitting tab quickly (more quickly than renderers getting created) won't work
+        if (_.missing(this.cellEditor) && cellStartedEdit) {
+            this.focusCell(true);
+        }
+    }
+
+    private afterCellEditorCreated(stateId: number, cellEditor: ICellEditorComp): void {
+
+        if (stateId!==this.stateId) {
+            if (cellEditor.destroy) {
+                cellEditor.destroy();
+            }
+            return;
+        }
+
         if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
             if (cellEditor.destroy) {
                 cellEditor.destroy();
             }
-            return false;
+            this.setEditingCell(false);
+            return;
         }
 
         if (!cellEditor.getGui) {
@@ -886,13 +916,13 @@ export class CellComp extends Component {
                 console.warn(`ag-Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?`);
             }
 
-            return false;
+            this.setEditingCell(false);
+            return;
         }
 
         this.cellEditor = cellEditor;
-        this.editingCell = true;
 
-        this.cellEditorInPopup = this.cellEditor.isPopup && this.cellEditor.isPopup();
+        this.cellEditorInPopup = cellEditor.isPopup && cellEditor.isPopup();
         this.setInlineEditingClass();
 
         if (this.cellEditorInPopup) {
@@ -907,8 +937,6 @@ export class CellComp extends Component {
 
         let event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(event);
-
-        return true;
     }
 
     private addInCellEditor(): void {
@@ -970,15 +998,6 @@ export class CellComp extends Component {
         _.addOrRemoveCssClass(this.getGui(), 'ag-cell-not-inline-editing', !editingInline);
     }
 
-    private createCellEditor(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorComp {
-
-        let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-
-        let cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getColDef(), params);
-
-        return cellEditor;
-    }
-
     private createCellEditorParams(keyPress: number, charPress: string, cellStartedEdit: boolean): ICellEditorParams {
         let params: ICellEditorParams = {
             value: this.getValue(),
@@ -1036,8 +1055,16 @@ export class CellComp extends Component {
     }
 
     public setFocusInOnEditor(): void {
-        if (this.editingCell && this.cellEditor && this.cellEditor.focusIn) {
-            this.cellEditor.focusIn();
+        if (this.editingCell) {
+            if (this.cellEditor && this.cellEditor.focusIn) {
+                // if the editor is present, then we just focus it
+                this.cellEditor.focusIn();
+            } else {
+                // if the editor is not present, it means async cell editor (eg React fibre)
+                // and we are trying to set focus before the cell editor is present, so we
+                // focus the cell instead
+                this.focusCell(true);
+            }
         }
     }
 
@@ -1083,10 +1110,9 @@ export class CellComp extends Component {
             return false;
         } else {
             // if editing is null or undefined, this sets it to false
-            let editing = this.editingCell === true;
             let params: SuppressKeyboardEventParams = {
                 event: event,
-                editing: editing,
+                editing: this.editingCell,
                 column: this.column,
                 api: this.beans.gridOptionsWrapper.getApi(),
                 node: this.rowNode,
@@ -1271,10 +1297,12 @@ export class CellComp extends Component {
 
         if (this.cellEditor && this.cellEditor.destroy) {
             this.cellEditor.destroy();
+            this.cellEditor = null;
         }
 
         if (this.cellRenderer && this.cellRenderer.destroy) {
             this.cellRenderer.destroy();
+            this.cellRenderer = null;
         }
     }
 
@@ -1401,8 +1429,20 @@ export class CellComp extends Component {
         }
     }
 
+    private setEditingCell(editingCell: boolean): void {
+        this.editingCell = editingCell;
+        this.stateId++;
+    }
+
     public stopEditing(cancel = false): void {
         if (!this.editingCell) {
+            return;
+        }
+
+        // if no cell editor, this means due to async, that the cell editor never got initialised,
+        // so we just carry on regardless as if the editing was never started.
+        if (!this.cellEditor) {
+            this.setEditingCell(false);
             return;
         }
 
@@ -1422,11 +1462,15 @@ export class CellComp extends Component {
         // when editing stops. the 'refresh' method checks editing, and doesn't refresh editing cells.
         // thus it will skip the refresh on this cell until the end of this method where we call
         // refresh directly and we suppress the flash.
-        this.editingCell = false;
+        this.setEditingCell(false);
 
         if (this.cellEditor.destroy) {
             this.cellEditor.destroy();
         }
+
+        // important to clear this out - as parts of the code will check for
+        // this to see if an async cellEditor has yet to be created
+        this.cellEditor = null;
 
         if (this.cellEditorInPopup) {
             this.hideEditorPopup();

@@ -895,7 +895,7 @@ export class RowRenderer extends BeanStub {
 
             if (editing) {
                 if (this.gridOptionsWrapper.isFullRowEdit()) {
-                    this.moveEditToNextRow(previousRenderedCell, nextRenderedCell);
+                    this.moveEditToNextCellOrRow(previousRenderedCell, nextRenderedCell);
                 } else {
                     this.moveEditToNextCell(previousRenderedCell, nextRenderedCell);
                 }
@@ -915,7 +915,7 @@ export class RowRenderer extends BeanStub {
         nextRenderedCell.focusCell(false);
     }
 
-    private moveEditToNextRow(previousRenderedCell: CellComp, nextRenderedCell: CellComp): void {
+    private moveEditToNextCellOrRow(previousRenderedCell: CellComp, nextRenderedCell: CellComp): void {
         let pGridCell = previousRenderedCell.getGridCell();
         let nGridCell = nextRenderedCell.getGridCell();
 
