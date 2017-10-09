@@ -20,7 +20,7 @@ var columnDefs = [
     {headerName: "Total", field: "total", width: 100, filterParams:{newRowsAction: 'keep'}}
 ];
 
-var groupColumn = {
+var autoGroupColumnDef = {
     headerName: "Group",
     width: 200,
     field: 'athlete',
@@ -53,7 +53,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     paginationAutoPageSize:true,
     pagination: true,
-    autoGroupColumnDef: groupColumn,
+    autoGroupColumnDef: autoGroupColumnDef,
     defaultColDef:{
         editable: true,
         enableRowGroup:true,
