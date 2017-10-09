@@ -64,11 +64,10 @@ export class HeaderGroupWrapperComp extends Component {
 
         let displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
-        let headerComponent: IHeaderGroupComp = this.appendHeaderGroupComp(displayName);
+        this.appendHeaderGroupComp(displayName);
 
         this.setupResize();
         this.addClasses();
-        this.setupMove(headerComponent.getGui(), displayName);
         this.setupWidth();
         this.addAttributes();
 
@@ -81,7 +80,7 @@ export class HeaderGroupWrapperComp extends Component {
         this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
     }
 
-    private appendHeaderGroupComp(displayName: string): IHeaderGroupComp {
+    private appendHeaderGroupComp(displayName: string): void {
         let params: IHeaderGroupParams = {
             displayName: displayName,
             columnGroup: this.columnGroup,
@@ -92,9 +91,19 @@ export class HeaderGroupWrapperComp extends Component {
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
-        let headerComp = this.componentRecipes.newHeaderGroupComponent(params);
-        this.appendChild(headerComp);
-        return headerComp;
+
+        let callback = this.afterHeaderCompCreated.bind(this, displayName);
+
+        this.componentRecipes.newHeaderGroupComponent(params, callback);
+    }
+
+    private afterHeaderCompCreated(displayName: string, headerGroupComp: IHeaderGroupComp): void {
+        this.appendChild(headerGroupComp);
+        this.setupMove(headerGroupComp.getGui(), displayName);
+
+        if (headerGroupComp.destroy) {
+            this.addDestroyFunc(headerGroupComp.destroy.bind(headerGroupComp));
+        }
     }
 
     private addClasses(): void {

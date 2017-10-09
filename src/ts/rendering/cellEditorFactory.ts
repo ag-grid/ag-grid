@@ -31,12 +31,6 @@ export class CellEditorFactory {
 
     public createCellEditor_async(callback: (comp: ICellEditorComp)=>void,
                                           column:ColDef, params: ICellEditorParams): void {
-        let result = this.createCellEditor(column, params);
-
-        _.mimicAsync( ()=> callback(result) );
-    }
-
-    public createCellEditor(column:ColDef, params: ICellEditorParams): ICellEditorComp {
         let cellEditor:ICellEditorComp = this.componentResolver.createAgGridComponent (
             column,
             params,
@@ -54,6 +48,7 @@ export class CellEditorFactory {
             cellEditor.init(params);
         }
 
-        return cellEditor;
+        _.mimicAsync( ()=> callback(cellEditor) );
     }
+
 }

@@ -78,14 +78,13 @@ export class HeaderWrapperComp extends Component {
         let enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
         let enableMenu = this.menuFactory.isMenuEnabled(this.column) && !this.column.getColDef().suppressMenu;
 
-        let headerComp = this.appendHeaderComp(displayName, enableSorting, enableMenu);
+        this.appendHeaderComp(displayName, enableSorting, enableMenu);
 
         this.setupWidth();
         this.setupMovingCss();
         this.setupTooltip();
         this.setupResize();
         this.setupMenuClass();
-        this.setupMove(headerComp.getGui(), displayName);
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
 
@@ -124,7 +123,7 @@ export class HeaderWrapperComp extends Component {
         _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
     }
 
-    private appendHeaderComp(displayName: string, enableSorting: boolean, enableMenu: boolean): IComponent<any> {
+    private appendHeaderComp(displayName: string, enableSorting: boolean, enableMenu: boolean): void {
         let params = <IHeaderParams> {
             column: this.column,
             displayName: displayName,
@@ -143,11 +142,19 @@ export class HeaderWrapperComp extends Component {
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
-        let headerComp: IHeaderComp = this.componentRecipes.newHeaderComponent(params);
 
+        let callback = this.afterHeaderCompCreated.bind(this, displayName);
 
+        this.componentRecipes.newHeaderComponent(params, callback);
+    }
+
+    private afterHeaderCompCreated(displayName: string, headerComp: IHeaderComp): void {
         this.appendChild(headerComp);
-        return headerComp;
+        this.setupMove(headerComp.getGui(), displayName);
+
+        if (headerComp.destroy) {
+            this.addDestroyFunc(headerComp.destroy.bind(headerComp));
+        }
     }
 
     private onColumnMovingChanged(): void {

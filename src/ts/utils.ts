@@ -45,7 +45,7 @@ export class Utils {
     static mimicAsync(callback: Function): void {
         // setTimeout( ()=> {
             callback();
-        // }, 0);
+        // }, 5000);
     }
 
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
