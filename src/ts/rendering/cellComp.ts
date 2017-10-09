@@ -73,7 +73,8 @@ export class CellComp extends Component {
     // is still relevant when creating is finished. eg we could click edit / unedit 20
     // times before the first React edit component comes back - we should discard
     // the first 19.
-    private stateId = 0;
+    private cellEditorVersion = 0;
+    private cellRendererVersion = 0;
 
     constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp) {
         super();
@@ -670,16 +671,16 @@ export class CellComp extends Component {
         let valueToRender = this.formatValue(this.value);
         let params = this.createCellRendererParams(valueToRender);
 
-        this.stateId++;
-        let callback = this.afterCellRendererCreated.bind(this, this.stateId);
+        this.cellRendererVersion++;
+        let callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
 
         this.beans.componentResolver.createAgGridComponent_async(callback, this.column.getColDef(), params, this.cellRendererType);
     }
 
-    private afterCellRendererCreated(stateId: number, cellRenderer: ICellRendererComp): void {
+    private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
 
         // see if daemon
-        if (stateId !== this.stateId) {
+        if (cellRendererVersion !== this.cellRendererVersion) {
             if (cellRenderer.destroy) {
                 cellRenderer.destroy();
             }
@@ -694,7 +695,11 @@ export class CellComp extends Component {
             return;
         }
 
-        this.eParentOfValue.appendChild(this.cellRendererGui);
+        // if async components, then it's possible the user started editing since
+        // this call was made
+        if (!this.editingCell) {
+            this.eParentOfValue.appendChild(this.cellRendererGui);
+        }
     }
 
     private attachCellRenderer(): void {
@@ -876,9 +881,10 @@ export class CellComp extends Component {
         // don't do it if already editing
         if (this.editingCell) { return; }
 
-        this.setEditingCell(true);
+        this.editingCell = true;
 
-        let callback = this.afterCellEditorCreated.bind(this, this.stateId);
+        this.cellEditorVersion++;
+        let callback = this.afterCellEditorCreated.bind(this, this.cellEditorVersion);
 
         let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
         this.beans.cellEditorFactory.createCellEditor_async(callback, this.column.getColDef(), params);
@@ -891,9 +897,13 @@ export class CellComp extends Component {
         }
     }
 
-    private afterCellEditorCreated(stateId: number, cellEditor: ICellEditorComp): void {
+    private afterCellEditorCreated(cellEditorVersion: number, cellEditor: ICellEditorComp): void {
 
-        if (stateId!==this.stateId) {
+        // if editingCell=false, means user cancelled the editor before component was ready.
+        // if versionMismatch, then user cancelled the edit, then started the edit again, and this
+        //   is the first editor which is now stale.
+        let versionMismatch = cellEditorVersion!==this.cellEditorVersion;
+        if (versionMismatch || !this.editingCell) {
             if (cellEditor.destroy) {
                 cellEditor.destroy();
             }
@@ -904,7 +914,7 @@ export class CellComp extends Component {
             if (cellEditor.destroy) {
                 cellEditor.destroy();
             }
-            this.setEditingCell(false);
+            this.editingCell = false;
             return;
         }
 
@@ -916,7 +926,11 @@ export class CellComp extends Component {
                 console.warn(`ag-Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?`);
             }
 
-            this.setEditingCell(false);
+            if (cellEditor.destroy) {
+                cellEditor.destroy();
+            }
+
+            this.editingCell = false;
             return;
         }
 
@@ -1429,11 +1443,6 @@ export class CellComp extends Component {
         }
     }
 
-    private setEditingCell(editingCell: boolean): void {
-        this.editingCell = editingCell;
-        this.stateId++;
-    }
-
     public stopEditing(cancel = false): void {
         if (!this.editingCell) {
             return;
@@ -1442,7 +1451,7 @@ export class CellComp extends Component {
         // if no cell editor, this means due to async, that the cell editor never got initialised,
         // so we just carry on regardless as if the editing was never started.
         if (!this.cellEditor) {
-            this.setEditingCell(false);
+            this.editingCell= false;
             return;
         }
 
@@ -1462,7 +1471,7 @@ export class CellComp extends Component {
         // when editing stops. the 'refresh' method checks editing, and doesn't refresh editing cells.
         // thus it will skip the refresh on this cell until the end of this method where we call
         // refresh directly and we suppress the flash.
-        this.setEditingCell(false);
+        this.editingCell = false;
 
         if (this.cellEditor.destroy) {
             this.cellEditor.destroy();
