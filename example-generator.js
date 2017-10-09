@@ -73,7 +73,7 @@ module.exports = cb => {
             indexJSX = prettier.format(source, {printWidth: 120});
         } catch (e) {
             console.error(`Failed at ./src/${section}/${example}`, e);
-            console.error(source);
+            // console.error(source);
             //throw new Error('Failed generating the react version');
         }
 
@@ -82,8 +82,8 @@ module.exports = cb => {
             appComponentTS = prettier.format(source, {printWidth: 120, parser: 'typescript'});
         } catch (e) {
             console.error(`Failed at ./src/${section}/${example}`, e);
-            console.error(source);
-            //throw new Error('Failed generating the angular version');
+            // console.error(source);
+            // throw new Error('Failed generating the angular version');
         }
 
         const reactPath = path.join(_gen, 'react');
