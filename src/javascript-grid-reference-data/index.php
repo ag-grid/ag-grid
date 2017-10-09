@@ -151,7 +151,7 @@ cellEditorParams: {
         </li>
     </ul>
 
-    <?= example('Value Handlers', 'ref-data-value-handler', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Value Handlers', 'ref-data-value-handler', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="example-reference-data-with-ref-data-prop">Example - 'refData' Property</h2>
 
@@ -182,7 +182,7 @@ cellEditorParams: {
         </li>
     </ul>
 
-    <?= example('Ref Data Property', 'ref-data-property', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Ref Data Property', 'ref-data-property', 'generated', array("enterprise" => 1)) ?>
 
 </div>
 
