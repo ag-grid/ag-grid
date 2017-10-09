@@ -178,7 +178,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Expiring Cache through Editing', 'expiring-through-editing', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Expiring Cache through Editing', 'expiring-through-editing', 'generated', array("enterprise" => 1)) ?>
 
     <note>
         It is not possible to partially invalidate the cache, eg it is not possible to invalidate only a
