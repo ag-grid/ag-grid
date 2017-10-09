@@ -30,8 +30,9 @@ function phpArrayToJSON(string) {
         throw new Error(' The hackish conversion of PHP syntax to JSON failed. check ./exmaple-generator.js');
     }
 }
-function forEachExampleToGenerate(cb) {
+function forEachExampleToGenerate(cb, final) {
     glob('src/*/*.php', {}, (er, files) => {
+
         files.forEach(file => {
             const contents = fs.readFileSync(file, {encoding: 'utf8'});
             const section = path.dirname(file).replace('src/', '');
@@ -46,6 +47,7 @@ function forEachExampleToGenerate(cb) {
                 }
             }
         });
+        final();
     });
 }
 module.exports = cb => {
@@ -55,7 +57,9 @@ module.exports = cb => {
 
     const appModuleTS = fs.readFileSync(path.join('./src', 'example-runner', 'angular-generated-app-module.ts'));
 
+    let count = 0;
     forEachExampleToGenerate((section, example, options) => {
+        count ++;
         const document = glob.sync(path.join('./src', section, example, 'index.html'))[0];
         const script = glob.sync(path.join('./src', section, example, '*.js'))[0];
         const stylesGlob = path.join('./src', section, example, '*.css');
@@ -101,7 +105,10 @@ module.exports = cb => {
             const srcFilesGlob = path.join('./src', section, example, '*.{html,js,css}');
             copy(srcFilesGlob, vanillaPath, () => {});
         });
+    }, () => {
+        console.log(`// ${count} examples generated`);
+        cb();
     });
 
-    cb();
+
 };
