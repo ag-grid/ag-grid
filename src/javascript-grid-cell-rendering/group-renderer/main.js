@@ -1,5 +1,25 @@
-var columnDefs = [
+function getSimpleCellRenderer() {
+    function SimpleCellRenderer() {}
 
+    SimpleCellRenderer.prototype.init = function(params) {
+        var tempDiv = document.createElement('div');
+        if (params.node.group) {
+            tempDiv.innerHTML = '<span style="border-bottom: 1px solid grey; border-left: 1px solid grey; padding: 2px;">' + params.value + '</span>';
+        } else {
+            tempDiv.innerHTML =
+                '<span><img src="https://flags.fmcdn.net/data/flags/mini/ie.png" style="width: 20px; padding-right: 4px;"/>' + params.value + '</span>';
+        }
+        this.eGui = tempDiv.firstChild;
+    };
+
+    SimpleCellRenderer.prototype.getGui = function() {
+        return this.eGui;
+    };
+
+    return SimpleCellRenderer;
+}
+
+var columnDefs = [
     // this column shows just the country group values, but has not group renderer, so there is no expand / collapse functionality
     {headerName: 'Country Group - No Renderer', showRowGroup: 'country'},
 
@@ -13,12 +33,16 @@ var columnDefs = [
     {headerName: 'Group Renderer B', showRowGroup: true, cellRenderer: 'group', field: 'city'},
 
     // add in a cell renderer params
-    {headerName: 'Group Renderer C', showRowGroup: true, cellRenderer: 'group', field: 'city',
+    {
+        headerName: 'Group Renderer C',
+        showRowGroup: true,
+        cellRenderer: 'group',
+        field: 'city',
         cellRendererParams: {
             suppressCount: true,
             checkbox: true,
             padding: 20,
-            innerRenderer: SimpleCellRenderer
+            innerRenderer: getSimpleCellRenderer()
         }
     },
 
@@ -27,26 +51,10 @@ var columnDefs = [
     {headerName: 'City', field: 'city'}
 ];
 
-function SimpleCellRenderer() {}
-
-SimpleCellRenderer.prototype.init = function(params) {
-    var tempDiv = document.createElement('div');
-    if (params.node.group) {
-        tempDiv.innerHTML = '<span style="border-bottom: 1px solid grey; border-left: 1px solid grey; padding: 2px;">' + params.value + '</span>';
-    } else {
-        tempDiv.innerHTML = '<span><img src="https://flags.fmcdn.net/data/flags/mini/ie.png" style="width: 20px; padding-right: 4px;"/>' + params.value + '</span>';
-    }
-    this.eGui = tempDiv.firstChild;
-};
-
-SimpleCellRenderer.prototype.getGui = function() {
-    return this.eGui;
-};
-
 function createRowData() {
     var rowData = [];
 
-    var irelandCities = ['Dublin','Galway','Cork'];
+    var irelandCities = ['Dublin', 'Galway', 'Cork'];
     var ukCities = ['London', 'Bristol', 'Manchester', 'Liverpool'];
     var usaCities = ['New York', 'Boston', 'L.A.', 'San Fransisco', 'Detroit'];
     var middleEarthCities = ['The Shire', 'Rohan', 'Rivendell', 'Mordor'];
@@ -66,8 +74,7 @@ function createRowData() {
 }
 
 var gridOptions = {
-    defaultColDef: {
-    },
+    defaultColDef: {},
     // we don't want the auto column here, as we are providing our own cols
     groupSuppressAutoColumn: true,
     suppressRowClickSelection: true,
