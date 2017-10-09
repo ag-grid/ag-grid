@@ -59,6 +59,7 @@ function indexTemplate(bindings) {
     template = template.replace(/onchange="(\w+)\((.*)\)"/g, 'onChange={this.$1.bind(this, $2)}');
 
     template = template.replace(/<input type="radio" (.+?)>/g, '<input type="radio" $1 />');
+    template = template.replace(/<input placeholder(.+?)>/g, '<input placeholder$1 />');
 
     template = styleConvertor(template);
 
