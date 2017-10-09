@@ -215,11 +215,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName);
 
         params.valueFormatted = valueFormatted;
-        if (params.fullWidth == true){
+        if (params.fullWidth == true) {
             this.cellRendererService.useFullWidthGroupRowInnerCellRenderer(this.eValue, params);
-        }else{
+        } else {
             this.cellRendererService.useInnerCellRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), this.eValue, params);
-
         }
     }
 

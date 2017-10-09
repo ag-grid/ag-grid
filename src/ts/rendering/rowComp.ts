@@ -356,20 +356,26 @@ export class RowComp extends Component {
 
             this.createFullWidthRowContainer(this.bodyContainerComp, null,
                 null, type,
-                (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
+                (eRow: HTMLElement) => {
                     this.eFullWidthRowBody = eRow;
+                },
+                (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentBody = cellRenderer;
                 });
             this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Column.PINNED_LEFT,
                 'ag-cell-last-left-pinned', type,
-                (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
+                (eRow: HTMLElement) => {
                     this.eFullWidthRowLeft = eRow;
+                },
+                (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentLeft = cellRenderer;
                 });
             this.createFullWidthRowContainer(this.pinnedRightContainerComp, Column.PINNED_RIGHT,
                 'ag-cell-first-right-pinned', type,
-                (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
+                (eRow: HTMLElement) => {
                     this.eFullWidthRowRight = eRow;
+                },
+                (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentRight = cellRenderer;
                 });
 
@@ -379,13 +385,15 @@ export class RowComp extends Component {
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
             this.createFullWidthRowContainer(this.fullWidthContainerComp, null,
                 null, type,
-                (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
+                (eRow: HTMLElement) => {
                     this.eFullWidthRow = eRow;
-                    this.fullWidthRowComponent = cellRenderer;
                     // and fake the mouse wheel for the fullWidth container
                     if (!this.beans.forPrint) {
                         this.addMouseWheelListenerToFullWidthRow();
                     }
+                },
+                (cellRenderer: ICellRendererComp) => {
+                    this.fullWidthRowComponent = cellRenderer;
                 });
         }
     }
@@ -777,7 +785,8 @@ export class RowComp extends Component {
 
     private createFullWidthRowContainer(rowContainerComp: RowContainerComponent, pinned: string,
                                         extraCssClass: string, cellRendererType: string,
-                                        callback: (eRow: HTMLElement, comp: ICellRendererComp) => void): void {
+                                        eRowCallback: (eRow: HTMLElement) => void,
+                                        cellRendererCallback: (comp: ICellRendererComp) => void): void {
 
         let rowTemplate = this.createTemplate('', extraCssClass);
         rowContainerComp.appendRowTemplate(rowTemplate, ()=> {
@@ -786,12 +795,22 @@ export class RowComp extends Component {
 
             let params = this.createFullWidthParams(eRow, pinned);
 
-            let cellRenderer = this.beans.componentResolver.createAgGridComponent<ICellRendererComp>(null, params, cellRendererType);
-            let gui = cellRenderer.getGui();
-            eRow.appendChild(gui);
+            let callback = (cellRenderer: ICellRendererComp)=> {
+                if (this.isAlive()) {
+                    let gui = cellRenderer.getGui();
+                    eRow.appendChild(gui);
+                    cellRendererCallback(cellRenderer);
+                } else {
+                    if (cellRenderer.destroy) {
+                        cellRenderer.destroy();
+                    }
+                }
+            };
+
+            this.beans.componentResolver.createAgGridComponent_async<ICellRendererComp>(callback,null, params, cellRendererType);
 
             this.afterRowAttached(rowContainerComp, eRow);
-            callback(eRow, cellRenderer);
+            eRowCallback(eRow);
 
             this.angular1Compile(eRow);
         });
