@@ -99,7 +99,7 @@ module.exports = cb => {
         mkdirp(reactPath, () => {
             fs.writeFileSync(path.join(reactPath, 'index.jsx'), indexJSX);
             if (inlineStyles) {
-                fs.writeFileSync(path.join(reactPath, 'example.css'), inlineStyles);
+                fs.writeFileSync(path.join(reactPath, 'styles.css'), inlineStyles);
             }
             copy(stylesGlob, reactPath, () => {});
         });
@@ -109,7 +109,7 @@ module.exports = cb => {
             fs.writeFileSync(path.join(angularPath, 'app', 'app.component.ts'), appComponentTS);
             fs.writeFileSync(path.join(angularPath, 'app', 'app.module.ts'), appModuleTS);
             if (inlineStyles) {
-                fs.writeFileSync(path.join(angularPath, 'example.css'), inlineStyles);
+                fs.writeFileSync(path.join(angularPath, 'styles.css'), inlineStyles);
             }
             copy(stylesGlob, angularPath, () => {});
         });
