@@ -57,7 +57,7 @@ colDef = {
         <code>valueGetter</code> is used, a string is provided instead of a function.
     </p>
 
-    <?= example('Column Definition Expressions', 'column-definition-expressions') ?>
+    <?= example('Column Definition Expressions', 'column-definition-expressions', 'generated') ?>
 
     <h2>Variables to Expressions</h2>
 
