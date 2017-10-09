@@ -43,9 +43,9 @@ export class Utils {
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
     static mimicAsync(callback: Function): void {
-        setTimeout( ()=> {
+        // setTimeout( ()=> {
             callback();
-        }, 0);
+        // }, 0);
     }
 
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
