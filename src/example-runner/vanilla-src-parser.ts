@@ -79,6 +79,9 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
     const localGridOptions = esprima.parseScript(gridOptionsLocalVar).body[0];
 
     const domTree = $(`<div>${html}</div>`);
+
+    domTree.find('style').remove();
+
     const clickHandlers = extractEventHandlers(domTree, 'onclick');
     const changeHandlers = extractEventHandlers(domTree, 'onchange');
     const tree = esprima.parseScript(js);

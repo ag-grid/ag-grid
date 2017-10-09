@@ -2,6 +2,7 @@ const {JSDOM} = require('jsdom');
 const {window, document} = new JSDOM('<html></html>');
 global.window = window;
 global.document = document;
+const jQuery = require('jquery');
 
 const glob = require('glob');
 const fs = require('fs');
@@ -68,6 +69,14 @@ module.exports = cb => {
 
         let source, indexJSX, appComponentTS;
 
+        let inlineStyles;
+        const style = jQuery(`<div>${sources[1]}</div>`).find('style');
+
+        if (style.length) {
+            inlineStyles = prettier.format(style.text(), { parser: 'css' });
+        }
+
+
         try {
             source = vanillaToReact(sources, options);
             indexJSX = prettier.format(source, {printWidth: 120});
@@ -89,6 +98,9 @@ module.exports = cb => {
         const reactPath = path.join(_gen, 'react');
         mkdirp(reactPath, () => {
             fs.writeFileSync(path.join(reactPath, 'index.jsx'), indexJSX);
+            if (inlineStyles) {
+                fs.writeFileSync(path.join(reactPath, 'example.css'), inlineStyles);
+            }
             copy(stylesGlob, reactPath, () => {});
         });
 
@@ -96,6 +108,9 @@ module.exports = cb => {
         mkdirp(path.join(angularPath, 'app'), () => {
             fs.writeFileSync(path.join(angularPath, 'app', 'app.component.ts'), appComponentTS);
             fs.writeFileSync(path.join(angularPath, 'app', 'app.module.ts'), appModuleTS);
+            if (inlineStyles) {
+                fs.writeFileSync(path.join(angularPath, 'example.css'), inlineStyles);
+            }
             copy(stylesGlob, angularPath, () => {});
         });
 
