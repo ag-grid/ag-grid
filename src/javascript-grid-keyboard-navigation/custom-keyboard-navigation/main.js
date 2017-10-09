@@ -23,8 +23,8 @@ var gridOptions = {
     defaultColDef: {
         editable: true
     },
-    navigateToNextCell: myNavigateToNextCell,
-    tabToNextCell: myTabToNextCell,
+    navigateToNextCell: navigateToNextCell,
+    tabToNextCell: tabToNextCell,
     columnDefs: columnDefs,
     enableSorting: true,
     onGridReady: function (params) {
@@ -33,7 +33,7 @@ var gridOptions = {
         // are added (using virtualColumnsChanged for example)
 
         // store the colIds so that we can go along the columns
-        var columns = gridOptions.columnApi.getAllDisplayedVirtualColumns();
+        var columns = params.columnApi.getAllDisplayedVirtualColumns();
         var colIds = columns.map(function (column) {
             return column.colId
         });
@@ -70,14 +70,14 @@ var gridOptions = {
                         var sort = [
                             {colId: column.colId, sort: 'asc'}
                         ];
-                        gridOptions.api.setSortModel(sort);
+                        params.api.setSortModel(sort);
                     }
                 })
         })
     }
 };
 
-function myTabToNextCell(params) {
+function tabToNextCell(params) {
     var previousCell = params.previousCellDef;
     var lastRowIndex = previousCell.rowIndex;
     var nextRowIndex = params.backwards ? lastRowIndex + 1 : lastRowIndex - 1;
@@ -100,7 +100,7 @@ function myTabToNextCell(params) {
     return result;
 }
 
-function myNavigateToNextCell(params) {
+function navigateToNextCell(params) {
     var previousCell = params.previousCellDef;
     var suggestedNextCell = params.nextCellDef;
     switch (params.key) {
