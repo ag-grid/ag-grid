@@ -229,7 +229,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= example('Never expire Value change', 'never-expire', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Never expire Value change', 'never-expire', 'generated', array("enterprise" => 1)) ?>
 
 </div>
 
