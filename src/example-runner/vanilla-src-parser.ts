@@ -72,12 +72,24 @@ function nodeIsSimpleHttpRequest(node) {
     return innerCallee && innerProperty && innerCallee.name == 'agGrid' && innerProperty.name == 'simpleHttpRequest';
 }
 
-function extractEventHandlers(tree, eventName) {
-    var elements = tree.find('[' + eventName + ']');
-    var map = Array.prototype.map;
-    return map.call(elements, el => el.getAttribute(eventName)).map(call => call.match(/^([\w]+)\((.*)\)/));
-}
+export const recognizedDomEvents = ['click', 'change', 'input'];
 
+const arrayMap = function(array, callback) {
+    return Array.prototype.map.call(array, callback);
+};
+
+const flatMap = function(array, callback) {
+    return Array.prototype.concat.apply([], array.map(callback));
+};
+
+const extractEventHandlerBody = call => call.match(/^([\w]+)\((.*)\)/);
+const getAttr = attrName => el => el.getAttribute(attrName);
+
+function extractEventHandlers(tree, eventNames: string[]) {
+    return flatMap(eventNames, eventName => {
+        return arrayMap(tree.find(`[on${eventName}]`), getAttr(`on${eventName}`)).map(extractEventHandlerBody);
+    });
+}
 
 export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) {
     const localGridOptions = esprima.parseScript(gridOptionsLocalVar).body[0];
@@ -86,8 +98,7 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
 
     domTree.find('style').remove();
 
-    const clickHandlers = extractEventHandlers(domTree, 'onclick');
-    const changeHandlers = extractEventHandlers(domTree, 'onchange');
+    const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
     const tree = esprima.parseScript(js);
     const collectors = [];
     const gridOptionsCollectors = [];
@@ -97,7 +108,7 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
 
     const registered = ['gridOptions', 'fetchData'];
 
-    clickHandlers.concat(changeHandlers).forEach(([_, handler, params]) => {
+    domEventHandlers.forEach(([_, handler, params]) => {
         if (registered.indexOf(handler) > -1) {
             return;
         }
@@ -110,10 +121,12 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
                 const body = node.body;
                 body.body.unshift(localGridOptions);
 
+                const code = generate(node, indentOne);
+
                 col.externalEventHandlers.push({
                     name: handler,
                     params: params,
-                    body: generate(node, indentOne)
+                    body: code
                 });
             }
         });
@@ -266,6 +279,6 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
 
     bindings.template = domTree.html().replace(/<br>/g, '<br />');
 
-    bindings.gridSettings = Object.assign({ width: '100%', height: '100%', theme: 'ag-fresh' }, gridSettings);
+    bindings.gridSettings = (<any>Object).assign({width: '100%', height: '100%', theme: 'ag-fresh'}, gridSettings);
     return bindings;
 }

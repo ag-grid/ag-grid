@@ -1,4 +1,4 @@
-import parser from './vanilla-src-parser';
+import parser, { recognizedDomEvents } from './vanilla-src-parser';
 import styleConvertor from './lib/convert-style-to-react';
 
 function indexTemplate(bindings) {
@@ -55,8 +55,13 @@ function indexTemplate(bindings) {
 
     let template = bindings.template ? bindings.template.replace('$$GRID$$', agGridTag) : agGridTag;
 
-    template = template.replace(/onclick="(\w+)\((.*)\)"/g, 'onClick={this.$1.bind(this, $2)}');
-    template = template.replace(/onchange="(\w+)\((.*)\)"/g, 'onChange={this.$1.bind(this, $2)}');
+
+    recognizedDomEvents.forEach( event => {
+        const jsEvent = 'on' + event[0].toUpperCase() + event.substr(1, event.length);
+        const matcher = new RegExp(`on${event}="(\\w+)\\((.*)\\)"`, 'g');
+        template = template.replace(matcher, `${jsEvent}={this.$1.bind(this, $2)}`);
+    });
+    template = template.replace(/\(this\, \)/g, '(this)');
 
     template = template.replace(/<input type="radio" (.+?)>/g, '<input type="radio" $1 />');
     template = template.replace(/<input placeholder(.+?)>/g, '<input placeholder$1 />');

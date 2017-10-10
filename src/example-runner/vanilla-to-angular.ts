@@ -1,4 +1,4 @@
-import parser from './vanilla-src-parser';
+import parser, {recognizedDomEvents} from './vanilla-src-parser';
 
 function removeFunction(code) {
     return code.replace(/^function /, '');
@@ -17,7 +17,9 @@ function ngOnInitTemplate(url, callback) {
 }
 
 function ngAfterViewInitTemplate(readyCode: string, resizeToFit: boolean) {
-    let readyMethod = '', readyCall = '', resize = '';
+    let readyMethod = '',
+        readyCall = '',
+        resize = '';
 
     if (readyCode) {
         readyMethod = `onGridReady(params) ${readyCode}`;
@@ -86,12 +88,18 @@ function appComponentTemplate(bindings) {
     ${propertyAttributes.concat(eventAttributes).join('\n    ')}
     ></ag-grid-angular>`;
 
-    const template = bindings.template
-        ? bindings.template
-              .replace(/onclick=/g, '(click)=')
-              .replace(/onchange=/g, '(change)=')
-              .replace('$$GRID$$', agGridTag)
-        : agGridTag;
+    let template;
+    if (bindings.template) {
+        template = bindings.template;
+
+        recognizedDomEvents.forEach(event => {
+            template = template.replace(new RegExp(`on${event}=`, 'g'), `(${event})=`);
+        });
+
+        template = template.replace('$$GRID$$', agGridTag);
+    } else {
+        template = agGridTag;
+    }
 
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => removeFunction(handler.body));
 
