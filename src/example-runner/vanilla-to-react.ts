@@ -64,6 +64,7 @@ function indexTemplate(bindings) {
     template = template.replace(/\(this\, \)/g, '(this)');
 
     template = template.replace(/<input type="radio" (.+?)>/g, '<input type="radio" $1 />');
+    template = template.replace(/<input type="checkbox" (.+?)>/g, '<input type="checkbox" $1 />');
     template = template.replace(/<input placeholder(.+?)>/g, '<input placeholder$1 />');
 
     template = styleConvertor(template);

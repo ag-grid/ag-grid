@@ -43,12 +43,16 @@ function nodeIsPropertyNamed(node, name) {
 }
 
 function nodeIsDocumentContentLoaded(node) {
-    return (
-        node.type === 'ExpressionStatement' &&
-        node.expression.type == 'CallExpression' &&
-        node.expression.arguments[0].type === 'Literal' &&
-        node.expression.arguments[0].value === 'DOMContentLoaded'
-    );
+    try {
+        return (
+            node.type === 'ExpressionStatement' &&
+            node.expression.type == 'CallExpression' &&
+            node.expression.arguments[0].type === 'Literal' &&
+            node.expression.arguments[0].value === 'DOMContentLoaded'
+        );
+    } catch (e) {
+        console.error('We found something which we do not understand', node);
+    }
 }
 
 function nodeIsFetchDataCall(node) {
@@ -229,7 +233,15 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
         // grab global variables named as grid properties
         collectors.push({
             matches: node => nodeIsVarNamed(node, propertyName),
-            apply: (col, node) => col.properties.push({name: propertyName, value: generate(node.declarations[0].init, indentOne)})
+
+            apply: (col, node) => {
+                try {
+                    const code = generate(node.declarations[0].init, indentOne);
+                    col.properties.push({name: propertyName, value: code});
+                } catch (e) {
+                    console.error('We failed generating', node, node.declarations[0].id);
+                }
+            }
         });
 
         gridOptionsCollectors.push({
