@@ -1,22 +1,35 @@
 var columnDefs = [
-    {headerName: "Category", field: "category", rowGroupIndex: 1, hide: true},
-    {headerName: "Price", field: "price", aggFunc: 'sum', valueFormatter: poundFormatter},
-    {headerName: "Zombies", field: "zombies"},
-    {headerName: "Style", field: "style"},
-    {headerName: "Clothes", field: "clothes"},
-    {headerName: "Created", field: "created"}
+    {headerName: 'Category', field: 'category', rowGroupIndex: 1, hide: true},
+    {headerName: 'Price', field: 'price', aggFunc: 'sum', valueFormatter: poundFormatter},
+    {headerName: 'Zombies', field: 'zombies'},
+    {headerName: 'Style', field: 'style'},
+    {headerName: 'Clothes', field: 'clothes'},
+    {headerName: 'Created', field: 'created'}
 ];
 
 function poundFormatter(params) {
-    return '£' + Math.floor(params.value).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    return (
+        '£' +
+        Math.floor(params.value)
+            .toString()
+            .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    );
 }
 
-var rowData = [];
+function getInitialRowData() {
+    var rowData = [];
+
+    for (var i = 0; i < 12; i++) {
+        var category = categories[i % categories.length];
+        rowData.push(createNewRowData(category));
+    }
+    return rowData;
+}
 
 // make the data three 10 times bigger
-var names = ['Elly','Shane','Niall','Rob','John','Sean','Dicky','Willy','Shaggy','Spud','Sugar','Spice'];
-var models = ['Mondeo','Celica','Boxter','Minty','Snacky','FastCar','Biscuit','Whoooper','Scoooper','Jet Blaster'];
-var categories = ['Sold','For Sale','In Workshop'];
+var names = ['Elly', 'Shane', 'Niall', 'Rob', 'John', 'Sean', 'Dicky', 'Willy', 'Shaggy', 'Spud', 'Sugar', 'Spice'];
+var models = ['Mondeo', 'Celica', 'Boxter', 'Minty', 'Snacky', 'FastCar', 'Biscuit', 'Whoooper', 'Scoooper', 'Jet Blaster'];
+var categories = ['Sold', 'For Sale', 'In Workshop'];
 
 function createNewRowData(category) {
     var newData = {
@@ -32,15 +45,10 @@ function createNewRowData(category) {
     return newData;
 }
 
-for (var i = 0; i<12; i++) {
-    var category = categories[i % categories.length];
-    rowData.push(createNewRowData(category));
-}
-
 var gridOptions = {
     columnDefs: columnDefs,
     groupDefaultExpanded: 1,
-    rowData: rowData,
+    rowData: getInitialRowData(),
     rememberGroupStateWhenNewData: true,
     enableSorting: true,
     suppressRowClickSelection: true,
@@ -53,20 +61,29 @@ var gridOptions = {
         var rowNode = params.node;
         if (rowNode.group) {
             switch (rowNode.key) {
-                case 'In Workshop': return 'category-in-workshop';
-                case 'Sold': return 'category-sold';
-                case 'For Sale': return 'category-for-sale';
-                default: return null;
+                case 'In Workshop':
+                    return 'category-in-workshop';
+                case 'Sold':
+                    return 'category-sold';
+                case 'For Sale':
+                    return 'category-for-sale';
+                default:
+                    return null;
             }
         } else {
             // no extra classes for leaf rows
             return null;
         }
     },
-    autoGroupColumnDef: {headerName: "Group", field: "model", rowGroupIndex: 1, cellRenderer: 'group',
+    autoGroupColumnDef: {
+        headerName: 'Group',
+        field: 'model',
+        rowGroupIndex: 1,
+        cellRenderer: 'group',
         cellRendererParams: {
             checkbox: true
-        }},
+        }
+    },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }
@@ -74,7 +91,7 @@ var gridOptions = {
 
 function getRowData() {
     var rowData = [];
-    gridOptions.api.forEachNode( function(node) {
+    gridOptions.api.forEachNode(function(node) {
         rowData.push(node.data);
     });
     console.log('Row Data:');
@@ -88,7 +105,7 @@ function onAddRow(category) {
 
 function onMoveToGroup(category) {
     var selectedRowData = gridOptions.api.getSelectedRows();
-    selectedRowData.forEach( function(dataItem) {
+    selectedRowData.forEach(function(dataItem) {
         dataItem.category = category;
     });
     gridOptions.api.updateRowData({update: selectedRowData});
@@ -101,7 +118,7 @@ function onRemoveSelected() {
 
 // wait for the document to be loaded, otherwise
 // ag-Grid will not find the div in the document.
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener('DOMContentLoaded', function() {
     var eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
 });

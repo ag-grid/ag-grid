@@ -99,7 +99,7 @@ include '../documentation-main/documentation_header.php';
         edit the data so the filter is broken (ie a row is present that should not be present), then hit this button to fix the filter.</li>
     </ul>
 
-    <?= example('Updating Row Nodes', 'updating-row-nodes') ?>
+    <?= example('Updating Row Nodes', 'updating-row-nodes', 'generated') ?>
 
     <h2 id="bulk-updating">Bulk Updating</h2>
 
@@ -281,7 +281,7 @@ interface RowDataTransaction {
         </li>
     </ul>
 
-    <?= example('Updating with Transaction', 'updating-with-transaction') ?>
+    <?= example('Updating with Transaction', 'updating-with-transaction', 'generated') ?>
 
     <h3 id="example-updating-with-transaction-and-groups">Example - Updating with Transaction and Groups</h3>
 
@@ -308,7 +308,7 @@ interface RowDataTransaction {
             are always added to the top as they are ordered 'latest first'</li>
     </ul>
 
-    <?= example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', array("enterprise" => 1)) ?>
 
 
     <h2>Bulk Method 2 - Row Data (Normal)</h2>
@@ -412,7 +412,7 @@ interface RowDataTransaction {
         selected items to that group. Notice how the rows animate to the new position.</li>
     </ul>
 
-    <?= example('Simple Immutable Store', 'simple-immutable-store', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Simple Immutable Store', 'simple-immutable-store', 'generated', array("enterprise" => 1)) ?>
 
 
     <h3>Example - Immutable Store - Updates via Feed</h3>
@@ -452,7 +452,7 @@ interface RowDataTransaction {
         even though the grid data is constantly updating.
     </p>
 
-    <?= example('Complex Immutable Store', 'complex-immutable-store', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Complex Immutable Store', 'complex-immutable-store', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="flashing">Flashing Data Changes</h2>
 
@@ -471,7 +471,7 @@ interface RowDataTransaction {
         <a href="../javascript-grid-cell-rendering-components/">custom cell renderer</a>.
     </note>
 
-    <?= example('Flashing Data Changes', 'flashing-data-changes', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Flashing Data Changes', 'flashing-data-changes', 'generated', array("enterprise" => 1)) ?>
 
     <h3>How Flashing Works</h3>
 
