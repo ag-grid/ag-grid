@@ -12,18 +12,22 @@ var columnDefs = [
         valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d") + getValue("e") + getValue("f")'}
 ];
 
-var rowData = [];
-for (var i = 1; i<=10; i++) {
-    rowData.push({
-        group: i < 5 ? 'A' : 'B',
-        a: (i * 863) % 100,
-        b: (i * 811) % 100,
-        c: (i * 743) % 100,
-        d: (i * 677) % 100,
-        e: (i * 619) % 100,
-        f: (i * 571) % 100
-    });
+function getRowData() {
+    var rowData = [];
+    for (var i = 1; i <= 10; i++) {
+        rowData.push({
+            group: i < 5 ? 'A' : 'B',
+            a: (i * 863) % 100,
+            b: (i * 811) % 100,
+            c: (i * 743) % 100,
+            d: (i * 677) % 100,
+            e: (i * 619) % 100,
+            f: (i * 571) % 100
+        });
+    }
+    return rowData;
 }
+
 
 var gridOptions = {
     columnDefs: columnDefs,
@@ -35,7 +39,7 @@ var gridOptions = {
         },
         totalColumn: { cellRenderer: 'animateShowChange', cellClass: 'number-cell'}
     },
-    rowData: rowData,
+    rowData: getRowData(),
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
     animateRows: true,

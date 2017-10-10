@@ -5,32 +5,37 @@ var columnDefs = [
     {headerName: 'D', field: 'd', type: 'valueColumn'},
     {headerName: 'E', field: 'e', type: 'valueColumn'},
     {headerName: 'F', field: 'f', type: 'valueColumn'},
-    {headerName: 'Total',
+    {
+        headerName: 'Total',
         valueGetter: 'data.a + data.b + data.c + data.d + data.e + data.f',
         editable: false,
         aggFunc: 'sum',
-        cellClass: 'total-col'}
+        cellClass: 'total-col'
+    }
 ];
 
-var rowData = [];
-for (var i = 1; i<=20; i++) {
-    rowData.push({
-        group: i < 5 ? 'A' : 'B',
-        a: (i * 863) % 100,
-        b: (i * 811) % 100,
-        c: (i * 743) % 100,
-        d: (i * 677) % 100,
-        e: (i * 619) % 100,
-        f: (i * 571) % 100
-    });
+function getRowData() {
+    var rowData = [];
+    for (var i = 1; i <= 20; i++) {
+        rowData.push({
+            group: i < 5 ? 'A' : 'B',
+            a: (i * 863) % 100,
+            b: (i * 811) % 100,
+            c: (i * 743) % 100,
+            d: (i * 677) % 100,
+            e: (i * 619) % 100,
+            f: (i * 571) % 100
+        });
+    }
+    return rowData;
 }
 
 var gridOptions = {
     columnTypes: {
-        valueColumn: { editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)', filter: 'number'}
+        valueColumn: {editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)', filter: 'number'}
     },
     columnDefs: columnDefs,
-    rowData: rowData,
+    rowData: getRowData(),
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
     enableCellChangeFlash: true,

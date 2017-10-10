@@ -74,7 +74,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <?= example('Change Detection and Value Getters', 'change-detection-value-getters', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', array("enterprise" => 1)) ?>
 
     <h1>1. Value Change Detection</h1>
 
@@ -200,7 +200,7 @@ colDef = {
     </ul>
     </p>
 
-    <?= example('Change Detection with Groups', 'change-detection-groups', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Change Detection with Groups', 'change-detection-groups', 'generated', array("enterprise" => 1)) ?>
 
     <p>
         Notice above that the group column is also editable (eg you can change one of the rows from group 'A'
@@ -285,7 +285,7 @@ colDef = {
         </ul>
     </p>
 
-    <?= example('Change Detection with Filter / Sort / Group', 'change-detection-filter-sort-group', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Change Detection with Filter / Sort / Group', 'change-detection-filter-sort-group', 'generated', array("enterprise" => 1)) ?>
 
     <h1 id="path-selection">Aggregation Path Selection</h1>
 
@@ -369,7 +369,7 @@ colDef = {
     </p>
 
 
-    <?= example('Change Detection with Delta Aggregation', 'change-detection-delta-aggregation', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Change Detection with Delta Aggregation', 'change-detection-delta-aggregation', 'generated', array("enterprise" => 1)) ?>
 
 
     <h1 id="pivot-example">Change Detection and Pivot</h1>
@@ -426,7 +426,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= example('Change Detection Pivot', 'change-detection-pivot', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Change Detection Pivot', 'change-detection-pivot', 'generated', array("enterprise" => 1)) ?>
 
 </div>
 
