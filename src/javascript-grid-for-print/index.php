@@ -46,7 +46,7 @@ include '../documentation-main/documentation_header.php';
         Note: If you do see scrolls below, it is the scrolls of the example iFrame, not the grid.
     </p>
 
-    <?= example('For Print Simple', 'for-print-simple') ?>
+    <?= example('For Print Simple', 'for-print-simple', 'generated') ?>
 
     <h3 id="complex-example">Complex Example</h3>
 
