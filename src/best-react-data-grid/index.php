@@ -1,7 +1,7 @@
 <?php
 $key = "Overview React";
-$pageTitle = "React Datagrid";
-$pageDescription = "A feature-rich React datagrid designed for Enterprise. Easily integrate with React and React Components to deliver all the grid features that you need.";
+$pageTitle = "React Datagrid - Excel-like React Component";
+$pageDescription = "Now supporting React 16. A feature-rich React datagrid designed for Enterprise. Easily integrate with React and React Components to deliver all the grid features that you need.";
 $pageKeyboards = "React Data Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
