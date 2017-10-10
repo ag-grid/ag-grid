@@ -110,7 +110,7 @@ localeText = {
         ctrlV: 'ctrl n C'
 }</snippet>
 
-    <?= example('Internationalisation', 'internationalisation', 'vanilla', array('enterprise' => true)) ?>
+    <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true)) ?>
 
     <h3 id="using-locale-text-func">Using <i>localeTextFunc</i></h3>
 
