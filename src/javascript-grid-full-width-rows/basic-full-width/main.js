@@ -1,13 +1,14 @@
-// create array with each entry one letter of alphabet, et ['A','B'...]
-var LETTERS_IN_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-
-var mainRowData = createData(100, 'body');
+var rowData = createData(100, 'body');
 var pinnedTopRowData = createData(3, 'floating');
 var pinnedBottomRowData = createData(3, 'floating');
 
+function alphabet() {
+    return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+}
+
 function createData(count, prefix) {
     var rowData = [];
-    for (var i = 0; i<count; i++) {
+    for (var i = 0; i < count; i++) {
         var item = {};
         // mark every third row as full width. how you mark the row is up to you,
         // in this example the example code (not the grid code) looks at the
@@ -15,7 +16,7 @@ function createData(count, prefix) {
         // if a row is full width or not is totally up to you.
         item.fullWidth = i % 3 === 2;
         // put in a column for each letter of the alphabet
-        LETTERS_IN_ALPHABET.forEach( function(letter) {
+        alphabet().forEach(function(letter) {
             item[letter] = prefix + ' (' + letter + ',' + i + ')';
         });
         rowData.push(item);
@@ -23,26 +24,29 @@ function createData(count, prefix) {
     return rowData;
 }
 
-var columnDefs = [];
-LETTERS_IN_ALPHABET.forEach( function(letter) {
-    var colDef = {
-        headerName: letter,
-        field: letter,
-        width: 100
-    };
-    if (letter==='A') {
-        colDef.pinned = 'left';
-    }
-    if (letter==='Z') {
-        colDef.pinned = 'right';
-    }
-    columnDefs.push(colDef);
-});
+function getColumnDefs() {
+    var columnDefs = [];
+    alphabet().forEach(function(letter) {
+        var colDef = {
+            headerName: letter,
+            field: letter,
+            width: 100
+        };
+        if (letter === 'A') {
+            colDef.pinned = 'left';
+        }
+        if (letter === 'Z') {
+            colDef.pinned = 'right';
+        }
+        columnDefs.push(colDef);
+    });
+    return columnDefs;
+}
 
 var gridOptions = {
     // embedFullWidthRows: true,
-    columnDefs: columnDefs,
-    rowData: mainRowData,
+    columnDefs: getColumnDefs(),
+    rowData: rowData,
     pinnedTopRowData: pinnedTopRowData,
     pinnedBottomRowData: pinnedTopRowData,
     isFullWidthCell: function(rowNode) {
@@ -68,7 +72,7 @@ var gridOptions = {
         }
 
         var eDiv = document.createElement('div');
-        eDiv.innerHTML = '<div class="'+cssClass+'"><button>Click</button> '+message+'</div>';
+        eDiv.innerHTML = '<div class="' + cssClass + '"><button>Click</button> ' + message + '</div>';
 
         var eButton = eDiv.querySelector('button');
         eButton.addEventListener('click', function() {
@@ -76,13 +80,13 @@ var gridOptions = {
             console.log('setting');
             // params.node.setRowHeight(500);
             // params.api.onRowHeightChanged();
-        } );
+        });
 
         return eDiv;
     },
     getRowHeight: function(params) {
         // you can have normal rows and full width rows any height that you want
-        var isBodyRow = params.node.rowPinned===undefined;
+        var isBodyRow = params.node.rowPinned === undefined;
         var isFullWidth = params.node.data.fullWidth;
         if (isBodyRow && isFullWidth) {
             return 55;
