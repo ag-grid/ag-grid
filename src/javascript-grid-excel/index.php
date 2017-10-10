@@ -188,7 +188,7 @@ include '../documentation-main/documentation_header.php';
         <li>For groups, the first exported value (column) will always have the group key.</li>
     </ul>
 
-    <?= example('Excel Export Without Styles', 'excel-export-without-styles', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Excel Export Without Styles', 'excel-export-without-styles', 'generated', array("enterprise" => 1)) ?>
 
     <h3>Export with Styles</h3>
 
@@ -406,7 +406,7 @@ var gridOptions = {
         </ul>
     </p>
 
-    <?= example('Excel Export With Styles', 'excel-export-with-styles', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Excel Export With Styles', 'excel-export-with-styles', 'generated', array("enterprise" => 1)) ?>
 
     <h3 id="exportToXlsx">
         Exporting To XLSX
@@ -481,6 +481,6 @@ function download (params, content){
     </li>
     </ul>
 
-    <?= example('Custom XLSX', 'custom-xlsx', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Custom XLSX', 'custom-xlsx', 'generated', array("enterprise" => 1, "extras" => array('xlsx'))) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
