@@ -226,8 +226,12 @@ class ExampleRunner {
         this.loadingSource = true;
         this.source = this.$sce.trustAsHtml('Loading...');
 
+        console.log("Loading...", this.selectedFile)
         this.loadSource(this.selectedFile).then(source => {
             this.loadingSource = false;
+            if (!this.selectedFile) {
+                throw new Error('We ended up without a selected file :(')
+            }
             const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
             const highlightedSource = highlight(source.trim(), extension);
             this.source = this.$sce.trustAsHtml(highlightedSource);

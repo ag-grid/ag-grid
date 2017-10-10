@@ -44,7 +44,7 @@ gridOptions.columnDefs = [
         by adding <code>hide: true</code> to their <i>colDef</i> as illustrated in the Multi Auto Column example.</li>
     </ul>
 
-    <?= example('Auto Column Group', 'auto-column-group', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Auto Column Group', 'auto-column-group', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="multi-auto-column-group">Multi Auto Column Group</h2>
     <p>
@@ -61,7 +61,7 @@ gridOptions.columnDefs = [
             This is done by setting <code>colDef.hide = true</code>.</li>
     </ul>
 
-    <?= example('Multi Auto Column Group', 'multi-auto-column-group', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Multi Auto Column Group', 'multi-auto-column-group', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="configuring-auto-column">Configuring the Auto Group Column</h2>
 
@@ -110,7 +110,7 @@ gridOptions.columnDefs = [
         </li>
     </ul>
 
-    <?= example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Adding Values To Leaf Nodes</h2>
 
@@ -143,7 +143,7 @@ valueGetter: function (params){
         <li>Filtering is switched on so you can see how now you can filter the group column by athlete.</li>
     </ul>
 
-    <?= example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', array("enterprise" => 1)) ?>
 
     <p>
         Adding leaf nodes data can also be achieved even if you provide your own group columns, this is illustrated
@@ -166,7 +166,7 @@ valueGetter: function (params){
         grouping.</li>
     </ul>
 
-    <?= example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Group Cell Rendering</h2>
 
@@ -226,7 +226,7 @@ columnDefs = [
         Year is grouped first and Country is grouped second.
     </p>
 
-    <?= example('Row Group Index', 'row-group-index', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Row Group Index', 'row-group-index', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="replacingChildren">Hide Open Parents</h2>
 
@@ -257,7 +257,7 @@ columnDefs = [
         are in it's place.
     </p>
 
-    <?= example('Hide Open Parents', 'hide-open-parents', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1)) ?>
 
 
     <h2 id="fullWidthRows">Full Width Group Rows</h2>
@@ -273,7 +273,7 @@ columnDefs = [
         Note that all that is necessary to achieve this it to add <code>groupUseEntireRow:true</code> to your gridOptions
     </p>
 
-    <?= example('Full Width Group Rows', 'full-width-group-rows', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Full Width Group Rows', 'full-width-group-rows', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Full Width Groups Rendering</h2>
 
@@ -353,7 +353,7 @@ gridOptions.groupRowRendererParams: {
         then using the entire row to give a summary.
     </p>
 
-    <?= example('Full Width Groups Rendering', 'full-width-groups-rendering', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Full Width Group Rows - Embedding</h2>
 
@@ -479,7 +479,7 @@ cellRendererParams: {
         the next section but included here as footer rows only make sense when used with aggregation.
     </p>
 
-    <?= example('Group Footers', 'grouping-footers', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Group Footers', 'grouping-footers', 'generated', array("enterprise" => 1)) ?>
 
     </p>
 
@@ -503,7 +503,7 @@ cellRendererParams: {
         as such the state is not maintained. A group like 'Australia' is in both sets and is maintained.
     </p>
 
-    <?= example('Keeping Group State', 'keeping-group-state', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Keeping Group State', 'keeping-group-state', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="removeSingleChildren">Removing Single Children</h2>
 
@@ -531,7 +531,7 @@ cellRendererParams: {
         only the filter is reapplied, the grouping is not reapplied.
     </note>
 
-    <?= example('Removing Single Children', 'remove-single-children', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Removing Single Children', 'remove-single-children', 'generated', array("enterprise" => 1)) ?>
 
     <note>
         It is not possible to mix <i>groupRemoveSingleChildren</i> and <i>groupHideOpenParents</i>.
@@ -547,7 +547,7 @@ cellRendererParams: {
         Sorting, for example, will sort by group.
     </p>
 
-    <?= example('Suppress Group Row', 'suppress-group-row', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Suppress Group Row', 'suppress-group-row', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="showRowGroup">Creating Your Own Group Display Columns</h2>
 
@@ -605,18 +605,18 @@ coldefs:[
 
     <p>The following example shows how to appoint individual columns to show individual groups</p>
 
-    <?= example('Custom Grouping Many Group Columns', 'custom-grouping-many-group-columns', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Custom Grouping Many Group Columns', 'custom-grouping-many-group-columns', 'generated', array("enterprise" => 1)) ?>
 
     <p>The following example shows how to display all the groups in a single column</p>
 
-    <?= example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'generated', array("enterprise" => 1)) ?>
 
     <p>
         The last example of explicitly setting groups shows an alternative for Hide Open Parents.
         The example below demonstrates hiding open parents using explicit group columns.
     </p>
 
-    <?= example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'generated', array("enterprise" => 1)) ?>
 
     <note>Remember these examples are achieving the same that you can achieve with
         the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases
