@@ -30,10 +30,8 @@ var rowData = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
-    debug: true,
     getNodeChildDetails: getNodeChildDetails,
     onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
     }
 };
 
@@ -53,7 +51,8 @@ function getNodeChildDetails(rowItem) {
     }
 }
 
-function onFilterChanged(value) {
+function onTextboxFilterChanged() {
+    var value = document.getElementById('filter-textbox').value;
     gridOptions.api.setQuickFilter(value);
 }
 
@@ -61,4 +60,5 @@ function onFilterChanged(value) {
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
+    gridOptions.api.sizeColumnsToFit();
 });
