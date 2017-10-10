@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
         an RTL language, however none of us in ag-Grid know any RTL languages, so we are sticking with English.
     </p>
 
-    <?= example('RTL Simple', 'rtl-simple') ?>
+    <?= example('RTL Simple', 'rtl-simple', 'generated') ?>
 
     <h3 id="complex-example">Complex Example</h3>
 
