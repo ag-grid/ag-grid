@@ -322,6 +322,11 @@ function renderExampleExtras($config) {
     }
 
     $extras = array(
+        'xlsx' => array( 
+            'scripts' => array( 
+                'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.3/xlsx.core.min.js'
+            )
+         ),
         'jquery' => array(
             'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js' )
         ),
