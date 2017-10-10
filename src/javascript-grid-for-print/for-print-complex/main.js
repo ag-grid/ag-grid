@@ -1,13 +1,11 @@
 // create array with each entry one letter of alphabet, et ['A','B'...]
-var LETTERS_IN_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
-
-var mainRowData = createData(20, 'body');
-var pinnedTopRowData = createData(3, 'pinned');
-var pinnedBottomRowData = createData(3, 'pinned');
+function alphabet() {
+    return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+}
 
 function createData(count, prefix) {
     var rowData = [];
-    for (var i = 0; i<count; i++) {
+    for (var i = 0; i < count; i++) {
         var item = {};
         // mark every third row as full width. how you mark the row is up to you,
         // in this example the example code (not the grid code) looks at the
@@ -15,7 +13,7 @@ function createData(count, prefix) {
         // if a row is full width or not is totally up to you.
         item.fullWidth = i % 3 === 2;
         // put in a column for each letter of the alphabet
-        LETTERS_IN_ALPHABET.forEach( function(letter) {
+        alphabet().forEach(function(letter) {
             item[letter] = prefix + ' (' + letter + ',' + i + ')';
         });
         rowData.push(item);
@@ -23,28 +21,31 @@ function createData(count, prefix) {
     return rowData;
 }
 
-var columnDefs = [];
-LETTERS_IN_ALPHABET.forEach( function(letter) {
-    var colDef = {
-        headerName: letter,
-        field: letter,
-        width: 100
-    };
-    if (letter==='A') {
-        colDef.pinned = 'left';
-    }
-    if (letter==='Z') {
-        colDef.pinned = 'right';
-    }
-    columnDefs.push(colDef);
-});
+function createColumnDefs() {
+    var columnDefs = [];
+    alphabet().forEach(function(letter) {
+        var colDef = {
+            headerName: letter,
+            field: letter,
+            width: 100
+        };
+        if (letter === 'A') {
+            colDef.pinned = 'left';
+        }
+        if (letter === 'Z') {
+            colDef.pinned = 'right';
+        }
+        columnDefs.push(colDef);
+    });
+    return columnDefs;
+}
 
 var gridOptions = {
-    domLayout: "forPrint",
-    columnDefs: columnDefs,
-    rowData: mainRowData,
-    pinnedTopRowData: pinnedTopRowData,
-    pinnedBottomRowData: pinnedTopRowData,
+    domLayout: 'forPrint',
+    columnDefs: createColumnDefs(),
+    rowData: createData(20, 'body'),
+    pinnedTopRowData: createData(3, 'pinned'),
+    pinnedBottomRowData: createData(3, 'pinned'),
     isFullWidthCell: function(rowNode) {
         // in this example, we check the fullWidth attribute that we set
         // while creating the data. what check you do to decide if you
@@ -67,13 +68,13 @@ var gridOptions = {
             message = 'Normal full width row at index' + params.rowIndex;
         }
 
-        var template = '<div class="'+cssClass+'"><button onclick="window.alert(\'Clicked!!\')">Click</button> '+message+'</div>';
+        var template = '<div class="' + cssClass + '"><button onclick="window.alert(\'Clicked!!\')">Click</button> ' + message + '</div>';
 
         return template;
     },
     getRowHeight: function(params) {
         // you can have normal rows and full width rows any height that you want
-        var isBodyRow = params.node.floating===undefined;
+        var isBodyRow = params.node.floating === undefined;
         var isFullWidth = params.node.data.fullWidth;
         if (isBodyRow && isFullWidth) {
             return 55;
