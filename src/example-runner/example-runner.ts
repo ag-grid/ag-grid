@@ -3,9 +3,6 @@ import './example-runner.scss';
 import * as angular from 'angular';
 import * as jQuery from 'jquery';
 
-import {vanillaToAngular} from './vanilla-to-angular';
-import {vanillaToReact} from './vanilla-to-react';
-
 import {whenInViewPort, trackIfInViewPort} from './lib/viewport';
 import {highlight} from './lib/highlight';
 
