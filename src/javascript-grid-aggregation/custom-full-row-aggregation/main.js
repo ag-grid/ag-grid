@@ -1,12 +1,12 @@
 var columnDefs = [
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Gold*pie", field: "goldPie", width: 100},
-    {headerName: "Silver*pie", field: "silverPie", width: 100},
-    {headerName: "Bronze*pie", field: "bronzePie", width: 100},
-    {headerName: "Country", field: "country", width: 120, rowGroup: true, hide: true},
-    {headerName: "Year", field: "year", width: 90, rowGroup: true, hide: true}
+    {headerName: 'Gold', field: 'gold', width: 100},
+    {headerName: 'Silver', field: 'silver', width: 100},
+    {headerName: 'Bronze', field: 'bronze', width: 100},
+    {headerName: 'Gold*pie', field: 'goldPie', width: 100},
+    {headerName: 'Silver*pie', field: 'silverPie', width: 100},
+    {headerName: 'Bronze*pie', field: 'bronzePie', width: 100},
+    {headerName: 'Country', field: 'country', width: 120, rowGroup: true, hide: true},
+    {headerName: 'Year', field: 'year', width: 90, rowGroup: true, hide: true}
 ];
 
 var gridOptions = {
@@ -16,9 +16,9 @@ var gridOptions = {
     enableSorting: true,
     enableRangeSelection: true,
     groupRowAggNodes: groupRowAggNodes,
-    autoGroupColumnDef:{
-        headerName: "Athlete",
-        field: "athlete",
+    autoGroupColumnDef: {
+        headerName: 'Athlete',
+        field: 'athlete',
         width: 200
     }
 };
@@ -32,7 +32,7 @@ function groupRowAggNodes(nodes) {
         silverPie: 0,
         bronzePie: 0
     };
-    nodes.forEach( function(node) {
+    nodes.forEach(function(node) {
         var data = node.group ? node.aggData : node.data;
         if (typeof data.gold === 'number') {
             result.gold += data.gold;
@@ -50,6 +50,14 @@ function groupRowAggNodes(nodes) {
     return result;
 }
 
+function expandAll() {
+    gridOptions.api.expandAll();
+}
+
+function collapseAll() {
+    gridOptions.api.collapseAll();
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
@@ -57,8 +65,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json'})
-        .then( function(rows) {
-            gridOptions.api.setRowData(rows);
-        });
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json'}).then(function(rows) {
+        gridOptions.api.setRowData(rows);
+    });
 });
