@@ -1,14 +1,14 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, enableRowGroup: true, enablePivot: true},
-    {headerName: "Age", field: "age", width: 90, enableValue: true},
-    {headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true},
-    {headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true},
-    {headerName: "Date", field: "date", width: 110, enableRowGroup: true, enablePivot: true},
-    {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true},
-    {headerName: "Gold", field: "gold", width: 100, enableValue: true, aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", width: 100, enableValue: true},
-    {headerName: "Bronze", field: "bronze", width: 100, enableValue: true},
-    {headerName: "Total", field: "total", width: 100, enableValue: true}
+    {headerName: 'Athlete', field: 'athlete', width: 150, enableRowGroup: true, enablePivot: true},
+    {headerName: 'Age', field: 'age', width: 90, enableValue: true},
+    {headerName: 'Country', field: 'country', width: 120, enableRowGroup: true, enablePivot: true},
+    {headerName: 'Year', field: 'year', width: 90, enableRowGroup: true, enablePivot: true},
+    {headerName: 'Date', field: 'date', width: 110, enableRowGroup: true, enablePivot: true},
+    {headerName: 'Sport', field: 'sport', width: 110, enableRowGroup: true, enablePivot: true},
+    {headerName: 'Gold', field: 'gold', width: 100, enableValue: true, aggFunc: 'sum'},
+    {headerName: 'Silver', field: 'silver', width: 100, enableValue: true},
+    {headerName: 'Bronze', field: 'bronze', width: 100, enableValue: true},
+    {headerName: 'Total', field: 'total', width: 100, enableValue: true}
 ];
 
 var gridOptions = {
@@ -17,6 +17,27 @@ var gridOptions = {
     enableColResize: true,
     columnDefs: columnDefs
 };
+function turnOffPivotMode() {
+    gridOptions.columnApi.setPivotMode(true);
+}
+function turnOnPivotMode() {
+    gridOptions.columnApi.setPivotMode(false);
+}
+function addPivotColumn() {
+    gridOptions.columnApi.addPivotColumn('country');
+}
+function addPivotColumns() {
+    gridOptions.columnApi.addPivotColumns(['year', 'country']);
+}
+function removePivotColumn() {
+    gridOptions.columnApi.removePivotColumn('country');
+}
+function emptyPivotColumns() {
+    gridOptions.columnApi.setPivotColumns([]);
+}
+function exportToCsv() {
+    gridOptions.api.exportDataAsCsv({});
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

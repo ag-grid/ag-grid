@@ -9,21 +9,21 @@ var columnDefs = [
 ];
 
 function onBtNormal() {
-    this.gridOptions.columnApi.setPivotMode(false);
-    this.gridOptions.columnApi.setPivotColumns([]);
-    this.gridOptions.columnApi.setRowGroupColumns(['country','year']);
+    gridOptions.columnApi.setPivotMode(false);
+    gridOptions.columnApi.setPivotColumns([]);
+    gridOptions.columnApi.setRowGroupColumns(['country','year']);
 }
 
 function onBtPivotMode() {
-    this.gridOptions.columnApi.setPivotMode(true);
-    this.gridOptions.columnApi.setPivotColumns([]);
-    this.gridOptions.columnApi.setRowGroupColumns(['country','year']);
+    gridOptions.columnApi.setPivotMode(true);
+    gridOptions.columnApi.setPivotColumns([]);
+    gridOptions.columnApi.setRowGroupColumns(['country','year']);
 }
 
 function onBtFullPivot() {
-    this.gridOptions.columnApi.setPivotMode(true);
-    this.gridOptions.columnApi.setPivotColumns(['year']);
-    this.gridOptions.columnApi.setRowGroupColumns(['country']);
+    gridOptions.columnApi.setPivotMode(true);
+    gridOptions.columnApi.setPivotColumns(['year']);
+    gridOptions.columnApi.setRowGroupColumns(['country']);
 }
 
 var gridOptions = {

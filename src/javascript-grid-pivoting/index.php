@@ -58,7 +58,7 @@ gridOptions.columnDefs = [
         pivot or value associated with them.
     </p>
 
-    <?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Pivot Mode vs Pivot Active</h2>
 
@@ -92,7 +92,7 @@ gridOptions.columnDefs = [
     </ul>
     </p>
 
-    <?= example('Pivot Mode Vs Pivot Active', 'pivot-mode', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Pivot Mode Vs Pivot Active', 'pivot-mode', 'generated', array("enterprise" => 1)) ?>
 
     <p>
         Note that a pivot can only be active if pivot mode is on. If pivot mode is off, all pivot
@@ -197,7 +197,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         as there is no records for Canada and Equestrian.
     </p>
 
-    <?= example('Filtering With Pivot', 'filter', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Filtering With Pivot', 'filter', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Sorting with Pivot</h2>
 
@@ -212,7 +212,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         underneath the hood.
     </p>
 
-    <?= example('Sorting With Pivot', 'sorting', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Sorting With Pivot', 'sorting', 'generated', array("enterprise" => 1)) ?>
 
 
     <h2 id="totalPivotColumns">Total Pivot Columns</h2>
@@ -242,7 +242,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
        </ul>
     </p>
 
-    <?= example('Total Pivot Columns', 'totals', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Total Pivot Columns', 'totals', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Saving & Restoring Column State with Pivot</h2>
 
@@ -258,7 +258,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         needs to be stored separately.
     </p>
 
-    <?= example('Saving & Restoring Column State', 'state', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Saving & Restoring Column State', 'state', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Pivot API</h2>
     
@@ -271,7 +271,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         is what will be exported.
     </p>
 
-    <?= example('Pivot API', 'api', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Pivot API', 'api', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="orderingPivotColumns">Ordering Pivot Columns</h2>
 
@@ -307,7 +307,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         as the field attribute is needed by the grid to pull out the value.
     </p>
 
-    <?= example('Secondary Columns', 'secondary-columns', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Secondary Columns', 'secondary-columns', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="hideOpenParents">Hide Open Parents</h2>
 
@@ -323,7 +323,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         </ul>
     </p>
 
-    <?= example('Hide Open Parents', 'hide-open-parents', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="change-detection">Change Detection and Pivot</h2>
 

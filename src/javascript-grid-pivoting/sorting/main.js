@@ -1,9 +1,9 @@
 var columnDefs = [
-    {headerName: "Country", field: "country", width: 120, rowGroup: true},
-    {headerName: "Year", field: "year", width: 90, pivot: true},
-    {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'}
+    {headerName: 'Country', field: 'country', width: 120, rowGroup: true},
+    {headerName: 'Year', field: 'year', width: 90, pivot: true},
+    {headerName: 'Gold', field: 'gold', width: 100, aggFunc: 'sum'},
+    {headerName: 'Silver', field: 'silver', width: 100, aggFunc: 'sum'},
+    {headerName: 'Bronze', field: 'bronze', width: 100, aggFunc: 'sum'}
 ];
 
 var gridOptions = {
@@ -19,27 +19,21 @@ function clearSort() {
 }
 
 function sort2000Bronze() {
-    var column = findIdForColumn('2000','bronze');
-    var sort = [
-        {colId: column.getId(), sort: 'desc'}
-    ];
+    var column = findIdForColumn('2000', 'bronze', gridOptions.columnApi.getAllGridColumns());
+    var sort = [{colId: column.getId(), sort: 'desc'}];
     gridOptions.api.setSortModel(sort);
 }
 
 function sort2002Gold() {
-    var column = gridOptions.columnApi.getSecondaryPivotColumn(['2002'],'gold');
-    var sort = [
-        {colId: column.getId(), sort: 'desc'}
-    ];
+    var column = gridOptions.columnApi.getSecondaryPivotColumn(['2002'], 'gold');
+    var sort = [{colId: column.getId(), sort: 'desc'}];
     gridOptions.api.setSortModel(sort);
 }
 
-function findIdForColumn(year, medal) {
-    var pivotColumns = gridOptions.columnApi.getAllGridColumns();
+function findIdForColumn(year, medal, pivotColumns) {
     var foundColumn;
 
-    pivotColumns.forEach( function(column) {
-
+    pivotColumns.forEach(function(column) {
         var pivotKeys = column.getColDef().pivotKeys;
         var pivotKey = pivotKeys[0];
         var pivotKeyMatches = pivotKey === year;
@@ -47,7 +41,7 @@ function findIdForColumn(year, medal) {
         var pivotValueColumn = column.getColDef().pivotValueColumn;
         var pivotValueColId = pivotValueColumn.getColId();
         var pivotValueMatches = pivotValueColId === medal;
-        
+
         if (pivotKeyMatches && pivotValueMatches) {
             foundColumn = column;
         }
