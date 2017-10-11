@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>The spreadsheet contains a few rows of simple data, which the example parses and sets as row data.</p>
 
-    <p>The speadsheet can be downloaded <a href="https://www.ag-grid.com/example-excel-import/OlymicData.xlsx">here.</a></p>
+    <p>The spreadsheet can be downloaded <a href="https://www.ag-grid.com/example-excel-import/OlymicData.xlsx">here.</a></p>
 
     <?= example('Import Excel into ag-Grid', 'excel-import', 'vanilla', array("showResult" => true, "exampleHeight" => 460, "extras" => array("xlsx-style"))) ?>
 </div>
