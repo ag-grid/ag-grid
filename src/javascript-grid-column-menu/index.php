@@ -144,7 +144,7 @@ menuItems.push('separator')</snippet>
     </ul>
     </p>
 
-    <?= example('Column Menu', 'column-menu', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Column Menu', 'column-menu', 'generated', array("enterprise" => 1)) ?>
 
 </div>
 
