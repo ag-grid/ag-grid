@@ -5,7 +5,7 @@ import {
     AgEditorTemplate,
     AgFilterTemplate,
     AgHeaderGroupTemplate,
-    AgHeaderTemplate
+    AgHeaderTemplate, AgPinnedRowTemplate
 } from "./agTemplate";
 import {generateBindables} from "./agUtils";
 
@@ -53,6 +53,9 @@ export class AgGridColumn {
     @child('ag-header-group-template')
     public headerGroupTemplate: AgHeaderGroupTemplate;
 
+    @child('ag-pinned-row-template')
+    public pinnedRowTemplate: AgPinnedRowTemplate;
+
     constructor() {
     }
 
@@ -67,33 +70,53 @@ export class AgGridColumn {
             (<any>colDef)["children"] = AgGridColumn.getChildColDefs(this.childColumns);
         }
 
-        if (this.cellTemplate) {
-            colDef.cellRendererFramework = {template: this.cellTemplate.template};
-            delete (<any>colDef).cellTemplate;
-        }
+        const defaultAction = (templateName:string) => {
+            let self = <any>this;
 
-        if (this.editorTemplate) {
+            if(self[templateName]) {
+                const frameworkName = templates[templateName].frameworkName;
+                (<any>colDef)[frameworkName] = {template: self[templateName].template};
+                delete (<any>colDef)[templateName];
+            }
+        };
+
+        const editorAction = (templateName:string) => {
             if (colDef.editable === undefined) {
                 colDef.editable = true;
             }
-            colDef.cellEditorFramework = {template: this.editorTemplate.template};
-            delete (<any>colDef).editorTemplate;
-        }
 
-        if (this.filterTemplate) {
-            colDef.filterFramework = {template: this.filterTemplate.template};
-            delete (<any>colDef).filterTemplate;
-        }
+            defaultAction(templateName);
+        };
 
-        if (this.headerTemplate) {
-            (<any>colDef).headerComponentFramework = {template: this.headerTemplate.template};
-            delete (<any>colDef).headerTemplate;
-        }
+        const templates : any = {
+            cellTemplate: {
+                frameworkName: 'cellRendererFramework'
+            },
+            editorTemplate: {
+                frameworkName: 'cellEditorFramework',
+                action: editorAction
+            },
+            filterTemplate: {
+                frameworkName: 'filterFramework'
+            },
+            headerTemplate: {
+                frameworkName: 'headerComponentFramework'
+            },
+            headerGroupTemplate: {
+                frameworkName: 'headerGroupComponentFramework'
+            },
+            pinnedRowTemplate: {
+                frameworkName: 'pinnedRowCellRendererFramework'
+            }
+        };
 
-        if (this.headerGroupTemplate) {
-            (<any>colDef).headerGroupComponentFramework = {template: this.headerGroupTemplate.template};
-            delete (<any>colDef).headerGroupTemplate;
-        }
+        const addTemplate = (templateName: string) => {
+            const action = templates[templateName].action ? templates[templateName].action : defaultAction;
+            action(templateName);
+        };
+
+        Object.keys(templates)
+            .forEach(addTemplate);
 
         return colDef;
     }

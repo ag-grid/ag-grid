@@ -81,6 +81,18 @@ export class AgHeaderGroupTemplate {
     }
 }
 
+@customElement('ag-pinned-row-template')
+@noView()
+@autoinject()
+@processContent(parseElement)
+export class AgPinnedRowTemplate {
+    template: string;
+
+    constructor(targetInstruction: TargetInstruction) {
+        this.template = getTemplate(targetInstruction);
+    }
+}
+
 @customElement('ag-date-template')
 @noView()
 @autoinject()
