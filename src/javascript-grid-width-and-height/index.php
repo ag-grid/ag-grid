@@ -116,7 +116,7 @@ include '../documentation-main/documentation_header.php';
         Note that if you use the example inlined the scroll bars shown are for the containing iframe, not the grid.
     </note>
 
-    <?= example('Auto Height', 'auto-height') ?>
+    <?= example('Auto Height', 'auto-height', 'generated') ?>
 
     <h3>Animation with Auto Height</h3>
 

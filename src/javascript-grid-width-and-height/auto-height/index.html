@@ -4,7 +4,7 @@
     <button onclick="setRowData(20)">20 Rows</button>
     <button onclick="setRowData(50)">50 Rows</button>
     <label>
-        <input type="checkbox" onclick="cbFloatingRows(this.checked)"/>
+        <input type="checkbox" id="floating-rows" onclick="cbFloatingRows()" />
         Pinned Rows
     </label>
     &nbsp;
@@ -13,7 +13,6 @@
     Current Row Count = <span id="currentRowCount"></span>
 </div>
 
-<!-- The grid DIV is not given any height, it is going to have not height specified so it fills -->
 <div id="myGrid" class="ag-fresh"></div>
 
 <div style="border: 10px solid #eee; padding: 10px; margin-top: 10px;">
