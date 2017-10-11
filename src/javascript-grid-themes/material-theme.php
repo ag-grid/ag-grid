@@ -18,8 +18,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p> The example below shows the grid with a rich set of features enabled.</p>
-    <?= example('Material Theme', 'theme-material', 'vanilla', array( 'extras' => array('roboto') )) ?>
-
+    <?= example('Material Theme', 'theme-material', 'generated', array( 'enterprise' => true, 'extras' => array("roboto") )) ?>
 
     <p>
         To use the theme, add <code>ag-theme-material</code> CSS class to the DIV element on which the ag-Grid instance is instantiated.
@@ -148,8 +147,7 @@ gridOptions = {
 
     <p/>
 
-    <?= example('Old Material Theme', 'theme-material-old', 'vanilla', array( 'extras' => array('roboto') )) ?>
-
+    <?= example('Old Material Theme', 'theme-material-old', 'vanilla', array( 'enterprise' => true, 'extras' => array("roboto") )) ?>
 </pre>
 
 </div>
