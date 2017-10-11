@@ -210,7 +210,7 @@ colDef = {
         </ul>
     </p>
 
-    <?= example('Header Checkbox', 'header-checkbox') ?>
+    <?= example('Header Checkbox', 'header-checkbox', 'generated') ?>
 
     <h4 id="headerSelectionExample2">Header Checkbox Example 2 - Filtered Only = false</h4>
 
@@ -223,7 +223,7 @@ colDef = {
     </ul>
     </p>
 
-    <?= example('Header Checkbox Entire Set', 'header-checkbox-entire-set') ?>
+    <?= example('Header Checkbox Entire Set', 'header-checkbox-entire-set', 'generated') ?>
 
     <h3 id="selectionEvents">Selection Events</h3>
 
