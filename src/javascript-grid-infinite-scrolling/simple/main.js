@@ -51,28 +51,19 @@ var gridOptions = {
     maxBlocksInCache: 2
 };
 
-function setRowData(allOfTheData) {
-    var dataSource = {
-        rowCount: null, // behave as infinite scroll
-        getRows: function (params) {
-            console.log('asking for ' + params.startRow + ' to ' + params.endRow);
-            // At this point in your code, you would call the server, using $http if in AngularJS 1.x.
-            // To make the demo look real, wait for 500ms before returning
-            setTimeout( function() {
-                // take a slice of the total rows
-                var rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);
-                // if on or after the last page, work out the last row.
-                var lastRow = -1;
-                if (allOfTheData.length <= params.endRow) {
-                    lastRow = allOfTheData.length;
-                }
-                // call the success callback
-                params.successCallback(rowsThisPage, lastRow);
-            }, 500);
+
+// do http request to get our sample data - not using any framework to keep the example self contained.
+// you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+function fetchData(url, callback) {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open('GET', url);
+    httpRequest.send();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+            var httpResult = JSON.parse(httpRequest.responseText);
+            callback(httpResult);
         }
     };
-
-    gridOptions.api.setDatasource(dataSource);
 }
 
 // setup the grid after the page has finished loading
@@ -80,15 +71,27 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var httpResponse = JSON.parse(httpRequest.responseText);
-            setRowData(httpResponse);
-        }
-    };
+    fetchData('https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json', function(data) {
+        var dataSource = {
+            rowCount: null, // behave as infinite scroll
+            getRows: function (params) {
+                console.log('asking for ' + params.startRow + ' to ' + params.endRow);
+                // At this point in your code, you would call the server, using $http if in AngularJS 1.x.
+                // To make the demo look real, wait for 500ms before returning
+                setTimeout( function() {
+                    // take a slice of the total rows
+                    var rowsThisPage = data.slice(params.startRow, params.endRow);
+                    // if on or after the last page, work out the last row.
+                    var lastRow = -1;
+                    if (data.length <= params.endRow) {
+                        lastRow = data.length;
+                    }
+                    // call the success callback
+                    params.successCallback(rowsThisPage, lastRow);
+                }, 500);
+            }
+        };
+
+        gridOptions.api.setDatasource(dataSource);
+    });
 });

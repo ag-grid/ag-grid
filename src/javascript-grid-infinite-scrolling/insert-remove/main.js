@@ -1,38 +1,39 @@
 var columnDefs = [
-    {headerName: "Item ID", field: "id",
+    {
+        headerName: 'Item ID',
+        field: 'id',
         valueGetter: 'node.id',
         cellRenderer: function(params) {
             if (params.value !== undefined) {
                 return params.value;
             } else {
-                return '<img src="../images/loading.gif">'
+                return '<img src="../images/loading.gif">';
             }
         }
     },
-    {headerName: "Make", field: "make"},
-    {headerName: "Model", field: "model"},
-    {headerName: "Price", field: "price", valueFormatter: function(params) {
-        if (typeof params.value === 'number') {
-            return '£' + params.value.toLocaleString();
-        } else {
-            return params.value;
+    {headerName: 'Make', field: 'make'},
+    {headerName: 'Model', field: 'model'},
+    {
+        headerName: 'Price',
+        field: 'price',
+        valueFormatter: function(params) {
+            if (typeof params.value === 'number') {
+                return '£' + params.value.toLocaleString();
+            } else {
+                return params.value;
+            }
         }
-    } }
+    }
 ];
 
-var makes = ['Toyota', 'Ford', 'Porsche', 'Chevy', 'Honda', 'Nissan'];
-var models = ['Cruze', 'Celica', 'Mondeo', 'Boxter', 'Genesis', 'Accord', 'Taurus'];
-
 // this counter is used to give id's to the rows
-var sequenceId = 1;
+var sequenceId;
 
-// create a bunch of dummy data
-var allOfTheData = [];
-for (var i = 0; i<1000; i++) {
-    allOfTheData.push(createRowData(sequenceId++));
-}
+var allOfTheData;
 
 function createRowData(id) {
+    var makes = ['Toyota', 'Ford', 'Porsche', 'Chevy', 'Honda', 'Nissan'];
+    var models = ['Cruze', 'Celica', 'Mondeo', 'Boxter', 'Genesis', 'Accord', 'Taurus'];
     return {
         id: id,
         make: makes[id % makes.length],
@@ -68,7 +69,7 @@ function insertItemsAt2AndRefresh(count) {
 
 function insertItemsAt2(count) {
     var newDataItems = [];
-    for (var i = 0; i<count; i++) {
+    for (var i = 0; i < count; i++) {
         var newItem = createRowData(sequenceId++);
         allOfTheData.splice(2, 0, newItem);
         newDataItems.push(newItem);
@@ -100,14 +101,14 @@ function rowsAndMaxFound() {
 
 // function just gives new prices to the row data, it does not update the grid
 function setPricesHigh() {
-    allOfTheData.forEach( function(dataItem) {
-        dataItem.price = Math.round(55500 + (400 * (.5 + Math.random())));
+    allOfTheData.forEach(function(dataItem) {
+        dataItem.price = Math.round(55500 + 400 * (0.5 + Math.random()));
     });
 }
 
 function setPricesLow() {
-    allOfTheData.forEach( function(dataItem) {
-        dataItem.price = Math.round(1000 + (100 * (.5 + Math.random())));
+    allOfTheData.forEach(function(dataItem) {
+        dataItem.price = Math.round(1000 + 100 * (0.5 + Math.random()));
     });
 }
 
@@ -125,17 +126,17 @@ function jumpTo500() {
     gridOptions.api.ensureIndexVisible(500);
 }
 
-var dataSource = {
+var datasource = {
     rowCount: null, // behave as infinite scroll
-    getRows: function (params) {
+    getRows: function(params) {
         console.log('asking for ' + params.startRow + ' to ' + params.endRow);
         // At this point in your code, you would call the server.
         // To make the demo look real, wait for 500ms before returning
-        setTimeout( function() {
+        setTimeout(function() {
             // take a slice of the total rows
             var rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);
             // make a copy of each row - this is what would happen if taking data from server
-            for (var i = 0; i<rowsThisPage.length; i++) {
+            for (var i = 0; i < rowsThisPage.length; i++) {
                 var item = rowsThisPage[i];
                 // this is a trick to copy an object
                 var itemCopy = JSON.parse(JSON.stringify(item));
@@ -154,12 +155,11 @@ var dataSource = {
 
 var gridOptions = {
     enableColResize: true,
-    debug: true,
     rowSelection: 'multiple',
     rowDeselection: true,
     columnDefs: columnDefs,
     rowModelType: 'infinite',
-    datasource: dataSource,
+    datasource: datasource,
 
     maxBlocksInCache: 2,
     infiniteInitialRowCount: 500,
@@ -170,14 +170,19 @@ var gridOptions = {
     },
 
     onGridReady: function(params) {
+        sequenceId = 1;
+        allOfTheData = [];
+        for (var i = 0; i < 1000; i++) {
+            allOfTheData.push(createRowData(sequenceId++));
+        }
         params.api.sizeColumnsToFit();
     },
 
     getRowStyle: function(params) {
-        if (params.data && params.data.make==='Honda') {
+        if (params.data && params.data.make === 'Honda') {
             return {
                 fontWeight: 'bold'
-            }
+            };
         } else {
             return null;
         }
