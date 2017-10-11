@@ -15,7 +15,7 @@ import {ColumnApi, ComponentUtil, Grid, GridApi, GridOptions, GridParams} from "
 import {AureliaFrameworkFactory} from "./aureliaFrameworkFactory";
 import {AgGridColumn} from "./agGridColumn";
 import {generateBindables} from "./agUtils";
-import {AgFullWidthRowTemplate} from './agTemplate';
+import {AgDateTemplate, AgFullWidthRowTemplate} from './agTemplate';
 import {AureliaFrameworkComponentWrapper} from "./aureliaFrameworkComponentWrapper";
 
 interface IPropertyChanges {
@@ -49,6 +49,9 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
 
     @child('ag-full-width-row-template')
     public fullWidthRowTemplate: AgFullWidthRowTemplate;
+
+    @child('ag-date-template')
+    public dateTemplate: AgDateTemplate;
 
     constructor(element: Element,
                 private taskQueue: TaskQueue,
@@ -104,6 +107,11 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
                 {template: this.fullWidthRowTemplate.template};
         }
 
+        if (this.dateTemplate) {
+            this.gridOptions.dateComponentFramework =
+                {template: this.dateTemplate.template};
+        }
+
         new Grid(this._nativeElement, this.gridOptions, this.gridParams);
         this.api = this.gridOptions.api;
         this.columnApi = this.gridOptions.columnApi;
@@ -115,7 +123,7 @@ export class AgGridAurelia implements ComponentAttached, ComponentDetached {
      * Called by Aurelia whenever a bound property changes
      */
     propertyChanged(propertyName: string, newValue: any, oldValue: any) {
-        //emulate an Angular2 SimpleChanges Object
+        // emulate an Angular2 SimpleChanges Object
         let changes: IPropertyChanges = {};
         changes[propertyName] = <any>{currentValue: newValue, previousValue: oldValue};
 

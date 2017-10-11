@@ -81,6 +81,18 @@ export class AgHeaderGroupTemplate {
     }
 }
 
+@customElement('ag-date-template')
+@noView()
+@autoinject()
+@processContent(parseElement)
+export class AgDateTemplate {
+    template: string;
+
+    constructor(targetInstruction: TargetInstruction) {
+        this.template = getTemplate(targetInstruction);
+    }
+}
+
 @customElement('ag-full-width-row-template')
 @noView()
 @autoinject()
