@@ -484,8 +484,8 @@ export class InMemoryRowModel {
     private doRowGrouping(groupState: any, rowNodeTransaction: RowNodeTransaction, changedPath: ChangedPath) {
 
         // grouping is enterprise only, so if service missing, skip the step
-        let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (rowsAlreadyGrouped) { return; }
+        let usingTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (usingTreeData) { return; }
 
         if (this.groupStage) {
 

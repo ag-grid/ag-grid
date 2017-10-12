@@ -265,6 +265,8 @@ export interface GridOptions {
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?: GetNodeChildDetails;
+    getGroupKeys?: (data: any) => string[];
+    isGroup?: (data: any) => boolean;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
     getRowNodeId?: GetRowNodeIdFunc;

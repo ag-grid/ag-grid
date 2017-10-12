@@ -25,6 +25,7 @@ export class InMemoryNodeManager {
     private getNodeChildDetails: GetNodeChildDetails;
     private doesDataFlower: (data: any) => boolean;
     private suppressParentsInRowNodes: boolean;
+    private isGroup: (dataItem: any) => boolean;
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: {[id:string]: RowNode} = {};
@@ -74,6 +75,7 @@ export class InMemoryNodeManager {
         this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
         this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
+        this.isGroup = this.gridOptionsWrapper.getIsGroupFunc();
 
         let rowsAlreadyGrouped = _.exists(this.getNodeChildDetails);
 
@@ -202,7 +204,13 @@ export class InMemoryNodeManager {
     private createNode(dataItem: any, parent: RowNode, level: number): RowNode {
         let node = new RowNode();
         this.context.wireBean(node);
-        let nodeChildDetails = this.getNodeChildDetails ? this.getNodeChildDetails(dataItem) : null;
+
+        let doingTreeData = _.exists(this.getNodeChildDetails);
+        let doingGroupData = !doingTreeData && _.exists(this.isGroup);
+
+        let nodeChildDetails = doingTreeData ? this.getNodeChildDetails(dataItem) : null;
+        let isGroup = doingGroupData ? this.isGroup(dataItem) : false;
+
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
             node.childrenAfterGroup = this.recursiveFunction(nodeChildDetails.children, node, level + 1);
@@ -213,10 +221,17 @@ export class InMemoryNodeManager {
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         } else {
-            node.group = false;
-            node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
-            if (node.canFlower) {
-                node.expanded = this.isExpanded(level);
+
+            node.group = isGroup;
+
+            if (isGroup) {
+                node.userGroup = true;
+                node.canFlower = false;
+            } else {
+                node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
+                if (node.canFlower) {
+                    node.expanded = this.isExpanded(level);
+                }
             }
         }
 
