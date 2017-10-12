@@ -181,7 +181,6 @@ export class GroupStage implements IRowNodeStage {
                 changedPath.addParentNode(rowNode.parent);
             }
         });
-        console.log(">>>> rootNode", rootNode);
     }
 
     private insertRowNodeIntoGroups(newRowNode: RowNode, rootNode: RowNode, groupColumns: Column[], expandByDefault: any, includeParents: boolean, isPivot: boolean): void {
