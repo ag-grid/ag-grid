@@ -237,6 +237,13 @@ function renderStyles($styles) {
     }
 }
 
+// helpers in the example render, shared between angular and react
+function renderNonGeneratedScripts($scripts) {
+    foreach ($scripts as $script) {
+        echo '    <script src="'.$script.'"></script>' . "\n";
+    }
+}
+
 function filterByExt($files, $root, $preview, $ext) {
     $matching = array();
     foreach ($files as $file) {

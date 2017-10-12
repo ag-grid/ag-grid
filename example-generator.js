@@ -13,8 +13,12 @@ const fsExtra = require('fs-extra');
 
 const prettier = require('prettier');
 
+function copyFilesSync(files, dest) {
+    files.forEach(file => fsExtra.copySync(file, dest + '/' + path.basename(file)));
+}
+
 function copyGlobSync(globString, dest) {
-    glob.sync(globString).forEach(file => fsExtra.copySync(file, dest + '/' + path.basename(file)));
+    copyFilesSync(glob.sync(globString), dest);
 }
 
 function phpArrayToJSON(string) {
@@ -67,7 +71,15 @@ module.exports = cb => {
         (section, example, options) => {
             count++;
             const document = glob.sync(path.join('./src', section, example, 'index.html'))[0];
-            const script = glob.sync(path.join('./src', section, example, '*.js'))[0];
+            let script, scripts;
+            if (glob.sync(path.join('./src', section, example, '*.js')).length > 1) {
+                script = glob.sync(path.join('./src', section, example, 'main.js'))[0];
+                scripts = glob.sync(path.join('./src', section, example, '*.js'), { ignore: '**/main.js' });
+            } else {
+                script = glob.sync(path.join('./src', section, example, '*.js'))[0];
+                scripts = [];
+            }
+
             const stylesGlob = path.join('./src', section, example, '*.css');
             const sources = [fs.readFileSync(script, {encoding: 'utf8'}), fs.readFileSync(document, {encoding: 'utf8'})];
             const _gen = path.join('./src', section, example, '_gen');
@@ -107,6 +119,7 @@ module.exports = cb => {
             }
 
             copyGlobSync(stylesGlob, reactPath);
+            copyFilesSync(scripts, reactPath);
 
             const angularPath = path.join(_gen, 'angular');
             mkdirp.sync(path.join(angularPath, 'app'));
@@ -116,6 +129,7 @@ module.exports = cb => {
                 fs.writeFileSync(path.join(angularPath, 'styles.css'), inlineStyles);
             }
             copyGlobSync(stylesGlob, angularPath);
+            copyFilesSync(scripts, angularPath);
 
             const vanillaPath = path.join(_gen, 'vanilla');
 

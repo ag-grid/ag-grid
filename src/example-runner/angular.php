@@ -17,6 +17,8 @@ if ($generated) {
 <?php renderExampleExtras($_GET); ?>
 <?php renderStyles($example['styles']); ?>
 
+<?php renderNonGeneratedScripts($example['scripts']); ?>
+
     <!-- Polyfills -->
     <script src="https://unpkg.com/core-js/client/shim.min.js"></script>
     <script src="https://unpkg.com/zone.js@0.8.17?main=browser"></script>

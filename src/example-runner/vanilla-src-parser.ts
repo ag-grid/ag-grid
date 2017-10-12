@@ -181,8 +181,7 @@ export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) 
         matches: nodeIsSimpleHttpRequest,
         apply: (col, node) => {
             const dataUrl = node.expression.callee.object.arguments[0].properties[0].value.raw;
-            // Let's try this for now
-            const callback = '      { gridOptions.api.setRowData(data) }';
+            const callback = generate(node.expression.arguments[0].body);
 
             col.data = {url: dataUrl, callback: callback};
         }

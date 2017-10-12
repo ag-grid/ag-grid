@@ -14,6 +14,7 @@ if ($generated) {
     <style> html, body, #root { margin: 0; padding: 0; height: 100%; } </style>
 <?php renderExampleExtras($_GET) ?>
 <?php renderStyles($example['styles']); ?>
+<?php renderNonGeneratedScripts($example['scripts']); ?>
 </head>
 <body>
     <div id="root">Loading ag-Grid React example&hellip;</div>
