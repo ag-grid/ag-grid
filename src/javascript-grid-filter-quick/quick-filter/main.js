@@ -62,8 +62,8 @@ var gridOptions = {
     rowData: createRowData()
 };
 
-function onFilterChanged(value) {
-    gridOptions.api.setQuickFilter(value);
+function onFilterTextBoxChanged() {
+    gridOptions.api.setQuickFilter(document.getElementById('filter-text-box').value);
 }
 
 function onPrintQuickFilterTexts() {

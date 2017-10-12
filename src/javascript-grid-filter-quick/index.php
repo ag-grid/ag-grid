@@ -106,7 +106,7 @@ Params contains {value, node, data, column, colDef}.
     </ul>
 </p>
 
-<?= example('Quick Filter', 'quick-filter') ?>
+<?= example('Quick Filter', 'quick-filter', 'generated') ?>
 
 <h3 id="server-side-filtering">Server Side Data</h3>
 
