@@ -369,6 +369,7 @@
     menuItem(2, 'Styled Report', 'Styled Report', 'example-account-report/');
     menuItem(2, 'File Browser', 'File Browser', 'example-file-browser/');
     menuItem(2, 'Expressions and Context', 'Expressions', 'example-expressions-and-context/');
+    menuItem(2, 'Import Excel', 'Excel Import', 'example-excel-import/');
     menuItem(2, 'Gallery', 'Gallery', 'example-gallery/');
     ?>
 </div>

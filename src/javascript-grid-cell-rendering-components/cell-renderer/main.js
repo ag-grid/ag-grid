@@ -15,11 +15,10 @@ function createImageSpan(imageMultiplier, image) {
  * After a data update, cellRenderer Components.refresh method will be called to re-render the altered Cells
  */
 function frostierYear(extraDaysFrost) {
-    var model = gridOptions.api.getModel();
-    for (var i = 0; i < model.rowsToDisplay.length; i++) {
-        var rowNode = model.rowsToDisplay[i];
+    // iterate over the rows and make each "days of air frost"
+    gridOptions.api.forEachNode(function(rowNode) {
         rowNode.setDataValue('Days of air frost (days)', rowNode.data['Days of air frost (days)'] + extraDaysFrost);
-    }
+    })
 }
 
 /**
@@ -27,19 +26,12 @@ function frostierYear(extraDaysFrost) {
  * Visually indicates if this months value is higher or lower than last months value
  * by adding an +/- symbols according to the difference
  */
-function deltaIndicator(params, field) {
-    var rowsToDisplay = gridOptions.api.getModel().rowsToDisplay;
-
-    var index = params.node.childIndex - 1;
-    if (params.node.firstChild) {
-        index = rowsToDisplay[rowsToDisplay.length - 1].childIndex;
-    }
-
+function deltaIndicator(params) {
     var element = document.createElement("span");
     var imageElement = document.createElement("img");
 
     // visually indicate if this months value is higher or lower than last months value
-    if (params.value > rowsToDisplay[index].data[field]) {
+    if (params.value > 15) {
         imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/fire-plus.png"
     } else {
         imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/fire-minus.png"
@@ -50,7 +42,7 @@ function deltaIndicator(params, field) {
 }
 
 /**
- * Demonstrating Component Cell Rendere
+ * Demonstrating Component Cell Renderer
  */
 function DaysFrostRenderer() {
     this.eGui = document.createElement("span");
@@ -67,7 +59,7 @@ DaysFrostRenderer.prototype.updateImages = function() {
         imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/" + this.rendererImage;
         this.eGui.appendChild(imageElement);
     }
-}
+};
 DaysFrostRenderer.prototype.getGui = function getGui() {
     return this.eGui;
 };
@@ -105,17 +97,13 @@ var columnDefs = [
         headerName: "Max Temp (˚C)",
         field: "Max temp (C)",
         width: 120,
-        cellRenderer: function (params) {      // Function cell renderer
-            return deltaIndicator(params, "Max temp (C)");
-        }
+        cellRenderer: deltaIndicator           // Function cell renderer
     },
     {
         headerName: "Min Temp (˚C)",
         field: "Min temp (C)",
         width: 120,
-        cellRenderer: function (params) {      // Function cell renderer
-            return deltaIndicator(params, "Min temp (C)");
-        }
+        cellRenderer: deltaIndicator           // Function cell renderer
     },
     {
         headerName: "Days of Air Frost",

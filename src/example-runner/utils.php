@@ -316,6 +316,9 @@ function renderExampleExtras($config) {
         'fontawesome' => array(
             'styles' => array( 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' )
         ),
+        'xlsx-style' => array(
+            'scripts' => array( 'https://unpkg.com/xlsx-style@0.8.13/dist/xlsx.full.min.js' )
+        ),
         'angularjs1' => array(
             'scripts' => array(
                 'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js'
