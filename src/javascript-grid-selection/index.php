@@ -370,7 +370,7 @@ function myNavigation(params) {
    }
 }</snippet>
 
-    <?= example('Selection with Keyboard Arrow Keys', 'selection-with-arrow-keys', 'generated') ?>
+    <?= example('Selection with Keyboard Arrow Keys', 'selection-with-arrow-keys') ?>
 
 </div>
 
