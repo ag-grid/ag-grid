@@ -1,21 +1,21 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", minWidth: 150},
-    {headerName: "Age", field: "age", minWidth: 90},
-    {headerName: "Country", field: "country"},
-    {headerName: "Year", field: "year"},
-    {headerName: "Date", field: "date"},
-    {headerName: "Sport", field: "sport"},
-    {headerName: "Gold", field: "gold"},
-    {headerName: "Silver", field: "silver"},
-    {headerName: "Bronze", field: "bronze"},
-    {headerName: "Total", field: "total"}
+    {headerName: 'Athlete', field: 'athlete', minWidth: 150},
+    {headerName: 'Age', field: 'age', minWidth: 90},
+    {headerName: 'Country', field: 'country'},
+    {headerName: 'Year', field: 'year'},
+    {headerName: 'Date', field: 'date'},
+    {headerName: 'Sport', field: 'sport'},
+    {headerName: 'Gold', field: 'gold'},
+    {headerName: 'Silver', field: 'silver'},
+    {headerName: 'Bronze', field: 'bronze'},
+    {headerName: 'Total', field: 'total'}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    onGridReady: function () {
-        gridOptions.api.sizeColumnsToFit();
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
     }
     // onViewportChanged: function () {
     //     gridOptions.api.sizeColumnsToFit();
