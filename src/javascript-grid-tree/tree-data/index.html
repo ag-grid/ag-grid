@@ -1,8 +1,2 @@
-<input placeholder="Filter..." type="text"
-       onpaste="onFilterChanged(this.value)"
-       oninput="onFilterChanged(this.value)"
-       onchange="onFilterChanged(this.value)"
-       onchange="onFilterChanged(this.value)"
-       onkeydown="onFilterChanged(this.value)"
-       onkeyup="onFilterChanged(this.value)"/>
-<div id="myGrid" class="ag-fresh" style="height: 450px; margin-top: 4px;"></div>
+<div style="margin-bottom:4px"><input placeholder="Filter..." type="text" id="filter-textbox" oninput="onTextboxFilterChanged()" /></div>
+<div id="myGrid" class="ag-fresh" style="height: 450px;"></div>

@@ -4,25 +4,13 @@
 <div style="position: absolute; top: 0px; left: 0px;">
     <div style="padding: 4px;">
         <button onclick="clearPinned()">Clear Pinned</button>
-        <button onclick="resetPinned()">Left = {#, Athlete, Age} Right = {Total}</button>
-        <button onclick="pinCountry()">Left = {Country}</button>
+        <button onclick="resetPinned()">Left = #, Athlete, Age; Right = Total</button>
+        <button onclick="pinCountry()">Left = Country</button>
     </div>
 
     <div style="padding: 4px;">
         Jump to:
-        <input placeholder="row" type="text" style="width: 40px"
-               onpaste="jumpToRow(this.value)"
-               oninput="jumpToRow(this.value)"
-               onchange="jumpToRow(this.value)"
-               onchange="jumpToRow(this.value)"
-               onkeydown="jumpToRow(this.value)"
-               onkeyup="jumpToRow(this.value)"/>
-        <input placeholder="col" type="text" style="width: 40px"
-               onpaste="jumpToRow(this.value)"
-               oninput="jumpToCol(this.value)"
-               onchange="jumpToCol(this.value)"
-               onchange="jumpToCol(this.value)"
-               onkeydown="jumpToCol(this.value)"
-               onkeyup="jumpToCol(this.value)"/>
+        <input placeholder="row" type="text" style="width: 40px" id="row" oninput="jumpToRow()" />
+        <input placeholder="col" type="text" style="width: 40px" id="col" oninput="jumpToCol()" />
     </div>
 </div>

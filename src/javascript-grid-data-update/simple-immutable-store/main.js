@@ -5,16 +5,20 @@ var columnDefs = [
     {headerName: 'Group', field: 'group'}
 ];
 
-var immutableStore = [];
+function getInitialData() {
+    var data = [];
+    for (var i = 0; i < 10; i++) {
+        data.push(createItem());
+    }
 
-for (var i = 0; i<10; i++) {
-    var newItem = createItem();
-    immutableStore.push(newItem);
+    return data;
 }
+
+var immutableStore;
 
 function addFiveItems() {
     var newStore = immutableStore.slice();
-    for (var i = 0; i<5; i++) {
+    for (var i = 0; i < 5; i++) {
         var newItem = createItem();
         newStore.push(newItem);
     }
@@ -24,15 +28,21 @@ function addFiveItems() {
 
 function removeSelected() {
     var selectedRowNodes = gridOptions.api.getSelectedNodes();
-    var selectedIds = selectedRowNodes.map( function(rowNode) { return rowNode.id; });
-    immutableStore = immutableStore.filter( function(dataItem) { return selectedIds.indexOf(dataItem.symbol) < 0; });
+    var selectedIds = selectedRowNodes.map(function(rowNode) {
+        return rowNode.id;
+    });
+    immutableStore = immutableStore.filter(function(dataItem) {
+        return selectedIds.indexOf(dataItem.symbol) < 0;
+    });
     gridOptions.api.setRowData(immutableStore);
 }
 
 function setSelectedToGroup(newGroup) {
     var selectedRowNodes = gridOptions.api.getSelectedNodes();
-    var selectedIds = selectedRowNodes.map( function(rowNode) { return rowNode.id; });
-    immutableStore = immutableStore.map( function(dataItem) {
+    var selectedIds = selectedRowNodes.map(function(rowNode) {
+        return rowNode.id;
+    });
+    immutableStore = immutableStore.map(function(dataItem) {
         var itemSelected = selectedIds.indexOf(dataItem.symbol) >= 0;
         if (itemSelected) {
             return {
@@ -51,7 +61,7 @@ function setSelectedToGroup(newGroup) {
 
 function updatePrices() {
     var newStore = [];
-    immutableStore.forEach( function(item) {
+    immutableStore.forEach(function(item) {
         newStore.push({
             // use same symbol as last time, this is the unique id
             symbol: item.symbol,
@@ -94,20 +104,19 @@ function setGroupingEnabled(enabled) {
         gridOptions.columnApi.setColumnVisible('group', true);
         gridOptions.columnApi.setColumnVisible('symbol', true);
     }
-    setItemVisible('groupingon', !enabled);
-    setItemVisible('groupingoff', enabled);
+    setItemVisible('groupingOn', !enabled);
+    setItemVisible('groupingOff', enabled);
 }
 
 function setItemVisible(id, visible) {
-    var element = document.querySelector('#'+id);
+    var element = document.querySelector('#' + id);
     element.style.display = visible ? null : 'none';
 }
 
 // creates a unique symbol, eg 'ADG' or 'ZJD'
 function createUniqueRandomSymbol() {
-
     var symbol;
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
     var isUnique = false;
     while (!isUnique) {
@@ -118,8 +127,8 @@ function createUniqueRandomSymbol() {
         }
         // check uniqueness
         isUnique = true;
-        immutableStore.forEach( function(oldItem) {
-            if (oldItem.symbol===symbol) {
+        immutableStore.forEach(function(oldItem) {
+            if (oldItem.symbol === symbol) {
                 isUnique = false;
             }
         });
@@ -143,13 +152,20 @@ var gridOptions = {
     },
     groupDefaultExpanded: 1,
     enableSorting: true,
-    getRowNodeId: function(data) { return data.symbol; }
+    rowData: immutableStore,
+    getRowNodeId: function(data) {
+        return data.symbol;
+    },
+    onGridReady: function() {
+        immutableStore = [];
+        immutableStore = getInitialData();
+        gridOptions.api.setRowData(immutableStore);
+        this.setGroupingEnabled(false);
+    }
 };
 
 // after page is loaded, create the grid.
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener('DOMContentLoaded', function() {
     var eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
-    gridOptions.api.setRowData(immutableStore);
-    setGroupingEnabled(false);
 });

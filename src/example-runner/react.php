@@ -1,18 +1,19 @@
 <?php
 include 'utils.php';
 $example = getExampleInfo('react');
+$generated = isset($_GET['generated']);
+if ($generated) { 
+    echo "<!DOCTYPE html>\n";
+};
 ?>
 <html>
 <head>
     <title>ag-Grid React Example</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-<?php if (!$example['preview']) { ?>
-    <style> html, body { margin: 0; padding: 0; } </style>
-<?php } ?>
+    <style> html, body, #root { margin: 0; padding: 0; height: 100%; } </style>
 <?php renderExampleExtras($_GET) ?>
 <?php renderStyles($example['styles']); ?>
-
 </head>
 <body>
     <div id="root">Loading ag-Grid React example&hellip;</div>
@@ -27,9 +28,7 @@ $example = getExampleInfo('react');
     <script src="<?=$example['boilerplatePath']?>systemjs.config.js"></script>
 
     <script>
-      System.import('<?=$example['appLocation']?>index.jsx').catch( function(err) {
-        console.error(err);
-      })
+      System.import('<?=$example['appLocation']?>index.jsx').catch( function(err) { console.error(err); })
     </script>
 </body>
 </html>

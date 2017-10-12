@@ -1,14 +1,14 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120, rowGroup: true, hide: true},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110, rowGroup: true, hide: true},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
+    {headerName: 'Athlete', field: 'athlete', width: 150},
+    {headerName: 'Age', field: 'age', width: 90},
+    {headerName: 'Country', field: 'country', width: 120, rowGroup: true, hide: true},
+    {headerName: 'Year', field: 'year', width: 90},
+    {headerName: 'Date', field: 'date', width: 110},
+    {headerName: 'Sport', field: 'sport', width: 110, rowGroup: true, hide: true},
+    {headerName: 'Gold', field: 'gold', width: 100},
+    {headerName: 'Silver', field: 'silver', width: 100},
+    {headerName: 'Bronze', field: 'bronze', width: 100},
+    {headerName: 'Total', field: 'total', width: 100}
 ];
 
 var gridOptions = {
@@ -17,14 +17,26 @@ var gridOptions = {
     rememberGroupStateWhenNewData: true,
     rowData: null,
     onGridReady: function(params) {
-        params.api.setSortModel([
-            {colId: 'ag-Grid-AutoColumn', sort: 'asc'}
-        ]);
+        params.api.setSortModel([{colId: 'ag-Grid-AutoColumn', sort: 'asc'}]);
     }
 };
 
 var allRowData;
-var pickingEvenRows = false;
+var pickingEvenRows;
+
+// do http request to get our sample data - not using any framework to keep the example self contained.
+// you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+function fetchData(url, callback) {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open('GET', url);
+    httpRequest.send();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+            var httpResult = JSON.parse(httpRequest.responseText);
+            callback(httpResult);
+        }
+    };
+}
 
 function refreshData() {
     // in case user hits the 'refresh groups' data before the data was loaded
@@ -34,9 +46,9 @@ function refreshData() {
 
     // pull out half the data, different half to the last time
     var dataThisTime = [];
-    allRowData.forEach( function(item, index) {
+    allRowData.forEach(function(item, index) {
         var rowIsEven = index % 2 === 0;
-        if ( (pickingEvenRows && rowIsEven) || (!pickingEvenRows && !rowIsEven) ) {
+        if ((pickingEvenRows && rowIsEven) || (!pickingEvenRows && !rowIsEven)) {
             dataThisTime.push(item);
         }
     });
@@ -51,16 +63,15 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            allRowData = httpResult;
-            refreshData();
-        }
-    };
+    fetchData('https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json', function(data) {
+        allRowData = data;
+        var dataThisTime = [];
+        data.forEach(function(item, index) {
+            if (index % 2 === 0) {
+                dataThisTime.push(item);
+            }
+        });
+
+        gridOptions.api.setRowData(dataThisTime);
+    });
 });

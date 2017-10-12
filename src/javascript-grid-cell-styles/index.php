@@ -200,7 +200,7 @@ cellClassRules: {
         </ul>
     </p>
 
-    <?= example('Cell Styling', 'cell-styling') ?>
+    <?= example('Cell Styling', 'cell-styling', 'generated') ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

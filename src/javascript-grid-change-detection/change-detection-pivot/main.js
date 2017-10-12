@@ -9,7 +9,9 @@ var columnDefs = [
 
 function ageRangeValueGetter(params) {
     var age = params.getValue('age');
-    if (age===undefined) { return null; }
+    if (age === undefined) {
+        return null;
+    }
     if (age < 20) {
         return '< 20';
     } else if (age > 30) {
@@ -22,35 +24,40 @@ function ageRangeValueGetter(params) {
 var studentIdSequence = 10023;
 
 // pretty basic, but deterministic (so same numbers each time we run), random number generator
-var seed = 16807 % 2147483647;
+var seed;
 function random() {
-    seed = seed * 16807 % 2147483647;
+    seed = ((seed || 1) * 16807) % 2147483647;
     return seed;
 }
 
-var rowData = [];
-for (var i = 1; i<=100; i++) {
-    var row = createRow();
-    rowData.push(row);
+function getRowData() {
+    var rowData = [];
+    for (var i = 1; i <= 100; i++) {
+        var row = createRow();
+        rowData.push(row);
+    }
+    return rowData;
 }
 
 function createRow() {
     var randomNumber = random();
     var result = {
         student: studentIdSequence++,
-        points: (randomNumber % 60) + 40,
-        course: ['Science', 'History'][(randomNumber % 3 === 0) ? 0 : 1],
-        yearGroup: 'Year ' + ((randomNumber % 4) + 1), // 'Year 1' to 'Year 4'
-        age: (randomNumber % 25) + 15 // 15 to 40
+        points: randomNumber % 60 + 40,
+        course: ['Science', 'History'][randomNumber % 3 === 0 ? 0 : 1],
+        yearGroup: 'Year ' + (randomNumber % 4 + 1), // 'Year 1' to 'Year 4'
+        age: randomNumber % 25 + 15 // 15 to 40
     };
     return result;
 }
 
-function pivotMode(value) {
-    if (value) {
+function pivotMode() {
+    var checked = document.getElementById('pivot-mode').checked;
+
+    if (checked) {
         gridOptions.columnApi.setPivotMode(true);
         gridOptions.columnApi.setRowGroupColumns(['yearGroup']);
-        gridOptions.columnApi.setPivotColumns(['course','ageRange']);
+        gridOptions.columnApi.setPivotColumns(['course', 'ageRange']);
     } else {
         gridOptions.columnApi.setPivotMode(false);
         gridOptions.columnApi.setRowGroupColumns([]);
@@ -59,7 +66,7 @@ function pivotMode(value) {
 }
 
 function updateOneRecord() {
-    var rowNodeToUpdate = pickExistingRowNodeAtRandom();
+    var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridOptions);
     var randomValue = createNewRandomScore(rowNodeToUpdate.data);
     console.log('updating points to ' + randomValue + ' on ', rowNodeToUpdate.data);
     rowNodeToUpdate.setDataValue('points', randomValue);
@@ -78,26 +85,30 @@ function createRandomNumber() {
     return Math.floor(Math.random() * 100);
 }
 
-function pickExistingRowNodeAtRandom() {
+function pickExistingRowNodeAtRandom(gridOptions) {
     var allItems = [];
     gridOptions.api.forEachLeafNode(function(rowNode) {
         allItems.push(rowNode);
     });
 
-    if (allItems.length===0) { return; }
+    if (allItems.length === 0) {
+        return;
+    }
     var result = allItems[Math.floor(Math.random() * allItems.length)];
 
     return result;
 }
 
-function pickExistingRowItemAtRandom() {
-    var rowNode = pickExistingRowNodeAtRandom();
+function pickExistingRowItemAtRandom(gridOptions) {
+    var rowNode = pickExistingRowNodeAtRandom(gridOptions);
     return rowNode ? rowNode.data : null;
 }
 
 function updateUsingTransaction() {
-    var itemToUpdate = pickExistingRowItemAtRandom();
-    if (!itemToUpdate) { return; }
+    var itemToUpdate = pickExistingRowItemAtRandom(gridOptions);
+    if (!itemToUpdate) {
+        return;
+    }
 
     console.log('updating - before', itemToUpdate);
     itemToUpdate.points = createRandomNumber(itemToUpdate);
@@ -134,7 +145,7 @@ function addNewCourse() {
 function removePhysics() {
     var allPhysics = [];
     gridOptions.api.forEachLeafNode(function(rowNode) {
-        if (rowNode.data.course==='Physics') {
+        if (rowNode.data.course === 'Physics') {
             allPhysics.push(rowNode.data);
         }
     });
@@ -146,9 +157,11 @@ function removePhysics() {
 }
 
 function moveCourse() {
-    var item = pickExistingRowItemAtRandom();
-    if (!item) { return; }
-    item.course = item.course==='History' ? 'Science' : 'History';
+    var item = pickExistingRowItemAtRandom(gridOptions);
+    if (!item) {
+        return;
+    }
+    item.course = item.course === 'History' ? 'Science' : 'History';
     var transaction = {
         update: [item]
     };
@@ -162,7 +175,7 @@ var gridOptions = {
         width: 120
     },
     columnDefs: columnDefs,
-    rowData: rowData,
+    rowData: getRowData(),
     pivotMode: true,
     groupDefaultExpanded: 1,
     // enableCellChangeFlash: true,

@@ -123,7 +123,7 @@ api.forEachLeafNode( function(rowNode, index) {
         In the example, try applying some sorts and filters, and see how this impacts the different operations.
     </p>
 
-    <?= example('Using For-Each', 'using-for-each', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Using For-Each', 'using-for-each', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="for-each-node">Accessing Displayed Rows</h2>
 
@@ -165,7 +165,7 @@ api.forEachLeafNode( function(rowNode, index) {
             one page.</li>
     </ul>
 
-    <?= example('Get Displayed Row', 'get-displayed-row') ?>
+    <?= example('Get Displayed Row', 'get-displayed-row', 'generated') ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

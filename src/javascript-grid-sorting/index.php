@@ -58,7 +58,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         </ul>
     </p>
 
-    <?= example('Custom Sorting', 'custom-sorting') ?>
+    <?= example('Custom Sorting', 'custom-sorting', 'generated') ?>
 
     <h3 id="sorting-animation">Sorting Animation</h3>
 
@@ -97,7 +97,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
     </ul>
     </p>
 
-    <?= example('Sorting Order and Animation', 'sorting-order-and-animation') ?>
+    <?= example('Sorting Order and Animation', 'sorting-order-and-animation', 'generated') ?>
 
     <h3 id="sorting-api">Sorting API</h3>
 
@@ -128,7 +128,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         The example below shows the API in action.
     </p>
 
-    <?= example('Sorting API', 'sorting-api') ?>
+    <?= example('Sorting API', 'sorting-api', 'generated') ?>
 
     <h3 id="sorting-groups">Sorting Groups</h3>
 
@@ -163,7 +163,7 @@ var groupColumn = {
         The following example is configured to use this feature.
     </p>
 
-    <?= example('Accented Sort', 'accented-sort') ?>
+    <?= example('Accented Sort', 'accented-sort', 'generated') ?>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

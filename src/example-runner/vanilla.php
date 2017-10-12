@@ -4,10 +4,14 @@ include 'utils.php';
 $exampleDir = basename($_GET['example']);
 $exampleSection = basename($_GET['section']);
 $multi = isset($_GET['multi']);
+$generated = isset($_GET['generated']);
 $preview = isset($_GET['preview']);
+$gridDefaults = getGridSettings();
 
 if ($multi) {
     $path = path_combine('..', $exampleSection, $exampleDir, 'vanilla');
+} else if ($generated) {
+    $path = path_combine('..', $exampleSection, $exampleDir, '_gen', 'vanilla');
 } else {
     $path = path_combine('..', $exampleSection, $exampleDir);
 }
@@ -30,11 +34,10 @@ foreach ($files as $file) {
     }
 }
 ?>
+<?php if ($generated) { echo "<!DOCTYPE html>\n"; } ?>
 <html>
 <head>
-<?php if (!$preview) { ?>
-    <style> html, body { margin: 0; padding: 0; } </style>
-<?php } ?>
+<style> html, body { margin: 0; padding: 0; height: 100%; } </style>
 <?php renderExampleExtras($_GET) ?>
 <?= globalAgGridScript(isset($_GET["enterprise"])) ?>
 
@@ -44,13 +47,10 @@ foreach ($files as $file) {
 
 <?php
 include path_combine($path, 'index.html');
-
 echo "\n";
-
 foreach ($scripts as $script) {
-    echo '<script src="'.$script.'"></script>' . "\n";
+echo '    <script src="'.$script.'"></script>' . "\n";
 }
 ?>
-
 </body>
 </html>

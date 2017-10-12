@@ -196,7 +196,7 @@ gridOptions.rowBuffer = 9999</snippet>
         </li>
     </ul>
 
-    <?= example('Accessibility', 'accessibility', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Accessibility', 'accessibility', 'generated', array("enterprise" => 1)) ?>
 
     <note>
         Tested on Windows using JAWS (version 18) and Mac using VoiceOver (Sierra 10.12.4)

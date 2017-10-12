@@ -21,8 +21,6 @@ var nextBookId = 62472;
 var nextTradeId = 24287;
 var nextBatchId = 101;
 
-var gridOptions;
-
 var columnDefs = [
         // these are the row groups, so they are all hidden (they are showd in the group column)
         {headerName: 'Product', field: 'product', enableRowGroup: true, enablePivot: true, rowGroupIndex: 0, hide: true},
@@ -128,10 +126,8 @@ function createTradeId() {
     return nextTradeId
 }
 
-function createGridOptions() {
-    createRowData();
 
-    gridOptions = {
+    var gridOptions = {
         deltaRowDataMode: true,
         columnDefs: columnDefs,
         rowData: globalRowData,
@@ -146,12 +142,16 @@ function createGridOptions() {
         getRowNodeId: function(data) { return data.trade; },
         defaultColDef: {
             width: 120
+        },
+        onGridReady: function(params) {
+            // kick off the feed
+            timeoutTarget(params);
+            createRowData();
+            params.api.setRowData(globalRowData)
         }
     };
-    console.log('Record count is ' + gridOptions.rowData.length);
-}
 
-function updateUsingTransaction() {
+function updateUsingTransaction(gridOptions) {
 
     var itemsToRemove = removeSomeItems();
     var itemsToAdd = addSomeItems();
@@ -161,6 +161,10 @@ function updateUsingTransaction() {
             add: itemsToAdd,
             remove: itemsToRemove,
             update: itemsToUpdate});
+}
+
+function updateUsingTransactionHandler() {
+    updateUsingTransaction(gridOptions);
 }
 
 function updateUsingTransactionImmutableStore() {
@@ -243,18 +247,16 @@ function updateImmutableObject(original, newValues) {
 // randomlyChangeData() method will be called.
 var feedActive = false;
 
-// kick off the feed
-timeoutTarget();
 
 // this method gets executed periodically
-function timeoutTarget() {
+function timeoutTarget(gridOptions) {
     // if feed active, then call the randomlyChangeData
     if (feedActive) {
-        updateUsingTransaction();
+        updateUsingTransaction(gridOptions);
     }
     // call this method again after between 1 and 4 seconds.
     var millis = randomBetween(1000, 4000);
-    this.setTimeout(timeoutTarget, millis);
+    setTimeout(timeoutTarget, millis, gridOptions);
 }
 
 function toggleFeed() {
@@ -267,6 +269,5 @@ function toggleFeed() {
 // after page is loaded, create the grid.
 document.addEventListener("DOMContentLoaded", function() {
     var eGridDiv = document.querySelector('#myGrid');
-    createGridOptions();
     new agGrid.Grid(eGridDiv, gridOptions);
 });

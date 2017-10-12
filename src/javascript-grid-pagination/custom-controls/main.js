@@ -26,23 +26,25 @@ var gridOptions = {
     pagination: true,
     suppressPaginationPanel: true,
     suppressScrollOnNewData: true,
-    onPaginationChanged: onPaginationPageLoaded
+    onPaginationChanged: onPaginationChanged
 };
 
 function setText(selector, text) {
     document.querySelector(selector).innerHTML = text;
 }
 
-function onPaginationPageLoaded() {
-    console.log('onPaginationPageLoaded');
+function onPaginationChanged() {
+    if (gridOptions) {
+        console.log('onPaginationPageLoaded');
 
-    setText('#lbLastPageFound', gridOptions.api.paginationIsLastPageFound());
-    setText('#lbPageSize', gridOptions.api.paginationGetPageSize());
-    // we +1 to current page, as pages are zero based
-    setText('#lbCurrentPage', gridOptions.api.paginationGetCurrentPage() + 1);
-    setText('#lbTotalPages', gridOptions.api.paginationGetTotalPages());
+        setText('#lbLastPageFound', gridOptions.api.paginationIsLastPageFound());
+        setText('#lbPageSize', gridOptions.api.paginationGetPageSize());
+        // we +1 to current page, as pages are zero based
+        setText('#lbCurrentPage', gridOptions.api.paginationGetCurrentPage() + 1);
+        setText('#lbTotalPages', gridOptions.api.paginationGetTotalPages());
 
-    setLastButtonDisabled(!gridOptions.api.paginationIsLastPageFound());
+        setLastButtonDisabled(!gridOptions.api.paginationIsLastPageFound());
+    }
 }
 
 function setLastButtonDisabled(disabled) {

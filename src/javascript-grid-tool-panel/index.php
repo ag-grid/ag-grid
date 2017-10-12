@@ -109,7 +109,7 @@ colDefs = {
         </ul>
     </p>
 
-    <?= example('Tool Panel Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Tool Panel Example', 'simple', 'generated', array("enterprise" => 1)) ?>
 
     <h3 id="suppressExample">Suppress Panels</h3>
 
@@ -125,7 +125,7 @@ colDefs = {
     </ul>
     </p>
 
-    <?= example('Suppress Panels', 'suppress', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Suppress Panels', 'suppress', 'generated', array("enterprise" => 1)) ?>
 
     <h3 id="read-only-functions">Read Only Functions</h3>
 
@@ -135,7 +135,7 @@ colDefs = {
         so they can see what columns are used, but prevent them from making changes to the selection.
     </p>
 
-    <?= example('Read Only Example', 'read-only', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Read Only Example', 'read-only', 'generated', array("enterprise" => 1)) ?>
 
 </div>
 

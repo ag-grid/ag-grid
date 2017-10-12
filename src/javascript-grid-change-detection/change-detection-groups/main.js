@@ -6,33 +6,44 @@ var columnDefs = [
     {headerName: 'D', field: 'd', type: 'valueColumn'},
     {headerName: 'E', field: 'e', type: 'valueColumn'},
     {headerName: 'F', field: 'f', type: 'valueColumn'},
-    {headerName: 'Total',
+    {
+        headerName: 'Total',
         type: 'totalColumn',
         // we use getValue() instead of data.a so that it gets the aggregated values at the group level
-        valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d") + getValue("e") + getValue("f")'}
+        valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d") + getValue("e") + getValue("f")'
+    }
 ];
 
-var rowData = [];
-for (var i = 1; i<=10; i++) {
-    rowData.push({
-        group: i < 5 ? 'A' : 'B',
-        a: (i * 863) % 100,
-        b: (i * 811) % 100,
-        c: (i * 743) % 100,
-        d: (i * 677) % 100,
-        e: (i * 619) % 100,
-        f: (i * 571) % 100
-    });
+function getRowData() {
+    var rowData = [];
+    for (var i = 1; i <= 20; i++) {
+        rowData.push({
+            group: i < 5 ? 'A' : 'B',
+            a: (i * 863) % 100,
+            b: (i * 811) % 100,
+            c: (i * 743) % 100,
+            d: (i * 677) % 100,
+            e: (i * 619) % 100,
+            f: (i * 571) % 100
+        });
+    }
+    return rowData;
 }
 
 var gridOptions = {
     columnDefs: columnDefs,
     columnTypes: {
-        valueColumn: { editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)', cellClass: 'number-cell',
-            cellRenderer: 'animateShowChange', filter: 'number'},
-        totalColumn: { cellRenderer: 'animateShowChange', cellClass: 'number-cell'}
+        valueColumn: {
+            editable: true,
+            aggFunc: 'sum',
+            valueParser: 'Number(newValue)',
+            cellClass: 'number-cell',
+            cellRenderer: 'animateShowChange',
+            filter: 'number'
+        },
+        totalColumn: {cellRenderer: 'animateShowChange', cellClass: 'number-cell'}
     },
-    rowData: rowData,
+    rowData: getRowData(),
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true,
     animateRows: true,

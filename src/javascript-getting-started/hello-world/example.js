@@ -16,8 +16,8 @@ var rowData = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
-    onGridReady: function () {
-        gridOptions.api.sizeColumnsToFit();
+    onGridReady: function (params) {
+        params.api.sizeColumnsToFit();
     }
 };
 

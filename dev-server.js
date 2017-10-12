@@ -7,6 +7,8 @@ const realWebpack = require('webpack');
 const proxy = require('express-http-proxy');
 const webpackMiddleware = require('webpack-dev-middleware');
 const hotMiddleware = require('webpack-hot-middleware');
+const chokidar = require('chokidar');
+const generateExamples = require('./example-generator');
 
 const lnk = require('lnk').sync;
 const mkdirp = require('mkdir-p').sync;
@@ -104,6 +106,19 @@ function launchTSCCheck() {
     });
 }
 
+function watchAndGenerateExamples() {
+    const callback = () => {
+        console.log('regenerating examples...');
+        generateExamples(() => {
+            console.log('generation done.');
+        });
+    }
+
+    callback();
+
+    chokidar.watch('./src/{*/*.php,*/*/*.{html,css,js}}').on('all', callback);
+}
+
 module.exports = callback => {
     const app = express();
 
@@ -122,6 +137,7 @@ module.exports = callback => {
 
     // angular is another story
     serveAndWatchAngular(app);
+    watchAndGenerateExamples();
 
     // PHP
     launchPhpCP(app);

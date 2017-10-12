@@ -242,7 +242,7 @@ athleteFilterComponent.onFilterChanged()</snippet></p>
 </ul>
 </p>
 
-<?= example('Text Filter', 'text-filter') ?>
+<?= example('Text Filter', 'text-filter', 'generated') ?>
 
 <h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
 

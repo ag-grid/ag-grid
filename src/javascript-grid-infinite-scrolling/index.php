@@ -230,7 +230,7 @@ interface IGetRowsParams {
         Notice that the grid will load more data when you bring the scroll all the way to the bottom.
     </p>
 
-    <?= example('Simple Example', 'simple') ?>
+    <?= example('Simple Example', 'simple', 'generated') ?>
 
     <h3 id="selection">Selection</h3>
 
@@ -292,7 +292,7 @@ gridOptions.getRowNodeId: function(item) {
           This is to prevent the filter from being reset.
     </note>
 
-    <?= example('Server Side Sorting And Filtering', 'server-side') ?>
+    <?= example('Server Side Sorting And Filtering', 'server-side', 'generated') ?>
 
     <note>
         When performing multiple row selections using 'shift-click', it is possible that not all rows are available in
@@ -308,7 +308,7 @@ gridOptions.getRowNodeId: function(item) {
         and creates a datasource Class. The example also just creates (makes up) data on the fly.
     </p>
 
-    <?= example('Made Up Data', 'made-up-data') ?>
+    <?= example('Made Up Data', 'made-up-data', 'generated') ?>
 
     <h3 id="loading-spinner">Loading Spinner</h3>
 
@@ -528,7 +528,7 @@ loadingSpinnerColumn = {
     get called after the data is set as well as when the row is created (when the data may not yet be available).
     </p>
 
-    <?= example('Insert And Remove Example', 'insert-remove') ?>
+    <?= example('Insert And Remove Example', 'insert-remove', 'generated') ?>
 
     <h2 id="pagination">Pagination with Infinite Scrolling</h2>
 
@@ -577,7 +577,7 @@ loadingSpinnerColumn = {
         sided call is needed.
     </p>
 
-    <?= example('Block Larger Than Page', 'block-larger-page') ?>
+    <?= example('Block Larger Than Page', 'block-larger-page', 'generated') ?>
 
     <h3>Example 2: Equal Pagination Page Size and Large Infinite Block Size</h3>
 
@@ -586,7 +586,7 @@ loadingSpinnerColumn = {
         every time a new page is navigated to.
     </p>
 
-    <?= example('Block Equal Than Page', 'block-equal-page') ?>
+    <?= example('Block Equal Than Page', 'block-equal-page', 'generated') ?>
 
 </div>
 

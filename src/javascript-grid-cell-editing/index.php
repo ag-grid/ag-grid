@@ -271,7 +271,7 @@ colDef.cellEditorParams = {
         The example below illustrates different parts of the editing API using the buttons at the top.
     </p>
 
-    <?= example('Cell Editing', 'cell-editing') ?>
+    <?= example('Cell Editing', 'cell-editing', 'generated') ?>
 
     <h3 id="datepicker-cell-editing-example">Datepicker Cell Editing Example</h3>
 
@@ -279,7 +279,7 @@ colDef.cellEditorParams = {
     <ul>
         <li>'Date' column uses a Component cell editor that allows you to pick a date using jQuery UI Datepicker.</li>
     </ul>
-    <?= example('Datepicker Cell Editing', 'datepicker-cell-editing', 'vanilla', array("enterprise" => 1, "extras" => array('jquery', 'jqueryui', 'bootstrap') )) ?>
+    <?= example('Datepicker Cell Editing', 'datepicker-cell-editing', 'generated', array("enterprise" => 1, "extras" => array('jquery', 'jqueryui', 'bootstrap') )) ?>
 
     </p>
 
@@ -359,7 +359,7 @@ colDef.cellEditorParams = {
         </ul>
     </p>
 
-    <?= example('Full Row Editing', 'full-row-editing', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Full Row Editing', 'full-row-editing', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="groupEditing">Group Editing</h2>
 
@@ -379,7 +379,7 @@ colDef.cellEditorParams = {
         The example below shows using <code>enableGroupEdit=true</code> along with tree data to allow editing of group data.
     </p>
 
-    <?= example('Group Editing', 'group-editing', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Group Editing', 'group-editing', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="singleClickEditing">Single Click, Double Click, No Click Editing</h2>
 
@@ -442,7 +442,7 @@ colDef.cellEditorParams = {
         </ul>
     </p>
 
-    <?= example('Stop Editing When Grid Loses Focus', 'stop-edit-when-grid-loses-focus') ?>
+    <?= example('Stop Editing When Grid Loses Focus', 'stop-edit-when-grid-loses-focus', 'generated') ?>
 
     <note>Cell Editing can also be done via Cell Editor Components - please see <a href="../javascript-grid-cell-editor">
             Cell Editor Components</a> for more information.</note>

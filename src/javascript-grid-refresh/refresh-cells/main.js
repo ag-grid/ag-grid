@@ -9,13 +9,13 @@ var columnDefs = [
 
 // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
 // the row animation look nice when you see all the rows
-var rowData = createData(14);
-var topRowData = createData(2);
-var bottomRowData = createData(2);
+var data = [];
+var topRowData = [];
+var bottomRowData = [];
 
 function createData(count) {
     var result = [];
-    for (var i = 1; i<=count; i++) {
+    for (var i = 1; i <= count; i++) {
         result.push({
             a: (i * 863) % 100,
             b: (i * 811) % 100,
@@ -30,12 +30,20 @@ function createData(count) {
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: rowData,
-    pinnedTopRowData: topRowData,
-    pinnedBottomRowData: bottomRowData,
+    rowData: [],
+    pinnedTopRowData: [],
+    pinnedBottomRowData: [ ],
     enableCellChangeFlash: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
+        // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
+        // the row animation look nice when you see all the rows
+        data = createData(14);
+        topRowData = createData(2);
+        bottomRowData = createData(2);
+        params.api.setRowData(data);
+        params.api.setPinnedTopRowData(topRowData);
+        params.api.setPinnedBottomRowData(bottomRowData);
     }
 };
 
@@ -54,13 +62,13 @@ function scrambleAndRefreshAll() {
 function scrambleAndRefreshLeftToRight() {
     scramble();
 
-    ['a','b','c','d','e','f'].forEach( function(col, index) {
+    ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function(col, index) {
         var millis = index * 100;
         var params = {
             force: isForceRefreshSelected(),
             columns: [col]
         };
-        callRefreshAfterMillis(params, millis);
+        callRefreshAfterMillis(params, millis, gridOptions);
     });
 }
 
@@ -71,17 +79,17 @@ function scrambleAndRefreshTopToBottom() {
     var i;
     var rowNode;
 
-    for (i = 0; i<gridOptions.api.getPinnedTopRowCount(); i++) {
+    for (i = 0; i < gridOptions.api.getPinnedTopRowCount(); i++) {
         rowNode = gridOptions.api.getPinnedTopRow(i);
         refreshRow(rowNode);
     }
 
-    for (i = 0; i<gridOptions.api.getDisplayedRowCount(); i++) {
+    for (i = 0; i < gridOptions.api.getDisplayedRowCount(); i++) {
         rowNode = gridOptions.api.getDisplayedRowAtIndex(i);
         refreshRow(rowNode);
     }
 
-    for (i = 0; i<gridOptions.api.getPinnedBottomRowCount(); i++) {
+    for (i = 0; i < gridOptions.api.getPinnedBottomRowCount(); i++) {
         rowNode = gridOptions.api.getPinnedBottomRow(i);
         refreshRow(rowNode);
     }
@@ -93,26 +101,28 @@ function scrambleAndRefreshTopToBottom() {
             force: isForceRefreshSelected(),
             rowNodes: rowNodes
         };
-        callRefreshAfterMillis(params, millis);
+        callRefreshAfterMillis(params, millis, gridOptions);
     }
 }
 
-function callRefreshAfterMillis(params, millis) {
-    setTimeout( function() {
+function callRefreshAfterMillis(params, millis, gridOptions) {
+    setTimeout(function() {
         gridOptions.api.refreshCells(params);
     }, millis);
 }
 
 function scramble() {
-    rowData.forEach(scrambleItem);
+    data.forEach(scrambleItem);
     topRowData.forEach(scrambleItem);
     bottomRowData.forEach(scrambleItem);
 }
 
 function scrambleItem(item) {
-    ['a','b','c','d','e','f'].forEach( function(colId) {
+    ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function(colId) {
         // skip 50% of the cells so updates are random
-        if (Math.random() > .5) { return; }
+        if (Math.random() > 0.5) {
+            return;
+        }
         item[colId] = Math.floor(Math.random() * 100);
     });
 }

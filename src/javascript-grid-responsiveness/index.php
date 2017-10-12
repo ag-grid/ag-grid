@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
         will simply be hidden and available to the right via the scrollbar.
     </p>
 
-<?= example('Dynamic horizontal resizing with scroll', 'example') ?>
+<?= example('Dynamic horizontal resizing with scroll', 'example', 'generated') ?>
 
     <h3>Dynamic Resizing without Horizontal Scroll</h3>
 
@@ -41,14 +41,14 @@ include '../documentation-main/documentation_header.php';
     <p>This example is best seen when opened in a new tab - then change the horizontal size of the browser and watch as
     columns hide/show based on the current grid size.</p>
 
-<?= example('Dynamic horizontal resizing without scroll', 'example1') ?>
+<?= example('Dynamic horizontal resizing without scroll', 'example1', 'generated') ?>
 
     <h3>Dynamic Vertical Resizing</h3>
 
     <p>Sometimes the vertical height of the grid is greater than the number of rows you have it in.  You can dynamically
     set the row heights to fill the available height as the following example shows:</p>
 
-    <?= example('Dynamic vertical resizing', 'example2') ?>
+<?= example('Dynamic vertical resizing', 'example2', 'vanilla') ?>
 
 </div>
 

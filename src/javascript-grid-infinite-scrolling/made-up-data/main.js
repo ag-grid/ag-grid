@@ -1,18 +1,22 @@
-var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+function alphabet() {
+    return 'abcdefghijklmnopqrstuvwxyz'.split('');
+}
 
-var columnDefs = [];
+function getColumnDefs() {
+    var columnDefs = [];
 
-var checkboxSelectionColumn = {checkboxSelection: true, headerName: '', width: 24};
-columnDefs.push(checkboxSelectionColumn);
+    var checkboxSelectionColumn = {checkboxSelection: true, headerName: '', width: 24};
+    columnDefs.push(checkboxSelectionColumn);
 
-alphabet.forEach( function(letter) {
-    columnDefs.push({headerName: letter.toUpperCase(), field: letter, width: 80});
-});
+    alphabet().forEach(function(letter) {
+        columnDefs.push({headerName: letter.toUpperCase(), field: letter, width: 80});
+    });
+    return columnDefs;
+}
 
 var gridOptions = {
     enableColResize: true,
-    debug: true,
-    columnDefs: columnDefs,
+    columnDefs: getColumnDefs(),
     rowModelType: 'infinite',
     rowSelection: 'multiple',
     maxBlocksInCache: 2,
@@ -20,34 +24,36 @@ var gridOptions = {
     getRowNodeId: function(item) {
         return item.a;
     },
-    datasource: new MyDatasource(100)
+    datasource: getDataSource(100)
 };
 
-function MyDatasource(rowCount) {
-    this.rowCount = rowCount;
-}
-
-MyDatasource.prototype.getRows = function(params) {
-
-    var rowsThisPage = [];
-
-    for (var rowIndex = params.startRow; rowIndex < params.endRow; rowIndex++) {
-        var record = {};
-        alphabet.forEach( function(letter, colIndex) {
-            var randomNumber = 17+rowIndex+colIndex;
-            var cellKey = letter.toUpperCase() + (rowIndex+1);
-            record[letter] = cellKey + ' = ' + randomNumber;
-        });
-        rowsThisPage.push(record);
+function getDataSource(count) {
+    function MyDatasource(rowCount) {
+        this.rowCount = rowCount;
     }
 
-    // to mimic server call, we reply after a short delay
-    setTimeout( function() {
-        // no need to pass the second 'rowCount' parameter as we have already provided it
-        params.successCallback(rowsThisPage);
-    }, 500);
+    MyDatasource.prototype.getRows = function(params) {
+        var rowsThisPage = [];
 
-};
+        for (var rowIndex = params.startRow; rowIndex < params.endRow; rowIndex++) {
+            var record = {};
+            alphabet().forEach(function(letter, colIndex) {
+                var randomNumber = 17 + rowIndex + colIndex;
+                var cellKey = letter.toUpperCase() + (rowIndex + 1);
+                record[letter] = cellKey + ' = ' + randomNumber;
+            });
+            rowsThisPage.push(record);
+        }
+
+        // to mimic server call, we reply after a short delay
+        setTimeout(function() {
+            // no need to pass the second 'rowCount' parameter as we have already provided it
+            params.successCallback(rowsThisPage);
+        }, 500);
+    };
+
+    return new MyDatasource(count);
+}
 
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');

@@ -1,31 +1,31 @@
 var columnDefs = [
     {field: 'topGroup', rowGroup: true, hide: true},
     {field: 'group', rowGroup: true, hide: true},
-    {headerName: 'ID',field: 'id', cellClass: 'number-cell'},
+    {headerName: 'ID', field: 'id', cellClass: 'number-cell'},
     {headerName: 'A', field: 'a', type: 'valueColumn'},
     {headerName: 'B', field: 'b', type: 'valueColumn'},
     {headerName: 'C', field: 'c', type: 'valueColumn'},
     {headerName: 'D', field: 'd', type: 'valueColumn'},
     {headerName: 'E', field: 'e', type: 'valueColumn'},
     {headerName: 'F', field: 'f', type: 'valueColumn'},
-    {headerName: 'Total',
+    {
+        headerName: 'Total',
         type: 'totalColumn',
         // we use getValue() instead of data.a so that it gets the aggregated values at the group level
-        valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d") + getValue("e") + getValue("f")'}
+        valueGetter: 'getValue("a") + getValue("b") + getValue("c") + getValue("d") + getValue("e") + getValue("f")'
+    }
 ];
 
 var rowIdCounter = 0;
 
 var callCount = 0;
 
-var rowData = createRowData();
-
 function createRowData() {
     var result = [];
-    for (var i = 1; i<=2; i++) {
+    for (var i = 1; i <= 2; i++) {
         for (var j = 1; j <= 5; j++) {
             for (var k = 1; k <= 3; k++) {
-                var rowDataItem = createRowItem(i,j,k);
+                var rowDataItem = createRowItem(i, j, k);
                 result.push(rowDataItem);
             }
         }
@@ -33,7 +33,7 @@ function createRowData() {
     return result;
 }
 
-function createRowItem(i,j,k) {
+function createRowItem(i, j, k) {
     var rowDataItem = {
         id: rowIdCounter++,
         a: (j * k * 863) % 100,
@@ -47,7 +47,7 @@ function createRowItem(i,j,k) {
         rowDataItem.topGroup = 'Top';
         rowDataItem.group = 'Group A' + j;
     } else {
-        rowDataItem.topGroup =  'Bottom';
+        rowDataItem.topGroup = 'Bottom';
         rowDataItem.group = 'Group B' + j;
     }
     return rowDataItem;
@@ -64,7 +64,7 @@ var gridOptions = {
     aggregateOnlyChangedColumns: true,
     columnDefs: columnDefs,
     aggFuncs: {
-        'sum': function(values) {
+        sum: function(values) {
             var result = 0;
             if (values) {
                 values.forEach(function(value) {
@@ -79,13 +79,19 @@ var gridOptions = {
         }
     },
     columnTypes: {
-        valueColumn: { editable: true, aggFunc: 'sum', cellClass: 'number-cell',
-            cellRenderer: 'animateShowChange', filter: 'number', valueParser: numberValueParser},
-        totalColumn: { cellRenderer: 'animateShowChange', cellClass: 'number-cell'}
+        valueColumn: {
+            editable: true,
+            aggFunc: 'sum',
+            cellClass: 'number-cell',
+            cellRenderer: 'animateShowChange',
+            filter: 'number',
+            valueParser: numberValueParser
+        },
+        totalColumn: {cellRenderer: 'animateShowChange', cellClass: 'number-cell'}
     },
     autoGroupColumnDef: {width: 300},
     groupDefaultExpanded: 1,
-    rowData: rowData,
+    rowData: createRowData(),
     suppressAggFuncInHeader: true,
     animateRows: true,
     enableSorting: true,
@@ -99,7 +105,7 @@ var gridOptions = {
 };
 
 function updateOneRecord() {
-    var rowNodeToUpdate = pickExistingRowNodeAtRandom();
+    var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridOptions);
 
     var randomValue = createRandomNumber();
     var randomColumnId = pickRandomColumn();
@@ -109,8 +115,8 @@ function updateOneRecord() {
 }
 
 function pickRandomColumn() {
-    var letters = ['a','b','c','d','e','f'];
-    var randomIndex = Math.floor(Math.random()*letters.length);
+    var letters = ['a', 'b', 'c', 'd', 'e', 'f'];
+    var randomIndex = Math.floor(Math.random() * letters.length);
     return letters[randomIndex];
 }
 
@@ -118,27 +124,30 @@ function createRandomNumber() {
     return Math.floor(Math.random() * 100);
 }
 
-function pickExistingRowItemAtRandom() {
-    var rowNode = pickExistingRowNodeAtRandom();
+function pickExistingRowItemAtRandom(gridOptions) {
+    var rowNode = pickExistingRowNodeAtRandom(gridOptions);
     return rowNode ? rowNode.data : null;
 }
 
-function pickExistingRowNodeAtRandom() {
+function pickExistingRowNodeAtRandom(gridOptions) {
     var allItems = [];
     gridOptions.api.forEachLeafNode(function(rowNode) {
         allItems.push(rowNode);
     });
 
-    if (allItems.length===0) { return; }
+    if (allItems.length === 0) {
+        return;
+    }
     var result = allItems[Math.floor(Math.random() * allItems.length)];
 
     return result;
 }
 
 function updateUsingTransaction() {
-
-    var itemToUpdate = pickExistingRowItemAtRandom();
-    if (!itemToUpdate) { return; }
+    var itemToUpdate = pickExistingRowItemAtRandom(gridOptions);
+    if (!itemToUpdate) {
+        return;
+    }
 
     console.log('updating - before', itemToUpdate);
 
@@ -155,9 +164,10 @@ function updateUsingTransaction() {
 }
 
 function removeUsingTransaction() {
-
-    var itemToRemove = pickExistingRowItemAtRandom();
-    if (!itemToRemove) { return; }
+    var itemToRemove = pickExistingRowItemAtRandom(gridOptions);
+    if (!itemToRemove) {
+        return;
+    }
 
     var transaction = {
         remove: [itemToRemove]
@@ -169,11 +179,10 @@ function removeUsingTransaction() {
 }
 
 function addUsingTransaction() {
-
     var i = Math.floor(Math.random() * 2);
     var j = Math.floor(Math.random() * 5);
     var k = Math.floor(Math.random() * 3);
-    var newItem = createRowItem(i,j,k);
+    var newItem = createRowItem(i, j, k);
 
     var transaction = {
         add: [newItem]
@@ -185,11 +194,12 @@ function addUsingTransaction() {
 }
 
 function changeGroupUsingTransaction() {
+    var itemToUpdate = pickExistingRowItemAtRandom(gridOptions);
+    if (!itemToUpdate) {
+        return;
+    }
 
-    var itemToUpdate = pickExistingRowItemAtRandom();
-    if (!itemToUpdate) { return; }
-
-    itemToUpdate.topGroup = (itemToUpdate.topGroup==='Top') ? 'Bottom' : 'Top';
+    itemToUpdate.topGroup = itemToUpdate.topGroup === 'Top' ? 'Bottom' : 'Top';
 
     var transaction = {
         update: [itemToUpdate]

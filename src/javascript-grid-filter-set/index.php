@@ -133,7 +133,7 @@ columnDefinition = {
         The column athlete has a debounce of 1000ms before the selected options are filtered out
     </p>
 
-    <?= example('Set Filter', 'set-filter', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1)) ?>
 
     <h3 id="sortingSetFilter">Sorting And Formatting Set Filter Values List</h3>
 
@@ -153,7 +153,7 @@ columnDefinition = {
         can check this by searching for 'bjo'in the mini-filter box.
     </p>
 
-    <?= example('Set Filter Comparator', 'set-filter-comparator', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="newRowsSetFilter">New Rows Action and Values Example</h2>
 
@@ -181,7 +181,7 @@ columnDefinition = {
         no longer exist in the new set.
     </note>
 
-    <?= example('Set Filter New Rows', 'set-filter-new-rows', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Set Filter New Rows', 'set-filter-new-rows', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="model">Set Filter Model</h2>
 
@@ -239,7 +239,7 @@ countryFilterComponent.onFilterChanged()</snippet>
         end of the interaction a call to gridOptions.api.onFilterChanged() is performed.
     </p>
 
-    <?= example('Set Filter API', 'set-filter-api', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="floating">Floating Set Filter</h2>
     <p>

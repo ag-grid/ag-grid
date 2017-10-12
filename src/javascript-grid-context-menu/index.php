@@ -130,7 +130,7 @@ MenuItemDef {
     </ul>
     </p>
 
-    <?= example('Context Menu Example', 'context-menu', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Context Menu Example', 'context-menu', 'generated', array("enterprise" => 1)) ?>
 
 </div>
 

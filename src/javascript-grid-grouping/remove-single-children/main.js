@@ -19,7 +19,7 @@ var rowData = [
     { athlete: 'Mike NoMagic', country: 'Sweden', year: '2016', gold: 2, silver: 2, bronze: 2 }
 ];
 
-var groupRemoveSingleChildren = true;
+var groupRemoveSingleChildrenFlag;
 
 var gridOptions = {
     columnDefs: columnDefs,
@@ -29,24 +29,20 @@ var gridOptions = {
         cellRenderer: 'group',
         field: 'country'
     },
-    groupRemoveSingleChildren: groupRemoveSingleChildren,
+    groupRemoveSingleChildren: false,
     animateRows: true,
     groupDefaultExpanded: 1,
     suppressAggFuncInHeader: true
 };
 
-function setupGrid() {
-    var gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions);
-    gridOptions.api.sizeColumnsToFit();
-}
-
 function toggleGrid() {
-    groupRemoveSingleChildren = !groupRemoveSingleChildren;
-    gridOptions.api.setGroupRemoveSingleChildren(groupRemoveSingleChildren);
+    groupRemoveSingleChildrenFlag = !groupRemoveSingleChildrenFlag;
+    gridOptions.api.setGroupRemoveSingleChildren(groupRemoveSingleChildrenFlag);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
-    setupGrid();
+    var gridDiv = document.querySelector('#myGrid');
+    new agGrid.Grid(gridDiv, gridOptions);
+    gridOptions.api.sizeColumnsToFit();
 });

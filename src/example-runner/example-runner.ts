@@ -1,88 +1,18 @@
 import './example-runner.scss';
+
 import * as angular from 'angular';
-import * as Prism from 'prismjs';
 import * as jQuery from 'jquery';
-import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-bash';
-import 'prismjs/components/prism-jsx';
-import 'prismjs/components/prism-java';
-import 'prismjs/components/prism-sql';
+
+import {whenInViewPort, trackIfInViewPort} from './lib/viewport';
+import {highlight} from './lib/highlight';
 
 const docs: angular.IModule = angular.module('documentation');
-
-const LanguageMap: {[key: string]: Prism.LanguageDefinition} = {
-    js: Prism.languages.javascript,
-    ts: Prism.languages.typescript,
-    css: Prism.languages.css,
-    sh: Prism.languages.bash,
-    html: Prism.languages.html,
-    jsx: Prism.languages.jsx,
-    java: Prism.languages.java,
-    sql: Prism.languages.sql
-};
-
-function highlight(code: string, language: string): string {
-    const prismLanguage = LanguageMap[language];
-    return Prism.highlight(code, prismLanguage);
-}
 
 docs.service('HighlightService', function() {
     this.highlight = function(code: string, language: string) {
         return highlight(code, language);
     };
 });
-
-const win = jQuery(window);
-
-function getCurrentViewPort() {
-    const viewport = {
-        top : win.scrollTop(),
-        left : win.scrollLeft(),
-        right: NaN,
-        bottom: NaN
-    };
-
-    viewport.right = viewport.left + win.width();
-    viewport.bottom = viewport.top + win.height();
-
-    return viewport;
-}
-
-function getRect(element) {
-    const bounds = element.offset();
-    bounds.right = bounds.left + element.outerWidth();
-    bounds.bottom = bounds.top + element.outerHeight();
-    return bounds;
-}
-
-function whenInViewPort(element, callback) {
-    function comparePosition() {
-        const viewPort = getCurrentViewPort();
-        const box = getRect(element);
-
-        if (viewPort.bottom >= box.top) {
-            window.removeEventListener('scroll', comparePosition);
-            callback();
-            // setTimeout(callback, 2000);
-        }
-    }
-
-    comparePosition();
-    window.addEventListener('scroll', comparePosition);
-}
-
-function trackIfInViewPort(element, callback) {
-    function comparePosition() {
-        const viewPort = getCurrentViewPort();
-        const box = getRect(element);
-        var inViewPort = viewPort.bottom >= box.top && viewPort.top <= box.bottom;
-
-        callback(inViewPort);
-    }
-
-    comparePosition();
-    window.addEventListener('scroll', comparePosition);
-}
 
 docs.directive('snippet', function() {
     return {
@@ -126,10 +56,14 @@ docs.factory('formPostData', [
     }
 ]);
 
+const ACTIVE_EXAMPLE_RUNNERS = [];
+const MAX_ACTIVE_RUNNERS = 2;
+
 class ExampleRunner {
-    ready: boolean = false;
+    private ready: boolean = false;
     private source: any;
     private loadingSource: boolean;
+    private showFrameworksDropdown: boolean;
     private selectedTab: string;
 
     private selectedFile: string;
@@ -194,33 +128,28 @@ class ExampleRunner {
         this.title = this.config.title;
         this.name = this.config.name;
         this.section = this.config.section;
+        this.showFrameworksDropdown = this.config.type === 'multi' || this.config.type === 'generated';
 
         this.availableTypes = Object.keys(this.config.types);
 
         const divWrapper = jQuery(this.$element).find('div.example-wrapper');
 
-        this.$timeout( () =>  {
+        this.$timeout(() => {
             let visibleToggle: angular.IPromise<void>;
             let nextVisible: boolean = false;
 
-            trackIfInViewPort(divWrapper, ( visible ) => {
-                if (nextVisible !== visible) {
-                    nextVisible = visible;
-
-                    // show immediately, unload after a while
-                    const delay = nextVisible ? 0 : 10000;
-                    
-                    this.$timeout.cancel(visibleToggle);
-
-                    visibleToggle = this.$timeout(() => {
-                        if (!nextVisible) {
-                            // console.debug('Unloading example');
+            trackIfInViewPort(divWrapper, visible => {
+                this.$timeout(() => {
+                    if (visible && !this.visible) {
+                        this.visible = true;
+                        ACTIVE_EXAMPLE_RUNNERS.push(this);
+                        if (ACTIVE_EXAMPLE_RUNNERS.length > MAX_ACTIVE_RUNNERS) {
+                            ACTIVE_EXAMPLE_RUNNERS.shift().visible = false;
                         }
-                        this.visible = nextVisible;
-                    }, delay);
-                }
+                    }
+                });
             });
-        }, 500);
+        });
 
         whenInViewPort(divWrapper, () => {
             this.$timeout(() => {
@@ -248,6 +177,7 @@ class ExampleRunner {
         const tenYearsFromNow = new Date();
         tenYearsFromNow.setFullYear(tenYearsFromNow.getFullYear() + 10);
         this.$cookies.put('agGridRunnerVersion', type, {
+            path: '/',
             expires: tenYearsFromNow
         });
     }
@@ -269,48 +199,96 @@ class ExampleRunner {
         this.currentType = type;
 
         this.loadAllSources();
+
         this.refreshSource();
 
         this.openFwDropdown = false;
     }
 
-    private sources: any;
+    private sources: string[];
     private allFiles: any;
 
     loadAllSources() {
         this.allFiles = this.files.concat(this.boilerplateFiles);
-        this.$q.all(this.allFiles.map((file: any) => this.$http.get(this.getSourceUrl(file)))).then((files: any) => {
-            this.sources = files;
-        });
+
+        this.$q
+            .all(
+                this.allFiles.map((file: string) => {
+                    return this.loadSource(file);
+                })
+            )
+            .then((sources: any) => {
+                this.sources = sources;
+            });
     }
 
     refreshSource() {
         this.loadingSource = true;
         this.source = this.$sce.trustAsHtml('Loading...');
 
-        const sourceUrl = this.getSourceUrl(this.selectedFile);
-
-        this.$http.get(sourceUrl).then((response: angular.IHttpResponse<{}>) => {
+        console.log("Loading...", this.selectedFile)
+        this.loadSource(this.selectedFile).then(source => {
             this.loadingSource = false;
+            if (!this.selectedFile) {
+                throw new Error('We ended up without a selected file :(')
+            }
             const extension = this.selectedFile.match(/\.([a-z]+)$/)[1];
-            const highlightedSource = highlight((response.data as string).trim(), extension);
+            const highlightedSource = highlight(source.trim(), extension);
             this.source = this.$sce.trustAsHtml(highlightedSource);
         });
     }
 
-    getSourceUrl(file: string) {
+    loadSource(file: string): angular.IPromise<string> {
+        let source = this.getSource(file);
+        let sourceUrl;
+
+        if (typeof source === 'string') {
+            return this.$http.get(source).then((response: angular.IHttpResponse<string>) => {
+                return response.data;
+            });
+        } else {
+            const sourcePromises = source.sources.map(source => source ? this.$http.get(source).then(response => response.data) : '');
+            return this.$q.all(sourcePromises).then(responses => {
+                // stupid typescript
+                return (<any>source).process(responses);
+            });
+        }
+    }
+
+    getSource(file: string): string | {sources: string[]; process: (string) => string} {
         if (this.boilerplateFiles.indexOf(file) > -1) {
             return [this.boilerplatePath, file].join('/');
         }
+
         if (file == this.files[0]) {
             return this.resultUrl + '&preview=true';
         } else {
-            if (this.config.type === 'multi') {
-                return [this.config.options.sourcePrefix, this.section, this.name, this.currentType, file].join('/');
-            } else {
-                return [this.config.options.sourcePrefix, this.section, this.name, file].join('/');
-            }
+            return this.appFilePath(file);
         }
+    }
+
+    sourcesForGeneration(): string[] {
+        const vanillaTypes = this.config.types.vanilla.files;
+
+        return [
+            this.appFilePath(vanillaTypes.filter(file => file.endsWith('.js'))[0]),
+            this.appFilePath(vanillaTypes.filter(file => file.endsWith('.html'))[0]) 
+        ];
+    }
+
+    appFilePath(file) {
+        if (!file) {
+            return '';
+        }
+
+        let endSegment = [ file ];
+        if (this.config.type === 'multi') {
+            endSegment = [this.currentType, file];
+        } else if (this.config.type === 'generated') {
+            endSegment = ["_gen", this.currentType, file];
+        }
+
+        return [this.config.options.sourcePrefix, this.section, this.name].concat(endSegment).join('/');
     }
 
     openPlunker(clickEvent) {
@@ -322,7 +300,7 @@ class ExampleRunner {
         };
 
         this.sources.forEach((file: any, index: number) => {
-            postData['files[' + this.allFiles[index] + ']'] = file.data;
+            postData['files[' + this.allFiles[index] + ']'] = file;
         });
 
         this.formPostData('//plnkr.co/edit/?p=preview', true, postData);
@@ -364,7 +342,7 @@ docs.component('exampleRunner', {
     template: ` 
         <div ng-class='["example-runner"]'>
 
-        <div class="framework-chooser" ng-if="$ctrl.config.type === 'multi'">
+        <div class="framework-chooser" ng-if="$ctrl.showFrameworksDropdown">
             <span> Example version: </span>
             <div ng-class="{ 'btn-group': true, 'open': $ctrl.openFwDropdown }">
 
@@ -557,7 +535,7 @@ docs.component('preview', {
     ]
 });
 
-let removeFilenameFromPath = function (pathname) {
+let removeFilenameFromPath = function(pathname) {
     if (pathname.lastIndexOf('/') === 0) {
         // only the root slash present
         return pathname;
@@ -565,59 +543,69 @@ let removeFilenameFromPath = function (pathname) {
     return pathname.slice(0, pathname.lastIndexOf('/'));
 };
 
-let getPathWithTrailingSlash = function () {
+let getPathWithTrailingSlash = function() {
     let pathname = removeFilenameFromPath(window.location.pathname);
-    let trailingSlash = (pathname.indexOf("/", 1) === pathname.length - 1);
-    pathname += trailingSlash ? "" : "/";
+    let trailingSlash = pathname.indexOf('/', 1) === pathname.length - 1;
+    pathname += trailingSlash ? '' : '/';
     return pathname;
 };
 
-docs.directive("showSources", function () {
-    const ShowComplexScriptExampleController = ['$scope', '$http', '$attrs', '$sce', 'HighlightService', function ($scope, $http, $attrs, $sce, HighlightService) {
-        const pathname = getPathWithTrailingSlash();
+docs.directive('showSources', function() {
+    const ShowComplexScriptExampleController = [
+        '$scope',
+        '$http',
+        '$attrs',
+        '$sce',
+        'HighlightService',
+        function($scope, $http, $attrs, $sce, HighlightService) {
+            const pathname = getPathWithTrailingSlash();
 
-        $scope.source = $scope.sourcesOnly ? $attrs["example"] : (pathname + $attrs["example"]);
+            $scope.source = $scope.sourcesOnly ? $attrs['example'] : pathname + $attrs['example'];
 
-        $scope.extraPages = [];
+            $scope.extraPages = [];
 
-        const sources = eval($attrs.sources);
-        sources.forEach(function (source) {
-            let root = source.root;
-            root = root === "./" ? pathname : root;
-            const files = source.files.split(',');
+            const sources = eval($attrs.sources);
+            sources.forEach(function(source) {
+                let root = source.root;
+                root = root === './' ? pathname : root;
+                const files = source.files.split(',');
 
-            $scope.extraPages = $scope.extraPages.concat(files);
+                $scope.extraPages = $scope.extraPages.concat(files);
 
-            $scope.extraPageContent = {};
-            files.forEach(function (file) {
-                $http.get(root + file).then(function (response) {
-                    const language = $attrs.language ? $attrs.language : 'js';
-                    const content = $attrs.highlight ? HighlightService.highlight(response.data, language) : response.data;
-                    $scope.extraPageContent[file] = $sce.trustAsHtml("<code><pre>" + content + "</code></pre>");
-                }).catch(function (response) {
-                    $scope.extraPageContent[file] = response.data;
+                $scope.extraPageContent = {};
+                files.forEach(function(file) {
+                    $http
+                        .get(root + file)
+                        .then(function(response) {
+                            const language = $attrs.language ? $attrs.language : 'js';
+                            const content = $attrs.highlight ? HighlightService.highlight(response.data, language) : response.data;
+                            $scope.extraPageContent[file] = $sce.trustAsHtml('<code><pre>' + content + '</code></pre>');
+                        })
+                        .catch(function(response) {
+                            $scope.extraPageContent[file] = response.data;
+                        });
                 });
+                $scope.extraPage = $scope.extraPages[0];
             });
-            $scope.extraPage = $scope.extraPages[0];
-        });
 
-        if ($attrs.exampleheight) {
-            $scope.iframeStyle = {height: $attrs.exampleheight};
-        } else {
-            $scope.iframeStyle = {height: '500px'}
+            if ($attrs.exampleheight) {
+                $scope.iframeStyle = {height: $attrs.exampleheight};
+            } else {
+                $scope.iframeStyle = {height: '500px'};
+            }
+
+            $scope.isActivePage = function(item) {
+                return $scope.extraPage == item;
+            };
+            $scope.setActivePage = function(item) {
+                $scope.extraPage = item;
+            };
         }
-
-        $scope.isActivePage = function (item) {
-            return $scope.extraPage == item;
-        };
-        $scope.setActivePage = function (item) {
-            $scope.extraPage = item;
-        };
-    }];
+    ];
 
     return {
         scope: true,
         controller: ShowComplexScriptExampleController,
-        templateUrl: "/showSources.html"
-    }
+        templateUrl: '/showSources.html'
+    };
 });

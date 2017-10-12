@@ -26,8 +26,8 @@ function sizeToFit() {
 
 function autoSizeAll() {
     var allColumnIds = [];
-    columnDefs.forEach( function(columnDef) {
-        allColumnIds.push(columnDef.field);
+    gridOptions.columnApi.getAllColumns().forEach(function(column) {
+        allColumnIds.push(column.colId);
     });
     gridOptions.columnApi.autoSizeColumns(allColumnIds);
 }

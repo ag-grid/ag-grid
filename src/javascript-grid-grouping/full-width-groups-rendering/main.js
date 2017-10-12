@@ -1,44 +1,45 @@
-var FLAG_CODES = {
-    'Ireland': 'ie',
-    'United States': 'us',
-    'Russia': 'ru',
-    'Australia': 'au',
-    'Canada': 'ca',
-    'Norway': 'no',
-    'China': 'cn',
-    'Zimbabwe': 'zw',
-    'Netherlands': 'nl',
-    'South Korea': 'kr',
-    'Croatia': 'hr',
-    'France': 'fr'
-};
-
+function flagCodes() {
+    return {
+        Ireland: 'ie',
+        'United States': 'us',
+        Russia: 'ru',
+        Australia: 'au',
+        Canada: 'ca',
+        Norway: 'no',
+        China: 'cn',
+        Zimbabwe: 'zw',
+        Netherlands: 'nl',
+        'South Korea': 'kr',
+        Croatia: 'hr',
+        France: 'fr'
+    };
+}
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 200},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Gold", field: "gold", width: 100, aggFunc: 'sum'},
-    {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'},
-    {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'},
-    {headerName: "Country", field: "country", width: 120, rowGroup: true},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110}
+    {headerName: 'Athlete', field: 'athlete', width: 200},
+    {headerName: 'Age', field: 'age', width: 90},
+    {headerName: 'Gold', field: 'gold', width: 100, aggFunc: 'sum'},
+    {headerName: 'Silver', field: 'silver', width: 100, aggFunc: 'sum'},
+    {headerName: 'Bronze', field: 'bronze', width: 100, aggFunc: 'sum'},
+    {headerName: 'Total', field: 'total', width: 100, aggFunc: 'sum'},
+    {headerName: 'Country', field: 'country', width: 120, rowGroup: true},
+    {headerName: 'Year', field: 'year', width: 90},
+    {headerName: 'Date', field: 'date', width: 110},
+    {headerName: 'Sport', field: 'sport', width: 110}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     groupUseEntireRow: true,
-    groupRowInnerRenderer: groupRowInnerRendererFunc
+    groupRowInnerRenderer: groupRowInnerRenderer
 };
 
-function groupRowInnerRendererFunc(params) {
-    var flagCode = FLAG_CODES[params.node.key];
+function groupRowInnerRenderer(params) {
+    var flagCode = flagCodes()[params.node.key];
 
     var html = '';
     if (flagCode) {
-        html += '<img class="flag" border="0" width="20" height="15" src="https://flags.fmcdn.net/data/flags/mini/'+flagCode+'.png">'
+        html += '<img class="flag" border="0" width="20" height="15" src="https://flags.fmcdn.net/data/flags/mini/' + flagCode + '.png">';
     }
 
     var node = params.node;

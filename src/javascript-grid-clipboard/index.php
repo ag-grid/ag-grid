@@ -103,7 +103,7 @@ include '../documentation-main/documentation_header.php';
         <i>suppressCopyRowsToClipboard:true</i>
     </p>
 
-    <?= example('Clipboard example', 'simple', 'vanilla', array("enterprise" => true)) ?>
+    <?= example('Clipboard example', 'simple', 'generated', array("enterprise" => true)) ?>
 
     <h3 id="sendToClipboard">Controlling Clipboard Copy</h3>
 
@@ -119,7 +119,7 @@ include '../documentation-main/documentation_header.php';
         demonstrates the callback by just printing the data to the console.
     </p>
 
-    <?= example('Controlling Clipboard Copy', 'custom', 'vanilla', array("enterprise" => true)) ?>
+    <?= example('Controlling Clipboard Copy', 'custom', 'generated', array("enterprise" => true)) ?>
 
     <h3 class="processClipboard">Processing Clipboard Data</h3>
 
@@ -165,7 +165,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <?= example('Complex Example', 'complex', 'vanilla', array("enterprise" => true)) ?>
+    <?= example('Complex Example', 'complex', 'generated', array("enterprise" => true)) ?>
 
 </div>
 

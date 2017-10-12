@@ -108,7 +108,7 @@ colDef = {
     </ul>
     </p>
 
-    <?= example('Built-In Functions', 'built-in-functions', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Built-In Functions', 'built-in-functions', 'generated', array("enterprise" => 1)) ?>
 
     <h3 id="custom-aggregation-functions">Example 2 - Custom Aggregation Functions</h3>
 
@@ -196,7 +196,7 @@ colDef = {
         or make sure that <i>aggFunc</i> is not used in any column until it is configured into the grid.
     </p>
 
-    <?= example('Custom Aggregation Functions', 'custom-agg-functions', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Custom Aggregation Functions', 'custom-agg-functions', 'generated', array("enterprise" => 1)) ?>
 
     <h3>Aggregation API</h3>
 
@@ -259,7 +259,7 @@ colDef = {
         sum and another by multiplying the result by Math.PI.
     </p>
 
-    <?= example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'generated', array("enterprise" => 1)) ?>
 
     <h3>Recomputing Aggregates</h3>
 

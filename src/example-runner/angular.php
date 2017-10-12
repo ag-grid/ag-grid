@@ -1,7 +1,10 @@
 <?php
 include 'utils.php';
-
 $example = getExampleInfo('angular');
+$generated = isset($_GET['generated']);
+if ($generated) { 
+    echo "<!DOCTYPE html>\n";
+};
 ?>
 <html>
 <head>
@@ -10,9 +13,7 @@ $example = getExampleInfo('angular');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<?php if (!$example['preview']) { ?>
-    <style> html, body { margin: 0; padding: 0; } </style>
-<?php } ?>
+    <style> html, body { margin: 0; padding: 0; height: 100%; } </style>
 <?php renderExampleExtras($_GET); ?>
 <?php renderStyles($example['styles']); ?>
 
@@ -32,6 +33,7 @@ $example = getExampleInfo('angular');
     <script>
     System.import('<?=$example['boilerplatePath']?>main.ts').catch(function(err){ console.error(err); });
     </script>
+
 </head>
 <body>
     <my-app>Loading ag-Grid example&hellip;<my-app>

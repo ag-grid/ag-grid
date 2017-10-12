@@ -30,8 +30,9 @@ function isFirstColumn(params) {
     return thisIsFirstColumn;
 }
 
-function onQuickFilterChanged(text) {
-    gridOptions.api.setQuickFilter(text);
+
+function onQuickFilterChanged() {
+    gridOptions.api.setQuickFilter(document.getElementById('quickFilter').value);
 }
 
 // setup the grid after the page has finished loading

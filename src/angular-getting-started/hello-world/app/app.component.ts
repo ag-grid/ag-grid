@@ -1,10 +1,5 @@
 import { Component } from '@angular/core';
 
-export class Hero {
-  id: number;
-  name: string;
-}
-
 @Component({
   selector: 'my-app',
   template: `
@@ -30,9 +25,5 @@ export class AppComponent {
             {make: "Ford", model: "Mondeo", price: 32000},
             {make: "Porsche", model: "Boxter", price: 72000}
         ]
-    }
-
-    onGridReady(params) {
-        params.api.sizeColumnsToFit();
     }
 }

@@ -1,14 +1,14 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete"},
-    {headerName: "Age", field: "age"},
-    {headerName: "Country", field: "country"},
-    {headerName: "Year", field: "year", cellEditor: YearCellEditor},
-    {headerName: "Date", field: "date"},
-    {headerName: "Sport", field: "sport"},
-    {headerName: "Gold", field: "gold"},
-    {headerName: "Silver", field: "silver"},
-    {headerName: "Bronze", field: "bronze"},
-    {headerName: "Total", field: "total"}
+    {headerName: 'Athlete', field: 'athlete'},
+    {headerName: 'Age', field: 'age'},
+    {headerName: 'Country', field: 'country'},
+    {headerName: 'Year', field: 'year', cellEditor: getYearCellEditor()},
+    {headerName: 'Date', field: 'date'},
+    {headerName: 'Sport', field: 'sport'},
+    {headerName: 'Gold', field: 'gold'},
+    {headerName: 'Silver', field: 'silver'},
+    {headerName: 'Bronze', field: 'bronze'},
+    {headerName: 'Total', field: 'total'}
 ];
 
 var gridOptions = {
@@ -24,45 +24,48 @@ var gridOptions = {
     stopEditingWhenGridLosesFocus: true
 };
 
-function YearCellEditor() {}
+function getYearCellEditor() {
+    function YearCellEditor() {}
 
-YearCellEditor.prototype.getGui = function() {
-    return this.eGui;
-};
+    YearCellEditor.prototype.getGui = function() {
+        return this.eGui;
+    };
 
-YearCellEditor.prototype.getValue = function() {
-    return this.value;
-};
+    YearCellEditor.prototype.getValue = function() {
+        return this.value;
+    };
 
-YearCellEditor.prototype.isPopup = function() {
-    return true;
-};
+    YearCellEditor.prototype.isPopup = function() {
+        return true;
+    };
 
-YearCellEditor.prototype.init = function(params) {
-    this.value = params.value;
-    var tempElement = document.createElement('div');
-    tempElement.innerHTML =
-        '<div class="yearSelect">' +
-        '<div>Clicking here does not close the popup!</div>' +
-        '<button id="bt2006" class="yearButton">2006</button>' +
-        '<button id="bt2008" class="yearButton">2008</button>' +
-        '<button id="bt2010" class="yearButton">2010</button>' +
-        '<button id="bt2012" class="yearButton">2012</button>' +
-        '<div>' +
+    YearCellEditor.prototype.init = function(params) {
+        this.value = params.value;
+        var tempElement = document.createElement('div');
+        tempElement.innerHTML =
+            '<div class="yearSelect">' +
+            '<div>Clicking here does not close the popup!</div>' +
+            '<button id="bt2006" class="yearButton">2006</button>' +
+            '<button id="bt2008" class="yearButton">2008</button>' +
+            '<button id="bt2010" class="yearButton">2010</button>' +
+            '<button id="bt2012" class="yearButton">2012</button>' +
+            '<div>' +
             '<input type="text" style="width: 100%;" placeholder="clicking on this text field does not close"/>' +
-        '</div>' +
-    '</div>';
+            '</div>' +
+            '</div>';
 
-    var that = this;
-    [2006,2008,2010,2012].forEach( function(year) {
-        tempElement.querySelector('#bt'+year).addEventListener('click', function() {
-            that.value = year;
-            params.stopEditing();
+        var that = this;
+        [2006, 2008, 2010, 2012].forEach(function(year) {
+            tempElement.querySelector('#bt' + year).addEventListener('click', function() {
+                that.value = year;
+                params.stopEditing();
+            });
         });
-    });
 
-    this.eGui = tempElement.firstChild;
-};
+        this.eGui = tempElement.firstChild;
+    };
+    return YearCellEditor;
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

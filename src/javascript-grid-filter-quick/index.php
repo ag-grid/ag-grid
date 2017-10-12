@@ -1,7 +1,7 @@
 <?php
 $key = "Quick Filter";
 $pageTitle = "JavaScript Grid Quick Filter";
-$pageDescription = "ag-Grid comes with a quick filter. This sections explains how to use the quick filter.";
+$pageDescription = "ag-Grid comes with a quick filter. This section explains how to use the quick filter.";
 $pageKeyboards = "ag-Grid Quick Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -106,7 +106,7 @@ Params contains {value, node, data, column, colDef}.
     </ul>
 </p>
 
-<?= example('Quick Filter', 'quick-filter') ?>
+<?= example('Quick Filter', 'quick-filter', 'generated') ?>
 
 <h3 id="server-side-filtering">Server Side Data</h3>
 

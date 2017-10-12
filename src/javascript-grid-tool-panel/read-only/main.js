@@ -22,8 +22,8 @@ var gridOptions = {
     functionsReadOnly: true
 };
 
-function setReadOnly(value) {
-    gridOptions.api.setFunctionsReadOnly(value);
+function setReadOnly() {
+    gridOptions.api.setFunctionsReadOnly(document.getElementById('read-only').checked);
 }
 
 // setup the grid after the page has finished loading

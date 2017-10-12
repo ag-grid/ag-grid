@@ -166,7 +166,7 @@ interface GridCellDef {
         to go up and down rather than right and left.
     </p>
 
-    <?= example('Custom Keyboard Navigation', 'custom-keyboard-navigation') ?>
+    <?= example('Custom Keyboard Navigation', 'custom-keyboard-navigation', 'generated') ?>
 
 </div>
 

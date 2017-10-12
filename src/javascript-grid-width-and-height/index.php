@@ -56,7 +56,7 @@ include '../documentation-main/documentation_header.php';
         the resize to avoid a flicker.
     </p>
 
-    <?= example('Width & Height', 'width-and-height', 'vanilla', array( 'exampleHeight' => 600 )) ?>
+    <?= example('Width & Height', 'width-and-height', 'multi', array( 'exampleHeight' => 600 )) ?>
 
     <h2 id="dom-layout">DOM Layout</h2>
 
@@ -116,7 +116,7 @@ include '../documentation-main/documentation_header.php';
         Note that if you use the example inlined the scroll bars shown are for the containing iframe, not the grid.
     </note>
 
-    <?= example('Auto Height', 'auto-height') ?>
+    <?= example('Auto Height', 'auto-height', 'generated') ?>
 
     <h3>Animation with Auto Height</h3>
 

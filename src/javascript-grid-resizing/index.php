@@ -98,7 +98,7 @@ include '../documentation-main/documentation_header.php';
         after you press the button.
     </p>
 
-    <?= example('Column Resizing', 'column-resizing') ?>
+    <?= example('Column Resizing', 'column-resizing', 'generated') ?>
 
     <h3 id="resizing-example">Sizing Columns By Default</h3>
 
@@ -115,7 +115,7 @@ include '../documentation-main/documentation_header.php';
         for some frameworks (eg Angular) as DOM objects are used before getting attached.
     </p>
 
-    <?= example('Default Resizing', 'default-resizing') ?>
+    <?= example('Default Resizing', 'default-resizing', 'generated') ?>
 
     <h3 id="resizing-groups">Resizing Groups</h3>
 
@@ -131,7 +131,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Resizing Groups', 'resizing-groups') ?>
+    <?= example('Resizing Groups', 'resizing-groups', 'generated') ?>
 
 </div>
 

@@ -15,10 +15,10 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowSelection: 'single',
     rowData: null,
-    navigateToNextCell: myNavigation
+    navigateToNextCell: navigateToNextCell
 };
 
-function myNavigation(params) {
+function navigateToNextCell(params) {
 
     var previousCell = params.previousCellDef;
     var suggestedNextCell = params.nextCellDef;

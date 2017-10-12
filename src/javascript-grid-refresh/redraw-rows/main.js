@@ -7,9 +7,6 @@ var columnDefs = [
     {headerName: 'F', field: 'f'}
 ];
 
-// placing in 13 rows, so there are exactly enough rows to fill the grid, makes
-// the row animation look nice when you see all the rows
-var rowData = createData(16);
 
 function createData(count) {
     var result = [];
@@ -31,7 +28,7 @@ var colors = ['#000000','#000066','#006600','#660000'];
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: rowData,
+    rowData: createData(16),
     getRowStyle: function() {
         return {
             backgroundColor: colors[colorIndex]

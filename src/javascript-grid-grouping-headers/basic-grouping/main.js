@@ -1,20 +1,20 @@
 var columnDefs = [
     {
-        headerName: "Athlete Details",
+        headerName: 'Athlete Details',
         children: [
-            {headerName: "Athlete", field: "athlete", width: 150, filter: 'text'},
-            {headerName: "Age", field: "age", width: 90, filter: 'number'},
-            {headerName: "Country", field: "country", width: 120}
+            {headerName: 'Athlete', field: 'athlete', width: 150, filter: 'text'},
+            {headerName: 'Age', field: 'age', width: 90, filter: 'number'},
+            {headerName: 'Country', field: 'country', width: 120}
         ]
     },
     {
-        headerName: "Sports Results",
+        headerName: 'Sports Results',
         children: [
-            {headerName: "Sport", field: "sport", width: 110},
-            {headerName: "Total", columnGroupShow: 'closed', field: "total", width: 100, filter: 'number'},
-            {headerName: "Gold", columnGroupShow: 'open', field: "gold", width: 100, filter: 'number'},
-            {headerName: "Silver", columnGroupShow: 'open', field: "silver", width: 100, filter: 'number'},
-            {headerName: "Bronze", columnGroupShow: 'open', field: "bronze", width: 100, filter: 'number'}
+            {headerName: 'Sport', field: 'sport', width: 110},
+            {headerName: 'Total', columnGroupShow: 'closed', field: 'total', width: 100, filter: 'number'},
+            {headerName: 'Gold', columnGroupShow: 'open', field: 'gold', width: 100, filter: 'number'},
+            {headerName: 'Silver', columnGroupShow: 'open', field: 'silver', width: 100, filter: 'number'},
+            {headerName: 'Bronze', columnGroupShow: 'open', field: 'bronze', width: 100, filter: 'number'}
         ]
     }
 ];
@@ -28,20 +28,26 @@ var gridOptions = {
     enableColResize: true
 };
 
+// do http request to get our sample data - not using any framework to keep the example self contained.
+// you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+function fetchData(url, callback) {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open('GET', url);
+    httpRequest.send();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+            var httpResult = JSON.parse(httpRequest.responseText);
+            callback(httpResult);
+        }
+    };
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    fetchData('https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json', function(data) {
+        gridOptions.api.setRowData(data);
+    });
 });

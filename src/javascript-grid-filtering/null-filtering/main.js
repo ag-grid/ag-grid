@@ -1,47 +1,55 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
+    {headerName: 'Athlete', field: 'athlete', width: 150},
     {
-        headerName: "Age", field: "age", width: 90, filter: 'number', filterParams: {
-        nullComparator: {
-            equals: false,
-            lessThan: false,
-            greaterThan: false
+        headerName: 'Age',
+        field: 'age',
+        width: 90,
+        filter: 'number',
+        filterParams: {
+            nullComparator: {
+                equals: false,
+                lessThan: false,
+                greaterThan: false
+            }
         }
-    }
     },
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
+    {headerName: 'Country', field: 'country', width: 120},
+    {headerName: 'Year', field: 'year', width: 90},
     {
-        headerName: "Date", field: "date", width: 145, filter: 'date', filterParams: {
-        comparator: function (filterLocalDateAtMidnight, cellValue) {
-            var dateAsString = cellValue;
-            var dateParts = dateAsString.split("/");
-            var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+        headerName: 'Date',
+        field: 'date',
+        width: 145,
+        filter: 'date',
+        filterParams: {
+            comparator: function(filterLocalDateAtMidnight, cellValue) {
+                var dateAsString = cellValue;
+                var dateParts = dateAsString.split('/');
+                var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
-            if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
-                return 0
-            }
+                if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
+                    return 0;
+                }
 
-            if (cellDate < filterLocalDateAtMidnight) {
-                return -1;
-            }
+                if (cellDate < filterLocalDateAtMidnight) {
+                    return -1;
+                }
 
-            if (cellDate > filterLocalDateAtMidnight) {
-                return 1;
+                if (cellDate > filterLocalDateAtMidnight) {
+                    return 1;
+                }
+            },
+            nullComparator: {
+                equals: false,
+                lessThan: false,
+                greaterThan: false
             }
-        }, nullComparator: {
-            equals: false,
-            lessThan: false,
-            greaterThan: false
         }
-
-    }
     },
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'number'},
-    {headerName: "Total", field: "total", width: 100, filter: 'number', suppressFilter: true}
+    {headerName: 'Sport', field: 'sport', width: 110},
+    {headerName: 'Gold', field: 'gold', width: 100, filter: 'number'},
+    {headerName: 'Silver', field: 'silver', width: 100, filter: 'number'},
+    {headerName: 'Bronze', field: 'bronze', width: 100, filter: 'number'},
+    {headerName: 'Total', field: 'total', width: 100, filter: 'number', suppressFilter: true}
 ];
 
 var gridOptions = {
@@ -56,13 +64,8 @@ function changeNull(toChange, value) {
     gridOptions.api.onFilterChanged();
 }
 
-
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions);
-
-    gridOptions.api.setRowData([{
+var rowData = [
+    {
         athlete: 'Alberto Gutierrez',
         age: 36,
         country: 'Spain',
@@ -72,7 +75,8 @@ document.addEventListener('DOMContentLoaded', function () {
         gold: 1,
         silver: 0,
         bronze: 0
-    }, {
+    },
+    {
         athlete: 'Alberto Gutierrez',
         age: 36,
         country: 'Spain',
@@ -82,7 +86,8 @@ document.addEventListener('DOMContentLoaded', function () {
         gold: 1,
         silver: 0,
         bronze: 0
-    }, {
+    },
+    {
         athlete: 'John Masterson',
         age: null,
         country: 'Rainland',
@@ -92,7 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
         gold: 0,
         silver: 0,
         bronze: 1
-    }, {
+    },
+    {
         athlete: 'Robert Clarke',
         age: null,
         country: 'Raveland',
@@ -103,7 +109,12 @@ document.addEventListener('DOMContentLoaded', function () {
         silver: 0,
         bronze: 1
     }
+];
 
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function() {
+    var gridDiv = document.querySelector('#myGrid');
+    new agGrid.Grid(gridDiv, gridOptions);
 
-    ]);
+    gridOptions.api.setRowData(rowData);
 });

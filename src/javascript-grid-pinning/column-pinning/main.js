@@ -43,7 +43,8 @@ function pinCountry() {
     gridOptions.columnApi.setColumnPinned('total', null);
 }
 
-function jumpToCol(value) {
+function jumpToCol() {
+    var value = document.getElementById('col').value;
     if (typeof value !== 'string' || value === '') {
         return;
     }
@@ -62,6 +63,7 @@ function jumpToCol(value) {
 }
 
 function jumpToRow(value) {
+    var value = document.getElementById('row').value;
     var index = Number(value);
     if (typeof index === 'number' && !isNaN(index)) {
         gridOptions.api.ensureIndexVisible(index);

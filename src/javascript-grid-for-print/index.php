@@ -46,7 +46,7 @@ include '../documentation-main/documentation_header.php';
         Note: If you do see scrolls below, it is the scrolls of the example iFrame, not the grid.
     </p>
 
-    <?= example('For Print Simple', 'for-print-simple') ?>
+    <?= example('For Print Simple', 'for-print-simple', 'generated') ?>
 
     <h3 id="complex-example">Complex Example</h3>
 
@@ -63,7 +63,7 @@ include '../documentation-main/documentation_header.php';
         scrolls will be printed if you tried to print the contents of the iFrame.
     </p>
 
-    <?= example('For Print Complex', 'for-print-complex') ?>
+    <?= example('For Print Complex', 'for-print-complex', 'generated') ?>
 
     <h3 id="for-print-and-rtl">For Print and RTL</h3>
 
@@ -74,7 +74,7 @@ include '../documentation-main/documentation_header.php';
         below.
     </p>
 
-    <?= example('RTL For Print', 'for-print-rtl') ?>
+    <?= example('RTL For Print', 'for-print-rtl', 'generated') ?>
 
     <h3 id="for-print-child-detail">For Print and Master Detail Grids</h3>
 

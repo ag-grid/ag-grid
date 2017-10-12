@@ -42,10 +42,7 @@ var gridOptions = {
     rowData: rowData,
     debug: true,
     enableSorting: true,
-    getNodeChildDetails: getNodeChildDetails,
-    onGridReady: function (params) {
-        params.api.sizeColumnsToFit();
-    }
+    getNodeChildDetails: getNodeChildDetails
 };
 
 function getNodeChildDetails(rowItem) {
@@ -77,4 +74,5 @@ function onFilterChanged(value) {
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
+    gridOptions.api.sizeColumnsToFit();
 });

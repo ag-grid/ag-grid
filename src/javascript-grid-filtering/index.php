@@ -129,7 +129,7 @@ columnDefinition = {
     </ul>
     </p>
 
-    <?= example('Built-In Filters', 'built-in-filters') ?>
+    <?= example('Built-In Filters', 'built-in-filters', 'generated') ?>
 
     <h3 id="apply-function">Apply Function</h3>
 
@@ -177,7 +177,7 @@ columnDefinition = {
         </ul>
     </p>
 
-    <?= example('Apply Button and Filter Events', 'apply-and-filter-events') ?>
+    <?= example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated') ?>
 
     <h3 id="filtering-animation">Filtering Animation</h3>
 
@@ -219,7 +219,7 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <?= example('Filter API', 'filter-api', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Filter API', 'filter-api', 'generated', array("enterprise" => 1)) ?>
 
     <h4 id="reset_filters">Reset Individual Filters</h4>
 
@@ -282,7 +282,7 @@ gridOptions.api.setFilterModel(null);</snippet>
         (Note: the example uses the <a href="../javascript-grid-filter-set/">enterprise set filter</a>).
     </p>
 
-    <?= example('Filter Model', 'filter-model', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Filter Model', 'filter-model', 'generated', array("enterprise" => 1)) ?>
 
 <h3 id="floatingFilter">Floating filters</h3>
 
@@ -342,7 +342,7 @@ gridOptions = {
     </ul>
 </p>
 
-<?= example('Floating Filter', 'floating-filter', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Floating Filter', 'floating-filter', 'generated', array("enterprise" => 1)) ?>
 
 <h3>Server Side Filtering</h3>
 
@@ -380,7 +380,7 @@ In the following example you can filter by age or date and see how <code>null</c
 on the combination of filter type and your <code>columnDef.filterParams.nullComparator</code>
 </p>
 
-<?= example('Null Filtering', 'null-filtering') ?>
+<?= example('Null Filtering', 'null-filtering', 'generated') ?>
 
 <p>
     Note that <code>inRange</code> will never include <code>null</code>.
