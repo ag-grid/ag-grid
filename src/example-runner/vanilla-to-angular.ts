@@ -84,6 +84,7 @@ function appComponentTemplate(bindings) {
     const agGridTag = `<ag-grid-angular
     #agGrid
     style="width: ${bindings.gridSettings.width}; height: ${bindings.gridSettings.height};"
+    id="myGrid"
     class="${bindings.gridSettings.theme}"
     ${propertyAttributes.concat(eventAttributes).join('\n    ')}
     ></ag-grid-angular>`;

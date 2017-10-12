@@ -48,6 +48,7 @@ function indexTemplate(bindings) {
                 className="${bindings.gridSettings.theme}">
 
             <AgGridReact
+                id="myGrid"
                 ${componentAttributes.join('\n        ')}
             />
 
