@@ -186,7 +186,7 @@ export interface ColumnVO {
     </ul>
 </p>
 
-<?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <h1>Example - Slice and Dice - Mocked Server</h1>
 
@@ -249,7 +249,7 @@ export interface ColumnVO {
     This is to prevent the filter from being reset as data is loaded into the grid.
 </note>
 
-<?= example('Slice And Dice', 'slice-and-dice', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Slice And Dice', 'slice-and-dice', 'generated', array("enterprise" => 1)) ?>
 
 <h1>Pivoting Challenges</h1>
 
@@ -371,7 +371,7 @@ export interface ColumnVO {
 
 </p>
 
-<?= example('Click Selection', 'click-selection', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Click Selection', 'click-selection', 'generated', array("enterprise" => 1)) ?>
 
 <note>
     Performing multiple row selections using 'shift-click' has the following restrictions:
@@ -398,7 +398,7 @@ export interface ColumnVO {
     only. Normal applications generally have the checkbox only on one column.
 </p>
 
-<?= example('Checkbox Example', 'checkbox', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Checkbox Example', 'checkbox', 'generated', array("enterprise" => 1)) ?>
 
 
 <h1 id="child-count">Providing Child Counts</h1>
@@ -441,7 +441,7 @@ gridOptions.getChildCount = function(data) {
     for the 'getRowHeight' Grid Options property. This is demonstrated in the example below:
 </p>
 
-<?= example('Dynamic Row Height Example', 'dynamic-row-height', 'vanilla', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= example('Dynamic Row Height Example', 'dynamic-row-height', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <note>
     Purging the cache and dynamic row heights do not work together for the Enterprise Row Model.
@@ -500,14 +500,14 @@ gridOptions.getChildCount = function(data) {
 </ul>
 </p>
 
-<?= example('API example', 'api', 'vanilla', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= example('API example', 'api', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <h1 id="pagination">Pagination with Enterprise Row Model</h1>
 <p>
     To enable pagination when using the enterprise row model, all you have to do is turning pagination on with
-    <code>pagination=true</code>. Find below an example.
+    <code>pagination=true</code>. Find an example below:
 </p>
 
-<?= example('Pagination Example', 'pagination', 'vanilla', array("enterprise" => 1, "extras" => array('lodash'))) ?>
+<?= example('Pagination Example', 'pagination', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

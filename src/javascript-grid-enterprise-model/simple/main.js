@@ -32,18 +32,27 @@ var gridOptions = {
     }
 };
 
+// do http request to get our sample data - not using any framework to keep the example self contained.
+// you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+function fetchData(url, callback) {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.open('GET', url);
+    httpRequest.send();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+            var httpResult = JSON.parse(httpRequest.responseText);
+            callback(httpResult);
+        }
+    };
+}
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json'})
-        .then( function(rows) {
-            var fakeServer = new FakeServer(rows);
-            var datasource = new EnterpriseDatasource(fakeServer);
-            gridOptions.api.setEnterpriseDatasource(datasource);
-        }
-    );
+    fetchData( 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json', function(data) {
+        var fakeServer = new FakeServer(data);
+        var datasource = new EnterpriseDatasource(fakeServer);
+        gridOptions.api.setEnterpriseDatasource(datasource);
+    })
 });

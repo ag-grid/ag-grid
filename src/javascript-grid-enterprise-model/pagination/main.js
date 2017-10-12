@@ -39,8 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json'})
-        .then( function(rows) {
-            var fakeServer = new FakeServer(rows);
+        .then( function(data) {
+            var fakeServer = new FakeServer(data);
             var datasource = new EnterpriseDatasource(fakeServer);
             gridOptions.api.setEnterpriseDatasource(datasource);
         }

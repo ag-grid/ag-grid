@@ -1,5 +1,6 @@
-function EnterpriseDatasource(fakeServer) {
+function EnterpriseDatasource(fakeServer, gridOptions) {
     this.fakeServer = fakeServer;
+    this.gridOptions = gridOptions;
 }
 
 EnterpriseDatasource.prototype.getRows = function(params) {
@@ -19,7 +20,7 @@ EnterpriseDatasource.prototype.getRows = function(params) {
 EnterpriseDatasource.prototype.setSecondaryColsIntoGrid = function(secondaryColDefs) {
     var colDefHash = this.createColsHash(secondaryColDefs);
     if (this.colDefHash !== colDefHash) {
-        gridOptions.columnApi.setSecondaryColumns(secondaryColDefs);
+        this.gridOptions.columnApi.setSecondaryColumns(secondaryColDefs);
         this.colDefHash = colDefHash;
     }
 };

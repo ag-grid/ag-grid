@@ -1,5 +1,6 @@
-function EnterpriseDatasource(fakeServer) {
+function EnterpriseDatasource(fakeServer, gridOptions) {
     this.fakeServer = fakeServer;
+    this.gridOptions = gridOptions;
 }
 
 EnterpriseDatasource.prototype.getRows = function(params) {
@@ -10,7 +11,7 @@ EnterpriseDatasource.prototype.getRows = function(params) {
             params.successCallback(resultForGrid, lastRow);
 
             let secondaryColumnDefinitions = that.buildSecondaryColumnDefinitions(secondaryCols);
-            gridOptions.columnApi.setSecondaryColumns(secondaryColumnDefinitions);
+            that.gridOptions.columnApi.setSecondaryColumns(secondaryColumnDefinitions);
         });
 };
 
