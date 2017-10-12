@@ -9,8 +9,13 @@ const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
 const copy = require('copy');
+const fsExtra = require('fs-extra');
 
 const prettier = require('prettier');
+
+function copyGlobSync(globString, dest) {
+    glob.sync(globString).forEach(file => fsExtra.copySync(file, dest + '/' + path.basename(file)));
+}
 
 function phpArrayToJSON(string) {
     if (!string) {
@@ -33,7 +38,6 @@ function phpArrayToJSON(string) {
 }
 function forEachExampleToGenerate(cb, final) {
     glob('src/*/*.php', {}, (er, files) => {
-
         files.forEach(file => {
             const contents = fs.readFileSync(file, {encoding: 'utf8'});
             const section = path.dirname(file).replace('src/', '');
@@ -59,71 +63,69 @@ module.exports = cb => {
     const appModuleTS = fs.readFileSync(path.join('./src', 'example-runner', 'angular-generated-app-module.ts'));
 
     let count = 0;
-    forEachExampleToGenerate((section, example, options) => {
-        count ++;
-        const document = glob.sync(path.join('./src', section, example, 'index.html'))[0];
-        const script = glob.sync(path.join('./src', section, example, '*.js'))[0];
-        const stylesGlob = path.join('./src', section, example, '*.css');
-        const sources = [fs.readFileSync(script, {encoding: 'utf8'}), fs.readFileSync(document, {encoding: 'utf8'})];
-        const _gen = path.join('./src', section, example, '_gen');
+    forEachExampleToGenerate(
+        (section, example, options) => {
+            count++;
+            const document = glob.sync(path.join('./src', section, example, 'index.html'))[0];
+            const script = glob.sync(path.join('./src', section, example, '*.js'))[0];
+            const stylesGlob = path.join('./src', section, example, '*.css');
+            const sources = [fs.readFileSync(script, {encoding: 'utf8'}), fs.readFileSync(document, {encoding: 'utf8'})];
+            const _gen = path.join('./src', section, example, '_gen');
 
-        let source, indexJSX, appComponentTS;
+            let source, indexJSX, appComponentTS;
 
-        let inlineStyles;
-        const style = jQuery(`<div>${sources[1]}</div>`).find('style');
+            let inlineStyles;
+            const style = jQuery(`<div>${sources[1]}</div>`).find('style');
 
-        if (style.length) {
-            inlineStyles = prettier.format(style.text(), { parser: 'css' });
-        }
+            if (style.length) {
+                inlineStyles = prettier.format(style.text(), {parser: 'css'});
+            }
 
+            try {
+                source = vanillaToReact(sources, options);
+                indexJSX = prettier.format(source, {printWidth: 120});
+            } catch (e) {
+                console.error(`Failed at ./src/${section}/${example}`, e);
+                // console.error(source);
+                //throw new Error('Failed generating the react version');
+            }
 
-        try {
-            source = vanillaToReact(sources, options);
-            indexJSX = prettier.format(source, {printWidth: 120});
-        } catch (e) {
-            console.error(`Failed at ./src/${section}/${example}`, e);
-            // console.error(source);
-            //throw new Error('Failed generating the react version');
-        }
+            try {
+                source = vanillaToAngular(sources, options);
+                appComponentTS = prettier.format(source, {printWidth: 120, parser: 'typescript'});
+            } catch (e) {
+                console.error(`Failed at ./src/${section}/${example}`, e);
+                // console.error(source);
+                // throw new Error('Failed generating the angular version');
+            }
 
-        try {
-            source = vanillaToAngular(sources, options);
-            appComponentTS = prettier.format(source, {printWidth: 120, parser: 'typescript'});
-        } catch (e) {
-            console.error(`Failed at ./src/${section}/${example}`, e);
-            // console.error(source);
-            // throw new Error('Failed generating the angular version');
-        }
-
-        const reactPath = path.join(_gen, 'react');
-        mkdirp(reactPath, () => {
+            const reactPath = path.join(_gen, 'react');
+            mkdirp.sync(reactPath);
             fs.writeFileSync(path.join(reactPath, 'index.jsx'), indexJSX);
             if (inlineStyles) {
                 fs.writeFileSync(path.join(reactPath, 'styles.css'), inlineStyles);
             }
-            copy(stylesGlob, reactPath, () => {});
-        });
 
-        const angularPath = path.join(_gen, 'angular');
-        mkdirp(path.join(angularPath, 'app'), () => {
+            copyGlobSync(stylesGlob, reactPath);
+
+            const angularPath = path.join(_gen, 'angular');
+            mkdirp.sync(path.join(angularPath, 'app'));
             fs.writeFileSync(path.join(angularPath, 'app', 'app.component.ts'), appComponentTS);
             fs.writeFileSync(path.join(angularPath, 'app', 'app.module.ts'), appModuleTS);
             if (inlineStyles) {
                 fs.writeFileSync(path.join(angularPath, 'styles.css'), inlineStyles);
             }
-            copy(stylesGlob, angularPath, () => {});
-        });
+            copyGlobSync(stylesGlob, angularPath);
 
-        const vanillaPath = path.join(_gen, 'vanilla');
+            const vanillaPath = path.join(_gen, 'vanilla');
 
-        mkdirp(vanillaPath, () => {
+            mkdirp(vanillaPath);
             const srcFilesGlob = path.join('./src', section, example, '*.{html,js,css}');
-            copy(srcFilesGlob, vanillaPath, () => {});
-        });
-    }, () => {
-        console.log(`// ${count} examples generated`);
-        cb();
-    });
-
-
+            copyGlobSync(srcFilesGlob, vanillaPath);
+        },
+        () => {
+            console.log(`// ${count} examples generated`);
+            cb();
+        }
+    );
 };
