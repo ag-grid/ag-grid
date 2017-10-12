@@ -89,7 +89,7 @@ include '../documentation-main/documentation_header.php';
         happens then params.keyPress will contain the key code of the key that started the edit. The default editor
         will clear the contents of the cell if Backspace or Delete are pressed.</li>
         <li><b>Printable Key Pressed</b>: Any of the following characters are pressed:
-            "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}"<br/>
+            &quote;qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&amp;*()_+-=[];\'#,./\|<>?:@~{}&quote; <br/>
             If this happens then <code>params.charPress</code> will contain the character that started the edit. The default editor
             places this character into the edit field so that the user experience is they are typing into the cell.</li>
         <li><b>Mouse Double Click</b>: If the mouse is double clicked. There is a grid property <code>singleClickEdit</code>
@@ -406,7 +406,13 @@ colDef.cellEditorParams = {
         such as including a button in your cell renderer.
     </p>
 
-    <?= example('Single Click Editing', 'single-click-editing') ?>
+    <p> The grid below has <i>singleClickEdit=true</i> so that editing will start on a cell when you single click on it.  </p>
+
+    <?= example('Single Click Editing', 'single-click-editing', 'generated') ?>
+
+    <p>The grid below has <i>suppressClickEdit=true</i> so that clicking doesn't started editing. The grid configures a cellRenderer with a button to start editing.</p>
+
+    <?= example('Single Click Editing', 'single-click-editing-renderer', 'generated') ?>
 
     <h3 id="losingFocusStopsEditing">Stop Editing When Grid Loses Focus</h3>
 
