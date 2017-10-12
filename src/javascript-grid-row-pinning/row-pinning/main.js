@@ -1,14 +1,18 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150,
+    {
+        headerName: 'Athlete',
+        field: 'athlete',
+        width: 150,
         // for athlete only, have the pinned header italics
         pinnedRowCellRenderer: function(params) {
-            return '<i>'+params.value+'</i>'
-        }},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110}
+            return '<i>' + params.value + '</i>';
+        }
+    },
+    {headerName: 'Age', field: 'age', width: 90},
+    {headerName: 'Country', field: 'country', width: 120},
+    {headerName: 'Year', field: 'year', width: 90},
+    {headerName: 'Date', field: 'date', width: 110},
+    {headerName: 'Sport', field: 'sport', width: 110}
 ];
 
 var gridOptions = {
@@ -19,41 +23,34 @@ var gridOptions = {
     enableFilter: true,
     getRowStyle: function(params) {
         if (params.node.rowPinned) {
-            return {'font-weight': 'bold'}
+            return {'font-weight': 'bold'};
         }
     },
     // no rows to pin to start with
-    pinnedTopRowData: [],
-    pinnedBottomRowData: []
+    pinnedTopRowData: createData(1, 'Top'),
+    pinnedBottomRowData: createData(1, 'Bottom'),
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
-function onPinnedRowTopCount(headerRowsToFloat) {
+function onPinnedRowTopCount() {
+    var headerRowsToFloat = document.getElementById('top-row-count').value;
     var count = Number(headerRowsToFloat);
     var rows = createData(count, 'Top');
     gridOptions.api.setPinnedTopRowData(rows);
 }
 
-function onPinnedRowBottomCount(footerRowsToFloat) {
+function onPinnedRowBottomCount() {
+    var footerRowsToFloat = document.getElementById('bottom-row-count').value;
     var count = Number(footerRowsToFloat);
     var rows = createData(count, 'Bottom');
     gridOptions.api.setPinnedBottomRowData(rows);
 }
 
-function setData(rowData) {
-    gridOptions.api.setRowData(rowData);
-    // initialise the pinned rows
-    onPinnedRowTopCount(1);
-    onPinnedRowBottomCount(1);
-    // if this timeout is missing, we size to fit before the scrollbar shows,
-    // which doesn't fit the columns very well
-    setTimeout( function() {
-        gridOptions.api.sizeColumnsToFit();
-    }, 0);
-}
-
 function createData(count, prefix) {
     var result = [];
-    for (var i = 0; i<count; i++) {
+    for (var i = 0; i < count; i++) {
         result.push({
             athlete: prefix + ' Athlete ' + i,
             age: prefix + ' Age ' + i,
@@ -79,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
-            setData(httpResult);
+            gridOptions.api.setRowData(httpResult);
         }
     };
 });
