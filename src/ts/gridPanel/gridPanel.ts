@@ -740,7 +740,7 @@ export class GridPanel extends BeanStub {
                 newScrollPosition = rowBottomPixel - viewportHeight;
                 break;
             case 'middle':
-                newScrollPosition = rowTopPixel + halfScreenHeight;
+                newScrollPosition = halfScreenHeight;
                 // The if/else logic here protects us from over scrolling
                 // ie: Trying to scroll past the row (ie ensureNodeVisible (0, 'middle'))
                 newScrollPosition = newScrollPosition > rowTopPixel ? rowTopPixel : newScrollPosition;
