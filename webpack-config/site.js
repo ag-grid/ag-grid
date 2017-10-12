@@ -6,9 +6,7 @@ const path = require('path');
 
 module.exports = merge(common, {
     entry: {
-        site: ['./src/_assets/ts/site', 'webpack-hot-middleware/client?path=/dist/__webpack_hmr&reload=true'],
-        'vanilla-to-angular': [ './src/example-runner/vanilla-to-angular' ],
-        'vanilla-to-react': [ './src/example-runner/vanilla-to-react' ]
+        site: ['./src/_assets/ts/site', 'webpack-hot-middleware/client?path=/dist/__webpack_hmr&reload=true']
     },
     output: {
         publicPath: '/',
