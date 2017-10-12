@@ -86,18 +86,24 @@ Params contains {value, node, data, column, colDef}.
         <li>E - Complex object, not getQuickFilterText provided, so the quick filter text ends up with '[object,object]' for this column.</li>
     </ul>
 
-    The example also demonstrates using the cache vs not using the cache. Selecting one of the following
-    will reset the grid and work as follows:
+    The example also demonstrates using the quick filter cache vs not using the quick filter cache.
+    The grid works very fast even when the cache is turned off - so you probably don't need it.
+    However for those with very large data sets (eg over 10,000 rows), turning the cache on will
+    improve quick filter speed. The cache is demonstrated as follows:
     <ul>
-        <li><b>Normal Quick Filter:</b> The cache is not used. Value getters are executed on each node each
-            time the filter is executed.</li>
-        <li><b>Cache Quick Filter:</b> The cache is used. Value getters are executed first time the quick
-            filter is run.</li>
+        <li>
+            <b>Normal Quick Filter:</b> The cache is not used. Value getters are executed on each node each
+            time the filter is executed. Hitting 'Print Quick Filter Texts' will always return back 'undefined'
+            for every row because the cache is not used.
+        </li>
+        <li>
+            <b>Cache Quick Filter:</b> The cache is used. Value getters are executed first time the quick
+            filter is run. Hitting 'Print Quick Filter Texts' will return back the quick filter text for each
+            row which will initially be undefined and then set the the quick filter text after the quick filter
+            is executed for the first time. You will notice the quick filter text is correct
+            for each column except E (which would be fixed by adding an appropriate getQuickFilterText method like D does).
+        </li>
     </ul>
-
-    To see the quick filter text attached to each node while using the cache, click 'Print Quick Filter Texts'
-    button after you execute the quick filter at least one. You will notice the quick filter text is correct
-    for each column except E (which would be fixed by adding an appropriate getQuickFilterText method like D does).
 </p>
 
 <?= example('Quick Filter', 'quick-filter') ?>
