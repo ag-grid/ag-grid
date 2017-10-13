@@ -117,10 +117,10 @@ ${bindings.utils.join('\n')}
 export class AppComponent {
     @ViewChild('agGrid') agGrid;
 
-    ${propertyVars.join('\n    ')}
+    ${propertyVars.join('\n')}
 
     constructor(${diParams.join(', ')}) {
-        ${propertyAssignments.join(';\n    ')}
+        ${propertyAssignments.join(';\n')}
     }
 
     ${eventHandlers
@@ -133,7 +133,7 @@ export class AppComponent {
 }
 
 export function vanillaToAngular(src, gridSettings) {
-    const bindings = parser(src, gridSettings, {gridOptionsLocalVar: 'const gridOptions = this.agGrid'});
+    const bindings = parser(src, gridSettings);
     return appComponentTemplate(bindings);
 }
 

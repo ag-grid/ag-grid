@@ -95,8 +95,8 @@ function extractEventHandlers(tree, eventNames: string[]) {
     });
 }
 
-export default function parser([js, html], gridSettings, {gridOptionsLocalVar}) {
-    const localGridOptions = esprima.parseScript(gridOptionsLocalVar).body[0];
+export default function parser([js, html], gridSettings) {
+    const localGridOptions = esprima.parseScript( 'const gridOptions = this.agGrid').body[0];
 
     const domTree = $(`<div>${html}</div>`);
 

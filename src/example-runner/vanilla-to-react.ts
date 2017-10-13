@@ -1,4 +1,4 @@
-import parser, { recognizedDomEvents } from './vanilla-src-parser';
+import parser, {recognizedDomEvents} from './vanilla-src-parser';
 import styleConvertor from './lib/convert-style-to-react';
 
 function indexTemplate(bindings) {
@@ -46,27 +46,22 @@ function indexTemplate(bindings) {
                 height: '${bindings.gridSettings.height}', 
                 width: '${bindings.gridSettings.width}'}} 
                 className="${bindings.gridSettings.theme}">
-
             <AgGridReact
                 id="myGrid"
-                ${componentAttributes.join('\n        ')}
+                ${componentAttributes.join('\n')}
             />
-
             </div>`;
 
     let template = bindings.template ? bindings.template.replace('$$GRID$$', agGridTag) : agGridTag;
 
-
-    recognizedDomEvents.forEach( event => {
+    recognizedDomEvents.forEach(event => {
         const jsEvent = 'on' + event[0].toUpperCase() + event.substr(1, event.length);
         const matcher = new RegExp(`on${event}="(\\w+)\\((.*)\\)"`, 'g');
         template = template.replace(matcher, `${jsEvent}={this.$1.bind(this, $2)}`);
     });
     template = template.replace(/\(this\, \)/g, '(this)');
 
-    template = template.replace(/<input type="radio" (.+?)>/g, '<input type="radio" $1 />');
-    template = template.replace(/<input type="checkbox" (.+?)>/g, '<input type="checkbox" $1 />');
-    template = template.replace(/<input type="text" (.+?)>/g, '<input type="text" $1 />');
+    template = template.replace(/<input type="(radio|checkbox|text)" (.+?)>/g, '<input type="$1" $2 />');
     template = template.replace(/<input placeholder(.+?)>/g, '<input placeholder$1 />');
 
     template = styleConvertor(template);
@@ -119,9 +114,7 @@ render(
 }
 
 export function vanillaToReact(src, gridSettings) {
-    const bindings = parser(src, gridSettings, {
-        gridOptionsLocalVar: 'const gridOptions = this.agGrid'
-    });
+    const bindings = parser(src, gridSettings);
     return indexTemplate(bindings);
 }
 
