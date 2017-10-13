@@ -1,17 +1,21 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 200},
-    {headerName: "Age", field: "age", width: 100},
-    {headerName: "Country", field: "country", width: 150},
-    {headerName: "Year", field: "year", width: 120},
-    {headerName: "Sport", field: "sport", width: 200},
+    {headerName: 'Athlete', field: 'athlete', width: 200},
+    {headerName: 'Age', field: 'age', width: 100},
+    {headerName: 'Country', field: 'country', width: 150},
+    {headerName: 'Year', field: 'year', width: 120},
+    {headerName: 'Sport', field: 'sport', width: 200},
     // in the total col, we have a value getter, which usually means we don't need to provide a field
     // however the master/slave depends on the column id (which is derived from the field if provided) in
     // order ot match up the columns
-    {headerName: "Total", field: "total",
-        valueGetter: "data.gold + data.silver + data.bronze", width: 200},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100}
+    {
+        headerName: 'Total',
+        field: 'total',
+        valueGetter: 'data.gold + data.silver + data.bronze',
+        width: 200
+    },
+    {headerName: 'Gold', field: 'gold', width: 100},
+    {headerName: 'Silver', field: 'silver', width: 100},
+    {headerName: 'Bronze', field: 'bronze', width: 100}
 ];
 
 var dataForBottomGrid = [
