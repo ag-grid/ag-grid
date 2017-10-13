@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -164,9 +164,6 @@ var PaginationProxy = (function (_super) {
         return this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop;
     };
     PaginationProxy.prototype.isRowPresent = function (rowNode) {
-        return this.isRowInPage(rowNode);
-    };
-    PaginationProxy.prototype.isRowInPage = function (rowNode) {
         if (!this.rowModel.isRowPresent(rowNode)) {
             return false;
         }

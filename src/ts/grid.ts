@@ -29,7 +29,7 @@ import {SortController} from "./sortController";
 import {FocusedCellController} from "./focusedCellController";
 import {MouseEventService} from "./gridPanel/mouseEventService";
 import {CellNavigationService} from "./cellNavigationService";
-import {Utils as _} from "./utils";
+import {NumberSequence, Utils as _} from "./utils";
 import {FilterStage} from "./rowModels/inMemory/filterStage";
 import {SortStage} from "./rowModels/inMemory/sortStage";
 import {FlattenStage} from "./rowModels/inMemory/flattenStage";
@@ -167,11 +167,11 @@ export class Grid {
                 BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
                 GridPanel, PopupService, ValueCache, ValueService, AlignedGridsService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
-                DragAndDropService, SortController, ColumnApi, FocusedCellController, MouseEventService,
+                DragAndDropService, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, RowNodeFactory,
                 CellEditorFactory, CellRendererService, ValueFormatterService, StylingService, ScrollVisibleService,
                 ColumnHoverService, ColumnAnimationService, SortService, AutoGroupColService, ImmutableService,
-                ChangeDetectionService, Environment, Beans, AnimationFrameService],
+                ChangeDetectionService, Environment, Beans, AnimationFrameService, SortController],
             components: [
                 {componentName: 'AgCheckbox', theClass: AgCheckbox}
             ],

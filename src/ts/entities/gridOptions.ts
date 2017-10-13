@@ -233,6 +233,7 @@ export interface GridOptions {
      ****************************************************************/
 
     // callbacks
+    paginationNumberFormatter?: (params: PaginationNumberFormatterParams)=>string;
     postProcessPopup?:(params: PostProcessPopupParams)=>void;
     frameworkComponents?:{[p:string]:{new(): any}}
     components?:{[p:string]:AgGridRegisteredComponentInput<IComponent<any, IAfterGuiAttachedParams>>}
@@ -247,6 +248,7 @@ export interface GridOptions {
     doesExternalFilterPass?(node: RowNode): boolean;
     getRowStyle?: Function;
     getRowClass?: (params: any) => (string | string[]);
+    rowClassRules?: { [cssClassName: string]: (Function | string) };
     getRowHeight?: Function;
     sendToClipboard?: (params: any)=>void;
     navigateToNextCell?: (params: NavigateToNextCellParams)=>GridCellDef;
@@ -266,6 +268,7 @@ export interface GridOptions {
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
     getRowNodeId?: GetRowNodeIdFunc;
+    getChildCount?(dataItem: any): number;
     doesDataFlower?(dataItem: any): boolean;
     processRowPostCreate?(params: ProcessRowParams): void;
     processCellForClipboard?(params: ProcessCellForExportParams): any;
@@ -430,4 +433,8 @@ export interface PostProcessPopupParams {
     eventSource?: HTMLElement;
     // if the popup is as a result of a click or touch, this is the event - eg user showing context menu
     mouseEvent?: MouseEvent|Touch;
+}
+
+export interface PaginationNumberFormatterParams {
+    value: number;
 }

@@ -163,7 +163,7 @@ export class ComponentResolver {
         if (hardcodedJsFunction){
             // console.warn(`ag-grid: Since version 12.1.0 specifying a function directly is deprecated, you should register the component by name`);
             // console.warn(`${hardcodedJsFunction}`);
-            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.AG_GRID, ComponentSource.HARDCODED);
+            return <ResolvedComponent<A,B>>this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.AG_GRID, ComponentSource.HARDCODED);
         }
 
 
@@ -175,7 +175,7 @@ export class ComponentResolver {
             componentNameToUse = componentName;
         }
 
-        return this.namedComponentResolver.resolve(propertyName, componentNameToUse);
+        return <ResolvedComponent<A,B>>this.namedComponentResolver.resolve(propertyName, componentNameToUse);
     }
 
     /**
@@ -208,7 +208,7 @@ export class ComponentResolver {
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
      * It takes
-     *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
+     *  @param holderOpt: This is the context for which this component needs to be created, it can be gridOptions
      *      (global) or columnDef mostly.
      *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
      *      specified by the user in the configuration
@@ -235,9 +235,9 @@ export class ComponentResolver {
 
         //Wire the component and call the init mehtod with the correct params
         let finalParams = this.mergeParams(holder, propertyName, agGridParams);
-
         this.context.wireBean(component);
         component.init(finalParams);
+
         return component;
     }
 
@@ -253,6 +253,7 @@ export class ComponentResolver {
 
         if (!componentToUse || !componentToUse.component) {
             if (mandatory){
+                debugger;
                 console.error(`Error creating component ${propertyName}=>${componentName}`);
             }
             return null;
@@ -266,7 +267,7 @@ export class ComponentResolver {
         let FrameworkComponentRaw: {new(): B} = componentToUse.component;
 
         let thisComponentConfig: ComponentMetadata= this.componentMetadataProvider.retrieve(propertyName);
-        return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList);
+        return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, componentName);
     }
 
 }

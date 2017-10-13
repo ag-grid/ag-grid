@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,6 +39,7 @@ var checkboxSelectionComponent_1 = require("../checkboxSelectionComponent");
 var columnController_1 = require("../../columnController/columnController");
 var column_1 = require("../../entities/column");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
+var mouseEventService_1 = require("../../gridPanel/mouseEventService");
 var GroupCellRenderer = (function (_super) {
     __extends(GroupCellRenderer, _super);
     function GroupCellRenderer() {
@@ -101,14 +102,14 @@ var GroupCellRenderer = (function (_super) {
             paddingPx = 0;
         }
         else {
-            var paddingFactor = (params.padding >= 0) ? params.padding : 10;
+            var paddingFactor = (params.padding >= 0) ? params.padding : this.gridOptionsWrapper.getGroupPaddingSize();
             paddingPx = rowNode.uiLevel * paddingFactor;
             var reducedLeafNode = this.columnController.isPivotMode() && params.node.leafGroup;
             if (rowNode.footer) {
-                paddingPx += 15;
+                paddingPx += this.gridOptionsWrapper.getFooterPaddingAddition();
             }
             else if (!rowNode.isExpandable() || reducedLeafNode) {
-                paddingPx += 10;
+                paddingPx += this.gridOptionsWrapper.getLeafNodePaddingAddition();
             }
         }
         if (this.gridOptionsWrapper.isEnableRtl()) {
@@ -223,7 +224,7 @@ var GroupCellRenderer = (function (_super) {
         if (checkboxNeeded) {
             var cbSelectionComponent_1 = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent_1);
-            cbSelectionComponent_1.init({ rowNode: rowNode });
+            cbSelectionComponent_1.init({ rowNode: rowNode, column: this.params.column });
             this.eCheckbox.appendChild(cbSelectionComponent_1.getHtmlElement());
             this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
         }
@@ -235,16 +236,15 @@ var GroupCellRenderer = (function (_super) {
         var eContractedIcon = utils_1.Utils.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
-        var expandOrContractListener = this.onExpandOrContract.bind(this);
-        this.addDestroyableEventListener(this.eExpanded, 'click', expandOrContractListener);
-        this.addDestroyableEventListener(this.eContracted, 'click', expandOrContractListener);
+        this.addDestroyableEventListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
+        this.addDestroyableEventListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
         // expand / contract as the user hits enter
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
         this.addDestroyableEventListener(params.node, rowNode_1.RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
         // if editing groups, then double click is to start editing
         if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
-            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
+            this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
     };
     GroupCellRenderer.prototype.onKeyDown = function (event) {
@@ -290,6 +290,20 @@ var GroupCellRenderer = (function (_super) {
         // if we didn't find a displayed group, set it to the row node
         if (utils_1.Utils.missing(this.displayedGroup)) {
             this.displayedGroup = rowNode;
+        }
+    };
+    GroupCellRenderer.prototype.onExpandClicked = function () {
+        this.onExpandOrContract();
+    };
+    GroupCellRenderer.prototype.onCellDblClicked = function (event) {
+        // we want to avoid acting on double click events on the expand / contract icon,
+        // as that icons already has expand / collapse functionality on it. otherwise if
+        // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
+        // is open->close->open, however double click should be open->close only.
+        var targetIsExpandIcon = utils_1.Utils.isElementInEventPath(this.eExpanded, event)
+            || utils_1.Utils.isElementInEventPath(this.eContracted, event);
+        if (!targetIsExpandIcon) {
+            this.onExpandOrContract();
         }
     };
     GroupCellRenderer.prototype.onExpandOrContract = function () {
@@ -358,6 +372,10 @@ var GroupCellRenderer = (function (_super) {
         context_1.Autowired('columnController'),
         __metadata("design:type", columnController_1.ColumnController)
     ], GroupCellRenderer.prototype, "columnController", void 0);
+    __decorate([
+        context_1.Autowired('mouseEventService'),
+        __metadata("design:type", mouseEventService_1.MouseEventService)
+    ], GroupCellRenderer.prototype, "mouseEventService", void 0);
     __decorate([
         componentAnnotations_1.RefSelector('eExpanded'),
         __metadata("design:type", HTMLElement)

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -40,9 +40,9 @@ var CheckboxSelectionComponent = (function (_super) {
         return _super.call(this, "<span class=\"ag-selection-checkbox\"/>") || this;
     }
     CheckboxSelectionComponent.prototype.createAndAddIcons = function () {
-        this.eCheckedIcon = utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null);
-        this.eUncheckedIcon = utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null);
-        this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null);
+        this.eCheckedIcon = utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
+        this.eUncheckedIcon = utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
+        this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.column);
         var element = this.getHtmlElement();
         element.appendChild(this.eCheckedIcon);
         element.appendChild(this.eUncheckedIcon);
@@ -71,10 +71,10 @@ var CheckboxSelectionComponent = (function (_super) {
         }
     };
     CheckboxSelectionComponent.prototype.init = function (params) {
-        this.createAndAddIcons();
         this.rowNode = params.rowNode;
         this.column = params.column;
         this.visibleFunc = params.visibleFunc;
+        this.createAndAddIcons();
         this.onSelectionChanged();
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
         // would possibly get selected twice

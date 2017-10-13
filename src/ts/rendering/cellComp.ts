@@ -19,7 +19,7 @@ import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {Component} from "../widgets/component";
 import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
-import {NewValueParams} from "../entities/colDef";
+import {NewValueParams, SuppressKeyboardEventParams} from "../entities/colDef";
 import {Beans} from "./beans";
 import {IAfterGuiAttachedParams, ICellRendererAfterGuiAttachedParams} from "../interfaces/iComponent";
 import {RowComp} from "./rowComp";
@@ -575,8 +575,8 @@ export class CellComp extends Component {
     }
 
     private processCellClassRules(onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void): void {
-        this.beans.stylingService.processCellClassRules(
-            this.column.getColDef(),
+        this.beans.stylingService.processClassRules(
+            this.column.getColDef().cellClassRules,
             {
                 value: this.value,
                 data: this.rowNode.data,
@@ -663,7 +663,7 @@ export class CellComp extends Component {
         let valueToRender = this.formatValue(this.value);
         let params = this.createCellRendererParams(valueToRender);
 
-        this.cellRenderer = this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType);
+        this.cellRenderer = <ICellRendererComp>this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType);
         this.cellRendererGui = this.cellRenderer.getGui();
 
         if (this.cellRendererGui===null || this.cellRendererGui===undefined) {
@@ -967,7 +967,7 @@ export class CellComp extends Component {
 
         let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
 
-        let cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getCellEditor(), params);
+        let cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getColDef(), params);
 
         return cellEditor;
     }
@@ -1041,6 +1041,9 @@ export class CellComp extends Component {
     public onKeyDown(event: KeyboardEvent): void {
         let key = event.which || event.keyCode;
 
+        // give user a chance to cancel event processing
+        if (this.doesUserWantToCancelKeyboardEvent(event)) { return; }
+
         switch (key) {
             case Constants.KEY_ENTER:
                 this.onEnterKeyDown();
@@ -1064,6 +1067,27 @@ export class CellComp extends Component {
             case Constants.KEY_LEFT:
                 this.onNavigationKeyPressed(event, key);
                 break;
+        }
+    }
+
+    public doesUserWantToCancelKeyboardEvent(event: KeyboardEvent): boolean {
+        let callback = this.column.getColDef().suppressKeyboardEvent;
+        if (_.missing(callback)) {
+            return false;
+        } else {
+            // if editing is null or undefined, this sets it to false
+            let editing = this.editingCell === true;
+            let params: SuppressKeyboardEventParams = {
+                event: event,
+                editing: editing,
+                column: this.column,
+                api: this.beans.gridOptionsWrapper.getApi(),
+                node: this.rowNode,
+                colDef: this.column.getColDef(),
+                context: this.beans.gridOptionsWrapper.getContext(),
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi()
+            };
+            return callback(params);
         }
     }
 
@@ -1382,7 +1406,7 @@ export class CellComp extends Component {
             let userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
             if (!userWantsToCancel) {
                 let newValue = this.cellEditor.getValue();
-                this.beans.valueService.setValue(this.rowNode, this.column, newValue);
+                this.rowNode.setDataValue(this.column, newValue);
                 this.value = this.getValue();
             }
         }
@@ -1414,7 +1438,12 @@ export class CellComp extends Component {
                     // we know it's a dom element (not a string) because we converted
                     // it after the gui was attached if it was a string.
                     let eCell = <HTMLElement>this.cellRendererGui;
-                    this.getHtmlElement().appendChild(eCell);
+
+                    // can be null if cell was previously null / contained empty string,
+                    // this will result in new value not being rendered.
+                    if(eCell) {
+                        this.getHtmlElement().appendChild(eCell);
+                    }
                 }
             }
         }

@@ -14,6 +14,7 @@ import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {ICellRendererAfterGuiAttachedParams} from "../../interfaces/iComponent";
+import {MouseEventService} from "../../gridPanel/mouseEventService";
 
 export interface GroupCellRendererParams extends ICellRendererParams{
     pinned:string,
@@ -45,6 +46,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
 
     @RefSelector('eExpanded') private eExpanded: HTMLElement;
     @RefSelector('eContracted') private eContracted: HTMLElement;
@@ -129,14 +131,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (rowNode.uiLevel<=0) {
             paddingPx = 0;
         } else {
-            let paddingFactor: number = (params.padding >= 0) ? params.padding : 10;
+            let paddingFactor: number = (params.padding >= 0) ? params.padding : this.gridOptionsWrapper.getGroupPaddingSize();
             paddingPx = rowNode.uiLevel * paddingFactor;
 
             let reducedLeafNode = this.columnController.isPivotMode() && params.node.leafGroup;
             if (rowNode.footer) {
-                paddingPx += 15;
+                paddingPx += this.gridOptionsWrapper.getFooterPaddingAddition();
             } else if (!rowNode.isExpandable() || reducedLeafNode) {
-                paddingPx += 10;
+                paddingPx += this.gridOptionsWrapper.getLeafNodePaddingAddition();
             }
         }
 
@@ -266,7 +268,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (checkboxNeeded) {
             let cbSelectionComponent = new CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);
-            cbSelectionComponent.init({rowNode: rowNode});
+            cbSelectionComponent.init({rowNode: rowNode, column: this.params.column});
             this.eCheckbox.appendChild(cbSelectionComponent.getHtmlElement());
             this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
         }
@@ -280,9 +282,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
 
-        let expandOrContractListener = this.onExpandOrContract.bind(this);
-        this.addDestroyableEventListener(this.eExpanded, 'click', expandOrContractListener);
-        this.addDestroyableEventListener(this.eContracted, 'click', expandOrContractListener);
+        this.addDestroyableEventListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
+        this.addDestroyableEventListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
 
         // expand / contract as the user hits enter
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
@@ -291,7 +292,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         // if editing groups, then double click is to start editing
         if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
-            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
+            this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
     }
 
@@ -341,6 +342,24 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // if we didn't find a displayed group, set it to the row node
         if (_.missing(this.displayedGroup)) {
             this.displayedGroup = rowNode;
+        }
+    }
+
+    public onExpandClicked(): void {
+        this.onExpandOrContract();
+    }
+
+    public onCellDblClicked(event: MouseEvent): void {
+        // we want to avoid acting on double click events on the expand / contract icon,
+        // as that icons already has expand / collapse functionality on it. otherwise if
+        // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
+        // is open->close->open, however double click should be open->close only.
+        let targetIsExpandIcon
+            = _.isElementInEventPath(this.eExpanded, event)
+            || _.isElementInEventPath(this.eContracted, event);
+
+        if (!targetIsExpandIcon) {
+            this.onExpandOrContract();
         }
     }
 

@@ -1,3 +1,5 @@
+import {TextCellEditor} from "../../rendering/cellEditors/textCellEditor";
+
 import {Bean, PostConstruct} from "../../context/context";
 import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
 import {DefaultDateComponent} from "../../filter/dateFilter";
@@ -15,8 +17,11 @@ import {ComponentType} from "./componentResolver";
 import {GroupCellRenderer} from "../../rendering/cellRenderers/groupCellRenderer";
 import {AnimateShowChangeCellRenderer} from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
 import {AnimateSlideCellRenderer} from "../../rendering/cellRenderers/animateSlideCellRenderer";
-import {DefaultCellRenderer} from "./agComponentUtils";
 import {LoadingCellRenderer} from "../../rendering/rowComp";
+import {SelectCellEditor} from "../../rendering/cellEditors/selectCellEditor";
+import {PopupTextCellEditor} from "../../rendering/cellEditors/popupTextCellEditor";
+import {PopupSelectCellEditor} from "../../rendering/cellEditors/popupSelectCellEditor";
+import {LargeTextCellEditor} from "../../rendering/cellEditors/largeTextCellEditor";
 
 
 export enum RegisteredComponentSource {
@@ -80,12 +85,25 @@ export class ComponentProvider {
             group: GroupCellRenderer,
             groupRowRenderer: GroupCellRenderer,
             loadingCellRenderer: LoadingCellRenderer,
-            pinnedRowCellRenderer: null
+            pinnedRowCellRenderer: null,
+
+            //editors
+            cellEditor: TextCellEditor,
+            textCellEditor: TextCellEditor,
+            text: TextCellEditor,
+            selectCellEditor: SelectCellEditor,
+            select: SelectCellEditor,
+            popupTextCellEditor: PopupTextCellEditor,
+            popupText: PopupTextCellEditor,
+            popupSelectCellEditor: PopupSelectCellEditor,
+            popupSelect: PopupSelectCellEditor,
+            largeTextCellEditor: LargeTextCellEditor,
+            largeText: LargeTextCellEditor
         }
     }
 
     public registerComponent<A extends IComponent<any, IAfterGuiAttachedParams>> (name:string, component:AgGridRegisteredComponentInput<A>){
-        console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
+        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
         if (this.frameworkComponents[name]){
             console.error(`Trying to register a component that you have already registered for frameworks: ${name}`);
             return;
@@ -99,7 +117,7 @@ export class ComponentProvider {
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
     public registerFwComponent<A extends IComponent<any, IAfterGuiAttachedParams> & B, B> (name:string, component:{new(): IComponent<B, IAfterGuiAttachedParams>}){
-        console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
+        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
         if (this.jsComponents[name]){
             console.error(`Trying to register a component that you have already registered for plain javascript: ${name}`);
             return;

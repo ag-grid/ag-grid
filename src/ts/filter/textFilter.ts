@@ -172,7 +172,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
 
     public resetState(): void{
         this.setFilter(null);
-        this.setFilterType(BaseFilter.CONTAINS);
+        this.setFilterType(this.defaultFilter);
     }
 
     public serialize(): SerializedTextFilter{

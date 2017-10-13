@@ -671,6 +671,13 @@ export class Utils {
     static defaultComparator(valueA: any, valueB: any, accentedCompare: boolean = false): number {
         let valueAMissing = valueA === null || valueA === undefined;
         let valueBMissing = valueB === null || valueB === undefined;
+
+        // this is for aggregations sum and avg, where the result can be a number that is wrapped.
+        // if we didn't do this, then the toString() value would be used, which would result in
+        // the strings getting used instead of the numbers.
+        if (valueA && valueA.toNumber) { valueA = valueA.toNumber(); }
+        if (valueB && valueB.toNumber) { valueB = valueB.toNumber(); }
+
         if (valueAMissing && valueBMissing) {
             return 0;
         }
@@ -704,7 +711,6 @@ export class Utils {
         } else {
             return 0;
         }
-
 
         function doQuickCompare (a:string, b:string): number{
             return (a > b ? 1 : (a < b ? -1 : 0));
@@ -1036,7 +1042,6 @@ export class Utils {
         if (this.isFirefox === undefined) {
             let anyWindow = <any> window;
             this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';
-            ;
         }
         return this.isFirefox;
     }
@@ -1046,6 +1051,53 @@ export class Utils {
     static getTarget(event: Event): Element {
         let eventNoType = <any> event;
         return eventNoType.target || eventNoType.srcElement;
+    }
+
+    static isElementInEventPath(element: HTMLElement, event: Event): boolean {
+        if (!event || !element) { return false; }
+        let path = _.getEventPath(event);
+        return path.indexOf(element) >= 0;
+    }
+
+    static createEventPath(event: Event): EventTarget[] {
+        let res: EventTarget[] = [];
+        let pointer = _.getTarget(event);
+        while (pointer) {
+            res.push(pointer);
+            pointer = pointer.parentElement;
+        }
+        return res;
+    }
+
+    // firefox doesn't have event.path set, or any alternative to it, so we hack
+    // it in. this is needed as it's to late to work out the path when the item is
+    // removed from the dom
+    static addAgGridEventPath(event: Event): void {
+        (<any>event).__agGridEventPath = this.getEventPath(event);
+    }
+
+    static getEventPath(event: Event): EventTarget[] {
+        // https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
+        // https://developer.mozilla.org/en-US/docs/Web/API/Event
+
+        let eventNoType = <any> event;
+        if (event.deepPath) {
+            // IE supports deep path
+            return event.deepPath();
+        } else if (eventNoType.path) {
+            // Chrome supports path
+            return eventNoType.path;
+        } else if (eventNoType.composedPath) {
+            // Firefox supports composePath
+            return eventNoType.composedPath();
+        } else if (eventNoType.__agGridEventPath) {
+            // Firefox supports composePath
+            return eventNoType.__agGridEventPath;
+        } else {
+            // and finally, if none of the above worked,
+            // we create the path ourselves
+            return this.createEventPath(event);
+        }
     }
 
     static forEachSnapshotFirst(list: any[], callback: (item: any)=>void ): void {

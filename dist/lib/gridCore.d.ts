@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.1.2
+// Type definitions for ag-grid v13.3.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
@@ -45,6 +45,6 @@ export declare class GridCore {
     showToolPanel(show: any): void;
     isToolPanelShowing(): boolean;
     private destroy();
-    ensureNodeVisible(comparator: any): void;
+    ensureNodeVisible(comparator: any, position?: string): void;
     doLayout(): void;
 }

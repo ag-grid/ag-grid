@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.1.2
+// Type definitions for ag-grid v13.3.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -6,6 +6,7 @@ import { Column } from "../entities/column";
 export declare class PopupService {
     private gridCore;
     private gridOptionsWrapper;
+    private activePopupElements;
     private getPopupParent();
     positionPopupForMenu(params: {
         eventSource: any;

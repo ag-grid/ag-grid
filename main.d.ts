@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.1.2
+// Type definitions for ag-grid v13.3.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { BalancedColumnTreeBuilder } from "./dist/lib/columnController/balancedColumnTreeBuilder";
@@ -8,6 +8,7 @@ export { ColumnUtils } from "./dist/lib/columnController/columnUtils";
 export { DisplayedGroupCreator } from "./dist/lib/columnController/displayedGroupCreator";
 export { GroupInstanceIdCreator } from "./dist/lib/columnController/groupInstanceIdCreator";
 export { ComponentUtil } from "./dist/lib/components/componentUtil";
+export { ComponentProvider } from "./dist/lib/components/framework/componentProvider";
 export { initialiseAgGridWithAngular1 } from "./dist/lib/components/agGridNg1";
 export { initialiseAgGridWithWebComponents } from "./dist/lib/components/agGridWebComponent";
 export { BeanStub } from "./dist/lib/context/beanStub";

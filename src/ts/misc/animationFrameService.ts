@@ -47,7 +47,7 @@ export class AnimationFrameService {
             duration = (new Date().getTime()) - frameStart;
         }
 
-        if (gridPanelNeedsAFrame || !this.p1Tasks.isEmpty() || !this.p1Tasks.isEmpty()) {
+        if (gridPanelNeedsAFrame || !this.p1Tasks.isEmpty() || !this.p2Tasks.isEmpty()) {
             this.requestFrame();
         } else {
             this.ticking = false;

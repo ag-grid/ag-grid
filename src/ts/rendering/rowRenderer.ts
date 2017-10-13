@@ -243,7 +243,6 @@ export class RowRenderer extends BeanStub {
 
     // gets called after changes to the model.
     public redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
-        this.logger.log('refreshView');
 
         this.getLockOnRefresh();
 

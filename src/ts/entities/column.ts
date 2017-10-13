@@ -98,7 +98,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private primary: boolean;
 
-    private cellEditor: {new(): ICellEditorComp} | string;
     private filter: {new(): IFilter} | string;
 
     private parent: ColumnGroupChild;
@@ -123,7 +122,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
     public initialise(): void {
-        this.cellEditor = this.frameworkFactory.colDefCellEditor(this.colDef);
         this.filter = this.frameworkFactory.colDefFilter(this.colDef);
 
         this.setPinned(this.colDef.pinned);
@@ -165,9 +163,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return showingAllGroups || showingThisGroup;
     }
 
-    public getCellEditor(): {new(): ICellEditorComp} | string {
-        return this.cellEditor;
-    }
+
 
     public getFilter(): {new(): IFilter} | string {
         return this.filter;

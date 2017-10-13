@@ -31,9 +31,9 @@ export class CheckboxSelectionComponent extends Component {
     }
 
     private createAndAddIcons(): void {
-        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null);
-        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null);
-        this.eIndeterminateIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null);
+        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
+        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
+        this.eIndeterminateIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.column);
 
         let element = this.getHtmlElement();
         element.appendChild(this.eCheckedIcon);
@@ -69,11 +69,11 @@ export class CheckboxSelectionComponent extends Component {
 
     public init(params: any): void {
 
-        this.createAndAddIcons();
-
         this.rowNode = params.rowNode;
         this.column = params.column;
         this.visibleFunc = params.visibleFunc;
+
+        this.createAndAddIcons();
 
         this.onSelectionChanged();
 

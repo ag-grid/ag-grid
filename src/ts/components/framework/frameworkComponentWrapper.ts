@@ -5,7 +5,12 @@ import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
 export interface FrameworkComponentWrapper {
-    wrap <A extends IComponent<any, IAfterGuiAttachedParams>> (frameworkComponent:{new(): any}, methodList:string[], optionalMethodList?: string[]):A
+    wrap <A extends IComponent<any, IAfterGuiAttachedParams>> (
+        frameworkComponent:{new(): any},
+        methodList:string[],
+        optionalMethodList?: string[],
+        componentName?:string
+    ):A
 }
 
 export interface WrapableInterface {
@@ -16,8 +21,8 @@ export interface WrapableInterface {
 
 
 export abstract class BaseComponentWrapper<F extends WrapableInterface> implements FrameworkComponentWrapper {
-    wrap<A extends IComponent<any, IAfterGuiAttachedParams>>(OriginalConstructor: { new (): any }, mandatoryMethodList: string[], optionalMethodList?: string[]): A {
-        let wrapper: F = this.createWrapper(OriginalConstructor);
+    wrap<A extends IComponent<any, IAfterGuiAttachedParams>>(OriginalConstructor: { new (): any }, mandatoryMethodList: string[], optionalMethodList?: string[], componentName?:string): A {
+        let wrapper: F = this.createWrapper(OriginalConstructor, componentName);
         mandatoryMethodList.forEach((methodName => {
             this.createMethod(wrapper, methodName, true);
         }));
@@ -33,7 +38,7 @@ export abstract class BaseComponentWrapper<F extends WrapableInterface> implemen
 
     }
 
-    abstract createWrapper(OriginalConstructor: { new (): any }): F;
+    abstract createWrapper(OriginalConstructor: { new (): any }, componentName?:string): F;
 
 
     private createMethod(wrapper: F, methodName: string, mandatory: boolean): void{

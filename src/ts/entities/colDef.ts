@@ -202,6 +202,8 @@ export interface ColDef extends AbstractColDef {
     /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
     suppressAutoSize?: boolean;
 
+    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
+
     /** If true, GUI will allow adding this columns as a row group */
     enableRowGroup?: boolean;
 
@@ -341,3 +343,10 @@ export interface ValueParserParams extends NewValueParams {}
 export interface ValueFormatterParams extends BaseWithValueColDefParams {}
 
 export interface ColSpanParams extends BaseColDefParams {}
+
+export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
+    // the keyboard event the grid received
+    event: KeyboardEvent;
+    // whether the cell is editing or not
+    editing: boolean;
+}

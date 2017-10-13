@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.1.2
+// Type definitions for ag-grid v13.3.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -101,6 +101,7 @@ export declare class CellComp extends Component {
     setFocusInOnEditor(): void;
     isEditing(): boolean;
     onKeyDown(event: KeyboardEvent): void;
+    doesUserWantToCancelKeyboardEvent(event: KeyboardEvent): boolean;
     setFocusOutOnEditor(): void;
     private onNavigationKeyPressed(event, key);
     private onTabKeyDown(event);

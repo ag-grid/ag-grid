@@ -49,6 +49,10 @@ export class ComponentMetadataProvider {
                 optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
+            cellEditor:{
+                mandatoryMethodList: ['getValue'],
+                optionalMethodList: ['isPopup','isCancelBeforeStart','isCancelAfterEnd','focusIn','focusOut','afterGuiAttached']
+            },
             innerRenderer:{
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],

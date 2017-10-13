@@ -5,7 +5,7 @@ import {
     GetRowNodeIdFunc,
     GridOptions,
     NavigateToNextCellParams,
-    NodeChildDetails, PostProcessPopupParams,
+    NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams,
     ProcessRowParams,
     TabToNextCellParams
 } from "./entities/gridOptions";
@@ -169,18 +169,8 @@ export class GridOptionsWrapper {
     public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
     public isToolPanelSuppressRowGroups() { return isTrue(this.gridOptions.toolPanelSuppressRowGroups); }
     public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
-    public isToolPanelSuppressPivots() {
-        // never allow pivot mode when using enterprise model
-        if (this.isRowModelEnterprise()) { return true; }
-        // otherwise, let user decide
-        return isTrue(this.gridOptions.toolPanelSuppressPivots);
-    }
-    public isToolPanelSuppressPivotMode() {
-        // never allow pivot mode when using enterprise model
-        if (this.isRowModelEnterprise()) { return true; }
-        // otherwise, let user decide
-        return isTrue(this.gridOptions.toolPanelSuppressPivotMode);
-    }
+    public isToolPanelSuppressPivots() { return isTrue(this.gridOptions.toolPanelSuppressPivots); }
+    public isToolPanelSuppressPivotMode() { return isTrue(this.gridOptions.toolPanelSuppressPivotMode); }
     public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
     public useAsyncEvents() { return !isTrue(this.gridOptions.suppressAsyncEvents); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
@@ -221,8 +211,11 @@ export class GridOptionsWrapper {
     public getRowClass() { return this.gridOptions.rowClass; }
     public getRowStyleFunc() { return this.gridOptions.getRowStyle; }
     public getRowClassFunc() { return this.gridOptions.getRowClass; }
+    public rowClassRules() { return this.gridOptions.rowClassRules;}
     public getPostProcessPopupFunc(): (params: PostProcessPopupParams)=>void { return this.gridOptions.postProcessPopup; }
     public getDoesDataFlowerFunc(): (data: any)=>boolean { return this.gridOptions.doesDataFlower; }
+    public getPaginationNumberFormatterFunc(): (params: PaginationNumberFormatterParams)=>string { return this.gridOptions.paginationNumberFormatter; }
+    public getChildCountFunc() { return this.gridOptions.getChildCount; }
 
     public getIsFullWidthCellFunc(): (rowNode: RowNode)=> boolean { return this.gridOptions.isFullWidthCell; }
     public getFullWidthCellRendererParams() { return this.gridOptions.fullWidthCellRendererParams; }
@@ -242,7 +235,6 @@ export class GridOptionsWrapper {
     public isSuppressClickEdit() { return isTrue(this.gridOptions.suppressClickEdit); }
     public isStopEditingWhenGridLosesFocus() { return isTrue(this.gridOptions.stopEditingWhenGridLosesFocus); }
     public getGroupDefaultExpanded(): number { return this.gridOptions.groupDefaultExpanded; }
-    public getAutoSizePadding(): number { return this.gridOptions.autoSizePadding; }
 
     public getMaxConcurrentDatasourceRequests(): number { return this.gridOptions.maxConcurrentDatasourceRequests; }
     public getMaxBlocksInCache(): number { return this.gridOptions.maxBlocksInCache; }
@@ -372,6 +364,14 @@ export class GridOptionsWrapper {
         this.propertyEventService.removeEventListener(key, listener);
     }
 
+    public getAutoSizePadding(): number {
+        const padding = this.gridOptions.autoSizePadding;
+        if (typeof padding === 'number' && padding > 0) {
+            return padding;
+        } else {
+            return this.specialForNewMaterial(4, 8 * 3);
+        }
+    }
     // properties
     public getHeaderHeight(): number {
         if (typeof this.gridOptions.headerHeight === 'number') {
@@ -387,6 +387,18 @@ export class GridOptionsWrapper {
         } else {
             return this.specialForNewMaterial(25, 8 * 7);
         }
+    }
+
+    public getGroupPaddingSize(): number {
+       return this.specialForNewMaterial(10, 18 + 8 * 3);
+    }
+
+    public getFooterPaddingAddition(): number {
+       return this.specialForNewMaterial(15, 32);
+    }
+
+    public getLeafNodePaddingAddition(): number {
+       return this.specialForNewMaterial(10, 24);
     }
 
     public getGroupHeaderHeight(): number {

@@ -1,4 +1,4 @@
-// ag-grid v13.1.2
+// ag-grid v13.3.1
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -81,7 +81,7 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -438,7 +438,7 @@ function getOrCreateProps(target) {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1050,6 +1050,15 @@ var Utils = (function () {
         if (accentedCompare === void 0) { accentedCompare = false; }
         var valueAMissing = valueA === null || valueA === undefined;
         var valueBMissing = valueB === null || valueB === undefined;
+        // this is for aggregations sum and avg, where the result can be a number that is wrapped.
+        // if we didn't do this, then the toString() value would be used, which would result in
+        // the strings getting used instead of the numbers.
+        if (valueA && valueA.toNumber) {
+            valueA = valueA.toNumber();
+        }
+        if (valueB && valueB.toNumber) {
+            valueB = valueB.toNumber();
+        }
         if (valueAMissing && valueBMissing) {
             return 0;
         }
@@ -1345,7 +1354,6 @@ var Utils = (function () {
         if (this.isFirefox === undefined) {
             var anyWindow = window;
             this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';
-            ;
         }
         return this.isFirefox;
     };
@@ -1354,6 +1362,54 @@ var Utils = (function () {
     Utils.getTarget = function (event) {
         var eventNoType = event;
         return eventNoType.target || eventNoType.srcElement;
+    };
+    Utils.isElementInEventPath = function (element, event) {
+        if (!event || !element) {
+            return false;
+        }
+        var path = exports._.getEventPath(event);
+        return path.indexOf(element) >= 0;
+    };
+    Utils.createEventPath = function (event) {
+        var res = [];
+        var pointer = exports._.getTarget(event);
+        while (pointer) {
+            res.push(pointer);
+            pointer = pointer.parentElement;
+        }
+        return res;
+    };
+    // firefox doesn't have event.path set, or any alternative to it, so we hack
+    // it in. this is needed as it's to late to work out the path when the item is
+    // removed from the dom
+    Utils.addAgGridEventPath = function (event) {
+        event.__agGridEventPath = this.getEventPath(event);
+    };
+    Utils.getEventPath = function (event) {
+        // https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
+        // https://developer.mozilla.org/en-US/docs/Web/API/Event
+        var eventNoType = event;
+        if (event.deepPath) {
+            // IE supports deep path
+            return event.deepPath();
+        }
+        else if (eventNoType.path) {
+            // Chrome supports path
+            return eventNoType.path;
+        }
+        else if (eventNoType.composedPath) {
+            // Firefox supports composePath
+            return eventNoType.composedPath();
+        }
+        else if (eventNoType.__agGridEventPath) {
+            // Firefox supports composePath
+            return eventNoType.__agGridEventPath;
+        }
+        else {
+            // and finally, if none of the above worked,
+            // we create the path ourselves
+            return this.createEventPath(event);
+        }
     };
     Utils.forEachSnapshotFirst = function (list, callback) {
         if (list) {
@@ -1794,7 +1850,7 @@ exports._ = Utils;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1814,13 +1870,13 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var eventService_1 = __webpack_require__(4);
 var constants_1 = __webpack_require__(7);
-var componentUtil_1 = __webpack_require__(62);
+var componentUtil_1 = __webpack_require__(63);
 var gridApi_1 = __webpack_require__(6);
 var context_1 = __webpack_require__(0);
 var columnController_1 = __webpack_require__(3);
 var utils_1 = __webpack_require__(1);
-var defaultColumnTypes_1 = __webpack_require__(127);
-var environment_1 = __webpack_require__(58);
+var defaultColumnTypes_1 = __webpack_require__(129);
+var environment_1 = __webpack_require__(59);
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 var DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
@@ -1921,22 +1977,8 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isShowToolPanel = function () { return isTrue(this.gridOptions.showToolPanel); };
     GridOptionsWrapper.prototype.isToolPanelSuppressRowGroups = function () { return isTrue(this.gridOptions.toolPanelSuppressRowGroups); };
     GridOptionsWrapper.prototype.isToolPanelSuppressValues = function () { return isTrue(this.gridOptions.toolPanelSuppressValues); };
-    GridOptionsWrapper.prototype.isToolPanelSuppressPivots = function () {
-        // never allow pivot mode when using enterprise model
-        if (this.isRowModelEnterprise()) {
-            return true;
-        }
-        // otherwise, let user decide
-        return isTrue(this.gridOptions.toolPanelSuppressPivots);
-    };
-    GridOptionsWrapper.prototype.isToolPanelSuppressPivotMode = function () {
-        // never allow pivot mode when using enterprise model
-        if (this.isRowModelEnterprise()) {
-            return true;
-        }
-        // otherwise, let user decide
-        return isTrue(this.gridOptions.toolPanelSuppressPivotMode);
-    };
+    GridOptionsWrapper.prototype.isToolPanelSuppressPivots = function () { return isTrue(this.gridOptions.toolPanelSuppressPivots); };
+    GridOptionsWrapper.prototype.isToolPanelSuppressPivotMode = function () { return isTrue(this.gridOptions.toolPanelSuppressPivotMode); };
     GridOptionsWrapper.prototype.isSuppressTouch = function () { return isTrue(this.gridOptions.suppressTouch); };
     GridOptionsWrapper.prototype.useAsyncEvents = function () { return !isTrue(this.gridOptions.suppressAsyncEvents); };
     GridOptionsWrapper.prototype.isEnableCellChangeFlash = function () { return isTrue(this.gridOptions.enableCellChangeFlash); };
@@ -1974,8 +2016,11 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getRowClass = function () { return this.gridOptions.rowClass; };
     GridOptionsWrapper.prototype.getRowStyleFunc = function () { return this.gridOptions.getRowStyle; };
     GridOptionsWrapper.prototype.getRowClassFunc = function () { return this.gridOptions.getRowClass; };
+    GridOptionsWrapper.prototype.rowClassRules = function () { return this.gridOptions.rowClassRules; };
     GridOptionsWrapper.prototype.getPostProcessPopupFunc = function () { return this.gridOptions.postProcessPopup; };
     GridOptionsWrapper.prototype.getDoesDataFlowerFunc = function () { return this.gridOptions.doesDataFlower; };
+    GridOptionsWrapper.prototype.getPaginationNumberFormatterFunc = function () { return this.gridOptions.paginationNumberFormatter; };
+    GridOptionsWrapper.prototype.getChildCountFunc = function () { return this.gridOptions.getChildCount; };
     GridOptionsWrapper.prototype.getIsFullWidthCellFunc = function () { return this.gridOptions.isFullWidthCell; };
     GridOptionsWrapper.prototype.getFullWidthCellRendererParams = function () { return this.gridOptions.fullWidthCellRendererParams; };
     GridOptionsWrapper.prototype.isEmbedFullWidthRows = function () {
@@ -1993,7 +2038,6 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.isSuppressClickEdit = function () { return isTrue(this.gridOptions.suppressClickEdit); };
     GridOptionsWrapper.prototype.isStopEditingWhenGridLosesFocus = function () { return isTrue(this.gridOptions.stopEditingWhenGridLosesFocus); };
     GridOptionsWrapper.prototype.getGroupDefaultExpanded = function () { return this.gridOptions.groupDefaultExpanded; };
-    GridOptionsWrapper.prototype.getAutoSizePadding = function () { return this.gridOptions.autoSizePadding; };
     GridOptionsWrapper.prototype.getMaxConcurrentDatasourceRequests = function () { return this.gridOptions.maxConcurrentDatasourceRequests; };
     GridOptionsWrapper.prototype.getMaxBlocksInCache = function () { return this.gridOptions.maxBlocksInCache; };
     GridOptionsWrapper.prototype.getCacheOverflowSize = function () { return this.gridOptions.cacheOverflowSize; };
@@ -2110,6 +2154,15 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.removeEventListener = function (key, listener) {
         this.propertyEventService.removeEventListener(key, listener);
     };
+    GridOptionsWrapper.prototype.getAutoSizePadding = function () {
+        var padding = this.gridOptions.autoSizePadding;
+        if (typeof padding === 'number' && padding > 0) {
+            return padding;
+        }
+        else {
+            return this.specialForNewMaterial(4, 8 * 3);
+        }
+    };
     // properties
     GridOptionsWrapper.prototype.getHeaderHeight = function () {
         if (typeof this.gridOptions.headerHeight === 'number') {
@@ -2126,6 +2179,15 @@ var GridOptionsWrapper = (function () {
         else {
             return this.specialForNewMaterial(25, 8 * 7);
         }
+    };
+    GridOptionsWrapper.prototype.getGroupPaddingSize = function () {
+        return this.specialForNewMaterial(10, 18 + 8 * 3);
+    };
+    GridOptionsWrapper.prototype.getFooterPaddingAddition = function () {
+        return this.specialForNewMaterial(15, 32);
+    };
+    GridOptionsWrapper.prototype.getLeafNodePaddingAddition = function () {
+        return this.specialForNewMaterial(10, 24);
     };
     GridOptionsWrapper.prototype.getGroupHeaderHeight = function () {
         if (typeof this.gridOptions.groupHeaderHeight === 'number') {
@@ -2463,7 +2525,7 @@ exports.GridOptionsWrapper = GridOptionsWrapper;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2488,18 +2550,18 @@ var gridOptionsWrapper_1 = __webpack_require__(2);
 var expressionService_1 = __webpack_require__(17);
 var balancedColumnTreeBuilder_1 = __webpack_require__(42);
 var displayedGroupCreator_1 = __webpack_require__(44);
-var autoWidthCalculator_1 = __webpack_require__(64);
+var autoWidthCalculator_1 = __webpack_require__(65);
 var eventService_1 = __webpack_require__(4);
-var columnUtils_1 = __webpack_require__(29);
+var columnUtils_1 = __webpack_require__(30);
 var logger_1 = __webpack_require__(10);
 var events_1 = __webpack_require__(5);
-var originalColumnGroup_1 = __webpack_require__(30);
-var groupInstanceIdCreator_1 = __webpack_require__(82);
+var originalColumnGroup_1 = __webpack_require__(31);
+var groupInstanceIdCreator_1 = __webpack_require__(83);
 var context_1 = __webpack_require__(0);
 var gridPanel_1 = __webpack_require__(11);
-var columnAnimationService_1 = __webpack_require__(70);
+var columnAnimationService_1 = __webpack_require__(72);
 var autoGroupColService_1 = __webpack_require__(101);
-var valueCache_1 = __webpack_require__(31);
+var valueCache_1 = __webpack_require__(32);
 var gridApi_1 = __webpack_require__(6);
 var ColumnApi = (function () {
     function ColumnApi() {
@@ -4533,7 +4595,7 @@ exports.ColumnController = ColumnController;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4735,115 +4797,14 @@ exports.EventService = EventService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Events = (function () {
-    function Events() {
-    }
-    /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
-    Events.EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
-    /** User has set in new columns. */
-    Events.EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
-    /** The pivot mode flag was changed */
-    Events.EVENT_COLUMN_PIVOT_MODE_CHANGED = 'columnPivotModeChanged';
-    /** A row group column was added, removed or order changed. */
-    Events.EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
-    /** A pivot column was added, removed or order changed. */
-    Events.EVENT_COLUMN_PIVOT_CHANGED = 'columnPivotChanged';
-    /** The list of grid columns has changed. */
-    Events.EVENT_GRID_COLUMNS_CHANGED = 'gridColumnsChanged';
-    /** A value column was added, removed or agg function was changed. */
-    Events.EVENT_COLUMN_VALUE_CHANGED = 'columnValueChanged';
-    /** A column was moved */
-    Events.EVENT_COLUMN_MOVED = 'columnMoved';
-    /** One or more columns was shown / hidden */
-    Events.EVENT_COLUMN_VISIBLE = 'columnVisible';
-    /** One or more columns was pinned / unpinned*/
-    Events.EVENT_COLUMN_PINNED = 'columnPinned';
-    /** A column group was opened / closed */
-    Events.EVENT_COLUMN_GROUP_OPENED = 'columnGroupOpened';
-    /** One or more columns was resized. If just one, the column in the event is set. */
-    Events.EVENT_COLUMN_RESIZED = 'columnResized';
-    /** The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc */
-    Events.EVENT_DISPLAYED_COLUMNS_CHANGED = 'displayedColumnsChanged';
-    /** The list of virtual columns has changed, results from viewport changing */
-    Events.EVENT_VIRTUAL_COLUMNS_CHANGED = 'virtualColumnsChanged';
-    /** A row group was opened / closed */
-    Events.EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
-    /** The client has set new data into the grid */
-    Events.EVENT_ROW_DATA_CHANGED = 'rowDataChanged';
-    /** The client has updated data for the grid */
-    Events.EVENT_ROW_DATA_UPDATED = 'rowDataUpdated';
-    /** The client has set new floating data into the grid */
-    Events.EVENT_PINNED_ROW_DATA_CHANGED = 'pinnedRowDataChanged';
-    /** Range selection has changed */
-    Events.EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
-    /** Model was updated - grid updates the drawn rows when this happens */
-    Events.EVENT_MODEL_UPDATED = 'modelUpdated';
-    Events.EVENT_CELL_CLICKED = 'cellClicked';
-    Events.EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
-    Events.EVENT_CELL_CONTEXT_MENU = 'cellContextMenu';
-    Events.EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
-    Events.EVENT_ROW_VALUE_CHANGED = 'rowValueChanged';
-    Events.EVENT_CELL_FOCUSED = 'cellFocused';
-    Events.EVENT_ROW_SELECTED = 'rowSelected';
-    Events.EVENT_SELECTION_CHANGED = 'selectionChanged';
-    Events.EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
-    Events.EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
-    /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
-    Events.EVENT_FILTER_CHANGED = 'filterChanged';
-    /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
-    Events.EVENT_FILTER_MODIFIED = 'filterModified';
-    Events.EVENT_SORT_CHANGED = 'sortChanged';
-    /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
-    Events.EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
-    Events.EVENT_ROW_CLICKED = 'rowClicked';
-    Events.EVENT_ROW_DOUBLE_CLICKED = 'rowDoubleClicked';
-    /** Gets called once after the grid has finished initialising. */
-    Events.EVENT_GRID_READY = 'gridReady';
-    /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
-     * changed, so always filling the space it was given. */
-    Events.EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
-    /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
-    Events.EVENT_VIEWPORT_CHANGED = 'viewportChanged';
-    /** A column drag has started, either resizing a column or moving a column. */
-    Events.EVENT_DRAG_STARTED = 'dragStarted';
-    /** A column drag has stopped */
-    Events.EVENT_DRAG_STOPPED = 'dragStopped';
-    Events.EVENT_ROW_EDITING_STARTED = 'rowEditingStarted';
-    Events.EVENT_ROW_EDITING_STOPPED = 'rowEditingStopped';
-    Events.EVENT_CELL_EDITING_STARTED = 'cellEditingStarted';
-    Events.EVENT_CELL_EDITING_STOPPED = 'cellEditingStopped';
-    /** Main body of grid has scrolled, either horizontally or vertically */
-    Events.EVENT_BODY_SCROLL = 'bodyScroll';
-    /** The displayed page for pagination has changed. For example the data was filtered or sorted,
-     * or the user has moved to a different page. */
-    Events.EVENT_PAGINATION_CHANGED = 'paginationChanged';
-    /** Only used by React, Angular 2+, Web Components, Aurelia and VueJS ag-Grid components
-     * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
-     * to bound properties, this event fires after the grid has finished processing the change. */
-    Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
-    /** All items from here down are used internally by the grid, not intended for external use. */
-    // not documented, either experimental, or we just don't want users using an ddepending on them
-    Events.EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
-    Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
-    Events.EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
-    Events.EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
-    Events.EVENT_FLASH_CELLS = 'flashCells';
-    // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
-    // to design these better around server side functions and then release to general public when fully working with
-    // all the row models.
-    Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST = 'columnRowGroupChangeRequest';
-    Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST = 'columnPivotChangeRequest';
-    Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
-    Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
-    return Events;
-}());
-exports.Events = Events;
+var eventKeys_1 = __webpack_require__(118);
+exports.Events = eventKeys_1.Events;
 
 
 /***/ }),
@@ -4853,7 +4814,7 @@ exports.Events = Events;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4870,7 +4831,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var csvCreator_1 = __webpack_require__(43);
 var rowRenderer_1 = __webpack_require__(18);
-var headerRenderer_1 = __webpack_require__(57);
+var headerRenderer_1 = __webpack_require__(58);
 var filterManager_1 = __webpack_require__(16);
 var columnController_1 = __webpack_require__(3);
 var selectionController_1 = __webpack_require__(14);
@@ -4880,17 +4841,17 @@ var valueService_1 = __webpack_require__(19);
 var eventService_1 = __webpack_require__(4);
 var constants_1 = __webpack_require__(7);
 var context_1 = __webpack_require__(0);
-var gridCore_1 = __webpack_require__(34);
+var gridCore_1 = __webpack_require__(35);
 var sortController_1 = __webpack_require__(21);
 var focusedCellController_1 = __webpack_require__(24);
 var gridCell_1 = __webpack_require__(23);
 var utils_1 = __webpack_require__(1);
-var cellRendererFactory_1 = __webpack_require__(54);
-var cellEditorFactory_1 = __webpack_require__(53);
-var paginationProxy_1 = __webpack_require__(33);
+var cellRendererFactory_1 = __webpack_require__(55);
+var cellEditorFactory_1 = __webpack_require__(54);
+var paginationProxy_1 = __webpack_require__(34);
 var immutableService_1 = __webpack_require__(102);
-var valueCache_1 = __webpack_require__(31);
-var alignedGridsService_1 = __webpack_require__(46);
+var valueCache_1 = __webpack_require__(32);
+var alignedGridsService_1 = __webpack_require__(47);
 var pinnedRowModel_1 = __webpack_require__(25);
 var GridApi = (function () {
     function GridApi() {
@@ -5302,11 +5263,15 @@ var GridApi = (function () {
     GridApi.prototype.ensureColumnVisible = function (key) {
         this.gridPanel.ensureColumnVisible(key);
     };
-    GridApi.prototype.ensureIndexVisible = function (index) {
-        this.gridPanel.ensureIndexVisible(index);
+    // Valid values for position are bottom, middle and top
+    GridApi.prototype.ensureIndexVisible = function (index, position) {
+        if (position === void 0) { position = 'top'; }
+        this.gridPanel.ensureIndexVisible(index, position);
     };
-    GridApi.prototype.ensureNodeVisible = function (comparator) {
-        this.gridCore.ensureNodeVisible(comparator);
+    // Valid values for position are bottom, middle and top
+    GridApi.prototype.ensureNodeVisible = function (comparator, position) {
+        if (position === void 0) { position = 'top'; }
+        this.gridCore.ensureNodeVisible(comparator, position);
     };
     GridApi.prototype.forEachLeafNode = function (callback) {
         if (utils_1.Utils.missing(this.inMemoryRowModel)) {
@@ -5857,7 +5822,7 @@ exports.GridApi = GridApi;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5982,7 +5947,7 @@ exports.Constants = Constants;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6269,7 +6234,7 @@ exports.Component = Component;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6288,7 +6253,7 @@ var eventService_1 = __webpack_require__(4);
 var utils_1 = __webpack_require__(1);
 var context_1 = __webpack_require__(0);
 var gridOptionsWrapper_1 = __webpack_require__(2);
-var columnUtils_1 = __webpack_require__(29);
+var columnUtils_1 = __webpack_require__(30);
 var columnController_1 = __webpack_require__(3);
 var gridApi_1 = __webpack_require__(6);
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
@@ -6321,7 +6286,6 @@ var Column = (function () {
     };
     // this is done after constructor as it uses gridOptionsWrapper
     Column.prototype.initialise = function () {
-        this.cellEditor = this.frameworkFactory.colDefCellEditor(this.colDef);
         this.filter = this.frameworkFactory.colDefFilter(this.colDef);
         this.setPinned(this.colDef.pinned);
         var minColWidth = this.gridOptionsWrapper.getMinColWidth();
@@ -6354,9 +6318,6 @@ var Column = (function () {
         var showingAllGroups = this.colDef.showRowGroup === true;
         var showingThisGroup = this.colDef.showRowGroup === colId;
         return showingAllGroups || showingThisGroup;
-    };
-    Column.prototype.getCellEditor = function () {
-        return this.cellEditor;
     };
     Column.prototype.getFilter = function () {
         return this.filter;
@@ -6807,7 +6768,7 @@ exports.Column = Column;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6877,7 +6838,7 @@ exports.Logger = Logger;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6909,7 +6870,7 @@ var utils_1 = __webpack_require__(1);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var columnController_1 = __webpack_require__(3);
 var rowRenderer_1 = __webpack_require__(18);
-var borderLayout_1 = __webpack_require__(65);
+var borderLayout_1 = __webpack_require__(66);
 var logger_1 = __webpack_require__(10);
 var context_1 = __webpack_require__(0);
 var eventService_1 = __webpack_require__(4);
@@ -6918,18 +6879,18 @@ var dragService_1 = __webpack_require__(45);
 var constants_1 = __webpack_require__(7);
 var selectionController_1 = __webpack_require__(14);
 var csvCreator_1 = __webpack_require__(43);
-var mouseEventService_1 = __webpack_require__(66);
+var mouseEventService_1 = __webpack_require__(46);
 var focusedCellController_1 = __webpack_require__(24);
-var scrollVisibleService_1 = __webpack_require__(32);
+var scrollVisibleService_1 = __webpack_require__(33);
 var beanStub_1 = __webpack_require__(13);
-var rowContainerComponent_1 = __webpack_require__(118);
-var paginationProxy_1 = __webpack_require__(33);
+var rowContainerComponent_1 = __webpack_require__(120);
+var paginationProxy_1 = __webpack_require__(34);
 var popupEditorWrapper_1 = __webpack_require__(69);
-var alignedGridsService_1 = __webpack_require__(46);
+var alignedGridsService_1 = __webpack_require__(47);
 var pinnedRowModel_1 = __webpack_require__(25);
 var gridApi_1 = __webpack_require__(6);
-var animationFrameService_1 = __webpack_require__(47);
-var rowComp_1 = __webpack_require__(48);
+var animationFrameService_1 = __webpack_require__(48);
+var rowComp_1 = __webpack_require__(49);
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 var HEADER_SNIPPET = '<div class="ag-header" role="row">' +
@@ -7278,7 +7239,18 @@ var GridPanel = (function (_super) {
         };
         this.performScroll(horizontalScroll);
     };
-    //Either HOME OR END
+    // Either HOME OR END
+    GridPanel.prototype.pageDiagonally_new = function (pagingKey) {
+        var homeKey = pagingKey === constants_1.Constants.KEY_PAGE_HOME_NAME;
+        var allColumns = this.columnController.getAllDisplayedColumns();
+        var columnToSelect = homeKey ? allColumns[0] : allColumns[allColumns.length - 1];
+        var rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
+        this.ensureColumnVisible(columnToSelect);
+        this.ensureIndexVisible(rowIndexToScrollTo);
+        // make sure the cell is rendered, needed if we are to focus
+        this.animationFrameService.flushAllFrames();
+        this.focusedCellController.setFocusedCell(rowIndexToScrollTo, columnToSelect, null, true);
+    };
     GridPanel.prototype.pageDiagonally = function (pagingKey) {
         //***************************************************************************
         //where to place the newly selected cell cursor after the scroll
@@ -7465,6 +7437,11 @@ var GridPanel = (function (_super) {
                 if (renderedCell && renderedCell.isEditing()) {
                     return;
                 }
+                // for copy / paste, we don't want to execute when the event
+                // was from a child grid (happens in master detail)
+                if (!_this.mouseEventService.isEventFromThisGrid(event)) {
+                    return;
+                }
                 if (event.ctrlKey || event.metaKey) {
                     switch (event.which) {
                         case constants_1.Constants.KEY_A: return _this.onCtrlAndA(event);
@@ -7566,7 +7543,13 @@ var GridPanel = (function (_super) {
         var templateLocalised = templateNotLocalised.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
         return templateLocalised;
     };
-    GridPanel.prototype.ensureIndexVisible = function (index) {
+    // Valid values for position are bottom, middle and top
+    // position should be {'top','middle','bottom', or undefined/null}.
+    // if undefined/null, then the grid will to the minimal amount of scrolling,
+    // eg if grid needs to scroll up, it scrolls until row is on top,
+    //    if grid needs to scroll down, it scrolls until row is on bottom,
+    //    if row is already in view, grid does not scroll
+    GridPanel.prototype.ensureIndexVisible = function (index, position) {
         // if for print, everything is always visible
         if (this.gridOptionsWrapper.isForPrint()) {
             return;
@@ -7589,22 +7572,49 @@ var GridPanel = (function (_super) {
         if (scrollShowing) {
             vRangeBottom -= this.scrollWidth;
         }
-        var viewportScrolledPastRow = vRangeTop > rowTopPixel;
-        var viewportScrolledBeforeRow = vRangeBottom < rowBottomPixel;
+        var rowToHighlightHeight = rowBottomPixel - rowTopPixel;
+        var viewportHeight = vRangeBottom - vRangeTop;
+        var halfScreenHeight = (viewportHeight / 2) + (rowToHighlightHeight / 2);
         var eViewportToScroll = this.getPrimaryScrollViewport();
-        if (viewportScrolledPastRow) {
-            // if row is before, scroll up with row at top
-            eViewportToScroll.scrollTop = rowTopPixel;
-            this.rowRenderer.redrawAfterScroll();
+        var newScrollPosition;
+        switch (position) {
+            case 'top':
+                newScrollPosition = rowTopPixel;
+                break;
+            case 'bottom':
+                newScrollPosition = rowBottomPixel - viewportHeight;
+                break;
+            case 'middle':
+                newScrollPosition = rowTopPixel + halfScreenHeight;
+                // The if/else logic here protects us from over scrolling
+                // ie: Trying to scroll past the row (ie ensureNodeVisible (0, 'middle'))
+                newScrollPosition = newScrollPosition > rowTopPixel ? rowTopPixel : newScrollPosition;
+                break;
+            default:
+                newScrollPosition = rowTopPixel;
+                var viewportScrolledPastRow = vRangeTop > rowTopPixel;
+                var viewportScrolledBeforeRow = vRangeBottom < rowBottomPixel;
+                if (viewportScrolledPastRow) {
+                    // if row is before, scroll up with row at top
+                    newScrollPosition = rowTopPixel;
+                }
+                else if (viewportScrolledBeforeRow) {
+                    // if row is below, scroll down with row at bottom
+                    var viewportHeight_1 = vRangeBottom - vRangeTop;
+                    newScrollPosition = rowBottomPixel - viewportHeight_1;
+                }
+                else {
+                    // row already in view, and top/middle/bottom not specified, so do nothing.
+                    newScrollPosition = null;
+                }
+                break;
         }
-        else if (viewportScrolledBeforeRow) {
-            // if row is below, scroll down with row at bottom
-            var viewportHeight = vRangeBottom - vRangeTop;
-            var newScrollPosition = rowBottomPixel - viewportHeight;
-            eViewportToScroll.scrollTop = newScrollPosition;
-            this.rowRenderer.redrawAfterScroll();
+        // this means the row is already in view, and we don't need to scroll
+        if (newScrollPosition === null) {
+            return;
         }
-        // otherwise, row is already in view, so do nothing
+        eViewportToScroll.scrollTop = newScrollPosition;
+        this.rowRenderer.redrawAfterScroll();
     };
     GridPanel.prototype.getPrimaryScrollViewport = function () {
         if (this.enableRtl && this.columnController.isPinningLeft()) {
@@ -8601,7 +8611,7 @@ function testKeyboardBinding(keyboardBinding, event) {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8671,7 +8681,7 @@ function getOrCreateProps(target, instanceName) {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8745,7 +8755,7 @@ exports.BeanStub = BeanStub;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9079,7 +9089,7 @@ exports.SelectionController = SelectionController;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9103,7 +9113,7 @@ var columnController_1 = __webpack_require__(3);
 var context_1 = __webpack_require__(0);
 var constants_1 = __webpack_require__(7);
 var utils_1 = __webpack_require__(1);
-var valueCache_1 = __webpack_require__(31);
+var valueCache_1 = __webpack_require__(32);
 var gridApi_1 = __webpack_require__(6);
 var RowNode = (function () {
     function RowNode() {
@@ -9687,7 +9697,7 @@ exports.RowNode = RowNode;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9704,15 +9714,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(1);
 var gridOptionsWrapper_1 = __webpack_require__(2);
-var popupService_1 = __webpack_require__(35);
+var popupService_1 = __webpack_require__(36);
 var valueService_1 = __webpack_require__(19);
 var columnController_1 = __webpack_require__(3);
-var textFilter_1 = __webpack_require__(88);
-var numberFilter_1 = __webpack_require__(89);
+var textFilter_1 = __webpack_require__(89);
+var numberFilter_1 = __webpack_require__(90);
 var context_1 = __webpack_require__(0);
 var eventService_1 = __webpack_require__(4);
 var events_1 = __webpack_require__(5);
-var dateFilter_1 = __webpack_require__(51);
+var dateFilter_1 = __webpack_require__(52);
 var gridApi_1 = __webpack_require__(6);
 var FilterManager = (function () {
     function FilterManager() {
@@ -10236,7 +10246,7 @@ exports.FilterManager = FilterManager;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10339,7 +10349,7 @@ exports.ExpressionService = ExpressionService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10371,26 +10381,26 @@ var utils_1 = __webpack_require__(1);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var gridPanel_1 = __webpack_require__(11);
 var expressionService_1 = __webpack_require__(17);
-var templateService_1 = __webpack_require__(49);
+var templateService_1 = __webpack_require__(50);
 var valueService_1 = __webpack_require__(19);
 var eventService_1 = __webpack_require__(4);
-var rowComp_1 = __webpack_require__(48);
+var rowComp_1 = __webpack_require__(49);
 var events_1 = __webpack_require__(5);
 var constants_1 = __webpack_require__(7);
 var cellComp_1 = __webpack_require__(38);
 var context_1 = __webpack_require__(0);
-var gridCore_1 = __webpack_require__(34);
+var gridCore_1 = __webpack_require__(35);
 var columnController_1 = __webpack_require__(3);
 var logger_1 = __webpack_require__(10);
 var focusedCellController_1 = __webpack_require__(24);
-var cellNavigationService_1 = __webpack_require__(79);
+var cellNavigationService_1 = __webpack_require__(80);
 var gridCell_1 = __webpack_require__(23);
 var beanStub_1 = __webpack_require__(13);
-var paginationProxy_1 = __webpack_require__(33);
+var paginationProxy_1 = __webpack_require__(34);
 var gridApi_1 = __webpack_require__(6);
 var pinnedRowModel_1 = __webpack_require__(25);
 var beans_1 = __webpack_require__(37);
-var animationFrameService_1 = __webpack_require__(47);
+var animationFrameService_1 = __webpack_require__(48);
 var RowRenderer = (function (_super) {
     __extends(RowRenderer, _super);
     function RowRenderer() {
@@ -10533,7 +10543,6 @@ var RowRenderer = (function (_super) {
     // gets called after changes to the model.
     RowRenderer.prototype.redrawAfterModelUpdate = function (params) {
         if (params === void 0) { params = {}; }
-        this.logger.log('refreshView');
         this.getLockOnRefresh();
         var focusedCell = this.getCellToRestoreFocusToAfterRefresh(params);
         if (!this.forPrint) {
@@ -11318,7 +11327,7 @@ exports.RowRenderer = RowRenderer;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11340,7 +11349,7 @@ var context_1 = __webpack_require__(0);
 var utils_1 = __webpack_require__(1);
 var events_1 = __webpack_require__(5);
 var eventService_1 = __webpack_require__(4);
-var valueCache_1 = __webpack_require__(31);
+var valueCache_1 = __webpack_require__(32);
 var ValueService = (function () {
     function ValueService() {
         this.initialised = false;
@@ -11399,6 +11408,7 @@ var ValueService = (function () {
         if (utils_1._.missing(data)) {
             rowNode.data = {};
         }
+        // for backwards compatibility we are also retrieving the newValueHandler as well as the valueSetter
         var _a = column.getColDef(), field = _a.field, newValueHandler = _a.newValueHandler, valueSetter = _a.valueSetter;
         // need either a field or a newValueHandler for this to work
         if (utils_1._.missing(field) && utils_1._.missing(newValueHandler) && utils_1._.missing(valueSetter)) {
@@ -11559,7 +11569,7 @@ exports.ValueService = ValueService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11583,7 +11593,7 @@ var utils_1 = __webpack_require__(1);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var dragService_1 = __webpack_require__(45);
 var columnController_1 = __webpack_require__(3);
-var environment_1 = __webpack_require__(58);
+var environment_1 = __webpack_require__(59);
 var DragSourceType;
 (function (DragSourceType) {
     DragSourceType[DragSourceType["ToolPanel"] = 0] = "ToolPanel";
@@ -11939,7 +11949,7 @@ exports.DragAndDropService = DragAndDropService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12149,7 +12159,7 @@ exports.SortController = SortController;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12429,7 +12439,7 @@ exports.ColumnGroup = ColumnGroup;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12471,7 +12481,7 @@ exports.GridCell = GridCell;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12641,7 +12651,7 @@ exports.FocusedCellController = FocusedCellController;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12820,7 +12830,7 @@ exports.PinnedRowModel = PinnedRowModel;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12838,7 +12848,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = __webpack_require__(0);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var filterManager_1 = __webpack_require__(16);
-var componentResolver_1 = __webpack_require__(36);
+var componentResolver_1 = __webpack_require__(27);
 var ComponentType;
 (function (ComponentType) {
     ComponentType[ComponentType["AG_GRID"] = 0] = "AG_GRID";
@@ -12945,6 +12955,252 @@ exports.ComponentRecipes = ComponentRecipes;
 
 /***/ }),
 /* 27 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v13.3.1
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var context_1 = __webpack_require__(0);
+var gridOptionsWrapper_1 = __webpack_require__(2);
+var utils_1 = __webpack_require__(1);
+var namedComponentResolver_1 = __webpack_require__(91);
+var agComponentUtils_1 = __webpack_require__(57);
+var componentMetadataProvider_1 = __webpack_require__(79);
+var ComponentType;
+(function (ComponentType) {
+    ComponentType[ComponentType["AG_GRID"] = 0] = "AG_GRID";
+    ComponentType[ComponentType["FRAMEWORK"] = 1] = "FRAMEWORK";
+})(ComponentType = exports.ComponentType || (exports.ComponentType = {}));
+var ComponentSource;
+(function (ComponentSource) {
+    ComponentSource[ComponentSource["DEFAULT"] = 0] = "DEFAULT";
+    ComponentSource[ComponentSource["REGISTERED_BY_NAME"] = 1] = "REGISTERED_BY_NAME";
+    ComponentSource[ComponentSource["HARDCODED"] = 2] = "HARDCODED";
+})(ComponentSource = exports.ComponentSource || (exports.ComponentSource = {}));
+var ComponentResolver = (function () {
+    function ComponentResolver() {
+    }
+    /**
+     * This method returns the underlying representation of the component to be created. ie for Javascript the
+     * underlying function where we should be calling new into. In case of the frameworks, the framework class
+     * object that represents the component to be created.
+     *
+     * This method is handy for different reasons, for example if you want to check if a component has a particular
+     * method implemented without having to create the component, just by inspecting the source component
+     *
+     * It takes
+     *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
+     *      (global) or columnDef mostly.
+     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
+     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
+     *  @param componentNameOpt: The actual name of the component to instantiate, this is usually the same as propertyName, but in
+     *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
+     *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
+     *      component found, it throws an error, by default all components are MANDATORY
+     */
+    ComponentResolver.prototype.getComponentToUse = function (holder, propertyName, componentNameOpt) {
+        var componentName = componentNameOpt == null ? propertyName : componentNameOpt;
+        /**
+         * There are five things that can happen when resolving a component.
+         *  a) HardcodedFwComponent: That holder[propertyName]Framework has associated a Framework native component
+         *  b) HardcodedJsComponent: That holder[propertyName] has associate a JS component
+         *  c) hardcodedJsFunction: That holder[propertyName] has associate a JS function
+         *  d) hardcodedNameComponent: That holder[propertyName] has associate a string that represents a component to load
+         *  e) That none of the three previous are specified, then we need to use the DefaultRegisteredComponent
+         */
+        var hardcodedNameComponent = null;
+        var HardcodedJsComponent = null;
+        var hardcodedJsFunction = null;
+        var HardcodedFwComponent = null;
+        if (holder != null) {
+            var componentPropertyValue = holder[propertyName];
+            if (componentPropertyValue != null) {
+                if (typeof componentPropertyValue === 'string') {
+                    hardcodedNameComponent = componentPropertyValue;
+                }
+                else if (this.agComponentUtils.doesImplementIComponent(componentPropertyValue)) {
+                    HardcodedJsComponent = componentPropertyValue;
+                }
+                else {
+                    hardcodedJsFunction = componentPropertyValue;
+                }
+            }
+            HardcodedFwComponent = holder[propertyName + "Framework"];
+        }
+        /**
+         * Since we allow many types of flavors for specifying the components, let's make sure this is not an illegal
+         * combination
+         */
+        if ((HardcodedJsComponent && HardcodedFwComponent) ||
+            (hardcodedNameComponent && HardcodedFwComponent) ||
+            (hardcodedJsFunction && HardcodedFwComponent)) {
+            throw Error("You are trying to specify: " + propertyName + " twice as a component.");
+        }
+        if (HardcodedFwComponent && !this.frameworkComponentWrapper) {
+            throw Error("You are specifying a framework component but you are not using a framework version of ag-grid for : " + propertyName);
+        }
+        /**
+         * At this stage we are guaranteed to either have,
+         * DEPRECATED
+         * - A unique HardcodedFwComponent
+         * - A unique HardcodedJsComponent
+         * - A unique hardcodedJsFunction
+         * BY NAME- FAVOURED APPROACH
+         * - A unique hardcodedNameComponent
+         * - None of the previous, hence we revert to: RegisteredComponent
+         */
+        if (HardcodedFwComponent) {
+            // console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
+            // console.warn(`${HardcodedFwComponent}`);
+            return {
+                type: ComponentType.FRAMEWORK,
+                component: HardcodedFwComponent,
+                source: ComponentSource.HARDCODED
+            };
+        }
+        if (HardcodedJsComponent) {
+            // console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
+            // console.warn(`${HardcodedJsComponent}`);
+            return {
+                type: ComponentType.AG_GRID,
+                component: HardcodedJsComponent,
+                source: ComponentSource.HARDCODED
+            };
+        }
+        if (hardcodedJsFunction) {
+            // console.warn(`ag-grid: Since version 12.1.0 specifying a function directly is deprecated, you should register the component by name`);
+            // console.warn(`${hardcodedJsFunction}`);
+            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.AG_GRID, ComponentSource.HARDCODED);
+        }
+        //^^^^^ABOVE DEPRECATED
+        var componentNameToUse;
+        if (hardcodedNameComponent) {
+            componentNameToUse = hardcodedNameComponent;
+        }
+        else {
+            componentNameToUse = componentName;
+        }
+        return this.namedComponentResolver.resolve(propertyName, componentNameToUse);
+    };
+    /**
+     * Useful to check what would be the resultant params for a given object
+     *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
+     *      (global) or columnDef mostly.
+     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
+     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
+     *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
+     *      specified by the user in the configuration
+     * @returns {any} It merges the user agGridParams with the actual params specified by the user.
+     */
+    ComponentResolver.prototype.mergeParams = function (holder, propertyName, agGridParams) {
+        var customParams = holder ? holder[propertyName + "Params"] : null;
+        var finalParams = {};
+        utils_1._.mergeDeep(finalParams, agGridParams);
+        utils_1._.mergeDeep(finalParams, customParams);
+        if (!finalParams.api) {
+            finalParams.api = this.gridOptions.api;
+        }
+        return finalParams;
+    };
+    /**
+     * This method creates a component given everything needed to guess what sort of component needs to be instantiated
+     * It takes
+     *  @param holderOpt: This is the context for which this component needs to be created, it can be gridOptions
+     *      (global) or columnDef mostly.
+     *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
+     *      specified by the user in the configuration
+     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
+     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
+     *  @param componentNameOpt: The actual name of the component to instantiate, this is usually the same as propertyName, but in
+     *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
+     *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
+     *      component found, it throws an error, by default all components are MANDATORY
+     */
+    ComponentResolver.prototype.createAgGridComponent = function (holderOpt, agGridParams, propertyName, componentNameOpt, mandatory) {
+        if (mandatory === void 0) { mandatory = true; }
+        var holder = holderOpt == null ? this.gridOptions : holderOpt;
+        var componentName = componentNameOpt == null ? propertyName : componentNameOpt;
+        //Create the component instance
+        var component = this.newAgGridComponent(holder, propertyName, componentName, mandatory);
+        if (!component)
+            return null;
+        //Wire the component and call the init mehtod with the correct params
+        var finalParams = this.mergeParams(holder, propertyName, agGridParams);
+        this.context.wireBean(component);
+        component.init(finalParams);
+        return component;
+    };
+    ComponentResolver.prototype.newAgGridComponent = function (holder, propertyName, componentName, mandatory) {
+        if (mandatory === void 0) { mandatory = true; }
+        var componentToUse = this.getComponentToUse(holder, propertyName, componentName);
+        if (!componentToUse || !componentToUse.component) {
+            if (mandatory) {
+                debugger;
+                console.error("Error creating component " + propertyName + "=>" + componentName);
+            }
+            return null;
+        }
+        if (componentToUse.type === ComponentType.AG_GRID) {
+            return new componentToUse.component();
+        }
+        //Using framework component
+        var FrameworkComponentRaw = componentToUse.component;
+        var thisComponentConfig = this.componentMetadataProvider.retrieve(propertyName);
+        return this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, componentName);
+    };
+    __decorate([
+        context_1.Autowired("gridOptions"),
+        __metadata("design:type", Object)
+    ], ComponentResolver.prototype, "gridOptions", void 0);
+    __decorate([
+        context_1.Autowired("gridOptionsWrapper"),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], ComponentResolver.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired("context"),
+        __metadata("design:type", context_1.Context)
+    ], ComponentResolver.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired("namedComponentResolver"),
+        __metadata("design:type", namedComponentResolver_1.NamedComponentResolver)
+    ], ComponentResolver.prototype, "namedComponentResolver", void 0);
+    __decorate([
+        context_1.Autowired("agComponentUtils"),
+        __metadata("design:type", agComponentUtils_1.AgComponentUtils)
+    ], ComponentResolver.prototype, "agComponentUtils", void 0);
+    __decorate([
+        context_1.Autowired("componentMetadataProvider"),
+        __metadata("design:type", componentMetadataProvider_1.ComponentMetadataProvider)
+    ], ComponentResolver.prototype, "componentMetadataProvider", void 0);
+    __decorate([
+        context_1.Optional("frameworkComponentWrapper"),
+        __metadata("design:type", Object)
+    ], ComponentResolver.prototype, "frameworkComponentWrapper", void 0);
+    ComponentResolver = __decorate([
+        context_1.Bean('componentResolver')
+    ], ComponentResolver);
+    return ComponentResolver;
+}());
+exports.ComponentResolver = ComponentResolver;
+
+
+/***/ }),
+/* 28 */
 /***/ (function(module, exports) {
 
 /*
@@ -13000,7 +13256,7 @@ module.exports = function() {
 
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports) {
 
 /*
@@ -13254,13 +13510,13 @@ function updateLink(linkElement, obj) {
 
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13277,7 +13533,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var columnGroup_1 = __webpack_require__(22);
-var originalColumnGroup_1 = __webpack_require__(30);
+var originalColumnGroup_1 = __webpack_require__(31);
 var context_1 = __webpack_require__(0);
 var context_2 = __webpack_require__(0);
 // takes in a list of columns, as specified by the column definitions, and returns column groups
@@ -13413,13 +13669,13 @@ exports.ColumnUtils = ColumnUtils;
 
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13584,13 +13840,13 @@ exports.OriginalColumnGroup = OriginalColumnGroup;
 
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13663,13 +13919,13 @@ exports.ValueCache = ValueCache;
 
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13768,13 +14024,13 @@ exports.ScrollVisibleService = ScrollVisibleService;
 
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13806,7 +14062,7 @@ var utils_1 = __webpack_require__(1);
 var context_1 = __webpack_require__(0);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var gridPanel_1 = __webpack_require__(11);
-var scrollVisibleService_1 = __webpack_require__(32);
+var scrollVisibleService_1 = __webpack_require__(33);
 var selectionController_1 = __webpack_require__(14);
 var columnController_1 = __webpack_require__(3);
 var gridApi_1 = __webpack_require__(6);
@@ -13938,9 +14194,6 @@ var PaginationProxy = (function (_super) {
         return this.bottomRowBounds.rowTop + this.bottomRowBounds.rowHeight - this.topRowBounds.rowTop;
     };
     PaginationProxy.prototype.isRowPresent = function (rowNode) {
-        return this.isRowInPage(rowNode);
-    };
-    PaginationProxy.prototype.isRowInPage = function (rowNode) {
         if (!this.rowModel.isRowPresent(rowNode)) {
             return false;
         }
@@ -14096,13 +14349,13 @@ exports.PaginationProxy = PaginationProxy;
 
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14128,14 +14381,14 @@ var eventService_1 = __webpack_require__(4);
 var gridPanel_1 = __webpack_require__(11);
 var logger_1 = __webpack_require__(10);
 var constants_1 = __webpack_require__(7);
-var popupService_1 = __webpack_require__(35);
+var popupService_1 = __webpack_require__(36);
 var events_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(1);
-var borderLayout_1 = __webpack_require__(65);
+var borderLayout_1 = __webpack_require__(66);
 var context_1 = __webpack_require__(0);
 var focusedCellController_1 = __webpack_require__(24);
 var component_1 = __webpack_require__(8);
-var paginationComp_1 = __webpack_require__(124);
+var paginationComp_1 = __webpack_require__(126);
 var gridApi_1 = __webpack_require__(6);
 var GridCore = (function () {
     function GridCore(loggerFactory) {
@@ -14327,7 +14580,9 @@ var GridCore = (function () {
         this.logger.log('Grid DOM removed');
         this.destroyFunctions.forEach(function (func) { return func(); });
     };
-    GridCore.prototype.ensureNodeVisible = function (comparator) {
+    // Valid values for position are bottom, middle and top
+    GridCore.prototype.ensureNodeVisible = function (comparator, position) {
+        if (position === void 0) { position = 'top'; }
         if (this.doingVirtualPaging) {
             throw 'Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory';
         }
@@ -14353,7 +14608,7 @@ var GridCore = (function () {
             }
         }
         if (indexToSelect >= 0) {
-            this.gridPanel.ensureIndexVisible(indexToSelect);
+            this.gridPanel.ensureIndexVisible(indexToSelect, position);
         }
     };
     GridCore.prototype.doLayout = function () {
@@ -14488,13 +14743,13 @@ exports.GridCore = GridCore;
 
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14512,12 +14767,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(1);
 var constants_1 = __webpack_require__(7);
 var context_1 = __webpack_require__(0);
-var gridCore_1 = __webpack_require__(34);
+var gridCore_1 = __webpack_require__(35);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var PopupService = (function () {
     function PopupService() {
+        // this.popupService.setPopupParent(this.eRootPanel.getGui());
+        this.activePopupElements = [];
     }
-    // this.popupService.setPopupParent(this.eRootPanel.getGui());
     PopupService.prototype.getPopupParent = function () {
         return this.gridCore.getRootGui();
     };
@@ -14680,6 +14936,7 @@ var PopupService = (function () {
     //so that when the background is clicked, the child is removed again, giving
     //a model look to popups.
     PopupService.prototype.addAsModalPopup = function (eChild, closeOnEsc, closedCallback) {
+        var _this = this;
         var eBody = this.gridOptionsWrapper.getDocument();
         if (!eBody) {
             console.warn('ag-grid: could not find the body of the document, document.body is empty');
@@ -14691,9 +14948,48 @@ var PopupService = (function () {
         if (popupAlreadyShown) {
             return;
         }
-        this.getPopupParent().appendChild(eChild);
-        var that = this;
+        var ePopupParent = this.getPopupParent();
+        ePopupParent.appendChild(eChild);
+        this.activePopupElements.push(eChild);
         var popupHidden = false;
+        // let timeOfMouseEventOnChild = new Date().getTime();
+        // let childMouseClick: MouseEvent = null;
+        // let childTouch: TouchEvent = null;
+        var hidePopupOnEsc = function (event) {
+            var key = event.which || event.keyCode;
+            if (key === constants_1.Constants.KEY_ESCAPE) {
+                hidePopup(null);
+            }
+        };
+        var hidePopup = function (event) {
+            // we don't hide popup if the event was on the child, or any
+            // children of this child
+            var indexOfThisChild = _this.activePopupElements.indexOf(eChild);
+            for (var i = indexOfThisChild; i < _this.activePopupElements.length; i++) {
+                var element = _this.activePopupElements[i];
+                if (utils_1.Utils.isElementInEventPath(element, event)) {
+                    return;
+                }
+            }
+            // this method should only be called once. the client can have different
+            // paths, each one wanting to close, so this method may be called multiple
+            // times.
+            if (popupHidden) {
+                return;
+            }
+            popupHidden = true;
+            ePopupParent.removeChild(eChild);
+            utils_1.Utils.removeFromArray(_this.activePopupElements, eChild);
+            eBody.removeEventListener('keydown', hidePopupOnEsc);
+            eBody.removeEventListener('click', hidePopup);
+            eBody.removeEventListener('touchstart', hidePopup);
+            eBody.removeEventListener('contextmenu', hidePopup);
+            // eChild.removeEventListener('click', consumeMouseClick);
+            // eChild.removeEventListener('touchstart', consumeTouchClick);
+            if (closedCallback) {
+                closedCallback();
+            }
+        };
         // if we add these listeners now, then the current mouse
         // click will be included, which we don't want
         setTimeout(function () {
@@ -14703,54 +14999,7 @@ var PopupService = (function () {
             eBody.addEventListener('click', hidePopup);
             eBody.addEventListener('touchstart', hidePopup);
             eBody.addEventListener('contextmenu', hidePopup);
-            //eBody.addEventListener('mousedown', hidePopup);
-            eChild.addEventListener('click', consumeMouseClick);
-            eChild.addEventListener('touchstart', consumeTouchClick);
-            //eChild.addEventListener('mousedown', consumeClick);
         }, 0);
-        // let timeOfMouseEventOnChild = new Date().getTime();
-        var childMouseClick = null;
-        var childTouch = null;
-        function hidePopupOnEsc(event) {
-            var key = event.which || event.keyCode;
-            if (key === constants_1.Constants.KEY_ESCAPE) {
-                hidePopup(null);
-            }
-        }
-        function hidePopup(event) {
-            // we don't hide popup if the event was on the child
-            if (event && event === childMouseClick) {
-                return;
-            }
-            if (event && event === childTouch) {
-                return;
-            }
-            // this method should only be called once. the client can have different
-            // paths, each one wanting to close, so this method may be called multiple
-            // times.
-            if (popupHidden) {
-                return;
-            }
-            popupHidden = true;
-            that.getPopupParent().removeChild(eChild);
-            eBody.removeEventListener('keydown', hidePopupOnEsc);
-            //eBody.removeEventListener('mousedown', hidePopupOnEsc);
-            eBody.removeEventListener('click', hidePopup);
-            eBody.removeEventListener('touchstart', hidePopup);
-            eBody.removeEventListener('contextmenu', hidePopup);
-            eChild.removeEventListener('click', consumeMouseClick);
-            eChild.removeEventListener('touchstart', consumeTouchClick);
-            //eChild.removeEventListener('mousedown', consumeClick);
-            if (closedCallback) {
-                closedCallback();
-            }
-        }
-        function consumeMouseClick(event) {
-            childMouseClick = event;
-        }
-        function consumeTouchClick(event) {
-            childTouch = event;
-        }
         return hidePopup;
     };
     __decorate([
@@ -14770,258 +15019,13 @@ exports.PopupService = PopupService;
 
 
 /***/ }),
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(0);
-var gridOptionsWrapper_1 = __webpack_require__(2);
-var utils_1 = __webpack_require__(1);
-var namedComponentResolver_1 = __webpack_require__(90);
-var agComponentUtils_1 = __webpack_require__(56);
-var componentMetadataProvider_1 = __webpack_require__(78);
-var ComponentType;
-(function (ComponentType) {
-    ComponentType[ComponentType["AG_GRID"] = 0] = "AG_GRID";
-    ComponentType[ComponentType["FRAMEWORK"] = 1] = "FRAMEWORK";
-})(ComponentType = exports.ComponentType || (exports.ComponentType = {}));
-var ComponentSource;
-(function (ComponentSource) {
-    ComponentSource[ComponentSource["DEFAULT"] = 0] = "DEFAULT";
-    ComponentSource[ComponentSource["REGISTERED_BY_NAME"] = 1] = "REGISTERED_BY_NAME";
-    ComponentSource[ComponentSource["HARDCODED"] = 2] = "HARDCODED";
-})(ComponentSource = exports.ComponentSource || (exports.ComponentSource = {}));
-var ComponentResolver = (function () {
-    function ComponentResolver() {
-    }
-    /**
-     * This method returns the underlying representation of the component to be created. ie for Javascript the
-     * underlying function where we should be calling new into. In case of the frameworks, the framework class
-     * object that represents the component to be created.
-     *
-     * This method is handy for different reasons, for example if you want to check if a component has a particular
-     * method implemented without having to create the component, just by inspecting the source component
-     *
-     * It takes
-     *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
-     *      (global) or columnDef mostly.
-     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
-     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param componentNameOpt: The actual name of the component to instantiate, this is usually the same as propertyName, but in
-     *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
-     *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
-     *      component found, it throws an error, by default all components are MANDATORY
-     */
-    ComponentResolver.prototype.getComponentToUse = function (holder, propertyName, componentNameOpt) {
-        var componentName = componentNameOpt == null ? propertyName : componentNameOpt;
-        /**
-         * There are five things that can happen when resolving a component.
-         *  a) HardcodedFwComponent: That holder[propertyName]Framework has associated a Framework native component
-         *  b) HardcodedJsComponent: That holder[propertyName] has associate a JS component
-         *  c) hardcodedJsFunction: That holder[propertyName] has associate a JS function
-         *  d) hardcodedNameComponent: That holder[propertyName] has associate a string that represents a component to load
-         *  e) That none of the three previous are specified, then we need to use the DefaultRegisteredComponent
-         */
-        var hardcodedNameComponent = null;
-        var HardcodedJsComponent = null;
-        var hardcodedJsFunction = null;
-        var HardcodedFwComponent = null;
-        if (holder != null) {
-            var componentPropertyValue = holder[propertyName];
-            if (componentPropertyValue != null) {
-                if (typeof componentPropertyValue === 'string') {
-                    hardcodedNameComponent = componentPropertyValue;
-                }
-                else if (this.agComponentUtils.doesImplementIComponent(componentPropertyValue)) {
-                    HardcodedJsComponent = componentPropertyValue;
-                }
-                else {
-                    hardcodedJsFunction = componentPropertyValue;
-                }
-            }
-            HardcodedFwComponent = holder[propertyName + "Framework"];
-        }
-        /**
-         * Since we allow many types of flavors for specifying the components, let's make sure this is not an illegal
-         * combination
-         */
-        if ((HardcodedJsComponent && HardcodedFwComponent) ||
-            (hardcodedNameComponent && HardcodedFwComponent) ||
-            (hardcodedJsFunction && HardcodedFwComponent)) {
-            throw Error("You are trying to specify: " + propertyName + " twice as a component.");
-        }
-        if (HardcodedFwComponent && !this.frameworkComponentWrapper) {
-            throw Error("You are specifying a framework component but you are not using a framework version of ag-grid for : " + propertyName);
-        }
-        /**
-         * At this stage we are guaranteed to either have,
-         * DEPRECATED
-         * - A unique HardcodedFwComponent
-         * - A unique HardcodedJsComponent
-         * - A unique hardcodedJsFunction
-         * BY NAME- FAVOURED APPROACH
-         * - A unique hardcodedNameComponent
-         * - None of the previous, hence we revert to: RegisteredComponent
-         */
-        if (HardcodedFwComponent) {
-            // console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
-            // console.warn(`${HardcodedFwComponent}`);
-            return {
-                type: ComponentType.FRAMEWORK,
-                component: HardcodedFwComponent,
-                source: ComponentSource.HARDCODED
-            };
-        }
-        if (HardcodedJsComponent) {
-            // console.warn(`ag-grid: Since version 12.1.0 specifying a component directly is deprecated, you should register the component by name`);
-            // console.warn(`${HardcodedJsComponent}`);
-            return {
-                type: ComponentType.AG_GRID,
-                component: HardcodedJsComponent,
-                source: ComponentSource.HARDCODED
-            };
-        }
-        if (hardcodedJsFunction) {
-            // console.warn(`ag-grid: Since version 12.1.0 specifying a function directly is deprecated, you should register the component by name`);
-            // console.warn(`${hardcodedJsFunction}`);
-            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.AG_GRID, ComponentSource.HARDCODED);
-        }
-        //^^^^^ABOVE DEPRECATED
-        var componentNameToUse;
-        if (hardcodedNameComponent) {
-            componentNameToUse = hardcodedNameComponent;
-        }
-        else {
-            componentNameToUse = componentName;
-        }
-        return this.namedComponentResolver.resolve(propertyName, componentNameToUse);
-    };
-    /**
-     * Useful to check what would be the resultant params for a given object
-     *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
-     *      (global) or columnDef mostly.
-     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
-     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
-     *      specified by the user in the configuration
-     * @returns {any} It merges the user agGridParams with the actual params specified by the user.
-     */
-    ComponentResolver.prototype.mergeParams = function (holder, propertyName, agGridParams) {
-        var customParams = holder ? holder[propertyName + "Params"] : null;
-        var finalParams = {};
-        utils_1._.mergeDeep(finalParams, agGridParams);
-        utils_1._.mergeDeep(finalParams, customParams);
-        if (!finalParams.api) {
-            finalParams.api = this.gridOptions.api;
-        }
-        return finalParams;
-    };
-    /**
-     * This method creates a component given everything needed to guess what sort of component needs to be instantiated
-     * It takes
-     *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
-     *      (global) or columnDef mostly.
-     *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
-     *      specified by the user in the configuration
-     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
-     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param componentNameOpt: The actual name of the component to instantiate, this is usually the same as propertyName, but in
-     *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
-     *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
-     *      component found, it throws an error, by default all components are MANDATORY
-     */
-    ComponentResolver.prototype.createAgGridComponent = function (holderOpt, agGridParams, propertyName, componentNameOpt, mandatory) {
-        if (mandatory === void 0) { mandatory = true; }
-        var holder = holderOpt == null ? this.gridOptions : holderOpt;
-        var componentName = componentNameOpt == null ? propertyName : componentNameOpt;
-        //Create the component instance
-        var component = this.newAgGridComponent(holder, propertyName, componentName, mandatory);
-        if (!component)
-            return null;
-        //Wire the component and call the init mehtod with the correct params
-        var finalParams = this.mergeParams(holder, propertyName, agGridParams);
-        this.context.wireBean(component);
-        component.init(finalParams);
-        return component;
-    };
-    ComponentResolver.prototype.newAgGridComponent = function (holder, propertyName, componentName, mandatory) {
-        if (mandatory === void 0) { mandatory = true; }
-        var componentToUse = this.getComponentToUse(holder, propertyName, componentName);
-        if (!componentToUse || !componentToUse.component) {
-            if (mandatory) {
-                console.error("Error creating component " + propertyName + "=>" + componentName);
-            }
-            return null;
-        }
-        if (componentToUse.type === ComponentType.AG_GRID) {
-            return new componentToUse.component();
-        }
-        //Using framework component
-        var FrameworkComponentRaw = componentToUse.component;
-        var thisComponentConfig = this.componentMetadataProvider.retrieve(propertyName);
-        return this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList);
-    };
-    __decorate([
-        context_1.Autowired("gridOptions"),
-        __metadata("design:type", Object)
-    ], ComponentResolver.prototype, "gridOptions", void 0);
-    __decorate([
-        context_1.Autowired("gridOptionsWrapper"),
-        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-    ], ComponentResolver.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired("context"),
-        __metadata("design:type", context_1.Context)
-    ], ComponentResolver.prototype, "context", void 0);
-    __decorate([
-        context_1.Autowired("namedComponentResolver"),
-        __metadata("design:type", namedComponentResolver_1.NamedComponentResolver)
-    ], ComponentResolver.prototype, "namedComponentResolver", void 0);
-    __decorate([
-        context_1.Autowired("agComponentUtils"),
-        __metadata("design:type", agComponentUtils_1.AgComponentUtils)
-    ], ComponentResolver.prototype, "agComponentUtils", void 0);
-    __decorate([
-        context_1.Autowired("componentMetadataProvider"),
-        __metadata("design:type", componentMetadataProvider_1.ComponentMetadataProvider)
-    ], ComponentResolver.prototype, "componentMetadataProvider", void 0);
-    __decorate([
-        context_1.Optional("frameworkComponentWrapper"),
-        __metadata("design:type", Object)
-    ], ComponentResolver.prototype, "frameworkComponentWrapper", void 0);
-    ComponentResolver = __decorate([
-        context_1.Bean('componentResolver')
-    ], ComponentResolver);
-    return ComponentResolver;
-}());
-exports.ComponentResolver = ComponentResolver;
-
-
-/***/ }),
 /* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15042,22 +15046,22 @@ var gridApi_1 = __webpack_require__(6);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var expressionService_1 = __webpack_require__(17);
 var rowRenderer_1 = __webpack_require__(18);
-var templateService_1 = __webpack_require__(49);
+var templateService_1 = __webpack_require__(50);
 var valueService_1 = __webpack_require__(19);
 var eventService_1 = __webpack_require__(4);
-var columnAnimationService_1 = __webpack_require__(70);
+var columnAnimationService_1 = __webpack_require__(72);
 var focusedCellController_1 = __webpack_require__(24);
-var cellEditorFactory_1 = __webpack_require__(53);
-var cellRendererFactory_1 = __webpack_require__(54);
-var popupService_1 = __webpack_require__(35);
-var cellRendererService_1 = __webpack_require__(55);
+var cellEditorFactory_1 = __webpack_require__(54);
+var cellRendererFactory_1 = __webpack_require__(55);
+var popupService_1 = __webpack_require__(36);
+var cellRendererService_1 = __webpack_require__(56);
 var valueFormatterService_1 = __webpack_require__(40);
 var stylingService_1 = __webpack_require__(76);
 var columnHoverService_1 = __webpack_require__(77);
 var gridPanel_1 = __webpack_require__(11);
-var paginationProxy_1 = __webpack_require__(33);
-var animationFrameService_1 = __webpack_require__(47);
-var componentResolver_1 = __webpack_require__(36);
+var paginationProxy_1 = __webpack_require__(34);
+var animationFrameService_1 = __webpack_require__(48);
+var componentResolver_1 = __webpack_require__(27);
 var Beans = (function () {
     function Beans() {
     }
@@ -15193,7 +15197,7 @@ exports.Beans = Beans;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15665,7 +15669,7 @@ var CellComp = (function (_super) {
         }
     };
     CellComp.prototype.processCellClassRules = function (onApplicableClass, onNotApplicableClass) {
-        this.beans.stylingService.processCellClassRules(this.column.getColDef(), {
+        this.beans.stylingService.processClassRules(this.column.getColDef().cellClassRules, {
             value: this.value,
             data: this.rowNode.data,
             node: this.rowNode,
@@ -16011,7 +16015,7 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.createCellEditor = function (keyPress, charPress, cellStartedEdit) {
         var params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-        var cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getCellEditor(), params);
+        var cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getColDef(), params);
         return cellEditor;
     };
     CellComp.prototype.createCellEditorParams = function (keyPress, charPress, cellStartedEdit) {
@@ -16074,6 +16078,10 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.onKeyDown = function (event) {
         var key = event.which || event.keyCode;
+        // give user a chance to cancel event processing
+        if (this.doesUserWantToCancelKeyboardEvent(event)) {
+            return;
+        }
         switch (key) {
             case constants_1.Constants.KEY_ENTER:
                 this.onEnterKeyDown();
@@ -16097,6 +16105,27 @@ var CellComp = (function (_super) {
             case constants_1.Constants.KEY_LEFT:
                 this.onNavigationKeyPressed(event, key);
                 break;
+        }
+    };
+    CellComp.prototype.doesUserWantToCancelKeyboardEvent = function (event) {
+        var callback = this.column.getColDef().suppressKeyboardEvent;
+        if (utils_1._.missing(callback)) {
+            return false;
+        }
+        else {
+            // if editing is null or undefined, this sets it to false
+            var editing = this.editingCell === true;
+            var params = {
+                event: event,
+                editing: editing,
+                column: this.column,
+                api: this.beans.gridOptionsWrapper.getApi(),
+                node: this.rowNode,
+                colDef: this.column.getColDef(),
+                context: this.beans.gridOptionsWrapper.getContext(),
+                columnApi: this.beans.gridOptionsWrapper.getColumnApi()
+            };
+            return callback(params);
         }
     };
     CellComp.prototype.setFocusOutOnEditor = function () {
@@ -16392,7 +16421,7 @@ var CellComp = (function (_super) {
             var userWantsToCancel = this.cellEditor.isCancelAfterEnd && this.cellEditor.isCancelAfterEnd();
             if (!userWantsToCancel) {
                 var newValue = this.cellEditor.getValue();
-                this.beans.valueService.setValue(this.rowNode, this.column, newValue);
+                this.rowNode.setDataValue(this.column, newValue);
                 this.value = this.getValue();
             }
         }
@@ -16423,7 +16452,11 @@ var CellComp = (function (_super) {
                     // we know it's a dom element (not a string) because we converted
                     // it after the gui was attached if it was a string.
                     var eCell = this.cellRendererGui;
-                    this.getHtmlElement().appendChild(eCell);
+                    // can be null if cell was previously null / contained empty string,
+                    // this will result in new value not being rendered.
+                    if (eCell) {
+                        this.getHtmlElement().appendChild(eCell);
+                    }
                 }
             }
         }
@@ -16448,7 +16481,7 @@ exports.CellComp = CellComp;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16546,7 +16579,7 @@ exports.SetLeftFeature = SetLeftFeature;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16625,7 +16658,7 @@ exports.ValueFormatterService = ValueFormatterService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16741,7 +16774,7 @@ var DragInstance = (function () {
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16761,9 +16794,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var logger_1 = __webpack_require__(10);
-var columnUtils_1 = __webpack_require__(29);
+var columnUtils_1 = __webpack_require__(30);
 var columnKeyCreator_1 = __webpack_require__(103);
-var originalColumnGroup_1 = __webpack_require__(30);
+var originalColumnGroup_1 = __webpack_require__(31);
 var column_1 = __webpack_require__(9);
 var context_1 = __webpack_require__(0);
 var utils_1 = __webpack_require__(1);
@@ -16975,7 +17008,7 @@ exports.BalancedColumnTreeBuilder = BalancedColumnTreeBuilder;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17001,8 +17034,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = __webpack_require__(0);
-var gridSerializer_1 = __webpack_require__(63);
-var downloader_1 = __webpack_require__(83);
+var gridSerializer_1 = __webpack_require__(64);
+var downloader_1 = __webpack_require__(84);
 var columnController_1 = __webpack_require__(3);
 var valueService_1 = __webpack_require__(19);
 var gridOptionsWrapper_1 = __webpack_require__(2);
@@ -17200,7 +17233,7 @@ exports.CsvCreator = CsvCreator;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17215,9 +17248,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var columnUtils_1 = __webpack_require__(29);
+var columnUtils_1 = __webpack_require__(30);
 var columnGroup_1 = __webpack_require__(22);
-var originalColumnGroup_1 = __webpack_require__(30);
+var originalColumnGroup_1 = __webpack_require__(31);
 var context_1 = __webpack_require__(0);
 var utils_1 = __webpack_require__(1);
 var context_2 = __webpack_require__(0);
@@ -17398,7 +17431,7 @@ exports.DisplayedGroupCreator = DisplayedGroupCreator;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17677,7 +17710,106 @@ exports.DragService = DragService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var context_1 = __webpack_require__(0);
+var context_2 = __webpack_require__(0);
+var utils_1 = __webpack_require__(1);
+var gridOptionsWrapper_1 = __webpack_require__(2);
+var cellComp_1 = __webpack_require__(38);
+var MouseEventService = (function () {
+    function MouseEventService() {
+        this.gridInstanceId = MouseEventService_1.gridInstanceSequence.next();
+    }
+    MouseEventService_1 = MouseEventService;
+    MouseEventService.prototype.init = function () {
+        this.stampDomElementWithGridInstance();
+    };
+    // we put the instance id onto the main DOM element. this is used for events, when grids are inside grids,
+    // so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic
+    // for where this is used.
+    MouseEventService.prototype.stampDomElementWithGridInstance = function () {
+        this.eGridDiv[MouseEventService_1.GRID_DOM_KEY] = this.gridInstanceId;
+    };
+    MouseEventService.prototype.getRenderedCellForEvent = function (event) {
+        var sourceElement = utils_1.Utils.getTarget(event);
+        while (sourceElement) {
+            var renderedCell = this.gridOptionsWrapper.getDomData(sourceElement, cellComp_1.CellComp.DOM_DATA_KEY_CELL_COMP);
+            if (renderedCell) {
+                return renderedCell;
+            }
+            sourceElement = sourceElement.parentElement;
+        }
+        return null;
+    };
+    // walks the path of the event, and returns true if this grid is the first one that it finds. if doing
+    // master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste
+    // getting executed on many grids at the same time.
+    MouseEventService.prototype.isEventFromThisGrid = function (event) {
+        var ePointer = utils_1.Utils.getTarget(event);
+        var eventFromThisGrid = false;
+        var finished = utils_1.Utils.missing(ePointer);
+        // while we have not found a grid, look for one
+        while (!finished) {
+            var instanceId = ePointer[MouseEventService_1.GRID_DOM_KEY];
+            if (utils_1.Utils.exists(instanceId)) {
+                eventFromThisGrid = instanceId === this.gridInstanceId;
+                finished = true;
+            }
+            ePointer = ePointer.parentElement;
+        }
+        return eventFromThisGrid;
+    };
+    MouseEventService.prototype.getGridCellForEvent = function (event) {
+        var cellComp = this.getRenderedCellForEvent(event);
+        return cellComp ? cellComp.getGridCell() : null;
+    };
+    MouseEventService.gridInstanceSequence = new utils_1.NumberSequence();
+    MouseEventService.GRID_DOM_KEY = '__ag_grid_instance';
+    __decorate([
+        context_2.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], MouseEventService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_2.Autowired('eGridDiv'),
+        __metadata("design:type", HTMLElement)
+    ], MouseEventService.prototype, "eGridDiv", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], MouseEventService.prototype, "init", null);
+    MouseEventService = MouseEventService_1 = __decorate([
+        context_1.Bean('mouseEventService')
+    ], MouseEventService);
+    return MouseEventService;
+    var MouseEventService_1;
+}());
+exports.MouseEventService = MouseEventService;
+
+
+/***/ }),
+/* 47 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17911,13 +18043,13 @@ exports.AlignedGridsService = AlignedGridsService;
 
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17934,7 +18066,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = __webpack_require__(0);
 var gridPanel_1 = __webpack_require__(11);
-var linkedList_1 = __webpack_require__(119);
+var linkedList_1 = __webpack_require__(121);
 var AnimationFrameService = (function () {
     function AnimationFrameService() {
         this.p1Tasks = new linkedList_1.LinkedList();
@@ -17972,7 +18104,7 @@ var AnimationFrameService = (function () {
             }
             duration = (new Date().getTime()) - frameStart;
         }
-        if (gridPanelNeedsAFrame || !this.p1Tasks.isEmpty() || !this.p1Tasks.isEmpty()) {
+        if (gridPanelNeedsAFrame || !this.p1Tasks.isEmpty() || !this.p2Tasks.isEmpty()) {
             this.requestFrame();
         }
         else {
@@ -18015,13 +18147,13 @@ exports.AnimationFrameService = AnimationFrameService;
 
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18358,6 +18490,7 @@ var RowComp = (function (_super) {
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
         var eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, events_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
@@ -18389,8 +18522,16 @@ var RowComp = (function (_super) {
         // the stub component now replaces the entire row
         this.onRowSelected();
         // as data has changed, then the style and class needs to be recomputed
+        this.postProcessCss();
+    };
+    RowComp.prototype.onRowNodeCellChanged = function (event) {
+        // as data has changed, then the style and class needs to be recomputed
+        this.postProcessCss();
+    };
+    RowComp.prototype.postProcessCss = function () {
         this.postProcessStylesFromGridOptions();
         this.postProcessClassesFromGridOptions();
+        this.postProcessRowClassRules();
     };
     RowComp.prototype.onExpandedChanged = function () {
         if (this.rowNode.group && !this.rowNode.footer) {
@@ -18744,7 +18885,27 @@ var RowComp = (function (_super) {
             classes.push(this.rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
         }
         utils_1._.pushAll(classes, this.processClassesFromGridOptions());
+        utils_1._.pushAll(classes, this.preProcessRowClassRules());
         return classes;
+    };
+    RowComp.prototype.preProcessRowClassRules = function () {
+        var res = [];
+        this.processRowClassRules(function (className) {
+            res.push(className);
+        }, function (className) {
+            // not catered for, if creating, no need
+            // to remove class as it was never there
+        });
+        return res;
+    };
+    RowComp.prototype.processRowClassRules = function (onApplicableClass, onNotApplicableClass) {
+        this.beans.stylingService.processClassRules(this.beans.gridOptionsWrapper.rowClassRules(), {
+            data: this.rowNode.data,
+            node: this.rowNode,
+            rowIndex: this.rowNode.rowIndex,
+            api: this.beans.gridOptionsWrapper.getApi(),
+            context: this.beans.gridOptionsWrapper.getContext()
+        }, onApplicableClass, onNotApplicableClass);
     };
     RowComp.prototype.stopEditing = function (cancel) {
         if (cancel === void 0) { cancel = false; }
@@ -18801,6 +18962,14 @@ var RowComp = (function (_super) {
                 _this.eAllRowContainers.forEach(function (row) { return utils_1._.addCssClass(row, classStr); });
             });
         }
+    };
+    RowComp.prototype.postProcessRowClassRules = function () {
+        var _this = this;
+        this.processRowClassRules(function (className) {
+            _this.eAllRowContainers.forEach(function (row) { return utils_1._.addCssClass(row, className); });
+        }, function (className) {
+            _this.eAllRowContainers.forEach(function (row) { return utils_1._.removeCssClass(row, className); });
+        });
     };
     RowComp.prototype.processClassesFromGridOptions = function () {
         var res = [];
@@ -19160,13 +19329,13 @@ exports.RowComp = RowComp;
 
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19253,13 +19422,13 @@ exports.TemplateService = TemplateService;
 
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19615,13 +19784,13 @@ exports.ScalarBaseFilter = ScalarBaseFilter;
 
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19649,7 +19818,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = __webpack_require__(8);
 var componentAnnotations_1 = __webpack_require__(12);
 var utils_1 = __webpack_require__(1);
-var baseFilter_1 = __webpack_require__(50);
+var baseFilter_1 = __webpack_require__(51);
 var context_1 = __webpack_require__(0);
 var componentRecipes_1 = __webpack_require__(26);
 var DateFilter = (function (_super) {
@@ -19751,7 +19920,7 @@ var DateFilter = (function (_super) {
     DateFilter.prototype.resetState = function () {
         this.setDateFrom(null);
         this.setDateTo(null);
-        this.setFilterType("equals");
+        this.setFilterType(this.defaultFilter);
     };
     DateFilter.prototype.parse = function (model) {
         this.setDateFrom(model.dateFrom);
@@ -19806,13 +19975,13 @@ exports.DefaultDateComponent = DefaultDateComponent;
 
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19914,13 +20083,13 @@ exports.TouchListener = TouchListener;
 
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19936,28 +20105,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = __webpack_require__(0);
-var utils_1 = __webpack_require__(1);
-var textCellEditor_1 = __webpack_require__(71);
-var selectCellEditor_1 = __webpack_require__(72);
 var popupEditorWrapper_1 = __webpack_require__(69);
-var popupTextCellEditor_1 = __webpack_require__(92);
-var popupSelectCellEditor_1 = __webpack_require__(93);
 var gridOptionsWrapper_1 = __webpack_require__(2);
-var largeTextCellEditor_1 = __webpack_require__(94);
+var componentResolver_1 = __webpack_require__(27);
 var CellEditorFactory = (function () {
     function CellEditorFactory() {
-        this.cellEditorMap = {};
     }
-    CellEditorFactory_1 = CellEditorFactory;
     CellEditorFactory.prototype.init = function () {
-        this.cellEditorMap[CellEditorFactory_1.TEXT] = textCellEditor_1.TextCellEditor;
-        this.cellEditorMap[CellEditorFactory_1.SELECT] = selectCellEditor_1.SelectCellEditor;
-        this.cellEditorMap[CellEditorFactory_1.POPUP_TEXT] = popupTextCellEditor_1.PopupTextCellEditor;
-        this.cellEditorMap[CellEditorFactory_1.POPUP_SELECT] = popupSelectCellEditor_1.PopupSelectCellEditor;
-        this.cellEditorMap[CellEditorFactory_1.LARGE_TEXT] = largeTextCellEditor_1.LargeTextCellEditor;
     };
     CellEditorFactory.prototype.addCellEditor = function (key, cellEditor) {
-        this.cellEditorMap[key] = cellEditor;
+        console.warn("Ignoring this bwahahahahahaha!");
     };
     // private registerEditorsFromGridOptions(): void {
     //     let userProvidedCellEditors = this.gridOptionsWrapper.getCellEditors();
@@ -19965,28 +20122,8 @@ var CellEditorFactory = (function () {
     //         this.addCellEditor(key, cellEditor);
     //     });
     // }
-    CellEditorFactory.prototype.createCellEditor = function (key, params) {
-        var CellEditorClass;
-        if (utils_1.Utils.missing(key)) {
-            CellEditorClass = this.cellEditorMap[CellEditorFactory_1.TEXT];
-        }
-        else if (typeof key === 'string') {
-            CellEditorClass = this.cellEditorMap[key];
-            if (utils_1.Utils.missing(CellEditorClass)) {
-                console.warn('ag-Grid: unable to find cellEditor for key ' + key);
-                CellEditorClass = this.cellEditorMap[CellEditorFactory_1.TEXT];
-            }
-        }
-        else {
-            CellEditorClass = key;
-        }
-        var cellEditor = new CellEditorClass();
-        this.context.wireBean(cellEditor);
-        // we have to call init first, otherwise when using the frameworks, the wrapper
-        // classes won't be set up
-        if (cellEditor.init) {
-            cellEditor.init(params);
-        }
+    CellEditorFactory.prototype.createCellEditor = function (column, params) {
+        var cellEditor = this.componentResolver.createAgGridComponent(column, params, 'cellEditor');
         if (cellEditor.isPopup && cellEditor.isPopup()) {
             if (this.gridOptionsWrapper.isFullRowEdit()) {
                 console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
@@ -19998,15 +20135,14 @@ var CellEditorFactory = (function () {
         }
         return cellEditor;
     };
-    CellEditorFactory.TEXT = 'text';
-    CellEditorFactory.SELECT = 'select';
-    CellEditorFactory.POPUP_TEXT = 'popupText';
-    CellEditorFactory.POPUP_SELECT = 'popupSelect';
-    CellEditorFactory.LARGE_TEXT = 'largeText';
     __decorate([
         context_1.Autowired('context'),
         __metadata("design:type", context_1.Context)
     ], CellEditorFactory.prototype, "context", void 0);
+    __decorate([
+        context_1.Autowired('componentResolver'),
+        __metadata("design:type", componentResolver_1.ComponentResolver)
+    ], CellEditorFactory.prototype, "componentResolver", void 0);
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
@@ -20017,23 +20153,22 @@ var CellEditorFactory = (function () {
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], CellEditorFactory.prototype, "init", null);
-    CellEditorFactory = CellEditorFactory_1 = __decorate([
+    CellEditorFactory = __decorate([
         context_1.Bean('cellEditorFactory')
     ], CellEditorFactory);
     return CellEditorFactory;
-    var CellEditorFactory_1;
 }());
 exports.CellEditorFactory = CellEditorFactory;
 
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20115,13 +20250,13 @@ exports.CellRendererFactory = CellRendererFactory;
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20138,7 +20273,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = __webpack_require__(0);
 var componentRecipes_1 = __webpack_require__(26);
-var componentResolver_1 = __webpack_require__(36);
+var componentResolver_1 = __webpack_require__(27);
 var utils_1 = __webpack_require__(1);
 /** Class to use a cellRenderer. */
 var CellRendererService = (function () {
@@ -20236,13 +20371,13 @@ exports.CellRendererService = CellRendererService;
 
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20258,7 +20393,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = __webpack_require__(0);
-var componentMetadataProvider_1 = __webpack_require__(78);
+var componentMetadataProvider_1 = __webpack_require__(79);
 var DefaultCellRenderer = (function () {
     function DefaultCellRenderer() {
     }
@@ -20340,13 +20475,13 @@ exports.AgComponentUtils = AgComponentUtils;
 
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20369,7 +20504,7 @@ var context_1 = __webpack_require__(0);
 var headerContainer_1 = __webpack_require__(95);
 var eventService_1 = __webpack_require__(4);
 var events_1 = __webpack_require__(5);
-var scrollVisibleService_1 = __webpack_require__(32);
+var scrollVisibleService_1 = __webpack_require__(33);
 var HeaderRenderer = (function () {
     function HeaderRenderer() {
     }
@@ -20481,13 +20616,13 @@ exports.HeaderRenderer = HeaderRenderer;
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20538,13 +20673,13 @@ exports.Environment = Environment;
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20603,13 +20738,13 @@ exports.CssClassApplier = CssClassApplier;
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20784,13 +20919,13 @@ exports.AgCheckbox = AgCheckbox;
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20992,19 +21127,20 @@ exports.RowNodeBlock = RowNodeBlock;
 
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var events_1 = __webpack_require__(5);
+var propertyKeys_1 = __webpack_require__(119);
 var utils_1 = __webpack_require__(1);
 var ComponentUtil = (function () {
     function ComponentUtil() {
@@ -21032,22 +21168,22 @@ var ComponentUtil = (function () {
             .concat(ComponentUtil.OBJECT_PROPERTIES)
             .concat(ComponentUtil.FUNCTION_PROPERTIES)
             .forEach(function (key) {
-            if (typeof (component)[key] !== 'undefined') {
+            if (typeof component[key] !== 'undefined') {
                 pGridOptions[key] = component[key];
             }
         });
         ComponentUtil.BOOLEAN_PROPERTIES.forEach(function (key) {
-            if (typeof (component)[key] !== 'undefined') {
+            if (typeof component[key] !== 'undefined') {
                 pGridOptions[key] = ComponentUtil.toBoolean(component[key]);
             }
         });
         ComponentUtil.NUMBER_PROPERTIES.forEach(function (key) {
-            if (typeof (component)[key] !== 'undefined') {
+            if (typeof component[key] !== 'undefined') {
                 pGridOptions[key] = ComponentUtil.toNumber(component[key]);
             }
         });
         ComponentUtil.getEventCallbacks().forEach(function (funcName) {
-            if (typeof (component)[funcName] !== 'undefined') {
+            if (typeof component[funcName] !== 'undefined') {
                 pGridOptions[funcName] = component[funcName];
             }
         });
@@ -21104,11 +21240,11 @@ var ComponentUtil = (function () {
         if (changes.rowData) {
             api.setRowData(changes.rowData.currentValue);
         }
-        if (changes.floatingTopRowData) {
-            api.setFloatingTopRowData(changes.floatingTopRowData.currentValue);
+        if (changes.pinnedTopRowData) {
+            api.setFloatingTopRowData(changes.pinnedTopRowData.currentValue);
         }
-        if (changes.floatingBottomRowData) {
-            api.setFloatingBottomRowData(changes.floatingBottomRowData.currentValue);
+        if (changes.pinnedBottomRowData) {
+            api.setFloatingBottomRowData(changes.pinnedBottomRowData.currentValue);
         }
         if (changes.columnDefs) {
             api.setColumnDefs(changes.columnDefs.currentValue);
@@ -21165,69 +21301,13 @@ var ComponentUtil = (function () {
     };
     // all the events are populated in here AFTER this class (at the bottom of the file).
     ComponentUtil.EVENTS = [];
-    ComponentUtil.STRING_PROPERTIES = [
-        'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
-        'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType',
-        'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow'
-    ];
-    ComponentUtil.OBJECT_PROPERTIES = [
-        'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText', 'icons', 'datasource',
-        'enterpriseDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
-        'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes'
-        //,'cellRenderers','cellEditors'
-    ];
-    ComponentUtil.ARRAY_PROPERTIES = [
-        'slaveGrids', 'alignedGrids', 'rowData',
-        'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
-        // deprecated
-    ];
-    ComponentUtil.NUMBER_PROPERTIES = [
-        'rowHeight', 'rowBuffer', 'colWidth', 'headerHeight', 'groupHeaderHeight', 'floatingFiltersHeight',
-        'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded',
-        'minColWidth', 'maxColWidth', 'viewportRowModelPageSize', 'viewportRowModelBufferSize',
-        'layoutInterval', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
-        'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount',
-        'scrollbarWidth', 'paginationStartPage', 'infiniteBlockSize'
-    ];
-    ComponentUtil.BOOLEAN_PROPERTIES = [
-        'toolPanelSuppressRowGroups', 'toolPanelSuppressValues', 'toolPanelSuppressPivots', 'toolPanelSuppressPivotMode',
-        'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll', 'debug',
-        'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
-        'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
-        'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren',
-        'groupIncludeFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader', 'forPrint',
-        'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort',
-        'singleClickEdit', 'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize',
-        'suppressParentsInRowNodes', 'showToolPanel', 'suppressColumnMoveAnimation', 'suppressMovableColumns',
-        'suppressFieldDotNotation', 'enableRangeSelection',
-        'pivotPanelShow', 'suppressTouch', 'suppressAsyncEvents', 'allowContextMenuWithControlKey',
-        'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel',
-        'enableStatusBar', 'alwaysShowStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
-        'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
-        'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation', 'suppressAggAtRootLevel',
-        'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly',
-        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtl', 'suppressClickEdit',
-        'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
-        'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus',
-        'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
-        'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection',
-        'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame',
-        'suppressExcelExport', 'suppressCsvExport'
-    ];
-    ComponentUtil.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
-        'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent',
-        'getRowHeight', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
-        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
-        'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
-        'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
-        'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell',
-        'processCellFromClipboard', 'getDocument', 'postProcessPopup'];
-    ComponentUtil.ALL_PROPERTIES = ComponentUtil.ARRAY_PROPERTIES
-        .concat(ComponentUtil.OBJECT_PROPERTIES)
-        .concat(ComponentUtil.STRING_PROPERTIES)
-        .concat(ComponentUtil.NUMBER_PROPERTIES)
-        .concat(ComponentUtil.FUNCTION_PROPERTIES)
-        .concat(ComponentUtil.BOOLEAN_PROPERTIES);
+    ComponentUtil.STRING_PROPERTIES = propertyKeys_1.PropertyKeys.STRING_PROPERTIES;
+    ComponentUtil.OBJECT_PROPERTIES = propertyKeys_1.PropertyKeys.OBJECT_PROPERTIES;
+    ComponentUtil.ARRAY_PROPERTIES = propertyKeys_1.PropertyKeys.ARRAY_PROPERTIES;
+    ComponentUtil.NUMBER_PROPERTIES = propertyKeys_1.PropertyKeys.NUMBER_PROPERTIES;
+    ComponentUtil.BOOLEAN_PROPERTIES = propertyKeys_1.PropertyKeys.BOOLEAN_PROPERTIES;
+    ComponentUtil.FUNCTION_PROPERTIES = propertyKeys_1.PropertyKeys.FUNCTION_PROPERTIES;
+    ComponentUtil.ALL_PROPERTIES = propertyKeys_1.PropertyKeys.ALL_PROPERTIES;
     return ComponentUtil;
 }());
 exports.ComponentUtil = ComponentUtil;
@@ -21242,13 +21322,13 @@ function checkForDeprecated(changes) {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21271,7 +21351,7 @@ var selectionController_1 = __webpack_require__(14);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var displayedGroupCreator_1 = __webpack_require__(44);
 var balancedColumnTreeBuilder_1 = __webpack_require__(42);
-var groupInstanceIdCreator_1 = __webpack_require__(82);
+var groupInstanceIdCreator_1 = __webpack_require__(83);
 var columnGroup_1 = __webpack_require__(22);
 var pinnedRowModel_1 = __webpack_require__(25);
 var BaseGridSerializingSession = (function () {
@@ -21535,13 +21615,13 @@ var RowType;
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21560,8 +21640,8 @@ var rowRenderer_1 = __webpack_require__(18);
 var gridPanel_1 = __webpack_require__(11);
 var context_1 = __webpack_require__(0);
 var context_2 = __webpack_require__(0);
-var headerRenderer_1 = __webpack_require__(57);
-var renderedHeaderCell_1 = __webpack_require__(80);
+var headerRenderer_1 = __webpack_require__(58);
+var renderedHeaderCell_1 = __webpack_require__(81);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var headerWrapperComp_1 = __webpack_require__(97);
 var AutoWidthCalculator = (function () {
@@ -21599,9 +21679,6 @@ var AutoWidthCalculator = (function () {
         eBodyContainer.removeChild(eDummyContainer);
         // we add padding as I found without it, the gui still put '...' after some of the texts
         var autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
-        if (typeof autoSizePadding !== 'number' || autoSizePadding < 0) {
-            autoSizePadding = 4;
-        }
         return dummyContainerWidth + autoSizePadding;
     };
     AutoWidthCalculator.prototype.getHeaderCellForColumn = function (column) {
@@ -21674,13 +21751,13 @@ exports.AutoWidthCalculator = AutoWidthCalculator;
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21957,70 +22034,13 @@ exports.BorderLayout = BorderLayout;
 
 
 /***/ }),
-/* 66 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(0);
-var context_2 = __webpack_require__(0);
-var utils_1 = __webpack_require__(1);
-var gridOptionsWrapper_1 = __webpack_require__(2);
-var cellComp_1 = __webpack_require__(38);
-var MouseEventService = (function () {
-    function MouseEventService() {
-    }
-    MouseEventService.prototype.getRenderedCellForEvent = function (event) {
-        var sourceElement = utils_1.Utils.getTarget(event);
-        while (sourceElement) {
-            var renderedCell = this.gridOptionsWrapper.getDomData(sourceElement, cellComp_1.CellComp.DOM_DATA_KEY_CELL_COMP);
-            if (renderedCell) {
-                return renderedCell;
-            }
-            sourceElement = sourceElement.parentElement;
-        }
-        return null;
-    };
-    MouseEventService.prototype.getGridCellForEvent = function (event) {
-        var cellComp = this.getRenderedCellForEvent(event);
-        return cellComp ? cellComp.getGridCell() : null;
-    };
-    __decorate([
-        context_2.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-    ], MouseEventService.prototype, "gridOptionsWrapper", void 0);
-    MouseEventService = __decorate([
-        context_1.Bean('mouseEventService')
-    ], MouseEventService);
-    return MouseEventService;
-}());
-exports.MouseEventService = MouseEventService;
-
-
-/***/ }),
 /* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22098,7 +22118,7 @@ exports.GridRow = GridRow;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22138,9 +22158,9 @@ var CheckboxSelectionComponent = (function (_super) {
         return _super.call(this, "<span class=\"ag-selection-checkbox\"/>") || this;
     }
     CheckboxSelectionComponent.prototype.createAndAddIcons = function () {
-        this.eCheckedIcon = utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, null);
-        this.eUncheckedIcon = utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, null);
-        this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null);
+        this.eCheckedIcon = utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
+        this.eUncheckedIcon = utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
+        this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.column);
         var element = this.getHtmlElement();
         element.appendChild(this.eCheckedIcon);
         element.appendChild(this.eUncheckedIcon);
@@ -22169,10 +22189,10 @@ var CheckboxSelectionComponent = (function (_super) {
         }
     };
     CheckboxSelectionComponent.prototype.init = function (params) {
-        this.createAndAddIcons();
         this.rowNode = params.rowNode;
         this.column = params.column;
         this.visibleFunc = params.visibleFunc;
+        this.createAndAddIcons();
         this.onSelectionChanged();
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
         // would possibly get selected twice
@@ -22233,7 +22253,7 @@ exports.CheckboxSelectionComponent = CheckboxSelectionComponent;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22347,7 +22367,284 @@ exports.PopupEditorWrapper = PopupEditorWrapper;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var textCellEditor_1 = __webpack_require__(71);
+var context_1 = __webpack_require__(0);
+var dateFilter_1 = __webpack_require__(52);
+var headerComp_1 = __webpack_require__(122);
+var headerGroupComp_1 = __webpack_require__(123);
+var floatingFilter_1 = __webpack_require__(124);
+var floatingFilterWrapper_1 = __webpack_require__(125);
+var componentResolver_1 = __webpack_require__(27);
+var groupCellRenderer_1 = __webpack_require__(75);
+var animateShowChangeCellRenderer_1 = __webpack_require__(74);
+var animateSlideCellRenderer_1 = __webpack_require__(73);
+var rowComp_1 = __webpack_require__(49);
+var selectCellEditor_1 = __webpack_require__(78);
+var popupTextCellEditor_1 = __webpack_require__(92);
+var popupSelectCellEditor_1 = __webpack_require__(93);
+var largeTextCellEditor_1 = __webpack_require__(94);
+var RegisteredComponentSource;
+(function (RegisteredComponentSource) {
+    RegisteredComponentSource[RegisteredComponentSource["DEFAULT"] = 0] = "DEFAULT";
+    RegisteredComponentSource[RegisteredComponentSource["REGISTERED"] = 1] = "REGISTERED";
+})(RegisteredComponentSource = exports.RegisteredComponentSource || (exports.RegisteredComponentSource = {}));
+var ComponentProvider = (function () {
+    function ComponentProvider() {
+        this.jsComponents = {};
+        this.frameworkComponents = {};
+    }
+    ComponentProvider.prototype.postConstruct = function () {
+        this.agGridDefaults = {
+            //THE FOLLOWING COMPONENTS HAVE NO DEFAULTS, THEY NEED TO BE SPECIFIED AS AN SPECIFIC FLAVOUR
+            //THERE ARE NO DEFAULTS THAT FIT ALL PURPOSES
+            //THEY ARE ADDED HERE TO AVOID THE NOT FOUND WARNING.
+            filterComponent: null,
+            customFloatingFilterComponent: null,
+            //date
+            dateComponent: dateFilter_1.DefaultDateComponent,
+            //header
+            headerComponent: headerComp_1.HeaderComp,
+            headerGroupComponent: headerGroupComp_1.HeaderGroupComp,
+            //floating filters
+            setFloatingFilterComponent: floatingFilter_1.SetFloatingFilterComp,
+            textFloatingFilterComponent: floatingFilter_1.TextFloatingFilterComp,
+            numberFloatingFilterComponent: floatingFilter_1.NumberFloatingFilterComp,
+            dateFloatingFilterComponent: floatingFilter_1.DateFloatingFilterComp,
+            readModelAsStringFloatingFilterComponent: floatingFilter_1.ReadModelAsStringFloatingFilterComp,
+            floatingFilterWrapperComponent: floatingFilterWrapper_1.FloatingFilterWrapperComp,
+            emptyFloatingFilterWrapperComponent: floatingFilterWrapper_1.EmptyFloatingFilterWrapperComp,
+            //renderers
+            cellRenderer: null,
+            fullWidthCellRenderer: null,
+            innerRenderer: null,
+            groupRowInnerRenderer: null,
+            animateShowChange: animateShowChangeCellRenderer_1.AnimateShowChangeCellRenderer,
+            animateSlide: animateSlideCellRenderer_1.AnimateSlideCellRenderer,
+            group: groupCellRenderer_1.GroupCellRenderer,
+            groupRowRenderer: groupCellRenderer_1.GroupCellRenderer,
+            loadingCellRenderer: rowComp_1.LoadingCellRenderer,
+            pinnedRowCellRenderer: null,
+            //editors
+            cellEditor: textCellEditor_1.TextCellEditor,
+            textCellEditor: textCellEditor_1.TextCellEditor,
+            text: textCellEditor_1.TextCellEditor,
+            selectCellEditor: selectCellEditor_1.SelectCellEditor,
+            select: selectCellEditor_1.SelectCellEditor,
+            popupTextCellEditor: popupTextCellEditor_1.PopupTextCellEditor,
+            popupText: popupTextCellEditor_1.PopupTextCellEditor,
+            popupSelectCellEditor: popupSelectCellEditor_1.PopupSelectCellEditor,
+            popupSelect: popupSelectCellEditor_1.PopupSelectCellEditor,
+            largeTextCellEditor: largeTextCellEditor_1.LargeTextCellEditor,
+            largeText: largeTextCellEditor_1.LargeTextCellEditor
+        };
+    };
+    ComponentProvider.prototype.registerComponent = function (name, component) {
+        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
+        if (this.frameworkComponents[name]) {
+            console.error("Trying to register a component that you have already registered for frameworks: " + name);
+            return;
+        }
+        this.jsComponents[name] = component;
+    };
+    /**
+     * B the business interface (ie IHeader)
+     * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
+     */
+    ComponentProvider.prototype.registerFwComponent = function (name, component) {
+        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
+        if (this.jsComponents[name]) {
+            console.error("Trying to register a component that you have already registered for plain javascript: " + name);
+            return;
+        }
+        this.frameworkComponents[name] = component;
+    };
+    /**
+     * B the business interface (ie IHeader)
+     * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
+     */
+    ComponentProvider.prototype.retrieve = function (name) {
+        if (this.frameworkComponents[name]) {
+            return {
+                type: componentResolver_1.ComponentType.FRAMEWORK,
+                component: this.frameworkComponents[name],
+                source: RegisteredComponentSource.REGISTERED
+            };
+        }
+        if (this.jsComponents[name]) {
+            return {
+                type: componentResolver_1.ComponentType.AG_GRID,
+                component: this.jsComponents[name],
+                source: RegisteredComponentSource.REGISTERED
+            };
+        }
+        if (this.agGridDefaults[name]) {
+            return {
+                type: componentResolver_1.ComponentType.AG_GRID,
+                component: this.agGridDefaults[name],
+                source: RegisteredComponentSource.DEFAULT
+            };
+        }
+        if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {
+            console.warn("ag-grid: Looking for component [" + name + "] but it wasn't found.");
+        }
+        return null;
+    };
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ComponentProvider.prototype, "postConstruct", null);
+    ComponentProvider = __decorate([
+        context_1.Bean('componentProvider')
+    ], ComponentProvider);
+    return ComponentProvider;
+}());
+exports.ComponentProvider = ComponentProvider;
+
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v13.3.1
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var constants_1 = __webpack_require__(7);
+var component_1 = __webpack_require__(8);
+var utils_1 = __webpack_require__(1);
+var TextCellEditor = (function (_super) {
+    __extends(TextCellEditor, _super);
+    function TextCellEditor() {
+        return _super.call(this, TextCellEditor.TEMPLATE) || this;
+    }
+    TextCellEditor.prototype.init = function (params) {
+        this.params = params;
+        var eInput = this.getGui();
+        var startValue;
+        // cellStartedEdit is only false if we are doing fullRow editing
+        if (params.cellStartedEdit) {
+            this.focusAfterAttached = true;
+            var keyPressBackspaceOrDelete = params.keyPress === constants_1.Constants.KEY_BACKSPACE
+                || params.keyPress === constants_1.Constants.KEY_DELETE;
+            if (keyPressBackspaceOrDelete) {
+                startValue = '';
+            }
+            else if (params.charPress) {
+                startValue = params.charPress;
+            }
+            else {
+                startValue = this.getStartValue(params);
+                if (params.keyPress !== constants_1.Constants.KEY_F2) {
+                    this.highlightAllOnFocus = true;
+                }
+            }
+        }
+        else {
+            this.focusAfterAttached = false;
+            startValue = this.getStartValue(params);
+        }
+        if (utils_1.Utils.exists(startValue)) {
+            eInput.value = startValue;
+        }
+        this.addDestroyableEventListener(eInput, 'keydown', function (event) {
+            var isNavigationKey = event.keyCode === constants_1.Constants.KEY_LEFT
+                || event.keyCode === constants_1.Constants.KEY_RIGHT
+                || event.keyCode === constants_1.Constants.KEY_UP
+                || event.keyCode === constants_1.Constants.KEY_DOWN
+                || event.keyCode === constants_1.Constants.KEY_PAGE_DOWN
+                || event.keyCode === constants_1.Constants.KEY_PAGE_UP
+                || event.keyCode === constants_1.Constants.KEY_PAGE_HOME
+                || event.keyCode === constants_1.Constants.KEY_PAGE_END;
+            if (isNavigationKey) {
+                // this stops the grid from executing keyboard navigation
+                event.stopPropagation();
+                if (!(event.keyCode === constants_1.Constants.KEY_LEFT) && !(event.keyCode === constants_1.Constants.KEY_RIGHT)) {
+                    // this stops the browser from scrolling
+                    event.preventDefault();
+                }
+            }
+        });
+    };
+    TextCellEditor.prototype.afterGuiAttached = function () {
+        if (!this.focusAfterAttached) {
+            return;
+        }
+        var eInput = this.getGui();
+        eInput.focus();
+        if (this.highlightAllOnFocus) {
+            eInput.select();
+        }
+        else {
+            // when we started editing, we want the carot at the end, not the start.
+            // this comes into play in two scenarios: a) when user hits F2 and b)
+            // when user hits a printable character, then on IE (and only IE) the carot
+            // was placed after the first character, thus 'apply' would end up as 'pplea'
+            var length_1 = eInput.value ? eInput.value.length : 0;
+            if (length_1 > 0) {
+                eInput.setSelectionRange(length_1, length_1);
+            }
+        }
+    };
+    // gets called when tabbing trough cells and in full row edit mode
+    TextCellEditor.prototype.focusIn = function () {
+        var eInput = this.getGui();
+        eInput.focus();
+        eInput.select();
+    };
+    TextCellEditor.prototype.getValue = function () {
+        var eInput = this.getGui();
+        return this.params.parseValue(eInput.value);
+    };
+    TextCellEditor.prototype.getStartValue = function (params) {
+        var formatValue = params.useFormatter || params.column.getColDef().refData;
+        return formatValue ? params.formatValue(params.value) : params.value;
+    };
+    TextCellEditor.TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
+    return TextCellEditor;
+}(component_1.Component));
+exports.TextCellEditor = TextCellEditor;
+
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22457,232 +22754,13 @@ exports.ColumnAnimationService = ColumnAnimationService;
 
 
 /***/ }),
-/* 71 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-Object.defineProperty(exports, "__esModule", { value: true });
-var constants_1 = __webpack_require__(7);
-var component_1 = __webpack_require__(8);
-var utils_1 = __webpack_require__(1);
-var TextCellEditor = (function (_super) {
-    __extends(TextCellEditor, _super);
-    function TextCellEditor() {
-        return _super.call(this, TextCellEditor.TEMPLATE) || this;
-    }
-    TextCellEditor.prototype.init = function (params) {
-        this.params = params;
-        var eInput = this.getGui();
-        var startValue;
-        // cellStartedEdit is only false if we are doing fullRow editing
-        if (params.cellStartedEdit) {
-            this.focusAfterAttached = true;
-            var keyPressBackspaceOrDelete = params.keyPress === constants_1.Constants.KEY_BACKSPACE
-                || params.keyPress === constants_1.Constants.KEY_DELETE;
-            if (keyPressBackspaceOrDelete) {
-                startValue = '';
-            }
-            else if (params.charPress) {
-                startValue = params.charPress;
-            }
-            else {
-                startValue = this.getStartValue(params);
-                if (params.keyPress !== constants_1.Constants.KEY_F2) {
-                    this.highlightAllOnFocus = true;
-                }
-            }
-        }
-        else {
-            this.focusAfterAttached = false;
-            startValue = this.getStartValue(params);
-        }
-        if (utils_1.Utils.exists(startValue)) {
-            eInput.value = startValue;
-        }
-        this.addDestroyableEventListener(eInput, 'keydown', function (event) {
-            var isNavigationKey = event.keyCode === constants_1.Constants.KEY_LEFT
-                || event.keyCode === constants_1.Constants.KEY_RIGHT
-                || event.keyCode === constants_1.Constants.KEY_UP
-                || event.keyCode === constants_1.Constants.KEY_DOWN
-                || event.keyCode === constants_1.Constants.KEY_PAGE_DOWN
-                || event.keyCode === constants_1.Constants.KEY_PAGE_UP
-                || event.keyCode === constants_1.Constants.KEY_PAGE_HOME
-                || event.keyCode === constants_1.Constants.KEY_PAGE_END;
-            if (isNavigationKey) {
-                event.stopPropagation();
-                if (!(event.keyCode === constants_1.Constants.KEY_LEFT) && !(event.keyCode === constants_1.Constants.KEY_RIGHT)) {
-                    event.preventDefault();
-                }
-            }
-        });
-    };
-    TextCellEditor.prototype.afterGuiAttached = function () {
-        if (!this.focusAfterAttached) {
-            return;
-        }
-        var eInput = this.getGui();
-        eInput.focus();
-        if (this.highlightAllOnFocus) {
-            eInput.select();
-        }
-        else {
-            // when we started editing, we want the carot at the end, not the start.
-            // this comes into play in two scenarios: a) when user hits F2 and b)
-            // when user hits a printable character, then on IE (and only IE) the carot
-            // was placed after the first character, thus 'apply' would end up as 'pplea'
-            var length_1 = eInput.value ? eInput.value.length : 0;
-            if (length_1 > 0) {
-                eInput.setSelectionRange(length_1, length_1);
-            }
-        }
-    };
-    // gets called when tabbing trough cells and in full row edit mode
-    TextCellEditor.prototype.focusIn = function () {
-        var eInput = this.getGui();
-        eInput.focus();
-        eInput.select();
-    };
-    TextCellEditor.prototype.getValue = function () {
-        var eInput = this.getGui();
-        return this.params.parseValue(eInput.value);
-    };
-    TextCellEditor.prototype.getStartValue = function (params) {
-        var formatValue = params.useFormatter || params.column.getColDef().refData;
-        return formatValue ? params.formatValue(params.value) : params.value;
-    };
-    TextCellEditor.TEMPLATE = '<input class="ag-cell-edit-input" type="text"/>';
-    return TextCellEditor;
-}(component_1.Component));
-exports.TextCellEditor = TextCellEditor;
-
-
-/***/ }),
-/* 72 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = Object.setPrototypeOf ||
-        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = __webpack_require__(8);
-var utils_1 = __webpack_require__(1);
-var constants_1 = __webpack_require__(7);
-var context_1 = __webpack_require__(0);
-var gridOptionsWrapper_1 = __webpack_require__(2);
-var valueFormatterService_1 = __webpack_require__(40);
-var SelectCellEditor = (function (_super) {
-    __extends(SelectCellEditor, _super);
-    function SelectCellEditor() {
-        var _this = _super.call(this, '<div class="ag-cell-edit-input"><select class="ag-cell-edit-input"/></div>') || this;
-        _this.eSelect = _this.getHtmlElement().querySelector('select');
-        return _this;
-    }
-    SelectCellEditor.prototype.init = function (params) {
-        var _this = this;
-        this.focusAfterAttached = params.cellStartedEdit;
-        if (utils_1.Utils.missing(params.values)) {
-            console.log('ag-Grid: no values found for select cellEditor');
-            return;
-        }
-        params.values.forEach(function (value) {
-            var option = document.createElement('option');
-            option.value = value;
-            var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, null, value);
-            var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-            option.text = valueFormattedExits ? valueFormatted : value;
-            if (params.value === value) {
-                option.selected = true;
-            }
-            _this.eSelect.appendChild(option);
-        });
-        // we don't want to add this if full row editing, otherwise selecting will stop the
-        // full row editing.
-        if (!this.gridOptionsWrapper.isFullRowEdit()) {
-            this.addDestroyableEventListener(this.eSelect, 'change', function () { return params.stopEditing(); });
-        }
-        this.addDestroyableEventListener(this.eSelect, 'keydown', function (event) {
-            var isNavigationKey = event.keyCode === constants_1.Constants.KEY_UP || event.keyCode === constants_1.Constants.KEY_DOWN;
-            if (isNavigationKey) {
-                event.stopPropagation();
-            }
-        });
-        this.addDestroyableEventListener(this.eSelect, 'mousedown', function (event) {
-            event.stopPropagation();
-        });
-    };
-    SelectCellEditor.prototype.afterGuiAttached = function () {
-        if (this.focusAfterAttached) {
-            this.eSelect.focus();
-        }
-    };
-    SelectCellEditor.prototype.focusIn = function () {
-        this.eSelect.focus();
-    };
-    SelectCellEditor.prototype.getValue = function () {
-        return this.eSelect.value;
-    };
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper'),
-        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
-    ], SelectCellEditor.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('valueFormatterService'),
-        __metadata("design:type", valueFormatterService_1.ValueFormatterService)
-    ], SelectCellEditor.prototype, "valueFormatterService", void 0);
-    return SelectCellEditor;
-}(component_1.Component));
-exports.SelectCellEditor = SelectCellEditor;
-
-
-/***/ }),
 /* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22779,7 +22857,7 @@ exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22889,7 +22967,7 @@ exports.AnimateShowChangeCellRenderer = AnimateShowChangeCellRenderer;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22922,12 +23000,13 @@ var utils_1 = __webpack_require__(1);
 var context_1 = __webpack_require__(0);
 var component_1 = __webpack_require__(8);
 var rowNode_1 = __webpack_require__(15);
-var cellRendererService_1 = __webpack_require__(55);
+var cellRendererService_1 = __webpack_require__(56);
 var valueFormatterService_1 = __webpack_require__(40);
 var checkboxSelectionComponent_1 = __webpack_require__(68);
 var columnController_1 = __webpack_require__(3);
 var column_1 = __webpack_require__(9);
 var componentAnnotations_1 = __webpack_require__(12);
+var mouseEventService_1 = __webpack_require__(46);
 var GroupCellRenderer = (function (_super) {
     __extends(GroupCellRenderer, _super);
     function GroupCellRenderer() {
@@ -22990,14 +23069,14 @@ var GroupCellRenderer = (function (_super) {
             paddingPx = 0;
         }
         else {
-            var paddingFactor = (params.padding >= 0) ? params.padding : 10;
+            var paddingFactor = (params.padding >= 0) ? params.padding : this.gridOptionsWrapper.getGroupPaddingSize();
             paddingPx = rowNode.uiLevel * paddingFactor;
             var reducedLeafNode = this.columnController.isPivotMode() && params.node.leafGroup;
             if (rowNode.footer) {
-                paddingPx += 15;
+                paddingPx += this.gridOptionsWrapper.getFooterPaddingAddition();
             }
             else if (!rowNode.isExpandable() || reducedLeafNode) {
-                paddingPx += 10;
+                paddingPx += this.gridOptionsWrapper.getLeafNodePaddingAddition();
             }
         }
         if (this.gridOptionsWrapper.isEnableRtl()) {
@@ -23112,7 +23191,7 @@ var GroupCellRenderer = (function (_super) {
         if (checkboxNeeded) {
             var cbSelectionComponent_1 = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent_1);
-            cbSelectionComponent_1.init({ rowNode: rowNode });
+            cbSelectionComponent_1.init({ rowNode: rowNode, column: this.params.column });
             this.eCheckbox.appendChild(cbSelectionComponent_1.getHtmlElement());
             this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
         }
@@ -23124,16 +23203,15 @@ var GroupCellRenderer = (function (_super) {
         var eContractedIcon = utils_1.Utils.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
-        var expandOrContractListener = this.onExpandOrContract.bind(this);
-        this.addDestroyableEventListener(this.eExpanded, 'click', expandOrContractListener);
-        this.addDestroyableEventListener(this.eContracted, 'click', expandOrContractListener);
+        this.addDestroyableEventListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
+        this.addDestroyableEventListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
         // expand / contract as the user hits enter
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
         this.addDestroyableEventListener(params.node, rowNode_1.RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
         // if editing groups, then double click is to start editing
         if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
-            this.addDestroyableEventListener(eGroupCell, 'dblclick', expandOrContractListener);
+            this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
     };
     GroupCellRenderer.prototype.onKeyDown = function (event) {
@@ -23179,6 +23257,20 @@ var GroupCellRenderer = (function (_super) {
         // if we didn't find a displayed group, set it to the row node
         if (utils_1.Utils.missing(this.displayedGroup)) {
             this.displayedGroup = rowNode;
+        }
+    };
+    GroupCellRenderer.prototype.onExpandClicked = function () {
+        this.onExpandOrContract();
+    };
+    GroupCellRenderer.prototype.onCellDblClicked = function (event) {
+        // we want to avoid acting on double click events on the expand / contract icon,
+        // as that icons already has expand / collapse functionality on it. otherwise if
+        // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
+        // is open->close->open, however double click should be open->close only.
+        var targetIsExpandIcon = utils_1.Utils.isElementInEventPath(this.eExpanded, event)
+            || utils_1.Utils.isElementInEventPath(this.eContracted, event);
+        if (!targetIsExpandIcon) {
+            this.onExpandOrContract();
         }
     };
     GroupCellRenderer.prototype.onExpandOrContract = function () {
@@ -23248,6 +23340,10 @@ var GroupCellRenderer = (function (_super) {
         __metadata("design:type", columnController_1.ColumnController)
     ], GroupCellRenderer.prototype, "columnController", void 0);
     __decorate([
+        context_1.Autowired('mouseEventService'),
+        __metadata("design:type", mouseEventService_1.MouseEventService)
+    ], GroupCellRenderer.prototype, "mouseEventService", void 0);
+    __decorate([
         componentAnnotations_1.RefSelector('eExpanded'),
         __metadata("design:type", HTMLElement)
     ], GroupCellRenderer.prototype, "eExpanded", void 0);
@@ -23279,7 +23375,7 @@ exports.GroupCellRenderer = GroupCellRenderer;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23300,11 +23396,10 @@ var StylingService = (function () {
     function StylingService() {
     }
     StylingService.prototype.processAllCellClasses = function (colDef, params, onApplicableClass, onNotApplicableClass) {
-        this.processCellClassRules(colDef, params, onApplicableClass, onNotApplicableClass);
+        this.processClassRules(colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
         this.processStaticCellClasses(colDef, params, onApplicableClass);
     };
-    StylingService.prototype.processCellClassRules = function (colDef, params, onApplicableClass, onNotApplicableClass) {
-        var classRules = colDef.cellClassRules;
+    StylingService.prototype.processClassRules = function (classRules, params, onApplicableClass, onNotApplicableClass) {
         if (typeof classRules === 'object' && classRules !== null) {
             var classNames = Object.keys(classRules);
             for (var i = 0; i < classNames.length; i++) {
@@ -23366,7 +23461,7 @@ exports.StylingService = StylingService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23460,7 +23555,109 @@ exports.ColumnHoverService = ColumnHoverService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var component_1 = __webpack_require__(8);
+var utils_1 = __webpack_require__(1);
+var constants_1 = __webpack_require__(7);
+var context_1 = __webpack_require__(0);
+var gridOptionsWrapper_1 = __webpack_require__(2);
+var valueFormatterService_1 = __webpack_require__(40);
+var SelectCellEditor = (function (_super) {
+    __extends(SelectCellEditor, _super);
+    function SelectCellEditor() {
+        var _this = _super.call(this, '<div class="ag-cell-edit-input"><select class="ag-cell-edit-input"/></div>') || this;
+        _this.eSelect = _this.getHtmlElement().querySelector('select');
+        return _this;
+    }
+    SelectCellEditor.prototype.init = function (params) {
+        var _this = this;
+        this.focusAfterAttached = params.cellStartedEdit;
+        if (utils_1.Utils.missing(params.values)) {
+            console.log('ag-Grid: no values found for select cellEditor');
+            return;
+        }
+        params.values.forEach(function (value) {
+            var option = document.createElement('option');
+            option.value = value;
+            var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, null, value);
+            var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
+            option.text = valueFormattedExits ? valueFormatted : value;
+            if (params.value === value) {
+                option.selected = true;
+            }
+            _this.eSelect.appendChild(option);
+        });
+        // we don't want to add this if full row editing, otherwise selecting will stop the
+        // full row editing.
+        if (!this.gridOptionsWrapper.isFullRowEdit()) {
+            this.addDestroyableEventListener(this.eSelect, 'change', function () { return params.stopEditing(); });
+        }
+        this.addDestroyableEventListener(this.eSelect, 'keydown', function (event) {
+            var isNavigationKey = event.keyCode === constants_1.Constants.KEY_UP || event.keyCode === constants_1.Constants.KEY_DOWN;
+            if (isNavigationKey) {
+                event.stopPropagation();
+            }
+        });
+        this.addDestroyableEventListener(this.eSelect, 'mousedown', function (event) {
+            event.stopPropagation();
+        });
+    };
+    SelectCellEditor.prototype.afterGuiAttached = function () {
+        if (this.focusAfterAttached) {
+            this.eSelect.focus();
+        }
+    };
+    SelectCellEditor.prototype.focusIn = function () {
+        this.eSelect.focus();
+    };
+    SelectCellEditor.prototype.getValue = function () {
+        return this.eSelect.value;
+    };
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], SelectCellEditor.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('valueFormatterService'),
+        __metadata("design:type", valueFormatterService_1.ValueFormatterService)
+    ], SelectCellEditor.prototype, "valueFormatterService", void 0);
+    return SelectCellEditor;
+}(component_1.Component));
+exports.SelectCellEditor = SelectCellEditor;
+
+
+/***/ }),
+/* 79 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23476,7 +23673,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = __webpack_require__(0);
-var agComponentUtils_1 = __webpack_require__(56);
+var agComponentUtils_1 = __webpack_require__(57);
 var ComponentMetadataProvider = (function () {
     function ComponentMetadataProvider() {
     }
@@ -23510,6 +23707,10 @@ var ComponentMetadataProvider = (function () {
                 mandatoryMethodList: ['refresh'],
                 optionalMethodList: ['afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+            },
+            cellEditor: {
+                mandatoryMethodList: ['getValue'],
+                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'focusIn', 'focusOut', 'afterGuiAttached']
             },
             innerRenderer: {
                 mandatoryMethodList: [],
@@ -23555,13 +23756,13 @@ exports.ComponentMetadataProvider = ComponentMetadataProvider;
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23803,13 +24004,13 @@ exports.CellNavigationService = CellNavigationService;
 
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23838,16 +24039,16 @@ var utils_1 = __webpack_require__(1);
 var column_1 = __webpack_require__(9);
 var filterManager_1 = __webpack_require__(16);
 var columnController_1 = __webpack_require__(3);
-var headerTemplateLoader_1 = __webpack_require__(81);
+var headerTemplateLoader_1 = __webpack_require__(82);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var horizontalDragService_1 = __webpack_require__(41);
-var gridCore_1 = __webpack_require__(34);
+var gridCore_1 = __webpack_require__(35);
 var context_1 = __webpack_require__(0);
-var cssClassApplier_1 = __webpack_require__(59);
+var cssClassApplier_1 = __webpack_require__(60);
 var dragAndDropService_1 = __webpack_require__(20);
 var sortController_1 = __webpack_require__(21);
 var setLeftFeature_1 = __webpack_require__(39);
-var touchListener_1 = __webpack_require__(52);
+var touchListener_1 = __webpack_require__(53);
 var component_1 = __webpack_require__(8);
 var beans_1 = __webpack_require__(37);
 var RenderedHeaderCell = (function (_super) {
@@ -24229,13 +24430,13 @@ exports.RenderedHeaderCell = RenderedHeaderCell;
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24334,13 +24535,13 @@ exports.HeaderTemplateLoader = HeaderTemplateLoader;
 
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24380,13 +24581,13 @@ exports.GroupInstanceIdCreator = GroupInstanceIdCreator;
 
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24431,13 +24632,13 @@ exports.Downloader = Downloader;
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24447,72 +24648,72 @@ var gridOptionsWrapper_1 = __webpack_require__(2);
 var selectionController_1 = __webpack_require__(14);
 var columnController_1 = __webpack_require__(3);
 var rowRenderer_1 = __webpack_require__(18);
-var headerRenderer_1 = __webpack_require__(57);
+var headerRenderer_1 = __webpack_require__(58);
 var filterManager_1 = __webpack_require__(16);
 var valueService_1 = __webpack_require__(19);
 var eventService_1 = __webpack_require__(4);
 var gridPanel_1 = __webpack_require__(11);
 var gridApi_1 = __webpack_require__(6);
-var headerTemplateLoader_1 = __webpack_require__(81);
+var headerTemplateLoader_1 = __webpack_require__(82);
 var balancedColumnTreeBuilder_1 = __webpack_require__(42);
 var displayedGroupCreator_1 = __webpack_require__(44);
 var expressionService_1 = __webpack_require__(17);
-var templateService_1 = __webpack_require__(49);
-var popupService_1 = __webpack_require__(35);
+var templateService_1 = __webpack_require__(50);
+var popupService_1 = __webpack_require__(36);
 var logger_1 = __webpack_require__(10);
-var columnUtils_1 = __webpack_require__(29);
-var autoWidthCalculator_1 = __webpack_require__(64);
+var columnUtils_1 = __webpack_require__(30);
+var autoWidthCalculator_1 = __webpack_require__(65);
 var horizontalDragService_1 = __webpack_require__(41);
 var context_1 = __webpack_require__(0);
 var csvCreator_1 = __webpack_require__(43);
-var gridCore_1 = __webpack_require__(34);
+var gridCore_1 = __webpack_require__(35);
 var standardMenu_1 = __webpack_require__(104);
 var dragAndDropService_1 = __webpack_require__(20);
 var dragService_1 = __webpack_require__(45);
 var sortController_1 = __webpack_require__(21);
 var focusedCellController_1 = __webpack_require__(24);
-var mouseEventService_1 = __webpack_require__(66);
-var cellNavigationService_1 = __webpack_require__(79);
+var mouseEventService_1 = __webpack_require__(46);
+var cellNavigationService_1 = __webpack_require__(80);
 var utils_1 = __webpack_require__(1);
 var filterStage_1 = __webpack_require__(105);
 var sortStage_1 = __webpack_require__(107);
 var flattenStage_1 = __webpack_require__(109);
-var cellEditorFactory_1 = __webpack_require__(53);
+var cellEditorFactory_1 = __webpack_require__(54);
 var events_1 = __webpack_require__(5);
 var infiniteRowModel_1 = __webpack_require__(110);
 var inMemoryRowModel_1 = __webpack_require__(112);
-var cellRendererFactory_1 = __webpack_require__(54);
-var cellRendererService_1 = __webpack_require__(55);
+var cellRendererFactory_1 = __webpack_require__(55);
+var cellRendererService_1 = __webpack_require__(56);
 var valueFormatterService_1 = __webpack_require__(40);
-var agCheckbox_1 = __webpack_require__(60);
+var agCheckbox_1 = __webpack_require__(61);
 var baseFrameworkFactory_1 = __webpack_require__(113);
-var scrollVisibleService_1 = __webpack_require__(32);
-var downloader_1 = __webpack_require__(83);
+var scrollVisibleService_1 = __webpack_require__(33);
+var downloader_1 = __webpack_require__(84);
 var xmlFactory_1 = __webpack_require__(114);
-var gridSerializer_1 = __webpack_require__(63);
+var gridSerializer_1 = __webpack_require__(64);
 var stylingService_1 = __webpack_require__(76);
 var columnHoverService_1 = __webpack_require__(77);
-var columnAnimationService_1 = __webpack_require__(70);
+var columnAnimationService_1 = __webpack_require__(72);
 var sortService_1 = __webpack_require__(108);
 var filterService_1 = __webpack_require__(106);
-var rowNodeFactory_1 = __webpack_require__(131);
+var rowNodeFactory_1 = __webpack_require__(133);
 var autoGroupColService_1 = __webpack_require__(101);
-var paginationProxy_1 = __webpack_require__(33);
+var paginationProxy_1 = __webpack_require__(34);
 var immutableService_1 = __webpack_require__(102);
 var constants_1 = __webpack_require__(7);
-var valueCache_1 = __webpack_require__(31);
-var changeDetectionService_1 = __webpack_require__(132);
-var alignedGridsService_1 = __webpack_require__(46);
+var valueCache_1 = __webpack_require__(32);
+var changeDetectionService_1 = __webpack_require__(134);
+var alignedGridsService_1 = __webpack_require__(47);
 var pinnedRowModel_1 = __webpack_require__(25);
-var componentResolver_1 = __webpack_require__(36);
+var componentResolver_1 = __webpack_require__(27);
 var componentRecipes_1 = __webpack_require__(26);
-var componentProvider_1 = __webpack_require__(91);
-var agComponentUtils_1 = __webpack_require__(56);
-var componentMetadataProvider_1 = __webpack_require__(78);
-var namedComponentResolver_1 = __webpack_require__(90);
+var componentProvider_1 = __webpack_require__(70);
+var agComponentUtils_1 = __webpack_require__(57);
+var componentMetadataProvider_1 = __webpack_require__(79);
+var namedComponentResolver_1 = __webpack_require__(91);
 var beans_1 = __webpack_require__(37);
-var environment_1 = __webpack_require__(58);
-var animationFrameService_1 = __webpack_require__(47);
+var environment_1 = __webpack_require__(59);
+var animationFrameService_1 = __webpack_require__(48);
 var Grid = (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -24559,11 +24760,11 @@ var Grid = (function () {
                 balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder, csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory, gridSerializer_1.GridSerializer, templateService_1.TemplateService,
                 gridPanel_1.GridPanel, popupService_1.PopupService, valueCache_1.ValueCache, valueService_1.ValueService, alignedGridsService_1.AlignedGridsService,
                 logger_1.LoggerFactory, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator, popupService_1.PopupService, gridCore_1.GridCore, standardMenu_1.StandardMenuFactory,
-                dragAndDropService_1.DragAndDropService, sortController_1.SortController, columnController_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
+                dragAndDropService_1.DragAndDropService, columnController_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService,
                 cellNavigationService_1.CellNavigationService, filterStage_1.FilterStage, sortStage_1.SortStage, flattenStage_1.FlattenStage, filterService_1.FilterService, rowNodeFactory_1.RowNodeFactory,
                 cellEditorFactory_1.CellEditorFactory, cellRendererService_1.CellRendererService, valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService,
                 columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, sortService_1.SortService, autoGroupColService_1.AutoGroupColService, immutableService_1.ImmutableService,
-                changeDetectionService_1.ChangeDetectionService, environment_1.Environment, beans_1.Beans, animationFrameService_1.AnimationFrameService],
+                changeDetectionService_1.ChangeDetectionService, environment_1.Environment, beans_1.Beans, animationFrameService_1.AnimationFrameService, sortController_1.SortController],
             components: [
                 { componentName: 'AgCheckbox', theClass: agCheckbox_1.AgCheckbox }
             ],
@@ -24667,13 +24868,13 @@ exports.Grid = Grid;
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24691,7 +24892,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(1);
 var beanStub_1 = __webpack_require__(13);
-var rowNodeBlock_1 = __webpack_require__(61);
+var rowNodeBlock_1 = __webpack_require__(62);
 var RowNodeCache = (function (_super) {
     __extends(RowNodeCache, _super);
     function RowNodeCache(cacheParams) {
@@ -24937,13 +25138,13 @@ exports.RowNodeCache = RowNodeCache;
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25218,13 +25419,13 @@ exports.InMemoryNodeManager = InMemoryNodeManager;
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25278,13 +25479,13 @@ exports.ChangedPath = ChangedPath;
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25310,7 +25511,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(1);
-var baseFilter_1 = __webpack_require__(50);
+var baseFilter_1 = __webpack_require__(51);
 var componentAnnotations_1 = __webpack_require__(12);
 var TextFilter = (function (_super) {
     __extends(TextFilter, _super);
@@ -25409,7 +25610,7 @@ var TextFilter = (function (_super) {
     };
     TextFilter.prototype.resetState = function () {
         this.setFilter(null);
-        this.setFilterType(baseFilter_1.BaseFilter.CONTAINS);
+        this.setFilterType(this.defaultFilter);
     };
     TextFilter.prototype.serialize = function () {
         return {
@@ -25464,13 +25665,13 @@ exports.TextFilter = TextFilter;
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25497,7 +25698,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(1);
 var componentAnnotations_1 = __webpack_require__(12);
-var baseFilter_1 = __webpack_require__(50);
+var baseFilter_1 = __webpack_require__(51);
 var NumberFilter = (function (_super) {
     __extends(NumberFilter, _super);
     function NumberFilter() {
@@ -25608,7 +25809,7 @@ var NumberFilter = (function (_super) {
         utils_1.Utils.setVisible(this.eNumberToPanel, visible);
     };
     NumberFilter.prototype.resetState = function () {
-        this.setFilterType(baseFilter_1.BaseFilter.EQUALS);
+        this.setFilterType(this.defaultFilter);
         this.setFilter(null);
         this.setFilterTo(null);
     };
@@ -25630,13 +25831,13 @@ exports.NumberFilter = NumberFilter;
 
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25651,10 +25852,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var componentResolver_1 = __webpack_require__(36);
+var componentResolver_1 = __webpack_require__(27);
 var context_1 = __webpack_require__(0);
-var componentProvider_1 = __webpack_require__(91);
-var agComponentUtils_1 = __webpack_require__(56);
+var componentProvider_1 = __webpack_require__(70);
+var agComponentUtils_1 = __webpack_require__(57);
 var NamedComponentResolver = (function () {
     function NamedComponentResolver() {
     }
@@ -25699,154 +25900,13 @@ exports.NamedComponentResolver = NamedComponentResolver;
 
 
 /***/ }),
-/* 91 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/**
- * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = __webpack_require__(0);
-var dateFilter_1 = __webpack_require__(51);
-var headerComp_1 = __webpack_require__(120);
-var headerGroupComp_1 = __webpack_require__(121);
-var floatingFilter_1 = __webpack_require__(122);
-var floatingFilterWrapper_1 = __webpack_require__(123);
-var componentResolver_1 = __webpack_require__(36);
-var groupCellRenderer_1 = __webpack_require__(75);
-var animateShowChangeCellRenderer_1 = __webpack_require__(74);
-var animateSlideCellRenderer_1 = __webpack_require__(73);
-var rowComp_1 = __webpack_require__(48);
-var RegisteredComponentSource;
-(function (RegisteredComponentSource) {
-    RegisteredComponentSource[RegisteredComponentSource["DEFAULT"] = 0] = "DEFAULT";
-    RegisteredComponentSource[RegisteredComponentSource["REGISTERED"] = 1] = "REGISTERED";
-})(RegisteredComponentSource = exports.RegisteredComponentSource || (exports.RegisteredComponentSource = {}));
-var ComponentProvider = (function () {
-    function ComponentProvider() {
-        this.jsComponents = {};
-        this.frameworkComponents = {};
-    }
-    ComponentProvider.prototype.postConstruct = function () {
-        this.agGridDefaults = {
-            //THE FOLLOWING COMPONENTS HAVE NO DEFAULTS, THEY NEED TO BE SPECIFIED AS AN SPECIFIC FLAVOUR
-            //THERE ARE NO DEFAULTS THAT FIT ALL PURPOSES
-            //THEY ARE ADDED HERE TO AVOID THE NOT FOUND WARNING.
-            filterComponent: null,
-            customFloatingFilterComponent: null,
-            //date
-            dateComponent: dateFilter_1.DefaultDateComponent,
-            //header
-            headerComponent: headerComp_1.HeaderComp,
-            headerGroupComponent: headerGroupComp_1.HeaderGroupComp,
-            //floating filters
-            setFloatingFilterComponent: floatingFilter_1.SetFloatingFilterComp,
-            textFloatingFilterComponent: floatingFilter_1.TextFloatingFilterComp,
-            numberFloatingFilterComponent: floatingFilter_1.NumberFloatingFilterComp,
-            dateFloatingFilterComponent: floatingFilter_1.DateFloatingFilterComp,
-            readModelAsStringFloatingFilterComponent: floatingFilter_1.ReadModelAsStringFloatingFilterComp,
-            floatingFilterWrapperComponent: floatingFilterWrapper_1.FloatingFilterWrapperComp,
-            emptyFloatingFilterWrapperComponent: floatingFilterWrapper_1.EmptyFloatingFilterWrapperComp,
-            //renderers
-            cellRenderer: null,
-            fullWidthCellRenderer: null,
-            innerRenderer: null,
-            groupRowInnerRenderer: null,
-            animateShowChange: animateShowChangeCellRenderer_1.AnimateShowChangeCellRenderer,
-            animateSlide: animateSlideCellRenderer_1.AnimateSlideCellRenderer,
-            group: groupCellRenderer_1.GroupCellRenderer,
-            groupRowRenderer: groupCellRenderer_1.GroupCellRenderer,
-            loadingCellRenderer: rowComp_1.LoadingCellRenderer,
-            pinnedRowCellRenderer: null
-        };
-    };
-    ComponentProvider.prototype.registerComponent = function (name, component) {
-        console.warn("ag-grid: registering components is a lab feature, is not intended to be used or supported yet.");
-        if (this.frameworkComponents[name]) {
-            console.error("Trying to register a component that you have already registered for frameworks: " + name);
-            return;
-        }
-        this.jsComponents[name] = component;
-    };
-    /**
-     * B the business interface (ie IHeader)
-     * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
-     */
-    ComponentProvider.prototype.registerFwComponent = function (name, component) {
-        console.warn("ag-grid: registering components is a lab feature, is not intended to be used or supported yet.");
-        if (this.jsComponents[name]) {
-            console.error("Trying to register a component that you have already registered for plain javascript: " + name);
-            return;
-        }
-        this.frameworkComponents[name] = component;
-    };
-    /**
-     * B the business interface (ie IHeader)
-     * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
-     */
-    ComponentProvider.prototype.retrieve = function (name) {
-        if (this.frameworkComponents[name]) {
-            return {
-                type: componentResolver_1.ComponentType.FRAMEWORK,
-                component: this.frameworkComponents[name],
-                source: RegisteredComponentSource.REGISTERED
-            };
-        }
-        if (this.jsComponents[name]) {
-            return {
-                type: componentResolver_1.ComponentType.AG_GRID,
-                component: this.jsComponents[name],
-                source: RegisteredComponentSource.REGISTERED
-            };
-        }
-        if (this.agGridDefaults[name]) {
-            return {
-                type: componentResolver_1.ComponentType.AG_GRID,
-                component: this.agGridDefaults[name],
-                source: RegisteredComponentSource.DEFAULT
-            };
-        }
-        if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {
-            console.warn("ag-grid: Looking for component [" + name + "] but it wasn't found.");
-        }
-        return null;
-    };
-    __decorate([
-        context_1.PostConstruct,
-        __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
-        __metadata("design:returntype", void 0)
-    ], ComponentProvider.prototype, "postConstruct", null);
-    ComponentProvider = __decorate([
-        context_1.Bean('componentProvider')
-    ], ComponentProvider);
-    return ComponentProvider;
-}());
-exports.ComponentProvider = ComponentProvider;
-
-
-/***/ }),
 /* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25883,7 +25943,7 @@ exports.PopupTextCellEditor = PopupTextCellEditor;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25899,7 +25959,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-var selectCellEditor_1 = __webpack_require__(72);
+var selectCellEditor_1 = __webpack_require__(78);
 var PopupSelectCellEditor = (function (_super) {
     __extends(PopupSelectCellEditor, _super);
     function PopupSelectCellEditor() {
@@ -25920,7 +25980,7 @@ exports.PopupSelectCellEditor = PopupSelectCellEditor;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25995,7 +26055,7 @@ exports.LargeTextCellEditor = LargeTextCellEditor;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26021,7 +26081,7 @@ var events_1 = __webpack_require__(5);
 var headerRowComp_1 = __webpack_require__(96);
 var bodyDropTarget_1 = __webpack_require__(98);
 var column_1 = __webpack_require__(9);
-var scrollVisibleService_1 = __webpack_require__(32);
+var scrollVisibleService_1 = __webpack_require__(33);
 var HeaderContainer = (function () {
     function HeaderContainer(eContainer, eViewport, eRoot, pinned) {
         this.headerRowComps = [];
@@ -26167,7 +26227,7 @@ exports.HeaderContainer = HeaderContainer;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26197,12 +26257,12 @@ var context_1 = __webpack_require__(0);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var columnController_1 = __webpack_require__(3);
 var column_1 = __webpack_require__(9);
-var renderedHeaderCell_1 = __webpack_require__(80);
+var renderedHeaderCell_1 = __webpack_require__(81);
 var eventService_1 = __webpack_require__(4);
 var events_1 = __webpack_require__(5);
 var utils_1 = __webpack_require__(1);
 var headerWrapperComp_1 = __webpack_require__(97);
-var headerGroupWrapperComp_1 = __webpack_require__(126);
+var headerGroupWrapperComp_1 = __webpack_require__(128);
 var filterManager_1 = __webpack_require__(16);
 var componentRecipes_1 = __webpack_require__(26);
 var HeaderRowType;
@@ -26487,7 +26547,7 @@ exports.HeaderRowComp = HeaderRowComp;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26520,15 +26580,15 @@ var dragAndDropService_1 = __webpack_require__(20);
 var columnController_1 = __webpack_require__(3);
 var horizontalDragService_1 = __webpack_require__(41);
 var gridOptionsWrapper_1 = __webpack_require__(2);
-var cssClassApplier_1 = __webpack_require__(59);
+var cssClassApplier_1 = __webpack_require__(60);
 var setLeftFeature_1 = __webpack_require__(39);
 var gridApi_1 = __webpack_require__(6);
 var sortController_1 = __webpack_require__(21);
 var eventService_1 = __webpack_require__(4);
 var componentRecipes_1 = __webpack_require__(26);
-var agCheckbox_1 = __webpack_require__(60);
+var agCheckbox_1 = __webpack_require__(61);
 var componentAnnotations_1 = __webpack_require__(12);
-var selectAllFeature_1 = __webpack_require__(125);
+var selectAllFeature_1 = __webpack_require__(127);
 var events_1 = __webpack_require__(5);
 var columnHoverService_1 = __webpack_require__(77);
 var beans_1 = __webpack_require__(37);
@@ -26812,7 +26872,7 @@ exports.HeaderWrapperComp = HeaderWrapperComp;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26934,7 +26994,7 @@ exports.BodyDropTarget = BodyDropTarget;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27271,7 +27331,7 @@ exports.MoveColumnController = MoveColumnController;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27379,7 +27439,7 @@ exports.BodyDropPivotTarget = BodyDropPivotTarget;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27507,7 +27567,7 @@ exports.AutoGroupColService = AutoGroupColService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27611,7 +27671,7 @@ exports.ImmutableService = ImmutableService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27666,7 +27726,7 @@ exports.ColumnKeyCreator = ColumnKeyCreator;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27684,7 +27744,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = __webpack_require__(0);
 var filterManager_1 = __webpack_require__(16);
 var utils_1 = __webpack_require__(1);
-var popupService_1 = __webpack_require__(35);
+var popupService_1 = __webpack_require__(36);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var eventService_1 = __webpack_require__(4);
 var StandardMenuFactory = (function () {
@@ -27774,7 +27834,7 @@ exports.StandardMenuFactory = StandardMenuFactory;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27827,7 +27887,7 @@ exports.FilterStage = FilterStage;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27917,7 +27977,7 @@ exports.FilterService = FilterService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27970,7 +28030,7 @@ exports.SortStage = SortStage;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28133,7 +28193,7 @@ exports.SortService = SortService;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28202,8 +28262,12 @@ var FlattenStage = (function () {
             // check all these cases, for working out if this row should be included in the final mapped list
             var isGroupSuppressedNode = groupSuppressRow && rowNode.group;
             var isSkippedLeafNode = skipLeafNodes && !rowNode.group;
-            var isHiddenOpenParent = hideOpenParents && rowNode.expanded;
             var isRemovedSingleChildrenGroup = removeSingleChildrenGroups && rowNode.group && rowNode.childrenAfterGroup.length === 1;
+            // hide open parents means when group is open, we don't show it. we also need to make sure the
+            // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
+            // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
+            var neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
+            var isHiddenOpenParent = hideOpenParents && rowNode.expanded && (!neverAllowToExpand);
             var thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup;
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
@@ -28322,7 +28386,7 @@ exports.FlattenStage = FlattenStage;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28356,9 +28420,9 @@ var events_1 = __webpack_require__(5);
 var sortController_1 = __webpack_require__(21);
 var filterManager_1 = __webpack_require__(16);
 var constants_1 = __webpack_require__(7);
-var infiniteCache_1 = __webpack_require__(129);
+var infiniteCache_1 = __webpack_require__(131);
 var beanStub_1 = __webpack_require__(13);
-var rowNodeCache_1 = __webpack_require__(85);
+var rowNodeCache_1 = __webpack_require__(86);
 var rowNodeBlockLoader_1 = __webpack_require__(111);
 var gridApi_1 = __webpack_require__(6);
 var columnController_1 = __webpack_require__(3);
@@ -28581,7 +28645,6 @@ var InfiniteRowModel = (function (_super) {
         }
     };
     InfiniteRowModel.prototype.isRowPresent = function (rowNode) {
-        console.log('ag-Grid: not supported.');
         return false;
     };
     InfiniteRowModel.prototype.refreshCache = function () {
@@ -28679,7 +28742,7 @@ exports.InfiniteRowModel = InfiniteRowModel;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28697,7 +28760,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var rowNodeBlock_1 = __webpack_require__(61);
+var rowNodeBlock_1 = __webpack_require__(62);
 var logger_1 = __webpack_require__(10);
 var context_1 = __webpack_require__(0);
 var utils_1 = __webpack_require__(1);
@@ -28791,7 +28854,7 @@ exports.RowNodeBlockLoader = RowNodeBlockLoader;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28816,10 +28879,10 @@ var eventService_1 = __webpack_require__(4);
 var events_1 = __webpack_require__(5);
 var context_1 = __webpack_require__(0);
 var selectionController_1 = __webpack_require__(14);
-var inMemoryNodeManager_1 = __webpack_require__(86);
-var changedPath_1 = __webpack_require__(87);
+var inMemoryNodeManager_1 = __webpack_require__(87);
+var changedPath_1 = __webpack_require__(88);
 var valueService_1 = __webpack_require__(19);
-var valueCache_1 = __webpack_require__(31);
+var valueCache_1 = __webpack_require__(32);
 var gridApi_1 = __webpack_require__(6);
 var RecursionType;
 (function (RecursionType) {
@@ -29384,7 +29447,7 @@ exports.InMemoryRowModel = InMemoryRowModel;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29433,7 +29496,7 @@ exports.BaseFrameworkFactory = BaseFrameworkFactory;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29511,13 +29574,13 @@ Object.keys(agGrid).forEach(function(key) {
     exports[key] = agGrid[key];
 });
 
-__webpack_require__(139);
 __webpack_require__(141);
 __webpack_require__(143);
 __webpack_require__(145);
 __webpack_require__(147);
 __webpack_require__(149);
 __webpack_require__(151);
+__webpack_require__(153);
 
 
 /***/ }),
@@ -29527,7 +29590,7 @@ __webpack_require__(151);
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {/**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29546,18 +29609,20 @@ var columnController_1 = __webpack_require__(3);
 exports.ColumnController = columnController_1.ColumnController;
 var columnKeyCreator_1 = __webpack_require__(103);
 exports.ColumnKeyCreator = columnKeyCreator_1.ColumnKeyCreator;
-var columnUtils_1 = __webpack_require__(29);
+var columnUtils_1 = __webpack_require__(30);
 exports.ColumnUtils = columnUtils_1.ColumnUtils;
 var displayedGroupCreator_1 = __webpack_require__(44);
 exports.DisplayedGroupCreator = displayedGroupCreator_1.DisplayedGroupCreator;
-var groupInstanceIdCreator_1 = __webpack_require__(82);
+var groupInstanceIdCreator_1 = __webpack_require__(83);
 exports.GroupInstanceIdCreator = groupInstanceIdCreator_1.GroupInstanceIdCreator;
 // components
-var componentUtil_1 = __webpack_require__(62);
+var componentUtil_1 = __webpack_require__(63);
 exports.ComponentUtil = componentUtil_1.ComponentUtil;
-var agGridNg1_1 = __webpack_require__(128);
+var componentProvider_1 = __webpack_require__(70);
+exports.ComponentProvider = componentProvider_1.ComponentProvider;
+var agGridNg1_1 = __webpack_require__(130);
 exports.initialiseAgGridWithAngular1 = agGridNg1_1.initialiseAgGridWithAngular1;
-var agGridWebComponent_1 = __webpack_require__(133);
+var agGridWebComponent_1 = __webpack_require__(135);
 exports.initialiseAgGridWithWebComponents = agGridWebComponent_1.initialiseAgGridWithWebComponents;
 // context
 var beanStub_1 = __webpack_require__(13);
@@ -29592,60 +29657,60 @@ var gridCell_1 = __webpack_require__(23);
 exports.GridCell = gridCell_1.GridCell;
 var gridRow_1 = __webpack_require__(67);
 exports.GridRow = gridRow_1.GridRow;
-var originalColumnGroup_1 = __webpack_require__(30);
+var originalColumnGroup_1 = __webpack_require__(31);
 exports.OriginalColumnGroup = originalColumnGroup_1.OriginalColumnGroup;
 var rowNode_1 = __webpack_require__(15);
 exports.RowNode = rowNode_1.RowNode;
 // filter
-var baseFilter_1 = __webpack_require__(50);
+var baseFilter_1 = __webpack_require__(51);
 exports.BaseFilter = baseFilter_1.BaseFilter;
-var dateFilter_1 = __webpack_require__(51);
+var dateFilter_1 = __webpack_require__(52);
 exports.DateFilter = dateFilter_1.DateFilter;
 var filterManager_1 = __webpack_require__(16);
 exports.FilterManager = filterManager_1.FilterManager;
-var numberFilter_1 = __webpack_require__(89);
+var numberFilter_1 = __webpack_require__(90);
 exports.NumberFilter = numberFilter_1.NumberFilter;
-var textFilter_1 = __webpack_require__(88);
+var textFilter_1 = __webpack_require__(89);
 exports.TextFilter = textFilter_1.TextFilter;
 // gridPanel
 var gridPanel_1 = __webpack_require__(11);
 exports.GridPanel = gridPanel_1.GridPanel;
-var scrollVisibleService_1 = __webpack_require__(32);
+var scrollVisibleService_1 = __webpack_require__(33);
 exports.ScrollVisibleService = scrollVisibleService_1.ScrollVisibleService;
-var mouseEventService_1 = __webpack_require__(66);
+var mouseEventService_1 = __webpack_require__(46);
 exports.MouseEventService = mouseEventService_1.MouseEventService;
 // headerRendering
 var bodyDropPivotTarget_1 = __webpack_require__(100);
 exports.BodyDropPivotTarget = bodyDropPivotTarget_1.BodyDropPivotTarget;
 var bodyDropTarget_1 = __webpack_require__(98);
 exports.BodyDropTarget = bodyDropTarget_1.BodyDropTarget;
-var cssClassApplier_1 = __webpack_require__(59);
+var cssClassApplier_1 = __webpack_require__(60);
 exports.CssClassApplier = cssClassApplier_1.CssClassApplier;
 var headerContainer_1 = __webpack_require__(95);
 exports.HeaderContainer = headerContainer_1.HeaderContainer;
-var headerRenderer_1 = __webpack_require__(57);
+var headerRenderer_1 = __webpack_require__(58);
 exports.HeaderRenderer = headerRenderer_1.HeaderRenderer;
 var headerRowComp_1 = __webpack_require__(96);
 exports.HeaderRowComp = headerRowComp_1.HeaderRowComp;
-var headerTemplateLoader_1 = __webpack_require__(81);
+var headerTemplateLoader_1 = __webpack_require__(82);
 exports.HeaderTemplateLoader = headerTemplateLoader_1.HeaderTemplateLoader;
 var horizontalDragService_1 = __webpack_require__(41);
 exports.HorizontalDragService = horizontalDragService_1.HorizontalDragService;
 var moveColumnController_1 = __webpack_require__(99);
 exports.MoveColumnController = moveColumnController_1.MoveColumnController;
-var renderedHeaderCell_1 = __webpack_require__(80);
+var renderedHeaderCell_1 = __webpack_require__(81);
 exports.RenderedHeaderCell = renderedHeaderCell_1.RenderedHeaderCell;
 var standardMenu_1 = __webpack_require__(104);
 exports.StandardMenuFactory = standardMenu_1.StandardMenuFactory;
 // layout
-var borderLayout_1 = __webpack_require__(65);
+var borderLayout_1 = __webpack_require__(66);
 exports.BorderLayout = borderLayout_1.BorderLayout;
-var tabbedLayout_1 = __webpack_require__(134);
+var tabbedLayout_1 = __webpack_require__(136);
 exports.TabbedLayout = tabbedLayout_1.TabbedLayout;
-var verticalStack_1 = __webpack_require__(135);
+var verticalStack_1 = __webpack_require__(137);
 exports.VerticalStack = verticalStack_1.VerticalStack;
 // misc
-var simpleHttpRequest_1 = __webpack_require__(136);
+var simpleHttpRequest_1 = __webpack_require__(138);
 exports.simpleHttpRequest = simpleHttpRequest_1.simpleHttpRequest;
 var largeTextCellEditor_1 = __webpack_require__(94);
 exports.LargeTextCellEditor = largeTextCellEditor_1.LargeTextCellEditor;
@@ -29655,7 +29720,7 @@ var popupSelectCellEditor_1 = __webpack_require__(93);
 exports.PopupSelectCellEditor = popupSelectCellEditor_1.PopupSelectCellEditor;
 var popupTextCellEditor_1 = __webpack_require__(92);
 exports.PopupTextCellEditor = popupTextCellEditor_1.PopupTextCellEditor;
-var selectCellEditor_1 = __webpack_require__(72);
+var selectCellEditor_1 = __webpack_require__(78);
 exports.SelectCellEditor = selectCellEditor_1.SelectCellEditor;
 var textCellEditor_1 = __webpack_require__(71);
 exports.TextCellEditor = textCellEditor_1.TextCellEditor;
@@ -29669,19 +29734,19 @@ exports.GroupCellRenderer = groupCellRenderer_1.GroupCellRenderer;
 var setLeftFeature_1 = __webpack_require__(39);
 exports.SetLeftFeature = setLeftFeature_1.SetLeftFeature;
 // rendering
-var autoWidthCalculator_1 = __webpack_require__(64);
+var autoWidthCalculator_1 = __webpack_require__(65);
 exports.AutoWidthCalculator = autoWidthCalculator_1.AutoWidthCalculator;
-var cellEditorFactory_1 = __webpack_require__(53);
+var cellEditorFactory_1 = __webpack_require__(54);
 exports.CellEditorFactory = cellEditorFactory_1.CellEditorFactory;
-var cellRendererFactory_1 = __webpack_require__(54);
+var cellRendererFactory_1 = __webpack_require__(55);
 exports.CellRendererFactory = cellRendererFactory_1.CellRendererFactory;
-var cellRendererService_1 = __webpack_require__(55);
+var cellRendererService_1 = __webpack_require__(56);
 exports.CellRendererService = cellRendererService_1.CellRendererService;
 var checkboxSelectionComponent_1 = __webpack_require__(68);
 exports.CheckboxSelectionComponent = checkboxSelectionComponent_1.CheckboxSelectionComponent;
 var cellComp_1 = __webpack_require__(38);
 exports.CellComp = cellComp_1.CellComp;
-var rowComp_1 = __webpack_require__(48);
+var rowComp_1 = __webpack_require__(49);
 exports.RowComp = rowComp_1.RowComp;
 var rowRenderer_1 = __webpack_require__(18);
 exports.RowRenderer = rowRenderer_1.RowRenderer;
@@ -29699,45 +29764,45 @@ var pinnedRowModel_1 = __webpack_require__(25);
 exports.PinnedRowModel = pinnedRowModel_1.PinnedRowModel;
 var inMemoryRowModel_1 = __webpack_require__(112);
 exports.InMemoryRowModel = inMemoryRowModel_1.InMemoryRowModel;
-var changedPath_1 = __webpack_require__(87);
+var changedPath_1 = __webpack_require__(88);
 exports.ChangedPath = changedPath_1.ChangedPath;
-var inMemoryNodeManager_1 = __webpack_require__(86);
+var inMemoryNodeManager_1 = __webpack_require__(87);
 exports.InMemoryNodeManager = inMemoryNodeManager_1.InMemoryNodeManager;
 var infiniteRowModel_1 = __webpack_require__(110);
 exports.InfiniteRowModel = infiniteRowModel_1.InfiniteRowModel;
-var rowNodeBlock_1 = __webpack_require__(61);
+var rowNodeBlock_1 = __webpack_require__(62);
 exports.RowNodeBlock = rowNodeBlock_1.RowNodeBlock;
 var rowNodeBlockLoader_1 = __webpack_require__(111);
 exports.RowNodeBlockLoader = rowNodeBlockLoader_1.RowNodeBlockLoader;
-var rowNodeCache_1 = __webpack_require__(85);
+var rowNodeCache_1 = __webpack_require__(86);
 exports.RowNodeCache = rowNodeCache_1.RowNodeCache;
 //styling
 var stylingService_1 = __webpack_require__(76);
 exports.StylingService = stylingService_1.StylingService;
 // widgets
-var agCheckbox_1 = __webpack_require__(60);
+var agCheckbox_1 = __webpack_require__(61);
 exports.AgCheckbox = agCheckbox_1.AgCheckbox;
 var component_1 = __webpack_require__(8);
 exports.Component = component_1.Component;
-var popupService_1 = __webpack_require__(35);
+var popupService_1 = __webpack_require__(36);
 exports.PopupService = popupService_1.PopupService;
-var touchListener_1 = __webpack_require__(52);
+var touchListener_1 = __webpack_require__(53);
 exports.TouchListener = touchListener_1.TouchListener;
 // root
 var baseFrameworkFactory_1 = __webpack_require__(113);
 exports.BaseFrameworkFactory = baseFrameworkFactory_1.BaseFrameworkFactory;
-var cellNavigationService_1 = __webpack_require__(79);
+var cellNavigationService_1 = __webpack_require__(80);
 exports.CellNavigationService = cellNavigationService_1.CellNavigationService;
-var alignedGridsService_1 = __webpack_require__(46);
+var alignedGridsService_1 = __webpack_require__(47);
 exports.AlignedGridsService = alignedGridsService_1.AlignedGridsService;
 var constants_1 = __webpack_require__(7);
 exports.Constants = constants_1.Constants;
 var csvCreator_1 = __webpack_require__(43);
 exports.CsvCreator = csvCreator_1.CsvCreator;
 exports.BaseCreator = csvCreator_1.BaseCreator;
-var downloader_1 = __webpack_require__(83);
+var downloader_1 = __webpack_require__(84);
 exports.Downloader = downloader_1.Downloader;
-var grid_1 = __webpack_require__(84);
+var grid_1 = __webpack_require__(85);
 exports.Grid = grid_1.Grid;
 var gridApi_1 = __webpack_require__(6);
 exports.GridApi = gridApi_1.GridApi;
@@ -29745,13 +29810,13 @@ var events_1 = __webpack_require__(5);
 exports.Events = events_1.Events;
 var focusedCellController_1 = __webpack_require__(24);
 exports.FocusedCellController = focusedCellController_1.FocusedCellController;
-var functions_1 = __webpack_require__(137);
+var functions_1 = __webpack_require__(139);
 exports.defaultGroupComparator = functions_1.defaultGroupComparator;
 var gridOptionsWrapper_1 = __webpack_require__(2);
 exports.GridOptionsWrapper = gridOptionsWrapper_1.GridOptionsWrapper;
 var eventService_1 = __webpack_require__(4);
 exports.EventService = eventService_1.EventService;
-var gridCore_1 = __webpack_require__(34);
+var gridCore_1 = __webpack_require__(35);
 exports.GridCore = gridCore_1.GridCore;
 var logger_1 = __webpack_require__(10);
 exports.Logger = logger_1.Logger;
@@ -29759,7 +29824,7 @@ var selectionController_1 = __webpack_require__(14);
 exports.SelectionController = selectionController_1.SelectionController;
 var sortController_1 = __webpack_require__(21);
 exports.SortController = sortController_1.SortController;
-var templateService_1 = __webpack_require__(49);
+var templateService_1 = __webpack_require__(50);
 exports.TemplateService = templateService_1.TemplateService;
 var utils_1 = __webpack_require__(1);
 exports.Utils = utils_1.Utils;
@@ -29771,7 +29836,7 @@ var expressionService_1 = __webpack_require__(17);
 exports.ExpressionService = expressionService_1.ExpressionService;
 var xmlFactory_1 = __webpack_require__(114);
 exports.XmlFactory = xmlFactory_1.XmlFactory;
-var gridSerializer_1 = __webpack_require__(63);
+var gridSerializer_1 = __webpack_require__(64);
 exports.GridSerializer = gridSerializer_1.GridSerializer;
 exports.BaseGridSerializingSession = gridSerializer_1.BaseGridSerializingSession;
 exports.RowType = gridSerializer_1.RowType;
@@ -29779,9 +29844,9 @@ var logger_2 = __webpack_require__(10);
 exports.LoggerFactory = logger_2.LoggerFactory;
 var columnController_2 = __webpack_require__(3);
 exports.ColumnApi = columnController_2.ColumnApi;
-var frameworkComponentWrapper_1 = __webpack_require__(138);
+var frameworkComponentWrapper_1 = __webpack_require__(140);
 exports.BaseComponentWrapper = frameworkComponentWrapper_1.BaseComponentWrapper;
-var environment_1 = __webpack_require__(58);
+var environment_1 = __webpack_require__(59);
 exports.Environment = environment_1.Environment;
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(117)))
@@ -29820,7 +29885,210 @@ module.exports = g;
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Events = (function () {
+    function Events() {
+    }
+    /** Everything has changed with the columns. Either complete new set of columns set, or user called setState()*/
+    Events.EVENT_COLUMN_EVERYTHING_CHANGED = 'columnEverythingChanged';
+    /** User has set in new columns. */
+    Events.EVENT_NEW_COLUMNS_LOADED = 'newColumnsLoaded';
+    /** The pivot mode flag was changed */
+    Events.EVENT_COLUMN_PIVOT_MODE_CHANGED = 'columnPivotModeChanged';
+    /** A row group column was added, removed or order changed. */
+    Events.EVENT_COLUMN_ROW_GROUP_CHANGED = 'columnRowGroupChanged';
+    /** A pivot column was added, removed or order changed. */
+    Events.EVENT_COLUMN_PIVOT_CHANGED = 'columnPivotChanged';
+    /** The list of grid columns has changed. */
+    Events.EVENT_GRID_COLUMNS_CHANGED = 'gridColumnsChanged';
+    /** A value column was added, removed or agg function was changed. */
+    Events.EVENT_COLUMN_VALUE_CHANGED = 'columnValueChanged';
+    /** A column was moved */
+    Events.EVENT_COLUMN_MOVED = 'columnMoved';
+    /** One or more columns was shown / hidden */
+    Events.EVENT_COLUMN_VISIBLE = 'columnVisible';
+    /** One or more columns was pinned / unpinned*/
+    Events.EVENT_COLUMN_PINNED = 'columnPinned';
+    /** A column group was opened / closed */
+    Events.EVENT_COLUMN_GROUP_OPENED = 'columnGroupOpened';
+    /** One or more columns was resized. If just one, the column in the event is set. */
+    Events.EVENT_COLUMN_RESIZED = 'columnResized';
+    /** The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc */
+    Events.EVENT_DISPLAYED_COLUMNS_CHANGED = 'displayedColumnsChanged';
+    /** The list of virtual columns has changed, results from viewport changing */
+    Events.EVENT_VIRTUAL_COLUMNS_CHANGED = 'virtualColumnsChanged';
+    /** A row group was opened / closed */
+    Events.EVENT_ROW_GROUP_OPENED = 'rowGroupOpened';
+    /** The client has set new data into the grid */
+    Events.EVENT_ROW_DATA_CHANGED = 'rowDataChanged';
+    /** The client has updated data for the grid */
+    Events.EVENT_ROW_DATA_UPDATED = 'rowDataUpdated';
+    /** The client has set new floating data into the grid */
+    Events.EVENT_PINNED_ROW_DATA_CHANGED = 'pinnedRowDataChanged';
+    /** Range selection has changed */
+    Events.EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
+    /** Model was updated - grid updates the drawn rows when this happens */
+    Events.EVENT_MODEL_UPDATED = 'modelUpdated';
+    Events.EVENT_CELL_CLICKED = 'cellClicked';
+    Events.EVENT_CELL_DOUBLE_CLICKED = 'cellDoubleClicked';
+    Events.EVENT_CELL_CONTEXT_MENU = 'cellContextMenu';
+    Events.EVENT_CELL_VALUE_CHANGED = 'cellValueChanged';
+    Events.EVENT_ROW_VALUE_CHANGED = 'rowValueChanged';
+    Events.EVENT_CELL_FOCUSED = 'cellFocused';
+    Events.EVENT_ROW_SELECTED = 'rowSelected';
+    Events.EVENT_SELECTION_CHANGED = 'selectionChanged';
+    Events.EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
+    Events.EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
+    /** 2 events for filtering. The grid LISTENS for filterChanged and afterFilterChanged */
+    Events.EVENT_FILTER_CHANGED = 'filterChanged';
+    /** Filter was change but not applied. Only useful if apply buttons are used in filters. */
+    Events.EVENT_FILTER_MODIFIED = 'filterModified';
+    Events.EVENT_SORT_CHANGED = 'sortChanged';
+    /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */
+    Events.EVENT_VIRTUAL_ROW_REMOVED = 'virtualRowRemoved';
+    Events.EVENT_ROW_CLICKED = 'rowClicked';
+    Events.EVENT_ROW_DOUBLE_CLICKED = 'rowDoubleClicked';
+    /** Gets called once after the grid has finished initialising. */
+    Events.EVENT_GRID_READY = 'gridReady';
+    /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
+     * changed, so always filling the space it was given. */
+    Events.EVENT_GRID_SIZE_CHANGED = 'gridSizeChanged';
+    /** The indexes of the rows rendered has changed, eg user has scrolled to a new vertical position. */
+    Events.EVENT_VIEWPORT_CHANGED = 'viewportChanged';
+    /** A column drag has started, either resizing a column or moving a column. */
+    Events.EVENT_DRAG_STARTED = 'dragStarted';
+    /** A column drag has stopped */
+    Events.EVENT_DRAG_STOPPED = 'dragStopped';
+    Events.EVENT_ROW_EDITING_STARTED = 'rowEditingStarted';
+    Events.EVENT_ROW_EDITING_STOPPED = 'rowEditingStopped';
+    Events.EVENT_CELL_EDITING_STARTED = 'cellEditingStarted';
+    Events.EVENT_CELL_EDITING_STOPPED = 'cellEditingStopped';
+    /** Main body of grid has scrolled, either horizontally or vertically */
+    Events.EVENT_BODY_SCROLL = 'bodyScroll';
+    /** The displayed page for pagination has changed. For example the data was filtered or sorted,
+     * or the user has moved to a different page. */
+    Events.EVENT_PAGINATION_CHANGED = 'paginationChanged';
+    /** Only used by React, Angular 2+, Web Components, Aurelia and VueJS ag-Grid components
+     * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
+     * to bound properties, this event fires after the grid has finished processing the change. */
+    Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
+    /** All items from here down are used internally by the grid, not intended for external use. */
+    // not documented, either experimental, or we just don't want users using an ddepending on them
+    Events.EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
+    Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
+    Events.EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
+    Events.EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
+    Events.EVENT_FLASH_CELLS = 'flashCells';
+    // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
+    // to design these better around server side functions and then release to general public when fully working with
+    // all the row models.
+    Events.EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST = 'columnRowGroupChangeRequest';
+    Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST = 'columnPivotChangeRequest';
+    Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
+    Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
+    return Events;
+}());
+exports.Events = Events;
+
+
+/***/ }),
+/* 119 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v13.3.1
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var PropertyKeys = (function () {
+    function PropertyKeys() {
+    }
+    PropertyKeys.STRING_PROPERTIES = [
+        'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
+        'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType',
+        'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow'
+    ];
+    PropertyKeys.OBJECT_PROPERTIES = [
+        'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText',
+        'icons', 'datasource', 'enterpriseDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
+        'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
+        'rowClassRules'
+        //,'cellRenderers','cellEditors'
+    ];
+    PropertyKeys.ARRAY_PROPERTIES = [
+        'slaveGrids', 'alignedGrids', 'rowData',
+        'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData'
+        // deprecated
+    ];
+    PropertyKeys.NUMBER_PROPERTIES = [
+        'rowHeight', 'rowBuffer', 'colWidth', 'headerHeight', 'groupHeaderHeight', 'floatingFiltersHeight',
+        'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded',
+        'minColWidth', 'maxColWidth', 'viewportRowModelPageSize', 'viewportRowModelBufferSize',
+        'layoutInterval', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
+        'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount',
+        'scrollbarWidth', 'paginationStartPage', 'infiniteBlockSize'
+    ];
+    PropertyKeys.BOOLEAN_PROPERTIES = [
+        'toolPanelSuppressRowGroups', 'toolPanelSuppressValues', 'toolPanelSuppressPivots', 'toolPanelSuppressPivotMode',
+        'suppressRowClickSelection', 'suppressCellSelection', 'suppressHorizontalScroll', 'debug',
+        'enableColResize', 'enableCellExpressions', 'enableSorting', 'enableServerSideSorting',
+        'enableFilter', 'enableServerSideFilter', 'angularCompileRows', 'angularCompileFilters',
+        'angularCompileHeaders', 'groupSuppressAutoColumn', 'groupSelectsChildren',
+        'groupIncludeFooter', 'groupUseEntireRow', 'groupSuppressRow', 'groupSuppressBlankHeader', 'forPrint',
+        'suppressMenuHide', 'rowDeselection', 'unSortIcon', 'suppressMultiSort',
+        'singleClickEdit', 'suppressLoadingOverlay', 'suppressNoRowsOverlay', 'suppressAutoSize',
+        'suppressParentsInRowNodes', 'showToolPanel', 'suppressColumnMoveAnimation', 'suppressMovableColumns',
+        'suppressFieldDotNotation', 'enableRangeSelection',
+        'pivotPanelShow', 'suppressTouch', 'suppressAsyncEvents', 'allowContextMenuWithControlKey',
+        'suppressContextMenu', 'suppressMenuFilterPanel', 'suppressMenuMainPanel', 'suppressMenuColumnPanel',
+        'enableStatusBar', 'alwaysShowStatusBar', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
+        'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
+        'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation', 'suppressAggAtRootLevel',
+        'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly',
+        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtl', 'suppressClickEdit',
+        'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
+        'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus',
+        'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
+        'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection',
+        'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame',
+        'suppressExcelExport', 'suppressCsvExport'
+    ];
+    PropertyKeys.FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
+        'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent',
+        'getRowHeight', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
+        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
+        'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
+        'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
+        'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell',
+        'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount'];
+    PropertyKeys.ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
+        .concat(PropertyKeys.OBJECT_PROPERTIES)
+        .concat(PropertyKeys.STRING_PROPERTIES)
+        .concat(PropertyKeys.NUMBER_PROPERTIES)
+        .concat(PropertyKeys.FUNCTION_PROPERTIES)
+        .concat(PropertyKeys.BOOLEAN_PROPERTIES);
+    return PropertyKeys;
+}());
+exports.PropertyKeys = PropertyKeys;
+
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/**
+ * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29930,13 +30198,13 @@ exports.RowContainerComponent = RowContainerComponent;
 
 
 /***/ }),
-/* 119 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29984,13 +30252,13 @@ var LinkedListItem = (function () {
 
 
 /***/ }),
-/* 120 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30021,7 +30289,7 @@ var utils_1 = __webpack_require__(1);
 var context_1 = __webpack_require__(0);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var sortController_1 = __webpack_require__(21);
-var touchListener_1 = __webpack_require__(52);
+var touchListener_1 = __webpack_require__(53);
 var eventService_1 = __webpack_require__(4);
 var componentAnnotations_1 = __webpack_require__(12);
 var events_1 = __webpack_require__(5);
@@ -30235,13 +30503,13 @@ exports.HeaderComp = HeaderComp;
 
 
 /***/ }),
-/* 121 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30271,9 +30539,9 @@ var utils_1 = __webpack_require__(1);
 var columnController_1 = __webpack_require__(3);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var context_1 = __webpack_require__(0);
-var touchListener_1 = __webpack_require__(52);
+var touchListener_1 = __webpack_require__(53);
 var componentAnnotations_1 = __webpack_require__(12);
-var originalColumnGroup_1 = __webpack_require__(30);
+var originalColumnGroup_1 = __webpack_require__(31);
 var HeaderGroupComp = (function (_super) {
     __extends(HeaderGroupComp, _super);
     function HeaderGroupComp() {
@@ -30366,13 +30634,13 @@ exports.HeaderGroupComp = HeaderGroupComp;
 
 
 /***/ }),
-/* 122 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30398,7 +30666,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = __webpack_require__(0);
-var dateFilter_1 = __webpack_require__(51);
+var dateFilter_1 = __webpack_require__(52);
 var componentAnnotations_1 = __webpack_require__(12);
 var utils_1 = __webpack_require__(1);
 var componentRecipes_1 = __webpack_require__(26);
@@ -30668,13 +30936,13 @@ exports.ReadModelAsStringFloatingFilterComp = ReadModelAsStringFloatingFilterCom
 
 
 /***/ }),
-/* 123 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30762,10 +31030,10 @@ var FloatingFilterWrapperComp = (function (_super) {
             utils_1._.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body');
         }
         else {
-            // let icon:HTMLElement = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column, svgFactory.createFilterSvg12);
             floatingFilterBody.appendChild(floatingFilterComp);
-            body.appendChild(utils_1._.loadTemplate("<div class=\"ag-floating-filter-button\" aria-hidden=\"true\">\n                    <button ref=\"eButtonShowMainFilter\">...</button>            \n            </div>"));
-            // body.querySelector('button').appendChild(icon);
+            body.appendChild(utils_1._.loadTemplate("<div class=\"ag-floating-filter-button\" aria-hidden=\"true\">\n                    <button ref=\"eButtonShowMainFilter\"></button>\n            </div>"));
+            var eIcon = utils_1._.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
+            body.querySelector('button').appendChild(eIcon);
         }
         if (this.floatingFilterComp.afterGuiAttached) {
             this.floatingFilterComp.afterGuiAttached({
@@ -30809,13 +31077,13 @@ exports.EmptyFloatingFilterWrapperComp = EmptyFloatingFilterWrapperComp;
 
 
 /***/ }),
-/* 124 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30848,7 +31116,7 @@ var utils_1 = __webpack_require__(1);
 var eventService_1 = __webpack_require__(4);
 var events_1 = __webpack_require__(5);
 var rowRenderer_1 = __webpack_require__(18);
-var paginationProxy_1 = __webpack_require__(33);
+var paginationProxy_1 = __webpack_require__(34);
 var PaginationComp = (function (_super) {
     __extends(PaginationComp, _super);
     function PaginationComp() {
@@ -30871,7 +31139,16 @@ var PaginationComp = (function (_super) {
     };
     PaginationComp.prototype.setCurrentPageLabel = function () {
         var currentPage = this.paginationProxy.getCurrentPage();
-        this.lbCurrent.innerHTML = utils_1._.formatNumberCommas(currentPage + 1);
+        this.lbCurrent.innerHTML = this.formatNumber(currentPage + 1);
+    };
+    PaginationComp.prototype.formatNumber = function (value) {
+        var userFunc = this.gridOptionsWrapper.getPaginationNumberFormatterFunc();
+        if (userFunc) {
+            return userFunc({ value: value });
+        }
+        else {
+            return utils_1._.formatNumberCommas(value);
+        }
     };
     PaginationComp.prototype.getTemplate = function () {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -30929,8 +31206,8 @@ var PaginationComp = (function (_super) {
                 endRow = rowCount;
             }
         }
-        this.lbFirstRowOnPage.innerHTML = utils_1._.formatNumberCommas(startRow);
-        this.lbLastRowOnPage.innerHTML = utils_1._.formatNumberCommas(endRow);
+        this.lbFirstRowOnPage.innerHTML = this.formatNumber(startRow);
+        this.lbLastRowOnPage.innerHTML = this.formatNumber(endRow);
     };
     PaginationComp.prototype.isZeroPagesToDisplay = function () {
         var maxRowFound = this.paginationProxy.isLastPageFound();
@@ -30943,8 +31220,8 @@ var PaginationComp = (function (_super) {
         var rowCount = this.paginationProxy.isLastPageFound() ?
             this.paginationProxy.getTotalRowCount() : null;
         if (lastPageFound) {
-            this.lbTotal.innerHTML = utils_1._.formatNumberCommas(totalPages);
-            this.lbRecordCount.innerHTML = utils_1._.formatNumberCommas(rowCount);
+            this.lbTotal.innerHTML = this.formatNumber(totalPages);
+            this.lbRecordCount.innerHTML = this.formatNumber(rowCount);
         }
         else {
             var moreText = this.gridOptionsWrapper.getLocaleTextFunc()('more', 'more');
@@ -31020,13 +31297,13 @@ exports.PaginationComp = PaginationComp;
 
 
 /***/ }),
-/* 125 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31051,7 +31328,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var agCheckbox_1 = __webpack_require__(60);
+var agCheckbox_1 = __webpack_require__(61);
 var beanStub_1 = __webpack_require__(13);
 var context_1 = __webpack_require__(0);
 var columnController_1 = __webpack_require__(3);
@@ -31241,13 +31518,13 @@ exports.SelectAllFeature = SelectAllFeature;
 
 
 /***/ }),
-/* 126 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31280,7 +31557,7 @@ var columnController_1 = __webpack_require__(3);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var horizontalDragService_1 = __webpack_require__(41);
 var context_1 = __webpack_require__(0);
-var cssClassApplier_1 = __webpack_require__(59);
+var cssClassApplier_1 = __webpack_require__(60);
 var dragAndDropService_1 = __webpack_require__(20);
 var setLeftFeature_1 = __webpack_require__(39);
 var gridApi_1 = __webpack_require__(6);
@@ -31589,13 +31866,13 @@ exports.HeaderGroupWrapperComp = HeaderGroupWrapperComp;
 
 
 /***/ }),
-/* 127 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31610,19 +31887,19 @@ exports.DefaultColumnTypes = {
 
 
 /***/ }),
-/* 128 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var grid_1 = __webpack_require__(84);
+var grid_1 = __webpack_require__(85);
 function initialiseAgGridWithAngular1(angular) {
     var angularModule = angular.module("agGrid", []);
     angularModule.directive("agGrid", function () {
@@ -31658,13 +31935,13 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
 
 
 /***/ }),
-/* 129 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31696,8 +31973,8 @@ var context_1 = __webpack_require__(0);
 var eventService_1 = __webpack_require__(4);
 var events_1 = __webpack_require__(5);
 var logger_1 = __webpack_require__(10);
-var infiniteBlock_1 = __webpack_require__(130);
-var rowNodeCache_1 = __webpack_require__(85);
+var infiniteBlock_1 = __webpack_require__(132);
+var rowNodeCache_1 = __webpack_require__(86);
 var gridApi_1 = __webpack_require__(6);
 var columnController_1 = __webpack_require__(3);
 var InfiniteCache = (function (_super) {
@@ -31841,13 +32118,13 @@ exports.InfiniteCache = InfiniteCache;
 
 
 /***/ }),
-/* 130 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31875,7 +32152,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(1);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var context_1 = __webpack_require__(0);
-var rowNodeBlock_1 = __webpack_require__(61);
+var rowNodeBlock_1 = __webpack_require__(62);
 var rowRenderer_1 = __webpack_require__(18);
 var InfiniteBlock = (function (_super) {
     __extends(InfiniteBlock, _super);
@@ -31976,13 +32253,13 @@ exports.InfiniteBlock = InfiniteBlock;
 
 
 /***/ }),
-/* 131 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31998,7 +32275,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var rowNode_1 = __webpack_require__(15);
-var inMemoryNodeManager_1 = __webpack_require__(86);
+var inMemoryNodeManager_1 = __webpack_require__(87);
 var gridOptionsWrapper_1 = __webpack_require__(2);
 var eventService_1 = __webpack_require__(4);
 var context_1 = __webpack_require__(0);
@@ -32038,13 +32315,13 @@ exports.RowNodeFactory = RowNodeFactory;
 
 
 /***/ }),
-/* 132 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32071,7 +32348,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = __webpack_require__(0);
 var gridOptionsWrapper_1 = __webpack_require__(2);
-var changedPath_1 = __webpack_require__(87);
+var changedPath_1 = __webpack_require__(88);
 var rowRenderer_1 = __webpack_require__(18);
 var eventService_1 = __webpack_require__(4);
 var constants_1 = __webpack_require__(7);
@@ -32139,20 +32416,20 @@ exports.ChangeDetectionService = ChangeDetectionService;
 
 
 /***/ }),
-/* 133 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var componentUtil_1 = __webpack_require__(62);
-var grid_1 = __webpack_require__(84);
+var componentUtil_1 = __webpack_require__(63);
+var grid_1 = __webpack_require__(85);
 var registered = false;
 function initialiseAgGridWithWebComponents() {
     console.warn('ag-grid: initialiseAgGridWithWebComponents is deprecated. Please use the ag-grid-webcomponent dependency instead. ');
@@ -32262,13 +32539,13 @@ function toCamelCase(myString) {
 
 
 /***/ }),
-/* 134 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32368,13 +32645,13 @@ exports.TabbedLayout = TabbedLayout;
 
 
 /***/ }),
-/* 135 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32415,13 +32692,13 @@ exports.VerticalStack = VerticalStack;
 
 
 /***/ }),
-/* 136 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32458,13 +32735,13 @@ exports.Promise = Promise;
 
 
 /***/ }),
-/* 137 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32495,13 +32772,13 @@ exports.defaultGroupComparator = defaultGroupComparator;
 
 
 /***/ }),
-/* 138 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32510,9 +32787,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var BaseComponentWrapper = (function () {
     function BaseComponentWrapper() {
     }
-    BaseComponentWrapper.prototype.wrap = function (OriginalConstructor, mandatoryMethodList, optionalMethodList) {
+    BaseComponentWrapper.prototype.wrap = function (OriginalConstructor, mandatoryMethodList, optionalMethodList, componentName) {
         var _this = this;
-        var wrapper = this.createWrapper(OriginalConstructor);
+        var wrapper = this.createWrapper(OriginalConstructor, componentName);
         mandatoryMethodList.forEach((function (methodName) {
             _this.createMethod(wrapper, methodName, true);
         }));
@@ -32543,16 +32820,16 @@ exports.BaseComponentWrapper = BaseComponentWrapper;
 
 
 /***/ }),
-/* 139 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(140);
+var content = __webpack_require__(142);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(28)(content, {});
+var update = __webpack_require__(29)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -32569,30 +32846,30 @@ if(false) {
 }
 
 /***/ }),
-/* 140 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(27)();
+exports = module.exports = __webpack_require__(28)();
 // imports
 
 
 // module
-exports.push([module.i, "ag-grid-angular {\n  display: inline-block; }\n\nag-grid-ng2 {\n  display: inline-block; }\n\nag-grid {\n  display: block; }\n\nag-grid-polymer {\n  display: block; }\n\nag-grid-aurelia {\n  display: block; }\n\n.ag-rtl {\n  direction: rtl; }\n\n.ag-ltr {\n  direction: ltr; }\n\n.ag-select-agg-func-popup {\n  position: absolute; }\n\n.ag-body-no-select {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-root {\n  /* set to relative, so absolute popups appear relative to this */\n  position: relative;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  /* was getting some 'should be there' scrolls, this sorts it out */\n  overflow: hidden; }\n\n.ag-layout-normal .ag-root {\n  height: 100%; }\n\n.ag-font-style {\n  cursor: default;\n  /* disable user mouse selection */\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-layout-for-print {\n  white-space: nowrap;\n  display: inline-block; }\n\n.ag-layout-normal {\n  height: 100%; }\n\n.ag-popup-backdrop {\n  position: fixed;\n  left: 0px;\n  top: 0px;\n  width: 100%;\n  height: 100%; }\n\n.ag-header {\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  width: 100%; }\n\n.ag-layout-normal .ag-header {\n  position: absolute;\n  top: 0px;\n  left: 0px; }\n\n.ag-pinned-left-header {\n  float: left;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%; }\n\n.ag-pinned-right-header {\n  float: right;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%; }\n\n.ag-header-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%; }\n\n.ag-layout-normal .ag-header-row {\n  position: absolute; }\n\n.ag-layout-normal .ag-header-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n  height: 100%; }\n\n.ag-layout-auto-height .ag-header-row {\n  position: absolute; }\n\n.ag-layout-auto-height .ag-header-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n  height: 100%; }\n\n.ag-layout-for-print .ag-header-container {\n  white-space: nowrap; }\n\n.ag-header-overlay {\n  display: block;\n  position: absolute; }\n\n.ag-header-cell {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  vertical-align: bottom;\n  display: inline-block;\n  height: 100%;\n  position: absolute; }\n\n.ag-floating-filter {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: absolute;\n  display: inline-block; }\n\n.ag-floating-filter-body {\n  margin-right: 25px;\n  height: 20px; }\n\n.ag-floating-filter-full-body {\n  width: 100%;\n  height: 20px; }\n\n.ag-floating-filter-input {\n  width: 100%; }\n\n.ag-floating-filter-input:-moz-read-only {\n  background-color: #eeeeee; }\n\n.ag-floating-filter-input:read-only {\n  background-color: #eeeeee; }\n\n.ag-floating-filter-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-dnd-ghost {\n  font-size: 14px;\n  font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\n  position: absolute;\n  background: #e5e5e5;\n  border: 1px solid black;\n  cursor: move;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  padding: 3px;\n  line-height: 1.4; }\n\n.ag-dnd-ghost-icon {\n  display: inline-block;\n  float: left;\n  padding: 2px; }\n\n.ag-dnd-ghost-label {\n  display: inline-block; }\n\n.ag-header-group-cell {\n  height: 100%;\n  display: inline-block;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  position: absolute; }\n\n.ag-header-group-cell-label {\n  text-overflow: ellipsis;\n  overflow: hidden; }\n\n.ag-header-cell-label {\n  text-overflow: ellipsis;\n  overflow: hidden; }\n\n.ag-header-cell-resize {\n  height: 100%;\n  width: 4px;\n  cursor: col-resize; }\n\n.ag-ltr .ag-header-cell-resize {\n  float: right; }\n\n.ag-ltr .ag-pinned-right-header .ag-header-cell-resize {\n  float: left; }\n\n.ag-rtl .ag-header-cell-resize {\n  float: left; }\n\n.ag-rtl .ag-pinned-left-header .ag-header-cell-resize {\n  float: right; }\n\n.ag-ltr .ag-header-select-all {\n  float: left; }\n\n.ag-rtl .ag-header-select-all {\n  float: right; }\n\n.ag-header-expand-icon {\n  padding-left: 4px; }\n\n.ag-header-cell-menu-button {\n  float: right; }\n\n.ag-overlay-panel {\n  display: table;\n  width: 100%;\n  height: 100%;\n  pointer-events: none; }\n\n.ag-overlay-wrapper {\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center; }\n\n.ag-bl-overlay {\n  pointer-events: none;\n  position: absolute;\n  height: 100%;\n  width: 100%;\n  top: 0px;\n  left: 0px; }\n\n.ag-bl-full-height {\n  height: 100%;\n  overflow: auto;\n  position: relative; }\n\n.ag-bl-west {\n  float: left; }\n\n.ag-bl-full-height-west {\n  height: 100%; }\n\n.ag-bl-east {\n  float: right; }\n\n.ag-bl-full-height-east {\n  height: 100%; }\n\n.ag-bl-full-height-center {\n  height: 100%; }\n\n.ag-bl-normal {\n  height: 100%;\n  position: relative; }\n\n.ag-bl-normal-center-row {\n  height: 100%;\n  overflow: hidden; }\n\n.ag-bl-normal-west {\n  height: 100%;\n  float: left; }\n\n.ag-bl-normal-east {\n  height: 100%;\n  float: right; }\n\n.ag-bl-normal-center {\n  height: 100%; }\n\n.ag-bl-dont-fill {\n  position: relative; }\n\n.ag-body {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box; }\n\n.ag-layout-normal .ag-body {\n  height: 100%;\n  position: absolute; }\n\n.ag-floating-top {\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-top {\n  position: absolute;\n  left: 0px; }\n\n.ag-pinned-left-floating-top {\n  float: left;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-left-floating-top {\n  height: 100%; }\n\n.ag-pinned-right-floating-top {\n  float: right;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-right-floating-top {\n  height: 100%; }\n\n.ag-floating-top-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-top-viewport {\n  height: 100%; }\n\n.ag-floating-top-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-floating-bottom {\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-bottom {\n  position: absolute;\n  left: 0px; }\n\n.ag-pinned-left-floating-bottom {\n  float: left;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-left-floating-bottom {\n  height: 100%; }\n\n.ag-pinned-right-floating-bottom {\n  float: right;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-right-floating-bottom {\n  height: 100%; }\n\n.ag-floating-bottom-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-bottom-viewport {\n  height: 100%; }\n\n.ag-floating-bottom-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-pinned-left-cols-viewport {\n  float: left; }\n\n.ag-pinned-left-cols-container {\n  display: inline-block;\n  position: relative; }\n\n.ag-pinned-right-cols-viewport {\n  float: right; }\n\n.ag-ltr .ag-pinned-right-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-ltr .ag-pinned-left-cols-viewport {\n  overflow: hidden; }\n\n.ag-rtl .ag-pinned-right-cols-viewport {\n  overflow: hidden; }\n\n.ag-rtl .ag-pinned-left-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-pinned-right-cols-container {\n  display: inline-block;\n  position: relative; }\n\n.ag-layout-normal .ag-body-viewport-wrapper {\n  height: 100%; }\n\n.ag-body-viewport {\n  overflow-x: auto;\n  overflow-y: auto; }\n\n.ag-layout-normal .ag-body-viewport {\n  height: 100%; }\n\n.ag-full-width-viewport {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  display: inline;\n  pointer-events: none;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-full-width-container {\n  overflow: hidden;\n  position: relative;\n  width: 100%; }\n\n.ag-floating-bottom-full-width-container {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  pointer-events: none;\n  overflow: hidden;\n  display: inline; }\n\n.ag-floating-top-full-width-container {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  pointer-events: none;\n  overflow: hidden;\n  display: inline; }\n\n.ag-full-width-row {\n  pointer-events: all;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-body-container {\n  position: relative;\n  display: inline-block; }\n\n.ag-layout-auto-height .ag-body-container {\n  position: relative;\n  display: inline-block; }\n\n.ag-row-animation {\n  -webkit-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s; }\n\n.ag-row-no-animation {\n  -webkit-transition: background-color 0.1s;\n  transition: background-color 0.1s; }\n\n.ag-row {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box; }\n\n.ag-layout-normal .ag-row {\n  white-space: nowrap;\n  position: absolute;\n  width: 100%; }\n\n.ag-layout-auto-height .ag-row {\n  white-space: nowrap;\n  position: relative;\n  width: 100%; }\n\n.ag-layout-for-print .ag-row {\n  position: relative; }\n\n.ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s, width 0.2s;\n  transition: left 0.2s, width 0.2s; }\n\n.ag-column-drop {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box; }\n\n.ag-column-drop-vertical .ag-column-drop-cell {\n  display: block; }\n\n.ag-column-drop-vertical .ag-column-drop-empty-message {\n  display: block; }\n\n.ag-column-drop-vertical .ag-column-drop-cell-button {\n  line-height: 16px; }\n\n.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: right; }\n\n.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: left; }\n\n.ag-column-drop-horizontal {\n  white-space: nowrap; }\n  .ag-column-drop-horizontal .ag-column-drop-cell {\n    display: inline-block; }\n  .ag-column-drop-horizontal .ag-column-drop-empty-message {\n    display: inline-block; }\n\n.ag-cell {\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  position: absolute; }\n\n.ag-value-slide-out {\n  opacity: 1.0;\n  margin-right: 5px;\n  -webkit-transition: opacity 3s, margin-right 3s;\n  transition: opacity 3s, margin-right 3s;\n  -webkit-transition-timing-function: linear;\n  transition-timing-function: linear; }\n\n.ag-value-slide-out-end {\n  opacity: 0.0;\n  margin-right: 10px; }\n\n.ag-opacity-zero {\n  opacity: 0.0; }\n\n.ag-cell-edit-input {\n  width: 100%;\n  height: 100%; }\n\n.ag-group-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  text-overflow: ellipsis;\n  overflow: hidden; }\n\n.ag-footer-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  text-overflow: ellipsis;\n  overflow: hidden; }\n\n.ag-large .ag-root {\n  font-size: 20px; }\n\n.ag-popup-editor {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu-column-select-wrapper {\n  width: 200px;\n  height: 300px;\n  overflow: auto; }\n\n.ag-menu-list {\n  display: table;\n  border-collapse: collapse; }\n\n.ag-menu-option {\n  display: table-row; }\n\n.ag-menu-option-text {\n  display: table-cell; }\n\n.ag-menu-option-shortcut {\n  display: table-cell; }\n\n.ag-menu-option-icon {\n  display: table-cell; }\n\n.ag-menu-option-popup-pointer {\n  display: table-cell; }\n\n.ag-menu-separator {\n  display: table-row; }\n\n.ag-menu-separator-cell {\n  display: table-cell; }\n\n.ag-virtual-list-viewport {\n  overflow-x: auto;\n  height: 100%;\n  width: 100%; }\n\n.ag-virtual-list-container {\n  position: relative;\n  overflow: hidden; }\n\n.ag-rich-select {\n  outline: none; }\n\n.ag-rich-select-row {\n  white-space: nowrap; }\n\n.ag-rich-select-list {\n  width: 200px;\n  height: 200px; }\n\n.ag-set-filter-list {\n  width: 200px;\n  height: 200px; }\n\n.ag-set-filter-item {\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap; }\n\n.ag-virtual-list-item {\n  position: absolute;\n  width: 100%; }\n\n.ag-filter-filter {\n  width: 100%; }\n\n.ag-floating-filter-body input {\n  width: 100%;\n  margin: 0;\n  height: 19px; }\n\n.ag-floating-filter-full-body input {\n  width: 100%;\n  margin: 0;\n  height: 19px; }\n\n.ag-filter-select {\n  width: 110px;\n  margin: 4px 4px 0px 4px; }\n\n.ag-list-selection {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default; }\n\n.ag-tool-panel {\n  width: 200px;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: auto; }\n\n.ag-layout-normal .ag-tool-panel {\n  height: 100%; }\n\n.ag-column-select-indent {\n  display: inline-block; }\n\n.ag-column-select-column {\n  white-space: nowrap; }\n\n.ag-ltr .ag-column-select-column {\n  margin-left: 16px; }\n\n.ag-rtl .ag-column-select-column {\n  margin-right: 16px; }\n\n.ag-column-select-column-group {\n  white-space: nowrap; }\n\n.ag-hidden {\n  display: none !important; }\n\n.ag-visibility-hidden {\n  visibility: hidden !important; }\n\n.ag-faded {\n  opacity: 0.3; }\n\n.ag-width-half {\n  width: 50%;\n  display: inline-block; }\n\n.ag-shake-left-to-right {\n  -webkit-animation-name: ag-shake-left-to-right;\n  animation-name: ag-shake-left-to-right;\n  -webkit-animation-duration: 0.2s;\n  animation-duration: 0.2s;\n  -webkit-animation-iteration-count: infinite;\n  animation-iteration-count: infinite;\n  -webkit-animation-direction: alternate;\n  animation-direction: alternate; }\n\n@-webkit-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n@keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n/* icons are used outside of the grid root (in the ghost) */\n.ag-icon-aggregation {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOS41IDIuNWgtNmwyIDMuNS0yIDMuNWg2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iIzAwMCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-arrows {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgNmwtMS40MSAxLjQxTDE2LjE3IDlINHYyaDEyLjE3bC0xLjU4IDEuNTlMMTYgMTRsNC00eiIvPjxwYXRoIGQ9Ik00IDZsMS40MSAxLjQxTDMuODMgOUgxNnYySDMuODNsMS41OCAxLjU5TDQgMTRsLTQtNHoiLz48cGF0aCBkPSJNNiAxNmwxLjQxLTEuNDFMOSAxNi4xN1Y0aDJ2MTIuMTdsMS41OS0xLjU4TDE0IDE2bC00IDR6Ii8+PHBhdGggZD0iTTE0IDRsLTEuNDEgMS40MUwxMSAzLjgzVjE2SDlWMy44M0w3LjQxIDUuNDEgNiA0bDQtNHoiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-asc {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-checked-readonly {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-checked {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-indeterminate-readonly {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNCA1aDR2Mkg0eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-indeterminate {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNCA1aDR2Mkg0eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-unchecked-readonly {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-unchecked {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-column {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDR2Mkgxem0wIDNoNHY3SDF6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-columns {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDR2Mkgxem02IDBoNHYySDd6TTEgNWg0djJIMXptNiAwaDR2Mkg3ek0xIDloNHYySDF6bTYgMGg0djJIN3oiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-contracted {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlPSIjMDAwIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjkiIGhlaWdodD0iOSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNOSA1djJIM1Y1eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-copy {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTQuNSA0LjVoNXY1aC01eiIvPjxwYXRoIGQ9Ik03LjUgMi41aC01djVoMnYyaDV2LTVoLTJ2LTJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-cut {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTMgMy4xMmMuNjY3LjA3OCAzIDEuNzQ1IDcgNS0uMzI2LjIwNC0uNjU5LjIwNC0xIDAtLjM0MS0uMjA2LTEuNjc0LTEuMjA2LTQtMyAwIC42NjYtLjY2Ny42NjYtMiAwLTItMS0xLTIuMTIgMC0yeiIvPjxwYXRoIGQ9Ik0zIDguMjY0Yy42NjctLjA4IDMtMS43NDYgNy01LS4zMjYtLjIwNS0uNjU5LS4yMDUtMSAwLS4zNDEuMjA0LTEuNjc0IDEuMjA0LTQgMyAwLS42NjctLjY2Ny0uNjY3LTIgMC0yIDEtMSAyLjExOSAwIDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-desc {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-expanded {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlPSIjMDAwIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjkiIGhlaWdodD0iOSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNSAzaDJ2Nkg1eiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik05IDV2MkgzVjV6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-eye-slash {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjAwMSAzLjkwOEwzIDRhMyAzIDAgMSAwIDUuOTk5LS4wOTJBNS4yNDggNS4yNDggMCAwIDAgNiAzYy0xLjEgMC0yLjEuMzAzLTIuOTk5LjkwOHoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA0LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMiAzLTMgNS0zczMuNjY3IDEgNSAzQzkuNjY3IDggOCA5IDYgOVMyLjMzMyA4IDEgNnoiIHN0cm9rZT0iIzAwMCIvPjxwYXRoIGQ9Ik00LjAwNCAyLjgzNWw0Ljk5MiA2LjMzIiBzdHJva2U9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48cGF0aCBkPSJNMy4wMDQgMi44MzVsNC45OTIgNi4zMyIgc3Ryb2tlPSIjRkZGIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-eye {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjAwMSAzLjkwOEwzIDRhMyAzIDAgMSAwIDUuOTk5LS4wOTJBNS4yNDggNS4yNDggMCAwIDAgNiAzYy0xLjEgMC0yLjEuMzAzLTIuOTk5LjkwOHoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA0LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMiAzLTMgNS0zczMuNjY3IDEgNSAzQzkuNjY3IDggOCA5IDYgOVMyLjMzMyA4IDEgNnoiIHN0cm9rZT0iIzAwMCIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-filter {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-folder-open {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEuMzMzIDIuNUwuNSAzLjV2Ni4yMTRsMSAuNzg2aDhsMS0xdi01bC0xLTFoLTNsLTEtMXoiLz48cGF0aCBkPSJNMi41IDEwLjVMMiA5bDEtMyAyLjUtLjVoNmwtMSA1eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-folder {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEuMzMzIDIuNUwuNSAzLjV2Ni4yMTRsMSAuNzg2aDhsMS0xdi01bC0xLTFoLTNsLTEtMXoiLz48cGF0aCBkPSJNNy41IDMuNWwtMiAyaC01Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-group {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNSAxLjVoM3YyaC0zem0wIDRoM3YyaC0zem0wIDRoM3YyaC0zeiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0yIDNoMXY4SDJ6bTEgM2g0djFIM3ptMi00aDN2MUg1eiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0yIDEwaDV2MUgyeiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTEuNSAxLjVoM3YyaC0zeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-indeterminate {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjA1NiA0LjU4MWEzLjAwMSAzLjAwMSAwIDAgMCA1Ljg4OCAwQzguMDU5IDQuMTk0IDcuMDc4IDQgNiA0Yy0xLjA3OCAwLTIuMDYuMTk0LTIuOTQ0LjU4MXoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA1LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMS4zMzMgMy0yIDUtMnMzLjY2Ny42NjcgNSAyQzkuNjY3IDcuMzMzIDggOCA2IDhzLTMuNjY3LS42NjctNS0yeiIgc3Ryb2tlPSIjMDAwIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-left {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01LjUgMS41aDJ2OWgtMnoiLz48cGF0aCBkPSJNNy45OTMgNC43VjIuOTkzaC02djZIMy43VjQuN2g0LjI5M3oiIGlkPSJiIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAgNi41IDYpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNiAyaDF2OEg2eiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtNDUgNC45OTMgNS45OTMpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNy40OTMgNC4ydi0uNzA3aC01djVIMy4yVjQuMmg0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-loading {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDFoMnYzSDV6Ii8+PHBhdGggaWQ9ImIiIGQ9Ik01IDhoMnYzSDV6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik0xIDVoM3YySDF6Ii8+PHBhdGggaWQ9ImQiIGQ9Ik04IDVoM3YySDh6Ii8+PHBhdGggaWQ9ImUiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImYiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImciIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImgiIGQ9Ik03IDRoM3YySDd6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTUuNSAxLjVoMXYyaC0xeiIvPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik01LjUgOC41aDF2MmgtMXoiLz48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNjIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNMS41IDUuNWgydjFoLTJ6Ii8+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTguNSA1LjVoMnYxaC0yeiIvPjxnIG9wYWNpdHk9Ii43MTQiPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNS41aDF2MmgtMXoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNC4yOTMgNi43MDcpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNmIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41IDcuNWgxdjJoLTF6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZyIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTS41IDQuNWgydjFoLTJ6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjaCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTcuNSA0LjVoMnYxaC0yeiIvPjwvZz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-menu {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-minus {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDh2MkgyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-none {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-not-allowed {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGNpcmNsZSBjeD0iNiIgY3k9IjYiIHI9IjQiLz48cGF0aCBkPSJNOC41IDMuNUwzLjQwMSA4LjU5OSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-paste {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTIuNSAyLjVoN3Y3aC03eiIvPjxwYXRoIGQ9Ik02LjUgMS41aC0xdjJoLTF2MWgzdi0xaC0xdi0yeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-pin {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0zIDJoNnYxSDh2NGwyIDFIN2wtMSAzLTEtM0gybDItMVYzSDN6Ii8+PHBhdGggZmlsbC1vcGFjaXR5PSIuNSIgZmlsbD0iI0ZGRiIgZD0iTTUgM2gxdjRINXoiLz48cGF0aCBmaWxsLW9wYWNpdHk9Ii4yOCIgZmlsbD0iI0ZGRiIgZD0iTTQgM2gxdjNINHoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-pivot {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHJlY3QgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSI5IiBoZWlnaHQ9IjkiIHJ4PSIxIi8+PHBhdGggZD0iTTEwLjUgMy41aC05bTItMnY5IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHBhdGggZD0iTTcuNSA2LjVsMS0xIDEgMW0tMyAxbC0xIDEgMSAxIi8+PHBhdGggZD0iTTguNSA1LjV2M2gtMyIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-plus {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik01IDJoMnY4SDV6Ii8+PHBhdGggZD0iTTIgNWg4djJIMnoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-right {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik00LjUgMS41aDJ2OWgtMnoiLz48cGF0aCBkPSJNOS45OTMgNC43VjIuOTkzaC02djZINS43VjQuN2g0LjI5M3oiIGlkPSJiIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAgNS41IDYpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNSAyaDF2OEg1eiIvPjwvZz48ZyB0cmFuc2Zvcm09InNjYWxlKC0xIDEpIHJvdGF0ZSgtNDUgMCAyMi44NzQpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOS40OTMgNC4ydi0uNzA3aC01djVINS4yVjQuMmg0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-small-left {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMyA2bDQtNHY4eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-small-right {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAybDQgNC00IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-small-up {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA3bDQtNCA0IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-small-down {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDhMNiA5eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-tick {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMS41IDUuNWwzIDMgNi02IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iIzAwMCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-cross {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiAxMGw4LThtMCA4TDIgMiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-tree-open {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDhMNiA5eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-tree-closed {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAybDQgNC00IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n", ""]);
+exports.push([module.i, "ag-grid-angular {\n  display: inline-block; }\n\nag-grid-ng2 {\n  display: inline-block; }\n\nag-grid {\n  display: block; }\n\nag-grid-polymer {\n  display: block; }\n\nag-grid-aurelia {\n  display: block; }\n\n.ag-rtl {\n  direction: rtl; }\n\n.ag-ltr {\n  direction: ltr; }\n\n.ag-select-agg-func-popup {\n  position: absolute; }\n\n.ag-body-no-select {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-root {\n  /* set to relative, so absolute popups appear relative to this */\n  position: relative;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  /* was getting some 'should be there' scrolls, this sorts it out */\n  overflow: hidden; }\n\n.ag-layout-normal .ag-root {\n  height: 100%; }\n\n.ag-font-style {\n  cursor: default;\n  /* disable user mouse selection */\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-layout-for-print {\n  white-space: nowrap;\n  display: inline-block; }\n\n.ag-layout-normal {\n  height: 100%; }\n\n.ag-popup-backdrop {\n  position: fixed;\n  left: 0px;\n  top: 0px;\n  width: 100%;\n  height: 100%; }\n\n.ag-header {\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  width: 100%; }\n\n.ag-layout-normal .ag-header {\n  position: absolute;\n  top: 0px;\n  left: 0px; }\n\n.ag-pinned-left-header {\n  float: left;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%; }\n\n.ag-pinned-right-header {\n  float: right;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  height: 100%; }\n\n.ag-header-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  height: 100%; }\n\n.ag-layout-normal .ag-header-row {\n  position: absolute; }\n\n.ag-layout-normal .ag-header-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n  height: 100%; }\n\n.ag-layout-auto-height .ag-header-row {\n  position: absolute; }\n\n.ag-layout-auto-height .ag-header-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap;\n  height: 100%; }\n\n.ag-layout-for-print .ag-header-container {\n  white-space: nowrap; }\n\n.ag-header-overlay {\n  display: block;\n  position: absolute; }\n\n.ag-header-cell {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  vertical-align: bottom;\n  display: inline-block;\n  height: 100%;\n  position: absolute; }\n\n.ag-floating-filter {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: absolute;\n  display: inline-block; }\n\n.ag-floating-filter-body {\n  margin-right: 25px;\n  height: 20px; }\n\n.ag-floating-filter-full-body {\n  width: 100%;\n  height: 20px; }\n\n.ag-floating-filter-input {\n  width: 100%; }\n\n.ag-floating-filter-input:-moz-read-only {\n  background-color: #eeeeee; }\n\n.ag-floating-filter-input:read-only {\n  background-color: #eeeeee; }\n\n.ag-floating-filter-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-dnd-ghost {\n  font-size: 14px;\n  font-family: \"Helvetica Neue\",Helvetica,Arial,sans-serif;\n  position: absolute;\n  background: #e5e5e5;\n  border: 1px solid black;\n  cursor: move;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  text-overflow: ellipsis;\n  padding: 3px;\n  line-height: 1.4; }\n\n.ag-dnd-ghost-icon {\n  display: inline-block;\n  float: left;\n  padding: 2px; }\n\n.ag-dnd-ghost-label {\n  display: inline-block; }\n\n.ag-header-group-cell {\n  height: 100%;\n  display: inline-block;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  position: absolute; }\n\n.ag-header-group-cell-label {\n  text-overflow: ellipsis;\n  overflow: hidden; }\n\n.ag-header-cell-label {\n  text-overflow: ellipsis;\n  overflow: hidden; }\n\n.ag-header-cell-resize {\n  height: 100%;\n  width: 4px;\n  cursor: col-resize; }\n\n.ag-ltr .ag-header-cell-resize {\n  float: right; }\n\n.ag-ltr .ag-pinned-right-header .ag-header-cell-resize {\n  float: left; }\n\n.ag-rtl .ag-header-cell-resize {\n  float: left; }\n\n.ag-rtl .ag-pinned-left-header .ag-header-cell-resize {\n  float: right; }\n\n.ag-ltr .ag-header-select-all {\n  float: left; }\n\n.ag-rtl .ag-header-select-all {\n  float: right; }\n\n.ag-header-expand-icon {\n  padding-left: 4px; }\n\n.ag-header-cell-menu-button {\n  float: right; }\n\n.ag-overlay-panel {\n  display: table;\n  width: 100%;\n  height: 100%;\n  pointer-events: none; }\n\n.ag-overlay-wrapper {\n  display: table-cell;\n  vertical-align: middle;\n  text-align: center; }\n\n.ag-bl-overlay {\n  pointer-events: none;\n  position: absolute;\n  height: 100%;\n  width: 100%;\n  top: 0px;\n  left: 0px; }\n\n.ag-bl-full-height {\n  height: 100%;\n  overflow: auto;\n  position: relative; }\n\n.ag-bl-west {\n  float: left; }\n\n.ag-bl-full-height-west {\n  height: 100%; }\n\n.ag-bl-east {\n  float: right; }\n\n.ag-bl-full-height-east {\n  height: 100%; }\n\n.ag-bl-full-height-center {\n  height: 100%; }\n\n.ag-bl-normal {\n  height: 100%;\n  position: relative; }\n\n.ag-bl-normal-center-row {\n  height: 100%;\n  overflow: hidden; }\n\n.ag-bl-normal-west {\n  height: 100%;\n  float: left; }\n\n.ag-bl-normal-east {\n  height: 100%;\n  float: right; }\n\n.ag-bl-normal-center {\n  height: 100%; }\n\n.ag-bl-dont-fill {\n  position: relative; }\n\n.ag-body {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box; }\n\n.ag-layout-normal .ag-body {\n  height: 100%;\n  position: absolute; }\n\n.ag-floating-top {\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-top {\n  position: absolute;\n  left: 0px; }\n\n.ag-pinned-left-floating-top {\n  float: left;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-left-floating-top {\n  height: 100%; }\n\n.ag-pinned-right-floating-top {\n  float: right;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-right-floating-top {\n  height: 100%; }\n\n.ag-floating-top-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-top-viewport {\n  height: 100%; }\n\n.ag-floating-top-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-floating-bottom {\n  width: 100%;\n  white-space: nowrap;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-bottom {\n  position: absolute;\n  left: 0px; }\n\n.ag-pinned-left-floating-bottom {\n  float: left;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-left-floating-bottom {\n  height: 100%; }\n\n.ag-pinned-right-floating-bottom {\n  float: right;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  display: inline-block;\n  overflow: hidden;\n  position: relative; }\n\n.ag-layout-normal .ag-pinned-right-floating-bottom {\n  height: 100%; }\n\n.ag-floating-bottom-viewport {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-floating-bottom-viewport {\n  height: 100%; }\n\n.ag-floating-bottom-container {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  position: relative;\n  white-space: nowrap; }\n\n.ag-pinned-left-cols-viewport {\n  float: left; }\n\n.ag-pinned-left-cols-container {\n  display: inline-block;\n  position: relative; }\n\n.ag-pinned-right-cols-viewport {\n  float: right; }\n\n.ag-ltr .ag-pinned-right-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-ltr .ag-pinned-left-cols-viewport {\n  overflow: hidden; }\n\n.ag-rtl .ag-pinned-right-cols-viewport {\n  overflow: hidden; }\n\n.ag-rtl .ag-pinned-left-cols-viewport {\n  overflow-x: hidden;\n  overflow-y: auto; }\n\n.ag-pinned-right-cols-container {\n  display: inline-block;\n  position: relative; }\n\n.ag-layout-normal .ag-body-viewport-wrapper {\n  height: 100%; }\n\n.ag-body-viewport {\n  overflow-x: auto;\n  overflow-y: auto; }\n\n.ag-layout-normal .ag-body-viewport {\n  height: 100%; }\n\n.ag-full-width-viewport {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  display: inline;\n  pointer-events: none;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden; }\n\n.ag-full-width-container {\n  overflow: hidden;\n  position: relative;\n  width: 100%; }\n\n.ag-floating-bottom-full-width-container {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  pointer-events: none;\n  overflow: hidden;\n  display: inline; }\n\n.ag-floating-top-full-width-container {\n  height: 100%;\n  width: 100%;\n  position: absolute;\n  top: 0px;\n  left: 0px;\n  pointer-events: none;\n  overflow: hidden;\n  display: inline; }\n\n.ag-full-width-row {\n  pointer-events: all;\n  overflow: hidden; }\n\n.ag-layout-normal .ag-body-container {\n  position: relative;\n  display: inline-block; }\n\n.ag-layout-auto-height .ag-body-container {\n  position: relative;\n  display: inline-block; }\n\n.ag-row-animation {\n  -webkit-transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;\n  transition: top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s; }\n\n.ag-row-no-animation {\n  -webkit-transition: background-color 0.1s;\n  transition: background-color 0.1s; }\n\n.ag-row {\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box; }\n\n.ag-layout-normal .ag-row {\n  white-space: nowrap;\n  position: absolute;\n  width: 100%; }\n\n.ag-layout-auto-height .ag-row {\n  white-space: nowrap;\n  position: relative;\n  width: 100%; }\n\n.ag-layout-for-print .ag-row {\n  position: relative; }\n\n.ag-column-moving .ag-cell {\n  -webkit-transition: left 0.2s;\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-cell {\n  -webkit-transition: left 0.2s;\n  transition: left 0.2s; }\n\n.ag-column-moving .ag-header-group-cell {\n  -webkit-transition: left 0.2s, width 0.2s;\n  transition: left 0.2s, width 0.2s; }\n\n.ag-column-drop {\n  width: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box; }\n\n.ag-column-drop-vertical .ag-column-drop-cell {\n  display: block; }\n\n.ag-column-drop-vertical .ag-column-drop-empty-message {\n  display: block; }\n\n.ag-column-drop-vertical .ag-column-drop-cell-button {\n  line-height: 16px; }\n\n.ag-ltr .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: right; }\n\n.ag-rtl .ag-column-drop-vertical .ag-column-drop-cell-button {\n  float: left; }\n\n.ag-column-drop-horizontal {\n  white-space: nowrap; }\n  .ag-column-drop-horizontal .ag-column-drop-cell {\n    display: inline-block; }\n  .ag-column-drop-horizontal .ag-column-drop-empty-message {\n    display: inline-block; }\n\n.ag-cell {\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  text-overflow: ellipsis;\n  overflow: hidden;\n  position: absolute; }\n\n.ag-value-slide-out {\n  opacity: 1.0;\n  margin-right: 5px;\n  -webkit-transition: opacity 3s, margin-right 3s;\n  transition: opacity 3s, margin-right 3s;\n  -webkit-transition-timing-function: linear;\n  transition-timing-function: linear; }\n\n.ag-value-slide-out-end {\n  opacity: 0.0;\n  margin-right: 10px; }\n\n.ag-opacity-zero {\n  opacity: 0.0; }\n\n.ag-cell-edit-input {\n  width: 100%;\n  height: 100%; }\n\n.ag-group-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  text-overflow: ellipsis;\n  overflow: hidden; }\n\n.ag-footer-cell-entire-row {\n  width: 100%;\n  display: inline-block;\n  white-space: nowrap;\n  height: 100%;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  text-overflow: ellipsis;\n  overflow: hidden; }\n\n.ag-large .ag-root {\n  font-size: 20px; }\n\n.ag-popup-editor {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu {\n  position: absolute;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none; }\n\n.ag-menu-column-select-wrapper {\n  width: 200px;\n  height: 300px;\n  overflow: auto; }\n\n.ag-menu-list {\n  display: table;\n  border-collapse: collapse; }\n\n.ag-menu-option {\n  display: table-row; }\n\n.ag-menu-option-text {\n  display: table-cell; }\n\n.ag-menu-option-shortcut {\n  display: table-cell; }\n\n.ag-menu-option-icon {\n  display: table-cell; }\n\n.ag-menu-option-popup-pointer {\n  display: table-cell; }\n\n.ag-menu-separator {\n  display: table-row; }\n\n.ag-menu-separator-cell {\n  display: table-cell; }\n\n.ag-virtual-list-viewport {\n  overflow-x: auto;\n  height: 100%;\n  width: 100%; }\n\n.ag-virtual-list-container {\n  position: relative;\n  overflow: hidden; }\n\n.ag-rich-select {\n  outline: none;\n  cursor: default; }\n\n.ag-rich-select-row {\n  white-space: nowrap; }\n\n.ag-rich-select-list {\n  width: 200px;\n  height: 200px; }\n\n.ag-set-filter-list {\n  width: 200px;\n  height: 200px; }\n\n.ag-set-filter-item {\n  text-overflow: ellipsis;\n  overflow: hidden;\n  white-space: nowrap; }\n\n.ag-virtual-list-item {\n  position: absolute;\n  width: 100%; }\n\n.ag-filter-filter {\n  width: 100%; }\n\n.ag-floating-filter-body input {\n  width: 100%;\n  margin: 0;\n  height: 19px; }\n\n.ag-floating-filter-full-body input {\n  width: 100%;\n  margin: 0;\n  height: 19px; }\n\n.ag-filter-select {\n  width: 110px;\n  margin: 4px 4px 0px 4px; }\n\n.ag-list-selection {\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default; }\n\n.ag-tool-panel {\n  width: 200px;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n  cursor: default;\n  -webkit-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: auto; }\n\n.ag-layout-normal .ag-tool-panel {\n  height: 100%; }\n\n.ag-column-select-indent {\n  display: inline-block; }\n\n.ag-column-select-column {\n  white-space: nowrap; }\n\n.ag-ltr .ag-column-select-column {\n  margin-left: 16px; }\n\n.ag-rtl .ag-column-select-column {\n  margin-right: 16px; }\n\n.ag-column-select-column-group {\n  white-space: nowrap; }\n\n.ag-hidden {\n  display: none !important; }\n\n.ag-visibility-hidden {\n  visibility: hidden !important; }\n\n.ag-faded {\n  opacity: 0.3; }\n\n.ag-width-half {\n  width: 50%;\n  display: inline-block; }\n\n.ag-shake-left-to-right {\n  -webkit-animation-name: ag-shake-left-to-right;\n  animation-name: ag-shake-left-to-right;\n  -webkit-animation-duration: 0.2s;\n  animation-duration: 0.2s;\n  -webkit-animation-iteration-count: infinite;\n  animation-iteration-count: infinite;\n  -webkit-animation-direction: alternate;\n  animation-direction: alternate; }\n\n@-webkit-keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n@keyframes ag-shake-left-to-right {\n  from {\n    padding-left: 6px;\n    padding-right: 2px; }\n  to {\n    padding-left: 2px;\n    padding-right: 6px; } }\n\n/* icons are used outside of the grid root (in the ghost) */\n.ag-icon-aggregation {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOS41IDIuNWgtNmwyIDMuNS0yIDMuNWg2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iIzAwMCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-arrows {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgNmwtMS40MSAxLjQxTDE2LjE3IDlINHYyaDEyLjE3bC0xLjU4IDEuNTlMMTYgMTRsNC00eiIvPjxwYXRoIGQ9Ik00IDZsMS40MSAxLjQxTDMuODMgOUgxNnYySDMuODNsMS41OCAxLjU5TDQgMTRsLTQtNHoiLz48cGF0aCBkPSJNNiAxNmwxLjQxLTEuNDFMOSAxNi4xN1Y0aDJ2MTIuMTdsMS41OS0xLjU4TDE0IDE2bC00IDR6Ii8+PHBhdGggZD0iTTE0IDRsLTEuNDEgMS40MUwxMSAzLjgzVjE2SDlWMy44M0w3LjQxIDUuNDEgNiA0bDQtNHoiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-asc {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-checked-readonly {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-checked {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-indeterminate-readonly {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNCA1aDR2Mkg0eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-indeterminate {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNCA1aDR2Mkg0eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-unchecked-readonly {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-checkbox-unchecked {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-column {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDR2Mkgxem0wIDNoNHY3SDF6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-columns {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDR2Mkgxem02IDBoNHYySDd6TTEgNWg0djJIMXptNiAwaDR2Mkg3ek0xIDloNHYySDF6bTYgMGg0djJIN3oiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-contracted {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlPSIjMDAwIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjkiIGhlaWdodD0iOSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNOSA1djJIM1Y1eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-copy {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTQuNSA0LjVoNXY1aC01eiIvPjxwYXRoIGQ9Ik03LjUgMi41aC01djVoMnYyaDV2LTVoLTJ2LTJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-cut {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTMgMy4xMmMuNjY3LjA3OCAzIDEuNzQ1IDcgNS0uMzI2LjIwNC0uNjU5LjIwNC0xIDAtLjM0MS0uMjA2LTEuNjc0LTEuMjA2LTQtMyAwIC42NjYtLjY2Ny42NjYtMiAwLTItMS0xLTIuMTIgMC0yeiIvPjxwYXRoIGQ9Ik0zIDguMjY0Yy42NjctLjA4IDMtMS43NDYgNy01LS4zMjYtLjIwNS0uNjU5LS4yMDUtMSAwLS4zNDEuMjA0LTEuNjc0IDEuMjA0LTQgMyAwLS42NjctLjY2Ny0uNjY3LTIgMC0yIDEtMSAyLjExOSAwIDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-desc {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-expanded {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHN0cm9rZS1vcGFjaXR5PSIuNSIgc3Ryb2tlPSIjMDAwIiB4PSIxLjUiIHk9IjEuNSIgd2lkdGg9IjkiIGhlaWdodD0iOSIgcng9IjEiLz48cGF0aCBmaWxsPSIjMDAwIiBkPSJNNSAzaDJ2Nkg1eiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik05IDV2MkgzVjV6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-eye-slash {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjAwMSAzLjkwOEwzIDRhMyAzIDAgMSAwIDUuOTk5LS4wOTJBNS4yNDggNS4yNDggMCAwIDAgNiAzYy0xLjEgMC0yLjEuMzAzLTIuOTk5LjkwOHoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA0LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMiAzLTMgNS0zczMuNjY3IDEgNSAzQzkuNjY3IDggOCA5IDYgOVMyLjMzMyA4IDEgNnoiIHN0cm9rZT0iIzAwMCIvPjxwYXRoIGQ9Ik00LjAwNCAyLjgzNWw0Ljk5MiA2LjMzIiBzdHJva2U9IiMwMDAiIHN0cm9rZS1saW5lY2FwPSJzcXVhcmUiLz48cGF0aCBkPSJNMy4wMDQgMi44MzVsNC45OTIgNi4zMyIgc3Ryb2tlPSIjRkZGIiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-eye {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjAwMSAzLjkwOEwzIDRhMyAzIDAgMSAwIDUuOTk5LS4wOTJBNS4yNDggNS4yNDggMCAwIDAgNiAzYy0xLjEgMC0yLjEuMzAzLTIuOTk5LjkwOHoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA0LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMiAzLTMgNS0zczMuNjY3IDEgNSAzQzkuNjY3IDggOCA5IDYgOVMyLjMzMyA4IDEgNnoiIHN0cm9rZT0iIzAwMCIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-filter {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-folder-open {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEuMzMzIDIuNUwuNSAzLjV2Ni4yMTRsMSAuNzg2aDhsMS0xdi01bC0xLTFoLTNsLTEtMXoiLz48cGF0aCBkPSJNMi41IDEwLjVMMiA5bDEtMyAyLjUtLjVoNmwtMSA1eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-folder {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTEuMzMzIDIuNUwuNSAzLjV2Ni4yMTRsMSAuNzg2aDhsMS0xdi01bC0xLTFoLTNsLTEtMXoiLz48cGF0aCBkPSJNNy41IDMuNWwtMiAyaC01Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-group {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNSAxLjVoM3YyaC0zem0wIDRoM3YyaC0zem0wIDRoM3YyaC0zeiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0yIDNoMXY4SDJ6bTEgM2g0djFIM3ptMi00aDN2MUg1eiIvPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0yIDEwaDV2MUgyeiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTEuNSAxLjVoM3YyaC0zeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-indeterminate {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zLjA1NiA0LjU4MWEzLjAwMSAzLjAwMSAwIDAgMCA1Ljg4OCAwQzguMDU5IDQuMTk0IDcuMDc4IDQgNiA0Yy0xLjA3OCAwLTIuMDYuMTk0LTIuOTQ0LjU4MXoiIGZpbGw9IiMwMDAiLz48cGF0aCBkPSJNNCA1LjVjLjY2Ny0uMzMzIDEuNjY3LS41IDMtLjUiIHN0cm9rZT0iIzk3OTc5NyIvPjxwYXRoIGQ9Ik0xIDZjMS4zMzMtMS4zMzMgMy0yIDUtMnMzLjY2Ny42NjcgNSAyQzkuNjY3IDcuMzMzIDggOCA2IDhzLTMuNjY3LS42NjctNS0yeiIgc3Ryb2tlPSIjMDAwIi8+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-left {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01LjUgMS41aDJ2OWgtMnoiLz48cGF0aCBkPSJNNy45OTMgNC43VjIuOTkzaC02djZIMy43VjQuN2g0LjI5M3oiIGlkPSJiIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAgNi41IDYpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNiAyaDF2OEg2eiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtNDUgNC45OTMgNS45OTMpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNy40OTMgNC4ydi0uNzA3aC01djVIMy4yVjQuMmg0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-loading {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDFoMnYzSDV6Ii8+PHBhdGggaWQ9ImIiIGQ9Ik01IDhoMnYzSDV6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik0xIDVoM3YySDF6Ii8+PHBhdGggaWQ9ImQiIGQ9Ik04IDVoM3YySDh6Ii8+PHBhdGggaWQ9ImUiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImYiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImciIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImgiIGQ9Ik03IDRoM3YySDd6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTUuNSAxLjVoMXYyaC0xeiIvPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik01LjUgOC41aDF2MmgtMXoiLz48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNjIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNMS41IDUuNWgydjFoLTJ6Ii8+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTguNSA1LjVoMnYxaC0yeiIvPjxnIG9wYWNpdHk9Ii43MTQiPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNS41aDF2MmgtMXoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNC4yOTMgNi43MDcpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNmIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41IDcuNWgxdjJoLTF6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZyIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTS41IDQuNWgydjFoLTJ6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDQuMjkzIDYuNzA3KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjaCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTcuNSA0LjVoMnYxaC0yeiIvPjwvZz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-menu {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-minus {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDh2MkgyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-none {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-not-allowed {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGNpcmNsZSBjeD0iNiIgY3k9IjYiIHI9IjQiLz48cGF0aCBkPSJNOC41IDMuNUwzLjQwMSA4LjU5OSIgc3Ryb2tlLWxpbmVjYXA9InNxdWFyZSIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-paste {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTIuNSAyLjVoN3Y3aC03eiIvPjxwYXRoIGQ9Ik02LjUgMS41aC0xdjJoLTF2MWgzdi0xaC0xdi0yeiIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-pin {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik0zIDJoNnYxSDh2NGwyIDFIN2wtMSAzLTEtM0gybDItMVYzSDN6Ii8+PHBhdGggZmlsbC1vcGFjaXR5PSIuNSIgZmlsbD0iI0ZGRiIgZD0iTTUgM2gxdjRINXoiLz48cGF0aCBmaWxsLW9wYWNpdHk9Ii4yOCIgZmlsbD0iI0ZGRiIgZD0iTTQgM2gxdjNINHoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-pivot {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBzdHJva2U9IiMwMDAiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHJlY3QgeD0iMS41IiB5PSIxLjUiIHdpZHRoPSI5IiBoZWlnaHQ9IjkiIHJ4PSIxIi8+PHBhdGggZD0iTTEwLjUgMy41aC05bTItMnY5IiBzdHJva2UtbGluZWNhcD0ic3F1YXJlIi8+PHBhdGggZD0iTTcuNSA2LjVsMS0xIDEgMW0tMyAxbC0xIDEgMSAxIi8+PHBhdGggZD0iTTguNSA1LjV2M2gtMyIvPjwvZz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-plus {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik01IDJoMnY4SDV6Ii8+PHBhdGggZD0iTTIgNWg4djJIMnoiLz48L2c+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-right {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik00LjUgMS41aDJ2OWgtMnoiLz48cGF0aCBkPSJNOS45OTMgNC43VjIuOTkzaC02djZINS43VjQuN2g0LjI5M3oiIGlkPSJiIi8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJyb3RhdGUoOTAgNS41IDYpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNhIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNNSAyaDF2OEg1eiIvPjwvZz48ZyB0cmFuc2Zvcm09InNjYWxlKC0xIDEpIHJvdGF0ZSgtNDUgMCAyMi44NzQpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNiIi8+PHBhdGggc3Ryb2tlPSIjMDAwIiBkPSJNOS40OTMgNC4ydi0uNzA3aC01djVINS4yVjQuMmg0LjI5M3oiLz48L2c+PC9nPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-small-left {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMyA2bDQtNHY4eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-small-right {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAybDQgNC00IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-small-up {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA3bDQtNCA0IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-small-down {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDhMNiA5eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-tick {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMS41IDUuNWwzIDMgNi02IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZT0iIzAwMCIgZmlsbD0ibm9uZSIvPjwvc3ZnPg==) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-cross {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiAxMGw4LThtMCA4TDIgMiIgc3Ryb2tlPSIjMDAwIiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-tree-open {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiA1aDhMNiA5eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n\n.ag-icon-tree-closed {\n  display: inline-block;\n  width: 12px;\n  height: 12px;\n  background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAybDQgNC00IDR6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n  background-size: 12px 12px;\n  -webkit-filter: \"initial\";\n  filter: \"initial\"; }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 141 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(142);
+var content = __webpack_require__(144);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(28)(content, {});
+var update = __webpack_require__(29)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -32609,30 +32886,30 @@ if(false) {
 }
 
 /***/ }),
-/* 142 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(27)();
+exports = module.exports = __webpack_require__(28)();
 // imports
 
 
 // module
-exports.push([module.i, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-blue {\n  line-height: 1.4;\n  font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n  font-size: 10pt;\n  color: #222;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-blue .ag-numeric-cell {\n    text-align: right; }\n  .ag-blue .ag-header-cell-label {\n    display: flex; }\n    .ag-blue .ag-header-cell-label > span {\n      float: left; }\n    .ag-blue .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-blue .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-blue .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-blue .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-blue .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-blue .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-blue .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-blue .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-blue img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-blue .ag-root {\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-blue .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-blue .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-blue .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-blue .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-blue .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-blue .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-blue .ag-cell-focus {\n    border: 2px solid #217346; }\n  .ag-blue .ag-cell-no-focus {\n    border-top: 2px solid transparent;\n    border-bottom: 1px dotted #9bc2e6; }\n  .ag-blue .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted #9bc2e6;\n    border-left: 2px solid transparent; }\n  .ag-blue .ag-rtl .ag-cell-no-focus {\n    border-right: 2px solid transparent;\n    border-left: 1px dotted #9bc2e6; }\n  .ag-blue .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-blue .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-blue .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-blue .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-blue .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-blue .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-blue .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-blue .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid #9bc2e6;\n    background-color: white; }\n  .ag-blue .ag-rich-select-value {\n    padding: 2px; }\n  .ag-blue .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-blue .ag-rich-select-row {\n    padding: 2px; }\n  .ag-blue .ag-rich-select-row-selected {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-large-text {\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-select-all, .ag-blue .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-blue .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-blue .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-blue .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-blue .ag-header {\n    color: #fff;\n    background: #5B9BD5;\n    border-bottom: 1px solid #9bc2e6;\n    font-weight: 600; }\n  .ag-blue .ag-header-icon {\n    color: #fff;\n    stroke: none;\n    fill: #fff; }\n  .ag-blue .ag-filter-icon {\n    display: inline-block; }\n  .ag-blue .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-layout-for-print .ag-header-container {\n    background: #5B9BD5;\n    border-bottom: 1px solid #9bc2e6; }\n  .ag-blue .ag-ltr .ag-header-cell {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-header-cell {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-blue .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-blue .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-group-cell-with-group {\n    border-bottom: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-blue .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-blue .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-blue .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-body {\n    background-color: #f6f6f6; }\n  .ag-blue .ag-row-odd {\n    background-color: #DDEBF7; }\n  .ag-blue .ag-row-even {\n    background-color: #fff; }\n  .ag-blue .ag-row-selected {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-blue .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-blue .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid #9bc2e6;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-blue .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid #9bc2e6;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-blue .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-blue .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-blue .ag-group-cell {\n    font-style: italic; }\n  .ag-blue .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-blue .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-blue .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-blue .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-blue .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-blue .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-blue .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-blue .ag-group-child-count {\n    display: inline-block; }\n  .ag-blue .ag-footer-cell {\n    font-style: italic; }\n  .ag-blue .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n    font-size: 10pt; }\n    .ag-blue .ag-menu .ag-tab-header {\n      background-color: #5B9BD5; }\n    .ag-blue .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-blue .ag-menu .ag-tab-selected {\n      background-color: #9bc2e6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-blue .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-blue .ag-menu-option-active {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-blue .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-blue .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-blue .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-blue .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-blue .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-blue .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-blue .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-blue .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-blue .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-blue .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-blue .ag-paging-panel {\n    padding: 4px; }\n  .ag-blue .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-blue .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-blue .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: 1px solid #9bc2e6;\n    border-top: 1px solid #9bc2e6;\n    color: #222; }\n  .ag-blue .ltr .ag-tool-panel {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .rtl .ag-tool-panel {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-status-bar {\n    color: #222;\n    background-color: #f6f6f6;\n    font-size: 10pt;\n    height: 22px;\n    border-bottom: 1px solid #9bc2e6;\n    border-left: 1px solid #9bc2e6;\n    border-right: 1px solid #9bc2e6;\n    padding: 2px; }\n  .ag-blue .ag-status-bar-aggregations {\n    float: right; }\n  .ag-blue .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-blue .ag-column-drop-cell {\n    background: #ddebf7;\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-blue .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-blue .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-blue .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-blue .ag-column-drop-cell-button:hover {\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-blue .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-blue .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-blue .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid #9bc2e6;\n    border-left: 1px solid #9bc2e6;\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid #9bc2e6;\n    overflow: auto; }\n    .ag-blue .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-blue .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-blue .ag-pivot-mode {\n    border-bottom: 1px solid #9bc2e6;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-blue .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid #9bc2e6;\n    overflow: auto; }\n  .ag-blue .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-blue .ag-select-agg-func-item:hover {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-blue .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-blue .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-blue .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-blue .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-blue .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-blue .ag-sort-order::before {\n      content: '('; }\n    .ag-blue .ag-sort-order::after {\n      content: ')'; }\n\n.ag-blue .ag-floating-filter-body input {\n  background-color: white;\n  color: #222; }\n  .ag-blue .ag-floating-filter-body input[readonly] {\n    background: rgba(255, 255, 255, 0.3); }\n\n.ag-blue .ag-floating-filter-button {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n\n.ag-blue .ag-header .ag-icon-asc, .ag-blue .ag-header .ag-icon-desc, .ag-blue .ag-header .ag-icon-expanded, .ag-blue .ag-header .ag-icon-contracted, .ag-blue .ag-header .ag-icon-menu {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n\n.ag-blue .ag-tab-header .ag-icon {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n", ""]);
+exports.push([module.i, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-blue {\n  line-height: 1.4;\n  font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n  font-size: 10pt;\n  color: #222;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-blue .ag-numeric-cell {\n    text-align: right; }\n  .ag-blue .ag-header-cell-label {\n    display: flex; }\n    .ag-blue .ag-header-cell-label > span {\n      float: left; }\n    .ag-blue .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-blue .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-blue .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-blue .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-blue .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-blue .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-blue .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-blue .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-blue img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-blue .ag-root {\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-blue .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-blue .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-blue .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-blue .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-blue .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-blue .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-blue .ag-cell-focus {\n    border: 2px solid #217346; }\n  .ag-blue .ag-cell-no-focus {\n    border-top: 2px solid transparent;\n    border-bottom: 1px dotted #9bc2e6; }\n  .ag-blue .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted #9bc2e6;\n    border-left: 2px solid transparent; }\n  .ag-blue .ag-rtl .ag-cell-no-focus {\n    border-right: 2px solid transparent;\n    border-left: 1px dotted #9bc2e6; }\n  .ag-blue .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-blue .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-blue .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-blue .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-blue .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-blue .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-blue .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-blue .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid #9bc2e6;\n    background-color: white; }\n  .ag-blue .ag-rich-select-value {\n    padding: 2px; }\n  .ag-blue .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-blue .ag-rich-select-row {\n    padding: 2px; }\n  .ag-blue .ag-rich-select-row-selected {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-large-text {\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-select-all, .ag-blue .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-blue .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-blue .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-blue .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-blue .ag-header {\n    color: #fff;\n    background: #5B9BD5;\n    border-bottom: 1px solid #9bc2e6;\n    font-weight: 600; }\n  .ag-blue .ag-header-icon {\n    color: #fff;\n    stroke: none;\n    fill: #fff; }\n  .ag-blue .ag-filter-icon {\n    display: inline-block; }\n  .ag-blue .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-layout-for-print .ag-header-container {\n    background: #5B9BD5;\n    border-bottom: 1px solid #9bc2e6; }\n  .ag-blue .ag-ltr .ag-header-cell {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-header-cell {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-blue .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-blue .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-group-cell-with-group {\n    border-bottom: 1px solid #9bc2e6; }\n  .ag-blue .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-blue .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-blue .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-blue .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-blue .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-body {\n    background-color: #f6f6f6; }\n  .ag-blue .ag-row-odd {\n    background-color: #DDEBF7; }\n  .ag-blue .ag-row-even {\n    background-color: #fff; }\n  .ag-blue .ag-row-selected {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-blue .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-blue .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-blue .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid #9bc2e6;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-blue .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid #9bc2e6;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-blue .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-blue .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-blue .ag-group-cell {\n    font-style: italic; }\n  .ag-blue .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-blue .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-blue .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-blue .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-blue .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-blue .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-blue .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-blue .ag-group-child-count {\n    display: inline-block; }\n  .ag-blue .ag-footer-cell {\n    font-style: italic; }\n  .ag-blue .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: Calibri, \"Segoe UI\", Thonburi, Arial, Verdana, sans-serif;\n    font-size: 10pt; }\n    .ag-blue .ag-menu .ag-tab-header {\n      background-color: #5B9BD5; }\n    .ag-blue .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-blue .ag-menu .ag-tab-selected {\n      background-color: #9bc2e6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-blue .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-blue .ag-menu-option-active {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-blue .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-blue .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-blue .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-blue .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-blue .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-blue .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-blue .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-blue .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-blue .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-blue .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-blue .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-blue .ag-paging-panel {\n    padding: 4px; }\n  .ag-blue .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-blue .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-blue .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: 1px solid #9bc2e6;\n    border-top: 1px solid #9bc2e6;\n    color: #222; }\n  .ag-blue .ltr .ag-tool-panel {\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .rtl .ag-tool-panel {\n    border-left: 1px solid #9bc2e6; }\n  .ag-blue .ag-status-bar {\n    color: #222;\n    background-color: #f6f6f6;\n    font-size: 10pt;\n    height: 22px;\n    border-bottom: 1px solid #9bc2e6;\n    border-left: 1px solid #9bc2e6;\n    border-right: 1px solid #9bc2e6;\n    padding: 2px; }\n  .ag-blue .ag-status-bar-aggregations {\n    float: right; }\n  .ag-blue .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-blue .ag-column-drop-cell {\n    background: #ddebf7;\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-blue .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-blue .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-blue .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-blue .ag-column-drop-cell-button:hover {\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-blue .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-blue .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-blue .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid #9bc2e6;\n    border-left: 1px solid #9bc2e6;\n    border-right: 1px solid #9bc2e6; }\n  .ag-blue .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid #9bc2e6;\n    overflow: auto; }\n    .ag-blue .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-blue .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-blue .ag-pivot-mode {\n    border-bottom: 1px solid #9bc2e6;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-blue .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid #9bc2e6;\n    overflow: auto; }\n  .ag-blue .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: 1px solid #9bc2e6; }\n  .ag-blue .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-blue .ag-select-agg-func-item:hover {\n    background-color: #c7c7c7; }\n  .ag-blue .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-blue .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-blue .ag-floating-filter-button button {\n      border: 0;\n      background: transparent;\n      padding: 3px;\n      margin: 0; }\n  .ag-blue .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-blue .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-blue .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-blue .ag-sort-order::before {\n      content: '('; }\n    .ag-blue .ag-sort-order::after {\n      content: ')'; }\n\n.ag-blue .ag-floating-filter-body input {\n  background-color: white;\n  color: #222; }\n  .ag-blue .ag-floating-filter-body input[readonly] {\n    background: rgba(255, 255, 255, 0.3); }\n\n.ag-blue .ag-floating-filter-button {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n\n.ag-blue .ag-header .ag-icon-asc, .ag-blue .ag-header .ag-icon-desc, .ag-blue .ag-header .ag-icon-expanded, .ag-blue .ag-header .ag-icon-contracted, .ag-blue .ag-header .ag-icon-menu, .ag-blue .ag-header .ag-icon-filter {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n\n.ag-blue .ag-tab-header .ag-icon {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 143 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(144);
+var content = __webpack_require__(146);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(28)(content, {});
+var update = __webpack_require__(29)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -32649,30 +32926,30 @@ if(false) {
 }
 
 /***/ }),
-/* 144 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(27)();
+exports = module.exports = __webpack_require__(28)();
 // imports
 
 
 // module
-exports.push([module.i, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-dark {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #ccc;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-dark .ag-numeric-cell {\n    text-align: right; }\n  .ag-dark .ag-header-cell-label {\n    display: flex; }\n    .ag-dark .ag-header-cell-label > span {\n      float: left; }\n    .ag-dark .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-dark .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-dark .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-dark .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-dark .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-dark .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-dark .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-dark .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-dark img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-dark .ag-root {\n    border: 1px solid grey; }\n  .ag-dark .ag-cell-data-changed {\n    background-color: chocolate; }\n  .ag-dark .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-dark .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-dark .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(100, 160, 160, 0.4); }\n  .ag-dark .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(100, 190, 190, 0.4); }\n  .ag-dark .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(100, 220, 220, 0.4); }\n  .ag-dark .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(100, 250, 250, 0.4); }\n  .ag-dark .ag-cell-focus {\n    border: 1px solid darkgrey; }\n  .ag-dark .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-dark .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted grey;\n    border-left: 1px solid transparent; }\n  .ag-dark .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px dotted grey; }\n  .ag-dark .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-cell-highlight {\n    border: 1px solid lightgreen; }\n  .ag-dark .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-dark .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-dark .ag-value-change-delta-up {\n    color: greenyellow; }\n  .ag-dark .ag-value-change-delta-down {\n    color: red; }\n  .ag-dark .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-dark .ag-value-change-value-highlight {\n    background-color: chocolate;\n    transition: background-color 0.1s; }\n  .ag-dark .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid grey;\n    background-color: #302E2E; }\n  .ag-dark .ag-rich-select-value {\n    padding: 2px; }\n  .ag-dark .ag-rich-select-list {\n    border-top: 1px solid #555; }\n  .ag-dark .ag-rich-select-row {\n    padding: 2px; }\n  .ag-dark .ag-rich-select-row-selected {\n    background-color: #4A708B; }\n  .ag-dark .ag-large-text {\n    border: 1px solid grey; }\n  .ag-dark .ag-header-select-all, .ag-dark .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-dark .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-dark .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-dark .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-dark .ag-header {\n    color: #e0e0e0;\n    background: #626262;\n    border-bottom: 1px solid grey;\n    font-weight: normal; }\n  .ag-dark .ag-header-icon {\n    color: #e0e0e0;\n    stroke: none;\n    fill: #e0e0e0; }\n  .ag-dark .ag-filter-icon {\n    display: inline-block; }\n  .ag-dark .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-layout-for-print .ag-header-container {\n    background: #626262;\n    border-bottom: 1px solid grey; }\n  .ag-dark .ag-ltr .ag-header-cell {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-header-cell {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-dark .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-dark .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-header-group-cell-with-group {\n    border-bottom: 1px solid grey; }\n  .ag-dark .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-dark .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-dark .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-dark .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-body {\n    background-color: #302E2E; }\n  .ag-dark .ag-row-odd {\n    background-color: #302E2E; }\n  .ag-dark .ag-row-even {\n    background-color: #403E3E; }\n  .ag-dark .ag-row-selected {\n    background-color: #4A708B; }\n  .ag-dark .ag-row-stub {\n    background-color: #333; }\n  .ag-dark .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-dark .ag-floating-top {\n    background-color: #333; }\n  .ag-dark .ag-floating-top .ag-row {\n    background-color: #333; }\n  .ag-dark .ag-floating-bottom {\n    background-color: #333; }\n  .ag-dark .ag-floating-bottom .ag-row {\n    background-color: #333; }\n  .ag-dark .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-dark .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid grey;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-dark .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid grey;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-dark .ag-group-cell-entire-row {\n    background-color: #302E2E;\n    padding: 2px; }\n  .ag-dark .ag-footer-cell-entire-row {\n    background-color: #302E2E;\n    padding: 2px; }\n  .ag-dark .ag-group-cell {\n    font-style: italic; }\n  .ag-dark .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-dark .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-dark .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-dark .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-dark .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-dark .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-dark .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-dark .ag-group-child-count {\n    display: inline-block; }\n  .ag-dark .ag-footer-cell {\n    font-style: italic; }\n  .ag-dark .ag-menu {\n    border: 1px solid #555;\n    background-color: #302E2E;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-dark .ag-menu .ag-tab-header {\n      background-color: #626262; }\n    .ag-dark .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-dark .ag-menu .ag-tab-selected {\n      background-color: #302E2E;\n      border-right: 1px solid #555;\n      border-left: 1px solid #555;\n      border-top: 1px solid #555; }\n  .ag-dark .ag-menu-separator {\n    border-top: 1px solid #555; }\n  .ag-dark .ag-menu-option-active {\n    background-color: #4A708B; }\n  .ag-dark .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-dark .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-dark .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-dark .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-dark .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-dark .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-dark .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-dark .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #555; }\n  .ag-dark .ag-filter-apply-panel {\n    border-top: 1px solid #555;\n    padding: 2px 0px 2px 4px; }\n  .ag-dark .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-dark .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-dark .ag-paging-panel {\n    padding: 4px; }\n  .ag-dark .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-dark .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-dark .ag-tool-panel {\n    background-color: #302E2E;\n    border-bottom: 1px solid grey;\n    border-top: 1px solid grey;\n    color: #ccc; }\n  .ag-dark .ltr .ag-tool-panel {\n    border-right: 1px solid grey; }\n  .ag-dark .rtl .ag-tool-panel {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-status-bar {\n    color: #ccc;\n    background-color: #302E2E;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: 1px solid grey;\n    border-left: 1px solid grey;\n    border-right: 1px solid grey;\n    padding: 2px; }\n  .ag-dark .ag-status-bar-aggregations {\n    float: right; }\n  .ag-dark .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-dark .ag-column-drop-cell {\n    background: #403E3E;\n    color: #e0e0e0;\n    border: 1px solid #666; }\n  .ag-dark .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-dark .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-dark .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-dark .ag-column-drop-cell-button:hover {\n    border: 1px solid grey; }\n  .ag-dark .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-dark .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-dark .ag-column-drop {\n    background-color: #302E2E; }\n  .ag-dark .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid grey;\n    border-left: 1px solid grey;\n    border-right: 1px solid grey; }\n  .ag-dark .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid grey;\n    overflow: auto; }\n    .ag-dark .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-dark .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-dark .ag-pivot-mode {\n    border-bottom: 1px solid grey;\n    padding: 2px 4px 3px 4px;\n    background-color: #302E2E; }\n  .ag-dark .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid grey;\n    overflow: auto; }\n  .ag-dark .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: #302E2E;\n    border: 1px solid grey; }\n  .ag-dark .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-dark .ag-select-agg-func-item:hover {\n    background-color: #4A708B; }\n  .ag-dark .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-dark .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-dark .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: invert(100%);\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-dark .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-dark .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-dark .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-dark .ag-sort-order::before {\n      content: '('; }\n    .ag-dark .ag-sort-order::after {\n      content: ')'; }\n\n.ag-dark ::-webkit-scrollbar {\n  width: 12px;\n  height: 12px;\n  background: #302E2E; }\n  .ag-dark ::-webkit-scrollbar-thumb {\n    background-color: #626262; }\n\n.ag-dark ::-webkit-scrollbar-corner {\n  background: #302E2E; }\n\n.ag-dark select {\n  background-color: #302E2E;\n  color: #ccc; }\n\n.ag-dark input {\n  background-color: #302E2E;\n  color: #ccc; }\n\n.ag-dark .ag-floating-filter-body input {\n  background-color: #302E2E;\n  color: #ccc; }\n  .ag-dark .ag-floating-filter-body input[readonly] {\n    background: rgba(48, 46, 46, 0.3); }\n\n.ag-dark .ag-icon {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n", ""]);
+exports.push([module.i, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-dark {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #ccc;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-dark .ag-numeric-cell {\n    text-align: right; }\n  .ag-dark .ag-header-cell-label {\n    display: flex; }\n    .ag-dark .ag-header-cell-label > span {\n      float: left; }\n    .ag-dark .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-dark .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-dark .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-dark .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-dark .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-dark .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-dark .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-dark .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-dark img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-dark .ag-root {\n    border: 1px solid grey; }\n  .ag-dark .ag-cell-data-changed {\n    background-color: chocolate; }\n  .ag-dark .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-dark .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-dark .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(100, 160, 160, 0.4); }\n  .ag-dark .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(100, 190, 190, 0.4); }\n  .ag-dark .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(100, 220, 220, 0.4); }\n  .ag-dark .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(100, 250, 250, 0.4); }\n  .ag-dark .ag-cell-focus {\n    border: 1px solid darkgrey; }\n  .ag-dark .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-dark .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted grey;\n    border-left: 1px solid transparent; }\n  .ag-dark .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px dotted grey; }\n  .ag-dark .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-cell-highlight {\n    border: 1px solid lightgreen; }\n  .ag-dark .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-dark .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-dark .ag-value-change-delta-up {\n    color: greenyellow; }\n  .ag-dark .ag-value-change-delta-down {\n    color: red; }\n  .ag-dark .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-dark .ag-value-change-value-highlight {\n    background-color: chocolate;\n    transition: background-color 0.1s; }\n  .ag-dark .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid grey;\n    background-color: #302E2E; }\n  .ag-dark .ag-rich-select-value {\n    padding: 2px; }\n  .ag-dark .ag-rich-select-list {\n    border-top: 1px solid #555; }\n  .ag-dark .ag-rich-select-row {\n    padding: 2px; }\n  .ag-dark .ag-rich-select-row-selected {\n    background-color: #4A708B; }\n  .ag-dark .ag-large-text {\n    border: 1px solid grey; }\n  .ag-dark .ag-header-select-all, .ag-dark .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-dark .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-dark .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-dark .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-dark .ag-header {\n    color: #e0e0e0;\n    background: #626262;\n    border-bottom: 1px solid grey;\n    font-weight: normal; }\n  .ag-dark .ag-header-icon {\n    color: #e0e0e0;\n    stroke: none;\n    fill: #e0e0e0; }\n  .ag-dark .ag-filter-icon {\n    display: inline-block; }\n  .ag-dark .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-layout-for-print .ag-header-container {\n    background: #626262;\n    border-bottom: 1px solid grey; }\n  .ag-dark .ag-ltr .ag-header-cell {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-header-cell {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-dark .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-dark .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-header-group-cell-with-group {\n    border-bottom: 1px solid grey; }\n  .ag-dark .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-dark .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-dark .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-dark .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: invert(100%); }\n  .ag-dark .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid grey; }\n  .ag-dark .ag-body {\n    background-color: #302E2E; }\n  .ag-dark .ag-row-odd {\n    background-color: #302E2E; }\n  .ag-dark .ag-row-even {\n    background-color: #403E3E; }\n  .ag-dark .ag-row-selected {\n    background-color: #4A708B; }\n  .ag-dark .ag-row-stub {\n    background-color: #333; }\n  .ag-dark .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-dark .ag-floating-top {\n    background-color: #333; }\n  .ag-dark .ag-floating-top .ag-row {\n    background-color: #333; }\n  .ag-dark .ag-floating-bottom {\n    background-color: #333; }\n  .ag-dark .ag-floating-bottom .ag-row {\n    background-color: #333; }\n  .ag-dark .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-dark .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid grey;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-dark .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid grey;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-dark .ag-group-cell-entire-row {\n    background-color: #302E2E;\n    padding: 2px; }\n  .ag-dark .ag-footer-cell-entire-row {\n    background-color: #302E2E;\n    padding: 2px; }\n  .ag-dark .ag-group-cell {\n    font-style: italic; }\n  .ag-dark .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-dark .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-dark .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-dark .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-dark .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-dark .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-dark .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-dark .ag-group-child-count {\n    display: inline-block; }\n  .ag-dark .ag-footer-cell {\n    font-style: italic; }\n  .ag-dark .ag-menu {\n    border: 1px solid #555;\n    background-color: #302E2E;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-dark .ag-menu .ag-tab-header {\n      background-color: #626262; }\n    .ag-dark .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-dark .ag-menu .ag-tab-selected {\n      background-color: #302E2E;\n      border-right: 1px solid #555;\n      border-left: 1px solid #555;\n      border-top: 1px solid #555; }\n  .ag-dark .ag-menu-separator {\n    border-top: 1px solid #555; }\n  .ag-dark .ag-menu-option-active {\n    background-color: #4A708B; }\n  .ag-dark .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-dark .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-dark .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-dark .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-dark .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-dark .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-dark .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-dark .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #555; }\n  .ag-dark .ag-filter-apply-panel {\n    border-top: 1px solid #555;\n    padding: 2px 0px 2px 4px; }\n  .ag-dark .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-dark .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-dark .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-dark .ag-paging-panel {\n    padding: 4px; }\n  .ag-dark .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-dark .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-dark .ag-tool-panel {\n    background-color: #302E2E;\n    border-bottom: 1px solid grey;\n    border-top: 1px solid grey;\n    color: #ccc; }\n  .ag-dark .ltr .ag-tool-panel {\n    border-right: 1px solid grey; }\n  .ag-dark .rtl .ag-tool-panel {\n    border-left: 1px solid grey; }\n  .ag-dark .ag-status-bar {\n    color: #ccc;\n    background-color: #302E2E;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: 1px solid grey;\n    border-left: 1px solid grey;\n    border-right: 1px solid grey;\n    padding: 2px; }\n  .ag-dark .ag-status-bar-aggregations {\n    float: right; }\n  .ag-dark .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-dark .ag-column-drop-cell {\n    background: #403E3E;\n    color: #e0e0e0;\n    border: 1px solid #666; }\n  .ag-dark .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-dark .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-dark .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-dark .ag-column-drop-cell-button:hover {\n    border: 1px solid grey; }\n  .ag-dark .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-dark .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-dark .ag-column-drop {\n    background-color: #302E2E; }\n  .ag-dark .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid grey;\n    border-left: 1px solid grey;\n    border-right: 1px solid grey; }\n  .ag-dark .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid grey;\n    overflow: auto; }\n    .ag-dark .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-dark .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-dark .ag-pivot-mode {\n    border-bottom: 1px solid grey;\n    padding: 2px 4px 3px 4px;\n    background-color: #302E2E; }\n  .ag-dark .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid grey;\n    overflow: auto; }\n  .ag-dark .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: #302E2E;\n    border: 1px solid grey; }\n  .ag-dark .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-dark .ag-select-agg-func-item:hover {\n    background-color: #4A708B; }\n  .ag-dark .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-dark .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-dark .ag-floating-filter-button button {\n      border: 0;\n      background: transparent;\n      padding: 3px;\n      margin: 0; }\n  .ag-dark .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-dark .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-dark .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-dark .ag-sort-order::before {\n      content: '('; }\n    .ag-dark .ag-sort-order::after {\n      content: ')'; }\n\n.ag-dark ::-webkit-scrollbar {\n  width: 12px;\n  height: 12px;\n  background: #302E2E; }\n  .ag-dark ::-webkit-scrollbar-thumb {\n    background-color: #626262; }\n\n.ag-dark ::-webkit-scrollbar-corner {\n  background: #302E2E; }\n\n.ag-dark select {\n  background-color: #302E2E;\n  color: #ccc; }\n\n.ag-dark input {\n  background-color: #302E2E;\n  color: #ccc; }\n\n.ag-dark .ag-floating-filter-body input {\n  background-color: #302E2E;\n  color: #ccc; }\n  .ag-dark .ag-floating-filter-body input[readonly] {\n    background: rgba(48, 46, 46, 0.3); }\n\n.ag-dark .ag-icon {\n  -webkit-filter: invert(100%);\n  filter: invert(100%); }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 145 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(146);
+var content = __webpack_require__(148);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(28)(content, {});
+var update = __webpack_require__(29)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -32689,30 +32966,30 @@ if(false) {
 }
 
 /***/ }),
-/* 146 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(27)();
+exports = module.exports = __webpack_require__(28)();
 // imports
 
 
 // module
-exports.push([module.i, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-fresh {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #222;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-fresh .ag-numeric-cell {\n    text-align: right; }\n  .ag-fresh .ag-header-cell-label {\n    display: flex; }\n    .ag-fresh .ag-header-cell-label > span {\n      float: left; }\n    .ag-fresh .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-fresh .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-fresh .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-fresh .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-fresh .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-fresh img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-fresh .ag-root {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-fresh .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-fresh .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-fresh .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-fresh .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-fresh .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-fresh .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-fresh .ag-cell-focus {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-fresh .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted silver;\n    border-left: 1px solid transparent; }\n  .ag-fresh .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px dotted silver; }\n  .ag-fresh .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-fresh .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-fresh .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-fresh .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-fresh .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-fresh .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-fresh .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-fresh .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid darkgrey;\n    background-color: white; }\n  .ag-fresh .ag-rich-select-value {\n    padding: 2px; }\n  .ag-fresh .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-rich-select-row {\n    padding: 2px; }\n  .ag-fresh .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-large-text {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-header-select-all, .ag-fresh .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-fresh .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-fresh .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-fresh .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-fresh .ag-header {\n    color: #333;\n    background: linear-gradient(white, lightgrey);\n    border-bottom: 1px solid darkgrey;\n    font-weight: normal; }\n  .ag-fresh .ag-header-icon {\n    color: #333;\n    stroke: none;\n    fill: #333; }\n  .ag-fresh .ag-filter-icon {\n    display: inline-block; }\n  .ag-fresh .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-layout-for-print .ag-header-container {\n    background: linear-gradient(white, lightgrey);\n    border-bottom: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-header-cell {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-header-cell {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-fresh .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-fresh .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-header-group-cell-with-group {\n    border-bottom: 1px solid darkgrey; }\n  .ag-fresh .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-fresh .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-fresh .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-fresh .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-body {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-row-odd {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-row-even {\n    background-color: white; }\n  .ag-fresh .ag-row-selected {\n    background-color: powderblue; }\n  .ag-fresh .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-fresh .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-fresh .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid darkgrey;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-fresh .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid darkgrey;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-fresh .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-fresh .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-fresh .ag-group-cell {\n    font-style: italic; }\n  .ag-fresh .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-fresh .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-fresh .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-fresh .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-fresh .ag-group-child-count {\n    display: inline-block; }\n  .ag-fresh .ag-footer-cell {\n    font-style: italic; }\n  .ag-fresh .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-fresh .ag-menu .ag-tab-header {\n      background-color: #e6e6e6; }\n    .ag-fresh .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-fresh .ag-menu .ag-tab-selected {\n      background-color: #f6f6f6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-fresh .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-fresh .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-fresh .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-fresh .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-fresh .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-fresh .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-fresh .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-fresh .ag-paging-panel {\n    padding: 4px; }\n  .ag-fresh .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-fresh .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-fresh .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: 1px solid darkgrey;\n    border-top: 1px solid darkgrey;\n    color: #222; }\n  .ag-fresh .ltr .ag-tool-panel {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .rtl .ag-tool-panel {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-status-bar {\n    color: #222;\n    background-color: #f6f6f6;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: 1px solid darkgrey;\n    border-left: 1px solid darkgrey;\n    border-right: 1px solid darkgrey;\n    padding: 2px; }\n  .ag-fresh .ag-status-bar-aggregations {\n    float: right; }\n  .ag-fresh .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-fresh .ag-column-drop-cell {\n    background: linear-gradient(white, lightgrey);\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-fresh .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-fresh .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-fresh .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-fresh .ag-column-drop-cell-button:hover {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-fresh .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-fresh .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid darkgrey;\n    border-left: 1px solid darkgrey;\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid darkgrey;\n    overflow: auto; }\n    .ag-fresh .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-fresh .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-fresh .ag-pivot-mode {\n    border-bottom: 1px solid darkgrey;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid darkgrey;\n    overflow: auto; }\n  .ag-fresh .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-fresh .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-fresh .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-fresh .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-fresh .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-fresh .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-fresh .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-fresh .ag-sort-order::before {\n      content: '('; }\n    .ag-fresh .ag-sort-order::after {\n      content: ')'; }\n", ""]);
+exports.push([module.i, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-fresh {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #222;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-fresh .ag-numeric-cell {\n    text-align: right; }\n  .ag-fresh .ag-header-cell-label {\n    display: flex; }\n    .ag-fresh .ag-header-cell-label > span {\n      float: left; }\n    .ag-fresh .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-fresh .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-fresh .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-fresh .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-fresh .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-fresh .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-fresh img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-fresh .ag-root {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-fresh .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-fresh .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-fresh .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-fresh .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-fresh .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-fresh .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-fresh .ag-cell-focus {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-fresh .ag-ltr .ag-cell-no-focus {\n    border-right: 1px dotted silver;\n    border-left: 1px solid transparent; }\n  .ag-fresh .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px dotted silver; }\n  .ag-fresh .ag-rtl .ag-cell-first-right-pinned {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-cell-first-right-pinned {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-cell-last-left-pinned {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-cell-last-left-pinned {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-fresh .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-fresh .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-fresh .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-fresh .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-fresh .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-fresh .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-fresh .ag-rich-select {\n    font-size: 14px;\n    border: 1px solid darkgrey;\n    background-color: white; }\n  .ag-fresh .ag-rich-select-value {\n    padding: 2px; }\n  .ag-fresh .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-rich-select-row {\n    padding: 2px; }\n  .ag-fresh .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-large-text {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-header-select-all, .ag-fresh .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-fresh .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-fresh .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-fresh .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-fresh .ag-header {\n    color: #333;\n    background: linear-gradient(white, lightgrey);\n    border-bottom: 1px solid darkgrey;\n    font-weight: normal; }\n  .ag-fresh .ag-header-icon {\n    color: #333;\n    stroke: none;\n    fill: #333; }\n  .ag-fresh .ag-filter-icon {\n    display: inline-block; }\n  .ag-fresh .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-layout-for-print .ag-header-container {\n    background: linear-gradient(white, lightgrey);\n    border-bottom: 1px solid darkgrey; }\n  .ag-fresh .ag-ltr .ag-header-cell {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-header-cell {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-fresh .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-fresh .ag-ltr .ag-header-group-cell {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-header-group-cell {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-header-group-cell-with-group {\n    border-bottom: 1px solid darkgrey; }\n  .ag-fresh .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-fresh .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-fresh .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-fresh .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-fresh .ag-ltr .ag-pinned-right-header {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-rtl .ag-pinned-left-header {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-body {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-row-odd {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-row-even {\n    background-color: white; }\n  .ag-fresh .ag-row-selected {\n    background-color: powderblue; }\n  .ag-fresh .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-fresh .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-fresh .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-fresh .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: 1px solid darkgrey;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-fresh .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: 1px solid darkgrey;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-fresh .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-fresh .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 2px; }\n  .ag-fresh .ag-group-cell {\n    font-style: italic; }\n  .ag-fresh .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-fresh .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-fresh .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-fresh .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-fresh .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-fresh .ag-group-child-count {\n    display: inline-block; }\n  .ag-fresh .ag-footer-cell {\n    font-style: italic; }\n  .ag-fresh .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-fresh .ag-menu .ag-tab-header {\n      background-color: #e6e6e6; }\n    .ag-fresh .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-fresh .ag-menu .ag-tab-selected {\n      background-color: #f6f6f6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-fresh .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-fresh .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-fresh .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-fresh .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-fresh .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-fresh .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-fresh .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-fresh .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-fresh .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-fresh .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-fresh .ag-paging-panel {\n    padding: 4px; }\n  .ag-fresh .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-fresh .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-fresh .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: 1px solid darkgrey;\n    border-top: 1px solid darkgrey;\n    color: #222; }\n  .ag-fresh .ltr .ag-tool-panel {\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .rtl .ag-tool-panel {\n    border-left: 1px solid darkgrey; }\n  .ag-fresh .ag-status-bar {\n    color: #222;\n    background-color: #f6f6f6;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: 1px solid darkgrey;\n    border-left: 1px solid darkgrey;\n    border-right: 1px solid darkgrey;\n    padding: 2px; }\n  .ag-fresh .ag-status-bar-aggregations {\n    float: right; }\n  .ag-fresh .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-fresh .ag-column-drop-cell {\n    background: linear-gradient(white, lightgrey);\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-fresh .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-fresh .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-fresh .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-fresh .ag-column-drop-cell-button:hover {\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-fresh .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-fresh .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: 1px solid darkgrey;\n    border-left: 1px solid darkgrey;\n    border-right: 1px solid darkgrey; }\n  .ag-fresh .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: 1px solid darkgrey;\n    overflow: auto; }\n    .ag-fresh .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-fresh .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-fresh .ag-pivot-mode {\n    border-bottom: 1px solid darkgrey;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-fresh .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: 1px solid darkgrey;\n    overflow: auto; }\n  .ag-fresh .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: 1px solid darkgrey; }\n  .ag-fresh .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-fresh .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-fresh .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-fresh .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-fresh .ag-floating-filter-button button {\n      border: 0;\n      background: transparent;\n      padding: 3px;\n      margin: 0; }\n  .ag-fresh .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-fresh .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-fresh .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-fresh .ag-sort-order::before {\n      content: '('; }\n    .ag-fresh .ag-sort-order::after {\n      content: ')'; }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 147 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(148);
+var content = __webpack_require__(150);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(28)(content, {});
+var update = __webpack_require__(29)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -32729,30 +33006,30 @@ if(false) {
 }
 
 /***/ }),
-/* 148 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(27)();
+exports = module.exports = __webpack_require__(28)();
 // imports
 
 
 // module
-exports.push([module.i, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-material {\n  line-height: 1.4;\n  font-family: Roboto;\n  font-size: 14px;\n  color: #666;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-material .ag-numeric-cell {\n    text-align: right; }\n  .ag-material .ag-header-cell-label {\n    display: flex; }\n    .ag-material .ag-header-cell-label > span {\n      float: left; }\n    .ag-material .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-material .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-material .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-material .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-material .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-material .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-material .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-material .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-material img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-material .ag-root {\n    border: none; }\n  .ag-material .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-material .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-material .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-material .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-material .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-material .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-material .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-material .ag-cell-focus {\n    border: 1px solid lightgrey; }\n  .ag-material .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid lightgrey; }\n  .ag-material .ag-ltr .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px solid transparent; }\n  .ag-material .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px solid transparent; }\n  .ag-material .ag-rtl .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-material .ag-ltr .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-material .ag-rtl .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-material .ag-ltr .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-material .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-material .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-material .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-material .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-material .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-material .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-material .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-material .ag-rich-select {\n    font-size: 14px;\n    border: none;\n    background-color: white; }\n  .ag-material .ag-rich-select-value {\n    padding: 2px; }\n  .ag-material .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-material .ag-rich-select-row {\n    padding: 2px; }\n  .ag-material .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-material .ag-large-text {\n    border: none; }\n  .ag-material .ag-header-select-all, .ag-material .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-material .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-material .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-material .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-material .ag-header {\n    color: #666;\n    background: none;\n    border-bottom: none;\n    font-weight: bold; }\n  .ag-material .ag-header-icon {\n    color: #666;\n    stroke: none;\n    fill: #666; }\n  .ag-material .ag-filter-icon {\n    display: inline-block; }\n  .ag-material .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-layout-for-print .ag-header-container {\n    background: none;\n    border-bottom: none; }\n  .ag-material .ag-ltr .ag-header-cell {\n    border-right: none; }\n  .ag-material .ag-rtl .ag-header-cell {\n    border-left: none; }\n  .ag-material .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-material .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-material .ag-ltr .ag-header-group-cell {\n    border-right: none; }\n  .ag-material .ag-rtl .ag-header-group-cell {\n    border-left: none; }\n  .ag-material .ag-header-group-cell-with-group {\n    border-bottom: none; }\n  .ag-material .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-material .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-material .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-material .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-ltr .ag-pinned-right-header {\n    border-left: none; }\n  .ag-material .ag-rtl .ag-pinned-left-header {\n    border-right: none; }\n  .ag-material .ag-body {\n    background-color: #fff; }\n  .ag-material .ag-row-odd {\n    background-color: white; }\n  .ag-material .ag-row-even {\n    background-color: white; }\n  .ag-material .ag-row-selected {\n    background-color: #F5F5F5; }\n  .ag-material .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-material .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-material .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-material .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-material .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-material .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-material .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-material .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-material .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-material .ag-group-cell-entire-row {\n    background-color: #fff;\n    padding: 2px; }\n  .ag-material .ag-footer-cell-entire-row {\n    background-color: #fff;\n    padding: 2px; }\n  .ag-material .ag-group-cell {\n    font-style: italic; }\n  .ag-material .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-material .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-material .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-material .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-material .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-material .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-material .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-material .ag-group-child-count {\n    display: inline-block; }\n  .ag-material .ag-footer-cell {\n    font-style: italic; }\n  .ag-material .ag-menu {\n    border: 1px solid #808080;\n    background-color: #fff;\n    cursor: default;\n    font-family: Roboto;\n    font-size: 14px; }\n    .ag-material .ag-menu .ag-tab-header {\n      background-color: #f6f6f6; }\n    .ag-material .ag-menu .ag-tab {\n      padding: 6px 16px 6px 16px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-material .ag-menu .ag-tab-selected {\n      background-color: #fff;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent; }\n  .ag-material .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-material .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-material .ag-menu-option-icon {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle; }\n  .ag-material .ag-menu-option-text {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle; }\n  .ag-material .ag-menu-option-shortcut {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle; }\n  .ag-material .ag-menu-option-popup-pointer {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-material .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-material .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-material .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-material .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-material .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-material .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-material .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-material .ag-paging-panel {\n    padding: 4px; }\n  .ag-material .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-material .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-material .ag-tool-panel {\n    background-color: #fff;\n    border-bottom: none;\n    border-top: none;\n    color: #666; }\n  .ag-material .ltr .ag-tool-panel {\n    border-right: none; }\n  .ag-material .rtl .ag-tool-panel {\n    border-left: none; }\n  .ag-material .ag-status-bar {\n    color: #666;\n    background-color: #fff;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: none;\n    border-left: none;\n    border-right: none;\n    padding: 2px; }\n  .ag-material .ag-status-bar-aggregations {\n    float: right; }\n  .ag-material .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-material .ag-column-drop-cell {\n    background: none;\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-material .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-material .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-material .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-material .ag-column-drop-cell-button:hover {\n    border: none; }\n  .ag-material .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-material .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-material .ag-column-drop {\n    background-color: #fff; }\n  .ag-material .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: none;\n    border-left: none;\n    border-right: none; }\n  .ag-material .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: none;\n    overflow: auto; }\n    .ag-material .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-material .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-material .ag-pivot-mode {\n    border-bottom: none;\n    padding: 2px 4px 3px 4px;\n    background-color: #fff; }\n  .ag-material .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: none;\n    overflow: auto; }\n  .ag-material .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: none; }\n  .ag-material .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-material .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-material .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-material .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-material .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-material .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-material .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-material .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-material .ag-sort-order::before {\n      content: '('; }\n    .ag-material .ag-sort-order::after {\n      content: ')'; }\n\n.ag-material .ag-row-hover {\n  background-color: #eeeeee !important; }\n\n.ag-material .ag-cell-not-inline-editing {\n  padding-top: 15px; }\n\n.ag-material .ag-header-cell-menu-button:hover {\n  border: 1px solid grey; }\n\n.ag-material .ag-header-cell-label {\n  text-align: left; }\n\n.ag-material .ag-header {\n  border-bottom: 1px solid grey; }\n\n.ag-material .ag-selection-checkbox {\n  padding-right: 12px;\n  padding-left: 12px; }\n", ""]);
+exports.push([module.i, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-material {\n  line-height: 1.4;\n  font-family: Roboto;\n  font-size: 14px;\n  color: #666;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-material .ag-numeric-cell {\n    text-align: right; }\n  .ag-material .ag-header-cell-label {\n    display: flex; }\n    .ag-material .ag-header-cell-label > span {\n      float: left; }\n    .ag-material .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-material .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-material .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-material .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-material .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-material .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-material .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-material .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-material img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-material .ag-root {\n    border: none; }\n  .ag-material .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-material .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-material .ag-cell-not-inline-editing {\n    padding: 2px;\n    /* compensate for the transparent borders; */\n    padding-left: 1px; }\n  .ag-material .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-material .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-material .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-material .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-material .ag-cell-focus {\n    border: 1px solid lightgrey; }\n  .ag-material .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid lightgrey; }\n  .ag-material .ag-ltr .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px solid transparent; }\n  .ag-material .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: 1px solid transparent; }\n  .ag-material .ag-rtl .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-material .ag-ltr .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-material .ag-rtl .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-material .ag-ltr .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-material .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-material .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-material .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-material .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-material .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-material .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-material .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-material .ag-rich-select {\n    font-size: 14px;\n    border: none;\n    background-color: white; }\n  .ag-material .ag-rich-select-value {\n    padding: 2px; }\n  .ag-material .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-material .ag-rich-select-row {\n    padding: 2px; }\n  .ag-material .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-material .ag-large-text {\n    border: none; }\n  .ag-material .ag-header-select-all, .ag-material .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-material .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-material .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-material .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-material .ag-header {\n    color: #666;\n    background: none;\n    border-bottom: none;\n    font-weight: bold; }\n  .ag-material .ag-header-icon {\n    color: #666;\n    stroke: none;\n    fill: #666; }\n  .ag-material .ag-filter-icon {\n    display: inline-block; }\n  .ag-material .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-layout-for-print .ag-header-container {\n    background: none;\n    border-bottom: none; }\n  .ag-material .ag-ltr .ag-header-cell {\n    border-right: none; }\n  .ag-material .ag-rtl .ag-header-cell {\n    border-left: none; }\n  .ag-material .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-material .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-material .ag-ltr .ag-header-group-cell {\n    border-right: none; }\n  .ag-material .ag-rtl .ag-header-group-cell {\n    border-left: none; }\n  .ag-material .ag-header-group-cell-with-group {\n    border-bottom: none; }\n  .ag-material .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-material .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-material .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-material .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-material .ag-ltr .ag-pinned-right-header {\n    border-left: none; }\n  .ag-material .ag-rtl .ag-pinned-left-header {\n    border-right: none; }\n  .ag-material .ag-body {\n    background-color: #fff; }\n  .ag-material .ag-row-odd {\n    background-color: white; }\n  .ag-material .ag-row-even {\n    background-color: white; }\n  .ag-material .ag-row-selected {\n    background-color: #F5F5F5; }\n  .ag-material .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-material .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-material .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-material .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-material .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-material .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-material .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-material .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-material .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-material .ag-group-cell-entire-row {\n    background-color: #fff;\n    padding: 2px; }\n  .ag-material .ag-footer-cell-entire-row {\n    background-color: #fff;\n    padding: 2px; }\n  .ag-material .ag-group-cell {\n    font-style: italic; }\n  .ag-material .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-material .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-material .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-material .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-material .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-material .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-material .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-material .ag-group-child-count {\n    display: inline-block; }\n  .ag-material .ag-footer-cell {\n    font-style: italic; }\n  .ag-material .ag-menu {\n    border: 1px solid #808080;\n    background-color: #fff;\n    cursor: default;\n    font-family: Roboto;\n    font-size: 14px; }\n    .ag-material .ag-menu .ag-tab-header {\n      background-color: #f6f6f6; }\n    .ag-material .ag-menu .ag-tab {\n      padding: 6px 16px 6px 16px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-material .ag-menu .ag-tab-selected {\n      background-color: #fff;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent; }\n  .ag-material .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-material .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-material .ag-menu-option-icon {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle; }\n  .ag-material .ag-menu-option-text {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle; }\n  .ag-material .ag-menu-option-shortcut {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle; }\n  .ag-material .ag-menu-option-popup-pointer {\n    padding: 10px 6px 10px 6px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-material .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-material .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-material .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-material .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-material .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-material .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-material .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-material .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-material .ag-paging-panel {\n    padding: 4px; }\n  .ag-material .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-material .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-material .ag-tool-panel {\n    background-color: #fff;\n    border-bottom: none;\n    border-top: none;\n    color: #666; }\n  .ag-material .ltr .ag-tool-panel {\n    border-right: none; }\n  .ag-material .rtl .ag-tool-panel {\n    border-left: none; }\n  .ag-material .ag-status-bar {\n    color: #666;\n    background-color: #fff;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: none;\n    border-left: none;\n    border-right: none;\n    padding: 2px; }\n  .ag-material .ag-status-bar-aggregations {\n    float: right; }\n  .ag-material .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-material .ag-column-drop-cell {\n    background: none;\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-material .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-material .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-material .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-material .ag-column-drop-cell-button:hover {\n    border: none; }\n  .ag-material .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-material .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-material .ag-column-drop {\n    background-color: #fff; }\n  .ag-material .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: none;\n    border-left: none;\n    border-right: none; }\n  .ag-material .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: none;\n    overflow: auto; }\n    .ag-material .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-material .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-material .ag-pivot-mode {\n    border-bottom: none;\n    padding: 2px 4px 3px 4px;\n    background-color: #fff; }\n  .ag-material .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: none;\n    overflow: auto; }\n  .ag-material .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: none; }\n  .ag-material .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-material .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-material .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-material .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-material .ag-floating-filter-button button {\n      border: 0;\n      background: transparent;\n      padding: 3px;\n      margin: 0; }\n  .ag-material .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-material .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-material .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-material .ag-sort-order::before {\n      content: '('; }\n    .ag-material .ag-sort-order::after {\n      content: ')'; }\n\n.ag-material .ag-row-hover {\n  background-color: #eeeeee !important; }\n\n.ag-material .ag-cell-not-inline-editing {\n  padding-top: 15px; }\n\n.ag-material .ag-header-cell-menu-button:hover {\n  border: 1px solid grey; }\n\n.ag-material .ag-header-cell-label {\n  text-align: left; }\n\n.ag-material .ag-header {\n  border-bottom: 1px solid grey; }\n\n.ag-material .ag-selection-checkbox {\n  padding-right: 12px;\n  padding-left: 12px; }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 149 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(150);
+var content = __webpack_require__(152);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(28)(content, {});
+var update = __webpack_require__(29)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -32769,30 +33046,30 @@ if(false) {
 }
 
 /***/ }),
-/* 150 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(27)();
+exports = module.exports = __webpack_require__(28)();
 // imports
 
 
 // module
-exports.push([module.i, ".ag-theme-material {\n  font: 400 13px \"Roboto\", sans-serif;\n  color: rgba(0, 0, 0, 0.87);\n  background-color: #FFFFFF; }\n  .ag-theme-material .ag-header {\n    font: 700 12px \"Roboto\", sans-serif;\n    color: rgba(0, 0, 0, 0.54); }\n  .ag-theme-material .ag-header-row {\n    border-bottom: 1px solid #E0E0E0;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box; }\n  .ag-theme-material .ag-row {\n    border-bottom: 1px solid #E0E0E0;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box; }\n  .ag-theme-material .ag-row-hover {\n    background-color: #EEEEEE; }\n  .ag-theme-material .ag-numeric-cell {\n    text-align: right; }\n  .ag-theme-material .ag-header-cell-label {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    float: left;\n    width: calc(100% - 18px); }\n    .ag-theme-material .ag-header-cell-label > span {\n      float: left; }\n    .ag-theme-material .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-theme-material .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-label {\n    -webkit-box-orient: horizontal;\n    -webkit-box-direction: reverse;\n    -ms-flex-direction: row-reverse;\n    flex-direction: row-reverse; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-label {\n    float: right; }\n    .ag-theme-material .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-theme-material .ag-header-cell, .ag-theme-material .ag-header-group-cell {\n    padding-left: 24px;\n    padding-right: 24px;\n    line-height: 56px; }\n  .ag-theme-material .ag-cell {\n    padding-left: 24px;\n    padding-right: 24px;\n    line-height: 46px;\n    border: 1px solid transparent; }\n  .ag-theme-material .ag-cell:focus {\n    outline: initial;\n    border: 1px solid #3f51b5; }\n  .ag-theme-material .ag-cell-highlight {\n    background-color: #FCE4EC !important; }\n  .ag-theme-material .ag-cell-highlight-animation {\n    -webkit-transition: background-color 1s;\n    transition: background-color 1s; }\n  .ag-theme-material .ag-header-cell-resize {\n    width: 16px;\n    position: absolute;\n    right: -8px;\n    z-index: 4; }\n    .ag-theme-material .ag-header-cell-resize::after {\n      border-right: 1px solid #E0E0E0;\n      display: block;\n      height: 24px;\n      margin-top: 16px;\n      content: 'resize';\n      overflow: hidden;\n      text-indent: 8px;\n      width: 8px; }\n  .ag-theme-material .ag-icon-aggregation {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTMgMTN2MWExIDEgMCAwIDEtMSAxSDVhMSAxIDAgMCAxLTEtMXYtMWwzLTQtMy00VjRhMSAxIDAgMCAxIDEtMWg3YTEgMSAwIDAgMSAxIDF2MUg2LjVsMi41NSAzLjRhMSAxIDAgMCAxIDAgMS4yTDYuNSAxM0gxM3oiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-arrows {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDYuNWgzdi0yaDJMOSAxIDUuNSA0LjVoMnYyem0tMSAxaC0ydi0yTDEgOWwzLjUgMy41di0yaDJ2LTN6TTE3IDlsLTMuNS0zLjV2MmgtMnYzaDJ2MkwxNyA5em0tNi41IDIuNWgtM3YyaC0yTDkgMTdsMy41LTMuNWgtMnYtMnoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-asc {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTVWNmw0IDQgMS0xLTYtNi02IDYgMSAxIDQtNHY5eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-checked-readonly {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiIG9wYWNpdHk9Ii41Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-checked {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-indeterminate-readonly {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yem0tMiAxMEg0VjhoMTB2MnoiIGZpbGwtb3BhY2l0eT0iLjUiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-indeterminate {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yem0tMiAxMEg0VjhoMTB2MnoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-unchecked-readonly {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMnYxNEgyVjJoMTR6bTAtMkgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yeiIgZmlsbC1vcGFjaXR5PSIuNSIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-unchecked {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMnYxNEgyVjJoMTR6bTAtMkgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yeiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-column {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiAyaDR2Mkgyem0wIDRoNHYxMEgyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-columns {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-contracted {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMi41TDggOWwzLjUtMy41LTEtMUw2IDlsNC41IDQuNXoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-copy {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMSAySDRhMSAxIDAgMCAwLTEgMXY5aDFWM2g3VjJ6IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNiA0aDZhMSAxIDAgMCAxIDEgMXY5YTEgMSAwIDAgMS0xIDFINmExIDEgMCAwIDEtMS0xVjVhMSAxIDAgMCAxIDEtMXptMCAxdjloNlY1SDZ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-cut {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy4zNDggNS45NDhjLjE2MS0uMzUuMjUyLS43MzUuMjUyLTEuMTQ4YTIuOCAyLjggMCAxIDAtNS42IDAgMi44IDIuOCAwIDAgMCAyLjggMi44Yy40MTMgMCAuNzk4LS4wOTEgMS4xNDgtLjI1Mkw3LjYgOWwtMS42NTIgMS42NTJBMi43MjggMi43MjggMCAwIDAgNC44IDEwLjRhMi44IDIuOCAwIDEgMCAwIDUuNiAyLjggMi44IDAgMCAwIDIuOC0yLjhjMC0uNDEzLS4wOTEtLjc5OC0uMjUyLTEuMTQ4TDkgMTAuNGw0LjkgNC45SDE2di0uN0w3LjM0OCA1Ljk0OHpNNC44IDYuMmExLjQgMS40IDAgMSAxIDAtMi44IDEuNCAxLjQgMCAwIDEgMCAyLjh6bTAgOC40YTEuNCAxLjQgMCAxIDEgMC0yLjggMS40IDEuNCAwIDAgMSAwIDIuOHpNOSA5LjM1QS4zNDcuMzQ3IDAgMCAxIDguNjUgOWMwLS4xOTYuMTU0LS4zNS4zNS0uMzUuMTk2IDAgLjM1LjE1NC4zNS4zNSAwIC4xOTYtLjE1NC4zNS0uMzUuMzV6bTQuOS02LjY1TDkuNyA2LjlsMS40IDEuNEwxNiAzLjR2LS43aC0yLjF6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-desc {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCAzdjkuMTNMNCA4IDMgOWw2IDYgNi02LTEtMS00IDQuMTNWM3oiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-expanded {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMi41TDkuNSA5IDYgNS41bDEtMUwxMS41IDkgNyAxMy41eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-eye-slash {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMi40NDkgMTIuNDVsLTEuMzg4LTEuMzg3YTIuOTE4IDIuOTE4IDAgMCAwLTQuMTI0LTQuMTI0TDUuNTUgNS41NUE2Ljg1IDYuODUgMCAwIDEgOSA0LjYyNSA2Ljg5OSA2Ljg5OSAwIDAgMSAxNS40MTcgOWE2LjkzNSA2LjkzNSAwIDAgMS0yLjk2OCAzLjQ1em0tLjk1NS40NkE2Ljg5OSA2Ljg5OSAwIDAgMSAyLjU4NCA5IDYuOTMzIDYuOTMzIDAgMCAxIDQuNzEgNi4xMjVMNi4zNTUgNy43N2EyLjkxOCAyLjkxOCAwIDAgMCAzLjg3NSAzLjg3NWwxLjI2NCAxLjI2NHoiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0xMC4yNDIgMTAuMjM1TDcuNzY1IDcuNzU4QTEuNzQ0IDEuNzQ0IDAgMCAxIDkgNy4yNWMuOTY4IDAgMS43NS43ODIgMS43NSAxLjc1IDAgLjQ4Mi0uMTk0LjkxOC0uNTA4IDEuMjM1em0tLjkyNy40ODdhMS43NDggMS43NDggMCAwIDEtMi4wMzctMi4wMzdsMi4wMzcgMi4wMzd6Ii8+PHBhdGggZD0iTTMuMDcgOC40ODdoMTIuNDE3djFIMy4wN3oiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-eye {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0LjYyNUE2Ljg5OSA2Ljg5OSAwIDAgMCAyLjU4MyA5IDYuODk5IDYuODk5IDAgMCAwIDkgMTMuMzc1IDYuODk5IDYuODk5IDAgMCAwIDE1LjQxNyA5IDYuODk5IDYuODk5IDAgMCAwIDkgNC42MjV6bTAgNy4yOTJhMi45MTggMi45MTggMCAwIDEgMC01LjgzNCAyLjkxOCAyLjkxOCAwIDAgMSAwIDUuODM0ek05IDcuMjVjLS45NjggMC0xLjc1Ljc4Mi0xLjc1IDEuNzVzLjc4MiAxLjc1IDEuNzUgMS43NSAxLjc1LS43ODIgMS43NS0xLjc1UzkuOTY4IDcuMjUgOSA3LjI1eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-filter {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-group {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xNCAxNEg3di0yaDlhMiAyIDAgMCAxLTIgMnptLTUtMnYyaDJ2LTJIOXoiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0xNiA2YTIgMiAwIDAgMC0yLTJINWEyIDIgMCAwIDAtMiAyaDEzek03IDR2Mkg1VjRoMnptOSA2SDdWOGg5djJ6TTkgOHYyaDJWOEg5eiIvPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-indeterminate {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0LjYyNUE2Ljg5OSA2Ljg5OSAwIDAgMCAyLjU4MyA5IDYuODk5IDYuODk5IDAgMCAwIDkgMTMuMzc1IDYuODk5IDYuODk5IDAgMCAwIDE1LjQxNyA5IDYuODk5IDYuODk5IDAgMCAwIDkgNC42MjV6bTAgNy4yOTJhMi45MTggMi45MTggMCAwIDEgMC01LjgzNCAyLjkxOCAyLjkxOCAwIDAgMSAwIDUuODM0eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-left {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUgOEg2bDQtNC0xLTEtNiA2IDYgNiAxLTEtNC00aDl6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-loading {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImIiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImQiIGQ9Ik03IDRoM3YySDd6Ii8+PHBhdGggaWQ9ImUiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImYiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImciIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImgiIGQ9Ik03IDRoM3YySDd6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMyA0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNS41aDF2MmgtMXoiLz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMyA0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNSA3LjVoMXYyaC0xeiIvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzIDQpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNjIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNLjUgNC41aDJ2MWgtMnoiLz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMyA0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTcuNSA0LjVoMnYxaC0yeiIvPjwvZz48ZyBvcGFjaXR5PSIuNzE0Ij48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxLjY3MiAxMC42MjEpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNlIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41LjVoMXYyaC0xeiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxLjY3MiAxMC42MjEpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNmIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41IDcuNWgxdjJoLTF6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDEuNjcyIDEwLjYyMSkiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2ciLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik0uNSA0LjVoMnYxaC0yeiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxLjY3MiAxMC42MjEpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNoIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNy41IDQuNWgydjFoLTJ6Ii8+PC9nPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-menu {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-minus {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQgMTBINFY4aDEweiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-none {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoNXYtMkgyeiIvPjxwYXRoIGQ9Ik0yIDR2MmgxNFY0em0wIDZoOVY4SDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-not-allowed {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxLjVDNC44NiAxLjUgMS41IDQuODYgMS41IDljMCA0LjE0IDMuMzYgNy41IDcuNSA3LjUgNC4xNCAwIDcuNS0zLjM2IDcuNS03LjUgMC00LjE0LTMuMzYtNy41LTcuNS03LjV6TTMgOWMwLTMuMzE1IDIuNjg1LTYgNi02YTUuOTMgNS45MyAwIDAgMSAzLjY3NSAxLjI2OGwtOC40MDggOC40MDdBNS45MjcgNS45MjcgMCAwIDEgMyA5em02IDZhNS45MjcgNS45MjcgMCAwIDEtMy42NzUtMS4yNjhsOC40MDctOC40MDdBNS45MjcgNS45MjcgMCAwIDEgMTUgOWMwIDMuMzE1LTIuNjg1IDYtNiA2eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-paste {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEgM2MwLS41LS41LTEuNS0yLTEuNVM3IDIuNSA3IDNINGExIDEgMCAwIDAtMSAxdjExYTEgMSAwIDAgMCAxIDFoMTBhMSAxIDAgMCAwIDEtMVY0YTEgMSAwIDAgMC0xLTFoLTN6bS0yIC4yNzNjLjM2NyAwIC42NjcuMjg2LjY2Ny42MzYgMCAuMzUtLjMuNjM2LS42NjcuNjM2LS4zNjcgMC0uNjY3LS4yODYtLjY2Ny0uNjM2IDAtLjM1LjMtLjYzNi42NjctLjYzNnpNMTQgMTVINFY0aDJ2Mmg2VjRoMnYxMXoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-pin {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik05LjY1NyAybDUuNDEgNS40MS0uNTQuNTQyLS41NDItLjU0MS00LjMyOCAyLjE2NCAxLjA4MiAxLjA4Mi0xLjU0MSAxLjU0TDQuODY5IDcuODdsMS41NDItMS41NCAxLjA4MiAxLjA4IDIuMTY0LTQuMzI5LS41NDEtLjU0eiIvPjxwYXRoIGQ9Ik02IDExbC0yLjUgMi41IiBzdHJva2U9IiMwMDAiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-pivot {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTExLjUgMTAuNUwxMyA5bDEuNSAxLjVtLTUgMUw4IDEzbDEuNSAxLjUiLz48cGF0aCBkPSJNMCAwaDE4djE4SDB6Ii8+PHBhdGggZD0iTTMgMWgxMmEyIDIgMCAwIDEgMiAydjEyYTIgMiAwIDAgMS0yIDJIM2EyIDIgMCAwIDEtMi0yVjNhMiAyIDAgMCAxIDItMnptMyAxNHYtM0gzdjNoM3ptMC00VjhIM3YzaDN6bTAtNVYzSDN2M2gzem01IDBWM0g3djNoNHptNCA5VjhIN3Y3aDh6bTAtOVYzaC0zdjNoM3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-plus {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQgMTBoLTR2NEg4di00SDRWOGg0VjRoMnY0aDR6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-right {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAzTDggNGw0IDRIM3YyaDlsLTQgNCAxIDEgNi02eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-left {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTNMNiA5bDQtNHoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-right {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCA1bDQgNC00IDR6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-up {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAxMGw0LTQgNCA0eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-down {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSA4bDQgNCA0LTR6Ii8+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-tick {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNi41IDEyLjVMMyA5bC0xIDEgNC41IDQuNSA5LTktMS0xeiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-cross {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQgNWwtMS0xLTQgNC00LTQtMSAxIDQgNC00IDQgMSAxIDQtNCA0IDQgMS0xLTQtNHoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-tree-open {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIuNSA2LjVMOSAxMCA1LjUgNi41bC0xIDFMOSAxMmw0LjUtNC41eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-tree-closed {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMi41TDkuNSA5IDYgNS41bDEtMUwxMS41IDkgNyAxMy41eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-header-cell-menu-button .ag-icon-menu {\n    height: 56px; }\n  .ag-theme-material .ag-icon-checkbox-checked:empty {\n    background: #ff4081 none;\n    -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=) no-repeat 50% 50%;\n    mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=) no-repeat 50% 50%; }\n    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n      .ag-theme-material .ag-icon-checkbox-checked:empty {\n        background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=); } }\n  .ag-theme-material .ag-menu {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    padding: 0;\n    z-index: 5; }\n    .ag-theme-material .ag-menu .ag-menu-list {\n      width: 100%;\n      cursor: default;\n      margin-top: 8px;\n      margin-bottom: 8px; }\n    .ag-theme-material .ag-menu .ag-menu-option {\n      line-height: 32px;\n      padding-left: 16px;\n      padding-right: 16px; }\n      .ag-theme-material .ag-menu .ag-menu-option > span {\n        vertical-align: middle;\n        display: table-cell; }\n    .ag-theme-material .ag-menu .ag-menu-option-active {\n      background: #EEEEEE; }\n    .ag-theme-material .ag-menu .ag-menu-option-icon {\n      padding-left: 8px;\n      padding-right: 8px; }\n      .ag-theme-material .ag-menu .ag-menu-option-icon span {\n        margin-top: 8px;\n        height: 18px;\n        line-height: 0; }\n    .ag-theme-material .ag-menu .ag-menu-option-shortcut {\n      padding-left: 16px; }\n    .ag-theme-material .ag-menu .ag-menu-separator {\n      margin-left: -8px; }\n      .ag-theme-material .ag-menu .ag-menu-separator > span {\n        height: 16px;\n        background-image: url(\"data:image/svg+xml;utf8,<svg width='1' height='16px' viewBox='0 0 1 16px' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='8px' x2='1' y2='8px' stroke-width='1' stroke='#E0E0E0'/> </svg>\"); }\n    .ag-theme-material .ag-menu .ag-menu-option-popup-pointer {\n      width: 34px; }\n  .ag-theme-material.ag-dnd-ghost {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    font: 700 12px \"Roboto\", sans-serif;\n    color: rgba(0, 0, 0, 0.54);\n    border: none;\n    height: 56px !important;\n    line-height: 56px;\n    z-index: 5;\n    margin: 0;\n    -webkit-transform: translatey(16px);\n    transform: translatey(16px);\n    padding: 0 16px; }\n    .ag-theme-material.ag-dnd-ghost span, .ag-theme-material.ag-dnd-ghost div {\n      float: left;\n      height: 100%;\n      margin: 0;\n      padding: 0; }\n  .ag-theme-material .ag-tab-header {\n    background: #EEEEEE;\n    display: table;\n    width: 100%;\n    min-width: 220px; }\n    .ag-theme-material .ag-tab-header .ag-tab {\n      display: table-cell;\n      height: 32px;\n      vertical-align: middle;\n      text-align: center;\n      border-bottom: 2px solid transparent; }\n      .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected {\n        border-bottom: 2px solid #3f51b5; }\n        .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-filter {\n          display: inline-block;\n          background: #3f51b5 none;\n          -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) no-repeat 50% 50%;\n          mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) no-repeat 50% 50%; }\n          @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n            .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-filter {\n              background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+); } }\n        .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-columns {\n          display: inline-block;\n          background: #3f51b5 none;\n          -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+) no-repeat 50% 50%;\n          mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+) no-repeat 50% 50%; }\n          @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n            .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-columns {\n              background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+); } }\n        .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-menu {\n          display: inline-block;\n          background: #3f51b5 none;\n          -webkit-mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==) no-repeat 50% 50%;\n          mask: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==) no-repeat 50% 50%; }\n          @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n            .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-menu {\n              background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==); } }\n  .ag-theme-material .ag-tab-body {\n    padding: 8px 0; }\n    .ag-theme-material .ag-tab-body .ag-filter-select {\n      margin: 8px;\n      width: calc(100% - 16px); }\n    .ag-theme-material .ag-tab-body .ag-menu-list {\n      margin-top: 0;\n      margin-bottom: 0; }\n      .ag-theme-material .ag-tab-body .ag-menu-list > div:first-child > span {\n        padding-top: 0; }\n      .ag-theme-material .ag-tab-body .ag-menu-list > div:last-child > span {\n        padding-bottom: 0; }\n      .ag-theme-material .ag-tab-body .ag-menu-list > div:last-child > .ag-menu-option-popup-pointer {\n        background-position-y: 0; }\n  .ag-theme-material .ag-filter-select {\n    margin: 8px;\n    width: calc(100% - 16px); }\n  .ag-theme-material .ag-filter input[type=text], .ag-theme-material .ag-filter input[type=date] {\n    border: 0;\n    background: transparent;\n    font-size: inherit;\n    font-family: inherit;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n    border-bottom: 1px solid #E0E0E0;\n    height: 24px;\n    padding-bottom: 8px;\n    color: rgba(0, 0, 0, 0.87);\n    padding-left: 8px; }\n    .ag-theme-material .ag-filter input[type=text]:focus, .ag-theme-material .ag-filter input[type=date]:focus {\n      border-bottom: 2px solid #3f51b5;\n      padding-bottom: 7px;\n      outline: none; }\n    .ag-theme-material .ag-filter input[type=text]::-webkit-input-placeholder, .ag-theme-material .ag-filter input[type=date]::-webkit-input-placeholder {\n      color: rgba(0, 0, 0, 0.38); }\n    .ag-theme-material .ag-filter input[type=text]:-ms-input-placeholder, .ag-theme-material .ag-filter input[type=date]:-ms-input-placeholder {\n      color: rgba(0, 0, 0, 0.38); }\n    .ag-theme-material .ag-filter input[type=text]::placeholder, .ag-theme-material .ag-filter input[type=date]::placeholder {\n      color: rgba(0, 0, 0, 0.38); }\n  .ag-theme-material .ag-filter label {\n    display: block;\n    padding-left: 8px; }\n  .ag-theme-material .ag-filter .ag-set-filter-list {\n    padding-top: 8px; }\n  .ag-theme-material .ag-filter .ag-filter-header-container {\n    height: 32px;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box; }\n  .ag-theme-material .ag-filter .ag-filter-header-container:nth-child(2) {\n    border-bottom: 1px solid #E0E0E0; }\n  .ag-theme-material .ag-filter .ag-filter-checkbox {\n    float: left;\n    margin-right: 8px;\n    height: 32px;\n    padding-top: 4px; }\n  .ag-theme-material .ag-filter .ag-filter-value {\n    height: 32px;\n    float: left;\n    line-height: 28px; }\n  .ag-theme-material .ag-filter .ag-filter-apply-panel {\n    padding: 8px;\n    padding-top: 16px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-pack: end;\n    -ms-flex-pack: end;\n    justify-content: flex-end; }\n    .ag-theme-material .ag-filter .ag-filter-apply-panel button {\n      -webkit-appearance: none;\n      background: transparent;\n      border: 0;\n      color: #3f51b5;\n      text-transform: uppercase;\n      font-family: inherit;\n      font-size: inherit;\n      padding: 0;\n      margin: 0; }\n    .ag-theme-material .ag-filter .ag-filter-apply-panel button + button {\n      margin-left: 16px; }\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column-group::not(::first-child) {\n    border-top: 1px solid #E0E0E0; }\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column-group,\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column {\n    height: 32px;\n    line-height: 32px;\n    margin-left: 8px; }\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column-group span,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column span {\n      float: left;\n      height: 100%; }\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column-group .ag-column-select-indent,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column .ag-column-select-indent {\n      width: 16px; }\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column-group .ag-column-select-checkbox, .ag-theme-material .ag-column-select-panel .ag-column-select-column-group .ag-column-group-icons,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column .ag-column-select-checkbox,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column .ag-column-group-icons {\n      margin-right: 8px; }\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column {\n    margin-left: 42px; }\n  .ag-theme-material .ag-tool-panel {\n    border-right: 0;\n    background-color: #FAFAFA; }\n    .ag-theme-material .ag-tool-panel .ag-pivot-mode {\n      height: 56px;\n      border-bottom: 1px solid #E0E0E0;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      line-height: 56px; }\n      .ag-theme-material .ag-tool-panel .ag-pivot-mode span {\n        float: left;\n        height: 100%; }\n      .ag-theme-material .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select {\n        margin-left: 8px; }\n        .ag-theme-material .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select .ag-checkbox-label {\n          margin-left: 8px; }\n    .ag-theme-material .ag-tool-panel .ag-column-select-panel {\n      padding: 8px 0;\n      padding-bottom: 7px;\n      border-bottom: 1px solid #E0E0E0; }\n    .ag-theme-material .ag-tool-panel .ag-column-drop {\n      overflow: auto;\n      border-bottom: 1px solid #E0E0E0;\n      padding: 8px 0;\n      padding-bottom: 16px;\n      clear: both; }\n      .ag-theme-material .ag-tool-panel .ag-column-drop .ag-icon {\n        float: left;\n        height: 40px;\n        margin: 0 8px; }\n      .ag-theme-material .ag-tool-panel .ag-column-drop .ag-column-drop-title {\n        line-height: 40px;\n        height: 40px;\n        float: left;\n        width: calc(100% - 34px);\n        clear: right; }\n      .ag-theme-material .ag-tool-panel .ag-column-drop .ag-column-drop-empty-message {\n        clear: both;\n        font: 700 12px \"Roboto\", sans-serif;\n        color: rgba(0, 0, 0, 0.38);\n        padding-left: 32px;\n        padding-right: 8px;\n        line-height: 16px; }\n  .ag-theme-material .ag-filter-icon:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-sort-ascending-icon:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTVWNmw0IDQgMS0xLTYtNi02IDYgMSAxIDQtNHY5eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-sort-descending-icon:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCAzdjkuMTNMNCA4IDMgOWw2IDYgNi02LTEtMS00IDQuMTNWM3oiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-sort-none-icon:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoNXYtMkgyeiIvPjxwYXRoIGQ9Ik0yIDR2MmgxNFY0em0wIDZoOVY4SDJ6Ii8+PC9nPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-header-cell-label .ag-header-icon {\n    margin: 0;\n    height: 100%;\n    background-size: 14px 14px;\n    background-position-y: 20px;\n    margin-left: 8px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-label .ag-header-icon {\n    margin-left: 0;\n    margin-right: 8px; }\n  .ag-theme-material .ag-paging-panel {\n    border-top: 1px solid #E0E0E0;\n    height: 56px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n    -ms-flex-align: center;\n    align-items: center;\n    padding: 0 24px;\n    -webkit-box-pack: end;\n    -ms-flex-pack: end;\n    justify-content: flex-end;\n    color: rgba(0, 0, 0, 0.54); }\n    .ag-theme-material .ag-paging-panel > span {\n      margin-left: 32px; }\n    .ag-theme-material .ag-paging-panel button[ref=btFirst] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00LjUgNC41SDZ2OUg0LjV6Ii8+PHBhdGggZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNMTQgMTIuNUwxMC41IDkgMTQgNS41bC0xLTFMOC41IDlsNC41IDQuNXoiLz48L2c+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btFirst][disabled] {\n        opacity: 0.38; }\n    .ag-theme-material .ag-paging-panel button[ref=btPrevious] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMi41TDggOWwzLjUtMy41LTEtMUw2IDlsNC41IDQuNXoiLz48L3N2Zz4=) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btPrevious][disabled] {\n        opacity: 0.38; }\n    .ag-theme-material .ag-paging-panel button[ref=btLast] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMy41IDQuNUgxMnY5aDEuNXoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik00IDEyLjVMNy41IDkgNCA1LjVsMS0xTDkuNSA5IDUgMTMuNXoiLz48L2c+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btLast][disabled] {\n        opacity: 0.38; }\n    .ag-theme-material .ag-paging-panel button[ref=btNext] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMi41TDkuNSA5IDYgNS41bDEtMUwxMS41IDkgNyAxMy41eiIvPjwvc3ZnPg==) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btNext][disabled] {\n        opacity: 0.38; }\n  .ag-theme-material .ag-row-selected {\n    background-color: #F5F5F5; }\n  .ag-theme-material .ag-cell-range-selected:not(.ag-cell-focus) {\n    background-color: #E8EAF6; }\n  .ag-theme-material .ag-cell-inline-editing {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    height: 72px;\n    z-index: 2;\n    background: #F5F5F5;\n    padding: 24px;\n    line-height: normal; }\n    .ag-theme-material .ag-cell-inline-editing input[type=text] {\n      border: 0;\n      background: transparent;\n      font-size: inherit;\n      font-family: inherit;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      border-bottom: 1px solid #E0E0E0;\n      height: 24px;\n      padding-bottom: 8px;\n      color: rgba(0, 0, 0, 0.87); }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]:focus {\n        border-bottom: 2px solid #3f51b5;\n        padding-bottom: 7px;\n        outline: none; }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]::-webkit-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]:-ms-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]::placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n    .ag-theme-material .ag-cell-inline-editing select {\n      height: auto; }\n  .ag-theme-material .ag-popup-editor {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    padding: 0;\n    background: #F5F5F5; }\n    .ag-theme-material .ag-popup-editor .ag-large-textarea textarea {\n      padding: 24px;\n      border: 0;\n      background: transparent;\n      font-size: inherit;\n      font-family: inherit;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      border-bottom: 1px solid #E0E0E0;\n      height: 24px;\n      padding-bottom: 8px;\n      color: rgba(0, 0, 0, 0.87);\n      height: auto; }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea:focus {\n        border-bottom: 2px solid #3f51b5;\n        padding-bottom: 7px;\n        outline: none; }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea::-webkit-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea:-ms-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea::placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n  .ag-theme-material .ag-rich-select {\n    background: #F5F5F5;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIuNSA2LjVMOSAxMCA1LjUgNi41bC0xIDFMOSAxMmw0LjUtNC41eiIvPjwvc3ZnPg==);\n    background-position-y: 16px;\n    background-position-x: calc(100% - 8px);\n    background-repeat: no-repeat; }\n    .ag-theme-material .ag-rich-select .ag-rich-select-list {\n      height: 200px; }\n    .ag-theme-material .ag-rich-select .ag-rich-select-value {\n      line-height: 48px;\n      height: 48px;\n      padding-left: 24px; }\n    .ag-theme-material .ag-rich-select .ag-virtual-list-item {\n      cursor: default;\n      height: 48px;\n      line-height: 48px;\n      padding-left: 24px; }\n      .ag-theme-material .ag-rich-select .ag-virtual-list-item:hover {\n        background-color: #EEEEEE; }\n  .ag-theme-material .ag-floating-filter-body {\n    float: left;\n    width: calc(100% - 8px * 4);\n    margin-right: 0;\n    height: 100%; }\n    .ag-theme-material .ag-floating-filter-body input {\n      border: 0;\n      background: transparent;\n      font-size: inherit;\n      font-family: inherit;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      border-bottom: 1px solid #E0E0E0;\n      height: 24px;\n      padding-bottom: 8px;\n      color: rgba(0, 0, 0, 0.87); }\n      .ag-theme-material .ag-floating-filter-body input:focus {\n        border-bottom: 2px solid #3f51b5;\n        padding-bottom: 7px;\n        outline: none; }\n      .ag-theme-material .ag-floating-filter-body input::-webkit-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-floating-filter-body input:-ms-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-floating-filter-body input::placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n  .ag-theme-material .ag-floating-filter-button {\n    padding-top: 20px;\n    float: right; }\n    .ag-theme-material .ag-floating-filter-button button {\n      -webkit-appearance: none;\n      background: transparent;\n      border: 0;\n      color: #3f51b5;\n      text-transform: uppercase;\n      font-family: inherit;\n      font-size: inherit;\n      padding: 0;\n      margin: 0;\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden; }\n  .ag-theme-material .ag-cell-label-container {\n    height: 100%; }\n  .ag-theme-material .ag-header-cell-label {\n    height: 100%; }\n    .ag-theme-material .ag-header-cell-label span {\n      height: 100%; }\n  .ag-theme-material .ag-header-group-cell-label {\n    height: 100%; }\n    .ag-theme-material .ag-header-group-cell-label span {\n      float: left;\n      height: 100%; }\n  .ag-theme-material .ag-header-select-all {\n    margin-right: 24px;\n    height: 100%; }\n    .ag-theme-material .ag-header-select-all span {\n      height: 100%; }\n  .ag-theme-material .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {\n    width: calc(100% - 18px - 24px);\n    float: left; }\n  .ag-theme-material .ag-selection-checkbox span, .ag-theme-material .ag-group-expanded span, .ag-theme-material .ag-group-contracted span {\n    margin-right: 24px; }\n  .ag-theme-material .ag-selection-checkbox span {\n    position: relative;\n    top: 4px; }\n  .ag-theme-material .ag-group-expanded .ag-icon-contracted:empty {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIuNSA2LjVMOSAxMCA1LjUgNi41bC0xIDFMOSAxMmw0LjUtNC41eiIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-column-drop-horizontal {\n    height: 48px;\n    line-height: 32px;\n    background-color: #EEEEEE;\n    padding-left: 24px; }\n    .ag-theme-material .ag-column-drop-horizontal.ag-width-half {\n      margin-bottom: -3px; }\n    .ag-theme-material .ag-column-drop-horizontal span {\n      height: 100%;\n      float: left; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-icon-group, .ag-theme-material .ag-column-drop-horizontal .ag-icon-pivot {\n      margin-right: 24px; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-right-arrow {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAzTDggNGw0IDRIM3YyaDlsLTQgNCAxIDEgNi02eiIvPjwvc3ZnPg==) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-left-arrow {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUgOEg2bDQtNC0xLTEtNiA2IDYgNiAxLTEtNC00aDl6Ii8+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-left-arrow, .ag-theme-material .ag-column-drop-horizontal .ag-right-arrow {\n      text-indent: 100%;\n      overflow: hidden;\n      height: 100%;\n      margin: 0 8px;\n      opacity: 0.54; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-column-drop-empty-message {\n      height: 100%;\n      line-height: 48px;\n      opacity: 0.54; }\n  .ag-theme-material .ag-column-drop-cell {\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n    height: 32px !important;\n    margin-top: 8px;\n    padding: 0 4px;\n    background: #E0E0E0;\n    border-radius: 32px; }\n    .ag-theme-material .ag-column-drop-cell .ag-column-drop-cell-text {\n      margin: 0 8px;\n      height: 100%;\n      line-height: 32px; }\n    .ag-theme-material .ag-column-drop-cell .ag-column-drop-cell-button {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxLjVBNy40OTMgNy40OTMgMCAwIDAgMS41IDljMCA0LjE0OCAzLjM1MyA3LjUgNy41IDcuNSA0LjE0OCAwIDcuNS0zLjM1MiA3LjUtNy41IDAtNC4xNDctMy4zNTItNy41LTcuNS03LjV6bTMuNzUgMTAuMTkzbC0xLjA1NyAxLjA1N0w5IDEwLjA1NyA2LjMwOCAxMi43NSA1LjI1IDExLjY5MyA3Ljk0MiA5IDUuMjUgNi4zMDggNi4zMDggNS4yNSA5IDcuOTQybDIuNjkzLTIuNjkyIDEuMDU3IDEuMDU4TDEwLjA1NyA5bDIuNjkzIDIuNjkzeiIvPjwvc3ZnPg==) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      height: 100%;\n      opacity: 0.54;\n      margin: 0 4px; }\n      .ag-theme-material .ag-column-drop-cell .ag-column-drop-cell-button:hover {\n        opacity: 0.87; }\n  .ag-theme-material .ag-column-drop-vertical > .ag-column-drop-cell {\n    margin-top: 0;\n    margin-left: 8px;\n    margin-bottom: 8px;\n    float: left; }\n  .ag-theme-material .ag-row-level-1 > .ag-cell:first-child > span:first-child {\n    padding-left: 66px !important; }\n  .ag-theme-material .ag-row-level-2 > .ag-cell:first-child > span:first-child {\n    padding-left: 132px !important; }\n  .ag-theme-material .ag-row-level-3 > .ag-cell:first-child > span:first-child {\n    padding-left: 198px !important; }\n  .ag-theme-material .ag-row-level-4 > .ag-cell:first-child > span:first-child {\n    padding-left: 264px !important; }\n  .ag-theme-material .ag-row-level-5 > .ag-cell:first-child > span:first-child {\n    padding-left: 330px !important; }\n  .ag-theme-material .ag-row-level-6 > .ag-cell:first-child > span:first-child {\n    padding-left: 396px !important; }\n  .ag-theme-material .ag-row-level-7 > .ag-cell:first-child > span:first-child {\n    padding-left: 462px !important; }\n  .ag-theme-material .ag-row-level-8 > .ag-cell:first-child > span:first-child {\n    padding-left: 528px !important; }\n  .ag-theme-material .ag-row-level-9 > .ag-cell:first-child > span:first-child {\n    padding-left: 594px !important; }\n  .ag-theme-material .ag-row-level-10 > .ag-cell:first-child > span:first-child {\n    padding-left: 660px !important; }\n  .ag-theme-material .ag-row-level-11 > .ag-cell:first-child > span:first-child {\n    padding-left: 726px !important; }\n  .ag-theme-material .ag-row-level-12 > .ag-cell:first-child > span:first-child {\n    padding-left: 792px !important; }\n  .ag-theme-material .ag-row-level-13 > .ag-cell:first-child > span:first-child {\n    padding-left: 858px !important; }\n  .ag-theme-material .ag-row-level-14 > .ag-cell:first-child > span:first-child {\n    padding-left: 924px !important; }\n  .ag-theme-material .ag-row-level-15 > .ag-cell:first-child > span:first-child {\n    padding-left: 990px !important; }\n  .ag-theme-material .ag-row-level-16 > .ag-cell:first-child > span:first-child {\n    padding-left: 1056px !important; }\n  .ag-theme-material .ag-row-level-17 > .ag-cell:first-child > span:first-child {\n    padding-left: 1122px !important; }\n  .ag-theme-material .ag-row-level-18 > .ag-cell:first-child > span:first-child {\n    padding-left: 1188px !important; }\n  .ag-theme-material .ag-row-level-19 > .ag-cell:first-child > span:first-child {\n    padding-left: 1254px !important; }\n  .ag-theme-material .ag-row-level-20 > .ag-cell:first-child > span:first-child {\n    padding-left: 1320px !important; }\n  .ag-theme-material .ag-cell-data-changed {\n    background-color: #FCE4EC; }\n  .ag-theme-material .ag-cell-data-changed-animation {\n    background-color: transparent;\n    -webkit-transition: background-color 1s;\n    transition: background-color 1s; }\n  .ag-theme-material .ag-rtl .ag-numeric-cell {\n    text-align: left; }\n  .ag-theme-material .ag-rtl .ag-header-cell-menu-button {\n    float: left; }\n  .ag-theme-material .ag-rtl .ag-header-cell-label {\n    float: right;\n    width: calc(100% - 18px); }\n    .ag-theme-material .ag-rtl .ag-header-cell-label > span {\n      float: right; }\n    .ag-theme-material .ag-rtl .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n  .ag-theme-material .ag-rtl .ag-numeric-header .ag-header-cell-menu-button {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-numeric-header .ag-header-cell-label {\n    float: left; }\n    .ag-theme-material .ag-rtl .ag-numeric-header .ag-header-cell-label > span {\n      float: left; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-pivot-mode span {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select {\n    margin-right: 8px; }\n    .ag-theme-material .ag-rtl .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select .ag-checkbox-label {\n      margin-right: 8px; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-column-drop .ag-icon {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-column-drop .ag-column-drop-title {\n    float: right;\n    clear: left; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-column-drop .ag-column-drop-empty-message {\n    padding-right: 32px;\n    padding-left: 8px; }\n  .ag-theme-material .ag-rtl .ag-filter-checkbox {\n    float: right;\n    margin-left: 8px; }\n  .ag-theme-material .ag-rtl .ag-filter-value {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group,\n  .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column {\n    margin-right: 8px; }\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group span,\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column span {\n      float: right; }\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group .ag-column-select-checkbox, .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group .ag-column-group-icons,\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column .ag-column-select-checkbox,\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column .ag-column-group-icons {\n      margin-left: 8px; }\n  .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column {\n    margin-right: 42px;\n    margin-left: 0; }\n  .ag-theme-material .ag-rtl .ag-icon-tree-closed {\n    width: 18px;\n    height: 18px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMi41TDggOWwzLjUtMy41LTEtMUw2IDlsNC41IDQuNXoiLz48L3N2Zz4=) center no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-rtl .ag-header-group-cell-label {\n    height: 100%; }\n    .ag-theme-material .ag-rtl .ag-header-group-cell-label span {\n      float: right;\n      height: 100%; }\n  .ag-theme-material .ag-rtl .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-header-select-all {\n    margin-left: 24px;\n    margin-right: 0; }\n  .ag-theme-material .ag-rtl .ag-selection-checkbox span, .ag-theme-material .ag-rtl .ag-group-expanded span, .ag-theme-material .ag-rtl .ag-group-contracted span {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-column-drop-horizontal {\n    padding-right: 24px; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal span {\n      float: right; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-icon-group, .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-icon-pivot {\n      margin-left: 24px;\n      margin-right: 0; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-right-arrow {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAzTDggNGw0IDRIM3YyaDlsLTQgNCAxIDEgNi02eiIvPjwvc3ZnPg==) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      height: 100%; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-left-arrow {\n      width: 18px;\n      height: 18px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUgOEg2bDQtNC0xLTEtNiA2IDYgNiAxLTEtNC00aDl6Ii8+PC9zdmc+) center no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      height: 100%; }\n  .ag-theme-material .ag-rtl .ag-floating-filter-body {\n    float: right;\n    margin-left: 0; }\n  .ag-theme-material .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-theme-material .ag-rtl .ag-header-group-cell-label span {\n    float: right;\n    height: 100%; }\n", ""]);
+exports.push([module.i, ".ag-theme-material {\n  font: 400 13px \"Roboto\", sans-serif;\n  color: rgba(0, 0, 0, 0.87);\n  background-color: #FFFFFF; }\n  .ag-theme-material .ag-header {\n    font: 700 12px \"Roboto\", sans-serif;\n    color: rgba(0, 0, 0, 0.54); }\n  .ag-theme-material .ag-header-row {\n    border-bottom: 1px solid #E0E0E0;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box; }\n  .ag-theme-material .ag-row {\n    border-bottom: 1px solid #E0E0E0;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box; }\n  .ag-theme-material .ag-row-hover {\n    background-color: #EEEEEE; }\n  .ag-theme-material .ag-numeric-cell {\n    text-align: right; }\n  .ag-theme-material .ag-header-cell-label {\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    float: left;\n    width: calc(100% - 18px); }\n    .ag-theme-material .ag-header-cell-label > span {\n      float: left; }\n    .ag-theme-material .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-theme-material .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-label {\n    -webkit-box-orient: horizontal;\n    -webkit-box-direction: reverse;\n    -ms-flex-direction: row-reverse;\n    flex-direction: row-reverse; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-label {\n    float: right; }\n    .ag-theme-material .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-theme-material .ag-header-cell, .ag-theme-material .ag-header-group-cell {\n    padding-left: 24px;\n    padding-right: 24px;\n    line-height: 56px; }\n  .ag-theme-material .ag-cell {\n    padding-left: 24px;\n    padding-right: 24px;\n    line-height: 46px;\n    /* adjust for transparent border */\n    border: 1px solid transparent;\n    padding-left: 23px;\n    padding-right: 23px; }\n  .ag-theme-material .ag-cell:focus {\n    outline: initial;\n    border: 1px solid #3f51b5; }\n  .ag-theme-material .ag-cell-highlight {\n    background-color: #FCE4EC !important; }\n  .ag-theme-material .ag-cell-highlight-animation {\n    -webkit-transition: background-color 1s;\n    transition: background-color 1s; }\n  .ag-theme-material .ag-header-cell-resize {\n    width: 16px;\n    position: absolute;\n    right: -8px;\n    z-index: 4; }\n    .ag-theme-material .ag-header-cell-resize::after {\n      border-right: 1px solid #E0E0E0;\n      display: block;\n      height: 24px;\n      margin-top: 16px;\n      content: 'resize';\n      overflow: hidden;\n      text-indent: 8px;\n      width: 8px; }\n  .ag-theme-material .ag-icon-aggregation {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTMgMTN2MWExIDEgMCAwIDEtMSAxSDVhMSAxIDAgMCAxLTEtMXYtMWwzLTQtMy00VjRhMSAxIDAgMCAxIDEtMWg3YTEgMSAwIDAgMSAxIDF2MUg2LjVsMi41NSAzLjRhMSAxIDAgMCAxIDAgMS4yTDYuNSAxM0gxM3oiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-arrows {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy41IDYuNWgzdi0yaDJMOSAxIDUuNSA0LjVoMnYyem0tMSAxaC0ydi0yTDEgOWwzLjUgMy41di0yaDJ2LTN6TTE3IDlsLTMuNS0zLjV2MmgtMnYzaDJ2MkwxNyA5em0tNi41IDIuNWgtM3YyaC0yTDkgMTdsMy41LTMuNWgtMnYtMnoiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-asc {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTVWNmw0IDQgMS0xLTYtNi02IDYgMSAxIDQtNHY5eiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-checked-readonly {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiIG9wYWNpdHk9Ii41Ii8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-checked {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-indeterminate-readonly {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yem0tMiAxMEg0VjhoMTB2MnoiIGZpbGwtb3BhY2l0eT0iLjUiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-indeterminate {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yem0tMiAxMEg0VjhoMTB2MnoiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-unchecked-readonly {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMnYxNEgyVjJoMTR6bTAtMkgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yeiIgZmlsbC1vcGFjaXR5PSIuNSIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-checkbox-unchecked {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMnYxNEgyVjJoMTR6bTAtMkgyQy45IDAgMCAuOSAwIDJ2MTRjMCAxLjEuOSAyIDIgMmgxNGMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yeiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-column {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMiAyaDR2Mkgyem0wIDRoNHYxMEgyeiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-columns {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-contracted {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMi41TDggOWwzLjUtMy41LTEtMUw2IDlsNC41IDQuNXoiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-copy {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMSAySDRhMSAxIDAgMCAwLTEgMXY5aDFWM2g3VjJ6IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNiA0aDZhMSAxIDAgMCAxIDEgMXY5YTEgMSAwIDAgMS0xIDFINmExIDEgMCAwIDEtMS0xVjVhMSAxIDAgMCAxIDEtMXptMCAxdjloNlY1SDZ6Ii8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-cut {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNy4zNDggNS45NDhjLjE2MS0uMzUuMjUyLS43MzUuMjUyLTEuMTQ4YTIuOCAyLjggMCAxIDAtNS42IDAgMi44IDIuOCAwIDAgMCAyLjggMi44Yy40MTMgMCAuNzk4LS4wOTEgMS4xNDgtLjI1Mkw3LjYgOWwtMS42NTIgMS42NTJBMi43MjggMi43MjggMCAwIDAgNC44IDEwLjRhMi44IDIuOCAwIDEgMCAwIDUuNiAyLjggMi44IDAgMCAwIDIuOC0yLjhjMC0uNDEzLS4wOTEtLjc5OC0uMjUyLTEuMTQ4TDkgMTAuNGw0LjkgNC45SDE2di0uN0w3LjM0OCA1Ljk0OHpNNC44IDYuMmExLjQgMS40IDAgMSAxIDAtMi44IDEuNCAxLjQgMCAwIDEgMCAyLjh6bTAgOC40YTEuNCAxLjQgMCAxIDEgMC0yLjggMS40IDEuNCAwIDAgMSAwIDIuOHpNOSA5LjM1QS4zNDcuMzQ3IDAgMCAxIDguNjUgOWMwLS4xOTYuMTU0LS4zNS4zNS0uMzUuMTk2IDAgLjM1LjE1NC4zNS4zNSAwIC4xOTYtLjE1NC4zNS0uMzUuMzV6bTQuOS02LjY1TDkuNyA2LjlsMS40IDEuNEwxNiAzLjR2LS43aC0yLjF6Ii8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-desc {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCAzdjkuMTNMNCA4IDMgOWw2IDYgNi02LTEtMS00IDQuMTNWM3oiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-expanded {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMi41TDkuNSA5IDYgNS41bDEtMUwxMS41IDkgNyAxMy41eiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-eye-slash {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMi40NDkgMTIuNDVsLTEuMzg4LTEuMzg3YTIuOTE4IDIuOTE4IDAgMCAwLTQuMTI0LTQuMTI0TDUuNTUgNS41NUE2Ljg1IDYuODUgMCAwIDEgOSA0LjYyNSA2Ljg5OSA2Ljg5OSAwIDAgMSAxNS40MTcgOWE2LjkzNSA2LjkzNSAwIDAgMS0yLjk2OCAzLjQ1em0tLjk1NS40NkE2Ljg5OSA2Ljg5OSAwIDAgMSAyLjU4NCA5IDYuOTMzIDYuOTMzIDAgMCAxIDQuNzEgNi4xMjVMNi4zNTUgNy43N2EyLjkxOCAyLjkxOCAwIDAgMCAzLjg3NSAzLjg3NWwxLjI2NCAxLjI2NHoiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0xMC4yNDIgMTAuMjM1TDcuNzY1IDcuNzU4QTEuNzQ0IDEuNzQ0IDAgMCAxIDkgNy4yNWMuOTY4IDAgMS43NS43ODIgMS43NSAxLjc1IDAgLjQ4Mi0uMTk0LjkxOC0uNTA4IDEuMjM1em0tLjkyNy40ODdhMS43NDggMS43NDggMCAwIDEtMi4wMzctMi4wMzdsMi4wMzcgMi4wMzd6Ii8+PHBhdGggZD0iTTMuMDcgOC40ODdoMTIuNDE3djFIMy4wN3oiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-eye {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0LjYyNUE2Ljg5OSA2Ljg5OSAwIDAgMCAyLjU4MyA5IDYuODk5IDYuODk5IDAgMCAwIDkgMTMuMzc1IDYuODk5IDYuODk5IDAgMCAwIDE1LjQxNyA5IDYuODk5IDYuODk5IDAgMCAwIDkgNC42MjV6bTAgNy4yOTJhMi45MTggMi45MTggMCAwIDEgMC01LjgzNCAyLjkxOCAyLjkxOCAwIDAgMSAwIDUuODM0ek05IDcuMjVjLS45NjggMC0xLjc1Ljc4Mi0xLjc1IDEuNzVzLjc4MiAxLjc1IDEuNzUgMS43NSAxLjc1LS43ODIgMS43NS0xLjc1UzkuOTY4IDcuMjUgOSA3LjI1eiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-filter {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-group {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xNCAxNEg3di0yaDlhMiAyIDAgMCAxLTIgMnptLTUtMnYyaDJ2LTJIOXoiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0xNiA2YTIgMiAwIDAgMC0yLTJINWEyIDIgMCAwIDAtMiAyaDEzek03IDR2Mkg1VjRoMnptOSA2SDdWOGg5djJ6TTkgOHYyaDJWOEg5eiIvPjwvZz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-indeterminate {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSA0LjYyNUE2Ljg5OSA2Ljg5OSAwIDAgMCAyLjU4MyA5IDYuODk5IDYuODk5IDAgMCAwIDkgMTMuMzc1IDYuODk5IDYuODk5IDAgMCAwIDE1LjQxNyA5IDYuODk5IDYuODk5IDAgMCAwIDkgNC42MjV6bTAgNy4yOTJhMi45MTggMi45MTggMCAwIDEgMC01LjgzNCAyLjkxOCAyLjkxOCAwIDAgMSAwIDUuODM0eiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-left {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUgOEg2bDQtNC0xLTEtNiA2IDYgNiAxLTEtNC00aDl6Ii8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-loading {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImIiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImMiIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImQiIGQ9Ik03IDRoM3YySDd6Ii8+PHBhdGggaWQ9ImUiIGQ9Ik00IDBoMnYzSDR6Ii8+PHBhdGggaWQ9ImYiIGQ9Ik00IDdoMnYzSDR6Ii8+PHBhdGggaWQ9ImciIGQ9Ik0wIDRoM3YySDB6Ii8+PHBhdGggaWQ9ImgiIGQ9Ik03IDRoM3YySDd6Ii8+PC9kZWZzPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMyA0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYSIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNS41aDF2MmgtMXoiLz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMyA0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTQuNSA3LjVoMXYyaC0xeiIvPjwvZz48ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzIDQpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNjIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNLjUgNC41aDJ2MWgtMnoiLz48L2c+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMyA0KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjZCIvPjxwYXRoIHN0cm9rZT0iIzk3OTc5NyIgZD0iTTcuNSA0LjVoMnYxaC0yeiIvPjwvZz48ZyBvcGFjaXR5PSIuNzE0Ij48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxLjY3MiAxMC42MjEpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNlIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41LjVoMXYyaC0xeiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxLjY3MiAxMC42MjEpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNmIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNC41IDcuNWgxdjJoLTF6Ii8+PC9nPjxnIHRyYW5zZm9ybT0icm90YXRlKDQ1IDEuNjcyIDEwLjYyMSkiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2ciLz48cGF0aCBzdHJva2U9IiM5Nzk3OTciIGQ9Ik0uNSA0LjVoMnYxaC0yeiIvPjwvZz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSAxLjY3MiAxMC42MjEpIj48dXNlIGZpbGw9IiNEOEQ4RDgiIHhsaW5rOmhyZWY9IiNoIi8+PHBhdGggc3Ryb2tlPSIjOTc5Nzk3IiBkPSJNNy41IDQuNWgydjFoLTJ6Ii8+PC9nPjwvZz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-menu {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-minus {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQgMTBINFY4aDEweiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-none {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoNXYtMkgyeiIvPjxwYXRoIGQ9Ik0yIDR2MmgxNFY0em0wIDZoOVY4SDJ6Ii8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-not-allowed {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxLjVDNC44NiAxLjUgMS41IDQuODYgMS41IDljMCA0LjE0IDMuMzYgNy41IDcuNSA3LjUgNC4xNCAwIDcuNS0zLjM2IDcuNS03LjUgMC00LjE0LTMuMzYtNy41LTcuNS03LjV6TTMgOWMwLTMuMzE1IDIuNjg1LTYgNi02YTUuOTMgNS45MyAwIDAgMSAzLjY3NSAxLjI2OGwtOC40MDggOC40MDdBNS45MjcgNS45MjcgMCAwIDEgMyA5em02IDZhNS45MjcgNS45MjcgMCAwIDEtMy42NzUtMS4yNjhsOC40MDctOC40MDdBNS45MjcgNS45MjcgMCAwIDEgMTUgOWMwIDMuMzE1LTIuNjg1IDYtNiA2eiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-paste {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEgM2MwLS41LS41LTEuNS0yLTEuNVM3IDIuNSA3IDNINGExIDEgMCAwIDAtMSAxdjExYTEgMSAwIDAgMCAxIDFoMTBhMSAxIDAgMCAwIDEtMVY0YTEgMSAwIDAgMC0xLTFoLTN6bS0yIC4yNzNjLjM2NyAwIC42NjcuMjg2LjY2Ny42MzYgMCAuMzUtLjMuNjM2LS42NjcuNjM2LS4zNjcgMC0uNjY3LS4yODYtLjY2Ny0uNjM2IDAtLjM1LjMtLjYzNi42NjctLjYzNnpNMTQgMTVINFY0aDJ2Mmg2VjRoMnYxMXoiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-pin {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGw9IiMwMDAiIGQ9Ik05LjY1NyAybDUuNDEgNS40MS0uNTQuNTQyLS41NDItLjU0MS00LjMyOCAyLjE2NCAxLjA4MiAxLjA4Mi0xLjU0MSAxLjU0TDQuODY5IDcuODdsMS41NDItMS41NCAxLjA4MiAxLjA4IDIuMTY0LTQuMzI5LS41NDEtLjU0eiIvPjxwYXRoIGQ9Ik02IDExbC0yLjUgMi41IiBzdHJva2U9IiMwMDAiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-pivot {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTExLjUgMTAuNUwxMyA5bDEuNSAxLjVtLTUgMUw4IDEzbDEuNSAxLjUiLz48cGF0aCBkPSJNMCAwaDE4djE4SDB6Ii8+PHBhdGggZD0iTTMgMWgxMmEyIDIgMCAwIDEgMiAydjEyYTIgMiAwIDAgMS0yIDJIM2EyIDIgMCAwIDEtMi0yVjNhMiAyIDAgMCAxIDItMnptMyAxNHYtM0gzdjNoM3ptMC00VjhIM3YzaDN6bTAtNVYzSDN2M2gzem01IDBWM0g3djNoNHptNCA5VjhIN3Y3aDh6bTAtOVYzaC0zdjNoM3oiIGZpbGw9IiMwMDAiIGZpbGwtcnVsZT0ibm9uemVybyIvPjwvZz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-plus {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQgMTBoLTR2NEg4di00SDRWOGg0VjRoMnY0aDR6Ii8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-right {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAzTDggNGw0IDRIM3YyaDlsLTQgNCAxIDEgNi02eiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-left {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTNMNiA5bDQtNHoiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-right {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCA1bDQgNC00IDR6Ii8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-up {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSAxMGw0LTQgNCA0eiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-small-down {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNSA4bDQgNCA0LTR6Ii8+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-tick {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNi41IDEyLjVMMyA5bC0xIDEgNC41IDQuNSA5LTktMS0xeiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-cross {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTQgNWwtMS0xLTQgNC00LTQtMSAxIDQgNC00IDQgMSAxIDQtNCA0IDQgMS0xLTQtNHoiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-tree-open {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIuNSA2LjVMOSAxMCA1LjUgNi41bC0xIDFMOSAxMmw0LjUtNC41eiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-icon-tree-closed {\n    display: inline-block;\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMi41TDkuNSA5IDYgNS41bDEtMUwxMS41IDkgNyAxMy41eiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-header-cell-menu-button .ag-icon-menu {\n    height: 56px; }\n  .ag-theme-material .ag-icon-checkbox-checked:empty {\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MS0xLjQxTDcgMTEuMTdsNy41OS03LjU5TDE2IDVsLTkgOXoiIGZpbGw9IiNGRjQwODEiLz48L3N2Zz4=); }\n  .ag-theme-material .ag-menu {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    padding: 0;\n    z-index: 5; }\n    .ag-theme-material .ag-menu .ag-menu-list {\n      width: 100%;\n      cursor: default;\n      margin-top: 8px;\n      margin-bottom: 8px; }\n    .ag-theme-material .ag-menu .ag-menu-option {\n      line-height: 32px;\n      padding-left: 16px;\n      padding-right: 16px; }\n      .ag-theme-material .ag-menu .ag-menu-option > span {\n        vertical-align: middle;\n        display: table-cell; }\n    .ag-theme-material .ag-menu .ag-menu-option-active {\n      background: #EEEEEE; }\n    .ag-theme-material .ag-menu .ag-menu-option-icon {\n      padding-left: 8px;\n      padding-right: 8px; }\n      .ag-theme-material .ag-menu .ag-menu-option-icon span {\n        margin-top: 8px;\n        height: 18px;\n        line-height: 0; }\n    .ag-theme-material .ag-menu .ag-menu-option-shortcut {\n      padding-left: 16px; }\n    .ag-theme-material .ag-menu .ag-menu-separator {\n      margin-left: -8px; }\n      .ag-theme-material .ag-menu .ag-menu-separator > span {\n        height: 16px;\n        background-image: url(\"data:image/svg+xml;utf8,<svg width='1' height='16px' viewBox='0 0 1 16px' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='8px' x2='1' y2='8px' stroke-width='1' stroke='#E0E0E0'/> </svg>\"); }\n    .ag-theme-material .ag-menu .ag-menu-option-popup-pointer {\n      width: 34px; }\n  .ag-theme-material.ag-dnd-ghost {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    font: 700 12px \"Roboto\", sans-serif;\n    color: rgba(0, 0, 0, 0.54);\n    border: none;\n    height: 56px !important;\n    line-height: 56px;\n    z-index: 5;\n    margin: 0;\n    -webkit-transform: translatey(16px);\n    transform: translatey(16px);\n    padding: 0 16px; }\n    .ag-theme-material.ag-dnd-ghost span, .ag-theme-material.ag-dnd-ghost div {\n      float: left;\n      height: 100%;\n      margin: 0;\n      padding: 0; }\n  .ag-theme-material .ag-tab-header {\n    background: #EEEEEE;\n    display: table;\n    width: 100%;\n    min-width: 220px; }\n    .ag-theme-material .ag-tab-header .ag-tab {\n      display: table-cell;\n      height: 32px;\n      vertical-align: middle;\n      text-align: center;\n      border-bottom: 2px solid transparent; }\n      .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected {\n        border-bottom: 2px solid #3f51b5; }\n        .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-filter {\n          display: inline-block;\n          background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjM0Y1MUI1IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+); }\n        .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-columns {\n          display: inline-block;\n          background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yIDEwaDNWN0gydjN6bTAtNWgzVjJIMnYzem0wIDEwaDN2LTNIMnYzem01IDBoM3YtM0g3djN6bTUtNWgzVjdoLTN2M3ptLTUgMGgzVjdIN3Yzem01IDVoM3YtM2gtM3Yzem0wLTEzdjNoM1YyaC0zek03IDVoM1YySDd2M3oiIGZpbGw9IiMzRjUxQjUiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik0wIDBoMTh2MThIMHoiLz48L2c+PC9zdmc+); }\n        .ag-theme-material .ag-tab-header .ag-tab.ag-tab-selected .ag-icon-menu {\n          display: inline-block;\n          background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjM0Y1MUI1IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoMTR2LTJIMnoiLz48cGF0aCBkPSJNMiAxMGgxNFY4SDJ6bTAtNnYyaDE0VjR6Ii8+PC9nPjwvc3ZnPg==); }\n  .ag-theme-material .ag-tab-body {\n    padding: 8px 0; }\n    .ag-theme-material .ag-tab-body .ag-filter-select {\n      margin: 8px;\n      width: calc(100% - 16px); }\n    .ag-theme-material .ag-tab-body .ag-menu-list {\n      margin-top: 0;\n      margin-bottom: 0; }\n      .ag-theme-material .ag-tab-body .ag-menu-list > div:first-child > span {\n        padding-top: 0; }\n      .ag-theme-material .ag-tab-body .ag-menu-list > div:last-child > span {\n        padding-bottom: 0; }\n      .ag-theme-material .ag-tab-body .ag-menu-list > div:last-child > .ag-menu-option-popup-pointer {\n        background-position-y: 0; }\n  .ag-theme-material .ag-filter-select {\n    margin: 8px;\n    width: calc(100% - 16px); }\n  .ag-theme-material .ag-filter input[type=text], .ag-theme-material .ag-filter input[type=date] {\n    border: 0;\n    background: transparent;\n    font-size: inherit;\n    font-family: inherit;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n    border-bottom: 1px solid #E0E0E0;\n    height: 24px;\n    padding-bottom: 8px;\n    color: rgba(0, 0, 0, 0.87);\n    padding-left: 8px; }\n    .ag-theme-material .ag-filter input[type=text]:focus, .ag-theme-material .ag-filter input[type=date]:focus {\n      border-bottom: 2px solid #3f51b5;\n      padding-bottom: 7px;\n      outline: none; }\n    .ag-theme-material .ag-filter input[type=text]::-webkit-input-placeholder, .ag-theme-material .ag-filter input[type=date]::-webkit-input-placeholder {\n      color: rgba(0, 0, 0, 0.38); }\n    .ag-theme-material .ag-filter input[type=text]:-ms-input-placeholder, .ag-theme-material .ag-filter input[type=date]:-ms-input-placeholder {\n      color: rgba(0, 0, 0, 0.38); }\n    .ag-theme-material .ag-filter input[type=text]::placeholder, .ag-theme-material .ag-filter input[type=date]::placeholder {\n      color: rgba(0, 0, 0, 0.38); }\n  .ag-theme-material .ag-filter label {\n    display: block;\n    padding-left: 8px; }\n  .ag-theme-material .ag-filter .ag-set-filter-list {\n    padding-top: 8px; }\n  .ag-theme-material .ag-filter .ag-filter-header-container {\n    height: 32px;\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box; }\n  .ag-theme-material .ag-filter .ag-filter-header-container:nth-child(2) {\n    border-bottom: 1px solid #E0E0E0; }\n  .ag-theme-material .ag-filter .ag-filter-checkbox {\n    float: left;\n    margin-right: 8px;\n    height: 32px;\n    padding-top: 4px; }\n  .ag-theme-material .ag-filter .ag-filter-value {\n    height: 32px;\n    float: left;\n    line-height: 28px; }\n  .ag-theme-material .ag-filter .ag-filter-apply-panel {\n    padding: 8px;\n    padding-top: 16px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-pack: end;\n    -ms-flex-pack: end;\n    justify-content: flex-end; }\n    .ag-theme-material .ag-filter .ag-filter-apply-panel button {\n      -webkit-appearance: none;\n      background: transparent;\n      border: 0;\n      color: #3f51b5;\n      text-transform: uppercase;\n      font-family: inherit;\n      font-size: inherit;\n      padding: 0;\n      margin: 0; }\n    .ag-theme-material .ag-filter .ag-filter-apply-panel button + button {\n      margin-left: 16px; }\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column-group::not(::first-child) {\n    border-top: 1px solid #E0E0E0; }\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column-group,\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column {\n    height: 32px;\n    line-height: 32px;\n    margin-left: 8px; }\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column-group span,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column span {\n      float: left;\n      height: 100%; }\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column-group .ag-column-select-indent,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column .ag-column-select-indent {\n      width: 16px; }\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column-group .ag-column-select-checkbox, .ag-theme-material .ag-column-select-panel .ag-column-select-column-group .ag-column-group-icons,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column .ag-column-select-checkbox,\n    .ag-theme-material .ag-column-select-panel .ag-column-select-column .ag-column-group-icons {\n      margin-right: 8px; }\n  .ag-theme-material .ag-column-select-panel .ag-column-select-column {\n    margin-left: 42px; }\n  .ag-theme-material .ag-tool-panel {\n    border-right: 0;\n    background-color: #FAFAFA; }\n    .ag-theme-material .ag-tool-panel .ag-pivot-mode {\n      height: 56px;\n      border-bottom: 1px solid #E0E0E0;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      line-height: 56px; }\n      .ag-theme-material .ag-tool-panel .ag-pivot-mode span {\n        float: left;\n        height: 100%; }\n      .ag-theme-material .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select {\n        margin-left: 8px; }\n        .ag-theme-material .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select .ag-checkbox-label {\n          margin-left: 8px; }\n    .ag-theme-material .ag-tool-panel .ag-column-select-panel {\n      padding: 8px 0;\n      padding-bottom: 7px;\n      border-bottom: 1px solid #E0E0E0; }\n    .ag-theme-material .ag-tool-panel .ag-column-drop {\n      overflow: auto;\n      border-bottom: 1px solid #E0E0E0;\n      padding: 8px 0;\n      padding-bottom: 16px;\n      clear: both; }\n      .ag-theme-material .ag-tool-panel .ag-column-drop .ag-icon {\n        float: left;\n        height: 40px;\n        margin: 0 8px; }\n      .ag-theme-material .ag-tool-panel .ag-column-drop .ag-column-drop-title {\n        line-height: 40px;\n        height: 40px;\n        float: left;\n        width: calc(100% - 34px);\n        clear: right; }\n      .ag-theme-material .ag-tool-panel .ag-column-drop .ag-column-drop-empty-message {\n        clear: both;\n        font: 700 12px \"Roboto\", sans-serif;\n        color: rgba(0, 0, 0, 0.38);\n        padding-left: 32px;\n        padding-right: 8px;\n        line-height: 16px; }\n  .ag-theme-material .ag-filter-icon:empty {\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00IDEwaDEwVjhINHpNMiA0djJoMTRWNHoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik03IDE0aDR2LTJIN3oiLz48L2c+PC9zdmc+);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-sort-ascending-icon:empty {\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTAgMTVWNmw0IDQgMS0xLTYtNi02IDYgMSAxIDQtNHY5eiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-sort-descending-icon:empty {\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOCAzdjkuMTNMNCA4IDMgOWw2IDYgNi02LTEtMS00IDQuMTNWM3oiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-sort-none-icon:empty {\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGZpbGwtcnVsZT0ibm9uemVybyIgZD0iTTIgMTRoNXYtMkgyeiIvPjxwYXRoIGQ9Ik0yIDR2MmgxNFY0em0wIDZoOVY4SDJ6Ii8+PC9nPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-header-cell-label .ag-header-icon {\n    margin: 0;\n    height: 100%;\n    background-size: 14px 14px;\n    background-position-y: 20px;\n    margin-left: 8px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-numeric-header .ag-header-cell-label .ag-header-icon {\n    margin-left: 0;\n    margin-right: 8px; }\n  .ag-theme-material .ag-paging-panel {\n    border-top: 1px solid #E0E0E0;\n    height: 56px;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n    -webkit-box-align: center;\n    -ms-flex-align: center;\n    align-items: center;\n    padding: 0 24px;\n    -webkit-box-pack: end;\n    -ms-flex-pack: end;\n    justify-content: flex-end;\n    color: rgba(0, 0, 0, 0.54); }\n    .ag-theme-material .ag-paging-panel > span {\n      margin-left: 32px; }\n    .ag-theme-material .ag-paging-panel button[ref=btFirst] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik00LjUgNC41SDZ2OUg0LjV6Ii8+PHBhdGggZmlsbC1ydWxlPSJub256ZXJvIiBkPSJNMTQgMTIuNUwxMC41IDkgMTQgNS41bC0xLTFMOC41IDlsNC41IDQuNXoiLz48L2c+PC9zdmc+);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btFirst][disabled] {\n        opacity: 0.38; }\n    .ag-theme-material .ag-paging-panel button[ref=btPrevious] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMi41TDggOWwzLjUtMy41LTEtMUw2IDlsNC41IDQuNXoiLz48L3N2Zz4=);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btPrevious][disabled] {\n        opacity: 0.38; }\n    .ag-theme-material .ag-paging-panel button[ref=btLast] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0xMy41IDQuNUgxMnY5aDEuNXoiLz48cGF0aCBmaWxsLXJ1bGU9Im5vbnplcm8iIGQ9Ik00IDEyLjVMNy41IDkgNCA1LjVsMS0xTDkuNSA5IDUgMTMuNXoiLz48L2c+PC9zdmc+);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btLast][disabled] {\n        opacity: 0.38; }\n    .ag-theme-material .ag-paging-panel button[ref=btNext] {\n      -webkit-appearance: none;\n      border: none;\n      padding: 0;\n      width: 18px;\n      height: 18px;\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNiAxMi41TDkuNSA5IDYgNS41bDEtMUwxMS41IDkgNyAxMy41eiIvPjwvc3ZnPg==);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      opacity: 0.54; }\n      .ag-theme-material .ag-paging-panel button[ref=btNext][disabled] {\n        opacity: 0.38; }\n  .ag-theme-material .ag-row-selected {\n    background-color: #F5F5F5; }\n  .ag-theme-material .ag-cell-range-selected:not(.ag-cell-focus) {\n    background-color: #E8EAF6; }\n  .ag-theme-material .ag-cell-inline-editing {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    height: 72px;\n    z-index: 2;\n    background: #F5F5F5;\n    padding: 24px;\n    line-height: normal; }\n    .ag-theme-material .ag-cell-inline-editing input[type=text], .ag-theme-material .ag-cell-inline-editing input[type=tel], .ag-theme-material .ag-cell-inline-editing input[type=date], .ag-theme-material .ag-cell-inline-editing input[type=datetime-local] {\n      border: 0;\n      background: transparent;\n      font-size: inherit;\n      font-family: inherit;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      border-bottom: 1px solid #E0E0E0;\n      height: 24px;\n      padding-bottom: 8px;\n      color: rgba(0, 0, 0, 0.87); }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]:focus, .ag-theme-material .ag-cell-inline-editing input[type=tel]:focus, .ag-theme-material .ag-cell-inline-editing input[type=date]:focus, .ag-theme-material .ag-cell-inline-editing input[type=datetime-local]:focus {\n        border-bottom: 2px solid #3f51b5;\n        padding-bottom: 7px;\n        outline: none; }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]::-webkit-input-placeholder, .ag-theme-material .ag-cell-inline-editing input[type=tel]::-webkit-input-placeholder, .ag-theme-material .ag-cell-inline-editing input[type=date]::-webkit-input-placeholder, .ag-theme-material .ag-cell-inline-editing input[type=datetime-local]::-webkit-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]:-ms-input-placeholder, .ag-theme-material .ag-cell-inline-editing input[type=tel]:-ms-input-placeholder, .ag-theme-material .ag-cell-inline-editing input[type=date]:-ms-input-placeholder, .ag-theme-material .ag-cell-inline-editing input[type=datetime-local]:-ms-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-cell-inline-editing input[type=text]::placeholder, .ag-theme-material .ag-cell-inline-editing input[type=tel]::placeholder, .ag-theme-material .ag-cell-inline-editing input[type=date]::placeholder, .ag-theme-material .ag-cell-inline-editing input[type=datetime-local]::placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n    .ag-theme-material .ag-cell-inline-editing select {\n      height: auto; }\n  .ag-theme-material .ag-popup-editor {\n    -webkit-box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);\n    padding: 8px;\n    background: #FFFFFF;\n    border-radius: 2px;\n    padding: 0;\n    background: #F5F5F5; }\n    .ag-theme-material .ag-popup-editor .ag-large-textarea textarea {\n      padding: 24px;\n      border: 0;\n      background: transparent;\n      font-size: inherit;\n      font-family: inherit;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      border-bottom: 1px solid #E0E0E0;\n      height: 24px;\n      padding-bottom: 8px;\n      color: rgba(0, 0, 0, 0.87);\n      height: auto; }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea:focus {\n        border-bottom: 2px solid #3f51b5;\n        padding-bottom: 7px;\n        outline: none; }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea::-webkit-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea:-ms-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-popup-editor .ag-large-textarea textarea::placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n  .ag-theme-material .ag-rich-select {\n    background: #F5F5F5;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIuNSA2LjVMOSAxMCA1LjUgNi41bC0xIDFMOSAxMmw0LjUtNC41eiIvPjwvc3ZnPg==);\n    background-position-y: 16px;\n    background-position-x: calc(100% - 8px);\n    background-repeat: no-repeat; }\n    .ag-theme-material .ag-rich-select .ag-rich-select-list {\n      height: 200px; }\n    .ag-theme-material .ag-rich-select .ag-rich-select-value {\n      line-height: 48px;\n      height: 48px;\n      padding-left: 24px; }\n    .ag-theme-material .ag-rich-select .ag-virtual-list-item {\n      cursor: default;\n      height: 48px;\n      line-height: 48px;\n      padding-left: 24px; }\n      .ag-theme-material .ag-rich-select .ag-virtual-list-item:hover {\n        background-color: #EEEEEE; }\n  .ag-theme-material .ag-floating-filter-body {\n    float: left;\n    width: calc(100% - 8px * 4);\n    margin-right: 0;\n    height: 100%; }\n    .ag-theme-material .ag-floating-filter-body input {\n      border: 0;\n      background: transparent;\n      font-size: inherit;\n      font-family: inherit;\n      -webkit-box-sizing: border-box;\n      box-sizing: border-box;\n      border-bottom: 1px solid #E0E0E0;\n      height: 24px;\n      padding-bottom: 8px;\n      color: rgba(0, 0, 0, 0.87); }\n      .ag-theme-material .ag-floating-filter-body input:focus {\n        border-bottom: 2px solid #3f51b5;\n        padding-bottom: 7px;\n        outline: none; }\n      .ag-theme-material .ag-floating-filter-body input::-webkit-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-floating-filter-body input:-ms-input-placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n      .ag-theme-material .ag-floating-filter-body input::placeholder {\n        color: rgba(0, 0, 0, 0.38); }\n  .ag-theme-material .ag-floating-filter-button {\n    padding-top: 20px;\n    float: right; }\n    .ag-theme-material .ag-floating-filter-button button {\n      -webkit-appearance: none;\n      background: transparent;\n      border: 0;\n      color: #3f51b5;\n      text-transform: uppercase;\n      font-family: inherit;\n      font-size: inherit;\n      padding: 0;\n      margin: 0; }\n  .ag-theme-material .ag-cell-label-container {\n    height: 100%; }\n  .ag-theme-material .ag-header-cell-label {\n    height: 100%; }\n    .ag-theme-material .ag-header-cell-label span {\n      height: 100%; }\n  .ag-theme-material .ag-header-group-cell-label {\n    height: 100%; }\n    .ag-theme-material .ag-header-group-cell-label span {\n      float: left;\n      height: 100%; }\n  .ag-theme-material .ag-header-select-all {\n    margin-right: 24px;\n    height: 100%; }\n    .ag-theme-material .ag-header-select-all span {\n      height: 100%; }\n  .ag-theme-material .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {\n    width: calc(100% - 18px - 24px);\n    float: left; }\n  .ag-theme-material .ag-selection-checkbox span, .ag-theme-material .ag-group-expanded span, .ag-theme-material .ag-group-contracted span {\n    margin-right: 24px; }\n  .ag-theme-material .ag-selection-checkbox span {\n    position: relative;\n    top: 4px; }\n  .ag-theme-material .ag-group-expanded .ag-icon-contracted:empty {\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTIuNSA2LjVMOSAxMCA1LjUgNi41bC0xIDFMOSAxMmw0LjUtNC41eiIvPjwvc3ZnPg==);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-column-drop-horizontal {\n    height: 48px;\n    line-height: 32px;\n    background-color: #EEEEEE;\n    padding-left: 24px; }\n    .ag-theme-material .ag-column-drop-horizontal.ag-width-half {\n      margin-bottom: -3px; }\n    .ag-theme-material .ag-column-drop-horizontal span {\n      height: 100%;\n      float: left; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-icon-group, .ag-theme-material .ag-column-drop-horizontal .ag-icon-pivot {\n      margin-right: 24px; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-right-arrow {\n      width: 18px;\n      height: 18px;\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAzTDggNGw0IDRIM3YyaDlsLTQgNCAxIDEgNi02eiIvPjwvc3ZnPg==);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-left-arrow {\n      width: 18px;\n      height: 18px;\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUgOEg2bDQtNC0xLTEtNiA2IDYgNiAxLTEtNC00aDl6Ii8+PC9zdmc+);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-left-arrow, .ag-theme-material .ag-column-drop-horizontal .ag-right-arrow {\n      text-indent: 100%;\n      overflow: hidden;\n      height: 100%;\n      margin: 0 8px;\n      opacity: 0.54; }\n    .ag-theme-material .ag-column-drop-horizontal .ag-column-drop-empty-message {\n      height: 100%;\n      line-height: 48px;\n      opacity: 0.54; }\n  .ag-theme-material .ag-column-drop-cell {\n    -webkit-box-sizing: border-box;\n    box-sizing: border-box;\n    height: 32px !important;\n    margin-top: 8px;\n    padding: 0 4px;\n    background: #E0E0E0;\n    border-radius: 32px; }\n    .ag-theme-material .ag-column-drop-cell .ag-column-drop-cell-text {\n      margin: 0 8px;\n      height: 100%;\n      line-height: 32px; }\n    .ag-theme-material .ag-column-drop-cell .ag-column-drop-cell-button {\n      width: 18px;\n      height: 18px;\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxLjVBNy40OTMgNy40OTMgMCAwIDAgMS41IDljMCA0LjE0OCAzLjM1MyA3LjUgNy41IDcuNSA0LjE0OCAwIDcuNS0zLjM1MiA3LjUtNy41IDAtNC4xNDctMy4zNTItNy41LTcuNS03LjV6bTMuNzUgMTAuMTkzbC0xLjA1NyAxLjA1N0w5IDEwLjA1NyA2LjMwOCAxMi43NSA1LjI1IDExLjY5MyA3Ljk0MiA5IDUuMjUgNi4zMDggNi4zMDggNS4yNSA5IDcuOTQybDIuNjkzLTIuNjkyIDEuMDU3IDEuMDU4TDEwLjA1NyA5bDIuNjkzIDIuNjkzeiIvPjwvc3ZnPg==);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      text-indent: 100%;\n      overflow: hidden;\n      height: 100%;\n      opacity: 0.54;\n      margin: 0 4px; }\n      .ag-theme-material .ag-column-drop-cell .ag-column-drop-cell-button:hover {\n        opacity: 0.87; }\n  .ag-theme-material .ag-column-drop-vertical > .ag-column-drop-cell {\n    margin-top: 0;\n    margin-left: 8px;\n    margin-bottom: 8px;\n    float: left; }\n  .ag-theme-material .ag-cell-data-changed {\n    background-color: #FCE4EC; }\n  .ag-theme-material .ag-cell-data-changed-animation {\n    background-color: transparent;\n    -webkit-transition: background-color 1s;\n    transition: background-color 1s; }\n  .ag-theme-material .ag-rtl .ag-numeric-cell {\n    text-align: left; }\n  .ag-theme-material .ag-rtl .ag-header-cell-menu-button {\n    float: left; }\n  .ag-theme-material .ag-rtl .ag-header-cell-label {\n    float: right;\n    width: calc(100% - 18px); }\n    .ag-theme-material .ag-rtl .ag-header-cell-label > span {\n      float: right; }\n    .ag-theme-material .ag-rtl .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n  .ag-theme-material .ag-rtl .ag-numeric-header .ag-header-cell-menu-button {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-numeric-header .ag-header-cell-label {\n    float: left; }\n    .ag-theme-material .ag-rtl .ag-numeric-header .ag-header-cell-label > span {\n      float: left; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-pivot-mode span {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select {\n    margin-right: 8px; }\n    .ag-theme-material .ag-rtl .ag-tool-panel .ag-pivot-mode .ag-pivot-mode-select .ag-checkbox-label {\n      margin-right: 8px; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-column-drop .ag-icon {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-column-drop .ag-column-drop-title {\n    float: right;\n    clear: left; }\n  .ag-theme-material .ag-rtl .ag-tool-panel .ag-column-drop .ag-column-drop-empty-message {\n    padding-right: 32px;\n    padding-left: 8px; }\n  .ag-theme-material .ag-rtl .ag-filter-checkbox {\n    float: right;\n    margin-left: 8px; }\n  .ag-theme-material .ag-rtl .ag-filter-value {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group,\n  .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column {\n    margin-right: 8px; }\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group span,\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column span {\n      float: right; }\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group .ag-column-select-checkbox, .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column-group .ag-column-group-icons,\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column .ag-column-select-checkbox,\n    .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column .ag-column-group-icons {\n      margin-left: 8px; }\n  .ag-theme-material .ag-rtl .ag-column-select-panel .ag-column-select-column {\n    margin-right: 42px;\n    margin-left: 0; }\n  .ag-theme-material .ag-rtl .ag-icon-tree-closed {\n    width: 18px;\n    height: 18px;\n    background-color: transparent;\n    background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNSAxMi41TDggOWwzLjUtMy41LTEtMUw2IDlsNC41IDQuNXoiLz48L3N2Zz4=);\n    background-position: center;\n    background-repeat: no-repeat;\n    background-size: 18px 18px;\n    opacity: 0.87; }\n  .ag-theme-material .ag-rtl .ag-header-group-cell-label {\n    height: 100%; }\n    .ag-theme-material .ag-rtl .ag-header-group-cell-label span {\n      float: right;\n      height: 100%; }\n  .ag-theme-material .ag-rtl .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-header-select-all {\n    margin-left: 24px;\n    margin-right: 0; }\n  .ag-theme-material .ag-rtl .ag-selection-checkbox span, .ag-theme-material .ag-rtl .ag-group-expanded span, .ag-theme-material .ag-rtl .ag-group-contracted span {\n    float: right; }\n  .ag-theme-material .ag-rtl .ag-column-drop-horizontal {\n    padding-right: 24px; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal span {\n      float: right; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-icon-group, .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-icon-pivot {\n      margin-left: 24px;\n      margin-right: 0; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-right-arrow {\n      width: 18px;\n      height: 18px;\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAzTDggNGw0IDRIM3YyaDlsLTQgNCAxIDEgNi02eiIvPjwvc3ZnPg==);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      height: 100%; }\n    .ag-theme-material .ag-rtl .ag-column-drop-horizontal .ag-left-arrow {\n      width: 18px;\n      height: 18px;\n      background-color: transparent;\n      background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTUgOEg2bDQtNC0xLTEtNiA2IDYgNiAxLTEtNC00aDl6Ii8+PC9zdmc+);\n      background-position: center;\n      background-repeat: no-repeat;\n      background-size: 18px 18px;\n      opacity: 0.87;\n      height: 100%; }\n  .ag-theme-material .ag-rtl .ag-floating-filter-body {\n    float: right;\n    margin-left: 0; }\n  .ag-theme-material .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-theme-material .ag-rtl .ag-header-group-cell-label span {\n    float: right;\n    height: 100%; }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 151 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // style-loader: Adds some css to the DOM by adding a <style> tag
 
 // load the styles
-var content = __webpack_require__(152);
+var content = __webpack_require__(154);
 if(typeof content === 'string') content = [[module.i, content, '']];
 // add the styles to the DOM
-var update = __webpack_require__(28)(content, {});
+var update = __webpack_require__(29)(content, {});
 if(content.locals) module.exports = content.locals;
 // Hot Module Replacement
 if(false) {
@@ -32809,15 +33086,15 @@ if(false) {
 }
 
 /***/ }),
-/* 152 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(27)();
+exports = module.exports = __webpack_require__(28)();
 // imports
 
 
 // module
-exports.push([module.i, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-bootstrap {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #000;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-bootstrap .ag-numeric-cell {\n    text-align: right; }\n  .ag-bootstrap .ag-header-cell-label {\n    display: flex; }\n    .ag-bootstrap .ag-header-cell-label > span {\n      float: left; }\n    .ag-bootstrap .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-bootstrap .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-bootstrap .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-bootstrap .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-bootstrap .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-bootstrap .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-bootstrap .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-bootstrap .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-bootstrap img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-bootstrap .ag-root {\n    border: none; }\n  .ag-bootstrap .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-bootstrap .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-bootstrap .ag-cell-not-inline-editing {\n    padding: 4px;\n    /* compensate for the transparent borders; */\n    padding-left: 3px; }\n  .ag-bootstrap .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-bootstrap .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-bootstrap .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-bootstrap .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-bootstrap .ag-cell-focus {\n    border: 2px solid #217346; }\n  .ag-bootstrap .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-bootstrap .ag-ltr .ag-cell-no-focus {\n    border-right: none;\n    border-left: 1px solid transparent; }\n  .ag-bootstrap .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: none; }\n  .ag-bootstrap .ag-rtl .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-bootstrap .ag-ltr .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-bootstrap .ag-rtl .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-bootstrap .ag-ltr .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-bootstrap .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-bootstrap .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-bootstrap .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-bootstrap .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-bootstrap .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-bootstrap .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-bootstrap .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-bootstrap .ag-rich-select {\n    font-size: 14px;\n    border: none;\n    background-color: white; }\n  .ag-bootstrap .ag-rich-select-value {\n    padding: 2px; }\n  .ag-bootstrap .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-rich-select-row {\n    padding: 2px; }\n  .ag-bootstrap .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-bootstrap .ag-large-text {\n    border: none; }\n  .ag-bootstrap .ag-header-select-all, .ag-bootstrap .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-bootstrap .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-bootstrap .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-bootstrap .ag-header {\n    color: #000;\n    background: none;\n    border-bottom: none;\n    font-weight: 600; }\n  .ag-bootstrap .ag-header-icon {\n    color: #000;\n    stroke: none;\n    fill: #000; }\n  .ag-bootstrap .ag-filter-icon {\n    display: inline-block; }\n  .ag-bootstrap .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-layout-for-print .ag-header-container {\n    background: none;\n    border-bottom: none; }\n  .ag-bootstrap .ag-ltr .ag-header-cell {\n    border-right: none; }\n  .ag-bootstrap .ag-rtl .ag-header-cell {\n    border-left: none; }\n  .ag-bootstrap .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-bootstrap .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-bootstrap .ag-ltr .ag-header-group-cell {\n    border-right: none; }\n  .ag-bootstrap .ag-rtl .ag-header-group-cell {\n    border-left: none; }\n  .ag-bootstrap .ag-header-group-cell-with-group {\n    border-bottom: none; }\n  .ag-bootstrap .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-bootstrap .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-bootstrap .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-bootstrap .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-ltr .ag-pinned-right-header {\n    border-left: none; }\n  .ag-bootstrap .ag-rtl .ag-pinned-left-header {\n    border-right: none; }\n  .ag-bootstrap .ag-body {\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-row-odd {\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-row-even {\n    background-color: white; }\n  .ag-bootstrap .ag-row-selected {\n    background-color: powderblue; }\n  .ag-bootstrap .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-bootstrap .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-bootstrap .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-bootstrap .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-bootstrap .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 4px; }\n  .ag-bootstrap .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 4px; }\n  .ag-bootstrap .ag-group-cell {\n    font-style: italic; }\n  .ag-bootstrap .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-bootstrap .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-bootstrap .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-bootstrap .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-bootstrap .ag-group-child-count {\n    display: inline-block; }\n  .ag-bootstrap .ag-footer-cell {\n    font-style: italic; }\n  .ag-bootstrap .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-bootstrap .ag-menu .ag-tab-header {\n      background-color: #e6e6e6; }\n    .ag-bootstrap .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-bootstrap .ag-menu .ag-tab-selected {\n      background-color: #f6f6f6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-bootstrap .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-bootstrap .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-bootstrap .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-bootstrap .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-bootstrap .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-bootstrap .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-bootstrap .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-bootstrap .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-bootstrap .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-bootstrap .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-paging-panel {\n    padding: 4px; }\n  .ag-bootstrap .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-bootstrap .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-bootstrap .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: none;\n    border-top: none;\n    color: #000; }\n  .ag-bootstrap .ltr .ag-tool-panel {\n    border-right: none; }\n  .ag-bootstrap .rtl .ag-tool-panel {\n    border-left: none; }\n  .ag-bootstrap .ag-status-bar {\n    color: #000;\n    background-color: #f6f6f6;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: none;\n    border-left: none;\n    border-right: none;\n    padding: 2px; }\n  .ag-bootstrap .ag-status-bar-aggregations {\n    float: right; }\n  .ag-bootstrap .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-bootstrap .ag-column-drop-cell {\n    background: none;\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-bootstrap .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-bootstrap .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-bootstrap .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-bootstrap .ag-column-drop-cell-button:hover {\n    border: none; }\n  .ag-bootstrap .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-bootstrap .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-bootstrap .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: none;\n    border-left: none;\n    border-right: none; }\n  .ag-bootstrap .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: none;\n    overflow: auto; }\n    .ag-bootstrap .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-bootstrap .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-bootstrap .ag-pivot-mode {\n    border-bottom: none;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: none;\n    overflow: auto; }\n  .ag-bootstrap .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: none; }\n  .ag-bootstrap .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-bootstrap .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-bootstrap .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-bootstrap .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-bootstrap .ag-floating-filter-button button {\n      width: 12px;\n      height: 12px;\n      background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAyaDEwTDcgNnY1TDUgOVY2TDEgMnptNCA0djFoMlY2SDV6IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=) center no-repeat;\n      background-size: 12px 12px;\n      filter: \"initial\";\n      height: 20px;\n      width: 20px;\n      background-position-y: 2px;\n      border: 0;\n      text-indent: 10000px;\n      overflow: hidden; }\n  .ag-bootstrap .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-bootstrap .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-bootstrap .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-bootstrap .ag-sort-order::before {\n      content: '('; }\n    .ag-bootstrap .ag-sort-order::after {\n      content: ')'; }\n", ""]);
+exports.push([module.i, "/*\n- todo {\n- loading overlay colors {\n- rich select colors {\n */\n.ag-icon:not(.ag-faded) {\n  opacity: 0.8; }\n\n.ag-bootstrap {\n  line-height: 1.4;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 14px;\n  color: #000;\n  /* this is for the rowGroupPanel, that appears along the top of the grid */\n  /* this is for the column drops that appear in the toolPanel */ }\n  .ag-bootstrap .ag-numeric-cell {\n    text-align: right; }\n  .ag-bootstrap .ag-header-cell-label {\n    display: flex; }\n    .ag-bootstrap .ag-header-cell-label > span {\n      float: left; }\n    .ag-bootstrap .ag-header-cell-label .ag-header-icon {\n      margin-top: 2px; }\n    .ag-bootstrap .ag-header-cell-label .ag-header-cell-text {\n      white-space: nowrap;\n      overflow: hidden;\n      text-overflow: ellipsis; }\n  .ag-bootstrap .ag-numeric-header .ag-header-cell-label {\n    flex-direction: row-reverse; }\n  .ag-bootstrap .ag-numeric-header .ag-header-cell-menu-button {\n    float: left; }\n  .ag-bootstrap .ag-numeric-header .ag-header-cell-label {\n    width: calc(100% - 12px);\n    float: right; }\n    .ag-bootstrap .ag-numeric-header .ag-header-cell-label > span {\n      float: right; }\n  .ag-bootstrap .ag-header-cell-resize {\n    position: absolute;\n    right: 0; }\n  .ag-bootstrap .ag-rtl .ag-header-cell-resize {\n    position: absolute;\n    left: 0;\n    right: auto; }\n  .ag-bootstrap img {\n    vertical-align: middle;\n    border: 0; }\n  .ag-bootstrap .ag-root {\n    border: none; }\n  .ag-bootstrap .ag-cell-data-changed {\n    background-color: #cec; }\n  .ag-bootstrap .ag-cell-data-changed-animation {\n    background-color: transparent;\n    transition: background-color 1s; }\n  .ag-bootstrap .ag-cell-not-inline-editing {\n    padding: 4px;\n    /* compensate for the transparent borders; */\n    padding-left: 3px; }\n  .ag-bootstrap .ag-cell-range-selected-1:not(.ag-cell-focus) {\n    background-color: rgba(120, 120, 120, 0.4); }\n  .ag-bootstrap .ag-cell-range-selected-2:not(.ag-cell-focus) {\n    background-color: rgba(80, 80, 80, 0.4); }\n  .ag-bootstrap .ag-cell-range-selected-3:not(.ag-cell-focus) {\n    background-color: rgba(40, 40, 40, 0.4); }\n  .ag-bootstrap .ag-cell-range-selected-4:not(.ag-cell-focus) {\n    background-color: rgba(0, 0, 0, 0.4); }\n  .ag-bootstrap .ag-cell-focus {\n    border: 2px solid #217346; }\n  .ag-bootstrap .ag-cell-no-focus {\n    border-top: 1px solid transparent;\n    border-bottom: 1px solid transparent; }\n  .ag-bootstrap .ag-ltr .ag-cell-no-focus {\n    border-right: none;\n    border-left: 1px solid transparent; }\n  .ag-bootstrap .ag-rtl .ag-cell-no-focus {\n    border-right: 1px solid transparent;\n    border-left: none; }\n  .ag-bootstrap .ag-rtl .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-bootstrap .ag-ltr .ag-cell-first-right-pinned {\n    border-left: none; }\n  .ag-bootstrap .ag-rtl .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-bootstrap .ag-ltr .ag-cell-last-left-pinned {\n    border-right: none; }\n  .ag-bootstrap .ag-cell-highlight {\n    border: 1px solid darkgreen; }\n  .ag-bootstrap .ag-cell-highlight-animation {\n    transition: border 1s; }\n  .ag-bootstrap .ag-value-change-delta {\n    padding-right: 2px; }\n  .ag-bootstrap .ag-value-change-delta-up {\n    color: darkgreen; }\n  .ag-bootstrap .ag-value-change-delta-down {\n    color: darkred; }\n  .ag-bootstrap .ag-value-change-value {\n    background-color: transparent;\n    border-radius: 1px;\n    padding-left: 1px;\n    padding-right: 1px;\n    transition: background-color 1s; }\n  .ag-bootstrap .ag-value-change-value-highlight {\n    background-color: #cec;\n    transition: background-color 0.1s; }\n  .ag-bootstrap .ag-rich-select {\n    font-size: 14px;\n    border: none;\n    background-color: white; }\n  .ag-bootstrap .ag-rich-select-value {\n    padding: 2px; }\n  .ag-bootstrap .ag-rich-select-list {\n    border-top: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-rich-select-row {\n    padding: 2px; }\n  .ag-bootstrap .ag-rich-select-row-selected {\n    background-color: #BDE2E5; }\n  .ag-bootstrap .ag-large-text {\n    border: none; }\n  .ag-bootstrap .ag-header-select-all, .ag-bootstrap .ag-header-cell-menu-button {\n    margin-top: 3px;\n    line-height: 1rem; }\n  .ag-bootstrap .ag-header-select-all {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-filter-header-container > label {\n    margin-bottom: 0; }\n  .ag-bootstrap .ag-header-cell {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-bootstrap .ag-header {\n    color: #000;\n    background: none;\n    border-bottom: none;\n    font-weight: 600; }\n  .ag-bootstrap .ag-header-icon {\n    color: #000;\n    stroke: none;\n    fill: #000; }\n  .ag-bootstrap .ag-filter-icon {\n    display: inline-block; }\n  .ag-bootstrap .ag-sort-ascending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDUuMlYzLjQ5M2gtNnY2SDQuN1Y1LjJoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSg0NSA1Ljk5MyA2LjQ5MykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2IiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04LjQ5MyA0Ljd2LS43MDdoLTV2NUg0LjJWNC43aDQuMjkzeiIvPjwvZz48L2c+PC9zdmc+) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-sort-descending-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDJoMnY5SDV6Ii8+PHBhdGggZD0iTTguOTkzIDYuMVY0LjM5M2gtNnY2SDQuN1Y2LjFoNC4yOTN6IiBpZD0iYiIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMi41aDF2OGgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuOTkzIDcuMzkzKSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTguNDkzIDUuNnYtLjcwN2gtNXY1SDQuMlY1LjZoNC4yOTN6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-sort-none-icon:empty {\n    display: inline-block;\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik01IDNoMnY2SDV6Ii8+PHBhdGggZD0iTTguMTQ2IDguMTgyVjYuNDc1aC01djVoMS43MDhWOC4xODJoMy4yOTJ6IiBpZD0iYiIvPjxwYXRoIGQ9Ik04LjUgMi45MTRWMS4yMDdoLTV2NWgxLjcwN1YyLjkxNEg4LjV6IiBpZD0iYyIvPjwvZGVmcz48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2EiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik01LjUgMy41aDF2NWgtMXoiLz48ZyB0cmFuc2Zvcm09InJvdGF0ZSgtMTM1IDUuNjQ2IDguNDc1KSI+PHVzZSBmaWxsPSIjRDhEOEQ4IiB4bGluazpocmVmPSIjYiIvPjxwYXRoIHN0cm9rZT0iIzAwMCIgZD0iTTcuNjQ2IDcuNjgydi0uNzA3aC00djRoLjcwOFY3LjY4MmgzLjI5MnoiLz48L2c+PGcgdHJhbnNmb3JtPSJyb3RhdGUoNDUgNiAzLjcwNykiPjx1c2UgZmlsbD0iI0Q4RDhEOCIgeGxpbms6aHJlZj0iI2MiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik04IDIuNDE0di0uNzA3SDR2NGguNzA3VjIuNDE0SDh6Ii8+PC9nPjwvZz48L3N2Zz4=) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-layout-for-print .ag-header-container {\n    background: none;\n    border-bottom: none; }\n  .ag-bootstrap .ag-ltr .ag-header-cell {\n    border-right: none; }\n  .ag-bootstrap .ag-rtl .ag-header-cell {\n    border-left: none; }\n  .ag-bootstrap .ag-header-cell-moving .ag-header-cell-label {\n    opacity: 0.5; }\n  .ag-bootstrap .ag-header-cell-moving {\n    background-color: #bebebe; }\n  .ag-bootstrap .ag-ltr .ag-header-group-cell {\n    border-right: none; }\n  .ag-bootstrap .ag-rtl .ag-header-group-cell {\n    border-left: none; }\n  .ag-bootstrap .ag-header-group-cell-with-group {\n    border-bottom: none; }\n  .ag-bootstrap .ag-header-group-cell-label {\n    padding: 2px;\n    padding-top: 4px; }\n  .ag-bootstrap .ag-rtl .ag-header-group-text {\n    margin-left: 2px; }\n  .ag-bootstrap .ag-ltr .ag-header-group-text {\n    margin-right: 2px; }\n  .ag-bootstrap .ag-header-cell-menu-button:empty {\n    width: 12px;\n    height: 12px;\n    background: transparent url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMSAxaDEwdjJIMXptMCA0aDEwdjJIMXptMCA0aDEwdjJIMXoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==) center no-repeat;\n    background-size: 12px 12px;\n    filter: \"initial\"; }\n  .ag-bootstrap .ag-ltr .ag-pinned-right-header {\n    border-left: none; }\n  .ag-bootstrap .ag-rtl .ag-pinned-left-header {\n    border-right: none; }\n  .ag-bootstrap .ag-body {\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-row-odd {\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-row-even {\n    background-color: white; }\n  .ag-bootstrap .ag-row-selected {\n    background-color: powderblue; }\n  .ag-bootstrap .ag-row-stub {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-stub-cell {\n    padding: 2px 2px 2px 10px; }\n  .ag-bootstrap .ag-floating-top {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-floating-top .ag-row {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-floating-bottom {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-floating-bottom .ag-row {\n    background-color: #f0f0f0; }\n  .ag-bootstrap .ag-overlay-loading-wrapper {\n    background-color: rgba(255, 255, 255, 0.5); }\n  .ag-bootstrap .ag-overlay-loading-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px;\n    color: black; }\n  .ag-bootstrap .ag-overlay-no-rows-center {\n    background-color: #ffffff;\n    border: none;\n    border-radius: 10px;\n    padding: 10px; }\n  .ag-bootstrap .ag-group-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 4px; }\n  .ag-bootstrap .ag-footer-cell-entire-row {\n    background-color: #f6f6f6;\n    padding: 4px; }\n  .ag-bootstrap .ag-group-cell {\n    font-style: italic; }\n  .ag-bootstrap .ag-ltr .ag-group-expanded {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-group-expanded {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-ltr .ag-group-contracted {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-group-contracted {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-ltr .ag-group-loading {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-group-loading {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-ltr .ag-group-value {\n    padding-right: 2px; }\n  .ag-bootstrap .ag-rtl .ag-group-value {\n    padding-left: 2px; }\n  .ag-bootstrap .ag-ltr .ag-group-checkbox {\n    padding-right: 2px; }\n  .ag-bootstrap .ag-rtl .ag-group-checkbox {\n    padding-left: 2px; }\n  .ag-bootstrap .ag-group-child-count {\n    display: inline-block; }\n  .ag-bootstrap .ag-footer-cell {\n    font-style: italic; }\n  .ag-bootstrap .ag-menu {\n    border: 1px solid #808080;\n    background-color: #f6f6f6;\n    cursor: default;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-size: 14px; }\n    .ag-bootstrap .ag-menu .ag-tab-header {\n      background-color: #e6e6e6; }\n    .ag-bootstrap .ag-menu .ag-tab {\n      padding: 6px 8px 6px 8px;\n      margin: 2px 2px 0px 2px;\n      display: inline-block;\n      border-right: 1px solid transparent;\n      border-left: 1px solid transparent;\n      border-top: 1px solid transparent;\n      border-top-right-radius: 2px;\n      border-top-left-radius: 2px; }\n    .ag-bootstrap .ag-menu .ag-tab-selected {\n      background-color: #f6f6f6;\n      border-right: 1px solid #d3d3d3;\n      border-left: 1px solid #d3d3d3;\n      border-top: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-menu-separator {\n    border-top: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-menu-option-active {\n    background-color: #BDE2E5; }\n  .ag-bootstrap .ag-menu-option-icon {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-bootstrap .ag-menu-option-text {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle; }\n  .ag-bootstrap .ag-menu-option-shortcut {\n    padding: 2px 2px 2px 2px;\n    vertical-align: middle; }\n  .ag-bootstrap .ag-menu-option-popup-pointer {\n    padding: 2px 4px 2px 4px;\n    vertical-align: middle;\n    display: table-cell; }\n  .ag-bootstrap .ag-menu-option-disabled {\n    opacity: 0.5; }\n  .ag-bootstrap .ag-menu-column-select-wrapper {\n    margin: 2px; }\n  .ag-bootstrap .ag-filter-checkbox {\n    margin-right: 4px;\n    margin-bottom: 0;\n    display: inline-block; }\n  .ag-bootstrap .ag-filter-header-container {\n    padding: 2px 4px 2px 4px;\n    border-bottom: 1px solid #d3d3d3; }\n  .ag-bootstrap .ag-filter-apply-panel {\n    border-top: 1px solid #d3d3d3;\n    padding: 2px 0px 2px 4px; }\n  .ag-bootstrap .ag-virtual-list-container {\n    padding: 4px 4px 10px 4px; }\n  .ag-bootstrap .ag-ltr .ag-selection-checkbox {\n    padding-right: 4px; }\n  .ag-bootstrap .ag-rtl .ag-selection-checkbox {\n    padding-left: 4px; }\n  .ag-bootstrap .ag-paging-panel {\n    padding: 4px; }\n  .ag-bootstrap .ag-paging-button {\n    margin-left: 4px;\n    margin-right: 4px; }\n  .ag-bootstrap .ag-paging-row-summary-panel {\n    display: inline-block;\n    width: 300px; }\n  .ag-bootstrap .ag-tool-panel {\n    background-color: #f6f6f6;\n    border-bottom: none;\n    border-top: none;\n    color: #000; }\n  .ag-bootstrap .ltr .ag-tool-panel {\n    border-right: none; }\n  .ag-bootstrap .rtl .ag-tool-panel {\n    border-left: none; }\n  .ag-bootstrap .ag-status-bar {\n    color: #000;\n    background-color: #f6f6f6;\n    font-size: 14px;\n    height: 22px;\n    border-bottom: none;\n    border-left: none;\n    border-right: none;\n    padding: 2px; }\n  .ag-bootstrap .ag-status-bar-aggregations {\n    float: right; }\n  .ag-bootstrap .ag-status-bar-item {\n    padding-left: 10px; }\n  .ag-bootstrap .ag-column-drop-cell {\n    background: none;\n    color: #000;\n    border: 1px solid #808080; }\n  .ag-bootstrap .ag-column-drop-cell-ghost {\n    opacity: 0.5; }\n  .ag-bootstrap .ag-column-drop-cell-text {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-bootstrap .ag-column-drop-cell-button {\n    border: 1px solid transparent;\n    padding-left: 2px;\n    padding-right: 2px;\n    border-radius: 3px; }\n  .ag-bootstrap .ag-column-drop-cell-button:hover {\n    border: none; }\n  .ag-bootstrap .ag-column-drop-empty-message {\n    padding-left: 2px;\n    padding-right: 2px;\n    color: grey; }\n  .ag-bootstrap .ag-column-drop-icon {\n    margin: 6px 3px 0px 3px; }\n  .ag-bootstrap .ag-column-drop {\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-column-drop-horizontal {\n    padding: 2px;\n    border-top: none;\n    border-left: none;\n    border-right: none; }\n  .ag-bootstrap .ag-column-drop-vertical {\n    padding: 4px 4px 10px 4px;\n    border-bottom: none;\n    overflow: auto; }\n    .ag-bootstrap .ag-column-drop-vertical .ag-column-drop-cell {\n      margin-top: 2px; }\n    .ag-bootstrap .ag-column-drop-vertical .ag-column-drop-empty-message {\n      padding: 5px; }\n  .ag-bootstrap .ag-pivot-mode {\n    border-bottom: none;\n    padding: 2px 4px 3px 4px;\n    background-color: #f6f6f6; }\n  .ag-bootstrap .ag-tool-panel .ag-column-select-panel {\n    padding: 4px 4px 10px 4px;\n    padding-left: 0;\n    border-bottom: none;\n    overflow: auto; }\n  .ag-bootstrap .ag-select-agg-func-popup {\n    cursor: default;\n    position: absolute;\n    font-size: 14px;\n    background-color: white;\n    border: none; }\n  .ag-bootstrap .ag-select-agg-func-item {\n    padding-left: 2px;\n    padding-right: 2px; }\n  .ag-bootstrap .ag-select-agg-func-item:hover {\n    background-color: #BDE2E5; }\n  .ag-bootstrap .ag-floating-filter-body {\n    margin-right: 20px;\n    width: calc(100% - 20px); }\n  .ag-bootstrap .ag-floating-filter-button {\n    margin-top: -20px;\n    display: inline-block;\n    float: right; }\n    .ag-bootstrap .ag-floating-filter-button button {\n      border: 0;\n      background: transparent;\n      padding: 3px;\n      margin: 0; }\n  .ag-bootstrap .ag-rtl .ag-floating-filter-body {\n    margin-right: 0;\n    margin-left: 20px;\n    float: right; }\n  .ag-bootstrap .ag-rtl .ag-floating-filter-button {\n    float: left; }\n  .ag-bootstrap .ag-sort-order {\n    margin-left: .5em;\n    font-size: 0.80em; }\n    .ag-bootstrap .ag-sort-order::before {\n      content: '('; }\n    .ag-bootstrap .ag-sort-order::after {\n      content: ')'; }\n", ""]);
 
 // exports
 

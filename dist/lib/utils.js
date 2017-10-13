@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.1.2
+ * @version v13.3.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -612,6 +612,15 @@ var Utils = (function () {
         if (accentedCompare === void 0) { accentedCompare = false; }
         var valueAMissing = valueA === null || valueA === undefined;
         var valueBMissing = valueB === null || valueB === undefined;
+        // this is for aggregations sum and avg, where the result can be a number that is wrapped.
+        // if we didn't do this, then the toString() value would be used, which would result in
+        // the strings getting used instead of the numbers.
+        if (valueA && valueA.toNumber) {
+            valueA = valueA.toNumber();
+        }
+        if (valueB && valueB.toNumber) {
+            valueB = valueB.toNumber();
+        }
         if (valueAMissing && valueBMissing) {
             return 0;
         }
@@ -907,7 +916,6 @@ var Utils = (function () {
         if (this.isFirefox === undefined) {
             var anyWindow = window;
             this.isFirefox = typeof anyWindow.InstallTrigger !== 'undefined';
-            ;
         }
         return this.isFirefox;
     };
@@ -916,6 +924,54 @@ var Utils = (function () {
     Utils.getTarget = function (event) {
         var eventNoType = event;
         return eventNoType.target || eventNoType.srcElement;
+    };
+    Utils.isElementInEventPath = function (element, event) {
+        if (!event || !element) {
+            return false;
+        }
+        var path = exports._.getEventPath(event);
+        return path.indexOf(element) >= 0;
+    };
+    Utils.createEventPath = function (event) {
+        var res = [];
+        var pointer = exports._.getTarget(event);
+        while (pointer) {
+            res.push(pointer);
+            pointer = pointer.parentElement;
+        }
+        return res;
+    };
+    // firefox doesn't have event.path set, or any alternative to it, so we hack
+    // it in. this is needed as it's to late to work out the path when the item is
+    // removed from the dom
+    Utils.addAgGridEventPath = function (event) {
+        event.__agGridEventPath = this.getEventPath(event);
+    };
+    Utils.getEventPath = function (event) {
+        // https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
+        // https://developer.mozilla.org/en-US/docs/Web/API/Event
+        var eventNoType = event;
+        if (event.deepPath) {
+            // IE supports deep path
+            return event.deepPath();
+        }
+        else if (eventNoType.path) {
+            // Chrome supports path
+            return eventNoType.path;
+        }
+        else if (eventNoType.composedPath) {
+            // Firefox supports composePath
+            return eventNoType.composedPath();
+        }
+        else if (eventNoType.__agGridEventPath) {
+            // Firefox supports composePath
+            return eventNoType.__agGridEventPath;
+        }
+        else {
+            // and finally, if none of the above worked,
+            // we create the path ourselves
+            return this.createEventPath(event);
+        }
     };
     Utils.forEachSnapshotFirst = function (list, callback) {
         if (list) {

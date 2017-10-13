@@ -7,12 +7,11 @@ export class StylingService {
     @Autowired('expressionService') private expressionService: ExpressionService;
 
     public processAllCellClasses(colDef:ColDef, params:any, onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void) {
-        this.processCellClassRules(colDef, params, onApplicableClass, onNotApplicableClass);
+        this.processClassRules(colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
         this.processStaticCellClasses(colDef, params, onApplicableClass)
     }
 
-    public processCellClassRules(colDef:ColDef, params:any, onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void) {
-        let classRules = colDef.cellClassRules;
+    public processClassRules(classRules: { [cssClassName: string]: (Function | string) }, params:any, onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void) {
         if (typeof classRules === 'object' && classRules !== null) {
             let classNames = Object.keys(classRules);
             for (let i = 0; i < classNames.length; i++) {

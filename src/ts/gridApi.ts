@@ -560,12 +560,14 @@ export class GridApi {
         this.gridPanel.ensureColumnVisible(key);
     }
 
-    public ensureIndexVisible(index:any) {
-        this.gridPanel.ensureIndexVisible(index);
+    // Valid values for position are bottom, middle and top
+    public ensureIndexVisible(index:any, position:string = 'top') {
+        this.gridPanel.ensureIndexVisible(index, position);
     }
 
-    public ensureNodeVisible(comparator:any) {
-        this.gridCore.ensureNodeVisible(comparator);
+    // Valid values for position are bottom, middle and top
+    public ensureNodeVisible(comparator:any, position:string = 'top') {
+        this.gridCore.ensureNodeVisible(comparator, position);
     }
 
     public forEachLeafNode(callback: (rowNode: RowNode)=>void ) {
