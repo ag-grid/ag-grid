@@ -217,6 +217,8 @@ export {
     NodeChildDetails,
     GetMainMenuItemsParams,
     GetMainMenuItems,
+    GetGroupKeys,
+    IsGroup,
     GetRowNodeIdFunc,
     ProcessRowParams,
     NavigateToNextCellParams,

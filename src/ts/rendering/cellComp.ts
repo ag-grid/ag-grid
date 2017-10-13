@@ -690,10 +690,7 @@ export class CellComp extends Component {
         this.cellRenderer = cellRenderer;
         this.cellRendererGui = this.cellRenderer.getGui();
 
-        if (_.missing(this.cellRendererGui)) {
-            console.warn('ag-Grid: cellRenderer.getGui() returned back nothing');
-            return;
-        }
+        if (_.missing(this.cellRendererGui)) { return; }
 
         // if async components, then it's possible the user started editing since
         // this call was made

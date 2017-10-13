@@ -265,8 +265,8 @@ export interface GridOptions {
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?: GetNodeChildDetails;
-    getGroupKeys?: (data: any) => string[];
-    isGroup?: (data: any) => boolean;
+    getGroupKeys?: GetGroupKeys;
+    isGroup?: IsGroup;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
     getRowNodeId?: GetRowNodeIdFunc;
@@ -340,6 +340,14 @@ export interface GridOptions {
     // apis, set by the grid on init
     api?: GridApi; // change to typed
     columnApi?: ColumnApi; // change to typed
+}
+
+export interface GetGroupKeys {
+    (data: any): string[];
+}
+
+export interface IsGroup {
+    (data: any): boolean;
 }
 
 export interface GetNodeChildDetails {

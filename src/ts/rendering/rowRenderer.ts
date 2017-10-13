@@ -341,7 +341,9 @@ export class RowRenderer extends BeanStub {
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {
         let rowComp = this.rowCompsByIndex[rowIndex];
-        rowComp.addEventListener(eventName, callback);
+        if (rowComp) {
+            rowComp.addEventListener(eventName, callback);
+        }
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {

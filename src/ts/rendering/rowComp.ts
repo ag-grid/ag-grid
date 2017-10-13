@@ -54,14 +54,11 @@ export class LoadingCellRenderer extends Component {
 
 export class RowComp extends Component {
 
-    public static EVENT_ROW_REMOVED = 'rowRemoved';
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 
     private static FULL_WIDTH_CELL_RENDERER = 'fullWidthCellRenderer';
     private static GROUP_ROW_RENDERER = 'groupRowRenderer';
     private static LOADING_CELL_RENDERER = 'loadingCellRenderer';
-
-    private renderedRowEventService: EventService;
 
     private rowNode: RowNode;
 
@@ -1206,20 +1203,19 @@ export class RowComp extends Component {
     }
 
     public addEventListener(eventType: string, listener: Function): void {
-        if (eventType==='renderedRowRemoved') {
-            eventType = RowComp.EVENT_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+        if (eventType==='renderedRowRemoved' || eventType==='rowRemoved') {
+            eventType = Events.EVENT_VIRTUAL_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
-        if (!this.renderedRowEventService) { this.renderedRowEventService = new EventService(); }
-        this.renderedRowEventService.addEventListener(eventType, listener);
+        super.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
-        if (eventType==='renderedRowRemoved') {
-            eventType = RowComp.EVENT_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+        if (eventType==='renderedRowRemoved' || eventType==='rowRemoved') {
+            eventType = Events.EVENT_VIRTUAL_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved and rowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
-        this.renderedRowEventService.removeEventListener(eventType, listener);
+        super.removeEventListener(eventType, listener);
     }
 
     private destroyScope(): void {
@@ -1256,9 +1252,7 @@ export class RowComp extends Component {
 
         let event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
 
-        if (this.renderedRowEventService) {
-            this.renderedRowEventService.dispatchEvent(event);
-        }
+        this.dispatchEvent(event);
         this.beans.eventService.dispatchEvent(event);
     }
 
