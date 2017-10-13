@@ -107,7 +107,10 @@ function launchTSCCheck() {
 }
 
 function watchAndGenerateExamples() {
-    const callback = () => {
+    const callback = (file) => {
+        if (file) {
+            console.log(`${file} changed, regenerating`);
+        }
         console.log('regenerating examples...');
         generateExamples(() => {
             console.log('generation done.');
@@ -116,7 +119,8 @@ function watchAndGenerateExamples() {
 
     callback();
 
-    chokidar.watch('./src/{*/*.php,*/*/*.{html,css,js}}').on('all', callback);
+    chokidar.watch('./src/*/*.php').on('change', callback);
+    chokidar.watch('./src/*/*/*.{html,css,js}').on('change', callback);
 }
 
 module.exports = callback => {
