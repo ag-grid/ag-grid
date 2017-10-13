@@ -444,12 +444,12 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>addRenderedRowListener(event, rowIndex, callback)</th>
-            <td>Registers a callback to a rendered row. A rendered row is a row that
+            <td>Registers a callback to a virtual row. A virtual row is a row that
                 is visually rendered on the screen (rows that are not visible because
                 of the scroll position are not rendered).
                 Unlike normal events, you do not need to unregister rendered row listeners.
                 When the rendered row is removed from the grid, all associated rendered row listeners will
-                also be removed. Currently only one event: 'renderedRowRemoved' - listen
+                also be removed. Currently only one event: 'virtualRowRemoved' - listen
                 for this event if your cellRenderer needs to do clean down after the
                 row no longer exists.
             </td>
