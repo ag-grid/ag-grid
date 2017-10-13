@@ -290,7 +290,9 @@ export class ColumnController {
 
     @PostConstruct
     public init(): void {
-        this.pivotMode = this.gridOptionsWrapper.isPivotMode();
+        if (this.checkPivotAllowed()) {
+            this.pivotMode = this.gridOptionsWrapper.isPivotMode();
+        }
     }
 
     private setVirtualViewportLeftAndRight(): void {
@@ -353,8 +355,21 @@ export class ColumnController {
         return this.pivotMode;
     }
 
+    public checkPivotAllowed(): boolean {
+        if (this.gridOptionsWrapper.getGroupKeysFunc() || this.gridOptionsWrapper.getIsGroupFunc()) {
+            console.warn('ag-Grid: Pivot mode not available. You have provided either getGroupKeys() or ' +
+                'isGroup() which imply tree data, which means you cannot turn pivot mode on.');
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     public setPivotMode(pivotMode: boolean): void {
         if (pivotMode === this.pivotMode) { return; }
+
+        if (!this.checkPivotAllowed()) { return; }
+
         this.pivotMode = pivotMode;
         this.updateDisplayedColumns();
         let event: ColumnPivotModeChangedEvent = {
