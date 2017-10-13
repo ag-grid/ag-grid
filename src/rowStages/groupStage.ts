@@ -387,7 +387,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private getGroupInfo(rowNode: RowNode, groupColumns: Column[]): GroupInfo[] {
-        if(this.treeData) {
+        if (this.treeData) {
             return this.getGroupInfoFromCallback(rowNode);
         } else {
             return this.getGroupInfoFromGroupColumns(rowNode, groupColumns);
@@ -401,13 +401,20 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private getGroupInfoFromGroupColumns(rowNode: RowNode, groupColumns: Column[]) {
-        let groupInfoMapper =
-            (groupCol: Column) => <GroupInfo> {
-                key: this.getKeyForNode(groupCol, rowNode),
-                field: groupCol.getColDef().field,
-                rowGroupColumn: groupCol
-            };
-        return groupColumns.map(groupInfoMapper);
+        let res: GroupInfo[] = [];
+        groupColumns.forEach( groupCol => {
+            let key: any = this.getKeyForNode(groupCol, rowNode);
+            let valueForThisColumn = key!==null && key!==undefined;
+            if (valueForThisColumn) {
+                let item = <GroupInfo> {
+                    key: this.getKeyForNode(groupCol, rowNode),
+                    field: groupCol.getColDef().field,
+                    rowGroupColumn: groupCol
+                };
+                res.push(item);
+            }
+        });
+        return res;
     }
 
     private getKeyForNode(groupColumn: Column, rowNode: RowNode): any {
