@@ -233,6 +233,8 @@ export class GroupStage implements IRowNodeStage {
     private shotgunResetEverything(details: GroupingDetails): void {
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
+        // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
+        // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
         details.rootNode.leafGroup = this.treeData ? false : details.groupedCols.length === 0;
 
         // we are going everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
@@ -294,8 +296,13 @@ export class GroupStage implements IRowNodeStage {
         userGroup.groupData = generatedGroup.groupData;
         userGroup.level = generatedGroup.level;
         userGroup.expanded = generatedGroup.expanded;
-        userGroup.leafGroup = generatedGroup.leafGroup; // is always false for userGroups
-        userGroup.rowGroupIndex = generatedGroup.rowGroupIndex; // always null for userGroups
+
+        // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
+        // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
+        userGroup.leafGroup = generatedGroup.leafGroup;
+
+        // always null for userGroups, as row grouping is not allowed when doing tree data
+        userGroup.rowGroupIndex = generatedGroup.rowGroupIndex;
 
         userGroup.allLeafChildren = generatedGroup.allLeafChildren;
         userGroup.childrenAfterGroup = generatedGroup.childrenAfterGroup;
