@@ -261,7 +261,7 @@ interface IViewportDatasourceParams {
         position and pushes data to the client based on the viewport position.
     </p>
 
-<?= example('Viewport Example', 'viewport', 'vanilla', array( 'enterprise'=> true )) ?>
+<?= example('Viewport Example', 'viewport', 'generated', array( 'enterprise'=> true )) ?>
 
     <h1 id="pagination">Example Viewport with Pagination</h1>
 
@@ -287,7 +287,7 @@ interface IViewportDatasourceParams {
         </ul>
     </p>
 
-<?= example('Pagination Viewport Example', 'pagination-viewport', 'vanilla', array( 'enterprise'=> true )) ?>
+<?= example('Pagination Viewport Example', 'pagination-viewport', 'generated', array( 'enterprise'=> true )) ?>
 
 </div>
 
