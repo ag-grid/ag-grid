@@ -79,6 +79,9 @@ var HeaderWrapperComp = (function (_super) {
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
         this.addAttributes();
+        if (this.column.colDef.checkboxSelection && !this.column.colDef.headerCheckboxSelection && this.gridOptionsWrapper.isRowSelectionMulti()) {
+            this.cbSelectAll.setVisible(true);
+        }
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getHtmlElement(), this.gridOptionsWrapper, this.column, null);
     };
     HeaderWrapperComp.prototype.addColumnHoverListener = function () {
