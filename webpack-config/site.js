@@ -14,5 +14,11 @@ module.exports = merge(common, {
         hotUpdateMainFilename: 'dist/[hash].hot-update.json'
     },
 
-    plugins: [new webpack.NamedModulesPlugin(), new webpack.HotModuleReplacementPlugin()]
+    plugins: [
+        new webpack.NamedModulesPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.DefinePlugin({
+            MAX_ACTIVE_EXAMPLES: JSON.stringify(3)
+        })
+    ]
 });

@@ -23,9 +23,12 @@ gulp.task('release', ['generate-examples', 'process-src', 'bundle-site', 'copy-f
 gulp.task('default', ['release']);
 
 gulp.task('bundle-site', () => {
+    const theWebpack = require('webpack')
     const webpackConfig = require('./webpack-config/site.js');
     webpackConfig.entry.site = './src/_assets/ts/site';
-    webpackConfig.plugins = [];
+    webpackConfig.plugins = [ new theWebpack.DefinePlugin({
+        MAX_ACTIVE_EXAMPLES: JSON.stringify(100)
+    }) ];
     webpackConfig.output.filename = 'site.js'
 
     return gulp
