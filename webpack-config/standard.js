@@ -14,7 +14,9 @@ module.exports = merge(common, {
         filename: '[name].js',
         library: ['agGrid'],
         libraryTarget: 'umd',
-        publicPath: 'http://localhost:8080/'
+        publicPath: '/',
+        hotUpdateChunkFilename: 'dev/ag-grid/[hash].hot-update.js',
+        hotUpdateMainFilename: 'dev/ag-grid/[hash].hot-update.json'
     },
 
     plugins: [

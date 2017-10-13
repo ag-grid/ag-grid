@@ -13,7 +13,9 @@ module.exports = merge(common, {
         filename: '[name].js',
         library: ['agGrid'],
         libraryTarget: 'umd',
-        publicPath: '/'
+        publicPath: '/',
+        hotUpdateChunkFilename: 'dev/ag-grid-enterprise-bundle/[hash].hot-update.js',
+        hotUpdateMainFilename:  'dev/ag-grid-enterprise-bundle/[hash].hot-update.json'
     },
     resolve: {
         alias: {

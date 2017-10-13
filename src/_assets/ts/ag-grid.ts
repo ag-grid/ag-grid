@@ -7,7 +7,7 @@ import "../../../../ag-grid/src/styles/theme-material.scss";
 import "../../../../ag-grid/src/styles/ag-theme-material.scss";
 
 if (!(<any> global).hot) {
-    require('webpack-hot-middleware/client?path=/dev/ag-grid/__webpack_hmr');
+    require('webpack-hot-middleware/client?path=/dev/ag-grid/__webpack_hmr&reload=true');
 }
 
 export * from "../../../../ag-grid/exports";
