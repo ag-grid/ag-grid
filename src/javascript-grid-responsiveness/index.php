@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
     <p>Sometimes the vertical height of the grid is greater than the number of rows you have it in.  You can dynamically
     set the row heights to fill the available height as the following example shows:</p>
 
-<?= example('Dynamic vertical resizing', 'example2', 'vanilla') ?>
+<?= example('Dynamic vertical resizing', 'example2', 'generated') ?>
 
 </div>
 

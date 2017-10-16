@@ -27,20 +27,21 @@ include '../documentation-main/documentation_header.php';
         product is JavaScript, there is little we can do to prevent this.
     </note>
 
-<?php if (isFrameworkJavaScript()) { ?>
     <h4><img src="../images/svg/javascript.svg" style="height: 25px" title="JavaScript"/> JavaScript</h4>
 
     <p>
         Use this if you are using the bundled version of ag-Grid (eg you are using <i>ag-grid-enterprise.js</i>).
     </p>
-    <snippet>
-agGrid.LicenseManager.setLicenseKey("your license key");</snippet>
+<snippet>
+agGrid.LicenseManager.setLicenseKey("your license key");
+</snippet>
 
     <h4>CommonJS</h4>
     <p>Use this if you are using CommonJS to load ag-Grid.</p>
-    <snippet>
+<snippet>
 var enterprise = require("ag-grid-enterprise");
-enterprise.LicenseManager.setLicenseKey("your license key");</snippet>
+enterprise.LicenseManager.setLicenseKey("your license key");
+</snippet>
 
     <h4>Do Not Mix Loading Mechanisms</h4>
 
@@ -50,9 +51,6 @@ enterprise.LicenseManager.setLicenseKey("your license key");</snippet>
         one will have the license key and the other will be used in your application without the license key.
     </p>
 
-<?php } ?>
-<?php if (isFrameworkAngular2()) { ?>
-
     <h3><img src="../images/angular2_large.png" style="height: 25px" title="Angular"/> Angular</h3>
 
     <p>We recommend setting the license key in your main boot files (typically named either <code>main.ts</code> or
@@ -60,8 +58,7 @@ enterprise.LicenseManager.setLicenseKey("your license key");</snippet>
 
     <p>For example:</p>
 
-    <snippet>
-
+<snippet>
 import {platformBrowser} from "@angular/platform-browser";
 import {AppModuleNgFactory} from "../aot/app/app.module.ngfactory";
 
@@ -69,20 +66,17 @@ import {LicenseManager} from "ag-grid-enterprise/main";
 LicenseManager.setLicenseKey("your license key");
 
 platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
-   </snippet>
-
-<?php } ?>
-<?php if (isFrameworkReact()) { ?>
+</snippet>
 
     <h3><img src="../images/react_large.png" style="height: 25px" title="React"/> React</h3>
 
-    <p>We recommend setting the license key in your main bootstrap file (typically named <code>index.js</code>), before you
-    bootstrap your application.</p>
+    <p>We recommend setting the license key in your main bootstrap file (typically named <code>index.js</code>), before
+        you
+        bootstrap your application.</p>
 
     <p>For example:</p>
 
-    <snippet>
-
+<snippet>
 import React from "react";
 import {render} from "react-dom";
 
@@ -95,24 +89,22 @@ LicenseManager.setLicenseKey("your license key");
 import App from "./App";
 
 document.addEventListener('DOMContentLoaded', () =&gt; {
-    render(
-        &lt;App/&gt;,
-        document.querySelector('#app')
-    );
-});</snippet>
-
-<?php } ?>
-<?php if (isFrameworkVue()) { ?>
+render(
+&lt;App/&gt;,
+document.querySelector('#app')
+);
+});
+</snippet>
 
     <h3><img src="../images/vue_large.png" style="height: 25px" title="VueJs"/> VueJS</h3>
 
-    <p>We recommend setting the license key in your main bootstrap file (typically named <code>main.js</code>), before you
+    <p>We recommend setting the license key in your main bootstrap file (typically named <code>main.js</code>), before
+        you
         bootstrap your application.</p>
 
     <p>For example:</p>
 
-    <snippet>
-
+<snippet>
 import Vue from "vue";
 
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
@@ -124,22 +116,19 @@ import {LicenseManager} from "ag-grid-enterprise/main";
 LicenseManager.setLicenseKey("your license key");
 
 new Vue({
-    el: "#el",
-    ...
-});</snippet>
-
-<?php } ?>
-<?php if (isFrameworkPolymer()) { ?>
+el: "#el",
+...
+});
+</snippet>
 
     <h3><img src="../images/polymer-large.png" style="height: 25px" title="Polymer"/> Polymer</h3>
 
     <p>You have two choices as to where to set your license key in Polymer.</p>
-    
-    <p>If you have many components with agGrid in, the we suggest
-    you run a separate script to reference and set the license key - for example:</p>
-    
-    <snippet>
 
+    <p>If you have many components with agGrid in, the we suggest
+        you run a separate script to reference and set the license key - for example:</p>
+
+<snippet>
 // the main/initial index.html
 &lt;script src="../bower_components/ag-grid-enterprise/dist/ag-grid-enterprise.noStyle.js"&gt;&lt;/script&gt;
 
@@ -150,17 +139,19 @@ new Vue({
 &lt;!-- licenseKey.js will be responsible for setting the license key across the application --&gt;
 &lt;script src="licenseKey.js"&gt;&lt;/script&gt;
 &lt;link rel="import" href="grid-component-one.html"&gt;
-&lt;link rel="import" href="grid-component-one.html"&gt;</snippet>
+&lt;link rel="import" href="grid-component-one.html"&gt;
+</snippet>
 <snippet>
 
 // licenseKey.js
-agGrid.LicenseManager.setLicenseKey("your license key")</snippet>
+agGrid.LicenseManager.setLicenseKey("your license key")
+</snippet>
 
-    <p>If you have a single component, or a single component that in turn has the child components, you can set the license key 
+    <p>If you have a single component, or a single component that in turn has the child components, you can set the
+        license key
         in this parent component - for example:</p>
 
-    <snippet>
-
+<snippet>
 // the main/initial index.html
 &lt;script src="../bower_components/ag-grid-enterprise/dist/ag-grid-enterprise.noStyle.js"&gt;&lt;/script&gt;
 
@@ -168,49 +159,44 @@ agGrid.LicenseManager.setLicenseKey("your license key")</snippet>
 &lt;link rel="import" href="../bower_components/ag-grid-polymer/ag-grid-polymer.html"&gt;
 
 &lt;!-- your code --&gt;
-&lt;link rel="import" href="main-component-one.html"&gt;</snippet>
-    
-    <snippet>
+&lt;link rel="import" href="main-component-one.html"&gt;
+</snippet>
 
+<snippet>
 // main-component-one.html
 &lt;dom-module id="simple-grid-example"&gt;
-    &lt;template id="template"&gt;
-        &lt;div &gt;
-            &lt;ag-grid-polymer style="width: 100%; height: 350px;"
-                             class="ag-fresh"
-                             rowData="{{rowData}}"
-                             columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
-        &lt;/div&gt;
-    &lt;/template&gt;
+&lt;template id="template"&gt;
+&lt;div &gt;
+&lt;ag-grid-polymer style="width: 100%; height: 350px;"
+class="ag-fresh"
+rowData="{{rowData}}"
+columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
+&lt;/div&gt;
+&lt;/template&gt;
 
-    &lt;script&gt;
-        agGrid.LicenseManager.setLicenseKey("your license key")
+&lt;script&gt;
+agGrid.LicenseManager.setLicenseKey("your license key")
 
-        class SimpleGridExample extends Polymer.Element {
-            ...
-        }
-   </snippet>
-
-<?php } ?>
-<?php if (isFrameworkAurelia()) { ?>
+class SimpleGridExample extends Polymer.Element {
+...
+}
+</snippet>
 
     <h3><img src="../images/aurelia_large.png" style="height: 25px" title="Aurelia"/> Aurelia</h3>
 
     <p>
         For Aurelia users, we suggest you set your License Key in the <code>configure</code> function, as follows:
-    <snippet>
-
+<snippet>
 export function configure(aurelia: Aurelia) {
-  aurelia.use
+    aurelia.use
     .standardConfiguration()
     .plugin('ag-grid-aurelia')
     .feature('resources');
 
-  LicenseManager.setLicenseKey("your license key");
+    LicenseManager.setLicenseKey("your license key");
 
-  ...rest of function</snippet>
+    ...rest of function
+</snippet>
 </div>
-<?php } ?>
-
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

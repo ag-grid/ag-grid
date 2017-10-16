@@ -13,7 +13,7 @@ var columnDefs = [
 
 function onGridSizeChanged(params) {
         // get the current grids width
-        var gridWidth = document.getElementById('myGrid').offsetWidth;
+        var gridWidth = document.getElementById('grid-wrapper').offsetWidth;
 
         // keep track of which columns to hide/show
         var columnsToShow = [];

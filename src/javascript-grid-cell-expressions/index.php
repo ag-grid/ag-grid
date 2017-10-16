@@ -164,7 +164,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= example('Cell Expressions', 'cell-expressions') ?>
+    <?= example('Cell Expressions', 'cell-expressions', 'multi') ?>
 
     <h2>How Expressions Work</h2>
 

@@ -60,13 +60,14 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-interface IFloatingFilterComp {
+    interface IFloatingFilterComp {
     // mandatory methods
 
     // The init(params) method is called on the floating filter once. See below for details on the parameters.
     init(params: IFilterFloatingParams): void;
 
-    &lt;span class="codeComment"&gt;// This is a method that ag-Grid will call every time the model from the associated rich filter
+    &lt;span class="codeComment"&gt;// This is a method that ag-Grid will call every time the model from the associated
+    rich filter
     // for this floating filter changes. Typically this would be used so that you can refresh your UI and show
     // on it a visual representation of the latest model for the filter as it is being updated somewhere else.&lt;/span&gt;
     onParentModelChanged(parentModel:any)
@@ -81,7 +82,8 @@ interface IFloatingFilterComp {
     // so gets destroyed if column is made not visible or when user scrolls column out of
     // view with horizontal scrolling.&lt;/span&gt;
     destroy?(): void;
-}</snippet>
+    }
+</snippet>
 
 
 <h3 id="ifilter-params">IFloatingFilterParams</h3>
@@ -93,12 +95,13 @@ interface IFloatingFilterComp {
 </p>
 
 <snippet>
-interface IFloatingFilterParams {
+    interface IFloatingFilterParams {
 
     // The column this filter is for
     column: Column;
 
-    &lt;span class="codeComment"&gt;// This is the callback you need to invoke from your component every time that you want
+    &lt;span class="codeComment"&gt;// This is the callback you need to invoke from your component every time that you
+    want
     // to update the model from your parent rich filter. In order to make this call you need to be able to produce a
     // model object like the one this rich filter will produce through getModel(). After this call is completed,
     // the parent rich filter will be updated and the data on the grid filtered accordingly if applyButton=false.&lt;/span&gt;
@@ -116,7 +119,8 @@ interface IFloatingFilterParams {
 
     // The grid API
     api: any;
-}</snippet>
+    }
+</snippet>
 
 <h3 id="example">Custom Floating Filter Example</h3>
 
@@ -224,21 +228,15 @@ interface IFloatingFilterParams {
 </ul>
 </p>
 
-<?= example('Custom Filter and Floating Filter', 'custom-complex-filter-and-floating-filter', 'vanilla', array( 'extras' => array('jquery', 'jqueryui') )) ?>
+<?= example('Custom Filter and Floating Filter', 'custom-complex-filter-and-floating-filter', 'vanilla', array('extras' => array('jquery', 'jqueryui'))) ?>
 
 <span id="ng2AngularAnchor"></span>
-<?php if (isFrameworkAngular2()) { ?>
-    <?php include './angular.php'; ?>
-<?php } ?>
+<?php include './angular.php'; ?>
 
 <span id="reactAnchor"></span>
-<?php if (isFrameworkReact()) { ?>
-    <?php include './react.php'; ?>
-<?php } ?>
+<?php include './react.php'; ?>
 
 <span id="polymerAnchor"></span>
-<?php if (isFrameworkPolymer()) { ?>
-    <?php include './polymer.php'; ?>
-<?php } ?>
+<?php include './polymer.php'; ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

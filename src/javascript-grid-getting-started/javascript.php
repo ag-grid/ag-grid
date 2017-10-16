@@ -1,10 +1,8 @@
-<?php if (!isFrameworkAll()) { ?>
-    <h2>
-        <img src="../images/svg/docs/getting_started.svg" width="50" />
-        <img style="vertical-align: middle" src="../images/svg/javascript.svg" height="25px"/>
-        Getting Started
-    </h2>
-<?php } ?>
+<h2>
+    <img src="../images/svg/docs/getting_started.svg" width="50"/>
+    <img style="vertical-align: middle" src="../images/svg/javascript.svg" height="25px"/>
+    Getting Started
+</h2>
 
 <?php include 'ag-grid-dependency.php' ?>
 
@@ -27,35 +25,36 @@
 
 <p>So let's create a simply example with 3 columns and 3 rows of data:</p>
 <snippet>
-// specify the columns
-var columnDefs = [
+    // specify the columns
+    var columnDefs = [
     {headerName: "Make", field: "make"},
     {headerName: "Model", field: "model"},
     {headerName: "Price", field: "price"}
-];
+    ];
 
-// specify the data
-var rowData = [
+    // specify the data
+    var rowData = [
     {make: "Toyota", model: "Celica", price: 35000},
     {make: "Ford", model: "Mondeo", price: 32000},
     {make: "Porsche", model: "Boxter", price: 72000}
-];
+    ];
 
-// let the grid know which columns and what data to use
-var gridOptions = {
+    // let the grid know which columns and what data to use
+    var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData
-};
+    };
 
-// wait for the document to be loaded, otherwise ag-Grid will not find the div in the document.
-document.addEventListener("DOMContentLoaded", function() {
+    // wait for the document to be loaded, otherwise ag-Grid will not find the div in the document.
+    document.addEventListener("DOMContentLoaded", function() {
 
     // lookup the container we want the Grid to use
     var eGridDiv = document.querySelector('#myGrid');
 
     // create the grid passing in the div to use together with the columns & data we want to use
     new agGrid.Grid(eGridDiv, gridOptions);
-});</snippet>
+    });
+</snippet>
 
 <p>With that in place we have a quick and simple Grid up and running:</p>
 

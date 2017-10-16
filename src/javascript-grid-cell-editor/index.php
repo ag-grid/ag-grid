@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-interface ICellEditorComp {
+    interface ICellEditorComp {
 
     // gets called once after the editor is created
     init?(params: ICellEditorParams): void;
@@ -55,50 +55,52 @@ interface ICellEditorComp {
 
     // If doing full row edit, then gets called when tabbing out of the cell.
     focusOut?(): boolean;
-}</snippet>
+    }
+</snippet>
 
 <p>
     Below is a simple example of Cell Editor:
 </p>
 
 <snippet>
-// function to act as a class
-function MyCellEditor () {}
+    // function to act as a class
+    function MyCellEditor () {}
 
-// gets called once before the renderer is used
-MyCellEditor.prototype.init = function(params) {
+    // gets called once before the renderer is used
+    MyCellEditor.prototype.init = function(params) {
     // create the cell
     this.eInput = document.createElement('input');
     this.eInput.value = params.value;
-};
+    };
 
-// gets called once when grid ready to insert the element
-MyCellEditor.prototype.getGui = function() {
+    // gets called once when grid ready to insert the element
+    MyCellEditor.prototype.getGui = function() {
     return this.eInput;
-};
+    };
 
-// focus and select can be done after the gui is attached
-MyCellEditor.prototype.afterGuiAttached = function() {
+    // focus and select can be done after the gui is attached
+    MyCellEditor.prototype.afterGuiAttached = function() {
     this.eInput.focus();
     this.eInput.select();
-};
+    };
 
-// returns the new value after editing
-MyCellEditor.prototype.getValue = function() {
+    // returns the new value after editing
+    MyCellEditor.prototype.getValue = function() {
     return this.eInput.value;
-};
+    };
 
-// any cleanup we need to be done here
-MyCellEditor.prototype.destroy = function() {
+    // any cleanup we need to be done here
+    MyCellEditor.prototype.destroy = function() {
     // but this example is simple, no cleanup, we could
     // even leave this method out as it's optional
-};
+    };
 
-// if true, then this editor will appear in a popup 
-MyCellEditor.prototype.isPopup = function() {
-     and we could leave this method out also, false is the default
+    // if true, then this editor will appear in a popup
+    MyCellEditor.prototype.isPopup = function() {
+    and we could leave this method out also, false is the default
     return false;
-};</snippet>
+    };
+</snippet>
 
 
 <h2 id="cell-editor-params">
@@ -152,9 +154,12 @@ MyCellEditor.prototype.isPopup = function() {
     </tr>
     <tr>
         <th>onKeyDown</th>
-        <td>Callback to tell grid a key was pressed - useful to pass control key events (tab, arrows etc) back to grid - however you do
-            not need to call this as the grid is already listening for the events as they propagate. This is only required if
-            you are preventing event propagation.</td>
+        <td>Callback to tell grid a key was pressed - useful to pass control key events (tab, arrows etc) back to grid -
+            however you do
+            not need to call this as the grid is already listening for the events as they propagate. This is only
+            required if
+            you are preventing event propagation.
+        </td>
     </tr>
     <tr>
         <th>stopEditing</th>
@@ -164,7 +169,8 @@ MyCellEditor.prototype.isPopup = function() {
         <th>eGridCell</th>
         <td>A reference to the DOM element representing the grid cell that your component will live inside.
             Useful if you want to add event listeners or classes at this level. This is the DOM element that
-            gets browser focus when selecting cells.</td>
+            gets browser focus when selecting cells.
+        </td>
     </tr>
     <tr>
         <th>cellStartedEdit</th>
@@ -191,14 +197,14 @@ MyCellEditor.prototype.isPopup = function() {
 </p>
 
 <snippet>
-// define cell renderer to be reused
-var myCellEditor = .....
+    // define cell renderer to be reused
+    var myCellEditor = .....
 
-// use with a color
-colDef.cellEditor = ... // provide cellEditor as before
-colDef.cellEditorParams = {
+    // use with a color
+    colDef.cellEditor = ... // provide cellEditor as before
+    colDef.cellEditorParams = {
     country: 'Ireland'
-}
+    }
 </snippet>
 
 <h2 id="editing-keyboard-navigation">Keyboard Navigation While Editing</h2>
@@ -219,7 +225,7 @@ colDef.cellEditorParams = {
 
 <p>
     You have two options to stop the grid from doing it's default action on certain key events:
-    <ol>
+<ol>
     <li>Stop propagation of the event to the grid in the cell editor.</li>
     <li>Tell the grid to do nothing via the <code>colDef.suppressKeyEvent()</code> callback.</li>
 </ol>
@@ -239,27 +245,27 @@ colDef.cellEditorParams = {
 </p>
 
 <snippet>
-var KEY_LEFT = 37;
-var KEY_UP = 38;
-var KEY_RIGHT = 39;
-var KEY_DOWN = 40;
-var KEY_PAGE_UP = 33;
-var KEY_PAGE_DOWN = 34;
-var KEY_PAGE_HOME = 36;
-var KEY_PAGE_END = 35;
+    var KEY_LEFT = 37;
+    var KEY_UP = 38;
+    var KEY_RIGHT = 39;
+    var KEY_DOWN = 40;
+    var KEY_PAGE_UP = 33;
+    var KEY_PAGE_DOWN = 34;
+    var KEY_PAGE_HOME = 36;
+    var KEY_PAGE_END = 35;
 
-eInputDomElement.addEventListener('keydown', function(event) {
-  var keyCode = event.keyCode;
+    eInputDomElement.addEventListener('keydown', function(event) {
+    var keyCode = event.keyCode;
 
-  var isNavigationKey = keyCode===KEY_LEFT || keyCode===KEY_RIGHT || keyCode===KEY_UP
-        || keyCode===KEY_DOWN || keyCode===KEY_PAGE_DOWN || keyCode===KEY_PAGE_UP
-        || keyCode===KEY_PAGE_HOME || keyCode===KEY_PAGE_END;
+    var isNavigationKey = keyCode===KEY_LEFT || keyCode===KEY_RIGHT || keyCode===KEY_UP
+    || keyCode===KEY_DOWN || keyCode===KEY_PAGE_DOWN || keyCode===KEY_PAGE_UP
+    || keyCode===KEY_PAGE_HOME || keyCode===KEY_PAGE_END;
 
-  if (isNavigationKey) {
+    if (isNavigationKey) {
     // this stops the grid from receiving the event and executing keyboard navigation
     event.stopPropagation();
-  }
-}
+    }
+    }
 </snippet>
 
 <h3 id="suppress-keyboard-event">Option 2 - Suppress Keyboard Event</h3>
@@ -273,10 +279,10 @@ eInputDomElement.addEventListener('keydown', function(event) {
 </p>
 
 <snippet>
-var KEY_UP = 38;
-var KEY_DOWN = 40;
+    var KEY_UP = 38;
+    var KEY_DOWN = 40;
 
-colDef.suppressKeyboardEvent = function(params) {
+    colDef.suppressKeyboardEvent = function(params) {
     console.log('cell is editing: ' + params.editing);
     console.log('keyboard event:', params.event);
 
@@ -284,13 +290,13 @@ colDef.suppressKeyboardEvent = function(params) {
     var keyCode = params.event.keyCode;
     var gridShouldDoNothing = params.editing && (keyCode===KEY_UP || keyCode===KEY_DOWN);
     return gridShouldDoNothing;
-}
+    }
 </snippet>
 
 <p>The params for <code>suppressKeyboardEvent()</code> are as follows:</p>
 
 <snippet>
-interface SuppressKeyboardEventParams {
+    interface SuppressKeyboardEventParams {
 
     // the keyboard event the grid received
     event: KeyboardEvent;
@@ -305,42 +311,39 @@ interface SuppressKeyboardEventParams {
     context: any;
     api: GridApi;
     columnApi: ColumnApi;
-}
+    }
 </snippet>
 
 <h2 id="cell-editing-example">Cell Editing Example</h2>
 
 <p>The example below illustrates:
 <ul>
-    <li>'Gender' column uses a Component cell editor that allows choices via a 'richSelect' (ag-Grid-Enterprise only), with values supplied by complementing the editor parameters.</li>
+    <li>'Gender' column uses a Component cell editor that allows choices via a 'richSelect' (ag-Grid-Enterprise only),
+        with values supplied by complementing the editor parameters.
+    </li>
     <li>'Age' column uses a Component cell editor that allows simple integer input only.</li>
-    <li>'Mood' column uses a custom Component cell editor and renderer that allows choice of mood based on image selection.</li>
-    <li>'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. Tab & Esc (amongst others) will exit editing in this field, Shift+Enter will allow newlines.</li>
-    <li>'Country' columns shows using 'richSelect' for a complex object - the cell renderer takes care of only rendering the country name.</li>
+    <li>'Mood' column uses a custom Component cell editor and renderer that allows choice of mood based on image
+        selection.
+    </li>
+    <li>'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. Tab & Esc
+        (amongst others) will exit editing in this field, Shift+Enter will allow newlines.
+    </li>
+    <li>'Country' columns shows using 'richSelect' for a complex object - the cell renderer takes care of only rendering
+        the country name.
+    </li>
 </ul>
 </p>
 
 <?= example('Editor Component', 'editor-component', 'vanilla', array("enterprise" => 1)) ?>
 
-<?php if (isFrameworkAngular2()) { ?>
-    <?php include './angular.php';?>
-<?php } ?>
+<?php include './angular.php'; ?>
 
-<?php if (isFrameworkReact()) { ?>
-    <?php include './react.php';?>
-<?php } ?>
+<?php include './react.php'; ?>
 
-<?php if (isFrameworkPolymer()) { ?>
-    <?php include './polymer.php';?>
-<?php } ?>
+<?php include './polymer.php'; ?>
 
-<?php if (isFrameworkVue()) { ?>
-    <?php include './vuejs.php';?>
-<?php } ?>
+<?php include './vuejs.php'; ?>
 
-<?php if (isFrameworkAurelia()) { ?>
-    <?php include './aurelia.php';?>
-<?php } ?>
+<?php include './aurelia.php'; ?>
 
-
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>
