@@ -1,67 +1,3 @@
-<div class="dropdown frameworkBox">
-    <div class="frameworkContainer">
-        <h4 class="frameworkHeading">Framework</h4>
-        <button class="btn btn-default frameworkDropdownButton dropdown-toggle<?php if (isFrameworkAll()) { ?> frameworkAllButton<?php } ?>"
-                type="button" onclick="this.classList.toggle('active');" data-toggle="dropdown">
-            <?php if (isFrameworkAll()) { ?>
-                All Frameworks
-            <?php } elseif (isFrameworkAngular2()) { ?>
-                <img src="/images/angular2_small.png" alt="Angular"/>
-                Angular
-            <?php } elseif (isFrameworkPolymer()) { ?>
-                <img src="/images/polymer-small.png" alt="Polymer"/>
-                Polymer
-            <?php } elseif (isFrameworkAngular1()) { ?>
-                <img src="/images/angularjs_small.png" alt="Angular 1"/>
-                Angular JS
-            <?php } elseif (isFrameworkAurelia()) { ?>
-                <img src="/images/aurelia_small.png" alt="Aurelia"/>
-                Aurelia
-            <?php } elseif (isFrameworkReact()) { ?>
-                <img src="/images/svg/react.alt.svg" width="22" alt="React"/>
-                React
-            <?php } elseif (isFrameworkVue()) { ?>
-                <img src="/images/vue_small.png" alt="Vue"/>
-                Vue JS
-            <?php } elseif (isFrameworkJavaScript()) { ?>
-                <img src="/images/svg/javascript.svg" alt="JavaScript" width="20" />
-                JavaScript
-            <?php } elseif (isFrameworkWebComponents()) { ?>
-                <img src="/images/webComponents_small.png" alt="Web Components"/>
-                <span class="web-components">Web Components</span>
-            <?php } ?>
-
-            <span class="caret"></span></button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="menu1">
-            <li class="frameworkDropdownText">Documentation not relevant to your framework choice will be filtered
-                out.
-            </li>
-            <li class="divider"></li>
-            <li><a class="frameworkDropdown-link" data-id="javascript" href="#"><img src="/images/svg/javascript.svg" width="20"
-                                                                                     alt="JavaScript"/> Just JavaScript
-                    (no framework)</a></li>
-            <li><a class="frameworkDropdown-link" data-id="react" href="#"><img src="/images/svg/react.alt.svg"
-                                                                                width="22" alt="React"/> React</a></li>
-            <li><a class="frameworkDropdown-link" data-id="angular" href="#"><img src="/images/angularjs_small.png"
-                                                                                  alt="Angular 1"/> Angular (Angular 2
-                    and later)</a></li>
-            <li><a class="frameworkDropdown-link" data-id="polymer" href="#"><img src="/images/polymer-small.png"
-                                                                                  alt="Polymer 2"/> Polymer 2</a></li>
-            <li><a class="frameworkDropdown-link" data-id="angularjs" href="#"><img src="/images/angularjs_small.png"
-                                                                                    alt="Angular 1"/> Angular JS
-                    (Angular 1)</a></li>
-            <li><a class="frameworkDropdown-link" data-id="aurelia" href="#"><img src="/images/aurelia_small.png"
-                                                                                  alt="Aurelia"/> Aurelia</a></li>
-            <li><a class="frameworkDropdown-link" data-id="vue" href="#"><img src="/images/vue_small.png" width="22"
-                                                                              alt="Vue"/> Vue JS</a></li>
-            <li><a class="frameworkDropdown-link" data-id="webcomponents" href="#"><img
-                            src="../images/webComponents_small.png" alt="Web Components"/> Web Components</a></li>
-            <li><a class="frameworkDropdown-link all-frameworks" data-id="all" href="#">All Frameworks (show
-                    everything)</a></li>
-        </ul>
-    </div>
-</div>
-
 <a href="#" class="expandAll text-right">
     <?php if ($expandAll === 'true') { ?>
         Close All <i class="fa fa-arrow-down" aria-hidden="true"></i>
@@ -82,20 +18,16 @@
 <div class="docsMenu-content">
 
     <?php
-    menuItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
+        menuItem(0, 'Getting Started', 'Overview', 'javascript-grid-getting-started/');
 
-    if (isFrameworkJavaScript()) {
         menuItem(1, 'Overview JavaScript', 'Javascript', 'best-javascript-data-grid/');
         menuItem(2, 'Getting Started Javascript', 'Getting Started', 'javascript-getting-started');
         menuItem(2, 'More Detail Javascript', 'More Details', 'javascript-more-details/');
-    }
-    if (isFrameworkReact()) {
+
         menuItem(1, 'Overview React', 'ReactJS', 'best-react-data-grid/');
         menuItem(2, 'Getting Started React', 'Getting Started', 'react-getting-started/');
         menuItem(2, 'More Detail React', 'More Details', 'react-more-details/');
-    }
 
-    if (isFrameworkAngular2()) {
         menuItem(1, 'Overview Angular', 'Angular 2.x/4.x', 'best-angular-2-data-grid/');
         menuItem(2, 'Getting Started Angular', 'Getting Started', 'angular-getting-started/');
         menuItem(2, 'More Detail Angular', 'More Details', 'angular-more-details/');
@@ -105,33 +37,20 @@
         menuItemCollapsibleChild(3, 'Angular Webpack 2', 'Webpack 2', 'ag-grid-angular-webpack-2/', 'angularParent', 'angularChild');
         menuItemCollapsibleChild(3, 'Angular ngtools Webpack', '@ngtools', 'ag-grid-angular-ngtools-webpack/', 'angularParent', 'angularChild');
         menuItemCollapsibleChild(3, 'Angular SystemJS', 'SystemJS', 'ag-grid-angular-systemjs/', 'angularParent', 'angularChild', 'end');
-    }
 
-    if (isFrameworkPolymer()) {
         menuItem(1, 'Overview Polymer', 'Polymer', 'best-polymer-data-grid/');
         menuItem(2, 'Getting Started Polymer', 'Getting Started', 'polymer-getting-started/');
         menuItem(2, 'More Detail Polymer', 'More Details', 'polymer-more-details/');
-    }
 
-    if (isFrameworkAngular1()) {
         menuItem(1, 'Getting Started ng1', 'AngularJS 1.x', 'best-angularjs-data-grid/');
-    }
 
-    if (isFrameworkVue()) {
         menuItem(1, 'Getting Started VueJS', 'VueJS', 'best-vuejs-data-grid/');
-    }
 
-    if (isFrameworkAurelia()) {
         menuItem(1, 'Getting Started Aurelia', 'Aurelia', 'best-aurelia-data-grid/');
-    }
 
-    if (isFrameworkWebComponents()) {
         menuItem(1, 'Getting Started Web Components', 'Web Components', 'best-web-component-data-grid/');
-    }
 
-    if (isFrameworkAll()) {
         menuItem(1, 'Getting Started TypeScript & Webpack 2', 'TypeScript', 'ag-grid-typescript-webpack-2/');
-    }
     ?>
 
 </div>
@@ -326,45 +245,43 @@
     <?php
 
     menuItem(0, 'Examples Overview', 'Overview', 'javascript-grid-examples/');
-    if (isFrameworkReact() || isFrameworkAll()) {
-        menuItemWithIcon('react_small.png', 1, 'React Examples', 'React Examples', 'example-react/', true);
-        menuItem(2, 'React Rich Grid', 'Rich Grid', 'example-react-rich-grid/');
-        menuItem(2, 'React Dynamic', 'Cell Renderers', 'example-react-dynamic/');
-        menuItem(2, 'React Editor', 'Editor Component', 'example-react-editor/');
-        menuItem(2, 'React Filter', 'Filter Component', 'example-react-filter/');
-        menuItem(2, 'React Pinned Row', 'Pinned Rows', 'example-react-floating-row/');
-        menuItem(2, 'React Full Width', 'Full Width Rows', 'example-react-full-width-rows/');
-        menuItem(2, 'React Group Row', 'Group Rows', 'example-react-grouped-row/');
-        menuItem(2, 'React MasterDetail', 'Master/Detail', 'example-react-master-detail/');
-        menuItem(2, 'React Redux', 'Redux Examples', 'example-react-redux/');
-    }
-    if (isFrameworkAngular2() || isFrameworkAll()) {
-        menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);
-        menuItem(2, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
-        menuItem(2, 'Angular Markup', 'Grid via Markup', 'example-angular-rich-grid-markup/');
-        menuItem(2, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
-        menuItem(2, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
-        menuItem(2, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
-        menuItem(2, 'Angular Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component#ng2Angular');
-        menuItem(2, 'Angular Pinned Row', 'Pinned Rows', 'example-angular-floating-row/');
-        menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
-        menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
-        menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
-        menuItem(2, 'Angular RxJS', 'RxJS', 'example-angular-rxjs/');
-        menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
-    }
-    if (isFrameworkPolymer() || isFrameworkAll()) {
-        menuItemWithIcon('polymer-small.png', 1, 'Polymer Examples', 'Polymer Examples', 'example-polymer/', true);
-        menuItem(2, 'Polymer Rich Grid', 'Rich Grid', 'example-polymer-rich-grid/');
-        menuItem(2, 'Polymer Dynamic', 'Cell Renderers', 'example-polymer-dynamic/');
-        menuItem(2, 'Polymer Editor', 'Editor Component', 'example-polymer-editor/');
-        menuItem(2, 'Polymer Filter', 'Filter Component', 'example-polymer-filter/');
-        menuItem(2, 'Polymer Floating Filter', 'Floating Filter', 'example-polymer-floating-filter/');
-        menuItem(2, 'Polymer Pinned Row', 'Pinned Rows', 'example-polymer-floating-row/');
-        menuItem(2, 'Polymer Full Width', 'Full Width Rows', 'example-polymer-full-width-rows/');
-        menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');
-        menuItem(2, 'Polymer MasterDetail', 'Master/Detail', 'example-polymer-master-detail/');
-    }
+
+    menuItemWithIcon('react_small.png', 1, 'React Examples', 'React Examples', 'example-react/', true);
+    menuItem(2, 'React Rich Grid', 'Rich Grid', 'example-react-rich-grid/');
+    menuItem(2, 'React Dynamic', 'Cell Renderers', 'example-react-dynamic/');
+    menuItem(2, 'React Editor', 'Editor Component', 'example-react-editor/');
+    menuItem(2, 'React Filter', 'Filter Component', 'example-react-filter/');
+    menuItem(2, 'React Pinned Row', 'Pinned Rows', 'example-react-floating-row/');
+    menuItem(2, 'React Full Width', 'Full Width Rows', 'example-react-full-width-rows/');
+    menuItem(2, 'React Group Row', 'Group Rows', 'example-react-grouped-row/');
+    menuItem(2, 'React MasterDetail', 'Master/Detail', 'example-react-master-detail/');
+    menuItem(2, 'React Redux', 'Redux Examples', 'example-react-redux/');
+
+    menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);
+    menuItem(2, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
+    menuItem(2, 'Angular Markup', 'Grid via Markup', 'example-angular-rich-grid-markup/');
+    menuItem(2, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
+    menuItem(2, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
+    menuItem(2, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
+    menuItem(2, 'Angular Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component#ng2Angular');
+    menuItem(2, 'Angular Pinned Row', 'Pinned Rows', 'example-angular-floating-row/');
+    menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
+    menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
+    menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
+    menuItem(2, 'Angular RxJS', 'RxJS', 'example-angular-rxjs/');
+    menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
+
+    menuItemWithIcon('polymer-small.png', 1, 'Polymer Examples', 'Polymer Examples', 'example-polymer/', true);
+    menuItem(2, 'Polymer Rich Grid', 'Rich Grid', 'example-polymer-rich-grid/');
+    menuItem(2, 'Polymer Dynamic', 'Cell Renderers', 'example-polymer-dynamic/');
+    menuItem(2, 'Polymer Editor', 'Editor Component', 'example-polymer-editor/');
+    menuItem(2, 'Polymer Filter', 'Filter Component', 'example-polymer-filter/');
+    menuItem(2, 'Polymer Floating Filter', 'Floating Filter', 'example-polymer-floating-filter/');
+    menuItem(2, 'Polymer Pinned Row', 'Pinned Rows', 'example-polymer-floating-row/');
+    menuItem(2, 'Polymer Full Width', 'Full Width Rows', 'example-polymer-full-width-rows/');
+    menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');
+    menuItem(2, 'Polymer MasterDetail', 'Master/Detail', 'example-polymer-master-detail/');
+
     menuItemWithIcon('svg/javascript.svg', 1, 'JavaScript Examples', 'Plain JavaScript', 'example-javascript/', true);
     menuItem(2, 'Styled Report', 'Styled Report', 'example-account-report/');
     menuItem(2, 'File Browser', 'File Browser', 'example-file-browser/');

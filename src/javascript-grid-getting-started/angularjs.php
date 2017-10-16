@@ -1,10 +1,8 @@
-<?php if (!isFrameworkAll()) { ?>
-    <h2 id="implementing-the-angularjs-datagrid">
-        <img src="../images/svg/docs/getting_started.svg" width="50" />
-        <img style="vertical-align: middle" src="/images/angularjs.png" height="25px"/>
-        Getting Started
-    </h2>
-<?php } ?>
+<h2 id="implementing-the-angularjs-datagrid">
+    <img src="../images/svg/docs/getting_started.svg" width="50"/>
+    <img style="vertical-align: middle" src="/images/angularjs.png" height="25px"/>
+    Getting Started
+</h2>
 
 <?php include 'ag-grid-dependency.php' ?>
 
@@ -18,15 +16,16 @@
 Include ag-Grid as a dependency of your module like this:
 <p/>
 <snippet>
-// if you're using ag-Grid-Enterprise, you'll need to provide the License Key before doing anything else
-// not necessary if you're just using ag-Grid
-agGrid.LicenseManager.setLicenseKey("your license key goes here");
+    // if you're using ag-Grid-Enterprise, you'll need to provide the License Key before doing anything else
+    // not necessary if you're just using ag-Grid
+    agGrid.LicenseManager.setLicenseKey("your license key goes here");
 
-// get ag-Grid to create an Angular module and register the ag-Grid directive
-agGrid.initialiseAgGridWithAngular1(angular);
+    // get ag-Grid to create an Angular module and register the ag-Grid directive
+    agGrid.initialiseAgGridWithAngular1(angular);
 
-// create your module with ag-Grid as a dependency
-var module = angular.module("example", ["agGrid"]);</snippet>
+    // create your module with ag-Grid as a dependency
+    var module = angular.module("example", ["agGrid"]);
+</snippet>
 
 <h4 id="ag-grid-div">ag-Grid Div</h4>
 
@@ -48,7 +47,8 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </p>
 
 <snippet>
-&lt;div &lt;b&gt;ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"&lt;/b&gt;&gt;&lt;/div&gt;</snippet>
+    &lt;div &lt;b&gt;ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"&lt;/b&gt;&gt;&lt;/div&gt;
+</snippet>
 
 <p>
     (note: a div by default has 100% width, so the width is not specified explicitly above).

@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-interface IFilterComp {
+    interface IFilterComp {
 
     // mandatory methods
 
@@ -36,7 +36,8 @@ interface IFilterComp {
     // The grid calls this to know if the filter icon in the header should be shown. Return true to show.
     isFilterActive(): boolean;
 
-    &lt;span class="codeComment"&gt;// The grid will ask each active filter, in turn, whether each row in the grid passes. If any
+    &lt;span class="codeComment"&gt;// The grid will ask each active filter, in turn, whether each row in the grid
+    passes. If any
     // filter fails, then the row will be excluded from the final set. The method is provided a
     // params object with attributes node (the rodNode the grid creates that wraps the data) and data
     // (the data object that you provided to the grid for that row).&lt;/span&gt;
@@ -59,7 +60,8 @@ interface IFilterComp {
     // you want to hide the popup after it is pressed.&lt;/span&gt;
     afterGuiAttached?(params?: {hidePopup?: Function}): void;
 
-    &lt;span class="codeComment"&gt;// Gets called when new rows are inserted into the grid. If the filter needs to change its state
+    &lt;span class="codeComment"&gt;// Gets called when new rows are inserted into the grid. If the filter needs to
+    change its state
     // after rows are loaded, it can do it here. For example the set filters uses this to update the list of
     // available values to select from (eg 'Ireland', 'UK' etc for Country filter).&lt;/span&gt;
     onNewRowsLoaded?(): void;
@@ -86,9 +88,9 @@ interface IFilterComp {
     &lt;span class="codeComment"&gt;// Only used in conjunction with floating filters.
     //
     // When a floating filter changes and calls the &lt;i&gt;onFloatingFilterChanged(change)&lt;/i&gt; callback then:
-    //   a) &lt;i&gt;filter.onFloatingFilterChanged(change)&lt;/i&gt; gets called if it exists.
-    //   ELSE
-    //   b) &lt;i&gt;filter.setModel(model)&lt;/i&gt; gets called.
+    // a) &lt;i&gt;filter.onFloatingFilterChanged(change)&lt;/i&gt; gets called if it exists.
+    // ELSE
+    // b) &lt;i&gt;filter.setModel(model)&lt;/i&gt; gets called.
     //
     // If &lt;i&gt;setModal(modal)&lt;/i&gt; is used, then the change object you pass should be the model
     // object the filter is expecting. The grid will then continue and update the grids rows
@@ -102,7 +104,8 @@ interface IFilterComp {
     // this to also consider logic for the Apply button (as if Apply button is active, then
     // the filter does not call &lt;i&gt;filterChangedCallback()&lt;/i&gt;. &lt;/span&gt;
     onFloatingFilterChanged?(change:any): void;
-}</snippet>
+    }
+</snippet>
 
 <h4 id="ifilter-params">IFilterParams</h4>
 
@@ -113,7 +116,7 @@ interface IFilterComp {
 </p>
 
 <snippet>
-interface IFilterParams {
+    interface IFilterParams {
 
     // The column this filter is for
     column: Column;
@@ -160,9 +163,10 @@ interface IFilterParams {
     // you are not using Angular 1&lt;/span&gt;
     $scope: any;
 
-     // The grid API
+    // The grid API
     api: any;
-}</snippet>
+    }
+</snippet>
 
 <h4 id="i-does-filter-pass-params">IDoesFilterPassParams</h4>
 
@@ -171,14 +175,15 @@ interface IFilterParams {
 </p>
 
 <snippet>
-interface IDoesFilterPassParams {
+    interface IDoesFilterPassParams {
 
     // The row node in question
     node: RowNode;
 
     // The data part of the row node in question
     data: any
-}</snippet>
+    }
+</snippet>
 
 <h3>Associating Floating Filter</h3>
 
@@ -189,7 +194,8 @@ interface IDoesFilterPassParams {
         You can <a href="../javascript-grid-floating-filter-component/">create your own floating filter</a>.
     </li>
     <li>
-        You can implement the method <i>getModelAsString()</i> in your custom filter. If you implement this method and you don't
+        You can implement the method <i>getModelAsString()</i> in your custom filter. If you implement this method and
+        you don't
         provide a custom floating filter, ag-Grid will automatically provide a read-only version of a floating filter
     </li>
 </ol>
@@ -206,24 +212,14 @@ will be empty.
 
 <?= example('Filter Component', 'custom-filter') ?>
 
-<?php if (isFrameworkAngular2()) { ?>
-    <?php include './angular.php';?>
-<?php } ?>
+<?php include './angular.php'; ?>
 
-<?php if (isFrameworkReact()) { ?>
-    <?php include './react.php';?>
-<?php } ?>
+<?php include './react.php'; ?>
 
-<?php if (isFrameworkPolymer()) { ?>
-    <?php include './polymer.php';?>
-<?php } ?>
+<?php include './polymer.php'; ?>
 
-<?php if (isFrameworkVue()) { ?>
-    <?php include './vuejs.php';?>
-<?php } ?>
+<?php include './vuejs.php'; ?>
 
-<?php if (isFrameworkAurelia()) { ?>
-    <?php include './aurelia.php';?>
-<?php } ?>
+<?php include './aurelia.php'; ?>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>
