@@ -35,12 +35,6 @@ export class AppComponent {
     rowData;
     topOptions = { alignedGrids: [] };
     bottomOptions = { alignedGrids: [] };
-    style = {
-        marginTop: '20px',
-        width: '100%',
-        height: '100%',
-        boxSizing: 'border-box'
-    };
 
     @ViewChild('topGrid') topGrid;
     @ViewChild('bottomGrid') bottomGrid;
