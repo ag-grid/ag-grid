@@ -14,10 +14,10 @@ public class Athlete {
     @OneToOne()
     private Country country;
 
-    @OneToMany()
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "athlete_result",
-    joinColumns = @JoinColumn(name="athlete_id"),
-    inverseJoinColumns = @JoinColumn(name="result_id"))
+            joinColumns = @JoinColumn(name = "athlete_id"),
+            inverseJoinColumns = @JoinColumn(name = "result_id"))
     private List<Result> results;
 
     public Athlete() {
@@ -27,6 +27,14 @@ public class Athlete {
         this.name = name;
         this.country = country;
         this.results = results;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {

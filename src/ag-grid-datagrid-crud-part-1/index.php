@@ -115,10 +115,10 @@ include('../includes/mediaHeader.php');
 
             <p>Once there, ensure you fill in the fields as follows:</p>
 
-            <img src="./initalizr.png" style="width: 100%">
+            <img src="./initialzr.png" style="width: 100%">
 
             <p>The <code>Group</code> and <code>Artifact</code> can be anything you like. For Spring Boot I've chosen
-                2.0.0 M4 as
+                2.0.0 (SNAPSHOT) as
                 this is the latest available version for Spring 5 at the time of writing - if you have a newer version
                 available that will be fine too.</p>
 
@@ -132,37 +132,44 @@ include('../includes/mediaHeader.php');
 
             <p>Once done, click on <code>Generate Project</code> - you'll get a dialog to download the generated bundle.
                 Save
-                this to your chosen project location and once downloaded unzip it.</p>
+                this to your chosen project location and once downloaded unzip it to a sub-directory called <code>backend</code>.</p>
 
             <p>You should see the following project structures:</p>
 
 <snippet>
-├── mvnw
-├── mvnw.cmd
-├── pom.xml
-├── src
-│   ├── main
-│   │   ├── java
-│   │   │   └── com
-│   │   │   └── aggrid
-│   │   │   └── crudapp
-│   │   │   ├── CrudAppApplication.java
-│   │   └── resources
-│   │   ├── application.properties
-│   │   ├── static
-│   │   └── templates
-│   └── test
-│   └── java
-│   └── com
-│   └── aggrid
-│   └── crudapp
-│   └── CrudAppApplicationTests.java
+└── backend
+    ├── LICENSE
+    ├── mvnw
+    ├── mvnw.cmd
+    ├── pom.xml
+    └── src
+        ├── main
+        │   ├── java
+        │   │   └── com
+        │   │       └── aggrid
+        │   │           └── crudapp
+        │   │               └── CrudAppApplication.java
+        │   └── resources
+        │       ├── application.properties
+        │       ├── static
+        │       └── templates
+        └── test
+            └── java
+                └── com
+                    └── aggrid
+                        └── crudapp
+                           └── CrudAppApplicationTests.java
 </snippet>
 
             <p>Maven provides a standard project structure, including a default Application file (<code>CrudAppApplication.java</code>)
                 and default, starting, test file (<code>CrudAppApplicationTests.java</code>).</p>
 
-            <p>Let's download the dependencies and do a quick sanity check:</p>
+            <note>We have unzipped the generated project into a directory called <code>backend</code> as I prefer to keep the
+                back and front end separate. Each tier can in effect be considered an application in its own right - this
+                is especially true as your application grows in code and complexity.</note>
+
+
+            <p>Navigate to the <code>backend</code> directory; let's download the dependencies and do a quick sanity check:</p>
 
 <snippet language="sh">
 mvn test
@@ -307,12 +314,25 @@ spring.h2.console.enabled=true
             <p>In order to get the data we have (<code>src/main/resources/olympicWinners.csv</code>) into the
                 <code>H2</code> database, we'll make use of Spring's
                 <code>ApplicationListener&lt;ContextRefreshedEvent&gt;</code> facility to load the test data and save it
-                to the database:</p>
+                to the database.</p>
+            
+            <p>We'll make use of a third-party library called <code>Jackson</code> to convert the CSV to Java POJOs, so add this
+            to your Maven pom.xml file, within the <code>dependencies</code> block:</p>
+<snippet>
+&lt;dependency&gt;
+    &lt;groupId&gt;com.fasterxml.jackson.dataformat&lt;/groupId&gt;
+    &lt;artifactId&gt;jackson-dataformat-csv&lt;/artifactId&gt;
+    &lt;version&gt;2.9.1&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+</snippet>
+
+            <p>Note that we're only using this library for local testing, so it has the <code>test</code> scope.</p>
 
             <show-sources example=""
                           sources="{
                                         [
-                                            { root: './crud-app/bootstrap/', files: 'Bootstrap.java,CsvLoader.java,RawOlympicWinnerRecord.java' },
+                                            { root: './crud-app/bootstrap/', files: 'Bootstrap.java,CsvLoader.java,RawOlympicWinnerRecord.java' }
                                         ]
                                       }"
                           language="java"
@@ -336,6 +356,30 @@ and r.sport_id = s.id
 </snippet>
 
             <img src="./h2_query.png" style="width: 100%">
+
+            <h2>Optional - Spring DevTools</h2>
+
+            <p>Spring Boot offers a development utility called Spring DevTools. This is an optional dependency, but 
+            makes local development much easier.</p>
+            
+            <p>Let's add the <code>DevTools</code> to our Maven pom.xml file:</p>
+            
+<snippet>
+&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+    &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;
+</snippet>
+
+            <p>With this in place if you're running your application and find you need to make a change you can do so,
+                rebuild the project, and refresh the browser/end point without needing to restart your entire application.</p>
+
+            <p>This can be a real time, so adding this is recommend. Please refer to the <a
+                        href="https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html">Spring Boot DevTools</a>
+            documentation for more details.</p>
+
+            <p>We won't use it in this part of the blog, but will in a future section.</p>
 
             <h2>Summary</h2>
 
