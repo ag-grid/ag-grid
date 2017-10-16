@@ -1,21 +1,22 @@
 
 var rowData = [
-    {path: ['a'], "athlete":"aaa","age":23,"country":"United States","year":2008,"date":"24/08/2008","sport":"Swimming","gold":8,"silver":0,"bronze":0,"total":8},
+    {path: ['a'], name: "aaa", country: "United States", gold: 8, silver: 0, bronze: 0, total: 8},
 
-    {path: ['a'], group: true, "athlete":"*bbb"},
-    {path: ['a','x'], "athlete":"ccc","age":23,"country":"Ireland","year":2008,"date":"24/08/2008","sport":"Swimming","gold":8,"silver":0,"bronze":0,"total":8},
+    {path: ['a'], group: true, name: "bbb"},
+    {path: ['a','x'], name:"ccc", country: "Ireland", gold: 8, silver: 0, bronze: 0, total: 8},
 
-    {path: ['b','y'], group: true, "athlete":"*ddd", gold: 999, silver: 999, bronze: 999},
-    {path: ['b','x'], "athlete":"eee","age":24,"country":"Australia","year":2012,"date":"12/08/2012","sport":"Swimming","gold":1,"silver":3,"bronze":1,"total":5},
-    {path: ['b','y'], "athlete":"fff","age":24,"country":"Belgium","year":2012,"date":"12/08/2012","sport":"Swimming","gold":1,"silver":3,"bronze":1,"total":5},
+    {path: ['b','y'], group: true, name: "ddd", gold: 999, silver: 999, bronze: 999},
+    {path: ['b','x'], name:"eee", country: "Australia", gold:1, silver:3, bronze:1, total:5},
+    {path: ['b','y'], name:"fff", country: "Belgium", gold:1, silver:3, bronze:1, total:5},
 
-    {path: ['c'], "athlete":"ggg","age":19,"country":"Germany","year":2004,"date":"29/08/2004","sport":"Swimming","gold":6,"silver":0,"bronze":2,"total":8},
-    {path: ['c','y'], "athlete":"hhh","age":27,"country":"France","year":2012,"date":"12/08/2012","sport":"Swimming","gold":4,"silver":2,"bronze":0,"total":6},
-    {path: ['d'], "athlete":"iii","age":25,"country":"Italy","year":2008,"date":"24/08/2008","sport":"Swimming","gold":1,"silver":2,"bronze":3,"total":6},
-    {path: ['d'], "athlete":"jjj","age":24,"country":"Russia","year":2000,"date":"01/10/2000","sport":"Gymnastics","gold":2,"silver":1,"bronze":3,"total":6},
-    {"athlete":"kkk","age":17,"country":"Spain","year":2012,"date":"12/08/2012","sport":"Swimming","gold":4,"silver":0,"bronze":1,"total":5},
-    {"athlete":"lll","age":27,"country":"China","year":2012,"date":"12/08/2012","sport":"Swimming","gold":2,"silver":2,"bronze":1,"total":5},
-    {"athlete":"mmm","age":22,"country":"India","year":2012,"date":"12/08/2012","sport":"Swimming","gold":3,"silver":1,"bronze":1,"total":5}
+    {path: ['c'], name: "ggg", country: "Germany", gold: 6, silver: 0, bronze: 2, total: 8},
+    {path: ['c','y'], name: "hhh", country: "France", gold: 4, silver: 2, bronze: 0, total: 6},
+    {path: ['d'], name: "iii", country: "Italy", gold: 1, silver: 2, bronze: 3, total: 6},
+    {path: ['d'], name: "jjj", country: "Russia", gold: 2, silver: 1, bronze: 3, total: 6},
+    {path: ['e'], group: true, name: "kkk", gold: 999, silver: 999, bronze: 999},
+    {name:"lll", country: "Spain", gold: 4, silver: 0, bronze: 1, total: 5},
+    {name:"mmm", country: "China", gold: 2, silver: 2, bronze: 1, total: 5},
+    {name:"nnn", country: "India", gold: 3, silver: 1, bronze: 1, total: 5}
 ];
 
 var dataMapped = {
@@ -32,8 +33,9 @@ var dataMapped = {
     k: rowData[10],
     l: rowData[11],
     m: rowData[12],
-    n: {path: ['a','x'], "athlete":"nnn","age":19,"country":"Norway","year":2004,"date":"29/08/2004","sport":"Swimming","gold":6,"silver":0,"bronze":2,"total":8},
-    o: {path: ['f','z'], "athlete":"ooo","age":19,"country":"Sweden","year":2004,"date":"29/08/2004","sport":"Swimming","gold":6,"silver":0,"bronze":2,"total":8},
+    n: rowData[13],
+    o: {path: ['a','x'], name: "ooo", country: "Norway", gold: 6, silver: 0, bronze: 2, total: 8},
+    p: {path: ['f','z'], name: "ppp", country: "Sweden", gold: 6, silver: 0, bronze: 2, total: 8},
 };
 
 // remove a row, should get replaced with grid created row
@@ -67,18 +69,15 @@ function updateSilver(id, value) {
 
 var columnDefs = [
     {headerName: "Group", field: "country", cellRenderer: 'group', showRowGroup: true, cellRendererParams: {
+        checkbox: true
         // suppressCount: true
+
     }},
-    // {headerName: "Country", field: "country", width: 120},
-    {headerName: "Athlete", field: "athlete", width: 200},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100, aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", width: 100, aggFunc: 'sum'},
-    {headerName: "Total", field: "total", width: 100, aggFunc: 'sum'},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Date", field: "date", width: 110}
+    {field: "name", width: 200},
+    {field: "gold", width: 100},
+    {field: "silver", width: 100, aggFunc: 'sum'},
+    {field: "bronze", width: 100, aggFunc: 'sum'},
+    {field: "total", width: 100, aggFunc: 'sum'}
 ];
 
 var gridOptions = {
@@ -88,6 +87,9 @@ var gridOptions = {
             return parseInt(params.newValue);
         }
     },
+    rowSelection: 'multiple',
+    suppressRowClickSelection: true,
+    groupSelectsChildren: true,
     animateRows: true,
     enableCellChangeFlash: true,
     deltaRowDataMode: true,

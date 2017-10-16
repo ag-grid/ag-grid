@@ -12,6 +12,22 @@ include '../documentation-main/documentation_header.php';
     <h2 id="selection">Row Selection</h2>
 
     <p>
+        Configure row selection with the following properties:
+    </p>
+    <ul>
+        <li><b>rowSelection</b>: Type of row selection, set to either 'single' or 'multiple' to
+            enable selection. Single sets to single row selection, such that when you select a row,
+            the previously selected row gets unselected. Multiple allows multiple row selection.</li>
+        <li><b>rowDeselection</b>: Set to true or false. If true, then rows will be deselected if
+            you hold down ctrl + click the row. Normal behaviour with the grid disallows deselection
+            of nodes (ie once a node is selected, it remains selected until another row is selected
+            in its place).</li>
+        <li><b>suppressRowClickSelection</b>: If true, rows won't be selected when clicked. Use, for
+            example, when you want checkbox selection, and don't want to also select when the row
+            is clicked.</li>
+    </ul>
+
+    <p>
         When you pass data to the grid, it wraps each data item in an node. This is explained
         in the section <a href="../javascript-grid-model/">Grid Model</a>. When you query for
         the selected rows, there are two method types, ones that return nodes, and ones that
@@ -27,19 +43,6 @@ include '../documentation-main/documentation_header.php';
         Working with the ag-Grid nodes is preferred over the row data as it provide you with
         more information and maps better to the internal representation of ag-grid.
     </p>
-
-    <p>The following properties are relevant to selection:</p>
-    <ul>
-        <li><b>rowSelection</b>: Type of row selection, set to either 'single' or 'multiple' to
-            enable selection.</li>
-        <li><b>rowDeselection</b>: Set to true or false. If true, then rows will be deselected if
-            you hold down ctrl + click the row. Normal behaviour with the grid disallows deselection
-            of nodes (ie once a node is selected, it remains selected until another row is selected
-            in its place).</li>
-        <li><b>suppressRowClickSelection</b>: If true, rows won't be selected when clicked. Use, for
-            example, when you want checkbox selection, and don't want to also select when the row
-            is clicked.</li>
-    </ul>
 
     <h3 id="singleRowSelectionExample">Example - Single Row Selection</h3>
 
