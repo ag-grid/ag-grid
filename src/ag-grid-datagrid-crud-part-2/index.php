@@ -33,6 +33,13 @@ include('../includes/mediaHeader.php');
             </ul>
 
             <h2>Introduction</h2>
+
+            <note>The completed code for this blog series can be found <a
+                        href="https://github.com/seanlandsman/ag-grid-crud">here (once the series is complete)</a>,
+                with this particular section being under <a
+                        href="https://github.com/seanlandsman/ag-grid-crud/tree/part-2">Part
+                    2</a></note>
+
             <p>
                 In order for our data to be useful we need to make it available to users. One of hte easiest ways to do that
                 is to expose it as a <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST Service</a>,

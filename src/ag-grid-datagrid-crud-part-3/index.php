@@ -34,6 +34,13 @@ include('../includes/mediaHeader.php');
             </ul>
 
             <h2>Introduction</h2>
+
+            <note>The completed code for this blog series can be found <a
+                        href="https://github.com/seanlandsman/ag-grid-crud">here (once the series is complete)</a>,
+                with this particular section being under <a
+                        href="https://github.com/seanlandsman/ag-grid-crud/tree/part-3">Part
+                    3</a></note>
+
             <p>
                 In order for our data to be useful we need to make it available to users. So far we've exposed our data
                 via REST service in the previous <a href="../ag-grid-datagrid-crud-part-2/">part</a>, but now let's make it

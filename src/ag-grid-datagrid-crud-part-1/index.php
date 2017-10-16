@@ -62,7 +62,7 @@ include('../includes/mediaHeader.php');
             <h3>Our Application</h3>
 
             <note>The completed code for this blog series can be found <a
-                        href="https://github.com/seanlandsman/ag-grid-crud">here</a>,
+                        href="https://github.com/seanlandsman/ag-grid-crud">here (once the series is complete)</a>,
                 with this particular section being under <a
                         href="https://github.com/seanlandsman/ag-grid-crud/tree/part-1">Part
                     1</a></note>
