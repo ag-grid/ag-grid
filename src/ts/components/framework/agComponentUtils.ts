@@ -22,7 +22,9 @@ export class DefaultCellRenderer implements ICellRendererComp{
     getGui(): HTMLElement|string {
         let valueToUse = this.params.valueFormatted != null ? this.params.valueFormatted : this.params.value;
         if (valueToUse == null) return '';
-        return '<span>' + valueToUse + '</span>';
+        let span = this.params.api.gridOptionsWrapper.getDocument().createElement('span');
+        span.textContent = valueToUse;
+        return span;
     }
 
 }
