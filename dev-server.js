@@ -111,7 +111,7 @@ function watchAndGenerateExamples() {
         if (file) {
             console.log(`${file} changed, regenerating`);
             try {
-                dir = file.match(exampleDirMatch)[1];
+                dir = file.replace(/\\/g, '/').match(exampleDirMatch)[1];
             } catch (e) {
                 throw new Error(`'${exampleDirMatch}' did not extract the example dir from '${file}'. Fix the regexp in dev-server.js`);
             }
