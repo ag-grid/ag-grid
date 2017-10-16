@@ -72,7 +72,7 @@ const gridOptions = {
     <p>With these configuration we can supply the updates to ag-Grid and the grid will only re-render the changes rows, resulting
         in much improved performance.</p>
 
-    <?= example('RxJS - Full Updates', 'rxjs-full', 'vanilla', array("enterprise" => 1, "extras" => array("lodash", "rxjs"))) ?>
+    <?= example('RxJS - Full Updates', 'rxjs-full', 'generated', array("enterprise" => 1, "extras" => array("lodash", "rxjs"))) ?>
 
 </div>
 
