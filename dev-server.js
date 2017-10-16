@@ -90,7 +90,6 @@ function launchTSCCheck() {
 
     const tsChecker = cp.spawn(tscPath, ['--watch', '--noEmit']);
 
-
     // works:
     //    ..\ag-grid\src\ts\rendering\cellComp.ts(689,9): error TS2304: Cannot find name 'asfdsdf'.
     //    @ ../ag-grid-react/src/reactFrameworkFactory.ts 4:33-75
@@ -102,20 +101,24 @@ function launchTSCCheck() {
             .split('\n')
             .filter(line => line.indexOf('Watching for') === -1 && line.indexOf('File change') === -1)
             .forEach(line => console.log(line.replace('_dev', '..').replace('/dist/lib/', '/src/ts/').red));
-
     });
 }
 
+const exampleDirMatch = new RegExp('src/([-\\w]+)/');
 function watchAndGenerateExamples() {
-    const callback = (file) => {
+    const callback = file => {
+        let dir;
         if (file) {
             console.log(`${file} changed, regenerating`);
+            try {
+                dir = file.match(exampleDirMatch)[1];
+            } catch (e) {
+                throw new Error(`'${exampleDirMatch}' did not extract the example dir from '${file}'. Fix the regexp in dev-server.js`);
+            }
         }
         console.log('regenerating examples...');
-        generateExamples(() => {
-            console.log('generation done.');
-        });
-    }
+        generateExamples(() => console.log('generation done.'), dir);
+    };
 
     callback();
 

@@ -40,8 +40,8 @@ function phpArrayToJSON(string) {
         throw new Error(' The hackish conversion of PHP syntax to JSON failed. check ./exmaple-generator.js');
     }
 }
-function forEachExampleToGenerate(cb, final) {
-    glob('src/*/*.php', {}, (er, files) => {
+function forEachExampleToGenerate(cb, final, scope = '*') {
+    glob(`src/${scope}/*.php`, {}, (er, files) => {
         files.forEach(file => {
             const contents = fs.readFileSync(file, {encoding: 'utf8'});
             const section = path.dirname(file).replace('src/', '');
@@ -59,7 +59,7 @@ function forEachExampleToGenerate(cb, final) {
         final();
     });
 }
-module.exports = cb => {
+module.exports = (cb, scope) => {
     require('ts-node').register();
     const {vanillaToReact} = require('./src/example-runner/vanilla-to-react.ts');
     const {vanillaToAngular} = require('./src/example-runner/vanilla-to-angular.ts');
@@ -141,5 +141,5 @@ module.exports = cb => {
             console.log(`// ${count} examples generated`);
             cb();
         }
-    );
+    , scope);
 };
