@@ -11,26 +11,16 @@ var columnDefs = [
     {headerName: "Total", field: "total", width: 100}
 ];
 
-var gridOptions1 = {
+var gridOptions = {
     columnDefs: columnDefs,
     enableColResize: true,
     groupUseEntireRow: true
 };
 
-var gridOptions2 = {
-    columnDefs: columnDefs,
-    enableColResize: true,
-    groupUseEntireRow: true,
-    embedFullWidthRows: true
-};
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv1 = document.querySelector('#myGrid1');
-    new agGrid.Grid(gridDiv1, gridOptions1);
-
-    var gridDiv2 = document.querySelector('#myGrid2');
-    new agGrid.Grid(gridDiv2, gridOptions2);
+    var gridDiv = document.querySelector('#myGrid');
+    new agGrid.Grid(gridDiv, gridOptions);
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
@@ -40,8 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions1.api.setRowData(httpResult);
-            gridOptions2.api.setRowData(httpResult);
+            gridOptions.api.setRowData(httpResult);
         }
     };
 });

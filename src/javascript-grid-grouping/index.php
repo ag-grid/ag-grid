@@ -372,7 +372,7 @@ gridOptions.groupRowRendererParams: {
     </p>
 
     <p>
-        The example below demonstrates embedFullWidthRows on and off as follows:
+        The examples below demonstrate embedFullWidthRows on and off as follows:
     <ul>
         <li>Both grids have columns pinned left and right.</li>
         <li>Both grids have group rows spanning the grid width.</li>
@@ -392,7 +392,8 @@ gridOptions.groupRowRendererParams: {
     </ul>
     </p>
 
-    <?= example('Full Width Group Rows - Embedding', 'full-width-group-rows-embedding', 'vanilla', array("enterprise" => 1)) ?>
+    <?= example('Full Width Group Rows - embedFullWidthRows=false', 'full-width-group-rows-embedding-false', 'generated', array("enterprise" => 1, "exampleHeight" => 200)) ?>
+    <?= example('Full Width Group Rows - embedFullWidthRows=true', 'full-width-group-rows-embedding-true', 'generated', array("enterprise" => 1, "exampleHeight" => 200)) ?>
 
     <p>
         If you are using custom group row rendering (explained below) and embedFullWidthRows = true, the panel
