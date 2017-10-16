@@ -198,17 +198,18 @@ export class GroupStage implements IRowNodeStage {
 
         // if user group, and children are present, need to move children to new generated group. otherwise
         // if no children, we can just remove without replacing.
-        let replaceWithGridGeneratedGroup = childNode.userGroup && childNode.childrenAfterGroup.length > 0;
-        if (replaceWithGridGeneratedGroup) {
+        let replaceWithFillerGroup = childNode.userGroup && childNode.childrenAfterGroup.length > 0;
+        if (replaceWithFillerGroup) {
             let oldPath = this.getExistingPathForNode(childNode);
-            // because we just removed the userGroup, we know the returned groups in
-            // a newly created gridCreatedGroup
-            let gridCreatedGroup = this.getGroupForPath(childNode, oldPath, details);
+            // because we just removed the userGroup, this will always return new support group
+            let supportGroup = this.getOrCreateGroup(childNode, oldPath, details);
 
-            gridCreatedGroup.expanded = childNode.expanded;
-            gridCreatedGroup.allLeafChildren = childNode.allLeafChildren;
-            gridCreatedGroup.childrenAfterGroup = childNode.childrenAfterGroup;
-            gridCreatedGroup.childrenMapped = childNode.childrenMapped;
+            // these properties are the ones that will be incorrect in the newly created group,
+            // so copy them form the old childNode
+            supportGroup.expanded = childNode.expanded;
+            supportGroup.allLeafChildren = childNode.allLeafChildren;
+            supportGroup.childrenAfterGroup = childNode.childrenAfterGroup;
+            supportGroup.childrenMapped = childNode.childrenMapped;
         }
 
         // remove empty groups
@@ -257,10 +258,10 @@ export class GroupStage implements IRowNodeStage {
 
         let path: GroupInfo[] = this.getGroupInfo(childNode, details.groupedCols);
 
-        let nextGroup = this.getGroupForPath(childNode, path, details);
+        let nextGroup = this.getOrCreateGroup(childNode, path, details);
 
         if (childNode.userGroup) {
-            this.swapGeneratedGroupWithUserGroup(nextGroup, childNode);
+            this.swapFillerWithUserGroup(nextGroup, childNode);
         } else {
             childNode.parent = nextGroup;
             childNode.level = path.length;
@@ -268,7 +269,7 @@ export class GroupStage implements IRowNodeStage {
         }
     }
 
-    private getGroupForPath(childNode: RowNode, path: GroupInfo[], details: GroupingDetails): RowNode {
+    private getOrCreateGroup(childNode: RowNode, path: GroupInfo[], details: GroupingDetails): RowNode {
         let nextGroup: RowNode = details.rootNode;
 
         path.forEach( (groupInfo, level) => {
@@ -285,7 +286,7 @@ export class GroupStage implements IRowNodeStage {
         return nextGroup;
     }
 
-    private swapGeneratedGroupWithUserGroup(generatedGroup: RowNode, userGroup: RowNode) {
+    private swapFillerWithUserGroup(generatedGroup: RowNode, userGroup: RowNode) {
         if (generatedGroup.userGroup) {
             console.warn(`ag-Grid: duplicate group keys for row data, keys should be unique`,
                 [userGroup.data, generatedGroup.data]);
@@ -404,10 +405,10 @@ export class GroupStage implements IRowNodeStage {
         let res: GroupInfo[] = [];
         groupColumns.forEach( groupCol => {
             let key: any = this.getKeyForNode(groupCol, rowNode);
-            let valueForThisColumn = key!==null && key!==undefined;
-            if (valueForThisColumn) {
+            let keyExists = key!==null && key!==undefined;
+            if (keyExists) {
                 let item = <GroupInfo> {
-                    key: this.getKeyForNode(groupCol, rowNode),
+                    key: key,
                     field: groupCol.getColDef().field,
                     rowGroupColumn: groupCol
                 };
