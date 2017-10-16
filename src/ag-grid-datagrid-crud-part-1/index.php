@@ -40,12 +40,19 @@ include('../includes/mediaHeader.php');
 
             <ul>
                 <li>Part 1: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)</li>
-                <li><a href="../ag-grid-datagrid-crud-part-2">Part 2</a>: Middle Tier: Exposing our data with a REST Service</li>
-                <li><a href="../ag-grid-datagrid-crud-part-3">Part 3</a>: Front End - Initial Implementation</li>
-                <li><a href="../ag-grid-datagrid-crud-part-4">Part 4</a>: Front End - Aggregation & Pivoting</li>
-                <li><a href="../ag-grid-datagrid-crud-part-5">Part 5</a>: Front End - Enterprise Row Model</li>
-                <li><a href="../ag-grid-datagrid-crud-part-6">Part 6</a>: Back End (Optional) - Using Oracle DB</li>
+                <li>Part 2: Middle Tier: Exposing our data with a REST Service</li>
+                <li>Part 3: Front End - Initial Implementation</li>
+                <li>Part 4: Front End - Aggregation & Pivoting</li>
+                <li>Part 5: Front End - Enterprise Row Model</li>
+                <li>Part 6: Back End (Optional) - Using Oracle DB</li>
+<!--                <li><a href="../ag-grid-datagrid-crud-part-2">Part 2</a>: Middle Tier: Exposing our data with a REST Service</li>-->
+<!--                <li><a href="../ag-grid-datagrid-crud-part-3">Part 3</a>: Front End - Initial Implementation</li>-->
+<!--                <li><a href="../ag-grid-datagrid-crud-part-4">Part 4</a>: Front End - Aggregation & Pivoting</li>-->
+<!--                <li><a href="../ag-grid-datagrid-crud-part-5">Part 5</a>: Front End - Enterprise Row Model</li>-->
+<!--                <li><a href="../ag-grid-datagrid-crud-part-6">Part 6</a>: Back End (Optional) - Using Oracle DB</li>-->
             </ul>
+
+            <p>The links above will become active as we publish the the following part of the blog series.</p>
 
             <h2>Introduction</h2>
 
