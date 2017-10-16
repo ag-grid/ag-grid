@@ -9,8 +9,8 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
-public class CsvLoader {
-    public <T> List<T> loadObjectList(Class<T> type, String fileName) {
+class CsvLoader {
+    <T> List<T> loadObjectList(Class<T> type, String fileName) {
         try {
             CsvSchema bootstrapSchema = CsvSchema.emptySchema().withHeader();
             CsvMapper mapper = new CsvMapper();

@@ -6,7 +6,6 @@ import com.aggrid.crudapp.model.Result;
 import com.aggrid.crudapp.model.Sport;
 import com.aggrid.crudapp.repositories.AthleteRepository;
 import com.aggrid.crudapp.repositories.CountryRepository;
-import com.aggrid.crudapp.repositories.ResultRepository;
 import com.aggrid.crudapp.repositories.SportRepository;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -23,16 +22,13 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     private CountryRepository countryRepository;
     private SportRepository sportRepository;
     private AthleteRepository athleteRepository;
-    private ResultRepository resultRepository;
 
     public Bootstrap(CountryRepository countryRepository,
                      SportRepository sportRepository,
-                     AthleteRepository athleteRepository,
-                     ResultRepository resultRepository) {
+                     AthleteRepository athleteRepository) {
         this.countryRepository = countryRepository;
         this.sportRepository = sportRepository;
         this.athleteRepository = athleteRepository;
-        this.resultRepository = resultRepository;
     }
 
     @Override
@@ -57,10 +53,6 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         // we now have the test data - save it to the database
         this.countryRepository.saveAll(countryNameToCountry.values());
         this.sportRepository.saveAll(sportNameToSport.values());
-
-        for (List<Result> results : athleteNameToResults.values()) {
-            this.resultRepository.saveAll(results);
-        }
 
         this.athleteRepository.saveAll(athletes);
     }
@@ -89,6 +81,6 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
     private List<RawOlympicWinnerRecord> loadOlympicWinnersRecords() {
         CsvLoader csvLoader = new CsvLoader();
-        return csvLoader.loadObjectList(RawOlympicWinnerRecord.class, "olympicWinners.csv");
+        return csvLoader.loadObjectList(RawOlympicWinnerRecord.class, "./olympicWinners.csv");
     }
 }
