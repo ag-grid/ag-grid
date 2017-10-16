@@ -24,7 +24,7 @@ include('../includes/mediaHeader.php');
             <h2>Series Chapters</h2>
 
             <ul>
-                <li><a href="../ag-grid-datagrid-crud-part-1">Part 1</a>: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)</li>
+                <li><a href="../ag-grid-datagrid-crud-part-1/">Part 1</a>: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)</li>
                 <li>Part 2: Middle Tier: Exposing our data with a REST Service</li>
                 <li>Part 3: Front End - Initial Implementation</li>
                 <li>Part 4: Front End - Aggregation & Pivoting</li>
