@@ -81,6 +81,9 @@ include('../includes/mediaHeader.php');
                 <img src="./three_tier.png" style="margin-left: -150px;height: 325px">
             </div>
 
+            <p>Or alternatively, you can break it down as follows:</p>
+
+            <img src="./architecture.png" style="width: 100%">
 
             <h2>Initial Setup</h2>
 
