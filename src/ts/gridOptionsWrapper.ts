@@ -662,6 +662,18 @@ export class GridOptionsWrapper {
         return typeof this.gridOptions.getRowHeight === 'function';
     }
 
+    public getVirtualItemHeight() {
+        return this.specialForNewMaterial(20, 8 * 5);
+    }
+
+    public getAggFuncPopupHeight() {
+        return this.specialForNewMaterial(100, 8 * 5 * 3.5); // 3.5 cuts the last item in half, hinting that you can scroll
+    }
+
+    public getCheckboxIndentWidth() {
+        return this.specialForNewMaterial(10, 18 + 8); // icon size + grid size
+    }
+
     private isNumeric(value:any) {
         return !isNaN(value) && typeof value === 'number';
     }
