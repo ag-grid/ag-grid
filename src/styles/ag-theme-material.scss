@@ -779,7 +779,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     }
 
     .ag-floating-filter-button {
-        padding-top: $ag-mat-grid-size * 2.5;
+        margin-top: $ag-mat-grid-size* 2.5;
+        line-height: $ag-mat-icon-size;
         float: right;
         button {
             @include simple-material-flat-button;
