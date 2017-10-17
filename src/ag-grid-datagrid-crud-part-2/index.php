@@ -24,15 +24,22 @@ include('../includes/mediaHeader.php');
             <h2>Series Chapters</h2>
 
             <ul>
-                <li><a href="../ag-grid-datagrid-crud-part-1">Part 1</a>: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)</li>
+                <li><a href="../ag-grid-datagrid-crud-part-1/">Part 1</a>: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)</li>
                 <li>Part 2: Middle Tier: Exposing our data with a REST Service</li>
-                <li><a href="../ag-grid-datagrid-crud-part-3">Part 3</a>: Front End - Initial Implementation</li>
-                <li><a href="../ag-grid-datagrid-crud-part-4">Part 4</a>: Front End - Aggregation & Pivoting</li>
-                <li><a href="../ag-grid-datagrid-crud-part-5">Part 5</a>: Front End - Enterprise Row Model</li>
-                <li><a href="../ag-grid-datagrid-crud-part-6">Part 6</a>: Back End (Optional) - Using Oracle DB</li>
+                <li>Part 3: Front End - Initial Implementation</li>
+                <li>Part 4: Front End - Aggregation & Pivoting</li>
+                <li>Part 5: Front End - Enterprise Row Model</li>
+                <li>Part 6: Back End (Optional) - Using Oracle DB</li>
             </ul>
 
             <h2>Introduction</h2>
+
+            <note>The completed code for this blog series can be found <a
+                        href="https://github.com/seanlandsman/ag-grid-crud">here (once the series is complete)</a>,
+                with this particular section being under <a
+                        href="https://github.com/seanlandsman/ag-grid-crud/tree/part-2">Part
+                    2</a></note>
+
             <p>
                 In order for our data to be useful we need to make it available to users. One of hte easiest ways to do that
                 is to expose it as a <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST Service</a>,
@@ -55,16 +62,24 @@ include('../includes/mediaHeader.php');
 public class AthleteController {
 </snippet>
 
-            <p>With this in place Spring is aware of the role we want this class to play. Now let's add method to this class
-                and annotate it with <code>RequestMapping</code>:</p>
+            <p>We want to return all the Olympic Data we have in the first pass and in order to do that we need to use
+            our </code>AthleteRepository</p>. Let's create a constructor that will take this repository (Spring will
+            automatically inject it for us) and create a method that uses it:
 
-<snippet language="java">@RequestMapping("/athletes")
+<snippet language="java">
+private AthleteRepository athleteRepository;
+
+public AthleteController(AthleteRepository athleteRepository) {
+    this.athleteRepository = athleteRepository;
+}
+
+@GetMapping("/athletes")
 public Iterable<Athlete> getAthletes() {
     return athleteRepository.findAll();
 }
 </snippet>
 
-            <p>What the <code>RequestMapping</code> does is provide a mapping to our application via a URL.</p>
+            <p>What the <code>GetMapping</code> does is provide a mapping to our application via a URL.</p>
             <p>In our case the full mapping would be:</p>
 
 <snippet>http://localhost:8080/athletes</snippet>
@@ -227,13 +242,13 @@ public interface CrudRepository &lt;T, ID&gt; extends Repository&lt;T,ID&gt; {
             perform some business specific logic.</p>
 
 
-            <h4>Testing</h4>
+            <h4>Testing Our Progress</h4>
 
             <p>We'll make use of the supplied packaged <code>jUnit</code> testing framework. The Spring Boot project we
             downloaded already includes a single test class: <code>CrudAppApplicationTests</code>. Let's rename this to
             <code>AthleteControllerTests</code> and empty the contents of the class.</p>
 
-            <p>Let's start off with a simple test that confirms that we have the expected number of <code>Athlete</code> records in our database.
+            <p>We'll start off with a simple test that confirms that we have the expected number of <code>Athlete</code> records in our database.
             As our controller is nothing more than a REST Service with little logic within we can make use of the Spring
                 supplied <code>TestRestTemplate</code>.</p>
 
