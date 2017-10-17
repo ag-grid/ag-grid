@@ -677,6 +677,10 @@ ag-grid-aurelia {
 .ag-virtual-list-item {
     position: absolute;
     width: 100%;
+
+    span:empty {
+        border-left: 1px solid transparent;
+    }
 }
 .ag-filter-filter {
     width: 100%;
