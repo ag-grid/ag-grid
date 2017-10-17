@@ -126,8 +126,8 @@ export class RowNode implements IEventEmitter {
     public key: any;
     /** Used by enterprise row model, true if this row node is a stub */
     public stub: boolean;
-    /** Indicates whether rowNode is group provided by user */
-    public userGroup: boolean;
+    /** Indicates whether rowNode is group provided by user (false) or grid generated (true) */
+    public fillerGroup: boolean;
 
     /** All user provided nodes */
     public allLeafChildren: RowNode[];

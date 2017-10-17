@@ -220,7 +220,7 @@ export class InMemoryNodeManager {
         } else {
             if (treeData) {
                 node.group = true;
-                node.userGroup = true;
+                node.fillerGroup = false;
                 node.canFlower = false;
             } else {
                 //  this is the default, for when doing grid data

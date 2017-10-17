@@ -132,7 +132,7 @@ export { IAggFunc, ColGroupDef } from "./dist/lib/entities/colDef";
 export { GridCellDef } from "./dist/lib/entities/gridCell";
 export { ColDef } from "./dist/lib/entities/colDef";
 export { ProcessCellForExportParams, ProcessHeaderForExportParams } from "./dist/lib/exportParams";
-export { GridOptions, GetContextMenuItemsParams, GetContextMenuItems, MenuItemDef, GetNodeChildDetails, NodeChildDetails, GetMainMenuItemsParams, GetMainMenuItems, GetGroupKeys, IsGroup, GetRowNodeIdFunc, ProcessRowParams, NavigateToNextCellParams, TabToNextCellParams, PostProcessPopupParams } from "./dist/lib/entities/gridOptions";
+export { GridOptions, GetContextMenuItemsParams, GetContextMenuItems, MenuItemDef, GetNodeChildDetails, NodeChildDetails, GetMainMenuItemsParams, GetMainMenuItems, GetGroupKeys, GetRowNodeIdFunc, ProcessRowParams, NavigateToNextCellParams, TabToNextCellParams, PostProcessPopupParams } from "./dist/lib/entities/gridOptions";
 export { OriginalColumnGroupChild } from "./dist/lib/entities/originalColumnGroupChild";
 export { IViewportDatasource, IViewportDatasourceParams } from "./dist/lib/interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./dist/lib/interfaces/iContextMenuFactory";
