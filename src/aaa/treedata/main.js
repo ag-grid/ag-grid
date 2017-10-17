@@ -1,57 +1,61 @@
 
 var rowData = [
-    {path: ['a'], name: "Alan", country: "United States", gold: 8, silver: 0, bronze: 0, total: 8},
 
-    {path: ['a'], group: true, comment: 'Bouncy Boys'},
-    {path: ['a','x'], name: "Charles", country: "Ireland", gold: 8, silver: 0, bronze: 0, total: 8},
+    // root level nodes
+    {id: '1', path: ['Sophie'], val1: 1, val2: 1, color: 'Red'},
+    {id: '2', path: ['Isabelle'], val1: 2, val2: 2, color: 'Red'},
 
-    {path: ['b','y'], group: true, comment: "Drunken Doughnuts", gold: 999, silver: 999, bronze: 999},
-    {path: ['b','x'], name: "Ethan", country: "Australia", gold:1, silver:3, bronze:1, total:5},
-    {path: ['b','y'], name: "Fernando", country: "Belgium", gold:1, silver:3, bronze:1, total:5},
+    // group 1 nodes - user group
+    {id: '3', path: ['Group 1'], val1: 3, val2: 3, color: 'Blue'},
+    {id: '4', path: ['Group 1', 'Emily'], val1: 3, val2: 3, color: 'Red'},
+    {id: '5', path: ['Group 1', 'Olivia'], val1: 4, val2: 4, color: 'Red'},
 
-    {path: ['c'], name: "Garrett", country: "Germany", gold: 6, silver: 0, bronze: 2, total: 8},
-    {path: ['c','y'], name: "Helena", country: "France", gold: 4, silver: 2, bronze: 0, total: 6},
-    {path: ['d'], name: "Izzy", country: "Italy", gold: 1, silver: 2, bronze: 3, total: 6},
-    {path: ['d'], name: "Joe", country: "Russia", gold: 2, silver: 1, bronze: 3, total: 6},
-    {path: ['e'], group: true, comment: "Everyday Boys", gold: 999, silver: 999, bronze: 999},
-    {name:"Luke", country: "Spain", gold: 4, silver: 0, bronze: 1, total: 5},
-    {name:"Mark", country: "China", gold: 2, silver: 2, bronze: 1, total: 5},
-    {name:"Niall", country: "India", gold: 3, silver: 1, bronze: 1, total: 5}
+    // group 2 nodes - filler group
+    {id: '6', path: ['Group 2', 'Chloe'], val1: 5, val2: 5, color: 'Red'},
+    {id: '7', path: ['Group 2', 'Lucy'], val1: 6, val2: 6, color: 'Blue'},
+    {id: '8', path: ['Group 3', 'Ruby'], val1: 7, val2: 7, color: 'Red'},
+
+    // filler groups
+    {id: '9', path: ['A', 'B', 'C', 'Daisy'], val1: 8, val2: 8, color: 'Blue'},
+
+    // filler, then real, then filler
+    {id: '10', path: ['X', 'Y'], val1: 9, val2: 9, color: 'Red'},
+    {id: '11', path: ['X', 'Y', 'Z', 'Layla'], val1: 10, val2: 10, color: 'Red'},
+    {id: '12', path: ['X', 'Y', 'Z', 'Layla', 'Amelia'], val1: 11, val2: 11, color: 'Blue'},
+
+    // {path: ['a'], name: "Alan", country: "United States", gold: 8, silver: 0, bronze: 0, total: 8},
+    //
+    // {path: ['a'], group: true, comment: 'Bouncy Boys'},
+    // {path: ['a','x'], name: "Charles", country: "Ireland", gold: 8, silver: 0, bronze: 0, total: 8},
+    //
+    // {path: ['b','y'], group: true, comment: "Drunken Doughnuts", gold: 999, silver: 999, bronze: 999},
+    // {path: ['b','x'], name: "Ethan", country: "Australia", gold:1, silver:3, bronze:1, total:5},
+    // {path: ['b','y'], name: "Fernando", country: "Belgium", gold:1, silver:3, bronze:1, total:5},
+    //
+    // {path: ['c'], name: "Garrett", country: "Germany", gold: 6, silver: 0, bronze: 2, total: 8},
+    // {path: ['c','y'], name: "Helena", country: "France", gold: 4, silver: 2, bronze: 0, total: 6},
+    // {path: ['d'], name: "Izzy", country: "Italy", gold: 1, silver: 2, bronze: 3, total: 6},
+    // {path: ['d'], name: "Joe", country: "Russia", gold: 2, silver: 1, bronze: 3, total: 6},
+    // {path: ['e'], group: true, comment: "Everyday Boys", gold: 999, silver: 999, bronze: 999},
+    // {name:"Luke", country: "Spain", gold: 4, silver: 0, bronze: 1, total: 5},
+    // {name:"Mark", country: "China", gold: 2, silver: 2, bronze: 1, total: 5},
+    // {name:"Niall", country: "India", gold: 3, silver: 1, bronze: 1, total: 5}
 ];
-
-var dataMapped = {
-    a: rowData[0],
-    b: rowData[1],
-    c: rowData[2],
-    d: rowData[3],
-    e: rowData[4],
-    f: rowData[5],
-    g: rowData[6],
-    h: rowData[7],
-    i: rowData[8],
-    j: rowData[9],
-    k: rowData[10],
-    l: rowData[11],
-    m: rowData[12],
-    n: rowData[13],
-    o: {path: ['a','x'], name: "Oscar", country: "Norway", gold: 6, silver: 0, bronze: 2, total: 8},
-    p: {path: ['f','z'], name: "Patrick", country: "Sweden", gold: 6, silver: 0, bronze: 2, total: 8},
-};
 
 // remove a row, should get replaced with grid created row
 function remove(id) {
-    var item = dataMapped[id];
+    var item = gridOptions.api.getRowNode[id];
     gridOptions.api.updateRowData({remove: [item]});
 }
 
 function move(id, path) {
-    var item = dataMapped[id];
+    var item = gridOptions.api.getRowNode[id];
     item.path = path;
     gridOptions.api.updateRowData({update: [item]});
 }
 
 function add(id) {
-    var item = dataMapped[id];
+    var item = gridOptions.api.getRowNode[id];
     gridOptions.api.updateRowData({add: [item]});
 }
 
@@ -69,16 +73,14 @@ function updateSilver(id, value) {
 
 var columnDefs = [
     {headerName: "Group", field: "name", cellRenderer: 'group', showRowGroup: true, cellRendererParams: {
-        checkbox: true
-        // suppressCount: true
-
+        // checkbox: true,
+        suppressCount: true
     }},
-    // {field: "name", width: 200},
-    {field: 'comment'},
-    {field: "gold", width: 100},
-    {field: "silver", width: 100, aggFunc: 'sum'},
-    {field: "bronze", width: 100, aggFunc: 'sum'},
-    {field: "total", width: 100, aggFunc: 'sum'}
+    {valueGetter: 'node.id'},
+    {field: "path"},
+    {field: "color"},
+    {field: "val1"},
+    {field: "val2"}
 ];
 
 var gridOptions = {
@@ -89,11 +91,12 @@ var gridOptions = {
         }
     },
     rowSelection: 'multiple',
-    suppressRowClickSelection: true,
+    // suppressRowClickSelection: true,
     groupSelectsChildren: true,
     animateRows: true,
     enableCellChangeFlash: true,
     deltaRowDataMode: true,
+    treeData: true,
     columnDefs: columnDefs,
     rowData: rowData,
     enableFilter: true,
@@ -105,6 +108,9 @@ var gridOptions = {
     },
     isGroup: function(data) {
         return data.group === true;
+    },
+    getRowNodeId: function(data) {
+        return data.id;
     }
 };
 
