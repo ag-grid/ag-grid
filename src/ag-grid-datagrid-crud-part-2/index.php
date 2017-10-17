@@ -27,9 +27,11 @@ include('../includes/mediaHeader.php');
                 <li><a href="../ag-grid-datagrid-crud-part-1/">Part 1</a>: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)</li>
                 <li>Part 2: Middle Tier: Exposing our data with a REST Service</li>
                 <li>Part 3: Front End - Initial Implementation</li>
-                <li>Part 4: Front End - Aggregation & Pivoting</li>
-                <li>Part 5: Front End - Enterprise Row Model</li>
-                <li>Part 6: Back End (Optional) - Using Oracle DB</li>
+                <li>Part 4: Front End - Grid Features & CRUD (Creation, Updates and Deletion)</li>
+                <li>Part 5: Front End - Aggregation & Pivoting</li>
+                <li>Part 6: Front End - Enterprise Row Model</li>
+                <li>Part 7: Packaging (Optional)</li>
+                <li>Part 8: Back End (Optional) - Using Oracle DB</li>
             </ul>
 
             <h2>Introduction</h2>
@@ -342,7 +344,7 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
                     belies his years of experience.
                 </p>
                 <p>
-                    it'llLead Developer - Frameworks
+                    Lead Developer - Frameworks
                 </p>
 
                 <div>
