@@ -493,7 +493,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 
         .ag-filter-value {
             height: $virtual-item-height;
-            float: left;
             line-height: $ag-mat-grid-size * 3.5; // hate this
         }
 
@@ -1026,7 +1025,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
 
         .ag-filter-value {
-            float: right;
         }
 
         .ag-column-select-panel {
