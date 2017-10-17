@@ -25,6 +25,7 @@ export class ColDefUtil {
 
     public static OBJECT_PROPERTIES = [
         'headerGroupComponent',
+        'headerGroupComponentFramework',
         'headerGroupComponentParams',
         'cellStyle',
         'cellRendererParams',

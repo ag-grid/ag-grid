@@ -42,6 +42,8 @@ export interface ColGroupDef extends AbstractColDef {
     marryChildren?: boolean;
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
     headerGroupComponent?: {new(): IHeaderGroupComp};
+    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
+    headerGroupComponentFramework?: {new (): any};
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
     headerGroupComponentParams?: any;
 }
