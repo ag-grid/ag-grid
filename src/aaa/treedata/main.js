@@ -44,19 +44,19 @@ var rowData = [
 
 // remove a row, should get replaced with grid created row
 function remove(id) {
-    var item = gridOptions.api.getRowNode(id);
-    gridOptions.api.updateRowData({remove: [item]});
+    var rowNode = gridOptions.api.getRowNode(id);
+    gridOptions.api.updateRowData({remove: [rowNode.data]});
 }
 
 function move(id, path) {
-    var item = gridOptions.api.getRowNode(id);
-    item.path = path;
-    gridOptions.api.updateRowData({update: [item]});
+    var rowNode = gridOptions.api.getRowNode(id);
+    rowNode.data.path = path;
+    gridOptions.api.updateRowData({update: [rowNode.data]});
 }
 
 function add(id) {
-    var item = gridOptions.api.getRowNode(id);
-    gridOptions.api.updateRowData({add: [item]});
+    // var rowNode = gridOptions.api.getRowNode(id);
+    // gridOptions.api.updateRowData({add: [rowNode.data]});
 }
 
 function updateGold(id, value) {
@@ -77,10 +77,10 @@ var columnDefs = [
         suppressCount: true
     }},
     {valueGetter: 'node.id'},
-    {field: "path"},
-    {field: "color"},
-    {field: "val1"},
-    {field: "val2"}
+    {field: 'path'},
+    {field: 'color'},
+    {field: 'val1', aggFunc: 'sum'},
+    {field: 'val2'}
 ];
 
 var gridOptions = {
