@@ -76,6 +76,8 @@ export class AgGridColumn {
     @Input() public headerGroupComponent?: {
         new (): any;
     };
+    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
+    @Input() headerGroupComponentFramework?: {new (): any};
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
     @Input() public headerGroupComponentParams?: any;
 
