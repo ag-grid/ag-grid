@@ -174,7 +174,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         let value = this.params.values[row];
 
         // not using utils.exist() as want empty string test to pass
-        if (value!==null && value!==undefined) {
+        if (value!==undefined) {
             this.setSelectedValue(value);
         }
     }
