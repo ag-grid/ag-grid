@@ -22,7 +22,8 @@ var rowData = [
     {filePath: ['Documents', 'pdf', "book.pdf"], dateModified: "22 May 2017, 13:50", size: "2.1 MB"},
     {filePath: ['Documents', 'pdf', "cv.pdf"], dateModified: "3 Jun 2017, 21:02", size: "2.4 MB"},
     {filePath: ['Documents', 'xls', "accounts.xls"], dateModified: "12 Aug 2016, 22:50", size: "4.3 MB"},
-    {filePath: ['Music', 'mp3', "theme.mp3"], dateModified: "11 Sep 2016, 20:03", size: "14.3 MB"}
+    {filePath: ['Music', 'mp3', "theme.mp3"], dateModified: "11 Sep 2016, 20:03", size: "14.3 MB"},
+    {filePath: ["temp.txt"], dateModified: "17 Jan 2016, 20:03", size: "101 KB"}
 ];
 
 var gridOptions = {
@@ -56,9 +57,9 @@ function FileCellRenderer() {}
 FileCellRenderer.prototype.init = function(params) {
     var tempDiv = document.createElement('div');
 
-    var fileType = getFileType(params.value);
-    tempDiv.innerHTML = fileType ?
-        '<i class="'+ fileType + '"/><span style="padding:5px"><b>' + params.value + '</b></span>' : params.value;
+    var icon = getFileIcon(params.value);
+    tempDiv.innerHTML = icon ?
+        '<i class="'+ icon + '"/><span style="padding:5px"><b>' + params.value + '</b></span>' : params.value;
 
     this.eGui = tempDiv.firstChild;
 };
@@ -67,7 +68,7 @@ FileCellRenderer.prototype.getGui = function() {
     return this.eGui;
 };
 
-var getFileType = function (filename) {
+var getFileIcon = function (filename) {
     return filename.endsWith('.pdf') ? 'fa fa-file-pdf-o' :
            filename.endsWith('.xls') ? 'fa fa-file-excel-o' :
            filename.endsWith('.mp3') ? 'fa fa-file-audio-o' :
