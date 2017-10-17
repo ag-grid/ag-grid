@@ -1,9 +1,19 @@
-import {Bean, Autowired} from "../context/context";
+import {Bean, Autowired, PostConstruct} from "../context/context";
 import {RowNode} from "../entities/rowNode";
 import {FilterManager} from "../filter/filterManager";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 @Bean("filterService")
 export class FilterService {
+
     @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    private doingTreeData: boolean;
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.doingTreeData = this.gridOptionsWrapper.isTreeData();
+    }
 
     public filterAccordingToColumnState (rowNode:RowNode):void{
         let filterActive:boolean = this.filterManager.isAnyFilterPresent();
@@ -50,9 +60,22 @@ export class FilterService {
         this.setAllChildrenCount(rowNode);
     }
 
-    private setAllChildrenCount(rowNode: RowNode) {
+    private setAllChildrenCountTreeData(rowNode: RowNode) {
+        // for tree data, we include all children, groups and leafs
         let allChildrenCount = 0;
-        rowNode.childrenAfterFilter.forEach( child => {
+        rowNode.childrenAfterFilter.forEach((child: RowNode) => {
+            // include child itself
+            allChildrenCount++;
+            // include children of children
+            allChildrenCount += child.allChildrenCount;
+        });
+        rowNode.setAllChildrenCount(allChildrenCount);
+    }
+
+    private setAllChildrenCountGridGrouping(rowNode: RowNode) {
+        // for grid data, we only count the leafs
+        let allChildrenCount = 0;
+        rowNode.childrenAfterFilter.forEach((child: RowNode) => {
             if (child.group) {
                 allChildrenCount += child.allChildrenCount;
             } else {
@@ -60,5 +83,13 @@ export class FilterService {
             }
         });
         rowNode.setAllChildrenCount(allChildrenCount);
+    }
+
+    private setAllChildrenCount(rowNode: RowNode) {
+        if (this.doingTreeData) {
+            this.setAllChildrenCountTreeData(rowNode);
+        } else {
+            this.setAllChildrenCountGridGrouping(rowNode);
+        }
     }
 }

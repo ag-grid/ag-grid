@@ -25,7 +25,6 @@ export class InMemoryNodeManager {
     private getNodeChildDetails: GetNodeChildDetails;
     private doesDataFlower: (data: any) => boolean;
     private suppressParentsInRowNodes: boolean;
-    private isGroup: (dataItem: any) => boolean;
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: {[id:string]: RowNode} = {};
@@ -75,7 +74,6 @@ export class InMemoryNodeManager {
         this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
         this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
-        this.isGroup = this.gridOptionsWrapper.getIsGroupFunc();
 
         let rowsAlreadyGrouped = _.exists(this.getNodeChildDetails);
 
@@ -205,11 +203,10 @@ export class InMemoryNodeManager {
         let node = new RowNode();
         this.context.wireBean(node);
 
-        let doingTreeData = _.exists(this.getNodeChildDetails);
-        let doingGroupData = !doingTreeData && _.exists(this.isGroup);
+        let treeData = this.gridOptionsWrapper.isTreeData();
+        let legacyTreeData = !treeData && _.exists(this.getNodeChildDetails);
 
-        let nodeChildDetails = doingTreeData ? this.getNodeChildDetails(dataItem) : null;
-        let isGroup = doingGroupData ? this.isGroup(dataItem) : false;
+        let nodeChildDetails = legacyTreeData ? this.getNodeChildDetails(dataItem) : null;
 
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
@@ -221,13 +218,12 @@ export class InMemoryNodeManager {
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         } else {
-
-            node.group = isGroup;
-
-            if (isGroup) {
+            if (treeData) {
+                node.group = true;
                 node.userGroup = true;
                 node.canFlower = false;
             } else {
+                //  this is the default, for when doing grid data
                 node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
                 if (node.canFlower) {
                     node.expanded = this.isExpanded(level);

@@ -174,7 +174,15 @@ export class GridOptionsWrapper {
     public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
     public useAsyncEvents() { return !isTrue(this.gridOptions.suppressAsyncEvents); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
-    public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
+    public isGroupSelectsChildren() {
+        let result = isTrue(this.gridOptions.groupSelectsChildren);
+        if (result && this.isTreeData()) {
+            console.warn('ag-Grid: groupSelectsChildren does not work with tree data');
+            return false;
+        } else {
+            return result;
+        }
+    }
     public isGroupSelectsFiltered() { return isTrue(this.gridOptions.groupSelectsFiltered); }
     public isGroupHideOpenParents() { return isTrue(this.gridOptions.groupHideOpenParents); }
     // if we are doing hideOpenParents, then we always have groupMultiAutoColumn, otherwise hideOpenParents would not work
@@ -315,7 +323,7 @@ export class GridOptionsWrapper {
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
     public getGroupKeysFunc(): ((dataItem: any) => string[]) { return this.gridOptions.getGroupKeys; }
-    public getIsGroupFunc(): ((dataItem: any) => boolean) { return this.gridOptions.isGroup }
+    // public getIsGroupFunc(): ((dataItem: any) => boolean) { return this.gridOptions.isGroup }
     public getGroupRowAggNodesFunc() { return this.gridOptions.groupRowAggNodes; }
     public getContextMenuItemsFunc(): GetContextMenuItems { return this.gridOptions.getContextMenuItems; }
     public getMainMenuItemsFunc(): GetMainMenuItems { return this.gridOptions.getMainMenuItems; }
@@ -323,6 +331,7 @@ export class GridOptionsWrapper {
     public getNavigateToNextCellFunc(): (params: NavigateToNextCellParams)=>GridCellDef { return this.gridOptions.navigateToNextCell; }
     public getTabToNextCellFunc(): (params: TabToNextCellParams)=>GridCellDef { return this.gridOptions.tabToNextCell; }
 
+    public isTreeData(): boolean { return isTrue(this.gridOptions.treeData); }
     public isValueCache(): boolean { return isTrue(this.gridOptions.valueCache); }
     public isValueCacheNeverExpires(): boolean { return isTrue(this.gridOptions.valueCacheNeverExpires); }
     public isAggregateOnlyChangedColumns(): boolean { return isTrue(this.gridOptions.aggregateOnlyChangedColumns); }

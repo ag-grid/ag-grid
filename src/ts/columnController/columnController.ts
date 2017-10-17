@@ -358,7 +358,7 @@ export class ColumnController {
 
     private isPivotSettingAllowed(pivot: boolean): boolean {
         if (pivot) {
-            if (this.gridOptionsWrapper.getGroupKeysFunc() || this.gridOptionsWrapper.getIsGroupFunc()) {
+            if (this.gridOptionsWrapper.isTreeData()) {
                 console.warn('ag-Grid: Pivot mode not available. You have provided either getGroupKeys() or ' +
                     'isGroup() which imply tree data, which means you cannot turn pivot mode on.');
                 return false;

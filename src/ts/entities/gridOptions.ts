@@ -266,7 +266,7 @@ export interface GridOptions {
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?: GetNodeChildDetails;
     getGroupKeys?: GetGroupKeys;
-    isGroup?: IsGroup;
+    treeData?: boolean;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
     getRowNodeId?: GetRowNodeIdFunc;
@@ -346,9 +346,9 @@ export interface GetGroupKeys {
     (data: any): string[];
 }
 
-export interface IsGroup {
-    (data: any): boolean;
-}
+// export interface IsGroup {
+//     (data: any): boolean;
+// }
 
 export interface GetNodeChildDetails {
     (dataItem: any): NodeChildDetails;

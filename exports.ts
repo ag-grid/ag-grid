@@ -218,7 +218,6 @@ export {
     GetMainMenuItemsParams,
     GetMainMenuItems,
     GetGroupKeys,
-    IsGroup,
     GetRowNodeIdFunc,
     ProcessRowParams,
     NavigateToNextCellParams,
