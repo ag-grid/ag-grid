@@ -387,7 +387,7 @@ var defaultCols = [
                 floatCell: true,
                 filterParams: {
                     cellRenderer: countryCellRenderer,
-                    cellHeight: 20,
+                    // cellHeight: 20,
                     newRowsAction: 'keep',
                     selectAllOnMiniFilter: true,
                     clearButton: true
@@ -689,17 +689,10 @@ function rowSelected(event) {
 function onThemeChanged(newTheme) {
     gridDiv.className = newTheme;
 
-    /* tested the dynamic change of size 
-    if(newTheme === 'ag-theme-material') {
-        gridOptions.rowHeight = 24;
-        gridOptions.headerHeight = 28; 
-        gridOptions.floatingFiltersHeight = 28; 
-    }
-    */
-
     gridOptions.api.resetRowHeights();
     gridOptions.api.redrawRows();
     gridOptions.api.refreshHeader();
+    gridOptions.api.refreshToolPanel();
 }
 
 var filterCount = 0;

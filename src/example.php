@@ -60,6 +60,14 @@ require "example-runner/utils.php";
             -moz-filter: invert(100%);
             -ms-filter: invert(100%);
         }
+
+        .ag-theme-material .good-score {
+            background-color: rgba(185,246,202 , 0.4);
+        }
+
+        .ag-theme-material .bad-score {
+            background-color: rgba(255,128,171 , 0.4);
+        }
     </style>
 
     <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
