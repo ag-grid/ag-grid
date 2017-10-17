@@ -153,6 +153,7 @@ export {RowNodeBlockLoader} from "./dist/lib/rowModels/cache/rowNodeBlockLoader"
 export {IEnterpriseRowModel} from "./dist/lib/interfaces/iEnterpriseRowModel";
 export {IEnterpriseCache} from "./dist/lib/interfaces/iEnterpriseCache";
 export {IEnterpriseDatasource, ColumnVO} from "./dist/lib/interfaces/iEnterpriseDatasource";
+export {IToolPanel} from "./dist/lib/interfaces/iToolPanel";
 export {RowNodeCache, RowNodeCacheParams} from "./dist/lib/rowModels/cache/rowNodeCache";
 export {IGetRowsParams, IDatasource} from "./dist/lib/rowModels/iDatasource";
 

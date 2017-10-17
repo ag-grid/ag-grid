@@ -43,6 +43,7 @@ import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 import {AgEvent} from "./events";
+import {IToolPanel} from "./interfaces/iToolPanel";
 
 
 export interface StartEditingCellParams {
@@ -93,6 +94,7 @@ export class GridApi {
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
+    @Optional('toolPanel') private toolPanel: IToolPanel;
 
     private inMemoryRowModel: InMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
@@ -248,6 +250,12 @@ export class GridApi {
 
     public getVerticalPixelRange(): any {
         return this.gridPanel.getVerticalPixelRange();
+    }
+
+    public refreshToolPanel(): void {
+        if (this.toolPanel) {
+            this.toolPanel.refresh();
+        }
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
