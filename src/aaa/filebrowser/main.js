@@ -18,7 +18,7 @@ var columnDefs = [
 
 // specify the data
 var rowData = [
-    {filePath: ['Documents', 'txt', 'notes.txt'], dateModified: "22 May 2017, 13:50", size: "2.1 MB"},
+    {filePath: ['Documents', 'txt', 'notes.txt'], dateModified: "21 May 2017, 13:50", size: "14 KB"},
     {filePath: ['Documents', 'pdf', "book.pdf"], dateModified: "22 May 2017, 13:50", size: "2.1 MB"},
     {filePath: ['Documents', 'pdf', "cv.pdf"], dateModified: "3 Jun 2017, 21:02", size: "2.4 MB"},
     {filePath: ['Documents', 'xls', "accounts.xls"], dateModified: "12 Aug 2016, 22:50", size: "4.3 MB"},
