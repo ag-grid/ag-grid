@@ -407,7 +407,7 @@ export class RowNode implements IEventEmitter {
         if (this.eventService) {
             colIds.forEach( colId => {
                 let column = this.columnController.getGridColumn(colId);
-                let value = this.data ? this.data[colId] : undefined;
+                let value = this.aggData ? this.aggData[colId] : undefined;
                 this.dispatchCellChangedEvent(column, value);
             });
         }
