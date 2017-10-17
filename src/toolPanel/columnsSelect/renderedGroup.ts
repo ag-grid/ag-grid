@@ -84,7 +84,7 @@ export class RenderedGroup extends Component {
         this.setupExpandContract();
 
         let eIndent = this.queryForHtmlElement('#eIndent');
-        eIndent.style.width = (this.columnDept * 10) + 'px';
+        eIndent.style.width = (this.columnDept * this.gridOptionsWrapper.getCheckboxIndentWidth()) + 'px';
 
         this.addDestroyableEventListener(eText, 'click', this.onClick.bind(this) );
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this) );
