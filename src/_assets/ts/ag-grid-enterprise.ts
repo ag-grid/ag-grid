@@ -8,7 +8,7 @@ import "../../../../ag-grid/src/styles/ag-theme-material.scss";
 
 
 (<any> global).hot = true;
-import 'webpack-hot-middleware/client?path=/dev/ag-grid-enterprise-bundle/__webpack_hmr';
+import 'webpack-hot-middleware/client?path=/dev/ag-grid-enterprise-bundle/__webpack_hmr?reload=true';
 
 export * from "../../../../ag-grid/exports";
 
