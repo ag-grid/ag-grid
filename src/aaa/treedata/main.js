@@ -44,18 +44,18 @@ var rowData = [
 
 // remove a row, should get replaced with grid created row
 function remove(id) {
-    var item = gridOptions.api.getRowNode[id];
+    var item = gridOptions.api.getRowNode(id);
     gridOptions.api.updateRowData({remove: [item]});
 }
 
 function move(id, path) {
-    var item = gridOptions.api.getRowNode[id];
+    var item = gridOptions.api.getRowNode(id);
     item.path = path;
     gridOptions.api.updateRowData({update: [item]});
 }
 
 function add(id) {
-    var item = gridOptions.api.getRowNode[id];
+    var item = gridOptions.api.getRowNode(id);
     gridOptions.api.updateRowData({add: [item]});
 }
 
