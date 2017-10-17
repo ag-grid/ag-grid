@@ -23,39 +23,29 @@ export class FilterService {
     public filter(rowNode: RowNode, filterActive: boolean): void {
 
         // recursively get all children that are groups to also filter
-        rowNode.childrenAfterGroup.forEach( child => {
-            if (child.group) {
-                this.filter(child, filterActive);
-            }
-        });
+        rowNode.childrenAfterGroup
+            .filter( childNode => childNode.group )
+            .forEach( childNode => this.filter(childNode, filterActive));
 
         // result of filter for this node
-        let filterResult: RowNode[];
-
         if (filterActive) {
-            filterResult = [];
+            rowNode.childrenAfterFilter = rowNode.childrenAfterGroup.filter(childNode => {
+                // a group is included in the result if it has any children of it's own.
+                // by this stage, the child groups are already filtered
+                let passBecauseChildren = childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
 
-            rowNode.childrenAfterGroup.forEach( childNode => {
-                if (childNode.group) {
-                    // a group is included in the result if it has any children of it's own.
-                    // by this stage, the child groups are already filtered
-                    if (childNode.childrenAfterFilter.length > 0) {
-                        filterResult.push(childNode);
-                    }
-                } else {
-                    // a leaf level node is included if it passes the filter
-                    if (this.filterManager.doesRowPassFilter(childNode)) {
-                        filterResult.push(childNode);
-                    }
-                }
+                // both leaf level nodes and tree data nodes have data. these get added if
+                // the data passes the filter
+                let passBecauseDataPasses = childNode.data && this.filterManager.doesRowPassFilter(childNode);
+
+                // note - tree data nodes pass either if a) they pass themselves or b) any children of that node pass
+
+                return passBecauseChildren || passBecauseDataPasses;
             });
-
         } else {
             // if not filtering, the result is the original list
-            filterResult = rowNode.childrenAfterGroup;
+            rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
         }
-
-        rowNode.childrenAfterFilter = filterResult;
 
         this.setAllChildrenCount(rowNode);
     }
