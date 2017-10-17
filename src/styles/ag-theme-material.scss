@@ -543,7 +543,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
         .ag-column-select-column {
             // this is a very crude approximation, because we have one 10px hard-coded element in there.
-            margin-left: $ag-mat-icon-size + $ag-mat-grid-size * 3;
+            margin-left: $ag-mat-icon-size + $ag-mat-grid-size * 2;
         }
     }
 
@@ -918,6 +918,21 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             &:hover {
                 opacity: $ag-mat-foreground-opacity;
             }
+        }
+    }
+
+    .ag-select-agg-func-popup {
+        @include card();
+        padding: 0;
+
+        .ag-virtual-list-item {
+            cursor: default;
+            padding-left: $ag-mat-grid-size * 2;
+            line-height: $ag-mat-grid-size * 5;
+        }
+
+        .ag-virtual-list-item:hover {
+            background: $ag-mat-hover;
         }
     }
 
