@@ -48,7 +48,7 @@ export class GroupStage implements IRowNodeStage {
 
     // if doing tree data, this is true. we set this at create time - as our code does not
     // cater for the scenario where this is switched on / off dynamically
-    private treeData: boolean;
+    private usingTreeData: boolean;
     private getGroupKeys: GetGroupKeys;
 
     // we use a sequence variable so that each time we do a grouping, we don't
@@ -66,7 +66,7 @@ export class GroupStage implements IRowNodeStage {
     @PostConstruct
     private postConstruct(): void {
         this.getGroupKeys = this.gridOptionsWrapper.getGroupKeysFunc();
-        this.treeData = _.exists(this.getGroupKeys);
+        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
     }
 
     public execute(params: StageExecuteParams): void {
@@ -83,8 +83,8 @@ export class GroupStage implements IRowNodeStage {
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
         let {rowNode, changedPath, rowNodeTransaction} = params;
 
-        let groupedCols = this.treeData ? null : this.columnController.getRowGroupColumns();
-        let isGrouping = this.treeData || groupedCols.length > 0;
+        let groupedCols = this.usingTreeData ? null : this.columnController.getRowGroupColumns();
+        let isGrouping = this.usingTreeData || groupedCols.length > 0;
         let usingTransaction = isGrouping && _.exists(rowNodeTransaction);
 
         let details = <GroupingDetails> {
@@ -97,7 +97,7 @@ export class GroupStage implements IRowNodeStage {
             groupedCols: groupedCols,
             rootNode: rowNode,
             pivot: this.columnController.isPivotMode(),
-            groupedColCount: this.treeData ? 0 : groupedCols.length,
+            groupedColCount: this.usingTreeData ? 0 : groupedCols.length,
 
             // important not to do transaction if we are not grouping, as otherwise the 'insert index' is ignored.
             // ie, if not grouping, then we just want to shotgun so the rootNode.allLeafChildren gets copied
@@ -124,10 +124,13 @@ export class GroupStage implements IRowNodeStage {
         }
     }
 
-    private getExistingPathForNode(node: RowNode): GroupInfo[] {
+    private getExistingPathForNode(node: RowNode, details: GroupingDetails): GroupInfo[] {
         let res: GroupInfo[] = [];
-        let pointer = node.userGroup ? node : node.parent;
-        while (pointer.level >= 0) {
+
+        // when doing tree data, the node is part of the path,
+        // but when doing grid grouping, the node is not part of the path so we start with the parent.
+        let pointer = this.usingTreeData ? node : node.parent;
+        while (pointer !== details.rootNode) {
             res.push({
                 key: pointer.key,
                 rowGroupColumn: pointer.rowGroupColumn,
@@ -144,7 +147,7 @@ export class GroupStage implements IRowNodeStage {
         childNodes.forEach( childNode => {
 
             let infoToKeyMapper = (item: GroupInfo) => item.key;
-            let oldPath: string[] = this.getExistingPathForNode(childNode).map(infoToKeyMapper);
+            let oldPath: string[] = this.getExistingPathForNode(childNode, details).map(infoToKeyMapper);
             let newPath: string[] = this.getGroupInfo(childNode, details.groupedCols).map(infoToKeyMapper);
 
             let nodeInCorrectPath = _.compareArrays(oldPath, newPath);
@@ -196,11 +199,11 @@ export class GroupStage implements IRowNodeStage {
         // remove from allLeafChildren
         forEachParentGroup(parentNode => _.removeFromArray(parentNode.allLeafChildren, childNode));
 
-        // if user group, and children are present, need to move children to new generated group. otherwise
-        // if no children, we can just remove without replacing.
-        let replaceWithFillerGroup = childNode.userGroup && childNode.childrenAfterGroup.length > 0;
+        // if not filler group, and children are present, need to move children to new filler group.
+        // otherwise if no children, we can just remove without replacing.
+        let replaceWithFillerGroup = !childNode.fillerGroup && childNode.childrenAfterGroup.length > 0;
         if (replaceWithFillerGroup) {
-            let oldPath = this.getExistingPathForNode(childNode);
+            let oldPath = this.getExistingPathForNode(childNode, details);
             // because we just removed the userGroup, this will always return new support group
             let supportGroup = this.getOrCreateGroup(childNode, oldPath, details);
 
@@ -214,7 +217,7 @@ export class GroupStage implements IRowNodeStage {
 
         // remove empty groups
         forEachParentGroup( parentNode => {
-            let isEmptyGeneratedGroup = !parentNode.userGroup && parentNode.allLeafChildren.length===0;
+            let isEmptyGeneratedGroup = parentNode.fillerGroup && parentNode.allLeafChildren.length===0;
             if (isEmptyGeneratedGroup) {
                 this.removeFromParent(parentNode);
             }
@@ -236,7 +239,7 @@ export class GroupStage implements IRowNodeStage {
         // here to change leafGroup once.
         // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
         // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
-        details.rootNode.leafGroup = this.treeData ? false : details.groupedCols.length === 0;
+        details.rootNode.leafGroup = this.usingTreeData ? false : details.groupedCols.length === 0;
 
         // we are going everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
         details.rootNode.childrenAfterGroup = [];
@@ -260,12 +263,12 @@ export class GroupStage implements IRowNodeStage {
 
         let nextGroup = this.getOrCreateGroup(childNode, path, details);
 
-        if (childNode.userGroup) {
-            this.swapFillerWithUserGroup(nextGroup, childNode);
-        } else {
+        if (childNode.fillerGroup) {
             childNode.parent = nextGroup;
             childNode.level = path.length;
             nextGroup.childrenAfterGroup.push(childNode);
+        } else {
+            this.swapFillerWithUserGroup(nextGroup, childNode);
         }
     }
 
@@ -278,7 +281,7 @@ export class GroupStage implements IRowNodeStage {
             // note: we do not add to rootNode here, as the rootNode is the master list of rowNodes, not impacted by grouping
 
             // todo - the newRowNode is still in allLeafChildren of the root node - need to check that this is not a problem
-            if (!childNode.userGroup) {
+            if (childNode.fillerGroup) {
                 nextGroup.allLeafChildren.push(childNode);
             }
         });
@@ -286,32 +289,32 @@ export class GroupStage implements IRowNodeStage {
         return nextGroup;
     }
 
-    private swapFillerWithUserGroup(generatedGroup: RowNode, userGroup: RowNode) {
-        if (generatedGroup.userGroup) {
+    private swapFillerWithUserGroup(fillerGroup: RowNode, userGroup: RowNode) {
+        if (!fillerGroup.fillerGroup) {
             console.warn(`ag-Grid: duplicate group keys for row data, keys should be unique`,
-                [userGroup.data, generatedGroup.data]);
+                [userGroup.data, fillerGroup.data]);
         }
-        userGroup.parent = generatedGroup.parent;
-        userGroup.key = generatedGroup.key;
-        userGroup.field = generatedGroup.field;
-        userGroup.groupData = generatedGroup.groupData;
-        userGroup.level = generatedGroup.level;
-        userGroup.expanded = generatedGroup.expanded;
+        userGroup.parent = fillerGroup.parent;
+        userGroup.key = fillerGroup.key;
+        userGroup.field = fillerGroup.field;
+        userGroup.groupData = fillerGroup.groupData;
+        userGroup.level = fillerGroup.level;
+        userGroup.expanded = fillerGroup.expanded;
 
         // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
         // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
-        userGroup.leafGroup = generatedGroup.leafGroup;
+        userGroup.leafGroup = fillerGroup.leafGroup;
 
         // always null for userGroups, as row grouping is not allowed when doing tree data
-        userGroup.rowGroupIndex = generatedGroup.rowGroupIndex;
+        userGroup.rowGroupIndex = fillerGroup.rowGroupIndex;
 
-        userGroup.allLeafChildren = generatedGroup.allLeafChildren;
-        userGroup.childrenAfterGroup = generatedGroup.childrenAfterGroup;
-        userGroup.childrenMapped = generatedGroup.childrenMapped;
+        userGroup.allLeafChildren = fillerGroup.allLeafChildren;
+        userGroup.childrenAfterGroup = fillerGroup.childrenAfterGroup;
+        userGroup.childrenMapped = fillerGroup.childrenMapped;
 
-        this.removeFromParent(generatedGroup);
+        this.removeFromParent(fillerGroup);
         userGroup.childrenAfterGroup.forEach( rowNode => rowNode.parent = userGroup);
-        this.addToParent(userGroup, generatedGroup.parent);
+        this.addToParent(userGroup, fillerGroup.parent);
     }
 
     private getOrCreateNextGroup(parentGroup: RowNode, groupInfo: GroupInfo, level: number,
@@ -332,6 +335,7 @@ export class GroupStage implements IRowNodeStage {
         this.context.wireBean(newGroup);
 
         newGroup.group = true;
+        newGroup.fillerGroup = true;
         newGroup.field = groupInfo.field;
         newGroup.rowGroupColumn = groupInfo.rowGroupColumn;
         newGroup.groupData = {};
@@ -341,7 +345,7 @@ export class GroupStage implements IRowNodeStage {
         groupDisplayCols.forEach(col => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-            let displayGroupForCol = this.treeData || col.isRowGroupDisplayed(newGroup.rowGroupColumn.getId());
+            let displayGroupForCol = this.usingTreeData || col.isRowGroupDisplayed(newGroup.rowGroupColumn.getId());
             if (displayGroupForCol) {
                 newGroup.groupData[col.getColId()] = groupInfo.key;
             }
@@ -353,7 +357,7 @@ export class GroupStage implements IRowNodeStage {
         newGroup.key = groupInfo.key;
 
         newGroup.level = level;
-        newGroup.leafGroup = this.treeData ? false : level === (details.groupedColCount-1);
+        newGroup.leafGroup = this.usingTreeData ? false : level === (details.groupedColCount-1);
 
         // if doing pivoting, then the leaf group is never expanded,
         // as we do not show leaf rows
@@ -369,7 +373,7 @@ export class GroupStage implements IRowNodeStage {
 
         newGroup.setAllChildrenCount(0);
 
-        newGroup.rowGroupIndex = this.treeData ? null : level;
+        newGroup.rowGroupIndex = this.usingTreeData ? null : level;
 
         newGroup.childrenAfterGroup = [];
         newGroup.childrenMapped = {};
@@ -388,7 +392,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private getGroupInfo(rowNode: RowNode, groupColumns: Column[]): GroupInfo[] {
-        if (this.treeData) {
+        if (this.usingTreeData) {
             return this.getGroupInfoFromCallback(rowNode);
         } else {
             return this.getGroupInfoFromGroupColumns(rowNode, groupColumns);
