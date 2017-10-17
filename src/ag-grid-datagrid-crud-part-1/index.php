@@ -39,7 +39,7 @@ include('../includes/mediaHeader.php');
             <h2>Series Chapters</h2>
 
             <ul>
-                <li>Part 1: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)</li>
+                <li class="bold-roboto">Part 1: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)</li>
                 <li>Part 2: Middle Tier: Exposing our data with a REST Service</li>
                 <li>Part 3: Front End - Initial Implementation</li>
                 <li>Part 4: Front End - Grid Features & CRUD (Creation, Updates and Deletion)</li>
