@@ -263,12 +263,12 @@ export class GroupStage implements IRowNodeStage {
 
         let nextGroup = this.getOrCreateGroup(childNode, path, details);
 
-        if (childNode.fillerGroup) {
+        if (this.usingTreeData) {
+            this.swapFillerWithUserGroup(nextGroup, childNode);
+        } else {
             childNode.parent = nextGroup;
             childNode.level = path.length;
             nextGroup.childrenAfterGroup.push(childNode);
-        } else {
-            this.swapFillerWithUserGroup(nextGroup, childNode);
         }
     }
 

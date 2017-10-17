@@ -3,6 +3,7 @@ import {ColDef} from "ag-grid/main";
 import {ISetFilterParams} from "ag-grid/main";
 import {TextFormatter} from "ag-grid/main";
 import {TextFilter} from "ag-grid/main";
+import {InMemoryRowModel, IRowModel, Constants} from 'ag-grid';
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
@@ -14,7 +15,7 @@ export class SetFilterModel {
     private colDef: ColDef;
     private filterParams: ISetFilterParams;
 
-    private rowModel: any;
+    private inMemoryRowModel: InMemoryRowModel;
     private valueGetter: any;
     private allUniqueValues: any[]; // all values in the table
     private availableUniqueValues: any[]; // all values not filtered by other rows
@@ -32,12 +33,15 @@ export class SetFilterModel {
 
     private doesRowPassOtherFilters: any;
 
-    constructor(colDef: ColDef, rowModel: any, valueGetter: any, doesRowPassOtherFilters: any, suppressSorting: boolean) {
+    constructor(colDef: ColDef, rowModel: IRowModel, valueGetter: any, doesRowPassOtherFilters: any, suppressSorting: boolean) {
         this.suppressSorting = suppressSorting;
         this.colDef = colDef;
-        this.rowModel = rowModel;
         this.valueGetter = valueGetter;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
+
+        if (rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
+            this.inMemoryRowModel = <InMemoryRowModel> rowModel;
+        }
 
         this.filterParams = this.colDef.filterParams ? <ISetFilterParams> this.colDef.filterParams : <ISetFilterParams>{};
         if (Utils.exists(this.filterParams)) {
@@ -155,36 +159,37 @@ export class SetFilterModel {
         let uniqueCheck = <any>{};
         let result = <any>[];
 
-        if (!this.rowModel.forEachLeafNode) {
+        if (!this.inMemoryRowModel) {
             console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
             return [];
         }
 
-        this.rowModel.forEachLeafNode( (node: any)=> {
-            if (!node.group) {
-                let value = this.valueGetter(node);
+        this.inMemoryRowModel.forEachNode( (node: any)=> {
+            // only pull values from rows that have data. this means we skip filler group nodes.
+            if (!node.data) { return; }
 
-                if (this.colDef.keyCreator) {
-                    value = this.colDef.keyCreator( {value: value} );
-                }
+            let value = this.valueGetter(node);
 
-                if (value === "" || value === undefined) {
-                    value = null;
-                }
+            if (this.colDef.keyCreator) {
+                value = this.colDef.keyCreator( {value: value} );
+            }
 
-                if (filterOutNotAvailable) {
-                    if (!this.doesRowPassOtherFilters(node)) {
-                        return;
-                    }
-                }
+            if (value === "" || value === undefined) {
+                value = null;
+            }
 
-                if (value != null && Array.isArray(value)) {
-                    for (let j = 0; j < value.length; j++) {
-                        addUniqueValueIfMissing(value[j])
-                    }
-                } else {
-                    addUniqueValueIfMissing(value)
+            if (filterOutNotAvailable) {
+                if (!this.doesRowPassOtherFilters(node)) {
+                    return;
                 }
+            }
+
+            if (value != null && Array.isArray(value)) {
+                for (let j = 0; j < value.length; j++) {
+                    addUniqueValueIfMissing(value[j])
+                }
+            } else {
+                addUniqueValueIfMissing(value)
             }
         });
 
