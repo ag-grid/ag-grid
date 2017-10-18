@@ -36,44 +36,44 @@ include '../documentation-main/documentation_header.php';
     // The grid calls this to know if the filter icon in the header should be shown. Return true to show.
     isFilterActive(): boolean;
 
-    &lt;span class="codeComment"&gt;// The grid will ask each active filter, in turn, whether each row in the grid
+    // The grid will ask each active filter, in turn, whether each row in the grid
     passes. If any
     // filter fails, then the row will be excluded from the final set. The method is provided a
     // params object with attributes node (the rodNode the grid creates that wraps the data) and data
-    // (the data object that you provided to the grid for that row).&lt;/span&gt;
+    // (the data object that you provided to the grid for that row).
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 
     // Gets the filter state for storing
     getModel(): any;
 
-    &lt;span class="codeComment"&gt;// Restores the filter state. Called either as a result of user calling
-    // &lt;i&gt;gridApi.setSortModel&lt;/i&gt; OR the floating filter changed (only if using floating filters).&lt;/span&gt;
+    // Restores the filter state. Called either as a result of user calling
+    // OR the floating filter changed (only if using floating filters).
     setModel(model: any): void;
 
     // optional methods
 
-    &lt;span class="codeComment"&gt;// Gets called every time the popup is shown, after the gui returned in
+    // Gets called every time the popup is shown, after the gui returned in
     // getGui is attached to the DOM. If the filter popup is closed and reopened, this method is called
     // each time the filter is shown. This is useful for any logic that requires attachment before executing,
     // such as putting focus on a particular DOM element. The params has one callback method 'hidePopup',
     // which you can call at any later point to hide the popup - good if you have an 'Apply' button and
-    // you want to hide the popup after it is pressed.&lt;/span&gt;
+    // you want to hide the popup after it is pressed.
     afterGuiAttached?(params?: {hidePopup?: Function}): void;
 
-    &lt;span class="codeComment"&gt;// Gets called when new rows are inserted into the grid. If the filter needs to
+    // Gets called when new rows are inserted into the grid. If the filter needs to
     change its state
     // after rows are loaded, it can do it here. For example the set filters uses this to update the list of
-    // available values to select from (eg 'Ireland', 'UK' etc for Country filter).&lt;/span&gt;
+    // available values to select from (eg 'Ireland', 'UK' etc for Country filter).
     onNewRowsLoaded?(): void;
 
-    &lt;span class="codeComment"&gt;// Gets called when the Column is destroyed. If your custom filter needs to do
+    // Gets called when the Column is destroyed. If your custom filter needs to do
     // any resource cleaning up, do it here. A filter is NOT destroyed when it is
     // made 'not visible', as the gui is kept to be shown again if the user selects
     // that filter again. The filter is destroyed when the column it is associated with is destroyed,
-    // either new columns are set into the grid, or the grid itself is destroyed.&lt;/span&gt;
+    // either new columns are set into the grid, or the grid itself is destroyed.
     destroy?(): void;
 
-    &lt;span class="codeComment"&gt;// Only used in conjunction with floating filters.
+    // Only used in conjunction with floating filters.
     //
     // If floating filters are turned on for the grid, but you have no floating filter
     // configured for this column, then the grid will check for this method. If this
@@ -82,27 +82,27 @@ include '../documentation-main/documentation_header.php';
     // filter with one string input value, you could just return the simple string
     // value here.
     //
-    // If you are implementing a floating filter for your filter, then leave this method out.&lt;/span&gt;
+    // If you are implementing a floating filter for your filter, then leave this method out.
     getModelAsString?(model:any): string;
 
-    &lt;span class="codeComment"&gt;// Only used in conjunction with floating filters.
+    // Only used in conjunction with floating filters.
     //
-    // When a floating filter changes and calls the &lt;i&gt;onFloatingFilterChanged(change)&lt;/i&gt; callback then:
-    // a) &lt;i&gt;filter.onFloatingFilterChanged(change)&lt;/i&gt; gets called if it exists.
+    // When a floating filter changes and calls the onFloatingFilterChanged(change) callback then:
+    // a) filter.onFloatingFilterChanged(change) gets called if it exists.
     // ELSE
-    // b) &lt;i&gt;filter.setModel(model)&lt;/i&gt; gets called.
+    // b) filter.setModel(model) gets called.
     //
-    // If &lt;i&gt;setModal(modal)&lt;/i&gt; is used, then the change object you pass should be the model
+    // If setModal(modal) is used, then the change object you pass should be the model
     // object the filter is expecting. The grid will then continue and update the grids rows
     // based on the new filter state.
     //
-    // If &lt;i&gt;onFloatingFilterChanged(change)&lt;/i&gt; is used, then the change object you pass
+    // If onFloatingFilterChanged(change) is used, then the change object you pass
     // can be anything you like, as long as it's expected by your filter. The grid will
     // update the grid rows for you, you will need to do this yourself by calling filter
-    // &lt;i&gt;filterChangedCallback()&lt;/i&gt; if you need. Use this if your need to do more in your floating
-    // than &lt;i&gt;setModel()&lt;/i&gt; does. For example ag-Grid out of the box filter components use
+    // filterChangedCallback() if you need. Use this if your need to do more in your floating
+    // than setModel() does. For example ag-Grid out of the box filter components use
     // this to also consider logic for the Apply button (as if Apply button is active, then
-    // the filter does not call &lt;i&gt;filterChangedCallback()&lt;/i&gt;. &lt;/span&gt;
+    // the filter does not call filterChangedCallback(). 
     onFloatingFilterChanged?(change:any): void;
     }
 </snippet>
@@ -124,43 +124,43 @@ include '../documentation-main/documentation_header.php';
     // The column definition for the column
     colDef: ColDef;
 
-    &lt;span class="codeComment"&gt;// The row model, helpful for looking up data values if needed.
+    // The row model, helpful for looking up data values if needed.
     // If the filter needs to know which rows are a) in the table b) currently
     // visible (ie not already filtered), c) what groups d) what order - all of this
-    // can be read from the rowModel.&lt;/span&gt;
+    // can be read from the rowModel.
     rowModel: IRowModel;
 
-    &lt;span class="codeComment"&gt;// A function callback, to be called, when the filter changes,
-    // to inform the grid to filter the data. The grid will respond by filtering the data.&lt;/span&gt;
+    // A function callback, to be called, when the filter changes,
+    // to inform the grid to filter the data. The grid will respond by filtering the data.
     filterChangedCallback: ()=&gt; void;
 
-    &lt;span class="codeComment"&gt;// A function callback, to be optionally called, when the filter changes,
+    // A function callback, to be optionally called, when the filter changes,
     // but before 'Apply' is pressed. The grid does nothing except call
     // gridOptions.filterModified(). This is useful if you are making use of
     // an 'Apply' button and want to inform the user the filters are not
-    // longer in sync with the data (until you press 'Apply').&lt;/span&gt;
+    // longer in sync with the data (until you press 'Apply').
     filterModifiedCallback: ()=&gt; void;
 
-    &lt;span class="codeComment"&gt;// A function callback, call with a node to be given the value for that
+    // A function callback, call with a node to be given the value for that
     // filters column for that node. The callback takes care of selecting the right colDef
     // and deciding whether to use valueGetter or field etc. This is useful in, for example,
     // creating an Excel style filer, where the filter needs to lookup available values to
-    // allow the user to select from.&lt;/span&gt;
+    // allow the user to select from.
     valueGetter: (rowNode: RowNode) =&gt; any;
 
-    &lt;span class="codeComment"&gt;// A function callback, call with a node to be told whether
+    // A function callback, call with a node to be told whether
     // the node passes all filters except the current filter. This is useful if you want
     // to only present to the user values that this filter can filter given the status
     // of the other filters. The set filter uses this to remove from the list, items that
-    // are no longer available due to the state of other filters (like Excel type filtering). &lt;/span&gt;
+    // are no longer available due to the state of other filters (like Excel type filtering). 
     doesRowPassOtherFilter: (rowNode: RowNode) =&gt; boolean;
 
-    // The context for this grid. See section on &lt;a href="../javascript-grid-context/"&gt;Context&lt;/a&gt;
+    // The context for this grid. See section on Context
     context: any;
 
-    &lt;span class="codeComment"&gt;// If the grid options angularCompileFilters is set to true, then a new child
+    // If the grid options angularCompileFilters is set to true, then a new child
     // scope is created for each column filter and provided here. Just ignore this if
-    // you are not using Angular 1&lt;/span&gt;
+    // you are not using Angular 1
     $scope: any;
 
     // The grid API
