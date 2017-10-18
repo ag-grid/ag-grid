@@ -40,6 +40,7 @@ function phpArrayToJSON(string) {
         throw new Error(' The hackish conversion of PHP syntax to JSON failed. check ./exmaple-generator.js');
     }
 }
+
 function forEachExampleToGenerate(cb, final, scope = '*') {
     glob(`src/${scope}/*.php`, {}, (er, files) => {
         files.forEach(file => {
@@ -52,13 +53,20 @@ function forEachExampleToGenerate(cb, final, scope = '*') {
                 const [_, example, type, options] = matches;
 
                 if (type === 'generated') {
-                    cb(section, example, phpArrayToJSON(options));
+
+                    try {
+                        cb(section, example, phpArrayToJSON(options));
+                    } catch (error) {
+                        console.error(`Could not process example ${example } in ${file}. Does the example directory exist?`);
+                        console.error(`The error: ${error.message}`);
+                    }
                 }
             }
         });
         final();
     });
 }
+
 module.exports = (cb, scope) => {
     require('ts-node').register();
     const {vanillaToReact} = require('./src/example-runner/vanilla-to-react.ts');
