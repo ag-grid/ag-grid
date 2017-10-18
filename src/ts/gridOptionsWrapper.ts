@@ -322,7 +322,7 @@ export class GridOptionsWrapper {
     public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
-    public getGroupKeysFunc(): ((dataItem: any) => string[]) { return this.gridOptions.getGroupKeys; }
+    public getDataPathFunc(): ((dataItem: any) => string[]) { return this.gridOptions.getDataPath; }
     // public getIsGroupFunc(): ((dataItem: any) => boolean) { return this.gridOptions.isGroup }
     public getGroupRowAggNodesFunc() { return this.gridOptions.groupRowAggNodes; }
     public getContextMenuItemsFunc(): GetContextMenuItems { return this.gridOptions.getContextMenuItems; }

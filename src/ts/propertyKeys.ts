@@ -60,7 +60,7 @@ export class PropertyKeys {
         'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
         'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
         'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell',
-       'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getGroupKeys', 'isGroup'];
+       'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath'];
 
      public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)

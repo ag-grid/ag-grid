@@ -265,7 +265,7 @@ export interface GridOptions {
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?: GetNodeChildDetails;
-    getGroupKeys?: GetGroupKeys;
+    getDataPath?: GetDataPath;
     treeData?: boolean;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
@@ -342,7 +342,7 @@ export interface GridOptions {
     columnApi?: ColumnApi; // change to typed
 }
 
-export interface GetGroupKeys {
+export interface GetDataPath {
     (data: any): string[];
 }
 
