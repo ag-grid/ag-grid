@@ -611,6 +611,8 @@ ag-grid-aurelia {
 .ag-menu {
     position: absolute;
     user-select: none;
+    max-height: 100%;
+    overflow-y: auto;
 }
 .ag-menu-column-select-wrapper {
     width: 200px;
