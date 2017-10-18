@@ -64,7 +64,7 @@ export class AggregationStage implements IRowNodeStage {
 
         // aggregate all children first, as we use the result in this nodes calculations
         rowNode.childrenAfterFilter.forEach( (child: RowNode) => {
-            let nodeHasChildren = child.childrenAfterGroup && child.childrenAfterGroup.length > 0;
+            let nodeHasChildren = child.hasChildren();
             if (nodeHasChildren) {
                 this.recursivelyCreateAggData(child, aggDetails);
             } else {
