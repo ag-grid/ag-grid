@@ -294,6 +294,7 @@ ag-grid-aurelia {
     width: 100%;
     box-sizing: border-box;
 }
+
 .ag-layout-normal .ag-body {
     height: 100%;
     position: absolute;
@@ -770,6 +771,12 @@ ag-grid-aurelia {
         padding-right: 6px;
     }
 }
+
+/* this is a dummy property to detect styles being loaded in borderLayout.ts */
+.ag-layout-normal {
+    caption-side: bottom; 
+}
+
 
 $ag-icons-path: './icons/' !default;
 $ag-icons-filter: 'initial' !default;
