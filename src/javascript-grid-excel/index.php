@@ -30,7 +30,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The export is performed by calling the following API. Note that this API is similar to the <a href="../javascript-grid-export/#cellClassRules">CSV Export</a> API,
-        so you can use a similar configuration for both.
+        so you can use similar config for both.
     </p>
 
     <ul>
@@ -130,7 +130,8 @@ include '../documentation-main/documentation_header.php';
         below 'Export with Styles'
         </li>
     </ul>
-    <snippet>[
+    <snippet>
+[
     [],
     [{styleId:'bigHeader', data:{type:'String', value:'Summary'}}],
     [
@@ -196,7 +197,7 @@ include '../documentation-main/documentation_header.php';
         simplify the configuration the Excel Export reuses the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a>
         and the <a href="../javascript-grid-cell-styles/#cellClass">cellClass</a> from the column definition.
         Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the
-        excelStyles property in the <a href="../javascript-grid-properties/">gridOptions</a>.
+        ExcelStyles property in the <a href="../javascript-grid-properties/">gridOptions</a>.
     </p>
 
     <p>
@@ -213,7 +214,7 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li><b>id</b> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a></li>
-        <li><b>alignment</b> (optional): Vertical and horizontal alignment:<ul>
+        <li><b>alignment</b> (optional): Vertical and horizontal alignmen:<ul>
                 <li>horizontal: String one of Automatic, Left, Center, Right, Fill, Justify, CenterAcrossSelection, Distributed, and JustifyDistributed</li>
                 <li>indent: Number of indents</li>
                 <li>readingOrder: String one of RightToLeft, LeftToRight, and Context</li>
@@ -284,7 +285,8 @@ include '../documentation-main/documentation_header.php';
 
 
     <h4>Excel Style Definition Example</h4>
-    <snippet>var columnDef = {
+    <snippet>
+var columnDef = {
     ...,
     // The same cellClassRules and cellClass can be used for CSS and Excel
     cellClassRules: {
@@ -299,7 +301,7 @@ include '../documentation-main/documentation_header.php';
 
 var gridOptions = {
     ...,
-    excelStyles: [
+    ExcelStyles: [
         // The base style, red font.
         {
             id: "redFont",
@@ -337,6 +339,7 @@ var gridOptions = {
 
     ]
 }
+
    </snippet>
 
     <h4>Resolving Excel Styles</h4>
@@ -440,15 +443,16 @@ var gridOptions = {
         <li><a href="http://sheetjs.com/" target="_blank">sheetJs</a> Is included as a third party library</li>
         <li>
             The "Export to Excel (xlsx)" button reuses the XML and passes it to sheetJs to generate a xlsx</li>
-<snippet>var content = gridOptions.api.getDataAsExcel(params);
-var workbook = XLSX.read(content, {type: 'binary'});
-var xlsxContent = XLSX.write(workbook, {bookType: 'xlsx', type: 'base64'});
-</snippet>
-    </li>
-    <li>There is some code to handle the conversion from base64 to blob adapted from
-        <a href="http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript">stackOverflow</a></li>
-    <li>There is some code to handle the download of the blob:
-<snippet>function download (params, content){
+<snippet>
+    var content = gridOptions.api.getDataAsExcel(params);
+    var workbook = XLSX.read(content, {type: 'binary'});
+    var xlsxContent = XLSX.write(workbook, {bookType: 'xlsx', type: 'base64'});</snippet>
+        </li>
+        <li>There is some code to handle the conversion from base64 to blob adapted from
+            <a href="http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript">stackOverflow</a></li>
+        <li>There is some code to handle the download of the blob:
+<snippet>
+function download (params, content){
     var fileNamePresent = params && params.fileName && params.fileName.length !== 0;
     var fileName = fileNamePresent ? params.fileName : 'noWarning.xlsx';
 
@@ -469,16 +473,14 @@ var xlsxContent = XLSX.write(workbook, {bookType: 'xlsx', type: 'base64'});
         downloadLink.click();
         document.body.removeChild(downloadLink);
 }</snippet></li>
-    <li>Note that this example doesn't import the styles to xls. To add styling to the xlsx, the logic could be extended
+    <li>Note that this example doesnt't import the styles to xls. To add styling to the xlsx, the logic could be extended
         to read the XML styling information received from
-        <i>gridOptions.api.getDataAsExcel(params)</i>, and it could then be passed into SheetJs through the object returned by
+        <i>gridOptions.api.getDataAsExcel(params)</i>, and it could thn be passed into SheetJs through the object returned by
         <i>XLSX.read(content, {type: 'binary'})</i>. The reason this example is not exporting styles is because that it will
         go beyond of the purpose of demonstrating that you can reuse the XML we provide anyway you want.
     </li>
     </ul>
 
     <?= example('Custom XLSX', 'custom-xlsx', 'generated', array("enterprise" => 1, "extras" => array('xlsx'))) ?>
-
-    <?= example('Custom XLSX With Styles', 'custom-xlsx-styles', 'generated', array("enterprise" => 1, "extras" => array('xlsx'))) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
