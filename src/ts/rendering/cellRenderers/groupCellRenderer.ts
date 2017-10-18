@@ -170,12 +170,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (rowNode.footer) {
             this.createFooterCell();
         } else if (
-            rowNode.group ||
+            rowNode.hasChildren() ||
             _.get(params.colDef, 'cellRendererParams.innerRenderer', null) ||
             _.get(params.colDef, 'cellRendererParams.innerRendererFramework', null)
         ) {
             this.createGroupCell();
-            if (rowNode.group){
+            if (rowNode.hasChildren()){
                 this.addChildCount();
             }
         } else {
@@ -318,7 +318,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
             this.draggedFromHideOpenParents = false;
-        } else if (!rowNode.group) {
+        } else if (!rowNode.hasChildren()) {
             // if we are here, and we are not a group, then we must of been dragged down,
             // as otherwise the cell would be blank, and if cell is blank, this method is never called.
             this.draggedFromHideOpenParents = true;
@@ -382,8 +382,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private isExpandable(): boolean {
         let rowNode = this.params.node;
         let reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
-        let childrenExist = rowNode.allChildrenCount > 0;
-        return this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode && childrenExist);
+        return this.draggedFromHideOpenParents ||
+                (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
     }
 
     private showExpandAndContractIcons(): void {

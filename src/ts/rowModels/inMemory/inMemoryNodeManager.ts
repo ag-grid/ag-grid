@@ -218,15 +218,19 @@ export class InMemoryNodeManager {
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         } else {
+
+            node.group = false;
+
             if (treeData) {
-                node.group = true;
-                node.fillerGroup = false;
                 node.canFlower = false;
+                node.expanded = false;
             } else {
                 //  this is the default, for when doing grid data
                 node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
                 if (node.canFlower) {
                     node.expanded = this.isExpanded(level);
+                } else {
+                    node.expanded = false;
                 }
             }
         }

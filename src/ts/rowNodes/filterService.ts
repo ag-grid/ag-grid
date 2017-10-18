@@ -23,31 +23,36 @@ export class FilterService {
     public filter(rowNode: RowNode, filterActive: boolean): void {
 
         // recursively get all children that are groups to also filter
-        rowNode.childrenAfterGroup
-            .filter( childNode => childNode.group )
-            .forEach( childNode => this.filter(childNode, filterActive));
+        if (rowNode.hasChildren()) {
 
-        // result of filter for this node
-        if (filterActive) {
-            rowNode.childrenAfterFilter = rowNode.childrenAfterGroup.filter(childNode => {
-                // a group is included in the result if it has any children of it's own.
-                // by this stage, the child groups are already filtered
-                let passBecauseChildren = childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
+            rowNode.childrenAfterGroup.forEach( node => this.filter(node, filterActive));
 
-                // both leaf level nodes and tree data nodes have data. these get added if
-                // the data passes the filter
-                let passBecauseDataPasses = childNode.data && this.filterManager.doesRowPassFilter(childNode);
+            // result of filter for this node
+            if (filterActive) {
+                rowNode.childrenAfterFilter = rowNode.childrenAfterGroup.filter(childNode => {
+                    // a group is included in the result if it has any children of it's own.
+                    // by this stage, the child groups are already filtered
+                    let passBecauseChildren = childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
 
-                // note - tree data nodes pass either if a) they pass themselves or b) any children of that node pass
+                    // both leaf level nodes and tree data nodes have data. these get added if
+                    // the data passes the filter
+                    let passBecauseDataPasses = childNode.data && this.filterManager.doesRowPassFilter(childNode);
 
-                return passBecauseChildren || passBecauseDataPasses;
-            });
+                    // note - tree data nodes pass either if a) they pass themselves or b) any children of that node pass
+
+                    return passBecauseChildren || passBecauseDataPasses;
+                });
+            } else {
+                // if not filtering, the result is the original list
+                rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
+            }
+
+            this.setAllChildrenCount(rowNode);
+
         } else {
-            // if not filtering, the result is the original list
             rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
+            rowNode.setAllChildrenCount(null);
         }
-
-        this.setAllChildrenCount(rowNode);
     }
 
     private setAllChildrenCountTreeData(rowNode: RowNode) {

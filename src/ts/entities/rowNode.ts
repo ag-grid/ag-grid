@@ -126,8 +126,6 @@ export class RowNode implements IEventEmitter {
     public key: any;
     /** Used by enterprise row model, true if this row node is a stub */
     public stub: boolean;
-    /** Indicates whether rowNode is group provided by user (false) or grid generated (true) */
-    public fillerGroup: boolean;
 
     /** All user provided nodes */
     public allLeafChildren: RowNode[];
@@ -417,6 +415,10 @@ export class RowNode implements IEventEmitter {
         return this.childrenAfterGroup && this.childrenAfterGroup.length > 0;
     }
 
+    public isEmptyGroup(): boolean {
+        return this.group && !this.hasChildren();
+    }
+
     private dispatchCellChangedEvent(column: Column, newValue: any): void {
         let cellChangedEvent: CellChangedEvent = {
             type: RowNode.EVENT_CELL_CHANGED,
@@ -432,7 +434,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public isExpandable(): boolean {
-        return this.group || this.canFlower;
+        return this.hasChildren() || this.canFlower;
     }
 
     public isSelected(): boolean {
