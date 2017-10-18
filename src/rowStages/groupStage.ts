@@ -15,7 +15,7 @@ import {
     StageExecuteParams,
     ValueService,
     ChangedPath,
-    GetGroupKeys,
+    GetDataPath,
     PostConstruct
 } from "ag-grid/main";
 
@@ -49,7 +49,7 @@ export class GroupStage implements IRowNodeStage {
     // if doing tree data, this is true. we set this at create time - as our code does not
     // cater for the scenario where this is switched on / off dynamically
     private usingTreeData: boolean;
-    private getGroupKeys: GetGroupKeys;
+    private getDataPath: GetDataPath;
 
     // we use a sequence variable so that each time we do a grouping, we don't
     // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
@@ -65,7 +65,7 @@ export class GroupStage implements IRowNodeStage {
 
     @PostConstruct
     private postConstruct(): void {
-        this.getGroupKeys = this.gridOptionsWrapper.getGroupKeysFunc();
+        this.getDataPath = this.gridOptionsWrapper.getDataPathFunc();
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
     }
 
@@ -397,7 +397,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private getGroupInfoFromCallback(rowNode: RowNode) : GroupInfo[] {
-        let keys: string[] = this.getGroupKeys(rowNode.data);
+        let keys: string[] = this.getDataPath(rowNode.data);
         let groupInfoMapper = (key: string) => <GroupInfo> {key: key, field: null, rowGroupColumn: null};
         return keys ? keys.map(groupInfoMapper) : [];
     }
