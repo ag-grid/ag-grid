@@ -213,6 +213,7 @@ export {
     GridOptions,
     GetContextMenuItemsParams,
     GetContextMenuItems,
+    GetDataPath,
     MenuItemDef,
     GetNodeChildDetails,
     NodeChildDetails,
