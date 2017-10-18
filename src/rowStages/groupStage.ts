@@ -201,7 +201,7 @@ export class GroupStage implements IRowNodeStage {
 
         // if not filler group, and children are present, need to move children to new filler group.
         // otherwise if no children, we can just remove without replacing.
-        let replaceWithFillerGroup = !childNode.fillerGroup && childNode.childrenAfterGroup.length > 0;
+        let replaceWithFillerGroup = !childNode.fillerGroup && childNode.hasChildren();
         if (replaceWithFillerGroup) {
             let oldPath = this.getExistingPathForNode(childNode, details);
             // because we just removed the userGroup, this will always return new support group
@@ -213,12 +213,14 @@ export class GroupStage implements IRowNodeStage {
             supportGroup.allLeafChildren = childNode.allLeafChildren;
             supportGroup.childrenAfterGroup = childNode.childrenAfterGroup;
             supportGroup.childrenMapped = childNode.childrenMapped;
+
+            supportGroup.childrenAfterGroup.forEach( rowNode => rowNode.parent = supportGroup);
         }
 
         // remove empty groups
         forEachParentGroup( parentNode => {
-            let isEmptyGeneratedGroup = parentNode.fillerGroup && parentNode.allLeafChildren.length===0;
-            if (isEmptyGeneratedGroup) {
+            let emptyFillerGroup = parentNode.fillerGroup && !parentNode.hasChildren();
+            if (emptyFillerGroup) {
                 this.removeFromParent(parentNode);
             }
         });
