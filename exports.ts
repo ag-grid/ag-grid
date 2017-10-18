@@ -218,7 +218,6 @@ export {
     NodeChildDetails,
     GetMainMenuItemsParams,
     GetMainMenuItems,
-    GetDataPath,
     GetRowNodeIdFunc,
     ProcessRowParams,
     NavigateToNextCellParams,
