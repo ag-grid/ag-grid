@@ -22,24 +22,6 @@ var rowData = [
     {id: '10', path: ['X', 'Y'], val1: 9, val2: 9, color: 'Red'},
     {id: '11', path: ['X', 'Y', 'Z', 'Layla'], val1: 10, val2: 10, color: 'Red'},
     {id: '12', path: ['X', 'Y', 'Z', 'Layla', 'Amelia'], val1: 11, val2: 11, color: 'Blue'},
-
-    // {path: ['a'], name: "Alan", country: "United States", gold: 8, silver: 0, bronze: 0, total: 8},
-    //
-    // {path: ['a'], group: true, comment: 'Bouncy Boys'},
-    // {path: ['a','x'], name: "Charles", country: "Ireland", gold: 8, silver: 0, bronze: 0, total: 8},
-    //
-    // {path: ['b','y'], group: true, comment: "Drunken Doughnuts", gold: 999, silver: 999, bronze: 999},
-    // {path: ['b','x'], name: "Ethan", country: "Australia", gold:1, silver:3, bronze:1, total:5},
-    // {path: ['b','y'], name: "Fernando", country: "Belgium", gold:1, silver:3, bronze:1, total:5},
-    //
-    // {path: ['c'], name: "Garrett", country: "Germany", gold: 6, silver: 0, bronze: 2, total: 8},
-    // {path: ['c','y'], name: "Helena", country: "France", gold: 4, silver: 2, bronze: 0, total: 6},
-    // {path: ['d'], name: "Izzy", country: "Italy", gold: 1, silver: 2, bronze: 3, total: 6},
-    // {path: ['d'], name: "Joe", country: "Russia", gold: 2, silver: 1, bronze: 3, total: 6},
-    // {path: ['e'], group: true, comment: "Everyday Boys", gold: 999, silver: 999, bronze: 999},
-    // {name:"Luke", country: "Spain", gold: 4, silver: 0, bronze: 1, total: 5},
-    // {name:"Mark", country: "China", gold: 2, silver: 2, bronze: 1, total: 5},
-    // {name:"Niall", country: "India", gold: 3, silver: 1, bronze: 1, total: 5}
 ];
 
 // remove a row, should get replaced with grid created row
@@ -54,9 +36,8 @@ function move(id, path) {
     gridOptions.api.updateRowData({update: [rowNode.data]});
 }
 
-function add(id) {
-    // var rowNode = gridOptions.api.getRowNode(id);
-    // gridOptions.api.updateRowData({add: [rowNode.data]});
+function add(data) {
+    gridOptions.api.updateRowData({add: [data]});
 }
 
 function updateGold(id, value) {

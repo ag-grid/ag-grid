@@ -30,7 +30,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The export is performed by calling the following API. Note that this API is similar to the <a href="../javascript-grid-export/#cellClassRules">CSV Export</a> API,
-        so you can use a similar configuration for both.
+        so you can use similar config for both.
     </p>
 
     <ul>
@@ -197,7 +197,7 @@ include '../documentation-main/documentation_header.php';
         simplify the configuration the Excel Export reuses the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a>
         and the <a href="../javascript-grid-cell-styles/#cellClass">cellClass</a> from the column definition.
         Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the
-        excelStyles property in the <a href="../javascript-grid-properties/">gridOptions</a>.
+        ExcelStyles property in the <a href="../javascript-grid-properties/">gridOptions</a>.
     </p>
 
     <p>
@@ -214,7 +214,7 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li><b>id</b> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a></li>
-        <li><b>alignment</b> (optional): Vertical and horizontal alignment:<ul>
+        <li><b>alignment</b> (optional): Vertical and horizontal alignmen:<ul>
                 <li>horizontal: String one of Automatic, Left, Center, Right, Fill, Justify, CenterAcrossSelection, Distributed, and JustifyDistributed</li>
                 <li>indent: Number of indents</li>
                 <li>readingOrder: String one of RightToLeft, LeftToRight, and Context</li>
@@ -301,7 +301,7 @@ var columnDef = {
 
 var gridOptions = {
     ...,
-    excelStyles: [
+    ExcelStyles: [
         // The base style, red font.
         {
             id: "redFont",
@@ -473,9 +473,9 @@ function download (params, content){
         downloadLink.click();
         document.body.removeChild(downloadLink);
 }</snippet></li>
-    <li>Note that this example doesn't import the styles to xls. To add styling to the xlsx, the logic could be extended
+    <li>Note that this example doesnt't import the styles to xls. To add styling to the xlsx, the logic could be extended
         to read the XML styling information received from
-        <i>gridOptions.api.getDataAsExcel(params)</i>, and it could then be passed into SheetJs through the object returned by
+        <i>gridOptions.api.getDataAsExcel(params)</i>, and it could thn be passed into SheetJs through the object returned by
         <i>XLSX.read(content, {type: 'binary'})</i>. The reason this example is not exporting styles is because that it will
         go beyond of the purpose of demonstrating that you can reuse the XML we provide anyway you want.
     </li>
