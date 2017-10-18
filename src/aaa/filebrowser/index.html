@@ -2,9 +2,36 @@
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
     <script src="//localhost:8080/dev/ag-grid-enterprise-bundle/ag-grid-enterprise.js"></script>
+
+    <style>
+        .fa-folder {
+            color: darkorange;
+        }
+        .fa-folder-open-o {
+            color: darkorange;
+        }
+        .fa-file-pdf-o {
+            color: red;
+        }
+        .fa-file-excel-o {
+            color: green;
+        }
+        .fa-file-audio-o {
+            color: blue;
+        }
+    </style>
+
 <body>
 
-<div id="myGrid" class="ag-fresh" style="height: 100%;"></div>
+<div style="height: 100%; padding-top: 35px; box-sizing: border-box;">
+    <div id="myGrid" style="height: 100%;" class="ag-fresh"></div>
+</div>
+
+<div style="position: absolute; top: 10px; left: 10px;">
+    <button onclick="moveSelectedToStuff()">Move Selected to 'stuff'</button>
+    <button onclick="addNewGroup()">Add New Group</button>
+</div>
+
 <script src="main.js"></script>
 
 </body>
