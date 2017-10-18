@@ -16,9 +16,9 @@ var columnDefs = [
 
 function getRowData() {
     var rowData = [];
-    for (var i = 1; i <= 20; i++) {
+    for (var i = 1; i <= 16; i++) {
         rowData.push({
-            group: i < 5 ? 'A' : 'B',
+            group: i < 8 ? 'A' : 'B',
             a: (i * 863) % 100,
             b: (i * 811) % 100,
             c: (i * 743) % 100,
