@@ -1003,8 +1003,12 @@ export class GridPanel extends BeanStub {
                 }, 0);
             } else if (nextTimeout===100) {
                 setTimeout( ()=> {
-                    this.sizeColumnsToFit(-1);
+                    this.sizeColumnsToFit(500);
                 }, 100);
+            } else if (nextTimeout===500) {
+                setTimeout( ()=> {
+                    this.sizeColumnsToFit(-1);
+                }, 500);
             } else {
                 console.log('ag-Grid: tried to call sizeColumnsToFit() but the grid is coming back with ' +
                     'zero width, maybe the grid is not visible yet on the screen?');
