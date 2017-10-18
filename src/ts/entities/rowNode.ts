@@ -413,6 +413,10 @@ export class RowNode implements IEventEmitter {
         }
     }
 
+    public hasChildren(): boolean {
+        return this.childrenAfterGroup && this.childrenAfterGroup.length > 0;
+    }
+
     private dispatchCellChangedEvent(column: Column, newValue: any): void {
         let cellChangedEvent: CellChangedEvent = {
             type: RowNode.EVENT_CELL_CHANGED,
