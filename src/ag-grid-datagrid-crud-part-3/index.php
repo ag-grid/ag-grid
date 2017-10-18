@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "Blog: Building a CRUD Application with ag-Grid Part 2";
-$pageDescription = "Building a CRUD Application with ag-Grid Part 2";
+$pageTitle = "Blog: Building a CRUD Application with ag-Grid Part 3";
+$pageDescription = "Building a CRUD Application with ag-Grid Part 3";
 $pageKeyboards = "ag-grid datagrid crud enterprise";
 
 include('../includes/mediaHeader.php');
@@ -45,7 +45,7 @@ include('../includes/mediaHeader.php');
 
             <p>
                 In order for our data to be useful we need to make it available to users. So far we've exposed our data
-                via REST service in the previous <a href="../ag-grid-datagrid-crud-part-2/">part</a>, but now let's make it
+                via REST service in the previous <a href="../ag-grid-datagrid-crud-part-3/">part</a>, but now let's make it
                 available to our users in the browser.
             </p>
 
@@ -449,7 +449,7 @@ private createColumnDefs() {
 
             <div>
                 <a href="https://twitter.com/share" class="twitter-share-button"
-                   data-url="https://www.ag-grid.com/ag-grid-react-datagrid/"
+                   data-url="https://www.ag-grid.com/ag-grid-datagrid-crud-part-3/"
                    data-text="Building a CRUD application with ag-Grid" data-via="seanlandsman"
                    data-size="large">Tweet</a>
                 <script>!function (d, s, id) {

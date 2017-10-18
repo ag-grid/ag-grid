@@ -316,7 +316,7 @@ Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
 
             <div>
                 <a href="https://twitter.com/share" class="twitter-share-button"
-                   data-url="https://www.ag-grid.com/ag-grid-react-datagrid/"
+                   data-url="https://www.ag-grid.com/ag-grid-datagrid-crud-part-2/"
                    data-text="Building a CRUD application with ag-Grid" data-via="seanlandsman"
                    data-size="large">Tweet</a>
                 <script>!function (d, s, id) {
