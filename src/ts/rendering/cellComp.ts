@@ -532,6 +532,8 @@ export class CellComp extends Component {
                 let tooltip = _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
                 if (_.exists(tooltip)) {
                     this.eParentOfValue.setAttribute('title', tooltip);
+                } else {
+                    this.eParentOfValue.removeAttribute('title');
                 }
             }
         }
