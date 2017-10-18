@@ -54,7 +54,7 @@ function updateSilver(id, value) {
 
 var columnDefs = [
     {headerName: "Group", field: "name", cellRenderer: 'group', showRowGroup: true, cellRendererParams: {
-        // checkbox: true,
+        checkbox: true,
         suppressCount: true
     }},
     {valueGetter: 'node.id'},
@@ -83,7 +83,7 @@ var gridOptions = {
     enableFilter: true,
     groupDefaultExpanded: -1,
     // groupUseEntireRow:true,
-    getGroupKeys: function(data) {
+    getDataPath: function(data) {
         return data.path;
     },
     isGroup: function(data) {
