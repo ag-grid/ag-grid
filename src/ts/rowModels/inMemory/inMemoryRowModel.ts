@@ -429,7 +429,7 @@ export class InMemoryRowModel {
                 let node = nodes[i];
                 callback(node, index++);
                 // go to the next level if it is a group
-                if (node.group) {
+                if (node.hasChildren()) {
                     // depending on the recursion type, we pick a difference set of children
                     let nodeChildren: RowNode[];
                     switch (recursionType) {

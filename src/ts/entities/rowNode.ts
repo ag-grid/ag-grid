@@ -412,6 +412,9 @@ export class RowNode implements IEventEmitter {
     }
 
     public hasChildren(): boolean {
+        // we need to return true when this.group=true, as this is used by enterprise row model
+        // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
+        // if children exist.
         return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
     }
 
