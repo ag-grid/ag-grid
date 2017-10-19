@@ -35,10 +35,7 @@ exports.default = _vue2.default.extend({
     data: function data() {
         return {
             _initialised: false,
-            _destroyed: false,
-
-            api: null,
-            columnApi: null
+            _destroyed: false
         };
     },
 
@@ -64,6 +61,15 @@ exports.default = _vue2.default.extend({
             }
         }
     },
+    created: function created() {
+        if (this.gridOptions.api) {
+            this.api = this.gridOptions.api;
+        }
+
+        if (this.gridOptions.columnApi) {
+            this.columnApi = this.gridOptions.columnApi;
+        }
+    },
     mounted: function mounted() {
         var frameworkComponentWrapper = new _vueFrameworkComponentWrapper.VueFrameworkComponentWrapper(this);
         var vueFrameworkFactory = new _vueFrameworkFactory.VueFrameworkFactory(this.$el, this);
@@ -79,13 +85,13 @@ exports.default = _vue2.default.extend({
 
         new _main.Grid(this.$el, gridOptions, gridParams);
 
-        if (this.gridOptions.api) {
-            this.api = this.gridOptions.api;
-        }
-
-        if (this.gridOptions.columnApi) {
-            this.columnApi = this.gridOptions.columnApi;
-        }
+        // if (this.gridOptions.api) {
+        //     this.api = this.gridOptions.api;
+        // }
+        //
+        // if (this.gridOptions.columnApi) {
+        //     this.columnApi = this.gridOptions.columnApi;
+        // }
 
         this._initialised = true;
     },
@@ -93,7 +99,6 @@ exports.default = _vue2.default.extend({
     watch: watchedProperties,
     destroyed: function destroyed() {
         if (this._initialised) {
-            this.api.destroy();
             this._destroyed = true;
         }
     }
