@@ -70,9 +70,9 @@ export {RowNode} from "./dist/lib/entities/rowNode";
 
 // filter
 export {BaseFilter} from "./dist/lib/filter/baseFilter";
-export {DateFilter} from "./dist/lib/filter/dateFilter";
+export {DateFilter,SerializedDateFilter} from "./dist/lib/filter/dateFilter";
 export {FilterManager} from "./dist/lib/filter/filterManager";
-export {NumberFilter} from "./dist/lib/filter/numberFilter";
+export {NumberFilter,SerializedNumberFilter} from "./dist/lib/filter/numberFilter";
 export {TextFilter,SerializedTextFilter} from "./dist/lib/filter/textFilter";
 export {IFloatingFilter, IFloatingFilterParams} from "./dist/lib/filter/floatingFilter";
 
@@ -244,7 +244,6 @@ export {WrapableInterface} from "./dist/lib/components/framework/frameworkCompon
 export {BaseComponentWrapper} from "./dist/lib/components/framework/frameworkComponentWrapper";
 export {FrameworkComponentWrapper} from "./dist/lib/components/framework/frameworkComponentWrapper";
 export {IFrameworkFactory} from "./dist/lib/interfaces/iFrameworkFactory";
-export {SerializedNumberFilter} from "./dist/lib/filter/numberFilter";
 export {Environment} from "./dist/lib/environment";
 
 // events
