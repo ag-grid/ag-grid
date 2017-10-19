@@ -75,12 +75,12 @@ export class InMemoryNodeManager {
         this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
 
-        let rowsAlreadyGrouped = _.exists(this.getNodeChildDetails);
+        let doingLegacyTreeData = _.exists(this.getNodeChildDetails);
 
         // kick off recursion
         let result = this.recursiveFunction(rowData, null, InMemoryNodeManager.TOP_LEVEL);
 
-        if (rowsAlreadyGrouped) {
+        if (doingLegacyTreeData) {
             this.rootNode.childrenAfterGroup = result;
             this.setLeafChildren(this.rootNode);
         } else {
@@ -203,10 +203,10 @@ export class InMemoryNodeManager {
         let node = new RowNode();
         this.context.wireBean(node);
 
-        let treeData = this.gridOptionsWrapper.isTreeData();
-        let legacyTreeData = !treeData && _.exists(this.getNodeChildDetails);
+        let doingTreeData = this.gridOptionsWrapper.isTreeData();
+        let doingLegacyTreeData = !doingTreeData && _.exists(this.getNodeChildDetails);
 
-        let nodeChildDetails = legacyTreeData ? this.getNodeChildDetails(dataItem) : null;
+        let nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
 
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
@@ -221,7 +221,7 @@ export class InMemoryNodeManager {
 
             node.group = false;
 
-            if (treeData) {
+            if (doingTreeData) {
                 node.canFlower = false;
                 node.expanded = false;
             } else {
@@ -257,6 +257,7 @@ export class InMemoryNodeManager {
         }
     }
 
+    // this is only used for doing legacy tree data
     private setLeafChildren(node: RowNode): void {
         node.allLeafChildren = [];
         if (node.childrenAfterGroup) {

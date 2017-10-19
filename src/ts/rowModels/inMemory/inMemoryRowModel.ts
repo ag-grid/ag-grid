@@ -242,8 +242,8 @@ export class InMemoryRowModel {
     public isEmpty(): boolean {
         let rowsMissing: boolean;
 
-        let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (rowsAlreadyGrouped) {
+        let doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (doingLegacyTreeData) {
             rowsMissing = _.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0
         } else {
             rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
