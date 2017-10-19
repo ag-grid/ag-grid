@@ -259,7 +259,7 @@ export class RowRenderer extends BeanStub {
         // all rows and insert them again from scratch
         let rowsUsingFlow = this.forPrint || this.autoHeight;
         let recycleRows = rowsUsingFlow ? false : params.recycleRows;
-        let animate = rowsUsingFlow ? false : params.animate;
+        let animate = rowsUsingFlow ? false : (params.animate && this.gridOptionsWrapper.isAnimateRows());
 
         let rowsToRecycle: {[key: string]: RowComp} = this.binRowComps(recycleRows);
 

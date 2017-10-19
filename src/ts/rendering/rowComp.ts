@@ -1,6 +1,6 @@
 import {_} from "../utils";
 import {CellComp} from "./cellComp";
-import {DataChangedEvent, RowNode, CellChangedEvent} from "../entities/rowNode";
+import {CellChangedEvent, DataChangedEvent, RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Column} from "../entities/column";
 import {
@@ -13,9 +13,8 @@ import {
     RowValueChangedEvent,
     VirtualRowRemovedEvent
 } from "../events";
-import {EventService} from "../eventService";
 import {Autowired} from "../context/context";
-import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {Component} from "../widgets/component";
 import {RefSelector} from "../widgets/componentAnnotations";
