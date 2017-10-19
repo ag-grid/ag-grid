@@ -76,7 +76,7 @@ function addNewGroup() {
 }
 
 function removeSelected() {
-    var selectedNode = gridOptions.api.getSelectedNodes()[0]; // single row selection
+    var selectedNode = gridOptions.api.getSelectedNodes()[0]; // single selection
     if (!selectedNode) {
         console.warn("No nodes selected!");
         return;
@@ -91,15 +91,11 @@ function getRowsToRemove(node) {
         res = res.concat(getRowsToRemove(node.childrenAfterGroup[i]));
     }
 
-    if (!node.group) { //
-        res = res.concat([node.data]);
-    }
-
-    return res;
+    return node.data ? res.concat([node.data]) : res;
 }
 
 function moveSelectedNodeToTarget(targetRowId) {
-    var selectedNode = gridOptions.api.getSelectedNodes()[0]; // single row selection
+    var selectedNode = gridOptions.api.getSelectedNodes()[0]; // single selection
     if (!selectedNode) {
         console.warn("No nodes selected!");
         return;
@@ -107,13 +103,13 @@ function moveSelectedNodeToTarget(targetRowId) {
 
     var targetNode = gridOptions.api.getRowNode(targetRowId);
     var invalidMove = selectedNode.key === targetNode.key || isSelectionParentOfTarget(selectedNode, targetNode);
-
     if (invalidMove) {
         console.warn("Invalid selection - must not be parent or same as target!");
-    } else {
-        var rowsToUpdate = getRowsToUpdate(selectedNode, targetNode.data.filePath);
-        gridOptions.api.updateRowData({update: rowsToUpdate});
+        return;
     }
+
+    var rowsToUpdate = getRowsToUpdate(selectedNode, targetNode.data.filePath);
+    gridOptions.api.updateRowData({update: rowsToUpdate});
 }
 
 function isSelectionParentOfTarget(selectedNode, targetNode) {
@@ -128,14 +124,17 @@ function isSelectionParentOfTarget(selectedNode, targetNode) {
 function getRowsToUpdate(node, parentPath) {
     var res = [];
 
-    node.data.filePath = parentPath.concat([node.key]);
+    var newPath = parentPath.concat([node.key]);
+    if(node.data) {
+        node.data.filePath = newPath;
+    }
 
     for (var i = 0; i < node.childrenAfterGroup.length; i++) {
-        var updatedChildRowData = getRowsToUpdate(node.childrenAfterGroup[i], node.data.filePath);
+        var updatedChildRowData = getRowsToUpdate(node.childrenAfterGroup[i], newPath);
         res = res.concat(updatedChildRowData);
     }
 
-    return res.concat([node.data]); //TODO: order is important!
+    return node.data ? res.concat([node.data]) : res;
 }
 
 function getFileIcon(filename) {
