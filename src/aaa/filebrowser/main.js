@@ -97,7 +97,8 @@ function getRowsToRemove(node) {
     }
 
     // TODO: gotcha
-    if (!node.group) {
+    var userProvidedThisRow = !node.group;
+    if (userProvidedThisRow) {
         res = res.concat([node.data]);
     }
 
