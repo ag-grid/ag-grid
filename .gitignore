@@ -21,7 +21,7 @@ ag-grid.iml
 .sass-cache
 .cache-loader
 
-dist/
+dist
 package-lock.json
 module.tgz
 
