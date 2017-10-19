@@ -39,7 +39,8 @@ include('../includes/mediaHeader.php');
             <h2>Series Chapters</h2>
 
             <ul>
-                <li class="bold-roboto">Part 1: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)</li>
+                <li class="bold-roboto">Part 1: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)
+                </li>
                 <li>Part 2: Middle Tier: Exposing our data with a REST Service</li>
                 <li>Part 3: Front End - Initial Implementation</li>
                 <li>Part 4: Front End - Grid Features & CRUD (Creation, Updates and Deletion)</li>
@@ -92,7 +93,7 @@ include('../includes/mediaHeader.php');
             <h3>Prerequisites</h3>
 
             <p>In order to follow through this series, a number of tools are required. Please see their
-               documentation on
+                documentation on
                 how to download and install it for your particular Operating System.</p>
 
             <p>Subsequent sections will assume these tools have been installed and are available for use.</p>
@@ -139,48 +140,53 @@ include('../includes/mediaHeader.php');
 
             <p>Once done, click on <code>Generate Project</code> - you'll get a dialog to download the generated bundle.
                 Save
-                this to your chosen project location and once downloaded unzip it to a sub-directory called <code>backend</code>.</p>
+                this to your chosen project location and once downloaded unzip it to a sub-directory called <code>backend</code>.
+            </p>
 
             <p>You should see the following project structures:</p>
 
-<snippet>
-└── backend
-    ├── LICENSE
-    ├── mvnw
-    ├── mvnw.cmd
-    ├── pom.xml
-    └── src
-        ├── main
-        │   ├── java
-        │   │   └── com
-        │   │       └── aggrid
-        │   │           └── crudapp
-        │   │               └── CrudAppApplication.java
-        │   └── resources
-        │       ├── application.properties
-        │       ├── static
-        │       └── templates
-        └── test
-            └── java
-                └── com
-                    └── aggrid
-                        └── crudapp
-                           └── CrudAppApplicationTests.java
-</snippet>
+            <snippet>
+                └── backend
+                   ├── LICENSE
+                   ├── mvnw
+                   ├── mvnw.cmd
+                   ├── pom.xml
+                   └── src
+                   ├── main
+                   │   ├── java
+                   │   │   └── com
+                   │   │   └── aggrid
+                   │   │   └── crudapp
+                   │   │   └── CrudAppApplication.java
+                   │   └── resources
+                   │   ├── application.properties
+                   │   ├── static
+                   │   └── templates
+                   └── test
+                   └── java
+                   └── com
+                   └── aggrid
+                   └── crudapp
+                  └── CrudAppApplicationTests.java
+            </snippet>
 
             <p>Maven provides a standard project structure, including a default Application file (<code>CrudAppApplication.java</code>)
                 and default, starting, test file (<code>CrudAppApplicationTests.java</code>).</p>
 
-            <note>We have unzipped the generated project into a directory called <code>backend</code> as I prefer to keep the
-                back and front end separate. Each tier can in effect be considered an application in its own right - this
-                is especially true as your application grows in code and complexity.</note>
+            <note>We have unzipped the generated project into a directory called <code>backend</code> as I prefer to
+                keep the
+                back and front end separate. Each tier can in effect be considered an application in its own right -
+                this
+                is especially true as your application grows in code and complexity.
+            </note>
 
 
-            <p>Navigate to the <code>backend</code> directory; let's download the dependencies and do a quick sanity check:</p>
+            <p>Navigate to the <code>backend</code> directory; let's download the dependencies and do a quick sanity
+                check:</p>
 
-<snippet language="sh">
-mvn test
-</snippet>
+            <snippet language="sh">
+                mvn test
+            </snippet>
 
             <p>You should see a long output while mvn downloads all dependencies - this might take a little time
                 depending on your
@@ -201,9 +207,9 @@ mvn test
 
             <h4>Via Maven</h4>
 
-<snippet language="sh">
-mvn spring-boot:run
-</snippet>
+            <snippet language="sh">
+                mvn spring-boot:run
+            </snippet>
 
             <p>In either case the application will launch, but not actually do much at this stage.</p>
 
@@ -215,7 +221,8 @@ mvn spring-boot:run
                 <tr style="vertical-align: top">
                     <td><code>Athlete</code></td>
                     <td>The main entity - from this we can get the Results and Country associated to
-                        the Athlete</td>
+                        the Athlete
+                    </td>
                 </tr>
                 <tr style="vertical-align: top">
                     <td><code>Sport</code></td>
@@ -228,7 +235,8 @@ mvn spring-boot:run
                 <tr style="vertical-align: top">
                     <td><code>Result</code></td>
                     <td>Joins the tables above and captures each medal won, by which athlete in which
-                        sport, as well as the year, date and age of the athlete at the time of the event</td>
+                        sport, as well as the year, date and age of the athlete at the time of the event
+                    </td>
                 </tr>
             </table>
 
@@ -303,9 +311,9 @@ mvn spring-boot:run
                 This is disabled by default - we need to update <code>/src/main/resources/application.properties</code>
                 to enable it:</p>
 
-<snippet>
-spring.h2.console.enabled=true
-</snippet>
+            <snippet>
+                spring.h2.console.enabled=true
+            </snippet>
             <p>We can then navigate to <a href="http://localhost:8080/h2-console/" target="_blank">http://localhost:8080/h2-console/</a>
                 and take a look at what we have.</p>
 
@@ -322,17 +330,18 @@ spring.h2.console.enabled=true
                 <code>H2</code> database, we'll make use of Spring's
                 <code>ApplicationListener&lt;ContextRefreshedEvent&gt;</code> facility to load the test data and save it
                 to the database.</p>
-            
-            <p>We'll make use of a third-party library called <code>Jackson</code> to convert the CSV to Java POJOs, so add this
-            to your Maven pom.xml file, within the <code>dependencies</code> block:</p>
-<snippet>
-&lt;dependency&gt;
-    &lt;groupId&gt;com.fasterxml.jackson.dataformat&lt;/groupId&gt;
-    &lt;artifactId&gt;jackson-dataformat-csv&lt;/artifactId&gt;
-    &lt;version&gt;2.9.1&lt;/version&gt;
-    &lt;scope&gt;test&lt;/scope&gt;
-&lt;/dependency&gt;
-</snippet>
+
+            <p>We'll make use of a third-party library called <code>Jackson</code> to convert the CSV to Java POJOs, so
+                add this
+                to your Maven pom.xml file, within the <code>dependencies</code> block:</p>
+            <snippet>
+                &lt;dependency&gt;
+                &lt;groupId&gt;com.fasterxml.jackson.dataformat&lt;/groupId&gt;
+                &lt;artifactId&gt;jackson-dataformat-csv&lt;/artifactId&gt;
+                &lt;version&gt;2.9.1&lt;/version&gt;
+                &lt;scope&gt;test&lt;/scope&gt;
+                &lt;/dependency&gt;
+            </snippet>
 
             <p>Note that we're only using this library for local testing, so it has the <code>test</code> scope.</p>
 
@@ -353,38 +362,40 @@ spring.h2.console.enabled=true
             <p>Let's start the application and then fire up the <code>H2</code> console to test what we have. If we run
                 the following query in the <code>H2</code> console:</p>
 
-<snippet language="sql">
-select a.name, c.name, r.age, c.name, r.year, r.date,s.name,r.gold,r.silver,r.bronze
-from athlete a, country c, athlete_result ar, result r, sport s
-where a.country_id = c.id
-and ar.athlete_id = a.id
-and ar.result_id = r.id
-and r.sport_id = s.id
-</snippet>
+            <snippet language="sql">
+                select a.name, c.name, r.age, c.name, r.year, r.date,s.name,r.gold,r.silver,r.bronze
+                from athlete a, country c, athlete_result ar, result r, sport s
+                where a.country_id = c.id
+                and ar.athlete_id = a.id
+                and ar.result_id = r.id
+                and r.sport_id = s.id
+            </snippet>
 
             <img src="./h2_query.png" style="width: 100%">
 
             <h2>Optional - Spring DevTools</h2>
 
-            <p>Spring Boot offers a development utility called Spring DevTools. This is an optional dependency, but 
-            makes local development much easier.</p>
-            
+            <p>Spring Boot offers a development utility called Spring DevTools. This is an optional dependency, but
+                makes local development much easier.</p>
+
             <p>Let's add the <code>DevTools</code> to our Maven pom.xml file:</p>
-            
-<snippet>
-&lt;dependency&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
-    &lt;optional&gt;true&lt;/optional&gt;
-&lt;/dependency&gt;
-</snippet>
+
+            <snippet>
+                &lt;dependency&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+                &lt;optional&gt;true&lt;/optional&gt;
+                &lt;/dependency&gt;
+            </snippet>
 
             <p>With this in place if you're running your application and find you need to make a change you can do so,
-                rebuild the project, and refresh the browser/end point without needing to restart your entire application.</p>
+                rebuild the project, and refresh the browser/end point without needing to restart your entire
+                application.</p>
 
             <p>This can be a real time, so adding this is recommend. Please refer to the <a
-                        href="https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html">Spring Boot DevTools</a>
-            documentation for more details.</p>
+                        href="https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html">Spring
+                    Boot DevTools</a>
+                documentation for more details.</p>
 
             <p>We won't use it in this part of the blog, but will in a future section.</p>
 
@@ -460,31 +471,31 @@ and r.sport_id = s.id
         </div>
     </div>
 
+</div>
+<hr/>
 
-    <hr/>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES * * */
+    var disqus_shortname = 'aggrid';
 
-    <div id="disqus_thread"></div>
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES * * */
-        var disqus_shortname = 'aggrid';
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments
+        powered by Disqus.</a></noscript>
+<hr/>
 
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function () {
-            var dsq = document.createElement('script');
-            dsq.type = 'text/javascript';
-            dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments
-            powered by Disqus.</a></noscript>
-    <hr/>
+<footer class="license">
+    © ag-Grid Ltd. 2015-2017
+</footer>
 
-    <footer class="license">
-        © ag-Grid Ltd. 2015-2017
-    </footer>
-
-    <?php
-    include('../includes/mediaFooter.php');
-    ?>
+<?php
+include('../includes/mediaFooter.php');
+?>
