@@ -19,8 +19,12 @@
         .fa-file-audio-o {
             color: blue;
         }
+        .filename {
+            padding:5px;
+            color: black;
+            font-size: 16px
+        }
     </style>
-
 <body>
 
 <div style="height: 100%; padding-top: 35px; box-sizing: border-box;">
@@ -28,8 +32,9 @@
 </div>
 
 <div style="position: absolute; top: 10px; left: 10px;">
-    <button onclick="moveSelectedToStuff()">Move Selected to 'stuff'</button>
     <button onclick="addNewGroup()">Add New Group</button>
+    <button onclick="moveSelectedNodeToTarget(9)">Move Selected to 'stuff'</button>
+    <button onclick="removeSelected()">Remove Selected</button>
 </div>
 
 <script src="main.js"></script>

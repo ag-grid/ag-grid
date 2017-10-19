@@ -148,11 +148,14 @@
     menuItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
     menuItem(0, 'For Print', 'Layout For Print', 'javascript-grid-for-print/');
 
-    menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
-    menuItemWithIcon('enterprise.png', 1, 'Grouping', 'Grouping Rows', 'javascript-grid-grouping/');
-    menuItemWithIcon('enterprise.png', 1, 'Aggregation', 'Aggregation', 'javascript-grid-aggregation/');
-    menuItemWithIcon('enterprise.png', 1, 'Pivoting', 'Pivoting', 'javascript-grid-pivoting/');
+//    menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
 
+    menuItemWithIcon('enterprise.png', 0, 'Row Grouping', 'Row Grouping', 'javascript-grid-row-grouping/');
+    menuItemWithIcon('enterprise.png', 1, 'Grid Grouping', 'Grid Grouping', 'javascript-grid-grouping/');
+    menuItemWithIcon('enterprise.png', 1, 'Tree Data', 'Tree Data', 'javascript-grid-tree-data/');
+
+    menuItemWithIcon('enterprise.png', 0, 'Aggregation', 'Aggregation', 'javascript-grid-aggregation/');
+    menuItemWithIcon('enterprise.png', 0, 'Pivoting', 'Pivoting', 'javascript-grid-pivoting/');
     menuItemWithIcon('enterprise.png', 0, 'Tool Panel', 'Tool Panel', 'javascript-grid-tool-panel/');
     menuItemWithIcon('enterprise.png', 0, 'Clipboard', 'Clipboard', 'javascript-grid-clipboard/');
     menuItemWithIcon('enterprise.png', 0, 'Column Menu', 'Column Menu', 'javascript-grid-column-menu/');

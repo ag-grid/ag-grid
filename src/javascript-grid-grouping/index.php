@@ -1,8 +1,8 @@
 <?php
-$key = "Grouping";
-$pageTitle = "ag-Grid Grouping and Aggregation";
-$pageDescription = "ag-Grid Grouping and Aggregation";
-$pageKeyboards = "ag-Grid Grouping and Aggregation";
+$key = "Grid Grouping";
+$pageTitle = "ag-Grid Grid Grouping";
+$pageDescription = "ag-Grid Grid Grouping";
+$pageKeyboards = "ag-Grid Grid Grouping";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
