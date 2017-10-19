@@ -416,7 +416,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public isEmptyGroup(): boolean {
-        return this.group && !this.hasChildren();
+        return this.group && _.missingOrEmpty(this.childrenAfterGroup);
     }
 
     private dispatchCellChangedEvent(column: Column, newValue: any): void {
