@@ -33,11 +33,11 @@ var rowData = [
 ];
 
 var gridOptions = {
-    animateRows: true,
     columnDefs: columnDefs,
     rowData: rowData,
-    groupDefaultExpanded: -1,
-    treeData: true,
+    treeData: true, // enable Tree Data mode
+    animateRows: true,
+    groupDefaultExpanded: -1, // expand all groups by default
     getDataPath: function(data) {
         return data.orgHierarchy;
     }

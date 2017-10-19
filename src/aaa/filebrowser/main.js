@@ -13,20 +13,19 @@ var columnDefs = [
         }
     },
     {
-        field: "dateModified", comparator: function (d1, d2) {
+        field: "dateModified",
+        comparator: function (d1, d2) {
             return new Date(d1).getTime() < new Date(d2).getTime() ? -1 : 1;
         }
     },
     {
         field: "size",
-        // aggFunc: 'sum',
-        // valueFormatter: function (params) {
-        //     return (Math.round(params.value * 10) / 10); //+ " MB";
-        // }
+        aggFunc: 'sum',
+        valueFormatter: function (params) {
+            return (Math.round(params.value * 10) / 10) + " MB";
+        }
     }
 ];
-
-// Mar 12 2012 10:00:00 AM
 
 // specify the data
 var rowData = [
@@ -34,16 +33,16 @@ var rowData = [
     {id: 2, filePath: ['Documents', 'txt']},
     {id: 3, filePath: ['Documents', 'txt', 'notes.txt'], dateModified: "May 21 2017 01:50:00 PM", size: 14.7},
     {id: 4, filePath: ['Documents', 'pdf']},
-    {id: 5, filePath: ['Documents', 'pdf', "book.pdf"], dateModified: "May 22 2017 01:50:00 PM", size: 2.1},
-    {id: 6, filePath: ['Documents', 'pdf', "cv.pdf"], dateModified: "Jun 3 2017 09:02:00 PM", size: 2.4},
+    {id: 5, filePath: ['Documents', 'pdf', "book.pdf"], dateModified: "May 20 2017 01:50:00 PM", size: 2.1},
+    {id: 6, filePath: ['Documents', 'pdf', "cv.pdf"], dateModified: "May 20 2016 11:50:00 PM", size: 2.4},
     {id: 7, filePath: ['Documents', 'xls']},
     {id: 8, filePath: ['Documents', 'xls', "accounts.xls"], dateModified: "Aug 12 2016 10:50:00 AM", size: 4.3},
     {id: 9, filePath: ['Documents', 'stuff']},
-    {id: 10, filePath: ['Documents', 'stuff', 'xyz.txt'], dateModified: "Aug 12 2016 10:50:00 PM", size: 1.1},
-    // {id: 11, filePath: ['Music']},
-    // {id: 12, filePath: ['Music', 'mp3']},
-    // {id: 13, filePath: ['Music', 'mp3', "theme.mp3"], dateModified: "Sep 11 2016 08:03:00 PM", size: 14.3},
-    // {id: 14, filePath: ["temp.txt"], dateModified: "Jan 17 2016 08:03:00 PM", size: 101}
+    {id: 10, filePath: ['Documents', 'stuff', 'xyz.txt'], dateModified: "Jan 17 2016 08:03:00 PM", size: 1.1},
+    {id: 11, filePath: ['Music']},
+    {id: 12, filePath: ['Music', 'mp3']},
+    {id: 13, filePath: ['Music', 'mp3', "theme.mp3"], dateModified: "Sep 11 2016 08:03:00 PM", size: 14.3},
+    {id: 14, filePath: ["temp.txt"], dateModified: "Aug 12 2016 10:50:00 PM", size: 101}
 ];
 
 var gridOptions = {
@@ -81,7 +80,7 @@ function addNewGroup() {
     var newGroupData = [{
         id: rowData.length + 1,
         filePath: ['Music', 'wav', "hit.wav"],
-        dateModified: "11 Sep 2016, 20:03",
+        dateModified: "Aug 23 2017 11:52:00 PM",
         size: 14.3
     }];
     gridOptions.api.updateRowData({add: newGroupData});
@@ -138,7 +137,7 @@ function getRowsToUpdate(node, parentPath) {
     var res = [];
 
     var newPath = parentPath.concat([node.key]);
-    if(node.data) {
+    if (node.data) {
         // groups without data, i.e. 'filler groups' don't need path updated
         node.data.filePath = newPath;
     }

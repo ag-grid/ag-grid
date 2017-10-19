@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
         groups and then builds up into more advanced topics for row grouping.
     </p>
 
-    <h2>Specifying Group Columns</h2>
+    <h2 id="specifying-group-columns">Specifying Group Columns</h2>
 
     <p>
         To group rows by a particular column, mark the column you want to group with <code>rowGroup=true</code>.
