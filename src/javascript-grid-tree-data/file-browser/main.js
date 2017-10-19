@@ -127,6 +127,7 @@ function getRowsToUpdate(node, parentPath) {
 
     var newPath = parentPath.concat([node.key]);
     if(node.data) {
+        // groups without data, i.e. 'filler groups' don't need path updated
         node.data.filePath = newPath;
     }
 
