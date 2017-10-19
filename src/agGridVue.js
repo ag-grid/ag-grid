@@ -19,13 +19,10 @@ ComponentUtil.EVENTS.forEach((eventName) => {
 export default Vue.extend({
     template: '<div></div>',
     props: props,
-    data()  {
+    data() {
         return {
             _initialised: false,
             _destroyed: false,
-
-            api: null,
-            columnApi: null
         }
     },
     methods: {
@@ -50,6 +47,15 @@ export default Vue.extend({
             }
         }
     },
+    created() {
+      if (this.gridOptions.api) {
+        this.api = this.gridOptions.api;
+      }
+
+      if (this.gridOptions.columnApi) {
+        this.columnApi = this.gridOptions.columnApi;
+      }
+    },
     mounted() {
         let frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
         let vueFrameworkFactory = new VueFrameworkFactory(this.$el, this);
@@ -65,20 +71,19 @@ export default Vue.extend({
 
         new Grid(this.$el, gridOptions, gridParams);
 
-        if (this.gridOptions.api) {
-            this.api = this.gridOptions.api;
-        }
-
-        if (this.gridOptions.columnApi) {
-            this.columnApi = this.gridOptions.columnApi;
-        }
+        // if (this.gridOptions.api) {
+        //     this.api = this.gridOptions.api;
+        // }
+        //
+        // if (this.gridOptions.columnApi) {
+        //     this.columnApi = this.gridOptions.columnApi;
+        // }
 
         this._initialised = true;
     },
     watch: watchedProperties,
     destroyed() {
         if (this._initialised) {
-            this.api.destroy();
             this._destroyed = true;
         }
     }
