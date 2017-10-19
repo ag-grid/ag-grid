@@ -91,7 +91,7 @@ function getRowsToRemove(node) {
         res = res.concat(getRowsToRemove(node.childrenAfterGroup[i]));
     }
 
-    // ignore nodes that have has no data, i.e. 'filler groups'
+    // ignore nodes that have no data, i.e. 'filler groups'
     return node.data ? res.concat([node.data]) : res;
 }
 
@@ -136,7 +136,7 @@ function getRowsToUpdate(node, parentPath) {
         res = res.concat(updatedChildRowData);
     }
 
-    // ignore nodes that have has no data, i.e. 'filler groups'
+    // ignore nodes that have no data, i.e. 'filler groups'
     return node.data ? res.concat([node.data]) : res;
 }
 
