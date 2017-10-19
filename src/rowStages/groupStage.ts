@@ -228,6 +228,9 @@ export class GroupStage implements IRowNodeStage {
     private removeFromParent(child: RowNode) {
         _.removeFromArray(child.parent.childrenAfterGroup, child);
         child.parent.childrenMapped[child.key] = undefined;
+        // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
+        // remove, if rowTop is still present, the rowComp thinks it's just moved position.
+        child.setRowTop(null);
     }
 
     private addToParent(child: RowNode, parent: RowNode) {
