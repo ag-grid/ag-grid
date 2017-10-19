@@ -42,10 +42,6 @@ var gridOptions = {
     enableFilter: true,
     enableSorting: true,
     groupDefaultExpanded: -1,
-    icons: {
-        groupExpanded: '<i class="fa fa-folder-open-o"/>',
-        groupContracted: '<i class="fa fa-folder"/>'
-    },
     getDataPath: function (data) {
         return data.filePath;
     },
@@ -72,7 +68,7 @@ FileCellRenderer.prototype.getGui = function () {
 function addNewGroup() {
     var newGroupData = [{
         id: rowData.length + 1,
-        filePath: ['Music', 'wav', "hit.wav"], //TODO: note that no group node for 'wave' is provided!
+        filePath: ['Music', 'wav', "hit.wav"],
         dateModified: "11 Sep 2016, 20:03",
         size: "14.3 MB"
     }];
@@ -80,7 +76,7 @@ function addNewGroup() {
 }
 
 function removeSelected() {
-    var selectedNode = gridOptions.api.getSelectedNodes()[0]; //rowSelection = 'single'
+    var selectedNode = gridOptions.api.getSelectedNodes()[0]; // single selection
     if (!selectedNode) {
         console.warn("No nodes selected!");
         return;
@@ -94,11 +90,13 @@ function getRowsToRemove(node) {
     for (var i = 0; i < node.childrenAfterGroup.length; i++) {
         res = res.concat(getRowsToRemove(node.childrenAfterGroup[i]));
     }
-    return res.concat([node.data]);
+
+    // ignore nodes that have no data, i.e. 'filler groups'
+    return node.data ? res.concat([node.data]) : res;
 }
 
 function moveSelectedNodeToTarget(targetRowId) {
-    var selectedNode = gridOptions.api.getSelectedNodes()[0]; //rowSelection = 'single'
+    var selectedNode = gridOptions.api.getSelectedNodes()[0]; // single selection
     if (!selectedNode) {
         console.warn("No nodes selected!");
         return;
@@ -106,15 +104,13 @@ function moveSelectedNodeToTarget(targetRowId) {
 
     var targetNode = gridOptions.api.getRowNode(targetRowId);
     var invalidMove = selectedNode.key === targetNode.key || isSelectionParentOfTarget(selectedNode, targetNode);
-
     if (invalidMove) {
         console.warn("Invalid selection - must not be parent or same as target!");
-    } else {
-        var rowsToUpdate = getRowsToUpdate(selectedNode, targetNode.data.filePath);
-        gridOptions.api.updateRowData({update: rowsToUpdate});
+        return;
     }
 
-    gridOptions.api.deselectAll();
+    var rowsToUpdate = getRowsToUpdate(selectedNode, targetNode.data.filePath);
+    gridOptions.api.updateRowData({update: rowsToUpdate});
 }
 
 function isSelectionParentOfTarget(selectedNode, targetNode) {
@@ -129,20 +125,26 @@ function isSelectionParentOfTarget(selectedNode, targetNode) {
 function getRowsToUpdate(node, parentPath) {
     var res = [];
 
-    node.data.filePath = parentPath.concat([node.key]);
+    var newPath = parentPath.concat([node.key]);
+    if(node.data) {
+        // groups without data, i.e. 'filler groups' don't need path updated
+        node.data.filePath = newPath;
+    }
 
     for (var i = 0; i < node.childrenAfterGroup.length; i++) {
-        var updatedChildRowData = getRowsToUpdate(node.childrenAfterGroup[i], node.data.filePath);
+        var updatedChildRowData = getRowsToUpdate(node.childrenAfterGroup[i], newPath);
         res = res.concat(updatedChildRowData);
     }
 
-    return res.concat([node.data]); //TODO: order is important!
+    // ignore nodes that have no data, i.e. 'filler groups'
+    return node.data ? res.concat([node.data]) : res;
 }
 
 function getFileIcon(filename) {
     return filename.endsWith('.pdf') ? 'fa fa-file-pdf-o' :
         filename.endsWith('.xls') ? 'fa fa-file-excel-o' :
-            filename.endsWith('.mp3') || filename.endsWith('.wav') ? 'fa fa-file-audio-o' : 'fa fa-file-o';
+            filename.endsWith('.txt') ? 'fa fa fa-file-o' :
+                filename.endsWith('.mp3') || filename.endsWith('.wav') ? 'fa fa-file-audio-o' : 'fa fa-folder';
 }
 
 // wait for the document to be loaded, otherwise
