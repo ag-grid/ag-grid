@@ -13,7 +13,8 @@ var columnDefs = [
         }
     },
     {field: "dateModified"},
-    {field: "size"}
+    {field: "size"},
+    {valueGetter: 'node.id'}
 ];
 
 // specify the data
@@ -29,7 +30,7 @@ var rowData = [
     {id: 9, filePath: ['Documents', 'stuff']},
     {id: 10, filePath: ['Documents', 'stuff', 'xyz.txt'], dateModified: "12 Aug 2016, 22:50", size: "4.3 MB"},
     {id: 11, filePath: ['Music']},
-    {id: 12, filePath: ['Music', 'mp3']},
+    // {id: 12, filePath: ['Music', 'mp3']},
     {id: 13, filePath: ['Music', 'mp3', "theme.mp3"], dateModified: "11 Sep 2016, 20:03", size: "14.3 MB"},
     {id: 14, filePath: ["temp.txt"], dateModified: "17 Jan 2016, 20:03", size: "101 KB"}
 ];
