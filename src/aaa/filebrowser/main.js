@@ -37,15 +37,16 @@ var rowData = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
+    // rowSelection: 'single',
     treeData: true,
     animateRows: true,
     enableFilter: true,
     enableSorting: true,
     groupDefaultExpanded: -1,
-    icons: {
-        groupExpanded: '<i class="fa fa-folder-open-o"/>',
-        groupContracted: '<i class="fa fa-folder"/>'
-    },
+    // icons: {
+    //     groupExpanded: '<i class="fa fa-folder-open-o"/>',
+    //     groupContracted: '<i class="fa fa-folder"/>'
+    // },
     getDataPath: function (data) {
         return data.filePath;
     },
@@ -72,7 +73,7 @@ FileCellRenderer.prototype.getGui = function () {
 function addNewGroup() {
     var newGroupData = [{
         id: rowData.length + 1,
-        filePath: ['Music', 'wav', "hit.wav"], //TODO: note that no group node for 'wave' is provided!
+        filePath: ['Music', 'wav', "hit.wav"], //TODO: note that no group node for 'wav' is provided!
         dateModified: "11 Sep 2016, 20:03",
         size: "14.3 MB"
     }];
@@ -94,7 +95,13 @@ function getRowsToRemove(node) {
     for (var i = 0; i < node.childrenAfterGroup.length; i++) {
         res = res.concat(getRowsToRemove(node.childrenAfterGroup[i]));
     }
-    return res.concat([node.data]);
+
+    // TODO: gotcha
+    if (!node.group) {
+        res = res.concat([node.data]);
+    }
+
+    return res;
 }
 
 function moveSelectedNodeToTarget(targetRowId) {
@@ -113,8 +120,6 @@ function moveSelectedNodeToTarget(targetRowId) {
         var rowsToUpdate = getRowsToUpdate(selectedNode, targetNode.data.filePath);
         gridOptions.api.updateRowData({update: rowsToUpdate});
     }
-
-    gridOptions.api.deselectAll();
 }
 
 function isSelectionParentOfTarget(selectedNode, targetNode) {
@@ -142,7 +147,8 @@ function getRowsToUpdate(node, parentPath) {
 function getFileIcon(filename) {
     return filename.endsWith('.pdf') ? 'fa fa-file-pdf-o' :
         filename.endsWith('.xls') ? 'fa fa-file-excel-o' :
-            filename.endsWith('.mp3') || filename.endsWith('.wav') ? 'fa fa-file-audio-o' : 'fa fa-file-o';
+            filename.endsWith('.txt') ? 'fa fa fa-file-o' :
+                filename.endsWith('.mp3') || filename.endsWith('.wav') ? 'fa fa-file-audio-o' : 'fa fa-folder';
 }
 
 // wait for the document to be loaded, otherwise
