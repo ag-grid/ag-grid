@@ -45,7 +45,7 @@
     $border-color: map-get($params, 'border-color');
     $foreground: map-get($params, 'foreground');
     $grid-size: map-get($params, 'grid-size');
-    $primary: map-get($params, 'primary');
+    $primary-color: map-get($params, 'primary-color');
     $placeholder-color: map-get($params, 'foreground-disabled');
     $focused-border: map-get($params, 'focused-textbox-border');
 
@@ -90,7 +90,7 @@
 }
 
 @mixin ag-grid-theme($params) {
-    $accent: map-get($params, 'accent');
+    $accent-color: map-get($params, 'accent-color');
     $background: map-get($params, 'background');
     $background-editor-color: map-get($params, 'background-editor-color');
     $border-color: map-get($params, 'border-color');
@@ -127,7 +127,7 @@
     $icon-opacity: map-get($params, 'foreground-opacity');
     $panel-background: map-get($params, 'panel-background');
     $tool-panel-background: map-get($params, 'tool-panel-background');
-    $primary: map-get($params, 'primary');
+    $primary-color: map-get($params, 'primary-color');
     $range-selection-highlight: map-get($params, 'range-selection-highlight');
     $range-selection-background-color: map-get($params, 'range-selection-background-color');
     $row-height: map-get($params, 'row-height');
@@ -231,7 +231,7 @@
     // Navigation
     ////////////////////////////////////////
     .ag-cell:focus {
-        border: 1px solid $primary;
+        border: 1px solid $primary-color;
         outline: initial;
     }
 
@@ -283,7 +283,7 @@
     }
 
     .ag-icon-checkbox-checked:empty {
-        @include colorful-icon($icons-path, 'checkbox-checked', $accent);
+        @include colorful-icon($icons-path, 'checkbox-checked', $accent-color);
     }
 
     ////////////////////////////////////////
@@ -386,13 +386,13 @@
             vertical-align: middle;
 
             &.ag-tab-selected {
-                border-bottom: 2px solid $primary;
+                border-bottom: 2px solid $primary-color;
 
                 $icons: filter columns menu;
 
                 @each $icon in $icons {
                     .ag-icon-#{$icon} {
-                        @include colorful-icon($icons-path, $icon, $primary);
+                        @include colorful-icon($icons-path, $icon, $primary-color);
                         display: inline-block;
                     }
                 }
@@ -480,7 +480,7 @@
             padding-top: $grid-size * 2;
 
             button {
-                @include regular-button($primary, $button-background, $button-text-transform);
+                @include regular-button($primary-color, $button-background, $button-text-transform);
             }
 
             button + button {
@@ -749,7 +749,7 @@
         margin-top: $grid-size * 2.5;
 
         button {
-            @include regular-button($primary, $button-background, $button-text-transform);
+            @include regular-button($primary-color, $button-background, $button-text-transform);
         }
     }
 

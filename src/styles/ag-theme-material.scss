@@ -37,8 +37,8 @@ $ag-mat-secondary-font-size: 12px !default;
 $ag-mat-secondary-font-weight: 700 !default;
 
 // Theme colors
-$ag-mat-primary: $mat-indigo-500 !default;
-$ag-mat-accent: $mat-pink-A200 !default;
+$ag-mat-primary-color: $mat-indigo-500 !default;
+$ag-mat-accent-color: $mat-pink-A200 !default;
 $ag-mat-icon-color: black !default;
 
 $ag-mat-foreground-color: #000000;
@@ -78,7 +78,7 @@ $virtual-item-height: $ag-mat-grid-size * 5;
 $header-icon-size: 14px;
 
 $params: (
-    accent: $ag-mat-accent,
+    accent-color: $ag-mat-accent-color,
 
     background: $ag-mat-background,
     background-editor-color: $ag-mat-background-editor,
@@ -109,7 +109,7 @@ $params: (
     foreground-secondary: $ag-mat-foreground-secondary,
     foreground-secondary-opacity: $ag-mat-foreground-secondary-opacity,
 
-    focused-textbox-border: 2px solid $ag-mat-primary,
+    focused-textbox-border: 2px solid $ag-mat-primary-color,
 
 
     grid-size: $ag-mat-grid-size,
@@ -124,7 +124,7 @@ $params: (
     icon-color: $ag-mat-icon-color,
 
     panel-background: $ag-mat-panel-background,
-    primary: $ag-mat-primary,
+    primary-color: $ag-mat-primary-color,
 
     range-selection-background-color: $ag-mat-range-selection-background,
     range-selection-highlight: $ag-mat-range-selection-highlight,
