@@ -16,11 +16,15 @@ function getInitialData() {
 
 var immutableStore;
 
-function addFiveItems() {
+function addFiveItems(append) {
     var newStore = immutableStore.slice();
     for (var i = 0; i < 5; i++) {
         var newItem = createItem();
-        newStore.push(newItem);
+        if (append) {
+            newStore.push(newItem);
+        } else {
+            newStore.splice(0,0,newItem);
+        }
     }
     immutableStore = newStore;
     gridOptions.api.setRowData(immutableStore);
@@ -96,11 +100,11 @@ function createItem() {
 
 function setGroupingEnabled(enabled) {
     if (enabled) {
-        gridOptions.columnApi.addRowGroupColumn('group');
+        gridOptions.columnApi.setRowGroupColumns(['group']);
         gridOptions.columnApi.setColumnVisible('group', false);
         gridOptions.columnApi.setColumnVisible('symbol', false);
     } else {
-        gridOptions.columnApi.removeRowGroupColumn('group');
+        gridOptions.columnApi.setRowGroupColumns([]);
         gridOptions.columnApi.setColumnVisible('group', true);
         gridOptions.columnApi.setColumnVisible('symbol', true);
     }
@@ -137,6 +141,11 @@ function createUniqueRandomSymbol() {
     return symbol;
 }
 
+function reverseItems() {
+    immutableStore.reverse();
+    gridOptions.api.setRowData(immutableStore);
+}
+
 var gridOptions = {
     deltaRowDataMode: true,
     enableStatusBar: true,
@@ -160,7 +169,7 @@ var gridOptions = {
         immutableStore = [];
         immutableStore = getInitialData();
         gridOptions.api.setRowData(immutableStore);
-        this.setGroupingEnabled(false);
+        setGroupingEnabled(false);
     }
 };
 
