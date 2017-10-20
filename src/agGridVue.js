@@ -43,18 +43,9 @@ export default Vue.extend({
             if (this._initialised) {
                 let changes = {};
                 changes[propertyName] = {currentValue: val, previousValue: oldVal};
-                ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+                ComponentUtil.processOnChange(changes, this.gridOptions, this.gridOptions.api, this.gridOptions.columnApi);
             }
         }
-    },
-    created() {
-      if (this.gridOptions.api) {
-        this.api = this.gridOptions.api;
-      }
-
-      if (this.gridOptions.columnApi) {
-        this.columnApi = this.gridOptions.columnApi;
-      }
     },
     mounted() {
         let frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
@@ -76,8 +67,8 @@ export default Vue.extend({
     watch: watchedProperties,
     destroyed() {
         if (this._initialised) {
+            this.gridOptions.api.destroy();
             this._destroyed = true;
-            this.api = null; // release API object so GC will recycle rowData inside of it.
         }
     }
 });
