@@ -13,21 +13,28 @@ $mat-pink-A200: #ff4081;
 $mat-pink-50: #fce4ec;
 $mat-indigo-50: #e8eaf6;
 
+// opacity values used for black values, taken from material spec
+$ag-mat-foreground-opacity: 0.87 !default;
+$ag-mat-secondary-foreground-color-opacity: 0.54 !default;
+$ag-mat-disabled-forergound-color-opacity: 0.38 !default;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // The variables below can be overriden to adjust the look up to the app color scheme
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// sizing
+// Sizing
 $ag-mat-grid-size: 8px !default;
 $ag-mat-icon-size: 18px !default;
+$ag-mat-header-height: $ag-mat-grid-size * 7 !default;
+$ag-mat-row-height: $ag-mat-grid-size * 6 !default;
+$ag-mat-cell-horizontal-padding: $ag-mat-grid-size * 3;
+$ag-mat-virtual-item-height: $ag-mat-grid-size * 5;
+$ag-mat-header-icon-size: 14px;
 
+// Icons
 $ag-mat-icons-path: './material-icons/' !default;
 
-// opacity values used for black values, taken from material spec
-$ag-mat-foreground-opacity: 0.87 !default;
-$ag-mat-foreground-secondary-opacity: 0.54 !default;
-$ag-mat-foreground-disabled-opacity: 0.38 !default;
-
+// Fonts
 $ag-mat-font-family: 'Roboto', sans-serif !default;
 $ag-mat-font-size: 13px !default;
 $ag-mat-font-weight: 400 !default;
@@ -36,62 +43,54 @@ $ag-mat-secondary-font-family: 'Roboto', sans-serif !default;
 $ag-mat-secondary-font-size: 12px !default;
 $ag-mat-secondary-font-weight: 700 !default;
 
-// Theme colors
-$ag-mat-primary-color: $mat-indigo-500 !default;
-$ag-mat-accent-color: $mat-pink-A200 !default;
-$ag-mat-icon-color: black !default;
-
-$ag-mat-foreground-color: #000000;
-// the three black shades, used for the UI
-$ag-mat-foreground: rgba($ag-mat-foreground-color, $ag-mat-foreground-opacity) !default;
-$ag-mat-foreground-secondary: rgba($ag-mat-foreground-color, $ag-mat-foreground-secondary-opacity) !default;
-$ag-mat-foreground-disabled: rgba($ag-mat-foreground-color, $ag-mat-foreground-disabled-opacity) !default;
-
-// backgrounds
-$ag-mat-background: $mat-grey-0 !default;
-$ag-mat-background-editor: $mat-grey-100 !default;
-$ag-mat-panel-background: $mat-grey-200 !default;
-$ag-mat-tool-panel-background: $mat-grey-50 !default;
-$ag-mat-chip-background: $mat-grey-300 !default;
-$ag-mat-range-selection-background: $mat-indigo-50 !default; // this should be pink, but indigo looks better
-$ag-mat-range-selection-highlight: $mat-pink-50 !default;
-
-$ag-mat-cell-data-changed: $mat-pink-50 !default;
-
-// interaction
-$ag-mat-hover: $mat-grey-200 !default;
-$ag-mat-selected: $mat-grey-100 !default;
+// Colors
+$ag-mat-foreground-color: rgba(#000000, $ag-mat-foreground-opacity) !default;
+$ag-mat-secondary-foreground-color: rgba(#000000, $ag-mat-secondary-foreground-color-opacity) !default;
+$ag-mat-disabled-forergound-color: rgba(#000000, $ag-mat-disabled-forergound-color-opacity) !default;
 
 $ag-mat-border-color: $mat-grey-300 !default;
 
-$ag-mat-header-height: $ag-mat-grid-size * 7 !default;
-$ag-mat-row-height: $ag-mat-grid-size * 6 !default;
-$ag-mat-transition-speed: 120ms !default;
+$ag-mat-primary-color: $mat-indigo-500 !default;
 
+$ag-mat-accent-color: $mat-pink-A200 !default;
+$ag-mat-icon-color: black !default;
+
+$ag-mat-background-color: $mat-grey-0 !default;
+
+$ag-mat-editor-background-color: $mat-grey-100 !default;
+
+$ag-mat-panel-background-color: $mat-grey-200 !default;
+
+$ag-mat-tool-panel-background-color: $mat-grey-50 !default;
+
+$ag-mat-chip-background-color: $mat-grey-300 !default;
+
+$ag-mat-range-selection-background-color: $mat-indigo-50 !default; // this should be pink, but indigo looks better
+$ag-mat-range-selection-highlight-color: $mat-pink-50 !default;
+
+$ag-mat-hover-color: $mat-grey-200 !default;
+
+$ag-mat-selected-color: $mat-grey-100 !default;
+
+$ag-mat-cell-data-changed-color: $mat-pink-50 !default;
+
+// Misc 
+$ag-mat-transition-speed: 120ms !default;
 $ag-mat-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 $ag-mat-card-radius: 2px;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-// internal shortcuts
-$cell-horizontal-padding: $ag-mat-grid-size * 3;
-$virtual-item-height: $ag-mat-grid-size * 5;
-$header-icon-size: 14px;
-
 $params: (
-    accent-color: $ag-mat-accent-color,
+    // sizing
+    grid-size: $ag-mat-grid-size,
+    icon-size: $ag-mat-icon-size,
+    header-icon-size: $ag-mat-header-icon-size,
+    row-height: $ag-mat-row-height,
+    header-height: $ag-mat-header-height,
+    virtual-item-height: $ag-mat-virtual-item-height,
+    rich-select-item-height: $ag-mat-row-height,
+    cell-horizontal-padding: $ag-mat-cell-horizontal-padding,
 
-    background: $ag-mat-background,
-    background-editor-color: $ag-mat-background-editor,
-    border-color: $ag-mat-border-color,
-
-    button-background: transparent,
-    button-text-transform: uppercase,
-
-    card-radius: $ag-mat-card-radius,
-    card-shadow: $ag-mat-card-shadow,
-    cell-data-changed: $ag-mat-cell-data-changed,
-    cell-horizontal-padding: $cell-horizontal-padding,
-    chip-background: $ag-mat-chip-background,
+    icons-path: $ag-mat-icons-path,
 
     font-family: $ag-mat-font-family,
     font-size: $ag-mat-font-size,
@@ -101,40 +100,46 @@ $params: (
     secondary-font-size: $ag-mat-secondary-font-size,
     secondary-font-weight: $ag-mat-secondary-font-weight,
 
-    foreground: $ag-mat-foreground,
-    foreground-disabled: $ag-mat-foreground-disabled,
-    foreground-disabled-opacity: $ag-mat-foreground-disabled-opacity,
-
+    foreground-color: $ag-mat-foreground-color,
     foreground-opacity: $ag-mat-foreground-opacity,
-    foreground-secondary: $ag-mat-foreground-secondary,
-    foreground-secondary-opacity: $ag-mat-foreground-secondary-opacity,
 
-    focused-textbox-border: 2px solid $ag-mat-primary-color,
+    secondary-foreground-color-opacity: $ag-mat-secondary-foreground-color-opacity,
+    secondary-foreground-color: $ag-mat-secondary-foreground-color,
 
+    disabled-forergound-color-opacity: $ag-mat-disabled-forergound-color-opacity,
+    disabled-forergound-color: $ag-mat-disabled-forergound-color,
 
-    grid-size: $ag-mat-grid-size,
+    background-color: $ag-mat-background-color,
+    border-color: $ag-mat-border-color,
 
-    header-icon-size: $header-icon-size,
-    header-height: $ag-mat-header-height,
-    hover: $ag-mat-hover,
+    button-background-color: transparent,
 
-    icons-path: $ag-mat-icons-path,
-    icon-size: $ag-mat-icon-size,
-    icon-opacity: $ag-mat-foreground-opacity,
     icon-color: $ag-mat-icon-color,
 
-    panel-background: $ag-mat-panel-background,
+    cell-data-changed-color: $ag-mat-cell-data-changed-color,
+
+    chip-background-color: $ag-mat-chip-background-color,
+
+    editor-background-color-color: $ag-mat-editor-background-color,
+
+
+    range-selection-background-color: $ag-mat-range-selection-background-color,
+    range-selection-highlight-color: $ag-mat-range-selection-highlight-color,
+
+
+    panel-background-color: $ag-mat-panel-background-color,
+    tool-panel-background-color: $ag-mat-tool-panel-background-color,
+
+    accent-color: $ag-mat-accent-color,
     primary-color: $ag-mat-primary-color,
+    hover-color: $ag-mat-hover-color,
+    selected-color: $ag-mat-selected-color,
 
-    range-selection-background-color: $ag-mat-range-selection-background,
-    range-selection-highlight: $ag-mat-range-selection-highlight,
-
-    rich-select-item-height: $ag-mat-row-height,
-
-    row-height: $ag-mat-row-height,
-
-    selected-color: $ag-mat-selected,
-    tool-panel-background: $ag-mat-tool-panel-background,
+    icon-opacity: $ag-mat-foreground-opacity,
+    button-text-transform: uppercase,
+    card-radius: $ag-mat-card-radius,
+    card-shadow: $ag-mat-card-shadow,
+    focused-textbox-border: 2px solid $ag-mat-primary-color,
 );
 
 .ag-theme-material {
