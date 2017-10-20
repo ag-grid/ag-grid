@@ -65,8 +65,13 @@ export class GroupStage implements IRowNodeStage {
 
     @PostConstruct
     private postConstruct(): void {
-        this.getDataPath = this.gridOptionsWrapper.getDataPathFunc();
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        if (this.usingTreeData) {
+            this.getDataPath = this.gridOptionsWrapper.getDataPathFunc();
+            if (_.missing(this.getDataPath)) {
+                console.warn('ag-Grid: property usingTreeData=true, but you did not provide getDataPath function, please provide getDataPath function if using tree data.')
+            }
+        }
     }
 
     public execute(params: StageExecuteParams): void {
