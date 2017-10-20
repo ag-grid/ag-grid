@@ -88,8 +88,8 @@ export class InMemoryNodeManager {
         }
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction {
-        if (this.isRowsAlreadyGrouped()) { return null; }
+    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number}): RowNodeTransaction {
+        if (this.isLegacyTreeData()) { return null; }
 
         let {add, addIndex, remove, update} = rowDataTran;
 
@@ -131,6 +131,10 @@ export class InMemoryNodeManager {
                     rowNodeTransaction.update.push(updatedRowNode);
                 }
             });
+        }
+
+        if (rowNodeOrder) {
+            _.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
 
         return rowNodeTransaction;
@@ -274,7 +278,7 @@ export class InMemoryNodeManager {
     }
 
     public insertItemsAtIndex(index: number, rowData: any[]): RowNode[] {
-        if (this.isRowsAlreadyGrouped()) { return null; }
+        if (this.isLegacyTreeData()) { return null; }
 
         let nodeList = this.rootNode.allLeafChildren;
 
@@ -296,7 +300,7 @@ export class InMemoryNodeManager {
     }
 
     public removeItems(rowNodes: RowNode[]): RowNode[] {
-        if (this.isRowsAlreadyGrouped()) { return; }
+        if (this.isLegacyTreeData()) { return; }
 
         let nodeList = this.rootNode.allLeafChildren;
 
@@ -319,11 +323,11 @@ export class InMemoryNodeManager {
         return this.insertItemsAtIndex(nodeList.length, items);
     }
 
-    public isRowsAlreadyGrouped(): boolean {
+    public isLegacyTreeData(): boolean {
         let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) {
             console.warn('ag-Grid: adding and removing rows is not supported when using nodeChildDetailsFunc, ie it is not ' +
-                'supported if providing groups');
+                'supported for legacy tree data. Please see the docs on the new preferred way of providing tree data that works with delta updates.');
             return true;
         } else {
             return false;

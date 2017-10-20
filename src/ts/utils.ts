@@ -1480,6 +1480,15 @@ export class Utils {
 
         return words.map(word=>word.substring(0,1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length):'')).join(' ');
     }
+
+    static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: {[id: string]: number}): void {
+        if (!rowNodes) { return; }
+        rowNodes.sort( (nodeA: RowNode, nodeB: RowNode) => {
+            let positionA = rowNodeOrder[nodeA.id];
+            let positionB = rowNodeOrder[nodeB.id];
+            return positionA - positionB;
+        });
+    }
 }
 
 export class NumberSequence {

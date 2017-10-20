@@ -32,6 +32,8 @@ export interface RefreshModelParams {
     keepEditingRows?: boolean;
     // if doing delta updates, this has the changes that were done
     rowNodeTransaction?: RowNodeTransaction;
+    // if doing delta updates, this has the order of the nodes
+    rowNodeOrder?: {[id:string]: number};
     // true user called setRowData() (or a new page in pagination). the grid scrolls
     // back to the top when this is true.
     newData?: boolean;
@@ -199,7 +201,7 @@ export class InMemoryRowModel {
         switch (params.step) {
             case constants.STEP_EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(params.groupState, params.rowNodeTransaction, changedPath);
+                this.doRowGrouping(params.groupState, params.rowNodeTransaction, params.rowNodeOrder, changedPath);
                 // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants.STEP_FILTER:
                 // start = new Date().getTime();
@@ -481,17 +483,21 @@ export class InMemoryRowModel {
         this.sortStage.execute({rowNode: this.rootNode});
     }
 
-    private doRowGrouping(groupState: any, rowNodeTransaction: RowNodeTransaction, changedPath: ChangedPath) {
+    private doRowGrouping(groupState: any,
+                          rowNodeTransaction: RowNodeTransaction,
+                          rowNodeOrder: {[id:string]: number},
+                          changedPath: ChangedPath) {
 
         // grouping is enterprise only, so if service missing, skip the step
-        let usingTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (usingTreeData) { return; }
+        let doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (doingLegacyTreeData) { return; }
 
         if (this.groupStage) {
 
             if (rowNodeTransaction) {
                 this.groupStage.execute({rowNode: this.rootNode,
                     rowNodeTransaction: rowNodeTransaction,
+                    rowNodeOrder: rowNodeOrder,
                     changedPath: changedPath});
             } else {
                 // groups are about to get disposed, so need to deselect any that are selected
@@ -578,15 +584,16 @@ export class InMemoryRowModel {
             newData: true});
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction {
+    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {[id:string]: number}): RowNodeTransaction {
 
         this.valueCache.onDataChanged();
 
-        let rowNodeTran = this.nodeManager.updateRowData(rowDataTran);
+        let rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
 
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
             rowNodeTransaction: rowNodeTran,
+            rowNodeOrder: rowNodeOrder,
             keepRenderedRows: true,
             animate: true,
             keepEditingRows: true
