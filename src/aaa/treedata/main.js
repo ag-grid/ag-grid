@@ -86,9 +86,6 @@ var gridOptions = {
     getDataPath: function(data) {
         return data.path;
     },
-    isGroup: function(data) {
-        return data.group === true;
-    },
     getRowNodeId: function(data) {
         return data.id;
     }
