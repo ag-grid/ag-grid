@@ -53,10 +53,10 @@ function updateSilver(id, value) {
 }
 
 var columnDefs = [
-    {headerName: "Group", field: "name", cellRenderer: 'group', showRowGroup: true, cellRendererParams: {
-        checkbox: true,
-        suppressCount: true
-    }},
+    // {headerName: "Group", field: "name", cellRenderer: 'group', showRowGroup: true, cellRendererParams: {
+    //     checkbox: true,
+    //     suppressCount: true
+    // }},
     {valueGetter: 'node.id'},
     {field: 'path'},
     {field: 'color'},
@@ -72,6 +72,7 @@ var gridOptions = {
         }
     },
     rowSelection: 'multiple',
+    // groupSuppressAutoColumn: true,
     // suppressRowClickSelection: true,
     animateRows: true,
     enableCellChangeFlash: true,
