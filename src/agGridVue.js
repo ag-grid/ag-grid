@@ -36,7 +36,7 @@ export default Vue.extend({
             if (emitter) {
                 emitter(event);
             } else {
-                // the app isnt listening for this - ignore it
+                // the app isn't listening for this - ignore it
             }
         },
         processChanges(propertyName, val, oldVal) {
