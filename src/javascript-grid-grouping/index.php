@@ -29,7 +29,7 @@ gridOptions.columnDefs = [
 ];</snippet>
     </p>
 
-    <h2>Auto Column Group</h2>
+    <h2 id="auto-column-group">Auto Column Group</h2>
 
     <p>
         As you can see in the example below, as soon as there is at least on active row group, the grid will provide an
