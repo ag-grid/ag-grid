@@ -395,7 +395,13 @@ interface RowDataTransaction {
 
     <ul>
         <li>
-            <b>Add Five Items</b>: Adds five items to the list.
+            <b>Append Items</b>: Adds five items to the end ((assuming when no sort applied*).
+        </li>
+        <li>
+            <b>Prepend Items</b>: Adds five items to the start (assuming when no sort applied*).
+        </li>
+        <li>
+            <b>Reverse</b>: Reverses the order of the items (assuming when no sort applied*).
         </li>
         <li>
             <b>Remove Selected</b>: Removes the selected items. Try selecting multiple rows (ctrl + click
@@ -411,6 +417,11 @@ interface RowDataTransaction {
         <li><b>Group Selected A / B / C</b>: With grouping on, hit the buttons A, B and C to move
         selected items to that group. Notice how the rows animate to the new position.</li>
     </ul>
+
+    <p><i>
+        *assuming when no sort applied - because if the grid is sorting, then the grid sort will override any order
+        in the provided data.
+    </i></p>
 
     <?= example('Simple Immutable Store', 'simple-immutable-store', 'generated', array("enterprise" => 1)) ?>
 

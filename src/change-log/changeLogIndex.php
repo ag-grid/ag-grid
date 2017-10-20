@@ -22,6 +22,11 @@ include '../documentation-main/documentation_header.php';
         <li>AG-433 Keyboard navigation with home & end as loosing cell focus, now fixed, focus is put to correct cell.</li>
     </ul>
 
+    <h3>Enhancements</h3>
+    <ul>
+        <li>AG-744 Delta updates now maintains row order.</li>
+    </ul>
+    
     <h2>13.3.x</h2>
     <h3>Version 13.3.1 [04-OCT-2017]</h3>
     <h4>Enhancements</h4>
