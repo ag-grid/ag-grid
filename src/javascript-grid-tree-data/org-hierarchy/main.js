@@ -1,15 +1,6 @@
 // specify the columns
 var columnDefs = [
-    {
-        headerName: "Organisation Hierarchy",
-        cellRenderer: 'group',
-        showRowGroup: true,
-        width: 250,
-        cellRendererParams: {
-            suppressCount: true,
-            padding: 20
-        }
-    },
+    // we're using the auto group column by default!
     {field: "jobTitle"},
     {field: "employmentType"}
 ];
@@ -40,6 +31,13 @@ var gridOptions = {
     groupDefaultExpanded: -1, // expand all groups by default
     getDataPath: function(data) {
         return data.orgHierarchy;
+    },
+    autoGroupColumnDef: {
+        headerName: "Organisation Hierarchy",
+        cellRendererParams: {
+            suppressCount: true,
+            padding: 20
+        }
     }
 };
 

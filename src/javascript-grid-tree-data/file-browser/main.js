@@ -1,18 +1,6 @@
 // specify the columns
 var columnDefs = [
     {
-        headerName: "Files",
-        cellRenderer: 'group',
-        showRowGroup: true,
-        width: 250,
-        cellRendererParams: {
-            checkbox: true,
-            suppressCount: true,
-            padding: 20,
-            innerRenderer: FileCellRenderer
-        }
-    },
-    {
         field: "dateModified",
         comparator: function (d1, d2) {
             return new Date(d1).getTime() < new Date(d2).getTime() ? -1 : 1;
@@ -22,7 +10,7 @@ var columnDefs = [
         field: "size",
         aggFunc: 'sum',
         valueFormatter: function (params) {
-            return (Math.round(params.value * 10) / 10) + " MB";
+            return params.value ? (Math.round(params.value * 10) / 10) + " MB" : "0 MB"
         }
     }
 ];
@@ -39,10 +27,8 @@ var rowData = [
     {id: 8, filePath: ['Documents', 'xls', "accounts.xls"], dateModified: "Aug 12 2016 10:50:00 AM", size: 4.3},
     {id: 9, filePath: ['Documents', 'stuff']},
     {id: 10, filePath: ['Documents', 'stuff', 'xyz.txt'], dateModified: "Jan 17 2016 08:03:00 PM", size: 1.1},
-    {id: 11, filePath: ['Music']},
-    {id: 12, filePath: ['Music', 'mp3']},
-    {id: 13, filePath: ['Music', 'mp3', "theme.mp3"], dateModified: "Sep 11 2016 08:03:00 PM", size: 14.3},
-    {id: 14, filePath: ["temp.txt"], dateModified: "Aug 12 2016 10:50:00 PM", size: 101}
+    {id: 11, filePath: ['Music', 'mp3', "theme.mp3"], dateModified: "Sep 11 2016 08:03:00 PM", size: 14.3},
+    {id: 12, filePath: ["temp.txt"], dateModified: "Aug 12 2016 10:50:00 PM", size: 101}
 ];
 
 var gridOptions = {
@@ -58,6 +44,16 @@ var gridOptions = {
     },
     getRowNodeId: function (data) {
         return data.id;
+    },
+    autoGroupColumnDef: {
+        headerName: "Files",
+        width: 250,
+        cellRendererParams: {
+            checkbox: true,
+            suppressCount: true,
+            padding: 20,
+            innerRenderer: FileCellRenderer
+        }
     }
 };
 
@@ -79,9 +75,9 @@ FileCellRenderer.prototype.getGui = function () {
 function addNewGroup() {
     var newGroupData = [{
         id: rowData.length + 1,
-        filePath: ['Music', 'wav', "hit.wav"],
+        filePath: ['Music', 'wav', 'hit.wav'],
         dateModified: "Aug 23 2017 11:52:00 PM",
-        size: 14.3
+        size: 58.9
     }];
     gridOptions.api.updateRowData({add: newGroupData});
 }
@@ -127,8 +123,8 @@ function moveSelectedNodeToTarget(targetRowId) {
 function isSelectionParentOfTarget(selectedNode, targetNode) {
     var children = selectedNode.childrenAfterGroup;
     for (var i = 0; i < children.length; i++) {
-        if (children[i].key === targetNode.key) return true;
-        isSelectionParentOfTarget(children[i], targetNode.key);
+        if (targetNode && children[i].key === targetNode.key) return true;
+        isSelectionParentOfTarget(children[i], targetNode);
     }
     return false;
 }
@@ -152,10 +148,10 @@ function getRowsToUpdate(node, parentPath) {
 }
 
 function getFileIcon(filename) {
-    return filename.endsWith('.pdf') ? 'fa fa-file-pdf-o' :
+    return filename.endsWith('.mp3') || filename.endsWith('.wav') ? 'fa fa-file-audio-o' :
         filename.endsWith('.xls') ? 'fa fa-file-excel-o' :
             filename.endsWith('.txt') ? 'fa fa fa-file-o' :
-                filename.endsWith('.mp3') || filename.endsWith('.wav') ? 'fa fa-file-audio-o' : 'fa fa-folder';
+                filename.endsWith('.pdf') ? 'fa fa-file-pdf-o' : 'fa fa-folder';
 }
 
 // wait for the document to be loaded, otherwise
