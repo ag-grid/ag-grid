@@ -85,14 +85,6 @@ exports.default = _vue2.default.extend({
 
         new _main.Grid(this.$el, gridOptions, gridParams);
 
-        // if (this.gridOptions.api) {
-        //     this.api = this.gridOptions.api;
-        // }
-        //
-        // if (this.gridOptions.columnApi) {
-        //     this.columnApi = this.gridOptions.columnApi;
-        // }
-
         this._initialised = true;
     },
 
@@ -100,6 +92,7 @@ exports.default = _vue2.default.extend({
     destroyed: function destroyed() {
         if (this._initialised) {
             this._destroyed = true;
+            this.api = null; // release API object so GC will recycle rowData inside of it.
         }
     }
 });
