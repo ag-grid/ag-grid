@@ -232,14 +232,16 @@ export class GroupStage implements IRowNodeStage {
 
     private removeFromParent(child: RowNode) {
         _.removeFromArray(child.parent.childrenAfterGroup, child);
-        child.parent.childrenMapped[child.key] = undefined;
+        let mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
+        child.parent.childrenMapped[mapKey] = undefined;
         // this is important for transition, see rowComp removeFirstPassFuncs. when doing animation and
         // remove, if rowTop is still present, the rowComp thinks it's just moved position.
         child.setRowTop(null);
     }
 
     private addToParent(child: RowNode, parent: RowNode) {
-        parent.childrenMapped[child.key] = child;
+        let mapKey = this.getChildrenMappedKey(child.key, child.rowGroupColumn);
+        parent.childrenMapped[mapKey] = child;
         parent.childrenAfterGroup.push(child);
     }
 
@@ -326,7 +328,8 @@ export class GroupStage implements IRowNodeStage {
     private getOrCreateNextNode(parentGroup: RowNode, groupInfo: GroupInfo, level: number,
                                 details: GroupingDetails): RowNode {
 
-        let nextNode = <RowNode> parentGroup.childrenMapped[groupInfo.key];
+        let mapKey = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
+        let nextNode = <RowNode> parentGroup.childrenMapped[mapKey];
         if (!nextNode) {
             nextNode = this.createGroup(groupInfo, parentGroup, level, details);
             // attach the new group to the parent
@@ -386,6 +389,10 @@ export class GroupStage implements IRowNodeStage {
         groupNode.parent = details.includeParents ? parent : null;
 
         return groupNode;
+    }
+
+    private getChildrenMappedKey(key: string, rowGroupColumn: Column): string {
+        return rowGroupColumn.getId() + '-' + key;
     }
 
     private isExpanded(expandByDefault: number, level: number) {
