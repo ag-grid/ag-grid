@@ -29,17 +29,25 @@ rowData.forEach( function(item, i) {
 } );
 
 var columnDefs = [
-    {field: "country", enableRowGroup: true, cellRenderer: countryCellRenderer},
-    {field: "state", enableRowGroup: true, cellRenderer: stateCellRenderer},
-    {field: "city", enableRowGroup: true, cellRenderer: cityCellRenderer},
-    {field: "val1", enableValue: true, aggFunc: 'sum', editable: true, valueParser: numberParser},
-    {field: "val2", enableValue: true, aggFunc: 'sum', editable: true, valueParser: numberParser},
-    {field: "val3", enableValue: true, aggFunc: 'sum', editable: true, valueParser: numberParser},
-    {field: "val4", enableValue: true, aggFunc: 'sum', editable: true, valueParser: numberParser},
-    {field: "val5", enableValue: true, aggFunc: 'sum', editable: true, valueParser: numberParser}
+    {field: "country", type: 'dimension', cellRenderer: countryCellRenderer},
+    {field: "state", type: 'dimension', cellRenderer: stateCellRenderer},
+    {field: "city", type: 'dimension', cellRenderer: cityCellRenderer},
+    {field: "val1", type: 'numberValue'},
+    {field: "val2", type: 'numberValue'},
+    {field: "val3", type: 'numberValue'},
+    {field: "val4", type: 'numberValue'},
+    {field: "val5", type: 'numberValue'}
 ];
 
 var gridOptions = {
+    columnTypes: {
+        'numberValue': {
+            enableValue: true, aggFunc: 'sum', editable: true, valueParser: numberParser
+        },
+        'dimension': {
+            enableRowGroup: true, enablePivot: true
+        }
+    },
     defaultColDef: {
     },
     autoGroupColumnDef: {
