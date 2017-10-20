@@ -19,13 +19,10 @@ ComponentUtil.EVENTS.forEach((eventName) => {
 export default Vue.extend({
     template: '<div></div>',
     props: props,
-    data()  {
+    data() {
         return {
             _initialised: false,
             _destroyed: false,
-
-            api: null,
-            columnApi: null
         }
     },
     methods: {
@@ -46,7 +43,7 @@ export default Vue.extend({
             if (this._initialised) {
                 let changes = {};
                 changes[propertyName] = {currentValue: val, previousValue: oldVal};
-                ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+                ComponentUtil.processOnChange(changes, this.gridOptions, this.gridOptions.api, this.gridOptions.columnApi);
             }
         }
     },
@@ -65,20 +62,12 @@ export default Vue.extend({
 
         new Grid(this.$el, gridOptions, gridParams);
 
-        if (this.gridOptions.api) {
-            this.api = this.gridOptions.api;
-        }
-
-        if (this.gridOptions.columnApi) {
-            this.columnApi = this.gridOptions.columnApi;
-        }
-
         this._initialised = true;
     },
     watch: watchedProperties,
     destroyed() {
         if (this._initialised) {
-            this.api.destroy();
+            this.gridOptions.api.destroy();
             this._destroyed = true;
         }
     }

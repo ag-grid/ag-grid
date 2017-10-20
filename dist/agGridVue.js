@@ -35,10 +35,7 @@ exports.default = _vue2.default.extend({
     data: function data() {
         return {
             _initialised: false,
-            _destroyed: false,
-
-            api: null,
-            columnApi: null
+            _destroyed: false
         };
     },
 
@@ -60,7 +57,7 @@ exports.default = _vue2.default.extend({
             if (this._initialised) {
                 var changes = {};
                 changes[propertyName] = { currentValue: val, previousValue: oldVal };
-                _main.ComponentUtil.processOnChange(changes, this.gridOptions, this.api, this.columnApi);
+                _main.ComponentUtil.processOnChange(changes, this.gridOptions, this.gridOptions.api, this.gridOptions.columnApi);
             }
         }
     },
@@ -79,21 +76,13 @@ exports.default = _vue2.default.extend({
 
         new _main.Grid(this.$el, gridOptions, gridParams);
 
-        if (this.gridOptions.api) {
-            this.api = this.gridOptions.api;
-        }
-
-        if (this.gridOptions.columnApi) {
-            this.columnApi = this.gridOptions.columnApi;
-        }
-
         this._initialised = true;
     },
 
     watch: watchedProperties,
     destroyed: function destroyed() {
         if (this._initialised) {
-            this.api.destroy();
+            this.gridOptions.api.destroy();
             this._destroyed = true;
         }
     }
