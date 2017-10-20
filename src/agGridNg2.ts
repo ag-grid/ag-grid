@@ -248,6 +248,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressUseColIdForGroups: any = undefined;
     @Input() public suppressCopyRowsToClipboard: any = undefined;
     @Input() public pivotMode: any = undefined;
+    @Input() public treeData: any = undefined;
     @Input() public suppressAggFuncInHeader: any = undefined;
     @Input() public suppressColumnVirtualisation: any = undefined;
     @Input() public suppressFocusAfterRefresh: any = undefined;
@@ -333,10 +334,9 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressExcelExport: any = undefined;
     @Input() public suppressCsvExport: any = undefined;
     @Input() public getChildCount: any = undefined;
+    @Input() public getDataPath: any = undefined;
     @Input() public rowClassRules: any = undefined;
     @Input() public getRowClassRules: any = undefined;
-    @Input() public getGroupKeys: any = undefined;
-    @Input() public isGroup: any = undefined;
 
     /**
      * Outputs
