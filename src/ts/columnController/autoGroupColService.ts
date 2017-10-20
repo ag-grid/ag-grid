@@ -18,9 +18,17 @@ export class AutoGroupColService {
     public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
         let groupAutoColumns: Column[] = [];
 
+        let doingTreeData = this.gridOptionsWrapper.isTreeData();
+        let doingMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
+
+        if (doingTreeData && doingMultiAutoColumn) {
+            console.log('ag-Grid: you cannot mix groupMultiAutoColumn with treeData, only one column can be used to display groups when doing tree data');
+            doingMultiAutoColumn = false;
+        }
+
         // if doing groupMultiAutoColumn, then we call the method multiple times, once
         // for each column we are grouping by
-        if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
+        if (doingMultiAutoColumn) {
             rowGroupColumns.forEach((rowGroupCol: Column, index: number) => {
                 groupAutoColumns.push(this.createOneAutoGroupColumn(rowGroupCol, index));
             });

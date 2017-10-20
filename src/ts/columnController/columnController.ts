@@ -274,6 +274,7 @@ export class ColumnController {
     private autoGroupsNeedBuilding = false;
 
     private pivotMode = false;
+    private usingTreeData: boolean;
 
     // for horizontal visualisation of columns
     private scrollWidth: number;
@@ -294,6 +295,7 @@ export class ColumnController {
         if (this.isPivotSettingAllowed(pivotMode)) {
             this.pivotMode = pivotMode;
         }
+        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
     }
 
     private setVirtualViewportLeftAndRight(): void {
@@ -2297,7 +2299,7 @@ export class ColumnController {
         this.autoGroupsNeedBuilding = false;
 
         // see if we need to insert the default grouping column
-        let needAutoColumns = this.rowGroupColumns.length > 0
+        let needAutoColumns = (this.rowGroupColumns.length > 0 || this.usingTreeData)
             && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
             && !this.gridOptionsWrapper.isGroupUseEntireRow()
             && !this.gridOptionsWrapper.isGroupSuppressRow();
