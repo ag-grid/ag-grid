@@ -392,7 +392,13 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private getChildrenMappedKey(key: string, rowGroupColumn: Column): string {
-        return rowGroupColumn.getId() + '-' + key;
+        if (rowGroupColumn) {
+            // grouping by columns
+            return rowGroupColumn.getId() + '-' + key;
+        } else {
+            // tree data - we don't have rowGroupColumns
+            return key;
+        }
     }
 
     private isExpanded(expandByDefault: number, level: number) {
