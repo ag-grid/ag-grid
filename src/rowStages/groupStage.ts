@@ -34,6 +34,7 @@ interface GroupingDetails {
     groupedCols: Column[];
     groupedColCount: number;
     transaction: RowNodeTransaction;
+    rowNodeOrder: {[id: string]: number};
 }
 
 @Bean('groupStage')
@@ -86,7 +87,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
-        let {rowNode, changedPath, rowNodeTransaction} = params;
+        let {rowNode, changedPath, rowNodeTransaction, rowNodeOrder} = params;
 
         let groupedCols = this.usingTreeData ? null : this.columnController.getRowGroupColumns();
         let isGrouping = this.usingTreeData || groupedCols.length > 0;
@@ -103,6 +104,7 @@ export class GroupStage implements IRowNodeStage {
             rootNode: rowNode,
             pivot: this.columnController.isPivotMode(),
             groupedColCount: this.usingTreeData ? 0 : groupedCols.length,
+            rowNodeOrder: rowNodeOrder,
 
             // important not to do transaction if we are not grouping, as otherwise the 'insert index' is ignored.
             // ie, if not grouping, then we just want to shotgun so the rootNode.allLeafChildren gets copied
@@ -127,6 +129,19 @@ export class GroupStage implements IRowNodeStage {
         if (tran.remove) {
             this.removeNodes(tran.remove, details);
         }
+        if (details.rowNodeOrder) {
+            this.recursiveSortChildren(details.rootNode, details);
+        }
+    }
+
+    // this is used when doing delta updates, eg Redux, keeps nodes in right order
+    private recursiveSortChildren(node: RowNode, details: GroupingDetails): void {
+        _.sortRowNodesByOrder(node.childrenAfterGroup, details.rowNodeOrder);
+        node.childrenAfterGroup.forEach( childNode => {
+            if (childNode.childrenAfterGroup) {
+                this.recursiveSortChildren(childNode, details)
+            }
+        } );
     }
 
     private getExistingPathForNode(node: RowNode, details: GroupingDetails): GroupInfo[] {
