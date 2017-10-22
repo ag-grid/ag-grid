@@ -118,6 +118,11 @@ export class FocusedCellController {
         return this.focusedCell.rowIndex === rowIndex && this.focusedCell.floating === floatingOrNull;
     }
 
+    public isColumnFocused(colId: any): boolean {
+        if (_.missing(this.focusedCell)) { return false; }
+        return this.focusedCell.column.getId() === colId;
+    }
+
     private onCellFocused(forceBrowserFocus: boolean): void {
         let event: CellFocusedEvent = {
             type: Events.EVENT_CELL_FOCUSED,

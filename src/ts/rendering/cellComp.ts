@@ -62,7 +62,6 @@ export class CellComp extends Component {
     private rowComp: RowComp;
 
     private rangeSelectionEnabled: boolean;
-
     private value: any;
     private colsSpanning: Column[];
 
@@ -77,6 +76,7 @@ export class CellComp extends Component {
         this.rowComp = rowComp;
 
         this.createGridCellVo();
+        this.addToColumnCellComps();
 
         this.rangeSelectionEnabled = beans.enterprise && beans.gridOptionsWrapper.isEnableRangeSelection();
         this.cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
@@ -91,6 +91,12 @@ export class CellComp extends Component {
         this.setUsingWrapper();
         this.chooseCellRenderer();
         this.setupColSpan();
+    }
+
+    private addToColumnCellComps(): void {
+        let cellComps = this.column.getCellComps()
+        cellComps.push(this);
+        this.column.setCellComps(cellComps);
     }
 
     public getCreateTemplate(): string {
@@ -151,6 +157,7 @@ export class CellComp extends Component {
         this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onWidthChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, this.onFirstRightPinnedChanged.bind(this));
         this.addDestroyableEventListener(this.column, Column.EVENT_LAST_LEFT_PINNED_CHANGED, this.onLastLeftPinnedChanged.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Column.EVENT_CELL_FOCUSED, this.column.onCellFocusChanged.bind(this.column));
 
         // if not doing enterprise, then range selection service would be missing
         // so need to check before trying to use it
@@ -837,14 +844,16 @@ export class CellComp extends Component {
         let editOnDoubleClick = !this.beans.gridOptionsWrapper.isSingleClickEdit()
             && !this.beans.gridOptionsWrapper.isSuppressClickEdit();
         if (editOnDoubleClick) {
-            this.startRowOrCellEdit();
+            this.startComponentEdit();
         }
     }
 
     // called by rowRenderer when user navigates via tab key
-    public startRowOrCellEdit(keyPress?: number, charPress?: string): void {
+    public startComponentEdit(keyPress?: number, charPress?: string): void {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             this.rowComp.startRowEditing(keyPress, charPress, this);
+        } else if (this.beans.gridOptionsWrapper.isFullColumnEdit()) {
+            this.column.startColumnEditing(keyPress, charPress, this);
         } else {
             this.startEditingIfEnabled(keyPress, charPress, true);
         }
@@ -944,7 +953,7 @@ export class CellComp extends Component {
         if (this.editingCell) {
             // note: this only happens when use clicks outside of the grid. if use clicks on another
             // cell, then the editing will have already stopped on this cell
-            this.stopRowOrCellEdit();
+            this.stopComponentEdit();
 
             // we only focus cell again if this cell is still focused. it is possible
             // it is not focused if the user cancelled the edit by clicking on another
@@ -1003,7 +1012,7 @@ export class CellComp extends Component {
     // cell editors call this, when they want to stop for reasons other
     // than what we pick up on. eg selecting from a dropdown ends editing.
     private stopEditingAndFocus(): void {
-        this.stopRowOrCellEdit();
+        this.stopComponentEdit();
         this.focusCell(true);
     }
 
@@ -1099,7 +1108,7 @@ export class CellComp extends Component {
 
     private onNavigationKeyPressed(event: KeyboardEvent, key: number): void {
         if (this.editingCell) {
-            this.stopRowOrCellEdit();
+            this.stopComponentEdit();
         }
         this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.rowNode.rowPinned);
         // if we don't prevent default, the grid will scroll with the navigation keys
@@ -1113,28 +1122,28 @@ export class CellComp extends Component {
 
     private onBackspaceOrDeleteKeyPressed(key: number): void {
         if (!this.editingCell) {
-            this.startRowOrCellEdit(key);
+            this.startComponentEdit(key);
         }
     }
 
     private onEnterKeyDown(): void {
         if (this.editingCell) {
-            this.stopRowOrCellEdit();
+            this.stopComponentEdit();
             this.focusCell(true);
         } else {
-            this.startRowOrCellEdit(Constants.KEY_ENTER);
+            this.startComponentEdit(Constants.KEY_ENTER);
         }
     }
 
     private onF2KeyDown(): void {
         if (!this.editingCell) {
-            this.startRowOrCellEdit(Constants.KEY_F2);
+            this.startComponentEdit(Constants.KEY_F2);
         }
     }
 
     private onEscapeKeyDown(): void {
         if (this.editingCell) {
-            this.stopRowOrCellEdit(true);
+            this.stopComponentEdit(true);
             this.focusCell(true);
         }
     }
@@ -1152,7 +1161,7 @@ export class CellComp extends Component {
                 this.onSpaceKeyPressed(event);
             } else {
                 if (_.isEventFromPrintableCharacter(event)) {
-                    this.startRowOrCellEdit(null, pressedChar);
+                    this.startComponentEdit(null, pressedChar);
                     // if we don't prevent default, then the keypress also gets applied to the text field
                     // (at least when doing the default editor), but we need to allow the editor to decide
                     // what it wants to do. we only do this IF editing was started - otherwise it messes
@@ -1207,7 +1216,7 @@ export class CellComp extends Component {
         let editOnSingleClick = this.beans.gridOptionsWrapper.isSingleClickEdit()
             && !this.beans.gridOptionsWrapper.isSuppressClickEdit();
         if (editOnSingleClick) {
-            this.startRowOrCellEdit();
+            this.startComponentEdit();
         }
 
         this.doIeFocusHack();
@@ -1380,15 +1389,18 @@ export class CellComp extends Component {
 
         // if another cell was focused, and we are editing, then stop editing
         let fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
-        if (!cellFocused && !fullRowEdit && this.editingCell) {
-            this.stopRowOrCellEdit();
+        let fullColumnEdit = this.beans.gridOptionsWrapper.isFullColumnEdit();
+        if (!cellFocused && !fullRowEdit && !fullColumnEdit && this.editingCell) {
+            this.stopComponentEdit();
         }
     }
 
     // pass in 'true' to cancel the editing.
-    public stopRowOrCellEdit(cancel: boolean = false) {
+    public stopComponentEdit(cancel: boolean = false) {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             this.rowComp.stopRowEditing(cancel);
+        } else if (this.beans.gridOptionsWrapper.isFullColumnEdit()) {
+            this.column.stopColumnEditing(cancel);
         } else {
             this.stopEditing(cancel);
         }
