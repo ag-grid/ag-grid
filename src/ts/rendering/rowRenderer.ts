@@ -832,7 +832,7 @@ export class RowRenderer extends BeanStub {
     public startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void {
         let cell = this.getComponentForCell(gridCell);
         if (cell) {
-            cell.startRowOrCellEdit(keyPress, charPress);
+            cell.startComponentEdit(keyPress, charPress);
         }
     }
 
@@ -896,6 +896,8 @@ export class RowRenderer extends BeanStub {
             if (editing) {
                 if (this.gridOptionsWrapper.isFullRowEdit()) {
                     this.moveEditToNextRow(previousRenderedCell, nextRenderedCell);
+                } else if (this.gridOptionsWrapper.isFullColumnEdit()) {
+                    this.moveEditToNextColumn(previousRenderedCell, nextRenderedCell);
                 } else {
                     this.moveEditToNextCell(previousRenderedCell, nextRenderedCell);
                 }
@@ -939,6 +941,32 @@ export class RowRenderer extends BeanStub {
 
         nextRenderedCell.focusCell();
     }
+    // To be moved to a new "ColumnRenderer" class if we want to keep coherence
+    private moveEditToNextColumn(previousRenderedCell: CellComp, nextRenderedCell: CellComp): void {
+        let pGridCell = previousRenderedCell.getGridCell();
+        let nGridCell = nextRenderedCell.getGridCell();
+
+        let colsMatch = (pGridCell.column.getId() === nGridCell.column.getId())
+            && (pGridCell.floating === nGridCell.floating);
+
+        if (colsMatch) {
+            // same row, so we don't start / stop editing, we just move the focus along
+            previousRenderedCell.setFocusOutOnEditor();
+            nextRenderedCell.setFocusInOnEditor();
+        } else {
+            let pRow = previousRenderedCell.getRenderedRow();
+            let nRow = nextRenderedCell.getRenderedRow();
+
+            previousRenderedCell.setFocusOutOnEditor();
+            pRow.stopEditing();
+
+            nRow.startRowEditing();
+            nextRenderedCell.setFocusInOnEditor();
+        }
+
+        nextRenderedCell.focusCell();
+    }
+
 
     // called by the cell, when tab is pressed while editing.
     // @return: RenderedCell when navigation successful, otherwise null

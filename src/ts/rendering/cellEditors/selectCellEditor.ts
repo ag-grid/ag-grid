@@ -46,6 +46,9 @@ export class SelectCellEditor extends Component implements ICellEditorComp {
         if (!this.gridOptionsWrapper.isFullRowEdit()) {
             this.addDestroyableEventListener(this.eSelect, 'change', ()=> params.stopEditing() );
         }
+        if (!this.gridOptionsWrapper.isFullColumnEdit()) {
+            this.addDestroyableEventListener(this.eSelect, 'change', ()=> params.stopEditing() );
+        }
 
         this.addDestroyableEventListener(this.eSelect, 'keydown', (event: KeyboardEvent)=> {
             let isNavigationKey = event.keyCode===Constants.KEY_UP || event.keyCode===Constants.KEY_DOWN;

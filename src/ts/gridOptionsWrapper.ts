@@ -165,6 +165,7 @@ export class GridOptionsWrapper {
     }
 
     public isFullRowEdit() { return this.gridOptions.editType === 'fullRow'; }
+    public isFullColumnEdit() { return this.gridOptions.editType === 'fullColumn'; }
     public isSuppressFocusAfterRefresh() { return isTrue(this.gridOptions.suppressFocusAfterRefresh); }
     public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
     public isToolPanelSuppressRowGroups() { return isTrue(this.gridOptions.toolPanelSuppressRowGroups); }

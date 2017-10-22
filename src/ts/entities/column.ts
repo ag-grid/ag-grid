@@ -15,6 +15,8 @@ import {IEventEmitter} from "../interfaces/iEventEmitter";
 import {ColumnEvent} from "../events";
 import {ColumnApi} from "../columnController/columnController";
 import {GridApi} from "../gridApi";
+import {CellComp} from "../rendering/cellComp";
+import {Beans} from "../rendering/beans";
 
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
@@ -51,6 +53,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public static EVENT_PIVOT_CHANGED = 'columnPivotChanged';
     // + toolpanel, for gui updates
     public static EVENT_VALUE_CHANGED = 'columnValueChanged';
+    // + renderedCell, when focused
+    public static EVENT_CELL_FOCUSED = 'cellFocused';
     
     public static PINNED_RIGHT = 'right';
     public static PINNED_LEFT = 'left';
@@ -63,6 +67,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    //@Autowired('beans') private beans: Beans;
 
     private colDef: ColDef;
     private colId: any;
@@ -101,6 +106,9 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private filter: {new(): IFilter} | string;
 
     private parent: ColumnGroupChild;
+    private cellComps: CellComp[] = []; //key = rowIndex
+    private editingColumn: boolean;
+    private columnFocused: boolean;
 
     constructor(colDef: ColDef, colId: String, primary: boolean) {
         this.colDef = colDef;
@@ -146,7 +154,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         let suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.')>=0 && !suppressDotNotation;
         this.tooltipFieldContainsDots = _.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.')>=0 && !suppressDotNotation;
-
+        //this.columnFocused = this.beans.focusedCellController.isColumnFocused(this.colId);
+        //this.addEventListener(Column.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
         this.validate();
     }
 
@@ -626,5 +635,73 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             menuTabs = defaultValues;
         }
         return menuTabs;
+    }
+
+    private setEditingColumn(value: boolean): void {
+        this.editingColumn = value;
+        //Add event ?
+    }
+
+    public getCellComps(): CellComp[] {
+        return this.cellComps;
+    }
+    
+    public setCellComps(cellComps: CellComp[]): void {
+        this.cellComps = cellComps;
+    }
+
+
+
+    public startColumnEditing(keyPress: number = null, charPress: string = null, sourceRenderedCell: CellComp = null): void {
+        // don't do it if already editing
+        if (this.editingColumn) { return; }
+
+        this.forEachCellComp(renderedCell => {
+            let cellStartedEdit = renderedCell === sourceRenderedCell;
+            if (cellStartedEdit) {
+                renderedCell.startEditingIfEnabled(keyPress, charPress, cellStartedEdit)
+            } else {
+                renderedCell.startEditingIfEnabled(null, null, cellStartedEdit)
+            }
+        });
+        this.setEditingColumn(true);
+    }
+
+    public stopColumnEditing(cancel: boolean): void {
+        this.stopEditing(cancel);
+    }
+
+    public stopEditing(cancel = false): void {
+        this.forEachCellComp(renderedCell => {
+            renderedCell.stopEditing(cancel);
+        });
+        if (this.editingColumn) {
+            //Add event
+            this.setEditingColumn(false);
+        }
+    }
+
+    public forEachCellComp(callback: (renderedCell: CellComp)=>void): void {
+        _.iterateObject(this.cellComps, (key: any, cellComp: CellComp)=> {
+            if (cellComp) {
+                callback(cellComp);
+            }
+        });
+    }
+
+    public onCellFocusChanged(): void {
+        //TODO Add a "Bean" attribute to the Column class, to get the focusedCellController
+        /*let colFocused = this.beans.focusedCellController.isColumnFocused(this.colId);
+        if (colFocused !== this.columnFocused) {
+            this.columnFocused = colFocused;
+        }
+
+        
+        if (!colFocused && this.editingColumn) {
+            this.stopEditing(false);
+        }*/
+        if (this.editingColumn) {
+            this.stopEditing(false);
+        }
     }
 }
