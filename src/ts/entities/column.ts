@@ -182,22 +182,27 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     private validate(): void {
+
+        let colDefAny = <any> this.colDef;
+
         if (!this.gridOptionsWrapper.isEnterprise()) {
-            if (_.exists(this.colDef.aggFunc)) {
-                console.warn('ag-Grid: aggFunc is only valid in ag-Grid-Enterprise');
-            }
-            if (_.exists(this.colDef.rowGroupIndex)) {
-                console.warn('ag-Grid: rowGroupIndex is only valid in ag-Grid-Enterprise');
-            }
-            if (_.exists(this.colDef.rowGroup)) {
-                console.warn('ag-Grid: rowGroup is only valid in ag-Grid-Enterprise');
-            }
-            if (_.exists(this.colDef.pivotIndex)) {
-                console.warn('ag-Grid: pivotIndex is only valid in ag-Grid-Enterprise');
-            }
-            if (_.exists(this.colDef.pivot)) {
-                console.warn('ag-Grid: pivot is only valid in ag-Grid-Enterprise');
-            }
+            let itemsNotAllowedWithoutEnterprise =
+                ['enableRowGroup','rowGroup','rowGroupIndex','enablePivot','pivot','pivotIndex','aggFunc'];
+            itemsNotAllowedWithoutEnterprise.forEach( item => {
+                if (_.exists(colDefAny[item])) {
+                    console.warn(`ag-Grid: ${item} is only valid in ag-Grid-Enterprise, your column definition should not have ${item}`);
+                }
+            });
+        }
+
+        if (this.gridOptionsWrapper.isTreeData()) {
+            let itemsNotAllowedWithTreeData =
+                ['enableRowGroup','rowGroup','rowGroupIndex','enablePivot','pivot','pivotIndex'];
+            itemsNotAllowedWithTreeData.forEach( item => {
+                if (_.exists(colDefAny[item])) {
+                    console.warn(`ag-Grid: ${item} is not possible when doing tree data, your column definition should not have ${item}`);
+                }
+            });
         }
 
         if (_.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
@@ -216,7 +221,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
         }
 
-        let colDefAny: any = this.colDef;
         if (colDefAny.floatingCellRenderer) {
             console.warn('ag-Grid: since v11, floatingCellRenderer is now pinnedRowCellRenderer');
             this.colDef.pinnedRowCellRenderer = colDefAny.floatingCellRenderer;
