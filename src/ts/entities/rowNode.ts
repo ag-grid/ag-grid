@@ -418,7 +418,7 @@ export class RowNode implements IEventEmitter {
         return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
     }
 
-    public isEmptyGroup(): boolean {
+    public isEmptyFillerNode(): boolean {
         return this.group && _.missingOrEmpty(this.childrenAfterGroup);
     }
 
