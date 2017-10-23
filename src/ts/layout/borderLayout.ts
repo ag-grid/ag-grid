@@ -163,6 +163,9 @@ export class BorderLayout {
         return this.eGui;
     }
 
+    stylesLoaded = false;
+    styleChecks = 0;
+
     // returns true if any item changed size, otherwise returns false
     public doLayout() {
 
@@ -171,6 +174,17 @@ export class BorderLayout {
             this.visibleLastTime = false;
             return false;
         }
+
+        if (!this.stylesLoaded && window.getComputedStyle(this.eGui).captionSide !== "bottom") {
+            if (this.styleChecks > 100) {
+                throw new Error("The styles for ag-Grid were not detected");
+            } else {
+                this.styleChecks ++;
+                return false;
+            }
+        }
+
+        this.stylesLoaded = true;
 
         let atLeastOneChanged = false;
 
