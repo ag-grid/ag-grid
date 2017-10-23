@@ -239,8 +239,11 @@ export class GroupStage implements IRowNodeStage {
 
         // remove empty groups
         forEachParentGroup( node => {
-            if (node.isEmptyGroup()) {
+            if (node.isEmptyFillerNode()) {
                 this.removeFromParent(node);
+                // we remove selection on filler nodes here, as the selection would not be removed
+                // from the RowNodeManager, as filler nodes don't exist on teh RowNodeManager
+                node.setSelected(false);
             }
         });
     }
