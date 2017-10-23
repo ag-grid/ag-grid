@@ -29,6 +29,33 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">24th October 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <a href="../ag-grid-datagrid-crud-part-1/">
+            <img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" style="width: 100%;"/>
+        </a>
+    </div>
+    <div>
+        <br/>
+        The first in a series of blogs about <a href="../ag-grid-datagrid-crud-part-1/">Building a CRUD Application with ag-Grid</a> (all the way from the Database to ag-Grid).
+    </div>
+</div>
+
+<div class="news-box">
+    <div class="news-header">23rd October 2017</div>
+    <div style="position: relative;">
+        <a href="https://www.angularconnect.com//">
+            <img src="../images/angularconnect2017.png" style="width: 100%;"/>
+        </a>
+    </div>
+    <div>
+        <br/>
+        <p>We'll be at AngularConnect once again this year (7-8 November 2017).</p>
+        <p>We hope to see you there!</p>
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">5th October 2017</div>
     <div style="position: relative;">
         <a href="../ag-grid-jobs-board/">
@@ -37,8 +64,8 @@
     </div>
     <div>
         <br>
-        <p>    
-        We are looking for the best and the brightest to join us at ag-Grid. 
+        <p>
+        We are looking for the best and the brightest to join us at ag-Grid.
         </p>
         <p>
         See our <a href="../ag-grid-jobs-board/">jobs board</a> for all current opportunities.
