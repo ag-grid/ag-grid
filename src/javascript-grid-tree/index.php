@@ -9,7 +9,12 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="tree-data">Tree Data</h2>
+    <h2 id="tree-data">Tree Data (Legacy)</h2>
+
+    <note>
+        This section describes the legacy approach for working with Tree Data. For the recommended approach which was
+        introduced in v14 please refer to <a href="../javascript-grid-tree-data">Tree Data</a>.
+    </note>
 
     <p>It is possible to provide the data to ag-Grid in a tree structure. This can be used to provide a view of
     a tree (such as a file browser, this is what the <a href="../example-file-browser/">File Browser</a>

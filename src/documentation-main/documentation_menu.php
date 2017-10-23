@@ -150,9 +150,8 @@
 
 //    menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
 
-    menuItemWithIcon('enterprise.png', 0, 'Row Grouping', 'Row Grouping', 'javascript-grid-row-grouping/');
-    menuItemWithIcon('enterprise.png', 1, 'Grid Grouping', 'Grid Grouping', 'javascript-grid-grouping/');
-    menuItemWithIcon('enterprise.png', 1, 'Tree Data', 'Tree Data', 'javascript-grid-tree-data/');
+    menuItemWithIcon('enterprise.png', 0, 'Row Grouping', 'Row Grouping', 'javascript-grid-grouping/');
+    menuItemWithIcon('enterprise.png', 0, 'Tree Data', 'Tree Data', 'javascript-grid-tree-data/');
 
     menuItemWithIcon('enterprise.png', 0, 'Aggregation', 'Aggregation', 'javascript-grid-aggregation/');
     menuItemWithIcon('enterprise.png', 0, 'Pivoting', 'Pivoting', 'javascript-grid-pivoting/');
