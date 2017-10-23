@@ -18,6 +18,13 @@ include '../documentation-main/documentation_header.php';
         This section introduces simple ways to work with Tree Data before covering more advanced uses.
     </p>
 
+
+    <note>
+        This section describes the recommended approach for working with Tree Data, however if you are using
+        an older version of the grid prior to v14 see <a href="../javascript-grid-tree">Tree Data (Legacy)</a>.
+    </note>
+
+
     <h2 id="tree-data-mode">Tree Data Mode</h2>
 
     <p>
