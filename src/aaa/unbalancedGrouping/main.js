@@ -55,6 +55,7 @@ var gridOptions = {
     },
     enableCellChangeFlash: true,
     rowGroupPanelShow: 'always',
+    pivotPanelShow: 'always',
     animateRows: true,
     columnDefs: columnDefs,
     rowData: rowData,
