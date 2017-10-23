@@ -179,8 +179,8 @@ valueGetter: function (params){
     </p>
 
     <p>
-        You can also configure the look & feel of the expan/contract buttons by
-        <a href="../javascript-grid-icons">specifying your own custom icons</a>
+        You can also configure the look &amp; feel of the expan/contract buttons by
+        <a href="../javascript-grid-icons">specifying your own custom icons</a>.
     </p>
 
     <h2>Specifying Row Group Order</h2>
