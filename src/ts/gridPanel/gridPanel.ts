@@ -215,20 +215,25 @@ export class GridPanel extends BeanStub {
     private enableRtl: boolean;
     private forPrint: boolean;
     private autoHeight: boolean;
-    private scrollWidth: number;
 
     // used to track if pinned panels are showing, so we can turn them off if not
     private pinningRight: boolean;
     private pinningLeft: boolean;
 
     private useAnimationFrame: boolean;
+    private calculatedScrollWidth: number;
+
+    get scrollWidth(): number {
+        let width = this.calculatedScrollWidth || this.gridOptionsWrapper.getScrollbarWidth();
+        this.calculatedScrollWidth = width;
+        return width;
+    }
 
     public agWire(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('GridPanel');
         // makes code below more readable if we pull 'forPrint' out
         this.forPrint = this.gridOptionsWrapper.isForPrint();
         this.autoHeight = this.gridOptionsWrapper.isAutoHeight();
-        this.scrollWidth = this.gridOptionsWrapper.getScrollbarWidth();
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
         this.loadTemplate();
         this.findElements();

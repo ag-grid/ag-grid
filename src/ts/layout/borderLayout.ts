@@ -165,8 +165,11 @@ export class BorderLayout {
 
     // returns true if any item changed size, otherwise returns false
     public doLayout() {
-
-        let isVisible = _.isVisible(this.eGui);
+        let isVisible = true;
+        // the check for isVisible is expensive. Only do it if the element was hidden last time.
+        if(!this.visibleLastTime) {
+            isVisible = _.isVisible(this.eGui);
+        }
         if (!isVisible) {
             this.visibleLastTime = false;
             return false;
