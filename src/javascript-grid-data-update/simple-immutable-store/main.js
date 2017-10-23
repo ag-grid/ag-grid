@@ -98,7 +98,11 @@ function createItem() {
     return item;
 }
 
-function setGroupingEnabled(enabled) {
+function onGroupingEnabled(enabled) {
+    setGroupingEnabled(enabled, gridOptions);
+}
+
+function setGroupingEnabled(enabled, gridOptions) {
     if (enabled) {
         gridOptions.columnApi.setRowGroupColumns(['group']);
         gridOptions.columnApi.setColumnVisible('group', false);
@@ -165,11 +169,11 @@ var gridOptions = {
     getRowNodeId: function(data) {
         return data.symbol;
     },
-    onGridReady: function() {
+    onGridReady: function(params) {
         immutableStore = [];
         immutableStore = getInitialData();
-        gridOptions.api.setRowData(immutableStore);
-        setGroupingEnabled(false);
+        params.api.setRowData(immutableStore);
+        setGroupingEnabled(false, params);
     }
 };
 
