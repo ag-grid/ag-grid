@@ -18,7 +18,7 @@ module.exports = merge(common, {
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.DefinePlugin({
-            MAX_ACTIVE_EXAMPLES: JSON.stringify(2)
+            MAX_ACTIVE_EXAMPLES: JSON.stringify(3)
         })
     ]
 });
