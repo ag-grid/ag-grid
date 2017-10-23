@@ -79,7 +79,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         will make it sort descending. Another click will remove the sort.
     </p>
     <p>
-        It is possible to override this behaviour by providing your own <i>sortOrder</i> on either
+        It is possible to override this behaviour by providing your own <code>sortingOrder</code> on either
         the gridOptions or the colDef. If defined both in colDef and gridOptions, the colDef will get
         preference, allowing you to defined a common default, and then tailoring per column.
     </p>
