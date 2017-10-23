@@ -131,7 +131,6 @@
     menuItem(0, 'AccessingData', 'Accessing Data', 'javascript-grid-accessing-data/');
 
     menuItem(0, 'Pagination', 'Pagination', 'javascript-grid-pagination/');
-    menuItem(0, 'Tree Data', 'Tree Data', 'javascript-grid-tree/');
     menuItem(0, 'DataUpdate', 'Updating Data', 'javascript-grid-data-update/');
     menuItem(0, 'Refresh', 'View Refresh', 'javascript-grid-refresh/');
     menuItem(0, 'Change Detection', 'Change Detection', 'javascript-grid-change-detection/');
