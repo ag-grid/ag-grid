@@ -400,6 +400,26 @@ gridOptions.groupRowRendererParams: {
         you are rendering in is provided via the <i>pinned</i> parameter.
     </p>
 
+    <h2 id="unbalanced-groups">Unbalanced Groups</h2>
+
+    <p>
+        If there are rows containing null values for the column that is being grouped then these rows will not be grouped
+        as there is no value available to group by. We refer to this scenario as <i>Unbalanced Groups</i>, that is where
+        there is a mix of grouped and non-grouped rows.
+    </p>
+
+    <p>
+        The following example illustrates this scenario:
+    </p>
+
+    <ul>
+        <li>Notice that rows contain one of the following 'State' column values: 'New York', 'California', null.</li>
+        <li>Clicking 'Group By State' creates two groups 'New York' and 'California', whereas the rows with null values
+            are not grouped.</li>
+    </ul>
+
+    <?= example('Unbalanced Groups', 'unbalanced-groups', 'generated', array("enterprise" => 1, "exampleHeight" => 430)) ?>
+
     <h2>Grouping API</h2>
 
     <p>
