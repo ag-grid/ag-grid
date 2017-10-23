@@ -44,13 +44,13 @@
 <div class="news-box">
     <div class="news-header">23rd October 2017</div>
     <div style="position: relative;">
-        <a href="https://www.angularconnect.com//">
+        <a href="https://www.angularconnect.com/">
             <img src="../images/angularconnect2017.png" style="width: 100%;"/>
         </a>
     </div>
     <div>
         <br/>
-        <p>We'll be at AngularConnect once again this year (7-8 November 2017).</p>
+        <p>We'll be at <a href="https://www.angularconnect.com/">AngularConnect</a> once again this year (7-8 November 2017).</p>
         <p>We hope to see you there!</p>
     </div>
 </div>
