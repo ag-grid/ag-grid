@@ -166,6 +166,12 @@ export class GroupStage implements IRowNodeStage {
 
         childNodes.forEach( childNode => {
 
+            // we add node, even if parent has not changed, as the data could have
+            // changed, hence aggregations will be wrong
+            if (details.changedPath) {
+                details.changedPath.addParentNode(childNode.parent);
+            }
+
             let infoToKeyMapper = (item: GroupInfo) => item.key;
             let oldPath: string[] = this.getExistingPathForNode(childNode, details).map(infoToKeyMapper);
             let newPath: string[] = this.getGroupInfo(childNode, details).map(infoToKeyMapper);
@@ -179,16 +185,14 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private moveNode(childNode: RowNode, details: GroupingDetails): void {
-        // we add both old and new parents to changed path, as both will need to be refreshed
-        let oldParent = childNode.parent;
 
         this.removeOneNode(childNode, details);
         this.insertOneNode(childNode, details);
 
-        // add in new parent
+        // we add both old and new parents to changed path, as both will need to be refreshed.
+        // we already added the old parent (in calling method), so just add the new parent here
         if (details.changedPath) {
             let newParent = childNode.parent;
-            details.changedPath.addParentNode(oldParent);
             details.changedPath.addParentNode(newParent);
         }
     }
