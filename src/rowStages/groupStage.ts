@@ -26,7 +26,7 @@ interface GroupInfo {
 }
 
 interface GroupingDetails {
-    pivot: boolean;
+    pivotMode: boolean;
     includeParents: boolean;
     expandByDefault: number;
     changedPath: ChangedPath;
@@ -102,7 +102,7 @@ export class GroupStage implements IRowNodeStage {
                 -1 : this.gridOptionsWrapper.getGroupDefaultExpanded(),
             groupedCols: groupedCols,
             rootNode: rowNode,
-            pivot: this.columnController.isPivotMode(),
+            pivotMode: this.columnController.isPivotMode(),
             groupedColCount: this.usingTreeData ? 0 : groupedCols.length,
             rowNodeOrder: rowNodeOrder,
 
@@ -168,7 +168,7 @@ export class GroupStage implements IRowNodeStage {
 
             let infoToKeyMapper = (item: GroupInfo) => item.key;
             let oldPath: string[] = this.getExistingPathForNode(childNode, details).map(infoToKeyMapper);
-            let newPath: string[] = this.getGroupInfo(childNode, details.groupedCols).map(infoToKeyMapper);
+            let newPath: string[] = this.getGroupInfo(childNode, details).map(infoToKeyMapper);
 
             let nodeInCorrectPath = _.compareArrays(oldPath, newPath);
 
@@ -288,7 +288,7 @@ export class GroupStage implements IRowNodeStage {
 
     private insertOneNode(childNode: RowNode, details: GroupingDetails): void {
 
-        let path: GroupInfo[] = this.getGroupInfo(childNode, details.groupedCols);
+        let path: GroupInfo[] = this.getGroupInfo(childNode, details);
 
         let parentGroup = this.findParentForNode(childNode, path, details);
 
@@ -387,7 +387,7 @@ export class GroupStage implements IRowNodeStage {
 
         // if doing pivoting, then the leaf group is never expanded,
         // as we do not show leaf rows
-        if (details.pivot && groupNode.leafGroup) {
+        if (details.pivotMode && groupNode.leafGroup) {
             groupNode.expanded = false;
         } else {
             groupNode.expanded = this.isExpanded(details.expandByDefault, level);
@@ -427,11 +427,11 @@ export class GroupStage implements IRowNodeStage {
         }
     }
 
-    private getGroupInfo(rowNode: RowNode, groupColumns: Column[]): GroupInfo[] {
+    private getGroupInfo(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
         if (this.usingTreeData) {
             return this.getGroupInfoFromCallback(rowNode);
         } else {
-            return this.getGroupInfoFromGroupColumns(rowNode, groupColumns);
+            return this.getGroupInfoFromGroupColumns(rowNode, details);
         }
     }
 
@@ -441,11 +441,20 @@ export class GroupStage implements IRowNodeStage {
         return keys ? keys.map(groupInfoMapper) : [];
     }
 
-    private getGroupInfoFromGroupColumns(rowNode: RowNode, groupColumns: Column[]) {
+    private getGroupInfoFromGroupColumns(rowNode: RowNode, details: GroupingDetails) {
         let res: GroupInfo[] = [];
-        groupColumns.forEach( groupCol => {
+        details.groupedCols.forEach( groupCol => {
             let key: any = this.getKeyForNode(groupCol, rowNode);
             let keyExists = key!==null && key!==undefined;
+
+            // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make
+            // mathematical sense as you are building up a cube. so if pivot mode, we put in a blank key where missing.
+            // this keeps the tree balanced and hence can be represented as a group.
+            if (details.pivotMode && !keyExists) {
+                key = ' ';
+                keyExists = true;
+            }
+
             if (keyExists) {
                 let item = <GroupInfo> {
                     key: key,
