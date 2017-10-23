@@ -20,6 +20,7 @@
 
 @mixin icon-background($params, $icon) {
     $size: map-get($params, 'icon-size');
+    $color: map-get($params, 'foreground-color');
     background-color: transparent;
     background-image: url('#{map-get($params, 'icons-path')}#{$icon}.svg?color=#{encodecolor(map-get($params, 'icon-color'))}');
     background-position: center;
@@ -35,7 +36,7 @@
 }
 
 @mixin card($params) {
-    background: map-get($params, 'background');
+    background: map-get($params, 'background-color');
     border-radius: map-get($params, 'card-radius');
     box-shadow: map-get($params, 'card-shadow');
     padding: map-get($params, 'grid-size');
@@ -48,22 +49,33 @@
     $primary-color: map-get($params, 'primary-color');
     $placeholder-color: map-get($params, 'disabled-forergound-color');
     $focused-border: map-get($params, 'focused-textbox-border');
+    $input-border-width: map-get($params, 'input-border-width');
+    $input-bottom-border: map-get($params, 'input-bottom-border');
 
     background: transparent;
-    border: 0;
 
-    border-bottom: 1px solid $border-color;
+    @if $input-border-width {
+        border-width: $input-border-width;
+    }
+
+    @if $input-bottom-border {
+        border-bottom: $input-bottom-border;
+    }
+
     box-sizing: border-box;
     color: $foreground-color;
     font-family: inherit;
     font-size: inherit;
-    height: $grid-size * 3;
+    height: map-get($params, 'input-height');
     padding-bottom: $grid-size;
 
     &:focus {
-        border-bottom: $focused-border;
-        outline: none;
-        padding-bottom: $grid-size - 1;
+        @if $focused-border {
+            border-bottom: $focused-border;
+            outline: none;
+            padding-bottom: $grid-size - 1;
+        }
+
     }
 
     &::placeholder {
@@ -128,11 +140,10 @@
 
     $editor-background-color-color: map-get($params, 'editor-background-color-color');
 
-
     $range-selection-background-color: map-get($params, 'range-selection-background-color');
     $range-selection-highlight-color: map-get($params, 'range-selection-highlight-color');
 
-
+    $header-background-color: map-get($params, 'header-background-color');
     $panel-background-color: map-get($params, 'panel-background-color');
     $tool-panel-background-color: map-get($params, 'tool-panel-background-color');
 
@@ -153,7 +164,6 @@
     $font: $font-weight $font-size $font-family;
     $secondary-font: $secondary-font-weight $secondary-font-size $secondary-font-family;
 
-
     background-color: $background-color;
     color: $foreground-color;
     font: $font;
@@ -162,6 +172,9 @@
     // Basic layout
     ////////////////////////////////////////
     .ag-header {
+        @if $header-background-color {
+            background-color: $header-background-color;
+        }
         color: $secondary-foreground-color;
         font: $secondary-font;
     }
@@ -507,10 +520,6 @@
     // Column selector
     ////////////////////////////////////////
     .ag-column-select-panel {
-        .ag-column-select-column-group:not(:first-child) {
-            border-top: 1px solid $border-color;
-        }
-
         .ag-column-select-column-group,
         .ag-column-select-column {
             height: $grid-size * 4;

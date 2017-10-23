@@ -1,12 +1,14 @@
 import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional, Context} from './context/context';
 
-const themes = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'theme-material'];
+const themes = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'theme-material', 'theme-fresh'];
 const themeCLass = new RegExp(`ag-(${themes.join('|')})`);
 
 const matGridSize = 8;
 const matIconSize = 18;
 type HardCodedSize = { [ key:string ]: { [ key: string ]: number } };
 
+const freshGridSize = 4;
+const freshIconSize = 14;
 const HARD_CODED_SIZES: HardCodedSize = {
     "ag-theme-material": {
         autoSizePadding: matGridSize * 3,
@@ -20,6 +22,19 @@ const HARD_CODED_SIZES: HardCodedSize = {
         rowHeight: matGridSize * 6,
         gridSize: matGridSize,
         iconSize: matIconSize
+    },
+    "ag-theme-fresh": {
+        autoSizePadding: freshGridSize * 3,
+        headerHeight: freshGridSize * 7,
+        groupPaddingSize: freshGridSize * 3 + freshIconSize,
+        footerPaddingAddition: freshGridSize * 4,
+        virtualItemHeight: freshGridSize * 5,
+        aggFuncPopupHeight: freshGridSize * 5 * 3.5,
+        checkboxIndentWidth: freshGridSize + freshIconSize,
+        leafNodePadding: freshGridSize * 3,
+        rowHeight: freshGridSize * 7,
+        gridSize: freshGridSize,
+        iconSize: freshIconSize
     }
 }
 
@@ -51,8 +66,8 @@ export class Environment {
         */
     }
 
-    public getSassVariable(key: string): number {
-        return HARD_CODED_SIZES['ag-theme-material'][key];
+    public getSassVariable(theme: string, key: string): number {
+        return HARD_CODED_SIZES[theme][key];
         /*
         const result = parseInt(this.sassVariables[key]);
         if (!result || isNaN(result)) {

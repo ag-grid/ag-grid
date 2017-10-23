@@ -100,7 +100,7 @@ export class SortController {
             result = sortingOrder[currentIndex + 1];
         }
 
-        // verify the sort type exists, as the user could provide the sortOrder, need to make sure it's valid
+        // verify the sort type exists, as the user could provide the sortingOrder, need to make sure it's valid
         if (SortController.DEFAULT_SORTING_ORDER.indexOf(result) < 0) {
             console.warn('ag-grid: invalid sort type ' + result);
             return null;

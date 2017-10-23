@@ -1,0 +1,142 @@
+@import './ag-theme-common';
+
+$clouds: #F7F9F9;
+$concrete: #95a5a6;
+$silver: #bdc3c7;
+$asbestos: #7f8c8d;
+$midnight-blue: #2c3e50;
+$peter-river: #3498db;
+
+// opacity values used for black values, taken from material spec
+$foreground-opacity: 1 !default;
+$secondary-foreground-color-opacity: 1 !default;
+$disabled-forergound-color-opacity: 1 !default;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// The variables below can be overriden to adjust the look up to the app color scheme
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Sizing
+$grid-size: 4px !default;
+$icon-size: 14px !default;
+$header-height: $grid-size * 7 !default;
+$row-height: $grid-size * 7 !default;
+$cell-horizontal-padding: $grid-size * 3;
+$virtual-item-height: $grid-size * 5;
+$header-icon-size: 14px;
+
+// Icons
+$icons-path: './material-icons/' !default;
+
+// Fonts
+$font-family: 'Lucida Grande', sans-serif !default;
+$font-size: 11px !default;
+$font-weight: 400 !default;
+
+$secondary-font-family: $font-family;
+$secondary-font-size: 11px !default;
+$secondary-font-weight: 700 !default;
+
+// Colors
+//
+$black: $midnight-blue;
+$foreground-color: rgba($black, $foreground-opacity) !default;
+$secondary-foreground-color: rgba($black, $secondary-foreground-color-opacity) !default;
+$disabled-forergound-color: rgba($black, $disabled-forergound-color-opacity) !default;
+
+$border-color: $silver !default;
+
+$primary-color: $peter-river !default;
+
+$accent-color: $peter-river !default;
+
+$background-color: white !default;
+
+$editor-background-color: $clouds !default;
+
+$header-background-color: $clouds !default;
+$panel-background-color: $clouds !default;
+
+$tool-panel-background-color: #FBFCFC !default;
+
+$chip-background-color: #ECF0F1 !default;
+
+$range-selection-background-color: $peter-river !default; // this should be pink, but indigo looks better
+$range-selection-highlight-color: $peter-river !default;
+
+$hover-color: $clouds !default;
+
+$selected-color: #F0F3F4 !default;
+
+$cell-data-changed-color: white !default;
+
+// Misc 
+$transition-speed: 120ms !default;
+$card-shadow: none;
+$card-radius: 0;
+
+$params: (
+    // sizing
+    grid-size: $grid-size,
+    icon-size: $icon-size,
+    header-icon-size: $header-icon-size,
+    row-height: $row-height,
+    header-height: $header-height,
+    virtual-item-height: $virtual-item-height,
+    rich-select-item-height: $row-height,
+    cell-horizontal-padding: $cell-horizontal-padding,
+
+    icons-path: $icons-path,
+
+    font-family: $font-family,
+    font-size: $font-size,
+    font-weight: $font-weight,
+
+    secondary-font-family: $secondary-font-family,
+    secondary-font-size: $secondary-font-size,
+    secondary-font-weight: $secondary-font-weight,
+
+    foreground-color: $foreground-color,
+    foreground-opacity: $foreground-opacity,
+
+    secondary-foreground-color-opacity: $secondary-foreground-color-opacity,
+    secondary-foreground-color: $secondary-foreground-color,
+
+    disabled-forergound-color-opacity: $disabled-forergound-color-opacity,
+    disabled-forergound-color: $disabled-forergound-color,
+
+    background-color: $background-color,
+    border-color: $border-color,
+
+    button-background-color: transparent,
+
+    cell-data-changed-color: $cell-data-changed-color,
+
+    chip-background-color: $chip-background-color,
+
+    editor-background-color-color: $editor-background-color,
+
+    range-selection-background-color: $range-selection-background-color,
+    range-selection-highlight-color: $range-selection-highlight-color,
+
+    header-background-color: $header-background-color,
+
+    panel-background-color: $panel-background-color,
+
+    tool-panel-background-color: $tool-panel-background-color,
+
+    accent-color: $accent-color,
+    primary-color: $primary-color,
+    hover-color: $hover-color,
+    selected-color: $selected-color,
+
+    icon-opacity: $foreground-opacity,
+    button-text-transform: uppercase,
+    card-radius: $card-radius,
+    card-shadow: $card-shadow,
+    input-height: $grid-size * 4,
+);
+
+.ag-theme-fresh {
+    @include ag-grid-theme($params);
+}
