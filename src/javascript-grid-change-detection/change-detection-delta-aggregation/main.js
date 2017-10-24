@@ -105,7 +105,7 @@ var gridOptions = {
 };
 
 function updateOneRecord() {
-    var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridOptions);
+    var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridOptions.api);
 
     var randomValue = createRandomNumber();
     var randomColumnId = pickRandomColumn();
@@ -124,14 +124,14 @@ function createRandomNumber() {
     return Math.floor(Math.random() * 100);
 }
 
-function pickExistingRowItemAtRandom(gridOptions) {
-    var rowNode = pickExistingRowNodeAtRandom(gridOptions);
+function pickExistingRowItemAtRandom(gridApi) {
+    var rowNode = pickExistingRowNodeAtRandom(gridApi);
     return rowNode ? rowNode.data : null;
 }
 
-function pickExistingRowNodeAtRandom(gridOptions) {
+function pickExistingRowNodeAtRandom(gridApi) {
     var allItems = [];
-    gridOptions.api.forEachLeafNode(function(rowNode) {
+    gridApi.forEachLeafNode(function(rowNode) {
         allItems.push(rowNode);
     });
 
@@ -144,7 +144,7 @@ function pickExistingRowNodeAtRandom(gridOptions) {
 }
 
 function updateUsingTransaction() {
-    var itemToUpdate = pickExistingRowItemAtRandom(gridOptions);
+    var itemToUpdate = pickExistingRowItemAtRandom(gridOptions.api);
     if (!itemToUpdate) {
         return;
     }
@@ -164,7 +164,7 @@ function updateUsingTransaction() {
 }
 
 function removeUsingTransaction() {
-    var itemToRemove = pickExistingRowItemAtRandom(gridOptions);
+    var itemToRemove = pickExistingRowItemAtRandom(gridOptions.api);
     if (!itemToRemove) {
         return;
     }
@@ -194,7 +194,7 @@ function addUsingTransaction() {
 }
 
 function changeGroupUsingTransaction() {
-    var itemToUpdate = pickExistingRowItemAtRandom(gridOptions);
+    var itemToUpdate = pickExistingRowItemAtRandom(gridOptions.api);
     if (!itemToUpdate) {
         return;
     }
