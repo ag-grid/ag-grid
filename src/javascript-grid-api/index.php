@@ -102,8 +102,11 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>getSelectedNodes()</th>
-            <td>Returns a list of selected nodes. Getting the underlying node (rather than the data) is useful
-                when working with tree / aggregated data, as the node can be traversed.</td>
+            <td>Returns a list of selected nodes. Getting the underlying node (rather than the data) is useful when working
+                with tree / aggregated data, as the node can be traversed. Note that when using Tree Data 'Filler' groups
+                will not be returned. See <a href="../javascript-grid-tree-data/#selection">Tree Data Selection</a> for
+                more details.
+            </td>
         </tr>
         <tr>
             <th>getSelectedRows()</th>

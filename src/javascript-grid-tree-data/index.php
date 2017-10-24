@@ -241,7 +241,7 @@ var rowData = [
         row group in the tool panel) will be disabled.
     </p>
 
-    <h2>Child Counts</h2>
+    <h2 id="child-counts">Child Counts</h2>
 
     <p>
         If you are showing child counts for the groups, then the child count is a count of all children and grand children.
@@ -249,7 +249,7 @@ var rowData = [
         in tree data, all group children are also counted.
     </p>
 
-    <h2>Selection</h2>
+    <h2 id="selection">Selection</h2>
 
     <p>
         There are currently a few difference with selection of groups when using Tree Data:
