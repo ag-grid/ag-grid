@@ -793,3 +793,13 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
         @include icon-background('#{$icon}');
     }
 }
+
+.loading-filter {
+    position: absolute;
+    height: 100%;
+    top: 34px;
+    background-color: #e6e6e6;
+    z-index: 1;
+    width: 100%;
+    padding: 5px;
+}
