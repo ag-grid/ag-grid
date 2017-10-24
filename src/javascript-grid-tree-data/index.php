@@ -11,11 +11,12 @@ include '../documentation-main/documentation_header.php';
     <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Tree Data</h1>
 
     <p>
-        Tree Data contains pre-defined grouping and is typically preferred when data should be displayed at group levels.
+        Use Tree Data to display data that has parent / child relationships where the parent / child relationships are
+        provided as part of the data. For example, a folder can contain zero or more files and other folders.
     </p>
 
     </p>
-        This section introduces simple ways to work with Tree Data before covering more advanced uses.
+        This section introduces simple ways to work with Tree Data before covering more advanced use cases.
     </p>
 
     <note>

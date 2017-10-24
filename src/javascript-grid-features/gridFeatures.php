@@ -539,12 +539,6 @@ to have to scroll. Pagination allows viewing rows one page at a time.',
     ...
 }');
 
-gridFeature(true, 'Tree Data', '../javascript-grid-tree-data/', 'treeData.gif',
-    'Use <span class="feature-highlight">Tree Data</span> to display data that has parent / child
-relationships where the parent / child relationships are provided as part of the data. For example, 
-a folder can contain zero or more files and other folders.',
-    null);
-
 gridFeature(false, 'Updating Data', '../javascript-grid-data-update/', 'dataUpdate.gif',
     'Data can be <span class="feature-highlight">updated in real time</span>. The grid can highlight
 the change by flashing the cells or by animation inside the cell as the cell refreshes.',
@@ -654,16 +648,6 @@ visible on the screen.',
 
 ?>
 
-<div class="feature-item">
-    <h2 class="feature-title">
-        <img src="../images/enterprise_50.png" class="feature-enterprise-image"/>
-        <a href="../javascript-grid-data-functions/">Data Functions</a>
-    </h2>
-    <div class="feature-description">
-        <span class="feature-highlight">Data Functions</span> allow you to manipulate the data using
-        <span class="feature-highlight">Grouping</span>, <span class="feature-highlight">Aggregation</span>
-        and <span class="feature-highlight">Pivoting</span>.
-    </div>
 
     <div class="full-width-child-features">
     <?php
@@ -676,6 +660,12 @@ of their choice and have it grouped on the fly.',
     {field: \'sport\'},
     ...
 ]');
+
+    gridFeature(true, 'Tree Data', '../javascript-grid-tree-data/', 'treeData.gif',
+        'Use <span class="feature-highlight">Tree Data</span> to display data that has parent / child
+relationships where the parent / child relationships are provided as part of the data. For example, 
+a folder can contain zero or more files and other folders.',
+        null);
 
     gridFeature(true, 'Aggregation', '../javascript-grid-aggregation/', 'aggregation.gif',
         'When grouping you can also do <span class="feature-highlight">Aggregation</span> to get aggregate
@@ -697,8 +687,6 @@ similar to Pivot Tables in Excel.',
 ]');
     ?>
 
-    </div>
-</div>
 
 <?php
 
