@@ -29,6 +29,12 @@ gridOptions.columnDefs = [
 ];</snippet>
     </p>
 
+    <note>
+        To allow a column to be grouped when using the <a href="../javascript-grid-tool-panel/">Tool Panel</a>
+        set <code>enableRowGroup=true</code> on the required columns. Otherwise you won't be able to drag
+        and drop the columns to the grouping drop zone from the Tool Panel.
+    </note>
+
     <h2 id="auto-column-group">Auto Column Group</h2>
 
     <p>
@@ -649,7 +655,6 @@ coldefs:[
     <note>Remember these examples are achieving the same that you can achieve with
         the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases
         and for backwards compatibility for when we only supported this style of configuration.</note>
-
 
     <h2>Grid Grouping Properties</h2>
     <p>

@@ -65,6 +65,12 @@ include '../documentation-main/documentation_header.php';
         (ie you are not providing your own aggregation function).
     </p>
 
+    <note>
+        Remember to mark the column definitions with <code>enableRowGroup</code> for grouping, <code>enablePivot</code>
+        for pivoting and <code>enableValue</code> for aggregation. Otherwise you won't be able to drag and drop the
+        columns to the desired sections from the Tool Panel.
+    </note>
+
     <h3 id="stylingToolPanel">Styling Columns in Tool Panel</h3>
 
     <p>

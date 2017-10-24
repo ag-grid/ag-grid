@@ -110,6 +110,12 @@ colDef = {
 
     <?= example('Built-In Functions', 'built-in-functions', 'generated', array("enterprise" => 1)) ?>
 
+    <note>
+        Remember to mark value columns with <code>enableValue=true</code> when using the <a href="../javascript-grid-tool-panel/">Tool Panel</a>.
+        Otherwise you won't be able to drag and drop them to the 'Values' section in the Tool Panel.
+    </note>
+
+
     <h3 id="custom-aggregation-functions">Example 2 - Custom Aggregation Functions</h3>
 
     <p>

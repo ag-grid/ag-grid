@@ -33,6 +33,12 @@ include '../documentation-main/documentation_header.php';
         If pivot mode is off, then adding or removing pivot columns will have no effect.
     </p>
 
+    <note>
+        To allow a column to be used as pivot column via the <a href="../javascript-grid-tool-panel/">Tool Panel</a>,
+        set <code>enablePivot=true</code> on the required columns. Otherwise you won't be able to drag
+        and drop the columns to the pivot drop zone from the Tool Panel.
+    </note>
+
     <h2>Specifying Pivot Columns</h2>
 
     <p>
