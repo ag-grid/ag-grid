@@ -35,7 +35,7 @@ var gridOptions = {
     },
     onGridReady: function(params) {
         // we could also register functions after the grid is created,
-        // however because we are providing the columns in the gridOptions,
+        // however because we are providing the columns in the grid options,
         // it will be to late (eg remove 'xyz' from aggFuncs, and you will
         // see the grid complains.
         params.api.addAggFunc('xyz', xyzFunc);

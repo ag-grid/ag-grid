@@ -36,6 +36,7 @@ function onGridReadyTemplate(readyCode: string, resizeToFit: boolean) {
 }
 
 const toInput = property => `[${property.name}]="${property.name}"`;
+const toConst = property => `[${property.name}]="${property.value}"`;
 
 const toOutput = event => `(${event.name})="${event.handlerName}($event)"`;
 
@@ -57,11 +58,22 @@ function appComponentTemplate(bindings) {
         imports.push('import "ag-grid-enterprise";');
     }
 
-    const propertyAttributes = bindings.properties.map(toInput);
+    const propertyAttributes =[];
+    const propertyVars =[];
+    const propertyAssignments =[];
 
-    const propertyVars = bindings.properties.map(toMember);
-
-    const propertyAssignments = bindings.properties.map(toAssignment);
+    bindings.properties.forEach( property => {
+        if (property.value === 'null') {
+            return;
+        }
+        if (property.value === 'true' || property.value === 'false') {
+            propertyAttributes.push(toConst(property));
+        } else {
+            propertyAttributes.push(toInput(property));
+            propertyVars.push(toMember(property));
+            propertyAssignments.push(toAssignment(property));
+        }
+    });
 
     const eventAttributes = bindings.eventHandlers.filter(event => event.name != 'onGridReady').map(toOutput);
 

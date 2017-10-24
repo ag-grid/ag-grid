@@ -1,5 +1,3 @@
-var gridOptions;
-
 function createImageSpan(imageMultiplier, image) {
     var resultElement = document.createElement("span");
     for (var i = 0; i < imageMultiplier; i++) {
@@ -79,7 +77,7 @@ function daysSunshineRenderer(params) {
 }
 
 /**
- *  Cell Renderer by Property (using the gridOptions parameter)
+ *  Cell Renderer by Property (using the grid options parameter)
  */
 function rainPerTenMmRenderer(params) {
     var rainPerTenMm = params.value / 10;
@@ -135,7 +133,7 @@ var columnDefs = [
     }
 ];
 
-gridOptions = {
+var gridOptions = {
     columnDefs: columnDefs,
     rowData: null
 };

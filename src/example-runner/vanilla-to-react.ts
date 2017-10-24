@@ -3,8 +3,21 @@ import styleConvertor from './lib/convert-style-to-react';
 
 function indexTemplate(bindings) {
     const imports = [];
-    const propertyAssignments = bindings.properties.map(property => `${property.name}: ${property.value}`);
-    const componentAttributes = bindings.properties.map(property => `${property.name}={this.state.${property.name}}`);
+    const propertyAssignments = [];
+    const componentAttributes = [];
+
+    bindings.properties.forEach( property => {
+        if (property.value === 'null') {
+            return;
+        }
+        if (property.value === 'true' || property.value === 'false') {
+            componentAttributes.push( `${property.name}={${property.value}}`);
+        } else {
+            propertyAssignments.push( `${property.name}: ${property.value}`);
+            componentAttributes.push( `${property.name}={this.state.${property.name}}`);
+        }
+    });
+
     const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={this.${event.handlerName}.bind(this)}`);
 
     componentAttributes.push('onGridReady={this.onGridReady.bind(this)}');

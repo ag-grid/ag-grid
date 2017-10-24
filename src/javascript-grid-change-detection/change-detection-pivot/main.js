@@ -66,7 +66,7 @@ function pivotMode() {
 }
 
 function updateOneRecord() {
-    var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridOptions);
+    var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridOptions.api);
     var randomValue = createNewRandomScore(rowNodeToUpdate.data);
     console.log('updating points to ' + randomValue + ' on ', rowNodeToUpdate.data);
     rowNodeToUpdate.setDataValue('points', randomValue);
@@ -85,9 +85,9 @@ function createRandomNumber() {
     return Math.floor(Math.random() * 100);
 }
 
-function pickExistingRowNodeAtRandom(gridOptions) {
+function pickExistingRowNodeAtRandom(gridApi) {
     var allItems = [];
-    gridOptions.api.forEachLeafNode(function(rowNode) {
+    gridApi.forEachLeafNode(function(rowNode) {
         allItems.push(rowNode);
     });
 
@@ -99,13 +99,13 @@ function pickExistingRowNodeAtRandom(gridOptions) {
     return result;
 }
 
-function pickExistingRowItemAtRandom(gridOptions) {
-    var rowNode = pickExistingRowNodeAtRandom(gridOptions);
+function pickExistingRowItemAtRandom(gridApi) {
+    var rowNode = pickExistingRowNodeAtRandom(gridApi);
     return rowNode ? rowNode.data : null;
 }
 
 function updateUsingTransaction() {
-    var itemToUpdate = pickExistingRowItemAtRandom(gridOptions);
+    var itemToUpdate = pickExistingRowItemAtRandom(gridOptions.api);
     if (!itemToUpdate) {
         return;
     }
@@ -157,7 +157,7 @@ function removePhysics() {
 }
 
 function moveCourse() {
-    var item = pickExistingRowItemAtRandom(gridOptions);
+    var item = pickExistingRowItemAtRandom(gridOptions.api);
     if (!item) {
         return;
     }
