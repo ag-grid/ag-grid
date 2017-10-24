@@ -1,6 +1,6 @@
 /**
  * WEB ANGULAR VERSION
- * (based on systemjs.config.js in angular.io)
+ * (based on systemjs.config.js from the angular tutorial - https://angular.io/tutorial)
  * System configuration for Angular samples
  * Adjust as necessary for your application needs.
  */

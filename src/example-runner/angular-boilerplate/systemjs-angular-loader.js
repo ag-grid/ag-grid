@@ -1,3 +1,9 @@
+/**
+ * WEB ANGULAR VERSION
+ * (based on systemjs.config.js from the angular tutorial - https://angular.io/tutorial)
+ * System configuration for Angular samples
+ * Adjust as necessary for your application needs.
+ */
 var templateUrlRegex = /templateUrl\s*:(\s*['"`](.*?)['"`]\s*)/gm;
 var stylesRegex = /styleUrls *:(\s*\[[^\]]*?\])/g;
 var stringRegex = /(['`"])((?:[^\\]\\\1|.)*?)\1/g;
