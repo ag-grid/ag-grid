@@ -135,6 +135,38 @@ columnDefinition = {
 
     <?= example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1)) ?>
 
+    <h3 id="sortingSetFilter">Asynchronous Values</h3>
+
+    <p>
+        In addition to being able to specify a hardcoded list of values for your setFilter, you can provide a callback
+        to load the values asynchronoursly. The callback receives a parameter object. This parameter object has
+        a <code>success</code> callback function that you can callback as soon as the values for the setFilter are ready.
+    </p>
+
+    <p>
+        This can be observed in the next example. Note that:
+        <ul>
+            <li><code>colDef.filterParams.values</code> specifies the values for the set filter in a callback and introduces a 5 second delay</li>
+<snippet>
+    filterParams: {
+        values: (params)=>{
+            setTimeout(()=>{
+                params.success(['value 1', 'value 2'])
+            }, 5000)
+        }
+    }</snippet>
+            <li>While the data is obtained, (the 5s delay), the setFilter is showing a loading message</li>
+            <li>The loading message can be configured, check our <a href="../javascript-grid-internationalisation/">
+                    internationalisation docs</a>. The key for this string is <code>loadingOoo</code></li>
+            <li>The callback is only invoked the first time the filter is opened. The next time the filter is opened
+            the values should be populated immediately</li>
+        </ul>
+
+    </p>
+
+
+    <?= example('Callback/Async', 'callback-async', 'generated', array("enterprise" => 1)) ?>
+
     <h3 id="sortingSetFilter">Sorting And Formatting Set Filter Values List</h3>
 
     <p>
@@ -225,6 +257,7 @@ countryFilterComponent.onFilterChanged()</snippet>
         <li><b>getUniqueValue(index)</b>: Returns the unique value at the given index</li>
         <li><b>setFilterValues(arrayOfStringOptions)</b>: Useful if you want to change on the fly the available options
         <li><b>resetFilterValues()</b>: Useful if you want to rebuild the filter options based on the underlying data</li>
+        <li><b>onIsLoading(loading)</b>: Useful if you want to show/hide the loading overlay in the set filter.</li>
     </ul>
     </p>
 
