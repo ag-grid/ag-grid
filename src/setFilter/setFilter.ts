@@ -5,9 +5,10 @@ import {
     IDoesFilterPassParams,
     ISetFilterParams,
     QuerySelector,
-    Utils
+    Utils,
+    RefSelector
 } from "ag-grid/main";
-import {SetFilterModel} from "./setFilterModel";
+import {SetFilterModel, SetFilterModelValuesType} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
 
@@ -21,23 +22,25 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     private eSelectAllContainer: HTMLElement;
     @QuerySelector('.ag-filter-filter')
     private eMiniFilter: HTMLInputElement;
+    @RefSelector('ag-filter-loading')
+    private eFilterLoading: HTMLInputElement;
 
 
     private virtualList: VirtualList;
-    private debounceFilterChanged:()=>void;
+    private debounceFilterChanged: () => void;
 
     private eCheckedIcon: HTMLElement;
     private eUncheckedIcon: HTMLElement;
     private eIndeterminateCheckedIcon: HTMLElement;
 
     private selected: boolean = true;
-    
+
     constructor() {
         super();
     }
 
-    public customInit ():void{
-        let changeFilter:()=>void= ()=>{
+    public customInit(): void {
+        let changeFilter: () => void = () => {
             this.onFilterChanged();
         };
         let debounceMs: number = this.filterParams && this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 0;
@@ -50,22 +53,25 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
     }
 
-    private updateCheckboxIcon (){
-        if (this.eSelectAll.children){
-            for (let i=0; i<this.eSelectAll.children.length; i++){
+    private updateCheckboxIcon() {
+        if (this.eSelectAll.children) {
+            for (let i = 0; i < this.eSelectAll.children.length; i++) {
                 this.eSelectAll.removeChild(this.eSelectAll.children.item(i));
             }
         }
 
-        if (this.eSelectAll.indeterminate){
+        if (this.eSelectAll.indeterminate) {
             this.eSelectAll.appendChild(this.eIndeterminateCheckedIcon);
-        }else if (this.eSelectAll.checked){
+        } else if (this.eSelectAll.checked) {
             this.eSelectAll.appendChild(this.eCheckedIcon);
-        }else{
+        } else {
             this.eSelectAll.appendChild(this.eUncheckedIcon);
         }
     }
 
+    public onIsLoading (loading:boolean):void{
+        _.setVisible(this.eFilterLoading, loading);
+    }
 
     public initialiseFilterBodyUi(): void {
         this.virtualList = new VirtualList();
@@ -77,7 +83,15 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
 
-        this.model = new SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting);
+        this.model = new SetFilterModel(
+            this.filterParams.colDef,
+            this.filterParams.rowModel,
+            this.filterParams.valueGetter,
+            this.filterParams.doesRowPassOtherFilter,
+            this.filterParams.suppressSorting,
+            this.setFilterValues.bind(this),
+            this.onIsLoading.bind(this)
+        );
         this.virtualList.setModel(new ModelWrapper(this.model));
         _.setVisible(<HTMLElement>this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
 
@@ -95,7 +109,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         return [from];
     }
 
-    public refreshFilterBodyUi ():void{
+    public refreshFilterBodyUi(): void {
 
     }
 
@@ -105,7 +119,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.context.wireBean(listItem);
         listItem.setSelected(this.model.isValueSelected(value));
 
-        listItem.addEventListener(SetFilterListItem.EVENT_SELECTED, ()=> {
+        listItem.addEventListener(SetFilterListItem.EVENT_SELECTED, () => {
             this.onItemSelected(value, listItem.isSelected())
         });
 
@@ -114,7 +128,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state
-    public afterGuiAttached(params: any): void  {
+    public afterGuiAttached(params: any): void {
         this.virtualList.refresh();
         this.eMiniFilter.focus();
     }
@@ -136,7 +150,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
         let value = this.filterParams.valueGetter(params.node);
         if (this.filterParams.colDef.keyCreator) {
-            value = this.filterParams.colDef.keyCreator( {value: value} );
+            value = this.filterParams.colDef.keyCreator({value: value});
         }
         value = Utils.makeNull(value);
 
@@ -166,15 +180,18 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
      * Public method provided so the user can change the value of the filter once
      * the filter has been already started
      * @param options The options to use.
+     * @param selectAll If by default all the values should be selected.
      */
-    public setFilterValues (options:string[]): void{
+    public setFilterValues(options: string[], selectAll:boolean = false): void {
         let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
-        let isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
+        let isSelectAll = selectAll  || (this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate);
 
-        this.model.setUsingProvidedSet(true);
+        this.model.setUsingProvidedSet(SetFilterModelValuesType.PROVIDED_LIST);
         this.model.refreshValues(options, keepSelection, isSelectAll);
         this.updateSelectAll();
+        options.forEach(option=>this.model.selectValue(option));
         this.virtualList.refresh();
+        this.debounceFilterChanged();
     }
 
     //noinspection JSUnusedGlobalSymbols
@@ -182,8 +199,8 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
      * Public method provided so the user can reset the values of the filter once that it has started
      * @param options The options to use.
      */
-    public resetFilterValues (): void{
-        this.model.setUsingProvidedSet (false);
+    public resetFilterValues(): void {
+        this.model.setUsingProvidedSet(SetFilterModelValuesType.NOT_PROVIDED);
         this.onNewRowsLoaded();
     }
 
@@ -195,7 +212,8 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     public bodyTemplate() {
         let translate = this.translate.bind(this);
 
-        return `<div>
+        return `<div ref="ag-filter-loading" class="loading-filter ag-hidden">${translate('loadingOoo')}</div>
+                <div>
                     <div class="ag-filter-header-container" id="ag-mini-filter">
                         <input class="ag-filter-filter" type="text" placeholder="${translate('searchOoo')}"/>
                     </div>
@@ -232,6 +250,10 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     private onSelectAll(event: Event) {
         _.addAgGridEventPath(event);
         this.eSelectAll.checked = !this.eSelectAll.checked;
+        this.doSelectAll();
+    }
+
+    private doSelectAll(): void {
         let checked = this.eSelectAll.checked;
         if (checked) {
             this.model.selectEverything();
@@ -308,7 +330,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         return this.model.getUniqueValue(index);
     }
 
-    public serialize():string[] {
+    public serialize(): string[] {
         return this.model.getModel();
     }
 
@@ -318,7 +340,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.virtualList.refresh();
     }
 
-    public resetState (){
+    public resetState() {
         this.setMiniFilter(null);
         this.model.setModel(null, true);
         this.selectEverything();
@@ -327,10 +349,13 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 }
 
 class ModelWrapper implements VirtualListModel {
-    constructor(private model: SetFilterModel) {}
+    constructor(private model: SetFilterModel) {
+    }
+
     public getRowCount(): number {
         return this.model.getDisplayedValueCount();
     }
+
     public getRow(index: number): any {
         return this.model.getDisplayedValue(index);
     }

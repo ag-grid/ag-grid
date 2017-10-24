@@ -4,11 +4,16 @@ import {ISetFilterParams} from "ag-grid/main";
 import {TextFormatter} from "ag-grid/main";
 import {TextFilter} from "ag-grid/main";
 import {InMemoryRowModel, IRowModel, Constants} from 'ag-grid';
+import {SetFilterValuesFunc} from "ag-grid/main";
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
 // storing null values.
 const NULL_VALUE = '___NULL___';
+
+export enum SetFilterModelValuesType {
+    PROVIDED_LIST, PROVIDED_CB, NOT_PROVIDED
+}
 
 export class SetFilterModel {
 
@@ -29,26 +34,40 @@ export class SetFilterModel {
     // to make code more readable, we work these out once, and
     // then refer to each time. both are derived from the filterParams
     private showingAvailableOnly: boolean;
-    private usingProvidedSet: boolean;
+    private usingProvidedSet: SetFilterModelValuesType;
 
     private doesRowPassOtherFilters: any;
+    private _onModelUpdated: (values: string[]) => void;
+    private _onIsLoading: (loading: boolean) => void;
 
-    constructor(colDef: ColDef, rowModel: IRowModel, valueGetter: any, doesRowPassOtherFilters: any, suppressSorting: boolean) {
+    constructor(
+        colDef: ColDef,
+        rowModel: IRowModel,
+        valueGetter: any,
+        doesRowPassOtherFilters: any,
+        suppressSorting: boolean,
+        onModelUpdated: (values:string[])=>void,
+        onIsLoading: (loading:boolean)=>void
+    ) {
         this.suppressSorting = suppressSorting;
         this.colDef = colDef;
         this.valueGetter = valueGetter;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
+        this._onModelUpdated = onModelUpdated;
+        this._onIsLoading = onIsLoading;
 
         if (rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             this.inMemoryRowModel = <InMemoryRowModel> rowModel;
         }
 
         this.filterParams = this.colDef.filterParams ? <ISetFilterParams> this.colDef.filterParams : <ISetFilterParams>{};
-        if (Utils.exists(this.filterParams)) {
-            this.usingProvidedSet = Utils.exists(this.filterParams.values);
+        if (Utils.exists(this.filterParams) && Utils.exists(this.filterParams.values)) {
+            this.usingProvidedSet =  Array.isArray(this.filterParams.values)?
+                                        SetFilterModelValuesType.PROVIDED_LIST :
+                                        SetFilterModelValuesType.PROVIDED_CB;
             this.showingAvailableOnly = this.filterParams.suppressRemoveEntries!==true;
         } else {
-            this.usingProvidedSet = false;
+            this.usingProvidedSet = SetFilterModelValuesType.NOT_PROVIDED;
             this.showingAvailableOnly = true;
         }
 
@@ -107,11 +126,28 @@ export class SetFilterModel {
     }
 
     private createAllUniqueValues() {
-        let valuesToUse: string[] = this.extractValuesToUse();
-        this.setValues(valuesToUse);
+        if (this.areValuesSync()) {
+            let valuesToUse: string[] = this.extractSyncValuesToUse();
+            this.setValues(valuesToUse);
+        } else {
+            this._onIsLoading(true);
+            this.setValues([]);
+            let callback:SetFilterValuesFunc = <SetFilterValuesFunc>this.filterParams.values;
+            let onReady:(values:string[])=>void = (values)=>{
+                this._onModelUpdated(values);
+                this._onIsLoading(false);
+            };
+            callback({
+                success:onReady
+            });
+        }
     }
 
-    public setUsingProvidedSet (value:boolean){
+    private areValuesSync() {
+        return this.usingProvidedSet == SetFilterModelValuesType.PROVIDED_LIST || this.usingProvidedSet == SetFilterModelValuesType.NOT_PROVIDED;
+    }
+
+    public setUsingProvidedSet (value:SetFilterModelValuesType){
         this.usingProvidedSet = value;
     }
 
@@ -122,10 +158,12 @@ export class SetFilterModel {
         }
     }
 
-    private extractValuesToUse() {
+    private extractSyncValuesToUse() {
         let valuesToUse: string[];
-        if (this.usingProvidedSet) {
-            valuesToUse = Utils.toStrings(this.filterParams.values);
+        if (this.usingProvidedSet == SetFilterModelValuesType.PROVIDED_LIST) {
+            valuesToUse = Utils.toStrings(<string[]>this.filterParams.values);
+        } else if (this.usingProvidedSet == SetFilterModelValuesType.PROVIDED_CB){
+            throw Error (`ag-grid: Error extracting values to use. We should not extract the values synchronously when using a callback for the filterParams.values`);
         } else {
             let uniqueValuesAsAnyObjects = this.getUniqueValues(false);
             valuesToUse = Utils.toStrings(uniqueValuesAsAnyObjects);
@@ -134,7 +172,7 @@ export class SetFilterModel {
     }
 
     private createAvailableUniqueValues() {
-        let dontCheckAvailableValues = !this.showingAvailableOnly || this.usingProvidedSet;
+        let dontCheckAvailableValues = !this.showingAvailableOnly || this.usingProvidedSet == SetFilterModelValuesType.PROVIDED_LIST  || this.usingProvidedSet == SetFilterModelValuesType.PROVIDED_CB;
         if (dontCheckAvailableValues) {
             this.availableUniqueValues = this.allUniqueValues;
             return;
