@@ -20,41 +20,41 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        How Tree Data is managed in ag-Grid was changed in ag-Grid v14.
-        The old way was part of ag-Grid free, the new way is part of ag-Grid Enterprise.
-        The old way is deprecated but for the purposes of backwards compatibility and supporting ag-Grid Free users
-        you can still use it, but we will not be enhancing or bug fixing the old way.
-        For documentation on the older version of
-        the grid prior to v14 see <a href="../javascript-grid-tree">Tree Data (Legacy)</a>.
+        How Tree Data is managed in ag-Grid was changed in ag-Grid v14. This page presents the new way of working with Tree Data.
+        The old way was part of ag-Grid free, the new way is part of ag-Grid Enterprise. The old way is deprecated but you
+        can still use it, but we will not be enhancing it. For documentation on the older version of the grid prior to v14
+        see <a href="../javascript-grid-tree">Tree Data (Legacy)</a>.
     </note>
 
     <h2 id="tree-data-mode">Tree Data Mode</h2>
 
     <p>
-        In order to set the grid to work with Tree Data, simply enable Tree Data mode via the Grid Options using: <code>gridOptions.treeData = true</code>.
+        In order to set the grid to work with Tree Data, simply enable Tree Data mode via the Grid Options using:
+        <code>gridOptions.treeData = true</code>.
     </p>
 
     <h2 id="supplying-tree-data">Supplying Tree Data</h2>
 
     <p>
-       When providing Tree Data to the grid it should be supplied as an array of objects in the same way as non grouped
-       row data. However Tree Data differs in that it captures a path (or hierarchy) for each object. This is shown in
-       the code snippet below:
-    </p>
-        <snippet>
-var rowData = [
+       When providing Tree Data to the grid, it should be supplied as an array of objects in the same way as non grouped
+       row data:
+    <p>
+
+<snippet>
+    var rowData = [
     {orgHierarchy: ['Erica'], jobTitle: "CEO", employmentType: "Permanent"},
     {orgHierarchy: ['Erica', 'Malcolm'], jobTitle: "VP", employmentType: "Permanent"}
     ...
 ]</snippet>
 
     <p>
-        In the example above you will notice there is an object property <code>orgHierarchy</code> which represents a
-        path for each entry. In this sample we see that 'Erica' is a parent of 'Malcolm'.
+       However Tree Data differs in that it captures a path (or hierarchy) for each object. In the example above you will
+       notice there is an object property 'orgHierarchy' which represents a path for each entry where 'Erica' is a parent
+       of 'Malcolm'.
     </p>
     <p>
-        There is nothing special about the property name <code>orgHierarchy</code>
-        or the data type <code>string[]</code>. For instance the same data could be represented as follows:
+        There is nothing special about the property name 'orgHierarchy' or the data type <code>string[]</code>.
+        For example the same hierarchical information could be represented as follows:
     </p>
 
     <snippet>
@@ -82,13 +82,22 @@ getDataPath: function(data) {
     <h2 id="configuring-a-group-column">Configuring Group Column</h2>
 
     <p>
-        When the grid is working with Tree Data there is no need to explicitly specify a Column Group as the
-        grid will use the  <a href="../javascript-grid-grouping/#auto-column-group">Auto Column Group</a>.
-        However you will probably want to override some of the defaults as shown below:
+        There are two ways to configure the Group Column:
     </p>
 
-    <p>
+    <ul>
+        <li><b>Auto Column Group</b> -  this is automatically selected by the grid when in Tree Data mode, however
+        you can override the defaults. </li>
+        <li><b>Custom Column Group</b> - you can provide your own custom column group definition which gives allows
+        more control over how the Group Column is displayed.</li>
+    </ul>
 
+    <h3>Auto Column Group</h3>
+
+    <p>
+        When the grid is working with Tree Data there is no need to explicitly specify a Column Group as the grid will
+        use the  <a href="../javascript-grid-grouping/#auto-column-group">Auto Column Group</a>. However you will
+        probably want to override some of the defaults as shown below:
     </p>
 
 <snippet>
@@ -101,18 +110,30 @@ autoGroupColumnDef: {
 }
 </snippet>
 
+    <h3>Custom Column Group</h3>
+
     <p>
-        You can also configure your own Custom Column Group but note only column can be used. See <a href="../javascript-grid-grouping/#specifying-group-columns">Specifying Group Columns</a> for more details.
+        As noted above, providing your own Custom Column Group has the advantage of giving you full control over the
+        presentation of the Column Group, however it is not as convenient as using the default Auto Column Group.
     </p>
 
     <p>
-       The following example combines all the steps above to show a simplified organisational hierarchy:
+        For details on how you can provide your own Custom Group Column see: <a href="../javascript-grid-grouping/#specifying-group-columns">Specifying Group Columns</a>.
     </p>
+
 
     <note>
         It is <b>not</b> possible to have multiple group display columns for tree data like you do for row grouping.
         When doing tree data, you should only have one column for display the group.
     </note>
+
+    <h2>Example - Organisational Hierarchy</h2>
+
+    <p>
+       The following example combines all the steps above to show a simplified organisational hierarchy:
+    </p>
+
+
 
     <?= example('Org Hierarchy', 'org-hierarchy', 'generated', array("enterprise" => 1, "exampleHeight" => 375)) ?>
 
@@ -194,6 +215,17 @@ var rowData = [
     <p>
         The <a href="#example-file-browser">File Browser</a> example below demonstrates the Set Filter works with Tree Data.
     </p>
+
+
+    <h2>Example - File Browser</h2>
+
+    <p>
+        The following example presents a more complex example which includes Aggregation and Filtering:
+    </p>
+
+    <ul>
+        <li></li>
+    </ul>
 
     <?= example('File Browser', 'file-browser', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
 
