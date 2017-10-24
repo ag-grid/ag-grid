@@ -257,12 +257,10 @@ var rowData = [
             <li><code>cellRendererParams.checkbox = true</code> should be used instead of <code>gridOptions.rowSelection</code>.</li>
         </ul>
 
-
         <note>
-            When moving filler groups or groups with have child filler groups, selection will be lost as the grid does
-            not keep track of these ephemeral row nodes.
+            When moving filler groups or groups which have child filler groups under other groups, selection will be lost
+            as the grid does not keep track of these ephemeral row nodes for selection purposes.
         </note>
-
     </p>
 
 </div>
