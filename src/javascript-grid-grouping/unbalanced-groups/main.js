@@ -11,12 +11,10 @@ var rowData = [
 
     {country: 'USA', state: 'New York', city: 'New York'},
     {country: 'USA', state: 'New York', city: 'Albany'},
-    {country: 'USA', state: 'New York', city: 'Monroe'},
     {country: 'USA', state: 'New York', city: 'Onondaga'},
     {country: 'USA', state: 'New York', city: 'Westchester'},
 
     {country: 'USA', state: 'California', city: 'San Diego'},
-    {country: 'USA', state: 'California', city: 'Los Angeles'},
     {country: 'USA', state: 'California', city: 'San Francisco'}
 ];
 
@@ -26,9 +24,9 @@ rowData.forEach( function(item, i) {
 } );
 
 var columnDefs = [
-    {field: "city", cellRenderer: cityCellRenderer},
-    {field: "country", cellRenderer: countryCellRenderer},
-    {field: "state", cellRenderer: stateCellRenderer},
+    {field: "city", type: 'dimension', cellRenderer: cityCellRenderer},
+    {field: "country", type: 'dimension', cellRenderer: countryCellRenderer},
+    {field: "state", type: 'dimension', cellRenderer: stateCellRenderer, rowGroup: true},
     {field: "val1", type: 'numberValue'},
     {field: "val2", type: 'numberValue'}
 ];
@@ -36,6 +34,7 @@ var columnDefs = [
 var gridOptions = {
     rowData: rowData,
     columnDefs: columnDefs,
+    rowGroupPanelShow: 'always',
     animateRows: true,
     groupDefaultExpanded: -1,
     autoGroupColumnDef: {
@@ -44,6 +43,9 @@ var gridOptions = {
     columnTypes: {
         'numberValue': {
             enableValue: true, aggFunc: 'sum', editable: true, valueParser: numberParser
+        },
+        'dimension': {
+            enableRowGroup: true, enablePivot: true
         }
     }
 };

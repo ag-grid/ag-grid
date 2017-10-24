@@ -413,12 +413,13 @@ gridOptions.groupRowRendererParams: {
     </p>
 
     <ul>
-        <li>Notice that rows contain one of the following 'State' column values: 'New York', 'California', null.</li>
-        <li>Clicking 'Group By State' creates two groups 'New York' and 'California', whereas the rows with null values
-            are not grouped.</li>
+        <li>Notice in the Group column some of the cities are grouped by the 'States', 'New York' and 'California', whereas
+            others are not grouped by city.</li>
+        <li>Removing the 'State' group, in the top Row Group Panel, shows that the non grouped rows have <code>null</code>
+            'State' values.</li>
     </ul>
 
-    <?= example('Unbalanced Groups', 'unbalanced-groups', 'generated', array("enterprise" => 1, "exampleHeight" => 430)) ?>
+    <?= example('Unbalanced Groups', 'unbalanced-groups', 'generated', array("enterprise" => 1)) ?>
 
     <p>
         If you do not want rows with null or undefined to be left out of groups, but want
