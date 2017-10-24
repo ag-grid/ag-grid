@@ -16,14 +16,11 @@ function ngOnInitTemplate(url, callback) {
     }`;
 }
 
-function ngAfterViewInitTemplate(readyCode: string, resizeToFit: boolean) {
-    let readyMethod = '',
-        readyCall = '',
-        resize = '';
+function onGridReadyTemplate(readyCode: string, resizeToFit: boolean) {
+    let resize = '';
 
-    if (readyCode) {
-        readyMethod = `onGridReady(params) ${readyCode}`;
-        readyCall = `this.onGridReady(this.agGrid)`;
+    if (!readyCode) {
+        readyCode = '';
     }
 
     if (resizeToFit) {
@@ -31,13 +28,10 @@ function ngAfterViewInitTemplate(readyCode: string, resizeToFit: boolean) {
     }
 
     return `
-    ${readyMethod}
-
-    ngAfterViewInit() {
-        setTimeout(() => {
-            ${resize}
-            ${readyCall}
-        }, 400);
+    onGridReady(params) {
+        const gridOptions = params;
+        ${resize}
+        ${readyCode.trim().replace(/^\{|\}$/g, '')}
     }`;
 }
 
@@ -78,7 +72,9 @@ function appComponentTemplate(bindings) {
     }
 
     if (bindings.onGridReady || bindings.resizeToFit) {
-        additional.push(ngAfterViewInitTemplate(bindings.onGridReady, bindings.resizeToFit));
+        eventAttributes.push('(gridReady)="onGridReady($event)"');
+        //additional.push('onGridReady(params){ console.log(params) }');
+        additional.push(onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit));
     }
 
     const agGridTag = `<ag-grid-angular
@@ -108,12 +104,12 @@ function appComponentTemplate(bindings) {
 import { Component, ViewChild } from '@angular/core';
 ${imports.join('\n')}
 
-${bindings.utils.join('\n')}
 
 @Component({
     selector: 'my-app',
     template: \`${template}\`
 })
+
 export class AppComponent {
     @ViewChild('agGrid') agGrid;
 
@@ -129,6 +125,8 @@ export class AppComponent {
         .map(snippet => snippet.trim())
         .join('\n\n')}
 }
+
+${bindings.utils.join('\n')}
 `;
 }
 
