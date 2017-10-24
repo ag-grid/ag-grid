@@ -41,7 +41,7 @@ include '../documentation-main/documentation_header.php';
     <p>
 
 <snippet>
-    var rowData = [
+var rowData = [
     {orgHierarchy: ['Erica'], jobTitle: "CEO", employmentType: "Permanent"},
     {orgHierarchy: ['Erica', 'Malcolm'], jobTitle: "VP", employmentType: "Permanent"}
     ...
@@ -133,8 +133,6 @@ autoGroupColumnDef: {
        The following example combines all the steps above to show a simplified organisational hierarchy:
     </p>
 
-
-
     <?= example('Org Hierarchy', 'org-hierarchy', 'generated', array("enterprise" => 1, "exampleHeight" => 375)) ?>
 
     <h2 id="filler-nodes">Filler Groups</h2>
@@ -150,10 +148,10 @@ var rowData = [
     {filePath: ['Documents', 'txt']},
     {filePath: ['Documents', 'txt', 'notes.txt'], dateModified: "21 May 2017, 13:50", size: "14 KB"}
     ...
-    ]
+]
 
-    // only leaf level provided
-    var rowData = [
+// only leaf level provided
+var rowData = [
     {filePath: ['Documents', 'txt', 'notes.txt'], dateModified: "21 May 2017, 13:50", size: "14 KB"}
     ...
 ]</snippet>
