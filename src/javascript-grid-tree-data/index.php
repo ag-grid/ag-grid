@@ -224,7 +224,11 @@ var rowData = [
     </p>
 
     <ul>
-        <li></li>
+        <li><b>'Add New Group' Button</b> - will add a new group under Music.</li>
+        <li><b>'Move Selected to stuff' Button</b> - will move any non parent groups into the 'stuff' folder.</li>
+        <li><b>'Remove Selected' Button</b> - will remove selected group along with children.</li>
+        <li><b>'Files' Filter</b> - you can filter group and leaf names across the entire file tree.</li>
+        <li><b>'Size' Aggregation</b> - as you move selected items into 'stuff' you'll notice updated folder sizes.</li>
     </ul>
 
     <?= example('File Browser', 'file-browser', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
@@ -248,7 +252,14 @@ var rowData = [
     <h2>Selection</h2>
 
     <p>
-        Rob - to do - groupSelectsChildren is not supported for tree data.
+        There are currently a few difference with selection of groups when using Tree Data:
+
+        <ul>
+            <li><code>gridOptions.groupSelectsChildren</code> is not supported.</li>
+            <li><code>cellRendererParams.checkbox = true</code> should be used instead of <code>gridOptions.rowSelection</code>.</li>
+            <li><code>gridOptions.api.getSelectedNodes()</code> does not return 'Filler' groups.</li>
+        </ul>
+
     </p>
 
 </div>
