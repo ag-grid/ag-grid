@@ -403,9 +403,9 @@ gridOptions.groupRowRendererParams: {
     <h2 id="unbalanced-groups">Unbalanced Groups</h2>
 
     <p>
-        If there are rows containing null values for the column that is being grouped then these rows will not be grouped
-        as there is no value available to group by. We refer to this scenario as <i>Unbalanced Groups</i>, that is where
-        there is a mix of grouped and non-grouped rows.
+        If there are rows containing <code>null</code> or <code>undefined</code> values for the column that is being
+        grouped then these rows will not be grouped. We refer to this scenario as <i>Unbalanced Groups</i>, that is
+        where there is a mix of grouped and non-grouped rows.
     </p>
 
     <p>
@@ -419,6 +419,12 @@ gridOptions.groupRowRendererParams: {
     </ul>
 
     <?= example('Unbalanced Groups', 'unbalanced-groups', 'generated', array("enterprise" => 1, "exampleHeight" => 430)) ?>
+
+    <p>
+        If you do not want rows with null or undefined to be left out of groups, but want
+        a group created to contain these empty values, then change your data and replace the null and undefined
+        values with something (eg the string 'Empty' or a blank string ie ' ').
+    </p>
 
     <h2>Grouping API</h2>
 

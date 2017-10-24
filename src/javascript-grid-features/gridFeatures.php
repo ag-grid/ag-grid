@@ -539,9 +539,10 @@ to have to scroll. Pagination allows viewing rows one page at a time.',
     ...
 }');
 
-gridFeature(false, 'Tree Data', '../javascript-grid-tree/', 'treeData.gif',
+gridFeature(true, 'Tree Data', '../javascript-grid-tree-data/', 'treeData.gif',
     'Use <span class="feature-highlight">Tree Data</span> to display data that has parent / child
-relationships that is not balanced. For example, a file can have zero or more parent folders.',
+relationships where the parent / child relationships are provided as part of the data. For example, 
+a folder can contain zero or more files and other folders.',
     null);
 
 gridFeature(false, 'Updating Data', '../javascript-grid-data-update/', 'dataUpdate.gif',

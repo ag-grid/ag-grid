@@ -18,12 +18,14 @@ include '../documentation-main/documentation_header.php';
         This section introduces simple ways to work with Tree Data before covering more advanced uses.
     </p>
 
-
     <note>
-        This section describes the recommended approach for working with Tree Data, however if you are using
-        an older version of the grid prior to v14 see <a href="../javascript-grid-tree">Tree Data (Legacy)</a>.
+        How Tree Data is managed in ag-Grid was changed in ag-Grid v14.
+        The old way was part of ag-Grid free, the new way is part of ag-Grid Enterprise.
+        The old way is deprecated but for the purposes of backwards compatibility and supporting ag-Grid Free users
+        you can still use it, but we will not be enhancing or bug fixing the old way.
+        For documentation on the older version of
+        the grid prior to v14 see <a href="../javascript-grid-tree">Tree Data (Legacy)</a>.
     </note>
-
 
     <h2 id="tree-data-mode">Tree Data Mode</h2>
 
@@ -105,6 +107,11 @@ autoGroupColumnDef: {
     <p>
        The following example combines all the steps above to show a simplified organisational hierarchy:
     </p>
+
+    <note>
+        It is <b>not</b> possible to have multiple group display columns for tree data like you do for row grouping.
+        When doing tree data, you should only have one column for display the group.
+    </note>
 
     <?= example('Org Hierarchy', 'org-hierarchy', 'generated', array("enterprise" => 1, "exampleHeight" => 375)) ?>
 
@@ -188,6 +195,28 @@ var rowData = [
     </p>
 
     <?= example('File Browser', 'file-browser', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
+
+    <h2 id="only-one-column">Pivot and Row Grouping with Tree Data</h2>
+
+    <p>
+        It is not possible to do pivot or row grouping while using tree data. This means all the functions
+        related to pivot (eg colDef.pivot, or pivot in the tool panel) and row grouping (eg colDef.rowGroup, or
+        row group in the tool panel) will be disabled.
+    </p>
+
+    <h2>Child Counts</h2>
+
+    <p>
+        If you are showing child counts for the groups, then the child count is a count of all children and grand children.
+        This is different to <a href="../javascript-grid-grouping/">Row Grouping</a> where only leaf levels are counted,
+        in tree data, all group children are also counted.
+    </p>
+
+    <h2>Selection</h2>
+
+    <p>
+        Rob - to do - groupSelectsChildren is not supported for tree data.
+    </p>
 
 </div>
 
