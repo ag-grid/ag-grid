@@ -223,6 +223,9 @@ export class GridPanel extends BeanStub {
     private useAnimationFrame: boolean;
     private calculatedScrollWidth: number;
 
+    /**
+     * Getting scroll width is expensive. Only do it when necessary.
+     */
     get scrollWidth(): number {
         let width = this.calculatedScrollWidth || this.gridOptionsWrapper.getScrollbarWidth();
         this.calculatedScrollWidth = width;
