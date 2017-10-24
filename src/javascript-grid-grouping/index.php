@@ -477,6 +477,10 @@ rowItem = {
 }</snippet>
 
 
+    <?= example('Grouping Complex Objects with Keys', 'grouping-complex-objects', 'generated', array("enterprise" => 1)) ?>
+
+
+
     <h2 id="grouping-footers">Grouping Footers</h2>
 
     <p>
