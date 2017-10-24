@@ -77,8 +77,6 @@ import {render} from "react-dom"
 import {AgGridReact} from 'ag-grid-react';
 ${imports.join('\n')}
 
-${bindings.utils.join('\n')}
-
 class GridExample extends Component {
     constructor(props) {
         super(props);
@@ -96,7 +94,6 @@ class GridExample extends Component {
     }
 
 ${additional.concat(eventHandlers, externalEventHandlers).join('\n    ')}
-
     render() {
         return (
             <div style={{width: '100%', height: '100%' }}>
@@ -105,6 +102,8 @@ ${additional.concat(eventHandlers, externalEventHandlers).join('\n    ')}
         );
     }
 }
+
+${bindings.utils.join('\n')}
 
 render(
     <GridExample></GridExample>,

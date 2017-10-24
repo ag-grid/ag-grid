@@ -226,7 +226,6 @@ class ExampleRunner {
         this.loadingSource = true;
         this.source = this.$sce.trustAsHtml('Loading...');
 
-        console.log("Loading...", this.selectedFile)
         this.loadSource(this.selectedFile).then(source => {
             this.loadingSource = false;
             if (!this.selectedFile) {
