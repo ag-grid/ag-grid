@@ -147,8 +147,6 @@
     menuItem(0, 'Overlays', 'Overlays', 'javascript-grid-overlays/');
     menuItem(0, 'For Print', 'Layout For Print', 'javascript-grid-for-print/');
 
-//    menuItemWithIcon('enterprise.png', 0, 'Data Functions', 'Data Functions', 'javascript-grid-data-functions/');
-
     menuItemWithIcon('enterprise.png', 0, 'Row Grouping', 'Row Grouping', 'javascript-grid-grouping/');
     menuItemWithIcon('enterprise.png', 0, 'Tree Data', 'Tree Data', 'javascript-grid-tree-data/');
 
