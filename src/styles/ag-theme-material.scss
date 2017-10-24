@@ -37,6 +37,7 @@ $ag-mat-font-secondary-weight: 700 !default;
 // Theme colors
 $ag-mat-primary: $mat-indigo-500 !default;
 $ag-mat-accent: $mat-pink-A200 !default;
+$ag-mat-icon-color: black !default;
 
 // the three black shades, used for the UI
 $ag-mat-foreground: rgba(black, $ag-mat-foreground-opacity) !default;
@@ -88,7 +89,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     width: $ag-mat-icon-size;
     height: $ag-mat-icon-size;
     background-color: transparent;
-    background-image: url('#{$ag-mat-icons-path}#{$icon}.svg');
+    background-image: url('#{$ag-mat-icons-path}#{$icon}.svg?color=#{encodecolor($ag-mat-icon-color)}');
     background-position: center;
     background-repeat: no-repeat;
     background-size: $ag-mat-icon-size $ag-mat-icon-size;
