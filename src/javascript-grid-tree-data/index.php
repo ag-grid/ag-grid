@@ -257,8 +257,13 @@ var rowData = [
         <ul>
             <li><code>gridOptions.groupSelectsChildren</code> is not supported.</li>
             <li><code>cellRendererParams.checkbox = true</code> should be used instead of <code>gridOptions.rowSelection</code>.</li>
-            <li><code>gridOptions.api.getSelectedNodes()</code> does not return 'Filler' groups.</li>
         </ul>
+
+
+        <note>
+            When moving filler groups or groups with have child filler groups, selection will be lost as the grid does
+            not keep track of these ephemeral row nodes.
+        </note>
 
     </p>
 
