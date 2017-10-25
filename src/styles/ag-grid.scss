@@ -4,10 +4,10 @@
 // if we don't do this, then the width and height of the grid would be ignored,
 // as there is no default display for the element ag-grid-a2 (as it's not a natural dom element)
 ag-grid-angular {
-    display: inline-block;
+    display: block;
 }
 ag-grid-ng2 {
-    display: inline-block;
+    display: block;
 }
 ag-grid {
     display: block;
