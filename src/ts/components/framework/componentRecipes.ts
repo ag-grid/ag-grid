@@ -15,6 +15,7 @@ import {ComponentResolver} from "./componentResolver";
 import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
 import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRenderer";
 import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
+import {Promise} from "../../misc/simpleHttpRequest";
 
 
 
@@ -51,12 +52,12 @@ export class ComponentRecipes {
         return <IDateComp>this.componentResolver.createAgGridComponent(this.gridOptions, params, "dateComponent");
     }
 
-    public newHeaderComponent(params:IHeaderParams, callback: (headerComp: IHeaderComp)=>void): void {
-        this.componentResolver.createAgGridComponent_async(callback, params.column.getColDef(), params, "headerComponent");
+    public newHeaderComponent(params:IHeaderParams): Promise<IHeaderComp> {
+        return this.componentResolver.createAgGridComponent_async<IHeaderComp>(params.column.getColDef(), params, "headerComponent");
     }
 
-    public newHeaderGroupComponent(params:IHeaderGroupParams, callback: (headerGroupComp: IHeaderGroupComp)=>void): void {
-        this.componentResolver.createAgGridComponent_async(callback, params.columnGroup.getColGroupDef(), params, "headerGroupComponent");
+    public newHeaderGroupComponent(params:IHeaderGroupParams): Promise<IHeaderGroupComp> {
+        return this.componentResolver.createAgGridComponent_async(params.columnGroup.getColGroupDef(), params, "headerGroupComponent");
     }
 
     private newFloatingFilterComponent<M> (type:string, colDef:ColDef, params:IFloatingFilterParams<M, any>):IFloatingFilterComp<M, any, any>{

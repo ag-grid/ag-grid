@@ -5,6 +5,7 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColDef} from "../entities/colDef";
 import {ComponentResolver} from "../components/framework/componentResolver";
 import {_} from "../utils";
+import {Promise} from "../misc/simpleHttpRequest";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {
@@ -29,8 +30,7 @@ export class CellEditorFactory {
     //     });
     // }
 
-    public createCellEditor_async(callback: (comp: ICellEditorComp)=>void,
-                                          column:ColDef, params: ICellEditorParams): void {
+    public createCellEditor_async(column:ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
         let cellEditor:ICellEditorComp = this.componentResolver.createAgGridComponent (
             column,
             params,
@@ -48,7 +48,9 @@ export class CellEditorFactory {
             cellEditor.init(params);
         }
 
-        _.mimicAsync( ()=> callback(cellEditor) );
+        return new Promise<ICellEditorComp>( resolve => {
+            _.mimicAsync( ()=> resolve(cellEditor) );
+        });
     }
 
 }

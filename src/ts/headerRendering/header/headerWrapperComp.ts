@@ -145,7 +145,7 @@ export class HeaderWrapperComp extends Component {
 
         let callback = this.afterHeaderCompCreated.bind(this, displayName);
 
-        this.componentRecipes.newHeaderComponent(params, callback);
+        this.componentRecipes.newHeaderComponent(params).then(callback);
     }
 
     private afterHeaderCompCreated(displayName: string, headerComp: IHeaderComp): void {
