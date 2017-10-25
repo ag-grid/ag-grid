@@ -90,15 +90,16 @@ export class SetFilterListItem extends Component {
     }
 
     public render(): void {
-
         let valueElement = this.queryForHtmlElement(".ag-filter-value");
+        let valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
 
-         let valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
+        let colDef = this.column.getColDef();
+        let valueObj = {value: this.value, valueFormatted: valueFormatted};
 
-            let component = this.cellRendererService.useFilterCellRenderer(this.column.getColDef(), valueElement, {value: this.value, valueFormatted: valueFormatted});
-            if (component && component.destroy) {
-                this.addDestroyFunc( component.destroy.bind(component) );
+        let component = this.cellRendererService.useFilterCellRenderer(colDef, valueElement, valueObj);
 
+        if (component && component.destroy) {
+            this.addDestroyFunc(component.destroy.bind(component));
         }
     }
 }
