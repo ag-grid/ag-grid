@@ -7,7 +7,3 @@ src/javascript-grid-enterprise-model/click-selection/main.js
 src/javascript-grid-enterprise-model/slice-and-dice/main.js
 src/javascript-grid-filter-quick/quick-filter/main.js
 src/javascript-grid-filtering/null-filtering/main.js
-src/javascript-grid-pagination/custom-controls/main.js
-src/javascript-grid-refresh/refresh-cells/main.js
-src/javascript-grid-rtl/rtl-complex/main.js
-src/javascript-grid-value-cache/value-cache/main.js

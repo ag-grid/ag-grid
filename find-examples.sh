@@ -9,6 +9,8 @@ ag 'gridOptions' src/*/*/main.js \
     | cut -d: -f 1 | uniq \
     | grep -v angularjs \
     | grep -v tutorials \
+    | grep -v value-cache \
+    | grep -v rtl-complex \
     > examples-to-check.txt;
 
 cat examples-to-check.txt
