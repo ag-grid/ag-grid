@@ -169,7 +169,7 @@ export default function parser([js, html], gridSettings) {
         matches: nodeIsHttpOpen,
         apply: (col, node) => {
             const dataUrl = node.expression.arguments[1].raw;
-            const callback = '{ gridApi.setRowData(data); }';
+            const callback = '{ params.api.setRowData(data); }';
 
             col.data = {url: dataUrl, callback: callback};
         }
