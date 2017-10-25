@@ -4,10 +4,10 @@
 // if we don't do this, then the width and height of the grid would be ignored,
 // as there is no default display for the element ag-grid-a2 (as it's not a natural dom element)
 ag-grid-angular {
-    display: inline-block;
+    display: block;
 }
 ag-grid-ng2 {
-    display: inline-block;
+    display: block;
 }
 ag-grid {
     display: block;
@@ -611,6 +611,8 @@ ag-grid-aurelia {
 .ag-menu {
     position: absolute;
     user-select: none;
+    max-height: 100%;
+    overflow-y: auto;
 }
 .ag-menu-column-select-wrapper {
     width: 200px;
@@ -677,6 +679,10 @@ ag-grid-aurelia {
 .ag-virtual-list-item {
     position: absolute;
     width: 100%;
+
+    span:empty {
+        border-left: 1px solid transparent;
+    }
 }
 .ag-filter-filter {
     width: 100%;
@@ -786,4 +792,14 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
         display: inline-block;
         @include icon-background('#{$icon}');
     }
+}
+
+.loading-filter {
+    position: absolute;
+    height: 100%;
+    top: 34px;
+    background-color: #e6e6e6;
+    z-index: 1;
+    width: 100%;
+    padding: 5px;
 }

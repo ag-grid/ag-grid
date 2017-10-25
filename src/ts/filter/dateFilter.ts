@@ -70,22 +70,17 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
         this.dateFromComponent = this.componentRecipes.newDateComponent(dateComponentParams);
 
 
-        let dateFromElement = _.ensureElement(this.dateFromComponent.getGui());
+        let dateFromElement = this.dateFromComponent.getGui();
         this.eDateFromPanel.appendChild(dateFromElement);
-        let dateToElement = _.ensureElement(this.dateToComponent.getGui());
+        let dateToElement = this.dateToComponent.getGui();
         this.eDateToPanel.appendChild(dateToElement);
 
-
         if (this.dateFromComponent.afterGuiAttached) {
-            this.dateFromComponent.afterGuiAttached({
-                eComponent: dateFromElement
-            });
+            this.dateFromComponent.afterGuiAttached();
         }
 
         if (this.dateToComponent.afterGuiAttached) {
-            this.dateToComponent.afterGuiAttached({
-                eComponent: dateToElement
-            });
+            this.dateToComponent.afterGuiAttached();
         }
     }
 

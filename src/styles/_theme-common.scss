@@ -384,7 +384,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         padding-left: 2px;
     }
     .ag-group-child-count {
-        display: inline-block;
+        /* display: inline-block; */ // this breaks the overlow ellipsis
     }
     .ag-footer-cell {
         font-style: italic;

@@ -11,9 +11,12 @@ export class BeanStub implements IEventEmitter {
 
     private destroyFunctions: (()=>void)[] = [];
 
+    private destroyed = false;
+
     public destroy(): void {
         this.destroyFunctions.forEach( func => func() );
         this.destroyFunctions.length = 0;
+        this.destroyed = true;
     }
 
     public addEventListener(eventType: string, listener: Function): void {
@@ -40,6 +43,8 @@ export class BeanStub implements IEventEmitter {
     }
 
     public addDestroyableEventListener(eElement: HTMLElement|IEventEmitter|GridOptionsWrapper, event: string, listener: (event?: any)=>void): void {
+        if (this.destroyed) { return; }
+
         if (eElement instanceof HTMLElement) {
             _.addSafePassiveEventListener((<HTMLElement>eElement), event, listener)
         } else if (eElement instanceof GridOptionsWrapper) {
@@ -59,8 +64,17 @@ export class BeanStub implements IEventEmitter {
         });
     }
 
+    public isAlive(): boolean {
+        return !this.destroyed;
+    }
+
     public addDestroyFunc(func: ()=>void ): void {
-        this.destroyFunctions.push(func);
+        // if we are already destroyed, we execute the func now
+        if (this.isAlive()) {
+            this.destroyFunctions.push(func);
+        } else {
+            func();
+        }
     }
 
 }

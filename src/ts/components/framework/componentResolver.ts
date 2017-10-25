@@ -13,7 +13,7 @@ import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
 
 export type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams;
 
-export type AgComponentPropertyInput<A extends IComponent<any, IAfterGuiAttachedParams>> = AgGridRegisteredComponentInput<A> | string;
+export type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string;
 
 export enum ComponentType {
     AG_GRID, FRAMEWORK
@@ -27,7 +27,7 @@ export enum ComponentSource {
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
-export interface ResolvedComponent<A extends IComponent<any, IAfterGuiAttachedParams> & B, B> {
+export interface ResolvedComponent<A extends IComponent<any> & B, B> {
     component:{new(): A}|{new(): B},
     type:ComponentType,
     source:ComponentSource
@@ -77,7 +77,7 @@ export class ComponentResolver {
      *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
      */
-    public getComponentToUse<A extends IComponent<any, IAfterGuiAttachedParams> & B, B>
+    public getComponentToUse<A extends IComponent<any> & B, B>
     (
         holder:ComponentHolder,
         propertyName:string,
@@ -99,7 +99,7 @@ export class ComponentResolver {
         let HardcodedFwComponent : {new(): B} = null;
 
         if (holder != null){
-            let componentPropertyValue : AgComponentPropertyInput<IComponent<any, IAfterGuiAttachedParams>> = (<any>holder)[propertyName];
+            let componentPropertyValue : AgComponentPropertyInput<IComponent<any>> = (<any>holder)[propertyName];
             if (componentPropertyValue != null){
                 if (typeof componentPropertyValue === 'string'){
                     hardcodedNameComponent = componentPropertyValue;
@@ -204,8 +204,21 @@ export class ComponentResolver {
         return finalParams;
     }
 
+    public createAgGridComponent_async<A extends IComponent<any>> (
+        callback: (comp: A)=>void,
+        holderOpt:ComponentHolder,
+        agGridParams:any,
+        propertyName:string,
+        componentNameOpt?:string,
+        mandatory:boolean = true,
+        customInitParamsCb?:(params:any, component:A)=>any
+    ): void {
+        let result = this.createAgGridComponent(holderOpt, agGridParams, propertyName, componentNameOpt, mandatory, customInitParamsCb);
 
-    /**
+        _.mimicAsync( ()=> callback(result) );
+    }
+
+        /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
      * It takes
      *  @param holderOpt: This is the context for which this component needs to be created, it can be gridOptions
@@ -218,13 +231,16 @@ export class ComponentResolver {
      *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
      *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
+     *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
+     *  params are and the component that init is about to get called for
      */
-    public createAgGridComponent<A extends IComponent<any, IAfterGuiAttachedParams>> (
+    public createAgGridComponent<A extends IComponent<any>> (
         holderOpt:ComponentHolder,
         agGridParams:any,
         propertyName:string,
         componentNameOpt?:string,
-        mandatory:boolean = true
+        mandatory:boolean = true,
+        customInitParamsCb?:(params:any, component:A)=>any
     ): A{
         let holder:ComponentHolder = holderOpt == null ? this.gridOptions : holderOpt;
         let componentName:string = componentNameOpt == null ? propertyName : componentNameOpt;
@@ -236,12 +252,16 @@ export class ComponentResolver {
         //Wire the component and call the init mehtod with the correct params
         let finalParams = this.mergeParams(holder, propertyName, agGridParams);
         this.context.wireBean(component);
-        component.init(finalParams);
+        if (customInitParamsCb == null){
+            component.init(finalParams);
+        } else {
+            component.init(customInitParamsCb(finalParams, component));
+        }
 
         return component;
     }
 
-    private newAgGridComponent<A extends IComponent<any, IAfterGuiAttachedParams> & B, B>
+    private newAgGridComponent<A extends IComponent<any> & B, B>
     (
         holder:ComponentHolder,
         propertyName:string,
@@ -253,7 +273,6 @@ export class ComponentResolver {
 
         if (!componentToUse || !componentToUse.component) {
             if (mandatory){
-                debugger;
                 console.error(`Error creating component ${propertyName}=>${componentName}`);
             }
             return null;

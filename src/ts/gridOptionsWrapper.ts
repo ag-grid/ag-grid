@@ -7,7 +7,7 @@ import {
     NavigateToNextCellParams,
     NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams,
     ProcessRowParams,
-    TabToNextCellParams
+    TabToNextCellParams,
 } from "./entities/gridOptions";
 import {EventService} from "./eventService";
 import {Constants} from "./constants";
@@ -26,7 +26,6 @@ import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {BaseExportParams, ProcessCellForExportParams} from "./exportParams";
 import {AgEvent} from "./events";
 import {Column} from "./entities/column";
-import { DefaultColumnTypes } from "./entities/defaultColumnTypes";
 import { Environment } from "./environment";
 
 let DEFAULT_ROW_HEIGHT = 25;
@@ -113,7 +112,7 @@ export class GridOptionsWrapper {
 
         if (this.isGroupSelectsChildren()) {
             if (!this.isRowSelectionMulti()) {
-                console.warn('ag-Grid: rowSelectionMulti must be true for groupSelectsChildren to make sense');
+                console.warn(`ag-Grid: rowSelection must be 'multiple' for groupSelectsChildren to make sense`);
             }
             if (this.isRowModelEnterprise()) {
                 console.warn('ag-Grid: group selects children is NOT support for Enterprise Row Model. ' +
@@ -167,14 +166,30 @@ export class GridOptionsWrapper {
     public isFullRowEdit() { return this.gridOptions.editType === 'fullRow'; }
     public isSuppressFocusAfterRefresh() { return isTrue(this.gridOptions.suppressFocusAfterRefresh); }
     public isShowToolPanel() { return isTrue(this.gridOptions.showToolPanel); }
-    public isToolPanelSuppressRowGroups() { return isTrue(this.gridOptions.toolPanelSuppressRowGroups); }
     public isToolPanelSuppressValues() { return isTrue(this.gridOptions.toolPanelSuppressValues); }
-    public isToolPanelSuppressPivots() { return isTrue(this.gridOptions.toolPanelSuppressPivots); }
-    public isToolPanelSuppressPivotMode() { return isTrue(this.gridOptions.toolPanelSuppressPivotMode); }
+    public isToolPanelSuppressPivots() {
+        // we don't allow pivots when doing tree data
+        return isTrue(this.gridOptions.toolPanelSuppressPivots) || this.isTreeData();
+    }
+    public isToolPanelSuppressRowGroups() {
+        // we don't allow row grouping when doing tree data
+        return isTrue(this.gridOptions.toolPanelSuppressRowGroups) || this.isTreeData();
+    }
+    public isToolPanelSuppressPivotMode() {
+        return isTrue(this.gridOptions.toolPanelSuppressPivotMode) || this.isTreeData();
+    }
     public isSuppressTouch() { return isTrue(this.gridOptions.suppressTouch); }
     public useAsyncEvents() { return !isTrue(this.gridOptions.suppressAsyncEvents); }
     public isEnableCellChangeFlash() { return isTrue(this.gridOptions.enableCellChangeFlash); }
-    public isGroupSelectsChildren() { return isTrue(this.gridOptions.groupSelectsChildren); }
+    public isGroupSelectsChildren() {
+        let result = isTrue(this.gridOptions.groupSelectsChildren);
+        if (result && this.isTreeData()) {
+            console.warn('ag-Grid: groupSelectsChildren does not work with tree data');
+            return false;
+        } else {
+            return result;
+        }
+    }
     public isGroupSelectsFiltered() { return isTrue(this.gridOptions.groupSelectsFiltered); }
     public isGroupHideOpenParents() { return isTrue(this.gridOptions.groupHideOpenParents); }
     // if we are doing hideOpenParents, then we always have groupMultiAutoColumn, otherwise hideOpenParents would not work
@@ -257,7 +272,7 @@ export class GridOptionsWrapper {
     public isAngularCompileHeaders() { return isTrue(this.gridOptions.angularCompileHeaders); }
     public isDebug() { return isTrue(this.gridOptions.debug); }
     public getColumnDefs() { return this.gridOptions.columnDefs; }
-    public getColumnTypes(): {[key: string]: ColDef} { return _.assign({}, this.gridOptions.columnTypes, DefaultColumnTypes); }
+    public getColumnTypes(): {[key: string]: ColDef} { return this.gridOptions.columnTypes; }
     public getDatasource(): IDatasource { return this.gridOptions.datasource; }
     public getViewportDatasource(): IViewportDatasource { return this.gridOptions.viewportDatasource; }
     public getEnterpriseDatasource(): IEnterpriseDatasource { return this.gridOptions.enterpriseDatasource; }
@@ -314,6 +329,8 @@ export class GridOptionsWrapper {
     public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
     public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
+    public getDataPathFunc(): ((dataItem: any) => string[]) { return this.gridOptions.getDataPath; }
+    // public getIsGroupFunc(): ((dataItem: any) => boolean) { return this.gridOptions.isGroup }
     public getGroupRowAggNodesFunc() { return this.gridOptions.groupRowAggNodes; }
     public getContextMenuItemsFunc(): GetContextMenuItems { return this.gridOptions.getContextMenuItems; }
     public getMainMenuItemsFunc(): GetMainMenuItems { return this.gridOptions.getMainMenuItems; }
@@ -321,6 +338,7 @@ export class GridOptionsWrapper {
     public getNavigateToNextCellFunc(): (params: NavigateToNextCellParams)=>GridCellDef { return this.gridOptions.navigateToNextCell; }
     public getTabToNextCellFunc(): (params: TabToNextCellParams)=>GridCellDef { return this.gridOptions.tabToNextCell; }
 
+    public isTreeData(): boolean { return isTrue(this.gridOptions.treeData); }
     public isValueCache(): boolean { return isTrue(this.gridOptions.valueCache); }
     public isValueCacheNeverExpires(): boolean { return isTrue(this.gridOptions.valueCacheNeverExpires); }
     public isAggregateOnlyChangedColumns(): boolean { return isTrue(this.gridOptions.aggregateOnlyChangedColumns); }
@@ -515,10 +533,10 @@ export class GridOptionsWrapper {
         // we are looking for attributes that don't exist
         let options: any = this.gridOptions;
         if (options.suppressUnSort) {
-            console.warn('ag-grid: as of v1.12.4 suppressUnSort is not used. Please use sortOrder instead.');
+            console.warn('ag-grid: as of v1.12.4 suppressUnSort is not used. Please use sortingOrder instead.');
         }
         if (options.suppressDescSort) {
-            console.warn('ag-grid: as of v1.12.4 suppressDescSort is not used. Please use sortOrder instead.');
+            console.warn('ag-grid: as of v1.12.4 suppressDescSort is not used. Please use sortingOrder instead.');
         }
         if (options.groupAggFields) {
             console.warn('ag-grid: as of v3 groupAggFields is not used. Please add appropriate agg fields to your columns.');
@@ -649,6 +667,18 @@ export class GridOptionsWrapper {
 
     public isDynamicRowHeight(): boolean {
         return typeof this.gridOptions.getRowHeight === 'function';
+    }
+
+    public getVirtualItemHeight() {
+        return this.specialForNewMaterial(20, 8 * 5);
+    }
+
+    public getAggFuncPopupHeight() {
+        return this.specialForNewMaterial(100, 8 * 5 * 3.5); // 3.5 cuts the last item in half, hinting that you can scroll
+    }
+
+    public getCheckboxIndentWidth() {
+        return this.specialForNewMaterial(10, 18 + 8); // icon size + grid size
     }
 
     private isNumeric(value:any) {

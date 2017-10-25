@@ -45,7 +45,7 @@ export class FlattenStage implements IRowNodeStage {
 
     private resetRowTops(rowNode: RowNode): void {
         rowNode.clearRowTop();
-        if (rowNode.group) {
+        if (rowNode.hasChildren()) {
             if (rowNode.childrenAfterGroup) {
                 for (let i = 0; i<rowNode.childrenAfterGroup.length; i++) {
                     this.resetRowTops(rowNode.childrenAfterGroup[i])
@@ -69,9 +69,10 @@ export class FlattenStage implements IRowNodeStage {
             let rowNode = rowsToFlatten[i];
 
             // check all these cases, for working out if this row should be included in the final mapped list
-            let isGroupSuppressedNode = groupSuppressRow && rowNode.group;
-            let isSkippedLeafNode = skipLeafNodes && !rowNode.group;
-            let isRemovedSingleChildrenGroup = removeSingleChildrenGroups && rowNode.group && rowNode.childrenAfterGroup.length === 1;
+            let isParent = rowNode.hasChildren();
+            let isGroupSuppressedNode = groupSuppressRow && isParent;
+            let isSkippedLeafNode = skipLeafNodes && !isParent;
+            let isRemovedSingleChildrenGroup = removeSingleChildrenGroups && isParent && rowNode.childrenAfterGroup.length === 1;
             // hide open parents means when group is open, we don't show it. we also need to make sure the
             // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
             // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
@@ -87,7 +88,7 @@ export class FlattenStage implements IRowNodeStage {
             // if we are pivoting, we never map below the leaf group
             if (skipLeafNodes && rowNode.leafGroup) { continue; }
 
-            if (rowNode.group) {
+            if (isParent) {
                 // we traverse the group if it is expended, however we always traverse if the parent node
                 // was removed (as the group will never be opened if it is not displayed, we show the children instead)
                 if (rowNode.expanded || isRemovedSingleChildrenGroup) {

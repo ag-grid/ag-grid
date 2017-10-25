@@ -71,7 +71,7 @@ export class SelectionController {
     public getSelectedRows() {
         let selectedRows: any[] = [];
         _.iterateObject(this.selectedNodes, (key: string, rowNode: RowNode) => {
-            if (rowNode) {
+            if (rowNode && rowNode.data) {
                 selectedRows.push(rowNode.data);
             }
         });

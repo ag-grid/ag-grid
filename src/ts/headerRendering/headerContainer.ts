@@ -132,7 +132,7 @@ export class HeaderContainer {
             let headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.eRoot, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
-            this.eContainer.appendChild(headerRowComp.getHtmlElement());
+            this.eContainer.appendChild(headerRowComp.getGui());
         }
 
         let includeFloatingFilterRow = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
@@ -141,7 +141,7 @@ export class HeaderContainer {
             let headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned, this.eRoot, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
-            this.eContainer.appendChild(headerRowComp.getHtmlElement());
+            this.eContainer.appendChild(headerRowComp.getGui());
         }
     }
 

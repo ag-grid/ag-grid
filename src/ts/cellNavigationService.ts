@@ -7,6 +7,8 @@ import {GridRow} from "./entities/gridRow";
 import {GridCell, GridCellDef} from "./entities/gridCell";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
+import {RowNode} from "./entities/rowNode";
+import {Column} from "./entities/column";
 
 @Bean('cellNavigationService')
 export class CellNavigationService {
@@ -16,24 +18,73 @@ export class CellNavigationService {
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
+    // returns null if no cell to focus on, ie at the end of the grid
     public getNextCellToFocus(key: any, lastCellToFocus: GridCell): GridCell {
-        switch (key) {
-            case Constants.KEY_UP : return this.getCellAbove(lastCellToFocus);
-            case Constants.KEY_DOWN : return this.getCellBelow(lastCellToFocus);
-            case Constants.KEY_RIGHT :
-                if (this.gridOptionsWrapper.isEnableRtl()) {
-                    return this.getCellToLeft(lastCellToFocus);
-                } else {
-                    return this.getCellToRight(lastCellToFocus);
-                }
-            case Constants.KEY_LEFT :
-                if (this.gridOptionsWrapper.isEnableRtl()) {
-                    return this.getCellToRight(lastCellToFocus);
-                } else {
-                    return this.getCellToLeft(lastCellToFocus);
-                }
-            default : console.log('ag-Grid: unknown key for navigation ' + key);
+
+        // starting with the provided cell, we keep moving until we find a cell we can
+        // focus on.
+        let pointer = lastCellToFocus;
+        let finished = false;
+
+        // finished will be true when either:
+        // a) cell found that we can focus on
+        // b) run out of cells (ie the method returns null)
+        while (!finished) {
+
+            switch (key) {
+                case Constants.KEY_UP :
+                    pointer = this.getCellAbove(pointer);
+                    break;
+                case Constants.KEY_DOWN :
+                    pointer = this.getCellBelow(pointer);
+                    break;
+                case Constants.KEY_RIGHT :
+                    if (this.gridOptionsWrapper.isEnableRtl()) {
+                        pointer = this.getCellToLeft(pointer);
+                    } else {
+                        pointer = this.getCellToRight(pointer);
+                    }
+                    break;
+                case Constants.KEY_LEFT :
+                    if (this.gridOptionsWrapper.isEnableRtl()) {
+                        pointer = this.getCellToRight(pointer);
+                    } else {
+                        pointer = this.getCellToLeft(pointer);
+                    }
+                    break;
+                default : console.log('ag-Grid: unknown key for navigation ' + key);
+                    pointer = null;
+                    break;
+            }
+
+            if (pointer) {
+                finished = this.isCellGoodToFocusOn(pointer);
+            } else {
+                finished = true;
+            }
         }
+
+        return pointer;
+    }
+
+    private isCellGoodToFocusOn(gridCell: GridCell): boolean {
+        let column: Column = gridCell.column;
+        let rowNode: RowNode;
+
+        switch (gridCell.floating) {
+            case Constants.PINNED_TOP:
+                rowNode = this.pinnedRowModel.getPinnedTopRow(gridCell.rowIndex);
+                break;
+            case Constants.PINNED_BOTTOM:
+                rowNode = this.pinnedRowModel.getPinnedBottomRow(gridCell.rowIndex);
+                break;
+            default:
+                rowNode = this.rowModel.getRow(gridCell.rowIndex);
+                break;
+        }
+
+        let suppressNavigable = column.isSuppressNavigable(rowNode);
+        return !suppressNavigable;
     }
 
     private getCellToLeft(lastCell: GridCell): GridCell {

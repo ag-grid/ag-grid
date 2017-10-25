@@ -22,7 +22,7 @@ export class ImmutableService {
     }
 
     // converts the setRowData() command to a transaction
-    public createTransactionForRowData(data: any[]): RowDataTransaction {
+    public createTransactionForRowData(data: any[]): [RowDataTransaction, {[id:string]: number}] {
 
         if (_.missing(this.inMemoryRowModel)) {
             console.error('ag-Grid: ImmutableService only works with InMemoryRowModel');
@@ -44,14 +44,18 @@ export class ImmutableService {
 
         let existingNodesMap: {[id:string]: RowNode} = this.inMemoryRowModel.getCopyOfNodesMap();
 
+        let orderMap: {[id:string]: number} = {};
+
         if (_.exists(data)) {
             // split all the new data in the following:
             // if new, push to 'add'
             // if update, push to 'update'
             // if not changed, do not include in the transaction
-            data.forEach( dataItem => {
+            data.forEach( (dataItem: any, index: number) => {
                 let id: string = getRowNodeIdFunc(dataItem);
                 let existingNode: RowNode = existingNodesMap[id];
+
+                orderMap[id] = index;
 
                 if (existingNode) {
                     let dataHasChanged = existingNode.data !== dataItem;
@@ -75,7 +79,7 @@ export class ImmutableService {
             }
         });
 
-        return transaction;
+        return [transaction, orderMap];
     }
 
 }

@@ -42,6 +42,12 @@ export class Utils {
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
+    static mimicAsync(callback: Function): void {
+        // setTimeout( ()=> {
+            callback();
+        // }, 2000);
+    }
+
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean {
@@ -434,6 +440,15 @@ export class Utils {
         }
     }
 
+    static firstExistingValue<A>(...values: A[]): A {
+        for (let i = 0; i<values.length; i++){
+            let value:A = values[i];
+            if (_.exists(value)) return value;
+        }
+
+        return null;
+    }
+
     static anyExists(values: any[]): boolean {
         if (values) {
             for (let i = 0; i < values.length; i++) {
@@ -479,25 +494,6 @@ export class Utils {
         let tempDiv = document.createElement("div");
         tempDiv.innerHTML = template;
         return <HTMLElement> tempDiv.firstChild;
-    }
-
-    static assertHtmlElement(item: HTMLElement|string): HTMLElement {
-        if (typeof item === 'string') {
-            console.error(`ag-grid: Found a string template for a component type where only HTMLElements are allow. 
-            Please change the component to return back an HTMLElement from getGui(). Only some element types can return back strings.
-            The found template is ${item}`);
-            return null;
-        } else {
-            return <HTMLElement> item;
-        }
-    }
-
-    static ensureElement(item: HTMLElement|string): HTMLElement {
-        if (typeof item === 'string') {
-            return this.loadTemplate(item);
-        } else {
-            return <HTMLElement> item;
-        }
     }
 
     static appendHtml(eContainer: HTMLElement, htmlTemplate: string) {
@@ -1204,8 +1200,7 @@ export class Utils {
     }
 
     static escape(toEscape: string): string {
-        if (toEscape === null) return null;
-        if (!toEscape.replace) return toEscape;
+        if (toEscape===null || toEscape===undefined || !toEscape.replace) { return toEscape; }
 
         return toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr])
     }
@@ -1483,6 +1478,15 @@ export class Utils {
         let words:string[] = camelCase.replace( rex, '$1$4 $2$3$5' ).replace('.', ' ').split(' ');
 
         return words.map(word=>word.substring(0,1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length):'')).join(' ');
+    }
+
+    static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: {[id: string]: number}): void {
+        if (!rowNodes) { return; }
+        rowNodes.sort( (nodeA: RowNode, nodeB: RowNode) => {
+            let positionA = rowNodeOrder[nodeA.id];
+            let positionB = rowNodeOrder[nodeB.id];
+            return positionA - positionB;
+        });
     }
 }
 

@@ -53,7 +53,7 @@ export class RowNode implements IEventEmitter {
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_DATA_CHANGED = 'dataChanged';
     public static EVENT_CELL_CHANGED = 'cellChanged';
-    public static EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED = 'allChildrenCountChanged';
+    public static EVENT_ALL_CHILDREN_COUNT_CHANGED = 'allChildrenCountChanged';
     public static EVENT_MOUSE_ENTER = 'mouseEnter';
     public static EVENT_MOUSE_LEAVE = 'mouseLeave';
     public static EVENT_HEIGHT_CHANGED = 'heightChanged';
@@ -312,7 +312,7 @@ export class RowNode implements IEventEmitter {
         if (this.allChildrenCount === allChildrenCount) { return; }
         this.allChildrenCount = allChildrenCount;
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED));
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED));
         }
     }
 
@@ -405,10 +405,21 @@ export class RowNode implements IEventEmitter {
         if (this.eventService) {
             colIds.forEach( colId => {
                 let column = this.columnController.getGridColumn(colId);
-                let value = this.data ? this.data[colId] : undefined;
+                let value = this.aggData ? this.aggData[colId] : undefined;
                 this.dispatchCellChangedEvent(column, value);
             });
         }
+    }
+
+    public hasChildren(): boolean {
+        // we need to return true when this.group=true, as this is used by enterprise row model
+        // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
+        // if children exist.
+        return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+    }
+
+    public isEmptyFillerNode(): boolean {
+        return this.group && _.missingOrEmpty(this.childrenAfterGroup);
     }
 
     private dispatchCellChangedEvent(column: Column, newValue: any): void {
@@ -426,7 +437,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public isExpandable(): boolean {
-        return this.group || this.canFlower;
+        return this.hasChildren() || this.canFlower;
     }
 
     public isSelected(): boolean {

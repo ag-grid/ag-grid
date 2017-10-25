@@ -49,6 +49,12 @@ export class ValueFormatterService {
         } else if(colDef.refData) {
             return colDef.refData[value];
         }
+
+        // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (ie with spaces)
+        if ( (result===null || result===undefined) && Array.isArray(value)) {
+            result = value.join(', ');
+        }
+
         return result;
     }
 }

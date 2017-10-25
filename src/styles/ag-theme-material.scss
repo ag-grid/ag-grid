@@ -1,15 +1,15 @@
-// Taken from the palette of angular material: https://github.com/angular/material2/blob/master/src/lib/core/theming/_palette.scss 
-$mat-grey-0:    #FFFFFF;
-$mat-grey-50:   #FAFAFA;
-$mat-grey-100:  #F5F5F5;
-$mat-grey-200:  #EEEEEE;
-$mat-grey-300:  #E0E0E0;
+// Taken from the palette of angular material: https://github.com/angular/material2/blob/master/src/lib/core/theming/_palette.scss
+$mat-grey-0: #ffffff;
+$mat-grey-50: #fafafa;
+$mat-grey-100: #f5f5f5;
+$mat-grey-200: #eeeeee;
+$mat-grey-300: #e0e0e0;
 
 // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
 $mat-indigo-500: #3f51b5;
 $mat-pink-A200: #ff4081;
-$mat-pink-50: #FCE4EC;
-$mat-indigo-50: #E8EAF6;
+$mat-pink-50: #fce4ec;
+$mat-indigo-50: #e8eaf6;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // The variables below can be overriden to adjust the look up to the app color scheme
@@ -22,21 +22,22 @@ $ag-mat-icon-size: 18px !default;
 $ag-mat-icons-path: './material-icons/' !default;
 
 // opacity values used for black values, taken from material spec
-$ag-mat-foreground-opacity: .87 !default;
-$ag-mat-foreground-secondary-opacity: .54 !default;
-$ag-mat-foreground-disabled-opacity: .38 !default;
+$ag-mat-foreground-opacity: 0.87 !default;
+$ag-mat-foreground-secondary-opacity: 0.54 !default;
+$ag-mat-foreground-disabled-opacity: 0.38 !default;
 
-$ag-mat-font: "Roboto", sans-serif !default;
+$ag-mat-font: 'Roboto', sans-serif !default;
 $ag-mat-font-size: 13px !default;
 $ag-mat-font-weight: 400 !default;
 
-$ag-mat-font-secondary: "Roboto", sans-serif !default;
+$ag-mat-font-secondary: 'Roboto', sans-serif !default;
 $ag-mat-font-secondary-size: 12px !default;
 $ag-mat-font-secondary-weight: 700 !default;
 
-// Theme colors 
+// Theme colors
 $ag-mat-primary: $mat-indigo-500 !default;
 $ag-mat-accent: $mat-pink-A200 !default;
+$ag-mat-icon-color: black !default;
 
 // the three black shades, used for the UI
 $ag-mat-foreground: rgba(black, $ag-mat-foreground-opacity) !default;
@@ -50,11 +51,11 @@ $ag-mat-panel-background: $mat-grey-200 !default;
 $ag-mat-tool-panel-background: $mat-grey-50 !default;
 $ag-mat-chip-background: $mat-grey-300 !default;
 $ag-mat-range-selection-background: $mat-indigo-50 !default; // this should be pink, but indigo looks better
-$ag-mat-range-selection-highlight: $mat-pink-50 !default; 
+$ag-mat-range-selection-highlight: $mat-pink-50 !default;
 
-$ag-mat-cell-data-changed: $mat-pink-50 !default; 
+$ag-mat-cell-data-changed: $mat-pink-50 !default;
 
-// interaction 
+// interaction
 $ag-mat-hover: $mat-grey-200 !default;
 $ag-mat-selected: $mat-grey-100 !default;
 
@@ -88,7 +89,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     width: $ag-mat-icon-size;
     height: $ag-mat-icon-size;
     background-color: transparent;
-    background-image: url('#{$ag-mat-icons-path}#{$icon}.svg');
+    background-image: url('#{$ag-mat-icons-path}#{$icon}.svg?color=#{encodecolor($ag-mat-icon-color)}');
     background-position: center;
     background-repeat: no-repeat;
     background-size: $ag-mat-icon-size $ag-mat-icon-size;
@@ -96,14 +97,13 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 }
 
 @function encodecolor($string) {
-	@if type-of($string) == 'color' {
+    @if type-of($string) == 'color' {
         $hex: str-slice(ie-hex-str($string), 4);
-        $string:unquote("#{$hex}");
+        $string: unquote('#{$hex}');
     }
     $string: '%23' + $string;
-	@return $string;
+    @return $string;
 }
-
 
 @mixin colorful-icon($color, $icon) {
     background-image: url('#{$ag-mat-icons-path}#{$icon}.svg?color=#{encodecolor($color)}');
@@ -169,9 +169,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     color: $ag-mat-foreground;
     background-color: $ag-mat-background;
 
-////////////////////////////////////////
-// Basic layout
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Basic layout
+    ////////////////////////////////////////
     .ag-header {
         font: $ag-mat-font-secondary-weight $ag-mat-font-secondary-size $ag-mat-font-secondary;
         color: $ag-mat-foreground-secondary;
@@ -207,7 +207,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         .ag-header-cell-text {
             white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis; 
+            text-overflow: ellipsis;
         }
     }
 
@@ -228,7 +228,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
-    .ag-header-cell, .ag-header-group-cell {
+    .ag-header-cell,
+    .ag-header-group-cell {
         @include grid-cell($ag-mat-header-height);
     }
 
@@ -241,9 +242,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         padding-right: $cell-horizontal-padding - 1px;
     }
 
-////////////////////////////////////////
-// Navigation
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Navigation
+    ////////////////////////////////////////
     .ag-cell:focus {
         outline: initial;
         border: 1px solid $ag-mat-primary;
@@ -256,13 +257,13 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         transition: background-color 1s;
     }
 
-////////////////////////////////////////
-// Resizing
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Resizing
+    ////////////////////////////////////////
     .ag-header-cell-resize {
         width: $ag-mat-grid-size * 2;
         position: absolute;
-        right:-$ag-mat-grid-size * 1;
+        right: -$ag-mat-grid-size * 1;
         z-index: 4;
         &::after {
             border-right: 1px solid $ag-mat-border-color;
@@ -276,11 +277,13 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
-////////////////////////////////////////
-// Icons
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Icons
+    ////////////////////////////////////////
 
-    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross tree-open tree-closed;
+    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly
+        checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed
+        paste pin pivot plus right small-left small-right small-up small-down tick cross tree-open tree-closed;
 
     @each $icon in $icons {
         .ag-icon-#{$icon} {
@@ -297,10 +300,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         @include accent-icon('checkbox-checked');
     }
 
-
-////////////////////////////////////////
-// Context Menu
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Context Menu
+    ////////////////////////////////////////
 
     .ag-menu {
         @include card;
@@ -355,13 +357,13 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
 
         .ag-menu-option-popup-pointer {
-            width:$ag-mat-icon-size + $ag-mat-grid-size * 2;
+            width: $ag-mat-icon-size + $ag-mat-grid-size * 2;
         }
     }
 
-////////////////////////////////////////
-// Column Reordering
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Column Reordering
+    ////////////////////////////////////////
 
     &.ag-dnd-ghost {
         @include card();
@@ -375,7 +377,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         transform: translatey($ag-mat-grid-size * 2);
         padding: 0 $ag-mat-grid-size * 2;
 
-        span, div {
+        span,
+        div {
             float: left;
             height: 100%;
             margin: 0;
@@ -383,9 +386,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
-////////////////////////////////////////
-// Column Filter
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Column Filter
+    ////////////////////////////////////////
 
     .ag-tab-header {
         background: $ag-mat-panel-background;
@@ -418,7 +421,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     .ag-tab-body {
         padding: $ag-mat-grid-size 0;
 
-
         // string filter type
         .ag-filter-select {
             margin: $ag-mat-grid-size;
@@ -442,7 +444,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
-
     // string filter type
     .ag-filter-select {
         margin: $ag-mat-grid-size;
@@ -452,15 +453,16 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     // forced by the JS implementation
     $virtual-item-height: 32px;
 
-////////////////////////////////////////
-// Value Set Filter
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Value Set Filter
+    ////////////////////////////////////////
 
     .ag-filter {
         & > div > div > div {
         }
 
-        input[type=text], input[type=date] {
+        input[type='text'],
+        input[type='date'] {
             @include simple-material-textbox;
             padding-left: $ag-mat-grid-size;
         }
@@ -492,7 +494,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
 
         .ag-filter-value {
             height: $virtual-item-height;
-            float: left;
             line-height: $ag-mat-grid-size * 3.5; // hate this
         }
 
@@ -512,16 +513,15 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
-////////////////////////////////////////
-// Column selector
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Column selector
+    ////////////////////////////////////////
     .ag-column-select-panel {
-
         .ag-column-select-column-group::not(::first-child) {
             border-top: 1px solid $ag-mat-border-color;
         }
 
-        .ag-column-select-column-group, 
+        .ag-column-select-column-group,
         .ag-column-select-column {
             height: $ag-mat-grid-size * 4;
             line-height: $ag-mat-grid-size * 4;
@@ -536,19 +536,20 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
                 width: $ag-mat-grid-size * 2;
             }
 
-            .ag-column-select-checkbox, .ag-column-group-icons {
+            .ag-column-select-checkbox,
+            .ag-column-group-icons {
                 margin-right: $ag-mat-grid-size;
             }
-        } 
+        }
         .ag-column-select-column {
             // this is a very crude approximation, because we have one 10px hard-coded element in there.
-            margin-left: $ag-mat-icon-size + $ag-mat-grid-size * 3;
+            margin-left: $ag-mat-icon-size + $ag-mat-grid-size * 2;
         }
     }
 
-////////////////////////////////////////
-// Tool panel
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Tool panel
+    ////////////////////////////////////////
 
     .ag-tool-panel {
         border-right: 0;
@@ -592,7 +593,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             .ag-icon {
                 float: left;
                 height: $group-height;
-                margin:0 $ag-mat-grid-size;
+                margin: 0 $ag-mat-grid-size;
             }
 
             .ag-column-drop-title {
@@ -602,7 +603,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
                 width: calc(100% - #{$ag-mat-icon-size + $ag-mat-grid-size * 2});
                 clear: right;
             }
-            
+
             .ag-column-drop-empty-message {
                 clear: both;
                 font: $ag-mat-font-secondary-weight $ag-mat-font-secondary-size $ag-mat-font-secondary;
@@ -614,9 +615,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
-////////////////////////////////////////
-// Sorting
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Sorting
+    ////////////////////////////////////////
     .ag-filter-icon:empty {
         @include icon-background('filter');
     }
@@ -649,9 +650,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         margin-right: $ag-mat-grid-size;
     }
 
-////////////////////////////////////////
-// Pagination
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Pagination
+    ////////////////////////////////////////
     .ag-paging-panel {
         border-top: 1px solid $ag-mat-border-color;
         height: $ag-mat-header-height;
@@ -665,15 +666,10 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             margin-left: $ag-mat-grid-size * 4;
         }
 
-        $buttonIcons: (
-            btFirst: first,
-            btPrevious: previous,
-            btLast: last,
-            btNext: next
-        );
+        $buttonIcons: (btFirst: first, btPrevious: previous, btLast: last, btNext: next);
 
         @each $ref, $icon in $buttonIcons {
-            button[ref=#{$ref}] {
+            button[ref='#{$ref}'] {
                 -webkit-appearance: none;
                 border: none;
                 padding: 0;
@@ -689,9 +685,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
-////////////////////////////////////////
-// Selection
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Selection
+    ////////////////////////////////////////
 
     .ag-row-selected {
         background-color: $ag-mat-selected;
@@ -701,9 +697,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         background-color: $ag-mat-range-selection-background;
     }
 
-////////////////////////////////////////
-// Editing
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Editing
+    ////////////////////////////////////////
 
     .ag-cell-inline-editing {
         @include card;
@@ -713,9 +709,12 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         padding: $cell-horizontal-padding;
         line-height: normal;
 
-        input[type=text], input[type=tel], input[type=date], input[type=datetime-local] {
+        input[type='text'],
+        input[type='tel'],
+        input[type='date'],
+        input[type='datetime-local'] {
             @include simple-material-textbox;
-        } 
+        }
 
         select {
             height: auto;
@@ -733,13 +732,13 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             height: auto;
         }
     }
-////////////////////////////////////////
-// Rich Select
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Rich Select
+    ////////////////////////////////////////
     $rich-select-item-height: $ag-mat-row-height;
     .ag-rich-select {
         background: $ag-mat-background-editor;
-        background-image: url("#{$ag-mat-icons-path}tree-open.svg");
+        background-image: url('#{$ag-mat-icons-path}tree-open.svg');
         background-position-y: $ag-mat-grid-size * 2;
         background-position-x: calc(100% - #{$ag-mat-grid-size});
         background-repeat: no-repeat;
@@ -753,7 +752,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             padding-left: $cell-horizontal-padding;
         }
 
-        .ag-virtual-list-item  {
+        .ag-virtual-list-item {
             cursor: default;
             height: $rich-select-item-height;
             line-height: $rich-select-item-height;
@@ -765,9 +764,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
-////////////////////////////////////////
-// Floating filter
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Floating filter
+    ////////////////////////////////////////
     .ag-floating-filter-body {
         float: left;
         width: calc(100% - #{$ag-mat-grid-size} * 4);
@@ -780,7 +779,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
     }
 
     .ag-floating-filter-button {
-        padding-top: $ag-mat-grid-size * 2.5;
+        margin-top: $ag-mat-grid-size* 2.5;
+        line-height: $ag-mat-icon-size;
         float: right;
         button {
             @include simple-material-flat-button;
@@ -798,9 +798,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
-////////////////////////////////////////
-// Expanding headers
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Expanding headers
+    ////////////////////////////////////////
     .ag-header-group-cell-label {
         height: 100%;
 
@@ -810,9 +810,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
-////////////////////////////////////////
-// Header checkbox selection
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Header checkbox selection
+    ////////////////////////////////////////
     .ag-header-select-all {
         margin-right: $cell-horizontal-padding;
         height: 100%;
@@ -827,10 +827,12 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         float: left;
     }
 
-////////////////////////////////////////
-// Selection checkbox
-////////////////////////////////////////
-    .ag-selection-checkbox, .ag-group-expanded, .ag-group-contracted {
+    ////////////////////////////////////////
+    // Selection checkbox
+    ////////////////////////////////////////
+    .ag-selection-checkbox,
+    .ag-group-expanded,
+    .ag-group-contracted {
         span {
             margin-right: $cell-horizontal-padding;
         }
@@ -847,9 +849,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
     }
 
-////////////////////////////////////////
-// Column drop
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Column drop
+    ////////////////////////////////////////
     .ag-column-drop-horizontal {
         height: $ag-mat-row-height;
         line-height: $ag-mat-grid-size * 4;
@@ -857,14 +859,17 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         padding-left: $cell-horizontal-padding;
 
         // nasty fix for inline-block approach with half-width.
-        &.ag-width-half { margin-bottom: -3px; }
+        &.ag-width-half {
+            margin-bottom: -3px;
+        }
 
         span {
             height: 100%;
             float: left;
         }
 
-        .ag-icon-group, .ag-icon-pivot {
+        .ag-icon-group,
+        .ag-icon-pivot {
             margin-right: $cell-horizontal-padding;
         }
 
@@ -875,7 +880,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             @include icon-background('left');
         }
 
-        .ag-left-arrow, .ag-right-arrow {
+        .ag-left-arrow,
+        .ag-right-arrow {
             @include hide-text;
             height: 100%;
             margin: 0 $ag-mat-grid-size;
@@ -887,7 +893,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             line-height: $ag-mat-row-height;
             opacity: $ag-mat-foreground-secondary-opacity;
         }
-
     }
 
     .ag-column-drop-cell {
@@ -899,7 +904,7 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         border-radius: $ag-mat-grid-size * 4;
 
         .ag-column-drop-cell-text {
-            margin:0 $ag-mat-grid-size;
+            margin: 0 $ag-mat-grid-size;
             height: 100%;
             line-height: $ag-mat-grid-size * 4;
         }
@@ -913,6 +918,21 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             &:hover {
                 opacity: $ag-mat-foreground-opacity;
             }
+        }
+    }
+
+    .ag-select-agg-func-popup {
+        @include card();
+        padding: 0;
+
+        .ag-virtual-list-item {
+            cursor: default;
+            padding-left: $ag-mat-grid-size * 2;
+            line-height: $ag-mat-grid-size * 5;
+        }
+
+        .ag-virtual-list-item:hover {
+            background: $ag-mat-hover;
         }
     }
 
@@ -933,9 +953,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         transition: background-color 1s;
     }
 
-////////////////////////////////////////
-// Right-To-Left
-////////////////////////////////////////
+    ////////////////////////////////////////
+    // Right-To-Left
+    ////////////////////////////////////////
     .ag-rtl {
         .ag-numeric-cell {
             text-align: left;
@@ -968,7 +988,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             }
         }
 
-
         .ag-tool-panel {
             .ag-pivot-mode {
                 span {
@@ -983,7 +1002,6 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
                     }
                 }
             }
-
 
             .ag-column-drop {
                 .ag-icon {
@@ -1008,22 +1026,21 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
         }
 
         .ag-filter-value {
-            float: right;
         }
 
         .ag-column-select-panel {
-
-            .ag-column-select-column-group, 
+            .ag-column-select-column-group,
             .ag-column-select-column {
                 margin-right: $ag-mat-grid-size;
                 span {
                     float: right;
                 }
 
-                .ag-column-select-checkbox, .ag-column-group-icons {
+                .ag-column-select-checkbox,
+                .ag-column-group-icons {
                     margin-left: $ag-mat-grid-size;
                 }
-            } 
+            }
             .ag-column-select-column {
                 // this is a very crude approximation, because we have one 10px hard-coded element in there.
                 margin-right: $ag-mat-icon-size + $cell-horizontal-padding;
@@ -1052,7 +1069,9 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             margin-right: 0;
         }
 
-        .ag-selection-checkbox, .ag-group-expanded, .ag-group-contracted {
+        .ag-selection-checkbox,
+        .ag-group-expanded,
+        .ag-group-contracted {
             span {
                 float: right;
             }
@@ -1064,7 +1083,8 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
                 float: right;
             }
 
-            .ag-icon-group, .ag-icon-pivot {
+            .ag-icon-group,
+            .ag-icon-pivot {
                 margin-left: $cell-horizontal-padding;
                 margin-right: 0;
             }
@@ -1096,5 +1116,24 @@ $cell-horizontal-padding: $ag-mat-grid-size * 3;
             }
         }
     }
-}
 
+    .ag-status-bar {
+        padding: $ag-mat-grid-size * 2 $ag-mat-grid-size * 4;
+        background: $ag-mat-background;
+        border-top: 1px solid $ag-mat-border-color;
+        font: $ag-mat-font-secondary-weight $ag-mat-font-secondary-size $ag-mat-font-secondary;
+        color: $ag-mat-foreground-disabled;
+        display: flex;
+        justify-content: flex-end;
+
+        .ag-status-bar-item {
+            margin-right: $ag-mat-grid-size * 2;
+            span:nth-child(1):after {
+                content: ':';
+            }
+            span:nth-child(2) {
+                color: $ag-mat-foreground;
+            }
+        }
+    }
+}

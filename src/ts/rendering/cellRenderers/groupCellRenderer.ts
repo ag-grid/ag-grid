@@ -13,7 +13,6 @@ import {CheckboxSelectionComponent} from "../checkboxSelectionComponent";
 import {ColumnController} from "../../columnController/columnController";
 import {Column} from "../../entities/column";
 import {RefSelector} from "../../widgets/componentAnnotations";
-import {ICellRendererAfterGuiAttachedParams} from "../../interfaces/iComponent";
 import {MouseEventService} from "../../gridPanel/mouseEventService";
 
 export interface GroupCellRendererParams extends ICellRendererParams{
@@ -144,10 +143,10 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // if doing rtl, padding is on the right
-            this.getHtmlElement().style.paddingRight = paddingPx + 'px';
+            this.getGui().style.paddingRight = paddingPx + 'px';
         } else {
             // otherwise it is on the left
-            this.getHtmlElement().style.paddingLeft = paddingPx + 'px';
+            this.getGui().style.paddingLeft = paddingPx + 'px';
         }
     }
 
@@ -171,12 +170,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         if (rowNode.footer) {
             this.createFooterCell();
         } else if (
-            rowNode.group ||
+            rowNode.hasChildren() ||
             _.get(params.colDef, 'cellRendererParams.innerRenderer', null) ||
             _.get(params.colDef, 'cellRendererParams.innerRendererFramework', null)
         ) {
             this.createGroupCell();
-            if (rowNode.group){
+            if (rowNode.hasChildren()){
                 this.addChildCount();
             }
         } else {
@@ -213,14 +212,14 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let columnToUse: Column = rowGroupColumn ? rowGroupColumn : params.column;
 
         let groupName = this.params.value;
-        let valueFormatted = this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName);
+        let valueFormatted = columnToUse ?
+            this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName) : null;
 
         params.valueFormatted = valueFormatted;
-        if (params.fullWidth == true){
+        if (params.fullWidth == true) {
             this.cellRendererService.useFullWidthGroupRowInnerCellRenderer(this.eValue, params);
-        }else{
+        } else {
             this.cellRendererService.useInnerCellRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), this.eValue, params);
-
         }
     }
 
@@ -230,7 +229,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // then this could be left out, or set to -1, ie no child count
         if (this.params.suppressCount) { return; }
 
-        this.addDestroyableEventListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED, this.updateChildCount.bind(this));
+        this.addDestroyableEventListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.updateChildCount.bind(this));
 
         // filtering changes the child count, so need to cater for it
         this.updateChildCount();
@@ -269,7 +268,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             let cbSelectionComponent = new CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);
             cbSelectionComponent.init({rowNode: rowNode, column: this.params.column});
-            this.eCheckbox.appendChild(cbSelectionComponent.getHtmlElement());
+            this.eCheckbox.appendChild(cbSelectionComponent.getGui());
             this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
         }
     }
@@ -289,6 +288,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
         this.addDestroyableEventListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
+
+        // because we don't show the expand / contract when there are no children, we need to check every time
+        // the number of children change.
+        this.addDestroyableEventListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED,
+            this.showExpandAndContractIcons.bind(this));
 
         // if editing groups, then double click is to start editing
         if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
@@ -314,7 +318,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         if (!this.gridOptionsWrapper.isGroupHideOpenParents()) {
             this.draggedFromHideOpenParents = false;
-        } else if (!rowNode.group) {
+        } else if (!rowNode.hasChildren()) {
             // if we are here, and we are not a group, then we must of been dragged down,
             // as otherwise the cell would be blank, and if cell is blank, this method is never called.
             this.draggedFromHideOpenParents = true;
@@ -378,7 +382,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private isExpandable(): boolean {
         let rowNode = this.params.node;
         let reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
-        return this.draggedFromHideOpenParents || (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
+        return this.draggedFromHideOpenParents ||
+                (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
     }
 
     private showExpandAndContractIcons(): void {

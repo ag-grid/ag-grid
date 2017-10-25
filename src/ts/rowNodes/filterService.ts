@@ -1,9 +1,19 @@
-import {Bean, Autowired} from "../context/context";
+import {Bean, Autowired, PostConstruct} from "../context/context";
 import {RowNode} from "../entities/rowNode";
 import {FilterManager} from "../filter/filterManager";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 @Bean("filterService")
 export class FilterService {
+
     @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+
+    private doingTreeData: boolean;
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.doingTreeData = this.gridOptionsWrapper.isTreeData();
+    }
 
     public filterAccordingToColumnState (rowNode:RowNode):void{
         let filterActive:boolean = this.filterManager.isAnyFilterPresent();
@@ -13,46 +23,54 @@ export class FilterService {
     public filter(rowNode: RowNode, filterActive: boolean): void {
 
         // recursively get all children that are groups to also filter
-        rowNode.childrenAfterGroup.forEach( child => {
-            if (child.group) {
-                this.filter(child, filterActive);
-            }
-        });
+        if (rowNode.hasChildren()) {
 
-        // result of filter for this node
-        let filterResult: RowNode[];
+            rowNode.childrenAfterGroup.forEach( node => this.filter(node, filterActive));
 
-        if (filterActive) {
-            filterResult = [];
-
-            rowNode.childrenAfterGroup.forEach( childNode => {
-                if (childNode.group) {
+            // result of filter for this node
+            if (filterActive) {
+                rowNode.childrenAfterFilter = rowNode.childrenAfterGroup.filter(childNode => {
                     // a group is included in the result if it has any children of it's own.
                     // by this stage, the child groups are already filtered
-                    if (childNode.childrenAfterFilter.length > 0) {
-                        filterResult.push(childNode);
-                    }
-                } else {
-                    // a leaf level node is included if it passes the filter
-                    if (this.filterManager.doesRowPassFilter(childNode)) {
-                        filterResult.push(childNode);
-                    }
-                }
-            });
+                    let passBecauseChildren = childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
+
+                    // both leaf level nodes and tree data nodes have data. these get added if
+                    // the data passes the filter
+                    let passBecauseDataPasses = childNode.data && this.filterManager.doesRowPassFilter(childNode);
+
+                    // note - tree data nodes pass either if a) they pass themselves or b) any children of that node pass
+
+                    return passBecauseChildren || passBecauseDataPasses;
+                });
+            } else {
+                // if not filtering, the result is the original list
+                rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
+            }
+
+            this.setAllChildrenCount(rowNode);
 
         } else {
-            // if not filtering, the result is the original list
-            filterResult = rowNode.childrenAfterGroup;
+            rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
+            rowNode.setAllChildrenCount(null);
         }
-
-        rowNode.childrenAfterFilter = filterResult;
-
-        this.setAllChildrenCount(rowNode);
     }
 
-    private setAllChildrenCount(rowNode: RowNode) {
+    private setAllChildrenCountTreeData(rowNode: RowNode) {
+        // for tree data, we include all children, groups and leafs
         let allChildrenCount = 0;
-        rowNode.childrenAfterFilter.forEach( child => {
+        rowNode.childrenAfterFilter.forEach((child: RowNode) => {
+            // include child itself
+            allChildrenCount++;
+            // include children of children
+            allChildrenCount += child.allChildrenCount;
+        });
+        rowNode.setAllChildrenCount(allChildrenCount);
+    }
+
+    private setAllChildrenCountGridGrouping(rowNode: RowNode) {
+        // for grid data, we only count the leafs
+        let allChildrenCount = 0;
+        rowNode.childrenAfterFilter.forEach((child: RowNode) => {
             if (child.group) {
                 allChildrenCount += child.allChildrenCount;
             } else {
@@ -60,5 +78,13 @@ export class FilterService {
             }
         });
         rowNode.setAllChildrenCount(allChildrenCount);
+    }
+
+    private setAllChildrenCount(rowNode: RowNode) {
+        if (this.doingTreeData) {
+            this.setAllChildrenCountTreeData(rowNode);
+        } else {
+            this.setAllChildrenCountGridGrouping(rowNode);
+        }
     }
 }

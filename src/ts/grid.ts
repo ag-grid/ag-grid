@@ -71,6 +71,7 @@ import {NamedComponentResolver} from "./components/framework/namedComponentResol
 import {Beans} from "./rendering/beans";
 import {Environment} from "./environment";
 import {AnimationFrameService} from "./misc/animationFrameService";
+import {NavigationService} from "./gridPanel/navigationService";
 
 export interface GridParams {
     // used by Web Components
@@ -165,7 +166,7 @@ export class Grid {
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
                 BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
-                GridPanel, PopupService, ValueCache, ValueService, AlignedGridsService,
+                NavigationService, GridPanel, PopupService, ValueCache, ValueService, AlignedGridsService,
                 LoggerFactory, ColumnUtils, AutoWidthCalculator, PopupService, GridCore, StandardMenuFactory,
                 DragAndDropService, ColumnApi, FocusedCellController, MouseEventService,
                 CellNavigationService, FilterStage, SortStage, FlattenStage, FilterService, RowNodeFactory,

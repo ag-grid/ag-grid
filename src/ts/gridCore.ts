@@ -77,9 +77,9 @@ export class GridCore {
         if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
             // if we are doing RTL, then the tool panel appears on the left
             if (this.gridOptionsWrapper.isEnableRtl()) {
-                westPanel = this.toolPanel.getHtmlElement();
+                westPanel = this.toolPanel.getGui();
             } else {
-                eastPanel = this.toolPanel.getHtmlElement();
+                eastPanel = this.toolPanel.getGui();
             }
         }
 
@@ -160,8 +160,8 @@ export class GridCore {
         this.rowGroupComp = this.rowGroupCompFactory.create();
         this.pivotComp = this.pivotCompFactory.create();
 
-        topPanelGui.appendChild(this.rowGroupComp.getHtmlElement());
-        topPanelGui.appendChild(this.pivotComp.getHtmlElement());
+        topPanelGui.appendChild(this.rowGroupComp.getGui());
+        topPanelGui.appendChild(this.pivotComp.getGui());
 
         this.rowGroupComp.addEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
         this.pivotComp.addEventListener(Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
@@ -204,14 +204,14 @@ export class GridCore {
 
         let eSouthPanel = document.createElement('div');
         if (statusBarEnabled) {
-            eSouthPanel.appendChild(this.statusBar.getHtmlElement());
+            eSouthPanel.appendChild(this.statusBar.getGui());
         }
 
 
         if (paginationPanelEnabled) {
             let paginationComp = new PaginationComp();
             this.context.wireBean(paginationComp);
-            eSouthPanel.appendChild(paginationComp.getHtmlElement());
+            eSouthPanel.appendChild(paginationComp.getGui());
             this.destroyFunctions.push(paginationComp.destroy.bind(paginationComp));
         }
 

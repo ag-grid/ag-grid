@@ -15,6 +15,7 @@ export interface Comparator<T>{
 }
 
 const DEFAULT_TRANSLATIONS : {[name:string]:string}= {
+    loadingOoo:'Loading...',
     equals:'Equals',
     notEqual:'Not equal',
     lessThan:'Less than',

@@ -259,7 +259,7 @@ export class RowRenderer extends BeanStub {
         // all rows and insert them again from scratch
         let rowsUsingFlow = this.forPrint || this.autoHeight;
         let recycleRows = rowsUsingFlow ? false : params.recycleRows;
-        let animate = rowsUsingFlow ? false : params.animate;
+        let animate = rowsUsingFlow ? false : (params.animate && this.gridOptionsWrapper.isAnimateRows());
 
         let rowsToRecycle: {[key: string]: RowComp} = this.binRowComps(recycleRows);
 
@@ -341,7 +341,9 @@ export class RowRenderer extends BeanStub {
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function): void {
         let rowComp = this.rowCompsByIndex[rowIndex];
-        rowComp.addEventListener(eventName, callback);
+        if (rowComp) {
+            rowComp.addEventListener(eventName, callback);
+        }
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -895,7 +897,7 @@ export class RowRenderer extends BeanStub {
 
             if (editing) {
                 if (this.gridOptionsWrapper.isFullRowEdit()) {
-                    this.moveEditToNextRow(previousRenderedCell, nextRenderedCell);
+                    this.moveEditToNextCellOrRow(previousRenderedCell, nextRenderedCell);
                 } else {
                     this.moveEditToNextCell(previousRenderedCell, nextRenderedCell);
                 }
@@ -915,7 +917,7 @@ export class RowRenderer extends BeanStub {
         nextRenderedCell.focusCell(false);
     }
 
-    private moveEditToNextRow(previousRenderedCell: CellComp, nextRenderedCell: CellComp): void {
+    private moveEditToNextCellOrRow(previousRenderedCell: CellComp, nextRenderedCell: CellComp): void {
         let pGridCell = previousRenderedCell.getGridCell();
         let nGridCell = nextRenderedCell.getGridCell();
 

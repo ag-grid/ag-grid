@@ -17,6 +17,7 @@ export {GroupInstanceIdCreator} from "./dist/lib/columnController/groupInstanceI
 
 // components
 export {ComponentUtil} from "./dist/lib/components/componentUtil";
+export {ColDefUtil} from "./dist/lib/components/colDefUtil";
 export {ComponentProvider} from "./dist/lib/components/framework/componentProvider";
 export {initialiseAgGridWithAngular1} from "./dist/lib/components/agGridNg1";
 export {initialiseAgGridWithWebComponents} from "./dist/lib/components/agGridWebComponent";
@@ -152,6 +153,7 @@ export {RowNodeBlockLoader} from "./dist/lib/rowModels/cache/rowNodeBlockLoader"
 export {IEnterpriseRowModel} from "./dist/lib/interfaces/iEnterpriseRowModel";
 export {IEnterpriseCache} from "./dist/lib/interfaces/iEnterpriseCache";
 export {IEnterpriseDatasource, ColumnVO} from "./dist/lib/interfaces/iEnterpriseDatasource";
+export {IToolPanel} from "./dist/lib/interfaces/iToolPanel";
 export {RowNodeCache, RowNodeCacheParams} from "./dist/lib/rowModels/cache/rowNodeCache";
 export {IGetRowsParams, IDatasource} from "./dist/lib/rowModels/iDatasource";
 
@@ -211,6 +213,7 @@ export {
     GridOptions,
     GetContextMenuItemsParams,
     GetContextMenuItems,
+    GetDataPath,
     MenuItemDef,
     GetNodeChildDetails,
     NodeChildDetails,
@@ -228,7 +231,7 @@ export {IContextMenuFactory} from "./dist/lib/interfaces/iContextMenuFactory"
 export {ICompFactory} from "./dist/lib/interfaces/iCompFactory"
 export {IRowNodeStage, StageExecuteParams} from "./dist/lib/interfaces/iRowNodeStage"
 export {IFilterParams, IDoesFilterPassParams} from "./dist/lib/interfaces/iFilter"
-export {ISetFilterParams} from "./dist/lib/interfaces/iSetFilterParams"
+export {ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams} from "./dist/lib/interfaces/iSetFilterParams"
 export {IDateParams, IDate, IDateComp} from "./dist/lib/rendering/dateComponent";
 export {IAfterGuiAttachedParams, IComponent} from "./dist/lib/interfaces/iComponent";
 export {IFilter, IFilterComp} from "./dist/lib/interfaces/iFilter";

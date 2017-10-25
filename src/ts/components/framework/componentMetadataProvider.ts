@@ -6,7 +6,7 @@ import {AgComponentUtils} from "./agComponentUtils";
 export interface ComponentMetadata {
     mandatoryMethodList:string[],
     optionalMethodList:string[],
-    functionAdapter?:(callback:AgGridComponentFunctionInput)=>{new(): IComponent<any, IAfterGuiAttachedParams>}
+    functionAdapter?:(callback:AgGridComponentFunctionInput)=>{new(): IComponent<any>}
 }
 
 
@@ -71,6 +71,11 @@ export class ComponentMetadataProvider {
             groupRowInnerRenderer:{
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+            },
+            filter:{
+                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
+                optionalMethodList: ['onNewRowsLoaded', 'onFloatingFilterChanged'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             }
         }

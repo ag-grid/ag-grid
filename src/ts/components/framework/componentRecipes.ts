@@ -27,7 +27,7 @@ enum ComponentType {
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
-interface ComponentToUse<A extends IComponent<any, IAfterGuiAttachedParams> & B, B> {
+interface ComponentToUse<A extends IComponent<any> & B, B> {
     component:{new(): A}|{new(): B},
     type:ComponentType
 }
@@ -47,18 +47,16 @@ export class ComponentRecipes {
     @Autowired('filterManager')
     private filterManager: FilterManager;
 
-
-
     public newDateComponent (params: IDateParams): IDateComp{
         return <IDateComp>this.componentResolver.createAgGridComponent(this.gridOptions, params, "dateComponent");
     }
 
-    public newHeaderComponent (params:IHeaderParams): IHeaderComp{
-        return <IHeaderComp>this.componentResolver.createAgGridComponent(params.column.getColDef(), params, "headerComponent");
+    public newHeaderComponent(params:IHeaderParams, callback: (headerComp: IHeaderComp)=>void): void {
+        this.componentResolver.createAgGridComponent_async(callback, params.column.getColDef(), params, "headerComponent");
     }
 
-    public newHeaderGroupComponent (params:IHeaderGroupParams): IHeaderGroupComp{
-        return <IHeaderGroupComp>this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent");
+    public newHeaderGroupComponent(params:IHeaderGroupParams, callback: (headerGroupComp: IHeaderGroupComp)=>void): void {
+        this.componentResolver.createAgGridComponent_async(callback, params.columnGroup.getColGroupDef(), params, "headerGroupComponent");
     }
 
     private newFloatingFilterComponent<M> (type:string, colDef:ColDef, params:IFloatingFilterParams<M, any>):IFloatingFilterComp<M, any, any>{
@@ -136,7 +134,7 @@ export class ComponentRecipes {
         return <ICellRendererComp>this.componentResolver.createAgGridComponent(this.gridOptionsWrapper, params, "fullWidthCellRenderer");
     }
 
-    private getFilterComponentPrototype<A extends IComponent<any, IAfterGuiAttachedParams> & B, B>
+    private getFilterComponentPrototype<A extends IComponent<any> & B, B>
     (colDef: ColDef): ComponentToUse<A, B> {
         return <ComponentToUse<A, B>>this.componentResolver.getComponentToUse(colDef, "filterComponent");
     }

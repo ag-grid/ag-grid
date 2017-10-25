@@ -98,8 +98,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     private primary: boolean;
 
-    private filter: {new(): IFilter} | string;
-
     private parent: ColumnGroupChild;
 
     constructor(colDef: ColDef, colId: String, primary: boolean) {
@@ -122,8 +120,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
     public initialise(): void {
-        this.filter = this.frameworkFactory.colDefFilter(this.colDef);
-
         this.setPinned(this.colDef.pinned);
 
         let minColWidth = this.gridOptionsWrapper.getMinColWidth();
@@ -165,10 +161,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
 
 
-    public getFilter(): {new(): IFilter} | string {
-        return this.filter;
-    }
-
     public getUniqueId(): string {
         return this.getId();
     }
@@ -190,22 +182,27 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     private validate(): void {
+
+        let colDefAny = <any> this.colDef;
+
         if (!this.gridOptionsWrapper.isEnterprise()) {
-            if (_.exists(this.colDef.aggFunc)) {
-                console.warn('ag-Grid: aggFunc is only valid in ag-Grid-Enterprise');
-            }
-            if (_.exists(this.colDef.rowGroupIndex)) {
-                console.warn('ag-Grid: rowGroupIndex is only valid in ag-Grid-Enterprise');
-            }
-            if (_.exists(this.colDef.rowGroup)) {
-                console.warn('ag-Grid: rowGroup is only valid in ag-Grid-Enterprise');
-            }
-            if (_.exists(this.colDef.pivotIndex)) {
-                console.warn('ag-Grid: pivotIndex is only valid in ag-Grid-Enterprise');
-            }
-            if (_.exists(this.colDef.pivot)) {
-                console.warn('ag-Grid: pivot is only valid in ag-Grid-Enterprise');
-            }
+            let itemsNotAllowedWithoutEnterprise =
+                ['enableRowGroup','rowGroup','rowGroupIndex','enablePivot','pivot','pivotIndex','aggFunc'];
+            itemsNotAllowedWithoutEnterprise.forEach( item => {
+                if (_.exists(colDefAny[item])) {
+                    console.warn(`ag-Grid: ${item} is only valid in ag-Grid-Enterprise, your column definition should not have ${item}`);
+                }
+            });
+        }
+
+        if (this.gridOptionsWrapper.isTreeData()) {
+            let itemsNotAllowedWithTreeData =
+                ['enableRowGroup','rowGroup','rowGroupIndex','enablePivot','pivot','pivotIndex'];
+            itemsNotAllowedWithTreeData.forEach( item => {
+                if (_.exists(colDefAny[item])) {
+                    console.warn(`ag-Grid: ${item} is not possible when doing tree data, your column definition should not have ${item}`);
+                }
+            });
         }
 
         if (_.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
@@ -224,7 +221,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
         }
 
-        let colDefAny: any = this.colDef;
         if (colDefAny.floatingCellRenderer) {
             console.warn('ag-Grid: since v11, floatingCellRenderer is now pinnedRowCellRenderer');
             this.colDef.pinnedRowCellRenderer = colDefAny.floatingCellRenderer;
@@ -277,8 +273,8 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         // if function, then call the function to find out
         if (typeof this.colDef.suppressNavigable === 'function') {
             let params = this.createIsColumnFuncParams(rowNode);
-            let suppressNaviableFunc = <IsColumnFunc> this.colDef.suppressNavigable;
-            return suppressNaviableFunc(params);
+            let userFunc = <IsColumnFunc> this.colDef.suppressNavigable;
+            return userFunc(params);
         }
 
         return false;

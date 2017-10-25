@@ -85,7 +85,7 @@ export class AutoWidthCalculator {
             }
         });
 
-        return comp ? comp.getHtmlElement() : null;
+        return comp ? comp.getGui() : null;
     }
     
     private putRowCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): void {

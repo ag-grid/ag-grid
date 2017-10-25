@@ -75,12 +75,12 @@ export class InMemoryNodeManager {
         this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
         this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
 
-        let rowsAlreadyGrouped = _.exists(this.getNodeChildDetails);
+        let doingLegacyTreeData = _.exists(this.getNodeChildDetails);
 
         // kick off recursion
         let result = this.recursiveFunction(rowData, null, InMemoryNodeManager.TOP_LEVEL);
 
-        if (rowsAlreadyGrouped) {
+        if (doingLegacyTreeData) {
             this.rootNode.childrenAfterGroup = result;
             this.setLeafChildren(this.rootNode);
         } else {
@@ -88,8 +88,8 @@ export class InMemoryNodeManager {
         }
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction {
-        if (this.isRowsAlreadyGrouped()) { return null; }
+    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number}): RowNodeTransaction {
+        if (this.isLegacyTreeData()) { return null; }
 
         let {add, addIndex, remove, update} = rowDataTran;
 
@@ -131,6 +131,10 @@ export class InMemoryNodeManager {
                     rowNodeTransaction.update.push(updatedRowNode);
                 }
             });
+        }
+
+        if (rowNodeOrder) {
+            _.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
 
         return rowNodeTransaction;
@@ -202,7 +206,12 @@ export class InMemoryNodeManager {
     private createNode(dataItem: any, parent: RowNode, level: number): RowNode {
         let node = new RowNode();
         this.context.wireBean(node);
-        let nodeChildDetails = this.getNodeChildDetails ? this.getNodeChildDetails(dataItem) : null;
+
+        let doingTreeData = this.gridOptionsWrapper.isTreeData();
+        let doingLegacyTreeData = !doingTreeData && _.exists(this.getNodeChildDetails);
+
+        let nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
+
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
             node.childrenAfterGroup = this.recursiveFunction(nodeChildDetails.children, node, level + 1);
@@ -213,10 +222,20 @@ export class InMemoryNodeManager {
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         } else {
+
             node.group = false;
-            node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
-            if (node.canFlower) {
-                node.expanded = this.isExpanded(level);
+
+            if (doingTreeData) {
+                node.canFlower = false;
+                node.expanded = false;
+            } else {
+                //  this is the default, for when doing grid data
+                node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
+                if (node.canFlower) {
+                    node.expanded = this.isExpanded(level);
+                } else {
+                    node.expanded = false;
+                }
             }
         }
 
@@ -242,6 +261,7 @@ export class InMemoryNodeManager {
         }
     }
 
+    // this is only used for doing legacy tree data
     private setLeafChildren(node: RowNode): void {
         node.allLeafChildren = [];
         if (node.childrenAfterGroup) {
@@ -258,7 +278,7 @@ export class InMemoryNodeManager {
     }
 
     public insertItemsAtIndex(index: number, rowData: any[]): RowNode[] {
-        if (this.isRowsAlreadyGrouped()) { return null; }
+        if (this.isLegacyTreeData()) { return null; }
 
         let nodeList = this.rootNode.allLeafChildren;
 
@@ -280,7 +300,7 @@ export class InMemoryNodeManager {
     }
 
     public removeItems(rowNodes: RowNode[]): RowNode[] {
-        if (this.isRowsAlreadyGrouped()) { return; }
+        if (this.isLegacyTreeData()) { return; }
 
         let nodeList = this.rootNode.allLeafChildren;
 
@@ -303,11 +323,11 @@ export class InMemoryNodeManager {
         return this.insertItemsAtIndex(nodeList.length, items);
     }
 
-    public isRowsAlreadyGrouped(): boolean {
+    public isLegacyTreeData(): boolean {
         let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) {
             console.warn('ag-Grid: adding and removing rows is not supported when using nodeChildDetailsFunc, ie it is not ' +
-                'supported if providing groups');
+                'supported for legacy tree data. Please see the docs on the new preferred way of providing tree data that works with delta updates.');
             return true;
         } else {
             return false;

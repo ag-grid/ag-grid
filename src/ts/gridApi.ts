@@ -43,6 +43,7 @@ import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 import {AgEvent} from "./events";
+import {IToolPanel} from "./interfaces/iToolPanel";
 
 
 export interface StartEditingCellParams {
@@ -93,6 +94,7 @@ export class GridApi {
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
+    @Optional('toolPanel') private toolPanel: IToolPanel;
 
     private inMemoryRowModel: InMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
@@ -167,8 +169,8 @@ export class GridApi {
     public setRowData(rowData: any[]) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             if (this.gridOptionsWrapper.isDeltaRowDataMode()) {
-                let transaction = this.immutableService.createTransactionForRowData(rowData);
-                this.inMemoryRowModel.updateRowData(transaction);
+                let [transaction, orderIdMap] = this.immutableService.createTransactionForRowData(rowData);
+                this.inMemoryRowModel.updateRowData(transaction, orderIdMap);
             } else {
                 this.selectionController.reset();
                 this.inMemoryRowModel.setRowData(rowData);
@@ -248,6 +250,12 @@ export class GridApi {
 
     public getVerticalPixelRange(): any {
         return this.gridPanel.getVerticalPixelRange();
+    }
+
+    public refreshToolPanel(): void {
+        if (this.toolPanel) {
+            this.toolPanel.refresh();
+        }
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -437,11 +445,6 @@ export class GridApi {
     }
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
-        if (eventName==='virtualRowRemoved') {
-            console.log('ag-Grid: event virtualRowRemoved is deprecated, now called renderedRowRemoved');
-            eventName = '' +
-                '';
-        }
         if (eventName==='virtualRowSelected') {
             console.log('ag-Grid: event virtualRowSelected is deprecated, to register for individual row ' +
                 'selection events, add a listener directly to the row node.');

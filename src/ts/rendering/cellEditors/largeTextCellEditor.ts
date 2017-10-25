@@ -43,7 +43,7 @@ export class LargeTextCellEditor extends Component implements ICellEditorComp {
             this.textarea.value = params.value.toString();
         }
 
-        this.getHtmlElement().querySelector('.ag-large-textarea').appendChild(this.textarea);
+        this.getGui().querySelector('.ag-large-textarea').appendChild(this.textarea);
 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
     }
