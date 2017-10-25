@@ -68,7 +68,7 @@ function scrambleAndRefreshLeftToRight() {
             force: isForceRefreshSelected(),
             columns: [col]
         };
-        callRefreshAfterMillis(params, millis, gridOptions);
+        callRefreshAfterMillis(params, millis, gridOptions.api);
     });
 }
 
@@ -101,13 +101,13 @@ function scrambleAndRefreshTopToBottom() {
             force: isForceRefreshSelected(),
             rowNodes: rowNodes
         };
-        callRefreshAfterMillis(params, millis, gridOptions);
+        callRefreshAfterMillis(params, millis, gridOptions.api);
     }
 }
 
-function callRefreshAfterMillis(params, millis, gridOptions) {
+function callRefreshAfterMillis(params, millis, gridApi) {
     setTimeout(function() {
-        gridOptions.api.refreshCells(params);
+        gridApi.refreshCells(params);
     }, millis);
 }
 

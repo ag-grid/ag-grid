@@ -1,18 +1,22 @@
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
-    {headerName: "#", width: 50, cellRenderer: function(params) {
-        return params.node.id + 1;
-    } },
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
+    {
+        headerName: '#',
+        width: 50,
+        cellRenderer: function(params) {
+            return params.node.id + 1;
+        }
+    },
+    {headerName: 'Athlete', field: 'athlete', width: 150},
+    {headerName: 'Age', field: 'age', width: 90},
+    {headerName: 'Country', field: 'country', width: 120},
+    {headerName: 'Year', field: 'year', width: 90},
+    {headerName: 'Date', field: 'date', width: 110},
+    {headerName: 'Sport', field: 'sport', width: 110},
+    {headerName: 'Gold', field: 'gold', width: 100},
+    {headerName: 'Silver', field: 'silver', width: 100},
+    {headerName: 'Bronze', field: 'bronze', width: 100},
+    {headerName: 'Total', field: 'total', width: 100}
 ];
 
 var gridOptions = {
@@ -34,23 +38,20 @@ function setText(selector, text) {
 }
 
 function onPaginationChanged() {
-    if (gridOptions) {
-        console.log('onPaginationPageLoaded');
+    console.log('onPaginationPageLoaded');
 
-        setText('#lbLastPageFound', gridOptions.api.paginationIsLastPageFound());
-        setText('#lbPageSize', gridOptions.api.paginationGetPageSize());
-        // we +1 to current page, as pages are zero based
-        setText('#lbCurrentPage', gridOptions.api.paginationGetCurrentPage() + 1);
-        setText('#lbTotalPages', gridOptions.api.paginationGetTotalPages());
+    setText('#lbLastPageFound', gridOptions.api.paginationIsLastPageFound());
+    setText('#lbPageSize', gridOptions.api.paginationGetPageSize());
+    // we +1 to current page, as pages are zero based
+    setText('#lbCurrentPage', gridOptions.api.paginationGetCurrentPage() + 1);
+    setText('#lbTotalPages', gridOptions.api.paginationGetTotalPages());
 
-        setLastButtonDisabled(!gridOptions.api.paginationIsLastPageFound());
-    }
+    setLastButtonDisabled(!gridOptions.api.paginationIsLastPageFound());
 }
 
 function setLastButtonDisabled(disabled) {
     document.querySelector('#btLast').disabled = disabled;
 }
-
 
 function setRowData(rowData) {
     allOfTheData = rowData;
