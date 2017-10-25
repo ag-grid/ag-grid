@@ -51,7 +51,7 @@ function indexTemplate(bindings) {
     }
 
     if (bindings.resizeToFit) {
-        additionalInReady.push('this.agGrid.api.sizeColumnsToFit();');
+        additionalInReady.push('params.api.sizeColumnsToFit();');
     }
 
     const agGridTag = `<div style={{
@@ -101,8 +101,6 @@ class GridExample extends Component {
 
     onGridReady(params) {
         this.agGrid = params;
-        const gridOptions = params;
-
         ${additionalInReady.join('\n')}
     }
 

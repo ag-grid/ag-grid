@@ -95,9 +95,14 @@ function extractEventHandlers(tree, eventNames: string[]) {
     });
 }
 
-export default function parser([js, html], gridSettings) {
-    const localGridOptions = esprima.parseScript( 'const gridOptions = this.agGrid').body[0];
+const localGridOptions = esprima.parseScript('const gridInstance = this.agGrid').body[0];
 
+function generateWithReplacedGridOptions(node) {
+    //node.body.body.unshift(localGridOptions);
+    return generate(node).replace(/gridOptions/g, 'this.agGrid');
+}
+
+export default function parser([js, html], gridSettings) {
     const domTree = $(`<div>${html}</div>`);
 
     domTree.find('style').remove();
@@ -122,15 +127,10 @@ export default function parser([js, html], gridSettings) {
         collectors.push({
             matches: node => nodeIsFunctionNamed(node, handler),
             apply: (col, node) => {
-                const body = node.body;
-                body.body.unshift(localGridOptions);
-
-                const code = generate(node, indentOne);
-
                 col.externalEventHandlers.push({
                     name: handler,
                     params: params,
-                    body: code
+                    body: generateWithReplacedGridOptions(node)
                 });
             }
         });
@@ -139,7 +139,7 @@ export default function parser([js, html], gridSettings) {
     collectors.push({
         matches: node => nodeIsUnusedFunction(node, registered),
         apply: (col, node) => {
-            col.utils.push(generate(node));
+            col.utils.push(generate(node).replace(/gridOptions/g, 'gridInstance'));
         }
     });
 
@@ -159,7 +159,7 @@ export default function parser([js, html], gridSettings) {
 
             col.data = {
                 url: dataUrl,
-                callback: generate(callback, {format: {indent: {base: 2}}})
+                callback: generate(callback, {format: {indent: {base: 2}}}).replace(/gridOptions/g, 'params')
             };
         }
     });
@@ -169,19 +169,18 @@ export default function parser([js, html], gridSettings) {
         matches: nodeIsHttpOpen,
         apply: (col, node) => {
             const dataUrl = node.expression.arguments[1].raw;
-            // Let's try this for now
-            const callback = '      { gridOptions.api.setRowData(data) }';
+            const callback = '{ gridApi.setRowData(data); }';
 
             col.data = {url: dataUrl, callback: callback};
         }
     });
 
-    // extract the xmlhttpreq call
+    // extract the simpleHttpRequest call
     onReadyCollectors.push({
         matches: nodeIsSimpleHttpRequest,
         apply: (col, node) => {
             const dataUrl = node.expression.callee.object.arguments[0].properties[0].value.raw;
-            const callback = generate(node.expression.arguments[0].body);
+            const callback = generate(node.expression.arguments[0].body).replace(/gridOptions/g, 'params');
 
             col.data = {url: dataUrl, callback: callback};
         }
@@ -211,8 +210,11 @@ export default function parser([js, html], gridSettings) {
         collectors.push({
             matches: node => nodeIsFunctionNamed(node, onEventName),
             apply: (col, node) => {
-                node.body.body.unshift(localGridOptions);
-                col.eventHandlers.push({name: eventName, handlerName: onEventName, handler: generate(node, indentOne)});
+                col.eventHandlers.push({
+                    name: eventName,
+                    handlerName: onEventName,
+                    handler: generateWithReplacedGridOptions(node)
+                });
             }
         });
     });

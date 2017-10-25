@@ -8,28 +8,24 @@ function convertFunctionToMethod(code, methodName) {
     return methodName + removeFunction(code);
 }
 
-function ngOnInitTemplate(url, callback) {
-    return `
-    ngOnInit() {
-        const gridOptions = this.agGrid;
-        this.http.get(${url}).subscribe( data => ${callback});
-    }`;
-}
-
-function onGridReadyTemplate(readyCode: string, resizeToFit: boolean) {
-    let resize = '';
+function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string }) {
+    let resize = '', getData = '';
 
     if (!readyCode) {
         readyCode = '';
     }
 
     if (resizeToFit) {
-        resize = `this.agGrid.api.sizeColumnsToFit();`;
+        resize = `params.api.sizeColumnsToFit();`;
+    }
+
+    if (data) {
+       getData = `this.http.get(${data.url}).subscribe( data => ${data.callback});`
     }
 
     return `
     onGridReady(params) {
-        const gridOptions = params;
+        ${getData}
         ${resize}
         ${readyCode.trim().replace(/^\{|\}$/g, '')}
     }`;
@@ -79,14 +75,9 @@ function appComponentTemplate(bindings) {
 
     const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunction);
 
-    if (bindings.data) {
-        additional.push(ngOnInitTemplate(bindings.data.url, bindings.data.callback));
-    }
-
-    if (bindings.onGridReady || bindings.resizeToFit) {
+    if (bindings.onGridReady || bindings.resizeToFit || bindings.data) {
         eventAttributes.push('(gridReady)="onGridReady($event)"');
-        //additional.push('onGridReady(params){ console.log(params) }');
-        additional.push(onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit));
+        additional.push(onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, bindings.data));
     }
 
     const agGridTag = `<ag-grid-angular
