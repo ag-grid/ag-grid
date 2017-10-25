@@ -26,7 +26,6 @@ import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {BaseExportParams, ProcessCellForExportParams} from "./exportParams";
 import {AgEvent} from "./events";
 import {Column} from "./entities/column";
-import { DefaultColumnTypes } from "./entities/defaultColumnTypes";
 import { Environment } from "./environment";
 
 let DEFAULT_ROW_HEIGHT = 25;
@@ -273,7 +272,7 @@ export class GridOptionsWrapper {
     public isAngularCompileHeaders() { return isTrue(this.gridOptions.angularCompileHeaders); }
     public isDebug() { return isTrue(this.gridOptions.debug); }
     public getColumnDefs() { return this.gridOptions.columnDefs; }
-    public getColumnTypes(): {[key: string]: ColDef} { return _.assign({}, this.gridOptions.columnTypes, DefaultColumnTypes); }
+    public getColumnTypes(): {[key: string]: ColDef} { return this.gridOptions.columnTypes; }
     public getDatasource(): IDatasource { return this.gridOptions.datasource; }
     public getViewportDatasource(): IViewportDatasource { return this.gridOptions.viewportDatasource; }
     public getEnterpriseDatasource(): IEnterpriseDatasource { return this.gridOptions.enterpriseDatasource; }

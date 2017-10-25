@@ -8,6 +8,7 @@ import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import {Column} from "../entities/column";
 import {Autowired, Bean, Context, Qualifier} from "../context/context";
 import {Utils as _} from "../utils";
+import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('balancedColumnTreeBuilder')
@@ -137,24 +138,30 @@ export class BalancedColumnTreeBuilder {
     }
 
     private createColumn(columnKeyCreator: ColumnKeyCreator,  primaryColumns: boolean, colDef: ColDef): Column {
+        let colDefMerged = this.mergeColDefs(colDef);
+        this.checkForDeprecatedItems(colDefMerged);
+        let colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
+        let column = new Column(colDefMerged, colId, primaryColumns);
+        this.context.wireBean(column);
+        return column;
+    }
+
+    private mergeColDefs(colDef: ColDef) {
+        // start with empty merged definition
         let colDefMerged: ColDef = <ColDef> {};
 
+        // merge properties from default column definitions
         _.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
 
-        if(colDef.type) {
+        // merge properties from column type properties
+        if (colDef.type) {
             this.assignColumnTypes(colDef, colDefMerged);
         }
 
+        // merge properties from column definitions
         _.assign(colDefMerged, colDef);
 
-        this.checkForDeprecatedItems(colDefMerged);
-
-        let colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
-
-        let column = new Column(colDefMerged, colId, primaryColumns);
-        this.context.wireBean(column);
-
-        return column;
+        return colDefMerged;
     }
 
     private assignColumnTypes(colDef: ColDef, colDefMerged: ColDef) {
@@ -174,8 +181,11 @@ export class BalancedColumnTreeBuilder {
             return;
         }
 
+        // merge user defined with default column types
+        let allColumnTypes = _.assign({}, this.gridOptionsWrapper.getColumnTypes(), DefaultColumnTypes);
+
         typeKeys.forEach((t) => {
-            let typeColDef = this.gridOptionsWrapper.getColumnTypes()[t.trim()];
+            let typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
                 _.assign(colDefMerged, typeColDef);
             } else {
