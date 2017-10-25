@@ -410,19 +410,14 @@ gridOptions.groupRowRendererParams: {
 
     <p>
         If there are rows containing <code>null</code> or <code>undefined</code> values for the column that is being
-        grouped then these rows will not be grouped. We refer to this scenario as <i>Unbalanced Groups</i>, that is
-        where there is a mix of grouped and non-grouped rows.
-    </p>
-
-    <p>
-        The following example illustrates this scenario:
+        grouped then these rows will not be grouped. We refer to this scenario as <i>Unbalanced Groups</i> in that
+        there is a mix of groups and rows as siblings. The following example demonstrates:
     </p>
 
     <ul>
-        <li>Notice in the Group column some of the cities are grouped by the 'States', 'New York' and 'California', whereas
-            others are not grouped by city.</li>
-        <li>Removing the 'State' group, in the top Row Group Panel, shows that the non grouped rows have <code>null</code>
-            'State' values.</li>
+        <li>Data is grouped by column 'State'. Rows are either grouped by state 'New York', 'California' or
+            not grouped.</li>
+        <li>Removing the grouping shows that the non grouped rows have no 'State' value.</li>
     </ul>
 
     <?= example('Unbalanced Groups', 'unbalanced-groups', 'generated', array("enterprise" => 1)) ?>
@@ -430,7 +425,7 @@ gridOptions.groupRowRendererParams: {
     <p>
         If you do not want rows with null or undefined to be left out of groups, but want
         a group created to contain these empty values, then change your data and replace the null and undefined
-        values with something (eg the string 'Empty' or a blank string ie ' ').
+        values with something (eg the string 'Empty' or a string with a blank space character i.e. ' ').
     </p>
 
     <h2>Grouping API</h2>
@@ -467,13 +462,24 @@ gridOptions.api.forEachNode(function(node) {
     <p>
         The example below shows grouping on the county, with country an object within each row.
     <snippet>
+// row item has complex object for country
 rowItem = {
     athlete: 'Michael Phelps',
-        country: { // country is complex object, so need to provide colDef.keyCreator()
+    country: {
         name: 'United States',
         code: 'US'
     }
     ....
+}
+
+// the column definition for country has keyCreator
+colDef = {
+    headerName: "Country",
+    field: "country",
+    keyCreator: function(params) {
+        return params.value.name;
+    }
+    ...
 }</snippet>
 
 
