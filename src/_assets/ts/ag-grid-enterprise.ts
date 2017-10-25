@@ -7,9 +7,12 @@ import "../../../../ag-grid/src/styles/theme-material.scss";
 import "../../../../ag-grid/src/styles/ag-theme-material.scss";
 // import "../../../../ag-grid/src/styles/ag-theme-fresh.scss";
 
+declare var HMR: boolean;
 
-(<any> global).hot = true;
-import 'webpack-hot-middleware/client?path=/dev/ag-grid-enterprise-bundle/__webpack_hmr&reload=true';
+if (HMR) {
+    (<any> global).hot = true;
+    require('webpack-hot-middleware/client?path=/dev/ag-grid-enterprise-bundle/__webpack_hmr&reload=true');
+}
 
 export * from "../../../../ag-grid/exports";
 

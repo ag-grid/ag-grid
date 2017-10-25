@@ -21,8 +21,19 @@ const WINDOWS = /^win/.test(os.platform());
 
 const rewrite = require('express-urlrewrite');
 
+var argv = require('minimist')(process.argv.slice(2));
+const useHmr = argv.hmr;
+
 function addWebpackMiddleware(app, configPath, prefix) {
     const webpackConfig = require(path.resolve('./webpack-config/', configPath + '.js'));
+
+    webpackConfig.plugins.push( new realWebpack.DefinePlugin({ HMR: useHmr }));
+
+    // remove the HMR plugins - very "hardcoded" approach. 
+    if (!useHmr) {
+        webpackConfig.plugins.splice(0, 2);
+    }
+
     const compiler = realWebpack(webpackConfig);
 
     app.use(rewrite(new RegExp(`^${prefix}/(.+).hot-update.(json|js)`), `${prefix}${prefix}/$1.hot-update.$2`));
@@ -35,7 +46,9 @@ function addWebpackMiddleware(app, configPath, prefix) {
         })
     );
 
-    app.use(prefix, hotMiddleware(compiler));
+    if (useHmr) {
+        app.use(prefix, hotMiddleware(compiler));
+    }
 }
 
 function launchPhpCP(app) {

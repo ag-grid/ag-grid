@@ -4,9 +4,15 @@ const common = require('./common');
 const webpack = require('webpack');
 const path = require('path');
 
+let entry = './src/_assets/ts/site';
+
+if (require('minimist')(process.argv.slice(2)).hmr) {
+    entry = ['./src/_assets/ts/site', 'webpack-hot-middleware/client?path=/dist/__webpack_hmr&reload=true'];
+}
+
 module.exports = merge(common, {
     entry: {
-        site: ['./src/_assets/ts/site', 'webpack-hot-middleware/client?path=/dist/__webpack_hmr&reload=true']
+        site: entry
     },
     output: {
         publicPath: '/',
@@ -17,8 +23,6 @@ module.exports = merge(common, {
     plugins: [
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
-        new webpack.DefinePlugin({
-            MAX_ACTIVE_EXAMPLES: JSON.stringify(3)
-        })
+        new webpack.DefinePlugin({ MAX_ACTIVE_EXAMPLES: JSON.stringify(3) })
     ]
 });

@@ -85,6 +85,7 @@
     "gulp-uncss": "1.0.6",
     "http-server": "0.10.0",
     "loader-utils": "^1.1.0",
+    "minimist": "^1.2.0",
     "node-sass": "^4.5.3",
     "postcss-loader": "^2.0.6",
     "postcss-scss": "^1.0.2",
