@@ -6,12 +6,14 @@ import {GroupCellRendererParams} from "./cellRenderers/groupCellRenderer";
 import {ComponentResolver, ComponentSource, ResolvedComponent} from "../components/framework/componentResolver";
 import {ISetFilterParams} from "../interfaces/iSetFilterParams";
 import {_} from "../utils";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 /** Class to use a cellRenderer. */
 @Bean('cellRendererService')
 export class CellRendererService {
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
     @Autowired('componentResolver') private componentResolver: ComponentResolver;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     public useCellRenderer(
         target:ColDef,
@@ -36,7 +38,13 @@ export class CellRendererService {
         if (cellRenderer != null) {
             this.bindToHtml(cellRenderer, eTarget);
         } else {
-            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+
+            if(params.valueFormatted == null && params.value == null) {
+                let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+                eTarget.innerText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
+            } else {
+                eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+            }
         }
         return cellRenderer;
     }
