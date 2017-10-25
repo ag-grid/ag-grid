@@ -55,10 +55,6 @@ function nodeIsDocumentContentLoaded(node) {
     }
 }
 
-function nodeIsFetchDataCall(node) {
-    return node.type === 'ExpressionStatement' && node.expression.callee && node.expression.callee.name === 'fetchData';
-}
-
 function nodeIsResizeColumnsToFit(node) {
     return node.expression && node.expression.callee && node.expression.callee.property && node.expression.callee.property.name == 'sizeColumnsToFit';
 }
@@ -115,7 +111,7 @@ export default function parser([js, html], gridSettings) {
 
     const indentOne = {format: {indent: {base: 1}}};
 
-    const registered = ['gridOptions', 'fetchData'];
+    const registered = ['gridOptions'];
 
     domEventHandlers.forEach(([_, handler, params]) => {
         if (registered.indexOf(handler) > -1) {
@@ -147,20 +143,6 @@ export default function parser([js, html], gridSettings) {
         matches: node => nodeIsUnusedVar(node, registered),
         apply: (col, node) => {
             col.utils.push(generate(node));
-        }
-    });
-
-    // extract the fetchData call
-    onReadyCollectors.push({
-        matches: nodeIsFetchDataCall,
-        apply: (col, node) => {
-            const dataUrl = node.expression.arguments[0].raw;
-            const callback = node.expression.arguments[1].body;
-
-            col.data = {
-                url: dataUrl,
-                callback: generate(callback, {format: {indent: {base: 2}}}).replace(/gridOptions/g, 'params')
-            };
         }
     });
 

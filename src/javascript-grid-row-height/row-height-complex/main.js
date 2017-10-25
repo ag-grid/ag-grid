@@ -36,26 +36,12 @@ var gridOptions = {
     }
 };
 
-// do http request to get our sample data - not using any framework to keep the example self contained.
-// you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-function fetchData(url, callback) {
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', url);
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            callback(httpResult);
-        }
-    };
-}
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    fetchData('https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json', function(data) {
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json'}).then(function(data) {
         data.forEach(function(dataItem) {
             var start = Math.floor(Math.random() * (latinText.length / 2));
             var end = Math.floor(Math.random() * (latinText.length / 2) + latinText.length / 2);

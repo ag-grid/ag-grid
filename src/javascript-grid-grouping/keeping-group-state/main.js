@@ -24,20 +24,6 @@ var gridOptions = {
 var allRowData;
 var pickingEvenRows;
 
-// do http request to get our sample data - not using any framework to keep the example self contained.
-// you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-function fetchData(url, callback) {
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', url);
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            callback(httpResult);
-        }
-    };
-}
-
 function refreshData() {
     // in case user hits the 'refresh groups' data before the data was loaded
     if (!allRowData) {
@@ -63,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    fetchData('https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json', function(data) {
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json'}).then(function(data) {
         allRowData = data;
         var dataThisTime = [];
         data.forEach(function(item, index) {
