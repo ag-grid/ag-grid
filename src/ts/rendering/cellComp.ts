@@ -109,7 +109,9 @@ export class CellComp extends Component {
         let left = col.getLeft();
 
         let valueToRender = this.getInitialValueToRender();
+        let valueSanitised = _.escape(valueToRender);
         let tooltip = this.getToolTip();
+        let tooltipSanitised = _.escape(tooltip);
 
         let wrapperStartTemplate: string;
         let wrapperEndTemplate: string;
@@ -129,10 +131,10 @@ export class CellComp extends Component {
         templateParts.push(` comp-id="${this.getCompId()}" `);
         templateParts.push(` col-id="${col.getId()}"`);
         templateParts.push(` class="${cssClasses.join(' ')}"`);
-        templateParts.push(  tooltip ? ` title="${tooltip}"` : ``);
+        templateParts.push(  tooltipSanitised ? ` title="${tooltipSanitised}"` : ``);
         templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef}" >`);
         templateParts.push(wrapperStartTemplate);
-        templateParts.push(valueToRender);
+        templateParts.push(valueSanitised);
         templateParts.push(wrapperEndTemplate);
         templateParts.push(`</div>`);
 
