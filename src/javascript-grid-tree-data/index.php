@@ -36,48 +36,41 @@ include '../documentation-main/documentation_header.php';
     <h2 id="supplying-tree-data">Supplying Tree Data</h2>
 
     <p>
-       When providing Tree Data to the grid, it should be supplied as an array of objects in the same way as non grouped
-       row data:
+        When providing tree data to the grid you implement the <code>gridOptions.getDataPath(data)</code> callback
+        to tell the grid the hierarchy for each row. The callback returns back a <code>string[]</code> with each
+        element specifying a level of the tree. Below follows two examples presenting the hierarchy in different ways.
     <p>
 
 <snippet>
+// sample hierarchy, Malcolm is child or Erica
+  + Erica
+    - Malcolm
+
+// ############
+// Example #1 - hierarchy in the data is already a string array
+// ############
 var rowData = [
     {orgHierarchy: ['Erica'], jobTitle: "CEO", employmentType: "Permanent"},
     {orgHierarchy: ['Erica', 'Malcolm'], jobTitle: "VP", employmentType: "Permanent"}
     ...
-]</snippet>
+]
+// just return the hierarchy, no conversion required
+getDataPath: function(data) {
+    return data.orgHierarchy;
+}
 
-    <p>
-       However Tree Data differs in that it captures a path (or hierarchy) for each object. In the example above you will
-       notice there is an object property 'orgHierarchy' which represents a path for each entry where 'Erica' is a parent
-       of 'Malcolm'.
-    </p>
-    <p>
-        There is nothing special about the property name 'orgHierarchy' or the data type <code>string[]</code>.
-        For example the same hierarchical information could be represented as follows:
-    </p>
-
-    <snippet>
+// ############
+// Example #2 - hierarchy is a path string, needs conversion
+// ############
 var rowData = [
     {path: "Erica", jobTitle: "CEO", employmentType: "Permanent"},
     {path: "Erica/Malcolm", jobTitle: "VP", employmentType: "Permanent"}
     ...
-]</snippet>
-
-    <p>
-        All the grid requires is that you implement the <code>gridOptions.getDataPath(data)</code> callback and return a
-        <code>string[]</code>. The following snippet demonstrates how this is done for both sample data formats above:
-    </p>
-
-    <snippet>
-getDataPath: function(data) {
-    return data.orgHierarchy; // orgHierarchy: ['Erica', 'Malcolm']
-}
-
+]
+// callback converts eg "Erica/Malcolm" to ["Erica","Malcolm"]
 getDataPath: function(data) {
     return data.path.split('/'); // path: "Erica/Malcolm"
-}
-</snippet>
+}</snippet>
 
     <h2 id="configuring-a-group-column">Configuring Group Column</h2>
 
