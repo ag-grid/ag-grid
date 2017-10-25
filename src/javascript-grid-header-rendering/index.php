@@ -30,28 +30,28 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet>
-        // a list of column definitions
-        var myColumns = {
+// a list of column definitions
+var myColumns = {
 
-        // these columns use the default header
-        {headerName: "Athlete", field: "athlete"},
-        {headerName: "Sport", field: "sport"},
+    // these columns use the default header
+    {headerName: "Athlete", field: "athlete"},
+    {headerName: "Sport", field: "sport"},
 
-        // this column uses a custom header
-        {headerName: "Age", field: "age", headerComponent: MyHeaderComponent},
+    // this column uses a custom header
+    {headerName: "Age", field: "age", headerComponent: MyHeaderComponent},
 
-        // you can also specify header components for groups
-        {
+    // you can also specify header components for groups
+    {
         headerName: "Medals",
         // custom header component
         headerGroupComponent: MyHeaderGroupComponent,
         children: [
-        {headerName: "Gold", field: "gold"},
-        {headerName: "Silver", field: "silver"},
-        {headerName: "Gold", field: "bronze"}
+            {headerName: "Gold", field: "gold"},
+            {headerName: "Silver", field: "silver"},
+            {headerName: "Gold", field: "bronze"}
         ]
-        }
-        }
+    }
+}
     </snippet>
 
     <note>
@@ -76,23 +76,23 @@ include '../documentation-main/documentation_header.php';
         be worried about, eg the resizing and moving of columns. The HTML of the header cell is similar
         to the following:
     </p>
-    <snippet>
-        // the ag-header-cell is always provided by ag-Grid
-        // column moving and resize logic is put on this element by the grid
-        &lt;div class="ag-header-cell"&gt;
+    <snippet language="html">
+&lt;!-- the ag-header-cell is always provided by ag-Grid --!&gt;
+&lt;!-- column moving and resize logic is put on this element by the grid --!&gt;
+&lt;div class="ag-header-cell"&gt;
 
-        // ag-Grid will also always provide a resize bar (if column resizing
-        // is enabled) and take care of all the resize logic. the grid usually
-        // floats this element to the right.
-        &lt;div class="ag-header-cell-resize"/&gt;
+&lt;!-- ag-Grid will also always provide a resize bar (if column resizing
+ is enabled) and take care of all the resize logic. the grid usually
+ floats this element to the right.--!&gt;
+&lt;div class="ag-header-cell-resize"&gt;&lt;/div&gt;
 
-        // checkbox for selection, if turned on.
-        // the grid usually floats this element to the left.
-        &lt;div class="ag-header-select-all"/&gt;
+&lt;!-- checkbox for selection, if turned on.
+ the grid usually floats this element to the left.
+&lt;div class="ag-header-select-all"&gt;&lt;/div&gt;
 
-        // the header component - this is the piece that you can customise
-        &lt;div class="ag-header-component"/&gt;
-        &lt;/div&gt;
+&lt;!-- the header component - this is the piece that you can customise --!&gt;
+&lt;div class="ag-header-component"&gt; &lt;/div&gt;
+&lt;/div&gt;
     </snippet>
 
     <p>
@@ -151,7 +151,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>The params passed to <i>init()</i> are as follows:</p>
     <snippet>
-        export interface IHeaderCompParams {
+    export interface IHeaderCompParams {
 
         // the column the header is for
         column: Column;
@@ -185,7 +185,7 @@ include '../documentation-main/documentation_header.php';
 
         // The grid API
         api: any;
-        }
+    }
     </snippet>
 
     <h3 id="sorting">Sorting</h3>
@@ -556,7 +556,7 @@ include '../documentation-main/documentation_header.php';
         <p>
             For your reference, the default header template is as follows:
         </p>
-        <snippet>
+        <snippet language="html">
             &lt;div class="ag-header-cell"&gt;
             &lt;div id="agResizeBar" class="ag-header-cell-resize"&gt;&lt;/div&gt;
             &lt;span id="agMenu" class="ag-header-icon ag-header-cell-menu-button"&gt;&lt;/span&gt;
