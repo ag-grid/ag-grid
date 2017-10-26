@@ -682,8 +682,10 @@ ag-grid-aurelia {
         border-left: 1px solid transparent;
     }
 }
+
 .ag-filter-filter {
     width: 100%;
+    box-sizing: border-box;
 }
 .ag-floating-filter-body {
     input {

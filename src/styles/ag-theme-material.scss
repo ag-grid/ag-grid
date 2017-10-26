@@ -16,7 +16,7 @@ $mat-indigo-50: #e8eaf6;
 // opacity values used for black values, taken from material spec
 $ag-mat-foreground-opacity: 0.87 !default;
 $ag-mat-secondary-foreground-color-opacity: 0.54 !default;
-$ag-mat-disabled-forergound-color-opacity: 0.38 !default;
+$ag-mat-disabled-foreground-color-opacity: 0.38 !default;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // The variables below can be overriden to adjust the look up to the app color scheme
@@ -46,7 +46,7 @@ $ag-mat-secondary-font-weight: 700 !default; // ag-mat-font-secondary-weight
 // Colors
 $ag-mat-foreground-color: rgba(#000000, $ag-mat-foreground-opacity) !default; // ag-mat-foreground
 $ag-mat-secondary-foreground-color: rgba(#000000, $ag-mat-secondary-foreground-color-opacity) !default; // ag-mat-foreground-secondary
-$ag-mat-disabled-forergound-color: rgba(#000000, $ag-mat-disabled-forergound-color-opacity) !default; // ag-mat-foreground-disabled
+$ag-mat-disabled-foreground-color: rgba(#000000, $ag-mat-disabled-foreground-color-opacity) !default; // ag-mat-foreground-disabled
 
 $ag-mat-border-color: $mat-grey-300 !default;
 
@@ -127,8 +127,8 @@ $params: (
     secondary-foreground-color-opacity: $ag-mat-secondary-foreground-color-opacity,
     secondary-foreground-color: $ag-mat-secondary-foreground-color,
 
-    disabled-forergound-color-opacity: $ag-mat-disabled-forergound-color-opacity,
-    disabled-forergound-color: $ag-mat-disabled-forergound-color,
+    disabled-foreground-color-opacity: $ag-mat-disabled-foreground-color-opacity,
+    disabled-foreground-color: $ag-mat-disabled-foreground-color,
 
     background-color: $ag-mat-background-color,
     border-color: $ag-mat-border-color,
@@ -141,8 +141,8 @@ $params: (
 
     chip-background-color: $ag-mat-chip-background-color,
 
+    card-background-color: $ag-mat-background-color,
     editor-background-color-color: $ag-mat-editor-background-color,
-
 
     range-selection-background-color: $ag-mat-range-selection-background-color,
     range-selection-highlight-color: $ag-mat-range-selection-highlight-color,
@@ -165,8 +165,17 @@ $params: (
     input-border-width: 0,
     input-bottom-border: 1px solid $ag-mat-border-color,
     input-height: $ag-mat-grid-size * 3,
+
+    use-icons-for-pager-buttons: true,
+    customize-inputs: true,
+    customize-buttons: true,
+    full-width-tabs: true,
 );
 
 .ag-theme-material {
+    %selected-tab {
+        border-bottom: 2px solid $ag-mat-primary-color;
+    }
+
     @include ag-grid-theme($params);
 }

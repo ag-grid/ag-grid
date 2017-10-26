@@ -36,7 +36,8 @@
 }
 
 @mixin card($params) {
-    background: map-get($params, 'background-color');
+    @extend %card !optional;
+    background: map-get($params, 'card-background-color');
     border-radius: map-get($params, 'card-radius');
     box-shadow: map-get($params, 'card-shadow');
     padding: map-get($params, 'grid-size');
@@ -47,39 +48,40 @@
     $foreground-color: map-get($params, 'foreground-color');
     $grid-size: map-get($params, 'grid-size');
     $primary-color: map-get($params, 'primary-color');
-    $placeholder-color: map-get($params, 'disabled-forergound-color');
+    $placeholder-color: map-get($params, 'disabled-foreground-color');
     $focused-border: map-get($params, 'focused-textbox-border');
     $input-border-width: map-get($params, 'input-border-width');
     $input-bottom-border: map-get($params, 'input-bottom-border');
 
-    background: transparent;
+    @if map-get($params, 'customize-inputs') {
+        background: transparent;
 
-    @if $input-border-width {
-        border-width: $input-border-width;
-    }
-
-    @if $input-bottom-border {
-        border-bottom: $input-bottom-border;
-    }
-
-    box-sizing: border-box;
-    color: $foreground-color;
-    font-family: inherit;
-    font-size: inherit;
-    height: map-get($params, 'input-height');
-    padding-bottom: $grid-size;
-
-    &:focus {
-        @if $focused-border {
-            border-bottom: $focused-border;
-            outline: none;
-            padding-bottom: $grid-size - 1;
+        @if $input-border-width {
+            border-width: $input-border-width;
         }
 
-    }
+        @if $input-bottom-border {
+            border-bottom: $input-bottom-border;
+        }
 
-    &::placeholder {
-        color: $placeholder-color;
+        box-sizing: border-box;
+        color: $foreground-color;
+        font-family: inherit;
+        font-size: inherit;
+        height: map-get($params, 'input-height');
+        padding-bottom: $grid-size;
+
+        &:focus {
+            @if $focused-border {
+                border-bottom: $focused-border;
+                outline: none;
+                padding-bottom: $grid-size - 1;
+            }
+        }
+
+        &::placeholder {
+            color: $placeholder-color;
+        }
     }
 }
 
@@ -126,8 +128,8 @@
     $secondary-foreground-color-opacity: map-get($params, 'secondary-foreground-color-opacity');
     $secondary-foreground-color: map-get($params, 'secondary-foreground-color');
 
-    $disabled-forergound-color-opacity: map-get($params, 'disabled-forergound-color-opacity');
-    $disabled-forergound-color: map-get($params, 'disabled-forergound-color');
+    $disabled-foreground-color-opacity: map-get($params, 'disabled-foreground-color-opacity');
+    $disabled-foreground-color: map-get($params, 'disabled-foreground-color');
 
     $background-color: map-get($params, 'background-color');
     $border-color: map-get($params, 'border-color');
@@ -189,6 +191,12 @@
 
     .ag-row-hover {
         background-color: $hover-color;
+    }
+
+    @if map-get($params, 'odd-row-background-color') {
+        .ag-row-odd {
+            background-color: map-get($params, 'odd-row-background-color');
+        }
     }
 
     .ag-numeric-cell {
@@ -294,9 +302,9 @@
     ////////////////////////////////////////
     // Icons
     ////////////////////////////////////////
-    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
-        column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left
-        small-right small-up small-down tick cross tree-open tree-closed;
+    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly
+        checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed
+        paste pin pivot plus right small-left small-right small-up small-down tick cross tree-open tree-closed;
 
     @each $icon in $icons {
         .ag-icon-#{$icon} {
@@ -396,24 +404,34 @@
         }
     }
 
+    $full-width-tabs: map-get($params, 'full-width-tabs');
+
     ////////////////////////////////////////
     // Column Filter
     ////////////////////////////////////////
     .ag-tab-header {
         background: $panel-background-color;
-        display: table;
+        @if $full-width-tabs {
+            display: table;
+        }
         min-width: 220px;
         width: 100%;
 
         .ag-tab {
+            @extend %tab !optional;
+
             border-bottom: 2px solid transparent;
-            display: table-cell;
-            height: $grid-size * 4;
+
+            @if $full-width-tabs {
+                display: table-cell;
+            }
+                height: $grid-size * 4;
+
             text-align: center;
             vertical-align: middle;
 
             &.ag-tab-selected {
-                border-bottom: 2px solid $primary-color;
+                @extend %selected-tab !optional;
 
                 $icons: filter columns menu;
 
@@ -507,7 +525,9 @@
             padding-top: $grid-size * 2;
 
             button {
-                @include regular-button($primary-color, $button-background-color, $button-text-transform);
+                @if map-get($params, 'customize-buttons') {
+                    @include regular-button($primary-color, $button-background-color, $button-text-transform);
+                }
             }
 
             button + button {
@@ -605,7 +625,7 @@
 
             .ag-column-drop-empty-message {
                 clear: both;
-                color: $disabled-forergound-color;
+                color: $disabled-foreground-color;
                 font: $secondary-font;
                 line-height: $grid-size * 2;
                 padding-left: $grid-size * 4;
@@ -654,21 +674,23 @@
             margin-left: $grid-size * 4;
         }
 
-        $buttonIcons: (btFirst: first, btPrevious: previous, btLast: last, btNext: next);
+        @if map-get($params, 'use-icons-for-pager-buttons') {
+            $buttonIcons: (btFirst: first, btPrevious: previous, btLast: last, btNext: next);
 
-        @each $ref, $icon in $buttonIcons {
-            button[ref='#{$ref}'] {
-                @include icon-background($params, $icon);
-                @include hide-text;
+            @each $ref, $icon in $buttonIcons {
+                button[ref='#{$ref}'] {
+                    @include icon-background($params, $icon);
+                    @include hide-text;
 
-                appearance: none;
-                border: 0;
+                    appearance: none;
+                    border: 0;
 
-                opacity: $secondary-foreground-color-opacity;
-                padding: 0;
+                    opacity: $secondary-foreground-color-opacity;
+                    padding: 0;
 
-                &[disabled] {
-                    opacity: $disabled-forergound-color-opacity;
+                    &[disabled] {
+                        opacity: $disabled-foreground-color-opacity;
+                    }
                 }
             }
         }
@@ -759,9 +781,10 @@
         float: left;
         height: 100%;
         margin-right: 0;
-        width: calc(100% - #{$grid-size} * 4);
+        width: calc(100% - #{$icon-size + $grid-size * 2});
 
         input {
+            box-sizing: border-box;
             @include textbox($params);
         }
     }
@@ -772,7 +795,12 @@
         margin-top: $grid-size * 2.5;
 
         button {
-            @include regular-button($primary-color, $button-background-color, $button-text-transform);
+            appearance: none;
+            border: 0;
+            background: transparent;
+            width: $icon-size;
+            height: $icon-size;
+            padding: 0;
         }
     }
 
@@ -874,7 +902,7 @@
         .ag-column-drop-empty-message {
             height: 100%;
             line-height: $row-height;
-            opacity: $secondary-foreground-color-opacity;
+            opacity: $disabled-foreground-color-opacity;
         }
     }
 
@@ -1102,7 +1130,7 @@
     .ag-status-bar {
         background: $background-color;
         border-top: 1px solid $border-color;
-        color: $disabled-forergound-color;
+        color: $disabled-foreground-color;
         display: flex;
         font: $secondary-font;
         justify-content: flex-end;
