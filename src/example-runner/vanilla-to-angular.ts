@@ -25,6 +25,9 @@ function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { ur
 
     return `
     onGridReady(params) {
+        this.gridApi = params.api;
+        this.gridColumnApi = params.columnApi;
+
         ${getData}
         ${resize}
         ${readyCode.trim().replace(/^\{|\}$/g, '')}
@@ -114,7 +117,8 @@ ${imports.join('\n')}
 })
 
 export class AppComponent {
-    @ViewChild('agGrid') agGrid;
+    private gridApi;
+    private gridColumnApi;
 
     ${propertyVars.join('\n')}
 

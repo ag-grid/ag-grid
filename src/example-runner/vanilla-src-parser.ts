@@ -94,8 +94,15 @@ function extractEventHandlers(tree, eventNames: string[]) {
 const localGridOptions = esprima.parseScript('const gridInstance = this.agGrid').body[0];
 
 function generateWithReplacedGridOptions(node) {
-    //node.body.body.unshift(localGridOptions);
-    return generate(node).replace(/gridOptions/g, 'this.agGrid');
+    const code = generate(node)
+            .replace(/gridOptions.api/g, 'this.gridApi')
+            .replace(/gridOptions.columnApi/g, 'this.gridColumnApi');
+
+    if (code.indexOf('gridOptions') > -1) {
+        throw new Error("An event handlers contain a gridOptions reference that does not access api or columnApi");
+    }
+
+    return code;
 }
 
 export default function parser([js, html], gridSettings) {
@@ -236,7 +243,7 @@ export default function parser([js, html], gridSettings) {
     gridOptionsCollectors.push({
         matches: node => nodeIsPropertyNamed(node, 'onGridReady'),
         apply: (col, node) => {
-            col.onGridReady = generate(node.value.body);
+            col.onGridReady = generate(node.value.body).replace(/gridOptions/g, 'params');
         }
     });
 

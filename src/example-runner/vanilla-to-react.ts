@@ -100,7 +100,8 @@ class GridExample extends Component {
     }
 
     onGridReady(params) {
-        this.agGrid = params;
+        this.gridApi = params.api;
+        this.gridColumnApi = params.columnApi;
         ${additionalInReady.join('\n')}
     }
 
