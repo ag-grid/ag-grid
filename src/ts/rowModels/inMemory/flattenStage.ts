@@ -63,7 +63,8 @@ export class FlattenStage implements IRowNodeStage {
 
         let groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
         let hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents();
-        let removeSingleChildrenGroups = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
+        let groupRemoveSingleChildren = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
+        let groupRemoveLowestSingleChildren = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
 
         for (let i = 0; i < rowsToFlatten.length; i++) {
             let rowNode = rowsToFlatten[i];
@@ -72,14 +73,16 @@ export class FlattenStage implements IRowNodeStage {
             let isParent = rowNode.hasChildren();
             let isGroupSuppressedNode = groupSuppressRow && isParent;
             let isSkippedLeafNode = skipLeafNodes && !isParent;
-            let isRemovedSingleChildrenGroup = removeSingleChildrenGroups && isParent && rowNode.childrenAfterGroup.length === 1;
+            let isRemovedSingleChildrenGroup = groupRemoveSingleChildren && isParent && rowNode.childrenAfterGroup.length === 1;
+            let isRemovedLowestSingleChildrenGroup = groupRemoveLowestSingleChildren && isParent && rowNode.leafGroup && rowNode.childrenAfterGroup.length === 1;
+
             // hide open parents means when group is open, we don't show it. we also need to make sure the
             // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
             // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
             let neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
             let isHiddenOpenParent = hideOpenParents && rowNode.expanded && (!neverAllowToExpand);
 
-            let thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup;
+            let thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup && !isRemovedLowestSingleChildrenGroup;
 
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);

@@ -708,6 +708,10 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, value);
     }
 
+    public setGroupRemoveLowestSingleChildren(value: boolean) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, value);
+    }
+
     public onRowHeightChanged() {
         if (_.exists(this.inMemoryRowModel)) {
             this.inMemoryRowModel.onRowHeightChanged();

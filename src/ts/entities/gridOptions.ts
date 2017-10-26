@@ -179,6 +179,7 @@ export interface GridOptions {
     groupIncludeFooter?: boolean;
     groupUseEntireRow?: boolean;
     groupRemoveSingleChildren?: boolean;
+    groupRemoveLowestSingleChildren?: boolean;
     groupSuppressRow?: boolean;
     groupHideOpenParents?: boolean;
     groupMultiAutoColumn?: boolean;

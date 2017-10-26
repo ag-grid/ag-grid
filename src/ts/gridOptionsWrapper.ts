@@ -66,6 +66,7 @@ export class GridOptionsWrapper {
 
     public static PROP_HEADER_HEIGHT = 'headerHeight';
     public static PROP_GROUP_REMOVE_SINGLE_CHILDREN = 'groupRemoveSingleChildren';
+    public static PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN = 'groupRemoveLowestSingleChildren';
     public static PROP_PIVOT_HEADER_HEIGHT = 'pivotHeaderHeight';
 
     public static PROP_GROUP_HEADER_HEIGHT = 'groupHeaderHeight';
@@ -195,6 +196,7 @@ export class GridOptionsWrapper {
     // if we are doing hideOpenParents, then we always have groupMultiAutoColumn, otherwise hideOpenParents would not work
     public isGroupMultiAutoColumn() { return isTrue(this.gridOptions.groupMultiAutoColumn) || isTrue(this.gridOptions.groupHideOpenParents); }
     public isGroupRemoveSingleChildren() { return isTrue(this.gridOptions.groupRemoveSingleChildren); }
+    public isGroupRemoveLowestSingleChildren() { return isTrue(this.gridOptions.groupRemoveLowestSingleChildren); }
     public isGroupIncludeFooter() { return isTrue(this.gridOptions.groupIncludeFooter); }
     public isGroupSuppressBlankHeader() { return isTrue(this.gridOptions.groupSuppressBlankHeader); }
     public isSuppressRowClickSelection() { return isTrue(this.gridOptions.suppressRowClickSelection); }
