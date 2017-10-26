@@ -33,7 +33,7 @@ var gridOptions = {
 // the code below executes an action every 2,000 milliseconds.
 // it's an interval, and each time it runs, it takes the next action
 // from the 'actions' list below
-function startInterval(gridOptions) {
+function startInterval(api, columnApi) {
     var actionIndex = 0;
 
     resetCountdown();
@@ -42,7 +42,7 @@ function startInterval(gridOptions) {
     function executeAfterXSeconds() {
         setTimeout(function() {
             var action = actions[actionIndex];
-            action(gridOptions);
+            action(api, columnApi);
             actionIndex++;
             if (actionIndex >= actions.length) {
                 actionIndex = 0;
@@ -85,91 +85,90 @@ function setTitleFormatted(apiName, methodName, paramsName) {
 }
 
 var actions = [
-    function(gridOptions) {
-        gridOptions.api.setSortModel([{colId: 'country', sort: 'asc'}]);
+    function(api) {
+        api.setSortModel([{colId: 'country', sort: 'asc'}]);
         setTitleFormatted('api', 'setSort', 'country');
     },
-    function(gridOptions) {
-        gridOptions.api.setSortModel([{colId: 'country', sort: 'asc'}, {colId: 'year', sort: 'asc'}]);
+    function(api) {
+        api.setSortModel([{colId: 'country', sort: 'asc'}, {colId: 'year', sort: 'asc'}]);
         setTitleFormatted('api', 'setSort', 'country, year');
     },
-    function(gridOptions) {
-        gridOptions.api.setSortModel([{colId: 'country', sort: 'asc'}, {colId: 'year', sort: 'desc'}]);
+    function(api) {
+        api.setSortModel([{colId: 'country', sort: 'asc'}, {colId: 'year', sort: 'desc'}]);
         setTitleFormatted('api', 'setSort', 'country, year');
     },
-    function(gridOptions) {
-        gridOptions.api.setSortModel([{colId: 'country', sort: 'asc'}]);
+    function(api) {
+        api.setSortModel([{colId: 'country', sort: 'asc'}]);
         setTitleFormatted('api', 'setSort', 'country');
     },
-    function(gridOptions) {
-        gridOptions.api.setSortModel([]);
-        gridOptions.api.setFilterModel({country: ['Ireland']});
+    function(api) {
+        api.setSortModel([]);
+        api.setFilterModel({country: ['Ireland']});
         setTitleFormatted('api', 'setFilter', 'Ireland');
     },
-    function(gridOptions) {
-        gridOptions.api.setSortModel([{colId: 'year', sort: 'asc'}]);
+    function(api) {
+        api.setSortModel([{colId: 'year', sort: 'asc'}]);
         setTitleFormatted('api', 'setSort', 'year');
     },
-    function(gridOptions) {
-        gridOptions.api.setSortModel([{colId: 'year', sort: 'desc'}]);
+    function(api) {
+        api.setSortModel([{colId: 'year', sort: 'desc'}]);
         setTitleFormatted('api', 'setSort', 'year');
     },
-    function(gridOptions) {
-        gridOptions.api.setSortModel([]);
-        gridOptions.api.setFilterModel({});
+    function(api) {
+        api.setSortModel([]);
+        api.setFilterModel({});
         setTitleFormatted('api', 'clearFilterAndSort', '');
     },
-    function(gridOptions) {
-        gridOptions.columnApi.setRowGroupColumns(['country', 'year', 'sport']);
-        gridOptions.columnApi.setColumnVisible('athlete', false);
-        gridOptions.api.sizeColumnsToFit();
+    function(api, columnApi) {
+        columnApi.setRowGroupColumns(['country', 'year', 'sport']);
+        columnApi.setColumnVisible('athlete', false);
+        api.sizeColumnsToFit();
         setTitleFormatted('api', 'setGrouping', 'country, year, sport');
     },
-    function(gridOptions) {
-        gridOptions.columnApi.moveColumns(['gold', 'silver', 'bronze', 'total'], 1);
-        gridOptions.api.sizeColumnsToFit();
+    function(api, columnApi) {
+        columnApi.moveColumns(['gold', 'silver', 'bronze', 'total'], 1);
+        api.sizeColumnsToFit();
         setTitleFormatted('api', 'moveColumns', 'gold, silver, bronze, total');
     },
-    function(gridOptions) {
-        var topLevelNodes = gridOptions.api.getModel().getTopLevelNodes();
+    function(api) {
+        var topLevelNodes = api.getModel().getTopLevelNodes();
         topLevelNodes[2].setExpanded(true);
         setTitleFormatted('rowNode', 'setExpanded', 'true');
     },
-    function(gridOptions) {
-        var topLevelNodes = gridOptions.api.getModel().getTopLevelNodes();
+    function(api) {
+        var topLevelNodes = api.getModel().getTopLevelNodes();
         topLevelNodes[2].childrenAfterSort[1].setExpanded(true);
         setTitleFormatted('rowNode', 'setExpanded', 'true');
     },
-    function(gridOptions) {
-        var topLevelNodes = gridOptions.api.getModel().getTopLevelNodes();
+    function(api) {
+        var topLevelNodes = api.getModel().getTopLevelNodes();
         topLevelNodes[2].childrenAfterSort[1].childrenAfterSort[0].setExpanded(true);
         setTitleFormatted('rowNode', 'setExpanded', 'true');
     },
-    function(gridOptions) {
-        var topLevelNodes = gridOptions.api.getModel().getTopLevelNodes();
+    function(api) {
+        var topLevelNodes = api.getModel().getTopLevelNodes();
         topLevelNodes[2].childrenAfterSort[1].setExpanded(false);
         setTitleFormatted('rowNode', 'setExpanded', 'false');
     },
-    function(gridOptions) {
-        gridOptions.columnApi.setRowGroupColumns([]);
-        gridOptions.columnApi.setColumnVisible('athlete', true);
-        gridOptions.api.sizeColumnsToFit();
+    function(api, columnApi) {
+        columnApi.setRowGroupColumns([]);
+        columnApi.setColumnVisible('athlete', true);
+        api.sizeColumnsToFit();
         setTitleFormatted('api', 'removeGrouping', '');
     },
-    function(gridOptions) {
-        gridOptions.columnApi.moveColumns(['gold', 'silver', 'bronze', 'total'], 6);
+    function(api, columnApi) {
+        columnApi.moveColumns(['gold', 'silver', 'bronze', 'total'], 6);
         setTitleFormatted('api', 'moveColumns', 'gold, silver, bronze, total');
     },
-    function(gridOptions) {
-        gridOptions.api
-            .getModel()
-            .getRow(3)
-            .setRowHeight(100);
-        gridOptions.api.onRowHeightChanged();
+    function(api) {
+        api.getModel()
+           .getRow(3)
+           .setRowHeight(100);
+        api.onRowHeightChanged();
         setTitleFormatted('rowNode', 'setRowHeight', '100');
     },
-    function(gridOptions) {
-        gridOptions.api.resetRowHeights();
+    function(api) {
+        api.resetRowHeights();
         setTitleFormatted('api', 'resetRowHeights', '');
     }
 ];
@@ -179,7 +178,6 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json'}).then(function(data) {
         gridOptions.api.setRowData(data);
         setTimeout(function() {
@@ -188,6 +186,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         eTitle = document.querySelector('#animationAction');
         eCountdown = document.querySelector('#animationCountdown');
-        startInterval(gridOptions);
+        startInterval(gridOptions.api, gridOptions.columnApi);
     });
 });
