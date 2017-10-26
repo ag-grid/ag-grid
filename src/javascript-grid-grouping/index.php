@@ -558,15 +558,38 @@ cellRendererParams: {
     </p>
 
     <p>
-        To turn this feature on, set the property <i>groupRemoveSingleChildren=true</i>.
+        To turn this feature on set either <i>groupRemoveSingleChildren=true</i>
+        or <i>groupRemoveLowestSingleChildren=true</i>.
     </p>
 
+    <ul>
+        <li><b>groupRemoveSingleChildren:</b> Removes groups from display if they only have one child.</li>
+        <li><b>groupRemoveLowestSingleChildren:</b> Removes groups from display if they only have one child and
+            the groups is at the lowest level (ie contains leaf nodes).</li>
+    </ul>
+
     <p>
-        The example below shows this feature in action. To demonstrate why this feature is needed
-        you can click 'Toggle Grid' to show what the grid would be like without this setting. You
-        will see the group UK, German and Sweden have only one child so the group is not giving any extra
-        value to the data.
+        The example below shows this feature. Note the following:
+        <ul>
+            <li>
+                <b>Normal:</b> Shows the rows as normal, nothing is removed. All groups have their children
+                count in brackets after the group.
+            </li>
+            <li>
+                <b>Remove Single Children:</b> Removes single children using the property
+                <i>groupRemoveSingleChildren=true</i>. All groups with just one child
+                are remove.
+            </li>
+            <li>
+                <b>Remove Lowest Single Children:</b> Removes single children using the property
+                <i>groupRemoveLowestSingleChildren=true</i>. All groups for the 'City' column with just one child
+                are remove. The 'City' column is the lowest level group, so it's the only group candidate to be
+                removed when one child.
+            </li>
+        </ul>
     </p>
+
+    <?= example('Removing Single Children', 'remove-single-children', 'generated', array("enterprise" => 1)) ?>
 
     <note>
         Filtering does not impact what groups get removed. For example if you have a group with two
@@ -575,12 +598,11 @@ cellRendererParams: {
         only the filter is reapplied, the grouping is not reapplied.
     </note>
 
-    <?= example('Removing Single Children', 'remove-single-children', 'generated', array("enterprise" => 1)) ?>
-
     <note>
-        It is not possible to mix <i>groupRemoveSingleChildren</i> and <i>groupHideOpenParents</i>.
-        Technically, it doesn't make sense. Mixing these two will put you down a black hole so deep not
-        even Stephen Hawking will be able to save you.
+        The properties <i>groupRemoveSingleChildren</i>, <i>groupRemoveLowestSingleChildren</i>
+        and <i>groupHideOpenParents</i> are mutually exclusive, you can only pick one.
+        Technically it doesn't make sense to mix these. Mixing these three will put you down a
+        black hole so deep not even Stephen Hawking will be able to save you.
     </note>
 
     <h2 id="suppress-group-row">Suppress Group Row</h2>

@@ -64,6 +64,11 @@ $rowGroupingProperties = [
         'See <a href="../javascript-grid-grouping/#removeSingleChildren">Remove Single Children</a>.'
     ],
     [
+        'groupRemoveLowestSingleChildren',
+        'Set to true to collapse lowest level groups that only have one child.',
+        'See <a href="../javascript-grid-grouping/#removeSingleChildren">Remove Single Children</a>.'
+    ],
+    [
         'groupHideOpenParents',
         'Set to true to hide parents that are open. When used with multiple columns for showing groups, it can give more pleasing user experience.',
         'See <a href="../javascript-grid-grouping/#replacingChildren">Group Hide Open Parents</a>.'
