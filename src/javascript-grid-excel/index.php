@@ -265,7 +265,7 @@ include '../documentation-main/documentation_header.php';
                     when worksheet protection is enabled.</li>
             </ul>
         </li>
-        <li><b>dataType</b> (optional): One of (string or number). In most cases this is not necessary since this value is
+        <li><b>dataType</b> (optional): One of (string, number, boolean, dateTime, error). In most cases this is not necessary since this value is
             guessed based in weather the cell content is numeric or not. This is helpful if you want to fix the type of the
             cell. ie. If your cell content is 003, this cell will be default be interpreted as numeric, and in Excel, it will
             show up as 3. But if you want to keep your original formatting, you can do so by setting this property to string.
@@ -407,6 +407,22 @@ var gridOptions = {
     </p>
 
     <?= example('Excel Export With Styles', 'excel-export-with-styles', 'generated', array("enterprise" => 1)) ?>
+
+    <h3>
+        Example 3 - Data types
+    </h3>
+
+    <p>
+        The following example demonstrates how to use other data types for your export. Note that:
+    <ul>
+        <li>Boolean works off using 1 for true</li>
+        <li>The date time format for excel follows this format yyyy-mm-ddThh:MM:ss.mmm: </li>
+        <li>If you try to pass data that is not compatible with the underlying data type Excel will throw an error</li>
+        <li>When using <code>dataType: 'dateTime'</code> Excel doesn't format the resultant value, in this example
+        it shows 39923. You need to add the formatting inside Excel</li>
+    </ul>
+    </p>
+    <?= example('Excel Data Typs', 'excel-data-types', 'generated', array("enterprise" => 1)) ?>
 
     <h3 id="exportToXlsx">
         Exporting To XLSX
