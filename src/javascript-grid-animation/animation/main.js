@@ -85,36 +85,36 @@ function setTitleFormatted(apiName, methodName, paramsName) {
 }
 
 var actions = [
-    function(api, columnApi) {
+    function(api) {
         api.setSortModel([{colId: 'country', sort: 'asc'}]);
         setTitleFormatted('api', 'setSort', 'country');
     },
-    function(api, columnApi) {
+    function(api) {
         api.setSortModel([{colId: 'country', sort: 'asc'}, {colId: 'year', sort: 'asc'}]);
         setTitleFormatted('api', 'setSort', 'country, year');
     },
-    function(api, columnApi) {
+    function(api) {
         api.setSortModel([{colId: 'country', sort: 'asc'}, {colId: 'year', sort: 'desc'}]);
         setTitleFormatted('api', 'setSort', 'country, year');
     },
-    function(api, columnApi) {
+    function(api) {
         api.setSortModel([{colId: 'country', sort: 'asc'}]);
         setTitleFormatted('api', 'setSort', 'country');
     },
-    function(api, columnApi) {
+    function(api) {
         api.setSortModel([]);
         api.setFilterModel({country: ['Ireland']});
         setTitleFormatted('api', 'setFilter', 'Ireland');
     },
-    function(api, columnApi) {
+    function(api) {
         api.setSortModel([{colId: 'year', sort: 'asc'}]);
         setTitleFormatted('api', 'setSort', 'year');
     },
-    function(api, columnApi) {
+    function(api) {
         api.setSortModel([{colId: 'year', sort: 'desc'}]);
         setTitleFormatted('api', 'setSort', 'year');
     },
-    function(api, columnApi) {
+    function(api) {
         api.setSortModel([]);
         api.setFilterModel({});
         setTitleFormatted('api', 'clearFilterAndSort', '');
@@ -130,22 +130,22 @@ var actions = [
         api.sizeColumnsToFit();
         setTitleFormatted('api', 'moveColumns', 'gold, silver, bronze, total');
     },
-    function(api, columnApi) {
+    function(api) {
         var topLevelNodes = api.getModel().getTopLevelNodes();
         topLevelNodes[2].setExpanded(true);
         setTitleFormatted('rowNode', 'setExpanded', 'true');
     },
-    function(api, columnApi) {
+    function(api) {
         var topLevelNodes = api.getModel().getTopLevelNodes();
         topLevelNodes[2].childrenAfterSort[1].setExpanded(true);
         setTitleFormatted('rowNode', 'setExpanded', 'true');
     },
-    function(api, columnApi) {
+    function(api) {
         var topLevelNodes = api.getModel().getTopLevelNodes();
         topLevelNodes[2].childrenAfterSort[1].childrenAfterSort[0].setExpanded(true);
         setTitleFormatted('rowNode', 'setExpanded', 'true');
     },
-    function(api, columnApi) {
+    function(api) {
         var topLevelNodes = api.getModel().getTopLevelNodes();
         topLevelNodes[2].childrenAfterSort[1].setExpanded(false);
         setTitleFormatted('rowNode', 'setExpanded', 'false');
@@ -160,14 +160,14 @@ var actions = [
         columnApi.moveColumns(['gold', 'silver', 'bronze', 'total'], 6);
         setTitleFormatted('api', 'moveColumns', 'gold, silver, bronze, total');
     },
-    function(api, columnApi) {
+    function(api) {
         api.getModel()
            .getRow(3)
            .setRowHeight(100);
         api.onRowHeightChanged();
         setTitleFormatted('rowNode', 'setRowHeight', '100');
     },
-    function(api, columnApi) {
+    function(api) {
         api.resetRowHeights();
         setTitleFormatted('api', 'resetRowHeights', '');
     }
