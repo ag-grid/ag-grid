@@ -217,6 +217,14 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
                     return 'String';
                 case 'number':
                     return 'Number';
+                case 'dateTime':
+                    return 'DateTime';
+                case 'error':
+                    return 'Error';
+                case 'boolean':
+                    return 'Boolean';
+                default:
+                    console.warn(`ag-grid: Unrecognized data type for excel export [${actualStyle.id}.dataType=${actualStyle.dataType}]`)
             }
 
             return type;
