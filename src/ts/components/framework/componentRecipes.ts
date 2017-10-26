@@ -1,7 +1,7 @@
 import {Autowired, Bean} from "../../context/context";
 import {IDateComp, IDateParams} from "../../rendering/dateComponent";
 import {GridOptions} from "../../entities/gridOptions";
-import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
+import {IComponent} from "../../interfaces/iComponent";
 import {ColDef} from "../../entities/colDef";
 import {IHeaderGroupComp, IHeaderGroupParams} from "../../headerRendering/headerGroup/headerGroupComp";
 import {IHeaderComp, IHeaderParams} from "../../headerRendering/header/headerComp";
@@ -15,9 +15,7 @@ import {ComponentResolver} from "./componentResolver";
 import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
 import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRenderer";
 import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
-import {Promise} from "../../misc/simpleHttpRequest";
-
-
+import {Promise} from "../../utils";
 
 
 enum ComponentType {

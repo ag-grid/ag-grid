@@ -2,15 +2,14 @@ import {Autowired, Bean, Context, Optional} from "../../context/context";
 import {GridOptions} from "../../entities/gridOptions";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {FrameworkComponentWrapper} from "./frameworkComponentWrapper";
-import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
+import {IComponent} from "../../interfaces/iComponent";
 import {ColDef, ColGroupDef} from "../../entities/colDef";
-import {_} from "../../utils";
+import {_, Promise} from "../../utils";
 import {NamedComponentResolver} from "./namedComponentResolver";
 import {AgGridComponentFunctionInput, AgGridRegisteredComponentInput} from "./componentProvider";
 import {AgComponentUtils} from "./agComponentUtils";
 import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
 import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
-import {Promise} from "../../misc/simpleHttpRequest";
 
 export type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams;
 

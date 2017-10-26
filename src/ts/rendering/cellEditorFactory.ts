@@ -4,8 +4,7 @@ import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColDef} from "../entities/colDef";
 import {ComponentResolver} from "../components/framework/componentResolver";
-import {_} from "../utils";
-import {Promise} from "../misc/simpleHttpRequest";
+import {_, Promise} from "../utils";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {
