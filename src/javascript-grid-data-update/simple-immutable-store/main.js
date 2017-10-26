@@ -99,18 +99,18 @@ function createItem() {
 }
 
 function onGroupingEnabled(enabled) {
-    setGroupingEnabled(enabled, gridOptions);
+    setGroupingEnabled(enabled, gridOptions.columnApi);
 }
 
-function setGroupingEnabled(enabled, gridOptions) {
+function setGroupingEnabled(enabled, columnApi) {
     if (enabled) {
-        gridOptions.columnApi.setRowGroupColumns(['group']);
-        gridOptions.columnApi.setColumnVisible('group', false);
-        gridOptions.columnApi.setColumnVisible('symbol', false);
+        columnApi.setRowGroupColumns(['group']);
+        columnApi.setColumnVisible('group', false);
+        columnApi.setColumnVisible('symbol', false);
     } else {
-        gridOptions.columnApi.setRowGroupColumns([]);
-        gridOptions.columnApi.setColumnVisible('group', true);
-        gridOptions.columnApi.setColumnVisible('symbol', true);
+        columnApi.setRowGroupColumns([]);
+        columnApi.setColumnVisible('group', true);
+        columnApi.setColumnVisible('symbol', true);
     }
     setItemVisible('groupingOn', !enabled);
     setItemVisible('groupingOff', enabled);
@@ -173,7 +173,7 @@ var gridOptions = {
         immutableStore = [];
         immutableStore = getInitialData();
         params.api.setRowData(immutableStore);
-        setGroupingEnabled(false, params);
+        setGroupingEnabled(false, params.columnApi);
     }
 };
 
