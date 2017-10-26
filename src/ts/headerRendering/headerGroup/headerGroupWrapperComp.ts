@@ -94,7 +94,7 @@ export class HeaderGroupWrapperComp extends Component {
 
         let callback = this.afterHeaderCompCreated.bind(this, displayName);
 
-        this.componentRecipes.newHeaderGroupComponent(params, callback);
+        this.componentRecipes.newHeaderGroupComponent(params).then(callback);
     }
 
     private afterHeaderCompCreated(displayName: string, headerGroupComp: IHeaderGroupComp): void {

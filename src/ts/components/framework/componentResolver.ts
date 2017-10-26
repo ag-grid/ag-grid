@@ -10,6 +10,7 @@ import {AgGridComponentFunctionInput, AgGridRegisteredComponentInput} from "./co
 import {AgComponentUtils} from "./agComponentUtils";
 import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
 import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
+import {Promise} from "../../misc/simpleHttpRequest";
 
 export type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams;
 
@@ -205,17 +206,18 @@ export class ComponentResolver {
     }
 
     public createAgGridComponent_async<A extends IComponent<any>> (
-        callback: (comp: A)=>void,
         holderOpt:ComponentHolder,
         agGridParams:any,
         propertyName:string,
         componentNameOpt?:string,
         mandatory:boolean = true,
         customInitParamsCb?:(params:any, component:A)=>any
-    ): void {
+    ): Promise<A> {
         let result = this.createAgGridComponent(holderOpt, agGridParams, propertyName, componentNameOpt, mandatory, customInitParamsCb);
 
-        _.mimicAsync( ()=> callback(result) );
+        return new Promise<A>( resolve => {
+            _.mimicAsync( ()=> resolve(result) );
+        });
     }
 
         /**
