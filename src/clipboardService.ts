@@ -205,7 +205,9 @@ export class ClipboardService implements IClipboardService {
         let rowCallback = (gridRow: GridRow, rowNode: RowNode, columns: Column[]) => {
             updatedRowNodes.push(rowNode);
             columns.forEach((column) => {
-                this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, Constants.EXPORT_TYPE_CLIPBOARD);
+                if (column.isCellEditable(rowNode)) {
+                    this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, updatedColumnIds, Constants.EXPORT_TYPE_CLIPBOARD);
+                }
             })
         };
         this.iterateActiveRanges(false, rowCallback);
