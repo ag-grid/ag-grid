@@ -377,6 +377,9 @@ var defaultCols = [
                 enableRowGroup: true,
                 enablePivot: true,
                 cellEditor: 'richSelect',
+                headerComponentParams: {
+                    template: '<div>bananas</div>'
+                },
                 cellEditorParams: {
                     cellRenderer: countryCellRenderer,
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
