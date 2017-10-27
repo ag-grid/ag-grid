@@ -283,7 +283,7 @@
     ////////////////////////////////////////
     .ag-header-cell-resize {
         position: absolute;
-        right: -($grid-size * 1);
+        right: -($grid-size);
         width: $grid-size * 2;
         z-index: 4;
 
@@ -844,7 +844,7 @@
     .ag-group-expanded,
     .ag-group-contracted {
         span {
-            margin-right: $cell-horizontal-padding;
+            margin-right: $cell-horizontal-padding;;
         }
     }
 
@@ -1089,7 +1089,8 @@
         .ag-group-expanded,
         .ag-group-contracted {
             span {
-                float: right;
+                margin-right: 0;
+                margin-left: $cell-horizontal-padding;;
             }
         }
 
@@ -1124,6 +1125,16 @@
 
         .ag-floating-filter-button {
             float: left;
+        }
+
+        .ag-header .ag-header-cell-resize {
+            left: -$grid-size;
+            right: auto;
+        }
+
+        .ag-header .ag-header-cell-resize::after {
+            border-right: 0;
+            border-left: 1px solid $border-color;
         }
     }
 

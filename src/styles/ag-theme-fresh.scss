@@ -1,12 +1,5 @@
 @import './ag-theme-common';
 
-$clouds: #F7F9F9;
-$concrete: #95a5a6;
-$silver: #bdc3c7;
-$asbestos: #7f8c8d;
-$midnight-blue: #2c3e50;
-$peter-river: #3498db;
-
 // opacity values used for black values, taken from material spec
 $foreground-opacity: 1 !default;
 $secondary-foreground-color-opacity: 1 !default;
@@ -38,6 +31,8 @@ $secondary-font-family: $font-family;
 $secondary-font-size: 14px !default;
 $secondary-font-weight: 400 !default;
 
+$menu-option-active-color: #BDE2E5 !default;
+
 // Colors
 //
 $black: black;
@@ -55,7 +50,7 @@ $accent-color: black !default;
 $background-color: white !default;
 $odd-row-background-color: #f6f6f6 !default;
 
-$editor-background-color: $clouds !default;
+$editor-background-color: lightgrey !default;
 
 $header-background-color: transparent !default;
 $panel-background-color: #f6f6f6 !default;
@@ -69,7 +64,7 @@ $range-selection-highlight-color: rgba(255, 255, 255, 0.4) !default;
 
 $hover-color: inherit !default;
 
-$selected-color: #F0F3F4 !default;
+$selected-color: $menu-option-active-color !default;
 
 $cell-data-changed-color: white !default;
 
@@ -77,6 +72,13 @@ $cell-data-changed-color: white !default;
 $transition-speed: 120ms !default;
 $card-shadow: none;
 $card-radius: 0;
+
+$cell-highlight-border: 2px solid darkgreen !default;
+
+$ag-range-selected-color-1: rgba(120,120,120,0.4) !default;
+$ag-range-selected-color-2: rgba(80,80,80,0.4) !default;
+$ag-range-selected-color-3: rgba(40,40,40,0.4) !default;
+$ag-range-selected-color-4: rgba(0,0,0,0.4) !default;
 
 $params: (
     // sizing
@@ -222,8 +224,83 @@ $params: (
     .ag-tool-panel .ag-column-drop .ag-column-drop-empty-message {
         line-height: $header-height;
     }
+
     .ag-floating-filter-button {
         margin-top: $grid-size * 2;
     }
 
+    .ag-menu .ag-menu-option {
+        line-height: $grid-size * 5;
+    }
+
+    .ag-filter .ag-filter-apply-panel {
+        justify-content: flex-start;
+    }
+
+    .ag-cell:focus {
+        border: 1px solid darkgrey;
+    }
+
+    .ag-menu .ag-menu-option-active {
+        background: $menu-option-active-color;
+    }
+
+    .ag-menu .ag-menu-option-active {
+        background: $menu-option-active-color;
+    }
+
+    .ag-menu .ag-menu-option {
+        line-height: $grid-size * 6;
+    }
+
+    .ag-column-drop-cell {
+        background: $chip-background-color;
+        border-radius: 0;
+        background-image: linear-gradient(white, lightgrey);
+        height: $grid-size * 5 !important;
+        border: 1px solid $border-color;
+    }
+
+
+    // we do not want to color the range color when the cell is also focused
+    .ag-cell-range-selected-1:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-1;
+    }
+    .ag-cell-range-selected-2:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-2;
+    }
+    .ag-cell-range-selected-3:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-3;
+    }
+    .ag-cell-range-selected-4:not(.ag-cell-focus) {
+        background-color: $ag-range-selected-color-4;
+    }
+
+    .ag-cell-highlight {
+        background-color: $ag-range-selected-color-1;
+        border-bottom: $cell-highlight-border; 
+    }
+
+    .ag-cell-highlight-animation {
+        transition: all 1s;
+    }
+
+    .ag-group-expanded {
+        .ag-icon-contracted:empty {
+            @include icon-background($params, 'contracted');
+        }
+    }
+
+    .ag-rtl .ag-icon-tree-closed {
+        @include icon-background($params, 'small-left');
+    }
+
+    .ag-cell-inline-editing {
+        padding: 0;
+        height: $row-height;
+
+        input {
+            box-sizing: border-box;
+        }
+    }
 }
