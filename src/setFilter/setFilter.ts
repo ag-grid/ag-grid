@@ -69,7 +69,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         }
     }
 
-    public onIsLoading (loading:boolean):void{
+    public setLoading(loading:boolean):void{
         _.setVisible(this.eFilterLoading, loading);
     }
 
@@ -90,7 +90,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
             this.filterParams.doesRowPassOtherFilter,
             this.filterParams.suppressSorting,
             this.setFilterValues.bind(this),
-            this.onIsLoading.bind(this)
+            this.setLoading.bind(this)
         );
         this.virtualList.setModel(new ModelWrapper(this.model));
         _.setVisible(<HTMLElement>this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
@@ -186,7 +186,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
         let isSelectAll = selectAll  || (this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate);
 
-        this.model.setUsingProvidedSet(SetFilterModelValuesType.PROVIDED_LIST);
+        this.model.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
         this.model.refreshValues(options, keepSelection, isSelectAll);
         this.updateSelectAll();
         options.forEach(option=>this.model.selectValue(option));
@@ -200,7 +200,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
      * @param options The options to use.
      */
     public resetFilterValues(): void {
-        this.model.setUsingProvidedSet(SetFilterModelValuesType.NOT_PROVIDED);
+        this.model.setValuesType(SetFilterModelValuesType.NOT_PROVIDED);
         this.onNewRowsLoaded();
     }
 

@@ -5,6 +5,7 @@ import {TextFormatter} from "ag-grid/main";
 import {TextFilter} from "ag-grid/main";
 import {InMemoryRowModel, IRowModel, Constants} from 'ag-grid';
 import {SetFilterValuesFunc} from "ag-grid/main";
+import {SetFilterValuesFuncParams} from "../../../ag-grid/src/ts/interfaces/iSetFilterParams";
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
@@ -34,11 +35,11 @@ export class SetFilterModel {
     // to make code more readable, we work these out once, and
     // then refer to each time. both are derived from the filterParams
     private showingAvailableOnly: boolean;
-    private usingProvidedSet: SetFilterModelValuesType;
+    private valuesType: SetFilterModelValuesType;
 
     private doesRowPassOtherFilters: any;
-    private _onModelUpdated: (values: string[]) => void;
-    private _onIsLoading: (loading: boolean) => void;
+    private modelUpdatedFunc: (values: string[]) => void;
+    private isLoadingFunc: (loading: boolean) => void;
 
     constructor(
         colDef: ColDef,
@@ -46,15 +47,15 @@ export class SetFilterModel {
         valueGetter: any,
         doesRowPassOtherFilters: any,
         suppressSorting: boolean,
-        onModelUpdated: (values:string[])=>void,
-        onIsLoading: (loading:boolean)=>void
+        modelUpdatedFunc: (values:string[])=>void,
+        isLoadingFunc: (loading:boolean)=>void
     ) {
         this.suppressSorting = suppressSorting;
         this.colDef = colDef;
         this.valueGetter = valueGetter;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
-        this._onModelUpdated = onModelUpdated;
-        this._onIsLoading = onIsLoading;
+        this.modelUpdatedFunc = modelUpdatedFunc;
+        this.isLoadingFunc = isLoadingFunc;
 
         if (rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {
             this.inMemoryRowModel = <InMemoryRowModel> rowModel;
@@ -62,12 +63,12 @@ export class SetFilterModel {
 
         this.filterParams = this.colDef.filterParams ? <ISetFilterParams> this.colDef.filterParams : <ISetFilterParams>{};
         if (Utils.exists(this.filterParams) && Utils.exists(this.filterParams.values)) {
-            this.usingProvidedSet =  Array.isArray(this.filterParams.values)?
+            this.valuesType =  Array.isArray(this.filterParams.values)?
                                         SetFilterModelValuesType.PROVIDED_LIST :
                                         SetFilterModelValuesType.PROVIDED_CB;
             this.showingAvailableOnly = this.filterParams.suppressRemoveEntries!==true;
         } else {
-            this.usingProvidedSet = SetFilterModelValuesType.NOT_PROVIDED;
+            this.valuesType = SetFilterModelValuesType.NOT_PROVIDED;
             this.showingAvailableOnly = true;
         }
 
@@ -130,25 +131,27 @@ export class SetFilterModel {
             let valuesToUse: string[] = this.extractSyncValuesToUse();
             this.setValues(valuesToUse);
         } else {
-            this._onIsLoading(true);
+            this.isLoadingFunc(true);
             this.setValues([]);
-            let callback:SetFilterValuesFunc = <SetFilterValuesFunc>this.filterParams.values;
-            let onReady:(values:string[])=>void = (values)=>{
-                this._onModelUpdated(values);
-                this._onIsLoading(false);
+            let callback = <SetFilterValuesFunc> this.filterParams.values;
+            let params: SetFilterValuesFuncParams = {
+                success:this.onAsyncValuesLoaded.bind(this)
             };
-            callback({
-                success:onReady
-            });
+            callback(params);
         }
     }
 
-    private areValuesSync() {
-        return this.usingProvidedSet == SetFilterModelValuesType.PROVIDED_LIST || this.usingProvidedSet == SetFilterModelValuesType.NOT_PROVIDED;
+    private onAsyncValuesLoaded(values:string[]): void {
+        this.modelUpdatedFunc(values);
+        this.isLoadingFunc(false);
     }
 
-    public setUsingProvidedSet (value:SetFilterModelValuesType){
-        this.usingProvidedSet = value;
+    private areValuesSync() {
+        return this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.NOT_PROVIDED;
+    }
+
+    public setValuesType(value:SetFilterModelValuesType){
+        this.valuesType = value;
     }
 
     private setValues(valuesToUse: string[]) {
@@ -160,9 +163,9 @@ export class SetFilterModel {
 
     private extractSyncValuesToUse() {
         let valuesToUse: string[];
-        if (this.usingProvidedSet == SetFilterModelValuesType.PROVIDED_LIST) {
+        if (this.valuesType == SetFilterModelValuesType.PROVIDED_LIST) {
             valuesToUse = Utils.toStrings(<string[]>this.filterParams.values);
-        } else if (this.usingProvidedSet == SetFilterModelValuesType.PROVIDED_CB){
+        } else if (this.valuesType == SetFilterModelValuesType.PROVIDED_CB){
             throw Error (`ag-grid: Error extracting values to use. We should not extract the values synchronously when using a callback for the filterParams.values`);
         } else {
             let uniqueValuesAsAnyObjects = this.getUniqueValues(false);
@@ -172,7 +175,7 @@ export class SetFilterModel {
     }
 
     private createAvailableUniqueValues() {
-        let dontCheckAvailableValues = !this.showingAvailableOnly || this.usingProvidedSet == SetFilterModelValuesType.PROVIDED_LIST  || this.usingProvidedSet == SetFilterModelValuesType.PROVIDED_CB;
+        let dontCheckAvailableValues = !this.showingAvailableOnly || this.valuesType == SetFilterModelValuesType.PROVIDED_LIST  || this.valuesType == SetFilterModelValuesType.PROVIDED_CB;
         if (dontCheckAvailableValues) {
             this.availableUniqueValues = this.allUniqueValues;
             return;
