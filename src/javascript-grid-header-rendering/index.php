@@ -582,9 +582,11 @@ var myColumns = {
     <div style="border-left: 4px solid lightcoral; padding-left: 4px;">
         <h2 id="deprecated-header-rendering"><span style="color: darkred;">DEPRECATED -</span> Header Rendering</h2>
 
-        <note>Header components (explained above) replace the need for header rendering. If using header rendering,
-            you should refactor your code to use header components instead. Support for header rendering will be
-            dropped in ag-Grid v9.
+        <note>
+            Check <a href="../javascript-grid-column-header>">Column Headers</a> for the new way of
+            specifying templates in ag-Grid. This old way for doing headers is kept in ag-Grid for
+            ag-Grid v14 only so both ways are working concurrently. In v15 we plan to drop the deprecated
+            way shown in this section.
         </note>
 
         <p>
