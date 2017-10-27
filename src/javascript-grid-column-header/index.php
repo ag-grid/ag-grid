@@ -27,18 +27,17 @@ include '../documentation-main/documentation_header.php';
     <p>
         This is the default template used in ag-grid
     </p>
-    <snippet>
-        &lt;div class="ag-cell-label-container" role="presentation"&gt;
-        &lt;span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" &gt;&lt;/span&gt;
-        &lt;div ref="eLabel" class="ag-header-cell-label" role="presentation"&gt;
+    <snippet>&lt;div class="ag-cell-label-container" role="presentation"&gt;
+    &lt;span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"&gt;&lt;/span&gt;
+    &lt;div ref="eLabel" class="ag-header-cell-label" role="presentation"&gt;
         &lt;span ref="eText" class="ag-header-cell-text" role="columnheader"&gt;&lt;/span&gt;
         &lt;span ref="eFilter" class="ag-header-icon ag-filter-icon"&gt;&lt;/span&gt;
         &lt;span ref="eSortOrder" class="ag-header-icon ag-sort-order" &gt;&lt;/span&gt;
         &lt;span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" &gt;&lt;/span&gt;
         &lt;span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon" &gt;&lt;/span&gt;
-        &lt;span ref="eSortNone" class="ag-header-icon ag-sort-none-icon" &gt;&lt;/span&gt;&lt;/div&gt;
-        &lt;/div&gt;
-    </snippet>
+        &lt;span ref="eSortNone" class="ag-header-icon ag-sort-none-icon" &gt;&lt;/span&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</snippet>
 
     <p>When you provide your own template, everything should work as expected as long as you reuse the same refs.</p>
     <table class="table">
@@ -73,9 +72,15 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>eSortNone</th>
-            <td>In case of no sort being applied, this shows the associatad icon. Note this icon by default is empty</td>
+            <td>In case of no sort being applied, this shows the associated icon. Note this icon by default is empty</td>
         </tr>
     </table>
+
+    <p>
+        The ref parameters are used by the grid to identify elements to add functionality to. If you leave an element
+        out of your template, the functionality will not be added. For example if you do not specify <code>eLabel</code>
+        then the column will not react to click events for sorting.
+    </p>
 
     <note>
         Templates are not meant to let you configure icons, If you are
