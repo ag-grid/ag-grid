@@ -1,4 +1,6 @@
 
+import {Promise} from "../utils";
+
 export interface SimpleHttpRequestParams {
     url: string;
 }

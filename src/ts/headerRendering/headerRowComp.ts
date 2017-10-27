@@ -205,11 +205,13 @@ export class HeaderRowComp extends Component {
         this.removeAndDestroyChildComponents(currentChildIds);
     }
 
+    private warnedUserOnOldHeaderTemplate = false;
+
     // check if user is using the deprecated
     private isUsingOldHeaderRenderer(column: Column): boolean {
         let colDef = column.getColDef();
 
-        return _.anyExists([
+        let usingOldHeaderRenderer = _.anyExists([
             // header template
             this.gridOptionsWrapper.getHeaderCellTemplateFunc(),
             this.gridOptionsWrapper.getHeaderCellTemplate(),
@@ -219,6 +221,17 @@ export class HeaderRowComp extends Component {
             this.gridOptionsWrapper.getHeaderCellRenderer()
         ]);
 
+        if (usingOldHeaderRenderer && !this.warnedUserOnOldHeaderTemplate) {
+            if (this.gridOptionsWrapper.getHeaderCellTemplate() || this.gridOptionsWrapper.getHeaderCellTemplateFunc()) {
+                console.warn('ag-Grid: Since ag-Grid v14 you can now specify a template for the default header component. The ability to specify header template using colDef.headerCellTemplate is now deprecated and will be removed in v15. Please change your code to specify the template as colDef.headerComponentParams.template')
+            }
+            if (this.gridOptionsWrapper.getHeaderCellRenderer()) {
+                console.warn('ag-Grid: Using headerCellRenderer is deprecated and will be removed in ag-Grid v15. Please use Header Component instead.');
+            }
+            this.warnedUserOnOldHeaderTemplate = true;
+        }
+
+        return usingOldHeaderRenderer;
     }
 
     private createHeaderComp(columnGroupChild:ColumnGroupChild): IComponent<any> {
