@@ -30,6 +30,7 @@ import {
     Column,
     Constants,
     FlashCellsEvent,
+    _,
     ColumnApi,
     GridApi
 } from "ag-grid/main";
@@ -356,20 +357,21 @@ export class ClipboardService implements IClipboardService {
         let value = this.valueService.getValue(column, rowNode);
 
         let processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc(), Constants.EXPORT_TYPE_CLIPBOARD);
-        if (Utils.exists(processedValue)) {
 
-            let data = '';
-            if (includeHeaders) {
-                data = this.columnController.getDisplayNameForColumn(column, 'clipboard', true) + '\r\n';
-            }
-            data += processedValue.toString();
-
-            this.copyDataToClipboard(data);
-        } else {
+        if (_.missing(processedValue)) {
             // copy the new line character to clipboard instead of an empty string, as the 'execCommand' will ignore it.
             // this behaviour is consistent with how Excel works!
-            this.copyDataToClipboard('\n');
+            processedValue = '\n';
         }
+
+        let data = '';
+        if (includeHeaders) {
+            data = this.columnController.getDisplayNameForColumn(column, 'clipboard', true) + '\r\n';
+        }
+        data += processedValue.toString();
+
+        this.copyDataToClipboard(data);
+
 
         let cellId = focusedCell.createId();
         let cellsToFlash = {};
