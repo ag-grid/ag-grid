@@ -159,7 +159,7 @@ columnDefinition = {
             <li>The loading message can be configured, check our <a href="../javascript-grid-internationalisation/">
                     internationalisation docs</a>. The key for this string is <code>loadingOoo</code></li>
             <li>The callback is only invoked the first time the filter is opened. The next time the filter is opened
-            the values should be populated immediately</li>
+            the values are not loaded again.</li>
         </ul>
 
     </p>
@@ -257,7 +257,7 @@ countryFilterComponent.onFilterChanged()</snippet>
         <li><b>getUniqueValue(index)</b>: Returns the unique value at the given index</li>
         <li><b>setFilterValues(arrayOfStringOptions)</b>: Useful if you want to change on the fly the available options
         <li><b>resetFilterValues()</b>: Useful if you want to rebuild the filter options based on the underlying data</li>
-        <li><b>onIsLoading(loading)</b>: Useful if you want to show/hide the loading overlay in the set filter.</li>
+        <li><b>setLoading(loading)</b>: Useful if you want to show/hide the loading overlay in the set filter.</li>
     </ul>
     </p>
 
