@@ -62,7 +62,7 @@ include '../documentation-main/documentation_header.php';
     eDiv.innerHTML = '&lt;span class="my-css-class"&gt;&lt;button class="btn-simple"&gt;Push Me&lt;/button&gt;&lt;/span&gt;';
     var eButton = eDiv.querySelectorAll('.btn-simple')[0];
 
-    var eButton.addEventListener('click', function() {
+    eButton.addEventListener('click', function() {
     console.log('button was clicked!!');
     });
 
