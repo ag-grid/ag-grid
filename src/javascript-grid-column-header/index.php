@@ -19,8 +19,9 @@ include '../documentation-main/documentation_header.php';
     <h2 id="header-template">Header Templates</h2>
 
     <p>
-        You can provide a header template to change the overall layout of a header cell.The template for the header is
-        specified in <code>columnDef.headerParams.template</code>
+        You can provide a header template used by the default header component for simple layout changes. If you
+        want to change the behaviour, please look at creating your own <a href="../javascript-grid-header-rendering/">Custom Header Component.</a>
+        The template for the default header is specified in <code>columnDef.headerParams.template</code>
     </p>
 
     <p>
