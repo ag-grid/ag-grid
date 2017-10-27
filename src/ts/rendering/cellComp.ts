@@ -1034,11 +1034,6 @@ export class CellComp extends Component {
             formatValue: this.formatValue.bind(this)
         };
 
-        let colDef = this.column.getColDef();
-        if (colDef.cellEditorParams) {
-            _.assign(params, colDef.cellEditorParams);
-        }
-
         return params;
     }
 
