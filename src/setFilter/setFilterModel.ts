@@ -4,8 +4,7 @@ import {ISetFilterParams} from "ag-grid/main";
 import {TextFormatter} from "ag-grid/main";
 import {TextFilter} from "ag-grid/main";
 import {InMemoryRowModel, IRowModel, Constants} from 'ag-grid';
-import {SetFilterValuesFunc} from "ag-grid/main";
-import {SetFilterValuesFuncParams} from "../../../ag-grid/src/ts/interfaces/iSetFilterParams";
+import {SetFilterValuesFunc, SetFilterValuesFuncParams} from "ag-grid/main";
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
