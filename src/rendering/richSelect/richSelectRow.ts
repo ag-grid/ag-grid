@@ -34,7 +34,7 @@ export class RichSelectRow extends Component {
     }
 
     private populateWithRenderer(value: any, valueFormatted: string): ICellRendererComp {
-        let childComponent = this.cellRendererService.useCellRenderer(this.columnDef, this.getGui(), {value: value, valueFormatted: valueFormatted});
+        let childComponent = this.cellRendererService.useRichSelectCellRenderer(this.columnDef, this.getGui(), {value: value, valueFormatted: valueFormatted});
         if (childComponent && childComponent.destroy) {
             this.addDestroyFunc(childComponent.destroy.bind(childComponent));
         }

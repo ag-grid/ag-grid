@@ -1,7 +1,6 @@
 
 import {
     ICellEditor,
-    ICellEditorParams,
     Component,
     Autowired,
     Context,
@@ -9,16 +8,11 @@ import {
     Constants,
     ICellRendererComp,
     ICellRendererFunc,
-    CellRendererService
+    CellRendererService,
+    IRichCellEditorParams,
 } from "ag-grid/main";
 import {RichSelectRow} from "./richSelectRow";
 import {VirtualList} from "../virtualList";
-
-export interface IRichCellEditorParams extends ICellEditorParams {
-    values: string[];
-    cellHeight: number,
-    cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
-}
 
 export class RichSelectCellEditor extends Component implements ICellEditor {
 
@@ -130,7 +124,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         let valueFormatted = this.params.formatValue(this.selectedValue);
 
         if (this.cellRenderer) {
-            let result = this.cellRendererService.useCellRenderer(this.params.column.getColDef(), eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
+            let result = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
             if (result && result.destroy) {
                 this.addDestroyFunc( ()=> result.destroy() );
             }
