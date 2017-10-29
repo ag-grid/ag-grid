@@ -15,6 +15,7 @@ import {ComponentResolver} from "./componentResolver";
 import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
 import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRenderer";
 import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
+import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
 import {Promise} from "../../utils";
 
 
@@ -121,7 +122,7 @@ export class ComponentRecipes {
         return <ICellRendererComp>this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer", "groupRowInnerRenderer", false);
     }
 
-    public newCellRenderer (target: ColDef | ISetFilterParams, params:ICellRendererParams):ICellRendererComp{
+    public newCellRenderer (target: ColDef | ISetFilterParams | IRichCellEditorParams, params:ICellRendererParams):ICellRendererComp{
         return <ICellRendererComp>this.componentResolver.createAgGridComponent(target, params, "cellRenderer", "cellRenderer", false);
     }
 

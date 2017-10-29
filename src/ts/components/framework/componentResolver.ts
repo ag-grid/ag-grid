@@ -10,8 +10,9 @@ import {AgGridComponentFunctionInput, AgGridRegisteredComponentInput} from "./co
 import {AgComponentUtils} from "./agComponentUtils";
 import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
 import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
+import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
 
-export type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams;
+export type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams | IRichCellEditorParams;
 
 export type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string;
 
@@ -201,6 +202,7 @@ export class ComponentResolver {
         if (!finalParams.api){
             finalParams.api = this.gridOptions.api;
         }
+
         return finalParams;
     }
 
@@ -250,7 +252,7 @@ export class ComponentResolver {
         let component: A = <A>this.newAgGridComponent(holder, propertyName, componentName, mandatory);
         if (!component) return null;
 
-        //Wire the component and call the init mehtod with the correct params
+        //Wire the component and call the init method with the correct params
         let finalParams = this.mergeParams(holder, propertyName, agGridParams);
         this.context.wireBean(component);
         if (customInitParamsCb == null){

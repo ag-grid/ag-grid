@@ -243,6 +243,7 @@ export {IsColumnFunc} from "./dist/lib/entities/colDef";
 export {ColumnApi} from "./dist/lib/columnController/columnController";
 export {IHeader} from "./dist/lib/headerRendering/header/headerComp";
 export {ICellRendererParams} from "./dist/lib/rendering/cellRenderers/iCellRenderer";
+export {IRichCellEditorParams} from "./dist/lib/interfaces/iRichCellEditorParams";
 export {WrapableInterface} from "./dist/lib/components/framework/frameworkComponentWrapper";
 export {BaseComponentWrapper} from "./dist/lib/components/framework/frameworkComponentWrapper";
 export {FrameworkComponentWrapper} from "./dist/lib/components/framework/frameworkComponentWrapper";

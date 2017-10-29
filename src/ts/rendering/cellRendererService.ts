@@ -7,6 +7,7 @@ import {ComponentResolver, ComponentSource, ResolvedComponent} from "../componen
 import {ISetFilterParams} from "../interfaces/iSetFilterParams";
 import {_} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {IRichCellEditorParams} from "../interfaces/iRichCellEditorParams";
 
 /** Class to use a cellRenderer. */
 @Bean('cellRendererService')
@@ -45,6 +46,20 @@ export class CellRendererService {
             } else {
                 eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
             }
+        }
+        return cellRenderer;
+    }
+
+    public useRichSelectCellRenderer(
+        target:ColDef,
+        eTarget: HTMLElement,
+        params: any
+    ): ICellRendererComp {
+        let cellRenderer: ICellRendererComp = this.componentRecipes.newCellRenderer((<IRichCellEditorParams>target.cellEditorParams), params);
+        if (cellRenderer != null) {
+            this.bindToHtml(cellRenderer, eTarget);
+        } else {
+            eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
         }
         return cellRenderer;
     }
@@ -98,7 +113,6 @@ export class CellRendererService {
         return cellRenderer;
     }
 
-
     public bindToHtml(cellRenderer: ICellRendererComp, eTarget: HTMLElement) {
         let gui: HTMLElement|string = cellRenderer.getGui();
         if (gui != null) {
@@ -111,7 +125,4 @@ export class CellRendererService {
 
         return cellRenderer;
     }
-
-
-
 }
