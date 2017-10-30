@@ -7,7 +7,9 @@ import {
     GridOptionsWrapper,
     _,
     Column,
-    AgEvent
+    AgEvent,
+    Promise,
+    ICellRendererComp
 } from "ag-grid/main";
 
 export interface SelectedEvent extends AgEvent {
@@ -96,10 +98,14 @@ export class SetFilterListItem extends Component {
         let colDef = this.column.getColDef();
         let valueObj = {value: this.value, valueFormatted: valueFormatted};
 
-        let component = this.cellRendererService.useFilterCellRenderer(colDef, valueElement, valueObj);
+        let componentPromise:Promise<ICellRendererComp> = this.cellRendererService.useFilterCellRenderer(colDef, valueElement, valueObj);
 
-        if (component && component.destroy) {
-            this.addDestroyFunc(component.destroy.bind(component));
-        }
+        if (!componentPromise) return;
+
+        componentPromise.then(component=>{
+            if (component && component.destroy) {
+                this.addDestroyFunc(component.destroy.bind(component));
+            }
+        })
     }
 }

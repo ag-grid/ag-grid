@@ -17,7 +17,9 @@ import {
     AgEvent,
     IRowModel,
     Constants,
-    PostConstruct
+    PostConstruct,
+    FilterWrapper,
+    Promise
 } from "ag-grid";
 import {ColumnSelectPanel} from "../toolPanel/columnsSelect/columnSelectPanel";
 import {MenuList} from "./menuList";
@@ -368,7 +370,7 @@ export class EnterpriseMenu {
 
         this.tabItemGeneral = {
             title: Utils.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
-            body: this.mainMenuList.getGui(),
+            bodyPromise: Promise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
         };
 
@@ -381,16 +383,18 @@ export class EnterpriseMenu {
 
     private createFilterPanel(): TabbedItem {
 
-        let filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column);
+        let filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column);
 
         let afterFilterAttachedCallback: Function;
-        if (filterWrapper.filter.afterGuiAttached) {
-            afterFilterAttachedCallback = filterWrapper.filter.afterGuiAttached.bind(filterWrapper.filter);
-        }
+        filterWrapper.filterPromise.then(filter=>{
+            if (filter.afterGuiAttached) {
+                afterFilterAttachedCallback = filter.afterGuiAttached.bind(filter);
+            }
+        });
 
         this.tabItemFilter = {
             title: Utils.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
-            body: filterWrapper.gui,
+            bodyPromise: filterWrapper.guiPromise.promise,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
         };
@@ -410,7 +414,7 @@ export class EnterpriseMenu {
 
         this.tabItemColumns = {
             title: Utils.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),//createColumnsIcon(),
-            body: eWrapperDiv,
+            bodyPromise: Promise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS
         };
 

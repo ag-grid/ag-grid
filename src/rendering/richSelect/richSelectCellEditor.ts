@@ -10,6 +10,7 @@ import {
     ICellRendererFunc,
     CellRendererService,
     IRichCellEditorParams,
+    Promise
 } from "ag-grid/main";
 import {RichSelectRow} from "./richSelectRow";
 import {VirtualList} from "../virtualList";
@@ -124,10 +125,12 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         let valueFormatted = this.params.formatValue(this.selectedValue);
 
         if (this.cellRenderer) {
-            let result = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
-            if (result && result.destroy) {
-                this.addDestroyFunc( ()=> result.destroy() );
-            }
+            let rendererPromise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
+            rendererPromise.then(renderer=>{
+                if (renderer && renderer.destroy) {
+                    this.addDestroyFunc( ()=> renderer.destroy() );
+                }
+            })
         } else {
             if (Utils.exists(this.selectedValue)) {
                 eValue.innerHTML = valueFormatted;

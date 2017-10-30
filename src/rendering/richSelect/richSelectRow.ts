@@ -1,5 +1,5 @@
 
-import {Component, Utils, Autowired, CellRendererService, ICellRendererFunc, ICellRendererComp, ColDef} from "ag-grid/main";
+import {Component, Utils, Autowired, CellRendererService, ICellRendererFunc, ICellRendererComp, ColDef, Promise} from "ag-grid/main";
 
 export class RichSelectRow extends Component {
 
@@ -33,12 +33,14 @@ export class RichSelectRow extends Component {
         }
     }
 
-    private populateWithRenderer(value: any, valueFormatted: string): ICellRendererComp {
-        let childComponent = this.cellRendererService.useRichSelectCellRenderer(this.columnDef, this.getGui(), {value: value, valueFormatted: valueFormatted});
-        if (childComponent && childComponent.destroy) {
-            this.addDestroyFunc(childComponent.destroy.bind(childComponent));
-        }
-        return childComponent;
+    private populateWithRenderer(value: any, valueFormatted: string): Promise<ICellRendererComp> {
+        let childComponentPromise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.columnDef, this.getGui(), {value: value, valueFormatted: valueFormatted});
+        childComponentPromise.then(childComponent=>{
+            if (childComponent && childComponent.destroy) {
+                this.addDestroyFunc(childComponent.destroy.bind(childComponent));
+            }
+        });
+        return childComponentPromise;
     }
 
 }
