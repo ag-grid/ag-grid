@@ -1,67 +1,71 @@
-var columnDefs = [
-    {headerName: 'Athlete', field: 'athlete', width: 150},
-    {
-        headerName: 'Age',
-        field: 'age',
-        width: 90,
-        filter: 'number',
-        filterParams: {
-            nullComparator: {
-                equals: false,
-                lessThan: false,
-                greaterThan: false
+function getColumnDefs() {
+    var columnDefs = [
+        {headerName: 'Athlete', field: 'athlete', width: 150},
+        {
+            headerName: 'Age',
+            field: 'age',
+            width: 90,
+            filter: 'number',
+            filterParams: {
+                nullComparator: {
+                    equals: false,
+                    lessThan: false,
+                    greaterThan: false
+                }
             }
-        }
-    },
-    {headerName: 'Country', field: 'country', width: 120},
-    {headerName: 'Year', field: 'year', width: 90},
-    {
-        headerName: 'Date',
-        field: 'date',
-        width: 145,
-        filter: 'date',
-        filterParams: {
-            comparator: function(filterLocalDateAtMidnight, cellValue) {
-                var dateAsString = cellValue;
-                var dateParts = dateAsString.split('/');
-                var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+        },
+        {headerName: 'Country', field: 'country', width: 120},
+        {headerName: 'Year', field: 'year', width: 90},
+        {
+            headerName: 'Date',
+            field: 'date',
+            width: 145,
+            filter: 'date',
+            filterParams: {
+                comparator: function(filterLocalDateAtMidnight, cellValue) {
+                    var dateAsString = cellValue;
+                    var dateParts = dateAsString.split('/');
+                    var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
-                if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
-                    return 0;
-                }
+                    if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
+                        return 0;
+                    }
 
-                if (cellDate < filterLocalDateAtMidnight) {
-                    return -1;
-                }
+                    if (cellDate < filterLocalDateAtMidnight) {
+                        return -1;
+                    }
 
-                if (cellDate > filterLocalDateAtMidnight) {
-                    return 1;
+                    if (cellDate > filterLocalDateAtMidnight) {
+                        return 1;
+                    }
+                },
+                nullComparator: {
+                    equals: false,
+                    lessThan: false,
+                    greaterThan: false
                 }
-            },
-            nullComparator: {
-                equals: false,
-                lessThan: false,
-                greaterThan: false
             }
-        }
-    },
-    {headerName: 'Sport', field: 'sport', width: 110},
-    {headerName: 'Gold', field: 'gold', width: 100, filter: 'number'},
-    {headerName: 'Silver', field: 'silver', width: 100, filter: 'number'},
-    {headerName: 'Bronze', field: 'bronze', width: 100, filter: 'number'},
-    {headerName: 'Total', field: 'total', width: 100, filter: 'number', suppressFilter: true}
-];
+        },
+        {headerName: 'Sport', field: 'sport', width: 110},
+        {headerName: 'Gold', field: 'gold', width: 100, filter: 'number'},
+        {headerName: 'Silver', field: 'silver', width: 100, filter: 'number'},
+        {headerName: 'Bronze', field: 'bronze', width: 100, filter: 'number'},
+        {headerName: 'Total', field: 'total', width: 100, filter: 'number', suppressFilter: true}
+    ];
+    return columnDefs;
+}
 
 var gridOptions = {
-    columnDefs: columnDefs,
+    columnDefs: getColumnDefs(),
     rowData: null,
     enableFilter: true
 };
 
 function changeNull(toChange, value) {
-    gridOptions.columnDefs[1].filterParams.nullComparator[toChange] = value;
-    gridOptions.columnDefs[4].filterParams.nullComparator[toChange] = value;
-    gridOptions.api.onFilterChanged();
+    var newColumnDefs = getColumnDefs();
+    newColumnDefs[1].filterParams.nullComparator[toChange] = value;
+    newColumnDefs[4].filterParams.nullComparator[toChange] = value;
+    gridOptions.api.setColumnDefs(newColumnDefs);
 }
 
 var rowData = [
