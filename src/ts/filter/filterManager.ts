@@ -73,8 +73,8 @@ export class FilterManager {
                 this.setModelOnFilterWrapper(filterWrapper.filterPromise, model[colId]);
             });
         } else {
-            _.iterateObject(this.allFilters, (key, filterWrapper) => {
-                this.setModelOnFilterWrapper(filterWrapper.filter, null);
+            _.iterateObject(this.allFilters, (key, filterWrapper: FilterWrapper) => {
+                this.setModelOnFilterWrapper(filterWrapper.filterPromise, null);
             });
         }
         this.onFilterChanged();
@@ -90,11 +90,14 @@ export class FilterManager {
         });
     }
 
-    public getFilterModel() {
+    public getFilterModel(): object {
         let result = <any>{};
-        _.iterateObject(this.allFilters, function (key: any, filterWrapper: any) {
+        _.iterateObject(this.allFilters, function (key: any, filterWrapper: FilterWrapper) {
             // because user can provide filters, we provide useful error checking and messages
-            let filter: IFilterComp = filterWrapper.filter;
+            let filterPromise: Promise<IFilterComp> = filterWrapper.filterPromise;
+            let filter = filterPromise.resolveNow(null, filter=>filter);
+            if (filter == null) return null;
+
             if (typeof filter.getModel !== 'function') {
                 console.warn('Warning ag-grid - filter API missing getModel method, which is needed for getFilterModel');
                 return;
