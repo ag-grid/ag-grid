@@ -49,6 +49,7 @@ var gridOptions = {
     animateRows: true,
     enableFilter: true,
     enableSorting: true,
+    enableColResize: true,
     groupDefaultExpanded: -1,
     getDataPath: function(data) {
         return data.filePath;

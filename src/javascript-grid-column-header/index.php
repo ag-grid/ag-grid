@@ -94,11 +94,10 @@ include '../documentation-main/documentation_header.php';
         the elements.
     </p>
 
-    <snippet>
-        defaultColDef : {
-        width: 100,
-        headerComponentParams : {
-        template:
+    <snippet>defaultColDef : {
+    width: 100,
+    headerComponentParams : {
+    template:
         '&lt;div class="ag-cell-label-container" role="presentation"&gt;' +
         '  &lt;span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"&gt;&lt;/span&gt;' +
         '  &lt;div ref="eLabel" class="ag-header-cell-label" role="presentation"&gt;' +
@@ -110,10 +109,8 @@ include '../documentation-main/documentation_header.php';
         '    &lt;span ref="eFilter" class="ag-header-icon ag-filter-icon"&gt;&lt;/span&gt;' +
         '  &lt;/div&gt;' +
         '&lt;/div&gt;'
-        }
-        }
-
-    </snippet>
+    }
+}</snippet>
 
     <p>
         Note that specifying your own templates is compatible with other configurations: <ul>

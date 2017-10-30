@@ -14,6 +14,9 @@ include '../documentation-main/documentation_header.php';
     </note>
 
     <h2>NEXT</h2>
+
+    <a href="../change-log/v14/">Notes</a>
+
     <h4>Bug Fixes</h4>
     <ul>
         <li>AG-672 Navigating with arrow keys now uses <code>suppressNavigable</code> property to skip cells that are not navigable.</li>

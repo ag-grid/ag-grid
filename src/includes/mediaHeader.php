@@ -49,10 +49,18 @@
 <body  class="big-text" ng-app="documentation">
 <!--<body ng-app="index" class="big-text">-->
 
-<?php $navKey = "blog"; include 'navbar.php'; ?>
+<?php
 
-<?php $headerTitle = "ag-Grid Blog"; include 'headerRow.php'; ?>
+    // if the user has not set a root folder, set it to the default
+    if (!isset($rootFolder)) {
+        $rootFolder = '..';
+    }
 
-<?php include '../example-runner/utils.php'; ?>
+    $navKey = "blog"; include 'navbar.php';
+
+    $headerTitle = "ag-Grid Blog"; include 'headerRow.php';
+    include $rootFolder.'/example-runner/utils.php';
+
+?>
 
 <div class="container">

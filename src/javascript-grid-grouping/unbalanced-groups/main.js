@@ -103,4 +103,5 @@ function cityCellRenderer(params) {
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
+    gridOptions.api.sizeColumnsToFit();
 });
