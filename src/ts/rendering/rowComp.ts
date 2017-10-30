@@ -803,7 +803,7 @@ export class RowComp extends Component {
                 }
             };
 
-            this.beans.componentResolver.createAgGridComponent_async<ICellRendererComp>(null, params, cellRendererType).then(callback);
+            this.beans.componentResolver.createAgGridComponent<ICellRendererComp>(null, params, cellRendererType).then(callback);
 
             this.afterRowAttached(rowContainerComp, eRow);
             eRowCallback(eRow);

@@ -600,7 +600,7 @@ export class GridApi {
     public getFilterInstance(key: string|Column): IFilterComp {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.getFilterComponent(column);
+            return this.filterManager.getFilterComponent(column).resolveNow<IFilterComp>(null, filterComp=>filterComp);
         }
     }
 

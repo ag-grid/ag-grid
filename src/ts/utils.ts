@@ -1534,10 +1534,50 @@ export enum PromiseStatus {
     IN_PROGRESS, RESOLVED
 }
 
+export interface ExternalPromise<T> {
+    resolve:(value:T)=>void,
+    promise:Promise<T>
+}
+
 export class Promise<T> {
     private status:PromiseStatus = PromiseStatus.IN_PROGRESS;
     private resolution:T = null;
     private listOfWaiters: ((value:T)=>void)[] = [];
+
+
+    static all<T> (toCombine:Promise<T>[]): Promise<T[]>{
+        return new Promise(resolve=>{
+            let combinedValues:T[] = [];
+            let remainingToResolve:number = toCombine.length;
+            toCombine.forEach((source, index)=> {
+                source.then(sourceResolved=>{
+                    remainingToResolve --;
+                    combinedValues[index] = sourceResolved;
+                    if (remainingToResolve == 0){
+                        resolve(combinedValues);
+                    }
+                });
+                combinedValues.push(null);
+            });
+        });
+    }
+
+    static resolve<T> (value:T): Promise<T>{
+        return new Promise<T>(resolve=>resolve(value));
+    }
+
+    static external<T> ():ExternalPromise<T>{
+        let capture: (value:T)=> void;
+        let promise:Promise<T> = new Promise<T>((resolve)=>{
+            capture = resolve
+        });
+        return <ExternalPromise<T>>{
+            promise: promise,
+            resolve: (value:T):void => {
+                capture(value)
+            }
+        };
+    }
 
     constructor (
         callback:ResolveAndRejectCallback<T>
@@ -1551,6 +1591,20 @@ export class Promise<T> {
         } else {
             func(this.resolution);
         }
+    }
+
+    public map<Z> (adapter:(from:T)=>Z):Promise<Z>{
+        return new Promise<Z>((resolve)=>{
+            this.then(unmapped=>{
+                resolve(adapter(unmapped))
+            })
+        });
+    }
+
+    public resolveNow<Z> (ifNotResolvedValue:Z, ifResolved:(current:T)=>Z):Z{
+        if (this.status == PromiseStatus.IN_PROGRESS) return ifNotResolvedValue;
+
+        return ifResolved(this.resolution);
     }
 
     private onDone (value:T):void {

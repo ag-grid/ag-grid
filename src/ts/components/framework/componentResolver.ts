@@ -206,22 +206,7 @@ export class ComponentResolver {
         return finalParams;
     }
 
-    public createAgGridComponent_async<A extends IComponent<any>> (
-        holderOpt:ComponentHolder,
-        agGridParams:any,
-        propertyName:string,
-        componentNameOpt?:string,
-        mandatory:boolean = true,
-        customInitParamsCb?:(params:any, component:A)=>any
-    ): Promise<A> {
-        let result = this.createAgGridComponent(holderOpt, agGridParams, propertyName, componentNameOpt, mandatory, customInitParamsCb);
-
-        return new Promise<A>( resolve => {
-            _.mimicAsync( ()=> resolve(result) );
-        });
-    }
-
-        /**
+    /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
      * It takes
      *  @param holderOpt: This is the context for which this component needs to be created, it can be gridOptions
@@ -244,7 +229,7 @@ export class ComponentResolver {
         componentNameOpt?:string,
         mandatory:boolean = true,
         customInitParamsCb?:(params:any, component:A)=>any
-    ): A{
+    ): Promise<A>{
         let holder:ComponentHolder = holderOpt == null ? this.gridOptions : holderOpt;
         let componentName:string = componentNameOpt == null ? propertyName : componentNameOpt;
 
@@ -255,13 +240,25 @@ export class ComponentResolver {
         //Wire the component and call the init method with the correct params
         let finalParams = this.mergeParams(holder, propertyName, agGridParams);
         this.context.wireBean(component);
+        let deferredInit:any;
         if (customInitParamsCb == null){
-            component.init(finalParams);
+            deferredInit = component.init(finalParams);
         } else {
-            component.init(customInitParamsCb(finalParams, component));
+            deferredInit = component.init(customInitParamsCb(finalParams, component));
         }
 
-        return component;
+        if (deferredInit == null){
+            // return Promise.resolve(component);
+            return new Promise<A> (resolve=>{
+                setTimeout(
+                    ()=>resolve(component),
+                    500
+                )
+            })
+        } else {
+            let asPromise:Promise<void> = <Promise<void>> deferredInit;
+            return asPromise.map(notRelevant=>component);
+        }
     }
 
     private newAgGridComponent<A extends IComponent<any> & B, B>
@@ -282,7 +279,7 @@ export class ComponentResolver {
         }
 
         if (componentToUse.type === ComponentType.AG_GRID){
-            return <any>new componentToUse.component();
+            return <A>new componentToUse.component();
         }
 
         //Using framework component

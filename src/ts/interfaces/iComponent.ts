@@ -1,3 +1,5 @@
+import {Promise} from "../utils";
+
 export interface IAfterGuiAttachedParams {
     hidePopup: () => void;
 }
@@ -21,6 +23,6 @@ export interface IComponent<T> {
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 
     /** The init(params) method is called on the filter once. See below for details on the parameters. */
-    init?(params: T): void;
+    init?(params: T): Promise<void> | void;
 
 }

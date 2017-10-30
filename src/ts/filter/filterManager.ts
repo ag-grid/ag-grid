@@ -1,4 +1,4 @@
-import {Utils as _} from "../utils";
+import {ExternalPromise, Promise, Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {PopupService} from "../widgets/popupService";
 import {ValueService} from "../valueService/valueService";
@@ -34,7 +34,7 @@ export class FilterManager {
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 
-    private allFilters: any = {};
+    private allFilters: {[p:string]:FilterWrapper} = {};
     private quickFilter: string = null;
 
     private advancedFilterPresent: boolean;
@@ -60,7 +60,7 @@ export class FilterManager {
             _.iterateObject(this.allFilters, (colId: string, filterWrapper: FilterWrapper) => {
                 _.removeFromArray(modelKeys, colId);
                 let newModel = model[colId];
-                this.setModelOnFilterWrapper(filterWrapper.filter, newModel);
+                this.setModelOnFilterWrapper(filterWrapper.filterPromise, newModel);
             });
             // at this point, processedFields contains data for which we don't have a filter working yet
             _.iterateArray(modelKeys, (colId) => {
@@ -70,7 +70,7 @@ export class FilterManager {
                     return;
                 }
                 let filterWrapper = this.getOrCreateFilterWrapper(column);
-                this.setModelOnFilterWrapper(filterWrapper.filter, model[colId]);
+                this.setModelOnFilterWrapper(filterWrapper.filterPromise, model[colId]);
             });
         } else {
             _.iterateObject(this.allFilters, (key, filterWrapper) => {
@@ -80,12 +80,14 @@ export class FilterManager {
         this.onFilterChanged();
     }
 
-    private setModelOnFilterWrapper(filter: IFilterComp, newModel: any) {
-        if (typeof filter.setModel !== 'function') {
-            console.warn('Warning ag-grid - filter missing setModel method, which is needed for setFilterModel');
-            return;
-        }
-        filter.setModel(newModel);
+    private setModelOnFilterWrapper(filterPromise: Promise<IFilterComp>, newModel: any) {
+        filterPromise.then(filter=>{
+            if (typeof filter.setModel !== 'function') {
+                console.warn('Warning ag-grid - filter missing setModel method, which is needed for setFilterModel');
+                return;
+            }
+            filter.setModel(newModel);
+        });
     }
 
     public getFilterModel() {
@@ -113,8 +115,8 @@ export class FilterManager {
     private setAdvancedFilterPresent() {
         let atLeastOneActive = false;
 
-        _.iterateObject(this.allFilters, function (key, filterWrapper) {
-            if (filterWrapper.filter.isFilterActive()) {
+        _.iterateObject(this.allFilters, function (key, filterWrapper:FilterWrapper) {
+            if (filterWrapper.filterPromise.resolveNow(false, filter=>filter.isFilterActive())) {
                 atLeastOneActive = true;
             }
         });
@@ -123,8 +125,8 @@ export class FilterManager {
     }
 
     private updateFilterFlagInColumns(): void {
-        _.iterateObject(this.allFilters, function (key, filterWrapper) {
-            let filterActive = filterWrapper.filter.isFilterActive();
+        _.iterateObject(this.allFilters, function (key, filterWrapper:FilterWrapper) {
+            let filterActive = filterWrapper.filterPromise.resolveNow(false, filter=>filter.isFilterActive());
             filterWrapper.column.setFilterActive(filterActive);
         });
     }
@@ -139,30 +141,37 @@ export class FilterManager {
         let colKeys = Object.keys(this.allFilters);
         for (let i = 0, l = colKeys.length; i < l; i++) { // critical code, don't use functional programming
             let colId = colKeys[i];
-            let filterWrapper = this.allFilters[colId];
+            let filterWrapper: FilterWrapper = this.allFilters[colId];
 
             // if no filter, always pass
             if (filterWrapper === undefined) {
                 continue;
             }
 
-            if (filterWrapper.filter === filterToSkip) {
+            let filter:IFilterComp = filterWrapper.filterPromise.resolveNow(undefined, filter=>filter);
+
+            // if filter not yet there, continue
+            if (filter === undefined) {
+                continue;
+            }
+
+            if (filter === filterToSkip) {
                 continue
             }
 
             // don't bother with filters that are not active
-            if (!filterWrapper.filter.isFilterActive()) {
+            if (!filter.isFilterActive()) {
                 continue;
             }
 
-            if (!filterWrapper.filter.doesFilterPass) { // because users can do custom filters, give nice error message
+            if (!filter.doesFilterPass) { // because users can do custom filters, give nice error message
                 console.error('Filter is missing method doesFilterPass');
             }
             let params: IDoesFilterPassParams = {
                 node: node,
                 data: data
             };
-            if (!filterWrapper.filter.doesFilterPass(params)) {
+            if (!filter.doesFilterPass(params)) {
                 return false;
             }
         }
@@ -201,10 +210,12 @@ export class FilterManager {
         this.updateFilterFlagInColumns();
         this.checkExternalFilter();
 
-        _.iterateObject(this.allFilters, function (key, filterWrapper) {
-            if (filterWrapper.filter.onAnyFilterChanged) {
-                filterWrapper.filter.onAnyFilterChanged();
-            }
+        _.iterateObject(this.allFilters, function (key, filterWrapper:FilterWrapper) {
+            filterWrapper.filterPromise.then(filter=>{
+                if (filter.onAnyFilterChanged) {
+                    filter.onAnyFilterChanged();
+                }
+            })
         });
 
         let event: FilterChangedEvent = {
@@ -325,10 +336,12 @@ export class FilterManager {
     }
 
     private onNewRowsLoaded() {
-        _.iterateObject(this.allFilters, function (key, filterWrapper) {
-            if (filterWrapper.filter.onNewRowsLoaded) {
-                filterWrapper.filter.onNewRowsLoaded();
-            }
+        _.iterateObject(this.allFilters, function (key, filterWrapper: FilterWrapper) {
+            filterWrapper.filterPromise.then(filter=>{
+                if (filter.onNewRowsLoaded) {
+                    filter.onNewRowsLoaded();
+                }
+            });
         });
         this.updateFilterFlagInColumns();
         this.setAdvancedFilterPresent();
@@ -341,13 +354,13 @@ export class FilterManager {
         };
     }
 
-    public getFilterComponent(column: Column) {
+    public getFilterComponent(column: Column):Promise<IFilterComp> {
         let filterWrapper = this.getOrCreateFilterWrapper(column);
-        return filterWrapper.filter;
+        return filterWrapper.filterPromise;
     }
 
     public getOrCreateFilterWrapper(column: Column): FilterWrapper {
-        let filterWrapper = this.cachedFilter(column);
+        let filterWrapper:FilterWrapper = this.cachedFilter(column);
 
         if (!filterWrapper) {
             filterWrapper = this.createFilterWrapper(column);
@@ -362,7 +375,7 @@ export class FilterManager {
         return this.allFilters[column.getColId()];
     }
 
-    private createFilterInstance(column: Column, $scope:any): IFilterComp {
+    private createFilterInstance(column: Column, $scope:any): Promise<IFilterComp> {
         let defaultFilter:string = 'textColumnFilter';
 
         if (this.gridOptionsWrapper.isEnterprise()) {
@@ -396,7 +409,7 @@ export class FilterManager {
             $scope: $scope
         };
 
-        return this.componentResolver.createAgGridComponent(
+        return this.componentResolver.createAgGridComponent<IFilterComp>(
             sanitisedColDef,
             params,
             'filter',
@@ -418,14 +431,14 @@ export class FilterManager {
     private createFilterWrapper(column: Column): FilterWrapper {
         let filterWrapper: FilterWrapper = {
             column: column,
-            filter: <IFilterComp> null,
+            filterPromise: null,
             scope: <any> null,
-            gui: <HTMLElement> null
+            guiPromise: Promise.external<HTMLElement>()
         };
 
         let $scope:any = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
 
-        filterWrapper.filter = this.createFilterInstance(column, $scope);
+        filterWrapper.filterPromise = this.createFilterInstance(column, $scope);
 
         this.putIntoGui(filterWrapper);
 
@@ -435,23 +448,25 @@ export class FilterManager {
     private putIntoGui(filterWrapper: FilterWrapper): void {
         let eFilterGui = document.createElement('div');
         eFilterGui.className = 'ag-filter';
-        let guiFromFilter = filterWrapper.filter.getGui();
+        filterWrapper.filterPromise.then(filter=>{
+            let guiFromFilter = filter.getGui();
 
-        // for backwards compatibility with Angular 1 - we
-        // used to allow providing back HTML from getGui().
-        // once we move away from supporting Angular 1
-        // directly, we can change this.
-        if (typeof guiFromFilter === 'string') {
-            guiFromFilter = _.loadTemplate(<string>guiFromFilter);
-        }
+            // for backwards compatibility with Angular 1 - we
+            // used to allow providing back HTML from getGui().
+            // once we move away from supporting Angular 1
+            // directly, we can change this.
+            if (typeof guiFromFilter === 'string') {
+                guiFromFilter = _.loadTemplate(<string>guiFromFilter);
+            }
 
-        eFilterGui.appendChild(guiFromFilter);
+            eFilterGui.appendChild(guiFromFilter);
 
-        if (filterWrapper.scope) {
-            filterWrapper.gui = this.$compile(eFilterGui)(filterWrapper.scope)[0];
-        } else {
-            filterWrapper.gui = eFilterGui;
-        }
+            if (filterWrapper.scope) {
+                filterWrapper.guiPromise.resolve(this.$compile(eFilterGui)(filterWrapper.scope)[0]);
+            } else {
+                filterWrapper.guiPromise.resolve(eFilterGui);
+            }
+        })
     }
 
     private onNewColumnsLoaded(): void {
@@ -460,7 +475,7 @@ export class FilterManager {
 
     // destroys the filter, so it not longer takes part
     public destroyFilter(column: Column): void {
-        let filterWrapper = this.allFilters[column.getColId()];
+        let filterWrapper:FilterWrapper = this.allFilters[column.getColId()];
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper);
             this.onFilterChanged();
@@ -468,12 +483,14 @@ export class FilterManager {
     }
 
     private disposeFilterWrapper(filterWrapper: FilterWrapper): void {
-        filterWrapper.filter.setModel(null);
-        if (filterWrapper.filter.destroy) {
-            filterWrapper.filter.destroy();
-        }
-        filterWrapper.column.setFilterActive(false);
-        delete this.allFilters[filterWrapper.column.getColId()];
+        filterWrapper.filterPromise.then(filter=>{
+            filter.setModel(null);
+            if (filter.destroy) {
+                filter.destroy();
+            }
+            filterWrapper.column.setFilterActive(false);
+            delete this.allFilters[filterWrapper.column.getColId()];
+        })
     }
 
     @PreDestroy
@@ -488,7 +505,7 @@ export class FilterManager {
 
 export interface FilterWrapper {
     column: Column,
-    filter: IFilterComp,
+    filterPromise: Promise<IFilterComp>,
     scope: any,
-    gui: HTMLElement
+    guiPromise: ExternalPromise<HTMLElement>
 }

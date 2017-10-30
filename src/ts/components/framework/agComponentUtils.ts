@@ -1,6 +1,6 @@
 import {Autowired, Bean} from "../../context/context";
 import {AgGridComponentFunctionInput, AgGridRegisteredComponentInput} from "./componentProvider";
-import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
+import {IComponent} from "../../interfaces/iComponent";
 import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
 import {ComponentSource, ComponentType, ResolvedComponent} from "./componentResolver";
 import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";

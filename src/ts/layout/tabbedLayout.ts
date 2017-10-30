@@ -1,4 +1,4 @@
-import {Utils as _} from '../utils';
+import {Promise, Utils as _} from '../utils';
 
 export class TabbedLayout {
 
@@ -51,7 +51,9 @@ export class TabbedLayout {
         this.items.forEach( (itemWrapper: TabbedItemWrapper) => {
             _.removeAllChildren(eDummyContainer);
 
-            let eClone: HTMLElement = <HTMLElement> itemWrapper.tabbedItem.body.cloneNode(true);
+            let eClone: HTMLElement = <HTMLElement> itemWrapper.tabbedItem.bodyPromise.resolveNow(null, body=>body.cloneNode(true));
+            if (eClone == null) return;
+
             eDummyContainer.appendChild(eClone);
 
             if (minWidth<eDummyContainer.offsetWidth) {
@@ -104,7 +106,9 @@ export class TabbedLayout {
             return;
         }
         _.removeAllChildren(this.eBody);
-        this.eBody.appendChild(wrapper.tabbedItem.body);
+        wrapper.tabbedItem.bodyPromise.then(body=>{
+            this.eBody.appendChild(body);
+        });
 
         if (this.activeItem) {
             _.removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
@@ -133,7 +137,7 @@ export interface TabbedLayoutParams {
 
 export interface TabbedItem {
     title: Element,
-    body: HTMLElement,
+    bodyPromise: Promise<HTMLElement>,
     name: string,
     afterAttachedCallback?: Function
 }

@@ -678,7 +678,7 @@ export class CellComp extends Component {
         this.cellRendererVersion++;
         let callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
 
-        this.beans.componentResolver.createAgGridComponent_async(this.column.getColDef(), params, this.cellRendererType).then(callback);
+        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType).then(callback);
     }
 
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
@@ -888,7 +888,7 @@ export class CellComp extends Component {
         let callback = this.afterCellEditorCreated.bind(this, this.cellEditorVersion);
 
         let params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-        this.beans.cellEditorFactory.createCellEditor_async(this.column.getColDef(), params).then(callback);
+        this.beans.cellEditorFactory.createCellEditor(this.column.getColDef(), params).then(callback);
 
         // if we don't do this, and editor component is async, then there will be a period
         // when the component isn't present and keyboard navigation won't work - so example

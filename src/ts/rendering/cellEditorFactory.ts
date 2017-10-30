@@ -29,27 +29,27 @@ export class CellEditorFactory {
     //     });
     // }
 
-    public createCellEditor_async(column:ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
-        let cellEditor:ICellEditorComp = this.componentResolver.createAgGridComponent (
+    public createCellEditor(column:ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
+        let cellEditorPromise:Promise<ICellEditorComp> = this.componentResolver.createAgGridComponent (
             column,
             params,
             'cellEditor'
         );
-        if (cellEditor.isPopup && cellEditor.isPopup()) {
+        cellEditorPromise.then(cellEditor=>{
+            if (cellEditor.isPopup && cellEditor.isPopup()) {
 
-            if (this.gridOptionsWrapper.isFullRowEdit()) {
-                console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
-                    '- either turn off fullRowEdit, or stop using popup editors.');
+                if (this.gridOptionsWrapper.isFullRowEdit()) {
+                    console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
+                        '- either turn off fullRowEdit, or stop using popup editors.');
+                }
+
+                cellEditor = new PopupEditorWrapper(cellEditor);
+                this.context.wireBean(cellEditor);
+                cellEditor.init(params);
             }
-
-            cellEditor = new PopupEditorWrapper(cellEditor);
-            this.context.wireBean(cellEditor);
-            cellEditor.init(params);
-        }
-
-        return new Promise<ICellEditorComp>( resolve => {
-            _.mimicAsync( ()=> resolve(cellEditor) );
         });
+
+        return cellEditorPromise;
     }
 
 }

@@ -100,7 +100,7 @@ export class Component extends BeanStub implements IComponent<any> {
     public attributesSet(): void {
     }
 
-    private wireQuerySelectors(): void {
+    protected wireQuerySelectors(): void {
         if (!this.eGui) {
             return;
         }

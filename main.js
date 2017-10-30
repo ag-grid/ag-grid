@@ -242,6 +242,7 @@ var utils_1 = require("./dist/lib/utils");
 exports.Utils = utils_1.Utils;
 exports.NumberSequence = utils_1.NumberSequence;
 exports._ = utils_1._;
+exports.Promise = utils_1.Promise;
 var valueService_1 = require("./dist/lib/valueService/valueService");
 exports.ValueService = valueService_1.ValueService;
 var expressionService_1 = require("./dist/lib/valueService/expressionService");

@@ -1,7 +1,7 @@
 import {Autowired, Context} from "../context/context";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
 import {Column} from "../entities/column";
-import {_} from "../utils";
+import {_, Promise} from "../utils";
 import {SetLeftFeature} from "../rendering/features/setLeftFeature";
 import {IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange} from "./floatingFilter";
 import {Component} from "../widgets/component";
@@ -12,7 +12,7 @@ import {Beans} from "../rendering/beans";
 
 export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     column:Column;
-    floatingFilterComp:IFloatingFilterComp<M, F, P>;
+    floatingFilterComp:Promise<IFloatingFilterComp<M, F, P>>;
     suppressFilterButton: boolean;
 }
 
@@ -29,7 +29,7 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
 
     column: Column;
 
-    init (params:P):void{
+    init (params:P):void | Promise<void>{
         this.column = params.column;
 
 
@@ -69,42 +69,56 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     @Autowired('gridOptionsWrapper')
     private gridOptionsWrapper: GridOptionsWrapper;
 
-    floatingFilterComp:IFloatingFilterComp<M, F, PC>;
+    floatingFilterCompPromise:Promise<IFloatingFilterComp<M, F, PC>>;
     suppressFilterButton:boolean;
 
 
     init(params: P): void{
-        this.floatingFilterComp = params.floatingFilterComp;
+        this.floatingFilterCompPromise = params.floatingFilterComp;
         this.suppressFilterButton = params.suppressFilterButton;
         super.init(params);
-        if (!this.suppressFilterButton){
+
+        this.addEventListeners();
+
+
+    }
+
+    private addEventListeners ():void{
+        if (!this.suppressFilterButton && this.eButtonShowMainFilter){
             this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
         }
     }
 
     enrichBody(body:HTMLElement):void{
-        let floatingFilterBody:HTMLElement = <HTMLElement>body.querySelector('.ag-floating-filter-body');
-        let floatingFilterComp = this.floatingFilterComp.getGui();
-        if (this.suppressFilterButton){
-            floatingFilterBody.appendChild(floatingFilterComp);
-            _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
-            _.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body')
-        } else {
-            floatingFilterBody.appendChild(floatingFilterComp);
-            body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button" aria-hidden="true">
-                    <button ref="eButtonShowMainFilter"></button>
-            </div>`));
+        this.floatingFilterCompPromise.then(floatingFilterComp=>{
+            let floatingFilterBody:HTMLElement = <HTMLElement>body.querySelector('.ag-floating-filter-body');
+            let floatingFilterCompUi = floatingFilterComp.getGui();
+            if (this.suppressFilterButton){
+                floatingFilterBody.appendChild(floatingFilterCompUi);
+                _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
+                _.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body')
+            } else {
+                floatingFilterBody.appendChild(floatingFilterCompUi);
+                body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button" aria-hidden="true">
+                        <button ref="eButtonShowMainFilter"></button>
+                </div>`));
 
-            let eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
-            body.querySelector('button').appendChild(eIcon);
-        }
-        if (this.floatingFilterComp.afterGuiAttached){
-            this.floatingFilterComp.afterGuiAttached();
-        }
+                let eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
+                body.querySelector('button').appendChild(eIcon);
+            }
+            if (floatingFilterComp.afterGuiAttached){
+                floatingFilterComp.afterGuiAttached();
+            }
+
+            this.wireQuerySelectors();
+            this.addEventListeners();
+        });
     }
 
     onParentModelChanged(parentModel:M):void{
-        this.floatingFilterComp.onParentModelChanged(parentModel);
+        this.floatingFilterCompPromise.then(floatingFilterComp=>{
+            floatingFilterComp.onParentModelChanged(parentModel);
+        })
     }
 
     private showParentFilter(){
