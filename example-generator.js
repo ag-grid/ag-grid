@@ -28,7 +28,7 @@ function phpArrayToJSON(string) {
     const replaced = string
         .replace(/^, /, '')
         .replace(/'/g, '"')
-        .replace(/array\(("\w+"(, )?)+\)/, '[$1]')
+        .replace(/array\((("\w+"(, )?)+)\)/, '[$1]')
         .replace(/array/g, '')
         .replace(/\(/g, '{')
         .replace(/\)/g, '}')
@@ -37,7 +37,7 @@ function phpArrayToJSON(string) {
         return JSON.parse(replaced);
     } catch (e) {
         console.error(replaced, e);
-        throw new Error(' The hackish conversion of PHP syntax to JSON failed. check ./exmaple-generator.js');
+        throw new Error(' The hackish conversion of PHP syntax to JSON failed. check ./example-generator.js');
     }
 }
 
