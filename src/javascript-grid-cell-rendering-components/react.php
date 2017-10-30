@@ -120,10 +120,9 @@ class NameCellRenderer extends React.Component {
 <h3 id="handling-refresh"><img src="../images/react_large.png" style="width: 20px;"/> Handling Refresh</h3>
 
 <p>
-    You have the option of handling refresh or not by either providing a <code>refresh()</code> method on
-    your React component or not. If not present, then the grid will destroy your component and create
-    a new one if it tries to refresh the cell. If you do implement it, then it's up to your React
-    components <code>refresh()</code> method to update the state of your component.
+    To handle refresh, implement logic inside the <code>refresh()</code> method inside your component and return true.
+    If you do not want to handle refresh, just return false from the refresh method (which will tell the grid you do
+    not handle refresh and your component will be destroyed and recreated if the underlying data changes).
 </p>
 
 <h3 id="example-rendering-using-more-complex-react-components">Example: Rendering using more complex React

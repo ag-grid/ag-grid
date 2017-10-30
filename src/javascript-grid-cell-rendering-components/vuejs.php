@@ -125,9 +125,11 @@ the grid will know the framework to use is VueJS.
     <li><i>getGui()</i> is not used. Instead do normal VueJS magic in your Component via the VueJS template.</li>
 </ul>
 
-<h3 id="handling-refresh"><img src="../images/vue_large.png" style="width: 20px;"/> Handling Refresh</h3>
-
-<p>To receive update (for example, after an edit) you should implement the optional <code>refresh</code> method on the <code>AgRendererComponent</code> interface.</p>
+<p>
+    To handle refresh, implement logic inside the <code>refresh()</code> method inside your component and return true.
+    If you do not want to handle refresh, just return false from the refresh method (which will tell the grid you do
+    not handle refresh and your component will be destroyed and recreated if the underlying data changes).
+</p>
 
 <h3 id="example-rendering-using-more-complex-vuejs-components">Example: Rendering using more complex VueJS Components</h3>
 <p>
