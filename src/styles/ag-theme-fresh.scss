@@ -12,8 +12,8 @@ $disabled-foreground-color-opacity: 0.5 !default;
 // Sizing
 $grid-size: 4px !default;
 $icon-size: 12px !default;
-$header-height: $grid-size * 7 !default;
-$row-height: $grid-size * 7 !default;
+$header-height: $grid-size * 6 + 1 !default;
+$row-height: ($grid-size * 6 + 1) !default; 
 $cell-horizontal-padding: $grid-size * 3;
 $virtual-item-height: $grid-size * 5;
 $header-icon-size: 14px;
@@ -148,6 +148,10 @@ $params: (
 );
 
 .ag-theme-fresh {
+    .ag-cell {
+        box-sizing: border-box;
+    }
+
     %card {
         border: 1px solid $border-color;
         background-color: lightgrey;

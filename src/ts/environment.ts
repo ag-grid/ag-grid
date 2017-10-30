@@ -25,14 +25,14 @@ const HARD_CODED_SIZES: HardCodedSize = {
     },
     "ag-theme-fresh": {
         autoSizePadding: freshGridSize * 3,
-        headerHeight: freshGridSize * 7,
+        headerHeight: 25,
         groupPaddingSize: freshGridSize * 3 + freshIconSize,
         footerPaddingAddition: freshGridSize * 4,
         virtualItemHeight: freshGridSize * 5,
         aggFuncPopupHeight: freshGridSize * 5 * 3.5,
         checkboxIndentWidth: freshGridSize + freshIconSize,
         leafNodePadding: freshGridSize * 3,
-        rowHeight: freshGridSize * 7,
+        rowHeight: 25,
         gridSize: freshGridSize,
         iconSize: freshIconSize
     }
