@@ -1,4 +1,3 @@
-import {ReactFrameworkFactory} from "./reactFrameworkFactory";
 import {ReactFrameworkComponentWrapper} from "./reactFrameworkComponentWrapper";
 
 import * as DOM from 'react-dom-factories';
@@ -46,10 +45,8 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     }
 
     componentDidMount() {
-        const reactFrameworkFactory = new ReactFrameworkFactory(this);
 
         const gridParams = {
-            frameworkFactory: reactFrameworkFactory,
             seedBeanInstances: {
                 agGridReact: this
             }

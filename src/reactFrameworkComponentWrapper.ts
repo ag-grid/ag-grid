@@ -1,4 +1,4 @@
-import {Autowired, BaseComponentWrapper, Bean, FrameworkComponentWrapper, IComponent, WrapableInterface, IAfterGuiAttachedParams} from "ag-grid";
+import {Autowired, BaseComponentWrapper, Bean, FrameworkComponentWrapper, IComponent, WrapableInterface, IAfterGuiAttachedParams, Promise} from "ag-grid";
 import {AgReactComponent} from "./agReactComponent";
 import {AgGridReact} from "./agGridReact";
 
@@ -15,8 +15,8 @@ export class ReactFrameworkComponentWrapper extends BaseComponentWrapper<Wrapabl
                 super(ReactComponent, _self.agGridReact);
             }
 
-            public init(params: any) {
-                super.init(<any>params);
+            public init(params: any):Promise<void> {
+                return super.init(<any>params);
             }
 
             hasMethod(name: string): boolean {
