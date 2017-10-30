@@ -78,10 +78,8 @@ function appComponentTemplate(bindings) {
 
     const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunction);
 
-    if (bindings.onGridReady || bindings.resizeToFit || bindings.data) {
-        eventAttributes.push('(gridReady)="onGridReady($event)"');
-        additional.push(onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, bindings.data));
-    }
+    eventAttributes.push('(gridReady)="onGridReady($event)"');
+    additional.push(onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, bindings.data));
 
     const agGridTag = `<ag-grid-angular
     #agGrid
