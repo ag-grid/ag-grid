@@ -253,10 +253,9 @@ export class SelectionController {
                     callback(rowNode);
                 }
             });
+            // this clears down the map (whereas above only sets the items in map to 'undefined')
+            this.reset();
         }
-
-        // this clears down the map (whereas above only sets the items in map to 'undefined')
-        this.reset();
 
         // the above does not clean up the parent rows if they are selected
         if (rowModelInMemory && this.groupSelectsChildren) {
