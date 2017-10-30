@@ -145,26 +145,26 @@ function createTradeId() {
         },
         onGridReady: function(params) {
             // kick off the feed
-            timeoutTarget(params);
+            timeoutTarget(params.api);
             createRowData();
             params.api.setRowData(globalRowData)
         }
     };
 
-function updateUsingTransaction(gridOptions) {
+function updateUsingTransaction(gridApi) {
 
     var itemsToRemove = removeSomeItems();
     var itemsToAdd = addSomeItems();
     var itemsToUpdate = updateSomeItems();
 
-    gridOptions.api.updateRowData({
+    gridApi.updateRowData({
             add: itemsToAdd,
             remove: itemsToRemove,
             update: itemsToUpdate});
 }
 
 function updateUsingTransactionHandler() {
-    updateUsingTransaction(gridOptions);
+    updateUsingTransaction(gridOptions.api);
 }
 
 function updateUsingTransactionImmutableStore() {
@@ -249,14 +249,14 @@ var feedActive = false;
 
 
 // this method gets executed periodically
-function timeoutTarget(gridOptions) {
+function timeoutTarget(gridApi) {
     // if feed active, then call the randomlyChangeData
     if (feedActive) {
-        updateUsingTransaction(gridOptions);
+        updateUsingTransaction(gridApi);
     }
     // call this method again after between 1 and 4 seconds.
     var millis = randomBetween(1000, 4000);
-    setTimeout(timeoutTarget, millis, gridOptions);
+    setTimeout(timeoutTarget, millis, gridApi);
 }
 
 function toggleFeed() {
