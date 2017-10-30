@@ -248,13 +248,13 @@ export class ComponentResolver {
         }
 
         if (deferredInit == null){
-            // return Promise.resolve(component);
-            return new Promise<A> (resolve=>{
-                setTimeout(
-                    ()=>resolve(component),
-                    500
-                )
-            })
+            return Promise.resolve(component);
+            // return new Promise<A> (resolve=>{
+            //     setTimeout(
+            //         ()=>resolve(component),
+            //         500
+            //     )
+            // })
         } else {
             let asPromise:Promise<void> = <Promise<void>> deferredInit;
             return asPromise.map(notRelevant=>component);
