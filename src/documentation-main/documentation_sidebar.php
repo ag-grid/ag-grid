@@ -29,6 +29,21 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">1st November 2017</div>
+    <div style="position: relative;">
+        <a href="../change-log/v14/">
+            <img src="../change-log/v14/v14-200.png" style="width: 100%;"/>
+        </a>
+    </div>
+    <div>
+        <br/>
+        Announcing <a href="../change-log/v14/">ag-Grid v14 Halloween</a> with improved
+        tree data, row grouping, examples in React and Angular and much more. Check the
+        <a href="../change-log/v14/">ag-Grid v14 Halloween</a> press release.
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">24th October 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
         <a href="../ag-grid-datagrid-crud-part-1/">
