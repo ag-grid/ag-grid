@@ -214,11 +214,10 @@ function GenderCellRenderer() {
 }
 
 GenderCellRenderer.prototype.init = function (params) {
-    if (params.value === "" || params.value === undefined || params.value === null) {
-        this.eGui = '';
-    } else {
+    this.eGui = document.createElement('span');
+    if (params.value !== "" || params.value !== undefined || params.value !== null) {
         var gender = '<img border="0" width="15" height="10" src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/' + params.value.toLowerCase() + '.png">';
-        this.eGui = '<span style="cursor: default;">' + gender + ' ' + params.value + '</span>';
+        this.eGui.innerHTML = gender + ' ' + params.value;
     }
 };
 
@@ -230,11 +229,10 @@ function MoodCellRenderer() {
 }
 
 MoodCellRenderer.prototype.init = function (params) {
-    if (params.value === "" || params.value === undefined || params.value === null) {
-        this.eGui = '';
-    } else {
+    this.eGui = document.createElement('span');
+    if (params.value !== "" || params.value !== undefined || params.value !== null) {
         var imgForMood = params.value === 'Happy' ? 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/smiley.png' : 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/smiley-sad.png';
-        this.eGui = '<img width="20px" src="' + imgForMood + '" />';
+        this.eGui.innerHTML = '<img width="20px" src="' + imgForMood + '" />';
     }
 };
 
