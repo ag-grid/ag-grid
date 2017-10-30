@@ -196,12 +196,13 @@ include '../documentation-main/documentation_header.php';
 
 <h3>Events Causing Refresh</h3>
 <p>
-    The grid is constantly refreshing the data in the browser, but not every refresh of the grid
-    results in the refresh method of your cell renderer getting called.
-    The following will result in the cell renderer's refresh method getting called:
+    The grid can refresh the data in the browser, but not every refresh / redraw of the grid
+    results in the refresh method of your cell renderer getting called. The following items
+    are those that <b>do</b> cause refresh to be called:
 <ul>
     <li>
-        Calling <code>rowNode.setDataValue(colKey, value)</code> to set a value directly onto the <code>rowNode</code>
+        Calling <code>rowNode.setDataValue(colKey, value)</code> to set a value directly onto the <code>rowNode</code>.
+        This is the preferred API way to change one value from outside of the grid.
     </li>
     <li>
         When editing a cell and editing is stopped, so that cell displays new value after editing.
@@ -221,9 +222,11 @@ method will be called.
 <ul>
     <li>
         Calling <code>rowNode.setData(data)</code> to set new data into a <code>rowNode</code>.
+        When you set the data for the whole row, then the whole row in the DOM is recreated again from scratch.
     </li>
     <li>
-        Scrolling the grid vertically (results in rows getting ripped in / out of the dom).
+        Scrolling the grid vertically causes columns (and their containing cells) to be removed and inserted
+        due to column virtualisation.
     </li>
 </ul>
 All of the above will result in the component getting destroyed and recreated.
