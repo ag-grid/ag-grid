@@ -680,7 +680,7 @@ ag-grid-aurelia {
     position: absolute;
     width: 100%;
 
-    span:empty {
+    span:empty:not(.ag-icon) {
         border-left: 1px solid transparent;
     }
 }
