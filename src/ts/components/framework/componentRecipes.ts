@@ -104,8 +104,8 @@ export class ComponentRecipes {
 
             let rawModelFn = params.currentParentModel;
             params.currentParentModel = ():M=>{
-                let parent:IFilterComp = <any>this.filterManager.getFilterComponent(column);
-                return <any>parent.getModelAsString(rawModelFn());
+                let parentPromise:Promise<IFilterComp> = this.filterManager.getFilterComponent(column);
+                return <any>parentPromise.resolveNow(null, parent=>parent.getModelAsString(rawModelFn()));
             };
             floatingFilterWrapperComponentParams.floatingFilterComp = this.newFloatingFilterComponent<M>('readModelAsString', colDef, params);
         }
