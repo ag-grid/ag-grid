@@ -96,7 +96,7 @@ export class FilterManager {
         });
     }
 
-    public getFilterModel(): object {
+    public getFilterModel(): any {
         let result = <any>{};
         _.iterateObject(this.allFilters, function (key: any, filterWrapper: FilterWrapper) {
             // because user can provide filters, we provide useful error checking and messages
