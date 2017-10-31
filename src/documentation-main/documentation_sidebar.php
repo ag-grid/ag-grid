@@ -12,6 +12,13 @@
         margin-bottom: 10px;
     }
 
+    .news-date {
+        text-align: right;
+        font-size: 12px;
+        color: #333;
+        margin-bottom: 4px;
+    }
+
     .separator {
         text-align: center;
     }
@@ -29,7 +36,12 @@
 </style>
 
 <div class="news-box">
-    <div class="news-header">1st November 2017</div>
+    <div class="news-date">
+        01-Nov-17
+    </div>
+    <div class="news-header">
+        ag-Grid v14 Released
+    </div>
     <div style="position: relative;">
         <a href="../change-log/v14/">
             <img src="../change-log/v14/v14-200.png" style="width: 100%;"/>
