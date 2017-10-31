@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-dev",
-  "version": "13.3.0",
+  "version": "14.0.0",
   "description": "Development project for all the other projects, contains a master gulp build file for dev purposes",
   "repository": {
     "type": "git",
