@@ -1,26 +1,30 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", pinned: "left"},
-    {headerName: "Age", field: "age", pinned: "left"},
-    {headerName: "Country", field: "country", colSpan: function(params) {
-        var country = params.data.country;
-        if (country==='Russia') {
-            // have all Russia age columns width 2
-            return 2;
-        } else if (country==='United States') {
-            // have all United States column width 4
-            return 4;
-        } else {
-            // all other rows should be just normal
-            return 1;
+    {headerName: 'Athlete', field: 'athlete', pinned: 'left'},
+    {headerName: 'Age', field: 'age', pinned: 'left'},
+    {
+        headerName: 'Country',
+        field: 'country',
+        colSpan: function(params) {
+            var country = params.data.country;
+            if (country === 'Russia') {
+                // have all Russia age columns width 2
+                return 2;
+            } else if (country === 'United States') {
+                // have all United States column width 4
+                return 4;
+            } else {
+                // all other rows should be just normal
+                return 1;
+            }
         }
-    }},
-    {headerName: "Year", field: "year"},
-    {headerName: "Date", field: "date"},
-    {headerName: "Sport", field: "sport"},
-    {headerName: "Gold", field: "gold"},
-    {headerName: "Silver", field: "silver"},
-    {headerName: "Bronze", field: "bronze"},
-    {headerName: "Total", field: "total"}
+    },
+    {headerName: 'Year', field: 'year'},
+    {headerName: 'Date', field: 'date'},
+    {headerName: 'Sport', field: 'sport'},
+    {headerName: 'Gold', field: 'gold'},
+    {headerName: 'Silver', field: 'silver'},
+    {headerName: 'Bronze', field: 'bronze'},
+    {headerName: 'Total', field: 'total'}
 ];
 
 var gridOptions = {
@@ -38,9 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json'})
-        .then( function(rows) {
-                gridOptions.api.setRowData(rows);
-            }
-        );
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json'}).then(function(data) {
+        gridOptions.api.setRowData(data);
+    });
 });
