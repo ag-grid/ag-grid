@@ -254,10 +254,10 @@ export class RowRenderer extends BeanStub {
 
         this.scrollToTopIfNewData(params);
 
-        // never keep rendered rows if doing forPrint or autoHeight, as we do not use 'top' to
+        // never keep rendered rows if doing forPrint, as we do not use 'top' to
         // position the rows (it uses normal flow), so we have to remove
         // all rows and insert them again from scratch
-        let rowsUsingFlow = this.forPrint || this.autoHeight;
+        let rowsUsingFlow = this.forPrint;
         let recycleRows = rowsUsingFlow ? false : params.recycleRows;
         let animate = rowsUsingFlow ? false : params.animate;
 
