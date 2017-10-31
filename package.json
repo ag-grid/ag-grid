@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-enterprise",
-  "version": "13.3.1",
+  "version": "14.0.0",
   "description": "ag-Grid Enterprise Features",
   "main": "main.js",
   "types": "main.d.ts",
@@ -39,7 +39,7 @@
     "gulp-rename": "1.2.2"
   },
   "peerDependencies": {
-    "ag-grid": "13.3.x"
+    "ag-grid": "14.0.x"
   },
   "dependencies": {}
 }
