@@ -13,7 +13,7 @@ $disabled-foreground-color-opacity: 0.5 !default;
 $grid-size: 4px !default;
 $icon-size: 12px !default;
 $header-height: $grid-size * 6 + 1 !default;
-$row-height: ($grid-size * 6 + 1) !default; 
+$row-height: ($grid-size * 6 + 1) !default;
 $cell-horizontal-padding: $grid-size * 3;
 $virtual-item-height: $grid-size * 5;
 $header-icon-size: 14px;
@@ -36,7 +36,7 @@ $icon-color: #333 !default;
 $foreground-color: rgba(black, $foreground-opacity) !default;
 $secondary-foreground-color: rgba(#333, $secondary-foreground-color-opacity) !default;
 $disabled-foreground-color: rgba(black, $disabled-foreground-color-opacity) !default;
-$menu-option-active-color: #BDE2E5 !default;
+$menu-option-active-color: #bde2e5 !default;
 
 $card-background-color: #f6f6f6 !default;
 $border-color: darkgrey !default;
@@ -46,7 +46,7 @@ $accent-color: black !default;
 $background-color: white !default;
 $odd-row-background-color: #f6f6f6 !default;
 
-$editor-background-color: lightgrey !default;
+$editor-background-color: #f6f6f6 !default;
 
 $header-background-color: transparent !default;
 $header-background-image: linear-gradient(white, lightgrey) !default;
@@ -54,7 +54,7 @@ $panel-background-color: #f6f6f6 !default;
 
 $tool-panel-background-color: #f6f6f6 !default;
 
-$chip-background-color: #ECF0F1 !default;
+$chip-background-color: #ecf0f1 !default;
 
 $range-selection-background-color: rgba(120, 120, 120, 0.4) !default; // this should be pink, but indigo looks better
 $range-selection-highlight-color: rgba(255, 255, 255, 0.4) !default;
@@ -69,7 +69,7 @@ $focused-cell-border-color: darkgrey !default;
 
 $tab-background-color: #e6e6e6;
 
-// Misc 
+// Misc
 $transition-speed: 120ms !default;
 $card-shadow: none;
 $card-radius: 0;
@@ -77,13 +77,12 @@ $card-radius: 0;
 $cell-highlight-border: 2px solid darkgreen !default;
 $cell-horizontal-border: 1px dotted silver !default;
 
-$ag-range-selected-color-1: rgba(120,120,120,0.4) !default;
-$ag-range-selected-color-2: rgba(80,80,80,0.4) !default;
-$ag-range-selected-color-3: rgba(40,40,40,0.4) !default;
-$ag-range-selected-color-4: rgba(0,0,0,0.4) !default;
+$ag-range-selected-color-1: rgba(120, 120, 120, 0.4) !default;
+$ag-range-selected-color-2: rgba(80, 80, 80, 0.4) !default;
+$ag-range-selected-color-3: rgba(40, 40, 40, 0.4) !default;
+$ag-range-selected-color-4: rgba(0, 0, 0, 0.4) !default;
 
 $params: (
-    // sizing
     grid-size: $grid-size,
     icon-size: $icon-size,
     header-icon-size: $header-icon-size,
@@ -92,61 +91,42 @@ $params: (
     virtual-item-height: $virtual-item-height,
     rich-select-item-height: $row-height,
     cell-horizontal-padding: $cell-horizontal-padding,
-
     icons-path: $icons-path,
-
     font-family: $font-family,
     font-size: $font-size,
     font-weight: $font-weight,
-
     secondary-font-family: $secondary-font-family,
     secondary-font-size: $secondary-font-size,
     secondary-font-weight: $secondary-font-weight,
-
     foreground-color: $foreground-color,
     foreground-opacity: $foreground-opacity,
-
     secondary-foreground-color-opacity: $secondary-foreground-color-opacity,
     secondary-foreground-color: $secondary-foreground-color,
-
     disabled-foreground-color-opacity: $disabled-foreground-color-opacity,
     disabled-foreground-color: $disabled-foreground-color,
-
     background-color: $background-color,
     odd-row-background-color: $odd-row-background-color,
-
     icon-color: $icon-color,
     border-color: $border-color,
-
     button-background-color: transparent,
-
     cell-data-changed-color: $cell-data-changed-color,
-
     chip-background-color: $chip-background-color,
-
     editor-background-color-color: $editor-background-color,
-
     range-selection-background-color: $range-selection-background-color,
     range-selection-highlight-color: $range-selection-highlight-color,
-
     header-background-color: $header-background-color,
-
     panel-background-color: $panel-background-color,
-
     tool-panel-background-color: $tool-panel-background-color,
-
     card-background-color: $card-background-color,
-
     accent-color: $accent-color,
     primary-color: $primary-color,
     hover-color: $hover-color,
     selected-color: $selected-color,
-
     icon-opacity: $foreground-opacity,
     button-text-transform: uppercase,
     card-radius: $card-radius,
     card-shadow: $card-shadow,
-    input-height: $grid-size * 4,
+    input-height: $grid-size * 4
 );
 
 .ag-theme-fresh {
@@ -163,7 +143,7 @@ $params: (
         display: inline-block;
         margin: $grid-size;
         margin-bottom: 0;
-        padding: $grid-size $grid-size * 2; 
+        padding: $grid-size $grid-size * 2;
         border: 1px solid transparent;
         border-bottom-width: 0;
     }
@@ -186,7 +166,7 @@ $params: (
 
     .ag-header {
         border-bottom: 1px solid $border-color;
-        background-image: $header-background-image ;
+        background-image: $header-background-image;
     }
 
     .ag-header-cell-resize::after {
@@ -241,6 +221,7 @@ $params: (
     }
 
     .ag-filter .ag-filter-apply-panel {
+        border-top: 1px solid $border-color;
         justify-content: flex-start;
     }
 
@@ -284,7 +265,7 @@ $params: (
 
     .ag-cell-highlight {
         background-color: $ag-range-selected-color-1;
-        border-bottom: $cell-highlight-border; 
+        border-bottom: $cell-highlight-border;
     }
 
     .ag-cell-highlight-animation {
@@ -325,5 +306,26 @@ $params: (
 
     .ag-tool-panel .ag-column-drop .ag-column-drop-title {
         float: none;
+    }
+
+    .ag-column-select-panel {
+        .ag-column-select-column-group,
+        .ag-column-select-column {
+            height: $grid-size * 5;
+            line-height: $grid-size * 5;
+        }
+    }
+
+    .ag-filter .ag-filter-header-container {
+        height: $grid-size * 6;
+    }
+
+    // bootstrap overrides
+    .ag-tab {
+        box-sizing: initial;
+    }
+
+    .ag-filter .ag-filter-value {
+       line-height: $icon-size + $grid-size; 
     }
 }

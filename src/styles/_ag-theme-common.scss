@@ -296,6 +296,7 @@
             overflow: hidden;
             text-indent: $grid-size;
             width: $grid-size;
+            box-sizing: initial;
         }
     }
 
@@ -946,6 +947,10 @@
         .ag-virtual-list-item:hover {
             background-color: $hover-color;
         }
+    }
+
+    .ag-set-filter-list, .ag-menu-column-select-wrapper {
+        width: auto;
     }
 
     .ag-column-drop-vertical > .ag-column-drop-cell {
