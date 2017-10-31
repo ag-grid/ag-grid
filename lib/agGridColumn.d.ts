@@ -1,6 +1,6 @@
-// ag-grid-aurelia v13.3.0
+// ag-grid-aurelia v14.0.0
 import { ColDef } from "ag-grid/main";
-import { AgCellTemplate, AgEditorTemplate, AgFilterTemplate, AgHeaderGroupTemplate, AgHeaderTemplate } from "./agTemplate";
+import { AgCellTemplate, AgEditorTemplate, AgFilterTemplate, AgHeaderGroupTemplate, AgHeaderTemplate, AgPinnedRowTemplate } from "./agTemplate";
 export declare class AgGridColumn {
     private mappedColumnProperties;
     childColumns: AgGridColumn[];
@@ -9,6 +9,7 @@ export declare class AgGridColumn {
     filterTemplate: AgFilterTemplate;
     headerTemplate: AgHeaderTemplate;
     headerGroupTemplate: AgHeaderGroupTemplate;
+    pinnedRowTemplate: AgPinnedRowTemplate;
     constructor();
     hasChildColumns(): boolean;
     toColDef(): ColDef;

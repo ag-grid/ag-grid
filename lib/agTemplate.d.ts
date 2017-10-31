@@ -1,4 +1,4 @@
-// ag-grid-aurelia v13.3.0
+// ag-grid-aurelia v14.0.0
 import { TargetInstruction } from "aurelia-framework";
 export declare class AgCellTemplate {
     template: string;
@@ -17,6 +17,14 @@ export declare class AgHeaderTemplate {
     constructor(targetInstruction: TargetInstruction);
 }
 export declare class AgHeaderGroupTemplate {
+    template: string;
+    constructor(targetInstruction: TargetInstruction);
+}
+export declare class AgPinnedRowTemplate {
+    template: string;
+    constructor(targetInstruction: TargetInstruction);
+}
+export declare class AgDateTemplate {
     template: string;
     constructor(targetInstruction: TargetInstruction);
 }

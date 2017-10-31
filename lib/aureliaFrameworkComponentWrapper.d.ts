@@ -1,4 +1,4 @@
-// ag-grid-aurelia v13.3.0
+// ag-grid-aurelia v14.0.0
 import { Container, TaskQueue, ViewCompiler, ViewResources } from "aurelia-framework";
 import { BaseComponentWrapper, FrameworkComponentWrapper, WrapableInterface } from 'ag-grid';
 export declare class AureliaFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterface> implements FrameworkComponentWrapper {
