@@ -124,8 +124,6 @@ include 'includes/navbar.php'; ?>
 
     <?php include 'home/intro2.php'; ?>
 
-<!--    --><?php //include 'home/demo-3.php'; ?>
-
     <?php include './home/demo-4.php'; ?>
 
     <?php include './home/testimonials-1.php'; ?>
@@ -175,7 +173,6 @@ include './includes/footer.php'; ?>
 <script inline src="example-rich-grid/example.js"></script>
 <!--<script inline src="example-account-report/account.js"></script>-->
 <script inline src="example-file-browser/fileBrowser.js"></script>
-<script inline src="javascript-grid-animation/animation/main.js"></script>
 <!--<script inline src="home/example-themes.js"></script>-->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
