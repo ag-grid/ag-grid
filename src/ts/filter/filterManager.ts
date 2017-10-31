@@ -54,6 +54,7 @@ export class FilterManager {
 
 
     public setFilterModel(model: any) {
+        let allPromises:Promise<IFilterComp> [] = [];
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
             let modelKeys = Object.keys(model);
@@ -61,6 +62,7 @@ export class FilterManager {
                 _.removeFromArray(modelKeys, colId);
                 let newModel = model[colId];
                 this.setModelOnFilterWrapper(filterWrapper.filterPromise, newModel);
+                allPromises.push(filterWrapper.filterPromise);
             });
             // at this point, processedFields contains data for which we don't have a filter working yet
             _.iterateArray(modelKeys, (colId) => {
@@ -71,13 +73,17 @@ export class FilterManager {
                 }
                 let filterWrapper = this.getOrCreateFilterWrapper(column);
                 this.setModelOnFilterWrapper(filterWrapper.filterPromise, model[colId]);
+                allPromises.push(filterWrapper.filterPromise);
             });
         } else {
             _.iterateObject(this.allFilters, (key, filterWrapper: FilterWrapper) => {
                 this.setModelOnFilterWrapper(filterWrapper.filterPromise, null);
+                allPromises.push(filterWrapper.filterPromise);
             });
         }
-        this.onFilterChanged();
+        Promise.all(allPromises).then(whatever=>{
+            this.onFilterChanged();
+        });
     }
 
     private setModelOnFilterWrapper(filterPromise: Promise<IFilterComp>, newModel: any) {
