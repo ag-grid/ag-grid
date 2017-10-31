@@ -35,11 +35,15 @@
             <img src="../change-log/v14/v14-200.png" style="width: 100%;"/>
         </a>
     </div>
-    <div>
-        <br/>
-        Announcing <a href="../change-log/v14/">ag-Grid v14 Halloween</a> with improved
-        tree data, row grouping, examples in React and Angular and much more. Check the
-        <a href="../change-log/v14/">ag-Grid v14 Halloween</a> press release.
+    <div style="margin-top: 10px">
+        <p>
+            <a href="../change-log/v14/">ag-Grid v14 Halloween</a> is out!
+        </p>
+        <p>
+            With improved
+            tree data, row grouping, examples in React and Angular and much more. Check the
+            <a href="../change-log/v14/">ag-Grid v14 Halloween</a> press release.
+        </p>
     </div>
 </div>
 
