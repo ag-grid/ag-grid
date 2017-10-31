@@ -50,7 +50,7 @@ exports.default = _vue2.default.extend({
             if (emitter) {
                 emitter(event);
             } else {
-                // the app isnt listening for this - ignore it
+                // the app isn't listening for this - ignore it
             }
         },
         processChanges: function processChanges(propertyName, val, oldVal) {
