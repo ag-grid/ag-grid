@@ -380,7 +380,7 @@ In the following example you can filter by age or date and see how <code>null</c
 on the combination of filter type and your <code>columnDef.filterParams.nullComparator</code>
 </p>
 
-<?= example('Null Filtering', 'null-filtering', 'generated') ?>
+<?= example('Null Filtering', 'null-filtering', 'vanilla') ?>
 
 <p>
     Note that <code>inRange</code> will never include <code>null</code>.

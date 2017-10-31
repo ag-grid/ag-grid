@@ -589,7 +589,7 @@ cellRendererParams: {
         </ul>
     </p>
 
-    <?= example('Removing Single Children', 'remove-single-children', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Removing Single Children', 'remove-single-children', 'vanilla', array("enterprise" => 1)) ?>
 
     <note>
         Filtering does not impact what groups get removed. For example if you have a group with two

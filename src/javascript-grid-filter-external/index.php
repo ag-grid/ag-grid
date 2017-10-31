@@ -38,6 +38,6 @@ include '../documentation-main/documentation_header.php';
     The example below shows the external filters in action.
 </p>
 
-<?= example('External Filter', 'external-filter', 'generated') ?>
+<?= example('External Filter', 'external-filter', 'vanilla') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
