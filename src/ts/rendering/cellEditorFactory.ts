@@ -30,26 +30,29 @@ export class CellEditorFactory {
     // }
 
     public createCellEditor(column:ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
+
         let cellEditorPromise:Promise<ICellEditorComp> = this.componentResolver.createAgGridComponent (
             column,
             params,
             'cellEditor'
         );
-        cellEditorPromise.then(cellEditor=>{
-            if (cellEditor.isPopup && cellEditor.isPopup()) {
+        return cellEditorPromise.map(cellEditor => {
 
-                if (this.gridOptionsWrapper.isFullRowEdit()) {
-                    console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
-                        '- either turn off fullRowEdit, or stop using popup editors.');
-                }
+            let isPopup = cellEditor.isPopup && cellEditor.isPopup();
 
-                cellEditor = new PopupEditorWrapper(cellEditor);
-                this.context.wireBean(cellEditor);
-                cellEditor.init(params);
+            if (!isPopup) { return cellEditor; }
+
+            if (this.gridOptionsWrapper.isFullRowEdit()) {
+                console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
+                    '- either turn off fullRowEdit, or stop using popup editors.');
             }
-        });
 
-        return cellEditorPromise;
+            // if a popup, then we wrap in a popup editor and return the popup
+            let popupEditorWrapper = new PopupEditorWrapper(cellEditor);
+            this.context.wireBean(popupEditorWrapper);
+            popupEditorWrapper.init(params);
+            return popupEditorWrapper;
+        });
     }
 
 }
