@@ -89,7 +89,7 @@
 
     function whenInViewPort(element, callback) {
         function comparePosition() {
-            var scrollTop = document.documentElement.scrollTop || document.bodyPromise.scrollTop || 0;
+            var scrollTop = document.documentElement.scrollTop || document.body.scrollTop || 0;
             var scrollPos = scrollTop + document.documentElement.clientHeight;
             var elemTop = element[0].getBoundingClientRect().top;
 
