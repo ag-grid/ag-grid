@@ -1,6 +1,4 @@
 export * from './lib/agGridReact';
-export * from './lib/reactCellRendererFactory';
-export * from './lib/reactFilterFactory';
 
 import {AgGridReactProps} from "./lib/agGridReact";
 import {Component} from "react";

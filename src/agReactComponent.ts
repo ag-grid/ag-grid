@@ -1,9 +1,8 @@
 import {AgReactFrameworkComponent} from "./interfaces";
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import * as AgGrid from 'ag-grid/main';
-import {ExternalPromise, Promise} from 'ag-grid/main';
-
+import * as AgGrid from 'ag-grid';
+import {Promise} from 'ag-grid';
 
 export class AgReactComponent implements AgReactFrameworkComponent<any> {
 
@@ -23,7 +22,7 @@ export class AgReactComponent implements AgReactFrameworkComponent<any> {
     }
 
     public init(params: any): Promise<void> {
-        return new Promise(resolve=>{
+        return new Promise<void>(resolve => {
             this.eParentElement = document.createElement('div');
             AgGrid.Utils.addCssClass(this.eParentElement, 'ag-react-container');
 
@@ -48,7 +47,6 @@ export class AgReactComponent implements AgReactFrameworkComponent<any> {
                     resolve(null);
                 });
             }
-
         });
     }
 
