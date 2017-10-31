@@ -43,7 +43,7 @@
     "merge2": "0.3.6",
     "rimraf": "2.5.x",
     "run-sequence": "1.2.x",
-    "typescript": "2.1.x",
+    "typescript": "2.2.x",
     "gulp-rename": "1.2.2",
     "@angular/compiler": ">=2.1.x",
     "@angular/compiler-cli": ">=2.1.x",
