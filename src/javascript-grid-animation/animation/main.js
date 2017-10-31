@@ -175,7 +175,8 @@ var actions = [
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+    var gridDiv = document.querySelector('#myGrid') || document.querySelector('#animationGrid');
+
     new agGrid.Grid(gridDiv, gridOptions);
 
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json'}).then(function(data) {
