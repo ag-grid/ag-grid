@@ -1,6 +1,6 @@
 import React from 'react';
 import * as PropTypes from 'prop-types';
-import RefData from './RefData.js';
+import RefData from './RefData.jsx';
 
 export default class SkillsCellRenderer extends React.Component {
 
