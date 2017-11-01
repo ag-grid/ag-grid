@@ -24,7 +24,7 @@ $ag-mat-disabled-foreground-color-opacity: 0.38 !default;
 
 // Sizing
 $ag-mat-grid-size: 8px !default;
-$ag-mat-icon-size: 18px !default;
+$ag-mat-icon-size: 16px !default;
 $ag-mat-header-height: $ag-mat-grid-size * 7 !default;
 $ag-mat-row-height: $ag-mat-grid-size * 6 !default;
 $ag-mat-cell-horizontal-padding: $ag-mat-grid-size * 3;
@@ -32,7 +32,7 @@ $ag-mat-virtual-item-height: $ag-mat-grid-size * 5;
 $ag-mat-header-icon-size: 14px;
 
 // Icons
-$ag-mat-icons-path: './material-icons/' !default;
+$ag-mat-icons-path: './balham-icons/' !default;
 
 // Fonts
 $ag-mat-font-family: 'Roboto', sans-serif !default; // legacy: ag-mat-font
@@ -53,7 +53,7 @@ $ag-mat-border-color: $mat-grey-300 !default;
 $ag-mat-primary-color: $mat-indigo-500 !default;
 
 $ag-mat-accent-color: $mat-pink-A200 !default;
-$ag-mat-icon-color: black !default;
+$ag-mat-icon-color: #333 !default;
 
 $ag-mat-background-color: $mat-grey-0 !default;
 

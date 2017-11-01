@@ -2,31 +2,32 @@
 @import './ag-theme-classic-vars';
 
 // Colors
-$icon-color: #333 !default;
-$foreground-color: rgba(black, $foreground-opacity) !default;
-$secondary-foreground-color: rgba(#333, $secondary-foreground-color-opacity) !default;
-$disabled-foreground-color: rgba(black, $disabled-foreground-color-opacity) !default;
-$menu-option-active-color: #bde2e5 !default;
+$icon-color: #d6d5d5 !default;
+$alt-icon-color: black !default;
+$foreground-color: #ccc !default;
+$secondary-foreground-color: rgba(#ccc, $secondary-foreground-color-opacity) !default;
+$disabled-foreground-color: rgba(#e4e4e4, $disabled-foreground-color-opacity) !default;
+$menu-option-active-color: #4a708b !default;
 
-$card-background-color: #f6f6f6 !default;
+$card-background-color: #302e2e !default;
 $border-color: darkgrey !default;
-$primary-color: black !default;
-$accent-color: black !default;
+$primary-color: $icon-color !default;
+$accent-color: $icon-color !default;
 
-$background-color: white !default;
-$odd-row-background-color: #f6f6f6 !default;
+$background-color: #302e2e !default;
+$odd-row-background-color: #403e3e !default;
 
-$editor-background-color: #f6f6f6 !default;
+$editor-background-color: #302e2e !default;
 
-$header-background-color: transparent !default;
-$header-background-image: linear-gradient(white, lightgrey) !default;
-$panel-background-color: #f6f6f6 !default;
+$header-background-color: #626262 !default;
+$header-background-image: none !default;
+$panel-background-color: #302e2e !default;
 
-$tool-panel-background-color: #f6f6f6 !default;
+$tool-panel-background-color: #302e2e !default;
 
 $chip-background-color: #ecf0f1 !default;
 
-$range-selection-background-color: rgba(120, 120, 120, 0.4) !default; // this should be pink, but indigo looks better
+$range-selection-background-color: rgba(100, 160, 160, 0.4) !default;
 $range-selection-highlight-color: rgba(255, 255, 255, 0.4) !default;
 
 $hover-color: inherit !default;
@@ -37,12 +38,12 @@ $cell-data-changed-color: white !default;
 
 $focused-cell-border-color: darkgrey !default;
 
-$tab-background-color: #e6e6e6;
+$tab-background-color: #626262;
 
-$cell-highlight-border: 2px solid darkgreen !default;
-$cell-horizontal-border: 1px dotted silver !default;
+$cell-highlight-border: 2px solid lightgreen !default;
+$cell-horizontal-border: 1px dotted grey !default;
 
-$ag-range-selected-color-1: rgba(120, 120, 120, 0.4) !default;
+$ag-range-selected-color-1: rgba(100, 160, 160, 0.4) !default;
 $ag-range-selected-color-2: rgba(80, 80, 80, 0.4) !default;
 $ag-range-selected-color-3: rgba(40, 40, 40, 0.4) !default;
 $ag-range-selected-color-4: rgba(0, 0, 0, 0.4) !default;
@@ -73,6 +74,7 @@ $params: (
     tab-background-color: $tab-background-color,
     odd-row-background-color: $odd-row-background-color,
     icon-color: $icon-color,
+    alt-icon-color: $alt-icon-color,
     border-color: $border-color,
     button-background-color: transparent,
     cell-data-changed-color: $cell-data-changed-color,
@@ -101,9 +103,33 @@ $params: (
     ag-range-selected-color-3: $ag-range-selected-color-3,
     ag-range-selected-color-4: $ag-range-selected-color-4,
     cell-highlight-border: $cell-highlight-border,
-    cell-horizontal-border: $cell-horizontal-border,
+    cell-horizontal-border: $cell-horizontal-border
 );
 
-.ag-theme-fresh {
+.ag-theme-dark {
     @include ag-theme-classic($params);
+
+    ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+        background: #302e2e;
+
+        &-thumb {
+            background-color: #626262;
+        }
+    }
+
+    ::-webkit-scrollbar-corner {
+        background: #302e2e;
+    }
+
+    input,
+    select {
+        background-color: $card-background-color;
+        color: $foreground-color;
+    }
+
+    .ag-floating-filter-body input[readonly] {
+        background: rgba(48, 46, 46, 0.3);
+    }
 }

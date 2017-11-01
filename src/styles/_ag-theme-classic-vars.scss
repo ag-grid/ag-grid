@@ -1,0 +1,35 @@
+// opacity values used for black values, taken from material spec
+$foreground-opacity: 1 !default;
+$secondary-foreground-color-opacity: 1 !default;
+$disabled-foreground-color-opacity: 0.5 !default;
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+// The variables below can be overriden to adjust the look up to the app color scheme
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Sizing
+$grid-size: 4px !default;
+$icon-size: 12px !default;
+$header-height: $grid-size * 6 + 1 !default;
+$row-height: ($grid-size * 6 + 1) !default;
+$cell-horizontal-padding: $grid-size * 3;
+$virtual-item-height: $grid-size * 5;
+$header-icon-size: 14px;
+
+// Icons
+$icons-path: './icons/' !default;
+
+// Fonts
+
+$font-family: 'Helvetica Neue', sans-serif !default;
+$font-size: 14px !default;
+$font-weight: 400 !default;
+
+$secondary-font-family: $font-family;
+$secondary-font-size: 14px !default;
+$secondary-font-weight: 400 !default;
+
+// Misc
+$transition-speed: 120ms !default;
+$card-shadow: none;
+$card-radius: 0;

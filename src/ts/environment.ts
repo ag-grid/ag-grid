@@ -4,7 +4,7 @@ const themes = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'theme-materia
 const themeCLass = new RegExp(`ag-(${themes.join('|')})`);
 
 const matGridSize = 8;
-const matIconSize = 18;
+const matIconSize = 16;
 type HardCodedSize = { [ key:string ]: { [ key: string ]: number } };
 
 const freshGridSize = 4;
