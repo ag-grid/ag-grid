@@ -76,9 +76,9 @@ class ExampleRunner {
     private currentType: string;
     private boilerplateFiles: string[];
     private boilerplatePath: string;
+    sourcePrefix: string;
 
     private options: {
-        sourcePrefix: string;
         showResult?: boolean;
         initialFile?: string;
         exampleHeight?: number;
@@ -287,7 +287,7 @@ class ExampleRunner {
             endSegment = ["_gen", this.currentType, file];
         }
 
-        return [this.config.options.sourcePrefix, this.section, this.name].concat(endSegment).join('/');
+        return [this.config.sourcePrefix, this.section, this.name].concat(endSegment).join('/');
     }
 
     openPlunker(clickEvent) {
