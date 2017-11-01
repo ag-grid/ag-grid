@@ -44,7 +44,9 @@ export class NumericEditorComponent implements ICellEditorAngularComp, AfterView
 
     // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
-        this.input.element.nativeElement.focus();
+        setTimeout(() => {
+            this.input.element.nativeElement.focus();
+        })
     }
 
     private getCharCodeFromEvent(event): any {
