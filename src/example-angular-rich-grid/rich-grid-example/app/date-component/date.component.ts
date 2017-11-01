@@ -6,7 +6,27 @@ import {IDateAngularComp} from "ag-grid-angular/main";
 @Component({
     selector: 'ag-date-component',
     templateUrl: './date.component.html',
-    styleUrls: ['./date.component.css'],
+    styles: [`
+        .dd {
+            width: 30px
+        }
+        
+        .mm {
+            width: 30px
+        }
+        
+        .yyyy {
+            width: 40px
+        }
+        
+        .reset {
+            padding: 2px;
+            background-color: red;
+            border-radius: 3px;
+            font-size: 10px;
+            color: white
+        }
+    `]
 })
 export class DateComponent implements IDateAngularComp {
     private date: Date;
