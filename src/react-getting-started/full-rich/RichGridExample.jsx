@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {AgGridReact} from "ag-grid-react";
-import RowDataFactory from "./RowDataFactory.js";
+import RowDataFactory from "./RowDataFactory.jsx";
 import ColDefFactory from "./ColDefFactory.jsx";
 import DateComponent from "./DateComponent.jsx";
 import SortableHeaderComponent from "./SortableHeaderComponent.jsx";
