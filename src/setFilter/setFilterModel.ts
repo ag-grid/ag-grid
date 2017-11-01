@@ -204,7 +204,7 @@ export class SetFilterModel {
             return [];
         }
 
-        this.inMemoryRowModel.forEachNode( (node: any)=> {
+        this.inMemoryRowModel.forEachLeafNode( (node: any)=> {
             // only pull values from rows that have data. this means we skip filler group nodes.
             if (!node.data) { return; }
 
