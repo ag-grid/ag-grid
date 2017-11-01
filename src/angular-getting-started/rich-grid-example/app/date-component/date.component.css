@@ -1,13 +1,13 @@
 .dd {
-    width: 30px
+    width: 30px !important
 }
 
 .mm {
-    width: 30px
+    width: 30px !important
 }
 
 .yyyy {
-    width: 40px
+    width: 40px !important;
 }
 
 .reset {
