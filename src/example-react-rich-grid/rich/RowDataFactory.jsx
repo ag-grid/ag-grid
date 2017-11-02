@@ -1,4 +1,4 @@
-import RefData from './RefData.js';
+import RefData from './RefData.jsx';
 
 export default class RowDataFactory {
 

@@ -1,7 +1,7 @@
 import SkillsCellRenderer from './SkillsCellRenderer.jsx';
 import NameCellEditor from './NameCellEditor.jsx';
 import ProficiencyCellRenderer from './ProficiencyCellRenderer.jsx';
-import RefData from './RefData.js';
+import RefData from './RefData.jsx';
 import SkillsFilter from './SkillsFilter.jsx';
 import ProficiencyFilter from './ProficiencyFilter.jsx';
 import HeaderGroupComponent from './HeaderGroupComponent.jsx';
@@ -51,7 +51,7 @@ export default class ColDefFactory {
                     {
                         headerName: "DOB",
                         field: "dob",
-                        width: 110,
+                        width: 145,
                         enableRowGroup: true,
                         enablePivot: true,
                         filter: 'date',

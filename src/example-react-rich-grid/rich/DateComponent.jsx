@@ -37,7 +37,7 @@ export default class DateComponent extends React.Component {
             width: '30px'
         };
         let yyyyStyle = {
-            width: '60px'
+            width: '40px'
         };
         let resetStyle = {
             padding: '2px',
