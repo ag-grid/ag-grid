@@ -109,7 +109,7 @@ export class CellComp extends Component {
         let left = col.getLeft();
 
         let valueToRender = this.getInitialValueToRender();
-        let valueSanitised = _.escape(valueToRender);
+        let valueSanitised = _.get(this.column, 'colDef.template', null) ? valueToRender : _.escape(valueToRender);
         let tooltip = this.getToolTip();
         let tooltipSanitised = _.escape(tooltip);
 
