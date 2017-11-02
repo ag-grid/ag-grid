@@ -79,6 +79,11 @@ $ag-mat-transition-speed: 120ms !default;
 $ag-mat-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
 $ag-mat-card-radius: 2px;
 
+// delta changes
+$value-change-delta-up-color: #43A047 !default;
+$value-change-delta-down-color: #e53935 !default;
+$value-change-value-highlight-background-color: #00ACC1 !default;
+
 // support for legacy variable names
 @if variable-exists(ag-mat-font) { $ag-mat-font-family: $ag-mat-font; }
 @if variable-exists(ag-mat-font-secondary) { $ag-mat-secondary-font-family: $ag-mat-font-secondary; }
@@ -170,6 +175,10 @@ $params: (
     customize-inputs: true,
     customize-buttons: true,
     full-width-tabs: true,
+
+    value-change-delta-up-color: $value-change-delta-up-color,
+    value-change-delta-down-color: $value-change-delta-down-color,
+    value-change-value-highlight-background-color: $value-change-value-highlight-background-color
 );
 
 .ag-theme-material {

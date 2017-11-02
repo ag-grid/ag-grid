@@ -5,27 +5,27 @@
 $icon-color: black !default;
 $alt-icon-color: white !default;
 $foreground-color: #222 !default;
-$secondary-foreground-color: rgba(#222, $secondary-foreground-color-opacity) !default;
-$disabled-foreground-color: rgba(#999, $disabled-foreground-color-opacity) !default;
-$menu-option-active-color: #C7C7C7 !default;
+$secondary-foreground-color: rgba(white, $secondary-foreground-color-opacity) !default;
+$disabled-foreground-color: rgba(#222, $disabled-foreground-color-opacity) !default;
+$menu-option-active-color: #c7c7c7 !default;
 
-$card-background-color: #F6F6F6 !default;
+$card-background-color: #f6f6f6 !default;
 $border-color: #9bc2e6 !default;
 $primary-color: $icon-color !default;
 $accent-color: $icon-color !default;
 
 $background-color: white !default;
-$odd-row-background-color: #DEEBF7 !default;
+$odd-row-background-color: #deebf7 !default;
 
 $editor-background-color: #f6f6f6 !default;
 
-$header-background-color: #5E9CD3 !default;
+$header-background-color: #5e9cd3 !default;
 $header-background-image: none !default;
-$panel-background-color: #302e2e !default;
+$panel-background-color: #f6f6f6 !default;
 
-$tool-panel-background-color: #302e2e !default;
+$tool-panel-background-color: #f6f6f6 !default;
 
-$chip-background-color: #ecf0f1 !default;
+$chip-background-color: #ddebf7 !default;
 
 $range-selection-background-color: rgba(100, 160, 160, 0.4) !default;
 $range-selection-highlight-color: rgba(255, 255, 255, 0.4) !default;
@@ -36,17 +36,22 @@ $selected-color: $menu-option-active-color !default;
 
 $cell-data-changed-color: white !default;
 
-$focused-cell-border-color: darkgrey !default;
+$focused-cell-border-color: darkgreen !default;
 
-$tab-background-color: #626262;
+$tab-background-color: #5e9cd3;
 
 $cell-highlight-border: 2px solid lightgreen !default;
-$cell-horizontal-border: 1px dotted grey !default;
+$cell-horizontal-border: 1px dotted #9bc2e6 !default;
 
-$ag-range-selected-color-1: rgba(100, 160, 160, 0.4) !default;
+$ag-range-selected-color-1: rgba(120, 120, 120, 0.4) !default;
 $ag-range-selected-color-2: rgba(80, 80, 80, 0.4) !default;
 $ag-range-selected-color-3: rgba(40, 40, 40, 0.4) !default;
 $ag-range-selected-color-4: rgba(0, 0, 0, 0.4) !default;
+
+// delta changes
+$value-change-delta-up-color: darkgreen !default;
+$value-change-delta-down-color: darkred !default;
+$value-change-value-highlight-background-color: #cec !default;
 
 $params: (
     grid-size: $grid-size,
@@ -103,11 +108,33 @@ $params: (
     ag-range-selected-color-3: $ag-range-selected-color-3,
     ag-range-selected-color-4: $ag-range-selected-color-4,
     cell-highlight-border: $cell-highlight-border,
-    cell-horizontal-border: $cell-horizontal-border
+    cell-horizontal-border: $cell-horizontal-border,
+    value-change-delta-up-color: $value-change-delta-up-color,
+    value-change-delta-down-color: $value-change-delta-down-color,
+    value-change-value-highlight-background-color: $value-change-value-highlight-background-color
 );
 
 .ag-theme-blue {
     @include ag-theme-classic($params);
+
+    $inverted-icons: asc, desc, expanded, contracted, menu, filter;
+
+    .ag-header {
+        @each $icon in $inverted-icons {
+            .ag-icon-#{$icon} {
+                @include colorful-icon($icons-path, '#{$icon}', white, white);
+                display: inline-block;
+            }
+        }
+    }
+
+    $tab-icons: menu, filter, columns;
+
+    @each $icon in $tab-icons {
+        .ag-tab-header .ag-tab:not(.ag-tab-selected) .ag-icon-#{$icon} {
+            @include colorful-icon($icons-path, '#{$icon}', white, white);
+        }
+    }
 
     input,
     select {
@@ -115,7 +142,12 @@ $params: (
         color: $foreground-color;
     }
 
+    .ag-row {
+        border-bottom-width: 1px;
+        border-bottom-style: dotted;
+    }
+
     .ag-floating-filter-body input[readonly] {
-        background: rgba(48, 46, 46, 0.3);
+        background: rgba(255, 255, 255, 0.3);
     }
 }

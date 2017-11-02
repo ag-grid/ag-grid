@@ -47,6 +47,11 @@ $ag-range-selected-color-2: rgba(80, 80, 80, 0.4) !default;
 $ag-range-selected-color-3: rgba(40, 40, 40, 0.4) !default;
 $ag-range-selected-color-4: rgba(0, 0, 0, 0.4) !default;
 
+// delta changes
+$value-change-delta-up-color: darkgreen !default;
+$value-change-delta-down-color: darkred !default;
+$value-change-value-highlight-background-color: #cec !default;
+
 $params: (
     grid-size: $grid-size,
     icon-size: $icon-size,
@@ -102,6 +107,9 @@ $params: (
     ag-range-selected-color-4: $ag-range-selected-color-4,
     cell-highlight-border: $cell-highlight-border,
     cell-horizontal-border: $cell-horizontal-border,
+    value-change-delta-up-color: $value-change-delta-up-color,
+    value-change-delta-down-color: $value-change-delta-down-color,
+    value-change-value-highlight-background-color: $value-change-value-highlight-background-color
 );
 
 .ag-theme-fresh {
