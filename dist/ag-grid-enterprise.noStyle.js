@@ -12709,7 +12709,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var width = this.getCellWidth();
 	        var left = col.getLeft();
 	        var valueToRender = this.getInitialValueToRender();
-	        var valueSanitised = utils_1._.escape(valueToRender);
+	        var valueSanitised = utils_1._.get(this.column, 'colDef.template', null) ? valueToRender : utils_1._.escape(valueToRender);
 	        var tooltip = this.getToolTip();
 	        var tooltipSanitised = utils_1._.escape(tooltip);
 	        var wrapperStartTemplate;
