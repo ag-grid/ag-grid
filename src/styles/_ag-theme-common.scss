@@ -163,6 +163,11 @@
     $card-radius: map-get($params, 'card-radius');
     $card-shadow: map-get($params, 'card-shadow');
     $focused-textbox-border: map-get($params, 'focused-textbox-border');
+
+    $value-change-delta-up-color: map-get($params, 'value-change-delta-up-color');
+    $value-change-delta-down-color: map-get($params, 'value-change-delta-down-color');
+    $value-change-value-highlight-background-color: map-get($params, 'value-change-value-highlight-background-color');
+
     ////////////////////////////////////////
     // Chinese wall of inline vars over
     ////////////////////////////////////////
@@ -173,6 +178,28 @@
     background-color: $background-color;
     color: $foreground-color;
     font: $font;
+
+    // used by the animateShowChangedCellRenderer
+    .ag-value-change-delta {
+        padding-right: 2px;
+    }
+    .ag-value-change-delta-up {
+        color: $value-change-delta-up-color;
+    }
+    .ag-value-change-delta-down {
+        color: $value-change-delta-down-color;
+    }
+    .ag-value-change-value {
+        background-color: transparent;
+        border-radius: 1px;
+        padding-left: 1px;
+        padding-right: 1px;
+        transition: background-color 1s;
+    }
+    .ag-value-change-value-highlight {
+        background-color: $value-change-value-highlight-background-color;
+        transition: background-color 0.1s;
+    }
 
     ////////////////////////////////////////
     // Basic layout
