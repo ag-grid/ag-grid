@@ -21,6 +21,31 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
+        <a href="../change-log/v14/">
+            <img src="../change-log/v14/v14-200.png" style="width: 225px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="../change-log/v14/">
+                ag-Grid v14 Released
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            2nd November 2017
+        </div>
+    </div>
+    <div style="color: #767676">
+        Niall Crosby
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        <p>With improved tree data, row grouping, examples in React and Angular and much more.</p>
+    </div>
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
         <a href="../ag-grid-datagrid-crud-part-1/">
             <img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" style="width: 225px;"/>
         </a>

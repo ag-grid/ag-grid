@@ -18,10 +18,10 @@ var gridOptions = {
     columnDefs: columnDefs
 };
 function turnOffPivotMode() {
-    gridOptions.columnApi.setPivotMode(true);
+    gridOptions.columnApi.setPivotMode(false);
 }
 function turnOnPivotMode() {
-    gridOptions.columnApi.setPivotMode(false);
+    gridOptions.columnApi.setPivotMode(true);
 }
 function addPivotColumn() {
     gridOptions.columnApi.addPivotColumn('country');

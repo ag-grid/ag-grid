@@ -13,24 +13,56 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h2>NEXT</h2>
+    <h2>14.0.x</h2>
+    <h3>Version 14.0.0 [02-NOV-2017]</h3>
 
-    <a href="../change-log/v14/">Notes</a>
+    <p>For details of this release, check our dedicated <a href="../change-log/v14/index.php">blog post for v14 aka Halloween</a>.</p>
+
+    <h4>Enhancements</h4>
+    <ul>
+        <li>AG-459: Revamped Feature: <a href="../javascript-grid-tree-data/">Tree Data</a>, we have rewritten tree data
+        to make it more powerful and easy to use.</li>
+        <li>AG-459: <a href="../javascript-grid-grouping#example-unbalanced-groups/">Unbalanced Grouping</a>. We now
+            show as leaf rows that are part of a group but their gouping key is null.</li>
+        <li>AG-875: If you are a React fan, then you will be excited to lean that ag-Grid v14 comes with full support for Asynchronous Components</li>
+        <li>AG-544: You can now provide <a href="../javascript-grid-column-header/#header-template">custom HTML templates</a> to customise how the column headers look. </li>
+        <li>AG-804: Set filters can now have their values specified from an asynchronously : <a href="../javascript-grid-filter-set#example-callback-async/">Tree Data</a></li>
+        <li>AG-816: More options for <a href="../javascript-grid-grouping/">grouping</a> with groupRemoveSingleChildren.</li>
+        <li>AG-744: Delta updates now maintain row order.</li>
+    </ul>
 
     <h4>Bug Fixes</h4>
     <ul>
-        <li>AG-672 Navigating with arrow keys now uses <code>suppressNavigable</code> property to skip cells that are not navigable.</li>
-        <li>AG-311 When using keyboard navigation, and col width is greater than grid with, the navigation was jumping the col from left to right.</li>
-        <li>AG-878 When in master / detail, and editing detail grid, console error was printed - no functional problem, the error should not of gotten printed</li>
-        <li>AG-433 Keyboard navigation with home & end as loosing cell focus, now fixed, focus is put to correct cell.</li>
-        <li>AG-816 New property <a href="../javascript-grid-grouping/#removeSingleChildren">groupRemoveLowestSingleChildren</a>.</li>
+        <li>AG-910: New component editor uses mergeDeep - causes stack overflow when certain observables are used</li>
+        <li>AG-946: Improve memory usage of vue vs js</li>
+        <li>AG-884: [excel] DateType were restricted to String and Number, added Boolean DateTime and Error</li>
+        <li>AG-901: [regression] SetFilter not displaying (Blanks) anymore for null values</li>
+        <li>AG-878: [master detail] Error raised in detail panel when using Cell Editors</li>
+        <li>AG-864: Sanitise Data in tooltip and cellRenderer</li>
+        <li>AG-855: Grids fail on ie11 when dealing with tree data</li>
+        <li>AG-820: [column types] - numericColumn not working</li>
+        <li>AG-817: [cellEditor richSelect]  cellEditorParams.values nulls and blanks are not handled well</li>
+        <li>AG-778: [frameworks] Aurelia - Add pinnedRowCellRenderer support</li>
+        <li>AG-777: [aurelia] Add dateComponent support</li>
+        <li>AG-772: Polymer CLI - PolymerFrameworkFactory is not defined </li>
+        <li>AG-882: [Copy&Paste] Copying Blank Cells not working</li>
+        <li>AG-924: If context menu very long, overflow entries are clipped</li>
+        <li>AG-921: ensureRowIndex/Node "middle" not working</li>
+        <li>AG-914: Status bar is not styled in new material theme</li>
+        <li>AG-874: Declarative column def does not match properties from ag-grid</li>
+        <li>AG-872: [grouping] - Group count info lost when reducing column's size</li>
+        <li>AG-850: with material theme, on the tool panel, in the values section (when you drag a column to aggregate), the background is transparent</li>
+        <li>AG-849: on set filter in material theme, if label is to large, we get it onto the other line</li>
+        <li>AG-672: [navigation] Navigating with arrows does not skip the columns marked with "suppressNavigable"</li>
+        <li>AG-433: [navigation] Keyboard Navigation Problems - home & end</li>
+        <li>AG-311: [keyboard navigation] bug in wide columns</li>
+        <li>AG-925: Empty cells retain old cell value tooltip</li>
+        <li>AG-913: getSelectedRowNodes sometimes returns an empty array when it shouldn't</li>
+        <li>AG-935: [material] checkboxes are too dense on main demo</li>
+        <li>AG-934: [material] aggregation function select popup is not styled</li>
+        <li>AG-770: Pinned row data was not getting bound to React correctly/li>
     </ul>
 
-    <h3>Enhancements</h3>
-    <ul>
-        <li>AG-744 Delta updates now maintains row order.</li>
-    </ul>
-    
     <h2>13.3.x</h2>
     <h3>Version 13.3.1 [04-OCT-2017]</h3>
     <h4>Enhancements</h4>
