@@ -72,6 +72,7 @@ var gridOptions = {
         }
 
         var eDiv = document.createElement('div');
+        eDiv.style.height = '100%';
         eDiv.innerHTML = '<div class="' + cssClass + '"><button>Click</button> ' + message + '</div>';
 
         var eButton = eDiv.querySelector('button');
