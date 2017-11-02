@@ -154,7 +154,7 @@ var SetFilterModel = (function () {
             console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
             return [];
         }
-        this.inMemoryRowModel.forEachNode(function (node) {
+        this.inMemoryRowModel.forEachLeafNode(function (node) {
             // only pull values from rows that have data. this means we skip filler group nodes.
             if (!node.data) {
                 return;
