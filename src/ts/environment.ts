@@ -4,11 +4,12 @@ const themes = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'theme-materia
 const themeCLass = new RegExp(`ag-(${themes.join('|')})`);
 
 const matGridSize = 8;
-const matIconSize = 16;
+const matIconSize = 18;
 type HardCodedSize = { [ key:string ]: { [ key: string ]: number } };
 
 const freshGridSize = 4;
 const freshIconSize = 14;
+
 const HARD_CODED_SIZES: HardCodedSize = {
     "ag-theme-material": {
         autoSizePadding: matGridSize * 3,
@@ -23,7 +24,7 @@ const HARD_CODED_SIZES: HardCodedSize = {
         gridSize: matGridSize,
         iconSize: matIconSize
     },
-    "ag-theme-fresh": {
+    "ag-theme-classic": {
         autoSizePadding: freshGridSize * 3,
         headerHeight: 25,
         groupPaddingSize: freshGridSize * 3 + freshIconSize,
@@ -67,7 +68,10 @@ export class Environment {
     }
 
     public getSassVariable(theme: string, key: string): number {
-        return HARD_CODED_SIZES[theme][key];
+        if (theme == 'ag-theme-material') {
+            return HARD_CODED_SIZES['ag-theme-material'][key];
+        }
+        return HARD_CODED_SIZES['ag-theme-classic'][key];
         /*
         const result = parseInt(this.sassVariables[key]);
         if (!result || isNaN(result)) {

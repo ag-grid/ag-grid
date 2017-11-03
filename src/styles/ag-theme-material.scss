@@ -32,7 +32,7 @@ $ag-mat-virtual-item-height: $ag-mat-grid-size * 5;
 $ag-mat-header-icon-size: 14px;
 
 // Icons
-$ag-mat-icons-path: './balham-icons/' !default;
+$ag-mat-icons-path: './material-icons/' !default;
 
 // Fonts
 $ag-mat-font-family: 'Roboto', sans-serif !default; // legacy: ag-mat-font
@@ -65,7 +65,7 @@ $ag-mat-tool-panel-background-color: $mat-grey-50 !default;
 
 $ag-mat-chip-background-color: $mat-grey-300 !default;
 
-$ag-mat-range-selection-background-color: $mat-indigo-50 !default; // this should be pink, but indigo looks better
+$ag-mat-range-selection-background-color: $mat-indigo-50 !default; 
 $ag-mat-range-selection-highlight-color: $mat-pink-50 !default;
 
 $ag-mat-hover-color: $mat-grey-200 !default;
