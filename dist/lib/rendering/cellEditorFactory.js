@@ -25,7 +25,7 @@ var CellEditorFactory = (function () {
     CellEditorFactory.prototype.init = function () {
     };
     CellEditorFactory.prototype.addCellEditor = function (key, cellEditor) {
-        console.warn("Ignoring this bwahahahahahaha!");
+        console.warn("ag-grid: since v13.3.1 this method is not supported anymore. If you want to register your own editor check the docs: https://www.ag-grid.com/javascript-grid-cell-editor/");
     };
     // private registerEditorsFromGridOptions(): void {
     //     let userProvidedCellEditors = this.gridOptionsWrapper.getCellEditors();
