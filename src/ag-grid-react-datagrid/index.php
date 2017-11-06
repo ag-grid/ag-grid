@@ -266,7 +266,7 @@ include('../includes/mediaHeader.php');
                 };
 
                 return (
-                &lt;div style={containerStyle} className="ag-fresh"&gt;
+                &lt;div style={containerStyle} className="ag-theme-fresh"&gt;
                 &lt;h1&gt;Simple ag-Grid React Example&lt;/h1&gt;
                 &lt;AgGridReact
                 // properties

@@ -80,13 +80,13 @@ export default class extends Component {
     render() {
         return (
             <div>
-                <div style={{width: '100%', height: '45%'}} className="ag-fresh">
+                <div style={{width: '100%', height: '45%'}} className="ag-theme-fresh">
                     <AgGridReact rowData={this.state.rowData} gridOptions={this.state.topOptions} columnDefs={this.state.columnDefs} onGridReady={this.onGridReady.bind(this)} />
                 </div>
 
                 <div style={{height: '5%'}} />
 
-                <div style={{width: '100%', height: '45%'}} className="ag-fresh">
+                <div style={{width: '100%', height: '45%'}} className="ag-theme-fresh">
                     <AgGridReact rowData={this.state.rowData} gridOptions={this.state.bottomOptions} columnDefs={this.state.columnDefs} />
                 </div>
             </div>

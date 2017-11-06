@@ -82,7 +82,7 @@ $ bower install ag-grid-polymer
                      <!-- Properties can be either hypenated or camelCased-->
                      <ag-grid-polymer id="myGrid"
                                       style="height: 350px; width: 800px;display: block;"
-                                      class="ag-fresh ag-basic"
+                                      class="ag-theme-fresh ag-basic"
                                       enableColResize
                                       enableSorting
                                       enable-filter

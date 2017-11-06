@@ -61,7 +61,7 @@ export default class FloatingFilterGridExample extends Component {
         const style = Object.assign({}, divStyle);
 
         return (
-            <div style={style} className="ag-fresh">
+            <div style={style} className="ag-theme-fresh">
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}

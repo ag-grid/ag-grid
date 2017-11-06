@@ -17,9 +17,9 @@ include '../documentation-main/documentation_header.php';
     <p/>
     To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
     <p/>
-    The following is an example of using the ag-bootstrap theme:<br/>
+    The following is an example of using the ag-theme-bootstrap theme:<br/>
     <snippet>
-&lt;div ag-grid="gridOptions" class="ag-bootstrap"&gt;&lt;/div&gt;</snippet>
+&lt;div ag-grid="gridOptions" class="ag-theme-bootstrap"&gt;&lt;/div&gt;</snippet>
 
     <div class="bigTitle" id="bootstrap-theme-example">Bootstrap Theme Example</div>
 
