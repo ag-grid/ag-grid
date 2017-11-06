@@ -117,20 +117,6 @@ $params: (
 .ag-theme-dark {
     @include ag-theme-classic($params);
 
-    ::-webkit-scrollbar {
-        width: 12px;
-        height: 12px;
-        background: #302e2e;
-
-        &-thumb {
-            background-color: #626262;
-        }
-    }
-
-    ::-webkit-scrollbar-corner {
-        background: #302e2e;
-    }
-
     input,
     select {
         background-color: $card-background-color;

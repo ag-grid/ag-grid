@@ -1,17 +1,18 @@
 import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional, Context} from './context/context';
 
-const themes = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'theme-material', 'theme-fresh'];
-const themeCLass = new RegExp(`ag-(${themes.join('|')})`);
+let themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material'];
+const themes = themeNames.concat(themeNames.map(name => `theme-${name}`));
+const themeClass = new RegExp(`ag-(${themes.join('|')})`);
 
 const matGridSize = 8;
 const matIconSize = 18;
-type HardCodedSize = { [ key:string ]: { [ key: string ]: number } };
+type HardCodedSize = {[key: string]: {[key: string]: number}};
 
 const freshGridSize = 4;
 const freshIconSize = 14;
 
 const HARD_CODED_SIZES: HardCodedSize = {
-    "ag-theme-material": {
+    'ag-theme-material': {
         autoSizePadding: matGridSize * 3,
         headerHeight: matGridSize * 7,
         groupPaddingSize: matGridSize * 3 + matIconSize,
@@ -24,7 +25,7 @@ const HARD_CODED_SIZES: HardCodedSize = {
         gridSize: matGridSize,
         iconSize: matIconSize
     },
-    "ag-theme-classic": {
+    'ag-theme-classic': {
         autoSizePadding: freshGridSize * 3,
         headerHeight: 25,
         groupPaddingSize: freshGridSize * 3 + freshIconSize,
@@ -37,7 +38,7 @@ const HARD_CODED_SIZES: HardCodedSize = {
         gridSize: freshGridSize,
         iconSize: freshIconSize
     }
-}
+};
 
 @Bean('environment')
 export class Environment {
@@ -45,9 +46,9 @@ export class Environment {
 
     private gridSize: number;
     private iconSize: number;
-    private sassVariables: { [key: string]: string } = {};
+    private sassVariables: {[key: string]: string} = {};
 
-    // Approach described here: 
+    // Approach described here:
     // https://www.ofcodeandcolor.com/2017/04/02/encoding-data-in-css/
     public loadSassVariables(): void {
         /*
@@ -86,7 +87,7 @@ export class Environment {
         let element: HTMLElement = this.eGridDiv;
 
         while (element != document.documentElement && themeMatch == null) {
-            themeMatch = element.className.match(themeCLass);
+            themeMatch = element.className.match(themeClass);
             element = element.parentElement;
             if (element == null) {
                 break;
