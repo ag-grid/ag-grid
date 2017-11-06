@@ -2,8 +2,8 @@
 import {RowNode} from "../../entities/rowNode";
 import {Utils as _} from "../../utils";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Context} from "../../context/context";
-import {GetNodeChildDetails} from "../../entities/gridOptions";
+import {Context, PostConstruct} from "../../context/context";
+import {GetNodeChildDetails, IsRowMaster} from "../../entities/gridOptions";
 import {EventService} from "../../eventService";
 import {RowDataTransaction, RowNodeTransaction} from "./inMemoryRowModel";
 import {ColumnController} from "../../columnController/columnController";
@@ -24,7 +24,11 @@ export class InMemoryNodeManager {
 
     private getNodeChildDetails: GetNodeChildDetails;
     private doesDataFlower: (data: any) => boolean;
+    private isRowMasterFunc: IsRowMaster;
     private suppressParentsInRowNodes: boolean;
+
+    private doingLegacyTreeData: boolean;
+    private doingMasterDetail: boolean;
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: {[id:string]: RowNode} = {};
@@ -43,6 +47,21 @@ export class InMemoryNodeManager {
         this.rootNode.childrenAfterGroup = [];
         this.rootNode.childrenAfterSort = [];
         this.rootNode.childrenAfterFilter = [];
+
+        // if we make this class a bean, then can annotate postConstruct
+        this.postConstruct();
+    }
+
+    // @PostConstruct - this is not a bean, so postConstruct called by constructor
+    public postConstruct(): void {
+        // func below doesn't have 'this' pointer, so need to pull out these bits
+        this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
+        this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
+        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
+        this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+
+        this.doingLegacyTreeData = _.exists(this.getNodeChildDetails);
+        this.doingMasterDetail = _.exists(this.gridOptionsWrapper.isMasterDetail());
     }
 
     public getCopyOfNodesMap(): {[id:string]: RowNode} {
@@ -70,17 +89,10 @@ export class InMemoryNodeManager {
             return;
         }
 
-        // func below doesn't have 'this' pointer, so need to pull out these bits
-        this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
-        this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
-        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
-
-        let doingLegacyTreeData = _.exists(this.getNodeChildDetails);
-
         // kick off recursion
         let result = this.recursiveFunction(rowData, null, InMemoryNodeManager.TOP_LEVEL);
 
-        if (doingLegacyTreeData) {
+        if (this.doingLegacyTreeData) {
             this.rootNode.childrenAfterGroup = result;
             this.setLeafChildren(this.rootNode);
         } else {
@@ -218,7 +230,7 @@ export class InMemoryNodeManager {
             node.expanded = nodeChildDetails.expanded === true;
             node.field = nodeChildDetails.field;
             node.key = nodeChildDetails.key;
-            node.canFlower = false;
+            node.canFlower = node.master; // deprecated, is now 'master'
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         } else {
@@ -226,18 +238,29 @@ export class InMemoryNodeManager {
             node.group = false;
 
             if (doingTreeData) {
-                node.canFlower = false;
+                node.master = false;
                 node.expanded = false;
             } else {
-                //  this is the default, for when doing grid data
-                node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
-                if (node.canFlower) {
-                    node.expanded = this.isExpanded(level);
+                // this is the default, for when doing grid data
+                if (this.doesDataFlower) {
+                    node.master = this.doesDataFlower(dataItem);
+                } else if (this.doingMasterDetail) {
+                    // if we are doing master detail, then the
+                    // default is that everything can flower.
+                    if (this.isRowMasterFunc) {
+                        node.master = this.isRowMasterFunc(dataItem);
+                    } else {
+                        node.master = true;
+                    }
                 } else {
-                    node.expanded = false;
+                    node.master = false;
                 }
+                node.expanded = node.master ? this.isExpanded(level) : false;
             }
         }
+
+        // support for backwards compatibility, canFlow is now called 'master'
+        node.canFlower = node.master;
 
         if (parent && !this.suppressParentsInRowNodes) {
             node.parent = parent;
@@ -297,25 +320,6 @@ export class InMemoryNodeManager {
         }
 
         return newNodes.length > 0 ? newNodes : null;
-    }
-
-    public removeItems(rowNodes: RowNode[]): RowNode[] {
-        if (this.isLegacyTreeData()) { return; }
-
-        let nodeList = this.rootNode.allLeafChildren;
-
-        let removedNodes: RowNode[] = [];
-        rowNodes.forEach( rowNode => {
-            let indexOfNode = nodeList.indexOf(rowNode);
-            if (indexOfNode>=0) {
-                rowNode.setSelected(false);
-                nodeList.splice(indexOfNode, 1);
-                this.allNodesMap[rowNode.id] = undefined;
-            }
-            removedNodes.push(rowNode);
-        });
-
-        return removedNodes.length > 0 ? removedNodes : null;
     }
 
     public addItems(items: any): RowNode[] {

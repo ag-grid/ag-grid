@@ -1,9 +1,9 @@
 import {RowNode} from "./entities/rowNode";
 import {
-    GetContextMenuItems,
+    GetContextMenuItems, GetDetailRowData,
     GetMainMenuItems,
     GetRowNodeIdFunc,
-    GridOptions,
+    GridOptions, IsRowMaster,
     NavigateToNextCellParams,
     NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams,
     ProcessRowParams,
@@ -311,6 +311,10 @@ export class GridOptionsWrapper {
     public getAggFuncs(): {[key: string]: IAggFunc} { return this.gridOptions.aggFuncs; }
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
     public getAlignedGrids(): GridOptions[] { return this.gridOptions.alignedGrids; }
+    public isMasterDetail() { return isTrue(this.gridOptions.masterDetail) || _.exists(this.gridOptions.doesDataFlower); }
+    public getDetailGridOptions(): GridOptions { return this.gridOptions.detailGridOptions; }
+    public getIsRowMasterFunc(): IsRowMaster { return this.gridOptions.isRowMaster; }
+    public getDetailRowDataFunc(): GetDetailRowData { return this.gridOptions.getDetailRowData; }
     public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }
     public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
     public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
@@ -652,6 +656,7 @@ export class GridOptionsWrapper {
         // check the function first, in case use set both function and
         // number, when using virtual pagination then function can be
         // used for pinned rows and the number for the body rows.
+
         if (typeof this.gridOptions.getRowHeight === 'function') {
             let params = {
                 node: rowNode,
@@ -660,6 +665,9 @@ export class GridOptionsWrapper {
                 context: this.gridOptions.context
             };
             return this.gridOptions.getRowHeight(params);
+        } else if (rowNode.detail && this.isMasterDetail()) {
+            // fixme - need better way to set height
+            return 300;
         } else if (this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         } else {

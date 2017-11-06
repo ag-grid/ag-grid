@@ -262,8 +262,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
                 && !rowNode.footer
                 // pinned rows cannot be selected
                 && !rowNode.rowPinned
-                // flowers cannot be selected
-                && !rowNode.flower;
+                // details cannot be selected
+                && !rowNode.detail;
         if (checkboxNeeded) {
             let cbSelectionComponent = new CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent);

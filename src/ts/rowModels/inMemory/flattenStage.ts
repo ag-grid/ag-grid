@@ -109,9 +109,9 @@ export class FlattenStage implements IRowNodeStage {
                 } else {
 
                 }
-            } else if (rowNode.canFlower && rowNode.expanded) {
-                let flowerNode = this.createFlowerNode(rowNode);
-                this.addRowNodeToRowsToDisplay(flowerNode, result, nextRowTop, uiLevel);
+            } else if (rowNode.master && rowNode.expanded) {
+                let detailNode = this.createDetailNode(rowNode);
+                this.addRowNodeToRowsToDisplay(detailNode, result, nextRowTop, uiLevel);
             }
         }
     }
@@ -152,22 +152,25 @@ export class FlattenStage implements IRowNodeStage {
         groupNode.sibling = footerNode;
     }
 
-    private createFlowerNode(parentNode: RowNode): RowNode {
+    private createDetailNode(masterNode: RowNode): RowNode {
 
-        if (_.exists(parentNode.childFlower)) {
-            return parentNode.childFlower;
+        if (_.exists(masterNode.detailNode)) {
+            return masterNode.detailNode;
         } else {
-            let flowerNode = new RowNode();
-            this.context.wireBean(flowerNode);
-            flowerNode.flower = true;
-            flowerNode.parent = parentNode;
-            if (_.exists(parentNode.id)) {
-                flowerNode.id = 'flowerNode_' + parentNode.id;
+            let detailNode = new RowNode();
+            this.context.wireBean(detailNode);
+            detailNode.detail = true;
+            // flower was renamed to 'detail', but keeping for backwards compatibility
+            detailNode.flower = detailNode.detail;
+            detailNode.parent = masterNode;
+            if (_.exists(masterNode.id)) {
+                detailNode.id = 'detail_' + masterNode.id;
             }
-            flowerNode.data = parentNode.data;
-            flowerNode.level = parentNode.level + 1;
-            parentNode.childFlower = flowerNode;
-            return flowerNode;
+            detailNode.data = masterNode.data;
+            detailNode.level = masterNode.level + 1;
+            masterNode.detailNode = detailNode;
+            masterNode.childFlower = masterNode.detailNode; // for backwards compatibility
+            return detailNode;
         }
 
     }

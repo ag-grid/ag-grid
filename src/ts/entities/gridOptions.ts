@@ -208,6 +208,14 @@ export interface GridOptions {
     rowHeight?: number;
     headerCellTemplate?: string;
 
+    masterDetail?: boolean;
+    isRowMaster?: IsRowMaster;
+    detailGridOptions?: GridOptions;
+    getDetailRowData?: GetDetailRowData;
+    detailCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
+    detailCellRendererFramework?: any;
+    detailCellRendererParams?: any;
+
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
@@ -353,6 +361,23 @@ export interface GetDataPath {
 
 export interface GetNodeChildDetails {
     (dataItem: any): NodeChildDetails;
+}
+
+export interface IsRowMaster {
+    (dataItem: any): boolean;
+}
+
+export interface GetDetailRowData {
+    (params: GetDetailRowDataParams): void;
+}
+
+export interface GetDetailRowDataParams {
+    // details for the request,
+    node:  RowNode;
+    data: any;
+
+    // success callback, pass the rows back the grid asked for
+    successCallback(rowData: any[]): void;
 }
 
 export interface NodeChildDetails {
