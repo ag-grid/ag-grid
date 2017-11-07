@@ -21,5 +21,4 @@ ag-grid.iml
 .sass-cache
 .cache-loader
 
-dist/
 package-lock.json
