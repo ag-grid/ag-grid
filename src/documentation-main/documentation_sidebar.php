@@ -36,6 +36,20 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">7th November 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <a href="../ag-grid-datagrid-crud-part-2/">
+            <img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" style="width: 100%;"/>
+        </a>
+    </div>
+    <div>
+        <br/>
+        The second part in a series of blogs about <a href="../ag-grid-datagrid-crud-part-2/">Building a CRUD Application with ag-Grid</a>. In this part we take a look
+        at the Middle Tier - exposing our data with a REST Service.
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-date">
         01-Nov-17
     </div>

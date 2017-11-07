@@ -69,27 +69,26 @@ include('../includes/mediaHeader.php');
 
             <p>To define a <code>RestController</code> all we need to do is annotate a class as follows:</p>
 
-            <snippet language="java">@RestController
-                public class AthleteController {
-            </snippet>
+<snippet language="java">@RestController
+public class AthleteController {
+</snippet>
 
             <p>We want to return all the Olympic Data we have in the first pass and in order to do that we need to use
                 our </code>AthleteRepository</p>. Let's create a constructor that will take this repository (Spring will
             automatically inject it for us) and create a method that uses it:
 
-            <snippet language="java">
-                private AthleteRepository athleteRepository;
+<snippet language="java">private AthleteRepository athleteRepository;
 
-                public AthleteController(AthleteRepository athleteRepository) {
-                this.athleteRepository = athleteRepository;
-                }
+public AthleteController(AthleteRepository athleteRepository) {
+    this.athleteRepository = athleteRepository;
+}
 
-                @GetMapping("/athletes")
-                public Iterable
-                <Athlete> getAthletes() {
-                    return athleteRepository.findAll();
-                    }
-            </snippet>
+@GetMapping("/athletes")
+public Iterable
+&lt;Athlete&gt; getAthletes() {
+    return athleteRepository.findAll();
+}
+</snippet>
 
             <p>What the <code>GetMapping</code> does is provide a mapping to our application via a URL.</p>
             <p>In our case the full mapping would be:</p>
@@ -112,43 +111,43 @@ include('../includes/mediaHeader.php');
                 <code>http://localhost:8080/athletes</code> in
                 a browser you should see something like this (formatted here for clarity):</p>
 
-            <snippet>
-                [
-                {
-                "name": "Robin Beauregard",
-                "country": {
-                "id": 33,
-                "name": "United States"
-                },
-                "results": [
-                {
-                "age": 25,
-                "year": 2004,
-                "date": "29/08/2004",
-                "gold": 0,
-                "silver": 0,
-                "bronze": 1,
-                "sport": {
-                "id": 112,
-                "name": "Waterpolo"
-                }
-                },
-                {
-                "age": 21,
-                "year": 2000,
-                "date": "01/10/2000",
-                "gold": 0,
-                "silver": 1,
-                "bronze": 0,
-                "sport": {
-                "id": 112,
-                "name": "Waterpolo"
-                }
-                }
-                ]
-                },
-                ...further records
-            </snippet>
+<snippet>
+[
+  {
+    "name": "Robin Beauregard",
+    "country": {
+      "id": 33,
+      "name": "United States"
+    },
+    "results": [
+      {
+        "age": 25,
+        "year": 2004,
+        "date": "29/08/2004",
+        "gold": 0,
+        "silver": 0,
+        "bronze": 1,
+        "sport": {
+          "id": 112,
+          "name": "Waterpolo"
+        }
+      },
+      {
+        "age": 21,
+        "year": 2000,
+        "date": "01/10/2000",
+        "gold": 0,
+        "silver": 1,
+        "bronze": 0,
+        "sport": {
+          "id": 112,
+          "name": "Waterpolo"
+        }
+      }
+    ]
+  }
+  ...further records
+</snippet>
 
             <p>Great, so far so good!</p>
 
@@ -194,31 +193,30 @@ include('../includes/mediaHeader.php');
 
             <p>Let's take a look at what operations the <code>CrudRepository</code> provides for us:</p>
 
-            <snippet language="java">
-                public interface CrudRepository &lt;T, ID&gt; extends Repository&lt;T,ID&gt; {
-                &lt;S extends T&gt; S save(S s);
+<snippet language="java">public interface CrudRepository &lt;T, ID&gt; extends Repository&lt;T,ID&gt; {
+    &lt;S extends T&gt; S save(S s);
 
-                &lt;S extends T&gt; Iterable&lt;S&gt; saveAll(Iterable&lt;S&gt; iterable);
+    &lt;S extends T&gt; Iterable&lt;S&gt; saveAll(Iterable&lt;S&gt; iterable);
 
-                Optional&lt;T&gt; findById(ID id);
+    Optional&lt;T&gt; findById(ID id);
 
-                boolean existsById(ID id);
+    boolean existsById(ID id);
 
-                Iterable&lt;T&gt; findAll();
+    Iterable&lt;T&gt; findAll();
 
-                Iterable&lt;T&gt; findAllById(Iterable&lt;ID&gt; iterable);
+    Iterable&lt;T&gt; findAllById(Iterable&lt;ID&gt; iterable);
 
-                long count();
+    long count();
 
-                void deleteById(ID id);
+    void deleteById(ID id);
 
-                void delete(T t);
+    void delete(T t);
 
-                void deleteAll(Iterable&lt;? extends T&gt; iterable);
+    void deleteAll(Iterable&lt;? extends T&gt; iterable);
 
-                void deleteAll();
-                }
-            </snippet>
+    void deleteAll();
+}
+</snippet>
             <p>As you can see, just about any operation you're likely to need has been provided here, which is
                 great.</p>
 
@@ -288,15 +286,12 @@ include('../includes/mediaHeader.php');
                 delve too
                 deeply into the testing side of things.</p>
 
-            <snippet language="java">
-                // makes the rest call, converting the results within the response body to an array of Athletes
-                ResponseEntity
-                <Athlete
-                        []> response = restTemplate.getForEntity(createURLWithPort("/athletes"), Athlete[].class);
+<snippet language="java">// makes the rest call, converting the results within the response body to an array of Athletes
+ResponseEntity&lt;Athlete[]&gt; response = restTemplate.getForEntity(createURLWithPort("/athletes"), Athlete[].class);
 
-                    // unpack the result
-                    Athlete[] athletes = response.getBody();
-            </snippet>
+// unpack the result
+Athlete[] athletes = response.getBody();
+</snippet>
 
             <p>The rest of the tests follow the same pattern - the completed <code>AthleteController</code> and
                 <code>AthleteControllerTests</code> can be seen here:</p>
@@ -317,19 +312,18 @@ include('../includes/mediaHeader.php');
 
             <snippet>mvn clean test</snippet>
 
-            <snippet>
-                Results :
+<snippet>Results :
 
-                Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
 
-                [INFO] ------------------------------------------------------------------------
-                [INFO] BUILD SUCCESS
-                [INFO] ------------------------------------------------------------------------
-                [INFO] Total time: 14.679 s
-                [INFO] Finished at: 2017-10-04T15:37:17+01:00
-                [INFO] Final Memory: 31M/321M
-                [INFO] ------------------------------------------------------------------------
-            </snippet>
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 14.679 s
+[INFO] Finished at: 2017-10-04T15:37:17+01:00
+[INFO] Final Memory: 31M/321M
+[INFO] ------------------------------------------------------------------------
+</snippet>
             <p>Great, so far so good. We've verified that the middle tier code we've written for the 4 use-cases above
                 will work
                 once invoked by the front end!</p>
@@ -360,7 +354,7 @@ include('../includes/mediaHeader.php');
                         <td>
                             <a href="https://twitter.com/share" class="twitter-share-button"
                                data-url="https://www.ag-grid.com/ag-grid-datagrid-crud-part-2/"
-                               data-text="Building a CRUD Application with ag-Grid #angular #aggrid #crud" data-via="seanlandsman"
+                               data-text="Building a CRUD Application with ag-Grid Part 2 #angular #aggrid #crud" data-via="seanlandsman"
                                data-size="large">Tweet</a>
                             <script>!function (d, s, id) {
                                     var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
@@ -382,7 +376,7 @@ include('../includes/mediaHeader.php');
             <div>
                 <a href="https://twitter.com/share" class="twitter-share-button"
                    data-url="https://www.ag-grid.com/ag-grid-datagrid-crud-part-2/"
-                   data-text="Building a CRUD application with ag-Grid" data-via="seanlandsman"
+                   data-text="Building a CRUD application with ag-Grid Part 2" data-via="seanlandsman"
                    data-size="large">Tweet</a>
                 <script>!function (d, s, id) {
                         var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
