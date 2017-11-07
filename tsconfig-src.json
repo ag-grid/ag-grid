@@ -19,8 +19,5 @@
     "aot",
     "main.ts",
     "main.d.ts"
-  ],
-  "angularCompilerOptions": {
-    "genDir": "aot"
-  }
+  ]
 }
