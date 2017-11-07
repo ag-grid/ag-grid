@@ -7,3 +7,5 @@ ag-grid-enterprise.iml
 
 dist/
 package-lock.json
+
+module.tgz
