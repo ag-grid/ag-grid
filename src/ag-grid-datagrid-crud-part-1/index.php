@@ -41,7 +41,7 @@ include('../includes/mediaHeader.php');
             <ul>
                 <li class="bold-roboto">Part 1: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)
                 </li>
-                <li>Part 2: Middle Tier: Exposing our data with a REST Service</li>
+                <li class="bold-roboto"><a href="../ag-grid-datagrid-crud-part-2/">Part 2</a>: Middle Tier: Exposing our data with a REST Service</li>
                 <li>Part 3: Front End - Initial Implementation</li>
                 <li>Part 4: Front End - Grid Features & CRUD (Creation, Updates and Deletion)</li>
                 <li>Part 5: Front End - Aggregation & Pivoting</li>
@@ -145,30 +145,29 @@ include('../includes/mediaHeader.php');
 
             <p>You should see the following project structures:</p>
 
-            <snippet>
-                └── backend
-                   ├── LICENSE
-                   ├── mvnw
-                   ├── mvnw.cmd
-                   ├── pom.xml
-                   └── src
-                   ├── main
-                   │   ├── java
-                   │   │   └── com
-                   │   │   └── aggrid
-                   │   │   └── crudapp
-                   │   │   └── CrudAppApplication.java
-                   │   └── resources
-                   │   ├── application.properties
-                   │   ├── static
-                   │   └── templates
-                   └── test
-                   └── java
-                   └── com
-                   └── aggrid
-                   └── crudapp
-                  └── CrudAppApplicationTests.java
-            </snippet>
+<snippet>
+└── backend
+   ├── LICENSE
+   ├── mvnw
+   ├── mvnw.cmd
+   ├── pom.xml
+   └── src
+   ├── main
+   │   ├── java
+   │   │   └── com
+   │   │   └── aggrid
+   │   │   └── crudapp
+   │   │   └── CrudAppApplication.java
+   │   └── resources
+   │   ├── application.properties
+   │   ├── static
+   │   └── templates
+   └── test
+   └── java
+   └── com
+   └── aggrid
+   └── crudapp
+      └── CrudAppApplicationTests.java</snippet>
 
             <p>Maven provides a standard project structure, including a default Application file (<code>CrudAppApplication.java</code>)
                 and default, starting, test file (<code>CrudAppApplicationTests.java</code>).</p>
@@ -184,9 +183,7 @@ include('../includes/mediaHeader.php');
             <p>Navigate to the <code>backend</code> directory; let's download the dependencies and do a quick sanity
                 check:</p>
 
-            <snippet language="sh">
-                mvn test
-            </snippet>
+            <snippet language="sh">mvn test</snippet>
 
             <p>You should see a long output while mvn downloads all dependencies - this might take a little time
                 depending on your
@@ -207,9 +204,7 @@ include('../includes/mediaHeader.php');
 
             <h4>Via Maven</h4>
 
-            <snippet language="sh">
-                mvn spring-boot:run
-            </snippet>
+            <snippet language="sh">mvn spring-boot:run</snippet>
 
             <p>In either case the application will launch, but not actually do much at this stage.</p>
 
@@ -311,9 +306,7 @@ include('../includes/mediaHeader.php');
                 This is disabled by default - we need to update <code>/src/main/resources/application.properties</code>
                 to enable it:</p>
 
-            <snippet>
-                spring.h2.console.enabled=true
-            </snippet>
+            <snippet>spring.h2.console.enabled=true</snippet>
             <p>We can then navigate to <a href="http://localhost:8080/h2-console/" target="_blank">http://localhost:8080/h2-console/</a>
                 and take a look at what we have.</p>
 
@@ -334,14 +327,12 @@ include('../includes/mediaHeader.php');
             <p>We'll make use of a third-party library called <code>Jackson</code> to convert the CSV to Java POJOs, so
                 add this
                 to your Maven pom.xml file, within the <code>dependencies</code> block:</p>
-            <snippet>
-                &lt;dependency&gt;
-                &lt;groupId&gt;com.fasterxml.jackson.dataformat&lt;/groupId&gt;
-                &lt;artifactId&gt;jackson-dataformat-csv&lt;/artifactId&gt;
-                &lt;version&gt;2.9.1&lt;/version&gt;
-                &lt;scope&gt;test&lt;/scope&gt;
-                &lt;/dependency&gt;
-            </snippet>
+<snippet>&lt;dependency&gt;
+    &lt;groupId&gt;com.fasterxml.jackson.dataformat&lt;/groupId&gt;
+    &lt;artifactId&gt;jackson-dataformat-csv&lt;/artifactId&gt;
+    &lt;version&gt;2.9.1&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;            </snippet>
 
             <p>Note that we're only using this library for local testing, so it has the <code>test</code> scope.</p>
 
@@ -362,14 +353,13 @@ include('../includes/mediaHeader.php');
             <p>Let's start the application and then fire up the <code>H2</code> console to test what we have. If we run
                 the following query in the <code>H2</code> console:</p>
 
-            <snippet language="sql">
-                select a.name, c.name, r.age, c.name, r.year, r.date,s.name,r.gold,r.silver,r.bronze
-                from athlete a, country c, athlete_result ar, result r, sport s
-                where a.country_id = c.id
-                and ar.athlete_id = a.id
-                and ar.result_id = r.id
-                and r.sport_id = s.id
-            </snippet>
+<snippet language="sql">select a.name, c.name, r.age, c.name, r.year, r.date,s.name,r.gold,r.silver,r.bronze
+from athlete a, country c, athlete_result ar, result r, sport s
+where a.country_id = c.id
+and ar.athlete_id = a.id
+and ar.result_id = r.id
+and r.sport_id = s.id
+</snippet>
 
             <img src="./h2_query.png" style="width: 100%">
 
@@ -380,13 +370,12 @@ include('../includes/mediaHeader.php');
 
             <p>Let's add the <code>DevTools</code> to our Maven pom.xml file:</p>
 
-            <snippet>
-                &lt;dependency&gt;
-                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-                &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
-                &lt;optional&gt;true&lt;/optional&gt;
-                &lt;/dependency&gt;
-            </snippet>
+<snippet>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
+    &lt;optional&gt;true&lt;/optional&gt;
+&lt;/dependency&gt;
+</snippet>
 
             <p>With this in place if you're running your application and find you need to make a change you can do so,
                 rebuild the project, and refresh the browser/end point without needing to restart your entire
