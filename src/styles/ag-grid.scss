@@ -1,6 +1,3 @@
-// nib is important, as it gets stylus to include variations on the CSS for browsers.
-// eg 'user-select' gets compiled to versions '-webkit-user-select, -moz-user-select, -ms-user-select'
-//@import 'nib';
 // if we don't do this, then the width and height of the grid would be ignored,
 // as there is no default display for the element ag-grid-a2 (as it's not a natural dom element)
 ag-grid-angular {
