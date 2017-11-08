@@ -14,6 +14,19 @@ include '../documentation-main/documentation_header.php';
     </note>
 
     <h2>14.0.x</h2>
+
+    <h3>Version 14.1.0 [07-NOV-2017]</h3>
+    <h4>Enhancements</h4>
+    <ul>
+        <li>AG-895: Angular 5 supported. Now you can use ag-grid with the latest angular version!</li>
+    </ul>
+
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>AG-1010: Fix an issue where Polymer would not work in Firefox</li>
+        <li>AG-1028: Fixed issues with the new doc examples on IE11</li>
+    </ul>
+
     <h3>Version 14.0.0 [02-NOV-2017]</h3>
 
     <p>For details of this release, check our dedicated <a href="../change-log/v14/index.php">blog post for v14 aka Halloween</a>.</p>
@@ -22,11 +35,11 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li>AG-459: Revamped Feature: <a href="../javascript-grid-tree-data/">Tree Data</a>, we have rewritten tree data
         to make it more powerful and easy to use.</li>
-        <li>AG-459: <a href="../javascript-grid-grouping#example-unbalanced-groups/">Unbalanced Grouping</a>. We now
-            show as leaf rows that are part of a group but their gouping key is null.</li>
+        <li>AG-459: <a href="../javascript-grid-grouping/#example-unbalanced-groups">Unbalanced Grouping</a>. We now
+            show as leaf rows that are part of a group but their grouping key is null.</li>
         <li>AG-875: If you are a React fan, then you will be excited to lean that ag-Grid v14 comes with full support for Asynchronous Components</li>
         <li>AG-544: You can now provide <a href="../javascript-grid-column-header/#header-template">custom HTML templates</a> to customise how the column headers look. </li>
-        <li>AG-804: Set filters can now have their values specified from an asynchronously : <a href="../javascript-grid-filter-set#example-callback-async/">Tree Data</a></li>
+        <li>AG-804: Set filters can now have their values specified <a href="../javascript-grid-filter-set/#example-callback-async">asynchronously</a></li>
         <li>AG-816: More options for <a href="../javascript-grid-grouping/">grouping</a> with groupRemoveSingleChildren.</li>
         <li>AG-744: Delta updates now maintain row order.</li>
     </ul>

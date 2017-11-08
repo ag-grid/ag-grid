@@ -8,6 +8,9 @@ if ($generated) {
 ?>
 <html>
 <head>
+<?php if (!$example['preview']) {?>
+    <base href="../" />
+<?php } ?>
     <title>ag-Grid React Example</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
