@@ -50,6 +50,37 @@
 </div>
 
 <div class="news-box">
+    <div class="news-header">7th November 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
+            v14.1.0
+        </span>
+        <img src="../images/logo-dark-hacked.svg"
+             style="width: 100%;"/>
+    </div>
+    <br/>
+    <div>
+        <div>
+            Featuring:
+        </div>
+        <div>
+            <ul style="padding-left: 20px;">
+                <li>
+                    Support for Angular 5.
+                </li>
+                <li>
+                    Support for Firefox and Polymer
+                </li>
+            </ul>
+        </div>
+        <div>
+            See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+            for full release details.
+        </div>
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-date">
         01-Nov-17
     </div>
