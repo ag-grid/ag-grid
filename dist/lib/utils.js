@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.1.0
+ * @version v14.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1309,7 +1309,7 @@ var Utils = (function () {
         }
     };
     Utils.addSafePassiveEventListener = function (eElement, event, listener) {
-        eElement.addEventListener(event, listener, (Utils.passiveEvents.indexOf(event) > -1 ? { passive: true } : null));
+        eElement.addEventListener(event, listener, (Utils.passiveEvents.indexOf(event) > -1 ? { passive: true } : undefined));
     };
     Utils.camelCaseToHumanText = function (camelCase) {
         if (camelCase == null)
