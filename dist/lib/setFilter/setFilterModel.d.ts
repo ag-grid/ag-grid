@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.1.0
+// ag-grid-enterprise v14.1.1
 import { ColDef } from "ag-grid/main";
 import { IRowModel } from 'ag-grid';
 export declare enum SetFilterModelValuesType {
