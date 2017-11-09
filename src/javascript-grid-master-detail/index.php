@@ -79,6 +79,17 @@ include '../documentation-main/documentation_header.php';
 
 <?= example('Custom Detail Component', 'custom-detail-component', 'generated', array("enterprise" => 1)) ?>
 
+<h2>Example - Dynamic Detail Expansion</h2>
+
+<p>
+    Below shows a simple master / detail setup. From the example you can notice the following:
+<ul>
+    <li></li>
+</ul>
+</p>
+
+<?= example('Dynamic Master Nodes', 'dynamic-master-nodes', 'generated', array("enterprise" => 1)) ?>
+
 <h2>Supported Modes</h2>
 
 <h4>Row Models</h4>
