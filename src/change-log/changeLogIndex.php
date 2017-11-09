@@ -24,7 +24,6 @@ include '../documentation-main/documentation_header.php';
     <h4>Bug Fixes</h4>
     <ul>
         <li>AG-1010: Fix an issue where Polymer would not work in Firefox</li>
-        <li>AG-1028: Fixed issues with the new doc examples on IE11</li>
     </ul>
 
     <h3>Version 14.0.0 [02-NOV-2017]</h3>
