@@ -37,6 +37,9 @@ export class DetailCellRenderer extends Component {
             this.createDetailsGrid();
             this.registerDetailWithMaster(params.node);
             this.loadRowData(params);
+
+            // TODO: forcing layout during initialisation is only a partial fix
+            setTimeout(() => this.detailGridOptions.api.doLayout(), 0);
         } else {
             console.warn('ag-Grid: reference to eDetailGrid was missing from the details template. ' +
                 'Please add ref="eDetailGrid" to the template.');
@@ -77,7 +80,7 @@ export class DetailCellRenderer extends Component {
                 let template = templateFunc(params);
                 this.setTemplate(template);
             } else {
-                console.warn('ag-Grid: detailCellRendererParams.template should be function or string')
+                console.warn('ag-Grid: detailCellRendererParams.template should be function or string');
                 this.setTemplate(DetailCellRenderer.TEMPLATE)
             }
         }
