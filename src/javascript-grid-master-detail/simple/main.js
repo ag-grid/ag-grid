@@ -59,8 +59,7 @@ var masterGridOptions = {
     },
     getDetailRowData: function(params) {
         setTimeout(function() {
-            var rowData = params.data.callRecords;
-            params.successCallback(rowData.records);
+            params.successCallback(params.data.callRecords);
         }, 1000);
     }
 };
