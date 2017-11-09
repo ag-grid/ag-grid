@@ -34,7 +34,6 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-
 <h2>Example - Simple Master Detail</h2>
 
 <p>
@@ -43,6 +42,31 @@ include '../documentation-main/documentation_header.php';
         <li></li>
     </ul>
 </p>
+
+<?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1)) ?>
+
+
+<h2>Example - Using String Template</h2>
+
+<p>
+    Below shows a simple master / detail setup. From the example you can notice the following:
+<ul>
+    <li></li>
+</ul>
+</p>
+
+<?= example('String Template', 'string-template', 'generated', array("enterprise" => 1)) ?>
+
+<h2>Example - Using String Template</h2>
+
+<p>
+    Below shows a simple master / detail setup. From the example you can notice the following:
+<ul>
+    <li></li>
+</ul>
+</p>
+
+<?= example('Template Callback', 'template-callback', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Supported Modes</h2>
 
