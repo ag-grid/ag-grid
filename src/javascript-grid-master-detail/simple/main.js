@@ -19,9 +19,6 @@ var detailGridOptions = {
     enableFilter: true,
     enableColResize: true,
     columnDefs: detailColumnDefs,
-    onGridDestroy: function(params) {
-        console.log('grid destroyed');
-    },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
         console.log('grid created');
@@ -43,6 +40,7 @@ var masterGridOptions = {
         params.api.sizeColumnsToFit();
     },
     detailGridOptions: detailGridOptions,
+    // detailCellRenderer: DetailCellRenderer,
     detailCellRendererParams: {
         // template:
         //     '<div style="height: 100%; background-color: #eef; padding: 20px; box-sizing: border-box;">' +
@@ -59,10 +57,11 @@ var masterGridOptions = {
         //     return template;
         // }
     },
-    // detailCellRenderer: DetailCellRenderer,
     getDetailRowData: function(params) {
-        var rowData = params.data.callRecords;
-        params.successCallback(rowData.records);
+        setTimeout(function() {
+            var rowData = params.data.callRecords;
+            params.successCallback(rowData.records);
+        }, 1000);
     }
 };
 
