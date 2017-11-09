@@ -23,3 +23,8 @@ ag-grid.iml
 
 dist/
 package-lock.json
+module.tgz
+
+
+main.js
+main.js.map
