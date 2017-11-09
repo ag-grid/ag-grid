@@ -7,19 +7,81 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+<h1 class="first-h1">Master Detail</h1>
 
-    <h3 id="example-master-detail-grids">Master Detail Grids</h3>
+<p>
+    Master detail allows you to nest grids inside grids. The top level grid is referred to as the 'master grid'.
+    The nested grid is referred to as the 'detail grid'. Typically the detail grid gives more information
+    about the row in the master grid that was expanded to reveal the detail grid.
+</p>
+
+<p>
+    To enable master detail, you should set the following grid options:
+    <ul>
+        <li>
+            <b>masterDetail:</b> Set to true to inform the grid you want to allow
+            expanding of rows to reveal detail grids.
+        </li>
+        <li>
+            <b>detailGridOptions:</b> The grid options to set for the detail grid.
+            The detail grid is a fully featured instance of ag-Grid, so any configuration
+            can be set on the detail grid that you would set any other grid.
+        </li>
+        <li>
+            <b>getDetailRowData:</b> A function you implement to provide the grid
+            with rows for display in the detail grids.
+        </li>
+    </ul>
+</p>
+
+
+<h2>Example - Simple Master Detail</h2>
+
+<p>
+    Below shows a simple master / detail setup. From the example you can notice the following:
+    <ul>
+        <li></li>
+    </ul>
+</p>
+
+<h2>Supported Modes</h2>
+
+<h4>Row Models</h4>
+
+<p>
+    The master grid in master / detail can only be using the
+    <a href="../javascript-grid-in-memory/">In Memory</a> row model.
+    It is not supported with <a href="../javascript-grid-enterprise-model/">Enterprise</a>,
+    <a href="../javascript-grid-viewport">Viewport</a> or
+    <a href="../javascript-grid-infinite-scrolling">Infinite</a> row models. This is because
+    all of these row models have their own unique way of loading data which would clash with
+    the workings on master detail.
+</p>
+
+<p>
+    The detail grid can use any of the row models.
+</p>
+
+<h4>Tree Data</h4>
+
+<p>
+    Master detail is not supported with <a href="../javascript-grid-tree-data">Tree Data</a>.
+    This is because the concept of tree data conflicts with master / detail, in that in tree
+    data, any row can expand to show child rows, which would result in a clash when a row
+    has child rows in addition to having master / detail at the same row.
+</p>
+
+
+<div style="border-left: 4px solid lightcoral; padding-left: 4px;">
+
+    <h3 id="example-master-detail-grids">Deprecated: Old Master Detail</h3>
 
     <p>
-        A common requirement is to have a master / detail relationship between two grids where you have the
-        rows expand into more details by displaying another grid with different columns when you expand the rows
-        of the top level grid.
-    </p>
-
-    <p>
-        ag-Grid supports master detail grids using the grids
-        <a href="../javascript-grid-full-width-rows/">fullWidth</a> feature.
+        Before v14.1 of ag-Grid, master detail was not a directly supported feature of ag-Grid.
+        Instead users of ag-Grid had to use the <a href="../javascript-grid-full-width-rows/">fullWidth</a>
+        and depreacted tree data feature
+        to achieve master detail. Below shows this depreated way, which still works, but
+        we advise against it.
     </p>
 
     <p>
@@ -84,6 +146,8 @@ include '../documentation-main/documentation_header.php';
         In other words, fullWidth works everywhere but parent / child may not. See the sections on the individual
         row model for details.
     </p>
+
+    <?= example('Simple', 'simple', 'vanilla', array("enterprise" => 1)) ?>
 
 </div>
 
