@@ -300,7 +300,7 @@ function getExampleInfo($boilerplatePrefix) {
         $boilerplatePath = "";
         $appLocation = "";
     } else {
-        $boilerplatePath = "example-runner/$boilerplatePrefix-boilerplate/";
+        $boilerplatePath = "$boilerplatePrefix-boilerplate/";
         $appLocation = $appRoot . "/";
     }
 

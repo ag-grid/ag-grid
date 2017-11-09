@@ -9,9 +9,7 @@ if ($generated) {
 <html>
 <head>
     <title>Angular 2 ag-Grid starter</title>
-<?php if (!$example['preview']) {?>
-    <base href="../" />
-<?php } ?>
+    <script>document.write('<base href="' + document.location + '" />');</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -40,6 +38,6 @@ if ($generated) {
 
 </head>
 <body>
-    <my-app>Loading ag-Grid example&hellip;</my-app>
+    <my-app>Loading ag-Grid example&hellip;<my-app>
 </body>
 </html>
