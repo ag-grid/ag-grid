@@ -666,6 +666,11 @@ export class GridOptionsWrapper {
             };
             return this.gridOptions.getRowHeight(params);
         } else if (rowNode.detail && this.isMasterDetail()) {
+            // if (this.isNumeric(this.gridOptions.detailRowHeight)) {
+            //     return this.gridOptions.detailRowHeight;
+            // } else {
+            //     return // default detauk row height???
+            // }
             // fixme - need better way to set height
             return 300;
         } else if (this.isNumeric(this.gridOptions.rowHeight)) {
