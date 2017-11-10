@@ -198,12 +198,12 @@
 <div class="docsMenu-content">
 
     <?php
-    menuItem(0, 'Styling', 'Overview', 'javascript-grid-styling/');
-    menuItem(0, 'Fresh Theme', 'Fresh <sup class="new">new</sup>', 'javascript-grid-themes/fresh-theme.php');
-    menuItem(0, 'Blue Theme', 'Blue <sup class="new">new</sup>', 'javascript-grid-themes/blue-theme.php');
-    menuItem(0, 'Dark Theme', 'Dark <sup class="new">new</sup>', 'javascript-grid-themes/dark-theme.php');
-    menuItem(0, 'Bootstrap Theme', 'Bootstrap <sup class="new">new</sup>', 'javascript-grid-themes/bootstrap-theme.php');
-    menuItem(0, 'Material Theme', 'Material ', 'javascript-grid-themes/material-theme.php');
+    menuItem(0, 'Styling', 'Overview <sup class="new">new</sup>', 'javascript-grid-styling/');
+    menuItem(0, 'Fresh Theme', 'Fresh ', 'javascript-grid-themes/fresh-theme.php');
+    menuItem(0, 'Blue Theme', 'Blue', 'javascript-grid-themes/blue-theme.php');
+    menuItem(0, 'Dark Theme', 'Dark', 'javascript-grid-themes/dark-theme.php');
+    menuItem(0, 'Bootstrap Theme', 'Bootstrap', 'javascript-grid-themes/bootstrap-theme.php');
+    menuItem(0, 'Material Theme', 'Material', 'javascript-grid-themes/material-theme.php');
     menuItem(0, 'Legacy Themes', 'Legacy', 'javascript-grid-themes/legacy.php');
     ?>
 

@@ -12,7 +12,12 @@ margin-bottom: 1em;
 }
 
 dt code {
-margin-left: 1em;
+    margin-left: 1em;
+}
+
+.theme-table td,
+.theme-table th {
+    padding-left: 2em;
 }
 </style>
 
@@ -21,6 +26,40 @@ margin-left: 1em;
         <img src="../images/svg/docs/themes.svg" width="50" />
         Themes
     </h2>
+
+
+    <h2 id="material-theme">Legacy Themes</h2>
+
+<note>
+    <p>
+The 14.2.0 release (October 2017) included remakes of the themes with more consistent whitespace and <a href="#customizing-sass-variables">easier customization through Sass variables</a>. 
+The previous ones are still shipped, but deprecated and likely to be removed after several releases.
+If you are using any of the themes below, give the new counterpart a try. 
+</p>
+
+<table class="theme-table">
+    <tr>
+        <th>Old Theme</th><th>New Theme</th>
+    </tr>
+    <tr>
+        <td>ag-fresh</td><td>ag-theme-fresh</td>
+    </tr>
+    <tr>
+        <td>ag-dark</td><td>ag-theme-dark</td>
+    </tr>
+    <tr>
+        <td>ag-blue</td><td>ag-theme-blue</td>
+    </tr>
+    <tr>
+        <td>ag-material</td><td>ag-theme-material</td>
+    </tr>
+    <tr>
+        <td>ag-bootstrap</td><td>ag-theme-bootstrap</td>
+    </tr>
+</table>
+
+</note>
+
 
     <p>
         ag-Grid is designed to have its look and feel derived from a theme.
@@ -334,12 +373,27 @@ margin-left: 1em;
 </snippet>
 
 
-    <h2 id="customizing-sass-variables">Customizing the themes with Sass variables</h2>
+<h2 id="customizing-sass-variables">Customizing the themes with Sass variables</h2>
 
-    <p>
-    After September 2017, the ag-Grid themes source files got converted to <a href="http://sass-lang.com">Sass</a>, using the scss syntax. 
-    If you already use Sass in your project, this means that you can change the looks of the theme you use
-    by overriding the theme variables value and referencing the Sass source files afterwards.</p> 
+<p>
+After September 2017, the ag-Grid themes source files got converted to <a href="http://sass-lang.com">Sass</a>, using the scss syntax. 
+If you already use Sass in your project, this means that you can change the looks of the theme you use
+by overriding the theme variables value and referencing the Sass source files afterwards.</p> 
+
+<p>Some of the things you can change in the theme include:</p>
+
+<ul>
+    <li>Changing the text / header / tool panel foreground and background colors</li>
+    <li>Changing the icons size and color</li>
+    <li>Changing the cell / row spacing*</li>
+</ul>
+
+<note>
+* If you are going to change the <strong>row or header height</strong>, you should also modify the respective options in the JavaScript grid configuration. 
+This is a redundant step we are looking into removing in the future.
+</note>
+
+<p>The example below is taken from <a href="https://github.com/ag-grid/ag-grid-seed/tree/master/typescript-webpack/src">the webpack example repository</a>:</p>
 
 <snippet>
 // styles.scss
@@ -349,13 +403,13 @@ margin-left: 1em;
 // For example, the `ng new` command accepts `--style scss`.
 
 // override the font size of the entire grid 
-$ag-root-font-size: 10px;
+$font-size: 11px;
 
 // import the Sass files from the ag-Grid npm package. //
 // The "~" path prefix below relies on Webpack's sass-loader -
 // https://github.com/webpack-contrib/sass-loader. 
 @import "~ag-grid/src/styles/ag-grid.scss";
-@import "~ag-grid/src/styles/theme-fresh.scss";</snippet>
+@import "~ag-grid/src/styles/ag-theme-fresh.scss";</snippet>
 
 <p>A runnable version of the example above is available in the <a href="https://github.com/ag-grid/ag-grid-seed/tree/master/typescript-webpack/src">ag-Grid seed Webpack/typescript project</a>. </p>
 
@@ -538,7 +592,7 @@ The background color used when the cell value changes.
 </dl>
 
 <p>You can examine the full, up-to-date list of the Sass variables and their usage in <a href="https://github.com/ag-grid/ag-grid/tree/master/src/styles">the source code of the themes</a>.
-The <code>_theme-common.scss</code> file contains the actual implementation, while the <code>theme-*.scss</code> contain the default variable values for each theme.
+The <code>_ag-theme-common.scss</code> file contains the actual implementation, while the <code>ag-theme-*.scss</code> contain the default variable values for each theme.
 </p>
 
 </div>
