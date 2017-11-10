@@ -22,19 +22,17 @@ dt code {
 </style>
 
 <div>
-    <h2 id="themes">
+    <h2 class="first-h1" id="themes">
         <img src="../images/svg/docs/themes.svg" width="50" />
         Themes
     </h2>
 
-
-    <h2 id="material-theme">Legacy Themes</h2>
-
 <note>
+    <h3 style="margin-top: 4px;">Legacy Themes</h3>
     <p>
-The 14.2.0 release (October 2017) included remakes of the themes with more consistent whitespace and <a href="#customizing-sass-variables">easier customization through Sass variables</a>. 
+The 14.2.0 release (October 2017) included remakes of the themes with more consistent whitespace and <a href="#customizing-sass-variables">easier customization through Sass variables</a>.
 The previous ones are still shipped, but deprecated and likely to be removed after several releases.
-If you are using any of the themes below, give the new counterpart a try. 
+If you are using any of the themes below, give the new counterpart a try.
 </p>
 
 <table class="theme-table">
@@ -106,7 +104,7 @@ If you are using any of the themes below, give the new counterpart a try.
         You have the following options when choosing a theme:
         <ol>
             <li>Use one of the provided themes e.g. <code>ag-theme-fresh</code>.</li>
-            <li>Use one of the provided themes and override particular items to fine tune it.</li>
+            <li>Use one of the provided themes and tweak using the provided <a href="#customizing-sass-variables">Sass variables</a>.</li>
             <li>Create your own theme from scratch. This is the most complex approach and you are more
             exposed to breaking changes in ag-Grid releases.</li>
         </ol>
@@ -155,19 +153,19 @@ If you are using any of the themes below, give the new counterpart a try.
 
     The style attributes float, position and overflow are intrinsic to how the grid works. Changing
     these values will change how the grid operates. If unsure, take a look at the styles associated
-    with an element using your browsers developer tools. If still unsure, try it out, see what
-    result you get.
+    with an element using your browsers developer tools. If still unsure, try it out, if the style
+    you want to apply breaks the grid, then it's not a good style to apply!
 
     <h2 id="structure-example">Structure Example</h2>
 
     <p>
-        The exact structure of the DOM within ag-Grid is dependent on its configuration and what data is present.
-        This page takes the below basic example grid, with one pinned column, as an example to demonstrate the DOM structure.
-        The reader is encouraged to inspect the DOM (using your browsers developer tools) to dig deeper.
+        The exact structure of the DOM within ag-Grid is dependent on its configuration and what
+        data is present. This page takes the below basic example grid, with one pinned column, as an
+        example to demonstrate the DOM structure. The reader is encouraged to inspect the DOM
+        (using your browsers developer tools) to dig deeper.
     </p>
 
 <?= example('ag-Grid styling', 'styling', 'generated') ?>
-    
 
     <h2 id="high-level-overview">High Level Overview</h2>
 
@@ -376,8 +374,8 @@ If you are using any of the themes below, give the new counterpart a try.
 <h2 id="customizing-sass-variables">Customizing the themes with Sass variables</h2>
 
 <p>
-After September 2017, the ag-Grid themes source files got converted to <a href="http://sass-lang.com">Sass</a>, using the scss syntax. 
-If you already use Sass in your project, this means that you can change the looks of the theme you use
+ag-Grid themes are build using <a href="http://sass-lang.com">Sass</a>.
+This means that you can change the looks of the theme you use using Sass,
 by overriding the theme variables value and referencing the Sass source files afterwards.</p> 
 
 <p>Some of the things you can change in the theme include:</p>
