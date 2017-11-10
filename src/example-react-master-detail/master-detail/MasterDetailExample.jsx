@@ -116,7 +116,7 @@ export default class MasterDetailExample extends Component {
 
     render() {
         return (
-            <div style={{height: 400, width: 900}} className="ag-fresh">
+            <div style={{height: 400, width: 900}} className="ag-theme-fresh">
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}

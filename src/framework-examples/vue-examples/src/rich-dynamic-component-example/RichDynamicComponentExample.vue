@@ -1,7 +1,7 @@
 <template>
     <div style="width: 800px;">
         <h1>Rich Dynamic Components</h1>
-        <ag-grid-vue style="width: 100%; height: 350px;" class="ag-fresh"
+        <ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-fresh"
                      :gridOptions="gridOptions"
                      :columnDefs="columnDefs"
                      :rowData="rowData"

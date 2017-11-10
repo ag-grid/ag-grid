@@ -66,7 +66,7 @@ export default class PinnedRowComponentExample extends Component {
     render() {
         return (
             <div style={{height: 400, width: 900}}
-                 className="ag-fresh">
+                 className="ag-theme-fresh">
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}

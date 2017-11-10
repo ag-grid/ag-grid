@@ -40,7 +40,7 @@ include  '../example-runner/utils.php'
             </div>
             <div style="width: 100%; height: 400px;"
                 id="bestHtml5Grid"
-                class="ag-fresh ag-basic">
+                class="ag-theme-fresh ag-basic">
             </div>
         </div>
 

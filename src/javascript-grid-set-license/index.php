@@ -168,7 +168,7 @@ agGrid.LicenseManager.setLicenseKey("your license key")
 &lt;template id="template"&gt;
 &lt;div &gt;
 &lt;ag-grid-polymer style="width: 100%; height: 350px;"
-class="ag-fresh"
+class="ag-theme-fresh"
 rowData="{{rowData}}"
 columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
 &lt;/div&gt;

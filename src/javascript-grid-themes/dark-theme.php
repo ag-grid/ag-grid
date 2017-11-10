@@ -17,9 +17,9 @@ include '../documentation-main/documentation_header.php';
     <p/>
     To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
     <p/>
-    The following is an example of using the ag-dark theme:<br/>
+    The following is an example of using the ag-theme-dark theme:<br/>
     <snippet>
-&lt;div ag-grid="gridOptions" class="ag-dark"&gt;&lt;/div&gt;</snippet>
+&lt;div ag-grid="gridOptions" class="ag-theme-dark"&gt;&lt;/div&gt;</snippet>
 
     <div class="bigTitle" id="dark-theme-example">Dark Theme Example</div>
 

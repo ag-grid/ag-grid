@@ -14,7 +14,7 @@
                 <div style="width: 100%; height: 600px; border: 1px solid #E0E0E0;"
                      id="bestHtml5Grid"
                      class="ag-theme-material">
-<!--                    class="ag-fresh ag-basic"-->
+<!--                    class="ag-theme-fresh ag-basic"-->
                 </div>
             </div>
             <div class="col-md-12">

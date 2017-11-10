@@ -26,27 +26,27 @@ require "example-runner/utils.php";
             color: lightblue;
         }
 
-        .ag-fresh .good-score {
+        .ag-theme-fresh .good-score {
             background-color: rgba(0, 200, 0, 0.4)
         }
 
-        .ag-blue .good-score {
+        .ag-theme-blue .good-score {
             background-color: rgba(0, 200, 0, 0.4)
         }
 
-        .ag-dark .good-score {
+        .ag-theme-dark .good-score {
             background-color: rgba(0, 100, 0, 0.4)
         }
 
-        .ag-fresh .bad-score {
+        .ag-theme-fresh .bad-score {
             background-color: rgba(200, 0, 0, 0.4)
         }
 
-        .ag-blue .bad-score {
+        .ag-theme-blue .bad-score {
             background-color: rgba(200, 0, 0, 0.4)
         }
 
-        .ag-dark .bad-score {
+        .ag-theme-dark .bad-score {
             background-color: rgba(100, 0, 0, 0.4)
         }
 
@@ -54,7 +54,7 @@ require "example-runner/utils.php";
             opacity: 0.5;
         }
 
-        .ag-dark .star {
+        .ag-theme-dark .star {
             filter: invert(100%);
             -webkit-filter: invert(100%);
             -moz-filter: invert(100%);
@@ -84,7 +84,7 @@ require "example-runner/utils.php";
 
 <!-- The table div -->
 <div style="padding-top: 98px; height: 100%; width: 100%;">
-    <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-fresh"></div>
+    <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-fresh"></div>
 </div>
 
 <div class="header-row" style="position: fixed; top: 0px; left: 0px; width: 100%; padding-bottom: 0px;">
@@ -123,10 +123,10 @@ require "example-runner/utils.php";
                                 class="hide-when-small">
                             <option value="">-none-</option>
                             <option value="ag-theme-material">Material</option>
-                            <option value="ag-fresh" selected>Fresh</option>
-                            <option value="ag-dark">Dark</option>
-                            <option value="ag-blue">Blue</option>
-                            <option value="ag-bootstrap">Bootstrap</option>
+                            <option value="ag-theme-fresh" selected>Fresh</option>
+                            <option value="ag-theme-dark">Dark</option>
+                            <option value="ag-theme-blue">Blue</option>
+                            <option value="ag-theme-bootstrap">Bootstrap</option>
                         </select>
 
                         <span id="message" style="margin-left: 10px;">

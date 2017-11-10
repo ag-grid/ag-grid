@@ -167,7 +167,7 @@ export default class RichGridExample extends Component {
             </div>
         );
         gridTemplate = (
-            <div style={{height: 440, width: 900}} className="ag-fresh">
+            <div style={{height: 440, width: 900}} className="ag-theme-fresh">
                 <AgGridReact
                     ref="myGrid"
                     // gridOptions is optional - it's possible to provide

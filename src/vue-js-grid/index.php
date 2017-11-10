@@ -101,7 +101,7 @@ npm install whatwg-fetch --save</snippet>
 <snippet>
 // MunroGrid.vue
 &lt;template&gt;
-    &lt;ag-grid-vue class="ag-fresh grid"
+    &lt;ag-grid-vue class="ag-theme-fresh grid"
                  :gridOptions="gridOptions"
                  :rowData="rowData"
                  :rowDataChanged="onRowDataChanged"&gt;
@@ -319,7 +319,7 @@ import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
 <snippet>
 // MunroGrid.vue
 &lt;template&gt;
-    &lt;ag-grid-vue class="ag-fresh grid"
+    &lt;ag-grid-vue class="ag-theme-fresh grid"
                  :gridOptions="gridOptions"
                  :rowData="rowData"
                  :rowClicked="onRowClicked"
@@ -656,7 +656,7 @@ onRowClicked(params) {
         
 <snippet>
 &lt;template&gt;
-    &lt;ag-grid-vue class="ag-fresh grid"
+    &lt;ag-grid-vue class="ag-theme-fresh grid"
                  :gridOptions="gridOptions"
                  :rowData="rowData"
                  :rowClicked="onRowClicked"

@@ -53,7 +53,7 @@ export default class FloatingFilterGridExample extends Component {
         const style = Object.assign({}, divStyle, overrideStyle);
 
         return (
-            <div style={style} className="ag-fresh">
+            <div style={style} className="ag-theme-fresh">
                 <h1>Floating Filter Example</h1>
                 <AgGridReact
                     // properties
