@@ -399,13 +399,9 @@ export class GridOptionsWrapper {
     }
 
     public getAutoSizePadding(): number {
-        const padding = this.gridOptions.autoSizePadding;
-        if (typeof padding === 'number' && padding > 0) {
-            return padding;
-        } else {
-            return this.specialForNewMaterial(4, 'autoSizePadding');
-        }
+        return this.gridOptions.autoSizePadding > 0 ? this.gridOptions.autoSizePadding : 0;
     }
+
     // properties
     public getHeaderHeight(): number {
         if (typeof this.gridOptions.headerHeight === 'number') {

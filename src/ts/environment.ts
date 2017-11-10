@@ -5,21 +5,17 @@ const themes = themeNames.concat(themeNames.map(name => `theme-${name}`));
 const themeClass = new RegExp(`ag-(${themes.join('|')})`);
 
 const matGridSize = 8;
-const matIconSize = 18;
 type HardCodedSize = {[key: string]: {[key: string]: number}};
 
 const freshGridSize = 4;
-const freshIconSize = 14;
 
 const HARD_CODED_SIZES: HardCodedSize = {
     'ag-theme-material': {
-        autoSizePadding: matGridSize * 3,
         headerHeight: matGridSize * 7,
         virtualItemHeight: matGridSize * 5,
         rowHeight: matGridSize * 6
     },
     'ag-theme-classic': {
-        autoSizePadding: freshGridSize * 3,
         headerHeight: 25,
         virtualItemHeight: freshGridSize * 5,
         rowHeight: 25
