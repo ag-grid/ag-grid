@@ -228,6 +228,9 @@
         .ag-row-odd {
             background-color: map-get($params, 'odd-row-background-color');
         }
+        .ag-row-even {
+            background-color: map-get($params, 'background-color');
+        }
     }
 
     .ag-numeric-cell {
@@ -803,11 +806,18 @@
             cursor: default;
             height: $rich-select-item-height;
             line-height: $rich-select-item-height;
-            padding-left: $cell-horizontal-padding;
 
             &:hover {
                 background-color: $hover-color;
             }
+        }
+
+        .ag-rich-select-row {
+            padding-left: $cell-horizontal-padding;
+        }
+
+        .ag-rich-select-row-selected {
+            background-color: $selected-color;
         }
     }
 
@@ -1199,6 +1209,11 @@
                 color: $foreground-color;
             }
         }
+    }
+
+
+    &.ag-dnd-ghost {
+        border: 1px solid $border-color;
     }
 
     $exported: (
