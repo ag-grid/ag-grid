@@ -38,7 +38,6 @@ export class DetailCellRenderer extends Component {
             this.registerDetailWithMaster(params.node);
             this.loadRowData(params);
 
-            // TODO: forcing layout during initialisation is only a partial fix
             setTimeout(() => this.detailGridOptions.api.doLayout(), 0);
         } else {
             console.warn('ag-Grid: reference to eDetailGrid was missing from the details template. ' +

@@ -206,6 +206,7 @@ export interface GridOptions {
     overlayLoadingTemplate?: string;
     overlayNoRowsTemplate?: string;
     rowHeight?: number;
+    detailRowHeight?: number;
     headerCellTemplate?: string;
 
     masterDetail?: boolean;

@@ -29,6 +29,7 @@ import {Column} from "./entities/column";
 import { Environment } from "./environment";
 
 let DEFAULT_ROW_HEIGHT = 25;
+let DEFAULT_DETAIL_ROW_HEIGHT = 300;
 let DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 let DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 let themeWarning = false;
@@ -39,7 +40,7 @@ let legacyThemes = [
     'ag-blue',
     'ag-dark',
     'ag-material'
-]
+];
 
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
@@ -675,13 +676,11 @@ export class GridOptionsWrapper {
             };
             return this.gridOptions.getRowHeight(params);
         } else if (rowNode.detail && this.isMasterDetail()) {
-            // if (this.isNumeric(this.gridOptions.detailRowHeight)) {
-            //     return this.gridOptions.detailRowHeight;
-            // } else {
-            //     return // default detauk row height???
-            // }
-            // fixme - need better way to set height
-            return 300;
+            if (this.isNumeric(this.gridOptions.detailRowHeight)) {
+                return this.gridOptions.detailRowHeight;
+            } else {
+                return DEFAULT_DETAIL_ROW_HEIGHT;
+            }
         } else if (this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         } else {
