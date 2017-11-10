@@ -23,18 +23,9 @@ var masterGridOptions = {
     rowData: rowData,
     masterDetail: true,
     detailGridOptions: detailGridOptions,
+    detailRowHeight: 500,
     getDetailRowData: function(params) {
         params.successCallback(params.data.callRecords);
-    },
-    getRowHeight: function (params) {
-        if(params.node && params.node.detail) {
-            var offset = 90;
-            var allDetailRowHeight = params.data.callRecords.length * 25;
-            return allDetailRowHeight + offset;
-        } else {
-            // otherwise return fixed master row height
-            return 50;
-        }
     }
 };
 

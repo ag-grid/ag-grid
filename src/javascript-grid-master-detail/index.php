@@ -123,6 +123,17 @@ include '../documentation-main/documentation_header.php';
 
 <?= example('Multiple Levels of Master Detail', 'multiple-levels', 'generated', array("enterprise" => 1)) ?>
 
+<h2>Example - Detail Row Height</h2>
+
+<p>
+    Below shows a simple master / detail setup. From the example you can notice the following:
+<ul>
+    <li></li>
+</ul>
+</p>
+
+<?= example('Detail Row Height', 'detail-row-height', 'generated', array("enterprise" => 1)) ?>
+
 <h2>Example - Dynamic Height</h2>
 
 <p>
