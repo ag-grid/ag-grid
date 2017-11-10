@@ -992,6 +992,7 @@
     .ag-select-agg-func-popup {
         @include card($params);
         padding: 0;
+        height: $grid-size * 5 * 3.5;
 
         .ag-virtual-list-item {
             cursor: default;

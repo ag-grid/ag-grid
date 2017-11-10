@@ -684,10 +684,6 @@ export class GridOptionsWrapper {
         return this.specialForNewMaterial(20, 'virtualItemHeight');
     }
 
-    public getAggFuncPopupHeight() {
-        return this.specialForNewMaterial(100, 'aggFuncPopupHeight'); 
-    }
-
     private isNumeric(value:any) {
         return !isNaN(value) && typeof value === 'number';
     }

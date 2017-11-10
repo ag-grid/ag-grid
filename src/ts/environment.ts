@@ -16,19 +16,13 @@ const HARD_CODED_SIZES: HardCodedSize = {
         autoSizePadding: matGridSize * 3,
         headerHeight: matGridSize * 7,
         virtualItemHeight: matGridSize * 5,
-        aggFuncPopupHeight: matGridSize * 5 * 3.5,
-        rowHeight: matGridSize * 6,
-        gridSize: matGridSize,
-        iconSize: matIconSize
+        rowHeight: matGridSize * 6
     },
     'ag-theme-classic': {
         autoSizePadding: freshGridSize * 3,
         headerHeight: 25,
         virtualItemHeight: freshGridSize * 5,
-        aggFuncPopupHeight: freshGridSize * 5 * 3.5,
-        rowHeight: 25,
-        gridSize: freshGridSize,
-        iconSize: freshIconSize
+        rowHeight: 25
     }
 };
 
