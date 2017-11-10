@@ -31,6 +31,15 @@ import { Environment } from "./environment";
 let DEFAULT_ROW_HEIGHT = 25;
 let DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 let DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
+let themeWarning = false;
+
+let legacyThemes = [
+    'ag-fresh',
+    'ag-bootstrap',
+    'ag-blue',
+    'ag-dark',
+    'ag-material'
+]
 
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
@@ -393,7 +402,7 @@ export class GridOptionsWrapper {
         if (typeof padding === 'number' && padding > 0) {
             return padding;
         } else {
-            return this.specialForNewMaterial(4, 8 * 3);
+            return this.specialForNewMaterial(4, 'autoSizePadding');
         }
     }
     // properties
@@ -401,7 +410,7 @@ export class GridOptionsWrapper {
         if (typeof this.gridOptions.headerHeight === 'number') {
             return this.gridOptions.headerHeight;
         } else {
-            return this.specialForNewMaterial(25, 8 * 7);
+            return this.specialForNewMaterial(25, 'headerHeight');
         }
     }
 
@@ -409,20 +418,20 @@ export class GridOptionsWrapper {
         if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
             return this.gridOptions.floatingFiltersHeight;
         } else {
-            return this.specialForNewMaterial(25, 8 * 7);
+            return this.specialForNewMaterial(25, 'headerHeight');
         }
     }
 
     public getGroupPaddingSize(): number {
-       return this.specialForNewMaterial(10, 18 + 8 * 3);
+       return this.specialForNewMaterial(10, 'groupPaddingSize');
     }
 
     public getFooterPaddingAddition(): number {
-       return this.specialForNewMaterial(15, 32);
+       return this.specialForNewMaterial(15, 'footerPaddingAddition');
     }
 
     public getLeafNodePaddingAddition(): number {
-       return this.specialForNewMaterial(10, 24);
+       return this.specialForNewMaterial(10, 'leafNodePadding');
     }
 
     public getGroupHeaderHeight(): number {
@@ -685,15 +694,15 @@ export class GridOptionsWrapper {
     }
 
     public getVirtualItemHeight() {
-        return this.specialForNewMaterial(20, 8 * 5);
+        return this.specialForNewMaterial(20, 'virtualItemHeight');
     }
 
     public getAggFuncPopupHeight() {
-        return this.specialForNewMaterial(100, 8 * 5 * 3.5); // 3.5 cuts the last item in half, hinting that you can scroll
+        return this.specialForNewMaterial(100, 'aggFuncPopupHeight'); 
     }
 
     public getCheckboxIndentWidth() {
-        return this.specialForNewMaterial(10, 18 + 8); // icon size + grid size
+        return this.specialForNewMaterial(10, 'checkboxIndentWidth');
     }
 
     private isNumeric(value:any) {
@@ -702,15 +711,22 @@ export class GridOptionsWrapper {
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones 
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    private specialForNewMaterial(defaultValue: number, materialValue: number): number {
-            if (this.environment.getTheme() == "ag-theme-material") {
-                return materialValue;
+    private specialForNewMaterial(defaultValue: number, sassVariableName: string): number {
+        var theme = this.environment.getTheme();
+            if (theme.indexOf('ag-theme') === 0) {
+                return this.environment.getSassVariable(theme, sassVariableName);
             } else {
+                if (legacyThemes.indexOf(theme) > -1) {
+                    if (!themeWarning) {
+                        themeWarning = true;
+                        console.warn(`You are using a legacy theme for ag-grid (${theme}). Please visit https://www.ag-grid.com/javascript-grid-styling/ for upgrade details`);
+                    }
+                }
                 return defaultValue;
             }
     }
 
     private getDefaultRowHeight() {
-        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 8 * 6);
+        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 'rowHeight');
     }
 }

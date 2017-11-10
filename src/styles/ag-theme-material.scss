@@ -1,3 +1,5 @@
+@import './ag-theme-common';
+
 // Taken from the palette of angular material: https://github.com/angular/material2/blob/master/src/lib/core/theming/_palette.scss
 $mat-grey-0: #ffffff;
 $mat-grey-50: #fafafa;
@@ -11,1129 +13,178 @@ $mat-pink-A200: #ff4081;
 $mat-pink-50: #fce4ec;
 $mat-indigo-50: #e8eaf6;
 
+// opacity values used for black values, taken from material spec
+$ag-mat-foreground-opacity: 0.87 !default;
+$ag-mat-secondary-foreground-color-opacity: 0.54 !default;
+$ag-mat-disabled-foreground-color-opacity: 0.38 !default;
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // The variables below can be overriden to adjust the look up to the app color scheme
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// sizing
+// Sizing
 $ag-mat-grid-size: 8px !default;
-$ag-mat-icon-size: 18px !default;
+$ag-mat-icon-size: 16px !default;
+$ag-mat-header-height: $ag-mat-grid-size * 7 !default;
+$ag-mat-row-height: $ag-mat-grid-size * 6 !default;
+$ag-mat-cell-horizontal-padding: $ag-mat-grid-size * 3;
+$ag-mat-virtual-item-height: $ag-mat-grid-size * 5;
+$ag-mat-header-icon-size: 14px;
 
+// Icons
 $ag-mat-icons-path: './material-icons/' !default;
 
-// opacity values used for black values, taken from material spec
-$ag-mat-foreground-opacity: 0.87 !default;
-$ag-mat-foreground-secondary-opacity: 0.54 !default;
-$ag-mat-foreground-disabled-opacity: 0.38 !default;
-
-$ag-mat-font: 'Roboto', sans-serif !default;
+// Fonts
+$ag-mat-font-family: 'Roboto', sans-serif !default; // legacy: ag-mat-font
 $ag-mat-font-size: 13px !default;
 $ag-mat-font-weight: 400 !default;
 
-$ag-mat-font-secondary: 'Roboto', sans-serif !default;
-$ag-mat-font-secondary-size: 12px !default;
-$ag-mat-font-secondary-weight: 700 !default;
+$ag-mat-secondary-font-family: 'Roboto', sans-serif !default; //ag-mat-font-secondary
+$ag-mat-secondary-font-size: 12px !default; // ag-mat-font-secondary-size
+$ag-mat-secondary-font-weight: 700 !default; // ag-mat-font-secondary-weight
 
-// Theme colors
-$ag-mat-primary: $mat-indigo-500 !default;
-$ag-mat-accent: $mat-pink-A200 !default;
-$ag-mat-icon-color: black !default;
-
-// the three black shades, used for the UI
-$ag-mat-foreground: rgba(black, $ag-mat-foreground-opacity) !default;
-$ag-mat-foreground-secondary: rgba(black, $ag-mat-foreground-secondary-opacity) !default;
-$ag-mat-foreground-disabled: rgba(black, $ag-mat-foreground-disabled-opacity) !default;
-
-// backgrounds
-$ag-mat-background: $mat-grey-0 !default;
-$ag-mat-background-editor: $mat-grey-100 !default;
-$ag-mat-panel-background: $mat-grey-200 !default;
-$ag-mat-tool-panel-background: $mat-grey-50 !default;
-$ag-mat-chip-background: $mat-grey-300 !default;
-$ag-mat-range-selection-background: $mat-indigo-50 !default; // this should be pink, but indigo looks better
-$ag-mat-range-selection-highlight: $mat-pink-50 !default;
-
-$ag-mat-cell-data-changed: $mat-pink-50 !default;
-
-// interaction
-$ag-mat-hover: $mat-grey-200 !default;
-$ag-mat-selected: $mat-grey-100 !default;
+// Colors
+$ag-mat-foreground-color: rgba(#000000, $ag-mat-foreground-opacity) !default; // ag-mat-foreground
+$ag-mat-secondary-foreground-color: rgba(#000000, $ag-mat-secondary-foreground-color-opacity) !default; // ag-mat-foreground-secondary
+$ag-mat-disabled-foreground-color: rgba(#000000, $ag-mat-disabled-foreground-color-opacity) !default; // ag-mat-foreground-disabled
 
 $ag-mat-border-color: $mat-grey-300 !default;
 
-$ag-mat-header-height: $ag-mat-grid-size * 7 !default;
-$ag-mat-row-height: $ag-mat-grid-size * 6 !default;
+$ag-mat-primary-color: $mat-indigo-500 !default;
+
+$ag-mat-accent-color: $mat-pink-A200 !default;
+$ag-mat-icon-color: #333 !default;
+
+$ag-mat-background-color: $mat-grey-0 !default;
+
+$ag-mat-editor-background-color: $mat-grey-100 !default;
+
+$ag-mat-panel-background-color: $mat-grey-200 !default;
+
+$ag-mat-tool-panel-background-color: $mat-grey-50 !default;
+
+$ag-mat-chip-background-color: $mat-grey-300 !default;
+
+$ag-mat-range-selection-background-color: $mat-indigo-50 !default; 
+$ag-mat-range-selection-highlight-color: $mat-pink-50 !default;
+
+$ag-mat-hover-color: $mat-grey-200 !default;
+
+$ag-mat-selected-color: $mat-grey-100 !default;
+
+$ag-mat-cell-data-changed-color: $mat-pink-50 !default;
+
+// Misc 
 $ag-mat-transition-speed: 120ms !default;
+$ag-mat-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+$ag-mat-card-radius: 2px;
 
-/////////////////////////////////////////////////////////////////////////////////////////////////////
+// delta changes
+$value-change-delta-up-color: #43A047 !default;
+$value-change-delta-down-color: #e53935 !default;
+$value-change-value-highlight-background-color: #00ACC1 !default;
 
-// internal shortcuts
-$cell-horizontal-padding: $ag-mat-grid-size * 3;
+// support for legacy variable names
+@if variable-exists(ag-mat-font) { $ag-mat-font-family: $ag-mat-font; }
+@if variable-exists(ag-mat-font-secondary) { $ag-mat-secondary-font-family: $ag-mat-font-secondary; }
+@if variable-exists(ag-mat-font-secondary-size) { $ag-mat-secondary-font-size: $ag-mat-font-secondary-size; }
+@if variable-exists(ag-mat-font-secondary-weight) { $ag-mat-secondary-font-weight: $ag-mat-font-secondary-weight; }
+@if variable-exists(ag-mat-primary) { $ag-mat-primary-color: $ag-mat-font-primary; }
+@if variable-exists(ag-mat-secondary) { $ag-mat-secondary-color: $ag-mat-secondary; }
+@if variable-exists(ag-mat-foreground) { $ag-mat-foreground-color: $ag-mat-foreground; }
+@if variable-exists(ag-mat-foreground-secondary) { $ag-mat-secondary-foreground-color: $ag-mat-foreground-secondary; }
+@if variable-exists(ag-mat-foreground-disabled) { $ag-mat-disabled-foreground-color: $ag-mat-foreground-disabled; }
+@if variable-exists(ag-mat-background) { $ag-mat-background-color: $ag-mat-background; }
+@if variable-exists(ag-mat-background-editor) { $ag-mat-editor-background-color: $ag-mat-background-editor; }
+@if variable-exists(ag-mat-panel-background) { $ag-mat-panel-background-color: $ag-mat-panel-background; }
+@if variable-exists(ag-mat-tool-panel-background) { $ag-mat-tool-panel-background-color: $ag-mat-tool-panel-background; }
+@if variable-exists(ag-mat-chip-background) { $ag-mat-chip-background-color: $ag-mat-chip-background; }
+@if variable-exists(ag-mat-range-selection-background) { $ag-mat-range-selection-background-color: $ag-mat-range-selection-background; }
+@if variable-exists(ag-mat-range-selection-highlight) { $ag-mat-range-selection-highlight-color: $ag-mat-range-selection-highlight; }
+@if variable-exists(ag-mat-cell-data-changed) { $ag-mat-cell-data-changed-color: $ag-mat-cell-data-changed; }
+@if variable-exists(ag-mat-hover) { $ag-mat-hover-color: $ag-mat-hover; }
+@if variable-exists(ag-mat-selected) { $ag-mat-selected-color: $ag-mat-selected; }
 
-@mixin bottom-border() {
-    border-bottom: 1px solid $ag-mat-border-color;
-    box-sizing: border-box;
-}
+$params: (
+    // sizing
+    grid-size: $ag-mat-grid-size,
+    icon-size: $ag-mat-icon-size,
+    header-icon-size: $ag-mat-header-icon-size,
+    row-height: $ag-mat-row-height,
+    header-height: $ag-mat-header-height,
+    virtual-item-height: $ag-mat-virtual-item-height,
+    rich-select-item-height: $ag-mat-row-height,
+    cell-horizontal-padding: $ag-mat-cell-horizontal-padding,
 
-@mixin centered-container($height) {
-    line-height: $height;
-}
+    icons-path: $ag-mat-icons-path,
 
-@mixin grid-cell($height) {
-    padding-left: $cell-horizontal-padding;
-    padding-right: $cell-horizontal-padding;
-    @include centered-container($height);
-}
+    font-family: $ag-mat-font-family,
+    font-size: $ag-mat-font-size,
+    font-weight: $ag-mat-font-weight,
 
-@mixin icon-background($icon) {
-    width: $ag-mat-icon-size;
-    height: $ag-mat-icon-size;
-    background-color: transparent;
-    background-image: url('#{$ag-mat-icons-path}#{$icon}.svg?color=#{encodecolor($ag-mat-icon-color)}');
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: $ag-mat-icon-size $ag-mat-icon-size;
-    opacity: $ag-mat-foreground-opacity;
-}
+    secondary-font-family: $ag-mat-secondary-font-family,
+    secondary-font-size: $ag-mat-secondary-font-size,
+    secondary-font-weight: $ag-mat-secondary-font-weight,
 
-@function encodecolor($string) {
-    @if type-of($string) == 'color' {
-        $hex: str-slice(ie-hex-str($string), 4);
-        $string: unquote('#{$hex}');
-    }
-    $string: '%23' + $string;
-    @return $string;
-}
+    foreground-color: $ag-mat-foreground-color,
+    foreground-opacity: $ag-mat-foreground-opacity,
 
-@mixin colorful-icon($color, $icon) {
-    background-image: url('#{$ag-mat-icons-path}#{$icon}.svg?color=#{encodecolor($color)}');
-}
+    secondary-foreground-color-opacity: $ag-mat-secondary-foreground-color-opacity,
+    secondary-foreground-color: $ag-mat-secondary-foreground-color,
 
-@mixin primary-icon($icon) {
-    @include colorful-icon($ag-mat-primary, $icon);
-}
+    disabled-foreground-color-opacity: $ag-mat-disabled-foreground-color-opacity,
+    disabled-foreground-color: $ag-mat-disabled-foreground-color,
 
-@mixin accent-icon($icon) {
-    @include colorful-icon($ag-mat-accent, $icon);
-}
+    background-color: $ag-mat-background-color,
+    border-color: $ag-mat-border-color,
 
-@mixin card() {
-    box-shadow: 0px 3px 1px -2px rgba(0, 0, 0, 0.2), 0px 2px 2px 0px rgba(0, 0, 0, 0.14), 0px 1px 5px 0px rgba(0, 0, 0, 0.12);
-    padding: $ag-mat-grid-size;
-    background: $ag-mat-background;
-    border-radius: 2px;
-}
+    button-background-color: transparent,
 
-@mixin simple-material-textbox {
-    border: 0;
-    background: transparent;
-    font-size: inherit;
-    font-family: inherit;
+    icon-color: $ag-mat-icon-color,
 
-    box-sizing: border-box;
-    border-bottom: 1px solid $ag-mat-border-color;
-    height: $ag-mat-grid-size * 3;
-    padding-bottom: $ag-mat-grid-size;
-    color: $ag-mat-foreground;
+    cell-data-changed-color: $ag-mat-cell-data-changed-color,
 
-    &:focus {
-        border-bottom: 2px solid $ag-mat-primary;
-        padding-bottom: $ag-mat-grid-size - 1;
-        outline: none;
-    }
+    chip-background-color: $ag-mat-chip-background-color,
 
-    &::placeholder {
-        color: $ag-mat-foreground-disabled;
-    }
-}
+    card-background-color: $ag-mat-background-color,
+    editor-background-color-color: $ag-mat-editor-background-color,
 
-@mixin simple-material-flat-button {
-    -webkit-appearance: none;
-    background: transparent;
-    border: 0;
-    color: $ag-mat-primary;
-    text-transform: uppercase;
-    font-family: inherit;
-    font-size: inherit;
-    padding: 0;
-    margin: 0;
-}
+    range-selection-background-color: $ag-mat-range-selection-background-color,
+    range-selection-highlight-color: $ag-mat-range-selection-highlight-color,
 
-@mixin hide-text {
-    text-indent: 100%;
-    overflow: hidden;
-}
+
+    panel-background-color: $ag-mat-panel-background-color,
+    tool-panel-background-color: $ag-mat-tool-panel-background-color,
+
+    accent-color: $ag-mat-accent-color,
+    primary-color: $ag-mat-primary-color,
+    hover-color: $ag-mat-hover-color,
+    selected-color: $ag-mat-selected-color,
+
+    icon-opacity: $ag-mat-foreground-opacity,
+    button-text-transform: uppercase,
+    card-radius: $ag-mat-card-radius,
+    card-shadow: $ag-mat-card-shadow,
+    focused-textbox-border: 2px solid $ag-mat-primary-color,
+
+    input-border-width: 0,
+    input-bottom-border: 1px solid $ag-mat-border-color,
+    input-height: $ag-mat-grid-size * 3,
+
+    use-icons-for-pager-buttons: true,
+    customize-inputs: true,
+    customize-buttons: true,
+    full-width-tabs: true,
+
+    value-change-delta-up-color: $value-change-delta-up-color,
+    value-change-delta-down-color: $value-change-delta-down-color,
+    value-change-value-highlight-background-color: $value-change-value-highlight-background-color
+);
 
 .ag-theme-material {
-    font: $ag-mat-font-weight $ag-mat-font-size $ag-mat-font;
-    color: $ag-mat-foreground;
-    background-color: $ag-mat-background;
-
-    ////////////////////////////////////////
-    // Basic layout
-    ////////////////////////////////////////
-    .ag-header {
-        font: $ag-mat-font-secondary-weight $ag-mat-font-secondary-size $ag-mat-font-secondary;
-        color: $ag-mat-foreground-secondary;
+    %selected-tab {
+        border-bottom: 2px solid $ag-mat-primary-color;
     }
 
-    .ag-header-row {
-        @include bottom-border;
-    }
-
-    .ag-row {
-        @include bottom-border;
-    }
-
-    .ag-row-hover {
-        background-color: $ag-mat-hover;
-    }
-
-    .ag-numeric-cell {
-        text-align: right;
-    }
-
-    .ag-header-cell-label {
-        display: flex;
-        float: left;
-        width: calc(100% - #{$ag-mat-icon-size});
-        & > span {
-            float: left;
-        }
-        .ag-header-icon {
-            margin-top: 2px;
-        }
-
-        .ag-header-cell-text {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-    }
-
-    .ag-numeric-header {
-        .ag-header-cell-label {
-            flex-direction: row-reverse;
-        }
-
-        .ag-header-cell-menu-button {
-            float: left;
-        }
-
-        .ag-header-cell-label {
-            float: right;
-            & > span {
-                float: right;
-            }
-        }
-    }
-
-    .ag-header-cell,
-    .ag-header-group-cell {
-        @include grid-cell($ag-mat-header-height);
-    }
-
-    .ag-cell {
-        @include grid-cell($ag-mat-row-height - 2);
-
-        /* adjust for transparent border */
-        border: 1px solid transparent;
-        padding-left: $cell-horizontal-padding - 1px;
-        padding-right: $cell-horizontal-padding - 1px;
-    }
-
-    ////////////////////////////////////////
-    // Navigation
-    ////////////////////////////////////////
-    .ag-cell:focus {
-        outline: initial;
-        border: 1px solid $ag-mat-primary;
-    }
-
-    .ag-cell-highlight {
-        background-color: $ag-mat-range-selection-highlight !important;
-    }
-    .ag-cell-highlight-animation {
-        transition: background-color 1s;
-    }
-
-    ////////////////////////////////////////
-    // Resizing
-    ////////////////////////////////////////
-    .ag-header-cell-resize {
-        width: $ag-mat-grid-size * 2;
-        position: absolute;
-        right: -$ag-mat-grid-size * 1;
-        z-index: 4;
-        &::after {
-            border-right: 1px solid $ag-mat-border-color;
-            display: block;
-            height: $ag-mat-header-height - $ag-mat-grid-size * 4;
-            margin-top: $ag-mat-grid-size * 2;
-            content: 'resize';
-            overflow: hidden;
-            text-indent: $ag-mat-grid-size;
-            width: $ag-mat-grid-size;
-        }
-    }
-
-    ////////////////////////////////////////
-    // Icons
-    ////////////////////////////////////////
-
-    $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly
-        checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter group indeterminate left loading menu minus none not-allowed
-        paste pin pivot plus right small-left small-right small-up small-down tick cross tree-open tree-closed;
-
-    @each $icon in $icons {
-        .ag-icon-#{$icon} {
-            display: inline-block;
-            @include icon-background('#{$icon}');
-        }
-    }
-
-    .ag-header-cell-menu-button .ag-icon-menu {
-        height: $ag-mat-header-height;
-    }
-
-    .ag-icon-checkbox-checked:empty {
-        @include accent-icon('checkbox-checked');
-    }
-
-    ////////////////////////////////////////
-    // Context Menu
-    ////////////////////////////////////////
-
-    .ag-menu {
-        @include card;
-        padding: 0;
-        z-index: 5;
-
-        .ag-menu-list {
-            width: 100%;
-            cursor: default;
-            margin-top: $ag-mat-grid-size;
-            margin-bottom: $ag-mat-grid-size;
-        }
-
-        .ag-menu-option {
-            line-height: $ag-mat-grid-size * 4;
-            padding-left: $ag-mat-grid-size * 2;
-            padding-right: $ag-mat-grid-size * 2;
-
-            & > span {
-                vertical-align: middle;
-                display: table-cell;
-            }
-        }
-
-        .ag-menu-option-active {
-            background: $ag-mat-hover;
-        }
-
-        .ag-menu-option-icon {
-            padding-left: $ag-mat-grid-size;
-            padding-right: $ag-mat-grid-size;
-
-            span {
-                margin-top: $ag-mat-grid-size;
-                height: $ag-mat-icon-size;
-                line-height: 0;
-            }
-        }
-
-        .ag-menu-option-shortcut {
-            padding-left: $ag-mat-grid-size * 2;
-        }
-
-        $separator-size: $ag-mat-grid-size;
-        .ag-menu-separator {
-            margin-left: -$ag-mat-grid-size;
-
-            & > span {
-                height: $ag-mat-grid-size * 2;
-                background-image: url("data:image/svg+xml;utf8,<svg width='1' height='#{$ag-mat-grid-size * 2}' viewBox='0 0 1 #{$ag-mat-grid-size * 2}' xmlns='http://www.w3.org/2000/svg'> <line x1='0' y1='#{$ag-mat-grid-size}' x2='1' y2='#{$ag-mat-grid-size}' stroke-width='1' stroke='#{$ag-mat-border-color}'/> </svg>");
-            }
-        }
-
-        .ag-menu-option-popup-pointer {
-            width: $ag-mat-icon-size + $ag-mat-grid-size * 2;
-        }
-    }
-
-    ////////////////////////////////////////
-    // Column Reordering
-    ////////////////////////////////////////
-
-    &.ag-dnd-ghost {
-        @include card();
-        font: $ag-mat-font-secondary-weight $ag-mat-font-secondary-size $ag-mat-font-secondary;
-        color: $ag-mat-foreground-secondary;
-        border: none;
-        height: $ag-mat-header-height !important;
-        line-height: $ag-mat-header-height;
-        z-index: 5;
-        margin: 0;
-        transform: translatey($ag-mat-grid-size * 2);
-        padding: 0 $ag-mat-grid-size * 2;
-
-        span,
-        div {
-            float: left;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-    }
-
-    ////////////////////////////////////////
-    // Column Filter
-    ////////////////////////////////////////
-
-    .ag-tab-header {
-        background: $ag-mat-panel-background;
-        display: table;
-        width: 100%;
-        min-width: 220px;
-
-        .ag-tab {
-            display: table-cell;
-            height: $ag-mat-grid-size * 4;
-            vertical-align: middle;
-            text-align: center;
-            border-bottom: 2px solid transparent;
-
-            &.ag-tab-selected {
-                border-bottom: 2px solid $ag-mat-primary;
-
-                $icons: filter columns menu;
-
-                @each $icon in $icons {
-                    .ag-icon-#{$icon} {
-                        display: inline-block;
-                        @include primary-icon($icon);
-                    }
-                }
-            }
-        }
-    }
-
-    .ag-tab-body {
-        padding: $ag-mat-grid-size 0;
-
-        // string filter type
-        .ag-filter-select {
-            margin: $ag-mat-grid-size;
-            width: calc(100% - #{$ag-mat-grid-size * 2});
-        }
-
-        .ag-menu-list {
-            margin-top: 0;
-            margin-bottom: 0;
-            & > div:first-child > span {
-                padding-top: 0;
-            }
-
-            & > div:last-child > span {
-                padding-bottom: 0;
-            }
-
-            & > div:last-child > .ag-menu-option-popup-pointer {
-                background-position-y: 0;
-            }
-        }
-    }
-
-    // string filter type
-    .ag-filter-select {
-        margin: $ag-mat-grid-size;
-        width: calc(100% - #{$ag-mat-grid-size * 2});
-    }
-
-    // forced by the JS implementation
-    $virtual-item-height: 32px;
-
-    ////////////////////////////////////////
-    // Value Set Filter
-    ////////////////////////////////////////
-
-    .ag-filter {
-        & > div > div > div {
-        }
-
-        input[type='text'],
-        input[type='date'] {
-            @include simple-material-textbox;
-            padding-left: $ag-mat-grid-size;
-        }
-
-        label {
-            display: block;
-            padding-left: $ag-mat-grid-size;
-        }
-
-        .ag-set-filter-list {
-            padding-top: $ag-mat-grid-size;
-        }
-
-        .ag-filter-header-container {
-            height: $virtual-item-height;
-            box-sizing: border-box;
-        }
-
-        .ag-filter-header-container:nth-child(2) {
-            border-bottom: 1px solid $ag-mat-border-color;
-        }
-
-        .ag-filter-checkbox {
-            float: left;
-            margin-right: $ag-mat-grid-size;
-            height: $virtual-item-height;
-            padding-top: $ag-mat-grid-size / 2;
-        }
-
-        .ag-filter-value {
-            height: $virtual-item-height;
-            line-height: $ag-mat-grid-size * 3.5; // hate this
-        }
-
-        .ag-filter-apply-panel {
-            padding: $ag-mat-grid-size;
-            padding-top: $ag-mat-grid-size * 2;
-            display: flex;
-            justify-content: flex-end;
-
-            button {
-                @include simple-material-flat-button;
-            }
-
-            button + button {
-                margin-left: $ag-mat-grid-size * 2;
-            }
-        }
-    }
-
-    ////////////////////////////////////////
-    // Column selector
-    ////////////////////////////////////////
-    .ag-column-select-panel {
-        .ag-column-select-column-group::not(::first-child) {
-            border-top: 1px solid $ag-mat-border-color;
-        }
-
-        .ag-column-select-column-group,
-        .ag-column-select-column {
-            height: $ag-mat-grid-size * 4;
-            line-height: $ag-mat-grid-size * 4;
-            margin-left: $ag-mat-grid-size;
-
-            span {
-                float: left;
-                height: 100%;
-            }
-
-            .ag-column-select-indent {
-                width: $ag-mat-grid-size * 2;
-            }
-
-            .ag-column-select-checkbox,
-            .ag-column-group-icons {
-                margin-right: $ag-mat-grid-size;
-            }
-        }
-        .ag-column-select-column {
-            // this is a very crude approximation, because we have one 10px hard-coded element in there.
-            margin-left: $ag-mat-icon-size + $ag-mat-grid-size * 2;
-        }
-    }
-
-    ////////////////////////////////////////
-    // Tool panel
-    ////////////////////////////////////////
-
-    .ag-tool-panel {
-        border-right: 0;
-        background-color: $ag-mat-tool-panel-background;
-
-        .ag-pivot-mode {
-            height: $ag-mat-header-height;
-            border-bottom: 1px solid $ag-mat-border-color;
-            box-sizing: border-box;
-            line-height: $ag-mat-header-height;
-
-            span {
-                float: left;
-                height: 100%;
-            }
-
-            .ag-pivot-mode-select {
-                margin-left: $ag-mat-grid-size;
-
-                .ag-checkbox-label {
-                    margin-left: $ag-mat-grid-size;
-                }
-            }
-        }
-
-        .ag-column-select-panel {
-            padding: $ag-mat-grid-size 0;
-            padding-bottom: $ag-mat-grid-size - 1; // absorb the bottom border;
-            border-bottom: 1px solid $ag-mat-border-color;
-        }
-
-        $group-height: $ag-mat-grid-size * 5;
-
-        .ag-column-drop {
-            overflow: auto;
-            border-bottom: 1px solid $ag-mat-border-color;
-            padding: $ag-mat-grid-size 0;
-            padding-bottom: $ag-mat-grid-size * 2;
-            clear: both;
-
-            .ag-icon {
-                float: left;
-                height: $group-height;
-                margin: 0 $ag-mat-grid-size;
-            }
-
-            .ag-column-drop-title {
-                line-height: $group-height;
-                height: $group-height;
-                float: left;
-                width: calc(100% - #{$ag-mat-icon-size + $ag-mat-grid-size * 2});
-                clear: right;
-            }
-
-            .ag-column-drop-empty-message {
-                clear: both;
-                font: $ag-mat-font-secondary-weight $ag-mat-font-secondary-size $ag-mat-font-secondary;
-                color: $ag-mat-foreground-disabled;
-                padding-left: $ag-mat-grid-size * 4;
-                padding-right: $ag-mat-grid-size;
-                line-height: $ag-mat-grid-size * 2;
-            }
-        }
-    }
-
-    ////////////////////////////////////////
-    // Sorting
-    ////////////////////////////////////////
-    .ag-filter-icon:empty {
-        @include icon-background('filter');
-    }
-
-    .ag-sort-ascending-icon:empty {
-        @include icon-background('asc');
-    }
-
-    .ag-sort-descending-icon:empty {
-        @include icon-background('desc');
-    }
-
-    .ag-sort-none-icon:empty {
-        @include icon-background('none');
-    }
-
-    $header-icon-size: 14px;
-
-    .ag-header-cell-label .ag-header-icon {
-        margin: 0;
-        height: 100%;
-        background-size: $header-icon-size $header-icon-size;
-        background-position-y: $ag-mat-grid-size * 2.5;
-        margin-left: $ag-mat-grid-size;
-        opacity: $ag-mat-foreground-opacity;
-    }
-
-    .ag-numeric-header .ag-header-cell-label .ag-header-icon {
-        margin-left: 0;
-        margin-right: $ag-mat-grid-size;
-    }
-
-    ////////////////////////////////////////
-    // Pagination
-    ////////////////////////////////////////
-    .ag-paging-panel {
-        border-top: 1px solid $ag-mat-border-color;
-        height: $ag-mat-header-height;
-        display: flex;
-        align-items: center;
-        padding: 0 $cell-horizontal-padding;
-        justify-content: flex-end;
-        color: $ag-mat-foreground-secondary;
-
-        & > span {
-            margin-left: $ag-mat-grid-size * 4;
-        }
-
-        $buttonIcons: (btFirst: first, btPrevious: previous, btLast: last, btNext: next);
-
-        @each $ref, $icon in $buttonIcons {
-            button[ref='#{$ref}'] {
-                -webkit-appearance: none;
-                border: none;
-                padding: 0;
-
-                @include icon-background($icon);
-                @include hide-text;
-                opacity: $ag-mat-foreground-secondary-opacity;
-
-                &[disabled] {
-                    opacity: $ag-mat-foreground-disabled-opacity;
-                }
-            }
-        }
-    }
-
-    ////////////////////////////////////////
-    // Selection
-    ////////////////////////////////////////
-
-    .ag-row-selected {
-        background-color: $ag-mat-selected;
-    }
-
-    .ag-cell-range-selected:not(.ag-cell-focus) {
-        background-color: $ag-mat-range-selection-background;
-    }
-
-    ////////////////////////////////////////
-    // Editing
-    ////////////////////////////////////////
-
-    .ag-cell-inline-editing {
-        @include card;
-        height: $ag-mat-row-height + $ag-mat-grid-size * 3;
-        z-index: 2;
-        background: $ag-mat-background-editor;
-        padding: $cell-horizontal-padding;
-        line-height: normal;
-
-        input[type='text'],
-        input[type='tel'],
-        input[type='date'],
-        input[type='datetime-local'] {
-            @include simple-material-textbox;
-        }
-
-        select {
-            height: auto;
-        }
-    }
-
-    .ag-popup-editor {
-        @include card;
-        padding: 0;
-        background: $ag-mat-background-editor;
-
-        .ag-large-textarea textarea {
-            padding: $cell-horizontal-padding;
-            @include simple-material-textbox;
-            height: auto;
-        }
-    }
-    ////////////////////////////////////////
-    // Rich Select
-    ////////////////////////////////////////
-    $rich-select-item-height: $ag-mat-row-height;
-    .ag-rich-select {
-        background: $ag-mat-background-editor;
-        background-image: url('#{$ag-mat-icons-path}tree-open.svg');
-        background-position-y: $ag-mat-grid-size * 2;
-        background-position-x: calc(100% - #{$ag-mat-grid-size});
-        background-repeat: no-repeat;
-        .ag-rich-select-list {
-            height: 200px;
-        }
-
-        .ag-rich-select-value {
-            line-height: $ag-mat-row-height;
-            height: $ag-mat-row-height;
-            padding-left: $cell-horizontal-padding;
-        }
-
-        .ag-virtual-list-item {
-            cursor: default;
-            height: $rich-select-item-height;
-            line-height: $rich-select-item-height;
-            padding-left: $cell-horizontal-padding;
-
-            &:hover {
-                background-color: $ag-mat-hover;
-            }
-        }
-    }
-
-    ////////////////////////////////////////
-    // Floating filter
-    ////////////////////////////////////////
-    .ag-floating-filter-body {
-        float: left;
-        width: calc(100% - #{$ag-mat-grid-size} * 4);
-        margin-right: 0;
-        height: 100%;
-
-        input {
-            @include simple-material-textbox;
-        }
-    }
-
-    .ag-floating-filter-button {
-        margin-top: $ag-mat-grid-size* 2.5;
-        line-height: $ag-mat-icon-size;
-        float: right;
-        button {
-            @include simple-material-flat-button;
-        }
-    }
-
-    .ag-cell-label-container {
-        height: 100%;
-    }
-
-    .ag-header-cell-label {
-        height: 100%;
-        span {
-            height: 100%;
-        }
-    }
-
-    ////////////////////////////////////////
-    // Expanding headers
-    ////////////////////////////////////////
-    .ag-header-group-cell-label {
-        height: 100%;
-
-        span {
-            float: left;
-            height: 100%;
-        }
-    }
-
-    ////////////////////////////////////////
-    // Header checkbox selection
-    ////////////////////////////////////////
-    .ag-header-select-all {
-        margin-right: $cell-horizontal-padding;
-        height: 100%;
-
-        span {
-            height: 100%;
-        }
-    }
-
-    .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {
-        width: calc(100% - #{$ag-mat-icon-size} - #{$cell-horizontal-padding});
-        float: left;
-    }
-
-    ////////////////////////////////////////
-    // Selection checkbox
-    ////////////////////////////////////////
-    .ag-selection-checkbox,
-    .ag-group-expanded,
-    .ag-group-contracted {
-        span {
-            margin-right: $cell-horizontal-padding;
-        }
-    }
-
-    .ag-selection-checkbox span {
-        position: relative;
-        top: $ag-mat-grid-size / 2;
-    }
-
-    .ag-group-expanded {
-        .ag-icon-contracted:empty {
-            @include icon-background('tree-open');
-        }
-    }
-
-    ////////////////////////////////////////
-    // Column drop
-    ////////////////////////////////////////
-    .ag-column-drop-horizontal {
-        height: $ag-mat-row-height;
-        line-height: $ag-mat-grid-size * 4;
-        background-color: $ag-mat-panel-background;
-        padding-left: $cell-horizontal-padding;
-
-        // nasty fix for inline-block approach with half-width.
-        &.ag-width-half {
-            margin-bottom: -3px;
-        }
-
-        span {
-            height: 100%;
-            float: left;
-        }
-
-        .ag-icon-group,
-        .ag-icon-pivot {
-            margin-right: $cell-horizontal-padding;
-        }
-
-        .ag-right-arrow {
-            @include icon-background('right');
-        }
-        .ag-left-arrow {
-            @include icon-background('left');
-        }
-
-        .ag-left-arrow,
-        .ag-right-arrow {
-            @include hide-text;
-            height: 100%;
-            margin: 0 $ag-mat-grid-size;
-            opacity: $ag-mat-foreground-secondary-opacity;
-        }
-
-        .ag-column-drop-empty-message {
-            height: 100%;
-            line-height: $ag-mat-row-height;
-            opacity: $ag-mat-foreground-secondary-opacity;
-        }
-    }
-
-    .ag-column-drop-cell {
-        box-sizing: border-box;
-        height: $ag-mat-grid-size * 4 !important;
-        margin-top: $ag-mat-grid-size;
-        padding: 0 $ag-mat-grid-size / 2;
-        background: $ag-mat-chip-background;
-        border-radius: $ag-mat-grid-size * 4;
-
-        .ag-column-drop-cell-text {
-            margin: 0 $ag-mat-grid-size;
-            height: 100%;
-            line-height: $ag-mat-grid-size * 4;
-        }
-
-        .ag-column-drop-cell-button {
-            @include icon-background('cancel');
-            @include hide-text;
-            height: 100%;
-            opacity: $ag-mat-foreground-secondary-opacity;
-            margin: 0 $ag-mat-grid-size / 2;
-            &:hover {
-                opacity: $ag-mat-foreground-opacity;
-            }
-        }
-    }
-
-    .ag-select-agg-func-popup {
-        @include card();
-        padding: 0;
-
-        .ag-virtual-list-item {
-            cursor: default;
-            padding-left: $ag-mat-grid-size * 2;
-            line-height: $ag-mat-grid-size * 5;
-        }
-
-        .ag-virtual-list-item:hover {
-            background: $ag-mat-hover;
-        }
-    }
-
-    .ag-column-drop-vertical > .ag-column-drop-cell {
-        margin-top: 0;
-        margin-left: $ag-mat-grid-size;
-        margin-bottom: $ag-mat-grid-size;
-        float: left;
-    }
-
-    // cell data changed
-    .ag-cell-data-changed {
-        background-color: $ag-mat-cell-data-changed;
-    }
-
-    .ag-cell-data-changed-animation {
-        background-color: transparent;
-        transition: background-color 1s;
-    }
-
-    ////////////////////////////////////////
-    // Right-To-Left
-    ////////////////////////////////////////
-    .ag-rtl {
-        .ag-numeric-cell {
-            text-align: left;
-        }
-
-        .ag-header-cell-menu-button {
-            float: left;
-        }
-        .ag-header-cell-label {
-            float: right;
-            width: calc(100% - #{$ag-mat-icon-size});
-            & > span {
-                float: right;
-            }
-            .ag-header-icon {
-                margin-top: 2px;
-            }
-        }
-
-        .ag-numeric-header {
-            .ag-header-cell-menu-button {
-                float: right;
-            }
-
-            .ag-header-cell-label {
-                float: left;
-                & > span {
-                    float: left;
-                }
-            }
-        }
-
-        .ag-tool-panel {
-            .ag-pivot-mode {
-                span {
-                    float: right;
-                }
-
-                .ag-pivot-mode-select {
-                    margin-right: $ag-mat-grid-size;
-
-                    .ag-checkbox-label {
-                        margin-right: $ag-mat-grid-size;
-                    }
-                }
-            }
-
-            .ag-column-drop {
-                .ag-icon {
-                    float: right;
-                }
-
-                .ag-column-drop-title {
-                    float: right;
-                    clear: left;
-                }
-
-                .ag-column-drop-empty-message {
-                    padding-right: $ag-mat-grid-size * 4;
-                    padding-left: $ag-mat-grid-size;
-                }
-            }
-        }
-
-        .ag-filter-checkbox {
-            float: right;
-            margin-left: $ag-mat-grid-size;
-        }
-
-        .ag-filter-value {
-        }
-
-        .ag-column-select-panel {
-            .ag-column-select-column-group,
-            .ag-column-select-column {
-                margin-right: $ag-mat-grid-size;
-                span {
-                    float: right;
-                }
-
-                .ag-column-select-checkbox,
-                .ag-column-group-icons {
-                    margin-left: $ag-mat-grid-size;
-                }
-            }
-            .ag-column-select-column {
-                // this is a very crude approximation, because we have one 10px hard-coded element in there.
-                margin-right: $ag-mat-icon-size + $cell-horizontal-padding;
-                margin-left: 0;
-            }
-        }
-
-        .ag-icon-tree-closed {
-            @include icon-background('contracted');
-        }
-
-        .ag-header-group-cell-label {
-            height: 100%;
-            span {
-                float: right;
-                height: 100%;
-            }
-        }
-
-        .ag-header-select-all:not(.ag-hidden) + .ag-cell-label-container {
-            float: right;
-        }
-
-        .ag-header-select-all {
-            margin-left: $cell-horizontal-padding;
-            margin-right: 0;
-        }
-
-        .ag-selection-checkbox,
-        .ag-group-expanded,
-        .ag-group-contracted {
-            span {
-                float: right;
-            }
-        }
-
-        .ag-column-drop-horizontal {
-            padding-right: $cell-horizontal-padding;
-            span {
-                float: right;
-            }
-
-            .ag-icon-group,
-            .ag-icon-pivot {
-                margin-left: $cell-horizontal-padding;
-                margin-right: 0;
-            }
-
-            .ag-right-arrow {
-                @include icon-background('right');
-                height: 100%;
-            }
-
-            .ag-left-arrow {
-                @include icon-background('left');
-                height: 100%;
-            }
-        }
-
-        .ag-floating-filter-body {
-            float: right;
-            margin-left: 0;
-        }
-
-        .ag-floating-filter-button {
-            float: left;
-        }
-
-        .ag-header-group-cell-label {
-            span {
-                float: right;
-                height: 100%;
-            }
-        }
-    }
-
-    .ag-status-bar {
-        padding: $ag-mat-grid-size * 2 $ag-mat-grid-size * 4;
-        background: $ag-mat-background;
-        border-top: 1px solid $ag-mat-border-color;
-        font: $ag-mat-font-secondary-weight $ag-mat-font-secondary-size $ag-mat-font-secondary;
-        color: $ag-mat-foreground-disabled;
-        display: flex;
-        justify-content: flex-end;
-
-        .ag-status-bar-item {
-            margin-right: $ag-mat-grid-size * 2;
-            span:nth-child(1):after {
-                content: ':';
-            }
-            span:nth-child(2) {
-                color: $ag-mat-foreground;
-            }
-        }
-    }
+    @include ag-grid-theme($params);
 }

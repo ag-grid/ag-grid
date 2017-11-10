@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>checkbox-checked-readonly</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.5">
+        <g id="checkbox-checked-readonly" stroke="#000000">
+            <rect id="Rectangle" x="1.5" y="1.5" width="13" height="13" rx="2"></rect>
+            <polyline id="Path-2" points="12 5 6.5 10.5 4 8"></polyline>
+        </g>
+    </g>
+</svg>
