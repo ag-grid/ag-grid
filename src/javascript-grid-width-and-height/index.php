@@ -18,10 +18,10 @@ include '../documentation-main/documentation_header.php';
 
     <snippet>
 // set width using percentages
-&lt;div id="myGrid" class="ag-fresh" style="width: 100%; height: 100%;"&gt;&lt;/div&gt;
+&lt;div id="myGrid" class="ag-theme-fresh" style="width: 100%; height: 100%;"&gt;&lt;/div&gt;
 
 // OR set width using fixed pixels
-&lt;div id="myGrid" class="ag-fresh" style="width: 500px; height: 200px;"&gt;&lt;/div&gt;</snippet>
+&lt;div id="myGrid" class="ag-theme-fresh" style="width: 500px; height: 200px;"&gt;&lt;/div&gt;</snippet>
 
     <h3 id="percent-width-and-height">Pitfall When Using Percent Width & Height</h3>
 

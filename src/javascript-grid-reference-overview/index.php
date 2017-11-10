@@ -697,7 +697,7 @@ include '../documentation-main/documentation_header.php';
 
         <snippet>
             // notice the grid has an id called agGrid, which can be used to call the API
-            &lt;g-grid-aurelia class="ag-fresh"
+            &lt;g-grid-aurelia class="ag-theme-fresh"
             // items bound to properties on the controller
             grid-options.bind="gridOptions"
             column-defs.bind="columnDefs"

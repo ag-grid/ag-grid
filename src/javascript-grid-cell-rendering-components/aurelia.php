@@ -39,7 +39,7 @@
 <h3 id="cell-renderers-from-templates"><img src="../images/aurelia_large.png" style="width: 20px;"/> Cell Renderer's from Templates</h3>
 <snippet>
 // create your cellRenderer as an Aurelia template
-&lt;ag-grid-aurelia #agGrid style="width: 100%; height: 100%;" class="ag-fresh"
+&lt;ag-grid-aurelia #agGrid style="width: 100%; height: 100%;" class="ag-theme-fresh"
                  grid-options.bind="gridOptions"&gt;
   &lt;ag-grid-column header-name="Mood" field="mood" width.bind="150" editable.bind="true"&gt;
     &lt;ag-cell-template&gt;

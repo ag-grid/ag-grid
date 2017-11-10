@@ -129,7 +129,7 @@ export class AppComponent {
     }
 }</snippet><snippet>
 // app/app.component.html 
-&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-fresh"
+&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-fresh"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"&gt;
