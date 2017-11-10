@@ -79,7 +79,7 @@ include '../documentation-main/documentation_header.php';
 
 <?= example('Custom Detail Component', 'custom-detail-component', 'generated', array("enterprise" => 1)) ?>
 
-<h2>Example - Dynamic Detail Expansion</h2>
+<h2>Example - Dynamic Master Nodes</h2>
 
 <p>
     Below shows a simple master / detail setup. From the example you can notice the following:
@@ -89,6 +89,51 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <?= example('Dynamic Master Nodes', 'dynamic-master-nodes', 'generated', array("enterprise" => 1)) ?>
+
+<h2>Example - Filtering with Sort</h2>
+
+<p>
+    Below shows a simple master / detail setup. From the example you can notice the following:
+<ul>
+    <li></li>
+</ul>
+</p>
+
+<?= example('Filtering with Sort', 'filtering-with-sort', 'generated', array("enterprise" => 1)) ?>
+
+<h2>Example - Lazy Load Rows</h2>
+
+<p>
+    Below shows a simple master / detail setup. From the example you can notice the following:
+<ul>
+    <li></li>
+</ul>
+</p>
+
+<?= example('Lazy Load Rows', 'lazy-load-rows', 'generated', array("enterprise" => 1)) ?>
+
+<h2>Example - Multiple Levels of Master Detail</h2>
+
+<p>
+    Below shows a simple master / detail setup. From the example you can notice the following:
+<ul>
+    <li></li>
+</ul>
+</p>
+
+<?= example('Multiple Levels of Master Detail', 'multiple-levels', 'generated', array("enterprise" => 1)) ?>
+
+<h2>Example - Dynamic Height</h2>
+
+<p>
+    Below shows a simple master / detail setup. From the example you can notice the following:
+<ul>
+    <li></li>
+</ul>
+</p>
+
+<?= example('Dynamic Height', 'dynamic-height', 'generated', array("enterprise" => 1)) ?>
+
 
 <h2>Supported Modes</h2>
 
