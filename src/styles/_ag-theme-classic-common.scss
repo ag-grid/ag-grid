@@ -213,4 +213,9 @@
     .ag-filter .ag-filter-value {
        line-height: $icon-size + $grid-size; 
     }
+
+    .ag-selection-checkbox span {
+        position: relative;
+        top: 0;
+    }
 }
