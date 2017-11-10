@@ -126,7 +126,6 @@ require "example-runner/utils.php";
                             <option value="ag-theme-fresh" selected>Fresh</option>
                             <option value="ag-theme-dark">Dark</option>
                             <option value="ag-theme-blue">Blue</option>
-                            <option value="ag-theme-bootstrap">Bootstrap</option>
                         </select>
 
                         <span id="message" style="margin-left: 10px;">
