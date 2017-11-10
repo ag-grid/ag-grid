@@ -780,13 +780,15 @@ ag-grid-aurelia {
 }
 
 
-$ag-icons-path: './icons/' !default;
+$icons-path: './icons/' !default;
+@if variable-exists(ag-icons-path) { $icons-path: $ag-icons-path; }
+
 $ag-icons-filter: 'initial' !default;
 
 @mixin icon-background($icon) {
     width: 12px;
     height: 12px;
-    background: transparent url('#{$ag-icons-path}#{$icon}.svg') center no-repeat;
+    background: transparent url('#{$icons-path}#{$icon}.svg') center no-repeat;
     background-size: 12px 12px;
     filter: $ag-icons-filter;
 }
