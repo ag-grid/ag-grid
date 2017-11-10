@@ -28,11 +28,13 @@ var masterGridOptions = {
     },
     getRowHeight: function (params) {
         if(params.node && params.node.detail) {
-            // params.data.cellRecords.le;
-             console.log(">>>> ", params);
-            return params.data.callRecords.length * 25 + 75;
+            var offset = 75;
+            var allDetailRowHeight = params.data.callRecords.length * 25;
+            return allDetailRowHeight + offset;
+        } else {
+            // otherwise return fixed master row height
+            return 50;
         }
-        return 50;
     }
 };
 

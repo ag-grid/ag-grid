@@ -132,7 +132,7 @@ include '../documentation-main/documentation_header.php';
 </ul>
 </p>
 
-<?= example('Dynamic Height', 'dynamic-height', 'generated', array("enterprise" => 1)) ?>
+<?= example('Dynamic Height', 'dynamic-row-height', 'generated', array("enterprise" => 1)) ?>
 
 
 <h2>Supported Modes</h2>
