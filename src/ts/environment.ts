@@ -15,12 +15,8 @@ const HARD_CODED_SIZES: HardCodedSize = {
     'ag-theme-material': {
         autoSizePadding: matGridSize * 3,
         headerHeight: matGridSize * 7,
-        groupPaddingSize: matGridSize * 3 + matIconSize,
-        footerPaddingAddition: matGridSize * 4,
         virtualItemHeight: matGridSize * 5,
         aggFuncPopupHeight: matGridSize * 5 * 3.5,
-        checkboxIndentWidth: matGridSize + matIconSize,
-        leafNodePadding: matGridSize * 3,
         rowHeight: matGridSize * 6,
         gridSize: matGridSize,
         iconSize: matIconSize
@@ -28,12 +24,8 @@ const HARD_CODED_SIZES: HardCodedSize = {
     'ag-theme-classic': {
         autoSizePadding: freshGridSize * 3,
         headerHeight: 25,
-        groupPaddingSize: freshGridSize * 3 + freshIconSize,
-        footerPaddingAddition: freshGridSize * 4,
         virtualItemHeight: freshGridSize * 5,
         aggFuncPopupHeight: freshGridSize * 5 * 3.5,
-        checkboxIndentWidth: freshGridSize + freshIconSize,
-        leafNodePadding: freshGridSize * 3,
         rowHeight: 25,
         gridSize: freshGridSize,
         iconSize: freshIconSize

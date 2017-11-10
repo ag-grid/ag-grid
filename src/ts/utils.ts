@@ -43,8 +43,13 @@ export class Utils {
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
-    static mimicAsync(callback: Function): void {
-        callback();
+    private static doOnceFlags: {[key: string]: boolean} = {};
+
+    // if the key was passed before, then doesn't execute the func
+    static doOnce(func: ()=>void, key: string ) {
+        if (this.doOnceFlags[key]) { return; }
+        func();
+        this.doOnceFlags[key] = true;
     }
 
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.

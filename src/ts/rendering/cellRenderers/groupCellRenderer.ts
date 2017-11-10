@@ -119,27 +119,34 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private setPadding(): void {
 
-        if (this.gridOptionsWrapper.isGroupHideOpenParents()) { return; }
+        if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            return;
+        }
 
         let params = this.params;
         let rowNode: RowNode = params.node;
 
-        let paddingPx: number;
+        // let paddingPx: number;
+        let paddingCount = rowNode.uiLevel;
 
-        // never any padding on top level nodes
-        if (rowNode.uiLevel<=0) {
-            paddingPx = 0;
-        } else {
-            let paddingFactor: number = (params.padding >= 0) ? params.padding : this.gridOptionsWrapper.getGroupPaddingSize();
-            paddingPx = rowNode.uiLevel * paddingFactor;
+        let pivotModeAndLeafGroup = this.columnController.isPivotMode() && params.node.leafGroup;
 
-            let reducedLeafNode = this.columnController.isPivotMode() && params.node.leafGroup;
-            if (rowNode.footer) {
-                paddingPx += this.gridOptionsWrapper.getFooterPaddingAddition();
-            } else if (!rowNode.isExpandable() || reducedLeafNode) {
-                paddingPx += this.gridOptionsWrapper.getLeafNodePaddingAddition();
+        if (rowNode.footer || !rowNode.isExpandable() || pivotModeAndLeafGroup) {
+            paddingCount += 1;
+        }
+
+        if (paddingCount > 0) {
+            if (params.padding >= 0) {
+                let paddingPx = paddingCount * params.padding;
+                this.setPaddingDeprecatedWay(paddingPx);
+            } else {
+                this.addCssClass('ag-row-group-indent-' + paddingCount);
             }
         }
+    }
+
+    private setPaddingDeprecatedWay(paddingPx: number): void {
+        _.doOnce( () => console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation.'), 'groupCellRenderer->doDeprecatedWay');
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // if doing rtl, padding is on the right

@@ -179,6 +179,15 @@
     color: $foreground-color;
     font: $font;
 
+    // indentation loop
+    @for $i from 1 to 50 {
+        .ag-ltr .ag-toolpanel-indent-#{$i} { padding-left: $i * ($grid-size + $icon-size); }
+        .ag-rtl .ag-toolpanel-indent-#{$i} { padding-right: $i * ($grid-size + $icon-size); }
+
+        .ag-ltr .ag-row-group-indent-#{$i} { padding-left: $i * ($grid-size * 3 + $icon-size); }
+        .ag-rtl .ag-row-group-indent-#{$i} { padding-right: $i * ($grid-size * 3 + $icon-size); }
+    }
+
     // used by the animateShowChangedCellRenderer
     .ag-value-change-delta {
         padding-right: 2px;

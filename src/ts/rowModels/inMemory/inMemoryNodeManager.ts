@@ -61,7 +61,7 @@ export class InMemoryNodeManager {
         this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
 
         this.doingLegacyTreeData = _.exists(this.getNodeChildDetails);
-        this.doingMasterDetail = _.exists(this.gridOptionsWrapper.isMasterDetail());
+        this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     }
 
     public getCopyOfNodesMap(): {[id:string]: RowNode} {

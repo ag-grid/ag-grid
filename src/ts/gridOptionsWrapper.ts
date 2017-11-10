@@ -423,18 +423,6 @@ export class GridOptionsWrapper {
         }
     }
 
-    public getGroupPaddingSize(): number {
-       return this.specialForNewMaterial(10, 'groupPaddingSize');
-    }
-
-    public getFooterPaddingAddition(): number {
-       return this.specialForNewMaterial(15, 'footerPaddingAddition');
-    }
-
-    public getLeafNodePaddingAddition(): number {
-       return this.specialForNewMaterial(10, 'leafNodePadding');
-    }
-
     public getGroupHeaderHeight(): number {
         if (typeof this.gridOptions.groupHeaderHeight === 'number') {
             return this.gridOptions.groupHeaderHeight;
@@ -700,10 +688,6 @@ export class GridOptionsWrapper {
         return this.specialForNewMaterial(100, 'aggFuncPopupHeight'); 
     }
 
-    public getCheckboxIndentWidth() {
-        return this.specialForNewMaterial(10, 'checkboxIndentWidth');
-    }
-
     private isNumeric(value:any) {
         return !isNaN(value) && typeof value === 'number';
     }
@@ -712,17 +696,17 @@ export class GridOptionsWrapper {
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
     private specialForNewMaterial(defaultValue: number, sassVariableName: string): number {
         var theme = this.environment.getTheme();
-            if (theme.indexOf('ag-theme') === 0) {
-                return this.environment.getSassVariable(theme, sassVariableName);
-            } else {
-                if (legacyThemes.indexOf(theme) > -1) {
-                    if (!themeWarning) {
-                        themeWarning = true;
-                        console.warn(`You are using a legacy theme for ag-grid (${theme}). Please visit https://www.ag-grid.com/javascript-grid-styling/ for upgrade details`);
-                    }
+        if (theme.indexOf('ag-theme') === 0) {
+            return this.environment.getSassVariable(theme, sassVariableName);
+        } else {
+            if (legacyThemes.indexOf(theme) > -1) {
+                if (!themeWarning) {
+                    themeWarning = true;
+                    console.warn(`ag-Grid: You are using a legacy theme for ag-grid (${theme}). Please visit https://www.ag-grid.com/javascript-grid-styling/ for upgrade details`);
                 }
-                return defaultValue;
             }
+            return defaultValue;
+        }
     }
 
     private getDefaultRowHeight() {
