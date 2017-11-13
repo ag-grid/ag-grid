@@ -6,24 +6,11 @@ var masterColumnDefs = [
     {field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'"}
 ];
 
-var detailColumnDefs = [
-    {field: 'callId'},
-    {field: 'direction'},
-    {field: 'number'},
-    {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
-    {field: 'switchCode'}
-];
-
-var detailGridOptions = {
-    columnDefs: detailColumnDefs
-};
-
 var masterGridOptions = {
     columnDefs: masterColumnDefs,
     rowData: rowData,
     masterDetail: true,
     detailCellRenderer: DetailCellRenderer,
-    detailGridOptions: detailGridOptions,
     getDetailRowData: function(params) {
         params.successCallback(params.data.callRecords);
     }
