@@ -55,9 +55,8 @@ include('../includes/mediaHeader.php');
                 operations that CRUD specifies.
             </p>
 
-            <p>We'll again make use of Spring to expose the data via a REST service. Again we do this as Spring will
-                remove a great
-                deal of the boilerplate that providing this functionality by hand would necessitate.</p>
+            <p>We'll again make use of Spring to expose the data via a REST service. Again we do this using Spring as
+                doing so by hand would be tedious and involve a great deal of boilerplate.</p>
 
             <h3>Rest Controllers</h3>
 
