@@ -96,7 +96,7 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
-        enableRtl: true,
+        // enableRtl: true,
 
     defaultColDef: {
         minWidth: 50
