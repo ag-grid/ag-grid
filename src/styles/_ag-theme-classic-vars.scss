@@ -27,3 +27,6 @@ $secondary-font-weight: 400 !default;
 $transition-speed: 120ms !default;
 $card-shadow: none;
 $card-radius: 0;
+
+$toolpanel-indent-size: $grid-size + $icon-size !default;
+$row-group-indent-size: $grid-size * 3 + $icon-size !default;

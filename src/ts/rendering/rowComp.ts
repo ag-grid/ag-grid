@@ -301,7 +301,9 @@ export class RowComp extends Component {
 
         let isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
         let isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
+
         let isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
+
         let isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow();
 
         if (this.rowNode.stub) {

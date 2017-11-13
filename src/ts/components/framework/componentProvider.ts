@@ -24,8 +24,6 @@ import {PopupSelectCellEditor} from "../../rendering/cellEditors/popupSelectCell
 import {LargeTextCellEditor} from "../../rendering/cellEditors/largeTextCellEditor";
 import {TextFilter} from "../../filter/textFilter";
 import {NumberFilter} from "../../filter/numberFilter";
-import {DetailCellRenderer} from "../../rendering/detailCellRenderer";
-
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED
@@ -88,7 +86,6 @@ export class ComponentProvider {
             group: GroupCellRenderer,
             groupRowRenderer: GroupCellRenderer,
             loadingCellRenderer: LoadingCellRenderer,
-            detailCellRenderer: DetailCellRenderer,
             pinnedRowCellRenderer: null,
 
             //editors

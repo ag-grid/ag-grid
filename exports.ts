@@ -211,6 +211,7 @@ export {ColDef} from "./dist/lib/entities/colDef"
 export {ProcessCellForExportParams, ProcessHeaderForExportParams} from "./dist/lib/exportParams"
 export {
     GridOptions,
+    GetDetailRowDataParams,
     GetContextMenuItemsParams,
     GetContextMenuItems,
     GetDataPath,
