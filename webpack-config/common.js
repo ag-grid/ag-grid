@@ -60,7 +60,8 @@ module.exports = {
                 use: [
                     {loader: 'url-loader', options: {limit: 20000}},
                     {
-                        loader: require.resolve('../../ag-grid/src/styles/svg-loader.js')
+                        loader: 'svg-colorize-loader',
+                        options: {color1: '#000000', color2: '#FFFFFF'}
                     }
                 ]
             }
