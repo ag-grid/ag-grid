@@ -587,6 +587,14 @@ The color used when the cell value increases.
 <dd>
 The background color used when the cell value changes.
 </dd>
+<dt>$row-group-indent-size<code>$grid-size * 3 + $icon-size</code></dt>
+<dd>
+The indent used for the row groups.
+</dd>
+<dt>$toolpanel-indent-size<code>$grid-size + $icon-size</code></dt>
+<dd>
+The indent used for the tool panel hierarchy.
+</dd>
 </dl>
 
 <p>You can examine the full, up-to-date list of the Sass variables and their usage in <a href="https://github.com/ag-grid/ag-grid/tree/master/src/styles">the source code of the themes</a>.
