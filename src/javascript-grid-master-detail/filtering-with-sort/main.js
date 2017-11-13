@@ -16,6 +16,8 @@ var detailColumnDefs = [
 
 var detailGridOptions = {
     columnDefs: detailColumnDefs,
+    enableSorting: true,
+    enableFilter: true,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }
@@ -26,7 +28,6 @@ var masterGridOptions = {
     rowData: rowData,
     enableSorting: true,
     enableFilter: true,
-    enableColResize: true,
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: detailGridOptions,
