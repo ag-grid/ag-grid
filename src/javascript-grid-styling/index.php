@@ -391,27 +391,35 @@ by overriding the theme variables value and referencing the Sass source files af
 This is a redundant step we are looking into removing in the future.
 </note>
 
-<p>The example below is taken from <a href="https://github.com/ag-grid/ag-grid-seed/tree/master/typescript-webpack/src">the webpack example repository</a>:</p>
+<p>The example below is taken from <a href="https://github.com/ag-grid/ag-grid-customise-theme">Theme Customization Example Repository</a>:</p>
 
 <snippet>
-// styles.scss
-// This is an example of the application scss file; 
-// Popular framework project scaffolders like angular-cli support 
-// generating sass enabled projects. 
-// For example, the `ng new` command accepts `--style scss`.
+// Customize the look and feel of the grid with Sass variables
+// Up-to-date list of variables is available in the source code: https://github.com/ag-grid/ag-grid/blob/latest/src/styles/theme-fresh.scss 
+$icons-path: "~ag-grid/src/styles/icons/";
 
-// override the font size of the entire grid 
-$font-size: 11px;
+// changes the border color
+$border-color: #FF0000;
 
-// import the Sass files from the ag-Grid npm package. //
-// The "~" path prefix below relies on Webpack's sass-loader -
-// https://github.com/webpack-contrib/sass-loader. 
-@import "~ag-grid/src/styles/ag-grid.scss";
-@import "~ag-grid/src/styles/ag-theme-fresh.scss";</snippet>
+// Changes the font size
+// $font-size: 12px;
 
-<p>A runnable version of the example above is available in the <a href="https://github.com/ag-grid/ag-grid-seed/tree/master/typescript-webpack/src">ag-Grid seed Webpack/typescript project</a>. </p>
+// Changes the font family
+// $font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
 
-<p>Following is a list of the most useful Sass variables, their default values for the fresh theme, and a short explanation of their purpose.</p>
+// Reverts the cell horizontal padding change between ag-fresh and ag-theme-fresh
+// $cell-horizontal-padding: 2px;
+
+// changes the icon color
+$icon-color: red;
+
+
+@import '~ag-grid/src/styles/ag-grid.scss';
+@import '~ag-grid/src/styles/ag-theme-fresh.scss';</snippet>
+
+<p>A runnable version of the example above is available in the <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag-Grid Customize Theme repository</a>. </p>
+
+<p>Following is a list of the most common Sass variables used, their default values for the fresh theme, and a short explanation of their purpose.</p>
 
 
 <dl>
