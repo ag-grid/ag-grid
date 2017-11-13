@@ -170,6 +170,13 @@ include '../documentation-main/documentation_header.php';
 
 <h2>Supported Modes</h2>
 
+<p>
+    The master / detail feature organises the grid in a way which overlaps with other features.
+    For example, master / detail expands rows, which is also the case with row grouping or enterprise
+    row model. For this reason, master / detail does not work with certain grid configurations.
+    These configurations are listed below.
+</p>
+
 <h3>Row Models</h3>
 
 <p>
