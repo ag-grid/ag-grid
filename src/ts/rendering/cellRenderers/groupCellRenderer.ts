@@ -64,6 +64,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
     private cellIsBlank: boolean;
 
+    // keep reference to this, so we can remove again when indent changes
+    private indentClass: string;
+
     constructor() {
         super(GroupCellRenderer.TEMPLATE);
     }
@@ -86,7 +89,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
-        this.addPadding();
+        this.setupIndent();
     }
 
     // if we are doing embedded full width rows, we only show the renderer when
@@ -117,8 +120,6 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    private paddingClass: string;
-
     private setIndent(): void {
 
         if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
@@ -143,12 +144,12 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             return;
         }
 
-        if (this.paddingClass) {
-            this.removeCssClass(this.paddingClass);
+        if (this.indentClass) {
+            this.removeCssClass(this.indentClass);
         }
 
-        this.paddingClass = 'ag-row-group-indent-' + paddingCount;
-        this.addCssClass(this.paddingClass);
+        this.indentClass = 'ag-row-group-indent-' + paddingCount;
+        this.addCssClass(this.indentClass);
     }
 
     private setPaddingDeprecatedWay(paddingCount: number, padding: number): void {
@@ -165,7 +166,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    private addPadding(): void {
+    private setupIndent(): void {
 
         // only do this if an indent - as this overwrites the padding that
         // the theme set, which will make things look 'not aligned' for the
