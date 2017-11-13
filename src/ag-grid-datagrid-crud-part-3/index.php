@@ -76,8 +76,8 @@ include('../includes/mediaHeader.php');
             <p>Angular CLI will create a scaffolded project all ready to go - we can test it as follows:</p>
 
             <snippet>cd frontend
-                ng serve
-            </snippet>
+ng serve
+</snippet>
 
             <p>You can now navigate to <code>http://localhost:4200/</code> and see the results of the scaffolding:</p>
 
@@ -97,13 +97,13 @@ include('../includes/mediaHeader.php');
 
             <p>We'll run the <code>server</code> and <code>front end</code> code separately in development mode:</p>
 
-            <snippet>
-                // server
-                mvn spring-boot:run
+<snippet>
+// server
+mvn spring-boot:run
 
-                // in a separate terminal/window, serve the front end code
-                ng serve
-            </snippet>
+// in a separate terminal/window, serve the front end code
+ng serve
+</snippet>
 
             <h3>First Call to the Server</h3>
 
@@ -119,43 +119,43 @@ include('../includes/mediaHeader.php');
             <p>The <code>model</code> classes are pretty simple and are pretty much mirrors of their Java counterparts:
             </p>
 
-            <snippet language="ts">
-                import {Country} from './country.model';
-                import {Result} from './result.model';
+<snippet language="ts">
+import {Country} from './country.model';
+import {Result} from './result.model';
 
-                export class Athlete {
-                id: number;
-                name: string;
-                country: Country;
-                results: Result[];
-                }
-            </snippet>
+export class Athlete {
+    id: number;
+    name: string;
+    country: Country;
+    results: Result[];
+}
+</snippet>
 
             <p>We'll also create a <code>AthleteService</code> that will interact with our REST endpoint:</p>
 
-            <snippet language="ts">
-                import {Injectable} from '@angular/core';
-                import {Athlete} from '../model/athlete.model';
-                import {Http, Response} from '@angular/http';
-                import 'rxjs/add/operator/map'
-                import 'rxjs/add/operator/catch';
-                import {Observable} from 'rxjs/Observable';
+<snippet language="ts">
+import {Injectable} from '@angular/core';
+import {Athlete} from '../model/athlete.model';
+import {Http, Response} from '@angular/http';
+import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/catch';
+import {Observable} from 'rxjs/Observable';
 
-                @Injectable()
-                export class AthleteService {
+@Injectable()
+export class AthleteService {
 
-                private apiUrl = 'http://localhost:8080/athletes';
+    private apiUrl = 'http://localhost:8080/athletes';
 
-                constructor(private http: Http) {
-                }
+    constructor(private http: Http) {
+    }
 
-                findAll(): Observable&lt;Athlete[]&gt; {
-                return this.http.get(this.apiUrl)
-                .map((res: Response) => res.json())
-                .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
-                }
-                }
-            </snippet>
+    findAll(): Observable&lt;Athlete[]&gt; {
+        return this.http.get(this.apiUrl)
+            .map((res: Response) => res.json())
+            .catch((error: any) => Observable.throw(error.json().error || 'Server error'));
+    }
+}
+</snippet>
 
             <p>There's a fair bit going on here - we're creating a <code>Service</code> that will make use of Angular's
                 <code>Http</code> service. In order to access it we use Angular Dependency Injection facility, so all we
@@ -170,35 +170,35 @@ include('../includes/mediaHeader.php');
 
             <p>So far so good - let's plug this service into our application next:</p>
 
-            <snippet language="ts">
-                export class AppComponent implements OnInit {
-                private athletes: Athlete[];
+<snippet language="ts">
+export class AppComponent implements OnInit {
+    private athletes: Athlete[];
 
-                constructor(private athleteService: AthleteService) {
-                }
+    constructor(private athleteService: AthleteService) {
+    }
 
-                ngOnInit() {
-                this.athleteService.findAll().subscribe(
-                athletes => {
+    ngOnInit() {
+        this.athleteService.findAll().subscribe(
+            athletes => {
                 this.athletes = athletes
-                },
-                error => {
+            },
+            error => {
                 console.log(error);
-                }
-                )
-                }
-                }
-            </snippet>
+            }
+        )
+    }
+}
+</snippet>
 
             <p>We'll create a quick template to output our results:</p>
 
-            <snippet language="html" ng-non-bindable>&lt;div *ngFor="let athlete of athletes"&gt;
-                &lt;span&gt;{{athlete.id}}&lt;/span&gt;
-                &lt;span&gt;{{athlete.name}}&lt;/span&gt;
-                &lt;span&gt;{{athlete?.country?.name}}&lt;/span&gt;
-                &lt;span&gt;{{athlete?.results?.length}}&lt;/span&gt;
-                &lt;/div&gt;
-            </snippet>
+<snippet language="html" ng-non-bindable>&lt;div *ngFor="let athlete of athletes"&gt;
+    &lt;span&gt;{{athlete.id}}&lt;/span&gt;
+    &lt;span&gt;{{athlete.name}}&lt;/span&gt;
+    &lt;span&gt;{{athlete?.country?.name}}&lt;/span&gt;
+    &lt;span&gt;{{athlete?.results?.length}}&lt;/span&gt;
+&lt;/div&gt;
+</snippet>
 
             <show-sources example=""
                           sources="{
@@ -229,12 +229,12 @@ include('../includes/mediaHeader.php');
 
             <p>Let's head back to our <code>AthleteController.java</code> controller and enable CORS:</p>
 
-            <snippet language="ts">
-                @CrossOrigin(origins = "http://localhost:4200")
-                @RestController
-                public class AthleteController {
-                ... rest of the class
-            </snippet>
+<snippet language="ts">
+@CrossOrigin(origins = "http://localhost:4200")
+@RestController
+public class AthleteController {
+... rest of the class
+</snippet>
 
             <p>With this one line we're good to go. Note that in a real application you'd probably want to only enable
                 CORS
@@ -255,13 +255,13 @@ include('../includes/mediaHeader.php');
 
             <p>Ok, let's try that again - let's start our applications and checkout the results:</p>
 
-            <snippet>
-                // server
-                mvn spring-boot:run
+<snippet>
+// server
+mvn spring-boot:run
 
-                // in a separate terminal/window, serve the front end code
-                ng serve
-            </snippet>
+// in a separate terminal/window, serve the front end code
+ng serve
+</snippet>
 
             <p>Once both have started you can navigate to <a href="localhost:4200" target="_blank">localhost:4200</a>.
                 You should see something like this: </p>
@@ -298,13 +298,13 @@ include('../includes/mediaHeader.php');
             <p>In order to let the CLI know about the styles we want to add we need to add them to the <code>.angular-cli.json</code>
                 file. Look for the styles section and add the following CSS entries:</p>
 
-            <snippet>
-                "styles": [
-                "styles.css",
-                "../node_modules/ag-grid/dist/styles/ag-grid.css",
-                "../node_modules/ag-grid/dist/styles/theme-fresh.css"
-                ],
-            </snippet>
+<snippet>
+"styles": [
+    "styles.css",
+    "../node_modules/ag-grid/dist/styles/ag-grid.css",
+    "../node_modules/ag-grid/dist/styles/theme-fresh.css"
+],
+</snippet>
 
             <p><code>styles.css</code> is a style file generated by Angular CLI - you can either keep it or remove it.
                 We
@@ -313,20 +313,20 @@ include('../includes/mediaHeader.php');
             <p>Next we need to add the <code>AgGridModule</code> to our application. We do this by adding it to our
                 <code>app.module.ts</code>:</p>
 
-            <snippet language="ts">
-                ... other imports
-                import {AgGridModule} from 'ag-grid-angular';
+<snippet language="ts">
+... other imports
+import {AgGridModule} from 'ag-grid-angular';
 
-                @NgModule({
-                declarations: [
-                AppComponent
-                ],
-                imports: [
-                BrowserModule,
-                HttpModule,
-                AgGridModule
-                ...rest of module
-            </snippet>
+@NgModule({
+    declarations: [
+    AppComponent
+    ],
+    imports: [
+        BrowserModule,
+        HttpModule,
+        AgGridModule
+    ...rest of module
+</snippet>
 
             <p>We now have the ag-Grid dependencies all setup - our next step is to actually use ag-Grid to display some
                 data.</p>
@@ -339,14 +339,14 @@ include('../includes/mediaHeader.php');
 
             <p>This will create a new Angular component for us and automatically register it in our Angular module.</p>
 
-            <snippet>
-                installing component
-                create src/app/grid/grid.component.css
-                create src/app/grid/grid.component.html
-                create src/app/grid/grid.component.spec.ts
-                create src/app/grid/grid.component.ts
-                update src/app/app.module.ts
-            </snippet>
+<snippet>
+installing component
+create src/app/grid/grid.component.css
+create src/app/grid/grid.component.html
+create src/app/grid/grid.component.spec.ts
+create src/app/grid/grid.component.ts
+update src/app/app.module.ts
+</snippet>
 
             <p>Let's open up our new Component and inject our <code>AthleteService</code> as before. The <code>AthleteService</code>
                 will be responsible for supplying data to the Grid. Later, it will also be responsible for updates &
@@ -360,63 +360,63 @@ include('../includes/mediaHeader.php');
                 to access the <code>GridApi</code> and <code>ColumnApi</code> and secondly to auto resize the columns on
                 initialisation.</p>
 
-            <snippet language="ts">
-                export class GridComponent implements OnInit {
-                // row data and column definitions
-                private rowData: Athlete[];
-                private columnDefs: ColDef[];
+<snippet language="ts">
+export class GridComponent implements OnInit {
+    // row data and column definitions
+    private rowData: Athlete[];
+    private columnDefs: ColDef[];
 
-                // gridApi and columnApi
-                private api: GridApi;
-                private columnApi: ColumnApi;
+    // gridApi and columnApi
+    private api: GridApi;
+    private columnApi: ColumnApi;
 
-                // inject the athleteService
-                constructor(private athleteService: AthleteService) {
-                this.columnDefs = this.createColumnDefs();
-                }
+    // inject the athleteService
+    constructor(private athleteService: AthleteService) {
+        this.columnDefs = this.createColumnDefs();
+    }
 
-                // on init, subscribe to the athelete data
-                ngOnInit() {
-                this.athleteService.findAll().subscribe(
-                athletes => {
+    // on init, subscribe to the athelete data
+    ngOnInit() {
+        this.athleteService.findAll().subscribe(
+            athletes => {
                 this.rowData = athletes
-                },
-                error => {
+            },
+            error => {
                 console.log(error);
-                }
-                )
-                }
+            }
+        )
+    }
 
-                // one grid initialisation, grap the APIs and auto resize the columns to fit the available space
-                onGridReady(params): void {
-                this.api = params.api;
-                this.columnApi = params.columnApi;
+    // one grid initialisation, grap the APIs and auto resize the columns to fit the available space
+    onGridReady(params): void {
+        this.api = params.api;
+        this.columnApi = params.columnApi;
 
-                this.api.sizeColumnsToFit();
-                }
+        this.api.sizeColumnsToFit();
+    }
 
-                // create some simple column definitions
-                private createColumnDefs() {
-                return [
-                {field: 'id'},
-                {field: 'name'},
-                {field: 'country'},
-                {field: 'results'}
-                ]
-                }
-                }
-            </snippet>
+    // create some simple column definitions
+    private createColumnDefs() {
+        return [
+            {field: 'id'},
+            {field: 'name'},
+            {field: 'country'},
+            {field: 'results'}
+        ]
+    }
+}
+</snippet>
 
             <p>And our view template looks like this:</p>
 
-            <snippet language="html">
-                &lt;ag-grid-angular style="width: 100%; height: 800px;"
-                class="ag-theme-fresh"
-                (gridReady)="onGridReady($event)"
-                [columnDefs]="columnDefs"
-                [rowData]="rowData"&gt;
-                &lt;/ag-grid-angular&gt;
-            </snippet>
+<snippet language="html">
+&lt;ag-grid-angular style="width: 100%; height: 800px;"
+    class="ag-theme-fresh"
+    (gridReady)="onGridReady($event)"
+    [columnDefs]="columnDefs"
+    [rowData]="rowData"&gt;
+&lt;/ag-grid-angular&gt;
+</snippet>
 
             <p>Notice that this is where we're binding to the row data and column definitions, as well as hooking into
                 the <code>gridReady</code> event. There are other ways of doing this, but this is clearer and more
@@ -443,16 +443,16 @@ include('../includes/mediaHeader.php');
                     Value Getter</a> which will convert the complex raw data into
                 something more display friendly:</p>
 
-            <snippet language="ts">
-                private createColumnDefs() {
-                return [
-                {field: 'id'},
-                {field: 'name'},
-                {field: 'country', valueGetter: (params) => params.data.country.name},
-                {field: 'results', valueGetter: (params) => params.data.results.length}
-                ]
-                }
-            </snippet>
+<snippet language="ts">
+private createColumnDefs() {
+    return [
+        {field: 'id'},
+        {field: 'name'},
+        {field: 'country', valueGetter: (params) => params.data.country.name},
+        {field: 'results', valueGetter: (params) => params.data.results.length}
+    ]
+}
+</snippet>
 
             <p>Here the <code>valueGetter</code> callback will be called for every row for <code>country</code> and
                 <code>results</code>,
