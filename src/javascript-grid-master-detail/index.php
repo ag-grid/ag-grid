@@ -76,7 +76,7 @@ include '../documentation-main/documentation_header.php';
 </ul>
 </p>
 
-<?= example('Custom Detail Component without Grid', 'simple-custom-detail-component', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Custom Detail Component without Grid', 'custom-detail-without-grid', 'vanilla', array("enterprise" => 1)) ?>
 
 
 <h2>Example - Custom Detail Component with Grid</h2>

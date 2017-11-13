@@ -16,7 +16,7 @@ var masterGridOptions = {
             params.successCallback(params.data.callRecords);
         }
     },
-    detailRowHeight: 25,
+    detailRowHeight: 70,
     detailCellRenderer: DetailCellRenderer,
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
@@ -27,7 +27,29 @@ function DetailCellRenderer() {}
 
 DetailCellRenderer.prototype.init = function(params) {
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '<div style="text-align: center; border: 2px solid lightblue">Custom Detail Row</div>'
+    this.eGui.innerHTML =
+        '<form>' +
+        '  <div>' +
+        '  <p>' +
+        '    <label>' +
+        '      Name:<br>' +
+        '    <input type="text" value="' + params.data.name + '">' +
+        '    </label>' +
+        '  </p>' +
+        '  <p>' +
+        '    <label>' +
+        '      Account:<br>' +
+        '    <input type="text" value="' + params.data.account + '">' +
+        '    </label>' +
+        '  </p>' +
+        '  <p>' +
+        '    <label>' +
+        '      Calls:<br>' +
+        '    <input type="number" value="' + params.data.calls + '">' +
+        '    </label>' +
+        '  </p>' +
+        '</form>' +
+        '</div>';
 };
 
 DetailCellRenderer.prototype.getGui = function() {
