@@ -63,6 +63,6 @@ export class Beans {
     @PostConstruct
     private postConstruct(): void {
         this.forPrint = this.gridOptionsWrapper.isForPrint();
-        this.doingMasterDetail = _.exists(this.gridOptionsWrapper.getDetailGridOptions());
+        this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     }
 }
