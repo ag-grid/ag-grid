@@ -26,15 +26,17 @@ var masterGridOptions = {
     columnDefs: masterColumnDefs,
     rowData: rowData,
     enableColResize: true,
-    masterDetail: true,
-    detailRowHeight: 200,
-    detailGridOptions: detailGridOptions,
     defaultColDef: {
         editable: true
     },
-    getDetailRowData: function(params) {
-        params.successCallback(params.data.callRecords);
+    masterDetail: true,
+    detailCellRendererParams: {
+        detailGridOptions: detailGridOptions,
+        getDetailRowData: function(params) {
+            params.successCallback(params.data.callRecords);
+        }
     },
+    detailRowHeight: 200,
     onGridReady: function () {
         expandMasterRow1();
     }

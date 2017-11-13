@@ -22,10 +22,12 @@ var masterGridOptions = {
     columnDefs: masterColumnDefs,
     rowData: rowData,
     masterDetail: true,
-    detailGridOptions: detailGridOptions,
     detailRowHeight: 500,
-    getDetailRowData: function(params) {
-        params.successCallback(params.data.callRecords);
+    detailCellRendererParams: {
+        detailGridOptions: detailGridOptions,
+        getDetailRowData: function(params) {
+            params.successCallback(params.data.callRecords);
+        }
     }
 };
 

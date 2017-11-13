@@ -25,9 +25,11 @@ var masterGridOptions = {
     enableFilter: true,
     enableColResize: true,
     masterDetail: true,
-    detailGridOptions: detailGridOptions,
-    getDetailRowData: function(params) {
-        params.successCallback(params.data.callRecords);
+    detailCellRendererParams: {
+        detailGridOptions: detailGridOptions,
+        getDetailRowData: function (params) {
+            params.successCallback(params.data.callRecords);
+        }
     }
 };
 

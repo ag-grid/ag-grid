@@ -22,16 +22,16 @@ var masterGridOptions = {
     columnDefs: masterColumnDefs,
     rowData: rowData,
     masterDetail: true,
-    detailGridOptions: detailGridOptions,
     detailCellRendererParams: {
+        detailGridOptions: detailGridOptions,
+        getDetailRowData: function(params) {
+            params.successCallback(params.data.callRecords);
+        },
         template:
             '<div style="height: 100%; background-color: #eef; padding: 20px; box-sizing: border-box;">' +
             '  <div style="height: 10%;">Call Details</div>' +
             '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
             '</div>'
-    },
-    getDetailRowData: function(params) {
-        params.successCallback(params.data.callRecords);
     }
 };
 

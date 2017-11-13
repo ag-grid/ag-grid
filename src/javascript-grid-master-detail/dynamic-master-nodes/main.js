@@ -22,12 +22,14 @@ var masterGridOptions = {
     columnDefs: masterColumnDefs,
     rowData: rowData,
     masterDetail: true,
-    detailGridOptions: detailGridOptions,
-    getDetailRowData: function(params) {
-        params.successCallback(params.data.callRecords);
+    detailCellRendererParams: {
+        detailGridOptions: detailGridOptions,
+        getDetailRowData: function (params) {
+            params.successCallback(params.data.callRecords);
+        }
     },
-    isRowMaster: function(params) {
-       return params ? params.callRecords.length > 0 : false;
+    isRowMaster: function (params) {
+        return params ? params.callRecords.length > 0 : false;
     }
 };
 

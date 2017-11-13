@@ -11,9 +11,11 @@ var masterGridOptions = {
     rowData: rowData,
     masterDetail: true,
     detailCellRenderer: DetailCellRenderer,
-    getDetailRowData: function(params) {
-        params.successCallback(params.data.callRecords);
-    }
+    detailCellRendererParams: {
+        getDetailRowData: function(params) {
+            params.successCallback(params.data.callRecords);
+        }
+    },
 };
 
 function DetailCellRenderer() {}
