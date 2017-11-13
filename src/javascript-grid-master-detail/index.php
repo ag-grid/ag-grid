@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= example('Simple Example', 'simple', 'generated') ?>
+<?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Example - Using String Template</h2>
 
@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
 
 <?= example('Template Callback with Inner Grid', 'template-callback-inner-grid', 'generated', array("enterprise" => 1)) ?>
 
-<h2>Example - Using Template Callback with Form</h2>
+<h2>Example - Custom Detail Component without Grid</h2>
 
 <p>
     Below shows a simple master / detail setup. From the example you can notice the following:
@@ -76,9 +76,10 @@ include '../documentation-main/documentation_header.php';
 </ul>
 </p>
 
-<?= example('Template Callback with Form', 'template-callback-form', 'generated', array("enterprise" => 1)) ?>
+<?= example('Custom Detail Component without Grid', 'simple-custom-detail-component', 'generated', array("enterprise" => 1)) ?>
 
-<h2>Example - Custom Detail Component</h2>
+
+<h2>Example - Custom Detail Component with Grid</h2>
 
 <p>
     Below shows a simple master / detail setup. From the example you can notice the following:
@@ -87,7 +88,7 @@ include '../documentation-main/documentation_header.php';
 </ul>
 </p>
 
-<?= example('Custom Detail Component', 'custom-detail-component', 'generated', array("enterprise" => 1)) ?>
+<?= example('Custom Detail Component with Grid', 'custom-detail-with-grid', 'generated', array("enterprise" => 1)) ?>
 
 
 <h2>Example - Editing Cells</h2>

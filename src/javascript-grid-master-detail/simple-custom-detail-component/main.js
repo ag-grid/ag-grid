@@ -10,19 +10,24 @@ var masterGridOptions = {
     columnDefs: masterColumnDefs,
     rowData: rowData,
     masterDetail: true,
+    detailRowHeight: 25,
     detailCellRenderer: DetailCellRenderer,
-    detailCellRendererParams: {
-        getDetailRowData: function(params) {
-            params.successCallback(params.data.callRecords);
-        }
+    getDetailRowData: function(params) {
+        params.successCallback(params.data.callRecords);
     },
+    onGridReady: function(params) {
+        params.api.forEachNode(function (node) {
+            node.setExpanded(node.id === "1");
+        });
+        params.api.sizeColumnsToFit();
+    }
 };
 
 function DetailCellRenderer() {}
 
 DetailCellRenderer.prototype.init = function(params) {
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '<div style="border: 2px solid green;">This is the detail grid</div>'
+    this.eGui.innerHTML = '<div style="border: 2px solid lightblue">Custom Detail Row</div>'
 };
 
 DetailCellRenderer.prototype.getGui = function() {
