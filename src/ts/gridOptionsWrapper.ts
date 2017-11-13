@@ -322,13 +322,15 @@ export class GridOptionsWrapper {
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
     public getAlignedGrids(): GridOptions[] { return this.gridOptions.alignedGrids; }
     public isMasterDetail() {
+        let usingMasterDetail = isTrue(this.gridOptions.masterDetail);
+
         _.doOnce(() => {
-            if (!this.enterprise) {
+            if (usingMasterDetail && !this.enterprise) {
                 console.warn('ag-grid: Master Detail is an Enterprise feature of ag-Grid.')
             }
         }, 'MasterDetailEnterpriseCheck');
 
-        return this.enterprise && isTrue(this.gridOptions.masterDetail);
+        return usingMasterDetail && this.enterprise;
     }
     public getDetailGridOptions(): GridOptions { return this.gridOptions.detailGridOptions; }
     public getIsRowMasterFunc(): IsRowMaster { return this.gridOptions.isRowMaster; }
