@@ -33,7 +33,6 @@ include '../documentation-main/documentation_header.php';
             <a href="../example-polymer-floating-row/" class="column-links column-items">Floating Row Renderer</a>
             <a href="../example-polymer-full-width-rows/" class="column-links column-items">Full Width Renderer</a>
             <a href="../example-polymer-grouped-row/" class="column-links column-items">Group Row Inner Renderer</a>
-            <a href="../example-polymer-master-detail/" class="column-links column-items">Master/Detail Components</a>
         </div>
     </div>
 </div>

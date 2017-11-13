@@ -254,7 +254,6 @@
     menuItem(2, 'React Pinned Row', 'Pinned Rows', 'example-react-floating-row/');
     menuItem(2, 'React Full Width', 'Full Width Rows', 'example-react-full-width-rows/');
     menuItem(2, 'React Group Row', 'Group Rows', 'example-react-grouped-row/');
-    menuItem(2, 'React MasterDetail', 'Master/Detail', 'example-react-master-detail/');
     menuItem(2, 'React Redux', 'Redux Examples', 'example-react-redux/');
 
     menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);
@@ -267,7 +266,6 @@
     menuItem(2, 'Angular Pinned Row', 'Pinned Rows', 'example-angular-floating-row/');
     menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
     menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
-    menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
     menuItem(2, 'Angular RxJS', 'RxJS', 'example-angular-rxjs/');
     menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
 
@@ -280,7 +278,6 @@
     menuItem(2, 'Polymer Pinned Row', 'Pinned Rows', 'example-polymer-floating-row/');
     menuItem(2, 'Polymer Full Width', 'Full Width Rows', 'example-polymer-full-width-rows/');
     menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');
-    menuItem(2, 'Polymer MasterDetail', 'Master/Detail', 'example-polymer-master-detail/');
 
     menuItemWithIcon('svg/javascript.svg', 1, 'JavaScript Examples', 'Plain JavaScript', 'example-javascript/', true);
     menuItem(2, 'Styled Report', 'Styled Report', 'example-account-report/');

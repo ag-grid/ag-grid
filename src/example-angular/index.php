@@ -34,7 +34,6 @@ include '../documentation-main/documentation_header.php';
             <a href="../example-angular-floating-row/" class="column-links column-items">Pinned Row Renderer</a>
             <a href="../example-angular-full-width-rows/" class="column-links column-items">Full Width Renderer</a>
             <a href="../example-angular-grouped-row/" class="column-links column-items">Group Row Inner Renderer</a>
-            <a href="../example-angular-master-detail/" class="column-links column-items">Master/Detail Components</a>
         </div>
     </div>
 
