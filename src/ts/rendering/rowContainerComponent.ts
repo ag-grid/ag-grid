@@ -20,6 +20,8 @@ export class RowContainerComponent {
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
 
+    // full width containers only show when no children, because they float above the normal rows,
+    // it adds complexity that can be confusing when inspecting the dom when they are not needed.
     private hideWhenNoChildren: boolean;
     private childCount = 0;
     private visible: boolean;
@@ -27,6 +29,8 @@ export class RowContainerComponent {
     private rowTemplatesToAdd: string[] = [];
     private afterGuiAttachedCallbacks: Function[] = [];
 
+    // we ensure the rows are in the dom in the order in which they appear on screen when the
+    // user requests this via gridOptions.ensureDomOrder. this is typically used for screen readers.
     private domOrder: boolean;
     private lastPlacedElement: HTMLElement;
 
@@ -53,7 +57,7 @@ export class RowContainerComponent {
     public flushRowTemplates(): void {
 
         // if doing dom order, then rowTemplates will be empty,
-        // or if now rows added since last time also empty.
+        // or if no rows added since last time also empty.
         if (this.rowTemplatesToAdd.length!==0) {
             let htmlToAdd = this.rowTemplatesToAdd.join('');
             _.appendHtml(this.eContainer, htmlToAdd);
