@@ -167,6 +167,8 @@
     $value-change-delta-up-color: map-get($params, 'value-change-delta-up-color');
     $value-change-delta-down-color: map-get($params, 'value-change-delta-down-color');
     $value-change-value-highlight-background-color: map-get($params, 'value-change-value-highlight-background-color');
+    $toolpanel-indent-size: map-get($params, 'toolpanel-indent-size');
+    $row-group-indent-size: map-get($params, 'row-group-indent-size');
 
     ////////////////////////////////////////
     // Chinese wall of inline vars over
@@ -181,11 +183,11 @@
 
     // indentation loop
     @for $i from 1 to 50 {
-        .ag-ltr .ag-toolpanel-indent-#{$i} { padding-left: $i * ($grid-size + $icon-size); }
-        .ag-rtl .ag-toolpanel-indent-#{$i} { padding-right: $i * ($grid-size + $icon-size); }
+        .ag-ltr .ag-toolpanel-indent-#{$i} { padding-left: $i * $toolpanel-indent-size; }
+        .ag-rtl .ag-toolpanel-indent-#{$i} { padding-right: $i * $toolpanel-indent-size; }
 
-        .ag-ltr .ag-row-group-indent-#{$i} { padding-left: $i * ($grid-size * 3 + $icon-size); }
-        .ag-rtl .ag-row-group-indent-#{$i} { padding-right: $i * ($grid-size * 3 + $icon-size); }
+        .ag-ltr .ag-row-group-indent-#{$i} { padding-left: $i * $row-group-indent-size; }
+        .ag-rtl .ag-row-group-indent-#{$i} { padding-right: $i * $row-group-indent-size; }
     }
 
     // used by the animateShowChangedCellRenderer
