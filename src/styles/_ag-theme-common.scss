@@ -26,7 +26,7 @@
     $size: map-get($params, 'icon-size');
     $color: map-get($params, 'foreground-color');
     background-color: transparent;
-    background-image: url('#{map-get($params, 'icons-path')}#{$icon}.svg?color=#{encodecolor(map-get($params, 'icon-color'))}&altColor=#{encodecolor(map-get($params, 'alt-icon-color'))}');
+    background-image: url('#{map-get($params, 'icons-path')}#{$icon}.svg?color1=#{encodecolor(map-get($params, 'icon-color'))}&color2=#{encodecolor(map-get($params, 'alt-icon-color'))}');
     background-position: center;
     background-repeat: no-repeat;
     background-size: $size $size;
@@ -36,7 +36,7 @@
 }
 
 @mixin colorful-icon($path, $icon, $color, $altColor) {
-    background-image: url('#{map-get($params, 'icons-path')}#{$icon}.svg?color=#{encodecolor($color)}&altColor=#{encodecolor($altColor)}');
+    background-image: url('#{map-get($params, 'icons-path')}#{$icon}.svg?color1=#{encodecolor($color)}&color2=#{encodecolor($altColor)}');
 }
 
 @mixin card($params) {
@@ -796,7 +796,7 @@
     ////////////////////////////////////////
     .ag-rich-select {
         background-color: $editor-background-color-color;
-        background-image: url('#{$icons-path}tree-open.svg?color=#{encodecolor(map-get($params, 'icon-color'))}');
+        background-image: url('#{$icons-path}tree-open.svg?color1=#{encodecolor(map-get($params, 'icon-color'))}');
         background-position-x: calc(100% - #{$grid-size});
         background-position-y: $grid-size * 2;
         background-repeat: no-repeat;
