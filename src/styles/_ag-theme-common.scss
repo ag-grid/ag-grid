@@ -310,7 +310,7 @@
     ////////////////////////////////////////
     // Navigation
     ////////////////////////////////////////
-    .ag-cell:focus {
+    .ag-cell-focus {
         border: 1px solid $primary-color;
         outline: initial;
     }
@@ -993,6 +993,7 @@
 
     .ag-select-agg-func-popup {
         @include card($params);
+        background: $background-color;
         padding: 0;
         height: $grid-size * 5 * 3.5;
 
@@ -1003,7 +1004,7 @@
         }
 
         .ag-virtual-list-item:hover {
-            background-color: $hover-color;
+            background-color: map-get($params, 'menu-option-active-color');
         }
     }
 

@@ -218,4 +218,8 @@
         position: relative;
         top: 0;
     }
+
+    .ag-rich-select-value {
+        border-bottom: 1px solid $border-color;
+    }
 }
