@@ -146,14 +146,15 @@ export interface ColumnVO {
     passed back as you interact with the grid.
 </p>
 
-<h1>Example - Predefined Master Detail - Mocked Server</h1>
+<h1>Example - Pre-defined Grouping - Mocked Server</h1>
 
 <p>
-    Below shows an example of predefined master / detail using the olympic winners dataset.
-    It is pre-defined as we set the grid with a particular grouping, and then
-    our datasource knows that the grid will either be asking for the top level
-    nodes (country list) OR the grid will be looking for the leaf nodes (winners
-    for a particular country).
+    Below shows an example of pre-defined grouping using the olympic winners dataset.
+    It is pre-defined as we set the grid with specific columns for row grouping and
+    do not allow the user to change this. Then
+    the datasource knows that the grid will either be asking for the top level
+    country list OR the grid will be looking for winners
+    for a particular country.
 </p>
 
 <p>
