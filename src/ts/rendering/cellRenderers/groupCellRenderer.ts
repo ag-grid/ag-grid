@@ -117,7 +117,9 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    private setPadding(): void {
+    private paddingClass: string;
+
+    private setIndent(): void {
 
         if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
             return;
@@ -135,18 +137,24 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
             paddingCount += 1;
         }
 
-        if (paddingCount > 0) {
-            if (params.padding >= 0) {
-                let paddingPx = paddingCount * params.padding;
-                this.setPaddingDeprecatedWay(paddingPx);
-            } else {
-                this.addCssClass('ag-row-group-indent-' + paddingCount);
-            }
+        let userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
+        if (userProvidedPaddingPixelsTheDeprecatedWay) {
+            this.setPaddingDeprecatedWay(paddingCount, params.padding);
+            return;
         }
+
+        if (this.paddingClass) {
+            this.removeCssClass(this.paddingClass);
+        }
+
+        this.paddingClass = 'ag-row-group-indent-' + paddingCount;
+        this.addCssClass(this.paddingClass);
     }
 
-    private setPaddingDeprecatedWay(paddingPx: number): void {
+    private setPaddingDeprecatedWay(paddingCount: number, padding: number): void {
         _.doOnce( () => console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation.'), 'groupCellRenderer->doDeprecatedWay');
+
+        let paddingPx = paddingCount * padding;
 
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // if doing rtl, padding is on the right
@@ -166,8 +174,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         let suppressPadding = this.params.suppressPadding;
 
         if (!suppressPadding) {
-            this.addDestroyableEventListener(node, RowNode.EVENT_UI_LEVEL_CHANGED, this.setPadding.bind(this));
-            this.setPadding();
+            this.addDestroyableEventListener(node, RowNode.EVENT_UI_LEVEL_CHANGED, this.setIndent.bind(this));
+            this.setIndent();
         }
     }
 
