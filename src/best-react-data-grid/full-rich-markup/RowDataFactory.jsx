@@ -1,12 +1,12 @@
-import RefData from './RefData';
+import RefData from './RefData.jsx';
 
 export default class RowDataFactory {
 
     createRowData() {
-        var rowData = [];
+        const rowData = [];
 
-        for (var i = 0; i < 200; i++) {
-            var countryData = RefData.COUNTRIES[i % RefData.COUNTRIES.length];
+        for (let i = 0; i < 200; i++) {
+            const countryData = RefData.COUNTRIES[i % RefData.COUNTRIES.length];
             rowData.push({
                 name: RefData.FIRST_NAMES[i % RefData.FIRST_NAMES.length] + ' ' + RefData.LAST_NAMES[i % RefData.LAST_NAMES.length],
                 skills: {
@@ -32,8 +32,8 @@ export default class RowDataFactory {
     }
 
     createRandomPhoneNumber() {
-        var result = '+';
-        for (var i = 0; i < 12; i++) {
+        let result = '+';
+        for (let i = 0; i < 12; i++) {
             result += Math.round(Math.random() * 10);
             if (i === 2 || i === 5 || i === 8) {
                 result += ' ';

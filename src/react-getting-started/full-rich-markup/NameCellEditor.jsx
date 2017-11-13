@@ -1,10 +1,9 @@
 import React from 'react';
-import RefData from './RefData';
 import * as PropTypes from 'prop-types';
 
-var KEY_BACKSPACE = 8;
-var KEY_DELETE = 46;
-var KEY_F2 = 113;
+const KEY_BACKSPACE = 8;
+const KEY_DELETE = 46;
+const KEY_F2 = 113;
 
 // cell renderer for the proficiency column. this is a very basic cell editor,
 export default class NameCellEditor extends React.Component {
@@ -20,9 +19,9 @@ export default class NameCellEditor extends React.Component {
     // experience is similar to Excel
     createInitialState(props) {
 
-        var startValue;
-        var putCursorAtEndOnFocus = false;
-        var highlightAllOnFocus = false;
+        let startValue;
+        const putCursorAtEndOnFocus = false;
+        const highlightAllOnFocus = false;
 
         if (props.keyPress === KEY_BACKSPACE || props.keyPress === KEY_DELETE) {
             // if backspace or delete pressed, we clear the cell
@@ -56,7 +55,7 @@ export default class NameCellEditor extends React.Component {
     onChangeListener(event) {
         // if doing React, you will probably be using a library for managing immutable
         // objects better. to keep this example simple, we don't use one.
-        var newState = {
+        const newState = {
             value: event.target.value,
             putCursorAtEndOnFocus: this.state.putCursorAtEndOnFocus,
             highlightAllOnFocus: this.state.highlightAllOnFocus
@@ -73,7 +72,7 @@ export default class NameCellEditor extends React.Component {
     // view, it may not yet be in the browser (put in by ag-Grid) so focus will not work
     afterGuiAttached() {
         // get ref from React component
-        var eInput = this.refs.textField;
+        const eInput = this.refs.textField;
         eInput.focus();
         if (this.highlightAllOnFocus) {
             eInput.select();
@@ -82,7 +81,7 @@ export default class NameCellEditor extends React.Component {
             // this comes into play in two scenarios: a) when user hits F2 and b)
             // when user hits a printable character, then on IE (and only IE) the carot
             // was placed after the first character, thus 'apply' would end up as 'pplea'
-            var length = eInput.value ? eInput.value.length : 0;
+            const length = eInput.value ? eInput.value.length : 0;
             if (length > 0) {
                 eInput.setSelectionRange(length, length);
             }
@@ -101,7 +100,7 @@ export default class NameCellEditor extends React.Component {
 
     // just to demonstrate, if you type in 'cancel' then the edit will not take effect
     isCancelAfterEnd() {
-        if (this.state.value && this.state.value.toUpperCase()==='CANCEL') {
+        if (this.state.value && this.state.value.toUpperCase() === 'CANCEL') {
             return true;
         } else {
             return false;

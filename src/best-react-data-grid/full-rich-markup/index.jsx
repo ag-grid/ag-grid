@@ -2,9 +2,10 @@
 
 import React from "react"
 import {render} from "react-dom"
-import RichGridExample from 'app/RichGridExample'
+
+import Grid from './RichGridDeclarativeExample.jsx'
 
 render(
-    <RichGridExample></RichGridExample>,
+    <Grid></Grid>,
     document.querySelector('#root')
 )

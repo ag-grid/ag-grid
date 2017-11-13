@@ -1,5 +1,4 @@
 import React from 'react';
-import RefData from './RefData';
 
 // cell renderer for the proficiency column. this is a very basic cell renderer,
 // it is arguable that we should not of used React and just returned a string of
@@ -7,7 +6,7 @@ import RefData from './RefData';
 export default class ProficiencyCellRenderer extends React.Component {
 
     render() {
-        var backgroundColor;
+        let backgroundColor;
         if (this.props.value < 20) {
             backgroundColor = 'red';
         } else if (this.props.value < 60) {
@@ -17,7 +16,7 @@ export default class ProficiencyCellRenderer extends React.Component {
         }
 
         return (
-            <div className="div-percent-bar" style={{ width: this.props.value + '%', backgroundColor: backgroundColor }}>
+            <div className="div-percent-bar" style={{width: this.props.value + '%', backgroundColor: backgroundColor}}>
                 <div className="div-percent-value">{this.props.value}%</div>
             </div>
         );
