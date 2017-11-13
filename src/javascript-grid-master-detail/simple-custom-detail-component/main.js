@@ -10,11 +10,13 @@ var masterGridOptions = {
     columnDefs: masterColumnDefs,
     rowData: rowData,
     masterDetail: true,
+    detailCellRendererParams: {
+        getDetailRowData: function(params) {
+            params.successCallback(params.data.callRecords);
+        }
+    },
     detailRowHeight: 25,
     detailCellRenderer: DetailCellRenderer,
-    getDetailRowData: function(params) {
-        params.successCallback(params.data.callRecords);
-    },
     onGridReady: function(params) {
         params.api.forEachNode(function (node) {
             node.setExpanded(node.id === "1");
