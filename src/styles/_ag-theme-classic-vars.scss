@@ -30,3 +30,6 @@ $card-radius: 0;
 
 $toolpanel-indent-size: $grid-size + $icon-size !default;
 $row-group-indent-size: $grid-size * 3 + $icon-size !default;
+
+// same in all themes
+$header-cell-moving-background-color: rgb(190, 190, 190) !default;

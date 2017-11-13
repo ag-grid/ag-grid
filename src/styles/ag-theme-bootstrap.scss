@@ -47,6 +47,9 @@ $ag-range-selected-color-2: rgba(80, 80, 80, 0.4) !default;
 $ag-range-selected-color-3: rgba(40, 40, 40, 0.4) !default;
 $ag-range-selected-color-4: rgba(0, 0, 0, 0.4) !default;
 
+$row-floating-background-color: #f0f0f0 !default;
+$row-stub-background-color: #f0f0f0 !default;
+
 // delta changes
 $value-change-delta-up-color: darkgreen !default;
 $value-change-delta-down-color: darkred !default;
@@ -79,6 +82,7 @@ $params: (
     background-color: $background-color,
     tab-background-color: $tab-background-color,
     odd-row-background-color: $odd-row-background-color,
+    header-cell-moving-background-color: $header-cell-moving-background-color,
     icon-color: $icon-color,
     border-color: $border-color,
     button-background-color: transparent,
@@ -111,7 +115,9 @@ $params: (
     cell-horizontal-border: $cell-horizontal-border,
     value-change-delta-up-color: $value-change-delta-up-color,
     value-change-delta-down-color: $value-change-delta-down-color,
-    value-change-value-highlight-background-color: $value-change-value-highlight-background-color
+    value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
+    row-floating-background-color: $row-floating-background-color,
+    row-stub-background-color: $row-stub-background-color,
 );
 
 .ag-theme-bootstrap {

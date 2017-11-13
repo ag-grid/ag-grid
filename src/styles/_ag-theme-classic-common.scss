@@ -53,6 +53,17 @@
         opacity: 0.3;
     }
 
+    [ref=north] {
+        .ag-column-drop {
+            border: 1px solid $border-color;
+            border-bottom: 0;
+        }
+
+        .ag-column-drop:last-child {
+            border-left: 0;
+        }
+    }
+
     .ag-header {
         border-bottom: 1px solid $border-color;
         background-image: $header-background-image;
@@ -85,8 +96,8 @@
     }
 
     .ag-tool-panel {
-        border-top: 1px solid $border-color;
-        border-bottom: 1px solid $border-color;
+        border: 1px solid $border-color;
+        border-left: 0;
     }
 
     .ag-cell-no-focus {
@@ -221,5 +232,12 @@
 
     .ag-rich-select-value {
         border-bottom: 1px solid $border-color;
+    }
+
+    .ag-header-cell-moving .ag-header-cell-label {
+        opacity: 0.5;
+    }
+    .ag-header-cell-moving {
+        background-color: map-get($params, 'header-cell-moving-background-color');
     }
 }

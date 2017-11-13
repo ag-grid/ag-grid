@@ -53,6 +53,9 @@ $value-change-delta-up-color: darkgreen !default;
 $value-change-delta-down-color: darkred !default;
 $value-change-value-highlight-background-color: #cec !default;
 
+$row-floating-background-color: #f0f0f0 !default;
+$row-stub-background-color: #f0f0f0 !default;
+
 $params: (
     grid-size: $grid-size,
     icon-size: $icon-size,
@@ -80,6 +83,7 @@ $params: (
     background-color: $background-color,
     tab-background-color: $tab-background-color,
     odd-row-background-color: $odd-row-background-color,
+    header-cell-moving-background-color: $header-cell-moving-background-color,
     icon-color: $icon-color,
     alt-icon-color: $alt-icon-color,
     border-color: $border-color,
@@ -113,7 +117,9 @@ $params: (
     cell-horizontal-border: $cell-horizontal-border,
     value-change-delta-up-color: $value-change-delta-up-color,
     value-change-delta-down-color: $value-change-delta-down-color,
-    value-change-value-highlight-background-color: $value-change-value-highlight-background-color
+    value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
+    row-floating-background-color: $row-floating-background-color,
+    row-stub-background-color: $row-stub-background-color,
 );
 
 .ag-theme-blue {

@@ -171,4 +171,13 @@ $params: (
     }
 
     @include ag-grid-theme($params);
+
+    .ag-cell-highlight {
+        background-color: $range-selection-highlight-color !important;
+    }
+
+    .ag-cell-highlight-animation {
+        transition: background-color 1s;
+    }
+
 }

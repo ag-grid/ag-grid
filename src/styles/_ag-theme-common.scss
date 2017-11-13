@@ -169,6 +169,7 @@
     $value-change-value-highlight-background-color: map-get($params, 'value-change-value-highlight-background-color');
     $toolpanel-indent-size: map-get($params, 'toolpanel-indent-size');
     $row-group-indent-size: map-get($params, 'row-group-indent-size');
+    $row-floating-background-color: map-get($params, 'row-floating-background-color');
 
     ////////////////////////////////////////
     // Chinese wall of inline vars over
@@ -190,16 +191,33 @@
         .ag-rtl .ag-row-group-indent-#{$i} { padding-right: $i * $row-group-indent-size; }
     }
 
+    // we use rtl and ltr below, even though it's the same style, so it propertly
+    .ag-rtl .ag-cell-first-right-pinned {
+        border-left: 1px solid $border-color;
+    }
+    .ag-ltr .ag-cell-first-right-pinned {
+        border-left: 1px solid $border-color;
+    }
+    .ag-rtl .ag-cell-last-left-pinned {
+        border-right: 1px solid $border-color;
+    }
+    .ag-ltr .ag-cell-last-left-pinned {
+        border-right: 1px solid $border-color;
+    }
+
     // used by the animateShowChangedCellRenderer
     .ag-value-change-delta {
         padding-right: 2px;
     }
+
     .ag-value-change-delta-up {
         color: $value-change-delta-up-color;
     }
+
     .ag-value-change-delta-down {
         color: $value-change-delta-down-color;
     }
+
     .ag-value-change-value {
         background-color: transparent;
         border-radius: 1px;
@@ -313,14 +331,6 @@
     .ag-cell-focus {
         border: 1px solid $primary-color;
         outline: initial;
-    }
-
-    .ag-cell-highlight {
-        background-color: $range-selection-highlight-color !important;
-    }
-
-    .ag-cell-highlight-animation {
-        transition: background-color 1s;
     }
 
     ////////////////////////////////////////
@@ -1020,13 +1030,48 @@
     }
 
     // cell data changed
-    .ag-cell-data-changed-color {
-        background-color: $cell-data-changed-color;
+    .ag-cell-data-changed {
+        background-color: $value-change-value-highlight-background-color !important;
     }
 
-    .ag-cell-data-changed-color-animation {
+    .ag-cell-data-changed-animation {
         background-color: transparent;
         transition: background-color 1s;
+    }
+
+    .ag-row-stub {
+        background-color: map-get($params, 'row-stub-background-color');
+    }
+
+    .ag-stub-cell {
+        padding-left: $cell-horizontal-padding;
+        padding-top: $grid-size;
+
+        .ag-loading-icon {
+            float: left;
+            height: 100%;
+        }
+
+        .ag-loading-text {
+            margin-top: $grid-size;
+            margin-left: $grid-size;
+            float: left;
+            height: 100%;
+        }
+    }
+
+    .ag-floating-top {
+        background-color: $row-floating-background-color;
+    }
+
+    .ag-floating-top {
+        .ag-row {
+            background-color: $row-floating-background-color;
+        }
+    }
+
+    .ag-floating-bottom {
+        background-color: $row-floating-background-color;
     }
 
     ////////////////////////////////////////
