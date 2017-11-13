@@ -170,10 +170,10 @@ include '../documentation-main/documentation_header.php';
 
 <h2>Supported Modes</h2>
 
-<h4>Row Models</h4>
+<h3>Row Models</h3>
 
 <p>
-    The master grid in master / detail can only be using the
+    The master grid (i.e. the top level grid) in master / detail can only be using the
     <a href="../javascript-grid-in-memory/">In Memory</a> row model.
     It is not supported with <a href="../javascript-grid-enterprise-model/">Enterprise</a>,
     <a href="../javascript-grid-viewport">Viewport</a> or
@@ -183,10 +183,18 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    The detail grid can use any of the row models.
+    The detail grid (i.e. the child grid) can use any of the row models. Thus as long as the
+    master grid uses <a href="../javascript-grid-in-memory/">In Memory</a>, then the detail
+    grid can use any of the other row models.
 </p>
 
-<h4>Tree Data</h4>
+<p>
+    The reason for this is that the row expand and collapse is either not support (viewport and
+    infinite row models) or has a different meaning (enterprise row model loads more rows when
+    you expand).
+</p>
+
+<h3>Tree Data</h3>
 
 <p>
     Master detail is not supported with <a href="../javascript-grid-tree-data">Tree Data</a>.
@@ -195,6 +203,24 @@ include '../documentation-main/documentation_header.php';
     has child rows in addition to having master / detail at the same row.
 </p>
 
+<h3>Layouts</h3>
+
+<p>
+    It is not possible to mix <a href="../javascript-grid-width-and-height/#dom-layout">DOM layout</a>
+    for master detail. This is because the layout is a CSS setting that would be inherited by all
+    grids contained with the master grid. So if your master grid was 'for-print', then all child grids
+    would pick up the 'for-print' layout.
+</p>
+
+<p>
+    When using master detail and <a href="../javascript-grid-for-print/">for-print</a>,
+    then all detail grids need to use for-print.
+</p>
+
+<p>
+    When using master / detail and <a href="../javascript-grid-width-and-height/#autoHeight">auto-height</a>,
+    then all detail grids need to use auto-height.
+</p>
 
 <div style="border-left: 4px solid lightcoral; padding-left: 4px;">
 
