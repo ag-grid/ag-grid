@@ -34,15 +34,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-
-    <show-complex-example example="exampleAutoHeightFullWidth.html"
-                          sources="{
-                        [
-                            { root: './', files: 'exampleAutoHeightFullWidth.html,exampleAutoHeightFullWidth.js' }
-                        ]
-                      }"
-                          exampleheight="500px">
-    </show-complex-example>
+    <?= example('Auto Height & Full Width', 'auto-height-full-width', 'generated') ?>
 
     <hr/>
 
@@ -61,8 +53,7 @@ include '../documentation-main/documentation_header.php';
         children of the group are visible.
     </p>
 
-    <show-example example="exampleTreeScroll"></show-example>
-
+    <?= example('Row Group Scroll', 'row-group-scroll', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Enterprise Row Model & Complex Columns</h2>
 
@@ -96,14 +87,7 @@ row = {
         with dot notation, ie <code>year.name</code>
     </p>
 
-    <show-complex-example example="exampleEnterpriseComplexObjects.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleEnterpriseComplexObjects.html,exampleEnterpriseComplexObjects.js,complexColumns.js,mockServerComplex.js' }
-                                ]
-                              }"
-                          exampleheight="500px">
-    </show-complex-example>
+    <?= example('Enterprise Complex Objects', 'enterprise-complex-objects', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Flower Nodes</h2>
 
