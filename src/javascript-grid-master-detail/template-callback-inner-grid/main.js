@@ -15,7 +15,10 @@ var detailColumnDefs = [
 ];
 
 var detailGridOptions = {
-    columnDefs: detailColumnDefs
+    columnDefs: detailColumnDefs,
+    onGridReady: function (params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
 var masterGridOptions = {
@@ -24,16 +27,22 @@ var masterGridOptions = {
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: detailGridOptions,
-        getDetailRowData: function(params) {
+        getDetailRowData: function (params) {
             params.successCallback(params.data.callRecords);
         },
-        template: function(params) {
+        template: function (params) {
             var personName = params.data.name;
             return '<div style="height: 100%; background-color: #eef; padding: 20px; box-sizing: border-box;">'
-                  +'  <div style="height: 10%;">Name: '+personName+'</div>'
-                  +'  <div ref="eDetailGrid" style="height: 90%;"></div>'
-                  +'</div>';
+                + '  <div style="height: 10%;">Name: ' + personName + '</div>'
+                + '  <div ref="eDetailGrid" style="height: 90%;"></div>'
+                + '</div>';
         }
+    },
+    onGridReady: function (params) {
+        params.api.forEachNode(function (node) {
+            node.setExpanded(node.id === "1");
+        });
+        params.api.sizeColumnsToFit();
     }
 };
 

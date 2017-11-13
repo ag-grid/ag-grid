@@ -61,41 +61,6 @@ var rowData = [{
             "number": "(05) 10830657"
         }, {
             "name": "susan",
-            "callId": 588,
-            "duration": 109,
-            "switchCode": "SW9",
-            "direction": "In",
-            "number": "(05) 10815312"
-        }, {
-            "name": "susan",
-            "callId": 589,
-            "duration": 39,
-            "switchCode": "SW7",
-            "direction": "Out",
-            "number": "(05) 89618828"
-        }, {
-            "name": "susan",
-            "callId": 590,
-            "duration": 108,
-            "switchCode": "SW3",
-            "direction": "Out",
-            "number": "(09) 15893215"
-        }, {
-            "name": "susan",
-            "callId": 591,
-            "duration": 33,
-            "switchCode": "SW9",
-            "direction": "Out",
-            "number": "(03) 24536100"
-        }, {
-            "name": "susan",
-            "callId": 592,
-            "duration": 93,
-            "switchCode": "SW9",
-            "direction": "Out",
-            "number": "(02) 80845157"
-        }, {
-            "name": "susan",
             "callId": 593,
             "duration": 114,
             "switchCode": "SW6",
@@ -117,25 +82,11 @@ var rowData = [{
             "number": "(08) 36133013"
         }, {
             "name": "susan",
-            "callId": 596,
-            "duration": 82,
-            "switchCode": "SW2",
-            "direction": "In",
-            "number": "(09) 25025760"
-        }, {
-            "name": "susan",
             "callId": 597,
             "duration": 100,
             "switchCode": "SW3",
             "direction": "Out",
             "number": "(02) 2011270"
-        }, {
-            "name": "susan",
-            "callId": 598,
-            "duration": 49,
-            "switchCode": "SW4",
-            "direction": "Out",
-            "number": "(09) 37470979"
         }, {
             "name": "susan",
             "callId": 599,

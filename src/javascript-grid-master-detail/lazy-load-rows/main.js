@@ -15,7 +15,10 @@ var detailColumnDefs = [
 ];
 
 var detailGridOptions = {
-    columnDefs: detailColumnDefs
+    columnDefs: detailColumnDefs,
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
 var masterGridOptions = {
@@ -29,6 +32,9 @@ var masterGridOptions = {
                 params.successCallback(params.data.callRecords);
             }, 1000);
         }
+    },
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
     }
 };
 

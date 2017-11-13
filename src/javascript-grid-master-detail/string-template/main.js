@@ -15,7 +15,10 @@ var detailColumnDefs = [
 ];
 
 var detailGridOptions = {
-    columnDefs: detailColumnDefs
+    columnDefs: detailColumnDefs,
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
 var masterGridOptions = {
@@ -32,6 +35,12 @@ var masterGridOptions = {
             '  <div style="height: 10%;">Call Details</div>' +
             '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
             '</div>'
+    },
+    onGridReady: function(params) {
+        params.api.forEachNode(function (node) {
+            node.setExpanded(node.id === "1");
+        });
+        params.api.sizeColumnsToFit();
     }
 };
 

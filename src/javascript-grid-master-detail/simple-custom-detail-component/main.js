@@ -9,8 +9,8 @@ var masterColumnDefs = [
 var masterGridOptions = {
     columnDefs: masterColumnDefs,
     rowData: rowData,
-    groupDefaultExpanded: 1,
     masterDetail: true,
+    groupDefaultExpanded: 1,
     detailCellRendererParams: {
         getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
