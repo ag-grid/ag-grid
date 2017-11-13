@@ -130,8 +130,8 @@ document.addEventListener('DOMContentLoaded', () =&gt; {
 &lt;AgGridReact
 
     // listen for events with React callbacks
-    onRowSelected={this.onRowSelected.bind(this)}
-    onCellClicked={this.onCellClicked.bind(this)}
+    onRowSelected={this.onRowSelected}              // if you've bound it using an arrow function: onRowSelected = (params) => {
+    onCellClicked={this.onCellClicked.bind(this)}   // if using normal functions: onRowSelected(params) {
 
     // binding to properties within React State or Props
     showToolPanel={this.state.showToolPanel}
@@ -145,8 +145,8 @@ document.addEventListener('DOMContentLoaded', () =&gt; {
 
     // or provide props the old way with no binding
     rowSelection="multiple"
-    enableSorting="true"
-    enableFilter="true"
+    enableSorting="true"    // or just enableSorting
+    enableFilter            // equivalent to enableFilter="true"
     rowHeight="22"
 /&gt;</snippet>
     </p>
@@ -157,21 +157,23 @@ document.addEventListener('DOMContentLoaded', () =&gt; {
         in the core ag-Grid. To access them, first up we need to define an alias to use inside
         webpack.config.js:
     <snippet>
-alias: {
-    "ag-grid-root" : __dirname + "/node_modules/ag-grid"
-}</snippet>
+resolve: {
+    alias: {
+        "ag-grid": path.resolve('./node_modules/ag-grid')
+</snippet>
     Once this is done, we can then access the two css files that we need as follows:
     <snippet>
-import 'ag-grid-root/dist/styles/ag-grid.css';
+import 'ag-grid/dist/styles/ag-grid.css';
 import 'ag-grid-root/dist/styles/theme-fresh.css';</snippet>
-    You will also need to configure CSS loaders for Webpack.
+    You will also need to configure CSS loaders for Webpack - you can find a full working example of this in our <a
+                href="https://github.com/ag-grid/ag-grid-react-example">React Examples</a>  Repo on Github.
     </p>
 
     <h2 id="applying-theme">Applying A Theme</h2>
 
     <p>
         You need to set a theme for the grid. You do this by giving the grid a CSS class, one
-        of ag-fresh, ag-blue or ag-dark. You must have the CSS loaded as specified above
+        of ag-theme-fresh, ag-theme-blue or ag-theme-dark. You must have the CSS loaded as specified above
         for this to work.
     </p>
 
@@ -180,11 +182,11 @@ import 'ag-grid-root/dist/styles/theme-fresh.css';</snippet>
 // if you only every wanted to use one style of grid
 
 // HTML
-&lt;div class="ag-fresh"&gt;
+&lt;div class="ag-theme-fresh"&gt;
     ...
 
 // OR JSX
-&lt;div className="ag-fresh"&gt;
+&lt;div className="ag-theme-fresh"&gt;
     ...
 
     // then later, use the grid
@@ -202,11 +204,11 @@ import 'ag-grid-root/dist/styles/theme-fresh.css';</snippet>
     <snippet>
 // provide gridReady callback to the grid
 &lt;AgGridReact
-    onGridReady={this.onGridReady.bind(this)}
+    onGridReady={this.onGridReady}
     .../&gt;
 
 // in onGridReady, store the api for later use
-onGridReady(params) {
+onGridReady = (params) => {
     this.api = params.api;
     this.columnApi = params.columnApi;
 }
@@ -261,6 +263,52 @@ constructor(props) {
     <p>You can see an example of this in the
         <a href="https://github.com/ceolter/ag-grid-react-example/blob/master/src/groupedRowInnerRendererExample/MedalRenderer.jsx">Grouped Row Example</a>
     where we change the display of the <code>groupRowInnerRendererFramework</code> to <code>inline-block</code> so that the +/- and label are inline.</p>
+
+    <h2 id="react-markup">Configuring ag-Grid and React Declaratively (via Markup)</h2>
+
+    <p>You can configure the grid columns using <code>gridOptions.columnDefs</code>, <code>api.setColumnDefs</code> or by
+    binding <code>columnDefs</code> on the <code>AgGridReact</code> component itself, but you can also define your grid
+        and column definitions entirely via markup.</p>
+
+    <p>Below is an example of a grid with a nested (grouped) column definition:</p>
+<snippet language="html" >
+&lt;AgGridReact
+    // listening for events
+    onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
+
+    // binding to array properties
+    rowData=<span ng-non-bindable>{</span>this.state.rowData}
+
+    // no binding, just providing hard coded strings for the properties
+    // boolean properties will default to true if provided (ie enableColResize =&gt; enableColResize="true")
+    rowSelection="multiple"
+    enableColResize
+
+    // setting grid wide date component
+    dateComponentFramework=<span ng-non-bindable>{</span>DateComponent}
+
+    // setting default column properties
+    defaultColDef=<span ng-non-bindable>{{</span>
+        headerComponentFramework: SortableHeaderComponent,
+        headerComponentParams: <span ng-non-bindable>{</span>
+            menuIcon: 'fa-bars'
+        }
+    }}
+    &gt;
+    &lt;AgGridColumn headerName="#" width=<span ng-non-bindable>{</span>30} checkboxSelection suppressSorting suppressMenu suppressFilter pinned&gt;&lt;/AgGridColumn&gt;
+    &lt;AgGridColumn headerName="Employee" headerGroupComponentFramework=<span ng-non-bindable>{</span>HeaderGroupComponent}&gt;
+        &lt;AgGridColumn field="name" width=<span ng-non-bindable>{</span>150} pinned editable cellEditorFramework=<span ng-non-bindable>{</span>NameCellEditor}&gt;&lt;/AgGridColumn&gt;
+        &lt;AgGridColumn field="country"
+                      width=<span ng-non-bindable>{</span>150}
+                      pinned editable cellRenderer=<span ng-non-bindable>{</span>RichGridDeclarativeExample.countryCellRenderer}
+                      filterParams=<span ng-non-bindable>{</span><span ng-non-bindable>{</span>cellRenderer: RichGridDeclarativeExample.countryCellRenderer, cellHeight:20}}&gt;&lt;/AgGridColumn&gt;
+    &lt;/AgGridColumn&gt;
+    ...rest of grid configuration
+</snippet>
+
+    <?= example('ag-Grid and React via Markup', 'full-rich-markup', 'react', array("enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
+
+    <p>You can find a full working example of this in our <a href="https://github.com/ag-grid/ag-grid-react-example">React Examples</a> Repo on Github.</p>
 
     <h2 id="react-redux">Using ag-Grid, React and Redux</h2>
 
@@ -381,7 +429,7 @@ class TopMoversGrid extends Component {
 
     render() {
         return (
-            &lt;div className="ag-fresh"&gt;
+            &lt;div className="ag-theme-fresh"&gt;
                 &lt;AgGridReact
                     // events
                     onGridReady={this.onGridReady}&gt;

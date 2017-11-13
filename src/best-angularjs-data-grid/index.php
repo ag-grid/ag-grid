@@ -73,7 +73,7 @@ include '../documentation-main/documentation_header.php';
     &lt;script src="example1.js"&gt;&lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
-    &lt;div id="myGrid" style="height: 100%;" class="ag-fresh"&gt;&lt;/div&gt;
+    &lt;div id="myGrid" style="height: 100%;" class="ag-theme-fresh"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</snippet>
 <note>
@@ -143,9 +143,9 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 
 <p>
     It is also usual to provide a styling theme to
-    the grid. Three themes come with the grid, ag-fresh, ag-dark and ag-blue. Each one is
+    the grid. Three themes come with the grid, ag-theme-fresh, ag-theme-dark and ag-theme-blue. Each one is
     set by applying the corresponding class of the same name to the div. In the
-    example, ag-fresh is used.
+    example, ag-theme-fresh is used.
 </p>
 
 <p>
@@ -154,7 +154,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </p>
 
 <snippet>
-&lt;div &lt;b&gt;ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"&lt;/b&gt;&gt;&lt;/div&gt;</snippet>
+&lt;div &lt;b&gt;ag-grid="gridOptions" class="ag-theme-fresh" style="height: 100%;"&lt;/b&gt;&gt;&lt;/div&gt;</snippet>
 
 <p>
     (note: a div by default has 100% width, so the width is not specified explicitly above).

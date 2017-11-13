@@ -411,7 +411,7 @@ include('../includes/mediaHeader.php');
 
             <snippet language="html">
                 &lt;ag-grid-angular style="width: 100%; height: 800px;"
-                class="ag-fresh"
+                class="ag-theme-fresh"
                 (gridReady)="onGridReady($event)"
                 [columnDefs]="columnDefs"
                 [rowData]="rowData"&gt;

@@ -101,7 +101,7 @@
 
     <p>
         You need to set a theme for the grid. You do this by giving the grid a CSS class, one
-        of ag-fresh, ag-blue or ag-dark. You must have the CSS loaded as specified above
+        of ag-theme-fresh, ag-theme-blue or ag-theme-dark. You must have the CSS loaded as specified above
         for this to work.
     </p>
 
@@ -110,11 +110,11 @@
         // if you only every wanted to use one style of grid
 
         // HTML
-        &lt;div class="ag-fresh"&gt;
+        &lt;div class="ag-theme-fresh"&gt;
         ...
 
         // OR JSX
-        &lt;div className="ag-fresh"&gt;
+        &lt;div className="ag-theme-fresh"&gt;
         ...
 
         // then later, use the grid

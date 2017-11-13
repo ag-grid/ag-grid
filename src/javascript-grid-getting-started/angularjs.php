@@ -36,9 +36,9 @@ Include ag-Grid as a dependency of your module like this:
 
 <p>
     It is also usual to provide a styling theme to
-    the grid. Three themes come with the grid, ag-fresh, ag-dark and ag-blue. Each one is
+    the grid. Three themes come with the grid, ag-theme-fresh, ag-theme-dark and ag-theme-blue. Each one is
     set by applying the corresponding class of the same name to the div. In the
-    example, ag-fresh is used.
+    example, ag-theme-fresh is used.
 </p>
 
 <p>
@@ -47,7 +47,7 @@ Include ag-Grid as a dependency of your module like this:
 </p>
 
 <snippet>
-    &lt;div &lt;b&gt;ag-grid="gridOptions" class="ag-fresh" style="height: 100%;"&lt;/b&gt;&gt;&lt;/div&gt;
+    &lt;div &lt;b&gt;ag-grid="gridOptions" class="ag-theme-fresh" style="height: 100%;"&lt;/b&gt;&gt;&lt;/div&gt;
 </snippet>
 
 <p>

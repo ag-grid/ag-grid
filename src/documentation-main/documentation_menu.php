@@ -190,7 +190,7 @@
     <h4>
         <img src="../images/svg/docs/themes.svg"/>
         &nbsp;
-        Themes
+        Themes <sup class="new">new</sup>
     </h4>
     <i class="fa fa-arrow-right" aria-hidden="true"></i>
 </div>
@@ -198,12 +198,13 @@
 <div class="docsMenu-content">
 
     <?php
-    menuItem(0, 'Styling', 'Overview', 'javascript-grid-styling/');
+    menuItem(0, 'Styling', 'Overview <sup class="new">new</sup>', 'javascript-grid-styling/');
     menuItem(0, 'Fresh Theme', 'Fresh ', 'javascript-grid-themes/fresh-theme.php');
-    menuItem(0, 'Blue Theme', 'Blue ', 'javascript-grid-themes/blue-theme.php');
-    menuItem(0, 'Dark Theme', 'Dark ', 'javascript-grid-themes/dark-theme.php');
+    menuItem(0, 'Blue Theme', 'Blue', 'javascript-grid-themes/blue-theme.php');
+    menuItem(0, 'Dark Theme', 'Dark', 'javascript-grid-themes/dark-theme.php');
     menuItem(0, 'Bootstrap Theme', 'Bootstrap', 'javascript-grid-themes/bootstrap-theme.php');
-    menuItem(0, 'Material Theme', 'Material <sup class="new">new</sup>', 'javascript-grid-themes/material-theme.php');
+    menuItem(0, 'Material Theme', 'Material', 'javascript-grid-themes/material-theme.php');
+    menuItem(0, 'Legacy Themes', 'Legacy', 'javascript-grid-themes/legacy.php');
     ?>
 
 </div>
@@ -253,7 +254,6 @@
     menuItem(2, 'React Pinned Row', 'Pinned Rows', 'example-react-floating-row/');
     menuItem(2, 'React Full Width', 'Full Width Rows', 'example-react-full-width-rows/');
     menuItem(2, 'React Group Row', 'Group Rows', 'example-react-grouped-row/');
-    menuItem(2, 'React MasterDetail', 'Master/Detail', 'example-react-master-detail/');
     menuItem(2, 'React Redux', 'Redux Examples', 'example-react-redux/');
 
     menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);
@@ -266,7 +266,6 @@
     menuItem(2, 'Angular Pinned Row', 'Pinned Rows', 'example-angular-floating-row/');
     menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
     menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
-    menuItem(2, 'Angular MasterDetail', 'Master/Detail', 'example-angular-master-detail/');
     menuItem(2, 'Angular RxJS', 'RxJS', 'example-angular-rxjs/');
     menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
 
@@ -279,7 +278,6 @@
     menuItem(2, 'Polymer Pinned Row', 'Pinned Rows', 'example-polymer-floating-row/');
     menuItem(2, 'Polymer Full Width', 'Full Width Rows', 'example-polymer-full-width-rows/');
     menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');
-    menuItem(2, 'Polymer MasterDetail', 'Master/Detail', 'example-polymer-master-detail/');
 
     menuItemWithIcon('svg/javascript.svg', 1, 'JavaScript Examples', 'Plain JavaScript', 'example-javascript/', true);
     menuItem(2, 'Styled Report', 'Styled Report', 'example-account-report/');

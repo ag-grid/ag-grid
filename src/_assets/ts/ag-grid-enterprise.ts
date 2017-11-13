@@ -4,8 +4,13 @@ import "../../../../ag-grid/src/styles/theme-blue.scss";
 import "../../../../ag-grid/src/styles/theme-dark.scss";
 import "../../../../ag-grid/src/styles/theme-bootstrap.scss";
 import "../../../../ag-grid/src/styles/theme-material.scss";
+
 import "../../../../ag-grid/src/styles/ag-theme-material.scss";
-// import "../../../../ag-grid/src/styles/ag-theme-fresh.scss";
+import "../../../../ag-grid/src/styles/ag-theme-fresh.scss";
+import "../../../../ag-grid/src/styles/ag-theme-dark.scss";
+import "../../../../ag-grid/src/styles/ag-theme-blue.scss";
+import "../../../../ag-grid/src/styles/ag-theme-bootstrap.scss";
+
 
 declare var HMR: boolean;
 

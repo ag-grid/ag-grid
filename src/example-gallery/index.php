@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="icons">Gallery</h2>
+    <h1 class="first-h1" id="icons">Gallery</h1>
 
     <p>
         This section of the documentation demonstrates different configurations of the grid.
@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
         doesn't fit into a particular documentation section.
     </p>
 
-    <h3>Auto Height, Full Width & Pagination</h3>
+    <h2>Auto Height, Full Width & Pagination</h2>
 
     <p>
         Shows the autoHeight feature working with fullWidth and pagination.
@@ -34,15 +34,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-
-    <show-complex-example example="exampleAutoHeightFullWidth.html"
-                          sources="{
-                        [
-                            { root: './', files: 'exampleAutoHeightFullWidth.html,exampleAutoHeightFullWidth.js' }
-                        ]
-                      }"
-                          exampleheight="500px">
-    </show-complex-example>
+    <?= example('Auto Height & Full Width', 'auto-height-full-width', 'generated') ?>
 
     <hr/>
 
@@ -61,8 +53,7 @@ include '../documentation-main/documentation_header.php';
         children of the group are visible.
     </p>
 
-    <show-example example="exampleTreeScroll"></show-example>
-
+    <?= example('Row Group Scroll', 'row-group-scroll', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Enterprise Row Model & Complex Columns</h2>
 
@@ -96,14 +87,23 @@ row = {
         with dot notation, ie <code>year.name</code>
     </p>
 
-    <show-complex-example example="exampleEnterpriseComplexObjects.html"
-                          sources="{
-                                [
-                                    { root: './', files: 'exampleEnterpriseComplexObjects.html,exampleEnterpriseComplexObjects.js,complexColumns.js,mockServerComplex.js' }
-                                ]
-                              }"
-                          exampleheight="500px">
-    </show-complex-example>
+    <?= example('Enterprise Complex Objects', 'enterprise-complex-objects', 'generated', array("enterprise" => 1)) ?>
+
+    <h2>Flower Nodes</h2>
+
+    <p>
+        Version 14.2 of ag-Grid introduced full support for Master / Detail. Before this, users had
+        to implement master / detail using flower nodes. Flower nodes are now deprecated. However to
+        check for backwards compatibility, flower node examples are presented here for regression
+        testing purposes.
+    </p>
+
+    <p>
+        Below shows using flower nodes to provide a master / detail experience.
+    </p>
+
+    <?= example('Flower Nodes', 'flower-nodes', 'generated') ?>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -32,7 +32,6 @@ include '../documentation-main/documentation_header.php';
             <a href="../example-react-floating-row/" class="column-links column-items">Pinned Row Renderer</a>
             <a href="../example-react-full-width-rows/" class="column-links column-items">Full Width Renderer</a>
             <a href="../example-react-grouped-row/" class="column-links column-items">Group Row Inner Renderer</a>
-            <a href="../example-react-master-detail/" class="column-links column-items">Master/Detail Components</a>
         </div>
     </div>
 

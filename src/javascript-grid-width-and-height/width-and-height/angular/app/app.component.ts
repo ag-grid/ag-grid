@@ -10,7 +10,7 @@ import { HttpClient } from '@angular/common/http';
             <ag-grid-angular
             style="width: 100%; height: 100%"
             #agGrid
-            class="ag-fresh"
+            class="ag-theme-fresh"
             [rowData]="rowData"
             [columnDefs]="columnDefs">
             </ag-grid-angular>

@@ -2,7 +2,7 @@
     <div style="width: 800px;">
         <h1>Filter Component</h1>
         <button style="margin-bottom: 10px" @click="onClicked($event)">Filter Instance Method</button>
-        <ag-grid-vue style="width: 100%; height: 350px;" class="ag-fresh"
+        <ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-fresh"
                      :gridOptions="gridOptions">
         </ag-grid-vue>
     </div>

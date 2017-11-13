@@ -36,7 +36,7 @@ foreach ($files as $file) {
 
 
     <!-- the ag-grid-polymer component-->
-    <link rel="import" href="//bowercdn.net/c/ag-grid-polymer-13.0.1/ag-grid-polymer.html">
+    <link rel="import" href="https://rawgit.com/ag-grid/ag-grid-polymer/master/ag-grid-polymer.html">
     </head>
 <body>
 
