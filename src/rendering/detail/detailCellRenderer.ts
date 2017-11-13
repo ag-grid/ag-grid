@@ -41,12 +41,24 @@ export class DetailCellRenderer extends Component {
             this.createDetailsGrid();
             this.registerDetailWithMaster(params.node);
             this.loadRowData(params);
+            this.setupGrabMouseWheelEvent();
 
             setTimeout(() => this.detailGridOptions.api.doLayout(), 0);
         } else {
             console.warn('ag-Grid: reference to eDetailGrid was missing from the details template. ' +
                 'Please add ref="eDetailGrid" to the template.');
         }
+    }
+
+    private setupGrabMouseWheelEvent(): void {
+        let mouseWheelListener = ()=> {
+            event.stopPropagation();
+        };
+
+        // event is 'mousewheel' for IE9, Chrome, Safari, Opera
+        this.eDetailGrid.addEventListener('mousewheel', mouseWheelListener);
+        // event is 'DOMMouseScroll' Firefox
+        this.eDetailGrid.addEventListener('DOMMouseScroll', mouseWheelListener);
     }
 
     private registerDetailWithMaster(rowNode: RowNode): void {
