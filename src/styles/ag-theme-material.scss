@@ -27,6 +27,8 @@ $ag-mat-grid-size: 8px !default;
 $ag-mat-icon-size: 16px !default;
 $ag-mat-header-height: $ag-mat-grid-size * 7 !default;
 $ag-mat-row-height: $ag-mat-grid-size * 6 !default;
+$toolpanel-indent-size: $ag-mat-grid-size + $ag-mat-icon-size !default;
+$row-group-indent-size: $ag-mat-grid-size * 3 + $ag-mat-icon-size !default;
 $ag-mat-cell-horizontal-padding: $ag-mat-grid-size * 3;
 $ag-mat-virtual-item-height: $ag-mat-grid-size * 5;
 $ag-mat-header-icon-size: 14px;
@@ -115,6 +117,8 @@ $params: (
     virtual-item-height: $ag-mat-virtual-item-height,
     rich-select-item-height: $ag-mat-row-height,
     cell-horizontal-padding: $ag-mat-cell-horizontal-padding,
+    toolpanel-indent-size: $toolpanel-indent-size,
+    row-group-indent-size: $row-group-indent-size,
 
     icons-path: $ag-mat-icons-path,
 

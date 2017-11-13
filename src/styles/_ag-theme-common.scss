@@ -26,7 +26,7 @@
     $size: map-get($params, 'icon-size');
     $color: map-get($params, 'foreground-color');
     background-color: transparent;
-    background-image: url('#{map-get($params, 'icons-path')}#{$icon}.svg?color=#{encodecolor(map-get($params, 'icon-color'))}&altColor=#{encodecolor(map-get($params, 'alt-icon-color'))}');
+    background-image: url('#{map-get($params, 'icons-path')}#{$icon}.svg?color1=#{encodecolor(map-get($params, 'icon-color'))}&color2=#{encodecolor(map-get($params, 'alt-icon-color'))}');
     background-position: center;
     background-repeat: no-repeat;
     background-size: $size $size;
@@ -36,7 +36,7 @@
 }
 
 @mixin colorful-icon($path, $icon, $color, $altColor) {
-    background-image: url('#{map-get($params, 'icons-path')}#{$icon}.svg?color=#{encodecolor($color)}&altColor=#{encodecolor($altColor)}');
+    background-image: url('#{map-get($params, 'icons-path')}#{$icon}.svg?color1=#{encodecolor($color)}&color2=#{encodecolor($altColor)}');
 }
 
 @mixin card($params) {
@@ -167,6 +167,8 @@
     $value-change-delta-up-color: map-get($params, 'value-change-delta-up-color');
     $value-change-delta-down-color: map-get($params, 'value-change-delta-down-color');
     $value-change-value-highlight-background-color: map-get($params, 'value-change-value-highlight-background-color');
+    $toolpanel-indent-size: map-get($params, 'toolpanel-indent-size');
+    $row-group-indent-size: map-get($params, 'row-group-indent-size');
 
     ////////////////////////////////////////
     // Chinese wall of inline vars over
@@ -181,11 +183,11 @@
 
     // indentation loop
     @for $i from 1 to 50 {
-        .ag-ltr .ag-toolpanel-indent-#{$i} { padding-left: $i * ($grid-size + $icon-size); }
-        .ag-rtl .ag-toolpanel-indent-#{$i} { padding-right: $i * ($grid-size + $icon-size); }
+        .ag-ltr .ag-toolpanel-indent-#{$i} { padding-left: $i * $toolpanel-indent-size; }
+        .ag-rtl .ag-toolpanel-indent-#{$i} { padding-right: $i * $toolpanel-indent-size; }
 
-        .ag-ltr .ag-row-group-indent-#{$i} { padding-left: $i * ($grid-size * 3 + $icon-size); }
-        .ag-rtl .ag-row-group-indent-#{$i} { padding-right: $i * ($grid-size * 3 + $icon-size); }
+        .ag-ltr .ag-row-group-indent-#{$i} { padding-left: $i * $row-group-indent-size; }
+        .ag-rtl .ag-row-group-indent-#{$i} { padding-right: $i * $row-group-indent-size; }
     }
 
     // used by the animateShowChangedCellRenderer
@@ -796,7 +798,7 @@
     ////////////////////////////////////////
     .ag-rich-select {
         background-color: $editor-background-color-color;
-        background-image: url('#{$icons-path}tree-open.svg?color=#{encodecolor(map-get($params, 'icon-color'))}');
+        background-image: url('#{$icons-path}tree-open.svg?color1=#{encodecolor(map-get($params, 'icon-color'))}');
         background-position-x: calc(100% - #{$grid-size});
         background-position-y: $grid-size * 2;
         background-repeat: no-repeat;
