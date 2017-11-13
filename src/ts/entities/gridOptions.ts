@@ -211,8 +211,6 @@ export interface GridOptions {
 
     masterDetail?: boolean;
     isRowMaster?: IsRowMaster;
-    detailGridOptions?: GridOptions;
-    getDetailRowData?: GetDetailRowData;
     detailCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     detailCellRendererFramework?: any;
     detailCellRendererParams?: any;
@@ -366,19 +364,6 @@ export interface GetNodeChildDetails {
 
 export interface IsRowMaster {
     (dataItem: any): boolean;
-}
-
-export interface GetDetailRowData {
-    (params: GetDetailRowDataParams): void;
-}
-
-export interface GetDetailRowDataParams {
-    // details for the request,
-    node:  RowNode;
-    data: any;
-
-    // success callback, pass the rows back the grid asked for
-    successCallback(rowData: any[]): void;
 }
 
 export interface NodeChildDetails {

@@ -1,6 +1,6 @@
 import {RowNode} from "./entities/rowNode";
 import {
-    GetContextMenuItems, GetDetailRowData,
+    GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
     GridOptions, IsRowMaster,
@@ -332,9 +332,7 @@ export class GridOptionsWrapper {
 
         return usingMasterDetail && this.enterprise;
     }
-    public getDetailGridOptions(): GridOptions { return this.gridOptions.detailGridOptions; }
     public getIsRowMasterFunc(): IsRowMaster { return this.gridOptions.isRowMaster; }
-    public getDetailRowDataFunc(): GetDetailRowData { return this.gridOptions.getDetailRowData; }
     public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }
     public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
     public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
