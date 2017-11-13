@@ -43,8 +43,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1)) ?>
-
+<?= example('Simple Example', 'simple', 'generated') ?>
 
 <h2>Example - Using String Template</h2>
 
@@ -57,7 +56,7 @@ include '../documentation-main/documentation_header.php';
 
 <?= example('String Template', 'string-template', 'generated', array("enterprise" => 1)) ?>
 
-<h2>Example - Using Template Callback Function</h2>
+<h2>Example - Using Template Callback with Inner Grid</h2>
 
 <p>
     Below shows a simple master / detail setup. From the example you can notice the following:
@@ -66,7 +65,18 @@ include '../documentation-main/documentation_header.php';
 </ul>
 </p>
 
-<?= example('Template Callback', 'template-callback', 'generated', array("enterprise" => 1)) ?>
+<?= example('Template Callback with Inner Grid', 'template-callback-inner-grid', 'generated', array("enterprise" => 1)) ?>
+
+<h2>Example - Using Template Callback with Form</h2>
+
+<p>
+    Below shows a simple master / detail setup. From the example you can notice the following:
+<ul>
+    <li></li>
+</ul>
+</p>
+
+<?= example('Template Callback with Form', 'template-callback-form', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Example - Custom Detail Component</h2>
 
@@ -78,6 +88,18 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <?= example('Custom Detail Component', 'custom-detail-component', 'generated', array("enterprise" => 1)) ?>
+
+
+<h2>Example - Editing Cells</h2>
+
+<p>
+    Below shows a simple master / detail setup. From the example you can notice the following:
+<ul>
+    <li></li>
+</ul>
+</p>
+
+<?= example('Cell Editing', 'cell-editing', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Example - Dynamic Master Nodes</h2>
 
