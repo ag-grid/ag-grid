@@ -31,7 +31,7 @@ var masterGridOptions = {
             params.successCallback(params.data.callRecords);
         },
         template:
-            '<div style="height: 100%; background-color: #eef; padding: 20px; box-sizing: border-box;">' +
+            '<div style="height: 100%; background-color: #edf6ff; padding: 20px; box-sizing: border-box;">' +
             '  <div style="height: 10%;">Call Details</div>' +
             '  <div ref="eDetailGrid" style="height: 90%;"></div>' +
             '</div>'
