@@ -321,7 +321,15 @@ export class GridOptionsWrapper {
     public getAggFuncs(): {[key: string]: IAggFunc} { return this.gridOptions.aggFuncs; }
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
     public getAlignedGrids(): GridOptions[] { return this.gridOptions.alignedGrids; }
-    public isMasterDetail() { return isTrue(this.gridOptions.masterDetail) || _.exists(this.gridOptions.doesDataFlower); }
+    public isMasterDetail() {
+        _.doOnce(() => {
+            if (!this.enterprise) {
+                console.warn('ag-grid: Master Detail is an Enterprise feature of ag-Grid.')
+            }
+        }, 'MasterDetailEnterpriseCheck');
+
+        return this.enterprise && isTrue(this.gridOptions.masterDetail);
+    }
     public getDetailGridOptions(): GridOptions { return this.gridOptions.detailGridOptions; }
     public getIsRowMasterFunc(): IsRowMaster { return this.gridOptions.isRowMaster; }
     public getDetailRowDataFunc(): GetDetailRowData { return this.gridOptions.getDetailRowData; }
