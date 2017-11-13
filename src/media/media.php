@@ -21,14 +21,14 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
-        <a href="../ag-grid-datagrid-crud-part-1/">
+        <a href="../ag-grid-datagrid-crud-part-2/">
             <img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" style="width: 225px;"/>
         </a>
     </div>
 
     <div style="overflow: hidden;">
         <div style="font-size: 20px; color: #167ac6; float: left;">
-            <a href="../ag-grid-datagrid-crud-part-1/">
+            <a href="../ag-grid-datagrid-crud-part-2/">
                 Building a CRUD Application with ag-Grid - Part 2
             </a>
         </div>
