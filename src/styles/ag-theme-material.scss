@@ -1,4 +1,5 @@
 @import './ag-theme-common';
+@import './material-legacy-var-names';
 
 // Taken from the palette of angular material: https://github.com/angular/material2/blob/master/src/lib/core/theming/_palette.scss
 $mat-grey-0: #ffffff;
@@ -14,166 +15,145 @@ $mat-pink-50: #fce4ec;
 $mat-indigo-50: #e8eaf6;
 
 // opacity values used for black values, taken from material spec
-$ag-mat-foreground-opacity: 0.87 !default;
-$ag-mat-secondary-foreground-color-opacity: 0.54 !default;
-$ag-mat-disabled-foreground-color-opacity: 0.38 !default;
+$foreground-opacity: 0.87 !default;
+$secondary-foreground-color-opacity: 0.54 !default;
+$disabled-foreground-color-opacity: 0.38 !default;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 // The variables below can be overriden to adjust the look up to the app color scheme
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Sizing
-$ag-mat-grid-size: 8px !default;
-$ag-mat-icon-size: 16px !default;
-$ag-mat-header-height: $ag-mat-grid-size * 7 !default;
-$ag-mat-row-height: $ag-mat-grid-size * 6 !default;
-$toolpanel-indent-size: $ag-mat-grid-size + $ag-mat-icon-size !default;
-$row-group-indent-size: $ag-mat-grid-size * 3 + $ag-mat-icon-size !default;
-$ag-mat-cell-horizontal-padding: $ag-mat-grid-size * 3;
-$ag-mat-virtual-item-height: $ag-mat-grid-size * 5;
-$ag-mat-header-icon-size: 14px;
+$grid-size: 8px !default;
+$icon-size: 16px !default;
+$header-height: $grid-size * 7 !default;
+$row-height: $grid-size * 6 !default;
+$toolpanel-indent-size: $grid-size + $icon-size !default;
+$row-group-indent-size: $grid-size * 3 + $icon-size !default;
+$cell-horizontal-padding: $grid-size * 3;
+$virtual-item-height: $grid-size * 5;
+$header-icon-size: 14px;
 
 // Icons
-$ag-mat-icons-path: './material-icons/' !default;
+$icons-path: './material-icons/' !default;
 
 // Fonts
-$ag-mat-font-family: 'Roboto', sans-serif !default; // legacy: ag-mat-font
-$ag-mat-font-size: 13px !default;
-$ag-mat-font-weight: 400 !default;
+$font-family: 'Roboto', sans-serif !default; // legacy: font
+$font-size: 13px !default;
+$font-weight: 400 !default;
 
-$ag-mat-secondary-font-family: 'Roboto', sans-serif !default; //ag-mat-font-secondary
-$ag-mat-secondary-font-size: 12px !default; // ag-mat-font-secondary-size
-$ag-mat-secondary-font-weight: 700 !default; // ag-mat-font-secondary-weight
+$secondary-font-family: 'Roboto', sans-serif !default; //font-secondary
+$secondary-font-size: 12px !default; // font-secondary-size
+$secondary-font-weight: 700 !default; // font-secondary-weight
 
 // Colors
-$ag-mat-foreground-color: rgba(#000000, $ag-mat-foreground-opacity) !default; // ag-mat-foreground
-$ag-mat-secondary-foreground-color: rgba(#000000, $ag-mat-secondary-foreground-color-opacity) !default; // ag-mat-foreground-secondary
-$ag-mat-disabled-foreground-color: rgba(#000000, $ag-mat-disabled-foreground-color-opacity) !default; // ag-mat-foreground-disabled
+$foreground-color: rgba(#000000, $foreground-opacity) !default; // foreground
+$secondary-foreground-color: rgba(#000000, $secondary-foreground-color-opacity) !default; // foreground-secondary
+$disabled-foreground-color: rgba(#000000, $disabled-foreground-color-opacity) !default; // foreground-disabled
 
-$ag-mat-border-color: $mat-grey-300 !default;
+$border-color: $mat-grey-300 !default;
 
-$ag-mat-primary-color: $mat-indigo-500 !default;
+$primary-color: $mat-indigo-500 !default;
 
-$ag-mat-accent-color: $mat-pink-A200 !default;
-$ag-mat-icon-color: #333 !default;
+$accent-color: $mat-pink-A200 !default;
+$icon-color: #333 !default;
 
-$ag-mat-background-color: $mat-grey-0 !default;
+$background-color: $mat-grey-0 !default;
 
-$ag-mat-editor-background-color: $mat-grey-100 !default;
+$editor-background-color: $mat-grey-100 !default;
 
-$ag-mat-panel-background-color: $mat-grey-200 !default;
+$panel-background-color: $mat-grey-200 !default;
 
-$ag-mat-tool-panel-background-color: $mat-grey-50 !default;
+$tool-panel-background-color: $mat-grey-50 !default;
 
-$ag-mat-chip-background-color: $mat-grey-300 !default;
+$chip-background-color: $mat-grey-300 !default;
 
-$ag-mat-range-selection-background-color: $mat-indigo-50 !default; 
-$ag-mat-range-selection-highlight-color: $mat-pink-50 !default;
+$range-selection-background-color: $mat-indigo-50 !default; 
+$range-selection-highlight-color: $mat-pink-50 !default;
 
-$ag-mat-hover-color: $mat-grey-200 !default;
+$hover-color: $mat-grey-200 !default;
 
-$ag-mat-selected-color: $mat-grey-100 !default;
+$selected-color: $mat-grey-100 !default;
 
-$ag-mat-cell-data-changed-color: $mat-pink-50 !default;
+$cell-data-changed-color: $mat-pink-50 !default;
 
 // Misc 
-$ag-mat-transition-speed: 120ms !default;
-$ag-mat-card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-$ag-mat-card-radius: 2px;
+$transition-speed: 120ms !default;
+$card-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+$card-radius: 2px;
 
 // delta changes
 $value-change-delta-up-color: #43A047 !default;
 $value-change-delta-down-color: #e53935 !default;
 $value-change-value-highlight-background-color: #00ACC1 !default;
 
-// support for legacy variable names
-@if variable-exists(ag-mat-font) { $ag-mat-font-family: $ag-mat-font; }
-@if variable-exists(ag-mat-font-secondary) { $ag-mat-secondary-font-family: $ag-mat-font-secondary; }
-@if variable-exists(ag-mat-font-secondary-size) { $ag-mat-secondary-font-size: $ag-mat-font-secondary-size; }
-@if variable-exists(ag-mat-font-secondary-weight) { $ag-mat-secondary-font-weight: $ag-mat-font-secondary-weight; }
-@if variable-exists(ag-mat-primary) { $ag-mat-primary-color: $ag-mat-font-primary; }
-@if variable-exists(ag-mat-secondary) { $ag-mat-secondary-color: $ag-mat-secondary; }
-@if variable-exists(ag-mat-foreground) { $ag-mat-foreground-color: $ag-mat-foreground; }
-@if variable-exists(ag-mat-foreground-secondary) { $ag-mat-secondary-foreground-color: $ag-mat-foreground-secondary; }
-@if variable-exists(ag-mat-foreground-disabled) { $ag-mat-disabled-foreground-color: $ag-mat-foreground-disabled; }
-@if variable-exists(ag-mat-background) { $ag-mat-background-color: $ag-mat-background; }
-@if variable-exists(ag-mat-background-editor) { $ag-mat-editor-background-color: $ag-mat-background-editor; }
-@if variable-exists(ag-mat-panel-background) { $ag-mat-panel-background-color: $ag-mat-panel-background; }
-@if variable-exists(ag-mat-tool-panel-background) { $ag-mat-tool-panel-background-color: $ag-mat-tool-panel-background; }
-@if variable-exists(ag-mat-chip-background) { $ag-mat-chip-background-color: $ag-mat-chip-background; }
-@if variable-exists(ag-mat-range-selection-background) { $ag-mat-range-selection-background-color: $ag-mat-range-selection-background; }
-@if variable-exists(ag-mat-range-selection-highlight) { $ag-mat-range-selection-highlight-color: $ag-mat-range-selection-highlight; }
-@if variable-exists(ag-mat-cell-data-changed) { $ag-mat-cell-data-changed-color: $ag-mat-cell-data-changed; }
-@if variable-exists(ag-mat-hover) { $ag-mat-hover-color: $ag-mat-hover; }
-@if variable-exists(ag-mat-selected) { $ag-mat-selected-color: $ag-mat-selected; }
-
 $params: (
     // sizing
-    grid-size: $ag-mat-grid-size,
-    icon-size: $ag-mat-icon-size,
-    header-icon-size: $ag-mat-header-icon-size,
-    row-height: $ag-mat-row-height,
-    header-height: $ag-mat-header-height,
-    virtual-item-height: $ag-mat-virtual-item-height,
-    rich-select-item-height: $ag-mat-row-height,
-    cell-horizontal-padding: $ag-mat-cell-horizontal-padding,
+    grid-size: $grid-size,
+    icon-size: $icon-size,
+    header-icon-size: $header-icon-size,
+    row-height: $row-height,
+    header-height: $header-height,
+    virtual-item-height: $virtual-item-height,
+    rich-select-item-height: $row-height,
+    cell-horizontal-padding: $cell-horizontal-padding,
     toolpanel-indent-size: $toolpanel-indent-size,
     row-group-indent-size: $row-group-indent-size,
 
-    icons-path: $ag-mat-icons-path,
+    icons-path: $icons-path,
 
-    font-family: $ag-mat-font-family,
-    font-size: $ag-mat-font-size,
-    font-weight: $ag-mat-font-weight,
+    font-family: $font-family,
+    font-size: $font-size,
+    font-weight: $font-weight,
 
-    secondary-font-family: $ag-mat-secondary-font-family,
-    secondary-font-size: $ag-mat-secondary-font-size,
-    secondary-font-weight: $ag-mat-secondary-font-weight,
+    secondary-font-family: $secondary-font-family,
+    secondary-font-size: $secondary-font-size,
+    secondary-font-weight: $secondary-font-weight,
 
-    foreground-color: $ag-mat-foreground-color,
-    foreground-opacity: $ag-mat-foreground-opacity,
+    foreground-color: $foreground-color,
+    foreground-opacity: $foreground-opacity,
 
-    secondary-foreground-color-opacity: $ag-mat-secondary-foreground-color-opacity,
-    secondary-foreground-color: $ag-mat-secondary-foreground-color,
+    secondary-foreground-color-opacity: $secondary-foreground-color-opacity,
+    secondary-foreground-color: $secondary-foreground-color,
 
-    disabled-foreground-color-opacity: $ag-mat-disabled-foreground-color-opacity,
-    disabled-foreground-color: $ag-mat-disabled-foreground-color,
+    disabled-foreground-color-opacity: $disabled-foreground-color-opacity,
+    disabled-foreground-color: $disabled-foreground-color,
 
-    background-color: $ag-mat-background-color,
-    border-color: $ag-mat-border-color,
+    background-color: $background-color,
+    border-color: $border-color,
 
     button-background-color: transparent,
 
-    icon-color: $ag-mat-icon-color,
+    icon-color: $icon-color,
 
-    cell-data-changed-color: $ag-mat-cell-data-changed-color,
+    cell-data-changed-color: $cell-data-changed-color,
 
-    chip-background-color: $ag-mat-chip-background-color,
+    chip-background-color: $chip-background-color,
 
-    card-background-color: $ag-mat-background-color,
-    editor-background-color-color: $ag-mat-editor-background-color,
+    card-background-color: $background-color,
+    editor-background-color-color: $editor-background-color,
 
-    range-selection-background-color: $ag-mat-range-selection-background-color,
-    range-selection-highlight-color: $ag-mat-range-selection-highlight-color,
+    range-selection-background-color: $range-selection-background-color,
+    range-selection-highlight-color: $range-selection-highlight-color,
 
 
-    panel-background-color: $ag-mat-panel-background-color,
-    tool-panel-background-color: $ag-mat-tool-panel-background-color,
+    panel-background-color: $panel-background-color,
+    tool-panel-background-color: $tool-panel-background-color,
 
-    accent-color: $ag-mat-accent-color,
-    primary-color: $ag-mat-primary-color,
-    hover-color: $ag-mat-hover-color,
-    selected-color: $ag-mat-selected-color,
+    accent-color: $accent-color,
+    primary-color: $primary-color,
+    hover-color: $hover-color,
+    selected-color: $selected-color,
 
-    icon-opacity: $ag-mat-foreground-opacity,
+    icon-opacity: $foreground-opacity,
     button-text-transform: uppercase,
-    card-radius: $ag-mat-card-radius,
-    card-shadow: $ag-mat-card-shadow,
-    focused-textbox-border: 2px solid $ag-mat-primary-color,
+    card-radius: $card-radius,
+    card-shadow: $card-shadow,
+    focused-textbox-border: 2px solid $primary-color,
 
     input-border-width: 0,
-    input-bottom-border: 1px solid $ag-mat-border-color,
-    input-height: $ag-mat-grid-size * 3,
+    input-bottom-border: 1px solid $border-color,
+    input-height: $grid-size * 3,
 
     use-icons-for-pager-buttons: true,
     customize-inputs: true,
@@ -187,7 +167,7 @@ $params: (
 
 .ag-theme-material {
     %selected-tab {
-        border-bottom: 2px solid $ag-mat-primary-color;
+        border-bottom: 2px solid $primary-color;
     }
 
     @include ag-grid-theme($params);
