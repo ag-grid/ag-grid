@@ -305,8 +305,6 @@ include '../documentation-main/documentation_header.php';
         row model for details.
     </p>
 
-    <?= example('Simple', 'simple', 'vanilla', array("enterprise" => 1)) ?>
-
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
