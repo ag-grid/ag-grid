@@ -203,7 +203,7 @@ interface DetailGridInfo {
 var detailGridInfo = masterGridOptions.api.getDetailGridInfo('someDetailGridId');
 
 // iterate over all DetailGridInfo's
-masterGridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
+masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
     console.log("detailGridInfo: ", detailGridInfo);
 });</snippet>
 
@@ -213,7 +213,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
     will only operate on the specific detail grid.
 </p>
 
-<h3>Example - Editing Cells with Master / Detail</h3>
+<h3>Example - Editing Cells with Master Detail</h3>
 
 <p>
     This example shows how to control cell editing when using master / detail. This examples demonstrates
@@ -236,23 +236,45 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
 </p>
 <br/>
 
-<?= example('Editing Cells with Master / Detail', 'cell-editing', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Editing Cells with Master Detail', 'cell-editing', 'vanilla', array("enterprise" => 1)) ?>
 
-<h2>Example - Dynamic Master Nodes</h2>
+
+<h2>Dynamically Specify Master Nodes</h2>
 
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    It certain cases it may be required to not treat all top level rows as a master rows. For instance if a master has
+    no child records it may not be desirable to expand the master row to an empty detail.
 </p>
 
-<?= example('Dynamic Master Nodes', 'dynamic-master-nodes', 'vanilla', array("enterprise" => 1)) ?>
+<p>
+   In order to prevent this the following callback can be used on the master grid options:
+</p>
+
+<snippet>
+masterGridOptions.isRowMaster = function (dataItem) {
+    // return true when row data has children, false otherwise
+    return dataItem ? dataItem.children.length > 0 : false;
+}
+</snippet>
+
+<p>
+    As shown above our callback function will return <code>true</code> when there are detail (i.e. children) records,
+    otherwise it will return <code>false</code>.
+</p>
+
+
+<h3>Example - Dynamically Specify Master Nodes</h3>
+
+<p>
+    The following example only shows detail rows when there are corresponding child records.
+</p>
+
+<?= example('Dynamically Specify Master Nodes', 'dynamic-master-nodes', 'vanilla', array("enterprise" => 1)) ?>
 
 <h2>Example - Filtering with Sort</h2>
 
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
+    Below shows a simple master detail setup. From the example you can notice the following:
 <ul>
     <li></li>
 </ul>
