@@ -179,16 +179,64 @@ detailCellRendererParams: {
 <?= example('Custom Detail Cell Renderer with Form', 'custom-detail-with-form', 'vanilla', array("enterprise" => 1)) ?>
 
 
-<h2>Example - Editing Cells</h2>
+<h2>Accessing Detail Grid via Grid API</h2>
 
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    In order to access a detail grid the <code>DetailGridInfo</code> exists with the following properties:
 </p>
 
-<?= example('Cell Editing', 'cell-editing', 'vanilla', array("enterprise" => 1)) ?>
+<snippet>
+interface DetailGridInfo {
+    id: string;
+    api: GridApi;
+    columnApi: ColumnApi;
+}
+</snippet>
+
+<p>
+    The <code>DetailGridInfo</code> is accessed via the <code>GridApi</code> of the master <code>gridOptions</code> as
+    shown below:
+</p>
+
+<snippet>
+// lookup a specific DetailGridInfo by id
+var detailGridInfo = masterGridOptions.api.getDetailGridInfo('someDetailGridId');
+
+// iterate over all DetailGridInfo's
+masterGridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
+    console.log("detailGridInfo: ", detailGridInfo);
+});</snippet>
+
+<p>
+    The <code>DetailGridInfo</code> contains a reference to the underlying <a href="../javascript-grid-api/">Grid API</a>
+    and <a href="../javascript-grid-column-api/">Column API</a> for each detail grid. Methods invoked on these API's
+    will only operate on the specific detail grid.
+</p>
+
+<h2>Example - Editing Cells with Master / Detail</h2>
+
+<p>
+    This example shows how to control cell editing when using master / detail. This examples demonstrates
+    the following:
+
+    <ul>
+        <li><b>Edit Master</b> - performs editing on a master cell using the master grid options:
+                                 <code>masterGridOptions.api.startEditingCell()</code>
+        </li>
+        <li><b>Stop Edit Master</b> - iterates over each master row node using <code>masterGridOptions.api.forEachNode</code>
+                                      and then calls <code>masterGridOptions.api.stopEditing()</code> on each node.
+        </li>
+        <li><b>Edit Detail</b> - looks up the corresponding <code>DetailGridInfo</code> using <code>masterGridOptions.api.getDetailGridInfo()</code>
+                                 and then uses the grid api on that detail grid start editing: <code>detailGrid.api.startEditingCell()</code>
+        </li>
+        <li><b>Stop Edit Detail</b> - iterates over each detail grid using <code>masterGridOptions.api.forEachDetailGridInfo()</code>
+                                      and then calls <code>detailGridApi.api.stopEditing()</code> on each detail grid.
+        </li>
+    </ul>
+</p>
+<br/>
+
+<?= example('Editing Cells with Master / Detail', 'cell-editing', 'vanilla', array("enterprise" => 1)) ?>
 
 <h2>Example - Dynamic Master Nodes</h2>
 
