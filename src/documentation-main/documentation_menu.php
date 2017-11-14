@@ -247,21 +247,22 @@
     menuItem(0, 'Examples Overview', 'Overview', 'javascript-grid-examples/');
 
     menuItemWithIcon('react_small.png', 1, 'React Examples', 'React Examples', 'example-react/', true);
-    menuItem(2, 'React Rich Grid', 'Rich Grid', 'example-react-rich-grid/');
+    menuItem(2, 'React Rich Grid', 'Rich Grid', 'react-getting-started#react-rich-grid-example');
     menuItem(2, 'React Dynamic', 'Cell Renderers', 'example-react-dynamic/');
-    menuItem(2, 'React Editor', 'Editor Component', 'example-react-editor/');
-    menuItem(2, 'React Filter', 'Filter Component', 'example-react-filter/');
+    menuItem(2, 'React Editor', 'Editor Component', 'javascript-grid-cell-editor#example-cell-editing-using-react-components');
+    menuItem(2, 'React Filter', 'Filter Component', 'javascript-grid-filter-component#example-filtering-using-react-components');
+    menuItem(2, 'React Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component#react-floating-filter-example');
     menuItem(2, 'React Pinned Row', 'Pinned Rows', 'example-react-floating-row/');
     menuItem(2, 'React Full Width', 'Full Width Rows', 'example-react-full-width-rows/');
     menuItem(2, 'React Group Row', 'Group Rows', 'example-react-grouped-row/');
     menuItem(2, 'React Redux', 'Redux Examples', 'example-react-redux/');
 
     menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);
-    menuItem(2, 'Angular Rich Grid', 'Rich Grid', 'example-angular-rich-grid/');
-    menuItem(2, 'Angular Markup', 'Grid via Markup', 'example-angular-rich-grid-markup/');
+    menuItem(2, 'Angular Rich Grid', 'Rich Grid', 'angular-getting-started#angular-rich-grid-example');
+    menuItem(2, 'Angular Markup', 'Grid via Markup', 'angular-more-details#example-rich-grid-using-markup');
     menuItem(2, 'Angular Dynamic', 'Cell Renderers', 'example-angular-dynamic/');
-    menuItem(2, 'Angular Editor', 'Editor Component', 'example-angular-editor/');
-    menuItem(2, 'Angular Filter', 'Filter Component', 'example-angular-filter/');
+    menuItem(2, 'Angular Editor', 'Editor Component', 'javascript-grid-cell-editor#example-cell-editing-using-angular-components');
+    menuItem(2, 'Angular Filter', 'Filter Component', 'javascript-grid-filter-component#example-filtering-using-angular-components');
     menuItem(2, 'Angular Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component#ng2Angular');
     menuItem(2, 'Angular Pinned Row', 'Pinned Rows', 'example-angular-floating-row/');
     menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
@@ -270,11 +271,11 @@
     menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
 
     menuItemWithIcon('polymer-small.png', 1, 'Polymer Examples', 'Polymer Examples', 'example-polymer/', true);
-    menuItem(2, 'Polymer Rich Grid', 'Rich Grid', 'example-polymer-rich-grid/');
+    menuItem(2, 'Polymer Rich Grid', 'Rich Grid', 'polymer-getting-started#polymer-rich-grid-example');
     menuItem(2, 'Polymer Dynamic', 'Cell Renderers', 'example-polymer-dynamic/');
-    menuItem(2, 'Polymer Editor', 'Editor Component', 'example-polymer-editor/');
-    menuItem(2, 'Polymer Filter', 'Filter Component', 'example-polymer-filter/');
-    menuItem(2, 'Polymer Floating Filter', 'Floating Filter', 'example-polymer-floating-filter/');
+    menuItem(2, 'Polymer Editor', 'Editor Component', 'javascript-grid-cell-editor#example-cell-editing-using-polymer-components');
+    menuItem(2, 'Polymer Filter', 'Filter Component', 'javascript-grid-filter-component#example-filtering-using-polymer-components');
+    menuItem(2, 'Polymer Floating Filter', 'Floating Filter', 'javascript-grid-floating-filter-component#polymerFilter');
     menuItem(2, 'Polymer Pinned Row', 'Pinned Rows', 'example-polymer-floating-row/');
     menuItem(2, 'Polymer Full Width', 'Full Width Rows', 'example-polymer-full-width-rows/');
     menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');

@@ -184,7 +184,7 @@ npm start
 
     <h2>Summary</h2>
 
-    <p>We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
+    <p id="react-rich-grid-example">We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 

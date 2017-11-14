@@ -167,7 +167,7 @@ npm start</snippet>
 
     <h3>Summary</h3>
 
-    <p>We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
+    <p id="angular-rich-grid-example">We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 

@@ -22,15 +22,15 @@ include '../documentation-main/documentation_header.php';
 
     <div class="row">
         <div class="col-sm-6">
-            <a href="../example-angular-rich-grid/" class="column-links column-items">Rich Grid</a>
-            <a href="../example-angular-rich-grid-markup/" class="column-links column-items">Rich Grid with Markup</a>
+            <a href="../angular-getting-started#angular-rich-grid-example" class="column-links column-items">Rich Grid</a>
+            <a href="../angular-more-details#example-rich-grid-using-markup" class="column-links column-items">Rich Grid with Markup</a>
             <a href="../example-angular-dynamic#dynamic" class="column-links column-items">Dynamic Component</a>
             <a href="../example-angular-dynamic#rich-dynamic" class="column-links column-items">Richer Dynamic Components</a>
-            <a href="../example-angular-editor/" class="column-links column-items">Editor Components</a>
+            <a href="../javascript-grid-cell-editor#example-cell-editing-using-angular-components" class="column-links column-items">Editor Components</a>
         </div>
         <div class="col-sm-6">
-            <a href="../example-angular-filter/" class="column-links column-items">Filter Component</a>
-            <a href="../javascript-grid-floating-filter-component/#ng2Angular" class="column-links column-items">Floating Filter Component</a>
+            <a href="../javascript-grid-filter-component#example-filtering-using-angular-components" class="column-links column-items">Filter Component</a>
+            <a href="../javascript-grid-floating-filter-component#ng2Angular" class="column-links column-items">Floating Filter Component</a>
             <a href="../example-angular-floating-row/" class="column-links column-items">Pinned Row Renderer</a>
             <a href="../example-angular-full-width-rows/" class="column-links column-items">Full Width Renderer</a>
             <a href="../example-angular-grouped-row/" class="column-links column-items">Group Row Inner Renderer</a>
