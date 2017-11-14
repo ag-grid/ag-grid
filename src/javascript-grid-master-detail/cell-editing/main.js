@@ -19,6 +19,9 @@ var detailGridOptions = {
     enableColResize: true,
     defaultColDef: {
         editable: true
+    },
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
     }
 };
 
@@ -27,16 +30,19 @@ var masterGridOptions = {
     rowData: rowData,
     enableColResize: true,
     masterDetail: true,
-    detailRowHeight: 200,
-    detailGridOptions: detailGridOptions,
+    detailCellRendererParams: {
+        detailGridOptions: detailGridOptions,
+        getDetailRowData: function(params) {
+            params.successCallback(params.data.callRecords);
+        }
+    },
+    detailRowHeight: 340,
     defaultColDef: {
         editable: true
     },
-    getDetailRowData: function(params) {
-        params.successCallback(params.data.callRecords);
-    },
-    onGridReady: function () {
+    onGridReady: function (params) {
         expandMasterRow1();
+        params.api.sizeColumnsToFit();
     }
 };
 

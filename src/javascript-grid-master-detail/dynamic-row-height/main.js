@@ -15,26 +15,37 @@ var detailColumnDefs = [
 ];
 
 var detailGridOptions = {
-    columnDefs: detailColumnDefs
+    columnDefs: detailColumnDefs,
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
 var masterGridOptions = {
     columnDefs: masterColumnDefs,
     rowData: rowData,
     masterDetail: true,
-    detailGridOptions: detailGridOptions,
-    getDetailRowData: function(params) {
-        params.successCallback(params.data.callRecords);
+    detailCellRendererParams: {
+        detailGridOptions: detailGridOptions,
+        getDetailRowData: function(params) {
+            params.successCallback(params.data.callRecords);
+        }
     },
     getRowHeight: function (params) {
         if(params.node && params.node.detail) {
-            var offset = 90;
+            var offset = 80;
             var allDetailRowHeight = params.data.callRecords.length * 25;
             return allDetailRowHeight + offset;
         } else {
             // otherwise return fixed master row height
-            return 50;
+            return 60;
         }
+    },
+    onGridReady: function(params) {
+        params.api.forEachNode(function (node) {
+            node.setExpanded(node.id === "1");
+        });
+        params.api.sizeColumnsToFit();
     }
 };
 

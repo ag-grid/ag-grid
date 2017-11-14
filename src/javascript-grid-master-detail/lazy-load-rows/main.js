@@ -15,18 +15,26 @@ var detailColumnDefs = [
 ];
 
 var detailGridOptions = {
-    columnDefs: detailColumnDefs
+    columnDefs: detailColumnDefs,
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
 var masterGridOptions = {
     columnDefs: masterColumnDefs,
     rowData: rowData,
     masterDetail: true,
-    detailGridOptions: detailGridOptions,
-    getDetailRowData: function(params) {
-        setTimeout(function () {
-            params.successCallback(params.data.callRecords);
-        }, 1000);
+    detailCellRendererParams: {
+        detailGridOptions: detailGridOptions,
+        getDetailRowData: function (params) {
+            setTimeout(function () {
+                params.successCallback(params.data.callRecords);
+            }, 1000);
+        }
+    },
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
     }
 };
 

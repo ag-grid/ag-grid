@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="width-and-height">Grid Size</h2>
+    <h1 class="first-h1" id="width-and-height">Grid Size</h1>
 
     <p>
         The grid width and height should be set using CSS width and height styles.

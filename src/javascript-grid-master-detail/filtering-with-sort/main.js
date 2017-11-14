@@ -15,7 +15,12 @@ var detailColumnDefs = [
 ];
 
 var detailGridOptions = {
-    columnDefs: detailColumnDefs
+    columnDefs: detailColumnDefs,
+    enableSorting: true,
+    enableFilter: true,
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
 var masterGridOptions = {
@@ -23,11 +28,18 @@ var masterGridOptions = {
     rowData: rowData,
     enableSorting: true,
     enableFilter: true,
-    enableColResize: true,
     masterDetail: true,
-    detailGridOptions: detailGridOptions,
-    getDetailRowData: function(params) {
-        params.successCallback(params.data.callRecords);
+    detailCellRendererParams: {
+        detailGridOptions: detailGridOptions,
+        getDetailRowData: function (params) {
+            params.successCallback(params.data.callRecords);
+        }
+    },
+    onGridReady: function(params) {
+        params.api.forEachNode(function (node) {
+            node.setExpanded(node.id === "1");
+        });
+        params.api.sizeColumnsToFit();
     }
 };
 
