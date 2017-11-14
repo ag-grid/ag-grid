@@ -31,8 +31,8 @@ var masterGridOptions = {
             params.successCallback(params.data.callRecords);
         }
     },
-    isRowMaster: function (params) {
-        return params ? params.callRecords.length > 0 : false;
+    isRowMaster: function (dataItem) {
+        return dataItem ? dataItem.callRecords.length > 0 : false;
     },
     onGridReady: function(params) {
         params.api.forEachNode(function (node) {

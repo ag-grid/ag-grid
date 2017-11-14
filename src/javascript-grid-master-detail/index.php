@@ -203,7 +203,7 @@ interface DetailGridInfo {
 var detailGridInfo = masterGridOptions.api.getDetailGridInfo('someDetailGridId');
 
 // iterate over all DetailGridInfo's
-masterGridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
+masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
     console.log("detailGridInfo: ", detailGridInfo);
 });</snippet>
 
@@ -213,7 +213,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
     will only operate on the specific detail grid.
 </p>
 
-<h3>Example - Editing Cells with Master / Detail</h3>
+<h3>Example - Editing Cells with Master Detail</h3>
 
 <p>
     This example shows how to control cell editing when using master / detail. This examples demonstrates
@@ -236,73 +236,190 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
 </p>
 <br/>
 
-<?= example('Editing Cells with Master / Detail', 'cell-editing', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Editing Cells with Master Detail', 'cell-editing', 'vanilla', array("enterprise" => 1)) ?>
 
-<h2>Example - Dynamic Master Nodes</h2>
+
+<h2>Dynamically Specify Master Nodes</h2>
 
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    It certain cases it may be required to not treat all top level rows as a master rows. For instance if a master has
+    no child records it may not be desirable to expand the master row to an empty detail.
 </p>
 
-<?= example('Dynamic Master Nodes', 'dynamic-master-nodes', 'vanilla', array("enterprise" => 1)) ?>
+<p>
+   In order to prevent this the following callback can be used on the master grid options:
+</p>
 
-<h2>Example - Filtering with Sort</h2>
+<snippet>
+masterGridOptions.isRowMaster = function (dataItem) {
+    // return true when row data has children, false otherwise
+    return dataItem ? dataItem.children.length > 0 : false;
+}
+</snippet>
 
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    As shown above our callback function will return <code>true</code> when there are detail (i.e. children) records,
+    otherwise it will return <code>false</code>.
+</p>
+
+<h3>Example - Dynamically Specify Master Nodes</h3>
+<p>
+    The following example only shows detail rows when there are corresponding child records.
+</p>
+
+<?= example('Dynamically Specify Master Nodes', 'dynamic-master-nodes', 'vanilla', array("enterprise" => 1)) ?>
+
+<h2>Nesting Master Detail</h2>
+
+<p>
+    It is possible to nest Master Detail grids. There are no special configurations required to achieve this but instead
+    of passing grid options for a detail grid, just supply another master grid options at each required level.
+</p>
+
+<p>
+    The following snippet illustrates how to achieve nesting via successive grid option configurations:
+</p>
+
+<snippet>
+// Level 1 (master)
+var gridOptionsLevel1Master = {
+    ...
+    masterDetail: true,
+    detailCellRendererParams: {
+        detailGridOptions: gridOptionsLevel2Master,
+        getDetailRowData: function (params) {
+            params.successCallback(params.data.children);
+        }
+    }
+}
+
+// Level 2 (master)
+var gridOptionsLevel2Master = {
+    ...
+    masterDetail: true,
+    detailCellRendererParams: {
+        detailGridOptions: gridOptionsLevel3Detail,
+        getDetailRowData: function (params) {
+            params.successCallback(params.data.children);
+        }
+    }
+}
+
+// Level 3 (detail)
+var gridOptionsLevel3Detail = {
+    ...
+    // no master configurations
+}
+</snippet>
+
+
+<h3>Example - Nesting Master Detail</h3>
+<p>
+    Below shows a contrived master detail setup to help illustrate how nesting can be achieved:
+</p>
+
+<?= example('Nesting Master Detail', 'nesting', 'vanilla', array("enterprise" => 1)) ?>
+
+
+<h2>Detail Row Height</h2>
+<p>
+    The height of detail rows can be configured to a fixed height or dynamically determined.
+</p>
+
+<p>
+    The following snippet compares both approaches:
+</p>
+
+
+<snippet>
+// fixed detail row height
+masterGridOptions.detailRowHeight = 500;
+
+// dynamic detail row height
+masterGridOptions.getRowHeight = function (params) {
+    if(params.node && params.node.detail) {
+        // dynamically calculate detail row height
+        return params.data.children.length * 50;
+    }
+
+    // otherwise return fixed master row height
+    return 500;
+}
+</snippet>
+
+<p>
+    Note that the <code>detail</code> property can be used to identify detail rows.
+</p>
+
+<p>
+    The following examples demonstrate both approaches:
+</p>
+
+<h3>Example - Fixed Detail Row Height</h3>
+<p>
+    The following demonstrates a fixed detail row height:
+</p>
+
+<?= example('Fixed Detail Row Height', 'fixed-detail-row-height', 'vanilla', array("enterprise" => 1)) ?>
+
+<h3>Example - Dynamic Detail Row Height</h3>
+<p>
+    The following example demonstrates dynamic detail row heights:
+</p>
+
+<?= example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'vanilla', array("enterprise" => 1)) ?>
+
+<h2>Filtering and Sorting</h2>
+<p>
+    There are no specific configurations for filtering and sorting with Master Detail but as there are multiple grids
+    each grid will filter and sort independently.
+</p>
+
+<h3>Example - Filtering with Sort</h3>
+
+<p>
+    Below shows a simple master detail setup which has filtering and sorting enabled in both Master and Detail grids.
 </p>
 
 <?= example('Filtering with Sort', 'filtering-with-sort', 'vanilla', array("enterprise" => 1)) ?>
 
-<h2>Example - Lazy Load Rows</h2>
-
+<h2>Lazy Load Detail Rows</h2>
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    It is possible to lazy load detail row data as it becomes available. For instance an asynchronous request could be
+    sent when expanding a master row to fetch detail records.
 </p>
 
-<?= example('Lazy Load Rows', 'lazy-load-rows', 'vanilla', array("enterprise" => 1)) ?>
-
-<h2>Example - Multiple Levels of Master Detail</h2>
-
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    The following snippet illustrates this using a simple <code>setTimeout()</code> function to delay supplying
+    data to the detail row after a fixed timeout.
 </p>
 
-<?= example('Multiple Levels of Master Detail', 'multiple-levels', 'vanilla', array("enterprise" => 1)) ?>
-
-<h2>Example - Detail Row Height</h2>
-
-<p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
-</p>
-
-<?= example('Detail Row Height', 'detail-row-height', 'vanilla', array("enterprise" => 1)) ?>
-
-<h2>Example - Dynamic Height</h2>
+<snippet>
+var masterGridOptions = {
+    detailCellRendererParams: {
+        getDetailRowData: function (params) {
+            // simulate delayed supply of data to the detail pane
+            setTimeout(function () {
+                params.successCallback(params.data.childRecords);
+            }, 1000);
+        }
+    }
+};
+</snippet>
 
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    Note that the key to this approach is the <code>params.successCallback(data)</code> function provided via the params, which can
+    be invoked later or asynchronously once the data for the detail row is available.
 </p>
 
-<?= example('Dynamic Height', 'dynamic-row-height', 'vanilla', array("enterprise" => 1)) ?>
+<h3>Example - Lazy Load Detail Rows</h3>
+
+<p>
+    Below shows a simple master detail setup which uses <code>setTimeout()</code> to simulate lazying loading of data
+    in the detail rows:
+</p>
+
+<?= example('Lazy Load Detail Rows', 'lazy-load-rows', 'vanilla', array("enterprise" => 1)) ?>
 
 
 <h2>Supported Modes</h2>
