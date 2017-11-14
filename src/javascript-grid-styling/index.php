@@ -30,31 +30,40 @@ dt code {
 <note>
     <h3 style="margin-top: 4px;">Legacy Themes</h3>
     <p>
-The 14.2.0 release (October 2017) included remakes of the themes with more consistent whitespace and <a href="#customizing-sass-variables">easier customization through Sass variables</a>.
-The previous ones are still shipped, but deprecated and likely to be removed after several releases.
-If you are using any of the themes below, give the new counterpart a try.
-</p>
+    The 14.2.0 release (October 2017) included remakes of the themes with more consistent whitespace and <a href="#customizing-sass-variables">easier customization through Sass variables</a>.
+    The previous ones are still shipped, but deprecated and likely to be removed after several releases.
+    If you are using any of the themes below, give the new counterpart a try.
+    </p>
 
-<table class="theme-table">
-    <tr>
-        <th>Old Theme</th><th>New Theme</th>
-    </tr>
-    <tr>
-        <td>ag-fresh</td><td>ag-theme-fresh</td>
-    </tr>
-    <tr>
-        <td>ag-dark</td><td>ag-theme-dark</td>
-    </tr>
-    <tr>
-        <td>ag-blue</td><td>ag-theme-blue</td>
-    </tr>
-    <tr>
-        <td>ag-material</td><td>ag-theme-material</td>
-    </tr>
-    <tr>
-        <td>ag-bootstrap</td><td>ag-theme-bootstrap</td>
-    </tr>
-</table>
+    <p>
+        <table class="theme-table">
+            <tr>
+                <th>Old Theme</th><th>New Theme</th>
+            </tr>
+            <tr>
+                <td>ag-fresh</td><td>ag-theme-fresh</td>
+            </tr>
+            <tr>
+                <td>ag-dark</td><td>ag-theme-dark</td>
+            </tr>
+            <tr>
+                <td>ag-blue</td><td>ag-theme-blue</td>
+            </tr>
+            <tr>
+                <td>ag-material</td><td>ag-theme-material</td>
+            </tr>
+            <tr>
+                <td>ag-bootstrap</td><td>ag-theme-bootstrap</td>
+            </tr>
+        </table>
+    </p>
+
+    <p>
+        If you move to a new theme you will notice the spacing is larger.
+        Customising the new theme to have less spacing (so it looks more like
+        an old theme) see the Github example
+        <a href="https://github.com/ag-grid/ag-grid-customise-theme">ag-grid-customise-theme</a>.
+    </p>
 
 </note>
 
@@ -76,7 +85,7 @@ If you are using any of the themes below, give the new counterpart a try.
     <dt>ag-theme-blue</dt>
     <dd>A light theme with blue headers.</dd>
 
-    <dt>ag-material</dt>
+    <dt>ag-theme-material</dt>
     <dd>A theme designed according to the Google Material Language Specs</dd>
 
     <dt>ag-theme-bootstrap</dt>
