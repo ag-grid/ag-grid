@@ -18,7 +18,7 @@ var gridOptionsLevel2 = {
     columnDefs: [{field: 'a2', cellRenderer: 'group'}, {field: 'b2'}],
     groupDefaultExpanded: 1,
     masterDetail: true,
-    detailRowHeight: 100,
+    detailRowHeight: 200,
     detailCellRendererParams: {
         detailGridOptions: gridOptionsLevel3,
         getDetailRowData: function (params) {

@@ -110,7 +110,7 @@ detailCellRendererParams: {
             + '  &lt;div style="height: 10%;">Name: ' + personName + '&lt;/div>'
             + '  &lt;div ref="eDetailGrid" style="height: 90%;">&lt;/div>'
             + '&lt;/div>';
-        }
+    }
 }
 </snippet>
 
@@ -123,27 +123,22 @@ detailCellRendererParams: {
     The follow examples demonstrate both approaches.
 </p>
 
-<h2>Example - Using String Template</h2>
-
+<h2>Example - Customising via String Template</h2>
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    This examples demonstrates a static string template which is supplied to the <code>detailCellRendererParams.template</code>
+    property to customise the layout and background colour.
 </p>
 
-<?= example('String Template', 'string-template', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Customising via String Template', 'string-template-customisation', 'vanilla', array("enterprise" => 1)) ?>
 
-<h2>Example - Using Template Callback with Inner Grid</h2>
+<h2>Example - Customising via Template Callback</h2>
 
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    A template callback function is supplied to the <code>detailCellRendererParams.template</code> property to customise
+    the layout and background colour. It additionally adds the name from the master row using the data supplied via callback parameters.
 </p>
 
-<?= example('Template Callback with Inner Grid', 'template-callback-inner-grid', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Customising via Template Callback', 'template-callback-customisation', 'vanilla', array("enterprise" => 1)) ?>
 
 
 <h2>Providing Custom Detail Components</h2>
