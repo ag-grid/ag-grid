@@ -77,18 +77,21 @@ var detailGridOptions = {
 <?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
 
 
-<h2>Overriding the Default Detail Template</h2>
+<h2>Overriding the Default Detail Cell Renderer</h2>
+    <p>
+        The template used by default detail Cell Renderer can be overridden with a user defined template. This is a convenient
+        way to provide custom layouts and styles to the detail rows.
+    </p>
 
-<p>
-    The default detail template used by the grid can be overridden with a user defined template.
+   <p>
+        There are two ways to achieve this:
 
-    <ul>
-        <li><b>String Template</b> - statically overrides the template used by the grid.</li>
-        <li><b>Template Callback</b> - can be dynamically modified based on row data.</li>
-    </ul>
+        <ul>
+            <li><b>String Template</b> - statically overrides the template used by the grid.</li>
+            <li><b>Template Callback</b> - can be dynamically modified based on row data.</li>
+        </ul>
 
-    Both methods require specifying the <code>detailCellRendererParams.template</code> property as shown below:
-
+        Both methods require specifying the <code>detailCellRendererParams.template</code> property as shown below:
 </p>
 
 <snippet>
@@ -141,31 +144,39 @@ detailCellRendererParams: {
 <?= example('Customising via Template Callback', 'template-callback-customisation', 'vanilla', array("enterprise" => 1)) ?>
 
 
-<h2>Providing Custom Detail Components</h2>
-
-
-<h2>Example - Custom Detail Component without Grid</h2>
+<h2>Providing a custom Detail Cell Renderer</h2>
 
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    The previous section described how to override the detail template used in the default Cell Renderer, however it is also
+    possible to provide a custom detail <a href="../javascript-grid-cell-rendering-components/">Cell Renderer Component</a>.
+    This approach provides more flexibility but is less convenient.
 </p>
-
-<?= example('Custom Detail Component without Grid', 'custom-detail-without-grid', 'vanilla', array("enterprise" => 1)) ?>
-
-
-<h2>Example - Custom Detail Component with Grid</h2>
 
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    To supply a custom detail Cell Renderer instead of using the default use: <code>gridOptions.detailCellRenderer</code>
 </p>
 
-<?= example('Custom Detail Component with Grid', 'custom-detail-with-grid', 'vanilla', array("enterprise" => 1)) ?>
+<p>
+    The following examples demonstrate custom Cell Renderer components for the detail row with and without a grid.
+</p>
+
+
+<h2>Example - Custom Detail Cell Renderer with a Grid</h2>
+
+<p>
+    This example demonstrates how to embeds a grid into the detail row using a custom Cell Renderer component:
+</p>
+
+<?= example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'vanilla', array("enterprise" => 1)) ?>
+
+
+<h2>Example - Custom Detail Cell Renderer with a Form</h2>
+
+<p>
+    This example demonstrates a custom Cell Renderer Component that uses a form rather than a grid:
+</p>
+
+<?= example('Custom Detail Cell Renderer with Form', 'custom-detail-with-form', 'vanilla', array("enterprise" => 1)) ?>
 
 
 <h2>Example - Editing Cells</h2>
