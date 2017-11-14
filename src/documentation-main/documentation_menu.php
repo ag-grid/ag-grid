@@ -138,7 +138,7 @@
     menuItem(0, 'Performance', 'Performance', 'javascript-grid-performance/');
     menuItem(0, 'Accessibility', 'Accessibility', 'javascript-grid-accessibility/');
     menuItem(0, 'Full Width Rows', 'Full Width Rows', 'javascript-grid-full-width-rows/');
-    menuItem(0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
+    menuItemWithIcon('enterprise.png',0, 'Master Detail', 'Master Detail', 'javascript-grid-master-detail/');
     menuItem(0, 'Aligned Grids', 'Aligned Grids', 'javascript-grid-aligned-grids/');
     menuItem(0, 'Data Export', 'CSV Export', 'javascript-grid-export/');
     menuItemWithIcon('enterprise.png', 0, 'Excel Export', 'Excel Export', 'javascript-grid-excel/');

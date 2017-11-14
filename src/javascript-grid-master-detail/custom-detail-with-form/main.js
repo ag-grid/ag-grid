@@ -11,11 +11,6 @@ var masterGridOptions = {
     rowData: rowData,
     masterDetail: true,
     detailCellRenderer: DetailCellRenderer,
-    detailCellRendererParams: {
-        getDetailRowData: function(params) {
-            params.successCallback(params.data.callRecords);
-        }
-    },
     detailRowHeight: 70,
     groupDefaultExpanded: 1,
     onGridReady: function(params) {

@@ -12,9 +12,6 @@ var masterGridOptions = {
     masterDetail: true,
     detailRowHeight: 260,
     detailCellRenderer: DetailPanelCellRenderer,
-    getDetailRowData: function(params) {
-        params.successCallback(params.data.callRecords);
-    },
     onGridReady: function(params) {
         params.api.forEachNode(function (node) {
             node.setExpanded(node.id === "1");
