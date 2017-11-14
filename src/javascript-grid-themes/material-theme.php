@@ -120,9 +120,9 @@ A working example that integrates Angular Material's input, checkbox, select and
     <p/>
     To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
     <p/>
-    The following is an example of using the ag-material theme:<br/>
+    The following is an example of using the <code>ag-theme-material</code> theme:<br/>
     <snippet>
-&lt;div ag-grid="gridOptions" class="ag-material"&gt;&lt;/div&gt;</snippet>
+&lt;div ag-grid="gridOptions" class="ag-theme-material"&gt;&lt;/div&gt;</snippet>
 
     </p>
     Note that to use the Material theme you'll need to override the default rowHeight

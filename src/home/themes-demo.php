@@ -26,7 +26,7 @@
             <div class="col-md-6">
                 <div style="padding: 4px;">
                     <h4 class="text-center">Google Material Design</h4>
-                    <div style="height:280px" id="material-demo" class="ag-material"></div>
+                    <div style="height:280px" id="material-demo" class="ag-theme-material"></div>
                 </div>
             </div>
             <div  class="col-md-6">
