@@ -19,6 +19,9 @@ var masterGridOptions = {
     detailRowHeight: 70,
     detailCellRenderer: DetailCellRenderer,
     onGridReady: function(params) {
+        params.api.forEachNode(function (node) {
+            node.setExpanded(node.id === "1");
+        });
         params.api.sizeColumnsToFit();
     }
 };

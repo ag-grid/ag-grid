@@ -34,16 +34,94 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
+<p>
+    These grid options are illustrated below:
+</p>
+
+<snippet>
+var masterGridOptions = {
+    columnDefs: masterColumnDefs,
+    rowData: rowData,
+
+    // enable master detail
+    masterDetail: true,
+
+    // specify params for default detail cell renderer
+    detailCellRendererParams: {
+        // provide detail grid options
+        detailGridOptions: detailGridOptions,
+
+        // extract and supply row data for detail
+        getDetailRowData: function(params) {
+            params.successCallback(params.data.childRecords);
+        }
+    }
+}
+
+var detailGridOptions = {
+    columnDefs: detailColumnDefs
+}</snippet>
+
+
 <h2>Example - Simple Master Detail</h2>
 
 <p>
     Below shows a simple master / detail setup. From the example you can notice the following:
     <ul>
-        <li></li>
+      <li><b>masterDetail</b> - is set to <code>true</code> in the master grid options.</li>
+      <li><b>detailCellRendererParams</b> - specifies the <code>detailGridOptions</code> to use and <code>getDetailRowData</code>
+    extracts the data for the detail row.</li>
     </ul>
 </p>
-
+<br/>
 <?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
+
+
+<h2>Overriding the Default Detail Template</h2>
+
+<p>
+    The default detail template used by the grid can be overridden with a user defined template.
+
+    <ul>
+        <li><b>String Template</b> - statically overrides the template used by the grid.</li>
+        <li><b>Template Callback</b> - can be dynamically modified based on row data.</li>
+    </ul>
+
+    Both methods require specifying the <code>detailCellRendererParams.template</code> property as shown below:
+
+</p>
+
+<snippet>
+// override using string template
+detailCellRendererParams: {
+    template:
+        '&lt;div style="background-color: #edf6ff; padding: 20px; box-sizing: border-box;">' +
+        '  &lt;div style="height: 10%;">Call Details&lt;/div>' +
+        '  &lt;div ref="eDetailGrid" style="height: 90%;">&lt;/div>' +
+        '&lt;/div>'
+    }
+}
+
+// override using template callback
+detailCellRendererParams: {
+    template: function (params) {
+        var personName = params.data.name;
+        return '&lt;div style="height: 100%; background-color: #EDF6FF; padding: 20px; box-sizing: border-box;">'
+            + '  &lt;div style="height: 10%;">Name: ' + personName + '&lt;/div>'
+            + '  &lt;div ref="eDetailGrid" style="height: 90%;">&lt;/div>'
+            + '&lt;/div>';
+        }
+}
+</snippet>
+
+<p>
+    To insert the detail grid user provided template it is important to use the reference <code>eDetailGrid</code> as
+    shown above.
+</p>
+
+<p>
+    The follow examples demonstrate both approaches.
+</p>
 
 <h2>Example - Using String Template</h2>
 
@@ -66,6 +144,10 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <?= example('Template Callback with Inner Grid', 'template-callback-inner-grid', 'vanilla', array("enterprise" => 1)) ?>
+
+
+<h2>Providing Custom Detail Components</h2>
+
 
 <h2>Example - Custom Detail Component without Grid</h2>
 
