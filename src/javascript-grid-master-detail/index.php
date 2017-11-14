@@ -262,38 +262,66 @@ masterGridOptions.isRowMaster = function (dataItem) {
     otherwise it will return <code>false</code>.
 </p>
 
-
 <h3>Example - Dynamically Specify Master Nodes</h3>
-
 <p>
     The following example only shows detail rows when there are corresponding child records.
 </p>
 
 <?= example('Dynamically Specify Master Nodes', 'dynamic-master-nodes', 'vanilla', array("enterprise" => 1)) ?>
 
-<h2>Example - Filtering with Sort</h2>
+<h2>Filtering and Sorting</h2>
+<p>
+    There are no specific configurations for filtering and sorting with Master Detail but as there are multiple grids
+    each grid will filter and sort independently.
+</p>
+
+<h3>Example - Filtering with Sort</h3>
 
 <p>
-    Below shows a simple master detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    Below shows a simple master detail setup which has filtering and sorting enabled in both Master and Detail grids.
 </p>
 
 <?= example('Filtering with Sort', 'filtering-with-sort', 'vanilla', array("enterprise" => 1)) ?>
 
-<h2>Example - Lazy Load Rows</h2>
-
+<h2>Lazy Load Detail Rows</h2>
 <p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
+    It is possible to lazy load detail row data as it becomes available. For instance an asynchronous request could be
+    sent when expanding a master row to fetch detail records.
 </p>
 
-<?= example('Lazy Load Rows', 'lazy-load-rows', 'vanilla', array("enterprise" => 1)) ?>
+<p>
+    The following snippet illustrates this using a simple <code>setTimeout()</code> function to delay supplying
+    data to the detail row after a fixed timeout.
+</p>
 
-<h2>Example - Multiple Levels of Master Detail</h2>
+<snippet>
+var masterGridOptions = {
+    detailCellRendererParams: {
+        getDetailRowData: function (params) {
+            // simulate delayed supply of data to the detail pane
+            setTimeout(function () {
+                params.successCallback(params.data.childRecords);
+            }, 1000);
+        }
+    }
+};
+</snippet>
+
+<p>
+    Note that the key to this approach is the <code>params.successCallback(data)</code> function provided via the params, which can
+    be invoked later or asynchronously once the data for the detail row is available.
+</p>
+
+<h3>Example - Lazy Load Detail Rows</h3>
+
+<p>
+    Below shows a simple master detail setup which uses <code>setTimeout()</code> to simulate lazying loading of data
+    in the detail rows:
+</p>
+
+<?= example('Lazy Load Detail Rows', 'lazy-load-rows', 'vanilla', array("enterprise" => 1)) ?>
+
+<h3>Example - Multiple Levels of Master Detail</h3>
 
 <p>
     Below shows a simple master / detail setup. From the example you can notice the following:

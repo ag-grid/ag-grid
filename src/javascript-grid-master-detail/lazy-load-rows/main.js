@@ -28,6 +28,8 @@ var masterGridOptions = {
     detailCellRendererParams: {
         detailGridOptions: detailGridOptions,
         getDetailRowData: function (params) {
+
+            // simulate delayed supply of data to the detail pane
             setTimeout(function () {
                 params.successCallback(params.data.callRecords);
             }, 1000);
