@@ -9,9 +9,24 @@ include('../includes/mediaHeader.php');
 
 <div class="container-fluid">
 
-<!-- <link rel="stylesheet" href="../documentation-main/documentation.css"> -->
-<h1 style='font-size: 70px;'>What's New in ag-Grid v14.2.0</h1>
-<p>Sophia Lazarova | 14th November 2017</p>
+    <!-- <link rel="stylesheet" href="../documentation-main/documentation.css"> -->
+    <h1 style='font-size: 70px;'>What's New in ag-Grid v14.2.0</h1>
+    <p style='display: inline'>Sophia Lazarova | 14th November 2017</p>
+    <div>
+        <a href="https://twitter.com/share" class="twitter-share-button"
+            data-url="https://www.ag-grid.com/ag-grid-blog-14-2-0/"
+            data-text="ag-Grid v14.2.0" data-via="sophialazarova"
+            data-size="large">Tweet</a>
+        <script>!function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                if (!d.getElementById(id)) {
+                    js = d.createElement(s);
+                    js.id = id;
+                    js.src = p + '://platform.twitter.com/widgets.js';
+                    fjs.parentNode.insertBefore(js, fjs);
+                }
+            }(document, 'script', 'twitter-wjs');</script>
+    </div>
 
     <img src="cover-img.jpg" width='94%'/>
     <div style="margin-top: 20px;" class="col-md-8">
