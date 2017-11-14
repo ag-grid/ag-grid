@@ -1,8 +1,10 @@
 <?php
 
-$pageTitle = "What's New in ag-Grid v14.2.0";
-$pageDescription = "Overview of version 14.2.0.";
-$pageKeyboards = "ag-Grid javascript datagrid 14.2.0";
+$pageTitle = "ag-Grid v14.2.0 Released";
+$pageDescription = "ag-Grid v14.2.0 is now released! New version comes with improved set of themes, master-detail view and bug fixes.";
+$pageKeyboards = "ag-grid new features v14.2.0";
+$socialUrl = "https://www.ag-grid.com/ag-grid-blog-14-2-0/";
+$socialImage = "https://www.ag-grid.com/ag-grid-blog-14-2-0/cover.jpg";
 
 include('../includes/mediaHeader.php');
 ?>
@@ -56,7 +58,7 @@ include('../includes/mediaHeader.php');
         <p>The new themes use a different architecture which provides means for easier customization. The improved implementation also introduces customization with <strong>Sass variables</strong>. 
         And that's not all, the new set has a number of visual improvements which contribute to the professional look of the grid.</p>
         
-        <p>You can find more details <a href="https://www.ag-grid.com/javascript-grid-styling/#gsc.tab=0" title="Themes">in our documentation</a>.</p>
+        <p>You can find more details <a href="../javascript-grid-styling/" title="Themes">in our documentation</a>.</p>
         
         <h2>Master-Detail</h2>
         
@@ -64,11 +66,11 @@ include('../includes/mediaHeader.php');
         
         <p>No more full-width rows and flower nodes hacks to achieve the <strong>master-detail</strong> effect. Version 14.2.0 arrives with <strong>master-detail</strong> as a feature, coming out of the box and available for customization with simple property changes.</p>
         
-        <p>Find implementation details and samples in the dedicated <a href="https://www.ag-grid.com/javascript-grid-master-detail/#gsc.tab=0" title="Master Detail">documentation page</a>.</p>
+        <p>Find implementation details and samples in the dedicated <a href="../javascript-grid-master-detail/" title="Master Detail">documentation page</a>.</p>
         
         <h2>Fixed Bugs and Improvements</h2>
         
-        <p>For full list of all bug fixes and enhancements coming with this version check the <a href="https://www.ag-grid.com/change-log/changeLogIndex.php#gsc.tab=0" title="change-log">change-log</a> published on our website.</p>
+        <p>For full list of all bug fixes and enhancements coming with this version check the <a href="../change-log/changeLogIndex.php" title="change-log">change-log</a> published on our website.</p>
         
         <h2>Give it a Try and Share</h2>
         
