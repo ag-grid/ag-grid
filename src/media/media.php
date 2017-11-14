@@ -21,6 +21,31 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
+        <a href="../ag-grid-blog-14-2-0/">
+            <img src="../ag-grid-blog-14-2-0/cover.jpg" style="width: 225px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="../ag-grid-blog-14-2-0/">
+                What's New in ag-Grid v14.2.0
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            14th November 2017
+        </div>
+    </div>
+    <div style="color: #767676">
+        Sophia Lazarova
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        <p>Find out what the team has prepared for you with v14.2.0</p>
+    </div>
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
         <a href="../ag-grid-datagrid-crud-part-1/">
             <img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" style="width: 225px;"/>
         </a>
