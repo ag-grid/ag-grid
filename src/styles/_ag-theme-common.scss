@@ -631,6 +631,10 @@
     // Tool panel
     ////////////////////////////////////////
 
+    .ag-group-child-count:before {
+        content: ' ';
+    }
+
     .ag-tool-panel {
         background-color: $tool-panel-background-color;
         border-right: 0;
