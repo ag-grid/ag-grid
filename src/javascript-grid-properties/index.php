@@ -422,6 +422,23 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
+            <td colspan="2">Master Detail</td>
+        </tr>
+        <tr>
+            <th>masterDetail</th>
+            <td>Set to true to enable the Master Detail. See <a href="../javascript-grid-master-detail">Master Detail</a>
+                for more details.
+            </td>
+        </tr>
+        <tr>
+            <th>detailCellRendererParams</th>
+            <td>Specifies the params to be used by the default detail <a href="../javascript-grid-cell-rendering-components">Cell Renderer</a>.
+                See <a href="../javascript-grid-master-detail">Master Detail</a> for more details.
+            </td>
+        </tr>
+
+        <tr class="title-row">
+            <!-- TITLE ROW -->
             <td colspan="2">Rendering & Styling</td>
         </tr>
         <tr>
