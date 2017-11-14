@@ -1157,7 +1157,7 @@ export class GridPanel extends BeanStub {
                 this.eFloatingTop, this.eFloatingBottom, this.eFullWidthCellContainer];
 
             this.rowContainerComponents = {
-                body: new RowContainerComponent({eContainer: this.eBodyContainer, eViewport: this.eBodyViewport}),
+                body: new RowContainerComponent({eContainer: this.eBodyContainer, eViewport: this.eBodyViewport, body: true}),
                 fullWidth: new RowContainerComponent({eContainer: this.eFullWidthCellContainer, hideWhenNoChildren: true, eViewport: this.eFullWidthCellViewport}),
                 pinnedLeft: new RowContainerComponent({eContainer: this.ePinnedLeftColsContainer, eViewport: this.ePinnedLeftColsViewport}),
                 pinnedRight: new RowContainerComponent({eContainer: this.ePinnedRightColsContainer, eViewport: this.ePinnedRightColsViewport}),
