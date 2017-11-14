@@ -269,6 +269,106 @@ masterGridOptions.isRowMaster = function (dataItem) {
 
 <?= example('Dynamically Specify Master Nodes', 'dynamic-master-nodes', 'vanilla', array("enterprise" => 1)) ?>
 
+<h2>Nesting Master Detail</h2>
+
+<p>
+    It is possible to nest Master Detail grids. There are no special configurations required to achieve this but instead
+    of passing grid options for a detail grid, just supply another master grid options at each required level.
+</p>
+
+<p>
+    The following snippet illustrates how to achieve nesting via successive grid option configurations:
+</p>
+
+<snippet>
+// Level 1 (master)
+var gridOptionsLevel1Master = {
+    ...
+    masterDetail: true,
+    detailCellRendererParams: {
+        detailGridOptions: gridOptionsLevel2Master,
+        getDetailRowData: function (params) {
+            params.successCallback(params.data.children);
+        }
+    }
+}
+
+// Level 2 (master)
+var gridOptionsLevel2Master = {
+    ...
+    masterDetail: true,
+    detailCellRendererParams: {
+        detailGridOptions: gridOptionsLevel3Detail,
+        getDetailRowData: function (params) {
+            params.successCallback(params.data.children);
+        }
+    }
+}
+
+// Level 3 (detail)
+var gridOptionsLevel3Detail = {
+    ...
+    // no master configurations
+}
+</snippet>
+
+
+<h3>Example - Nesting Master Detail</h3>
+<p>
+    Below shows a contrived master detail setup to help illustrate how nesting can be achieved:
+</p>
+
+<?= example('Nesting Master Detail', 'nesting', 'vanilla', array("enterprise" => 1)) ?>
+
+
+<h2>Detail Row Height</h2>
+<p>
+    The height of detail rows can be configured to a fixed height or dynamically determined.
+</p>
+
+<p>
+    The following snippet compares both approaches:
+</p>
+
+
+<snippet>
+// fixed detail row height
+masterGridOptions.detailRowHeight = 500;
+
+// dynamic detail row height
+masterGridOptions.getRowHeight = function (params) {
+    if(params.node && params.node.detail) {
+        // dynamically calculate detail row height
+        return params.data.children.length * 50;
+    }
+
+    // otherwise return fixed master row height
+    return 500;
+}
+</snippet>
+
+<p>
+    Note that the <code>detail</code> property can be used to identify detail rows.
+</p>
+
+<p>
+    The following examples demonstrate both approaches:
+</p>
+
+<h3>Example - Fixed Detail Row Height</h3>
+<p>
+    The following demonstrates a fixed detail row height:
+</p>
+
+<?= example('Fixed Detail Row Height', 'fixed-detail-row-height', 'vanilla', array("enterprise" => 1)) ?>
+
+<h3>Example - Dynamic Detail Row Height</h3>
+<p>
+    The following example demonstrates dynamic detail row heights:
+</p>
+
+<?= example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'vanilla', array("enterprise" => 1)) ?>
+
 <h2>Filtering and Sorting</h2>
 <p>
     There are no specific configurations for filtering and sorting with Master Detail but as there are multiple grids
@@ -320,39 +420,6 @@ var masterGridOptions = {
 </p>
 
 <?= example('Lazy Load Detail Rows', 'lazy-load-rows', 'vanilla', array("enterprise" => 1)) ?>
-
-<h3>Example - Multiple Levels of Master Detail</h3>
-
-<p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
-</p>
-
-<?= example('Multiple Levels of Master Detail', 'multiple-levels', 'vanilla', array("enterprise" => 1)) ?>
-
-<h2>Example - Detail Row Height</h2>
-
-<p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
-</p>
-
-<?= example('Detail Row Height', 'detail-row-height', 'vanilla', array("enterprise" => 1)) ?>
-
-<h2>Example - Dynamic Height</h2>
-
-<p>
-    Below shows a simple master / detail setup. From the example you can notice the following:
-<ul>
-    <li></li>
-</ul>
-</p>
-
-<?= example('Dynamic Height', 'dynamic-row-height', 'vanilla', array("enterprise" => 1)) ?>
 
 
 <h2>Supported Modes</h2>
