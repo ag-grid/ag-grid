@@ -11,7 +11,7 @@
         understand this section.</p>
 </div>
 
-<p>
+<p id="react-floating-filter-example">
     See example below on how to create a custom floating filter reusing the out of the box number filter with React
 </p>
 
