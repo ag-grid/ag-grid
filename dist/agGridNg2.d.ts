@@ -234,6 +234,10 @@ export declare class AgGridNg2 implements AfterViewInit {
     rowClassRules: any;
     getRowClassRules: any;
     groupRemoveLowestSingleChildren: any;
+    detailRowHeight: any;
+    detailGridOptions: any;
+    getDetailRowData: any;
+    masterDetail: any;
     /**
      * Outputs
      */
