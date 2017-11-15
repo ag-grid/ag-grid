@@ -85,7 +85,7 @@ var detailGridOptions = {
 <?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
 
 
-<h1>Overriding the Default Detail Cell Renderer</h1>
+<h1 id="overriding-default-detail-cell-renderer">Overriding the Default Detail Cell Renderer</h1>
     <p>
         The template used by default detail Cell Renderer can be overridden with a user defined template. This is a convenient
         way to provide custom layouts and styles to the detail rows.
@@ -158,7 +158,7 @@ detailCellRendererParams: {
 <?= example('Customising via Template Callback', 'template-callback-customisation', 'vanilla', array("enterprise" => 1)) ?>
 
 
-<h1>Providing a custom Detail Cell Renderer</h1>
+<h1 id="providing-custom-detail-cell-renderer">Providing a custom Detail Cell Renderer</h1>
 
 <p>
     The previous section described how to override the detail template used in the default Cell Renderer, however it is also
@@ -194,7 +194,7 @@ detailCellRendererParams: {
 <?= example('Custom Detail Cell Renderer with Form', 'custom-detail-with-form', 'vanilla', array("enterprise" => 1)) ?>
 
 
-<h1>Accessing Detail Grid API</h1>
+<h1 id="accessing-detail-grid-api">Accessing Detail Grid API</h1>
 
 <p>
     You can access the API of all detail grids via the master grid. The API for each detail grid
@@ -266,7 +266,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 <?= example('Editing Cells with Master Detail', 'cell-editing', 'vanilla', array("enterprise" => 1)) ?>
 
 
-<h1>Dynamically Specify Master Nodes</h1>
+<h1 id="dynamically-specify-master-nodes">Dynamically Specify Master Nodes</h1>
 
 <p>
     It certain cases it may be required to not treat all top level rows as a master rows. For instance if a master has
@@ -349,7 +349,7 @@ var gridOptionsLevel3Detail = {
 <?= example('Nesting Master Detail', 'nesting', 'vanilla', array("enterprise" => 1)) ?>
 
 
-<h1>Detail Row Height</h1>
+<h1 id="detail-row-height">Detail Row Height</h1>
 
 <p>
     The height of detail rows can be configured in one of the following two ways:
@@ -410,7 +410,7 @@ masterGridOptions.getRowHeight = function (params) {
 
 <?= example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'vanilla', array("enterprise" => 1)) ?>
 
-<h1>Filtering and Sorting</h1>
+<h1 id="filtering-and-sorting">Filtering and Sorting</h1>
 <p>
     There are no specific configurations for filtering and sorting with Master Detail but as there are multiple grids
     each grid will filter and sort independently.
@@ -424,7 +424,7 @@ masterGridOptions.getRowHeight = function (params) {
 
 <?= example('Filtering with Sort', 'filtering-with-sort', 'vanilla', array("enterprise" => 1)) ?>
 
-<h1>Lazy Load Detail Rows</h1>
+<h1 id="lazy-load-detail-rows">Lazy Load Detail Rows</h1>
 <p>
     It is possible to lazy load detail row data as it becomes available. For instance an asynchronous request could be
     sent when expanding a master row to fetch detail records.
@@ -463,7 +463,7 @@ var masterGridOptions = {
 <?= example('Lazy Load Detail Rows', 'lazy-load-rows', 'vanilla', array("enterprise" => 1)) ?>
 
 
-<h1>Supported Modes</h1>
+<h1 id="supported-modes">Supported Modes</h1>
 
 <p>
     The master / detail feature organises the grid in a way which overlaps with other features.
@@ -472,7 +472,7 @@ var masterGridOptions = {
     These configurations are listed below.
 </p>
 
-<h3>Row Models</h3>
+<h3 id="row-models">Row Models</h3>
 
 <p>
     The master grid (i.e. the top level grid) in master / detail can only be using the
@@ -496,7 +496,7 @@ var masterGridOptions = {
     you expand).
 </p>
 
-<h3>Tree Data</h3>
+<h3 id="tree-data">Tree Data</h3>
 
 <p>
     Master detail is not supported with <a href="../javascript-grid-tree-data">Tree Data</a>.
@@ -505,7 +505,7 @@ var masterGridOptions = {
     has child rows in addition to having master / detail at the same row.
 </p>
 
-<h3>Layouts</h3>
+<h3 id="layouts">Layouts</h3>
 
 <p>
     It is not possible to mix <a href="../javascript-grid-width-and-height/#dom-layout">DOM layout</a>
