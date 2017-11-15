@@ -28,7 +28,6 @@ export class RenderedColumn extends Component {
 
     private static TEMPLATE =
         '<div class="ag-column-select-column">' +
-          '<span class="ag-column-select-indent"></span>' +
           '<ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
           '<span class="ag-column-select-label"></span>' +
         '</div>';
@@ -69,7 +68,7 @@ export class RenderedColumn extends Component {
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         this.eText.innerHTML = this.displayName;
 
-        this.eIndent.style.width = (this.columnDept * this.gridOptionsWrapper.getCheckboxIndentWidth()) + 'px';
+        this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
 
         if (this.allowDragging) {
             this.addDragSource();

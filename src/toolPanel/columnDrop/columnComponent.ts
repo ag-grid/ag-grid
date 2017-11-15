@@ -172,7 +172,7 @@ export class ColumnComponent extends Component {
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualList.getGui());
-        ePopup.style.height = this.gridOptionsWrapper.getAggFuncPopupHeight() + 'px';
+        // ePopup.style.height = this.gridOptionsWrapper.getAggFuncPopupHeight() + 'px';
         ePopup.style.width = this.getGui().clientWidth + 'px';
 
         let popupHiddenFunc = () => {
