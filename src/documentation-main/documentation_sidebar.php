@@ -38,10 +38,7 @@
 <div class="news-box">
     <div class="news-header">15th November 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
-        <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
-            v14.2.0
-        </span>
-        <img src="../images/logo-dark-hacked.svg"
+        <img src="../ag-grid-blog-14-2-0/cover.jpg"
              style="width: 100%;"/>
     </div>
     <br/>

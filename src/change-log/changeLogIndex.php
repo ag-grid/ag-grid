@@ -17,6 +17,8 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Version 14.2.0 [165-NOV-2017]</h3>
 
+    <p>For details of this release, check our dedicated <a href="../ag-grid-blog-14-2-0/">blog post for v14.2.0</a>.</p>
+
     <h4>Enhancements</h4>
     <ul>
 
