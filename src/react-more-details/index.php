@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     </h1>
 
     <note>Full working examples of ag-Grid and React can be found in <a href="https://github.com/ceolter/ag-grid-react-example">Github</a>, illustrating
-        (amongst others) Rich Grids, Filtering with React Components, Master/Detail Grid and so on.</note>
+        (amongst others) Rich Grids, Filtering with React Components Grid and so on.</note>
 
     <h3>Downloading the ag-Grid React Component</h3>
 
@@ -241,7 +241,7 @@ this.state = {
                       pinned editable cellRenderer=<span ng-non-bindable>{</span>RichGridDeclarativeExample.countryCellRenderer}
                       filterParams=<span ng-non-bindable>{</span><span ng-non-bindable>{</span>cellRenderer: RichGridDeclarativeExample.countryCellRenderer, cellHeight:20}}&gt;&lt;/AgGridColumn&gt;
     &lt;/AgGridColumn&gt;
-/&gt;
+&lt;/AgGridReact&gt;
 </snippet>
 
     <h2 id="loading-css">Loading CSS</h2>
