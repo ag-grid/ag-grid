@@ -595,7 +595,7 @@ spans the entire width of the tables. This allows a card layout to work alongsid
     fullWidthCellRenderer: MyCardComponent
 }');
 
-gridFeature(false, 'Master Detail', '../javascript-grid-master-detail/', 'masterDetail.gif',
+gridFeature(true, 'Master Detail', '../javascript-grid-master-detail/', 'masterDetail.gif',
     'Use <span class="feature-highlight">Master Detail</span> to expand rows and have another grid
 with different columns inside.',
     null);
