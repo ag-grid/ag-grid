@@ -96,7 +96,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
     private isEmbeddedRowMismatch(): boolean {
-        if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+        if (this.params.fullWidth && this.gridOptionsWrapper.isEmbedFullWidthRows()) {
 
             let pinnedLeftCell = this.params.pinned === Column.PINNED_LEFT;
             let pinnedRightCell = this.params.pinned === Column.PINNED_RIGHT;
