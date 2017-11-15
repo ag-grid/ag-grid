@@ -100,7 +100,7 @@ npm start</snippet>
     <snippet>
 // Grid Definition
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                 class="ag-fresh"
+                 class="ag-theme-fresh"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
                  onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
@@ -121,7 +121,7 @@ npm start</snippet>
 
         &lt;h1&gt;Simple ag-Grid Polymer Example&lt;/h1&gt;
         &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                         class="ag-fresh"
+                         class="ag-theme-fresh"
                          rowData="{{rowData}}"
                          columnDefs="{{columnDefs}}"
                          onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;
@@ -173,7 +173,7 @@ npm start</snippet>
     <snippet>
 // Grid Definition
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                 class="ag-fresh"
+                 class="ag-theme-fresh"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
 
@@ -200,7 +200,7 @@ npm start</snippet>
     <snippet>
 // Grid Definition
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                 class="ag-fresh"
+                 class="ag-theme-fresh"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
 
@@ -218,7 +218,7 @@ npm start</snippet>
 
     <h3>Summary</h3>
 
-    <p>We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
+    <p id="polymer-rich-grid-example">We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 

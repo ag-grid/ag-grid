@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="for-print">Layout For Print</h2>
+    <h2 class="first-h1" id="for-print">Layout For Print</h2>
 
     <p>
         The 'For Print' renders the table without using any scrollbars. The grid will flow outside the

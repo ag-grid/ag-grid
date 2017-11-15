@@ -113,7 +113,7 @@ open index.html
 &lt;h1&gt;Simple ag-Grid Example&lt;/h1&gt;
 
 &lt;!-- the div ag-Grid will use to render it's data --&gt;
-&lt;div id="myGrid" style="height: 115px;width:500px" class="ag-fresh"&gt;&lt;/div&gt;
+&lt;div id="myGrid" style="height: 115px;width:500px" class="ag-theme-fresh"&gt;&lt;/div&gt;
 
 &lt;/body&gt;
 &lt;/html&gt;

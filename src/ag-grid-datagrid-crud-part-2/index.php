@@ -46,7 +46,7 @@ include('../includes/mediaHeader.php');
                     2</a></note>
 
             <p>
-                In order for our data to be useful we need to make it available to users. One of hte easiest ways to do
+                In order for our data to be useful we need to make it available to users. One of the easiest ways to do
                 that
                 is to expose it as a <a href="https://en.wikipedia.org/wiki/Representational_state_transfer">REST
                     Service</a>,
@@ -55,9 +55,8 @@ include('../includes/mediaHeader.php');
                 operations that CRUD specifies.
             </p>
 
-            <p>We'll again make use of Spring to expose the data via a REST service. Again we do this as Spring will
-                remove a great
-                deal of the boilerplate that providing this functionality by hand would necessitate.</p>
+            <p>We'll again make use of Spring to expose the data via a REST service. We do this using Spring, 
+            doing so by hand would be tedious and involve a great deal of boilerplate.</p>
 
             <h3>Rest Controllers</h3>
 

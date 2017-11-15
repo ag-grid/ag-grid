@@ -281,6 +281,6 @@ export default function parser([js, html], gridSettings) {
 
     bindings.template = domTree.html().replace(/<br>/g, '<br />');
 
-    bindings.gridSettings = (<any>Object).assign({width: '100%', height: '100%', theme: 'ag-fresh'}, gridSettings);
+    bindings.gridSettings = (<any>Object).assign({width: '100%', height: '100%', theme: 'ag-theme-fresh'}, gridSettings);
     return bindings;
 }

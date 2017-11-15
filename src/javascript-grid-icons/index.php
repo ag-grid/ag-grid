@@ -48,7 +48,7 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
  * The override should be placed after the import of the theme. 
  * Alternatively, you can aso increase the selector's specifcity.
  */
-.ag-fresh .ag-icon-pin {
+.ag-theme-fresh .ag-icon-pin {
     background-image: url('path/to/my-pin-icon.svg');
 }</snippet>
 

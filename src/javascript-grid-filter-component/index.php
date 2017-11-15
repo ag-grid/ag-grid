@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    interface IFilterComp {
+interface IFilterComp {
 
     // mandatory methods
 
@@ -104,7 +104,7 @@ include '../documentation-main/documentation_header.php';
     // this to also consider logic for the Apply button (as if Apply button is active, then
     // the filter does not call filterChangedCallback(). 
     onFloatingFilterChanged?(change:any): void;
-    }
+}
 </snippet>
 
 <h4 id="ifilter-params">IFilterParams</h4>
@@ -116,7 +116,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    interface IFilterParams {
+interface IFilterParams {
 
     // The column this filter is for
     column: Column;
@@ -165,7 +165,7 @@ include '../documentation-main/documentation_header.php';
 
     // The grid API
     api: any;
-    }
+}
 </snippet>
 
 <h4 id="i-does-filter-pass-params">IDoesFilterPassParams</h4>
@@ -175,14 +175,14 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    interface IDoesFilterPassParams {
+interface IDoesFilterPassParams {
 
     // The row node in question
     node: RowNode;
 
     // The data part of the row node in question
     data: any
-    }
+}
 </snippet>
 
 <h3>Associating Floating Filter</h3>

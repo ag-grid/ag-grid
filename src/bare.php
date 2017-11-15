@@ -23,7 +23,7 @@ require "example-runner/utils.php";
 
 </head>
 
-<body style="height: 100%; margin: 0px; padding: 0px;">
+<body style="height: 100%; margin: 0px; padding: 20px;">
 
 <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-fresh"></div>
 

@@ -11,7 +11,7 @@ import {Component, ViewChild} from '@angular/core';
             <div style="padding: 10px;">
             <ag-grid-angular
             #leftGrid
-            style="height: 90%; box-sizing: border-box;" id="myGridLeft" class="ag-dark"
+            style="height: 90%; box-sizing: border-box;" id="myGridLeft" class="ag-theme-dark"
             [context]="leftContext"
             [rowData]="rowDataLeft"
             enableCellExpressions="true"
@@ -27,7 +27,7 @@ import {Component, ViewChild} from '@angular/core';
     </div>
             <div style="padding: 10px;">
             <ag-grid-angular
-            style="height: 90%; box-sizing: border-box;" id="myGridRight" class="ag-dark"
+            style="height: 90%; box-sizing: border-box;" id="myGridRight" class="ag-theme-dark"
             (gridReady)="gridReady($event)"
             [rowData]="rowDataRight"
             [columnDefs]="columnDefsRight">

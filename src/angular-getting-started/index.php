@@ -97,7 +97,7 @@ npm start</snippet>
 
     <snippet>
 // src/app/my-grid-application/my-grid-application.component.html
-&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-fresh"
+&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-fresh"
                  [rowData]="rowData"
                  [columnDefs]="columnDefs"&gt;
 &lt;/ag-grid-angular&gt;</snippet>
@@ -124,7 +124,7 @@ npm start</snippet>
 
     <snippet>
 // Grid Definition 
-&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-fresh"
+&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-fresh"
                  [rowData]="rowData"
                  [columnDefs]="columnDefs"&gt;
 
@@ -150,7 +150,7 @@ npm start</snippet>
 
     <snippet>
 // Grid Definition 
-&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-fresh"
+&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-fresh"
                  [rowData]="rowData"
                  [columnDefs]="columnDefs"&gt;
 
@@ -167,7 +167,7 @@ npm start</snippet>
 
     <h3>Summary</h3>
 
-    <p>We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
+    <p id="angular-rich-grid-example">We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 

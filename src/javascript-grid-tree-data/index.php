@@ -243,17 +243,59 @@ var rowData = [
     <h2 id="selection">Selection</h2>
 
     <p>
-        There are currently a few difference with selection of groups when using Tree Data:
+        To enable selection set <code>gridOptions.rowSelection</code> to 'single' or 'multiple'
+        as normal. However there are some restrictions to be aware of.
+    </p>
 
-        <ul>
-            <li><code>gridOptions.groupSelectsChildren</code> is not supported.</li>
-            <li><code>cellRendererParams.checkbox = true</code> should be used instead of <code>gridOptions.rowSelection</code>.</li>
-        </ul>
+    <h3>Selecting Groups and Children</h3>
 
-        <note>
-            When moving filler groups or groups which have child filler groups under other groups, selection will be lost
-            as the grid does not keep track of these ephemeral row nodes for selection purposes.
-        </note>
+    <p>
+        The property <code>groupSelectsChildren</code> does not work with tree data. This is because
+        groups in tree data are rows passed by the application that may or may not have children - a
+        group is simple a normal row that has another row as a child. Given groups and leaf nodes
+        are logically identical, it is not possible to treat them differently in selection.
+    </p>
+
+    <p>
+        If you want to achieve something similar to <code>groupSelectsChildren</code> then you should
+        listen on the selection events and do the selection yourself in your application. You will come
+        across edge cases where only your application will understand what the best selection outcome is.
+    </p>
+
+    <h3>Checkbox vs Click Selection</h3>
+
+    <p>
+        Click selection is supported with tree data. However when you are displaying tree data, clicking
+        rows for selection is confusing as mouse clicks are also used for expanding / contracting rows.
+        For this reason we recommend not using click selecting and preferring checkbox selection instead.
+    </p>
+
+    <snippet>var gridOptions = {
+
+    // don't have click select rows
+    suppressRowClickSelection: true,
+
+    // have checkbox on the group column
+    autoGroupColumnDef: {
+        cellRendererParams: {
+            checkbox: true,
+        }
+    }
+
+    ...
+}</snippet>
+
+    <h3>Group Selection</h3>
+
+    <p>
+        Filler groups do not keep their selection state should the filler group be moved.
+        For example if you have groups A->B->C, where C is the only row provided (so the grid
+        creates groups A and B for you), and then you change the patch to D->B->C, group B
+        will not keep it's selection.
+    </p>
+    <p>
+        If keeping selection of groups is a priority, then arrange your data so that the
+        grid does not need to create any filler groups.
     </p>
 
 </div>

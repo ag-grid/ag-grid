@@ -76,19 +76,19 @@ npm start
         columns
         that match the data above:</p>
 
-<snippet>
+<snippet language="html">
 // column definitions
-[
-    {headerName: "Make", field: "make"},
-    {headerName: "Model", field: "model"},
-    {headerName: "Price", field: "price"}
-]
+&lt;AgGridColumn field="make">&lt;/AgGridColumn>
+&lt;AgGridColumn field="model">&lt;/AgGridColumn>
+&lt;AgGridColumn field="price">&lt;/AgGridColumn>
 </snippet>
 
-    <p>At a minimum a column definition needs a <code>headerName</code> - the column title to display - and a <code>field</code>
+    <p>At a minimum a column definition needs a <code>field</code> defined
         - the data item to read off of from the row data. Here we're defining 3 columns, <code>Make</code>,
         <code>Model</code>
         and <code>Price</code>, each of which correspond to their lowercase equivalent in the row data above.</p>
+
+    <p>Although we define the columns declaratively here, we can also declare them on <code>GridOptions</code> as an alternative.</p>
 
     <h3>Grid Definition</h3>
 
@@ -97,11 +97,16 @@ npm start
     <p>For a React application, you need to pull in the <code>AgGridReact</code> Component and include it in your <code>render</code>
         function:</p>
 
-<snippet>
+<snippet language="html">
 // Grid Definition 
 &lt;AgGridReact
     columnDefs={this.state.columnDefs}
     rowData={this.state.rowData}&gt;
+
+    {/* column definitions */}
+    &lt;AgGridColumn field="make">&lt;/AgGridColumn>
+    &lt;AgGridColumn field="model">&lt;/AgGridColumn>
+    &lt;AgGridColumn field="price">&lt;/AgGridColumn>
 &lt;/AgGridReact&gt;
 </snippet>
 
@@ -124,13 +129,17 @@ npm start
     <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
         enabled by setting a the <code>enableSorting</code>Grid property. Notice that <code>enableSorting</code> is shorthand for <code>enableSorting=true</code>.</p>
 
-<snippet>
+<snippet language="html">
 // Grid Definition 
 &lt;AgGridReact
     columnDefs={this.state.columnDefs}
     rowData={this.state.rowData}
     enableSorting&gt;
 
+    {/* column definitions */}
+    &lt;AgGridColumn field="make">&lt;/AgGridColumn>
+    &lt;AgGridColumn field="model">&lt;/AgGridColumn>
+    &lt;AgGridColumn field="price">&lt;/AgGridColumn>
 &lt;/AgGridReact&gt;
 </snippet>
 
@@ -150,7 +159,7 @@ npm start
 
 <p>As with sorting, enabling filtering is as easy as setting <code>enableFilter</code> in our Grid definition:</p>
 
-<snippet>
+<snippet language="html">
 // Grid Definition 
 &lt;AgGridReact
     columnDefs={this.state.columnDefs}
@@ -158,6 +167,10 @@ npm start
     enableSorting
     enableFilter&gt;
 
+    {/* column definitions */}
+    &lt;AgGridColumn field="make">&lt;/AgGridColumn>
+    &lt;AgGridColumn field="model">&lt;/AgGridColumn>
+    &lt;AgGridColumn field="price">&lt;/AgGridColumn>
 &lt;/AgGridReact&gt;
 </snippet>
 
@@ -171,11 +184,11 @@ npm start
 
     <h2>Summary</h2>
 
-    <p>We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
+    <p id="react-rich-grid-example">We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
         the left
         hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
-    <?= example('ag-Grid in React', 'full-rich', 'react', array("enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
+    <?= example('ag-Grid in React', 'full-rich-markup', 'react', array("enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
 
    <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
         <code>column grouping</code> as well as using <code>React Components</code> in the header. And even this rich

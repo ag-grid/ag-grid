@@ -91,11 +91,11 @@ export default class extends Component {
                     <button onClick={this.btSizeColsToFix.bind(this)}>Size Cols to Fit</button>
                 </div>
 
-                <div style={{width: '100%', height: '420px'}} className="ag-fresh">
+                <div style={{width: '100%', height: '420px'}} className="ag-theme-fresh">
                     <AgGridReact rowData={this.state.rowData} gridOptions={this.state.topOptions} columnDefs={this.state.columnDefs} onGridReady={this.onGridReady.bind(this)} />
                 </div>
 
-                <div style={{width: '100%', height: '40px'}} className="ag-fresh">
+                <div style={{width: '100%', height: '40px'}} className="ag-theme-fresh">
                     <AgGridReact
                         rowData={this.state.bottomData}
                         gridOptions={this.state.bottomOptions}

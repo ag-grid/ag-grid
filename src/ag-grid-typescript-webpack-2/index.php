@@ -92,7 +92,7 @@ new SimpleGrid();</snippet>
 &lt;head&gt;
 &lt;/head&gt;
 &lt;body&gt;
-&lt;div id="myGrid" style="height: 150px;width: 600px" class="ag-fresh"&gt;&lt;/div&gt;
+&lt;div id="myGrid" style="height: 150px;width: 600px" class="ag-theme-fresh"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</snippet>
     <h2>TypeScript Configuration</h2>

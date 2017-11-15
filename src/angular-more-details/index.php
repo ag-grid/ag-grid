@@ -82,7 +82,7 @@ import {AgGridModule} from 'ag-grid-angular/main';</snippet>
     <p>And finally, reference it in your template as follows:</p>
 <snippet>
 // component template
-&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-fresh"
+&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-fresh"
                 [rowData]="rowData"
                 [columnDefs]="columnDefs"&gt;
 &lt;/ag-grid-angular&gt;</snippet>
@@ -224,7 +224,7 @@ let colDefs = [
 
     <snippet>
 // notice the grid has an id called agGrid, which can be used to call the API
-&lt;ag-grid-angular #agGrid style="width: 100%; height: 350px;" class="ag-fresh"
+&lt;ag-grid-angular #agGrid style="width: 100%; height: 350px;" class="ag-theme-fresh"
 
     // items bound to properties on the controller
     [gridOptions]="gridOptions"
