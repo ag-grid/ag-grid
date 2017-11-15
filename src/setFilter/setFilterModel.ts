@@ -145,7 +145,7 @@ export class SetFilterModel {
         this.isLoadingFunc(false);
     }
 
-    private areValuesSync() {
+    public areValuesSync() {
         return this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.NOT_PROVIDED;
     }
 

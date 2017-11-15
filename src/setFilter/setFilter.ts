@@ -167,8 +167,13 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     }
 
     public onNewRowsLoaded(): void {
+        // this prevents overwriting previously fetched filter values, i.e. async callback with Enterprise Row Model
+        // TODO: introduces a single lazy load limitation
+        if (this.model.areValuesSync()) return;
+
         let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
         let isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
+
         // default is reset
         this.model.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
         this.updateSelectAll();
