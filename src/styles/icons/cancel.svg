@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="12px" height="12px" viewBox="0 0 12 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>cancel</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="cancel" fill-rule="nonzero" fill="#000000">
+            <polygon id="Shape" points="9 8.154 8.154 9 6 6.846 3.846 9 3 8.154 5.154 6 3 3.846 3.846 3 6 5.154 8.154 3 9 3.846 6.846 6"></polygon>
+        </g>
+    </g>
+</svg>

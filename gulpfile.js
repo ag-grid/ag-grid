@@ -213,7 +213,11 @@ function scssTask() {
                                 } 
                             },
                             { 
-                                loader: require.resolve('./src/styles/svg-loader.js') 
+                                loader: 'svg-colorize-loader', 
+                                options: {
+                                    color1: "#000000",
+                                    color2: "#FFFFFF"
+                                }
                             }
                         ]
                     }

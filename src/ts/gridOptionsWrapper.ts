@@ -3,7 +3,7 @@ import {
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowNodeIdFunc,
-    GridOptions,
+    GridOptions, IsRowMaster,
     NavigateToNextCellParams,
     NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams,
     ProcessRowParams,
@@ -29,8 +29,18 @@ import {Column} from "./entities/column";
 import { Environment } from "./environment";
 
 let DEFAULT_ROW_HEIGHT = 25;
+let DEFAULT_DETAIL_ROW_HEIGHT = 300;
 let DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 let DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
+let themeWarning = false;
+
+let legacyThemes = [
+    'ag-fresh',
+    'ag-bootstrap',
+    'ag-blue',
+    'ag-dark',
+    'ag-material'
+];
 
 function isTrue(value: any): boolean {
     return value === true || value === 'true';
@@ -311,6 +321,18 @@ export class GridOptionsWrapper {
     public getAggFuncs(): {[key: string]: IAggFunc} { return this.gridOptions.aggFuncs; }
     public getSortingOrder(): string[] { return this.gridOptions.sortingOrder; }
     public getAlignedGrids(): GridOptions[] { return this.gridOptions.alignedGrids; }
+    public isMasterDetail() {
+        let usingMasterDetail = isTrue(this.gridOptions.masterDetail);
+
+        _.doOnce(() => {
+            if (usingMasterDetail && !this.enterprise) {
+                console.warn('ag-grid: Master Detail is an Enterprise feature of ag-Grid.')
+            }
+        }, 'MasterDetailEnterpriseCheck');
+
+        return usingMasterDetail && this.enterprise;
+    }
+    public getIsRowMasterFunc(): IsRowMaster { return this.gridOptions.isRowMaster; }
     public getGroupRowRendererParams() { return this.gridOptions.groupRowRendererParams; }
     public getOverlayLoadingTemplate() { return this.gridOptions.overlayLoadingTemplate; }
     public getOverlayNoRowsTemplate() { return this.gridOptions.overlayNoRowsTemplate; }
@@ -385,19 +407,15 @@ export class GridOptionsWrapper {
     }
 
     public getAutoSizePadding(): number {
-        const padding = this.gridOptions.autoSizePadding;
-        if (typeof padding === 'number' && padding > 0) {
-            return padding;
-        } else {
-            return this.specialForNewMaterial(4, 8 * 3);
-        }
+        return this.gridOptions.autoSizePadding > 0 ? this.gridOptions.autoSizePadding : 0;
     }
+
     // properties
     public getHeaderHeight(): number {
         if (typeof this.gridOptions.headerHeight === 'number') {
             return this.gridOptions.headerHeight;
         } else {
-            return this.specialForNewMaterial(25, 8 * 7);
+            return this.specialForNewMaterial(25, 'headerHeight');
         }
     }
 
@@ -405,20 +423,8 @@ export class GridOptionsWrapper {
         if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
             return this.gridOptions.floatingFiltersHeight;
         } else {
-            return this.specialForNewMaterial(25, 8 * 7);
+            return this.specialForNewMaterial(25, 'headerHeight');
         }
-    }
-
-    public getGroupPaddingSize(): number {
-       return this.specialForNewMaterial(10, 18 + 8 * 3);
-    }
-
-    public getFooterPaddingAddition(): number {
-       return this.specialForNewMaterial(15, 32);
-    }
-
-    public getLeafNodePaddingAddition(): number {
-       return this.specialForNewMaterial(10, 24);
     }
 
     public getGroupHeaderHeight(): number {
@@ -652,6 +658,7 @@ export class GridOptionsWrapper {
         // check the function first, in case use set both function and
         // number, when using virtual pagination then function can be
         // used for pinned rows and the number for the body rows.
+
         if (typeof this.gridOptions.getRowHeight === 'function') {
             let params = {
                 node: rowNode,
@@ -660,6 +667,12 @@ export class GridOptionsWrapper {
                 context: this.gridOptions.context
             };
             return this.gridOptions.getRowHeight(params);
+        } else if (rowNode.detail && this.isMasterDetail()) {
+            if (this.isNumeric(this.gridOptions.detailRowHeight)) {
+                return this.gridOptions.detailRowHeight;
+            } else {
+                return DEFAULT_DETAIL_ROW_HEIGHT;
+            }
         } else if (this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         } else {
@@ -672,15 +685,7 @@ export class GridOptionsWrapper {
     }
 
     public getVirtualItemHeight() {
-        return this.specialForNewMaterial(20, 8 * 5);
-    }
-
-    public getAggFuncPopupHeight() {
-        return this.specialForNewMaterial(100, 8 * 5 * 3.5); // 3.5 cuts the last item in half, hinting that you can scroll
-    }
-
-    public getCheckboxIndentWidth() {
-        return this.specialForNewMaterial(10, 18 + 8); // icon size + grid size
+        return this.specialForNewMaterial(20, 'virtualItemHeight');
     }
 
     private isNumeric(value:any) {
@@ -689,15 +694,22 @@ export class GridOptionsWrapper {
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones 
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    private specialForNewMaterial(defaultValue: number, materialValue: number): number {
-            if (this.environment.getTheme() == "ag-theme-material") {
-                return materialValue;
-            } else {
-                return defaultValue;
+    private specialForNewMaterial(defaultValue: number, sassVariableName: string): number {
+        var theme = this.environment.getTheme();
+        if (theme.indexOf('ag-theme') === 0) {
+            return this.environment.getSassVariable(theme, sassVariableName);
+        } else {
+            if (legacyThemes.indexOf(theme) > -1) {
+                if (!themeWarning) {
+                    themeWarning = true;
+                    console.warn(`ag-Grid: You are using a legacy theme for ag-grid (${theme}). Please visit https://www.ag-grid.com/javascript-grid-styling/ for upgrade details`);
+                }
             }
+            return defaultValue;
+        }
     }
 
     private getDefaultRowHeight() {
-        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 8 * 6);
+        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 'rowHeight');
     }
 }
