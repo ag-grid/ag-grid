@@ -13,7 +13,9 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h3>Version 14.2.0 [16-NOV-2017]</h3>
+    <h2>14.x</h2>
+
+    <h3>Version 14.2.0 [165-NOV-2017]</h3>
 
     <h4>Enhancements</h4>
     <ul>
@@ -22,8 +24,6 @@ include '../documentation-main/documentation_header.php';
         <li>AG-530: Implement React declarative offering. Allow Grid & Column definitions to be entirely in markup.</li>
         <li>AG-891: Themes. Bring all legacy themes in line with new Material theme.</li>
     </ul>
-
-    <h2>14.0.x</h2>
 
     <h3>Version 14.1.0 [07-NOV-2017]</h3>
     <h4>Enhancements</h4>
