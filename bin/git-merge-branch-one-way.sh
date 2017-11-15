@@ -26,7 +26,7 @@ do
     git pull
     git checkout $current_branch
     git pull
-    git merge $1
+    git merge $1 --no-commit --no-ff
     git stash apply
     cd ..
 
