@@ -338,6 +338,10 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public rowClassRules: any = undefined;
     @Input() public getRowClassRules: any = undefined;
     @Input() public groupRemoveLowestSingleChildren: any = undefined;
+    @Input() public detailRowHeight: any = undefined;
+    @Input() public detailGridOptions: any = undefined;
+    @Input() public getDetailRowData: any = undefined;
+    @Input() public masterDetail: any = undefined;
 
     /**
      * Outputs
