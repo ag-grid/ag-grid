@@ -7,13 +7,21 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Master Detail</h1>
+<h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Master / Detail</h1>
 
 <p>
     Master detail allows you to nest grids inside grids. The top level grid is referred to as the 'master grid'.
     The nested grid is referred to as the 'detail grid'. Typically the detail grid gives more information
     about the row in the master grid that was expanded to reveal the detail grid.
 </p>
+
+<note>
+    Prior to ag-Grid v14.2, master / detail was not a feature of ag-Grid.
+    Instead ag-Grid provided a feature called 'flower nodes' that could be used to implement
+    master / detail which required a lot of complex configuration. Flower nodes are now deprecated.
+    We will continue to support flower nodes for backwards compatibility, however we do not recommend
+    them for any new development and have removed them from the documentation.
+</note>
 
 <p>
     To enable master detail, you should set the following grid options:
