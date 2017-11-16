@@ -30,7 +30,6 @@ var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_DETAIL_ROW_HEIGHT = 300;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 var DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
-var themeWarning = false;
 var legacyThemes = [
     'ag-fresh',
     'ag-bootstrap',
@@ -633,12 +632,6 @@ var GridOptionsWrapper = (function () {
             return this.environment.getSassVariable(theme, sassVariableName);
         }
         else {
-            if (legacyThemes.indexOf(theme) > -1) {
-                if (!themeWarning) {
-                    themeWarning = true;
-                    console.warn("ag-Grid: You are using a legacy theme for ag-grid (" + theme + "). Please visit https://www.ag-grid.com/javascript-grid-styling/ for upgrade details");
-                }
-            }
             return defaultValue;
         }
     };

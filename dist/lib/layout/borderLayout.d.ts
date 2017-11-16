@@ -37,8 +37,6 @@ export declare class BorderLayout {
     private setupPanels(params);
     private setupPanel(content, ePanel);
     getGui(): HTMLElement;
-    stylesLoaded: boolean;
-    styleChecks: number;
     doLayout(): boolean;
     private layoutChild(childPanel);
     private layoutHeight();

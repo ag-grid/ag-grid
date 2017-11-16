@@ -2,6 +2,8 @@
   background-color: #302e2e;
   color: #ccc;
   font: 400 14px "Helvetica Neue", sans-serif; }
+  .ag-theme-dark .ag-body {
+    background-color: #302e2e; }
   .ag-theme-dark .ag-cell {
     box-sizing: border-box; }
   .ag-theme-dark .ag-menu, .ag-theme-dark .ag-theme-dark.ag-dnd-ghost, .ag-theme-dark .ag-cell-inline-editing, .ag-theme-dark .ag-popup-editor, .ag-theme-dark .ag-select-agg-func-popup {
@@ -933,6 +935,8 @@
         vertical-align: middle; }
     .ag-theme-dark .ag-menu .ag-menu-option-active {
       background: inherit; }
+    .ag-theme-dark .ag-menu .ag-menu-option-disabled {
+      opacity: 0.5; }
     .ag-theme-dark .ag-menu .ag-menu-option-icon {
       padding-left: 4px;
       padding-right: 4px; }
@@ -1575,9 +1579,12 @@
     height: 25px; }
     .ag-theme-dark .ag-cell-inline-editing input {
       box-sizing: border-box; }
-  .ag-theme-dark .ag-column-drop-cell-button {
-    box-sizing: border-box; }
-  .ag-theme-dark .ag-column-drop-cell-button:hover {
+  .ag-theme-dark .ag-column-drop-cell .ag-column-drop-cell-button {
+    box-sizing: border-box;
+    height: calc(100% - 4px);
+    margin-top: 2px;
+    margin-bottom: 2px; }
+  .ag-theme-dark .ag-column-drop-cell .ag-column-drop-cell-button:hover {
     border: 1px solid darkgrey; }
   .ag-theme-dark .ag-column-drop-vertical .ag-column-drop-cell {
     display: block;
@@ -1603,6 +1610,18 @@
     opacity: 0.5; }
   .ag-theme-dark .ag-header-cell-moving {
     background-color: #bebebe; }
+  .ag-theme-dark .ag-ltr .ag-pinned-right-header {
+    border-left: 1px solid darkgrey; }
+  .ag-theme-dark .ag-rtl .ag-pinned-left-header {
+    border-right: 1px solid darkgrey; }
+  .ag-theme-dark .ag-overlay-loading-wrapper {
+    background-color: rgba(255, 255, 255, 0.5); }
+  .ag-theme-dark .ag-overlay-loading-center {
+    background-color: #ffffff;
+    border: 1px solid darkgrey;
+    border-radius: 10px;
+    padding: 10px;
+    color: black; }
   .ag-theme-dark input,
   .ag-theme-dark select {
     background-color: #302e2e;

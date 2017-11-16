@@ -914,6 +914,8 @@
         vertical-align: middle; }
     .ag-theme-material .ag-menu .ag-menu-option-active {
       background: #eeeeee; }
+    .ag-theme-material .ag-menu .ag-menu-option-disabled {
+      opacity: 0.5; }
     .ag-theme-material .ag-menu .ag-menu-option-icon {
       padding-left: 8px;
       padding-right: 8px; }

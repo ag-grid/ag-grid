@@ -1763,6 +1763,10 @@ var Utils = (function () {
         var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
         return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
     };
+    // gets called by: a) InMemoryRowNodeManager and b) GroupStage to do sorting.
+    // when in InMemoryRowNodeManager we always have indexes (as this sorts the items the
+    // user provided) but when in GroupStage, the nodes can contain filler nodes that
+    // don't have order id's
     Utils.sortRowNodesByOrder = function (rowNodes, rowNodeOrder) {
         if (!rowNodes) {
             return;
@@ -1770,7 +1774,30 @@ var Utils = (function () {
         rowNodes.sort(function (nodeA, nodeB) {
             var positionA = rowNodeOrder[nodeA.id];
             var positionB = rowNodeOrder[nodeB.id];
-            return positionA - positionB;
+            var aHasIndex = positionA !== undefined;
+            var bHasIndex = positionB !== undefined;
+            var bothNodesAreUserNodes = aHasIndex && bHasIndex;
+            var bothNodesAreFillerNodes = !aHasIndex && !bHasIndex;
+            if (bothNodesAreUserNodes) {
+                // when comparing two nodes the user has provided, they always
+                // have indexes
+                return positionA - positionB;
+            }
+            else if (bothNodesAreFillerNodes) {
+                // when comparing two filler nodes, we have no index to compare them
+                // against, however we want this sorting to be deterministic, so that
+                // the rows don't jump around as the user does delta updates. so we
+                // want the same sort result. so we use the id - which doesn't make sense
+                // from a sorting point of view, but does give consistent behaviour between
+                // calls. otherwise groups jump around as delta updates are done.
+                return nodeA.id > nodeB.id ? 1 : -1;
+            }
+            else if (aHasIndex) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
         });
     };
     Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
@@ -1964,7 +1991,6 @@ var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_DETAIL_ROW_HEIGHT = 300;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 var DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
-var themeWarning = false;
 var legacyThemes = [
     'ag-fresh',
     'ag-bootstrap',
@@ -2567,12 +2593,6 @@ var GridOptionsWrapper = (function () {
             return this.environment.getSassVariable(theme, sassVariableName);
         }
         else {
-            if (legacyThemes.indexOf(theme) > -1) {
-                if (!themeWarning) {
-                    themeWarning = true;
-                    console.warn("ag-Grid: You are using a legacy theme for ag-grid (" + theme + "). Please visit https://www.ag-grid.com/javascript-grid-styling/ for upgrade details");
-                }
-            }
             return defaultValue;
         }
     };
@@ -9978,8 +9998,8 @@ var FilterManager = (function () {
             scope: null,
             guiPromise: utils_1.Promise.external()
         };
-        var $scope = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
-        filterWrapper.filterPromise = this.createFilterInstance(column, $scope);
+        filterWrapper.scope = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
+        filterWrapper.filterPromise = this.createFilterInstance(column, filterWrapper.scope);
         this.putIntoGui(filterWrapper);
         return filterWrapper;
     };
@@ -9998,11 +10018,10 @@ var FilterManager = (function () {
             }
             eFilterGui.appendChild(guiFromFilter);
             if (filterWrapper.scope) {
-                filterWrapper.guiPromise.resolve(_this.$compile(eFilterGui)(filterWrapper.scope)[0]);
+                _this.$compile(eFilterGui)(filterWrapper.scope);
+                setTimeout(function () { return filterWrapper.scope.$apply(); }, 0);
             }
-            else {
-                filterWrapper.guiPromise.resolve(eFilterGui);
-            }
+            filterWrapper.guiPromise.resolve(eFilterGui);
         });
     };
     FilterManager.prototype.onNewColumnsLoaded = function () {
@@ -10024,6 +10043,9 @@ var FilterManager = (function () {
                 filter.destroy();
             }
             filterWrapper.column.setFilterActive(false);
+            if (filterWrapper.scope) {
+                filterWrapper.scope.$destroy();
+            }
             delete _this.allFilters[filterWrapper.column.getColId()];
         });
     };
@@ -15483,7 +15505,6 @@ var CellComp = (function (_super) {
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext(),
             refreshCell: this.refreshCell.bind(this),
-            // todo danger - in the new world, these are not present :(
             eGridCell: this.getGui(),
             eParentOfValue: this.eParentOfValue,
             // these bits are not documented anywhere, so we could drop them?
@@ -16232,21 +16253,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = __webpack_require__(0);
 var gridPanel_1 = __webpack_require__(11);
 var linkedList_1 = __webpack_require__(119);
+var gridOptionsWrapper_1 = __webpack_require__(2);
 var AnimationFrameService = (function () {
     function AnimationFrameService() {
         this.p1Tasks = new linkedList_1.LinkedList();
         this.p2Tasks = new linkedList_1.LinkedList();
         this.ticking = false;
     }
+    AnimationFrameService.prototype.init = function () {
+        this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+    };
+    // this method is for our ag-Grid sanity only - if animation frames are turned off,
+    // then no place in the code should be looking to add any work to be done in animation
+    // frames. this stops bugs - where some code is asking for a frame to be executed
+    // when it should not.
+    AnimationFrameService.prototype.verifyAnimationFrameOn = function (methodName) {
+        if (this.useAnimationFrame === false) {
+            console.warn("ag-Grid: AnimationFrameService." + methodName + " called but animation frames are off");
+        }
+    };
     AnimationFrameService.prototype.addP1Task = function (task) {
+        this.verifyAnimationFrameOn('addP1Task');
         this.p1Tasks.add(task);
         this.schedule();
     };
     AnimationFrameService.prototype.addP2Task = function (task) {
+        this.verifyAnimationFrameOn('addP2Task');
         this.p2Tasks.add(task);
         this.schedule();
     };
     AnimationFrameService.prototype.executeFrame = function (millis) {
+        this.verifyAnimationFrameOn('executeFrame');
         var frameStart = new Date().getTime();
         var duration = (new Date().getTime()) - frameStart;
         var gridPanelNeedsAFrame = true;
@@ -16277,9 +16314,15 @@ var AnimationFrameService = (function () {
         }
     };
     AnimationFrameService.prototype.flushAllFrames = function () {
+        if (!this.useAnimationFrame) {
+            return;
+        }
         this.executeFrame(-1);
     };
     AnimationFrameService.prototype.schedule = function () {
+        if (!this.useAnimationFrame) {
+            return;
+        }
         if (!this.ticking) {
             this.ticking = true;
             this.requestFrame();
@@ -16303,6 +16346,16 @@ var AnimationFrameService = (function () {
         context_1.Autowired('gridPanel'),
         __metadata("design:type", gridPanel_1.GridPanel)
     ], AnimationFrameService.prototype, "gridPanel", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], AnimationFrameService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], AnimationFrameService.prototype, "init", null);
     AnimationFrameService = __decorate([
         context_1.Bean('animationFrameService')
     ], AnimationFrameService);
@@ -21303,8 +21356,6 @@ var BorderLayout = (function () {
         this.centerLeftMarginLastTime = -1;
         this.visibleLastTime = false;
         this.sizeChangeListeners = [];
-        this.stylesLoaded = false;
-        this.styleChecks = 0;
         this.isLayoutPanel = true;
         this.fullHeight = !params.north && !params.south;
         var template;
@@ -21400,16 +21451,6 @@ var BorderLayout = (function () {
             this.visibleLastTime = false;
             return false;
         }
-        if (!this.stylesLoaded && window.getComputedStyle(this.eGui).captionSide !== "bottom") {
-            if (this.styleChecks > 100) {
-                throw new Error("The styles for ag-Grid were not detected");
-            }
-            else {
-                this.styleChecks++;
-                return false;
-            }
-        }
-        this.stylesLoaded = true;
         var atLeastOneChanged = false;
         if (this.visibleLastTime !== isVisible) {
             atLeastOneChanged = true;
@@ -22771,7 +22812,7 @@ var GroupCellRenderer = (function (_super) {
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
     GroupCellRenderer.prototype.isEmbeddedRowMismatch = function () {
-        if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+        if (this.params.fullWidth && this.gridOptionsWrapper.isEmbedFullWidthRows()) {
             var pinnedLeftCell = this.params.pinned === column_1.Column.PINNED_LEFT;
             var pinnedRightCell = this.params.pinned === column_1.Column.PINNED_RIGHT;
             var bodyCell = !pinnedLeftCell && !pinnedRightCell;

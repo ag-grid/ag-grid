@@ -14,8 +14,6 @@ var BorderLayout = (function () {
         this.centerLeftMarginLastTime = -1;
         this.visibleLastTime = false;
         this.sizeChangeListeners = [];
-        this.stylesLoaded = false;
-        this.styleChecks = 0;
         this.isLayoutPanel = true;
         this.fullHeight = !params.north && !params.south;
         var template;
@@ -111,16 +109,6 @@ var BorderLayout = (function () {
             this.visibleLastTime = false;
             return false;
         }
-        if (!this.stylesLoaded && window.getComputedStyle(this.eGui).captionSide !== "bottom") {
-            if (this.styleChecks > 100) {
-                throw new Error("The styles for ag-Grid were not detected");
-            }
-            else {
-                this.styleChecks++;
-                return false;
-            }
-        }
-        this.stylesLoaded = true;
         var atLeastOneChanged = false;
         if (this.visibleLastTime !== isVisible) {
             atLeastOneChanged = true;

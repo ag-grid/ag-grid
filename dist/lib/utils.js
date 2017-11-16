@@ -1325,6 +1325,10 @@ var Utils = (function () {
         var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
         return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
     };
+    // gets called by: a) InMemoryRowNodeManager and b) GroupStage to do sorting.
+    // when in InMemoryRowNodeManager we always have indexes (as this sorts the items the
+    // user provided) but when in GroupStage, the nodes can contain filler nodes that
+    // don't have order id's
     Utils.sortRowNodesByOrder = function (rowNodes, rowNodeOrder) {
         if (!rowNodes) {
             return;
@@ -1332,7 +1336,30 @@ var Utils = (function () {
         rowNodes.sort(function (nodeA, nodeB) {
             var positionA = rowNodeOrder[nodeA.id];
             var positionB = rowNodeOrder[nodeB.id];
-            return positionA - positionB;
+            var aHasIndex = positionA !== undefined;
+            var bHasIndex = positionB !== undefined;
+            var bothNodesAreUserNodes = aHasIndex && bHasIndex;
+            var bothNodesAreFillerNodes = !aHasIndex && !bHasIndex;
+            if (bothNodesAreUserNodes) {
+                // when comparing two nodes the user has provided, they always
+                // have indexes
+                return positionA - positionB;
+            }
+            else if (bothNodesAreFillerNodes) {
+                // when comparing two filler nodes, we have no index to compare them
+                // against, however we want this sorting to be deterministic, so that
+                // the rows don't jump around as the user does delta updates. so we
+                // want the same sort result. so we use the id - which doesn't make sense
+                // from a sorting point of view, but does give consistent behaviour between
+                // calls. otherwise groups jump around as delta updates are done.
+                return nodeA.id > nodeB.id ? 1 : -1;
+            }
+            else if (aHasIndex) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
         });
     };
     Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';

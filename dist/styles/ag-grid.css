@@ -774,10 +774,6 @@ ag-grid-aurelia {
     padding-left: 2px;
     padding-right: 6px; } }
 
-/* this is a dummy property to detect styles being loaded in borderLayout.ts */
-.ag-layout-normal {
-  caption-side: bottom; }
-
 /* icons are used outside of the grid root (in the ghost) */
 .ag-icon-aggregation {
   display: inline-block;

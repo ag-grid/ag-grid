@@ -18,21 +18,37 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var linkedList_1 = require("./linkedList");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var AnimationFrameService = (function () {
     function AnimationFrameService() {
         this.p1Tasks = new linkedList_1.LinkedList();
         this.p2Tasks = new linkedList_1.LinkedList();
         this.ticking = false;
     }
+    AnimationFrameService.prototype.init = function () {
+        this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+    };
+    // this method is for our ag-Grid sanity only - if animation frames are turned off,
+    // then no place in the code should be looking to add any work to be done in animation
+    // frames. this stops bugs - where some code is asking for a frame to be executed
+    // when it should not.
+    AnimationFrameService.prototype.verifyAnimationFrameOn = function (methodName) {
+        if (this.useAnimationFrame === false) {
+            console.warn("ag-Grid: AnimationFrameService." + methodName + " called but animation frames are off");
+        }
+    };
     AnimationFrameService.prototype.addP1Task = function (task) {
+        this.verifyAnimationFrameOn('addP1Task');
         this.p1Tasks.add(task);
         this.schedule();
     };
     AnimationFrameService.prototype.addP2Task = function (task) {
+        this.verifyAnimationFrameOn('addP2Task');
         this.p2Tasks.add(task);
         this.schedule();
     };
     AnimationFrameService.prototype.executeFrame = function (millis) {
+        this.verifyAnimationFrameOn('executeFrame');
         var frameStart = new Date().getTime();
         var duration = (new Date().getTime()) - frameStart;
         var gridPanelNeedsAFrame = true;
@@ -63,9 +79,15 @@ var AnimationFrameService = (function () {
         }
     };
     AnimationFrameService.prototype.flushAllFrames = function () {
+        if (!this.useAnimationFrame) {
+            return;
+        }
         this.executeFrame(-1);
     };
     AnimationFrameService.prototype.schedule = function () {
+        if (!this.useAnimationFrame) {
+            return;
+        }
         if (!this.ticking) {
             this.ticking = true;
             this.requestFrame();
@@ -89,6 +111,16 @@ var AnimationFrameService = (function () {
         context_1.Autowired('gridPanel'),
         __metadata("design:type", gridPanel_1.GridPanel)
     ], AnimationFrameService.prototype, "gridPanel", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], AnimationFrameService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], AnimationFrameService.prototype, "init", null);
     AnimationFrameService = __decorate([
         context_1.Bean('animationFrameService')
     ], AnimationFrameService);

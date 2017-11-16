@@ -2,6 +2,8 @@
   background-color: white;
   color: black;
   font: 400 14px "Helvetica Neue", sans-serif; }
+  .ag-theme-bootstrap .ag-body {
+    background-color: #f6f6f6; }
   .ag-theme-bootstrap .ag-cell {
     box-sizing: border-box; }
   .ag-theme-bootstrap .ag-menu, .ag-theme-bootstrap .ag-theme-bootstrap.ag-dnd-ghost, .ag-theme-bootstrap .ag-cell-inline-editing, .ag-theme-bootstrap .ag-popup-editor, .ag-theme-bootstrap .ag-select-agg-func-popup {
@@ -933,6 +935,8 @@
         vertical-align: middle; }
     .ag-theme-bootstrap .ag-menu .ag-menu-option-active {
       background: inherit; }
+    .ag-theme-bootstrap .ag-menu .ag-menu-option-disabled {
+      opacity: 0.5; }
     .ag-theme-bootstrap .ag-menu .ag-menu-option-icon {
       padding-left: 4px;
       padding-right: 4px; }
@@ -1575,9 +1579,12 @@
     height: 25px; }
     .ag-theme-bootstrap .ag-cell-inline-editing input {
       box-sizing: border-box; }
-  .ag-theme-bootstrap .ag-column-drop-cell-button {
-    box-sizing: border-box; }
-  .ag-theme-bootstrap .ag-column-drop-cell-button:hover {
+  .ag-theme-bootstrap .ag-column-drop-cell .ag-column-drop-cell-button {
+    box-sizing: border-box;
+    height: calc(100% - 4px);
+    margin-top: 2px;
+    margin-bottom: 2px; }
+  .ag-theme-bootstrap .ag-column-drop-cell .ag-column-drop-cell-button:hover {
     border: 1px solid transparent; }
   .ag-theme-bootstrap .ag-column-drop-vertical .ag-column-drop-cell {
     display: block;
@@ -1603,5 +1610,17 @@
     opacity: 0.5; }
   .ag-theme-bootstrap .ag-header-cell-moving {
     background-color: #bebebe; }
+  .ag-theme-bootstrap .ag-ltr .ag-pinned-right-header {
+    border-left: 1px solid transparent; }
+  .ag-theme-bootstrap .ag-rtl .ag-pinned-left-header {
+    border-right: 1px solid transparent; }
+  .ag-theme-bootstrap .ag-overlay-loading-wrapper {
+    background-color: rgba(255, 255, 255, 0.5); }
+  .ag-theme-bootstrap .ag-overlay-loading-center {
+    background-color: #ffffff;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    padding: 10px;
+    color: black; }
   .ag-theme-bootstrap .ag-menu, .ag-theme-bootstrap .ag-theme-bootstrap.ag-dnd-ghost, .ag-theme-bootstrap .ag-cell-inline-editing, .ag-theme-bootstrap .ag-popup-editor, .ag-theme-bootstrap .ag-select-agg-func-popup {
     border: 1px solid #ccc; }
