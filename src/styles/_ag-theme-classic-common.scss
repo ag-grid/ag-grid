@@ -187,12 +187,17 @@
         }
     }
 
-    .ag-column-drop-cell-button {
-        box-sizing: border-box;
-    }
+    .ag-column-drop-cell {
+        .ag-column-drop-cell-button {
+            box-sizing: border-box;
+            height: calc(100% - #{$grid-size});
+            margin-top: $grid-size / 2;
+            margin-bottom:  $grid-size / 2;
+        }
 
-    .ag-column-drop-cell-button:hover {
-        border: 1px solid $border-color;
+        .ag-column-drop-cell-button:hover {
+            border: 1px solid $border-color;
+        }
     }
 
     .ag-column-drop-vertical .ag-column-drop-cell {
