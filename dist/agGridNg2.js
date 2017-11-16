@@ -222,6 +222,10 @@ var AgGridNg2 = (function () {
         this.rowClassRules = undefined;
         this.getRowClassRules = undefined;
         this.groupRemoveLowestSingleChildren = undefined;
+        this.detailRowHeight = undefined;
+        this.detailGridOptions = undefined;
+        this.getDetailRowData = undefined;
+        this.masterDetail = undefined;
         /**
          * Outputs
          */
@@ -598,6 +602,10 @@ AgGridNg2.propDecorators = {
     'rowClassRules': [{ type: core_1.Input },],
     'getRowClassRules': [{ type: core_1.Input },],
     'groupRemoveLowestSingleChildren': [{ type: core_1.Input },],
+    'detailRowHeight': [{ type: core_1.Input },],
+    'detailGridOptions': [{ type: core_1.Input },],
+    'getDetailRowData': [{ type: core_1.Input },],
+    'masterDetail': [{ type: core_1.Input },],
     'gridReady': [{ type: core_1.Output },],
     'columnEverythingChanged': [{ type: core_1.Output },],
     'newColumnsLoaded': [{ type: core_1.Output },],
