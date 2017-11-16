@@ -38,11 +38,16 @@
 <div class="news-box">
     <div class="news-header">15th November 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
-        <img src="../ag-grid-blog-14-2-0/cover.jpg"
-             style="width: 100%;"/>
+        <a href="../ag-grid-blog-14-2-0/">
+            <img src="../ag-grid-blog-14-2-0/cover.jpg" style="width: 100%;"/>
+        </a>
     </div>
     <br/>
     <div>
+        <p>
+            <a href="../ag-grid-blog-14-2-0/">ag-Grid v14.2.0</a> is out!
+        </p>
+
         <div>
             Featuring:
         </div>
