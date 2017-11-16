@@ -1,10 +1,12 @@
 import {ReactFrameworkComponentWrapper} from "./reactFrameworkComponentWrapper";
 
 import * as DOM from 'react-dom-factories';
+import * as React from "react";
 import {Component} from "react";
 import * as PropTypes from "prop-types";
 import * as AgGrid from "ag-grid";
 import {GridOptions} from "ag-grid";
+import {AgGridColumn} from "./agGridColumn";
 
 export interface AgGridReactProps extends GridOptions {
     gridOptions?: GridOptions
@@ -52,7 +54,12 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             }
         };
 
-        this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(this.props.gridOptions, this.props);
+        let gridOptions = this.props.gridOptions || {};
+        if (AgGridColumn.hasChildColumns(this.props)) {
+            gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.props);
+        }
+
+        this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(gridOptions, this.props);
         AgGrid.Grid.setFrameworkBeans([ReactFrameworkComponentWrapper]);
 
         // don't need the return value
@@ -155,7 +162,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         if (a instanceof Date) {
             return b instanceof Date && a.valueOf() === b.valueOf();
         }
-        if(typeof a === "function") {
+        if (typeof a === "function") {
             return a.toString() === b.toString();
         }
         if (typeof (a) !== "object") {
