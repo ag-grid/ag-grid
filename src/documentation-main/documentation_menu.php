@@ -204,7 +204,6 @@
     menuItem(0, 'Dark Theme', 'Dark', 'javascript-grid-themes/dark-theme.php');
     menuItem(0, 'Bootstrap Theme', 'Bootstrap', 'javascript-grid-themes/bootstrap-theme.php');
     menuItem(0, 'Material Theme', 'Material', 'javascript-grid-themes/material-theme.php');
-    menuItem(0, 'Legacy Themes', 'Legacy', 'javascript-grid-themes/legacy.php');
     ?>
 
 </div>
