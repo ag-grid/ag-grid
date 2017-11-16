@@ -149,7 +149,7 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
     </p>
     <snippet>
 &lt;link href="node_modules/ag-grid/styles/ag-grid.css" rel="stylesheet" /&gt;
-&lt;link href="node_modules/ag-grid/styles/theme-fresh.css" rel="stylesheet" /&gt;</snippet>
+&lt;link href="node_modules/ag-grid/styles/ag-theme-fresh.css" rel="stylesheet" /&gt;</snippet>
 
     <p>
         You will also need to configure Aurelia (aurelia_project/aurelia.json) to use ag-grid and ag-grid-aurelia as

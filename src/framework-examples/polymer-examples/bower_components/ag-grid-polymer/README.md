@@ -42,7 +42,7 @@ $ bower install ag-grid-polymer
      <dom-module id="rich-grid-example">
          <template>
              <link rel="stylesheet" href="../../bower_components/ag-grid/dist/styles/ag-grid.css">
-             <link rel="stylesheet" href="../../bower_components/ag-grid/dist/styles/theme-fresh.css">
+             <link rel="stylesheet" href="../../bower_components/ag-grid/dist/styles/ag-theme-fresh.css">
              <link rel="stylesheet" href="rich-grid-example.css">
      
              <div style="width: 800px;">

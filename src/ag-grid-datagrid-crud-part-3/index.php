@@ -302,7 +302,7 @@ ng serve
 "styles": [
     "styles.css",
     "../node_modules/ag-grid/dist/styles/ag-grid.css",
-    "../node_modules/ag-grid/dist/styles/theme-fresh.css"
+    "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css"
 ],
 </snippet>
 

@@ -257,7 +257,7 @@ resolve: {
     Once this is done, we can then access the two css files that we need as follows:
     <snippet>
 import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid-root/dist/styles/theme-fresh.css';</snippet>
+import 'ag-grid-root/dist/styles/ag-theme-fresh.css';</snippet>
     You will also need to configure CSS loaders for Webpack - you can find a full working example of this in our <a
                 href="https://github.com/ag-grid/ag-grid-react-example">React Examples</a>  Repo on Github.
     </p>
