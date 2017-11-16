@@ -145,7 +145,7 @@ export class SetFilterModel {
         this.isLoadingFunc(false);
     }
 
-    public areValuesSync() {
+    private areValuesSync() {
         return this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.NOT_PROVIDED;
     }
 
@@ -163,7 +163,12 @@ export class SetFilterModel {
     private extractSyncValuesToUse() {
         let valuesToUse: string[];
         if (this.valuesType == SetFilterModelValuesType.PROVIDED_LIST) {
-            valuesToUse = Utils.toStrings(<string[]>this.filterParams.values);
+            if(Array.isArray(this.filterParams.values)){
+                valuesToUse = Utils.toStrings(<string[]>this.filterParams.values);
+            } else {
+                // In this case the values are async but have already been resolved, so we can reuse them
+                valuesToUse = this.allUniqueValues;
+            }
         } else if (this.valuesType == SetFilterModelValuesType.PROVIDED_CB){
             throw Error (`ag-grid: Error extracting values to use. We should not extract the values synchronously when using a callback for the filterParams.values`);
         } else {

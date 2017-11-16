@@ -89,7 +89,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
             this.filterParams.valueGetter,
             this.filterParams.doesRowPassOtherFilter,
             this.filterParams.suppressSorting,
-            this.setFilterValues.bind(this),
+            (values:string[])=>this.setFilterValues(values, true, false),
             this.setLoading.bind(this)
         );
         this.virtualList.setModel(new ModelWrapper(this.model));
@@ -167,10 +167,6 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     }
 
     public onNewRowsLoaded(): void {
-        // this prevents overwriting previously fetched filter values, i.e. async callback with Enterprise Row Model
-        // TODO: introduces a single lazy load limitation
-        if (this.model.areValuesSync()) return;
-
         let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
         let isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
 
@@ -186,8 +182,9 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
      * the filter has been already started
      * @param options The options to use.
      * @param selectAll If by default all the values should be selected.
+     * @param notify If we should let know the model that the values of the filter have changed
      */
-    public setFilterValues(options: string[], selectAll:boolean = false): void {
+    public setFilterValues(options: string[], selectAll:boolean = false, notify:boolean = true): void {
         let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
         let isSelectAll = selectAll  || (this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate);
 
@@ -196,7 +193,9 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
         this.updateSelectAll();
         options.forEach(option=>this.model.selectValue(option));
         this.virtualList.refresh();
-        this.debounceFilterChanged();
+        if (notify){
+            this.debounceFilterChanged();
+        }
     }
 
     //noinspection JSUnusedGlobalSymbols
