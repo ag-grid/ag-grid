@@ -201,6 +201,19 @@
             </p>
         </div>
 
+        <div class="col-md-4">
+            <div>
+                <img src='images/team/sophia.jpg'/>
+            </div>
+            <h3>Sophia Lazarova</h3>
+            <h4>Developer Advocate</h4>
+            <p>
+                Sophia is an active JavaScript community member and regularly speaks at
+                meetups and conferences. As a developer advocate her goal is to help
+                users of ag-Grid have an excellent experience with our product.
+            </p>
+        </div>
+
     </div>
 
     <div class="row">

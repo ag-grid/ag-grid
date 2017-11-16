@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    interface ICellEditorComp {
+interface ICellEditorComp {
 
     // gets called once after the editor is created
     init?(params: ICellEditorParams): void;
@@ -55,7 +55,7 @@ include '../documentation-main/documentation_header.php';
 
     // If doing full row edit, then gets called when tabbing out of the cell.
     focusOut?(): boolean;
-    }
+}
 </snippet>
 
 <p>
@@ -63,43 +63,43 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    // function to act as a class
-    function MyCellEditor () {}
+// function to act as a class
+function MyCellEditor () {}
 
-    // gets called once before the renderer is used
-    MyCellEditor.prototype.init = function(params) {
+// gets called once before the renderer is used
+MyCellEditor.prototype.init = function(params) {
     // create the cell
     this.eInput = document.createElement('input');
     this.eInput.value = params.value;
-    };
+};
 
-    // gets called once when grid ready to insert the element
-    MyCellEditor.prototype.getGui = function() {
+// gets called once when grid ready to insert the element
+MyCellEditor.prototype.getGui = function() {
     return this.eInput;
-    };
+};
 
-    // focus and select can be done after the gui is attached
-    MyCellEditor.prototype.afterGuiAttached = function() {
+// focus and select can be done after the gui is attached
+MyCellEditor.prototype.afterGuiAttached = function() {
     this.eInput.focus();
     this.eInput.select();
-    };
+};
 
-    // returns the new value after editing
-    MyCellEditor.prototype.getValue = function() {
+// returns the new value after editing
+MyCellEditor.prototype.getValue = function() {
     return this.eInput.value;
-    };
+};
 
-    // any cleanup we need to be done here
-    MyCellEditor.prototype.destroy = function() {
+// any cleanup we need to be done here
+MyCellEditor.prototype.destroy = function() {
     // but this example is simple, no cleanup, we could
     // even leave this method out as it's optional
-    };
+};
 
-    // if true, then this editor will appear in a popup
-    MyCellEditor.prototype.isPopup = function() {
-    and we could leave this method out also, false is the default
+// if true, then this editor will appear in a popup
+MyCellEditor.prototype.isPopup = function() {
+    // and we could leave this method out also, false is the default
     return false;
-    };
+};
 </snippet>
 
 
@@ -197,14 +197,14 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    // define cell renderer to be reused
-    var myCellEditor = .....
+// define cell renderer to be reused
+var myCellEditor = .....
 
-    // use with a color
-    colDef.cellEditor = ... // provide cellEditor as before
-    colDef.cellEditorParams = {
+// use with a color
+colDef.cellEditor = ... // provide cellEditor as before
+colDef.cellEditorParams = {
     country: 'Ireland'
-    }
+}
 </snippet>
 
 <h2 id="editing-keyboard-navigation">Keyboard Navigation While Editing</h2>
@@ -245,16 +245,16 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    var KEY_LEFT = 37;
-    var KEY_UP = 38;
-    var KEY_RIGHT = 39;
-    var KEY_DOWN = 40;
-    var KEY_PAGE_UP = 33;
-    var KEY_PAGE_DOWN = 34;
-    var KEY_PAGE_HOME = 36;
-    var KEY_PAGE_END = 35;
+var KEY_LEFT = 37;
+var KEY_UP = 38;
+var KEY_RIGHT = 39;
+var KEY_DOWN = 40;
+var KEY_PAGE_UP = 33;
+var KEY_PAGE_DOWN = 34;
+var KEY_PAGE_HOME = 36;
+var KEY_PAGE_END = 35;
 
-    eInputDomElement.addEventListener('keydown', function(event) {
+eInputDomElement.addEventListener('keydown', function(event) {
     var keyCode = event.keyCode;
 
     var isNavigationKey = keyCode===KEY_LEFT || keyCode===KEY_RIGHT || keyCode===KEY_UP
@@ -262,10 +262,10 @@ include '../documentation-main/documentation_header.php';
     || keyCode===KEY_PAGE_HOME || keyCode===KEY_PAGE_END;
 
     if (isNavigationKey) {
-    // this stops the grid from receiving the event and executing keyboard navigation
-    event.stopPropagation();
+        // this stops the grid from receiving the event and executing keyboard navigation
+        event.stopPropagation();
     }
-    }
+}
 </snippet>
 
 <h3 id="suppress-keyboard-event">Option 2 - Suppress Keyboard Event</h3>
@@ -279,10 +279,10 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    var KEY_UP = 38;
-    var KEY_DOWN = 40;
+var KEY_UP = 38;
+var KEY_DOWN = 40;
 
-    colDef.suppressKeyboardEvent = function(params) {
+colDef.suppressKeyboardEvent = function(params) {
     console.log('cell is editing: ' + params.editing);
     console.log('keyboard event:', params.event);
 
@@ -290,13 +290,13 @@ include '../documentation-main/documentation_header.php';
     var keyCode = params.event.keyCode;
     var gridShouldDoNothing = params.editing && (keyCode===KEY_UP || keyCode===KEY_DOWN);
     return gridShouldDoNothing;
-    }
+}
 </snippet>
 
 <p>The params for <code>suppressKeyboardEvent()</code> are as follows:</p>
 
 <snippet>
-    interface SuppressKeyboardEventParams {
+interface SuppressKeyboardEventParams {
 
     // the keyboard event the grid received
     event: KeyboardEvent;
@@ -311,7 +311,7 @@ include '../documentation-main/documentation_header.php';
     context: any;
     api: GridApi;
     columnApi: ColumnApi;
-    }
+}
 </snippet>
 
 <h2 id="cell-editing-example">Cell Editing Example</h2>

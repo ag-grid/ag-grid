@@ -10,7 +10,7 @@ var gridOptions = {
         {headerName: 'Year', field: 'year', type: 'numberColumn'},
 
         // using date and non-editable column types
-        {headerName: 'Date', field: 'date', type: ['dateColumn', 'nonEditableColumn']},
+        {headerName: 'Date', field: 'date', type: ['dateColumn', 'nonEditableColumn'], width: 200 },
         {
             headerName: 'Medals',
             groupId: 'medalsGroup',

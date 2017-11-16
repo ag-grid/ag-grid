@@ -3,7 +3,7 @@
         height: 100%;
     }
 
-    .ag-fresh .ag-value-change-value-highlight {
+    .ag-theme-fresh .ag-value-change-value-highlight {
         background-color: #afbcff;
     }
 
@@ -99,7 +99,7 @@
                                         class="fa fa-question-circle-o" aria-hidden="true"></i></a>
                         </div>
                         <div id="priceChangesGrid" style="clear:both;height: 410px; width: 700px"
-                             class="ag-dark"></div>
+                             class="ag-theme-dark"></div>
                     </div>
                     <div style="float: left" class="graphBox">
                         <div class="graphBoxContainer">
@@ -188,7 +188,7 @@
                                    data-content="A service will provide updates rows only, with the Grid updating the row data with the Transaction API.<br/><br/>Only changed rows are re-rendered for improved performance."><i
                                             class="fa fa-question-circle-o" aria-hidden="true"></i></a>
                             </div>
-                            <div id="quoteMatrix" style="height: 410px; width: 700px" class="ag-dark"></div>
+                            <div id="quoteMatrix" style="height: 410px; width: 700px" class="ag-theme-dark"></div>
                         </div>
                         <div style="float: left;display: inline-block;">
                             <div style="width: 415px;display: inline-block">
@@ -202,7 +202,7 @@
                                    data-content="A service will provide the complete set of row data for each update, with altered rows within the data set. The Grid updates the row data using the <code>deltaRowDataMode</code>.<br/><br/>Only changed rows are re-rendered for improved performance."><i
                                             class="fa fa-question-circle-o" aria-hidden="true"></i></a>
                             </div>
-                            <div id="topMovers" style="height: 410px; width: 415px" class="ag-dark"></div>
+                            <div id="topMovers" style="height: 410px; width: 415px" class="ag-theme-dark"></div>
                         </div>
                     </div>
                 </div>

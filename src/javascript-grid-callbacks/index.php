@@ -77,6 +77,12 @@ include '../documentation-main/documentation_header.php';
             <td>Tells the grid if this row should be rendered using <a href="../javascript-grid-master-detail/">fullWidth</a>.</td>
         </tr>
         <tr>
+            <th>isRowMaster(dataItem)</th>
+            <td>Callback to be used with <a href="../javascript-grid-master-detail">Master Detail</a> to determine if
+                a row should be master row. If false is returned no detail row will exist for this row.</td>
+        </tr>
+
+        <tr>
             <th>doesDataFlower(dataItem)</th>
             <td>Tells the grid if this row should flower.</td>
         </tr>

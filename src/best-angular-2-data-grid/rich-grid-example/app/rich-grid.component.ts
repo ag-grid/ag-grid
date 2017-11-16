@@ -24,18 +24,6 @@ export class RichGridComponent {
 
     constructor() {
         this.gridOptions = <GridOptions>{};
-
-        this.icons = {
-            columnRemoveFromGroup: '<i class="fa fa-remove"/>',
-            filter: '<i class="fa fa-filter"/>',
-            sortAscending: '<i class="fa fa-long-arrow-down"/>',
-            sortDescending: '<i class="fa fa-long-arrow-up"/>',
-            groupExpanded: '<i class="fa fa-minus-square-o"/>',
-            groupContracted: '<i class="fa fa-plus-square-o"/>',
-            columnGroupOpened: '<i class="fa fa-plus-square-o"/>',
-            columnGroupClosed: '<i class="fa fa-minus-square-o"/>'
-        };
-
         this.rowData = this.createRowData();
         this.columnDefs = this.createColumnDefs();
     }

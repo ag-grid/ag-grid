@@ -42,7 +42,7 @@ export default class extends Component {
         };
 
         return (
-            <div style={containerStyle} className="ag-fresh">
+            <div style={containerStyle} className="ag-theme-fresh">
                 <h1>Simple ag-Grid React Example</h1>
                 <AgGridReact
                     // properties

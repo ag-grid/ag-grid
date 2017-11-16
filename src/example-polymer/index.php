@@ -22,18 +22,17 @@ include '../documentation-main/documentation_header.php';
 
     <div class="row">
         <div class="col-sm-6">
-            <a href="../example-polymer-rich-grid/" class="column-links column-items">Rich Grid</a>
+            <a href="../polymer-getting-started#polymer-rich-grid-example" class="column-links column-items">Rich Grid</a>
             <a href="../example-polymer-dynamic#dynamic" class="column-links column-items">Dynamic Component</a>
             <a href="../example-polymer-dynamic#rich-dynamic" class="column-links column-items">Richer Dynamic Components</a>
-            <a href="../example-polymer-editor/" class="column-links column-items">Editor Components</a>
-            <a href="../example-polymer-filter/" class="column-links column-items">Filter Component</a>
+            <a href="../javascript-grid-cell-editor#example-cell-editing-using-polymer-components" class="column-links column-items">Editor Components</a>
+            <a href="../javascript-grid-filter-component#example-filtering-using-polymer-components" class="column-links column-items">Filter Component</a>
         </div>
         <div class="col-sm-6">
-            <a href="../javascript-grid-floating-filter-component/#polymerFilter" class="column-links column-items">Floating Filter Component</a>
+            <a href="../javascript-grid-floating-filter-component#polymerFilter" class="column-links column-items">Floating Filter Component</a>
             <a href="../example-polymer-floating-row/" class="column-links column-items">Floating Row Renderer</a>
             <a href="../example-polymer-full-width-rows/" class="column-links column-items">Full Width Renderer</a>
             <a href="../example-polymer-grouped-row/" class="column-links column-items">Group Row Inner Renderer</a>
-            <a href="../example-polymer-master-detail/" class="column-links column-items">Master/Detail Components</a>
         </div>
     </div>
 </div>

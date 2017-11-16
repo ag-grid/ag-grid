@@ -37,9 +37,9 @@ include '../documentation-main/documentation_header.php';
         repo, install the dependencies and start it up:</p>
 
 <snippet language="sh">
-# clone the ag-Grid React seed project
+# clone the ag-Grid  seed project
 git clone https://github.com/ag-grid/ag-grid-seed
-cd ag-grid-react-seed/javascript
+cd ag-grid-seed/javascript
 
 # Now either open index.html from the browser of your choice, or from the command line:
 # either Windows:
@@ -113,7 +113,7 @@ open index.html
 &lt;h1&gt;Simple ag-Grid Example&lt;/h1&gt;
 
 &lt;!-- the div ag-Grid will use to render it's data --&gt;
-&lt;div id="myGrid" style="height: 115px;width:500px" class="ag-fresh"&gt;&lt;/div&gt;
+&lt;div id="myGrid" style="height: 115px;width:500px" class="ag-theme-fresh"&gt;&lt;/div&gt;
 
 &lt;/body&gt;
 &lt;/html&gt;
@@ -245,8 +245,7 @@ var gridOptions = {
         example is only scratching the surface - we've only just gotten started with with ag-Grid can do!</p>
 
     <p>Please read the <a href="../javascript-more-details">More Details</a> section next to get a deeper understanding
-        of
-        how to use ag-Grid and React, as well as the options in installing dependencies and accessing the <code>Enterprise
+        of how to use ag-Grid, as well as the options in installing dependencies and accessing the <code>Enterprise
             Features</code>.</p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

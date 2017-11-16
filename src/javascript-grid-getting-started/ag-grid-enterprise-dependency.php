@@ -52,7 +52,7 @@
     &lt;script src="example1.js"&gt;&lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
-    &lt;div id="myGrid" style="height: 100%;" class="ag-fresh"&gt;&lt;/div&gt;
+    &lt;div id="myGrid" style="height: 100%;" class="ag-theme-fresh"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</snippet>
         <note>

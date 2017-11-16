@@ -171,7 +171,7 @@ function example($title, $dir, $type='vanilla', $options = array()) {
     }
 
     $gridSettings = array(
-        'theme' => 'ag-fresh',
+        'theme' => 'ag-theme-fresh',
         'height' => '100%',
         'width' => '100%',
         'enterprise' => $options['enterprise']
@@ -300,7 +300,7 @@ function getExampleInfo($boilerplatePrefix) {
         $boilerplatePath = "";
         $appLocation = "";
     } else {
-        $boilerplatePath = "example-runner/$boilerplatePrefix-boilerplate/";
+        $boilerplatePath = "$boilerplatePrefix-boilerplate/";
         $appLocation = $appRoot . "/";
     }
 

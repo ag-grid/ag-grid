@@ -13,7 +13,30 @@ include '../documentation-main/documentation_header.php';
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
-    <h2>14.0.x</h2>
+    <h2>14.x</h2>
+
+    <h3>Version 14.2.0 [16-NOV-2017]</h3>
+
+    <p>For details of this release, check our dedicated <a href="../ag-grid-blog-14-2-0/">blog post for v14.2.0</a>.</p>
+
+    <h4>Enhancements</h4>
+    <ul>
+
+        <li>AG-897: Master/Detail. New streamlined and simplifed offering, allowing for much easier <a href="../javascript-grid-master-detail/">Master/Detail</a>.</li>
+        <li>AG-530: Implement React declarative offering. Allow Grid & Column definitions to be entirely in markup.</li>
+        <li>AG-891: Themes. Bring all legacy themes in line with new Material theme.</li>
+    </ul>
+
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>AG-1094: Fix an issue where async set filters wouldn’t work with the enterprise row model</li>
+        <li>AG-1047: Keep row group after delta updates is broken when using groups</li>
+        <li>AG-993: State not preserved when row grouping and data transactions</li>
+        <li>AG-1098: Angular 1 Issue with filters</li>
+        <li>AG-1056: Issue with enterprise row model and null categories</li>
+        <li>AG-997: suppressAnimationFrame with col pinning scrolling issue when using arrow up/down</li>
+        <li>AG-944: domLayout:autoHeight not working when autoGroupColumn and the group column in pinned left</li>
+    </ul>
 
     <h3>Version 14.1.0 [07-NOV-2017]</h3>
     <h4>Enhancements</h4>
@@ -24,7 +47,6 @@ include '../documentation-main/documentation_header.php';
     <h4>Bug Fixes</h4>
     <ul>
         <li>AG-1010: Fix an issue where Polymer would not work in Firefox</li>
-        <li>AG-1028: Fixed issues with the new doc examples on IE11</li>
     </ul>
 
     <h3>Version 14.0.0 [02-NOV-2017]</h3>

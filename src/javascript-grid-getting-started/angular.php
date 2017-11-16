@@ -124,7 +124,7 @@
 
     // src/app/my-grid-application/my-grid-application.component.html
     &lt;div style="width: 200px;"&gt;
-    &lt;ag-grid-angular #agGrid style="width: 100%; height: 200px;" class="ag-fresh"
+    &lt;ag-grid-angular #agGrid style="width: 100%; height: 200px;" class="ag-theme-fresh"
     [gridOptions]="gridOptions"&gt;
     &lt;/ag-grid-angular&gt;
     &lt;/div&gt;

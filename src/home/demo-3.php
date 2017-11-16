@@ -10,7 +10,7 @@
             <div class="col-md-12">
                 <div style="width: 100%; height: 400px;"
                      id="liveStreamExample"
-                     class="ag-blue">
+                     class="ag-theme-blue">
                 </div>
             </div>
             <div class="col-md-12">

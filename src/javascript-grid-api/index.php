@@ -78,11 +78,28 @@ include '../documentation-main/documentation_header.php';
         <?php include '../javascript-grid-accessing-data/accessingDataProperties.php' ?>
         <?php printPropertiesRows($getRowNodeApi) ?>
 
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Master Detail</td>
+        </tr>
+        <tr>
+            <th>getDetailGridInfo(detailGridId)</th>
+            <td>Returns the <code>DetailGridInfo</code> corresponding to the supplied <code>detailGridId</code>. See
+                <a href="../javascript-grid-master-detail">Master Detail</a> for more details.
+            </td>
+        </tr>
+        <tr>
+            <th>forEachDetailGridInfo(callback)</th>
+            <td>Iterates through each <code>DetailGridInfo</code> in the grid and calls the supplied callback on each.
+                See <a href="../javascript-grid-master-detail">Master Detail</a> for more details.
+            </td>
+        </tr>
+
         <!------------------->
         <!-- Selection -->
         <!------------------->
-        <tr>
-            <th colspan="2"><h2>Selection</h2></th>
+        <tr class="title-row">
+            <td colspan="2">Selection</td>
         </tr>
         <tr>
             <th>selectAll()</th>

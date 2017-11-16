@@ -60,7 +60,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    interface IFloatingFilterComp {
+interface IFloatingFilterComp {
     // mandatory methods
 
     // The init(params) method is called on the floating filter once. See below for details on the parameters.
@@ -82,7 +82,7 @@ include '../documentation-main/documentation_header.php';
     // so gets destroyed if column is made not visible or when user scrolls column out of
     // view with horizontal scrolling.&lt;/span&gt;
     destroy?(): void;
-    }
+}
 </snippet>
 
 
@@ -95,7 +95,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    interface IFloatingFilterParams {
+interface IFloatingFilterParams {
 
     // The column this filter is for
     column: Column;
@@ -119,7 +119,7 @@ include '../documentation-main/documentation_header.php';
 
     // The grid API
     api: any;
-    }
+}
 </snippet>
 
 <h3 id="example">Custom Floating Filter Example</h3>

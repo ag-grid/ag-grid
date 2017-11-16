@@ -63,7 +63,7 @@ class GridComponent extends Component {
     // this requires each row to have a uniquely identifying property - in this case the row data "symbol" (see getRowNodeId)
     render() {
         return (
-            <div style={{height: 400, width: 900, marginTop: 15}} className="ag-fresh">
+            <div style={{height: 400, width: 900, marginTop: 15}} className="ag-theme-fresh">
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}
