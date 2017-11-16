@@ -49,6 +49,7 @@ import {GridOptions} from "./entities/gridOptions";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string|Column;
+    rowPinned?: string;
     keyPress?: number;
     charPress?: string;
 }
@@ -857,9 +858,16 @@ export class GridApi {
             console.warn(`ag-Grid: no column found for ${params.colKey}`);
             return;
         }
-        let gridCellDef = <GridCellDef> {rowIndex: params.rowIndex, floating: null, column: column};
+        let gridCellDef = <GridCellDef> {
+            rowIndex: params.rowIndex,
+            floating: params.rowPinned,
+            column: column
+        };
         let gridCell = new GridCell(gridCellDef);
-        this.gridPanel.ensureIndexVisible(params.rowIndex);
+        let notPinned = _.missing(params.rowPinned);
+        if (notPinned) {
+            this.gridPanel.ensureIndexVisible(params.rowIndex);
+        }
         this.rowRenderer.startEditingCell(gridCell, params.keyPress, params.charPress);
     }
 
