@@ -7,7 +7,7 @@ if [ "$#" -lt 2 ]
 fi
 
 
-version-modules.sh $1 $2 ag-grid ag-grid-enterprise ag-grid-dev ag-grid-angular ag-grid-angular-example ag-grid-react ag-grid-react-example ag-grid-aurelia ag-grid-aurelia-example ag-grid-vue ag-grid-vue-example ag-grid-polymer ag-grid-polymer-example
+version-modules.sh $1 $2 ag-grid ag-grid-enterprise ag-grid-dev ag-grid-angular ag-grid-angular-example ag-grid-react ag-grid-react-example ag-grid-aurelia ag-grid-aurelia-example ag-grid-vue ag-grid-vue-example ag-grid-polymer ag-grid-polymer-example ag-grid-docs
 version-angular-example.sh $2 $2 $2 $1
 version-react-example.sh $2 $2 $2 $1
 version-vue-example.sh $2 $2 $2 $1
