@@ -233,7 +233,7 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
 
     <snippet>
 // notice the grid has an id called agGrid, which can be used to call the API
-&lt;g-grid-aurelia #agGrid class="ag-theme-fresh"
+&lt;ag-grid-aurelia #agGrid class="ag-theme-fresh"
     // items bound to properties on the controller
     grid-options.bind="gridOptions"
     column-defs.bind="columnDefs"
