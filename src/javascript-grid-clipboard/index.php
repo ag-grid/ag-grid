@@ -32,6 +32,11 @@ include '../documentation-main/documentation_header.php';
     copied.
     </p>
 
+    <note>
+        Performing multiple 'Ctrl + Left Click' operations followed by 'Ctrl+C' will not preserve original cell layout
+        but rather copy them vertically to the clipboard.
+    </note>
+
     <h3>
         Paste from Clipboard
     </h3>

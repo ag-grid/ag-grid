@@ -210,7 +210,7 @@
             <p>
                 Sophia is an active JavaScript community member and regularly speaks at
                 meetups and conferences. As a developer advocate her goal is to help
-                users of ag-Grid have an excellent experience withour product.
+                users of ag-Grid have an excellent experience with our product.
             </p>
         </div>
 

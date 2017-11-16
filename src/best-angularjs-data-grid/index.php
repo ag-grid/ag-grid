@@ -154,7 +154,8 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </p>
 
 <snippet>
-&lt;div &lt;b&gt;ag-grid="gridOptions" class="ag-theme-fresh" style="height: 100%;"&lt;/b&gt;&gt;&lt;/div&gt;</snippet>
+&lt;div ag-grid="gridOptions" class="ag-theme-fresh" style="height: 100%;"&gt;&lt;/div&gt;
+</snippet>
 
 <p>
     (note: a div by default has 100% width, so the width is not specified explicitly above).
