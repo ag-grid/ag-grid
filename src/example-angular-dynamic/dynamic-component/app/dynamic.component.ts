@@ -20,7 +20,8 @@ export class DynamicComponent {
             columnDefs: DynamicComponent.createColumnDefs(),
             context: {
                 componentParent: this
-            }
+            },
+            enableColResize: true
         };
     }
 
@@ -34,7 +35,7 @@ export class DynamicComponent {
             {
                 headerName: "Row",
                 field: "row",
-                width: 150
+                width: 130
             },
             {
                 headerName: "Square",
@@ -42,7 +43,7 @@ export class DynamicComponent {
                 cellRendererFramework: SquareComponent,
                 editable: true,
                 colId: "square",
-                width: 150
+                width: 130
             },
             {
                 headerName: "Cube",
@@ -56,7 +57,7 @@ export class DynamicComponent {
                 field: "row",
                 cellRendererFramework: ParamsComponent,
                 colId: "params",
-                width: 150
+                width: 190
             },
             {
                 headerName: "Currency (Pipe)",
