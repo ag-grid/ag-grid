@@ -407,6 +407,10 @@
             background: $hover-color;
         }
 
+        .ag-menu-option-disabled {
+            opacity: 0.5;
+        }
+
         .ag-menu-option-icon {
             padding-left: $grid-size;
             padding-right: $grid-size;
