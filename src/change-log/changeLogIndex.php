@@ -27,6 +27,17 @@ include '../documentation-main/documentation_header.php';
         <li>AG-891: Themes. Bring all legacy themes in line with new Material theme.</li>
     </ul>
 
+    <h4>Bug Fixes</h4>
+    <ul>
+        <li>AG-1094: Fix an issue where async set filters wouldn’t work with the enterprise row model</li>
+        <li>AG-1047: Keep row group after delta updates is broken when using groups</li>
+        <li>AG-993: State not preserved when row grouping and data transactions</li>
+        <li>AG-1098: Angular 1 Issue with filters</li>
+        <li>AG-1056: Issue with enterprise row model and null categories</li>
+        <li>AG-997: suppressAnimationFrame with col pinning scrolling issue when using arrow up/down</li>
+        <li>AG-944: domLayout:autoHeight not working when autoGroupColumn and the group column in pinned left</li>
+    </ul>
+
     <h3>Version 14.1.0 [07-NOV-2017]</h3>
     <h4>Enhancements</h4>
     <ul>
