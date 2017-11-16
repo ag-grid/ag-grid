@@ -185,7 +185,7 @@
     }
 
     var SKILL_TEMPLATE =
-        '<label style="border: 1px solid lightgrey; margin: 4px; padding: 4px;">' +
+        '<label style="border: 1px solid lightgrey; margin: 4px; padding: 4px; display: inline-block;">' +
         '  <span>' +
         '    <div style="text-align: center;">SKILL_NAME</div>' +
         '    <div>' +
