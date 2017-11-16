@@ -383,7 +383,7 @@
     .ag-menu {
         @include card($params);
         padding: 0;
-        z-index: 5;
+        z-index: 50;
 
         .ag-menu-list {
             cursor: default;
