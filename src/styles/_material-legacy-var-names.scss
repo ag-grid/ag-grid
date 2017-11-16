@@ -38,7 +38,7 @@
 @if variable-exists(ag-mat-font-secondary) { $secondary-font-family: $ag-mat-font-secondary; }
 @if variable-exists(ag-mat-font-secondary-size) { $secondary-font-size: $ag-mat-font-secondary-size; }
 @if variable-exists(ag-mat-font-secondary-weight) { $secondary-font-weight: $ag-mat-font-secondary-weight; }
-@if variable-exists(ag-mat-primary) { $primary-color: $ag-mat-font-primary; }
+@if variable-exists(ag-mat-primary) { $primary-color: $ag-mat-primary; }
 @if variable-exists(ag-mat-secondary) { $secondary-color: $ag-mat-secondary; }
 @if variable-exists(ag-mat-foreground) { $foreground-color: $ag-mat-foreground; }
 @if variable-exists(ag-mat-foreground-secondary) { $secondary-foreground-color: $ag-mat-foreground-secondary; }
