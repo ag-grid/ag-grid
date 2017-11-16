@@ -24972,8 +24972,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./theme-fresh.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./theme-fresh.css");
+			module.hot.accept("!!../../../css-loader/index.js!./ag-theme-fresh.css", function() {
+				var newContent = require("!!../../../css-loader/index.js!./ag-theme-fresh.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});

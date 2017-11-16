@@ -6,7 +6,7 @@
     import Vue from "vue";
 
     import "../node_modules/ag-grid/dist/styles/ag-grid.css"
-    import "../node_modules/ag-grid/dist/styles/theme-fresh.css"
+    import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css"
     // only needed if you're using enterprise features
     import "ag-grid-enterprise/main";
 

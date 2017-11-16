@@ -117,7 +117,7 @@ npm start</snippet>
 &lt;dom-module id="simple-grid"&gt;
     &lt;template&gt;
         &lt;link rel="stylesheet" href="bower_components/ag-grid/dist/styles/ag-grid.css"&gt;
-        &lt;link rel="stylesheet" href="bower_components/ag-grid/dist/styles/theme-fresh.css"&gt;
+        &lt;link rel="stylesheet" href="bower_components/ag-grid/dist/styles/ag-theme-fresh.css"&gt;
 
         &lt;h1&gt;Simple ag-Grid Polymer Example&lt;/h1&gt;
         &lt;ag-grid-polymer style="width: 500px; height: 120px;"

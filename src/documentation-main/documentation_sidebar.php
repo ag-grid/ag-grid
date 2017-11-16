@@ -36,6 +36,40 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">15th November 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <a href="../ag-grid-blog-14-2-0/">
+            <img src="../ag-grid-blog-14-2-0/cover.jpg" style="width: 100%;"/>
+        </a>
+    </div>
+    <br/>
+    <div>
+        <p>
+            <a href="../ag-grid-blog-14-2-0/">ag-Grid v14.2.0</a> is out!
+        </p>
+
+        <div>
+            Featuring:
+        </div>
+        <div>
+            <ul style="padding-left: 20px;">
+                <li>
+                    New & Improved Master/Detail.
+                </li>
+                <li>
+                    React Declarative Offering
+                </li>
+                <li>Improved Themes</li>
+            </ul>
+        </div>
+        <div>
+            See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+            for full release details.
+        </div>
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">7th November 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
         <a href="../ag-grid-datagrid-crud-part-2/">

@@ -50,7 +50,7 @@ import {Grid, GridOptions} from "ag-grid/main";
 //import 'ag-grid-enterprise/main';
 
 import "ag-grid/dist/styles/ag-grid.css";
-import "ag-grid/dist/styles/theme-fresh.css";
+import "ag-grid/dist/styles/ag-theme-fresh.css";
 
 class SimpleGrid {
     private gridOptions: GridOptions = &lt;GridOptions&gt;{};
