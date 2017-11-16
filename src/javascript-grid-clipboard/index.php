@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         Performing multiple 'Ctrl + Left Click' operations followed by 'Ctrl+C' will not preserve original cell layout
-        but rather copy them vertically to the clipboard. In Excel this capability is disabled.
+        but rather copy them vertically to the clipboard.
     </note>
 
     <h3>
