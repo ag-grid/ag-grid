@@ -35460,18 +35460,6 @@
     "total": 1
   },
   {
-    "athlete": "athlete",
-    "age": "age",
-    "country": "country",
-    "year": "year",
-    "date": "date",
-    "sport": "sport",
-    "gold": "gold",
-    "silver": "silver",
-    "bronze": "bronze",
-    "total": "total"
-  },
-  {
     "athlete": "Sachiko Ito",
     "age": 32,
     "country": "Japan",
