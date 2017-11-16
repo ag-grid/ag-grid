@@ -256,4 +256,16 @@
     .ag-rtl .ag-pinned-left-header {
         border-right: 1px solid $border-color;
     }
+
+    .ag-overlay-loading-wrapper {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .ag-overlay-loading-center {
+        background-color: #ffffff;
+        border: 1px solid $border-color;
+        border-radius: 10px;
+        padding: 10px;
+        color: black;
+    }
 }
