@@ -19,6 +19,10 @@
     $row-height: map-get($params, 'row-height');
     $icon-size: map-get($params, 'icon-size');
 
+    .ag-body {
+        background-color: map-get($params, 'panel-background-color');
+    }
+
     .ag-cell {
         box-sizing: border-box;
     }
