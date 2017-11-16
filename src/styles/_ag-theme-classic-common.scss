@@ -245,4 +245,11 @@
     .ag-header-cell-moving {
         background-color: map-get($params, 'header-cell-moving-background-color');
     }
+
+    .ag-ltr .ag-pinned-right-header {
+        border-left: 1px solid $border-color;
+    }
+    .ag-rtl .ag-pinned-left-header {
+        border-right: 1px solid $border-color;
+    }
 }
