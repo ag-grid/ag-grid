@@ -63,10 +63,13 @@ export class EnterpriseBlock extends RowNodeBlock {
     private createNodeIdPrefix(): void {
         let parts: string[] = [];
         let rowNode = this.parentRowNode;
-        while (_.exists(rowNode.key)) {
+
+        // pull keys from all parent nodes, but do not include the root node
+        while (rowNode.level >= 0) {
             parts.push(rowNode.key);
             rowNode = rowNode.parent;
         }
+
         if (parts.length>0) {
             this.nodeIdPrefix = parts.reverse().join('-') + '-';
         }

@@ -261,7 +261,6 @@ export class ViewportRowModel implements IRowModel {
     }
 
     public isRowPresent(rowNode: RowNode): boolean {
-        console.log('not yet supported');
         return false;
     }
 

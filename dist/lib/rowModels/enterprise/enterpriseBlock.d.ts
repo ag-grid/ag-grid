@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.1.1
+// ag-grid-enterprise v14.2.0
 import { NumberSequence, RowNodeBlock, RowNode, RowBounds } from "ag-grid";
 import { EnterpriseCache, EnterpriseCacheParams } from "./enterpriseCache";
 export declare class EnterpriseBlock extends RowNodeBlock {

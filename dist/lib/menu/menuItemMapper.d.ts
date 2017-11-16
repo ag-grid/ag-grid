@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.1.1
+// ag-grid-enterprise v14.2.0
 import { MenuItemDef, Column } from 'ag-grid';
 export declare class MenuItemMapper {
     private gridOptionsWrapper;

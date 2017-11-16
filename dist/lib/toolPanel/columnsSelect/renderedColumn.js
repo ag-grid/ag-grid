@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.1.1
+// ag-grid-enterprise v14.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -35,7 +35,7 @@ var RenderedColumn = (function (_super) {
         this.setTemplate(RenderedColumn.TEMPLATE);
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         this.eText.innerHTML = this.displayName;
-        this.eIndent.style.width = (this.columnDept * this.gridOptionsWrapper.getCheckboxIndentWidth()) + 'px';
+        this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
         if (this.allowDragging) {
             this.addDragSource();
         }
@@ -237,7 +237,6 @@ var RenderedColumn = (function (_super) {
         this.processingColumnStateChange = false;
     };
     RenderedColumn.TEMPLATE = '<div class="ag-column-select-column">' +
-        '<span class="ag-column-select-indent"></span>' +
         '<ag-checkbox class="ag-column-select-checkbox"></ag-checkbox>' +
         '<span class="ag-column-select-label"></span>' +
         '</div>';

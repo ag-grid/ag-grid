@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.1.1
+// ag-grid-enterprise v14.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -43,8 +43,7 @@ var RenderedGroup = (function (_super) {
         }
         eText.innerHTML = this.displayName;
         this.setupExpandContract();
-        var eIndent = this.queryForHtmlElement('#eIndent');
-        eIndent.style.width = (this.columnDept * this.gridOptionsWrapper.getCheckboxIndentWidth()) + 'px';
+        this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
         this.addDestroyableEventListener(eText, 'click', this.onClick.bind(this));
         this.addDestroyableEventListener(this.eventService, main_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addDestroyableEventListener(this.cbSelect, main_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
@@ -229,7 +228,6 @@ var RenderedGroup = (function (_super) {
         return this.expanded;
     };
     RenderedGroup.TEMPLATE = '<div class="ag-column-select-column-group">' +
-        '  <span id="eIndent" class="ag-column-select-indent"></span>' +
         '  <span id="eColumnGroupIcons" class="ag-column-group-icons">' +
         '    <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>' +
         '    <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>' +

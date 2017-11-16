@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.1.1
+// ag-grid-enterprise v14.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -70,7 +70,7 @@ var SetFilter = (function (_super) {
             this.virtualList.setRowHeight(this.filterParams.cellHeight);
         }
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
-        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, this.setFilterValues.bind(this), this.setLoading.bind(this));
+        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, function (values) { return _this.setFilterValues(values, true, false); }, this.setLoading.bind(this));
         this.virtualList.setModel(new ModelWrapper(this.model));
         main_1._.setVisible(this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
         this.eMiniFilter.value = this.model.getMiniFilter();
@@ -144,10 +144,12 @@ var SetFilter = (function (_super) {
      * the filter has been already started
      * @param options The options to use.
      * @param selectAll If by default all the values should be selected.
+     * @param notify If we should let know the model that the values of the filter have changed
      */
-    SetFilter.prototype.setFilterValues = function (options, selectAll) {
+    SetFilter.prototype.setFilterValues = function (options, selectAll, notify) {
         var _this = this;
         if (selectAll === void 0) { selectAll = false; }
+        if (notify === void 0) { notify = true; }
         var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
         var isSelectAll = selectAll || (this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate);
         this.model.setValuesType(setFilterModel_1.SetFilterModelValuesType.PROVIDED_LIST);
@@ -155,7 +157,9 @@ var SetFilter = (function (_super) {
         this.updateSelectAll();
         options.forEach(function (option) { return _this.model.selectValue(option); });
         this.virtualList.refresh();
-        this.debounceFilterChanged();
+        if (notify) {
+            this.debounceFilterChanged();
+        }
     };
     //noinspection JSUnusedGlobalSymbols
     /**

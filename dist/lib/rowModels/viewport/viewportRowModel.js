@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.1.1
+// ag-grid-enterprise v14.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -209,7 +209,6 @@ var ViewportRowModel = (function () {
         }
     };
     ViewportRowModel.prototype.isRowPresent = function (rowNode) {
-        console.log('not yet supported');
         return false;
     };
     __decorate([

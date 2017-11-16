@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.1.1
+// ag-grid-enterprise v14.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -39,7 +39,8 @@ var EnterpriseBlock = (function (_super) {
     EnterpriseBlock.prototype.createNodeIdPrefix = function () {
         var parts = [];
         var rowNode = this.parentRowNode;
-        while (ag_grid_1._.exists(rowNode.key)) {
+        // pull keys from all parent nodes, but do not include the root node
+        while (rowNode.level >= 0) {
             parts.push(rowNode.key);
             rowNode = rowNode.parent;
         }

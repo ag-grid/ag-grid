@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.1.1
+// ag-grid-enterprise v14.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -119,7 +119,7 @@ var ColumnComponent = (function (_super) {
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
         ePopup.appendChild(virtualList.getGui());
-        ePopup.style.height = this.gridOptionsWrapper.getAggFuncPopupHeight() + 'px';
+        // ePopup.style.height = this.gridOptionsWrapper.getAggFuncPopupHeight() + 'px';
         ePopup.style.width = this.getGui().clientWidth + 'px';
         var popupHiddenFunc = function () {
             virtualList.destroy();

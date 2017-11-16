@@ -11,9 +11,15 @@ Object.keys(agGrid).forEach(function(key) {
 });
 
 require('ag-grid/dist/styles/ag-grid.css');
+
 require('ag-grid/dist/styles/theme-fresh.css');
 require('ag-grid/dist/styles/theme-dark.css');
 require('ag-grid/dist/styles/theme-blue.css');
 require('ag-grid/dist/styles/theme-material.css');
-require('ag-grid/dist/styles/ag-theme-material.css');
 require('ag-grid/dist/styles/theme-bootstrap.css');
+
+require('ag-grid/dist/styles/ag-theme-fresh.css');
+require('ag-grid/dist/styles/ag-theme-dark.css');
+require('ag-grid/dist/styles/ag-theme-blue.css');
+require('ag-grid/dist/styles/ag-theme-material.css');
+require('ag-grid/dist/styles/ag-theme-bootstrap.css');

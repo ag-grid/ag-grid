@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.1.1
+// ag-grid-enterprise v14.2.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -14,6 +14,7 @@ var main_1 = require("ag-grid/main");
 var setFilter_1 = require("./setFilter/setFilter");
 var richSelectCellEditor_1 = require("./rendering/richSelect/richSelectCellEditor");
 var licenseManager_1 = require("./licenseManager");
+var detailCellRenderer_1 = require("./rendering/detail/detailCellRenderer");
 var EnterpriseBoot = (function () {
     function EnterpriseBoot() {
     }
@@ -21,6 +22,7 @@ var EnterpriseBoot = (function () {
         this.componentProvider.registerComponent('richSelect', richSelectCellEditor_1.RichSelectCellEditor);
         this.componentProvider.registerComponent('richSelectCellEditor', richSelectCellEditor_1.RichSelectCellEditor);
         this.componentProvider.registerComponent('setColumnFilter', setFilter_1.SetFilter);
+        this.componentProvider.registerComponent('detailCellRenderer', detailCellRenderer_1.DetailCellRenderer);
         this.licenseManager.validateLicense();
     };
     __decorate([

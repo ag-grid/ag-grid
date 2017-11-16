@@ -24,7 +24,6 @@ export class RenderedGroup extends Component {
 
     private static TEMPLATE =
         '<div class="ag-column-select-column-group">' +
-        '  <span id="eIndent" class="ag-column-select-indent"></span>' +
         '  <span id="eColumnGroupIcons" class="ag-column-group-icons">' +
         '    <span id="eGroupOpenedIcon" class="ag-column-group-closed-icon"></span>' +
         '    <span id="eGroupClosedIcon" class="ag-column-group-opened-icon"></span>' +
@@ -83,8 +82,7 @@ export class RenderedGroup extends Component {
         eText.innerHTML = this.displayName;
         this.setupExpandContract();
 
-        let eIndent = this.queryForHtmlElement('#eIndent');
-        eIndent.style.width = (this.columnDept * this.gridOptionsWrapper.getCheckboxIndentWidth()) + 'px';
+        this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
 
         this.addDestroyableEventListener(eText, 'click', this.onClick.bind(this) );
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this) );
