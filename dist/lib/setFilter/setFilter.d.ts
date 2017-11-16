@@ -30,8 +30,9 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
      * the filter has been already started
      * @param options The options to use.
      * @param selectAll If by default all the values should be selected.
+     * @param notify If we should let know the model that the values of the filter have changed
      */
-    setFilterValues(options: string[], selectAll?: boolean): void;
+    setFilterValues(options: string[], selectAll?: boolean, notify?: boolean): void;
     /**
      * Public method provided so the user can reset the values of the filter once that it has started
      * @param options The options to use.

@@ -114,7 +114,13 @@ var SetFilterModel = (function () {
     SetFilterModel.prototype.extractSyncValuesToUse = function () {
         var valuesToUse;
         if (this.valuesType == SetFilterModelValuesType.PROVIDED_LIST) {
-            valuesToUse = main_1.Utils.toStrings(this.filterParams.values);
+            if (Array.isArray(this.filterParams.values)) {
+                valuesToUse = main_1.Utils.toStrings(this.filterParams.values);
+            }
+            else {
+                // In this case the values are async but have already been resolved, so we can reuse them
+                valuesToUse = this.allUniqueValues;
+            }
         }
         else if (this.valuesType == SetFilterModelValuesType.PROVIDED_CB) {
             throw Error("ag-grid: Error extracting values to use. We should not extract the values synchronously when using a callback for the filterParams.values");

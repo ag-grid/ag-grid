@@ -39,7 +39,8 @@ var EnterpriseBlock = (function (_super) {
     EnterpriseBlock.prototype.createNodeIdPrefix = function () {
         var parts = [];
         var rowNode = this.parentRowNode;
-        while (ag_grid_1._.exists(rowNode.key)) {
+        // pull keys from all parent nodes, but do not include the root node
+        while (rowNode.level >= 0) {
             parts.push(rowNode.key);
             rowNode = rowNode.parent;
         }

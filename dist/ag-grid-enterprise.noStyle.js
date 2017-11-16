@@ -654,7 +654,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var DEFAULT_DETAIL_ROW_HEIGHT = 300;
 	var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 	var DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
-	var themeWarning = false;
 	var legacyThemes = [
 	    'ag-fresh',
 	    'ag-bootstrap',
@@ -1257,12 +1256,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return this.environment.getSassVariable(theme, sassVariableName);
 	        }
 	        else {
-	            if (legacyThemes.indexOf(theme) > -1) {
-	                if (!themeWarning) {
-	                    themeWarning = true;
-	                    console.warn("ag-Grid: You are using a legacy theme for ag-grid (" + theme + "). Please visit https://www.ag-grid.com/javascript-grid-styling/ for upgrade details");
-	                }
-	            }
 	            return defaultValue;
 	        }
 	    };
@@ -3293,6 +3286,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
 	        return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
 	    };
+	    // gets called by: a) InMemoryRowNodeManager and b) GroupStage to do sorting.
+	    // when in InMemoryRowNodeManager we always have indexes (as this sorts the items the
+	    // user provided) but when in GroupStage, the nodes can contain filler nodes that
+	    // don't have order id's
 	    Utils.sortRowNodesByOrder = function (rowNodes, rowNodeOrder) {
 	        if (!rowNodes) {
 	            return;
@@ -3300,7 +3297,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	        rowNodes.sort(function (nodeA, nodeB) {
 	            var positionA = rowNodeOrder[nodeA.id];
 	            var positionB = rowNodeOrder[nodeB.id];
-	            return positionA - positionB;
+	            var aHasIndex = positionA !== undefined;
+	            var bHasIndex = positionB !== undefined;
+	            var bothNodesAreUserNodes = aHasIndex && bHasIndex;
+	            var bothNodesAreFillerNodes = !aHasIndex && !bHasIndex;
+	            if (bothNodesAreUserNodes) {
+	                // when comparing two nodes the user has provided, they always
+	                // have indexes
+	                return positionA - positionB;
+	            }
+	            else if (bothNodesAreFillerNodes) {
+	                // when comparing two filler nodes, we have no index to compare them
+	                // against, however we want this sorting to be deterministic, so that
+	                // the rows don't jump around as the user does delta updates. so we
+	                // want the same sort result. so we use the id - which doesn't make sense
+	                // from a sorting point of view, but does give consistent behaviour between
+	                // calls. otherwise groups jump around as delta updates are done.
+	                return nodeA.id > nodeB.id ? 1 : -1;
+	            }
+	            else if (aHasIndex) {
+	                return 1;
+	            }
+	            else {
+	                return -1;
+	            }
 	        });
 	    };
 	    Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
@@ -11724,8 +11744,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.centerLeftMarginLastTime = -1;
 	        this.visibleLastTime = false;
 	        this.sizeChangeListeners = [];
-	        this.stylesLoaded = false;
-	        this.styleChecks = 0;
 	        this.isLayoutPanel = true;
 	        this.fullHeight = !params.north && !params.south;
 	        var template;
@@ -11821,16 +11839,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.visibleLastTime = false;
 	            return false;
 	        }
-	        if (!this.stylesLoaded && window.getComputedStyle(this.eGui).captionSide !== "bottom") {
-	            if (this.styleChecks > 100) {
-	                throw new Error("The styles for ag-Grid were not detected");
-	            }
-	            else {
-	                this.styleChecks++;
-	                return false;
-	            }
-	        }
-	        this.stylesLoaded = true;
 	        var atLeastOneChanged = false;
 	        if (this.visibleLastTime !== isVisible) {
 	            atLeastOneChanged = true;
@@ -13316,7 +13324,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
 	            context: this.beans.gridOptionsWrapper.getContext(),
 	            refreshCell: this.refreshCell.bind(this),
-	            // todo danger - in the new world, these are not present :(
 	            eGridCell: this.getGui(),
 	            eParentOfValue: this.eParentOfValue,
 	            // these bits are not documented anywhere, so we could drop them?
@@ -16848,21 +16855,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	var context_1 = __webpack_require__(7);
 	var gridPanel_1 = __webpack_require__(26);
 	var linkedList_1 = __webpack_require__(48);
+	var gridOptionsWrapper_1 = __webpack_require__(4);
 	var AnimationFrameService = (function () {
 	    function AnimationFrameService() {
 	        this.p1Tasks = new linkedList_1.LinkedList();
 	        this.p2Tasks = new linkedList_1.LinkedList();
 	        this.ticking = false;
 	    }
+	    AnimationFrameService.prototype.init = function () {
+	        this.useAnimationFrame = !this.gridOptionsWrapper.isSuppressAnimationFrame();
+	    };
+	    // this method is for our ag-Grid sanity only - if animation frames are turned off,
+	    // then no place in the code should be looking to add any work to be done in animation
+	    // frames. this stops bugs - where some code is asking for a frame to be executed
+	    // when it should not.
+	    AnimationFrameService.prototype.verifyAnimationFrameOn = function (methodName) {
+	        if (this.useAnimationFrame === false) {
+	            console.warn("ag-Grid: AnimationFrameService." + methodName + " called but animation frames are off");
+	        }
+	    };
 	    AnimationFrameService.prototype.addP1Task = function (task) {
+	        this.verifyAnimationFrameOn('addP1Task');
 	        this.p1Tasks.add(task);
 	        this.schedule();
 	    };
 	    AnimationFrameService.prototype.addP2Task = function (task) {
+	        this.verifyAnimationFrameOn('addP2Task');
 	        this.p2Tasks.add(task);
 	        this.schedule();
 	    };
 	    AnimationFrameService.prototype.executeFrame = function (millis) {
+	        this.verifyAnimationFrameOn('executeFrame');
 	        var frameStart = new Date().getTime();
 	        var duration = (new Date().getTime()) - frameStart;
 	        var gridPanelNeedsAFrame = true;
@@ -16893,9 +16916,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    AnimationFrameService.prototype.flushAllFrames = function () {
+	        if (!this.useAnimationFrame) {
+	            return;
+	        }
 	        this.executeFrame(-1);
 	    };
 	    AnimationFrameService.prototype.schedule = function () {
+	        if (!this.useAnimationFrame) {
+	            return;
+	        }
 	        if (!this.ticking) {
 	            this.ticking = true;
 	            this.requestFrame();
@@ -16919,6 +16948,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        context_1.Autowired('gridPanel'),
 	        __metadata("design:type", gridPanel_1.GridPanel)
 	    ], AnimationFrameService.prototype, "gridPanel", void 0);
+	    __decorate([
+	        context_1.Autowired('gridOptionsWrapper'),
+	        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+	    ], AnimationFrameService.prototype, "gridOptionsWrapper", void 0);
+	    __decorate([
+	        context_1.PostConstruct,
+	        __metadata("design:type", Function),
+	        __metadata("design:paramtypes", []),
+	        __metadata("design:returntype", void 0)
+	    ], AnimationFrameService.prototype, "init", null);
 	    AnimationFrameService = __decorate([
 	        context_1.Bean('animationFrameService')
 	    ], AnimationFrameService);
@@ -19325,8 +19364,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            scope: null,
 	            guiPromise: utils_1.Promise.external()
 	        };
-	        var $scope = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
-	        filterWrapper.filterPromise = this.createFilterInstance(column, $scope);
+	        filterWrapper.scope = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
+	        filterWrapper.filterPromise = this.createFilterInstance(column, filterWrapper.scope);
 	        this.putIntoGui(filterWrapper);
 	        return filterWrapper;
 	    };
@@ -19345,11 +19384,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	            eFilterGui.appendChild(guiFromFilter);
 	            if (filterWrapper.scope) {
-	                filterWrapper.guiPromise.resolve(_this.$compile(eFilterGui)(filterWrapper.scope)[0]);
+	                _this.$compile(eFilterGui)(filterWrapper.scope);
+	                setTimeout(function () { return filterWrapper.scope.$apply(); }, 0);
 	            }
-	            else {
-	                filterWrapper.guiPromise.resolve(eFilterGui);
-	            }
+	            filterWrapper.guiPromise.resolve(eFilterGui);
 	        });
 	    };
 	    FilterManager.prototype.onNewColumnsLoaded = function () {
@@ -19371,6 +19409,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                filter.destroy();
 	            }
 	            filterWrapper.column.setFilterActive(false);
+	            if (filterWrapper.scope) {
+	                filterWrapper.scope.$destroy();
+	            }
 	            delete _this.allFilters[filterWrapper.column.getColId()];
 	        });
 	    };
@@ -23014,7 +23055,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    // in the body, or if pinning in the pinned section, or if pinning and RTL,
 	    // in the right section. otherwise we would have the cell repeated in each section.
 	    GroupCellRenderer.prototype.isEmbeddedRowMismatch = function () {
-	        if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+	        if (this.params.fullWidth && this.gridOptionsWrapper.isEmbedFullWidthRows()) {
 	            var pinnedLeftCell = this.params.pinned === column_1.Column.PINNED_LEFT;
 	            var pinnedRightCell = this.params.pinned === column_1.Column.PINNED_RIGHT;
 	            var bodyCell = !pinnedLeftCell && !pinnedRightCell;
@@ -36842,7 +36883,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.virtualList.setRowHeight(this.filterParams.cellHeight);
 	        }
 	        this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
-	        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, this.setFilterValues.bind(this), this.setLoading.bind(this));
+	        this.model = new setFilterModel_1.SetFilterModel(this.filterParams.colDef, this.filterParams.rowModel, this.filterParams.valueGetter, this.filterParams.doesRowPassOtherFilter, this.filterParams.suppressSorting, function (values) { return _this.setFilterValues(values, true, false); }, this.setLoading.bind(this));
 	        this.virtualList.setModel(new ModelWrapper(this.model));
 	        main_1._.setVisible(this.getGui().querySelector('#ag-mini-filter'), !this.filterParams.suppressMiniFilter);
 	        this.eMiniFilter.value = this.model.getMiniFilter();
@@ -36916,10 +36957,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * the filter has been already started
 	     * @param options The options to use.
 	     * @param selectAll If by default all the values should be selected.
+	     * @param notify If we should let know the model that the values of the filter have changed
 	     */
-	    SetFilter.prototype.setFilterValues = function (options, selectAll) {
+	    SetFilter.prototype.setFilterValues = function (options, selectAll, notify) {
 	        var _this = this;
 	        if (selectAll === void 0) { selectAll = false; }
+	        if (notify === void 0) { notify = true; }
 	        var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
 	        var isSelectAll = selectAll || (this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate);
 	        this.model.setValuesType(setFilterModel_1.SetFilterModelValuesType.PROVIDED_LIST);
@@ -36927,7 +36970,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.updateSelectAll();
 	        options.forEach(function (option) { return _this.model.selectValue(option); });
 	        this.virtualList.refresh();
-	        this.debounceFilterChanged();
+	        if (notify) {
+	            this.debounceFilterChanged();
+	        }
 	    };
 	    //noinspection JSUnusedGlobalSymbols
 	    /**
@@ -37202,7 +37247,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	    SetFilterModel.prototype.extractSyncValuesToUse = function () {
 	        var valuesToUse;
 	        if (this.valuesType == SetFilterModelValuesType.PROVIDED_LIST) {
-	            valuesToUse = main_1.Utils.toStrings(this.filterParams.values);
+	            if (Array.isArray(this.filterParams.values)) {
+	                valuesToUse = main_1.Utils.toStrings(this.filterParams.values);
+	            }
+	            else {
+	                // In this case the values are async but have already been resolved, so we can reuse them
+	                valuesToUse = this.allUniqueValues;
+	            }
 	        }
 	        else if (this.valuesType == SetFilterModelValuesType.PROVIDED_CB) {
 	            throw Error("ag-grid: Error extracting values to use. We should not extract the values synchronously when using a callback for the filterParams.values");
@@ -38132,7 +38183,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    LicenseManager.setLicenseKey = function (licenseKey) {
 	        LicenseManager_1.licenseKey = licenseKey;
 	    };
-	    LicenseManager.RELEASE_INFORMATION = 'MTUxMDA1NTAzMzMwNg==';
+	    LicenseManager.RELEASE_INFORMATION = 'MTUxMDc1NzI3NzA2OQ==';
 	    __decorate([
 	        main_1.Autowired('md5'),
 	        __metadata("design:type", md5_1.MD5)
@@ -41838,7 +41889,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    EnterpriseBlock.prototype.createNodeIdPrefix = function () {
 	        var parts = [];
 	        var rowNode = this.parentRowNode;
-	        while (ag_grid_1._.exists(rowNode.key)) {
+	        // pull keys from all parent nodes, but do not include the root node
+	        while (rowNode.level >= 0) {
 	            parts.push(rowNode.key);
 	            rowNode = rowNode.parent;
 	        }

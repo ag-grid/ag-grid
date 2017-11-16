@@ -139,7 +139,7 @@ var LicenseManager = (function () {
     LicenseManager.setLicenseKey = function (licenseKey) {
         LicenseManager_1.licenseKey = licenseKey;
     };
-    LicenseManager.RELEASE_INFORMATION = 'MTUxMDA1NTAzMzMwNg==';
+    LicenseManager.RELEASE_INFORMATION = 'MTUxMDc1NzI3NzA2OQ==';
     __decorate([
         main_1.Autowired('md5'),
         __metadata("design:type", md5_1.MD5)
