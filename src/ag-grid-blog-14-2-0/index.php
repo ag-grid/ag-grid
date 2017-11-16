@@ -84,8 +84,37 @@ include('../includes/mediaHeader.php');
         <li><strong>bower install ag-grid</strong></li>
         </ul>
 
-    </div>
+        <div style="background-color: #eee; padding: 10px; display: inline-block;">
 
+            <div style="margin-bottom: 5px;">If you liked this article then please share</div>
+
+            <table style="background-color: #eee;">
+                <tr>
+                    <td>
+                        <script type="text/javascript" src="//www.redditstatic.com/button/button1.js"></script>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;&nbsp;
+                    </td>
+                    <td>
+                        <a href="https://twitter.com/share" class="twitter-share-button"
+                           data-url="https://www.ag-grid.com/ag-grid-blog-14-2-0/"
+                           data-text="ag-Grid v14.2.0 Released" data-via="ceolter"
+                           data-size="large">Tweet</a>
+                        <script>!function (d, s, id) {
+                                var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                                if (!d.getElementById(id)) {
+                                    js = d.createElement(s);
+                                    js.id = id;
+                                    js.src = p + '://platform.twitter.com/widgets.js';
+                                    fjs.parentNode.insertBefore(js, fjs);
+                                }
+                            }(document, 'script', 'twitter-wjs');</script>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
     
 
     <div class="col-md-3" style="font-size: 14px; background-color: #efefef; padding: 15px;margin-top: 40px;margin-left:15px;">
@@ -103,7 +132,7 @@ include('../includes/mediaHeader.php');
 
         <div>
             <br/>
-            <a href="https://twitter.com/sophialazarova" class="twitter-follow-button" data-show-count="false" data-size="large">@seanlandsman</a>
+            <a href="https://twitter.com/sophialazarova" class="twitter-follow-button" data-show-count="false" data-size="large">@sophialazarova</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
         </div>
 
