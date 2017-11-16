@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.1.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellComp } from "./cellComp";
@@ -23,6 +23,7 @@ export declare class RowComp extends Component {
     private static FULL_WIDTH_CELL_RENDERER;
     private static GROUP_ROW_RENDERER;
     private static LOADING_CELL_RENDERER;
+    private static DETAIL_CELL_RENDERER;
     private rowNode;
     private beans;
     private ePinnedLeftRow;
@@ -70,10 +71,7 @@ export declare class RowComp extends Component {
     private lazyCreateCells(cols, eRow);
     private createRowContainer(rowContainerComp, cols, callback);
     private createChildScopeOrNull(data);
-    private setupRowStub();
     private setupRowContainers();
-    private setupFullWidthContainers();
-    private setupFullWidthGroupContainers();
     private setupNormalRowContainers();
     private createFullWidthRows(type);
     private addMouseWheelListenerToFullWidthRow();

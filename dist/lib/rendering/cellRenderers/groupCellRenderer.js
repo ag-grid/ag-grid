@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.1.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -59,13 +59,13 @@ var GroupCellRenderer = (function (_super) {
         this.addExpandAndContract();
         this.addCheckboxIfNeeded();
         this.addValueElement();
-        this.addPadding();
+        this.setupIndent();
     };
     // if we are doing embedded full width rows, we only show the renderer when
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
     GroupCellRenderer.prototype.isEmbeddedRowMismatch = function () {
-        if (this.gridOptionsWrapper.isEmbedFullWidthRows()) {
+        if (this.params.fullWidth && this.gridOptionsWrapper.isEmbedFullWidthRows()) {
             var pinnedLeftCell = this.params.pinned === column_1.Column.PINNED_LEFT;
             var pinnedRightCell = this.params.pinned === column_1.Column.PINNED_RIGHT;
             var bodyCell = !pinnedLeftCell && !pinnedRightCell;
@@ -90,28 +90,32 @@ var GroupCellRenderer = (function (_super) {
             return false;
         }
     };
-    GroupCellRenderer.prototype.setPadding = function () {
+    GroupCellRenderer.prototype.setIndent = function () {
         if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
             return;
         }
         var params = this.params;
         var rowNode = params.node;
-        var paddingPx;
-        // never any padding on top level nodes
-        if (rowNode.uiLevel <= 0) {
-            paddingPx = 0;
+        // let paddingPx: number;
+        var paddingCount = rowNode.uiLevel;
+        var pivotModeAndLeafGroup = this.columnController.isPivotMode() && params.node.leafGroup;
+        if (rowNode.footer || !rowNode.isExpandable() || pivotModeAndLeafGroup) {
+            paddingCount += 1;
         }
-        else {
-            var paddingFactor = (params.padding >= 0) ? params.padding : this.gridOptionsWrapper.getGroupPaddingSize();
-            paddingPx = rowNode.uiLevel * paddingFactor;
-            var reducedLeafNode = this.columnController.isPivotMode() && params.node.leafGroup;
-            if (rowNode.footer) {
-                paddingPx += this.gridOptionsWrapper.getFooterPaddingAddition();
-            }
-            else if (!rowNode.isExpandable() || reducedLeafNode) {
-                paddingPx += this.gridOptionsWrapper.getLeafNodePaddingAddition();
-            }
+        var userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
+        if (userProvidedPaddingPixelsTheDeprecatedWay) {
+            this.setPaddingDeprecatedWay(paddingCount, params.padding);
+            return;
         }
+        if (this.indentClass) {
+            this.removeCssClass(this.indentClass);
+        }
+        this.indentClass = 'ag-row-group-indent-' + paddingCount;
+        this.addCssClass(this.indentClass);
+    };
+    GroupCellRenderer.prototype.setPaddingDeprecatedWay = function (paddingCount, padding) {
+        utils_1.Utils.doOnce(function () { return console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation.'); }, 'groupCellRenderer->doDeprecatedWay');
+        var paddingPx = paddingCount * padding;
         if (this.gridOptionsWrapper.isEnableRtl()) {
             // if doing rtl, padding is on the right
             this.getGui().style.paddingRight = paddingPx + 'px';
@@ -121,15 +125,15 @@ var GroupCellRenderer = (function (_super) {
             this.getGui().style.paddingLeft = paddingPx + 'px';
         }
     };
-    GroupCellRenderer.prototype.addPadding = function () {
+    GroupCellRenderer.prototype.setupIndent = function () {
         // only do this if an indent - as this overwrites the padding that
         // the theme set, which will make things look 'not aligned' for the
         // first group level.
         var node = this.params.node;
         var suppressPadding = this.params.suppressPadding;
         if (!suppressPadding) {
-            this.addDestroyableEventListener(node, rowNode_1.RowNode.EVENT_UI_LEVEL_CHANGED, this.setPadding.bind(this));
-            this.setPadding();
+            this.addDestroyableEventListener(node, rowNode_1.RowNode.EVENT_UI_LEVEL_CHANGED, this.setIndent.bind(this));
+            this.setIndent();
         }
     };
     GroupCellRenderer.prototype.addValueElement = function () {
@@ -221,7 +225,7 @@ var GroupCellRenderer = (function (_super) {
         var checkboxNeeded = this.isUserWantsSelected()
             && !rowNode.footer
             && !rowNode.rowPinned
-            && !rowNode.flower;
+            && !rowNode.detail;
         if (checkboxNeeded) {
             var cbSelectionComponent_1 = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
             this.context.wireBean(cbSelectionComponent_1);

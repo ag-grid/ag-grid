@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.1.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -275,7 +275,7 @@ var RowNode = (function () {
         this.quickFilterAggregateText = null;
     };
     RowNode.prototype.isExpandable = function () {
-        return this.hasChildren() || this.canFlower;
+        return this.hasChildren() || this.master;
     };
     RowNode.prototype.isSelected = function () {
         // for footers, we just return what our sibling selected state is, as cannot select a footer

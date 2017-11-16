@@ -58,6 +58,7 @@ export class RowComp extends Component {
     private static FULL_WIDTH_CELL_RENDERER = 'fullWidthCellRenderer';
     private static GROUP_ROW_RENDERER = 'groupRowRenderer';
     private static LOADING_CELL_RENDERER = 'loadingCellRenderer';
+    private static DETAIL_CELL_RENDERER = 'detailCellRenderer';
 
     private rowNode: RowNode;
 
@@ -296,42 +297,26 @@ export class RowComp extends Component {
         }
     }
 
-    private setupRowStub(): void {
-        this.fullWidthRow = true;
-        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-        this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER);
-    }
-
     private setupRowContainers(): void {
 
         let isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
         let isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
+
+        let isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
+
         let isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow();
 
         if (this.rowNode.stub) {
-            this.setupRowStub();
+            this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER);
+        } else if (isDetailCell) {
+            this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER);
         } else if (isFullWidthCell) {
-            this.setupFullWidthContainers();
+            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER);
         } else if (isGroupSpanningRow) {
-            this.setupFullWidthGroupContainers();
+            this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER);
         } else {
             this.setupNormalRowContainers();
         }
-
-    }
-
-    private setupFullWidthContainers(): void {
-        this.fullWidthRow = true;
-        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-
-        this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER);
-    }
-
-    private setupFullWidthGroupContainers(): void {
-        this.fullWidthRow = true;
-        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-
-        this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER);
     }
 
     private setupNormalRowContainers(): void {
@@ -347,6 +332,9 @@ export class RowComp extends Component {
     }
 
     private createFullWidthRows(type: string): void {
+
+        this.fullWidthRow = true;
+        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
 
         if (this.fullWidthRowEmbedded) {
 

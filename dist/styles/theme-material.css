@@ -427,6 +427,9 @@
       content: '('; }
     .ag-material .ag-sort-order::after {
       content: ')'; }
+  .ag-material .ag-details-row {
+    padding: 20px;
+    box-sizing: border-box; }
 
 .ag-material .ag-row-hover {
   background-color: #eeeeee !important; }

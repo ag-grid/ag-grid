@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.1.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { BalancedColumnTreeBuilder } from "./dist/lib/columnController/balancedColumnTreeBuilder";
@@ -104,7 +104,7 @@ export { Constants } from "./dist/lib/constants";
 export { CsvCreator, BaseCreator } from "./dist/lib/csvCreator";
 export { Downloader } from "./dist/lib/downloader";
 export { Grid, GridParams } from "./dist/lib/grid";
-export { GridApi } from "./dist/lib/gridApi";
+export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo } from "./dist/lib/gridApi";
 export { Events } from "./dist/lib/events";
 export { FocusedCellController } from "./dist/lib/focusedCellController";
 export { defaultGroupComparator } from "./dist/lib/functions";

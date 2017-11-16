@@ -24,6 +24,7 @@ import {PaginationProxy} from "../rowModels/paginationProxy";
 import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {AnimationFrameService} from "../misc/animationFrameService";
 import {ComponentResolver} from "../components/framework/componentResolver";
+import {_} from "../utils";
 
 @Bean('beans')
 export class Beans {
@@ -57,9 +58,11 @@ export class Beans {
     @Autowired('animationFrameService') public taskQueue: AnimationFrameService;
 
     public forPrint: boolean;
+    public doingMasterDetail: boolean;
 
     @PostConstruct
     private postConstruct(): void {
         this.forPrint = this.gridOptionsWrapper.isForPrint();
+        this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     }
 }

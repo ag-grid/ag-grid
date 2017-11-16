@@ -427,6 +427,9 @@
       content: '('; }
     .ag-blue .ag-sort-order::after {
       content: ')'; }
+  .ag-blue .ag-details-row {
+    padding: 20px;
+    box-sizing: border-box; }
 
 .ag-blue .ag-floating-filter-body input {
   background-color: white;

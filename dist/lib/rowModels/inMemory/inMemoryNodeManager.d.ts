@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.1.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -18,9 +18,13 @@ export declare class InMemoryNodeManager {
     private static ROOT_NODE_ID;
     private getNodeChildDetails;
     private doesDataFlower;
+    private isRowMasterFunc;
     private suppressParentsInRowNodes;
+    private doingLegacyTreeData;
+    private doingMasterDetail;
     private allNodesMap;
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService, columnController: ColumnController);
+    postConstruct(): void;
     getCopyOfNodesMap(): {
         [id: string]: RowNode;
     };
@@ -36,7 +40,6 @@ export declare class InMemoryNodeManager {
     private isExpanded(level);
     private setLeafChildren(node);
     insertItemsAtIndex(index: number, rowData: any[]): RowNode[];
-    removeItems(rowNodes: RowNode[]): RowNode[];
     addItems(items: any): RowNode[];
     isLegacyTreeData(): boolean;
 }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.1.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -228,37 +228,26 @@ var RowComp = (function (_super) {
             return null;
         }
     };
-    RowComp.prototype.setupRowStub = function () {
-        this.fullWidthRow = true;
-        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-        this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER);
-    };
     RowComp.prototype.setupRowContainers = function () {
         var isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
         var isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
+        var isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
         var isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow();
         if (this.rowNode.stub) {
-            this.setupRowStub();
+            this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER);
+        }
+        else if (isDetailCell) {
+            this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER);
         }
         else if (isFullWidthCell) {
-            this.setupFullWidthContainers();
+            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER);
         }
         else if (isGroupSpanningRow) {
-            this.setupFullWidthGroupContainers();
+            this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER);
         }
         else {
             this.setupNormalRowContainers();
         }
-    };
-    RowComp.prototype.setupFullWidthContainers = function () {
-        this.fullWidthRow = true;
-        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-        this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER);
-    };
-    RowComp.prototype.setupFullWidthGroupContainers = function () {
-        this.fullWidthRow = true;
-        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-        this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER);
     };
     RowComp.prototype.setupNormalRowContainers = function () {
         var _this = this;
@@ -273,6 +262,8 @@ var RowComp = (function (_super) {
     };
     RowComp.prototype.createFullWidthRows = function (type) {
         var _this = this;
+        this.fullWidthRow = true;
+        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
         if (this.fullWidthRowEmbedded) {
             this.createFullWidthRowContainer(this.bodyContainerComp, null, null, type, function (eRow) {
                 _this.eFullWidthRowBody = eRow;
@@ -1180,6 +1171,7 @@ var RowComp = (function (_super) {
     RowComp.FULL_WIDTH_CELL_RENDERER = 'fullWidthCellRenderer';
     RowComp.GROUP_ROW_RENDERER = 'groupRowRenderer';
     RowComp.LOADING_CELL_RENDERER = 'loadingCellRenderer';
+    RowComp.DETAIL_CELL_RENDERER = 'detailCellRenderer';
     return RowComp;
 }(component_1.Component));
 exports.RowComp = RowComp;

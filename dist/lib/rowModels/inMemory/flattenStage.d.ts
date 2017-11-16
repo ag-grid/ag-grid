@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.1.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -14,5 +14,5 @@ export declare class FlattenStage implements IRowNodeStage {
     private recursivelyAddToRowsToDisplay(rowsToFlatten, result, nextRowTop, skipLeafNodes, uiLevel);
     private addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
     private ensureFooterNodeExists(groupNode);
-    private createFlowerNode(parentNode);
+    private createDetailNode(masterNode);
 }

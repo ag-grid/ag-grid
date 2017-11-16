@@ -1,6 +1,7 @@
-// Type definitions for ag-grid v14.1.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { ColumnApi } from "./columnController/columnController";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
@@ -30,6 +31,11 @@ export interface RefreshCellsParams {
 }
 export interface RedrawRowsParams {
     rowNodes?: RowNode[];
+}
+export interface DetailGridInfo {
+    id: string;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 export declare class GridApi {
     private immutableService;
@@ -63,9 +69,14 @@ export declare class GridApi {
     private inMemoryRowModel;
     private infinitePageRowModel;
     private enterpriseRowModel;
+    private detailGridInfoMap;
     private init();
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     __getAlignedGridService(): AlignedGridsService;
+    addDetailGridInfo(id: string, gridInfo: DetailGridInfo): void;
+    removeDetailGridInfo(id: string): void;
+    getDetailGridInfo(id: string): DetailGridInfo;
+    forEachDetailGridInfo(callback: (gridInfo: DetailGridInfo, index: number) => void): void;
     getDataAsCsv(params?: CsvExportParams): string;
     exportDataAsCsv(params?: CsvExportParams): void;
     getDataAsExcel(params?: ExcelExportParams): string;

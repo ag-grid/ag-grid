@@ -25,7 +25,6 @@ import {LargeTextCellEditor} from "../../rendering/cellEditors/largeTextCellEdit
 import {TextFilter} from "../../filter/textFilter";
 import {NumberFilter} from "../../filter/numberFilter";
 
-
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED
 }

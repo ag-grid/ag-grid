@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.1.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -164,7 +164,15 @@ export interface GridOptions {
     overlayLoadingTemplate?: string;
     overlayNoRowsTemplate?: string;
     rowHeight?: number;
+    detailRowHeight?: number;
     headerCellTemplate?: string;
+    masterDetail?: boolean;
+    isRowMaster?: IsRowMaster;
+    detailCellRenderer?: {
+        new (): ICellRendererComp;
+    } | ICellRendererFunc | string;
+    detailCellRendererFramework?: any;
+    detailCellRendererParams?: any;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
@@ -308,6 +316,9 @@ export interface GetDataPath {
 }
 export interface GetNodeChildDetails {
     (dataItem: any): NodeChildDetails;
+}
+export interface IsRowMaster {
+    (dataItem: any): boolean;
 }
 export interface NodeChildDetails {
     group: boolean;

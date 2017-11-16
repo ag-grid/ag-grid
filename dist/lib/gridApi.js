@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.1.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,17 @@ var alignedGridsService_1 = require("./alignedGridsService");
 var pinnedRowModel_1 = require("./rowModels/pinnedRowModel");
 var GridApi = (function () {
     function GridApi() {
+        this.detailGridInfoMap = {};
+        /*
+        Taking these out, as we want to reconsider how we register components
+        
+        public addCellRenderer(key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): void {
+            this.cellRendererFactory.addCellRenderer(key, cellRenderer);
+        }
+        
+        public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {
+            this.cellEditorFactory.addCellEditor(key, cellEditor);
+        }*/
     }
     GridApi.prototype.init = function () {
         switch (this.rowModel.getType()) {
@@ -58,6 +69,25 @@ var GridApi = (function () {
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     GridApi.prototype.__getAlignedGridService = function () {
         return this.alignedGridsService;
+    };
+    GridApi.prototype.addDetailGridInfo = function (id, gridInfo) {
+        this.detailGridInfoMap[id] = gridInfo;
+    };
+    GridApi.prototype.removeDetailGridInfo = function (id) {
+        this.detailGridInfoMap[id] = undefined;
+    };
+    GridApi.prototype.getDetailGridInfo = function (id) {
+        return this.detailGridInfoMap[id];
+    };
+    GridApi.prototype.forEachDetailGridInfo = function (callback) {
+        var index = 0;
+        utils_1.Utils.iterateObject(this.detailGridInfoMap, function (id, gridInfo) {
+            // check for undefined, as old references will still be lying around
+            if (utils_1.Utils.exists(gridInfo)) {
+                callback(gridInfo, index);
+                index++;
+            }
+        });
     };
     GridApi.prototype.getDataAsCsv = function (params) {
         return this.csvCreator.getDataAsCsv(params);

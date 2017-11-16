@@ -43,8 +43,13 @@ export class Utils {
 
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
-    static mimicAsync(callback: Function): void {
-        callback();
+    private static doOnceFlags: {[key: string]: boolean} = {};
+
+    // if the key was passed before, then doesn't execute the func
+    static doOnce(func: ()=>void, key: string ) {
+        if (this.doOnceFlags[key]) { return; }
+        func();
+        this.doOnceFlags[key] = true;
     }
 
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
@@ -1489,6 +1494,10 @@ export class Utils {
         return words.map(word => word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : '')).join(' ');
     }
 
+    // gets called by: a) InMemoryRowNodeManager and b) GroupStage to do sorting.
+    // when in InMemoryRowNodeManager we always have indexes (as this sorts the items the
+    // user provided) but when in GroupStage, the nodes can contain filler nodes that
+    // don't have order id's
     static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: { [id: string]: number }): void {
         if (!rowNodes) {
             return;
@@ -1496,7 +1505,30 @@ export class Utils {
         rowNodes.sort((nodeA: RowNode, nodeB: RowNode) => {
             let positionA = rowNodeOrder[nodeA.id];
             let positionB = rowNodeOrder[nodeB.id];
-            return positionA - positionB;
+
+            let aHasIndex = positionA !== undefined;
+            let bHasIndex = positionB !== undefined;
+
+            let bothNodesAreUserNodes = aHasIndex && bHasIndex;
+            let bothNodesAreFillerNodes = !aHasIndex && !bHasIndex;
+
+            if (bothNodesAreUserNodes) {
+                // when comparing two nodes the user has provided, they always
+                // have indexes
+                return positionA - positionB;
+            } else if (bothNodesAreFillerNodes) {
+                // when comparing two filler nodes, we have no index to compare them
+                // against, however we want this sorting to be deterministic, so that
+                // the rows don't jump around as the user does delta updates. so we
+                // want the same sort result. so we use the id - which doesn't make sense
+                // from a sorting point of view, but does give consistent behaviour between
+                // calls. otherwise groups jump around as delta updates are done.
+                return nodeA.id > nodeB.id ? 1 : -1;
+            } else if (aHasIndex) {
+                return 1;
+            } else {
+                return -1;
+            }
         });
     }
 }

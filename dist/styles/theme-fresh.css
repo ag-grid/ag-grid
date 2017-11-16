@@ -427,3 +427,6 @@
       content: '('; }
     .ag-fresh .ag-sort-order::after {
       content: ')'; }
+  .ag-fresh .ag-details-row {
+    padding: 20px;
+    box-sizing: border-box; }

@@ -1,8 +1,8 @@
-// Type definitions for ag-grid v14.1.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
-import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, NavigateToNextCellParams, NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessRowParams, TabToNextCellParams } from "./entities/gridOptions";
+import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, NavigateToNextCellParams, NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessRowParams, TabToNextCellParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { ColumnApi } from "./columnController/columnController";
@@ -170,6 +170,8 @@ export declare class GridOptionsWrapper {
     };
     getSortingOrder(): string[];
     getAlignedGrids(): GridOptions[];
+    isMasterDetail(): boolean;
+    getIsRowMasterFunc(): IsRowMaster;
     getGroupRowRendererParams(): any;
     getOverlayLoadingTemplate(): string;
     getOverlayNoRowsTemplate(): string;
@@ -213,9 +215,6 @@ export declare class GridOptionsWrapper {
     getAutoSizePadding(): number;
     getHeaderHeight(): number;
     getFloatingFiltersHeight(): number;
-    getGroupPaddingSize(): number;
-    getFooterPaddingAddition(): number;
-    getLeafNodePaddingAddition(): number;
     getGroupHeaderHeight(): number;
     getPivotHeaderHeight(): number;
     getPivotGroupHeaderHeight(): number;
@@ -235,9 +234,7 @@ export declare class GridOptionsWrapper {
     getRowHeightForNode(rowNode: RowNode): number;
     isDynamicRowHeight(): boolean;
     getVirtualItemHeight(): number;
-    getAggFuncPopupHeight(): number;
-    getCheckboxIndentWidth(): number;
     private isNumeric(value);
-    private specialForNewMaterial(defaultValue, materialValue);
+    private specialForNewMaterial(defaultValue, sassVariableName);
     private getDefaultRowHeight();
 }

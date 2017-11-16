@@ -728,7 +728,6 @@ export class CellComp extends Component {
             context: this.beans.gridOptionsWrapper.getContext(),
             refreshCell: this.refreshCell.bind(this),
 
-            // todo danger - in the new world, these are not present :(
             eGridCell: this.getGui(),
             eParentOfValue: this.eParentOfValue,
 

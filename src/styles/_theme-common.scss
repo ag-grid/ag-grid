@@ -600,6 +600,7 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         padding-left: 2px;
         padding-right: 2px;
     }
+
     .ag-select-agg-func-item:hover {
         background-color: $ag-menu-option-active-color;
     }
@@ -643,6 +644,11 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         &::after {
             content: ')';
         }
+    }
+
+    .ag-details-row {
+        padding: 20px;
+        box-sizing: border-box;
     }
 }
 

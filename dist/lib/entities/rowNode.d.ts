@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.1.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -6,6 +6,7 @@ import { Column } from "./column";
 import { RowNodeCache, RowNodeCacheParams } from "../rowModels/cache/rowNodeCache";
 import { RowNodeBlock } from "../rowModels/cache/rowNodeBlock";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
+import { DetailGridInfo } from "../gridApi";
 export interface SetSelectedParams {
     newValue: boolean;
     clearSelection?: boolean;
@@ -70,11 +71,19 @@ export declare class RowNode implements IEventEmitter {
     rowGroupIndex: number;
     /** True if this node is a group node (ie has children) */
     group: boolean;
-    /** True if this node can flower (ie can be expanded, but has no direct children) */
+    /** True if this row is a master row, part of master / detail (ie row can be expanded to show detail) */
+    master: boolean;
+    /** True if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
+    detail: boolean;
+    /** If this row is a master row that was expanded, this points to the associated detail row. */
+    detailNode: RowNode;
+    /** If master detail, this contains details about the detail grid */
+    detailGridInfo: DetailGridInfo;
+    /** Same as master, kept for legacy reasons */
     canFlower: boolean;
-    /** True if this node is a flower */
+    /** Same as detail, kept for legacy reasons */
     flower: boolean;
-    /** The child flower of this node */
+    /** Same as detailNode, kept for legacy reasons */
     childFlower: RowNode;
     /** True if this node is a group and the group is the bottom level in the tree */
     leafGroup: boolean;

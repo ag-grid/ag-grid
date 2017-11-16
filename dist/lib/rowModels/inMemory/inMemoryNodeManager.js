@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.1.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,19 @@ var InMemoryNodeManager = (function () {
         this.rootNode.childrenAfterGroup = [];
         this.rootNode.childrenAfterSort = [];
         this.rootNode.childrenAfterFilter = [];
+        // if we make this class a bean, then can annotate postConstruct
+        this.postConstruct();
     }
+    // @PostConstruct - this is not a bean, so postConstruct called by constructor
+    InMemoryNodeManager.prototype.postConstruct = function () {
+        // func below doesn't have 'this' pointer, so need to pull out these bits
+        this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
+        this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
+        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
+        this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+        this.doingLegacyTreeData = utils_1.Utils.exists(this.getNodeChildDetails);
+        this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+    };
     InMemoryNodeManager.prototype.getCopyOfNodesMap = function () {
         var result = utils_1.Utils.cloneObject(this.allNodesMap);
         return result;
@@ -45,14 +57,9 @@ var InMemoryNodeManager = (function () {
             this.rootNode.childrenAfterGroup = [];
             return;
         }
-        // func below doesn't have 'this' pointer, so need to pull out these bits
-        this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
-        this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
-        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
-        var doingLegacyTreeData = utils_1.Utils.exists(this.getNodeChildDetails);
         // kick off recursion
         var result = this.recursiveFunction(rowData, null, InMemoryNodeManager.TOP_LEVEL);
-        if (doingLegacyTreeData) {
+        if (this.doingLegacyTreeData) {
             this.rootNode.childrenAfterGroup = result;
             this.setLeafChildren(this.rootNode);
         }
@@ -176,27 +183,39 @@ var InMemoryNodeManager = (function () {
             node.expanded = nodeChildDetails.expanded === true;
             node.field = nodeChildDetails.field;
             node.key = nodeChildDetails.key;
-            node.canFlower = false;
+            node.canFlower = node.master; // deprecated, is now 'master'
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         }
         else {
             node.group = false;
             if (doingTreeData) {
-                node.canFlower = false;
+                node.master = false;
                 node.expanded = false;
             }
             else {
-                //  this is the default, for when doing grid data
-                node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
-                if (node.canFlower) {
-                    node.expanded = this.isExpanded(level);
+                // this is the default, for when doing grid data
+                if (this.doesDataFlower) {
+                    node.master = this.doesDataFlower(dataItem);
+                }
+                else if (this.doingMasterDetail) {
+                    // if we are doing master detail, then the
+                    // default is that everything can flower.
+                    if (this.isRowMasterFunc) {
+                        node.master = this.isRowMasterFunc(dataItem);
+                    }
+                    else {
+                        node.master = true;
+                    }
                 }
                 else {
-                    node.expanded = false;
+                    node.master = false;
                 }
+                node.expanded = node.master ? this.isExpanded(level) : false;
             }
         }
+        // support for backwards compatibility, canFlow is now called 'master'
+        node.canFlower = node.master;
         if (parent && !this.suppressParentsInRowNodes) {
             node.parent = parent;
         }
@@ -249,24 +268,6 @@ var InMemoryNodeManager = (function () {
             newNodes.push(newNode);
         }
         return newNodes.length > 0 ? newNodes : null;
-    };
-    InMemoryNodeManager.prototype.removeItems = function (rowNodes) {
-        var _this = this;
-        if (this.isLegacyTreeData()) {
-            return;
-        }
-        var nodeList = this.rootNode.allLeafChildren;
-        var removedNodes = [];
-        rowNodes.forEach(function (rowNode) {
-            var indexOfNode = nodeList.indexOf(rowNode);
-            if (indexOfNode >= 0) {
-                rowNode.setSelected(false);
-                nodeList.splice(indexOfNode, 1);
-                _this.allNodesMap[rowNode.id] = undefined;
-            }
-            removedNodes.push(rowNode);
-        });
-        return removedNodes.length > 0 ? removedNodes : null;
     };
     InMemoryNodeManager.prototype.addItems = function (items) {
         var nodeList = this.rootNode.allLeafChildren;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.1.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,8 +27,16 @@ var columnController_1 = require("./columnController/columnController");
 var utils_1 = require("./utils");
 var environment_1 = require("./environment");
 var DEFAULT_ROW_HEIGHT = 25;
+var DEFAULT_DETAIL_ROW_HEIGHT = 300;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
 var DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
+var legacyThemes = [
+    'ag-fresh',
+    'ag-bootstrap',
+    'ag-blue',
+    'ag-dark',
+    'ag-material'
+];
 function isTrue(value) {
     return value === true || value === 'true';
 }
@@ -262,6 +270,17 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getAggFuncs = function () { return this.gridOptions.aggFuncs; };
     GridOptionsWrapper.prototype.getSortingOrder = function () { return this.gridOptions.sortingOrder; };
     GridOptionsWrapper.prototype.getAlignedGrids = function () { return this.gridOptions.alignedGrids; };
+    GridOptionsWrapper.prototype.isMasterDetail = function () {
+        var _this = this;
+        var usingMasterDetail = isTrue(this.gridOptions.masterDetail);
+        utils_1.Utils.doOnce(function () {
+            if (usingMasterDetail && !_this.enterprise) {
+                console.warn('ag-grid: Master Detail is an Enterprise feature of ag-Grid.');
+            }
+        }, 'MasterDetailEnterpriseCheck');
+        return usingMasterDetail && this.enterprise;
+    };
+    GridOptionsWrapper.prototype.getIsRowMasterFunc = function () { return this.gridOptions.isRowMaster; };
     GridOptionsWrapper.prototype.getGroupRowRendererParams = function () { return this.gridOptions.groupRowRendererParams; };
     GridOptionsWrapper.prototype.getOverlayLoadingTemplate = function () { return this.gridOptions.overlayLoadingTemplate; };
     GridOptionsWrapper.prototype.getOverlayNoRowsTemplate = function () { return this.gridOptions.overlayNoRowsTemplate; };
@@ -325,13 +344,7 @@ var GridOptionsWrapper = (function () {
         this.propertyEventService.removeEventListener(key, listener);
     };
     GridOptionsWrapper.prototype.getAutoSizePadding = function () {
-        var padding = this.gridOptions.autoSizePadding;
-        if (typeof padding === 'number' && padding > 0) {
-            return padding;
-        }
-        else {
-            return this.specialForNewMaterial(4, 8 * 3);
-        }
+        return this.gridOptions.autoSizePadding > 0 ? this.gridOptions.autoSizePadding : 0;
     };
     // properties
     GridOptionsWrapper.prototype.getHeaderHeight = function () {
@@ -339,7 +352,7 @@ var GridOptionsWrapper = (function () {
             return this.gridOptions.headerHeight;
         }
         else {
-            return this.specialForNewMaterial(25, 8 * 7);
+            return this.specialForNewMaterial(25, 'headerHeight');
         }
     };
     GridOptionsWrapper.prototype.getFloatingFiltersHeight = function () {
@@ -347,17 +360,8 @@ var GridOptionsWrapper = (function () {
             return this.gridOptions.floatingFiltersHeight;
         }
         else {
-            return this.specialForNewMaterial(25, 8 * 7);
+            return this.specialForNewMaterial(25, 'headerHeight');
         }
-    };
-    GridOptionsWrapper.prototype.getGroupPaddingSize = function () {
-        return this.specialForNewMaterial(10, 18 + 8 * 3);
-    };
-    GridOptionsWrapper.prototype.getFooterPaddingAddition = function () {
-        return this.specialForNewMaterial(15, 32);
-    };
-    GridOptionsWrapper.prototype.getLeafNodePaddingAddition = function () {
-        return this.specialForNewMaterial(10, 24);
     };
     GridOptionsWrapper.prototype.getGroupHeaderHeight = function () {
         if (typeof this.gridOptions.groupHeaderHeight === 'number') {
@@ -596,6 +600,14 @@ var GridOptionsWrapper = (function () {
             };
             return this.gridOptions.getRowHeight(params);
         }
+        else if (rowNode.detail && this.isMasterDetail()) {
+            if (this.isNumeric(this.gridOptions.detailRowHeight)) {
+                return this.gridOptions.detailRowHeight;
+            }
+            else {
+                return DEFAULT_DETAIL_ROW_HEIGHT;
+            }
+        }
         else if (this.isNumeric(this.gridOptions.rowHeight)) {
             return this.gridOptions.rowHeight;
         }
@@ -607,29 +619,24 @@ var GridOptionsWrapper = (function () {
         return typeof this.gridOptions.getRowHeight === 'function';
     };
     GridOptionsWrapper.prototype.getVirtualItemHeight = function () {
-        return this.specialForNewMaterial(20, 8 * 5);
-    };
-    GridOptionsWrapper.prototype.getAggFuncPopupHeight = function () {
-        return this.specialForNewMaterial(100, 8 * 5 * 3.5); // 3.5 cuts the last item in half, hinting that you can scroll
-    };
-    GridOptionsWrapper.prototype.getCheckboxIndentWidth = function () {
-        return this.specialForNewMaterial(10, 18 + 8); // icon size + grid size
+        return this.specialForNewMaterial(20, 'virtualItemHeight');
     };
     GridOptionsWrapper.prototype.isNumeric = function (value) {
         return !isNaN(value) && typeof value === 'number';
     };
     // Material data table has strict guidelines about whitespace, and these values are different than the ones 
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    GridOptionsWrapper.prototype.specialForNewMaterial = function (defaultValue, materialValue) {
-        if (this.environment.getTheme() == "ag-theme-material") {
-            return materialValue;
+    GridOptionsWrapper.prototype.specialForNewMaterial = function (defaultValue, sassVariableName) {
+        var theme = this.environment.getTheme();
+        if (theme.indexOf('ag-theme') === 0) {
+            return this.environment.getSassVariable(theme, sassVariableName);
         }
         else {
             return defaultValue;
         }
     };
     GridOptionsWrapper.prototype.getDefaultRowHeight = function () {
-        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 8 * 6);
+        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 'rowHeight');
     };
     GridOptionsWrapper.MIN_COL_WIDTH = 10;
     GridOptionsWrapper.PROP_HEADER_HEIGHT = 'headerHeight';

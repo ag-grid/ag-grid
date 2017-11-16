@@ -427,3 +427,6 @@
       content: '('; }
     .ag-bootstrap .ag-sort-order::after {
       content: ')'; }
+  .ag-bootstrap .ag-details-row {
+    padding: 20px;
+    box-sizing: border-box; }

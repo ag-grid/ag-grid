@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.1.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -15,7 +15,8 @@ export declare class Utils {
     private static isChrome;
     private static isFirefox;
     private static PRINTABLE_CHARACTERS;
-    static mimicAsync(callback: Function): void;
+    private static doOnceFlags;
+    static doOnce(func: () => void, key: string): void;
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
     static shallowCompare(arr1: any[], arr2: any[]): boolean;
     static getNameOfClass(TheClass: any): string;
