@@ -316,6 +316,18 @@ export class EnterpriseBlock extends RowNodeBlock {
         return 0;
     }
 
+    public clearRowTops(virtualRowCount: number): void {
+        this.forEachRowNode(virtualRowCount, rowNode => {
+            rowNode.clearRowTop();
+
+            let hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
+            if (hasChildCache) {
+                let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
+                enterpriseCache.clearRowTops();
+            }
+        });
+    }
+
     public setDisplayIndexes(displayIndexSeq: NumberSequence,
                              virtualRowCount: number,
                              nextRowTop: {value: number}): void {
@@ -323,32 +335,48 @@ export class EnterpriseBlock extends RowNodeBlock {
         
         this.blockTop = nextRowTop.value;
 
+        this.forEachRowNode(virtualRowCount, rowNode => {
+            let rowIndex = displayIndexSeq.next();
+
+            rowNode.setRowIndex(rowIndex);
+            rowNode.setRowTop(nextRowTop.value);
+
+            nextRowTop.value += rowNode.rowHeight;
+
+            let hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
+            if (hasChildCache) {
+                let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
+                if (rowNode.expanded) {
+                    enterpriseCache.setDisplayIndexes(displayIndexSeq, nextRowTop);
+                } else {
+                    // we need to clear the row tops, as the row renderer depends on
+                    // this to know if the row should be faded out
+                    enterpriseCache.clearRowTops();
+                }
+            }
+        });
+
+        this.displayIndexEnd = displayIndexSeq.peek();
+        this.blockHeight = nextRowTop.value - this.blockTop;
+    }
+
+    private forEachRowNode(virtualRowCount: number, callback: (rowNode: RowNode)=>void): void {
         let start = this.getStartRow();
         let end = this.getEndRow();
 
         for (let i = start; i<=end; i++) {
             // the blocks can have extra rows in them, if they are the last block
             // in the cache and the virtual row count doesn't divide evenly by the
-            if (i >= virtualRowCount) { continue; }
+            if (i >= virtualRowCount) {
+                continue;
+            }
 
             let rowNode = this.getRowUsingLocalIndex(i);
+
             if (rowNode) {
-                let rowIndex = displayIndexSeq.next();
-
-                rowNode.setRowIndex(rowIndex);
-                rowNode.setRowTop(nextRowTop.value);
-
-                nextRowTop.value += rowNode.rowHeight;
-
-                if (rowNode.group && rowNode.expanded && _.exists(rowNode.childrenCache)) {
-                    let enterpriseCache = <EnterpriseCache> rowNode.childrenCache;
-                    enterpriseCache.setDisplayIndexes(displayIndexSeq, nextRowTop);
-                }
+                callback(rowNode);
             }
         }
-
-        this.displayIndexEnd = displayIndexSeq.peek();
-        this.blockHeight = nextRowTop.value - this.blockTop;
     }
 
     private createLoadParams(): IEnterpriseGetRowsParams {
