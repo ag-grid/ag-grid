@@ -166,8 +166,6 @@ export class RowComp extends Component {
                 this.eAllRowContainers.forEach(eRow => _.removeCssClass(eRow, 'ag-opacity-zero'));
             });
         }
-
-        this.executeProcessRowPostCreateFunc();
     }
 
     private createTemplate(contents: string, extraCssClass: string = null): string {
