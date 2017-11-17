@@ -213,8 +213,7 @@ interface RowDataTransaction {
     </p>
 
     <p>
-        If you are providing rowNode ID's (via the <code>getRowNodeId()</code> callback) then the
-        grid will match the rows based on ID. If you are not using ID's, then the grid will match
+        If you are providing rowNode ID's (via the <code>getRowNodeId()</code> callback) then pass an array of objects with keys corresponding to the rowNodeId you specified with <code>getRowNodeId</code> and values matching the rows you want to remove. If you are not using ID's, then the grid will match
         the rows based on object reference.
     </p>
 
