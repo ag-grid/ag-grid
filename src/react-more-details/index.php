@@ -389,7 +389,7 @@ export default connect(
 &lt;AgGridReact
     // properties
     columnDefs={this.state.columnDefs}
-    rowData={this.props.columnDefs}
+    rowData={this.props.rowData}
 
     // events
     onGridReady={this.onGridReady}&gt;
