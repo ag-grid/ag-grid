@@ -241,6 +241,7 @@ colDef.cellEditorParams = {
         <ul>
         <li><b>rowIndex</b>: The row index of the row to start editing.</li>
         <li><b>colKey</b>: The column key of the column to start editing.</li>
+        <li><b>rowPinned</b>: Set to 'top' or 'bottom' to started editing a pinned row.</li>
         <li><b>keyPress, charPress</b>: The keyPress and charPress that are passed to the cell editor</li>
     </ul>
     </p>
