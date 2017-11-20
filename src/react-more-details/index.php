@@ -515,7 +515,7 @@ class TopMoversGrid extends Component {
     render() {
         return (
             &lt;AgGridReact
-                rowData={this.cleanData}
+                rowData={this.cleanData()}
                 ...rest of the component</snippet>
 
     <p>As above, this call will result in ag-Grid believing that the rowData has changed each time the component renders as the filtering
