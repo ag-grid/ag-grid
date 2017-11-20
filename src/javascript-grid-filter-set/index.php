@@ -139,7 +139,7 @@ columnDefinition = {
 
     <p>
         In addition to being able to specify a hardcoded list of values for your setFilter, you can provide a callback
-        to load the values asynchronoursly. The callback receives a parameter object. This parameter object has
+        to load the values asynchronously. The callback receives a parameter object. This parameter object has
         a <code>success</code> callback function that you can callback as soon as the values for the setFilter are ready.
     </p>
 
