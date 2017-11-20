@@ -187,6 +187,71 @@ columnDefinition = {
 
     <?= example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1)) ?>
 
+    <h2 id="refreshAfterEdit">Refresh After Edit</h2>
+
+    <p>
+        The set filter does NOT refresh after you edit the data. If the data is changing and you want the
+        set filter values to also change, it is up to your application to get the filter to change.
+    </p>
+
+    <p>
+        The grid does not update the filters for you as the as there are two many use cases that
+        are open to different interpretation. For example, different users will have different requirements
+        on how to hand new values or how to handle row refresh (eg if a filter is active, should the data
+        be filtered again after the value is added).
+    </p>
+
+    <p>
+        The example below shows different approaches on handling data changes for set filters.
+        From the example, the following can be noted:
+        <ul>
+            <li>
+                All 4 columns have set filter with different responses to data changing.
+            </li>
+            <li>
+                All four columns have their filters initialised when the grid is loaded
+                by calling <code>getFilterInstance()</code> when the <code>gridReady</code> event
+                is received. This means when you edit, the filter is already created.
+            </li>
+            <li>
+                Column 1 has no special handling of new values.
+            </li>
+            <li>
+                Column 2 after an update: a) gets the filter to update.
+            </li>
+            <li>
+                Column 3 after an update: a) gets the filter to update and b) makes sure the new value is selected.
+            </li>
+            <li>
+                Column 4 after an update: a) gets the filter to update and b) makes sure the new value is selected
+                and c) refreshes the rows based on the new filter value. So for example if you first set the filter
+                on Col 4 to 'A' (notice that 'B' rows are removed), then change a value from 'A' to 'B', then
+                the other rows that were previously removed are added back in again.
+            </li>
+            <li>
+                Click 'Add C Row' to add a new row. Columns 3 and 4 will have their filters updated. Columns
+                1 and 2 will not have their filters updated.
+            </li>
+        </ul>
+    </p>
+
+    <?= example('Refresh After Edit', 'refresh-after-edit', 'generated', array("enterprise" => 1)) ?>
+
+    <p>
+        Why do we do this? The reason is if the filters were changing as the editing was happening, then
+        this would cause the following issues:
+    </p>
+
+    <ul>
+        <li>
+            Rows could disappear while editing if there was a filter set and the edit make a row fail
+            a filter that was previously passing the filter.
+        </li>
+        <li>
+            Values could be split, eg if
+        </li>
+    </ul>
+
     <h2 id="newRowsSetFilter">New Rows Action and Values Example</h2>
 
     <p>
