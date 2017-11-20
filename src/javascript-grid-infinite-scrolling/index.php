@@ -292,7 +292,7 @@ gridOptions.getRowNodeId: function(item) {
           This is to prevent the filter from being reset.
     </note>
 
-    <?= example('Server Side Sorting And Filtering', 'server-side', 'generated') ?>
+    <?= example('Server Side Sorting And Filtering', 'server-side', 'generated', array("enterprise" => 1)) ?>
 
     <note>
         When performing multiple row selections using 'shift-click', it is possible that not all rows are available in
