@@ -39,9 +39,18 @@ export class ContextMenuFactory implements IContextMenuFactory {
     private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef|string)[] {
         let defaultMenuOptions: string[];
         if (Utils.exists(node)) {
+
+            defaultMenuOptions = [];
+
+            if(column) {
+                // only makes sense if column exists, could have originated from a row
+                defaultMenuOptions = ['copy','copyWithHeaders','paste', 'separator'];
+            }
+
+            defaultMenuOptions.push('toolPanel');
+
             // if user clicks a cell
             let anyExport:boolean = !this.gridOptionsWrapper.isSuppressExcelExport() || !this.gridOptionsWrapper.isSuppressCsvExport();
-            defaultMenuOptions = ['copy','copyWithHeaders','paste','separator','toolPanel'];
             if (anyExport){
                 defaultMenuOptions.push('export')
             }
