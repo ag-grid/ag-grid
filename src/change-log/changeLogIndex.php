@@ -143,7 +143,7 @@ include '../documentation-main/documentation_header.php';
             AG-693: <a href="../javascript-grid-enterprise-model/#child-count">Child Count</a> can now be set for Enterprise Row Model.
         </li>
         <li>
-            AG-800: Put in callback <a href="../javascript-grid-cell-editor/#suppress-keyboard-event">colDef.suppressKeyboardNavigation()</a>
+            AG-800: Put in callback <a href="../javascript-grid-cell-editor/#suppress-keyboard-event">colDef.suppressKeyboardEvent()</a>
             to allow suppressing keyboard events while editing.
         </li>
     </ul>
