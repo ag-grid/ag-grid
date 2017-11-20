@@ -6,7 +6,7 @@ import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
 import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy, Context} from "../context/context";
 import {EventService} from "../eventService";
-import {BodyHeightChangedEvent, BodyScrollEvent, Events} from "../events";
+import {BodyHeightChangedEvent, BodyScrollEvent, CellContextMenuEvent, Events} from "../events";
 import {DragService, DragListenerParams} from "../dragAndDrop/dragService";
 import {IRangeController} from "../interfaces/iRangeController";
 import {Constants} from "../constants";
@@ -31,6 +31,8 @@ import {GridApi} from "../gridApi";
 import {AnimationFrameService} from "../misc/animationFrameService";
 import {RowComp} from "../rendering/rowComp";
 import {NavigationService} from "./navigationService";
+import {CellComp} from "../rendering/cellComp";
+import {ValueService} from "../valueService/valueService";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -163,6 +165,7 @@ export class GridPanel extends BeanStub {
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
+    @Autowired('valueService') private  valueService: ValueService;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -447,7 +450,7 @@ export class GridPanel extends BeanStub {
             let target = _.getTarget(mouseEvent);
             if (target===this.eBodyViewport || target===this.ePinnedLeftColsViewport || target===this.ePinnedRightColsViewport) {
                 // show it
-                this.onContextMenu(mouseEvent);
+                this.onContextMenu(mouseEvent, null, null, null);
                 this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
@@ -510,20 +513,36 @@ export class GridPanel extends BeanStub {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        let cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
-        if (cellComp) {
-            cellComp.onMouseEvent(eventName, mouseEvent);
-        }
+        if (!this.mouseEventService.isEventFromThisGrid(mouseEvent)) return;
 
-        let rowComp: RowComp = this.getRowForEvent(mouseEvent);
-        if (rowComp) {
-            rowComp.onMouseEvent(eventName, mouseEvent);
+        let rowComp = this.getRowForEvent(mouseEvent);
+        let cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
+
+        if (eventName === "contextmenu") {
+            this.handleContextMenuMouseEvent(mouseEvent, rowComp, cellComp);
+
+        } else {
+            if (cellComp) cellComp.onMouseEvent(eventName, mouseEvent);
+            if (rowComp) rowComp.onMouseEvent(eventName, mouseEvent);
         }
 
         this.preventDefaultOnContextMenu(mouseEvent);
     }
 
-    private onContextMenu(mouseEvent: MouseEvent): void {
+    private handleContextMenuMouseEvent(mouseEvent: MouseEvent, rowComp: RowComp, cellComp: CellComp) {
+        let rowNode = rowComp ? rowComp.getRowNode() : null;
+        let column = cellComp ? cellComp.getColumn() : null;
+        let value = null;
+
+        if(column) {
+            cellComp.dispatchCellContextMenuEvent(mouseEvent);
+            value = this.valueService.getValue(column, rowNode);
+        }
+
+        this.onContextMenu(mouseEvent, rowNode, column, value);
+    }
+
+    private onContextMenu(mouseEvent: MouseEvent, rowNode: RowNode, column: Column, value: any): void {
 
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
@@ -535,7 +554,7 @@ export class GridPanel extends BeanStub {
         }
 
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
-            this.contextMenuFactory.showMenu(null, null, null, mouseEvent);
+            this.contextMenuFactory.showMenu(rowNode, column, value, mouseEvent);
             mouseEvent.preventDefault();
         }
     }

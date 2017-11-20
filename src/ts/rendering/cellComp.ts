@@ -3,8 +3,7 @@ import {Column} from "../entities/column";
 import {CellChangedEvent, RowNode} from "../entities/rowNode";
 import {Constants} from "../constants";
 import {
-    CellClickedEvent,
-    CellContextMenuEvent,
+    CellClickedEvent, CellContextMenuEvent,
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
@@ -17,7 +16,7 @@ import {
 import {GridCell, GridCellDef} from "../entities/gridCell";
 import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {Component} from "../widgets/component";
-import {ICellRenderer, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {NewValueParams, SuppressKeyboardEventParams} from "../entities/colDef";
 import {Beans} from "./beans";
@@ -775,9 +774,18 @@ export class CellComp extends Component {
             case 'click': this.onCellClicked(mouseEvent); break;
             case 'mousedown': this.onMouseDown(); break;
             case 'dblclick': this.onCellDoubleClicked(mouseEvent); break;
-            case 'contextmenu': this.onContextMenu(mouseEvent); break;
             case 'mouseout': this.onMouseOut(mouseEvent); break;
             case 'mouseover': this.onMouseOver(mouseEvent); break;
+        }
+    }
+
+    public dispatchCellContextMenuEvent(mouseEvent: MouseEvent) {
+        let colDef = this.column.getColDef();
+        let cellContextMenuEvent: CellContextMenuEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CONTEXT_MENU);
+        this.beans.eventService.dispatchEvent(cellContextMenuEvent);
+
+        if (colDef.onCellContextMenu) {
+            colDef.onCellContextMenu(cellContextMenuEvent);
         }
     }
 
@@ -813,32 +821,6 @@ export class CellComp extends Component {
     private onMouseOver(mouseEvent: MouseEvent): void {
         let cellMouseOverEvent: CellMouseOverEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OVER);
         this.beans.eventService.dispatchEvent(cellMouseOverEvent);
-    }
-
-    private onContextMenu(mouseEvent: MouseEvent): void {
-
-        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
-        // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.beans.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
-            // then do the check
-            if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
-                return;
-            }
-        }
-
-
-        let colDef = this.column.getColDef();
-        let cellContextMenuEvent: CellContextMenuEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CONTEXT_MENU);
-        this.beans.eventService.dispatchEvent(cellContextMenuEvent);
-
-        if (colDef.onCellContextMenu) {
-            colDef.onCellContextMenu(cellContextMenuEvent);
-        }
-
-        if (this.beans.contextMenuFactory && !this.beans.gridOptionsWrapper.isSuppressContextMenu()) {
-            this.beans.contextMenuFactory.showMenu(this.rowNode, this.column, this.value, mouseEvent);
-            mouseEvent.preventDefault();
-        }
     }
 
     private onCellDoubleClicked(mouseEvent: MouseEvent) {
