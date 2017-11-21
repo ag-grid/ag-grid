@@ -1693,8 +1693,8 @@ export class GridPanel extends BeanStub {
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
     // out the virtual columns again. gets called from following locations:
-    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged
-    private setLeftAndRightBounds(): void {
+    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged, API (doLayout)
+    public setLeftAndRightBounds(): void {
         if (this.gridOptionsWrapper.isForPrint()) { return; }
 
         let scrollWidth = this.eBodyViewport.clientWidth;
