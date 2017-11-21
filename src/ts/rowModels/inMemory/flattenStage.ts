@@ -63,8 +63,10 @@ export class FlattenStage implements IRowNodeStage {
 
         let groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
         let hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents();
+
+        // these two are mutually exclusive, so if first set, we don't set the second
         let groupRemoveSingleChildren = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
-        let groupRemoveLowestSingleChildren = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
+        let groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
 
         for (let i = 0; i < rowsToFlatten.length; i++) {
             let rowNode = rowsToFlatten[i];
@@ -92,12 +94,15 @@ export class FlattenStage implements IRowNodeStage {
             if (skipLeafNodes && rowNode.leafGroup) { continue; }
 
             if (isParent) {
+
+                let excludedParent = isRemovedSingleChildrenGroup || isRemovedLowestSingleChildrenGroup;
+
                 // we traverse the group if it is expended, however we always traverse if the parent node
                 // was removed (as the group will never be opened if it is not displayed, we show the children instead)
-                if (rowNode.expanded || isRemovedSingleChildrenGroup) {
+                if (rowNode.expanded || excludedParent) {
 
                     // if the parent was excluded, then ui level is that of the parent
-                    let uiLevelForChildren = isRemovedSingleChildrenGroup ? uiLevel : uiLevel + 1;
+                    let uiLevelForChildren = excludedParent ? uiLevel : uiLevel + 1;
                     this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result,
                         nextRowTop, skipLeafNodes, uiLevelForChildren);
 
