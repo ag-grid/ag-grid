@@ -92,7 +92,8 @@ export class ContextMenuFactory implements IContextMenuFactory {
         let hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
-            ()=> menu.destroy()
+            ()=> menu.destroy(),
+            mouseEvent
         );
 
         this.popupService.positionPopupUnderMouseEvent({
