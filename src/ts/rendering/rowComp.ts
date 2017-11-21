@@ -1333,7 +1333,7 @@ export class RowComp extends Component {
         }
 
         this.eAllRowContainers.forEach( eRow => {
-            eRow.setAttribute('index', rowIndexStr);
+            eRow.setAttribute('row-index', rowIndexStr);
 
             if (rowIsEvenChanged) {
                 _.addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);

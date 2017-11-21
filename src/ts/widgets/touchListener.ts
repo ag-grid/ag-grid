@@ -10,6 +10,7 @@ export interface TapEvent extends AgEvent {
 
 export interface LongTapEvent extends AgEvent {
     touchStart: Touch;
+    touchEvent: TouchEvent;
 }
 
 export class TouchListener implements IEventEmitter {
@@ -86,7 +87,8 @@ export class TouchListener implements IEventEmitter {
                 this.moved = true;
                 let event: LongTapEvent = {
                     type: TouchListener.EVENT_LONG_TAP,
-                    touchStart: this.touchStart
+                    touchStart: this.touchStart,
+                    touchEvent: touchEvent
                 };
                 this.eventService.dispatchEvent(event);
             }

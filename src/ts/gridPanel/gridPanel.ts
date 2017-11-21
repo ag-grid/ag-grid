@@ -33,6 +33,7 @@ import {RowComp} from "../rendering/rowComp";
 import {NavigationService} from "./navigationService";
 import {CellComp} from "../rendering/cellComp";
 import {ValueService} from "../valueService/valueService";
+import {LongTapEvent, TouchListener} from "../widgets/touchListener";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -310,6 +311,7 @@ export class GridPanel extends BeanStub {
         this.addKeyboardEvents();
         this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
+        this.mockContextMenuForIPad();
 
         if (this.$scope) {
             this.addAngularApplyCheck();
@@ -450,7 +452,7 @@ export class GridPanel extends BeanStub {
             let target = _.getTarget(mouseEvent);
             if (target===this.eBodyViewport || target===this.ePinnedLeftColsViewport || target===this.ePinnedRightColsViewport) {
                 // show it
-                this.onContextMenu(mouseEvent, null, null, null);
+                this.onContextMenu(mouseEvent, null, null, null, null);
                 this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
@@ -464,7 +466,7 @@ export class GridPanel extends BeanStub {
 
     }
 
-    private getRowForEvent(event: MouseEvent | KeyboardEvent): RowComp {
+    private getRowForEvent(event: Event): RowComp {
 
         let sourceElement = _.getTarget(event);
 
@@ -519,8 +521,7 @@ export class GridPanel extends BeanStub {
         let cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
 
         if (eventName === "contextmenu") {
-            this.handleContextMenuMouseEvent(mouseEvent, rowComp, cellComp);
-
+            this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellComp);
         } else {
             if (cellComp) cellComp.onMouseEvent(eventName, mouseEvent);
             if (rowComp) rowComp.onMouseEvent(eventName, mouseEvent);
@@ -529,33 +530,56 @@ export class GridPanel extends BeanStub {
         this.preventDefaultOnContextMenu(mouseEvent);
     }
 
-    private handleContextMenuMouseEvent(mouseEvent: MouseEvent, rowComp: RowComp, cellComp: CellComp) {
+    private mockContextMenuForIPad(): void {
+
+        // we do NOT want this when not in ipad, otherwise we will be doing
+        if (!_.isUserAgentIPad()) {return;}
+
+        this.eAllCellContainers.forEach( container => {
+            let touchListener = new TouchListener(container);
+            let longTapListener = (event: LongTapEvent)=> {
+
+                let rowComp = this.getRowForEvent(event.touchEvent);
+                let cellComp = this.mouseEventService.getRenderedCellForEvent(event.touchEvent);
+
+                this.handleContextMenuMouseEvent(null, event.touchEvent, rowComp, cellComp);
+            };
+            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+            this.addDestroyFunc( ()=> touchListener.destroy() );
+        });
+
+    }
+
+    private handleContextMenuMouseEvent(mouseEvent: MouseEvent, touchEvent: TouchEvent, rowComp: RowComp, cellComp: CellComp) {
         let rowNode = rowComp ? rowComp.getRowNode() : null;
         let column = cellComp ? cellComp.getColumn() : null;
         let value = null;
 
-        if(column) {
-            cellComp.dispatchCellContextMenuEvent(mouseEvent);
+        if (column) {
+            let event = mouseEvent ? mouseEvent : touchEvent;
+            cellComp.dispatchCellContextMenuEvent(event);
             value = this.valueService.getValue(column, rowNode);
         }
 
-        this.onContextMenu(mouseEvent, rowNode, column, value);
+        this.onContextMenu(mouseEvent, touchEvent, rowNode, column, value);
     }
 
-    private onContextMenu(mouseEvent: MouseEvent, rowNode: RowNode, column: Column, value: any): void {
+    private onContextMenu(mouseEvent: MouseEvent, touchEvent: TouchEvent, rowNode: RowNode, column: Column, value: any): void {
 
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
         if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
             // then do the check
-            if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) {
                 return;
             }
         }
 
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
-            this.contextMenuFactory.showMenu(rowNode, column, value, mouseEvent);
-            mouseEvent.preventDefault();
+            let eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent.touches[0];
+            this.contextMenuFactory.showMenu(rowNode, column, value, eventOrTouch);
+            let event = mouseEvent ? mouseEvent : touchEvent;
+            event.preventDefault();
         }
     }
 
@@ -1669,8 +1693,8 @@ export class GridPanel extends BeanStub {
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
     // out the virtual columns again. gets called from following locations:
-    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged
-    private setLeftAndRightBounds(): void {
+    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged, API (doLayout)
+    public setLeftAndRightBounds(): void {
         if (this.gridOptionsWrapper.isForPrint()) { return; }
 
         let scrollWidth = this.eBodyViewport.clientWidth;

@@ -728,6 +728,11 @@ export class GridApi {
 
     public doLayout() {
         this.gridCore.doLayout();
+        // if the column is not visible, then made visible, it will be right size, but the
+        // correct virtual columns will not be displayed. the setLeftAndRightBounds() gets
+        // called when size changes. however when size is not changed, then wrong cols are shown.
+        // this was to fix https://ag-grid.atlassian.net/browse/AG-1081
+        this.gridPanel.setLeftAndRightBounds();
     }
 
     public resetRowHeights() {
