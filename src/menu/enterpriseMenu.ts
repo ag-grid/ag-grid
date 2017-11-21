@@ -119,7 +119,6 @@ export class EnterpriseMenu {
 
     public static EVENT_TAB_SELECTED = 'tabSelected';
 
-
     public static TAB_FILTER = 'filterMenuTab';
     public static TAB_GENERAL = 'generalMenuTab';
     public static TAB_COLUMNS = 'columnsMenuTab';
@@ -154,7 +153,6 @@ export class EnterpriseMenu {
     private tabFactories:{[p:string]:()=>TabbedItem} = {};
     private includeChecks:{[p:string]:()=>boolean} = {};
     private restrictTo ?: string[];
-
 
     constructor(column: Column, initialSelection: string, restrictTo ?: string[]) {
         this.column = column;
@@ -204,7 +202,7 @@ export class EnterpriseMenu {
         });
     }
 
-    private isValidMenuTabItem (menuTabName:string):boolean{
+    private isValidMenuTabItem (menuTabName:string): boolean {
         let isValid: boolean = true;
         let itemsToConsider: string[] = EnterpriseMenu.TABS_DEFAULT;
 

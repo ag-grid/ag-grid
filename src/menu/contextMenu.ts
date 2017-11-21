@@ -17,7 +17,8 @@ import {
     GridApi,
     IRowModel,
     IComponent,
-    IAfterGuiAttachedParams
+    IAfterGuiAttachedParams,
+    _
 } from "ag-grid";
 import {ClipboardService} from "../clipboardService";
 import {MenuItemComponent} from "./menuItemComponent";
@@ -76,7 +77,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         }
     }
 
-    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent): void {
+    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): void {
 
         let menuItems = this.getMenuItems(node, column, value);
 
