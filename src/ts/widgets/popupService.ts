@@ -268,7 +268,6 @@ export class PopupService {
         };
 
         let hidePopupOnMouseEvent = (event: MouseEvent) => {
-            console.log('hidePopupOnMouseEvent()');
             hidePopup(event);
         };
 
