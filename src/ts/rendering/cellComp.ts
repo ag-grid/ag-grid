@@ -779,9 +779,9 @@ export class CellComp extends Component {
         }
     }
 
-    public dispatchCellContextMenuEvent(mouseEvent: MouseEvent) {
+    public dispatchCellContextMenuEvent(event: Event) {
         let colDef = this.column.getColDef();
-        let cellContextMenuEvent: CellContextMenuEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CONTEXT_MENU);
+        let cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
         this.beans.eventService.dispatchEvent(cellContextMenuEvent);
 
         if (colDef.onCellContextMenu) {

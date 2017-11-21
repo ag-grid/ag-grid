@@ -41,6 +41,8 @@ export class Utils {
     private static isChrome: boolean;
     private static isFirefox: boolean;
 
+    private static isIPad: boolean;
+
     private static PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
 
     private static doOnceFlags: {[key: string]: boolean} = {};
@@ -1046,6 +1048,14 @@ export class Utils {
         return this.isFirefox;
     }
 
+    static isUserAgentIPad(): boolean {
+        if (this.isIPad === undefined) {
+            // taken from https://davidwalsh.name/detect-ipad
+            this.isIPad = navigator.userAgent.match(/iPad/i) != null;
+        }
+        return this.isIPad;
+    }
+
     // srcElement is only available in IE. In all other browsers it is target
     // http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
     static getTarget(event: Event): Element {
@@ -1492,6 +1502,24 @@ export class Utils {
         let words: string[] = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
 
         return words.map(word => word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : '')).join(' ');
+    }
+
+    // displays a message to the browser. this is useful in iPad, where you can't easily see the console.
+    // so the javascript code can use this to give feedback. this is NOT intended to be called in production.
+    // it is intended the ag-Grid developer calls this to troubleshoot, but then takes out the calls before
+    // checking in.
+    static message(msg: string): void {
+        let eMessage = document.createElement('div');
+        eMessage.innerHTML = msg;
+        let eBox = document.querySelector('#__ag__message');
+        if (!eBox) {
+            let template = `<div id="__ag__message" style="display: inline-block; position: absolute; top: 0px; left: 0px; color: white; background-color: black; z-index: 20; padding: 2px; border: 1px solid darkred; height: 200px; overflow-y: auto;"></div>`;
+            eBox = this.loadTemplate(template);
+            if (document.body) {
+                document.body.appendChild(eBox);
+            }
+        }
+        eBox.appendChild(eMessage);
     }
 
     // gets called by: a) InMemoryRowNodeManager and b) GroupStage to do sorting.

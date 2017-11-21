@@ -238,6 +238,7 @@ export class PopupService {
     //so that when the background is clicked, the child is removed again, giving
     //a model look to popups.
     public addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: ()=>void, click?: MouseEvent | Touch): (event?: any)=>void {
+
         let eBody = this.gridOptionsWrapper.getDocument();
         if (!eBody) {
             console.warn('ag-grid: could not find the body of the document, document.body is empty');
@@ -346,8 +347,11 @@ export class PopupService {
             mouseEventOrTouch = touchEvent.touches[0];
         }
         if (mouseEventOrTouch && originalClick) {
-            if (originalClick.screenX===mouseEvent.screenX && originalClick.screenY === mouseEvent.screenY) {
-                console.log(`click.screenX = ${originalClick.screenX}, click.screenY = ${originalClick.screenY}`);
+            // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
+            // by browser click (when you life finger up, touch is interrupted as click in browser)
+            let xMatch = Math.abs(originalClick.screenX - mouseEvent.screenX) < 5;
+            let yMatch = Math.abs(originalClick.screenY - mouseEvent.screenY) < 5;
+            if (xMatch && yMatch) {
                 return true;
             }
         }
