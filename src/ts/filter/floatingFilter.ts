@@ -65,7 +65,13 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     abstract asFloatingFilterText(parentModel: M): string;
 
     onParentModelChanged(parentModel: M): void {
-        if (this.equalModels(this.lastKnownModel, parentModel)) return;
+        if (this.equalModels(this.lastKnownModel, parentModel)) {
+            // ensure column floating filter text is blanked out when both ranges are empty
+            if(!this.lastKnownModel && !parentModel) {
+                this.eColumnFloatingFilter.value = '';
+            }
+            return;
+        }
         this.lastKnownModel = parentModel;
         let incomingTextValue = this.asFloatingFilterText(parentModel);
         if (incomingTextValue === this.eColumnFloatingFilter.value) return;
