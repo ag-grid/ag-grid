@@ -269,7 +269,7 @@ export class RangeController implements IRangeController {
     }
 
     public onDragging(mouseEvent: MouseEvent): void {
-        if (!this.dragging) {
+        if (!this.dragging || !this.activeRange) {
             return;
         }
 
