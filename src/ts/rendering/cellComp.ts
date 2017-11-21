@@ -1148,7 +1148,7 @@ export class CellComp extends Component {
     }
 
     private onEnterKeyDown(): void {
-        if (this.editingCell) {
+        if (this.editingCell || this.rowComp.isEditing()) {
             this.stopRowOrCellEdit();
             this.focusCell(true);
         } else {
