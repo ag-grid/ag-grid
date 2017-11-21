@@ -4,6 +4,9 @@ $pageTitle = "Blog: Building a CRUD Application with ag-Grid Part 2";
 $pageDescription = "Building a CRUD Application with ag-Grid Part 2";
 $pageKeyboards = "ag-grid datagrid crud enterprise";
 
+$socialUrl = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-2/";
+$socialImage = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/crud_overview.png?".uniqid();
+
 include('../includes/mediaHeader.php');
 ?>
 
@@ -29,7 +32,7 @@ include('../includes/mediaHeader.php');
                     and JPA/Backend (Database)
                 </li>
                 <li class="bold-roboto">Part 2: Middle Tier: Exposing our data with a REST Service</li>
-                <li>Part 3: Front End - Initial Implementation</li>
+                <li><a href="../ag-grid-datagrid-crud-part-3/">Part 3</a>: Front End - Initial Implementation</li>
                 <li>Part 4: Front End - Grid Features & CRUD (Creation, Updates and Deletion)</li>
                 <li>Part 5: Front End - Aggregation & Pivoting</li>
                 <li>Part 6: Front End - Enterprise Row Model</li>

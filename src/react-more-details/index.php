@@ -508,7 +508,7 @@ class TopMoversGrid extends Component {
         super(props);
     }
 
-    cleanData() {
+    cleanData = () =>  {
         return this.props.rowData.filter(data =&gt; data.isClean)
     }
 

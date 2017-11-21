@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         If you are using an immutable data store, as is usual in a React application, then you will be
-        interested in the section below <a href=".#delta-row-data">Bulk Method 3 - Delta Row Data</a>.
+        interested in the section below <a href="#delta-row-data">Bulk Method 3 - Delta Row Data</a>.
     </p>
 
     <h2>Updating RowNodes Data</h2>
