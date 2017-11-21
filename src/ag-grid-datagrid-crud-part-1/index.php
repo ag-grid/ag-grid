@@ -4,6 +4,9 @@ $pageTitle = "Blog: Building a CRUD Application with ag-Grid Part 1";
 $pageDescription = "Building a CRUD Application with ag-Grid Part 1";
 $pageKeyboards = "ag-grid datagrid crud enterprise";
 
+$socialUrl = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/";
+$socialImage = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/crud_overview.png?".uniqid();
+
 include('../includes/mediaHeader.php');
 ?>
 
