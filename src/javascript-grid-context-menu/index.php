@@ -132,42 +132,6 @@ MenuItemDef {
 
     <?= example('Context Menu Example', 'context-menu', 'generated', array("enterprise" => 1)) ?>
 
-    <h1>Context Menu on Touch Devices</h1>
-
-    <p>
-        The context menu will work on touch devices <b>that support context menu events</b> only.
-    </p>
-
-    <h3>Android</h3>
-
-    <p>
-        On touch devices running Android, the context menu event is fired by holding down
-        a touch and gently waiting for the context menu to appear.
-    </p>
-
-    <h3>Microsoft Windows</h3>
-
-    <p>
-        On touch devices running Microsoft Windows, the context menu event is fired by holding down
-        a touch and gently waiting for the context menu to appear.
-    </p>
-
-    <h3>iOS</h3>
-
-    <p>
-        On touch devices running iOS, there is no context menu event. The context menu is not supported
-        in ag-Grid on such devices.
-    </p>
-
-    <note>
-        Getting the context menu to work on iOS was something the ag-Grid team wanted to do. You might
-        wonder why we didn't mock the context event by listening to touch events? We did, we wrote the code,
-        but it was hazardous and error prone, or quite simply did not work. Because grid cells can be customised,
-        it is not possible to know what the content of the cells are, and as such cannot reliably predict how
-        touch events should be processed. If you really need the context menu for the grid in iOS, we recommend
-        creating a menu outside of the grid with similar options.
-    </note>
-
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
