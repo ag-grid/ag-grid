@@ -164,7 +164,7 @@ export class AthleteService {
 
             <p>In the <code>findAll</code> method we're providing an <code>Observable</code> that will make a call to
                 our
-                REST endpoint and on retrieval map it to the model classes we created above. We actually get a lot of
+                REST endpoint, and on retrieval, map it to the model classes we created above. We actually get a lot of
                 functionality
                 from not too many lines of code here, which is great.</p>
 
@@ -500,7 +500,7 @@ private createColumnDefs() {
                         <td>
                             <a href="https://twitter.com/share" class="twitter-share-button"
                                data-url="https://www.ag-grid.com/ag-grid-datagrid-crud-part-3/"
-                               data-text="Building a CRUD Application with ag-Grid #angular #aggrid #crud" data-via="seanlandsman"
+                               data-text="Building a CRUD Application with ag-Grid Part 3 #angular #aggrid #crud" data-via="seanlandsman"
                                data-size="large">Tweet</a>
                             <script>!function (d, s, id) {
                                     var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';

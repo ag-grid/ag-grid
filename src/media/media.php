@@ -21,6 +21,33 @@ include('../includes/mediaHeader.php');
 
 <div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
     <div style="float: left; width: 240px;">
+        <a href="../ag-grid-datagrid-crud-part-2/">
+            <img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" style="width: 225px;"/>
+        </a>
+    </div>
+
+    <div style="overflow: hidden;">
+        <div style="font-size: 20px; color: #167ac6; float: left;">
+            <a href="../ag-grid-datagrid-crud-part-3/">
+                Building a CRUD Application with ag-Grid - Part 3
+            </a>
+        </div>
+        <div style="float: right;  color: #767676;">
+            21st November 2017
+        </div>
+    </div>
+    <div style="color: #767676">
+        Sean Landsman
+    </div>
+    <div style="color: #767676; padding-top: 20px;">
+        <p>The third part in a series of blogs about Building a CRUD Application with ag-Grid. In this part we take a look
+            at implementing a first pass of our front end, integerating the data from the backend into a simple Grid.
+        </p>
+    </div>
+</div>
+
+<div style="overflow: hidden; border: 1px solid darkgrey; background-color: #eee; padding: 10px; margin: 30px 5px 5px 5px;">
+    <div style="float: left; width: 240px;">
         <a href="../ag-grid-blog-14-2-0/">
             <img src="../ag-grid-blog-14-2-0/cover.jpg" style="width: 225px;"/>
         </a>

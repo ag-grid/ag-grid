@@ -36,6 +36,20 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">21st November 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <a href="../ag-grid-datagrid-crud-part-3/">
+            <img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" style="width: 100%;"/>
+        </a>
+    </div>
+    <div>
+        <br/>
+        The third part in a series of blogs about <a href="../ag-grid-datagrid-crud-part-3/">Building a CRUD Application with ag-Grid</a>. In this part we take a look
+        at implementing a first pass of our front end, integerating the data from the backend into a simple Grid.
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">15th November 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
         <a href="../ag-grid-blog-14-2-0/">
