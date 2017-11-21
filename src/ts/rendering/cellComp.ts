@@ -376,6 +376,8 @@ export class CellComp extends Component {
             this.replaceContentsAfterRefresh();
         }
 
+        this.refreshToolTip();
+
         if (!suppressFlash) {
             this.flashCell();
         }
@@ -527,17 +529,6 @@ export class CellComp extends Component {
                 this.eParentOfValue.innerText = valueToRender;
             }
         }
-        if (colDef.tooltipField) {
-            let data = this.rowNode.data;
-            if (_.exists(data)) {
-                let tooltip = _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
-                if (_.exists(tooltip)) {
-                    this.eParentOfValue.setAttribute('title', tooltip);
-                } else {
-                    this.eParentOfValue.removeAttribute('title');
-                }
-            }
-        }
     }
 
     public attemptCellRendererRefresh(): boolean {
@@ -560,6 +551,20 @@ export class CellComp extends Component {
 
     public isVolatile() {
         return this.column.getColDef().volatile;
+    }
+
+    private refreshToolTip() {
+        if (this.column.getColDef().tooltipField) {
+            let data = this.rowNode.data;
+            if (_.exists(data)) {
+                let tooltip = _.getValueUsingField(data, this.column.getColDef().tooltipField, this.column.isTooltipFieldContainsDots());
+                if (_.exists(tooltip)) {
+                    this.eParentOfValue.setAttribute('title', tooltip);
+                } else {
+                    this.eParentOfValue.removeAttribute('title');
+                }
+            }
+        }
     }
 
     private valuesAreEqual(val1: any, val2: any): boolean {
