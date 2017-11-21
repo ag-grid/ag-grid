@@ -41,6 +41,12 @@ export class CheckboxSelectionComponent extends Component {
         element.appendChild(this.eIndeterminateIcon);
     }
 
+    private onDataChanged(): void {
+        // when rows are loaded for the second time, this can impact the selection, as a row
+        // could be loaded as already selected (if user scrolls down, and then up again).
+        this.onSelectionChanged();
+    }
+
     private onSelectionChanged(): void {
         let state = this.rowNode.isSelected();
         _.setVisible(this.eCheckedIcon, state === true);
@@ -88,6 +94,7 @@ export class CheckboxSelectionComponent extends Component {
         this.addDestroyableEventListener(this.eIndeterminateIcon, 'click', this.onIndeterminateClicked.bind(this));
 
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
 
         if (this.visibleFunc) {
             this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
