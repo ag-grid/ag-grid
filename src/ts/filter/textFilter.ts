@@ -98,7 +98,15 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
 
     public initialiseFilterBodyUi() {
         super.initialiseFilterBodyUi();
-        let debounceMs: number = this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 500;
+
+        let debounceMs: number = 0;
+
+        if (this.filterParams.applyButton && this.filterParams.debounceMs) {
+            console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
+        } else {
+            debounceMs = this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 500;
+        }
+
         let toDebounce:()=>void = _.debounce(this.onFilterTextFieldChanged.bind(this), debounceMs);
         this.addDestroyableEventListener(this.eFilterTextField, 'input', toDebounce);
     }
