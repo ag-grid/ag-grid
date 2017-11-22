@@ -154,7 +154,7 @@ export interface GridOptions {
     maxColWidth?: number;
 
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. GOD DAMN IT!*
+     * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
 
     // just set once
@@ -170,7 +170,7 @@ export interface GridOptions {
     defaultExportParams?: CsvExportParams;
 
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. FOR FUCKS SAKE! *
+     * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
 
     groupSuppressAutoColumn?: boolean;
@@ -191,7 +191,7 @@ export interface GridOptions {
     forPrint?: boolean;
 
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. YOU'VE BEEN WARNED*
+     * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
 
     // changeable, but no immediate impact
