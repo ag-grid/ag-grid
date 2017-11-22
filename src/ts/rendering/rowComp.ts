@@ -402,7 +402,7 @@ export class RowComp extends Component {
     }
 
     public isEditing(): boolean {
-        return false;
+        return this.editingRow;
     }
 
     public stopRowEditing(cancel: boolean): void {
