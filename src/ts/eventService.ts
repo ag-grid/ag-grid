@@ -95,8 +95,12 @@ export class EventService implements IEventEmitter {
         _.removeFromArray(listenerList, listener);
     }
 
-    public removeGlobalListener(listener: Function): void {
-        _.removeFromArray(this.globalSyncListeners, listener);
+    public removeGlobalListener(listener: Function, async = false): void {
+        if (async) {
+            _.removeFromArray(this.globalAsyncListeners, listener);
+        } else {
+            _.removeFromArray(this.globalSyncListeners, listener);
+        }
     }
 
     // why do we pass the type here? the type is in ColumnChangeEvent, so unless the

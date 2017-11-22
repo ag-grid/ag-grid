@@ -778,11 +778,13 @@ export class GridApi {
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
-        this.eventService.removeEventListener(eventType, listener);
+        let async = this.gridOptionsWrapper.useAsyncEvents();
+        this.eventService.removeEventListener(eventType, listener, async);
     }
 
     public removeGlobalListener(listener: Function): void {
-        this.eventService.removeGlobalListener(listener);
+        let async = this.gridOptionsWrapper.useAsyncEvents();
+        this.eventService.removeGlobalListener(listener, async);
     }
 
     public dispatchEvent(event: AgEvent): void {
