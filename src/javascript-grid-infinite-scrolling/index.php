@@ -588,6 +588,23 @@ loadingSpinnerColumn = {
 
     <?= example('Block Equal Than Page', 'block-equal-page', 'generated') ?>
 
+    <h1>Overlays</h1>
+
+    <p>
+        The infinite row model does not use <a href="../javascript-grid-overlays/">overlays</a>
+        like the In Memory Row Model. The does not
+        use 'loading' overlay as rows load in blocks as it would be wrong to hide all the grid
+        because some rows are getting loaded. The grid does not use 'no rows' overlay as the
+        'no rows' could be because you have a filter set, and a grid with a filter shows an empty
+        grid when no rows pass the filter.
+    </p>
+
+    <p>
+        If you do want to show overlays, then please see
+        <a href="../javascript-grid-overlays/">overlays</a> section for details on how to show
+        the overlays manually.
+    </p>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
