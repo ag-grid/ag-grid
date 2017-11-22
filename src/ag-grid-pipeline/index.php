@@ -7,14 +7,14 @@
     <meta name="description" content="ag-Grid - Pipeline / Changelog of Work.">
     <meta name="keywords" content="ag-Grid javascript grid pipeline changelog release notes"/>
     <meta http-equiv="Cache-control" content="public">
-    <meta http-equiv="cache-control" content="max-age=86400" />
+    <meta http-equiv="cache-control" content="max-age=86400"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="../dist/aui/css/aui.min.css" media="all">
     <link rel="stylesheet" href="../dist/aui/css/aui-experimental.min.css" media="all">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
     <!-- Bootstrap -->
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
@@ -30,80 +30,123 @@
 
 <body class="big-text">
 
+
 <?php
-date_default_timezone_set('Europe/London');
-
 $navKey = "pipeline";
-include '../includes/navbar.php'; ?>
+include '../includes/navbar.php';
 
-<?php $headerTitle = "Pipeline";
-include '../includes/headerRow.php'; ?>
+$headerTitle = "Pipeline";
+include '../includes/headerRow.php';
 
-<div class="container info-page" >
+include './jira_utilities.php';
+?>
+
+<div class="container info-page">
     <div class="row">
         <div class="col-md-12">
-            <?php
-            function mapIssueType($issueType)
-            {
-                switch ($issueType) {
-                    case "Task":
-//                        return "Feature Request/Improvement";
-                        return "Feature Request";
-                        break;
-                }
-                return $issueType;
-            }
-
-            function mapReporter($reporter)
-            {
-                if($reporter === "") {
-                    return "ag-Grid";
-                }
-                switch ($reporter) {
-                    case "Client Request (email, telephone, etc)":
-                        return "Enterprise Request";
-                        break;
-                }
-                return $reporter;
-            }
-
-            function mapStatus($status) {
-                if($status === 'Selected for Development') {
-                    return 'Backlog';
-                }
-                return $status;
-            }
-
-            function toDate($str_value)
-            {
-                $date = new DateTime($str_value, new DateTimeZone('GMT'));
-                return $date->format('j M Y');
-            }
-
-            ?>
-                    <table class="aui">
-                        <tbody>
+            <div class="tabbable boxed parentTabs">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#release">Current Release</a></li>
+                    <li><a href="#bugs">Bugs</a></li>
+                    <li><a href="#fr">Feature Requests</a></li>
+                    <li><a href="#epics">Epics</a></li>
+                </ul>
+                <div class="tab-content" style="margin-top: 5px">
+                    <div class="tab-pane active" id="release">
+                        <div class="description">
+                            If your item is in this list, its guaranteed that we will give it a resolution and that it
+                            will
+                            be made available in the next major release. Usually each major release takes 4-5 weeks
+                        </div>
                         <?php
-                        $firstReport = true;
-                        $reportTitle = "Completed - Will be Released Soon";
-                        $csvFile = "next_version_done.json";
-                        include './../jira_report.php';
+                        $displayEpic = 0;
+                        $jira_report = PIPELINE_SECTIONS['current_release'];
+                        include './jira_report.php';
                         ?>
+                    </div>
+                    <div class="tab-pane" id="bugs">
+                        <div class="description">
+                            If your item is listed here you should know that bugs are pulled into the current release in
+                            small
+                            batches based on development capacity. Usually items in the bug list with a high priority
+                            get cleared in 1-2 releases.
+                            Medium priority 1-3 releases. Low priority 2-4 releases
+                        </div>
                         <?php
-                        $reportTitle = "Open - Targeted For A Future Release";
-                        $csvFile = "next_version_notdone.json";
-                        include '../jira_report.php';
+                        $displayEpic = 0;
+                        $jira_report = PIPELINE_SECTIONS['bugs'];
+                        include './jira_report.php';
                         ?>
+                    </div>
+                    <div class="tab-pane" id="fr">
+                        <div class="description">
+                            Feature requests on this list are also pulled into the current release in small batches
+                            based on
+                            development capacity. Note that bugs take precedence at that our current capacity feature
+                            requests with high priority
+                            get cleared in 2-3 releases.<br/><br/>
+                            Other feature requests we don't have a timeline for this, but we are working in improving
+                            our capacity. The timelines in
+                            this page will get updated as soon as the capacity for feature requests is improved
+                        </div>
                         <?php
-                        $reportTitle = "Backlog";
-                        $csvFile = "backlog.json";
-                        include '../jira_report.php';
+                        $displayEpic = 0;
+                        $jira_report = PIPELINE_SECTIONS['feature_requests'];
+                        include './jira_report.php';
                         ?>
-                        </tbody>
-                    </table>
+                    </div>
+                    <div class="tab-pane" id="epics">
+                        <div class="description">
+                            <p>As part of managing feature requests we group similar ones into Epics, and then we bring
+                                these epics into each sprint planning for each next release so they are considered as
+                                next
+                                major pieces of work.</p>
+                            <p>If you are item is in this list is probably because it has jumped from the list of
+                                feature
+                                requests into this list, if that is the case have a look at the second list that shows
+                                epics
+                                sorted by priority.</p>
+                            <p>If your item is in an epic an is high on the priority list, then this is an indicator
+                                that
+                                the whole epic might get revamped soon, but it is not a hard commitment since we will
+                                refine
+                                this every sprint planning</p>
+                        </div>
+                        <div class="tabbable">
+                            <ul class="nav nav-tabs">
+                                <li class="active"><a href="#issue_by_epic">Tickets Grouped By Epic</a></li>
+                                <li><a href="#epic_by_priority">Epics By Priority</a></li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="issue_by_epic">
+                                    <?php
+                                    $displayEpic = 1;
+                                    $jira_report = PIPELINE_SECTIONS['issue_by_epic'];
+                                    include './jira_report.php';
+                                    ?>
+                                </div>
+                                <div class="tab-pane" id="epic_by_priority">
+                                    <?php
+                                    $displayEpic = 0;
+                                    $jira_report = PIPELINE_SECTIONS['epic_by_priority'];
+                                    include './jira_report.php';
+                                    ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+    $("ul.nav-tabs a").click(function (e) {
+        e.preventDefault();
+        $(this).tab('show');
+    });
+</script>
 <?php include("../includes/footer.php"); ?>
 
 </body>
