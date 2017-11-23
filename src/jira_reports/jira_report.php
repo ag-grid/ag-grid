@@ -1,4 +1,4 @@
-<input type="text" id="<?= 'search_' . $report_type ?>" class="report-search" placeholder="Type to filter issues">
+<input type="text" id="<?= 'search_' . $report_type ?>" class="report-search" placeholder="Filter issues for this report (eg. AG-1111/popup/feature)...">
 <table class="aui" id="<?= 'content_' . $report_type ?>">
     <tbody>
     <?php

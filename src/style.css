@@ -1511,3 +1511,26 @@ snippet pre, snippet code {
     border: 1px solid lightgrey;
     border-radius: 5px;
 }
+
+.global-search-pane {
+    margin-top: 20px;
+    width: 100%;
+    display: inline-block;
+}
+
+.global-report-search {
+    margin-bottom: 20px;
+    width: 80%;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    float: left;
+}
+
+.global-report-search-results {
+    margin: 20px 0 20px 15px;
+    float: left;
+}
+
+/* used for selection */
+.top-level-pane {
+}
