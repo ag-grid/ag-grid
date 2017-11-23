@@ -42,20 +42,39 @@ function jiraRequest($report_type, $startAt, $maxResults)
     if ($jira_config->{'local-dev'}) {
         return localJiraRequest($report_type);
     } else {
-        $username = $jira_config->{'username'};
-        $password = $jira_config->{'password'};
+        // favour credentials file if it exists - only applicable when deployed
+        $prod_file = dirname(__FILE__) . "/prod/credentials.json";
+        if (file_exists($prod_file)) {
+            // live
+            $credentials = json_decode(file_get_contents($prod_file));
+            $username = $credentials->{'username'};
+            $password = $credentials->{'password'};
+        } else {
+            // for testing live jira data locally
+            $username = $jira_config->{'username'};
+            $password = $jira_config->{'password'};
+        }
 
         $data = remoteJiraRequest($report_type, $startAt, $maxResults, $username, $password);
 
         if ($jira_config->{'update-mock-data'}) {
-            $file = "../mock_jira_data/" . $report_type . ".json";
-            $handle = fopen($file, 'w') or die('Cannot open file:  ' . $file);
-            fwrite($handle, $data);
-            fclose($handle);
+            updateLocalData($report_type, $data);
         }
 
         return $data;
     }
+}
+
+/**
+ * @param $report_type
+ * @param $data
+ */
+function updateLocalData($report_type, $data)
+{
+    $file = "../mock_jira_data/" . $report_type . ".json";
+    $handle = fopen($file, 'w') or die('Cannot open file:  ' . $file);
+    fwrite($handle, $data);
+    fclose($handle);
 }
 
 function retrieveJiraFilterData($report_type)
