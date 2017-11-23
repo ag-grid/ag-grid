@@ -136,7 +136,11 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        if (!this.params.enableMenu) {
+        // we don't show the menu if on an ipad, as the user cannot have a mouse on the ipad, so
+        // makes no sense. instead the user must long-tap if on an ipad.
+        let dontShowMenu = !this.params.enableMenu || _.isUserAgentIPad();
+
+        if (dontShowMenu) {
             _.removeFromParent(this.eMenu);
             return;
         }
