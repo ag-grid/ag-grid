@@ -58,7 +58,7 @@ export class CheckboxSelectionComponent extends Component {
         let groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
         let updatedCount = this.rowNode.setSelectedParams({newValue: false, groupSelectsFiltered: groupSelectsFiltered});
         return updatedCount;
-     }
+    }
 
     private onUncheckedClicked(event: MouseEvent): number {
         let groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
