@@ -1,6 +1,7 @@
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {Column} from "./entities/column";
 import {RowNode} from "./entities/rowNode";
+import {Constants} from "./constants";
 
 let FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 let FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
@@ -391,6 +392,15 @@ export class Utils {
 
     static isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
         let pressedChar = String.fromCharCode(event.charCode);
+
+        // newline is an exception, as it counts as a printable character, but we don't
+        // want to start editing when it is pressed. without this check, if user is in chrome
+        // and editing a cell, and they press ctrl+enter, the cell stops editing, and then
+        // starts editing again with a blank value (two 'key down' events are fired). to
+        // test this, remove the line below, edit a cell in chrome and hit ctrl+enter while editing.
+        // https://ag-grid.atlassian.net/browse/AG-605
+        if (this.isKeyPressed(event, Constants.KEY_NEW_LINE)) { return false; }
+
         if (_.exists(event.key)) {
             // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
             // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.

@@ -1486,7 +1486,7 @@ export class CellComp extends Component {
 
                     // can be null if cell was previously null / contained empty string,
                     // this will result in new value not being rendered.
-                    if(eCell) {
+                    if (eCell) {
                         this.getGui().appendChild(eCell);
                     }
                 }

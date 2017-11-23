@@ -17,6 +17,7 @@ export class Constants {
 
     static KEY_BACKSPACE = 8;
     static KEY_TAB = 9;
+    static KEY_NEW_LINE = 10;
     static KEY_ENTER = 13;
     static KEY_SHIFT = 16;
     static KEY_ESCAPE = 27;
