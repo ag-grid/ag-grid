@@ -1,0 +1,6 @@
+{
+  "local-dev": true,
+  "update-mock-data": false,
+  "username": "jira username",
+  "password": "jira password"
+}

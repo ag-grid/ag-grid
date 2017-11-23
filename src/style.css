@@ -1495,6 +1495,19 @@ snippet pre, snippet code {
     background-color: #f7f7f7;
 }
 
-.description {
+.report-description {
     margin-top: 15px;
+}
+
+.report-header {
+    border-top: none !important;
+    text-align: left;
+    text-transform: capitalize;
+}
+
+.report-search {
+    margin-top: 10px;
+    width: 100%;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
 }

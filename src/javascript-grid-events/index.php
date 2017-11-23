@@ -83,7 +83,9 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>rowValueChanged</th>
-            <td>A cells value within a row has changed.</td>
+            <td>A cells value within a row has changed. This event corresponds to
+                <a href="../javascript-grid-cell-editing/#fullRowEdit">Full Row Editing</a> only.
+            </td>
         </tr>
         <tr>
             <th>cellEditingStarted, cellEditingStopped</th>
@@ -93,7 +95,8 @@ include '../documentation-main/documentation_header.php';
             <th>rowEditingStarted, rowEditingStopped</th>
             <td>Editing a row has started / stopped (when row editing is enabled). When row editing, these events
                 will be fired once and <code>cellEditingStarted / cellEditingStopped</code> will be fired for each
-                individual cell.
+                individual cell. These events correspond to
+                <a href="../javascript-grid-cell-editing/#start-stop-editing-events">Full Row Editing</a> only.
             </td>
         </tr>
         <tr class="title-row">
