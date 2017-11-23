@@ -188,23 +188,23 @@ export class HeaderRowComp extends Component {
                 _.removeFromArray(currentChildIds, idOfChild);
                 headerCompPromise = this.headerCompPromises[idOfChild];
                 headerCompPromise.then(headerComp=>{
-                    eBefore = eHeaderCompGui;
                     eHeaderCompGui = headerComp.getGui();
                     if (ensureDomOrder) {
                         _.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                     }
+                    eBefore = eHeaderCompGui;
                 });
             } else {
                 headerCompPromise = this.createHeaderComp(child);
                 this.headerCompPromises[idOfChild] = headerCompPromise;
                 headerCompPromise.then(headerComp=>{
-                    eBefore = eHeaderCompGui;
                     eHeaderCompGui = headerComp.getGui();
                     if (ensureDomOrder) {
                         _.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                     } else {
                         eParentContainer.appendChild(eHeaderCompGui);
                     }
+                    eBefore = eHeaderCompGui;
                 });
             }
         });
