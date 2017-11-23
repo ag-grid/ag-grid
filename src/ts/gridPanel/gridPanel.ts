@@ -516,6 +516,7 @@ export class GridPanel extends BeanStub {
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
         if (!this.mouseEventService.isEventFromThisGrid(mouseEvent)) return;
+        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         let rowComp = this.getRowForEvent(mouseEvent);
         let cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);

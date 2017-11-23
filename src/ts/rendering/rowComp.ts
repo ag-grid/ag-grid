@@ -713,6 +713,7 @@ export class RowComp extends Component {
     }
 
     private onRowDblClick(mouseEvent: MouseEvent): void {
+        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         let agEvent: RowDoubleClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_DOUBLE_CLICKED, mouseEvent);
 
@@ -720,6 +721,7 @@ export class RowComp extends Component {
     }
 
     public onRowClick(mouseEvent: MouseEvent) {
+        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
 
         let agEvent: RowClickedEvent = this.createRowEventWithSource(Events.EVENT_ROW_CLICKED, mouseEvent);
 
