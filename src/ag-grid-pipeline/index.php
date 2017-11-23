@@ -53,11 +53,11 @@ include '../jira_reports/jira_utilities.php';
             </div>
             <div class="tabbable boxed parentTabs">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="#release">Current Release</a></li>
-                    <li><a href="#bugs">Bugs</a></li>
-                    <li><a href="#fr">Feature Requests</a></li>
-                    <li><a href="#epics">Epics</a></li>
-                    <li><a href="#parked">Parked Items</a></li>
+                    <li class="active"><a href="#release" class="report-link">Current Release</a></li>
+                    <li><a href="#bugs" class="report-link">Bugs</a></li>
+                    <li><a href="#fr" class="report-link">Feature Requests</a></li>
+                    <li><a href="#epics" class="report-link">Epics</a></li>
+                    <li><a href="#parked" class="report-link">Parked Items</a></li>
                 </ul>
                 <div class="tab-content" style="margin-top: 5px">
                     <div class="tab-pane top-level-pane active" id="release">
@@ -197,7 +197,12 @@ include '../jira_reports/jira_utilities.php';
                 return anchor.href.indexOf("#" + tabId) >= 0;
             });
 
-            $(tabAnchor[0]).click()
+            $(tabAnchor[0]).click();
+            $(tabAnchor[0]).addClass('search-highlight');
+            setTimeout(function() {
+                $(tabAnchor[0]).removeClass('search-highlight')
+            }, 1000)
+
         }
     });
 
