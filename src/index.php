@@ -56,7 +56,7 @@ include 'includes/navbar.php'; ?>
         <div class="container">
             <div class="row text-center">
                 <div class="col-md-4 info-item">
-                    Over <span class="info-item-big">800 Companies</span><br/>
+                    Over <span class="info-item-big">1,000 Companies</span><br/>
                     use <b>ag-Grid Enterprise</b>.
                 </div>
                 <div class="col-md-4 info-item">
@@ -65,7 +65,7 @@ include 'includes/navbar.php'; ?>
                     use <b>ag-Grid Enterprise</b>.
                 </div>
                 <div class="col-md-4 info-item">
-                    Over <span class="info-item-big">110,000 Downloads</span>
+                    Over <span class="info-item-big">150,000 Downloads</span>
                     per month.
                 </div>
             </div>
