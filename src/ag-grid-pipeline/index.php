@@ -38,7 +38,7 @@ include '../includes/navbar.php';
 $headerTitle = "Pipeline";
 include '../includes/headerRow.php';
 
-include './jira_utilities.php';
+include '../jira_reports/jira_utilities.php';
 ?>
 
 <div class="container info-page">
@@ -60,8 +60,8 @@ include './jira_utilities.php';
                         </div>
                         <?php
                         $displayEpic = 0;
-                        $jira_report = PIPELINE_SECTIONS['current_release'];
-                        include './jira_report.php';
+                        $report_type = 'current_release';
+                        include '../jira_reports/jira_report.php';
                         ?>
                     </div>
                     <div class="tab-pane" id="bugs">
@@ -74,8 +74,8 @@ include './jira_utilities.php';
                         </div>
                         <?php
                         $displayEpic = 0;
-                        $jira_report = PIPELINE_SECTIONS['bugs'];
-                        include './jira_report.php';
+                        $report_type = 'bugs';
+                        include '../jira_reports/jira_report.php';
                         ?>
                     </div>
                     <div class="tab-pane" id="fr">
@@ -91,8 +91,8 @@ include './jira_utilities.php';
                         </div>
                         <?php
                         $displayEpic = 0;
-                        $jira_report = PIPELINE_SECTIONS['feature_requests'];
-                        include './jira_report.php';
+                        $report_type = 'feature_requests';
+                        include '../jira_reports/jira_report.php';
                         ?>
                     </div>
                     <div class="tab-pane" id="epics">
@@ -121,15 +121,15 @@ include './jira_utilities.php';
                                 <div class="tab-pane active" id="issue_by_epic">
                                     <?php
                                     $displayEpic = 1;
-                                    $jira_report = PIPELINE_SECTIONS['issue_by_epic'];
-                                    include './jira_report.php';
+                                    $report_type = 'issue_by_epic';
+                                    include '../jira_reports/jira_report.php';
                                     ?>
                                 </div>
                                 <div class="tab-pane" id="epic_by_priority">
                                     <?php
                                     $displayEpic = 0;
-                                    $jira_report = PIPELINE_SECTIONS['epic_by_priority'];
-                                    include './jira_report.php';
+                                    $report_type = 'epic_by_priority';
+                                    include '../jira_reports/jira_report.php';
                                     ?>
                                 </div>
                             </div>

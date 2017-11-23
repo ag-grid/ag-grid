@@ -10,10 +10,9 @@ const PIPELINE_SECTIONS = array(
     'epic_by_priority' => JIRA_ENDPOINT . '11727+order+by+cf[10005]+asc+%2C+priority+desc'
 );
 
-function jiraRequest($jiraFilterUrl, $startAt, $maxResults)
+function remoteJiraRequest($report_type, $startAt, $maxResults, $username, $password)
 {
-    $username = '';
-    $password = '';
+    $jiraFilterUrl = PIPELINE_SECTIONS[$report_type];
 
     $url = $jiraFilterUrl . '&startAt=' . $startAt . '&maxResults=' . $maxResults;
     $curl = curl_init();
@@ -26,12 +25,45 @@ function jiraRequest($jiraFilterUrl, $startAt, $maxResults)
     return (curl_exec($curl));
 }
 
-function retrieveJiraFilterData($jiraFilterUrl)
+function localJiraRequest($report_type)
+{
+    $file = "../mock_jira_data/" . $report_type . ".json";
+    $handle = fopen($file, 'r') or die('Cannot open file:  ' . $file);
+    $data = fread($handle, filesize($file));
+    fclose($handle);
+
+    return $data;
+}
+
+function jiraRequest($report_type, $startAt, $maxResults)
+{
+    $jira_config = json_decode(file_get_contents(dirname(__FILE__) . "/jira_config.json"));
+
+    if ($jira_config->{'local-dev'}) {
+        return localJiraRequest($report_type);
+    } else {
+        $username = $jira_config->{'username'};
+        $password = $jira_config->{'password'};
+
+        $data = remoteJiraRequest($report_type, $startAt, $maxResults, $username, $password);
+
+        if ($jira_config->{'update-mock-data'}) {
+            $file = "../mock_jira_data/" . $report_type . ".json";
+            $handle = fopen($file, 'w') or die('Cannot open file:  ' . $file);
+            fwrite($handle, $data);
+            fclose($handle);
+        }
+
+        return $data;
+    }
+}
+
+function retrieveJiraFilterData($report_type)
 {
     $maxResults = 100;
 
     // initial query gets the first "page" of data, as well as the total number of issues to retrieve
-    $issue_list = jiraRequest($jiraFilterUrl, 0, $maxResults);
+    $issue_list = jiraRequest($report_type, 0, $maxResults);
     $tempArray = json_decode($issue_list, true);
 
     // this block iterates over the number of "pages" to retrieve, maxResults at a time
@@ -41,7 +73,7 @@ function retrieveJiraFilterData($jiraFilterUrl)
     for ($page = 1; $page < $pages; $page++) {
         echo ($maxResults * $page) . '<- startAt<br/>';
 
-        $issue_list = jiraRequest($jiraFilterUrl, ($maxResults * $page), $maxResults);
+        $issue_list = jiraRequest($report_type, ($maxResults * $page), $maxResults);
         $currentPageData = json_decode($issue_list, true);
 
         for ($x = 0; $x < count($currentPageData); $x++) {

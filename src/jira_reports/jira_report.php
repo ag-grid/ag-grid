@@ -1,10 +1,7 @@
-<?php
-
-?>
 <table class="aui">
     <tbody>
     <?php
-    $json_decoded = retrieveJiraFilterData($jira_report);
+    $json_decoded = retrieveJiraFilterData($report_type);
     $issue_count = count($json_decoded->{'issues'});
     for ($i = 0; $i < $issue_count; $i++) {
         if ($i == 0) {
