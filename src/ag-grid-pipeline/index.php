@@ -50,10 +50,11 @@ include '../jira_reports/jira_utilities.php';
                     <li><a href="#bugs">Bugs</a></li>
                     <li><a href="#fr">Feature Requests</a></li>
                     <li><a href="#epics">Epics</a></li>
+                    <li><a href="#parked">Parked Items</a></li>
                 </ul>
                 <div class="tab-content" style="margin-top: 5px">
                     <div class="tab-pane active" id="release">
-                        <div class="description">
+                        <div class="report-description">
                             If your item is in this list, its guaranteed that we will give it a resolution and that it
                             will
                             be made available in the next major release. Usually each major release takes 4-5 weeks
@@ -65,7 +66,7 @@ include '../jira_reports/jira_utilities.php';
                         ?>
                     </div>
                     <div class="tab-pane" id="bugs">
-                        <div class="description">
+                        <div class="report-description">
                             If your item is listed here you should know that bugs are pulled into the current release in
                             small
                             batches based on development capacity. Usually items in the bug list with a high priority
@@ -79,7 +80,7 @@ include '../jira_reports/jira_utilities.php';
                         ?>
                     </div>
                     <div class="tab-pane" id="fr">
-                        <div class="description">
+                        <div class="report-description">
                             Feature requests on this list are also pulled into the current release in small batches
                             based on
                             development capacity. Note that bugs take precedence at that our current capacity feature
@@ -96,7 +97,7 @@ include '../jira_reports/jira_utilities.php';
                         ?>
                     </div>
                     <div class="tab-pane" id="epics">
-                        <div class="description">
+                        <div class="report-description">
                             <p>As part of managing feature requests we group similar ones into Epics, and then we bring
                                 these epics into each sprint planning for each next release so they are considered as
                                 next
@@ -134,6 +135,16 @@ include '../jira_reports/jira_utilities.php';
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="tab-pane active" id="parked">
+                        <div class="report-description">
+                            Parked Items
+                        </div>
+                        <?php
+                        $displayEpic = 0;
+                        $report_type = 'current_release';
+//                        include '../jira_reports/jira_report.php';
+                        ?>
                     </div>
                 </div>
             </div>
