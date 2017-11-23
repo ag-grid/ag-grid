@@ -365,18 +365,21 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    public onExpandClicked(): void {
+    public onExpandClicked(mouseEvent: MouseEvent): void {
+        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
         this.onExpandOrContract();
     }
 
-    public onCellDblClicked(event: MouseEvent): void {
+    public onCellDblClicked(mouseEvent: MouseEvent): void {
+        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+
         // we want to avoid acting on double click events on the expand / contract icon,
         // as that icons already has expand / collapse functionality on it. otherwise if
         // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
         // is open->close->open, however double click should be open->close only.
         let targetIsExpandIcon
-            = _.isElementInEventPath(this.eExpanded, event)
-            || _.isElementInEventPath(this.eContracted, event);
+            = _.isElementInEventPath(this.eExpanded, mouseEvent)
+            || _.isElementInEventPath(this.eContracted, mouseEvent);
 
         if (!targetIsExpandIcon) {
             this.onExpandOrContract();

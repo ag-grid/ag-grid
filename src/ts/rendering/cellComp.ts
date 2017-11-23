@@ -775,6 +775,8 @@ export class CellComp extends Component {
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+
         switch (eventName) {
             case 'click': this.onCellClicked(mouseEvent); break;
             case 'mousedown': this.onMouseDown(); break;
