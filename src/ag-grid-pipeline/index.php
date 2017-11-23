@@ -44,16 +44,23 @@ include '../jira_reports/jira_utilities.php';
 <div class="container info-page">
     <div class="row">
         <div class="col-md-12">
+            <div class="global-search-pane">
+                <span class="search-label">Type the issue number you're looking for - when a single match is found the corresponding
+                tab will be opened.</span>
+                <input type="text" id="global_search" class="global-report-search"
+                       placeholder="Global Issue Search (eg. AG-1111)...">
+                <div class="global-report-search-results"></div>
+            </div>
             <div class="tabbable boxed parentTabs">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="#release">Current Release</a></li>
-                    <li><a href="#bugs">Bugs</a></li>
-                    <li><a href="#fr">Feature Requests</a></li>
-                    <li><a href="#epics">Epics</a></li>
-                    <li><a href="#parked">Parked Items</a></li>
+                    <li class="active"><a href="#release" class="report-link">Current Release</a></li>
+                    <li><a href="#bugs" class="report-link">Bugs</a></li>
+                    <li><a href="#fr" class="report-link">Feature Requests</a></li>
+                    <li><a href="#epics" class="report-link">Epics</a></li>
+                    <li><a href="#parked" class="report-link">Parked Items</a></li>
                 </ul>
                 <div class="tab-content" style="margin-top: 5px">
-                    <div class="tab-pane active" id="release">
+                    <div class="tab-pane top-level-pane active" id="release">
                         <div class="report-description">
                             If your item is in this list, its guaranteed that we will give it a resolution and that it
                             will
@@ -65,7 +72,7 @@ include '../jira_reports/jira_utilities.php';
                         include '../jira_reports/jira_report.php';
                         ?>
                     </div>
-                    <div class="tab-pane" id="bugs">
+                    <div class="tab-pane top-level-pane" id="bugs">
                         <div class="report-description">
                             If your item is listed here you should know that bugs are pulled into the current release in
                             small
@@ -79,7 +86,7 @@ include '../jira_reports/jira_utilities.php';
                         include '../jira_reports/jira_report.php';
                         ?>
                     </div>
-                    <div class="tab-pane" id="fr">
+                    <div class="tab-pane top-level-pane" id="fr">
                         <div class="report-description">
                             Feature requests on this list are also pulled into the current release in small batches
                             based on
@@ -96,7 +103,7 @@ include '../jira_reports/jira_utilities.php';
                         include '../jira_reports/jira_report.php';
                         ?>
                     </div>
-                    <div class="tab-pane" id="epics">
+                    <div class="tab-pane top-level-pane" id="epics">
                         <div class="report-description">
                             <p>As part of managing feature requests we group similar ones into Epics, and then we bring
                                 these epics into each sprint planning for each next release so they are considered as
@@ -143,7 +150,7 @@ include '../jira_reports/jira_utilities.php';
                         <?php
                         $displayEpic = 0;
                         $report_type = 'current_release';
-//                        include '../jira_reports/jira_report.php';
+                        //                        include '../jira_reports/jira_report.php';
                         ?>
                     </div>
                 </div>
@@ -153,10 +160,52 @@ include '../jira_reports/jira_utilities.php';
 </div>
 
 <script>
+    // show/hide tabs
     $("ul.nav-tabs a").click(function (e) {
         e.preventDefault();
         $(this).tab('show');
     });
+
+    // global issue search
+    $('#global_search').keyup(function () {
+        var searchCriteria = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+        var reportTables = $("table[id^=content_]");
+
+        var candidates = [];
+        var matchingIssueCount = 0;
+        reportTables.each(function (index, reportTable) {
+            var tableRows = $(reportTable).find("tr");
+            var matchingRows = tableRows.filter(function (index, row) {
+                var text = $(row).text().replace(/\s+/g, ' ').toLowerCase();
+                return text.indexOf(searchCriteria) >= 0;
+            });
+
+            var issueCount = matchingRows.length;
+            matchingIssueCount += issueCount;
+            if (issueCount === 1) {
+                candidates.push(reportTable);
+            }
+        });
+
+        $(".global-report-search-results").html(matchingIssueCount + " matching issues");
+
+        if (matchingIssueCount === 1 && candidates.length === 1) {
+            var closestParentTab = $(candidates[0]).closest(".top-level-pane");
+            var tabId = $(closestParentTab).attr('id');
+            var tabAnchor = $(".parentTabs .nav.nav-tabs a").filter(function (index, anchor) {
+                return anchor.href.indexOf("#" + tabId) >= 0;
+            });
+
+            $(tabAnchor[0]).click();
+            $(tabAnchor[0]).addClass('search-highlight');
+            setTimeout(function() {
+                $(tabAnchor[0]).removeClass('search-highlight')
+            }, 1000)
+
+        }
+    });
+
 </script>
 <?php include("../includes/footer.php"); ?>
 
