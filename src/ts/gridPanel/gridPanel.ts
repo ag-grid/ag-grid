@@ -1294,7 +1294,8 @@ export class GridPanel extends BeanStub {
         // allow the option to pass mouse wheel events to the browser
         // https://github.com/ag-grid/ag-grid/issues/800
         // in the future, this should be tied in with 'forPrint' option, or have an option 'no vertical scrolls'
-        if (!this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel()) {
+        let shouldPreventDefault = !this.gridOptionsWrapper.isAutoHeight() && !this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel();
+        if (shouldPreventDefault) {
             // if we don't prevent default, then the whole browser will scroll also as well as the grid
             event.preventDefault();
         }
