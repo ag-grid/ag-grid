@@ -237,8 +237,8 @@ include('../includes/mediaHeader.php');
 
                 <div class="caption" style="margin-top:20px;">
                     <div class="media-left">
-                        <div style="background-color:#838384; border-radius: 50%; width:35px; height:35px; padding:2px;">
-                            <img class="media-object" src="/images/team/sean.jpg" style="width: 30px; border-radius: 50%;">
+                        <div style="background-color:#838384; border-radius: 50%; width:35px; height:35px; padding:5px;">
+                            <p style="text-align:center;color:white;font-size:18px">A</p>
                         </div>
                     </div>
                     <div class="media-body">
