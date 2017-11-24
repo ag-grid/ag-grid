@@ -9,7 +9,7 @@ include('../includes/mediaHeader.php');
 
 <div style="margin-top:20px;">
     <div class="row">
-        <a style="color:black; text-decoration:none;" href="../ag-grid-blog-14-2-0/"> <h3 style="font-size:30px; text-align:center;font-weight:bold"> What's New in ag-Grid v14.2.0</h3></a>
+        <a style="color:black; text-decoration:none;" href="../ag-grid-blog-14-2-0/"> <h3 style="font-size:35px; text-align:center;font-weight:bold"> What's New in ag-Grid v14.2.0 </h3></a>
         <p style="text-align: center;color:grey">by Sophia Lazarova | 14 November 2017</p>
         <a href="../ag-grid-blog-14-2-0/"><img style="margin-bottom:30px;" src="../ag-grid-blog-14-2-0/cover-img.jpg" width='100%'/></a>
     </div>
