@@ -92,7 +92,7 @@
         Once this is done, we can then access the two css files that we need as follows:
         <snippet>
             import 'ag-grid-root/dist/styles/ag-grid.css';
-            import 'ag-grid-root/dist/styles/theme-fresh.css';
+            import 'ag-grid-root/dist/styles/ag-theme-fresh.css';
         </snippet>
         You will also need to configure CSS loaders for Webpack.
     </p>

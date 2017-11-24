@@ -158,7 +158,7 @@ interface GridCellDef {
         to stick with the grid default behaviour. Return null/undefined to skip the navigation.
     </p>
 
-    <h4 id="example-custom-navigation">Example Custom Navigation</h4>
+    <h3 id="example-custom-navigation">Example Custom Navigation</h3>
 
     <p>
         The example below shows both <i>navigateToNextCell</i> and <i>tabToNextCell</i> in practice.
@@ -167,6 +167,66 @@ interface GridCellDef {
     </p>
 
     <?= example('Custom Keyboard Navigation', 'custom-keyboard-navigation', 'generated') ?>
+
+
+    <h1 id="tabbing-into-grid">Tabbing into the Grid</h1>
+
+    <p>
+        In applications where the grid is embedded into a larger page it may be useful to tab into grid from another
+        element or user action such as a button click.
+    </p>
+
+    <p>
+        This can be achieved by using a combination of DOM event listeners and Grid API calls shown in the following code
+        snippet:
+    </p>
+
+    <snippet>
+// obtain reference to input element
+var myInput = document.getElementById("my-input");
+
+// intercept key strokes within input element
+myInput.addEventListener("keydown", function (event) {
+    // code for tab key
+    var tabKeyCode = 9;
+
+    // ignore non tab key strokes
+    if(event.keyCode !== tabKeyCode) return;
+
+    // prevents tabbing into the url section
+    event.preventDefault();
+
+    // scrolls to the first row
+    gridOptions.api.ensureIndexVisible(0);
+
+    // scrolls to the first column
+    var firstCol = gridOptions.columnApi.getAllDisplayedColumns()[0];
+    gridOptions.api.ensureColumnVisible(firstCol);
+
+    // sets focus into the first grid cell
+    gridOptions.api.setFocusedCell(0, firstCol);
+
+}, true);
+</snippet>
+
+    <h3>Example - Tabbing into the Grid</h3>
+
+    <p>
+        In the following example there is an input box provided to test tabbing into the grid. Notice the following:
+
+        <ul>
+            <li>
+                Tabbing out of the input box will gain focus on the first grid cell.
+            </li>
+            <li>
+                When the first cell is out of view due to either scrolling down (rows) or across (columns), tabbing out
+                of the input will cause the grid to navigate to the first cell.
+            </li>
+        </ul>
+    </p>
+
+
+    <?= example('Tabbing into the Grid', 'tabbing-into-grid', 'vanilla') ?>
 
 </div>
 

@@ -22,7 +22,7 @@
     <p>You'll need to import the ag-Grid CSS in your application, as well as a theme you wish to use:</p>
     <snippet>
         import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-        import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
+        import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";
     </snippet>
     <p>In this case we're using the Fresh Theme - please refer to the <a href="../javascript-grid-themes">Themes</a>
         documentation for more information.</p>
@@ -131,14 +131,14 @@
     </p>
     <snippet>
         &lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" /&gt;
-        &lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" /&gt;
+        &lt;link href="node_modules/ag-grid/dist/styles/ag-theme-fresh.css" rel="stylesheet" /&gt;
     </snippet>
 
     <p>If you're using the <code>style-loader</code> you can also import the CSS dependencies into your final bundle:
     </p>
     <snippet>
         import "../node_modules/ag-grid/dist/styles/ag-grid.css"
-        import "../node_modules/ag-grid/dist/styles/theme-fresh.css"
+        import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css"
 
         // only needed if you're using enterprise features
         import "ag-grid-enterprise/main";

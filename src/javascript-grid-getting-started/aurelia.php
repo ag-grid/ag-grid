@@ -104,7 +104,7 @@
     </p>
     <snippet>
         &lt;link href="node_modules/ag-grid/styles/ag-grid.css" rel="stylesheet" /&gt;
-        &lt;link href="node_modules/ag-grid/styles/theme-fresh.css" rel="stylesheet" /&gt;
+        &lt;link href="node_modules/ag-grid/styles/ag-theme-fresh.css" rel="stylesheet" /&gt;
     </snippet>
 
     <p>
@@ -188,57 +188,57 @@
         The example has ag-Grid configured through the template in the following ways:
     </p>
 
-    <snippet>
-        // notice the grid has an id called agGrid, which can be used to call the API
-        &lt;g-grid-aurelia #agGrid class="ag-theme-fresh"
-        // items bound to properties on the controller
-        grid-options.bind="gridOptions"
-        column-defs.bind="columnDefs"
-        show-tool-panel.bind="showToolPanel"
-        row-data.bind="rowData"
+<snippet>
+// notice the grid has an id called agGrid, which can be used to call the API
+&lt;ag-grid-aurelia #agGrid class="ag-theme-fresh"
+    // items bound to properties on the controller
+    grid-options.bind="gridOptions"
+    column-defs.bind="columnDefs"
+    show-tool-panel.bind="showToolPanel"
+    row-data.bind="rowData"
 
-        // boolean values 'turned on'
-        enable-col-resize
-        enable-sorting
-        enable-filter
-        group-headers
-        suppress-row-click-selection
-        tool-panel-suppress-groups
-        tool-panel-suppress-values
-        debug
+    // boolean values 'turned on'
+    enable-col-resize
+    enable-sorting
+    enable-filter
+    group-headers
+    suppress-row-click-selection
+    tool-panel-suppress-groups
+    tool-panel-suppress-values
+    debug
 
-        // simple values
-        row-height.bind="22"
-        row-selection="multiple"
+    // simple values
+    row-height.bind="22"
+    row-selection="multiple"
 
-        // event callbacks
-        model-updated.call="onModelUpdated()"
-        cell-clicked.call="onCellClicked($event)"
-        cell-double-clicked.call="onCellDoubleClicked($event)"
-        cell-context-menu.call="onCellContextMenu($event)"
-        cell-value-changed.call="onCellValueChanged($event)"
-        cell-focused.call="onCellFocused($event)"
-        row-selected.call="onRowSelected($event)"
-        selection-changed.call="onSelectionChanged()"
-        before-filter-changed.call="onBeforeFilterChanged()"
-        after-filter-changed.call="onAfterFilterChanged()"
-        filter-modified.call="onFilterModified()"
-        before-sort-changed.call="onBeforeSortChanged()"
-        after-sort-changed.call="onAfterSortChanged()"
-        virtual-row-removed.call="onVirtualRowRemoved($event)"
-        row-clicked.call="onRowClicked($event)"
-        ready.call="onReady($event)"
+    // event callbacks
+    model-updated.call="onModelUpdated()"
+    cell-clicked.call="onCellClicked($event)"
+    cell-double-clicked.call="onCellDoubleClicked($event)"
+    cell-context-menu.call="onCellContextMenu($event)"
+    cell-value-changed.call="onCellValueChanged($event)"
+    cell-focused.call="onCellFocused($event)"
+    row-selected.call="onRowSelected($event)"
+    selection-changed.call="onSelectionChanged()"
+    before-filter-changed.call="onBeforeFilterChanged()"
+    after-filter-changed.call="onAfterFilterChanged()"
+    filter-modified.call="onFilterModified()"
+    before-sort-changed.call="onBeforeSortChanged()"
+    after-sort-changed.call="onAfterSortChanged()"
+    virtual-row-removed.call="onVirtualRowRemoved($event)"
+    row-clicked.call="onRowClicked($event)"
+    ready.call="onReady($event)"
 
-        column-everything-changed.call="onColumnEvent($event)"
-        column-row-group-changed.call="onColumnEvent($event)"
-        column-value-changed.call="onColumnEvent($event)"
-        column-moved.call="onColumnEvent($event)"
-        column-visible.call="onColumnEvent($event)"
-        column-group-opened.call="onColumnEvent($event)"
-        column-resized.call="onColumnEvent($event)"
-        column-pinned-count-changed.call="onColumnEvent($event)"&gt;
-        &lt;/ag-grid-aurelia&gt;
-    </snippet>
+    column-everything-changed.call="onColumnEvent($event)"
+    column-row-group-changed.call="onColumnEvent($event)"
+    column-value-changed.call="onColumnEvent($event)"
+    column-moved.call="onColumnEvent($event)"
+    column-visible.call="onColumnEvent($event)"
+    column-group-opened.call="onColumnEvent($event)"
+    column-resized.call="onColumnEvent($event)"
+    column-pinned-count-changed.call="onColumnEvent($event)"&gt;
+&lt;/ag-grid-aurelia&gt;
+</snippet>
 
     <p>
         The above is all you need to get started using ag-Grid in a Aurelia application. Now would

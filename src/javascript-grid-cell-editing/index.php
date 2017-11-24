@@ -241,6 +241,7 @@ colDef.cellEditorParams = {
         <ul>
         <li><b>rowIndex</b>: The row index of the row to start editing.</li>
         <li><b>colKey</b>: The column key of the column to start editing.</li>
+        <li><b>rowPinned</b>: Set to 'top' or 'bottom' to started editing a pinned row.</li>
         <li><b>keyPress, charPress</b>: The keyPress and charPress that are passed to the cell editor</li>
     </ul>
     </p>
@@ -268,7 +269,38 @@ colDef.cellEditorParams = {
     <h3 id="cell-editing-example">Cell Editing Example</h3>
 
     <p>
-        The example below illustrates different parts of the editing API using the buttons at the top.
+        The example below illustrates different parts of the editing API. Each button starts
+        editing the 'Last Name' column of the first row with the following differences:
+        <ul>
+            <li>
+                <b>edit()</b>: Normal editing start.
+            </li>
+            <li>
+                <b>edit(Delete)</b>: Edit as if delete button was pressed (clears contents first).
+            </li>
+            <li>
+                <b>edit('T')</b>: Edit as if 'T' was pressed (places 'T' into cell).
+            </li>
+            <li>
+                <b>edit(top)</b>: Edits top pinned row.
+            </li>
+            <li>
+                <b>edit(bottom)</b>: Edits bottom pinned row.
+            </li>
+        </ul>
+        The example then demonstrates the following buttons for edit navigation:
+        <ul>
+            <li>
+                <b>stop()</b>: Stops editing.
+            </li>
+            <li>
+                <b>next()</b>: Edits the next cell.
+            </li>
+            <li>
+                <b>previous()</b>: Edits the previous cell.
+            </li>
+        </ul>
+
     </p>
 
     <?= example('Cell Editing', 'cell-editing', 'generated') ?>

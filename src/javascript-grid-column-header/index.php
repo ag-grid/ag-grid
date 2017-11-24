@@ -149,29 +149,26 @@ include '../documentation-main/documentation_header.php';
         The following example shows how you can provide a unique look & feel to the headers. Note that:
     <ul>
         <li>The header heights have all been changed in the gridOptions:
-            <snippet language="css">
-...
+<snippet>
+/* Group columns */
+groupHeaderHeight:75,
 
-    //Group columns
-    groupHeaderHeight:75,
+/* Label columns */
+headerHeight: 150,
 
-    //Label columns
-    headerHeight: 150,
+/* Floating filter */
+floatingFiltersHeight:50,
 
-    //Floating filter
-    floatingFiltersHeight:50,
+/* Pivoting, requires turning on pivot mode. Label columns */
+pivotGroupHeaderHeight:50,
 
-    //Pivoting, requires turning on pivot mode. Label columns
-    pivotGroupHeaderHeight:50,
-
-    //Pivoting, requires turning on pivot mode. Group columns
-    pivotGroupHeaderHeight:100,
-
-...</snippet>
+/* Pivoting, requires turning on pivot mode. Group columns */
+pivotGroupHeaderHeight:100,
+</snippet>
         </li>
         <li>The grouped column header <i>Athlete Details</i> has an specific style applied to it to make it bigger. Note
             that the style is slightly different depending if pivoting or not:
-<snippet>
+<snippet language="css">
 .ag-pivot-off .ag-header-group-cell{
     font-size: 50px;
     color: red;
@@ -211,7 +208,7 @@ include '../documentation-main/documentation_header.php';
 
 <snippet language="css">
 .ag-floating-filter-body input {
-    height:49px
+    height:49px;
 }
 
 .ag-floating-filter-button {

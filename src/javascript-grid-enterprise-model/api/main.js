@@ -57,7 +57,7 @@ var gridOptions = {
     maxBlocksInCache: 2,
     purgeClosedRowNodes: true,
     getChildCount: function(data) {
-        // return back a randam value, demonstrates how this can be set.
+        // return back a random value, demonstrates how this can be set.
         // in a real application, the child count would be set on the
         // data item, and this method could simply be "return data.childCount"
         return Math.round((Math.random() * 100) + 1);
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
     agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json'})
         .then( function(data) {
                 var fakeServer = new FakeServer(data);
-                var datasource = new EnterpriseDatasource(fakeServer);
+                var datasource = new EnterpriseDatasource(fakeServer, gridOptions);
                 gridOptions.api.setEnterpriseDatasource(datasource);
             }
         );

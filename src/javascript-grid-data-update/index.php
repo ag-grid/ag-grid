@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         If you are using an immutable data store, as is usual in a React application, then you will be
-        interested in the section below <a href=".#delta-row-data">Bulk Method 3 - Delta Row Data</a>.
+        interested in the section below <a href="#delta-row-data">Bulk Method 3 - Delta Row Data</a>.
     </p>
 
     <h2>Updating RowNodes Data</h2>
@@ -213,8 +213,7 @@ interface RowDataTransaction {
     </p>
 
     <p>
-        If you are providing rowNode ID's (via the <code>getRowNodeId()</code> callback) then the
-        grid will match the rows based on ID. If you are not using ID's, then the grid will match
+        If you are providing rowNode ID's (via the <code>getRowNodeId()</code> callback) then pass an array of objects with keys corresponding to the rowNodeId you specified with <code>getRowNodeId</code> and values matching the rows you want to remove. If you are not using ID's, then the grid will match
         the rows based on object reference.
     </p>
 

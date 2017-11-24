@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     </h1>
 
     <note>Full working examples of ag-Grid and React can be found in <a href="https://github.com/ceolter/ag-grid-react-example">Github</a>, illustrating
-        (amongst others) Rich Grids, Filtering with React Components, Master/Detail Grid and so on.</note>
+        (amongst others) Rich Grids, Filtering with React Components Grid and so on.</note>
 
     <h3>Downloading the ag-Grid React Component</h3>
 
@@ -241,7 +241,7 @@ this.state = {
                       pinned editable cellRenderer=<span ng-non-bindable>{</span>RichGridDeclarativeExample.countryCellRenderer}
                       filterParams=<span ng-non-bindable>{</span><span ng-non-bindable>{</span>cellRenderer: RichGridDeclarativeExample.countryCellRenderer, cellHeight:20}}&gt;&lt;/AgGridColumn&gt;
     &lt;/AgGridColumn&gt;
-/&gt;
+&lt;/AgGridReact&gt;
 </snippet>
 
     <h2 id="loading-css">Loading CSS</h2>
@@ -257,7 +257,7 @@ resolve: {
     Once this is done, we can then access the two css files that we need as follows:
     <snippet>
 import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid-root/dist/styles/theme-fresh.css';</snippet>
+import 'ag-grid-root/dist/styles/ag-theme-fresh.css';</snippet>
     You will also need to configure CSS loaders for Webpack - you can find a full working example of this in our <a
                 href="https://github.com/ag-grid/ag-grid-react-example">React Examples</a>  Repo on Github.
     </p>
@@ -389,7 +389,7 @@ export default connect(
 &lt;AgGridReact
     // properties
     columnDefs={this.state.columnDefs}
-    rowData={this.props.columnDefs}
+    rowData={this.props.rowData}
 
     // events
     onGridReady={this.onGridReady}&gt;
@@ -508,14 +508,14 @@ class TopMoversGrid extends Component {
         super(props);
     }
 
-    cleanData() {
+    cleanData = () =>  {
         return this.props.rowData.filter(data =&gt; data.isClean)
     }
 
     render() {
         return (
             &lt;AgGridReact
-                rowData={this.cleanData}
+                rowData={this.cleanData()}
                 ...rest of the component</snippet>
 
     <p>As above, this call will result in ag-Grid believing that the rowData has changed each time the component renders as the filtering

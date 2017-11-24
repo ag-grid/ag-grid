@@ -33,7 +33,7 @@ include '../documentation-main/documentation_header.php';
     <p>You'll need to import the ag-Grid CSS in your application, as well as a theme you wish to use:</p>
     <snippet>
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/theme-fresh.css";</snippet>
+import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";</snippet>
     <p>In this case we're using the Fresh Theme - please refer to the <a href="../javascript-grid-themes">Themes</a>
         documentation for more information.</p>
 
@@ -72,7 +72,7 @@ import "../node_modules/ag-grid/dist/styles/theme-fresh.css";</snippet>
     <snippet>
 import Vue from "vue";
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
+import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";
 
 // need if you use ag-grid enterprise features
 import "ag-grid-enterprise/main";

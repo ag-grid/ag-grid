@@ -155,7 +155,7 @@ NumericCellEditor.prototype.init = function (params) {
         if (!isKeyPressedNumeric(event)) {
             that.eInput.focus();
             if (event.preventDefault) event.preventDefault();
-        } else if (this.isKeyPressedNavigation(event)){
+        } else if (that.isKeyPressedNavigation(event)){
             event.stopPropagation();
         }
     });

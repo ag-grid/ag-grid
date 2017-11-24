@@ -43,6 +43,14 @@ include '../documentation-main/documentation_header.php';
         to build expressions.
     </p>
 
+    <h2>
+        <a href="../example-excel-import/" class="column-links column-items">Excel Import</a>
+    </h2>
+
+    <p>
+        Illustrates how you might utilise a third-party library to import an Excel spreadsheet into ag-Grid.
+    </p>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
