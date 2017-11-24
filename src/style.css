@@ -1495,6 +1495,53 @@ snippet pre, snippet code {
     background-color: #f7f7f7;
 }
 
-.description {
+.report-description {
     margin-top: 15px;
+}
+
+.report-header {
+    border-top: none !important;
+    text-align: left;
+    text-transform: capitalize;
+}
+
+.report-search {
+    margin-top: 10px;
+    width: 100%;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+}
+
+.global-search-pane {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    display: inline-block;
+}
+
+.global-report-search {
+    width: 75%;
+    border: 1px solid lightgrey;
+    border-radius: 5px;
+    float: left;
+}
+
+.global-report-search-results {
+    margin-left: 20px;
+    float: left;
+}
+
+.search-highlight {
+    background-color: lightgreen !important;
+}
+
+.report-link {
+    -webkit-transition: all 1s ease;
+    -moz-transition: all 1s ease;
+    -o-transition: all 1s ease;
+    transition: all 1s ease;
+}
+
+/* used for selection */
+.top-level-pane {
 }

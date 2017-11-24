@@ -1,10 +1,8 @@
-<?php
-
-?>
-<table class="aui">
+<input type="text" id="<?= 'search_' . $report_type ?>" class="report-search" placeholder="Filter issues for this report (eg. AG-1111/popup/feature)...">
+<table class="aui" id="<?= 'content_' . $report_type ?>">
     <tbody>
     <?php
-    $json_decoded = retrieveJiraFilterData($jira_report);
+    $json_decoded = retrieveJiraFilterData($report_type);
     $issue_count = count($json_decoded->{'issues'});
     for ($i = 0; $i < $issue_count; $i++) {
         if ($i == 0) {
@@ -13,43 +11,34 @@
                 <?php
                 if ($displayEpic) {
                     ?>
-                    <th style="text-align: left; text-transform: capitalize;"
-                        class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
+                    <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                                 class="jim-table-header-content">Epic</span></th>
                     <?php
                 }
                 ?>
 
-                <th style="text-align: left; text-transform: capitalize;"
-                    class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
+                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                             class="jim-table-header-content">Key</span></th>
 
-                <th style="text-align: left; text-transform: capitalize;"
-                    class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
+                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                             class="jim-table-header-content">Issue Type</span></th>
 
-                <th style="text-align: left; text-transform: capitalize;"
-                    class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
+                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                             class="jim-table-header-content">Summary</span></th>
 
-                <th style="text-align: left; text-transform: capitalize;"
-                    class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
+                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                             class="jim-table-header-content">Priority</span></th>
 
-                <th style="text-align: left; text-transform: capitalize;"
-                    class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
+                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                             class="jim-table-header-content">Status</span></th>
 
-                <th style="text-align: left; text-transform: capitalize;"
-                    class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
+                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                             class="jim-table-header-content">Created</span></th>
 
-                <th style="text-align: left; text-transform: capitalize;"
-                    class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
+                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                             class="jim-table-header-content">Updated</span></th>
 
-                <th style="text-align: left; text-transform: capitalize;"
-                    class="jira-macro-table-underline-pdfexport jira-tablesorter-header"><span
+                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                             class="jim-table-header-content">Reporter</span></th>
 
             </tr>
@@ -61,11 +50,6 @@
             if ($displayEpic) {
                 ?>
                 <td nowrap="true" class="jira-macro-table-underline-pdfexport">
-<!--                <span>-->
-<!--                    <img style="vertical-align: middle"-->
-<!--                         src="--><?//= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10005'}, FILTER_SANITIZE_STRING) ?><!--"-->
-<!--                         height="16" width="16" border="0"/>-->
-<!--                </span>-->
                     <span style="height: 100%"><?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10005'}, FILTER_SANITIZE_STRING)) ?></span>
                 </td>
                 <?php
@@ -122,3 +106,15 @@
     ?>
     </tbody>
 </table>
+
+<script type="text/javascript">
+    $('#<?= 'search_' . $report_type ?>').keyup(function () {
+        var searchCriteria = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
+
+        var tableRows = $('#<?= "content_" . $report_type ?> tr');
+        tableRows.show().filter(function () {
+            var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
+            return !~text.indexOf(searchCriteria);
+        }).hide();
+    });
+</script>

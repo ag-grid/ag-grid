@@ -89,13 +89,22 @@ gridOptionsSecond = {
     <p>
         This example is a bit more useful. In the bottom grid, we show a summary row. Also
         note the following:
-        <li>The top grid has no horizontal scroll bar, suppressed via a grid option.</li>
+        <li>The top grid has no horizontal scroll bar, suppressed via a grid option*.</li>
         <li>The bottom grid has no header, suppressed via a grid option.</li>
         <li>sizeColumnsToFit is only called on the top grid, the bottom grid receives the new column
             widths from the top grid.</li>
     </p>
 
     <?= example('Aligned Grid as Footer', 'aligned-floating-footer', 'multi') ?>
+
+    <note style="font-style: italic;">
+        * The property <code>suppressHorizontalScroll</code> does not work with the browser Edge.
+        If you are targeting Edge, then there is no way to hide the scrollbar. Currently there is no
+        known way to hide a scroll bar in Edge. The technique ag-Grid uses is to set the CSS overflow
+        property to 'hidden' (rather than 'auto'). In all other browsers, this technique works, however
+        in Edge it does not. The problem with Edge is demonstrated in the following
+        <a href="https://plnkr.co/edit/MHgT6Rrp9LpOu7jddzVr?p=preview">Plunker</a>.
+    </note>
 
     <h2 id="split-column-groups">Example - Align Column Groups</h2>
 
