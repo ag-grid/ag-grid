@@ -1,12 +1,12 @@
 import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnApi, ColumnController} from "../columnController/columnController";
-import {RowRenderer, RefreshViewParams} from "../rendering/rowRenderer";
+import {RowRenderer} from "../rendering/rowRenderer";
 import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
 import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy, Context} from "../context/context";
 import {EventService} from "../eventService";
-import {BodyHeightChangedEvent, BodyScrollEvent, CellContextMenuEvent, Events} from "../events";
+import {BodyHeightChangedEvent, BodyScrollEvent, Events} from "../events";
 import {DragService, DragListenerParams} from "../dragAndDrop/dragService";
 import {IRangeController} from "../interfaces/iRangeController";
 import {Constants} from "../constants";
@@ -21,7 +21,6 @@ import {BeanStub} from "../context/beanStub";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {Column} from "../entities/column";
 import {RowContainerComponent} from "../rendering/rowContainerComponent";
-import {GridCell, GridCellDef} from "../entities/gridCell";
 import {RowNode} from "../entities/rowNode";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
@@ -34,6 +33,7 @@ import {NavigationService} from "./navigationService";
 import {CellComp} from "../rendering/cellComp";
 import {ValueService} from "../valueService/valueService";
 import {LongTapEvent, TouchListener} from "../widgets/touchListener";
+import {ComponentRecipes} from "../components/framework/componentRecipes";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -113,16 +113,6 @@ const GRID_PANEL_FOR_PRINT_TEMPLATE =
             '<div class="ag-floating-bottom-container"></div>'+
         '</div>';
 
-// wrapping in outer div, and wrapper, is needed to center the loading icon
-// The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-const OVERLAY_TEMPLATE =
-    '<div class="ag-overlay-panel" role="presentation">'+
-        '<div class="ag-overlay-wrapper ag-overlay-[OVERLAY_NAME]-wrapper">[OVERLAY_TEMPLATE]</div>'+
-    '</div>';
-
-const LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
-const NO_ROWS_TO_SHOW_OVERLAY_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
-
 export interface RowContainerComponents {
     fullWidth: RowContainerComponent;
     body: RowContainerComponent;
@@ -167,6 +157,7 @@ export class GridPanel extends BeanStub {
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
     @Autowired('valueService') private  valueService: ValueService;
+    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -280,14 +271,11 @@ export class GridPanel extends BeanStub {
         this.addDragListeners();
 
         this.layout = new BorderLayout({
-            overlays: {
-                loading: _.loadTemplate(this.createLoadingOverlayTemplate()),
-                noRows: _.loadTemplate(this.createNoRowsOverlayTemplate())
-            },
             center: this.eRoot,
             dontFill: this.forPrint,
             fillHorizontalOnly: this.autoHeight,
-            name: 'eGridPanel'
+            name: 'eGridPanel',
+            componentRecipes: this.componentRecipes
         });
 
         this.layout.addSizeChangeListener(this.setBodyAndHeaderHeights.bind(this));
@@ -691,49 +679,6 @@ export class GridPanel extends BeanStub {
         return false;
     }
 
-    private createOverlayTemplate(name: string, defaultTemplate: string, userProvidedTemplate: string): string {
-
-        let template = OVERLAY_TEMPLATE
-            .replace('[OVERLAY_NAME]', name);
-
-        if (userProvidedTemplate) {
-            template = template.replace('[OVERLAY_TEMPLATE]', userProvidedTemplate);
-        } else {
-            template = template.replace('[OVERLAY_TEMPLATE]', defaultTemplate);
-        }
-
-        return template;
-    }
-
-    private createLoadingOverlayTemplate(): string {
-
-        let userProvidedTemplate = this.gridOptionsWrapper.getOverlayLoadingTemplate();
-
-        let templateNotLocalised = this.createOverlayTemplate(
-            'loading',
-            LOADING_OVERLAY_TEMPLATE,
-            userProvidedTemplate);
-
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        let templateLocalised = templateNotLocalised.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
-
-        return templateLocalised;
-    }
-
-    private createNoRowsOverlayTemplate(): string {
-        let userProvidedTemplate = this.gridOptionsWrapper.getOverlayNoRowsTemplate();
-
-        let templateNotLocalised = this.createOverlayTemplate(
-            'no-rows',
-            NO_ROWS_TO_SHOW_OVERLAY_TEMPLATE,
-            userProvidedTemplate);
-
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        let templateLocalised = templateNotLocalised.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
-
-        return templateLocalised;
-    }
-
     // Valid values for position are bottom, middle and top
     // position should be {'top','middle','bottom', or undefined/null}.
     // if undefined/null, then the grid will to the minimal amount of scrolling,
@@ -1008,13 +953,13 @@ export class GridPanel extends BeanStub {
 
     public showLoadingOverlay(): void {
         if (!this.gridOptionsWrapper.isSuppressLoadingOverlay()) {
-            this.layout.showOverlay('loading');
+            this.layout.showLoadingOverlay();
         }
     }
 
     public showNoRowsOverlay(): void {
         if (!this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
-            this.layout.showOverlay('noRows');
+            this.layout.showNoRowsOverlay();
         }
     }
 

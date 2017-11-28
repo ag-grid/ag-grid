@@ -17,7 +17,8 @@ import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRe
 import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
 import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
 import {Promise} from "../../utils";
-
+import {ILoadingOverlayRenderer, ILoadingOverlayRendererParams} from "../../rendering/loadingOverlayRenderer";
+import {INoRowsOverlayRenderer, INoRowsOverlayRendererParams} from "../../rendering/noRowsOverlayRenderer";
 
 enum ComponentType {
     AG_GRID, FRAMEWORK
@@ -132,6 +133,14 @@ export class ComponentRecipes {
 
     public newFullRowGroupRenderer (params:ICellRendererParams):Promise<ICellRendererComp>{
         return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptionsWrapper, params, "fullWidthCellRenderer");
+    }
+
+    public newLoadingOverlayRenderer(): Promise<ILoadingOverlayRenderer> {
+        return this.componentResolver.createAgGridComponent<ILoadingOverlayRenderer>(this.gridOptions, null, "loadingOverlayRenderer");
+    }
+
+    public newNoRowsOverlayRenderer(): Promise<INoRowsOverlayRenderer> {
+        return this.componentResolver.createAgGridComponent<INoRowsOverlayRenderer>(this.gridOptions, null, "noRowsOverlayRenderer");
     }
 
     private getFilterComponentPrototype<A extends IComponent<any> & B, B>

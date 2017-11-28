@@ -1,7 +1,7 @@
 import {TextCellEditor} from "../../rendering/cellEditors/textCellEditor";
 
 import {Bean, PostConstruct} from "../../context/context";
-import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
+import {IComponent} from "../../interfaces/iComponent";
 import {DateFilter, DefaultDateComponent} from "../../filter/dateFilter";
 import {HeaderComp} from "../../headerRendering/header/headerComp";
 import {HeaderGroupComp} from "../../headerRendering/headerGroup/headerGroupComp";
@@ -24,6 +24,8 @@ import {PopupSelectCellEditor} from "../../rendering/cellEditors/popupSelectCell
 import {LargeTextCellEditor} from "../../rendering/cellEditors/largeTextCellEditor";
 import {TextFilter} from "../../filter/textFilter";
 import {NumberFilter} from "../../filter/numberFilter";
+import {LoadingOverlayRenderer} from "../../rendering/loadingOverlayRenderer";
+import {NoRowsOverlayRenderer} from "../../rendering/noRowsOverlayRenderer";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED
@@ -86,6 +88,8 @@ export class ComponentProvider {
             group: GroupCellRenderer,
             groupRowRenderer: GroupCellRenderer,
             loadingCellRenderer: LoadingCellRenderer,
+            loadingOverlayRenderer: LoadingOverlayRenderer,
+            noRowsOverlayRenderer: NoRowsOverlayRenderer,
             pinnedRowCellRenderer: null,
 
             //editors
@@ -104,7 +108,7 @@ export class ComponentProvider {
             //filter
             textColumnFilter: TextFilter,
             numberColumnFilter: NumberFilter,
-            dateColumnFilter: DateFilter,
+            dateColumnFilter: DateFilter
         }
     }
 

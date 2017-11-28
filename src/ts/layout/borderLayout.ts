@@ -1,4 +1,6 @@
 import {Utils as _} from '../utils';
+import {ILoadingOverlayRenderer} from "../rendering/loadingOverlayRenderer";
+import {INoRowsOverlayRenderer} from "../rendering/noRowsOverlayRenderer";
 
 export class BorderLayout {
 
@@ -63,7 +65,9 @@ export class BorderLayout {
     private visibleLastTime = false;
 
     private sizeChangeListeners = <any>[];
-    private overlays: any;
+
+    private loadingOverlayRenderer: Promise<ILoadingOverlayRenderer>;
+    private noRowsOverlayRenderer: Promise<INoRowsOverlayRenderer>;
 
     constructor(params: any) {
 
@@ -103,7 +107,11 @@ export class BorderLayout {
             this.setupPanels(params);
         }
 
-        this.overlays = params.overlays;
+        if (params.componentRecipes) {
+            this.loadingOverlayRenderer = params.componentRecipes.newLoadingOverlayRenderer();
+            this.noRowsOverlayRenderer = params.componentRecipes.newNoRowsOverlayRenderer();
+        }
+
         this.setupOverlays();
     }
 
@@ -303,31 +311,40 @@ export class BorderLayout {
         this.doLayout();
     }
 
-    private setupOverlays(): void {
-        // if no overlays, just remove the panel
-        if (!this.overlays) {
-            this.eOverlayWrapper.parentNode.removeChild(this.eOverlayWrapper);
-            return;
-        }
-
-        this.hideOverlay();
-    }
-
     public hideOverlay() {
         _.removeAllChildren(this.eOverlayWrapper);
         this.eOverlayWrapper.style.display = 'none';
     }
 
-    public showOverlay(key: string) {
-        let overlay = this.overlays ? this.overlays[key] : null;
+    public showLoadingOverlay() {
+        this.loadingOverlayRenderer.then(renderer  => this.showOverlay(renderer.getGui()));
+    }
+
+    public showNoRowsOverlay() {
+        this.noRowsOverlayRenderer.then(renderer => this.showOverlay(renderer.getGui()));
+    }
+
+    private showOverlay(overlay: HTMLElement) {
         if (overlay) {
             _.removeAllChildren(this.eOverlayWrapper);
             this.eOverlayWrapper.style.display = '';
             this.eOverlayWrapper.appendChild(overlay);
         } else {
-            console.log('ag-Grid: unknown overlay');
+            console.warn('ag-Grid: unknown overlay');
             this.hideOverlay();
         }
     }
 
+    private setupOverlays(): void {
+        if(this.loadingOverlayRenderer) {
+            this.loadingOverlayRenderer.then(renderer => {
+                // if no overlays, just remove the panel
+                if (!renderer.getGui()) {
+                    this.eOverlayWrapper.parentNode.removeChild(this.eOverlayWrapper);
+                }
+            });
+        }
+
+        this.hideOverlay();
+    }
 }
