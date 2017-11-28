@@ -111,7 +111,7 @@ autoGroupColumnDef: {
     </p>
 
     <p>
-        For details on how you can provide your own Custom Group Column see: <a href="../javascript-grid-grouping/#specifying-group-columns">Specifying Group Columns</a>.
+        For details on how you can provide your own Custom Group Column see: <a href="../javascript-grid-grouping/#example-custom-grouping-many-group-columns">Specifying Group Columns</a>.
     </p>
 
 
