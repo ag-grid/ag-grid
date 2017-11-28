@@ -486,4 +486,28 @@ colDef.cellEditorParams = {
             Cell Editor Components</a> for more information.</note>
 
 
+    <h3 id="controllingKeyboardWhileEditing">Controlling keyboard while editing</h3>
+    <p>
+    While editing, the grid will listen to navigation events coming from the keyboard, this includes navigate to next cell,
+    next row... If you want to avoid this events from being consumed by the grid you can do so by configuring
+    <code>colDef.suppressKeyboardEvent</code>.
+    </p>
+
+
+    <p>
+    The following example shows a simple example where each cell contains a number and the arrows are used to manipulate
+    its value.
+
+    Note how the arrows are used to increase or decrease the value of the cell while editing and they are not used for
+    navigation
+    </p>
+
+    <snippet>
+suppressKeyboardEvent: function(event){
+    if (event.editing) return true;
+}</snippet>
+
+    <?= example('Controlling keyboard while editing', 'controlling-keyboard-while-editing', 'generated') ?>
+
+
 <?php include '../documentation-main/documentation_footer.php';?>
