@@ -69,7 +69,7 @@ include('../includes/mediaHeader.php');
             <p>Later, we'll need to do the same for <code>sport</code> values, so let's create a new service
                 that will retrieve static data (data that won't be changed by the user) for us.</p>
 
-            <p>First we nee create a new Spring <code>Controller</code> in the middle tier that we can use to access the
+            <p>First we need to create a new Spring <code>Controller</code> in the middle tier that we can use to access the
                 static data. I won't go into this service too much as we've already covered using
                 <code>Controller</code>s
                 in a previous part of this series:</p>
@@ -569,14 +569,89 @@ saveAthlete() {
 </snippet>
 
             <p>This is probably the most important part of this class: when a user click on <code>Save Athlete</code>
-            the <code>saveAthlete</code> method is invoked. We </p>
+            the <code>saveAthlete</code> method is invoked. We create an <code>Athlete</code> object and populate it with
+            our forms details. We then let the parent component (<code>GridComponent</code> in this case) know that the save
+            is complete, passing in the new <code>Athlete</code>.</p>
 
-            <p>The full component isn't described here, primarily as the rest of it is either standard Angular functionality
-                (i.e. simple property binding) or has been covered earlier in this part of the blog above.</p>
+            <p>Note: There are of coure a few things missing in our implementation here - we're performing only minimal validation,
+            and the form could do with a cancel button too. As this is for illustrative purposes only, this will do, but in
+            a real application you'd probably want to flesh this out further.</p>
+
+            <p>The full <code>AthleteEditScreenComponent</code> component isn't described here, primarily as the rest of
+                it is either standard Angular functionality (i.e. simple property binding), or has been covered earlier
+                in this part of the blog above.</p>
+
+            <p>To finish this section off, let's take a look at how the parent <code>GridComponent</code> component process
+            the save operation.</p>
+
+            <p>We've updated our template to include the new <code>GridComponent</code>, only showing it if we set the
+                <code>showEditScreen</code>
+                flag:</p>
+            
+<snippet language="html">
+&lt;div&gt;
+    &lt;button (click)="insertNewRow()"&gt;Insert New Row&lt;/button&gt;
+    &lt;button (click)="deleteSelectedRows()" [disabled]="!rowsSelected()"&gt;Delete Selected Row&lt;/button&gt;
+&lt;/div&gt;
+&lt;div&gt;
+    &lt;ag-grid-angular style="width: 100%; height: 500px;"
+                     class="ag-fresh"
+
+                     [columnDefs]="columnDefs"
+                     [rowData]="rowData"
+
+                     rowSelection="single"
+                     [suppressHorizontalScroll]="true"
+
+                     (gridReady)="onGridReady($event)"
+                     (cellValueChanged)="onCellValueChanged($event)"&gt;
+    &lt;/ag-grid-angular&gt;
+&lt;/div&gt;
+
+&lt;ng-template [ngIf]="showEditScreen"&gt;
+    &lt;app-athlete-edit-screen (onAthleteSaved)="onAthleteSaved($event)"&gt;&lt;/app-athlete-edit-screen&gt;
+&lt;/ng-template&gt;
+</snippet>
+
+            <p>Note that the <code>GridComponent</code> is listening for save completion here:</p>
+            <snippet>(onAthleteSaved)="onAthleteSaved($event)"</snippet>
+
+            <p>And in our <code>GridComponent</code> we process the save operation from <code>AthleteEditScreenComponent</code>
+            as follows:</p>
+
+<snippet>
+onAthleteSaved(savedAthlete: Athlete) {
+    const updates = this.api.updateRowData(
+        {
+            add: [savedAthlete]
+        }
+    );
+
+    this.showEditScreen = false;
+}
+</snippet>
+
+            <p>Here we're making use of the Grid's <a href="../javascript-grid-data-update">Update</a> functionality to
+                insert a new row (we'll touch on this further again later, when we improve on our initial implementation).</p>
+
+            <p>Finally, we hide the edit screen once more.</p>
+
+            <p>As above, in a real application some sort of validation would occur here, to ensure that valid data has been
+                returned - again, we're skipping this for legibility.</p>
+
+            <h3>Record Update/Edit</h3>
+
+            <p>Our last piece of the CRUD operation to completed is the Update part - here we'll take an existing <code>Athlete</code>
+            record and allow a user to edit it.</p>
+
+            <p>We'll be making use of the <code>AthleteEditScreenComponent</code> we created above - this time however we'll
+            pass in an existing record to edit. The rest of the functionality should remain largely unaltered.</p>
+
+
 
             <h2>Summary</h2>
 
-            <p>See you next time!</p>ne
+            <p>See you next time!</p>
 
             <div style="background-color: #eee; padding: 10px; display: inline-block;">
 
