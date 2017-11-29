@@ -39,9 +39,17 @@ $headerTitle = "Pipeline";
 include '../includes/headerRow.php';
 
 include '../jira_reports/jira_utilities.php';
+
+// update when doing a release
+$CURRENT_SPRINT = "3";
 ?>
 
 <div class="container info-page">
+    <div class="row">
+        <div class="col-md-12 sprint-container">
+            <span class="sprint-label">Current Sprint: <?= $CURRENT_SPRINT ?></span>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="global-search-pane">
@@ -66,7 +74,7 @@ include '../jira_reports/jira_utilities.php';
                         </div>
                         <?php
                         $displayEpic = 0;
-                        $suppressPriority = 1;
+                        $suppressTargetSprint = 1;
                         $report_type = 'current_release';
                         include '../jira_reports/jira_report.php';
                         ?>
@@ -81,7 +89,7 @@ include '../jira_reports/jira_utilities.php';
                         </div>
                         <?php
                         $displayEpic = 0;
-                        $suppressPriority = 0;
+                        $suppressTargetSprint = 0;
                         $report_type = 'bugs';
                         include '../jira_reports/jira_report.php';
                         ?>
@@ -99,7 +107,7 @@ include '../jira_reports/jira_utilities.php';
                         </div>
                         <?php
                         $displayEpic = 0;
-                        $suppressPriority = 0;
+                        $suppressTargetSprint = 0;
                         $report_type = 'feature_requests';
                         include '../jira_reports/jira_report.php';
                         ?>
@@ -123,7 +131,7 @@ include '../jira_reports/jira_utilities.php';
                         </div>
                         <?php
                         $displayEpic = 1;
-                        $suppressPriority = 0;
+                        $suppressTargetSprint = 0;
                         $report_type = 'issue_by_epic';
                         include '../jira_reports/jira_report.php';
                         ?>

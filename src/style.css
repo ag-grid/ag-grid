@@ -729,9 +729,7 @@ h1, h2, h3, h4, h5 {
     color: #333;
 }
 
-/
-/
-responsive video for mobile view
+/* responsive video for mobile view */
 
 @media only screen and (max-width: 768px) {
     .HomeIntro .HomeIntro-video {
@@ -1513,7 +1511,7 @@ snippet pre, snippet code {
 }
 
 .global-search-pane {
-    margin-top: 20px;
+    margin-top: 10px;
     margin-bottom: 20px;
     width: 100%;
     display: inline-block;
@@ -1521,8 +1519,6 @@ snippet pre, snippet code {
 
 .global-report-search {
     width: 75%;
-    /*border: 1px solid lightgrey;*/
-    /*border-radius: 5px;*/
     float: left;
 }
 
@@ -1536,30 +1532,51 @@ snippet pre, snippet code {
 }
 
 .report-link {
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    transition: all 1s ease;
+    -webkit-transition:  background-color 0.65s linear;
+    -moz-transition:  background-color 0.65s linear;
+    -o-transition:  background-color 0.65s linear;
+    transition:  background-color 0.65s linear;
 }
 
 /* used for selection */
 .top-level-pane {
 }
 
-.clearable{
+.clearable {
     background: #fff url(data:image/gif;base64,R0lGODlhBwAHAIAAAP///5KSkiH5BAAAAAAALAAAAAAHAAcAAAIMTICmsGrIXnLxuDMLADs=) no-repeat right -10px center;
     border: 1px solid #999;
     padding: 3px 18px 3px 10px; /* Use the same right padding (18) in jQ! */
     border-radius: 15px;
+    height: 35px;
     transition: background 0.4s;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
 }
-.clearable.x  { background-position: right 5px center; }
-.clearable.onX{ cursor: pointer; }
-.clearable::-ms-clear {display: none; width:0; height:0;}
+
+.clearable.x {
+    background-position: right 5px center;
+}
+
+.clearable.onX {
+    cursor: pointer;
+}
+
+.clearable::-ms-clear {
+    display: none;
+    width: 0;
+    height: 0;
+}
 
 input.clearable:focus {
     outline: none;
+}
+
+.sprint-container {
+    padding-top: 15px;
+}
+
+.sprint-label {
+    font-size: 25px;
+}
+
+.center-align {
+    text-align: center !important;
 }

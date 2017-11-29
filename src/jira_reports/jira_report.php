@@ -46,10 +46,10 @@
                             class="jim-table-header-content">Summary</span></th>
 
                 <?php
-                if (!$suppressPriority) {
+                if (!$suppressTargetSprint) {
                     ?>
                     <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
-                                class="jim-table-header-content">Time Frame</span></th>
+                                class="jim-table-header-content">Target Sprint</span></th>
                     <?php
                 }
                 ?>
@@ -77,11 +77,11 @@
 
             <!-- priority -->
             <?php
-            if (!$suppressPriority) {
+            if (!$suppressTargetSprint) {
                 ?>
-                <td class="jira-macro-table-underline-pdfexport" nowrap>
+                <td class="jira-macro-table-underline-pdfexport center-align" nowrap>
                     <span>
-                        <?= mapPriority(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'priority'}->{'name'}, FILTER_SANITIZE_STRING)) ?>
+                        <?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10515'}, FILTER_SANITIZE_STRING) ?>
                     </span>
                 </td>
                 <?php
