@@ -1,7 +1,7 @@
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Autowired} from "../context/context";
-import {Component} from "../widgets/component";
-import {IComponent} from "../interfaces/iComponent";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {Autowired} from "../../context/context";
+import {Component} from "../../widgets/component";
+import {IComponent} from "../../interfaces/iComponent";
 
 export interface ILoadingOverlayRenderer extends IComponent<ILoadingOverlayRendererParams> {
 }

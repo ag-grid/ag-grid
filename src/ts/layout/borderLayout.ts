@@ -1,6 +1,6 @@
 import {Utils as _} from '../utils';
-import {ILoadingOverlayRenderer} from "../rendering/loadingOverlayRenderer";
-import {INoRowsOverlayRenderer} from "../rendering/noRowsOverlayRenderer";
+import {ILoadingOverlayRenderer} from "../rendering/overlayRenderers/loadingOverlayRenderer";
+import {INoRowsOverlayRenderer} from "../rendering/overlayRenderers/noRowsOverlayRenderer";
 
 export class BorderLayout {
 
@@ -317,7 +317,7 @@ export class BorderLayout {
     }
 
     public showLoadingOverlay() {
-        this.loadingOverlayRenderer.then(renderer  => this.showOverlay(renderer.getGui()));
+        this.loadingOverlayRenderer.then(renderer => this.showOverlay(renderer.getGui()));
     }
 
     public showNoRowsOverlay() {

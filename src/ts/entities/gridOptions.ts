@@ -24,7 +24,7 @@ import {
     ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent,
     DragStartedEvent, DragStoppedEvent,
     FilterChangedEvent, FilterModifiedEvent,
-    GridColumnsChangedEvent, GridReadyEvent, GridSizeChangedEvent, ItemsAddedEvent, ModelUpdatedEvent,
+    GridColumnsChangedEvent, GridReadyEvent, GridSizeChangedEvent, ModelUpdatedEvent,
     NewColumnsLoadedEvent, PaginationChangedEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent,
     RowClickedEvent, RowDataChangedEvent,
     RowDoubleClickedEvent,
@@ -33,8 +33,10 @@ import {
     ViewportChangedEvent,
     VirtualColumnsChangedEvent, VirtualRowRemovedEvent
 } from "../events";
-import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
+import {IComponent} from "../interfaces/iComponent";
 import {AgGridRegisteredComponentInput} from "../components/framework/componentProvider";
+import {ILoadingOverlayRenderer} from "../rendering/overlayRenderers/loadingOverlayRenderer";
+import {INoRowsOverlayRenderer} from "../rendering/overlayRenderers/noRowsOverlayRenderer";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -262,6 +264,11 @@ export interface GridOptions {
     navigateToNextCell?: (params: NavigateToNextCellParams)=>GridCellDef;
     tabToNextCell?: (params: TabToNextCellParams)=>GridCellDef;
     getDocument?: ()=> Document;
+
+    loadingOverlayRenderer?: {new(): ILoadingOverlayRenderer} | string;
+    loadingOverlayRendererFramework?: any;
+    noRowsOverlayRenderer?: {new(): INoRowsOverlayRenderer} | string;
+    noRowsOverlayRendererFramework?: any;
 
     fullWidthCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;

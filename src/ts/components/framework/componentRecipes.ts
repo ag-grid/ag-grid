@@ -17,8 +17,8 @@ import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRe
 import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
 import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
 import {Promise} from "../../utils";
-import {ILoadingOverlayRenderer, ILoadingOverlayRendererParams} from "../../rendering/loadingOverlayRenderer";
-import {INoRowsOverlayRenderer, INoRowsOverlayRendererParams} from "../../rendering/noRowsOverlayRenderer";
+import {ILoadingOverlayRenderer} from "../../rendering/overlayRenderers/loadingOverlayRenderer";
+import {INoRowsOverlayRenderer} from "../../rendering/overlayRenderers/noRowsOverlayRenderer";
 
 enum ComponentType {
     AG_GRID, FRAMEWORK

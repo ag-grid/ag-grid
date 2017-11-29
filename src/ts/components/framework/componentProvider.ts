@@ -24,8 +24,8 @@ import {PopupSelectCellEditor} from "../../rendering/cellEditors/popupSelectCell
 import {LargeTextCellEditor} from "../../rendering/cellEditors/largeTextCellEditor";
 import {TextFilter} from "../../filter/textFilter";
 import {NumberFilter} from "../../filter/numberFilter";
-import {LoadingOverlayRenderer} from "../../rendering/loadingOverlayRenderer";
-import {NoRowsOverlayRenderer} from "../../rendering/noRowsOverlayRenderer";
+import {LoadingOverlayRenderer} from "../../rendering/overlayRenderers/loadingOverlayRenderer";
+import {NoRowsOverlayRenderer} from "../../rendering/overlayRenderers/noRowsOverlayRenderer";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED

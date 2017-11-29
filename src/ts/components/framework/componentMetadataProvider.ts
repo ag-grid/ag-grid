@@ -32,6 +32,14 @@ export class ComponentMetadataProvider {
                 mandatoryMethodList: [],
                 optionalMethodList: []
             },
+            loadingOverlayRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
+            noRowsOverlayRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
             floatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
                 optionalMethodList: ['afterGuiAttached']
