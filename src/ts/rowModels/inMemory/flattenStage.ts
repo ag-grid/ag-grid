@@ -73,7 +73,8 @@ export class FlattenStage implements IRowNodeStage {
             let isParent = rowNode.hasChildren();
             let isGroupSuppressedNode = groupSuppressRow && isParent;
             let isSkippedLeafNode = skipLeafNodes && !isParent;
-            let isRemovedSingleChildrenGroup = groupRemoveSingleChildren && isParent && rowNode.childrenAfterGroup.length === 1;
+            let colDefGroupRemoveSingleChildren = rowNode.rowGroupColumn && rowNode.rowGroupColumn.getColDef().groupRemoveSingleChildren;
+            let isRemovedSingleChildrenGroup = (groupRemoveSingleChildren || colDefGroupRemoveSingleChildren) && isParent && rowNode.childrenAfterGroup.length === 1;
             let isRemovedLowestSingleChildrenGroup = groupRemoveLowestSingleChildren && isParent && rowNode.leafGroup && rowNode.childrenAfterGroup.length === 1;
 
             // hide open parents means when group is open, we don't show it. we also need to make sure the
