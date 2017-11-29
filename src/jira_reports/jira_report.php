@@ -1,8 +1,30 @@
-<input type="text" id="<?= 'search_' . $report_type ?>" class="report-search" placeholder="Filter issues for this report (eg. AG-1111/popup/feature)...">
 <table class="aui" id="<?= 'content_' . $report_type ?>">
     <tbody>
     <?php
-    $json_decoded = retrieveJiraFilterData($report_type);
+    if ($report_type == 'issue_by_epic') {
+        // we treat epics differently as we effective stitch the two datasets together
+        // ideally we'd do this on jira side, but atm it doesnt appear to be possible to have parent epic info
+        // on a child issue
+        $epic_data = json_decode(json_encode(retrieveJiraFilterData('epic_by_priority')), true);
+
+        // build up a map for epic key=>epic name
+        $epicKeyToName = array();
+        for ($x = 0; $x < count($epic_data['issues']); $x++) {
+            $epicKeyToName[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['summary'];
+        }
+
+        // now add the epic name to each issue (we have the epic key, but not the name)
+        $issue_data = json_decode(json_encode(retrieveJiraFilterData('issue_by_epic')), true);
+        for ($x = 0; $x < count($issue_data['issues']); $x++) {
+            $issue_fields = $issue_data['issues'][$x]['fields'];
+            $issue_data['issues'][$x]['fields']['epicName'] = $epicKeyToName[$issue_fields['customfield_10005']];
+        }
+
+        // finally, convert back to object form
+        $json_decoded = json_decode(json_encode($issue_data));
+    } else {
+        $json_decoded = retrieveJiraFilterData($report_type);
+    }
     $issue_count = count($json_decoded->{'issues'});
     for ($i = 0; $i < $issue_count; $i++) {
         if ($i == 0) {
@@ -21,26 +43,16 @@
                             class="jim-table-header-content">Key</span></th>
 
                 <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
-                            class="jim-table-header-content">Issue Type</span></th>
-
-                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                             class="jim-table-header-content">Summary</span></th>
 
-                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
-                            class="jim-table-header-content">Priority</span></th>
-
-                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
-                            class="jim-table-header-content">Status</span></th>
-
-                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
-                            class="jim-table-header-content">Created</span></th>
-
-                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
-                            class="jim-table-header-content">Updated</span></th>
-
-                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
-                            class="jim-table-header-content">Reporter</span></th>
-
+                <?php
+                if (!$suppressPriority) {
+                    ?>
+                    <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
+                                class="jim-table-header-content">Time Frame</span></th>
+                    <?php
+                }
+                ?>
             </tr>
             <?php
         }
@@ -50,7 +62,7 @@
             if ($displayEpic) {
                 ?>
                 <td nowrap="true" class="jira-macro-table-underline-pdfexport">
-                    <span style="height: 100%"><?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10005'}, FILTER_SANITIZE_STRING)) ?></span>
+                    <span style="height: 100%"><?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'epicName'}, FILTER_SANITIZE_STRING)) ?></span>
                 </td>
                 <?php
             }
@@ -60,61 +72,24 @@
             <td nowrap="true"
                 class="jira-macro-table-underline-pdfexport"><?= filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING) ?></td>
 
-            <!-- issue type -->
-            <td nowrap="true" class="jira-macro-table-underline-pdfexport">
-                <span>
-                    <img style="vertical-align: middle"
-                         src="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'iconUrl'}, FILTER_SANITIZE_STRING) ?>"
-                         height="16" width="16" border="0"/>
-                </span>
-                <span style="height: 100%"><?= mapIssueType(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'issuetype'}->{'name'}, FILTER_SANITIZE_STRING)) ?></span>
-            </td>
-
             <!-- summary -->
             <td class="jira-macro-table-underline-pdfexport"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'summary'}, FILTER_SANITIZE_STRING); ?></td>
 
             <!-- priority -->
-            <td class="jira-macro-table-underline-pdfexport">
-                <span>
-                    <img style="vertical-align: middle"
-                         src="<?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'priority'}->{'iconUrl'}, FILTER_SANITIZE_STRING) ?>"
-                         height="16" width="16" border="0"/>
-                </span>
-            </td>
-
-            <!-- status -->
-            <td nowrap="true" class="jira-macro-table-underline-pdfexport">
-            <span class="aui-lozenge aui-lozenge-subtle aui-lozenge-success">
-                <?= mapStatus(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING)) ?>
-            </span>
-            </td>
-
-            <!-- created -->
-            <td nowrap="true"
-                class="jira-macro-table-underline-pdfexport"><?= toDate(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'created'}, FILTER_SANITIZE_STRING)) ?></td>
-
-            <!-- updated -->
-            <td nowrap="true"
-                class="jira-macro-table-underline-pdfexport"><?= toDate(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'updated'}, FILTER_SANITIZE_STRING)) ?></td>
-
-            <!-- reporter/source -->
-            <td nowrap="true"
-                class="jira-macro-table-underline-pdfexport"><?= mapReporter(count($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10300'}) > 0 ? filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10300'}[0]->{'value'}, FILTER_SANITIZE_STRING) : '') ?></td>
+            <?php
+            if (!$suppressPriority) {
+                ?>
+                <td class="jira-macro-table-underline-pdfexport" nowrap>
+                    <span>
+                        <?= mapPriority(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'priority'}->{'name'}, FILTER_SANITIZE_STRING)) ?>
+                    </span>
+                </td>
+                <?php
+            }
+            ?>
         </tr>
         <?php
     }
     ?>
     </tbody>
 </table>
-
-<script type="text/javascript">
-    $('#<?= 'search_' . $report_type ?>').keyup(function () {
-        var searchCriteria = $.trim($(this).val()).replace(/ +/g, ' ').toLowerCase();
-
-        var tableRows = $('#<?= "content_" . $report_type ?> tr');
-        tableRows.show().filter(function () {
-            var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
-            return !~text.indexOf(searchCriteria);
-        }).hide();
-    });
-</script>

@@ -90,8 +90,6 @@ function retrieveJiraFilterData($report_type)
     // dont try increase this value for performance reasons - it'll just be ignored
     $pages = ceil($tempArray['total'] / 100);
     for ($page = 1; $page < $pages; $page++) {
-        echo ($maxResults * $page) . '<- startAt<br/>';
-
         $issue_list = jiraRequest($report_type, ($maxResults * $page), $maxResults);
         $currentPageData = json_decode($issue_list, true);
 
@@ -114,25 +112,20 @@ function mapIssueType($issueType)
     return $issueType;
 }
 
-function mapReporter($reporter)
+function mapPriority($priority)
 {
-    if ($reporter === "") {
-        return "ag-Grid";
-    }
-    switch ($reporter) {
-        case "Client Request (email, telephone, etc)":
-            return "Enterprise Request";
+    $result = "2 - 4 Releases";
+    switch ($priority) {
+        case "Highest":
+        case "High":
+            $result = "1 - 2 Releases";
+            break;
+        case "Medium":
+            $result = "1 - 3 Releases";
             break;
     }
-    return $reporter;
-}
 
-function mapStatus($status)
-{
-    if ($status === 'Selected for Development') {
-        return 'Backlog';
-    }
-    return $status;
+    return $result;
 }
 
 function toDate($str_value)
