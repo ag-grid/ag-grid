@@ -86,7 +86,7 @@ gridOptions.api.hideOverlay()</snippet>
         </ul>
     </p>
 
-    <?= example('Custom Overlays', 'custom-overlays', 'generated', array('enterprise' => false, 'extras' => array('fontawesome')) ) ?>
+    <?= example('Custom Overlay Renderers', 'custom-overlay-renderers', 'generated', array('enterprise' => false, 'extras' => array('fontawesome')) ) ?>
 
 </div>
 
