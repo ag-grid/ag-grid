@@ -182,28 +182,12 @@ export class Grid {
         let isLoggingFunc = ()=> contextParams.debug;
         this.context = new Context(contextParams, new Logger('Context', isLoggingFunc));
 
-        // we do this at the end, after the boot sequence is complete
-        this.registerComponents(gridOptions);
         this.setColumnsAndData();
 
         this.dispatchGridReadyEvent(gridOptions);
 
         if (gridOptions.debug) {
             console.log('ag-Grid -> initialised successfully, enterprise = ' + enterprise);
-        }
-    }
-
-    private registerComponents(gridOptions: GridOptions): void {
-        let componentProvider: ComponentProvider = this.context.getBean('componentProvider');
-        if (gridOptions.components != null) {
-            Object.keys(gridOptions.components).forEach(it=>{
-                componentProvider.registerComponent(it, gridOptions.components[it]);
-            });
-        }
-        if (gridOptions.frameworkComponents != null) {
-            Object.keys(gridOptions.frameworkComponents).forEach(it=>{
-                componentProvider.registerFwComponent(it, gridOptions.frameworkComponents[it]);
-            });
         }
     }
 

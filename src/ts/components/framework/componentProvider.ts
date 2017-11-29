@@ -1,6 +1,6 @@
 import {TextCellEditor} from "../../rendering/cellEditors/textCellEditor";
 
-import {Bean, PostConstruct} from "../../context/context";
+import {Autowired, Bean, Context, PostConstruct} from "../../context/context";
 import {IComponent} from "../../interfaces/iComponent";
 import {DateFilter, DefaultDateComponent} from "../../filter/dateFilter";
 import {HeaderComp} from "../../headerRendering/header/headerComp";
@@ -26,6 +26,7 @@ import {TextFilter} from "../../filter/textFilter";
 import {NumberFilter} from "../../filter/numberFilter";
 import {LoadingOverlayRenderer} from "../../rendering/overlayRenderers/loadingOverlayRenderer";
 import {NoRowsOverlayRenderer} from "../../rendering/overlayRenderers/noRowsOverlayRenderer";
+import {GridOptions} from "../../entities/gridOptions";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED
@@ -48,6 +49,12 @@ export type AgGridComponentFunctionInput = (params:any)=>string | HTMLElement ;
 
 @Bean('componentProvider')
 export class ComponentProvider {
+
+    @Autowired('gridOptions')
+    private gridOptions: GridOptions;
+
+    @Autowired('context')
+    private context: Context;
 
     private agGridDefaults :{[key:string]:AgGridRegisteredComponentInput<any>};
     private jsComponents :{[key:string]:AgGridRegisteredComponentInput<any>} = {};
@@ -109,6 +116,21 @@ export class ComponentProvider {
             textColumnFilter: TextFilter,
             numberColumnFilter: NumberFilter,
             dateColumnFilter: DateFilter
+        }
+    }
+
+    @PostConstruct
+    private init():void{
+        let componentProvider: ComponentProvider = this.context.getBean('componentProvider');
+        if (this.gridOptions.components != null) {
+            Object.keys(this.gridOptions.components).forEach(it=>{
+                componentProvider.registerComponent(it, this.gridOptions.components[it]);
+            });
+        }
+        if (this.gridOptions.frameworkComponents != null) {
+            Object.keys(this.gridOptions.frameworkComponents).forEach(it=>{
+                componentProvider.registerFwComponent(it, this.gridOptions.frameworkComponents[it]);
+            });
         }
     }
 
