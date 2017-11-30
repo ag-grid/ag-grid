@@ -17,16 +17,15 @@ function copyFilesSync(files, dest) {
     files.forEach(file => fsExtra.copySync(file, dest + '/' + path.basename(file)));
 }
 
-function removeTokenFromFile(file, dest, token) {
-    let filename = path.basename(file);
-    fsExtra.rename(dest + '/' + filename, dest + '/' + filename.replace(token, ''));
-}
-
 function moveScriptsWithoutToken(scripts, dest, token) {
+    let removeTokenFromFile = file => {
+        let filename = path.basename(file);
+        fsExtra.rename(dest + '/' + filename, dest + '/' + filename.replace(token, ''));
+    };
+    
     copyFilesSync(scripts, dest);
-    scripts.forEach(file => removeTokenFromFile(file, dest, token));
+    scripts.forEach(file => removeTokenFromFile(file));
 }
-
 
 function copyGlobSync(globString, dest) {
     copyFilesSync(glob.sync(globString), dest);
