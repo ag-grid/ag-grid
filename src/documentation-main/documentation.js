@@ -238,6 +238,16 @@
      */
     module.directive("note", function () {
         return {
+            scope: {
+                img: '=?',
+                height: '=?',
+                width: '=?'
+            },
+            controller: function ($scope) {
+                $scope.img = angular.isDefined($scope.img) ? $scope.img : '../images/note.png';
+                $scope.height = angular.isDefined($scope.height) ? $scope.height : '50';
+                $scope.width = angular.isDefined($scope.width) ? $scope.width : '50';
+            },
             templateUrl: "/note.html",
             transclude: true
         }
