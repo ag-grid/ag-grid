@@ -46,32 +46,44 @@ $CURRENT_SPRINT = "3";
 
 <div class="container info-page">
     <div class="row">
+        <div class="row">
+            <div class="col-md-12" style="padding-top: 10px; padding-bottom: 5px;">
+                <h1>Tracking your Items in the Development Pipeline</h1>
+            </div>
+        </div>
         <div class="col-md-12 sprint-container">
-            <span class="sprint-label">Current Sprint: <?= $CURRENT_SPRINT ?></span>
+            <span class="sprint-label">Current Sprint: <?= $CURRENT_SPRINT ?> - Target Release: Week Commencing 11th December</span>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
             <div class="global-search-pane">
+                <div class="report-description">                                   
+                    <ul>
+                        <li>Current Sprint: items in the next release.</li>
+                        <li>Bugs: items reported via Zendesk/Github - these are prioritised above Feature Requests.</li>
+                        <li>Standalone Feature Requests: items that can be addressed on their own. These are recorded in a backlog and prioritised.</li>
+                        <li>Epic Feature Requests: items that we group into Epics. We then prioritise based on the Epic rather than the individual feature request.</li>
+                        <li>Parked Items: items parked for the immediate due to complexity/relevance to our entire user base.</li>
+                    </ul>
+                </div>                
+
+
+
                 <input class="clearable global-report-search" type="text" id="global_search" name="" value=""
                        placeholder="Issue Search (eg. AG-1111/popup/feature)..."/>
                 <div class="global-report-search-results"></div>
             </div>
             <div class="tabbable boxed parentTabs">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="#release" class="report-link">Current Release</a></li>
+                    <li class="active"><a href="#release" class="report-link">Current Sprint</a></li>
                     <li><a href="#bugs" class="report-link">Bugs</a></li>
-                    <li><a href="#fr" class="report-link">Feature Requests</a></li>
-                    <li><a href="#epics" class="report-link">Epics</a></li>
+                    <li><a href="#fr" class="report-link">Standalone Feature Requests</a></li>
+                    <li><a href="#epics" class="report-link">Epic Feature Requests</a></li>
                     <li><a href="#parked" class="report-link">Parked Items</a></li>
                 </ul>
                 <div class="tab-content" style="margin-top: 5px">
                     <div class="tab-pane top-level-pane active" id="release">
-                        <div class="report-description">
-                            If your item is in this list, its guaranteed that we will give it a resolution and that it
-                            will
-                            be made available in the next major release. Usually each major release takes 4-5 weeks
-                        </div>
                         <?php
                         $displayEpic = 0;
                         $suppressTargetSprint = 1;
@@ -80,13 +92,6 @@ $CURRENT_SPRINT = "3";
                         ?>
                     </div>
                     <div class="tab-pane top-level-pane" id="bugs">
-                        <div class="report-description">
-                            If your item is listed here you should know that bugs are pulled into the current release in
-                            small
-                            batches based on development capacity. Usually items in the bug list with a high priority
-                            get cleared in 1-2 releases.
-                            Medium priority 1-3 releases. Low priority 2-4 releases
-                        </div>
                         <?php
                         $displayEpic = 0;
                         $suppressTargetSprint = 0;
@@ -95,16 +100,6 @@ $CURRENT_SPRINT = "3";
                         ?>
                     </div>
                     <div class="tab-pane top-level-pane" id="fr">
-                        <div class="report-description">
-                            Feature requests on this list are also pulled into the current release in small batches
-                            based on
-                            development capacity. Note that bugs take precedence at that our current capacity feature
-                            requests with high priority
-                            get cleared in 2-3 releases.<br/><br/>
-                            Other feature requests we don't have a timeline for this, but we are working in improving
-                            our capacity. The timelines in
-                            this page will get updated as soon as the capacity for feature requests is improved
-                        </div>
                         <?php
                         $displayEpic = 0;
                         $suppressTargetSprint = 0;
@@ -113,22 +108,6 @@ $CURRENT_SPRINT = "3";
                         ?>
                     </div>
                     <div class="tab-pane top-level-pane" id="epics">
-                        <div class="report-description">
-                            <p>As part of managing feature requests we group similar ones into Epics, and then we bring
-                                these epics into each sprint planning for each next release so they are considered as
-                                next
-                                major pieces of work.</p>
-                            <p>If you are item is in this list is probably because it has jumped from the list of
-                                feature
-                                requests into this list, if that is the case have a look at the second list that shows
-                                epics
-                                sorted by priority.</p>
-                            <p>If your item is in an epic an is high on the priority list, then this is an indicator
-                                that
-                                the whole epic might get revamped soon, but it is not a hard commitment since we will
-                                refine
-                                this every sprint planning</p>
-                        </div>
                         <?php
                         $displayEpic = 1;
                         $suppressTargetSprint = 0;
