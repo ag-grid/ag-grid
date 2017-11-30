@@ -1,24 +1,29 @@
 package com.aggrid.crudapp.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Cacheable(false)
 public class Athlete {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Version()
+    private Long version = 0L;
 
     private String name;
 
     @OneToOne()
     private Country country;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(name = "athlete_result",
-            joinColumns = @JoinColumn(name = "athlete_id"),
-            inverseJoinColumns = @JoinColumn(name = "result_id"))
-    private List<Result> results;
+    @JsonManagedReference
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "athlete", orphanRemoval = true)
+    private List<Result> results = new ArrayList<>();
 
     public Athlete() {
     }
@@ -84,6 +89,7 @@ public class Athlete {
         return "Athlete{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", version='" + version + '\'' +
                 '}';
     }
 }

@@ -5,7 +5,7 @@ $pageDescription = "Building a CRUD Application with ag-Grid Part 1";
 $pageKeyboards = "ag-grid datagrid crud enterprise";
 
 $socialUrl = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/";
-$socialImage = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/crud_overview.png?".uniqid();
+$socialImage = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/crud_overview.png?" . uniqid();
 
 include('../includes/mediaHeader.php');
 ?>
@@ -44,7 +44,9 @@ include('../includes/mediaHeader.php');
             <ul>
                 <li class="bold-roboto">Part 1: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)
                 </li>
-                <li><a href="../ag-grid-datagrid-crud-part-2/">Part 2</a>: Middle Tier: Exposing our data with a REST Service</li>
+                <li><a href="../ag-grid-datagrid-crud-part-2/">Part 2</a>: Middle Tier: Exposing our data with a REST
+                    Service
+                </li>
                 <li><a href="../ag-grid-datagrid-crud-part-3/">Part 3</a>: Front End - Initial Implementation</li>
                 <li>Part 4: Front End - Grid Features & CRUD (Creation, Updates and Deletion)</li>
                 <li>Part 5: Front End - Aggregation & Pivoting</li>
@@ -72,6 +74,13 @@ include('../includes/mediaHeader.php');
                 with this particular section being under <a
                         href="https://github.com/seanlandsman/ag-grid-crud/tree/part-1">Part
                     1</a></note>
+
+            <note img="'./updated_transparent.png'" height="'50'" width="'123'">
+                <p>Two parts of this entry of the series have been updated as the result of a bug I found later on.</p>
+                <p>Look for the <code>Updated!</code> note (like this one) - one change is in the Data Model section, while the other
+                is in the Bootstrapping section.</p>
+                <p>The lesson here? Write more tests folks!</p>
+            </note>
 
             <p>Our application will be a reporting tool that looks at past Olympics results. Users will be able to see
                 historic results for the Olympic Games from 2000 to 2012 (7 games in all) and be able to see who won the
@@ -148,7 +157,7 @@ include('../includes/mediaHeader.php');
 
             <p>You should see the following project structures:</p>
 
-<snippet>
+            <snippet>
 └── backend
    ├── LICENSE
    ├── mvnw
@@ -213,6 +222,12 @@ include('../includes/mediaHeader.php');
 
             <h2>Data Model</h2>
 
+            <note img="'./updated_transparent.png'" height="'50'" width="'123'">
+                <p>This section has been updated to simplify the model - there is now no join table<br/>(it was
+                    unnecessary - not sure why I added it!).</p> The <code>Athlete</code> and
+                <code>Result</code> classes have been updated to reflect this change.
+            </note>
+
             <p>Our database model is pretty simple - we have 4 entities here:</p>
 
             <table>
@@ -248,14 +263,16 @@ include('../includes/mediaHeader.php');
                 <code>Sport</code>, <code>Medal</code> and <code>Country</code></p>
 
             <p><code>Sport</code> and <code>Country</code> are simple entities as these are primarily there as static
-                data.
-                <code>Result</code> is a bit more complicated in that it references <code>Country</code>.
-                <code>Athlete</code>
-                is the most interesting of these entities - it has a <code>OneToOne</code> mapping to
-                <code>Country</code>,
-                and a <code>OneToMany</code> mapping to <code>Result</code>.</p>
+                data. <code>Result</code> and <code>Athlete</code> are the most interesting of these entities.</p>
 
-            <p style="margin-top: 20px">We define each of these as JPA Entities by annotating the class with <code>@Entity</code>.
+            <p><code>Result</code> has a <code>OneToOne</code> mapping to <code>Sport</code>, and has a
+                <code>ManyToOne</code>
+                mapping to <code>Athlete</code>. <code>Athlete</code> in turn has a <code>OneToOne</code> mapping to
+                <code>Country</code>, and a <code>OneToMany</code> mapping to <code>Result</code>.</p>
+
+            <p>This reflects the ERD (entity relationship diagram) model above.</p>
+
+            <p>We define each of these as JPA Entities by annotating the class with <code>@Entity</code>.
                 we
                 also let Spring know that we want the <code>id</code> field to be the ID by annotating the field with
                 <code>@Id</code>
@@ -322,6 +339,11 @@ include('../includes/mediaHeader.php');
 
             <h3>Test Data - Bootstrapping</h3>
 
+            <note img="'./updated_transparent.png'" height="'50'" width="'123'">
+                <p>This section has been updated when I discovered I was incorrectly inserting duplicate <code>Athlete</code>
+                    with it.<p>Write tests before you write code, and write them often!</p>
+            </note>
+
             <p>In order to get the data we have (<code>src/main/resources/olympicWinners.csv</code>) into the
                 <code>H2</code> database, we'll make use of Spring's
                 <code>ApplicationListener&lt;ContextRefreshedEvent&gt;</code> facility to load the test data and save it
@@ -330,7 +352,7 @@ include('../includes/mediaHeader.php');
             <p>We'll make use of a third-party library called <code>Jackson</code> to convert the CSV to Java POJOs, so
                 add this
                 to your Maven pom.xml file, within the <code>dependencies</code> block:</p>
-<snippet>&lt;dependency&gt;
+            <snippet>&lt;dependency&gt;
     &lt;groupId&gt;com.fasterxml.jackson.dataformat&lt;/groupId&gt;
     &lt;artifactId&gt;jackson-dataformat-csv&lt;/artifactId&gt;
     &lt;version&gt;2.9.1&lt;/version&gt;
@@ -350,13 +372,13 @@ include('../includes/mediaHeader.php');
                           exampleHeight="500px">
             </show-sources>
 
-            <p>On startup the data in <code>src/main/resources/olympicWinners.csv</code> will be loaded, parsed and
+            <p style="margin-top: 20px">On startup the data in <code>src/main/resources/olympicWinners.csv</code> will be loaded, parsed and
                 inserted in the database, ready for us to query.</p>
 
             <p>Let's start the application and then fire up the <code>H2</code> console to test what we have. If we run
                 the following query in the <code>H2</code> console:</p>
 
-<snippet language="sql">select a.name, c.name, r.age, c.name, r.year, r.date,s.name,r.gold,r.silver,r.bronze
+            <snippet language="sql">select a.name, c.name, r.age, c.name, r.year, r.date,s.name,r.gold,r.silver,r.bronze
 from athlete a, country c, athlete_result ar, result r, sport s
 where a.country_id = c.id
 and ar.athlete_id = a.id
@@ -373,7 +395,7 @@ and r.sport_id = s.id
 
             <p>Let's add the <code>DevTools</code> to our Maven pom.xml file:</p>
 
-<snippet>&lt;dependency&gt;
+            <snippet>&lt;dependency&gt;
     &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
     &lt;artifactId&gt;spring-boot-devtools&lt;/artifactId&gt;
     &lt;optional&gt;true&lt;/optional&gt;
@@ -418,10 +440,12 @@ and r.sport_id = s.id
                         <td>
                             <a href="https://twitter.com/share" class="twitter-share-button"
                                data-url="https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/"
-                               data-text="Building a CRUD Application with ag-Grid #angular #aggrid #crud" data-via="seanlandsman"
+                               data-text="Building a CRUD Application with ag-Grid #angular #aggrid #crud"
+                               data-via="seanlandsman"
                                data-size="large">Tweet</a>
                             <script>!function (d, s, id) {
-                                    var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                                    var js, fjs = d.getElementsByTagName(s)[0],
+                                        p = /^http:/.test(d.location) ? 'http' : 'https';
                                     if (!d.getElementById(id)) {
                                         js = d.createElement(s);
                                         js.id = id;

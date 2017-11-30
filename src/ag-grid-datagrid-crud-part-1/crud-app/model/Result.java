@@ -1,5 +1,7 @@
 package com.aggrid.crudapp.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 
 @Entity
@@ -7,6 +9,13 @@ public class Result {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Version()
+    private Long version = 0L;
+
+    @JsonBackReference
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Athlete athlete;
 
     private int age;
     private int year;
@@ -95,6 +104,14 @@ public class Result {
         this.sport = sport;
     }
 
+    public Athlete getAthlete() {
+        return athlete;
+    }
+
+    public void setAthlete(Athlete athlete) {
+        this.athlete = athlete;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,11 +119,46 @@ public class Result {
 
         Result result = (Result) o;
 
-        return id != null ? id.equals(result.id) : result.id == null;
+        if (age != result.age) return false;
+        if (year != result.year) return false;
+        if (gold != result.gold) return false;
+        if (silver != result.silver) return false;
+        if (bronze != result.bronze) return false;
+        if (id != null ? !id.equals(result.id) : result.id != null) return false;
+        if (version != null ? !version.equals(result.version) : result.version != null) return false;
+        if (athlete != null ? !athlete.equals(result.athlete) : result.athlete != null) return false;
+        if (date != null ? !date.equals(result.date) : result.date != null) return false;
+        return sport != null ? sport.equals(result.sport) : result.sport == null;
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (version != null ? version.hashCode() : 0);
+        result = 31 * result + (athlete != null ? athlete.hashCode() : 0);
+        result = 31 * result + age;
+        result = 31 * result + year;
+        result = 31 * result + (date != null ? date.hashCode() : 0);
+        result = 31 * result + gold;
+        result = 31 * result + silver;
+        result = 31 * result + bronze;
+        result = 31 * result + (sport != null ? sport.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Result{" +
+                "id=" + id +
+                ", version=" + version +
+                ", athlete=" + athlete +
+                ", age=" + age +
+                ", year=" + year +
+                ", date='" + date + '\'' +
+                ", gold=" + gold +
+                ", silver=" + silver +
+                ", bronze=" + bronze +
+                ", sport=" + sport +
+                '}';
     }
 }
