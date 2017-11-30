@@ -155,7 +155,7 @@ $CURRENT_SPRINT = "3";
         $(tabAnchors).addClass('search-highlight');
         setTimeout(function () {
             $(tabAnchors).removeClass('search-highlight')
-        }, 1000)
+        }, 500)
     }, 250);
 
     // show/hide tabs
