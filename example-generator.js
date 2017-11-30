@@ -17,6 +17,17 @@ function copyFilesSync(files, dest) {
     files.forEach(file => fsExtra.copySync(file, dest + '/' + path.basename(file)));
 }
 
+function removeTokenFromFile(file, dest, token) {
+    let filename = path.basename(file);
+    fsExtra.rename(dest + '/' + filename, dest + '/' + filename.replace(token, ''));
+}
+
+function moveScriptsWithoutToken(scripts, dest, token) {
+    copyFilesSync(scripts, dest);
+    scripts.forEach(file => removeTokenFromFile(file, dest, token));
+}
+
+
 function copyGlobSync(globString, dest) {
     copyFilesSync(glob.sync(globString), dest);
 }
@@ -82,7 +93,10 @@ module.exports = (cb, scope) => {
             let script, scripts;
             if (glob.sync(path.join('./src', section, example, '*.js')).length > 1) {
                 script = glob.sync(path.join('./src', section, example, 'main.js'))[0];
-                scripts = glob.sync(path.join('./src', section, example, '*.js'), { ignore: '**/main.js' });
+                scripts = glob.sync(
+                    path.join('./src', section, example, '*.js'),
+                    { ignore: ['**/main.js', '**/*_angular.js', '**/*_react.js', '**/*_vanilla.js'] }
+                );
             } else {
                 script = glob.sync(path.join('./src', section, example, '*.js'))[0];
                 scripts = [];
@@ -121,16 +135,19 @@ module.exports = (cb, scope) => {
                 // throw new Error('Failed generating the angular version');
             }
 
+            // fetch and move react files to _gen/react
             const reactPath = path.join(_gen, 'react');
             mkdirp.sync(reactPath);
             fs.writeFileSync(path.join(reactPath, 'index.jsx'), indexJSX);
             if (inlineStyles) {
                 fs.writeFileSync(path.join(reactPath, 'styles.css'), inlineStyles);
             }
-
             copyGlobSync(stylesGlob, reactPath);
             copyFilesSync(scripts, reactPath);
+            const reactScripts = glob.sync(path.join('./src', section, example, '*_react*'));
+            moveScriptsWithoutToken(reactScripts, reactPath, '_react');
 
+            // fetch and move angular files to _gen/angular
             const angularPath = path.join(_gen, 'angular');
             mkdirp.sync(path.join(angularPath, 'app'));
             fs.writeFileSync(path.join(angularPath, 'app', 'app.component.ts'), appComponentTS);
@@ -140,12 +157,17 @@ module.exports = (cb, scope) => {
             }
             copyGlobSync(stylesGlob, angularPath);
             copyFilesSync(scripts, angularPath);
+            const angularScripts = glob.sync(path.join('./src', section, example, '*_angular*'));
+            moveScriptsWithoutToken(angularScripts, angularPath, '_angular');
 
+            // fetch and move vanilla files to _gen/vanilla
             const vanillaPath = path.join(_gen, 'vanilla');
-
             mkdirp(vanillaPath);
-            const srcFilesGlob = path.join('./src', section, example, '*.{html,js,css}');
-            copyGlobSync(srcFilesGlob, vanillaPath);
+            const vanillaScripts = glob.sync(
+                path.join('./src', section, example, '*.{html,js,css}'),
+                { ignore: ['**/*_angular.js', '**/*_react.js'] }
+            );
+            moveScriptsWithoutToken(vanillaScripts, vanillaPath, '_vanilla');
         },
         () => {
             console.log(`// ${count} examples generated`);
