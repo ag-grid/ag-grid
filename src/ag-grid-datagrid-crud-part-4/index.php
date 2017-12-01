@@ -807,6 +807,40 @@ saveAthlete() {
             <p>With a little styling applied, we'll end up with this: </p>
             <img src="./fist-pass-complete.png" style="width: 100%">
 
+
+            <h4>Optimistic Locking</h4>
+
+            <p>We've adopted an optimistic locking stragety here - we assume we can edit/delete something and that no one else
+                has modified what we're attempting to edit before us.</p>
+
+            <p>This is a fairly mechanism to use, but it has it's downsides. It we attempt to edit/delete something that another
+            user has edited before us, we'll get an error. This again is normal and in a real application you would code
+                for this - either let the user know that this has occurred, or do a check before the user attempts it (or both).</p>
+
+            <p>This optimistic locking is by an large handled for us by Spring JPA by the use of versioning. Each time a record is
+            changes the version will be bumped up and the result stored in the DB. When a change is attemped Spring JPA will check
+            the current version against the version in the DB - if they're the the same the edit can continue, but if not an error will
+            be raised.</p>
+
+            <p>This versioning is done by adding the following to the <code>Entity</code>'s we want to version - in our case
+            we only need to do this for <code>Athlete</code> and <code>Result</code> (<code>Country</code> and <code>Sport</code> cannot be edited).</p>
+
+<snippet language="java">
+@Entity
+public class Athlete {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Version()
+    private Long version = 0L;
+</snippet>
+
+            <p>Here the <code>@Version</code> annotation let's Spring JPA know that we want to version this class - the
+                rest just happens automagically!</p>
+
+
+            <h3>Section Break!</h3>
             <p>This will serve as a good place to do a quick check - we've done an awful lot of coding here, with lots to digest.</p>
 
             <p>The code to this point can be found in the <a href="">Part-4a</a> branch in Github, but you can also see the main
