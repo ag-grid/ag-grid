@@ -69,7 +69,8 @@ include('../includes/mediaHeader.php');
             <p>Later, we'll need to do the same for <code>sport</code> values, so let's create a new service
                 that will retrieve static data (data that won't be changed by the user) for us.</p>
 
-            <p>First we need to create a new Spring <code>Controller</code> in the middle tier that we can use to access the
+            <p>First we need to create a new Spring <code>Controller</code> in the middle tier that we can use to access
+                the
                 static data. I won't go into this service too much as we've already covered using
                 <code>Controller</code>s
                 in a previous part of this series:</p>
@@ -258,6 +259,8 @@ private createColumnDefs(countries: Country[]) {
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"
 
+                 suppressHorizontalScroll
+
                  (gridReady)="onGridReady($event)"
                  (cellValueChanged)="onCellValueChanged($event)"&gt;
 &lt;/ag-grid-angular&gt;
@@ -266,18 +269,22 @@ private createColumnDefs(countries: Country[]) {
             <p>Here we hook into the <code>cellValueChanged</code> - we'll use this hook to save changed values.</p>
 
             <snippet>
-onCellValueChanged(params: CellValueChangedEvent) {
+onCellValueChanged(params: any) {
     this.athleteService.save(params.data)
         .subscribe(
-            savedAthlete => console.log('Athlete Saved'),
+            savedAthlete => {
+                console.log('Athlete Saved');
+                this.setAthleteRowData();
+            },
             error => console.log(error)
         )
 }
 </snippet>
 
             <p>Once a cell value has been changed, this method will be called. We call the <code>AthleteService</code>
-                to
-                save the row data (<code>params.data</code> contains the row data).</p>
+                to save the row data (<code>params.data</code> contains the row data), and on successful save update the
+                row
+                data once again.</p>
 
             <p>What's great about this is that the <code>save</code> method requires an <code>Athlete</code> and as our
                 row data consists of an array of <code>Athlete</code> so this mapping will happy for free.</p>
@@ -298,6 +305,12 @@ onCellValueChanged(params: CellValueChangedEvent) {
                 this
                 later.</p>
 
+            <p>Note we're refreshing the entire grid data each time a cell value changes - this is very inefficient.
+                We'll look
+                at making use of ag-Grid <a href="../javascript-grid-data-update">Update</a> functionality so that we
+                only
+                redraw changed rows, not the entire grid.</p>
+
             <h3>Record Deletion</h3>
 
             <p>Next let's take a look record deletion - this is probably the easiest of the CRUD operations to
@@ -306,9 +319,9 @@ onCellValueChanged(params: CellValueChangedEvent) {
             <p>We'll allow the users to select one or more records and then provide a button that when clicked will
                 delete the
                 selected records.</p>
-            
+
             <p>First, let's enable <code>rowSelection</code> within the Grid:</p>
-            
+
             <snippet language="html">
 &lt;ag-grid-angular style="width: 100%; height: 500px;"
                  class="ag-fresh"
@@ -319,6 +332,7 @@ onCellValueChanged(params: CellValueChangedEvent) {
                  rowSelection="multiple"
 
                  suppressRowClickSelection
+                 suppressHorizontalScroll
 
                  (gridReady)="onGridReady($event)"
                  (cellValueChanged)="onCellValueChanged($event)"&gt;
@@ -326,19 +340,21 @@ onCellValueChanged(params: CellValueChangedEvent) {
 </snippet>
 
             <p>Here <code>rowSelection="multiple"</code> allows for one or more rows to be selected, and <code>suppressRowClickSelection</code>
-            prevents rows from being selected by clicking on a row.</p>
+                prevents rows from being selected by clicking on a row.</p>
 
             <p>What? Why would we want to prevent selection on row clicks? How will we make select a row?</p>
 
             <p>Well, how about we add a checkbox to each row, making this our row selection mechanism?</p>
 
-            <p>The benefits of this approach is that rows won't be selected when a row is being edited. Separating the selection
-            into a deliberate action (a user needs to click in the checkbox) makes the operation clearer.</p>
+            <p>The benefits of this approach is that rows won't be selected when a row is being edited. Separating the
+                selection
+                into a deliberate action (a user needs to click in the checkbox) makes the operation clearer (and
+                safer!).</p>
 
             <p>Adding a checkbox to a column is easy - all we need to do is add <code>checkboxSelection: true</code> to
                 our column definition:</p>
 
-<snippet>
+            <snippet>
 {
     field: 'name',
     editable: true,
@@ -348,10 +364,11 @@ onCellValueChanged(params: CellValueChangedEvent) {
 
             <img src="./checkbox-selection.png" style="width: 100%">
 
-            <p>Next, let's add a button that a user can use to delete the selected rows - we'll also add a utility method
+            <p>Next, let's add a button that a user can use to delete the selected rows - we'll also add a utility
+                method
                 that will disable the delete button if no rows are selected:</p>
 
-<snippet>
+            <snippet>
 &lt;div&gt;
     &lt;button (click)="deleteSelectedRows()" [disabled]="!rowsSelected()"&gt;Delete Selected Row&lt;/button&gt;
 &lt;/div&gt;
@@ -365,6 +382,7 @@ onCellValueChanged(params: CellValueChangedEvent) {
                      rowSelection="multiple"
 
                      suppressRowClickSelection
+                     suppressHorizontalScroll
 
                      (gridReady)="onGridReady($event)"
                      (cellValueChanged)="onCellValueChanged($event)"&gt;
@@ -374,7 +392,7 @@ onCellValueChanged(params: CellValueChangedEvent) {
 
             <p>And the corresponding method implementations in our Grid component:</p>
 
-<snippet>
+            <snippet>
 rowsSelected() {
     return this.api && this.api.getSelectedRows().length > 0;
 }
@@ -382,55 +400,44 @@ rowsSelected() {
 deleteSelectedRows() {
     const selectRows = this.api.getSelectedRows();
 
-    selectRows.forEach((rowToDelete) => {
-        this.athleteService.delete(rowToDelete)
-            .subscribe(
-                success => {
-                    console.log(`Deleted athlete ${rowToDelete.name}`);
-                },
-                error => console.log(error)
-            );
+    // create an Observable for each row to delete
+    const deleteSubscriptions = selectRows.map((rowToDelete) => {
+        return this.athleteService.delete(rowToDelete);
     });
-    this.setAthleteRowData();
+
+    // then subscribe to these and once all done, refresh the grid data
+    Observable.forkJoin(...deleteSubscriptions).subscribe(results => this.setAthleteRowData())
 }
 </snippet>
 
-            <p><code>rowsSelected()</code> will return true if the <code>api</code> is ready and if there are rows selected.</p>
+            <p><code>rowsSelected()</code> will return true if the <code>api</code> is ready and if there are rows
+                selected.</p>
 
             <p><code>deleteSelectedRows()</code> - we grab all the selected rows, then delete each row in turn. Finally,
-                we call <code>this.setAthleteRowData()</code> to refresh the grid with the current data from the database.</p>
+                we call <code>this.setAthleteRowData()</code> to refresh the grid with the current data from the
+                database.</p>
 
-            <p>This is a fairly naive and inefficient implementation -  there are two obvious improvements to be made:</p>
+            <p>This is a fairly naive and inefficient implementation - there are two obvious improvements to be
+                made:</p>
             <ul>
                 <li>Batch the deletes - let the middle/backend do the work</li>
-                <li>Make use of ag-Grid <a href="../javascript-grid-data-update">Update</a> functionality so that we only
-                redraw changed/deleted rows, not the entire grid</li>
+                <li>Make use of ag-Grid <a href="../javascript-grid-data-update">Update</a> functionality so that we
+                    only
+                    redraw changed/deleted rows, not the entire grid
+                </li>
             </ul>
 
             <p>We'll cover these improvements in a later iteration.</p>
 
-            <!--
-                        <show-sources example=""
-                                      sources="{
-                                        [
-                                            { root: './crud-app/', files: 'app.component.ts,app.component.html' },
-                                            { root: './crud-app/services/', files: 'athlete.service.ts' },
-                                            { root: './crud-app/model/', files: 'athlete.model.ts,country.model.ts,result.model.ts,sport.model.ts' }
-                                        ]
-                                      }"
-                                      language="ts"
-                                      highlight="true"
-                                      exampleHeight="500px">
-                        </show-sources>
-            -->
-
             <h3>Record Creation/Insertion</h3>
 
-            <p>Ok, let's look at something a bit more challenging - inserting new <code>Athlete</code> data.  Adding new
-            data to the Grid itself is easy, but in order to add a full <code>Athlete</code>, including <code>Result</code>
+            <p>Ok, let's look at something a bit more challenging - inserting new <code>Athlete</code> data. Adding new
+                data to the Grid itself is easy, but in order to add a full <code>Athlete</code>, including
+                <code>Result</code>
                 information, requires a bit more work on the Angular side than we've used so far.</p>
 
-            <p>First, let's create a new component that we'll use for both new record creation, as well as record updates later on.</p>
+            <p>First, let's create a new component that we'll use for both new record creation, as well as record
+                updates later on.</p>
 
             <p>We'll make use of the Angular CLI to do this for us:</p>
 
@@ -439,8 +446,8 @@ deleteSelectedRows() {
             <p><code>g</code> is shorthand for generate and <code>c</code> is shorthand for component.</p>
 
             <p>Let's replace the contents of the template () as follows:</p>
-            
-<snippet language="html">
+
+            <snippet language="html">
 &lt;div&gt;
     &lt;div style="display: inline-block"&gt;
         &lt;div style="float: left"&gt;
@@ -472,7 +479,8 @@ deleteSelectedRows() {
 &lt;/div&gt;
 </snippet>
 
-            <p>It might look like there's a lot going on here, but what we end up with will be something that looks like this:</p>
+            <p>It might look like there's a lot going on here, but what we end up with will be something that looks like
+                this:</p>
 
             <img src="./athlete-edit-1.png" style="width: 100%">
 
@@ -480,12 +488,13 @@ deleteSelectedRows() {
                 have the <code>name</code> and <code>country</code> fields, and below this we'll list the various
                 <code>result</code>'s, if any.</p>
 
-            <p>The Grid that displays could have been extracted into it's own component but in the interests of expediency
+            <p>The Grid that displays the results could have been extracted into it's own component but in the interests
+                of expediency
                 I've opted to keep it a bit simpler for this demo.</p>
 
             <p>The corresponding component class breaks down as follows:</p>
 
-<snippet>
+            <snippet>
 constructor(staticDataService: StaticDataService) {
     staticDataService.countries().subscribe(
         countries => this.countries = countries.sort(StaticDataService.alphabeticalSort()),
@@ -506,11 +515,13 @@ constructor(staticDataService: StaticDataService) {
 </snippet>
 
             <p>Here we retrieve the static <code>sport</code> and <code>country</code> data. The <code>country</code>
-            data will be used in the corresponding dropdown on the edit screen, while the <code>sport</code> data is passed
-            to the column definition code (in the same way we did in the grid component above), to be made available in a
-            <code>richSelect</code> column.</p>
+                data will be used in the corresponding dropdown on the edit screen, while the <code>sport</code> data is
+                passed
+                to the column definition code (in the same way we did in the grid component above), to be made available
+                in a
+                <code>richSelect</code> column.</p>
 
-<snippet>
+            <snippet>
 insertNewResult() {
     // insert a blank new row, providing the first sport as a default in the sport column
     const updates = this.api.updateRowData(
@@ -533,14 +544,16 @@ insertNewResult() {
                 the grid to create a new row for us using <code>this.api.updateRowData</code>.</p>
 
             <p>The same mechanism can be used for updates as well as deletions - see the corresponding
-                <a href="../javascript-grid-data-update">Update</a> documentation for more information around this powerful
-            piece of functionality that the Grid offers.</p>
+                <a href="../javascript-grid-data-update">Update</a> documentation for more information around this
+                powerful
+                piece of functionality that the Grid offers.</p>
 
-            <p>Once the new row has been inserted the Grid provides the new row information to us. Using this we can automatically
-            start editing the new row (using <code>this.api.startEditingCell</code>) - in this case we start editing
+            <p>Once the new row has been inserted the Grid provides the new row information to us. Using this we can
+                automatically
+                start editing the new row (using <code>this.api.startEditingCell</code>) - in this case we start editing
                 the first available cell: <code>age</code>.</p>
 
-<snippet>
+            <snippet>
 @Output() onAthleteSaved = new EventEmitter&lt;Athlete&gt;();
 
 saveAthlete() {
@@ -569,28 +582,33 @@ saveAthlete() {
 </snippet>
 
             <p>This is probably the most important part of this class: when a user click on <code>Save Athlete</code>
-            the <code>saveAthlete</code> method is invoked. We create an <code>Athlete</code> object and populate it with
-            our forms details. We then let the parent component (<code>GridComponent</code> in this case) know that the save
-            is complete, passing in the new <code>Athlete</code>.</p>
+                the <code>saveAthlete</code> method is invoked. We create an <code>Athlete</code> object and populate it
+                with
+                our forms details. We then let the parent component (<code>GridComponent</code> in this case) know that
+                the save
+                is complete, passing in the new <code>Athlete</code>.</p>
 
-            <p>Note: There are of coure a few things missing in our implementation here - we're performing only minimal validation,
-            and the form could do with a cancel button too. As this is for illustrative purposes only, this will do, but in
-            a real application you'd probably want to flesh this out further.</p>
+            <p>Note: There are of course a few things missing in our implementation here - we're performing only minimal
+                validation,
+                and the form could do with a cancel button too. As this is for illustrative purposes only, this will do,
+                but in
+                a real application you'd probably want to flesh this out further.</p>
 
             <p>The full <code>AthleteEditScreenComponent</code> component isn't described here, primarily as the rest of
                 it is either standard Angular functionality (i.e. simple property binding), or has been covered earlier
                 in this part of the blog above.</p>
 
-            <p>To finish this section off, let's take a look at how the parent <code>GridComponent</code> component process
-            the save operation.</p>
+            <p>To finish this section off, let's take a look at how the parent <code>GridComponent</code> component
+                process
+                the save operation.</p>
 
             <p>We've updated our template to include the new <code>GridComponent</code>, only showing it if we set the
-                <code>showEditScreen</code>
+                <code>editInProgress</code>
                 flag:</p>
-            
-<snippet language="html">
+
+            <snippet language="html">
 &lt;div&gt;
-    &lt;button (click)="insertNewRow()"&gt;Insert New Row&lt;/button&gt;
+    &lt;button (click)="insertNewRow()" [disabled]="editInProgress"&gt;Insert New Row&lt;/button&gt;
     &lt;button (click)="deleteSelectedRows()" [disabled]="!rowsSelected()"&gt;Delete Selected Row&lt;/button&gt;
 &lt;/div&gt;
 &lt;div&gt;
@@ -600,15 +618,17 @@ saveAthlete() {
                      [columnDefs]="columnDefs"
                      [rowData]="rowData"
 
-                     rowSelection="single"
-                     [suppressHorizontalScroll]="true"
+                     rowSelection="multiple"
+
+                     suppressRowClickSelection
+                     suppressHorizontalScroll
 
                      (gridReady)="onGridReady($event)"
                      (cellValueChanged)="onCellValueChanged($event)"&gt;
     &lt;/ag-grid-angular&gt;
 &lt;/div&gt;
 
-&lt;ng-template [ngIf]="showEditScreen"&gt;
+&lt;ng-template [ngIf]="editInProgress"&gt;
     &lt;app-athlete-edit-screen (onAthleteSaved)="onAthleteSaved($event)"&gt;&lt;/app-athlete-edit-screen&gt;
 &lt;/ng-template&gt;
 </snippet>
@@ -616,38 +636,230 @@ saveAthlete() {
             <p>Note that the <code>GridComponent</code> is listening for save completion here:</p>
             <snippet>(onAthleteSaved)="onAthleteSaved($event)"</snippet>
 
-            <p>And in our <code>GridComponent</code> we process the save operation from <code>AthleteEditScreenComponent</code>
-            as follows:</p>
+            <p>And in our <code>GridComponent</code> we process the save operation from
+                <code>AthleteEditScreenComponent</code>
+                as follows:</p>
 
-<snippet>
+            <snippet>
 onAthleteSaved(savedAthlete: Athlete) {
-    const updates = this.api.updateRowData(
-        {
-            add: [savedAthlete]
-        }
-    );
+    this.athleteService.save(savedAthlete)
+        .subscribe(
+            success => {
+                console.log('Athlete saved');
+                this.setAthleteRowData();
+            },
+            error => console.log(error)
+        );
 
-    this.showEditScreen = false;
+    this.editInProgress = false;
 }
 </snippet>
 
-            <p>Here we're making use of the Grid's <a href="../javascript-grid-data-update">Update</a> functionality to
-                insert a new row (we'll touch on this further again later, when we improve on our initial implementation).</p>
+            <p>Here we pass the new <code>Athlete</code> to our <code>AthleteService</code> to be persisted, and one
+                saved
+                reload the grid data.</p>
+
+            <p>As above, this refreshing of the entire grid data is very inefficient - again, we'll look at improving
+                this in
+                a later iteration of this.</p>
 
             <p>Finally, we hide the edit screen once more.</p>
 
-            <p>As above, in a real application some sort of validation would occur here, to ensure that valid data has been
+            <p>As above, in a real application some sort of validation would occur here, to ensure that valid data has
+                been
                 returned - again, we're skipping this for legibility.</p>
 
             <h3>Record Update/Edit</h3>
 
             <p>Our last piece of the CRUD operation to completed is the Update part - here we'll take an existing <code>Athlete</code>
-            record and allow a user to edit it.</p>
+                record and allow a user to edit it.</p>
 
-            <p>We'll be making use of the <code>AthleteEditScreenComponent</code> we created above - this time however we'll
-            pass in an existing record to edit. The rest of the functionality should remain largely unaltered.</p>
+            <p>We'll be making use of the <code>AthleteEditScreenComponent</code> we created above - this time however
+                we'll
+                pass in an existing record to edit. The rest of the functionality should remain largely unaltered.</p>
+
+            <p>First, we'll update our <code>GridComponent</code> - we'll remove the cell by cell edit functionality we
+                added
+                earlier, and replace it with an entire record (row) based approach.</p>
+
+            <snippet language="html">
+&lt;div&gt;
+    &lt;button (click)="insertNewRow()" [disabled]="editInProgress"&gt;Insert New Row&lt;/button&gt;
+    &lt;button (click)="deleteSelectedRows()" [disabled]="!rowsSelected() || editInProgress"&gt;Delete Selected Row&lt;/button&gt;
+&lt;/div&gt;
+&lt;div&gt;
+    &lt;ag-grid-angular style="width: 100%; height: 500px;"
+                     class="ag-fresh"
+
+                     [columnDefs]="columnDefs"
+                     [rowData]="rowData"
+
+                     rowSelection="multiple"
+
+                     suppressRowClickSelection
+                     suppressHorizontalScroll
+                     suppressClickEdit
+
+                     (gridReady)="onGridReady($event)"
+                     (rowDoubleClicked)="onRowDoubleClicked($event)"&gt;
+    &lt;/ag-grid-angular&gt;
+&lt;/div&gt;
+
+&lt;ng-template [ngIf]="editInProgress"&gt;
+    &lt;app-athlete-edit-screen [athlete]="athleteBeingEdited"
+                             (onAthleteSaved)="onAthleteSaved($event)"&gt;&lt;/app-athlete-edit-screen&gt;
+&lt;/ng-template&gt;
+</snippet>
+
+            <p>There are a number of changes above - let's walk through them:</p>
+
+            <snippet>suppressClickEdit</snippet>
+
+            <p>This property prevents a cell from going into edit mode when double clicked on, which is the default behaviour
+            for an editable cell. In our application however we want to make use of a separate component to do this for us.</p>
+
+            <snippet>(rowDoubleClicked)="onRowDoubleClicked($event)</snippet>
+
+            <p>We've removed the cell edit handler we had before and replaced it with a row based one. We'll use this event
+            to launch our <code>AthleteEditScreenComponent</code>.</p>
+
+            <snippet>&lt;app-athlete-edit-screen [athlete]="athleteBeingEdited"</snippet>
+
+            <p>When we display our <code>AthleteEditScreenComponent</code> we'll also pass in an <code>Athlete</code> now.</p>
+
+            <p>When creating new a new <code>Athlete</code> this refence will be <code>null</code>, but when we edit an
+            existing row we'll pass in the row (or <code>Athlete</code>, as each row of data is an <code>Athlete</code>)
+            to be edited with our <code>AthleteEditScreenComponent</code>.</p>
+
+            <snippet>
+private athleteBeingEdited: Athlete = null;
+onRowDoubleClicked(params: any) {
+    if (this.editInProgress) {
+        return;
+    }
+
+    this.athleteBeingEdited = &lt;Athlete&gt;params.data;
+    this.editInProgress = true;
+}
+</snippet>
+            <p>This handler will be invoked when a user double clicks on a row. If an edit is already in progress we'll
+                ignore the request, but if not we'll store the row double clicked on - this will be passed to the <code>AthleteEditScreenComponent</code>
+            via property binding.</p>
+
+            <p>Finally, we set the <code>editInProgress</code> property which will cause the <code>AthleteEditScreenComponent</code>
+                to be displayed.</p>
+
+<snippet>
+onAthleteSaved(savedAthlete: Athlete) {
+    this.athleteService.save(savedAthlete)
+        .subscribe(
+            success => {
+                console.log('Athlete saved');
+                this.setAthleteRowData();
+            },
+            error => console.log(error)
+        );
+
+    this.athleteBeingEdited = null;
+    this.editInProgress = false;
+}
+</snippet>
+            <p>Here we've made one small change to <code>onAthleteSaved</code> -  we reset <code>athleteBeingEdited</code>
+            to null once a save operation is complete, so that it's ready for the next insert or edit operation.</p>
+
+            <p>Switching our attention to <code>AthleteEditScreenComponent</code> next, we have a few small changes to make
+            to take account of an existing <code>Athlete</code> being passed in to be edited:</p>
+
+            <snippet>@Input() athlete: Athlete = null;</snippet>
+
+            <p>Here we let Angular know that we're expecting an <code>Athlete</code> to be passed in. Something will always
+            be passed in here - either a valid <code>Athlete</code> in the case of an edit operation, or <code>null</code>
+            in the case of an insert operation.</p>
+
+<snippet>
+ngOnInit() {
+    if (this.athlete) {
+        this.name = this.athlete.name;
+        this.country = this.athlete.country;
+        this.rowData = this.athlete.results.slice(0);
+    }
+}
+</snippet>
+
+            <p>When our component is initialised we check if an <code>Athlete</code> has been supplied - if it has, then we
+            populate our components fields with the details passed in, ready for the user to edit.</p>
+
+<snippet>
+saveAthlete() {
+    const athlete = new Athlete();
+
+    athlete.id = this.athlete ? this.athlete.id : null;
+</snippet>
+            <p>And finally, we check again if we're editing an <code>Athlete</code> when the use clicks save. If we are,
+            we also set the <code>Athlete</code> <code>ID</code> so that when it reaches our REST service we'll do an update
+            on the existing record, as opposed to inserting a new record.</p>
+
+            <p>And that's it! If we now double click on a row we'll be presented with a pre-populated <code>AthleteEditScreenComponent</code>,
+            ready for us to edit.</p>
+
+            <img src="./athlete-edit-2.png" style="width: 100%">
+
+            <p>With a little styling applied, we'll end up with this: </p>
+            <img src="./fist-pass-complete.png" style="width: 100%">
 
 
+            <h4>Optimistic Locking</h4>
+
+            <p>We've adopted an optimistic locking stragety here - we assume we can edit/delete something and that no one else
+                has modified what we're attempting to edit before us.</p>
+
+            <p>This is a fairly mechanism to use, but it has it's downsides. It we attempt to edit/delete something that another
+            user has edited before us, we'll get an error. This again is normal and in a real application you would code
+                for this - either let the user know that this has occurred, or do a check before the user attempts it (or both).</p>
+
+            <p>This optimistic locking is by an large handled for us by Spring JPA by the use of versioning. Each time a record is
+            changes the version will be bumped up and the result stored in the DB. When a change is attemped Spring JPA will check
+            the current version against the version in the DB - if they're the the same the edit can continue, but if not an error will
+            be raised.</p>
+
+            <p>This versioning is done by adding the following to the <code>Entity</code>'s we want to version - in our case
+            we only need to do this for <code>Athlete</code> and <code>Result</code> (<code>Country</code> and <code>Sport</code> cannot be edited).</p>
+
+<snippet language="java">
+@Entity
+public class Athlete {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Version()
+    private Long version = 0L;
+</snippet>
+
+            <p>Here the <code>@Version</code> annotation let's Spring JPA know that we want to version this class - the
+                rest just happens automagically!</p>
+
+
+            <h3>Section Break!</h3>
+            <p>This will serve as a good place to do a quick check - we've done an awful lot of coding here, with lots to digest.</p>
+
+            <p>The code to this point can be found in the <a href="">Part-4a</a> branch in Github, but you can also see the main
+            classes etc below.</p>
+
+            <show-sources example=""
+                          sources="{
+                            [
+                                { root: './crud-app/', files: 'app.module.ts' },
+                                { root: './crud-app/grid/', files: 'grid.component.ts,grid.component.html' },
+                                { root: './crud-app/athlete-edit-screen/', files: 'athlete-edit-screen.component.ts,athlete-edit-screen.component.html' },
+                                { root: './crud-app/services/', files: 'athlete.service.ts,static-data.service.ts' },
+                                { root: './crud-app/model/', files: 'athlete.model.ts,country.model.ts,result.model.ts,sport.model.ts,static-data.model.ts' }
+                            ]
+                          }"
+                          language="ts"
+                          highlight="true"
+                          exampleHeight="500px">
+            </show-sources>
 
             <h2>Summary</h2>
 
