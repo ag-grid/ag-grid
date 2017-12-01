@@ -804,6 +804,29 @@ saveAthlete() {
 
             <img src="./athlete-edit-2.png" style="width: 100%">
 
+            <p>With a little styling applied, we'll end up with this: </p>
+            <img src="./fist-pass-complete.png" style="width: 100%">
+
+            <p>This will serve as a good place to do a quick check - we've done an awful lot of coding here, with lots to digest.</p>
+
+            <p>The code to this point can be found in the <a href="">Part-4a</a> branch in Github, but you can also see the main
+            classes etc below.</p>
+
+            <show-sources example=""
+                          sources="{
+                            [
+                                { root: './crud-app/', files: 'app.module.ts' },
+                                { root: './crud-app/grid/', files: 'grid.component.ts,grid.component.html' },
+                                { root: './crud-app/athlete-edit-screen/', files: 'athlete-edit-screen.component.ts,athlete-edit-screen.component.html' },
+                                { root: './crud-app/services/', files: 'athlete.service.ts,static-data.service.ts' },
+                                { root: './crud-app/model/', files: 'athlete.model.ts,country.model.ts,result.model.ts,sport.model.ts,static-data.model.ts' }
+                            ]
+                          }"
+                          language="ts"
+                          highlight="true"
+                          exampleHeight="500px">
+            </show-sources>
+
             <h2>Summary</h2>
 
             <p>See you next time!</p>
