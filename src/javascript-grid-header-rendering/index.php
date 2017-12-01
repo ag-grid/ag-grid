@@ -583,7 +583,7 @@ var myColumns = {
         <h2 id="deprecated-header-rendering"><span style="color: darkred;">DEPRECATED -</span> Header Rendering</h2>
 
         <note>
-            Check <a href="../javascript-grid-column-header>">Column Headers</a> for the new way of
+            Check <a href="../javascript-grid-column-header">Column Headers</a> for the new way of
             specifying templates in ag-Grid. This old way for doing headers is kept in ag-Grid for
             ag-Grid v14 only so both ways are working concurrently. In v15 we plan to drop the deprecated
             way shown in this section.

@@ -198,7 +198,7 @@ gridOptions.api.refreshHeader();</snippet>
 <h1 id="saving-and-restoring-column-state">Saving and Restoring Column State</h1>
 
 <p>
-It is possible to save and subsequently restore the column state via the <a href="../javascript-column-api/">Column API</a>.
+It is possible to save and subsequently restore the column state via the <a href="../javascript-grid-column-api//">Column API</a>.
 Examples of state include column visibility, width, row groups and values.
 </p>
 <p>
