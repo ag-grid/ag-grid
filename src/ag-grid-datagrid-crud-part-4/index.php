@@ -41,6 +41,14 @@ include('../includes/mediaHeader.php');
 
             <h2>Introduction</h2>
 
+            <note img="'../ag-grid-datagrid-crud-part-1/updated_transparent.png'" height="'50'" width="'123'">
+                <p>While writing this part of the blog I uncovered two bugs in work done so far.</p>
+                <p>If you've been following this series so far please take a quick look at both parts
+                    <a href="../ag-grid-datagrid-crud-part-1/">1</a> and <a href="../ag-grid-datagrid-crud-part-2/">2</a>
+                to see the changes made (look for <code>Updated!</code>).</p>
+                <p>The lesson here? Write tests before you write code, and write them often!</p>
+            </note>
+
             <note>The completed code for this blog series can be found <a
                         href="https://github.com/seanlandsman/ag-grid-crud">here (once the series is complete)</a>,
                 with this particular section being under <a
@@ -342,7 +350,7 @@ onCellValueChanged(params: any) {
             <p>Here <code>rowSelection="multiple"</code> allows for one or more rows to be selected, and <code>suppressRowClickSelection</code>
                 prevents rows from being selected by clicking on a row.</p>
 
-            <p>What? Why would we want to prevent selection on row clicks? How will we make select a row?</p>
+            <p>What? Why would we want to prevent selection on row clicks? How will we select a row?</p>
 
             <p>Well, how about we add a checkbox to each row, making this our row selection mechanism?</p>
 
@@ -861,7 +869,236 @@ public class Athlete {
                           exampleHeight="500px">
             </show-sources>
 
+            <h2>Home Stretch - Final Improvements</h2>
+
+            <p>We're pretty much there now - we'll make two more sets of improvements to what we have so far.</p>
+
+            <p>The first is around look & feel/usability, and the second will be around reducing unnecessary Grid redraws
+                (and network calls).</p>
+
+            <h3>Usability - Overlay Edit Component</h3>
+
+            <p>At the moment the <code>AthleteEditScreenComponent</code> appears below the application (specifically below the grid).
+            This works just fine, but visually it would look & feel better if it would appear over the Grid - make it feel
+            as if the <code>AthleteEditScreenComponent</code> was part of the Grid itself.</p>
+
+            <p>In order to do this we need capture the Grid co-ordinates and supply them to <code>AthleteEditScreenComponent</code>
+            when it's about to be displayed, so that <code>AthleteEditScreenComponent</code> can position itself accordingly.</p>
+
+            <p>First, let's capture the Grid co-ordinates:</p>
+
+<snippet language="html">
+&lt;ag-grid-angular style="width: 100%; height: 500px;"
+                 class="ag-fresh"
+
+                 #grid
+
+                 [columnDefs]="columnDefs"
+                 [rowData]="rowData"
+
+</snippet>
+
+            <p>Here we grab a reference to the grid with <code>#grid</code> - we'll use it to grab the Grids dimensions and co-ordinates:</p>
+
+<snippet>
+@ViewChild('grid', {read: ElementRef}) public grid;
+private containerCoords: {} = null;
+
+private updateContainerCoords() {
+    this.containerCoords = {
+        top: this.grid.nativeElement.offsetTop,
+        left: this.grid.nativeElement.offsetLeft,
+        height: this.grid.nativeElement.offsetHeight,
+        width: this.grid.nativeElement.offsetWidth
+    };
+}
+</snippet>
+
+            <p>We store the Grid dimensions and co-ordinates here - we'll update this information just before the <code>AthleteEditScreenComponent</code>
+            is displayed (just before a new row is inserted, or when an existing row is double clicked/edited).</p>
+
+            <p>We pass this information to the <code>AthleteEditScreenComponent</code>:</p>
+
+<snippet language="html">
+&lt;ng-template [ngIf]="editInProgress"&gt;
+    &lt;app-athlete-edit-screen [athlete]="athleteBeingEdited"
+                             [containerCoords]="containerCoords"
+                             (onAthleteSaved)="onAthleteSaved($event)"&gt;&lt;/app-athlete-edit-screen&gt;
+&lt;/ng-template&gt;
+</snippet>
+
+            <p>Let's now switch to the <code>AthleteEditScreenComponent</code> and see how we use this.</p>
+            
+            <p>In our <code>AthleteEditScreenComponent</code> template we'll store a reference to the main div, and bind to the top & left co-ordinates:</p>
+<snippet>
+&lt;div class="input-panel" [style.width]="width" [style.top]="top" [style.left]="left" #panel&gt;
+    &lt;div style="display: inline-block"&gt;
+</snippet>
+
+            <p>Then in the <code>AthleteEditScreenComponent</code> component itself:</p>
+
+<snippet>
+// to position this component relative to the containing component
+@Input() containerCoords: any = null;
+@ViewChild('panel', {read: ElementRef}) public panel;
+private width: any;
+private left: any;
+private top: any;
+
+ngOnInit() {
+    this.setPanelCoordinates();
+    ... rest of the method
+}
+
+private setPanelCoordinates() {
+    // make our width 100pixels smaller than the container
+    this.width = (this.containerCoords.width - 100);
+
+    // set our left position to be the container left position plus half the difference in widths between this
+    // component and the container, minus the 15px padding
+    this.left = Math.floor(this.containerCoords.left + (this.containerCoords.width - this.width) / 2 - 15) + 'px';
+
+    // set our left position to be the container top position plus half the difference in height between this
+    // component and the container
+    this.top = Math.floor(this.containerCoords.top + (this.containerCoords.height - this.panel.nativeElement.offsetHeight) / 2) + 'px';
+
+    // add the px suffix back in (omitted above so that maths can work)
+    this.width = this.width + 'px'
+}
+</snippet>
+
+            <p>With this in place our <code>AthleteEditScreenComponent</code> will position itself within the Grid, which makes
+            for a better visual experience:</p>
+
+            <img src="./final-app.png" style="width: 100%">
+
+            <h3>Performance Improvements</h3>
+
+            <p>As we saw earlier, we retrieve the entire Grid data and redraw the entire Grid each time we make a change
+                (on either create, update or delete). This is needlessly inefficient, and the Grid can help us do less
+            network & Grid draws via use of it's <a href="../javascript-grid-data-update">Update</a> functionality.</p>
+
+            <p>First, we need to define a functional that will allow the Grid to uniquely identify each row in order to
+            find data within it.</p>
+
+            <p>We do this by defining a <code>getRowNodeId</code> function and binding to it:</p>
+
+<snippet language="html">
+&lt;ag-grid-angular style="width: 100%; height: 500px;"
+                 class="ag-fresh"
+
+                 ...reset of grid definition
+
+                 [getRowNodeId]="getRowNodeId"
+</snippet>
+
+            <p>And in our Grid component itself:</p>
+
+<snippet>
+getRowNodeId(params) {
+    return params.id;
+}
+</snippet>
+
+            <p>Our data has an obvious attribute to use to uniquely identify each row - the <code>ID</code> attribute.</p>
+
+            <p>We can now use the Grids <code>api.updateRowData</code> functionality to only update/redraw changed rows -
+                not the entire grid.</p>
+
+            <p>When we delete row(s):</p>
+
+<snippet>
+deleteSelectedRows() {
+    const selectRows = this.api.getSelectedRows();
+
+    // create an Observable for each row to delete
+    const deleteSubscriptions = selectRows.map((rowToDelete) => {
+        return this.athleteService.delete(rowToDelete);
+    });
+
+    // then subscribe to these and once all done, update the grid
+    Observable.forkJoin(...deleteSubscriptions).subscribe(
+        results => {
+            // only redraw removed rows...
+            this.api.updateRowData(
+                {
+                    remove: selectRows
+                }
+            );
+        }
+    );
+}
+</snippet>
+
+            <p>Once all the rows have been successfully deleted we let the grid know which rows to remove. This results
+                is a much faster user experience in that the Grid only redraws removed rows, and that we now no longer make
+            another network call to retrieve the latest Grid data.</p>
+
+            <p>When we create or insert rows:</p>
+
+<snippet>
+onAthleteSaved(athleteToSave: Athlete) {
+    this.athleteService.save(athleteToSave)
+        .subscribe(
+            savedAthlete => {
+                console.log('Athlete saved', savedAthlete.name);
+
+                const added = [];
+                const updated = [];
+                if (athleteToSave.id) {
+                    updated.push(savedAthlete);
+                } else {
+                    added.push(savedAthlete);
+                }
+
+                this.api.updateRowData(
+                    {
+                        add: added,
+                        update: updated
+                    }
+                );
+            },
+            error => console.log(error)
+        );
+
+    this.athleteBeingEdited = null;
+    this.editInProgress = false;
+}
+</snippet>
+
+            <p>The <code>onAthleteSaved</code> method is called when we create a new record, or when we edit an existing one.</p>
+
+            <p>In order to tell the Grid if rows are being added or updated, we'll check for the existence of the <code>Athlete</code>
+            <code>ID</code> - if it's present we're doing an update, but if it's not we're performing an add.</p>
+
+            <p>With this information we can let the Grid know to either add or update the effected row:</p>
+
+<snippet>
+this.api.updateRowData(
+    {
+        add: added,
+        update: updated
+    }
+);
+</snippet>
+
+            <p>As with the delete improvement above this results in a much faster refresh and a far better user experience.</p>
+
+            <p>We've only scratched the surface on what we can do with the Grid here - I suggest you have a look at the
+                <a href="../javascript-grid-data-update">Update</a> documentation for more information on what's possible.</p>
+
             <h2>Summary</h2>
+
+            <p>Well this was a huge part of this series. We covered a lot of material and a lof ground, but we end up with
+            a fair example of how you might write your own CRUD application using ag-Grid.</p>
+
+            <p>We've skipped a lot too though - there's very little in the way of validation or error handling here, mostly
+            to focus on the important ideas I'm trying to convey, but these are critical and shouldn't be skipped your side!</p>
+
+            <p>I hope that this has been helpful - if you have any question please let me know below.</p>
+
+            <p>In the next part we'll start looking at some of the more advanced Grid functionality around interpreting your data,
+            specifically how you can use Aggregation and Pivoting to get a high level picture of what your data is telling you.</p>
 
             <p>See you next time!</p>
 
