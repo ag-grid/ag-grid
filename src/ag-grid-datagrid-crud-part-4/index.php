@@ -1087,6 +1087,22 @@ this.api.updateRowData(
             <p>We've only scratched the surface on what we can do with the Grid here - I suggest you have a look at the
                 <a href="../javascript-grid-data-update">Update</a> documentation for more information on what's possible.</p>
 
+            <show-sources example=""
+                          sources="{
+                            [
+                                { root: './crud-app-final/', files: 'app.module.ts' },
+                                { root: './crud-app-final/grid/', files: 'grid.component.ts,grid.component.html' },
+                                { root: './crud-app-final/athlete-edit-screen/', files: 'athlete-edit-screen.component.ts,athlete-edit-screen.component.html' },
+                                { root: './crud-app-final/services/', files: 'athlete.service.ts,static-data.service.ts' },
+                                { root: './crud-app-final/model/', files: 'athlete.model.ts,country.model.ts,result.model.ts,sport.model.ts,static-data.model.ts' }
+                            ]
+                          }"
+                          language="ts"
+                          highlight="true"
+                          exampleHeight="500px">
+            </show-sources>
+
+
             <h2>Summary</h2>
 
             <p>Well this was a huge part of this series. We covered a lot of material and a lof ground, but we end up with
