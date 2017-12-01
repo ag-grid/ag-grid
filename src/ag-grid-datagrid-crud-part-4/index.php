@@ -7,6 +7,9 @@ $pageKeyboards = "ag-grid datagrid crud enterprise";
 include('../includes/mediaHeader.php');
 ?>
 
+<script type="text/javascript" src="/dist/thickbox/thickbox.js"></script>
+<link rel="stylesheet" href="/dist/thickbox/thickbox.css" type="text/css" media="screen" />
+
 <div class="row">
     <div class="col-sm-2" style="padding-top: 20px;">
         <img style="vertical-align: baseline;" src="../images/logo/SVG_ag_grid_bright-bg.svg" width="120px"/>
@@ -252,8 +255,7 @@ private createColumnDefs(countries: Country[]) {
 
             <p>With this in place we can now edit both the <code>name</code> and <code>country</code> columns:</p>
 
-            <img src="./simple-editing.png" style="width: 100%">
-
+            <a href="./simple-editing.png" class="thickbox"><img src="./simple-editing.png" style="width: 100%"/></a>
 
             <h3>Persisting Our Edits</h3>
 
@@ -370,7 +372,7 @@ onCellValueChanged(params: any) {
 }
 </snippet>
 
-            <img src="./checkbox-selection.png" style="width: 100%">
+            <a href="./checkbox-selection.png" class="thickbox"><img src="./checkbox-selection.png" style="width: 100%"/></a>
 
             <p>Next, let's add a button that a user can use to delete the selected rows - we'll also add a utility
                 method
@@ -490,7 +492,7 @@ deleteSelectedRows() {
             <p>It might look like there's a lot going on here, but what we end up with will be something that looks like
                 this:</p>
 
-            <img src="./athlete-edit-1.png" style="width: 100%">
+            <a href="./athlete-edit-1.png" class="thickbox"><img src="./athlete-edit-1.png" style="width: 100%"/></a>
 
             <p>In a nutshell this screen will show us the full details of an <code>Athlete</code>. In the top row we
                 have the <code>name</code> and <code>country</code> fields, and below this we'll list the various
@@ -810,11 +812,11 @@ saveAthlete() {
             <p>And that's it! If we now double click on a row we'll be presented with a pre-populated <code>AthleteEditScreenComponent</code>,
             ready for us to edit.</p>
 
-            <img src="./athlete-edit-2.png" style="width: 100%">
+            <a href="./athlete-edit-2.png" class="thickbox"><img src="./athlete-edit-2.png" style="width: 100%"/></a>
+
 
             <p>With a little styling applied, we'll end up with this: </p>
-            <img src="./fist-pass-complete.png" style="width: 100%">
-
+            <a href="./fist-pass-complete.png" class="thickbox"><img src="./fist-pass-complete.png" style="width: 100%"/></a>
 
             <h4>Optimistic Locking</h4>
 
@@ -970,7 +972,7 @@ private setPanelCoordinates() {
             <p>With this in place our <code>AthleteEditScreenComponent</code> will position itself within the Grid, which makes
             for a better visual experience:</p>
 
-            <img src="./final-app.png" style="width: 100%">
+            <a href="./final-app.png" class="thickbox"><img src="./final-app.png" style="width: 100%"/></a>
 
             <h3>Performance Improvements</h3>
 
