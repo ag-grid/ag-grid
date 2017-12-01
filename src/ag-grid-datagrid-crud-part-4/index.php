@@ -399,16 +399,14 @@ rowsSelected() {
 
 deleteSelectedRows() {
     const selectRows = this.api.getSelectedRows();
-    selectRows.forEach((rowToDelete) => {
-        this.athleteService.delete(rowToDelete)
-            .subscribe(
-                success => {
-                    console.log(`Deleted athlete ${rowToDelete.name}`);
-                },
-                error => console.log(error)
-            );
+
+    // create an Observable for each row to delete
+    const deleteSubscriptions = selectRows.map((rowToDelete) => {
+        return this.athleteService.delete(rowToDelete);
     });
-    this.setAthleteRowData();
+
+    // then subscribe to these and once all done, refresh the grid data
+    Observable.forkJoin(...deleteSubscriptions).subscribe(results => this.setAthleteRowData())
 }
 </snippet>
 
