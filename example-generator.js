@@ -22,9 +22,13 @@ function moveScriptsWithoutToken(scripts, dest, token) {
         let filename = path.basename(file);
         fsExtra.rename(dest + '/' + filename, dest + '/' + filename.replace(token, ''));
     };
-    
+
     copyFilesSync(scripts, dest);
     scripts.forEach(file => removeTokenFromFile(file));
+}
+
+function extractComponentFileNames(scripts, token) {
+    return scripts.map(script => path.basename(script).replace(token, ''));
 }
 
 function copyGlobSync(globString, dest) {
@@ -81,8 +85,7 @@ module.exports = (cb, scope) => {
     require('ts-node').register();
     const {vanillaToReact} = require('./src/example-runner/vanilla-to-react.ts');
     const {vanillaToAngular} = require('./src/example-runner/vanilla-to-angular.ts');
-
-    const appModuleTS = fs.readFileSync(path.join('./src', 'example-runner', 'angular-generated-app-module.ts'));
+    const {appModuleAngular} = require('./src/example-runner/angular-app-module.ts');
 
     let count = 0;
     forEachExampleToGenerate(
@@ -105,7 +108,7 @@ module.exports = (cb, scope) => {
             const sources = [fs.readFileSync(script, {encoding: 'utf8'}), fs.readFileSync(document, {encoding: 'utf8'})];
             const _gen = path.join('./src', section, example, '_gen');
 
-            let source, indexJSX, appComponentTS;
+            let source, indexJSX;
 
             let inlineStyles;
             const style = jQuery(`<div>${sources[1]}</div>`).find('style');
@@ -114,8 +117,9 @@ module.exports = (cb, scope) => {
                 inlineStyles = prettier.format(style.text(), {parser: 'css'});
             }
 
+            const reactScripts = glob.sync(path.join('./src', section, example, '*_react*'));
             try {
-                source = vanillaToReact(sources, options);
+                source = vanillaToReact(sources, options, extractComponentFileNames(reactScripts, '_react'));
                 indexJSX = prettier.format(source, {printWidth: 120});
             } catch (e) {
                 console.error(`Failed at ./src/${section}/${example}`, e);
@@ -124,9 +128,13 @@ module.exports = (cb, scope) => {
                 //throw new Error('Failed generating the react version');
             }
 
+            const angularScripts = glob.sync(path.join('./src', section, example, '*_angular*'));
+            let angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
+            let appComponentTS, appModuleTS;
             try {
-                source = vanillaToAngular(sources, options);
+                source = vanillaToAngular(sources, options, angularComponentFileNames);
                 appComponentTS = prettier.format(source, {printWidth: 120, parser: 'typescript'});
+                appModuleTS = prettier.format(appModuleAngular(angularComponentFileNames), {printWidth: 120, parser: 'typescript'});
             } catch (e) {
                 console.error(`Failed at ./src/${section}/${example}`, e);
                 return;
@@ -143,7 +151,6 @@ module.exports = (cb, scope) => {
             }
             copyGlobSync(stylesGlob, reactPath);
             copyFilesSync(scripts, reactPath);
-            const reactScripts = glob.sync(path.join('./src', section, example, '*_react*'));
             moveScriptsWithoutToken(reactScripts, reactPath, '_react');
 
             // fetch and move angular files to _gen/angular
@@ -156,8 +163,7 @@ module.exports = (cb, scope) => {
             }
             copyGlobSync(stylesGlob, angularPath);
             copyFilesSync(scripts, angularPath);
-            const angularScripts = glob.sync(path.join('./src', section, example, '*_angular*'));
-            moveScriptsWithoutToken(angularScripts, angularPath, '_angular');
+            moveScriptsWithoutToken(angularScripts, angularPath + '/app', '_angular');
 
             // fetch and move vanilla files to _gen/vanilla
             const vanillaPath = path.join(_gen, 'vanilla');
