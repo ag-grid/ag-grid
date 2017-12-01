@@ -48,11 +48,8 @@ $CURRENT_SPRINT = "3";
     <div class="row">
         <div class="row">
             <div class="col-md-12" style="padding-top: 10px; padding-bottom: 5px;">
-                <h1>Tracking your Items in the Development Pipeline</h1>
+                <h1>Current Sprint: <?= $CURRENT_SPRINT ?> - Target Release: Week Commencing 11th December</h1>
             </div>
-        </div>
-        <div class="col-md-12 sprint-container">
-            <span class="sprint-label">Current Sprint: <?= $CURRENT_SPRINT ?> - Target Release: Week Commencing 11th December</span>
         </div>
     </div>
     <div class="row">
@@ -60,10 +57,11 @@ $CURRENT_SPRINT = "3";
             <div class="global-search-pane">
                 <div class="report-description">                                   
                     <ul>
-                        <li>Current Sprint: items in the next release.</li>
+                        <li>Current Sprint: items targetted to be in the next release.</li>
                         <li>Bugs: items reported via Zendesk/Github - these are prioritised above Feature Requests.</li>
                         <li>Standalone Feature Requests: items that can be addressed on their own. These are recorded in a backlog and prioritised.</li>
                         <li>Epic Feature Requests: items that we group into Epics. We then prioritise based on the Epic rather than the individual feature request.</li>
+                        <li>Epics: items that group Epic Feature Requests. These are recorded in a backlog and prioritised.</li>
                         <li>Parked Items: items parked for the immediate due to complexity/relevance to our entire user base.</li>
                     </ul>
                 </div>                
@@ -80,6 +78,7 @@ $CURRENT_SPRINT = "3";
                     <li><a href="#bugs" class="report-link">Bugs</a></li>
                     <li><a href="#fr" class="report-link">Standalone Feature Requests</a></li>
                     <li><a href="#epics" class="report-link">Epic Feature Requests</a></li>
+                    <li><a href="#epics-group" class="report-link">Epics</a></li>
                     <li><a href="#parked" class="report-link">Parked Items</a></li>
                 </ul>
                 <div class="tab-content" style="margin-top: 5px">
@@ -110,19 +109,24 @@ $CURRENT_SPRINT = "3";
                     <div class="tab-pane top-level-pane" id="epics">
                         <?php
                         $displayEpic = 1;
-                        $suppressTargetSprint = 0;
+                        $suppressTargetSprint = 1;
                         $report_type = 'issue_by_epic';
                         include '../jira_reports/jira_report.php';
                         ?>
                     </div>
-                    <div class="tab-pane top-level-pane" id="parked">
-                        <div class="report-description">
-                            Parked Items
-                        </div>
+                    <div class="tab-pane top-level-pane" id="epics-group">
                         <?php
                         $displayEpic = 0;
-                        $report_type = 'current_release';
-                        //                        include '../jira_reports/jira_report.php';
+                        $suppressTargetSprint = 0;
+                        $report_type = 'epic_by_priority';
+                        include '../jira_reports/jira_report.php';
+                        ?>
+                    </div>
+                    <div class="tab-pane top-level-pane" id="parked">
+                        <?php
+                        $displayEpic = 0;
+                        $report_type = 'parked';
+                        include '../jira_reports/jira_report.php';
                         ?>
                     </div>
                 </div>

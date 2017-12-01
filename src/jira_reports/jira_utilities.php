@@ -3,11 +3,12 @@ date_default_timezone_set('Europe/London');
 
 const JIRA_ENDPOINT = 'https://ag-grid.atlassian.net/rest/api/2/search?jql=filter=';
 const PIPELINE_SECTIONS = array(
-    'current_release' => JIRA_ENDPOINT . '11730+order+by+status+desc',
-    'bugs' => JIRA_ENDPOINT . '11721+order+by+priority+desc',
-    'feature_requests' => JIRA_ENDPOINT . '11723+order+by+priority+desc',
+    'current_release' => JIRA_ENDPOINT . '11730+order+by+priority+DESC',
+    'bugs' => JIRA_ENDPOINT . '11721+ORDER+BY+cf[10515]+ASC+%2C+priority+DESC',
+    'feature_requests' => JIRA_ENDPOINT . '11723+ORDER+BY+cf[10515]+ASC+%2C+priority+DESC',
     'issue_by_epic' => JIRA_ENDPOINT . '11726+order+by+cf%5B10005%5D+desc+%2C+priority+desc',
-    'epic_by_priority' => JIRA_ENDPOINT . '11727+order+by+cf[10005]+asc+%2C+priority+desc'
+    'epic_by_priority' => JIRA_ENDPOINT . '11727+order+by+cf[10005]+asc+%2C+priority+desc',
+    'parked' => JIRA_ENDPOINT . '11732'
 );
 
 function remoteJiraRequest($report_type, $startAt, $maxResults, $username, $password)

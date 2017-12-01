@@ -1,6 +1,6 @@
 {
-  "local-dev": true,
-  "update-mock-data": false,
-  "username": "jira username",
-  "password": "jira password"
+  "local-dev": false,
+  "update-mock-data": true,
+  "username": "alberto.gutierrez@ag-grid.com",
+  "password": "eastex01"
 }
