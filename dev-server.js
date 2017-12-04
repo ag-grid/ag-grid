@@ -156,8 +156,8 @@ module.exports = callback => {
     addWebpackMiddleware(app, 'react', '/dev/ag-grid-react');
 
     // angular is another story
-    serveAndWatchAngular(app);
-    watchAndGenerateExamples();
+    // serveAndWatchAngular(app);
+    // watchAndGenerateExamples();
 
     // PHP
     launchPhpCP(app);
