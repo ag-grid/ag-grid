@@ -87,6 +87,7 @@
     "loader-utils": "^1.1.0",
     "minimist": "^1.2.0",
     "node-sass": "^4.5.3",
+    "popper.js": "^1.12.9",
     "postcss-loader": "^2.0.6",
     "postcss-scss": "^1.0.2",
     "precss": "^2.0.0",

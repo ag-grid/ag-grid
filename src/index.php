@@ -1,9 +1,11 @@
+<?php require "example-runner/utils.php" ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,900" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <title>Best HTML 5 Grid in the World</title>
 
@@ -200,6 +202,58 @@
             </div>
         </section>
     </div>
+
+    <div id="stage-scenarios">
+        <h2 id="heading-scenarios">Complex Scenarios
+            <span>Made Easy.</span>
+        </h2>
+
+        <ul id="nav-scenarios">
+            <li><a href="#" class="active">Rich Grid</a></li>
+            <li><a href="#">Trader Live Dashboard</a></li>
+            <li><a href="#">Grid API Demo</a></li>
+            <li><a href="#">File Explorer</a></li>
+        </ul>
+
+        <section>
+            <div class="demos">
+                <div id="demo-1" class="demo current">
+
+                    <div id="demo-1-header">
+                        <div>
+                            <input type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
+                        </div>
+
+                        <div>
+                            <span id="rowCount"></span> rows(s)
+                        </div>
+                    </div>
+
+                    <div id="bestHtml5Grid" class="ag-theme-material"></div>
+                </div>
+
+                <div id="demo-2" class="demo">
+                    <?php include 'home/demo-2.php' ?>
+                </div>
+
+                <div id="demo-3" class="demo">
+                    Demo 3
+                </div>
+
+                <div id="demo-4" class="demo">
+                    Demo 4
+                </div>
+            </div>
+
+            <div id="view-code">
+                <a href="#">View Code</a>
+            </div>
+        </section>
+    </div>
+
+    <?= globalAgGridScript(true) ?>
     <script src="dist/homepage.js"></script>
+    <script inline src="example-rich-grid/data.js"></script>
+    <script inline src="example-rich-grid/example.js"></script>
 </body>
 </html>

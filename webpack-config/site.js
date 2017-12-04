@@ -86,6 +86,18 @@ module.exports = {
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
         new ExtractTextPlugin({filename: '[name].css'}),
-        new webpack.DefinePlugin({MAX_ACTIVE_EXAMPLES: JSON.stringify(3)})
+
+
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery',
+            'window.jQuery': 'jquery',
+            Popper: ['popper.js', 'default']
+            // In case you imported plugins individually, you must also require them here:
+            // Util: 'exports-loader?Util!bootstrap/js/dist/util',
+            // Dropdown: 'exports-loader?Dropdown!bootstrap/js/dist/dropdown'
+        }),
+
+        new webpack.DefinePlugin({MAX_ACTIVE_EXAMPLES: JSON.stringify(3)}),
     ]
 };
