@@ -1,3 +1,8 @@
+<?php
+// update when doing a release
+$NEXT_SPRINT = "4";
+?>
+
 <table class="aui" id="<?= 'content_' . $report_type ?>">
     <tbody>
     <?php
@@ -46,10 +51,15 @@
                             class="jim-table-header-content">Summary</span></th>
 
                 <?php
-                if (!$suppressTargetSprint) {
+                if ($suppressTargetSprint) {
                     ?>
                     <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
-                                class="jim-table-header-content">Target Sprint</span></th>
+                                class="jim-table-header-content">Status</span></th>
+                    <?php
+                }else{
+                    ?>
+                    <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header center-align"><span
+                                class="jim-table-header-content ">Sprint ETA</span></th>
                     <?php
                 }
                 ?>
@@ -77,14 +87,37 @@
 
             <!-- priority -->
             <?php
-            if (!$suppressTargetSprint) {
+            if ($suppressTargetSprint) {
                 ?>
-                <td class="jira-macro-table-underline-pdfexport center-align" nowrap>
-                    <span>
-                        <?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10515'}, FILTER_SANITIZE_STRING) ?>
-                    </span>
+                <td class="jira-macro-table-underline-pdfexport">
+                    <?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING); ?>
                 </td>
                 <?php
+            }else{
+                $sprintEta = filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10515'}, FILTER_SANITIZE_STRING);
+                if ($sprintEta == $NEXT_SPRINT) {
+                    ?>
+                    <td class="jira-macro-table-underline-pdfexport center-align" nowrap>
+                        <span>
+                            <?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10515'}, FILTER_SANITIZE_STRING) ?>
+                        </span>
+                    </td>
+                    <?php
+                } else if ($sprintEta) {
+                ?>
+                    <td class="jira-macro-table-underline-pdfexport center-align" nowrap>
+                    <span>
+                        <?= $NEXT_SPRINT ?> - <?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10515'}, FILTER_SANITIZE_STRING) ?>
+                    </span>
+                    </td>
+                <?php
+                } else {
+                ?>
+                    <td class="jira-macro-table-underline-pdfexport center-align" nowrap>
+                            <span>Backlog</span>
+                    </td>
+                <?php
+                }
             }
             ?>
         </tr>
