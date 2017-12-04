@@ -135,4 +135,27 @@ function toDate($str_value)
     return $date->format('j M Y');
 }
 
+function classForStatus($status) {
+    $class = "aui-lozenge-success";
+    switch ($status) {
+        case "In Progress":
+            $class = "aui-lozenge-current";
+            break;
+        case "Backlog":
+            $class = "aui-lozenge-complete";
+            break;
+    }
+
+    return $class;
+}
+
+function getResolutionIfApplicable($resolution) {
+    $result = "";
+
+    if(!empty($resolution) && $resolution != "Done") {
+        $result = "(".$resolution.")";
+    }
+
+    return $result;
+}
 ?>
