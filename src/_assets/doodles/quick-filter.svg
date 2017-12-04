@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="218px" height="42px" viewBox="0 0 218 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>quick-filter</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Chalkboard-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD" transform="translate(-98.000000, -277.000000)">
+            <g id="quick-filter" transform="translate(98.000000, 277.000000)">
+                <rect id="Rectangle-2" stroke="#8ABDE3" x="10.5" y="12.5" width="137" height="18"></rect>
+                <polyline id="Line-5" stroke="#8ABDE3" stroke-linecap="square" points="147 11 147.5 31.5 150.5 29.5"></polyline>
+                <path d="M11.5,11.5 L10.5,31.5" id="Line-2" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <g id="carret" transform="translate(19.000000, 15.000000)" stroke="#8ABDE3" stroke-linecap="square">
+                    <path d="M1.5,2.5 L1.5,11.5" id="Line-3"></path>
+                    <path d="M2.5,1.5 L0.5,1.5" id="Line-4"></path>
+                    <path d="M2.5,11.5 L0.5,11.5" id="Line-4-Copy"></path>
+                </g>
+                <circle id="Oval-Copy-7" stroke="#0084E7" cx="214.5" cy="3.5" r="3"></circle>
+                <rect id="Rectangle-3" stroke="#0084E7" x="4.5" y="3.5" width="201" height="38"></rect>
+                <path d="M205.5,0.5 L205.5,15.5" id="Line-10" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M198.5,3.5 L211.5,3.5" id="Line-11" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M0.5,3.5 L13.5,3.5" id="Line-11-Copy" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M1.5,41.5 L14.5,41.5" id="Line-11-Copy-2" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M178,15 L178,15.9746753 C178,16.1072836 178.052678,16.2344605 178.146447,16.3282287 L184.171771,22.3535534 C184.453076,22.634858 184.611111,23.0163888 184.611111,23.4142136 L184.611111,28.6111111 L187.388889,26.5277778 L187.388889,23.4142136 C187.388889,23.0163888 187.546924,22.634858 187.828229,22.3535534 L193.853553,16.3282287 C193.947322,16.2344605 194,16.1072836 194,15.9746753 L194,15 L178,15 Z" id="Path-19" stroke="#8ABDE3"></path>
+            </g>
+        </g>
+    </g>
+</svg>

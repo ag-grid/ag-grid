@@ -1,0 +1,29 @@
+@function encodecolor($string) {
+    @if $string == null {
+        @return '';
+    }
+
+    @if type-of($string) == 'color' {
+        $hex: str-slice(ie-hex-str($string), 4);
+        $string: unquote('#{$hex}');
+    }
+    $string: '%23' + $string;
+    @return $string;
+}
+
+$red: #e11f22;
+$blue-1: #00407f;
+$blue-2: #0084e7;
+$blue-3: #8abde3;
+$blue-4: #f1f7ff;
+$offwhite: rgb(249, 252, 255);
+$white: #ffffff;
+
+$max-width: 1380px;
+
+$primary: $blue-2;
+
+body {
+    background-color: $white;
+}
+

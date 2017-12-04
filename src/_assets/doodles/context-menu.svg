@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="222px" height="142px" viewBox="0 0 222 142" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>context-menu</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Chalkboard-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD" transform="translate(-63.000000, -577.000000)">
+            <g id="context-menu" transform="translate(63.000000, 577.000000)">
+                <circle id="Oval-Copy-13" stroke="#0084E7" cx="185.5" cy="3.5" r="3"></circle>
+                <circle id="Oval-Copy-14" stroke="#0084E7" cx="3.5" cy="43.5" r="3"></circle>
+                <circle id="Oval-Copy-15" stroke="#0084E7" cx="55.5" cy="112.5" r="3"></circle>
+                <path d="M211.5,23.5 L6.46097932,23.5" id="Line-4" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M211.5,43.5 L6.46097932,43.5" id="Line-4-Copy" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M91.5,63.5 L6.46097932,63.5" id="Line-4-Copy-2" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M221.5,63.5 L176.460979,63.5" id="Line-4-Copy-5" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M101.5,83.5 L17.4609793,83.5" id="Line-4-Copy-3" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M91.5,103.5 L6.46097932,103.5" id="Line-4-Copy-4" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M55.5,6.5 L55.5,108.685476" id="Line-12" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M185.5,6.5 L185.5,58.6854758" id="Line-12-Copy" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M195,140 L194,67" id="Line-13-Copy" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <path d="M197.732704,139.166667 L113.267296,139.833333" id="Line-14" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <path d="M188.5,79.5 L122,79.5" id="Line-15-Copy-3" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <path d="M188.5,99.5 L122,99.5" id="Line-15-Copy-4" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <path d="M188.5,89.5 L122,89.5" id="Line-15-Copy-5" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <path d="M188.5,109.5 L122,109.5" id="Line-15-Copy-6" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <path d="M188.5,129.5 L122,129.5" id="Line-15-Copy-7" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <rect id="Rectangle-6-Copy" stroke="#0084E7" x="115.5" y="70.5" width="81" height="71"></rect>
+                <rect id="Rectangle-6" stroke="#8ABDE3" x="113.5" y="68.5" width="81" height="71"></rect>
+                <polygon id="Path-5" stroke="#8ABDE3" points="100.5 57.5 100.5 65.8333333 102.833333 63.5 104.5 67.3333333 106.666667 65.8333333 104.5 62.8333333 107.5 62.3333333"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

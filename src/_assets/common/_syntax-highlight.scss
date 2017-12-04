@@ -1,0 +1,28 @@
+@import '~prismjs/themes/prism';
+
+pre[class*="language-"] {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    @extend .rounded;
+    background-color: $offwhite;
+    border: 1px solid $gray-300;
+    font-size: 80%;
+
+    .token.string {
+        color: $blue-2;
+    }
+
+    .token.operator {
+        background-color: transparent;
+    }
+
+    .token.boolean {
+        color: $red;
+    }
+
+}
+
+code {
+    color: $blue-1;
+    background-color: $white;
+}

@@ -1,0 +1,211 @@
+@import '../common/vars.scss';
+@import '../common/bootstrap.scss';
+@import '../common/syntax-highlight.scss';
+@import '../common/grid.scss';
+
+@import '../common/nav.scss';
+@import './punch.scss';
+
+#news-flash {
+    & > div {
+        @extend .text-center, .col, %card, .py-3, .display-5, .mb-5;
+        color: $gray-700;
+
+        a {
+            @extend .text-primary;
+        }
+    }
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+    80% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+#stage-frameworks {
+    @extend %stage;
+    background-color: $offwhite;
+
+    section#section-frameworks {
+        @extend .align-items-center;
+
+        & > div:nth-child(1) {
+            @extend .col-sm-5;
+        }
+
+        & > div:nth-child(2) {
+            @extend .col-sm-6, .ml-auto;
+        }
+
+        h2 {
+            @extend .display-4, .text-right, .mb-3;
+        }
+
+        p {
+            @extend .display-5, .text-right;
+        }
+    }
+
+    #frameworks {
+        @extend .row, .no-gutters, .list-unstyled;
+
+        li {
+            @extend .col-sm-3, .text-center, .px-0;
+            min-width: 10em;
+
+            a {
+                @extend .d-block;
+
+                animation-duration: 1s;
+                animation-iteration-count: 1;
+                animation-name: fadein;
+
+                display: block;
+                background-size: 6em;
+                background-repeat: no-repeat;
+                background-position-x: center;
+                background-position-y: calc(50% - 1em);
+                padding-top: 8em;
+                padding-bottom: 1em;
+                color: $blue-2;
+                height: 100%;
+
+                &:hover {
+                    @extend %card;
+                    color: $primary;
+                    text-decoration: none;
+                }
+            }
+        }
+
+        $frameworks: angular react polymer vue javascript angularjs aurelia webcomponents;
+
+        @each $framework in $frameworks {
+            $i: index($frameworks, $framework);
+
+            #fw-#{$framework} a {
+                background-image: url('../fw-logos/#{$framework}.svg');
+
+                @include media-breakpoint-only(md) {
+                    @if $i < 7 {
+                        border-bottom: 1px solid $gray-300;
+                    }
+
+                    @if $i % 2 != 0 {
+                        border-right: 1px solid $gray-300;
+                    }
+                }
+
+                @include media-breakpoint-only(lg) {
+                    @if $i < 7 {
+                        border-bottom: 1px solid $gray-300;
+                    }
+
+                    @if $i % 3 != 0 {
+                        border-right: 1px solid $gray-300;
+                    }
+                }
+
+                @include media-breakpoint-only(xl) {
+                    @if $i < 5 {
+                        border-bottom: 1px solid $gray-300;
+                    }
+
+                    @if $i % 4 != 0 {
+                        border-right: 1px solid $gray-300;
+                    }
+                }
+            }
+        }
+    }
+}
+
+#stage-testimonials {
+    @extend %stage;
+
+    section {
+        & > div {
+            @extend .media;
+            @extend .col-sm-4;
+
+            img {
+                @extend .rounded-circle, .mt-4, .mr-4;
+                box-shadow: 0 1px 2px black;
+                width: 4rem;
+            }
+
+            & > div {
+                @extend .media-body;
+            }
+        }
+
+        blockquote {
+            @extend .blockquote;
+            font-size: 90%;
+        }
+
+        p {
+            margin-top: 1rem;
+            &:before {
+                content: '\201C';
+            }
+
+            &:after {
+                content: '\201D';
+            }
+        }
+
+        footer {
+            @extend .blockquote-footer;
+
+            .position {
+                display: block;
+            }
+        }
+    }
+}
+
+#stage-sponsorships {
+    @extend %stage;
+    background-color: $offwhite;
+    margin-bottom: 3rem;
+
+    #sponsorships {
+        @extend .align-items-center;
+        @extend %card, .py-4;
+
+        & > div:first-child {
+            @extend .col-md-6, .mb-3, .text-right;
+        }
+
+        & > div:nth-child(2) {
+            @extend .col-md-5, .ml-auto;
+
+            & > div {
+                @extend .py-4;
+            }
+        }
+
+        h2 {
+            @extend .display-4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h3 {
+            @extend .display-5;
+        }
+
+        img {
+            @extend .mr-3;
+            height: 4rem;
+        }
+    }
+}
