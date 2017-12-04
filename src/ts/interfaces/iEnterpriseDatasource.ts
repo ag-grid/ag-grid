@@ -1,3 +1,5 @@
+import { ISortModel } from "./iSortModel";
+
 // we pass a VO of the column and not the column itself,
 // so the data is read to be be converted to JSON and thrown
 // over the wire
@@ -26,7 +28,7 @@ export interface IEnterpriseGetRowsRequest {
     // if filtering, what the filter model is
     filterModel: any;
     // if sorting, what the sort model is
-    sortModel: any;
+    sortModel: ISortModel[] | null;
 }
 
 export interface IEnterpriseGetRowsParams {

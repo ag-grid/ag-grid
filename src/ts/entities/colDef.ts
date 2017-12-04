@@ -54,13 +54,13 @@ export interface ColDef extends AbstractColDef {
     colId?: string;
 
     /** If sorting by default, set it here. Set to 'asc' or 'desc' */
-    sort?: string;
+    sort?: Column.NullableSortDir;
 
     /** If sorting more than one column by default, the milliseconds when this column was sorted, so we know what order to sort the columns in. */
     sortedAt?: number;
 
     /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
-    sortingOrder?: string[];
+    sortingOrder?: Column.NullableSortDir[] | null;
 
     /** The field of the row to get the cells data from */
     field?: string;

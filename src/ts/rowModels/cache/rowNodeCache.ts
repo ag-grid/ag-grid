@@ -5,12 +5,13 @@ import {RowNodeBlock} from "./rowNodeBlock";
 import {Logger} from "../../logger";
 import {RowNodeBlockLoader} from "./rowNodeBlockLoader";
 import {AgEvent} from "../../events";
+import { ISortModel } from "../../interfaces/iSortModel";
 
 export interface RowNodeCacheParams {
     initialRowCount: number;
     blockSize: number;
     overflowSize: number;
-    sortModel: any;
+    sortModel: ISortModel[] | null;
     filterModel: any;
     maxBlocksInCache: number;
     rowHeight: number;

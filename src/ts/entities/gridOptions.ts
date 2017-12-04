@@ -55,7 +55,7 @@ export interface GridOptions {
     toolPanelSuppressPivotMode?: boolean;
     suppressRowClickSelection?: boolean;
     suppressCellSelection?: boolean;
-    sortingOrder?: string[];
+    sortingOrder?: Column.NullableSortDir[] | null;
     suppressMultiSort?: boolean;
     accentedSort?: boolean;
     suppressHorizontalScroll?: boolean;
