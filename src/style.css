@@ -1511,7 +1511,7 @@ snippet pre, snippet code {
 }
 
 .global-search-pane {
-    margin-top: -20px;
+    /*margin-top: -20px;*/
     margin-bottom: 20px;
     width: 100%;
     display: inline-block;
@@ -1581,4 +1581,14 @@ input.clearable:focus {
 
 .center-align {
     text-align: center !important;
+}
+
+.passive-tab a {
+    text-decoration: none;
+    cursor: default;
+    color: #555;
+}
+
+.passive-tab a:hover {
+    cursor: default;
 }

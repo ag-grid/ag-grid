@@ -3,7 +3,8 @@
     <?php
     if ($report_type == 'issue_by_epic') {
 
-        function sortBySpringEta($a, $b) {
+        function sortBySpringEta($a, $b)
+        {
             $etaA = $a['fields']['customfield_10515'];
             $etaB = $b['fields']['customfield_10515'];
 
@@ -85,18 +86,20 @@
                     <!-- status -->
                     <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
                                 class="jim-table-header-content">Status</span></th>
-                    <!-- resolution -->
-                    <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"></th>
                     <?php
                 } else {
                     ?>
-                    <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header center-align" nowrap><span
-                                class="jim-table-header-content">Sprint ETA</span></th>
+                    <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header center-align"
+                        nowrap><span
+                                class="jim-table-header-content">Release ETA</span></th>
                     <?php
                 }
                 ?>
             </tr>
             <?php
+        }
+        if (empty(filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING))) {
+            continue;
         }
         ?>
         <tr class="jira <?= $i % 2 == 0 ? 'issue-row' : 'issue-row-alternate' ?>">
@@ -123,47 +126,36 @@
                 ?>
                 <!-- status -->
                 <td nowrap="true" class="jira-macro-table-underline-pdfexport">
-                    <span
-                        class="aui-lozenge aui-lozenge-subtle <?= classForStatus(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING)) ?>">
-                        <?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING) ?>
-                    </span>
-                </td>
-                <td nowrap>
-                <span class="aui-lozenge aui-lozenge-subtle" style="border: none;background-color: transparent"><?= getResolutionIfApplicable(filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'resolution'}->{'name'}, FILTER_SANITIZE_STRING)) ?></span>
+                                        <span
+                                                class="aui-lozenge aui-lozenge-subtle
+                                            <?= classForStatusAndResolution(
+                                                    filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING),
+                                                    filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'resolution'}->{'name'}, FILTER_SANITIZE_STRING)) ?>">
+                                            <?= getStatusForStatusAndResolution(
+                                                filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING),
+                                                filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'resolution'}->{'name'}, FILTER_SANITIZE_STRING)
+                                            ) ?>
+                                        </span>
                 </td>
                 <?php
             } else {
-                $sprintEta = filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10515'}, FILTER_SANITIZE_STRING);
-                if ($sprintEta == $NEXT_SPRINT) {
-                    ?>
-                    <td class="jira-macro-table-underline-pdfexport center-align" nowrap>
-                        <!-- Sprint ETA = $NEXT_SPRINT -->
-                        <span>
-                            <?= $NEXT_SPRINT ?>
-                        </span>
-                    </td>
+                $sprintEta = filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10515'}, FILTER_SANITIZE_STRING)
+                ?>
+                <td class="jira-macro-table-underline-pdfexport center-align" nowrap>
                     <?php
-                } else if ($sprintEta) {
+                    if (!empty($sprintEta)) {
+                        ?>
+                        <span><?= getValueForTargetEta($sprintEta, $NEXT_SPRINT) ?></span>
+                        <?php
+                    } else {
+                        ?>
+                        <span class="aui-lozenge aui-lozenge-subtle <?= classForStatusAndResolution("Backlog", "") ?>">Backlog</span>
+                        <?php
+                    }
                     ?>
-                    <td class="jira-macro-table-underline-pdfexport center-align" nowrap>
-                        <!-- Sprint ETA = Next Sprint - Sprint ETA -->
-                    <span>
-                        <?= $NEXT_SPRINT ?>
-                        - <?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10515'}, FILTER_SANITIZE_STRING) ?>
-                    </span>
-                    </td>
-                    <?php
-                } else {
-                    ?>
-                    <td class="jira-macro-table-underline-pdfexport center-align" nowrap>
-                        <!-- Sprint ETA = Backlog -->
-                        <span></span>
-                        <span class="aui-lozenge aui-lozenge-subtle <?= classForStatus("Backlog") ?>">Backlog</span>
-                    </td>
-                    <?php
-                }
-            }
-            ?>
+                </td>
+                <?php
+            } ?>
         </tr>
         <?php
     }
