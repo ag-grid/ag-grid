@@ -36,10 +36,8 @@ function localJiraRequest($report_type)
     return $data;
 }
 
-function jiraRequest($report_type, $startAt, $maxResults)
+function jiraRequest($report_type, $startAt, $maxResults, $jira_config)
 {
-    $jira_config = json_decode(file_get_contents(dirname(__FILE__) . "/jira_config.json"));
-
     if ($jira_config->{'local-dev'}) {
         return localJiraRequest($report_type);
     } else {
@@ -57,10 +55,6 @@ function jiraRequest($report_type, $startAt, $maxResults)
         }
 
         $data = remoteJiraRequest($report_type, $startAt, $maxResults, $username, $password);
-
-        if ($jira_config->{'update-mock-data'}) {
-            updateLocalData($report_type, $data);
-        }
 
         return $data;
     }
@@ -80,27 +74,36 @@ function updateLocalData($report_type, $data)
 
 function retrieveJiraFilterData($report_type)
 {
+    $jira_config = json_decode(file_get_contents(dirname(__FILE__) . "/jira_config.json"));
+
     $maxResults = 100;
 
     // initial query gets the first "page" of data, as well as the total number of issues to retrieve
-    $issue_list = jiraRequest($report_type, 0, $maxResults);
+    $issue_list = jiraRequest($report_type, 0, $maxResults, $jira_config);
     $tempArray = json_decode($issue_list, true);
 
-    // this block iterates over the number of "pages" to retrieve, maxResults at a time
-    // note: although maxResults is a variable here, Jira actually sets a max of a hundred, so
-    // dont try increase this value for performance reasons - it'll just be ignored
-    $pages = ceil($tempArray['total'] / 100);
-    for ($page = 1; $page < $pages; $page++) {
-        $issue_list = jiraRequest($report_type, ($maxResults * $page), $maxResults);
-        $currentPageData = json_decode($issue_list, true);
+    if (!$jira_config->{'local-dev'}) {
+        // this block iterates over the number of "pages" to retrieve, maxResults at a time
+        // note: although maxResults is a variable here, Jira actually sets a max of a hundred, so
+        // dont try increase this value for performance reasons - it'll just be ignored
+        $pages = ceil($tempArray['total'] / 100);
+        for ($page = 1; $page < $pages; $page++) {
+            $issue_list = jiraRequest($report_type, ($maxResults * $page), $maxResults, $jira_config);
+            $currentPageData = json_decode($issue_list, true);
 
-        for ($x = 0; $x < count($currentPageData); $x++) {
-            array_push($tempArray['issues'], $currentPageData['issues'][$x]);
+            for ($x = 0; $x < count($currentPageData); $x++) {
+                array_push($tempArray['issues'], $currentPageData['issues'][$x]);
+            }
         }
     }
 
+    $dataAsJson = json_encode($tempArray);
+    if ($jira_config->{'update-mock-data'}) {
+        updateLocalData($report_type, $dataAsJson);
+    }
+
     // convert back to regular object (mainly in order to be able to use existing jira_report.php)
-    return json_decode(json_encode($tempArray));
+    return json_decode($dataAsJson);
 }
 
 function mapIssueType($issueType)
@@ -135,7 +138,8 @@ function toDate($str_value)
     return $date->format('j M Y');
 }
 
-function classForStatus($status) {
+function classForStatusAndResolution($status, $resolution)
+{
     $class = "aui-lozenge-success";
     switch ($status) {
         case "In Progress":
@@ -144,18 +148,27 @@ function classForStatus($status) {
         case "Backlog":
             $class = "aui-lozenge-complete";
             break;
+        case "Done":
+            $class = $resolution == 'Done' ? $class : "aui-lozenge-error";
     }
 
     return $class;
 }
 
-function getResolutionIfApplicable($resolution) {
-    $result = "";
-
-    if(!empty($resolution) && $resolution != "Done") {
-        $result = "(".$resolution.")";
+function getStatusForStatusAndResolution($status, $resolution)
+{
+    $result = $status;
+    switch ($status) {
+        case "Done":
+            $result = $resolution == 'Done' ? $result : $resolution;
     }
 
     return $result;
 }
+
+function getValueForTargetEta($sprintEta, $nextSprint)
+{
+    return "+".($sprintEta - $nextSprint + 1);
+}
+
 ?>
