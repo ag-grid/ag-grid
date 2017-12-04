@@ -1,9 +1,8 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BorderLayout } from "../layout/borderLayout";
 import { LoggerFactory } from "../logger";
-import { KeyboardBinding, KeyboardBindingGroup } from "../constants";
 import { BeanStub } from "../context/beanStub";
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
 export interface RowContainerComponents {
@@ -29,6 +28,7 @@ export declare class GridPanel extends BeanStub {
     private eventService;
     private context;
     private animationFrameService;
+    private navigationService;
     private paginationProxy;
     private columnApi;
     private gridApi;
@@ -106,13 +106,7 @@ export declare class GridPanel extends BeanStub {
     private addBodyViewportListener();
     private getRowForEvent(event);
     private processKeyboardEvent(eventName, keyboardEvent);
-    private handlePageScrollingKey(pagingKeyGroup, pagingKey, keyboardEvent);
-    private pageHorizontally(pagingKey);
-    private pageDiagonally_new(pagingKey);
-    private pageDiagonally(pagingKey);
-    private pageVertically(pagingKey);
     scrollToTop(): void;
-    private performScroll(scroll);
     private processMouseEvent(eventName, mouseEvent);
     private onContextMenu(mouseEvent);
     private preventDefaultOnContextMenu(mouseEvent);
@@ -125,9 +119,9 @@ export declare class GridPanel extends BeanStub {
     private createLoadingOverlayTemplate();
     private createNoRowsOverlayTemplate();
     ensureIndexVisible(index: any, position?: string): void;
-    private getPrimaryScrollViewport();
+    getPrimaryScrollViewport(): HTMLElement;
     getCenterWidth(): number;
-    private isHorizontalScrollShowing();
+    isHorizontalScrollShowing(): boolean;
     private isVerticalScrollShowing();
     private isBodyVerticalScrollShowing();
     periodicallyCheck(): void;
@@ -188,8 +182,4 @@ export declare class GridPanel extends BeanStub {
     private setFakeScroll(eContainer, pixels);
     addScrollEventListener(listener: () => void): void;
     removeScrollEventListener(listener: () => void): void;
-}
-export interface TestKeyboardBindingGroupsResult {
-    trappedKeyboardBinding: KeyboardBinding;
-    trappedKeyboardBindingGroup: KeyboardBindingGroup;
 }

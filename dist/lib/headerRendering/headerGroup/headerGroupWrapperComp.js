@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,20 +52,19 @@ var HeaderGroupWrapperComp = (function (_super) {
         return _this;
     }
     HeaderGroupWrapperComp.prototype.postConstruct = function () {
-        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getHtmlElement(), this.gridOptionsWrapper, null, this.columnGroup);
+        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
         var displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
-        var headerComponent = this.appendHeaderGroupComp(displayName);
+        this.appendHeaderGroupComp(displayName);
         this.setupResize();
         this.addClasses();
-        this.setupMove(utils_1.Utils.ensureElement(headerComponent.getGui()), displayName);
         this.setupWidth();
         this.addAttributes();
-        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getHtmlElement(), this.beans);
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     };
     HeaderGroupWrapperComp.prototype.addAttributes = function () {
-        this.getHtmlElement().setAttribute("col-id", this.columnGroup.getUniqueId());
+        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
     };
     HeaderGroupWrapperComp.prototype.appendHeaderGroupComp = function (displayName) {
         var _this = this;
@@ -79,9 +78,15 @@ var HeaderGroupWrapperComp = (function (_super) {
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
-        var headerComp = this.componentRecipes.newHeaderGroupComponent(params);
-        this.appendChild(headerComp);
-        return headerComp;
+        var callback = this.afterHeaderCompCreated.bind(this, displayName);
+        this.componentRecipes.newHeaderGroupComponent(params).then(callback);
+    };
+    HeaderGroupWrapperComp.prototype.afterHeaderCompCreated = function (displayName, headerGroupComp) {
+        this.appendChild(headerGroupComp);
+        this.setupMove(headerGroupComp.getGui(), displayName);
+        if (headerGroupComp.destroy) {
+            this.addDestroyFunc(headerGroupComp.destroy.bind(headerGroupComp));
+        }
     };
     HeaderGroupWrapperComp.prototype.addClasses = function () {
         // having different classes below allows the style to not have a bottom border
@@ -185,7 +190,7 @@ var HeaderGroupWrapperComp = (function (_super) {
         this.childColumnsDestroyFuncs = [];
     };
     HeaderGroupWrapperComp.prototype.onWidthChanged = function () {
-        this.getHtmlElement().style.width = this.columnGroup.getActualWidth() + 'px';
+        this.getGui().style.width = this.columnGroup.getActualWidth() + 'px';
     };
     HeaderGroupWrapperComp.prototype.setupResize = function () {
         var _this = this;

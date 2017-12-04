@@ -1,4 +1,4 @@
-import {ICellRendererAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
+import {IComponent} from "../../interfaces/iComponent";
 import {RowNode} from "../../entities/rowNode";
 import {ColDef} from "../../entities/colDef";
 import {Column} from "../../entities/column";
@@ -32,7 +32,7 @@ export interface ICellRenderer {
     refresh(params: any): boolean;
 }
 
-export interface ICellRendererComp extends ICellRenderer, IComponent<ICellRendererParams, ICellRendererAfterGuiAttachedParams> {
+export interface ICellRendererComp extends ICellRenderer, IComponent<ICellRendererParams> {
 
 }
 

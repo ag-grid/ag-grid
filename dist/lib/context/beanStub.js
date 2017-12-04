@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12,10 +12,12 @@ var utils_1 = require("../utils");
 var BeanStub = (function () {
     function BeanStub() {
         this.destroyFunctions = [];
+        this.destroyed = false;
     }
     BeanStub.prototype.destroy = function () {
         this.destroyFunctions.forEach(function (func) { return func(); });
         this.destroyFunctions.length = 0;
+        this.destroyed = true;
     };
     BeanStub.prototype.addEventListener = function (eventType, listener) {
         if (!this.localEventService) {
@@ -38,6 +40,9 @@ var BeanStub = (function () {
         }
     };
     BeanStub.prototype.addDestroyableEventListener = function (eElement, event, listener) {
+        if (this.destroyed) {
+            return;
+        }
         if (eElement instanceof HTMLElement) {
             utils_1._.addSafePassiveEventListener(eElement, event, listener);
         }
@@ -59,8 +64,17 @@ var BeanStub = (function () {
             }
         });
     };
+    BeanStub.prototype.isAlive = function () {
+        return !this.destroyed;
+    };
     BeanStub.prototype.addDestroyFunc = function (func) {
-        this.destroyFunctions.push(func);
+        // if we are already destroyed, we execute the func now
+        if (this.isAlive()) {
+            this.destroyFunctions.push(func);
+        }
+        else {
+            func();
+        }
     };
     return BeanStub;
 }());

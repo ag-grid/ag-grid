@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExportParams } from "../exportParams";
@@ -25,7 +25,7 @@ export interface ExcelData {
     type: ExcelDataType;
     value: string;
 }
-export declare type ExcelDataType = "String" | "Number";
+export declare type ExcelDataType = "String" | "Number" | "Boolean" | "DateTime" | "Error";
 export interface ExcelStyle {
     id?: string;
     name?: string;

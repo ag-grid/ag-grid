@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -27,6 +27,7 @@ export declare class HeaderGroupWrapperComp extends Component {
     private postConstruct();
     private addAttributes();
     private appendHeaderGroupComp(displayName);
+    private afterHeaderCompCreated(displayName, headerGroupComp);
     private addClasses();
     private setupMove(eHeaderGroup, displayName);
     getDragItemForGroup(): DragItem;

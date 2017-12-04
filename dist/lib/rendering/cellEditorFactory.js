@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,7 @@ var CellEditorFactory = (function () {
     CellEditorFactory.prototype.init = function () {
     };
     CellEditorFactory.prototype.addCellEditor = function (key, cellEditor) {
-        console.warn("Ignoring this bwahahahahahaha!");
+        console.warn("ag-grid: since v13.3.1 this method is not supported anymore. If you want to register your own editor check the docs: https://www.ag-grid.com/javascript-grid-cell-editor/");
     };
     // private registerEditorsFromGridOptions(): void {
     //     let userProvidedCellEditors = this.gridOptionsWrapper.getCellEditors();
@@ -34,17 +34,23 @@ var CellEditorFactory = (function () {
     //     });
     // }
     CellEditorFactory.prototype.createCellEditor = function (column, params) {
-        var cellEditor = this.componentResolver.createAgGridComponent(column, params, 'cellEditor');
-        if (cellEditor.isPopup && cellEditor.isPopup()) {
-            if (this.gridOptionsWrapper.isFullRowEdit()) {
+        var _this = this;
+        var cellEditorPromise = this.componentResolver.createAgGridComponent(column, params, 'cellEditor');
+        return cellEditorPromise.map(function (cellEditor) {
+            var isPopup = cellEditor.isPopup && cellEditor.isPopup();
+            if (!isPopup) {
+                return cellEditor;
+            }
+            if (_this.gridOptionsWrapper.isFullRowEdit()) {
                 console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
                     '- either turn off fullRowEdit, or stop using popup editors.');
             }
-            cellEditor = new popupEditorWrapper_1.PopupEditorWrapper(cellEditor);
-            this.context.wireBean(cellEditor);
-            cellEditor.init(params);
-        }
-        return cellEditor;
+            // if a popup, then we wrap in a popup editor and return the popup
+            var popupEditorWrapper = new popupEditorWrapper_1.PopupEditorWrapper(cellEditor);
+            _this.context.wireBean(popupEditorWrapper);
+            popupEditorWrapper.init(params);
+            return popupEditorWrapper;
+        });
     };
     __decorate([
         context_1.Autowired('context'),

@@ -60,28 +60,27 @@ export class HeaderGroupWrapperComp extends Component {
     @PostConstruct
     private postConstruct(): void {
 
-        CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getHtmlElement(), this.gridOptionsWrapper, null, this.columnGroup);
+        CssClassApplier.addHeaderClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
 
         let displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
 
-        let headerComponent: IHeaderGroupComp = this.appendHeaderGroupComp(displayName);
+        this.appendHeaderGroupComp(displayName);
 
         this.setupResize();
         this.addClasses();
-        this.setupMove(_.ensureElement(headerComponent.getGui()), displayName);
         this.setupWidth();
         this.addAttributes();
 
-        let setLeftFeature = new SetLeftFeature(this.columnGroup, this.getHtmlElement(), this.beans);
+        let setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     }
 
     private addAttributes(): void {
-        this.getHtmlElement().setAttribute("col-id", this.columnGroup.getUniqueId());
+        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
     }
 
-    private appendHeaderGroupComp(displayName: string): IHeaderGroupComp {
+    private appendHeaderGroupComp(displayName: string): void {
         let params: IHeaderGroupParams = {
             displayName: displayName,
             columnGroup: this.columnGroup,
@@ -92,9 +91,19 @@ export class HeaderGroupWrapperComp extends Component {
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
-        let headerComp = this.componentRecipes.newHeaderGroupComponent(params);
-        this.appendChild(headerComp);
-        return headerComp;
+
+        let callback = this.afterHeaderCompCreated.bind(this, displayName);
+
+        this.componentRecipes.newHeaderGroupComponent(params).then(callback);
+    }
+
+    private afterHeaderCompCreated(displayName: string, headerGroupComp: IHeaderGroupComp): void {
+        this.appendChild(headerGroupComp);
+        this.setupMove(headerGroupComp.getGui(), displayName);
+
+        if (headerGroupComp.destroy) {
+            this.addDestroyFunc(headerGroupComp.destroy.bind(headerGroupComp));
+        }
     }
 
     private addClasses(): void {
@@ -213,7 +222,7 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     private onWidthChanged(): void {
-        this.getHtmlElement().style.width = this.columnGroup.getActualWidth() + 'px';
+        this.getGui().style.width = this.columnGroup.getActualWidth() + 'px';
     }
 
     private setupResize(): void {

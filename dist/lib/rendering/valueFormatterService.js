@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -53,6 +53,10 @@ var ValueFormatterService = (function () {
         }
         else if (colDef.refData) {
             return colDef.refData[value];
+        }
+        // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (ie with spaces)
+        if ((result === null || result === undefined) && Array.isArray(value)) {
+            result = value.join(', ');
         }
         return result;
     };

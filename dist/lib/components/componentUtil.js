@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -108,10 +108,10 @@ var ComponentUtil = (function () {
             api.setRowData(changes.rowData.currentValue);
         }
         if (changes.pinnedTopRowData) {
-            api.setFloatingTopRowData(changes.pinnedTopRowData.currentValue);
+            api.setPinnedTopRowData(changes.pinnedTopRowData.currentValue);
         }
         if (changes.pinnedBottomRowData) {
-            api.setFloatingBottomRowData(changes.pinnedBottomRowData.currentValue);
+            api.setPinnedBottomRowData(changes.pinnedBottomRowData.currentValue);
         }
         if (changes.columnDefs) {
             api.setColumnDefs(changes.columnDefs.currentValue);

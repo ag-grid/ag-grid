@@ -33,7 +33,10 @@ export interface ExcelData {
 
 export type ExcelDataType =
     "String"
-    | "Number";
+    | "Number"
+    | "Boolean"
+    | "DateTime"
+    | "Error";
 
 
 export interface ExcelStyle {

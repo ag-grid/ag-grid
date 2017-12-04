@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -63,23 +63,22 @@ var HeaderWrapperComp = (function (_super) {
         var displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
         var enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
         var enableMenu = this.menuFactory.isMenuEnabled(this.column) && !this.column.getColDef().suppressMenu;
-        var headerComp = this.appendHeaderComp(displayName, enableSorting, enableMenu);
+        this.appendHeaderComp(displayName, enableSorting, enableMenu);
         this.setupWidth();
         this.setupMovingCss();
         this.setupTooltip();
         this.setupResize();
         this.setupMenuClass();
-        this.setupMove(utils_1.Utils.ensureElement(headerComp.getGui()), displayName);
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
         this.addDestroyableEventListener(this.column, column_1.Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
         this.addFeature(this.context, new selectAllFeature_1.SelectAllFeature(this.cbSelectAll, this.column));
-        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getHtmlElement(), this.beans);
+        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
         this.addAttributes();
-        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getHtmlElement(), this.gridOptionsWrapper, this.column, null);
+        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
     };
     HeaderWrapperComp.prototype.addColumnHoverListener = function () {
         this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
@@ -87,17 +86,17 @@ var HeaderWrapperComp = (function (_super) {
     };
     HeaderWrapperComp.prototype.onColumnHover = function () {
         var isHovered = this.columnHoverService.isHovered(this.column);
-        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-column-hover', isHovered);
+        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     };
     HeaderWrapperComp.prototype.setupSortableClass = function (enableSorting) {
         if (enableSorting) {
-            var element = this.getHtmlElement();
+            var element = this.getGui();
             utils_1.Utils.addCssClass(element, 'ag-header-cell-sortable');
         }
     };
     HeaderWrapperComp.prototype.onFilterChanged = function () {
         var filterPresent = this.column.isFilterActive();
-        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-filtered', filterPresent);
+        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
     };
     HeaderWrapperComp.prototype.appendHeaderComp = function (displayName, enableSorting, enableMenu) {
         var _this = this;
@@ -119,19 +118,25 @@ var HeaderWrapperComp = (function (_super) {
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
-        var headerComp = this.componentRecipes.newHeaderComponent(params);
+        var callback = this.afterHeaderCompCreated.bind(this, displayName);
+        this.componentRecipes.newHeaderComponent(params).then(callback);
+    };
+    HeaderWrapperComp.prototype.afterHeaderCompCreated = function (displayName, headerComp) {
         this.appendChild(headerComp);
-        return headerComp;
+        this.setupMove(headerComp.getGui(), displayName);
+        if (headerComp.destroy) {
+            this.addDestroyFunc(headerComp.destroy.bind(headerComp));
+        }
     };
     HeaderWrapperComp.prototype.onColumnMovingChanged = function () {
         // this function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
         if (this.column.isMoving()) {
-            utils_1.Utils.addCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
+            utils_1.Utils.addCssClass(this.getGui(), 'ag-header-cell-moving');
         }
         else {
-            utils_1.Utils.removeCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
+            utils_1.Utils.removeCssClass(this.getGui(), 'ag-header-cell-moving');
         }
     };
     HeaderWrapperComp.prototype.setupMove = function (eHeaderCellLabel, displayName) {
@@ -200,7 +205,7 @@ var HeaderWrapperComp = (function (_super) {
         var colDef = this.column.getColDef();
         // add tooltip if exists
         if (colDef.headerTooltip) {
-            this.getHtmlElement().title = colDef.headerTooltip;
+            this.getGui().title = colDef.headerTooltip;
         }
     };
     HeaderWrapperComp.prototype.setupMovingCss = function () {
@@ -208,7 +213,7 @@ var HeaderWrapperComp = (function (_super) {
         this.onColumnMovingChanged();
     };
     HeaderWrapperComp.prototype.addAttributes = function () {
-        this.getHtmlElement().setAttribute("col-id", this.column.getColId());
+        this.getGui().setAttribute("col-id", this.column.getColId());
     };
     HeaderWrapperComp.prototype.setupWidth = function () {
         this.addDestroyableEventListener(this.column, column_1.Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
@@ -222,7 +227,7 @@ var HeaderWrapperComp = (function (_super) {
         this.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
     };
     HeaderWrapperComp.prototype.onColumnWidthChanged = function () {
-        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
+        this.getGui().style.width = this.column.getActualWidth() + 'px';
     };
     // optionally inverts the drag, depending on pinned and RTL
     // note - this method is duplicated in RenderedHeaderGroupCell - should refactor out?

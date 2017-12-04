@@ -127,7 +127,7 @@
     padding-top: 4px; }
   .ag-blue .ag-header {
     color: #fff;
-    background: #5B9BD5;
+    background: #5b9bd5;
     border-bottom: 1px solid #9bc2e6;
     font-weight: 600; }
   .ag-blue .ag-header-icon {
@@ -158,7 +158,7 @@
     background-size: 12px 12px;
     filter: "initial"; }
   .ag-blue .ag-layout-for-print .ag-header-container {
-    background: #5B9BD5;
+    background: #5b9bd5;
     border-bottom: 1px solid #9bc2e6; }
   .ag-blue .ag-ltr .ag-header-cell {
     border-right: 1px solid #9bc2e6; }
@@ -194,7 +194,7 @@
   .ag-blue .ag-body {
     background-color: #f6f6f6; }
   .ag-blue .ag-row-odd {
-    background-color: #DDEBF7; }
+    background-color: #ddebf7; }
   .ag-blue .ag-row-even {
     background-color: #fff; }
   .ag-blue .ag-row-selected {
@@ -253,7 +253,7 @@
   .ag-blue .ag-rtl .ag-group-checkbox {
     padding-left: 2px; }
   .ag-blue .ag-group-child-count {
-    display: inline-block; }
+    /* display: inline-block; */ }
   .ag-blue .ag-footer-cell {
     font-style: italic; }
   .ag-blue .ag-menu {
@@ -263,7 +263,7 @@
     font-family: Calibri, "Segoe UI", Thonburi, Arial, Verdana, sans-serif;
     font-size: 10pt; }
     .ag-blue .ag-menu .ag-tab-header {
-      background-color: #5B9BD5; }
+      background-color: #5b9bd5; }
     .ag-blue .ag-menu .ag-tab {
       padding: 6px 8px 6px 8px;
       margin: 2px 2px 0px 2px;
@@ -427,6 +427,9 @@
       content: '('; }
     .ag-blue .ag-sort-order::after {
       content: ')'; }
+  .ag-blue .ag-details-row {
+    padding: 20px;
+    box-sizing: border-box; }
 
 .ag-blue .ag-floating-filter-body input {
   background-color: white;
@@ -434,11 +437,12 @@
   .ag-blue .ag-floating-filter-body input[readonly] {
     background: rgba(255, 255, 255, 0.3); }
 
-.ag-blue .ag-floating-filter-button {
-  -webkit-filter: invert(100%);
-  filter: invert(100%); }
-
-.ag-blue .ag-header .ag-icon-asc, .ag-blue .ag-header .ag-icon-desc, .ag-blue .ag-header .ag-icon-expanded, .ag-blue .ag-header .ag-icon-contracted, .ag-blue .ag-header .ag-icon-menu, .ag-blue .ag-header .ag-icon-filter {
+.ag-blue .ag-header .ag-icon-asc,
+.ag-blue .ag-header .ag-icon-desc,
+.ag-blue .ag-header .ag-icon-expanded,
+.ag-blue .ag-header .ag-icon-contracted,
+.ag-blue .ag-header .ag-icon-menu,
+.ag-blue .ag-header .ag-icon-filter {
   -webkit-filter: invert(100%);
   filter: invert(100%); }
 

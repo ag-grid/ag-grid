@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,6 +33,14 @@ var reUnescapedHtml = /[&<>"']/g;
 var Utils = (function () {
     function Utils() {
     }
+    // if the key was passed before, then doesn't execute the func
+    Utils.doOnce = function (func, key) {
+        if (this.doOnceFlags[key]) {
+            return;
+        }
+        func();
+        this.doOnceFlags[key] = true;
+    };
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
     Utils.areEventsNear = function (e1, e2, pixelCount) {
@@ -198,22 +206,18 @@ var Utils = (function () {
         });
         return Object.keys(allValues);
     };
-    Utils.mergeDeep = function (into, source) {
+    Utils.mergeDeep = function (dest, source) {
         if (this.exists(source)) {
-            this.iterateObject(source, function (key, target) {
-                var currentValue = into[key];
-                if (currentValue == null) {
-                    into[key] = target;
+            this.iterateObject(source, function (key, newValue) {
+                var oldValue = dest[key];
+                if (oldValue === newValue) {
                     return;
                 }
-                if (typeof currentValue === 'object') {
-                    if (target) {
-                        Utils.mergeDeep(currentValue, target);
-                        return;
-                    }
+                if (typeof oldValue === 'object' && typeof newValue === 'object') {
+                    Utils.mergeDeep(oldValue, newValue);
                 }
-                if (target) {
-                    into[key] = target;
+                else {
+                    dest[key] = newValue;
                 }
             });
         }
@@ -390,6 +394,18 @@ var Utils = (function () {
             return true;
         }
     };
+    Utils.firstExistingValue = function () {
+        var values = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            values[_i] = arguments[_i];
+        }
+        for (var i = 0; i < values.length; i++) {
+            var value = values[i];
+            if (exports._.exists(value))
+                return value;
+        }
+        return null;
+    };
     Utils.anyExists = function (values) {
         if (values) {
             for (var i = 0; i < values.length; i++) {
@@ -429,23 +445,6 @@ var Utils = (function () {
         var tempDiv = document.createElement("div");
         tempDiv.innerHTML = template;
         return tempDiv.firstChild;
-    };
-    Utils.assertHtmlElement = function (item) {
-        if (typeof item === 'string') {
-            console.error("ag-grid: Found a string template for a component type where only HTMLElements are allow. \n            Please change the component to return back an HTMLElement from getGui(). Only some element types can return back strings.\n            The found template is " + item);
-            return null;
-        }
-        else {
-            return item;
-        }
-    };
-    Utils.ensureElement = function (item) {
-        if (typeof item === 'string') {
-            return this.loadTemplate(item);
-        }
-        else {
-            return item;
-        }
     };
     Utils.appendHtml = function (eContainer, htmlTemplate) {
         if (eContainer.lastChild) {
@@ -1067,10 +1066,9 @@ var Utils = (function () {
         return !isNaN(parseFloat(value)) && isFinite(value);
     };
     Utils.escape = function (toEscape) {
-        if (toEscape === null)
-            return null;
-        if (!toEscape.replace)
+        if (toEscape === null || toEscape === undefined || !toEscape.replace) {
             return toEscape;
+        }
         return toEscape.replace(reUnescapedHtml, function (chr) { return HTML_ESCAPES[chr]; });
     };
     // Taken from here: https://github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
@@ -1316,7 +1314,7 @@ var Utils = (function () {
         }
     };
     Utils.addSafePassiveEventListener = function (eElement, event, listener) {
-        eElement.addEventListener(event, listener, (Utils.passiveEvents.indexOf(event) > -1 ? { passive: true } : null));
+        eElement.addEventListener(event, listener, (Utils.passiveEvents.indexOf(event) > -1 ? { passive: true } : undefined));
     };
     Utils.camelCaseToHumanText = function (camelCase) {
         if (camelCase == null)
@@ -1327,7 +1325,45 @@ var Utils = (function () {
         var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
         return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
     };
+    // gets called by: a) InMemoryRowNodeManager and b) GroupStage to do sorting.
+    // when in InMemoryRowNodeManager we always have indexes (as this sorts the items the
+    // user provided) but when in GroupStage, the nodes can contain filler nodes that
+    // don't have order id's
+    Utils.sortRowNodesByOrder = function (rowNodes, rowNodeOrder) {
+        if (!rowNodes) {
+            return;
+        }
+        rowNodes.sort(function (nodeA, nodeB) {
+            var positionA = rowNodeOrder[nodeA.id];
+            var positionB = rowNodeOrder[nodeB.id];
+            var aHasIndex = positionA !== undefined;
+            var bHasIndex = positionB !== undefined;
+            var bothNodesAreUserNodes = aHasIndex && bHasIndex;
+            var bothNodesAreFillerNodes = !aHasIndex && !bHasIndex;
+            if (bothNodesAreUserNodes) {
+                // when comparing two nodes the user has provided, they always
+                // have indexes
+                return positionA - positionB;
+            }
+            else if (bothNodesAreFillerNodes) {
+                // when comparing two filler nodes, we have no index to compare them
+                // against, however we want this sorting to be deterministic, so that
+                // the rows don't jump around as the user does delta updates. so we
+                // want the same sort result. so we use the id - which doesn't make sense
+                // from a sorting point of view, but does give consistent behaviour between
+                // calls. otherwise groups jump around as delta updates are done.
+                return nodeA.id > nodeB.id ? 1 : -1;
+            }
+            else if (aHasIndex) {
+                return 1;
+            }
+            else {
+                return -1;
+            }
+        });
+    };
     Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
+    Utils.doOnceFlags = {};
     // static prepend(parent: HTMLElement, child: HTMLElement): void {
     //     if (this.exists(parent.firstChild)) {
     //         parent.insertBefore(child, parent.firstChild);
@@ -1403,3 +1439,78 @@ var NumberSequence = (function () {
 }());
 exports.NumberSequence = NumberSequence;
 exports._ = Utils;
+var PromiseStatus;
+(function (PromiseStatus) {
+    PromiseStatus[PromiseStatus["IN_PROGRESS"] = 0] = "IN_PROGRESS";
+    PromiseStatus[PromiseStatus["RESOLVED"] = 1] = "RESOLVED";
+})(PromiseStatus = exports.PromiseStatus || (exports.PromiseStatus = {}));
+var Promise = (function () {
+    function Promise(callback) {
+        this.status = PromiseStatus.IN_PROGRESS;
+        this.resolution = null;
+        this.listOfWaiters = [];
+        callback(this.onDone.bind(this), this.onReject.bind(this));
+    }
+    Promise.all = function (toCombine) {
+        return new Promise(function (resolve) {
+            var combinedValues = [];
+            var remainingToResolve = toCombine.length;
+            toCombine.forEach(function (source, index) {
+                source.then(function (sourceResolved) {
+                    remainingToResolve--;
+                    combinedValues[index] = sourceResolved;
+                    if (remainingToResolve == 0) {
+                        resolve(combinedValues);
+                    }
+                });
+                combinedValues.push(null);
+            });
+        });
+    };
+    Promise.resolve = function (value) {
+        return new Promise(function (resolve) { return resolve(value); });
+    };
+    Promise.external = function () {
+        var capture;
+        var promise = new Promise(function (resolve) {
+            capture = resolve;
+        });
+        return {
+            promise: promise,
+            resolve: function (value) {
+                capture(value);
+            }
+        };
+    };
+    Promise.prototype.then = function (func) {
+        if (this.status === PromiseStatus.IN_PROGRESS) {
+            this.listOfWaiters.push(func);
+        }
+        else {
+            func(this.resolution);
+        }
+    };
+    Promise.prototype.map = function (adapter) {
+        var _this = this;
+        return new Promise(function (resolve) {
+            _this.then(function (unmapped) {
+                resolve(adapter(unmapped));
+            });
+        });
+    };
+    Promise.prototype.resolveNow = function (ifNotResolvedValue, ifResolved) {
+        if (this.status == PromiseStatus.IN_PROGRESS)
+            return ifNotResolvedValue;
+        return ifResolved(this.resolution);
+    };
+    Promise.prototype.onDone = function (value) {
+        this.status = PromiseStatus.RESOLVED;
+        this.resolution = value;
+        this.listOfWaiters.forEach(function (waiter) { return waiter(value); });
+    };
+    Promise.prototype.onReject = function (params) {
+        console.warn('TBI');
+    };
+    return Promise;
+}());
+exports.Promise = Promise;

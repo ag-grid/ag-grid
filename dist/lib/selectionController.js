@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -65,7 +65,7 @@ var SelectionController = (function () {
     SelectionController.prototype.getSelectedRows = function () {
         var selectedRows = [];
         utils_1.Utils.iterateObject(this.selectedNodes, function (key, rowNode) {
-            if (rowNode) {
+            if (rowNode && rowNode.data) {
                 selectedRows.push(rowNode.data);
             }
         });
@@ -231,9 +231,9 @@ var SelectionController = (function () {
                     callback(rowNode);
                 }
             });
+            // this clears down the map (whereas above only sets the items in map to 'undefined')
+            this.reset();
         }
-        // this clears down the map (whereas above only sets the items in map to 'undefined')
-        this.reset();
         // the above does not clean up the parent rows if they are selected
         if (rowModelInMemory && this.groupSelectsChildren) {
             this.updateGroupsFromChildrenSelections();

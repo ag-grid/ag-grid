@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,9 +27,15 @@ var AutoGroupColService = (function () {
     AutoGroupColService.prototype.createAutoGroupColumns = function (rowGroupColumns) {
         var _this = this;
         var groupAutoColumns = [];
+        var doingTreeData = this.gridOptionsWrapper.isTreeData();
+        var doingMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
+        if (doingTreeData && doingMultiAutoColumn) {
+            console.log('ag-Grid: you cannot mix groupMultiAutoColumn with treeData, only one column can be used to display groups when doing tree data');
+            doingMultiAutoColumn = false;
+        }
         // if doing groupMultiAutoColumn, then we call the method multiple times, once
         // for each column we are grouping by
-        if (this.gridOptionsWrapper.isGroupMultiAutoColumn()) {
+        if (doingMultiAutoColumn) {
             rowGroupColumns.forEach(function (rowGroupCol, index) {
                 groupAutoColumns.push(_this.createOneAutoGroupColumn(rowGroupCol, index));
             });
@@ -54,9 +60,8 @@ var AutoGroupColService = (function () {
         }
         utils_1._.mergeDeep(defaultAutoColDef, userAutoColDef);
         defaultAutoColDef.colId = colId;
-        //If the user is not telling us his preference with regards wether the filtering
-        //should be suppressed, we suppress it if there are no leaf nodes
-        if (userAutoColDef == null || userAutoColDef.suppressFilter == null) {
+        var noUserFilterPreferences = userAutoColDef == null || userAutoColDef.suppressFilter == null;
+        if (noUserFilterPreferences && !this.gridOptionsWrapper.isTreeData()) {
             var produceLeafNodeValues = defaultAutoColDef.field != null || defaultAutoColDef.valueGetter != null;
             defaultAutoColDef.suppressFilter = !produceLeafNodeValues;
         }

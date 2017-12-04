@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,25 +51,26 @@ var DateFilter = (function (_super) {
         return "<div class=\"ag-filter-body\">\n                    <div class=\"ag-filter-date-from\" id=\"filterDateFromPanel\">\n                    </div>\n                    <div class=\"ag-filter-date-to\" id=\"filterDateToPanel\">\n                    </div>\n                </div>";
     };
     DateFilter.prototype.initialiseFilterBodyUi = function () {
+        var _this = this;
         var dateComponentParams = {
             onDateChanged: this.onDateChanged.bind(this)
         };
-        this.dateToComponent = this.componentRecipes.newDateComponent(dateComponentParams);
-        this.dateFromComponent = this.componentRecipes.newDateComponent(dateComponentParams);
-        var dateFromElement = utils_1._.ensureElement(this.dateFromComponent.getGui());
-        this.eDateFromPanel.appendChild(dateFromElement);
-        var dateToElement = utils_1._.ensureElement(this.dateToComponent.getGui());
-        this.eDateToPanel.appendChild(dateToElement);
-        if (this.dateFromComponent.afterGuiAttached) {
-            this.dateFromComponent.afterGuiAttached({
-                eComponent: dateFromElement
-            });
-        }
-        if (this.dateToComponent.afterGuiAttached) {
-            this.dateToComponent.afterGuiAttached({
-                eComponent: dateToElement
-            });
-        }
+        this.componentRecipes.newDateComponent(dateComponentParams).then(function (dateToComponent) {
+            _this.dateToComponent = dateToComponent;
+            var dateToElement = _this.dateToComponent.getGui();
+            _this.eDateToPanel.appendChild(dateToElement);
+            if (_this.dateToComponent.afterGuiAttached) {
+                _this.dateToComponent.afterGuiAttached();
+            }
+        });
+        this.componentRecipes.newDateComponent(dateComponentParams).then(function (dateFromComponent) {
+            _this.dateFromComponent = dateFromComponent;
+            var dateFromElement = _this.dateFromComponent.getGui();
+            _this.eDateFromPanel.appendChild(dateFromElement);
+            if (_this.dateFromComponent.afterGuiAttached) {
+                _this.dateFromComponent.afterGuiAttached();
+            }
+        });
     };
     DateFilter.prototype.onDateChanged = function () {
         this.dateFrom = DateFilter.removeTimezone(this.dateFromComponent.getDate());

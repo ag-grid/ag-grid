@@ -1,8 +1,9 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellEditorComp, ICellEditorParams } from "./cellEditors/iCellEditor";
 import { ColDef } from "../entities/colDef";
+import { Promise } from "../utils";
 export declare class CellEditorFactory {
     private context;
     private componentResolver;
@@ -11,5 +12,5 @@ export declare class CellEditorFactory {
     addCellEditor(key: string, cellEditor: {
         new (): ICellEditorComp;
     }): void;
-    createCellEditor(column: ColDef, params: ICellEditorParams): ICellEditorComp;
+    createCellEditor(column: ColDef, params: ICellEditorParams): Promise<ICellEditorComp>;
 }

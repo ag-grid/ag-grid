@@ -1,12 +1,12 @@
 import {Bean, Autowired} from "../context/context";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
-import {FilterManager} from "../filter/filterManager";
+import {FilterManager, FilterWrapper} from "../filter/filterManager";
 import {Column} from "../entities/column";
 import {Utils as _} from "../utils";
 import {PopupService} from "../widgets/popupService";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {EventService} from "../eventService";
-import {IAfterGuiAttachedParams, IFilterAfterGuiAttachedParams} from "../interfaces/iComponent";
+import {IAfterGuiAttachedParams} from "../interfaces/iComponent";
 
 @Bean('menuFactory')
 export class StandardMenuFactory implements IMenuFactory {
@@ -40,11 +40,13 @@ export class StandardMenuFactory implements IMenuFactory {
     }
 
     public showPopup(column: Column,  positionCallback: (eMenu: HTMLElement)=>void): void {
-        let filterWrapper = this.filterManager.getOrCreateFilterWrapper(column);
+        let filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(column);
 
         let eMenu = document.createElement('div');
         _.addCssClass(eMenu, 'ag-menu');
-        eMenu.appendChild(filterWrapper.gui);
+        filterWrapper.guiPromise.promise.then(gui=>{
+            eMenu.appendChild(gui)
+        });
 
         let hidePopup: () => void;
 
@@ -66,13 +68,14 @@ export class StandardMenuFactory implements IMenuFactory {
         hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
         positionCallback(eMenu);
 
-        if (filterWrapper.filter.afterGuiAttached) {
-            let params: IFilterAfterGuiAttachedParams = {
-                hidePopup: hidePopup,
-                eComponent: filterWrapper.gui
-            };
-            filterWrapper.filter.afterGuiAttached(params);
-        }
+        filterWrapper.filterPromise.then(filter=>{
+            if (filter.afterGuiAttached) {
+                let params: IAfterGuiAttachedParams = {
+                    hidePopup: hidePopup
+                };
+                filter.afterGuiAttached(params);
+            }
+        });
 
         column.setMenuVisible(true);
     }

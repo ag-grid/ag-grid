@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -167,7 +167,7 @@ var RowNode = (function () {
         }
         this.allChildrenCount = allChildrenCount;
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED));
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED));
         }
     };
     RowNode.prototype.setRowHeight = function (rowHeight) {
@@ -248,10 +248,19 @@ var RowNode = (function () {
         if (this.eventService) {
             colIds.forEach(function (colId) {
                 var column = _this.columnController.getGridColumn(colId);
-                var value = _this.data ? _this.data[colId] : undefined;
+                var value = _this.aggData ? _this.aggData[colId] : undefined;
                 _this.dispatchCellChangedEvent(column, value);
             });
         }
+    };
+    RowNode.prototype.hasChildren = function () {
+        // we need to return true when this.group=true, as this is used by enterprise row model
+        // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
+        // if children exist.
+        return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+    };
+    RowNode.prototype.isEmptyFillerNode = function () {
+        return this.group && utils_1.Utils.missingOrEmpty(this.childrenAfterGroup);
     };
     RowNode.prototype.dispatchCellChangedEvent = function (column, newValue) {
         var cellChangedEvent = {
@@ -266,7 +275,7 @@ var RowNode = (function () {
         this.quickFilterAggregateText = null;
     };
     RowNode.prototype.isExpandable = function () {
-        return this.group || this.canFlower;
+        return this.hasChildren() || this.master;
     };
     RowNode.prototype.isSelected = function () {
         // for footers, we just return what our sibling selected state is, as cannot select a footer
@@ -545,7 +554,7 @@ var RowNode = (function () {
     RowNode.EVENT_ROW_SELECTED = 'rowSelected';
     RowNode.EVENT_DATA_CHANGED = 'dataChanged';
     RowNode.EVENT_CELL_CHANGED = 'cellChanged';
-    RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED = 'allChildrenCountChanged';
+    RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED = 'allChildrenCountChanged';
     RowNode.EVENT_MOUSE_ENTER = 'mouseEnter';
     RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
     RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';

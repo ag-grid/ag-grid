@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -210,7 +210,11 @@ var ColumnController = (function () {
         this.bodyWidthDirty = true;
     }
     ColumnController.prototype.init = function () {
-        this.pivotMode = this.gridOptionsWrapper.isPivotMode();
+        var pivotMode = this.gridOptionsWrapper.isPivotMode();
+        if (this.isPivotSettingAllowed(pivotMode)) {
+            this.pivotMode = pivotMode;
+        }
+        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
     };
     ColumnController.prototype.setVirtualViewportLeftAndRight = function () {
         if (this.gridOptionsWrapper.isEnableRtl()) {
@@ -268,8 +272,25 @@ var ColumnController = (function () {
     ColumnController.prototype.isPivotMode = function () {
         return this.pivotMode;
     };
+    ColumnController.prototype.isPivotSettingAllowed = function (pivot) {
+        if (pivot) {
+            if (this.gridOptionsWrapper.isTreeData()) {
+                console.warn("ag-Grid: Pivot mode not available in conjunction Tree Data i.e. 'gridOptions.treeData: true'");
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+        else {
+            return true;
+        }
+    };
     ColumnController.prototype.setPivotMode = function (pivotMode) {
         if (pivotMode === this.pivotMode) {
+            return;
+        }
+        if (!this.isPivotSettingAllowed(this.pivotMode)) {
             return;
         }
         this.pivotMode = pivotMode;
@@ -1949,7 +1970,7 @@ var ColumnController = (function () {
         }
         this.autoGroupsNeedBuilding = false;
         // see if we need to insert the default grouping column
-        var needAutoColumns = this.rowGroupColumns.length > 0
+        var needAutoColumns = (this.rowGroupColumns.length > 0 || this.usingTreeData)
             && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
             && !this.gridOptionsWrapper.isGroupUseEntireRow()
             && !this.gridOptionsWrapper.isGroupSuppressRow();

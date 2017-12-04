@@ -32,6 +32,8 @@ export interface RefreshModelParams {
     keepEditingRows?: boolean;
     // if doing delta updates, this has the changes that were done
     rowNodeTransaction?: RowNodeTransaction;
+    // if doing delta updates, this has the order of the nodes
+    rowNodeOrder?: {[id:string]: number};
     // true user called setRowData() (or a new page in pagination). the grid scrolls
     // back to the top when this is true.
     newData?: boolean;
@@ -85,17 +87,20 @@ export class InMemoryRowModel {
     @PostConstruct
     public init(): void {
 
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshModel.bind(this, {step: Constants.STEP_EVERYTHING} ));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshModel.bind(this, {step: Constants.STEP_EVERYTHING} ));
+        let refreshEverythingFunc = this.refreshModel.bind(this, {step: Constants.STEP_EVERYTHING} );
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingFunc);
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, {step: Constants.STEP_PIVOT} ));
 
         this.eventService.addModalPriorityEventListener(Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, {step: Constants.STEP_PIVOT} ));
+        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
 
-        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshModel.bind(this, {step: Constants.STEP_MAP, keepRenderedRows: true, animate: true} ));
+        let refreshMapFunc = this.refreshModel.bind(this, {step: Constants.STEP_MAP, keepRenderedRows: true, animate: true} );
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, refreshMapFunc);
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapFunc);
 
         this.rootNode = new RowNode();
         this.nodeManager = new InMemoryNodeManager(this.rootNode, this.gridOptionsWrapper,
@@ -199,7 +204,7 @@ export class InMemoryRowModel {
         switch (params.step) {
             case constants.STEP_EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(params.groupState, params.rowNodeTransaction, changedPath);
+                this.doRowGrouping(params.groupState, params.rowNodeTransaction, params.rowNodeOrder, changedPath);
                 // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants.STEP_FILTER:
                 // start = new Date().getTime();
@@ -242,8 +247,8 @@ export class InMemoryRowModel {
     public isEmpty(): boolean {
         let rowsMissing: boolean;
 
-        let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (rowsAlreadyGrouped) {
+        let doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (doingLegacyTreeData) {
             rowsMissing = _.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0
         } else {
             rowsMissing = _.missing(this.rootNode.allLeafChildren) || this.rootNode.allLeafChildren.length === 0;
@@ -429,7 +434,7 @@ export class InMemoryRowModel {
                 let node = nodes[i];
                 callback(node, index++);
                 // go to the next level if it is a group
-                if (node.group) {
+                if (node.hasChildren()) {
                     // depending on the recursion type, we pick a difference set of children
                     let nodeChildren: RowNode[];
                     switch (recursionType) {
@@ -481,17 +486,21 @@ export class InMemoryRowModel {
         this.sortStage.execute({rowNode: this.rootNode});
     }
 
-    private doRowGrouping(groupState: any, rowNodeTransaction: RowNodeTransaction, changedPath: ChangedPath) {
+    private doRowGrouping(groupState: any,
+                          rowNodeTransaction: RowNodeTransaction,
+                          rowNodeOrder: {[id:string]: number},
+                          changedPath: ChangedPath) {
 
         // grouping is enterprise only, so if service missing, skip the step
-        let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (rowsAlreadyGrouped) { return; }
+        let doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (doingLegacyTreeData) { return; }
 
         if (this.groupStage) {
 
             if (rowNodeTransaction) {
                 this.groupStage.execute({rowNode: this.rootNode,
                     rowNodeTransaction: rowNodeTransaction,
+                    rowNodeOrder: rowNodeOrder,
                     changedPath: changedPath});
             } else {
                 // groups are about to get disposed, so need to deselect any that are selected
@@ -578,15 +587,16 @@ export class InMemoryRowModel {
             newData: true});
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction {
+    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {[id:string]: number}): RowNodeTransaction {
 
         this.valueCache.onDataChanged();
 
-        let rowNodeTran = this.nodeManager.updateRowData(rowDataTran);
+        let rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
 
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
             rowNodeTransaction: rowNodeTran,
+            rowNodeOrder: rowNodeOrder,
             keepRenderedRows: true,
             animate: true,
             keepEditingRows: true

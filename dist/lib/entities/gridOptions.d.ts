@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -14,7 +14,7 @@ import { IDateComp } from "../rendering/dateComponent";
 import { IEnterpriseDatasource } from "../interfaces/iEnterpriseDatasource";
 import { CsvExportParams, ProcessCellForExportParams } from "../exportParams";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, FilterChangedEvent, FilterModifiedEvent, GridColumnsChangedEvent, GridReadyEvent, GridSizeChangedEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent, RowClickedEvent, RowDataChangedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent } from "../events";
-import { IAfterGuiAttachedParams, IComponent } from "../interfaces/iComponent";
+import { IComponent } from "../interfaces/iComponent";
 import { AgGridRegisteredComponentInput } from "../components/framework/componentProvider";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -142,6 +142,7 @@ export interface GridOptions {
     groupIncludeFooter?: boolean;
     groupUseEntireRow?: boolean;
     groupRemoveSingleChildren?: boolean;
+    groupRemoveLowestSingleChildren?: boolean;
     groupSuppressRow?: boolean;
     groupHideOpenParents?: boolean;
     groupMultiAutoColumn?: boolean;
@@ -163,7 +164,15 @@ export interface GridOptions {
     overlayLoadingTemplate?: string;
     overlayNoRowsTemplate?: string;
     rowHeight?: number;
+    detailRowHeight?: number;
     headerCellTemplate?: string;
+    masterDetail?: boolean;
+    isRowMaster?: IsRowMaster;
+    detailCellRenderer?: {
+        new (): ICellRendererComp;
+    } | ICellRendererFunc | string;
+    detailCellRendererFramework?: any;
+    detailCellRendererParams?: any;
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
@@ -194,7 +203,7 @@ export interface GridOptions {
         };
     };
     components?: {
-        [p: string]: AgGridRegisteredComponentInput<IComponent<any, IAfterGuiAttachedParams>>;
+        [p: string]: AgGridRegisteredComponentInput<IComponent<any>>;
     };
     dateComponent?: {
         new (): IDateComp;
@@ -232,6 +241,8 @@ export interface GridOptions {
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?: GetNodeChildDetails;
+    getDataPath?: GetDataPath;
+    treeData?: boolean;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
     getRowNodeId?: GetRowNodeIdFunc;
@@ -300,8 +311,14 @@ export interface GridOptions {
     api?: GridApi;
     columnApi?: ColumnApi;
 }
+export interface GetDataPath {
+    (data: any): string[];
+}
 export interface GetNodeChildDetails {
     (dataItem: any): NodeChildDetails;
+}
+export interface IsRowMaster {
+    (dataItem: any): boolean;
 }
 export interface NodeChildDetails {
     group: boolean;

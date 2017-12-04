@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -6,6 +6,7 @@ export interface RowContainerComponentParams {
     eContainer: HTMLElement;
     eViewport?: HTMLElement;
     hideWhenNoChildren?: boolean;
+    body?: boolean;
 }
 /**
  * There are many instances of this component covering each of the areas a row can be entered
@@ -16,6 +17,7 @@ export declare class RowContainerComponent {
     gridOptionsWrapper: GridOptionsWrapper;
     private eContainer;
     private eViewport;
+    private body;
     private hideWhenNoChildren;
     private childCount;
     private visible;

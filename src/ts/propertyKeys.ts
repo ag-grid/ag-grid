@@ -8,7 +8,7 @@ export class PropertyKeys {
         'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText',
         'icons', 'datasource', 'enterpriseDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
         'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
-        'rowClassRules'
+        'rowClassRules', 'detailGridOptions'
         //,'cellRenderers','cellEditors'
     ];
 
@@ -19,8 +19,8 @@ export class PropertyKeys {
     ];
 
     public static NUMBER_PROPERTIES = [
-        'rowHeight', 'rowBuffer', 'colWidth', 'headerHeight', 'groupHeaderHeight', 'floatingFiltersHeight',
-        'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded',
+        'rowHeight', 'detailRowHeight','rowBuffer', 'colWidth', 'headerHeight', 'groupHeaderHeight',
+        'floatingFiltersHeight', 'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded',
         'minColWidth', 'maxColWidth', 'viewportRowModelPageSize', 'viewportRowModelBufferSize',
         'layoutInterval', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
         'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount',
@@ -44,23 +44,24 @@ export class PropertyKeys {
         'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups',
         'suppressCopyRowsToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation', 'suppressAggAtRootLevel',
         'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly',
-        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'enableRtl', 'suppressClickEdit',
+        'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren',
+        'enableRtl', 'suppressClickEdit',
         'enableGroupEdit', 'embedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter',
         'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus',
         'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
         'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection',
         'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame',
-        'suppressExcelExport', 'suppressCsvExport'
+        'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail'
     ];
 
     public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
         'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent',
-        'getRowHeight', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getHeaderCellTemplate', 'traverseNode',
-        'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
+        'getRowHeight', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getRowClassRules', 'getHeaderCellTemplate',
+        'traverseNode', 'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
         'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
         'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
-        'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell',
-       'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount'];
+        'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell', 'getDetailRowData',
+       'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath'];
 
      public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)

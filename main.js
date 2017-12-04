@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,6 +28,8 @@ exports.GroupInstanceIdCreator = groupInstanceIdCreator_1.GroupInstanceIdCreator
 // components
 var componentUtil_1 = require("./dist/lib/components/componentUtil");
 exports.ComponentUtil = componentUtil_1.ComponentUtil;
+var colDefUtil_1 = require("./dist/lib/components/colDefUtil");
+exports.ColDefUtil = colDefUtil_1.ColDefUtil;
 var componentProvider_1 = require("./dist/lib/components/framework/componentProvider");
 exports.ComponentProvider = componentProvider_1.ComponentProvider;
 var agGridNg1_1 = require("./dist/lib/components/agGridNg1");
@@ -240,6 +242,7 @@ var utils_1 = require("./dist/lib/utils");
 exports.Utils = utils_1.Utils;
 exports.NumberSequence = utils_1.NumberSequence;
 exports._ = utils_1._;
+exports.Promise = utils_1.Promise;
 var valueService_1 = require("./dist/lib/valueService/valueService");
 exports.ValueService = valueService_1.ValueService;
 var expressionService_1 = require("./dist/lib/valueService/expressionService");

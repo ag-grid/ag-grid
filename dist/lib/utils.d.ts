@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -15,6 +15,8 @@ export declare class Utils {
     private static isChrome;
     private static isFirefox;
     private static PRINTABLE_CHARACTERS;
+    private static doOnceFlags;
+    static doOnce(func: () => void, key: string): void;
     static areEventsNear(e1: MouseEvent | Touch, e2: MouseEvent | Touch, pixelCount: number): boolean;
     static shallowCompare(arr1: any[], arr2: any[]): boolean;
     static getNameOfClass(TheClass: any): string;
@@ -32,7 +34,7 @@ export declare class Utils {
     static forEach<T>(array: T[], callback: (item: T, index: number) => void): void;
     static filter<T>(array: T[], callback: (item: T) => boolean): T[];
     static getAllKeysInObjects(objects: any[]): string[];
-    static mergeDeep(into: any, source: any): void;
+    static mergeDeep(dest: any, source: any): void;
     static assign(object: any, ...sources: any[]): any;
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date;
     static serializeDateToYyyyMmDd(date: Date, separator: string): string;
@@ -55,6 +57,7 @@ export declare class Utils {
     static missingOrEmpty(value: any[] | string): boolean;
     static missingOrEmptyObject(value: any): boolean;
     static exists(value: any): boolean;
+    static firstExistingValue<A>(...values: A[]): A;
     static anyExists(values: any[]): boolean;
     static existsAndNotEmpty(value: any[]): boolean;
     static removeAllChildren(node: HTMLElement): void;
@@ -66,8 +69,6 @@ export declare class Utils {
      * the dom api to load html directly, eg we cannot do this: document.createElement(template)
      */
     static loadTemplate(template: string): HTMLElement;
-    static assertHtmlElement(item: HTMLElement | string): HTMLElement;
-    static ensureElement(item: HTMLElement | string): HTMLElement;
     static appendHtml(eContainer: HTMLElement, htmlTemplate: string): void;
     static addOrRemoveCssClass(element: HTMLElement, className: string, addOrRemove: boolean): void;
     static callIfPresent(func: Function): void;
@@ -248,6 +249,9 @@ export declare class Utils {
     static passiveEvents: string[];
     static addSafePassiveEventListener(eElement: HTMLElement, event: string, listener: (event?: any) => void): void;
     static camelCaseToHumanText(camelCase: string): string;
+    static sortRowNodesByOrder(rowNodes: RowNode[], rowNodeOrder: {
+        [id: string]: number;
+    }): void;
 }
 export declare class NumberSequence {
     private nextValue;
@@ -258,3 +262,26 @@ export declare class NumberSequence {
     skip(count: number): void;
 }
 export declare let _: typeof Utils;
+export declare type ResolveAndRejectCallback<T> = (resolve: (value: T) => void, reject: (params: any) => void) => void;
+export declare enum PromiseStatus {
+    IN_PROGRESS = 0,
+    RESOLVED = 1,
+}
+export interface ExternalPromise<T> {
+    resolve: (value: T) => void;
+    promise: Promise<T>;
+}
+export declare class Promise<T> {
+    private status;
+    private resolution;
+    private listOfWaiters;
+    static all<T>(toCombine: Promise<T>[]): Promise<T[]>;
+    static resolve<T>(value: T): Promise<T>;
+    static external<T>(): ExternalPromise<T>;
+    constructor(callback: ResolveAndRejectCallback<T>);
+    then(func: (result: any) => void): void;
+    map<Z>(adapter: (from: T) => Z): Promise<Z>;
+    resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T) => Z): Z;
+    private onDone(value);
+    private onReject(params);
+}

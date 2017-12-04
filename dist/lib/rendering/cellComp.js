@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,6 +28,15 @@ var CellComp = (function (_super) {
     __extends(CellComp, _super);
     function CellComp(scope, beans, column, rowNode, rowComp) {
         var _this = _super.call(this) || this;
+        _this.editingCell = false;
+        // every time we go into edit mode, or back again, this gets incremented.
+        // it's the components way of dealing with the async nature of framework components,
+        // so if a framework component takes a while to be created, we know if the object
+        // is still relevant when creating is finished. eg we could click edit / unedit 20
+        // times before the first React edit component comes back - we should discard
+        // the first 19.
+        _this.cellEditorVersion = 0;
+        _this.cellRendererVersion = 0;
         _this.scope = scope;
         _this.beans = beans;
         _this.column = column;
@@ -53,7 +62,9 @@ var CellComp = (function (_super) {
         var width = this.getCellWidth();
         var left = col.getLeft();
         var valueToRender = this.getInitialValueToRender();
+        var valueSanitised = utils_1._.get(this.column, 'colDef.template', null) ? valueToRender : utils_1._.escape(valueToRender);
         var tooltip = this.getToolTip();
+        var tooltipSanitised = utils_1._.escape(tooltip);
         var wrapperStartTemplate;
         var wrapperEndTemplate;
         var stylesFromColDef = this.preProcessStylesFromColDef();
@@ -69,10 +80,10 @@ var CellComp = (function (_super) {
         templateParts.push(" comp-id=\"" + this.getCompId() + "\" ");
         templateParts.push(" col-id=\"" + col.getId() + "\"");
         templateParts.push(" class=\"" + cssClasses.join(' ') + "\"");
-        templateParts.push(tooltip ? " title=\"" + tooltip + "\"" : "");
+        templateParts.push(tooltipSanitised ? " title=\"" + tooltipSanitised + "\"" : "");
         templateParts.push(" style=\"width: " + width + "px; left: " + left + "px; " + stylesFromColDef + "\" >");
         templateParts.push(wrapperStartTemplate);
-        templateParts.push(valueToRender);
+        templateParts.push(valueSanitised);
         templateParts.push(wrapperEndTemplate);
         templateParts.push("</div>");
         return templateParts.join('');
@@ -80,7 +91,7 @@ var CellComp = (function (_super) {
     CellComp.prototype.afterAttached = function () {
         var querySelector = "[comp-id=\"" + this.getCompId() + "\"]";
         var eGui = this.eParentRow.querySelector(querySelector);
-        this.setHtmlElementNoHydrate(eGui);
+        this.setGui(eGui);
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.addDomData();
         this.addSelectionCheckbox();
@@ -103,7 +114,7 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.onColumnHover = function () {
         var isHovered = this.beans.columnHoverService.isHovered(this.column);
-        utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-column-hover', isHovered);
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     };
     CellComp.prototype.onCellChanged = function (event) {
         var eventImpactsThisCell = event.column === this.column;
@@ -304,7 +315,7 @@ var CellComp = (function (_super) {
     CellComp.prototype.animateCell = function (cssName) {
         var fullName = 'ag-cell-' + cssName;
         var animationFullName = 'ag-cell-' + cssName + '-animation';
-        var element = this.getHtmlElement();
+        var element = this.getGui();
         // we want to highlight the cells, without any animation
         utils_1._.addCssClass(element, fullName);
         utils_1._.removeCssClass(element, animationFullName);
@@ -374,7 +385,7 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.postProcessClassesFromColDef = function () {
         var _this = this;
-        this.processClassesFromColDef(function (className) { return utils_1._.addCssClass(_this.getHtmlElement(), className); });
+        this.processClassesFromColDef(function (className) { return utils_1._.addCssClass(_this.getGui(), className); });
     };
     CellComp.prototype.preProcessClassesFromColDef = function () {
         var res = [];
@@ -428,6 +439,9 @@ var CellComp = (function (_super) {
                 var tooltip = utils_1._.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
                 if (utils_1._.exists(tooltip)) {
                     this.eParentOfValue.setAttribute('title', tooltip);
+                }
+                else {
+                    this.eParentOfValue.removeAttribute('title');
                 }
             }
         }
@@ -485,9 +499,9 @@ var CellComp = (function (_super) {
     CellComp.prototype.postProcessCellClassRules = function () {
         var _this = this;
         this.processCellClassRules(function (className) {
-            utils_1._.addCssClass(_this.getHtmlElement(), className);
+            utils_1._.addCssClass(_this.getGui(), className);
         }, function (className) {
-            utils_1._.removeCssClass(_this.getHtmlElement(), className);
+            utils_1._.removeCssClass(_this.getGui(), className);
         });
     };
     CellComp.prototype.preProcessCellClassRules = function () {
@@ -545,10 +559,27 @@ var CellComp = (function (_super) {
     CellComp.prototype.createCellRendererInstance = function () {
         var valueToRender = this.formatValue(this.value);
         var params = this.createCellRendererParams(valueToRender);
-        this.cellRenderer = this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType);
+        this.cellRendererVersion++;
+        var callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
+        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType).then(callback);
+    };
+    CellComp.prototype.afterCellRendererCreated = function (cellRendererVersion, cellRenderer) {
+        // see if daemon
+        if (cellRendererVersion !== this.cellRendererVersion) {
+            if (cellRenderer.destroy) {
+                cellRenderer.destroy();
+            }
+            return;
+        }
+        this.cellRenderer = cellRenderer;
         this.cellRendererGui = this.cellRenderer.getGui();
-        if (this.cellRendererGui === null || this.cellRendererGui === undefined) {
-            console.warn('ag-Grid: cellRenderer should return back a string or a DOM object, but got ' + this.cellRendererGui);
+        if (utils_1._.missing(this.cellRendererGui)) {
+            return;
+        }
+        // if async components, then it's possible the user started editing since
+        // this call was made
+        if (!this.editingCell) {
+            this.eParentOfValue.appendChild(this.cellRendererGui);
         }
     };
     CellComp.prototype.attachCellRenderer = function () {
@@ -556,20 +587,6 @@ var CellComp = (function (_super) {
             return;
         }
         this.createCellRendererInstance();
-        if (typeof this.cellRendererGui !== 'object') {
-            //First check for simple return types
-            this.eParentOfValue.innerHTML = this.cellRendererGui + '';
-            this.cellRendererGui = this.eParentOfValue.firstChild;
-        }
-        else if (this.cellRendererGui instanceof Node) {
-            //Is this an HTML Element
-            this.eParentOfValue.appendChild(this.cellRendererGui);
-        }
-        else if (this.cellRendererGui.toString) {
-            //Lastly before given up... Does it have a toString
-            this.eParentOfValue.innerHTML = this.cellRendererGui.toString() + '';
-            this.cellRendererGui = this.eParentOfValue.firstChild;
-        }
     };
     CellComp.prototype.createCellRendererParams = function (valueFormatted) {
         var _this = this;
@@ -589,7 +606,6 @@ var CellComp = (function (_super) {
             columnApi: this.beans.gridOptionsWrapper.getColumnApi(),
             context: this.beans.gridOptionsWrapper.getContext(),
             refreshCell: this.refreshCell.bind(this),
-            // todo danger - in the new world, these are not present :(
             eGridCell: this.getGui(),
             eParentOfValue: this.eParentOfValue,
             // these bits are not documented anywhere, so we could drop them?
@@ -737,12 +753,36 @@ var CellComp = (function (_super) {
         if (this.editingCell) {
             return;
         }
-        var cellEditor = this.createCellEditor(keyPress, charPress, cellStartedEdit);
+        this.editingCell = true;
+        this.cellEditorVersion++;
+        var callback = this.afterCellEditorCreated.bind(this, this.cellEditorVersion);
+        var params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
+        this.beans.cellEditorFactory.createCellEditor(this.column.getColDef(), params).then(callback);
+        // if we don't do this, and editor component is async, then there will be a period
+        // when the component isn't present and keyboard navigation won't work - so example
+        // of user hitting tab quickly (more quickly than renderers getting created) won't work
+        var cellEditorAsync = utils_1._.missing(this.cellEditor);
+        if (cellEditorAsync && cellStartedEdit) {
+            this.focusCell(true);
+        }
+    };
+    CellComp.prototype.afterCellEditorCreated = function (cellEditorVersion, cellEditor) {
+        // if editingCell=false, means user cancelled the editor before component was ready.
+        // if versionMismatch, then user cancelled the edit, then started the edit again, and this
+        //   is the first editor which is now stale.
+        var versionMismatch = cellEditorVersion !== this.cellEditorVersion;
+        if (versionMismatch || !this.editingCell) {
+            if (cellEditor.destroy) {
+                cellEditor.destroy();
+            }
+            return;
+        }
         if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
             if (cellEditor.destroy) {
                 cellEditor.destroy();
             }
-            return false;
+            this.editingCell = false;
+            return;
         }
         if (!cellEditor.getGui) {
             console.warn("ag-Grid: cellEditor for column " + this.column.getId() + " is missing getGui() method");
@@ -750,11 +790,14 @@ var CellComp = (function (_super) {
             if (cellEditor.render) {
                 console.warn("ag-Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?");
             }
-            return false;
+            if (cellEditor.destroy) {
+                cellEditor.destroy();
+            }
+            this.editingCell = false;
+            return;
         }
         this.cellEditor = cellEditor;
-        this.editingCell = true;
-        this.cellEditorInPopup = this.cellEditor.isPopup && this.cellEditor.isPopup();
+        this.cellEditorInPopup = cellEditor.isPopup && cellEditor.isPopup();
         this.setInlineEditingClass();
         if (this.cellEditorInPopup) {
             this.addPopupCellEditor();
@@ -767,11 +810,10 @@ var CellComp = (function (_super) {
         }
         var event = this.createEvent(null, events_1.Events.EVENT_CELL_EDITING_STARTED);
         this.beans.eventService.dispatchEvent(event);
-        return true;
     };
     CellComp.prototype.addInCellEditor = function () {
-        utils_1._.removeAllChildren(this.getHtmlElement());
-        this.getHtmlElement().appendChild(utils_1._.assertHtmlElement(this.cellEditor.getGui()));
+        utils_1._.removeAllChildren(this.getGui());
+        this.getGui().appendChild(this.cellEditor.getGui());
         this.angular1Compile();
     };
     CellComp.prototype.addPopupCellEditor = function () {
@@ -786,8 +828,8 @@ var CellComp = (function (_super) {
             column: this.column,
             rowNode: this.rowNode,
             type: 'popupCellEditor',
-            eventSource: this.getHtmlElement(),
-            ePopup: utils_1._.assertHtmlElement(ePopupGui),
+            eventSource: this.getGui(),
+            ePopup: ePopupGui,
             keepWithinBounds: true
         });
         this.angular1Compile();
@@ -813,13 +855,8 @@ var CellComp = (function (_super) {
     // to allow the text editor full access to the entire cell
     CellComp.prototype.setInlineEditingClass = function () {
         var editingInline = this.editingCell && !this.cellEditorInPopup;
-        utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-inline-editing', editingInline);
-        utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-not-inline-editing', !editingInline);
-    };
-    CellComp.prototype.createCellEditor = function (keyPress, charPress, cellStartedEdit) {
-        var params = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
-        var cellEditor = this.beans.cellEditorFactory.createCellEditor(this.column.getColDef(), params);
-        return cellEditor;
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-inline-editing', editingInline);
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-not-inline-editing', !editingInline);
     };
     CellComp.prototype.createCellEditorParams = function (keyPress, charPress, cellStartedEdit) {
         var params = {
@@ -836,14 +873,10 @@ var CellComp = (function (_super) {
             $scope: this.scope,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
-            eGridCell: this.getHtmlElement(),
+            eGridCell: this.getGui(),
             parseValue: this.parseValue.bind(this),
             formatValue: this.formatValue.bind(this)
         };
-        var colDef = this.column.getColDef();
-        if (colDef.cellEditorParams) {
-            utils_1._.assign(params, colDef.cellEditorParams);
-        }
         return params;
     };
     // cell editors call this, when they want to stop for reasons other
@@ -872,8 +905,17 @@ var CellComp = (function (_super) {
         this.beans.focusedCellController.setFocusedCell(this.gridCell.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
     };
     CellComp.prototype.setFocusInOnEditor = function () {
-        if (this.editingCell && this.cellEditor && this.cellEditor.focusIn) {
-            this.cellEditor.focusIn();
+        if (this.editingCell) {
+            if (this.cellEditor && this.cellEditor.focusIn) {
+                // if the editor is present, then we just focus it
+                this.cellEditor.focusIn();
+            }
+            else {
+                // if the editor is not present, it means async cell editor (eg React fibre)
+                // and we are trying to set focus before the cell editor is present, so we
+                // focus the cell instead
+                this.focusCell(true);
+            }
         }
     };
     CellComp.prototype.isEditing = function () {
@@ -917,10 +959,9 @@ var CellComp = (function (_super) {
         }
         else {
             // if editing is null or undefined, this sets it to false
-            var editing = this.editingCell === true;
             var params = {
                 event: event,
-                editing: editing,
+                editing: this.editingCell,
                 column: this.column,
                 api: this.beans.gridOptionsWrapper.getApi(),
                 node: this.rowNode,
@@ -1050,7 +1091,7 @@ var CellComp = (function (_super) {
         if (utils_1._.isBrowserIE() || utils_1._.isBrowserEdge()) {
             if (utils_1._.missing(document.activeElement) || document.activeElement === document.body) {
                 // console.log('missing focus');
-                this.getHtmlElement().focus();
+                this.getGui().focus();
             }
         }
     };
@@ -1075,7 +1116,7 @@ var CellComp = (function (_super) {
         return this.column;
     };
     CellComp.prototype.detach = function () {
-        this.eParentRow.removeChild(this.getHtmlElement());
+        this.eParentRow.removeChild(this.getGui());
     };
     // if the row is also getting destroyed, then we don't need to remove from dom,
     // as the row will also get removed, so no need to take out the cells from the row
@@ -1085,18 +1126,20 @@ var CellComp = (function (_super) {
         _super.prototype.destroy.call(this);
         if (this.cellEditor && this.cellEditor.destroy) {
             this.cellEditor.destroy();
+            this.cellEditor = null;
         }
         if (this.cellRenderer && this.cellRenderer.destroy) {
             this.cellRenderer.destroy();
+            this.cellRenderer = null;
         }
     };
     CellComp.prototype.onLeftChanged = function () {
         var left = this.getCellLeft();
-        this.getHtmlElement().style.left = left + 'px';
+        this.getGui().style.left = left + 'px';
     };
     CellComp.prototype.onWidthChanged = function () {
         var width = this.getCellWidth();
-        this.getHtmlElement().style.width = width + 'px';
+        this.getGui().style.width = width + 'px';
     };
     CellComp.prototype.getRangeClasses = function () {
         var res = [];
@@ -1134,7 +1177,7 @@ var CellComp = (function (_super) {
             return;
         }
         var newRangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
-        var element = this.getHtmlElement();
+        var element = this.getGui();
         if (this.rangeCount !== newRangeCount) {
             utils_1._.addOrRemoveCssClass(element, 'ag-cell-range-selected', newRangeCount !== 0);
             utils_1._.addOrRemoveCssClass(element, 'ag-cell-range-selected-1', newRangeCount === 1);
@@ -1148,14 +1191,14 @@ var CellComp = (function (_super) {
         var firstRightPinned = this.column.isFirstRightPinned();
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
-            utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-first-right-pinned', firstRightPinned);
+            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-first-right-pinned', firstRightPinned);
         }
     };
     CellComp.prototype.onLastLeftPinnedChanged = function () {
         var lastLeftPinned = this.column.isLastLeftPinned();
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
-            utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-last-left-pinned', lastLeftPinned);
+            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-last-left-pinned', lastLeftPinned);
         }
     };
     CellComp.prototype.addSelectionCheckbox = function () {
@@ -1169,15 +1212,15 @@ var CellComp = (function (_super) {
             cbSelectionComponent_1.init({ rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc });
             this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
             // put the checkbox in before the value
-            this.eCellWrapper.insertBefore(cbSelectionComponent_1.getHtmlElement(), this.eParentOfValue);
+            this.eCellWrapper.insertBefore(cbSelectionComponent_1.getGui(), this.eParentOfValue);
         }
         else {
-            this.eParentOfValue = this.getHtmlElement();
+            this.eParentOfValue = this.getGui();
         }
     };
     CellComp.prototype.addDomData = function () {
         var _this = this;
-        var element = this.getHtmlElement();
+        var element = this.getGui();
         this.beans.gridOptionsWrapper.setDomData(element, CellComp.DOM_DATA_KEY_CELL_COMP, this);
         this.addDestroyFunc(function () {
             return _this.beans.gridOptionsWrapper.setDomData(element, CellComp.DOM_DATA_KEY_CELL_COMP, null);
@@ -1187,14 +1230,14 @@ var CellComp = (function (_super) {
         var cellFocused = this.beans.focusedCellController.isCellFocused(this.gridCell);
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {
-            utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-focus', cellFocused);
-            utils_1._.addOrRemoveCssClass(this.getHtmlElement(), 'ag-cell-no-focus', !cellFocused);
+            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-focus', cellFocused);
+            utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-cell-no-focus', !cellFocused);
             this.cellFocused = cellFocused;
         }
         // if this cell was just focused, see if we need to force browser focus, his can
         // happen if focus is programmatically set.
         if (cellFocused && event && event.forceBrowserFocus) {
-            this.getHtmlElement().focus();
+            this.getGui().focus();
         }
         // if another cell was focused, and we are editing, then stop editing
         var fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
@@ -1217,6 +1260,12 @@ var CellComp = (function (_super) {
         if (!this.editingCell) {
             return;
         }
+        // if no cell editor, this means due to async, that the cell editor never got initialised,
+        // so we just carry on regardless as if the editing was never started.
+        if (!this.cellEditor) {
+            this.editingCell = false;
+            return;
+        }
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
             // it is closed by user clicking outside the editor. then the editor will close automatically (with false
@@ -1236,16 +1285,19 @@ var CellComp = (function (_super) {
         if (this.cellEditor.destroy) {
             this.cellEditor.destroy();
         }
+        // important to clear this out - as parts of the code will check for
+        // this to see if an async cellEditor has yet to be created
+        this.cellEditor = null;
         if (this.cellEditorInPopup) {
             this.hideEditorPopup();
             this.hideEditorPopup = null;
         }
         else {
-            utils_1._.removeAllChildren(this.getHtmlElement());
+            utils_1._.removeAllChildren(this.getGui());
             // put the cell back the way it was before editing
             if (this.usingWrapper) {
                 // if wrapper, then put the wrapper back
-                this.getHtmlElement().appendChild(this.eCellWrapper);
+                this.getGui().appendChild(this.eCellWrapper);
             }
             else {
                 // if cellRenderer, then put the gui back in. if the renderer has
@@ -1258,7 +1310,7 @@ var CellComp = (function (_super) {
                     // can be null if cell was previously null / contained empty string,
                     // this will result in new value not being rendered.
                     if (eCell) {
-                        this.getHtmlElement().appendChild(eCell);
+                        this.getGui().appendChild(eCell);
                     }
                 }
             }

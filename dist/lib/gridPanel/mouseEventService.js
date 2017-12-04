@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49,19 +49,16 @@ var MouseEventService = (function () {
     // master / detail grids, and a child grid is found, then it returns false. this stops things like copy/paste
     // getting executed on many grids at the same time.
     MouseEventService.prototype.isEventFromThisGrid = function (event) {
-        var ePointer = utils_1.Utils.getTarget(event);
-        var eventFromThisGrid = false;
-        var finished = utils_1.Utils.missing(ePointer);
-        // while we have not found a grid, look for one
-        while (!finished) {
-            var instanceId = ePointer[MouseEventService_1.GRID_DOM_KEY];
+        var path = utils_1.Utils.getEventPath(event);
+        for (var i = 0; i < path.length; i++) {
+            var element = path[i];
+            var instanceId = element[MouseEventService_1.GRID_DOM_KEY];
             if (utils_1.Utils.exists(instanceId)) {
-                eventFromThisGrid = instanceId === this.gridInstanceId;
-                finished = true;
+                var eventFromThisGrid = instanceId === this.gridInstanceId;
+                return eventFromThisGrid;
             }
-            ePointer = ePointer.parentElement;
         }
-        return eventFromThisGrid;
+        return false;
     };
     MouseEventService.prototype.getGridCellForEvent = function (event) {
         var cellComp = this.getRenderedCellForEvent(event);

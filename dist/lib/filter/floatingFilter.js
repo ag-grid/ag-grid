@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -137,10 +137,12 @@ var DateFloatingFilterComp = (function (_super) {
         var dateComponentParams = {
             onDateChanged: toDebounce
         };
-        this.dateComponent = this.componentRecipes.newDateComponent(dateComponentParams);
+        this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
         var body = utils_1._.loadTemplate("<div></div>");
-        body.appendChild(utils_1._.ensureElement(this.dateComponent.getGui()));
-        this.setHtmlElement(body);
+        this.dateComponentPromise.then(function (dateComponent) {
+            body.appendChild(dateComponent.getGui());
+        });
+        this.setTemplateFromElement(body);
     };
     DateFloatingFilterComp.prototype.onDateChanged = function () {
         var parentModel = this.currentParentModel();
@@ -167,7 +169,7 @@ var DateFloatingFilterComp = (function (_super) {
     };
     DateFloatingFilterComp.prototype.asParentModel = function () {
         var currentParentModel = this.currentParentModel();
-        var filterValueDate = this.dateComponent.getDate();
+        var filterValueDate = this.dateComponentPromise.resolveNow(null, function (dateComponent) { return dateComponent.getDate(); });
         var filterValueText = utils_1._.serializeDateToYyyyMmDd(dateFilter_1.DateFilter.removeTimezone(filterValueDate), "-");
         return {
             type: currentParentModel.type,
@@ -178,11 +180,13 @@ var DateFloatingFilterComp = (function (_super) {
     };
     DateFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
         this.lastKnownModel = parentModel;
-        if (!parentModel || !parentModel.dateFrom) {
-            this.dateComponent.setDate(null);
-            return;
-        }
-        this.dateComponent.setDate(utils_1._.parseYyyyMmDdToDate(parentModel.dateFrom, '-'));
+        this.dateComponentPromise.then(function (dateComponent) {
+            if (!parentModel || !parentModel.dateFrom) {
+                dateComponent.setDate(null);
+                return;
+            }
+            dateComponent.setDate(utils_1._.parseYyyyMmDdToDate(parentModel.dateFrom, '-'));
+        });
     };
     __decorate([
         context_1.Autowired('componentRecipes'),

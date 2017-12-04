@@ -2,7 +2,7 @@ import {CsvCreator} from "./csvCreator";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {FilterManager} from "./filter/filterManager";
-import {ColumnController} from "./columnController/columnController";
+import {ColumnApi, ColumnController} from "./columnController/columnController";
 import {SelectionController} from "./selectionController";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {GridPanel} from "./gridPanel/gridPanel";
@@ -43,8 +43,9 @@ import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 import {AgEvent} from "./events";
+import {IToolPanel} from "./interfaces/iToolPanel";
+import {GridOptions} from "./entities/gridOptions";
 import { ISortModel } from "./interfaces/iSortModel";
-
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -62,6 +63,12 @@ export interface RefreshCellsParams {
 
 export interface RedrawRowsParams {
     rowNodes?: RowNode[];
+}
+
+export interface DetailGridInfo {
+    id: string;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 @Bean('gridApi')
@@ -94,10 +101,13 @@ export class GridApi {
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
+    @Optional('toolPanel') private toolPanel: IToolPanel;
 
     private inMemoryRowModel: InMemoryRowModel;
     private infinitePageRowModel: InfiniteRowModel;
     private enterpriseRowModel: IEnterpriseRowModel;
+
+    private detailGridInfoMap: {[id: string]: DetailGridInfo} = {};
 
     @PostConstruct
     private init(): void {
@@ -117,6 +127,29 @@ export class GridApi {
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __getAlignedGridService(): AlignedGridsService {
         return this.alignedGridsService;
+    }
+
+    public addDetailGridInfo(id: string, gridInfo: DetailGridInfo): void {
+        this.detailGridInfoMap[id] = gridInfo;
+    }
+
+    public removeDetailGridInfo(id: string): void {
+        this.detailGridInfoMap[id] = undefined;
+    }
+
+    public getDetailGridInfo(id: string): DetailGridInfo {
+        return this.detailGridInfoMap[id];
+    }
+
+    public forEachDetailGridInfo(callback: (gridInfo: DetailGridInfo, index: number)=>void) {
+        let index = 0;
+        _.iterateObject(this.detailGridInfoMap, (id: string, gridInfo: DetailGridInfo)=> {
+            // check for undefined, as old references will still be lying around
+            if (_.exists(gridInfo)) {
+                callback(gridInfo, index);
+                index++;
+            }
+        });
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
@@ -168,8 +201,8 @@ export class GridApi {
     public setRowData(rowData: any[]) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             if (this.gridOptionsWrapper.isDeltaRowDataMode()) {
-                let transaction = this.immutableService.createTransactionForRowData(rowData);
-                this.inMemoryRowModel.updateRowData(transaction);
+                let [transaction, orderIdMap] = this.immutableService.createTransactionForRowData(rowData);
+                this.inMemoryRowModel.updateRowData(transaction, orderIdMap);
             } else {
                 this.selectionController.reset();
                 this.inMemoryRowModel.setRowData(rowData);
@@ -249,6 +282,12 @@ export class GridApi {
 
     public getVerticalPixelRange(): any {
         return this.gridPanel.getVerticalPixelRange();
+    }
+
+    public refreshToolPanel(): void {
+        if (this.toolPanel) {
+            this.toolPanel.refresh();
+        }
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
@@ -438,11 +477,6 @@ export class GridApi {
     }
 
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
-        if (eventName==='virtualRowRemoved') {
-            console.log('ag-Grid: event virtualRowRemoved is deprecated, now called renderedRowRemoved');
-            eventName = '' +
-                '';
-        }
         if (eventName==='virtualRowSelected') {
             console.log('ag-Grid: event virtualRowSelected is deprecated, to register for individual row ' +
                 'selection events, add a listener directly to the row node.');
@@ -598,7 +632,7 @@ export class GridApi {
     public getFilterInstance(key: string|Column): IFilterComp {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.getFilterComponent(column);
+            return this.filterManager.getFilterComponent(column).resolveNow<IFilterComp>(null, filterComp=>filterComp);
         }
     }
 
@@ -704,6 +738,10 @@ export class GridApi {
 
     public setGroupRemoveSingleChildren(value: boolean) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, value);
+    }
+
+    public setGroupRemoveLowestSingleChildren(value: boolean) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, value);
     }
 
     public onRowHeightChanged() {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,7 +34,9 @@ var TabbedLayout = (function () {
         var minWidth = 0;
         this.items.forEach(function (itemWrapper) {
             utils_1.Utils.removeAllChildren(eDummyContainer);
-            var eClone = itemWrapper.tabbedItem.body.cloneNode(true);
+            var eClone = itemWrapper.tabbedItem.bodyPromise.resolveNow(null, function (body) { return body.cloneNode(true); });
+            if (eClone == null)
+                return;
             eDummyContainer.appendChild(eClone);
             if (minWidth < eDummyContainer.offsetWidth) {
                 minWidth = eDummyContainer.offsetWidth;
@@ -69,6 +71,7 @@ var TabbedLayout = (function () {
         }
     };
     TabbedLayout.prototype.showItemWrapper = function (wrapper) {
+        var _this = this;
         if (this.params.onItemClicked) {
             this.params.onItemClicked({ item: wrapper.tabbedItem });
         }
@@ -77,7 +80,9 @@ var TabbedLayout = (function () {
             return;
         }
         utils_1.Utils.removeAllChildren(this.eBody);
-        this.eBody.appendChild(wrapper.tabbedItem.body);
+        wrapper.tabbedItem.bodyPromise.then(function (body) {
+            _this.eBody.appendChild(body);
+        });
         if (this.activeItem) {
             utils_1.Utils.removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
         }

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,7 +52,6 @@ var Column = (function () {
     };
     // this is done after constructor as it uses gridOptionsWrapper
     Column.prototype.initialise = function () {
-        this.filter = this.frameworkFactory.colDefFilter(this.colDef);
         this.setPinned(this.colDef.pinned);
         var minColWidth = this.gridOptionsWrapper.getMinColWidth();
         var maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
@@ -85,9 +84,6 @@ var Column = (function () {
         var showingThisGroup = this.colDef.showRowGroup === colId;
         return showingAllGroups || showingThisGroup;
     };
-    Column.prototype.getFilter = function () {
-        return this.filter;
-    };
     Column.prototype.getUniqueId = function () {
         return this.getId();
     };
@@ -104,22 +100,22 @@ var Column = (function () {
         return this.tooltipFieldContainsDots;
     };
     Column.prototype.validate = function () {
+        var colDefAny = this.colDef;
         if (!this.gridOptionsWrapper.isEnterprise()) {
-            if (utils_1.Utils.exists(this.colDef.aggFunc)) {
-                console.warn('ag-Grid: aggFunc is only valid in ag-Grid-Enterprise');
-            }
-            if (utils_1.Utils.exists(this.colDef.rowGroupIndex)) {
-                console.warn('ag-Grid: rowGroupIndex is only valid in ag-Grid-Enterprise');
-            }
-            if (utils_1.Utils.exists(this.colDef.rowGroup)) {
-                console.warn('ag-Grid: rowGroup is only valid in ag-Grid-Enterprise');
-            }
-            if (utils_1.Utils.exists(this.colDef.pivotIndex)) {
-                console.warn('ag-Grid: pivotIndex is only valid in ag-Grid-Enterprise');
-            }
-            if (utils_1.Utils.exists(this.colDef.pivot)) {
-                console.warn('ag-Grid: pivot is only valid in ag-Grid-Enterprise');
-            }
+            var itemsNotAllowedWithoutEnterprise = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex', 'aggFunc'];
+            itemsNotAllowedWithoutEnterprise.forEach(function (item) {
+                if (utils_1.Utils.exists(colDefAny[item])) {
+                    console.warn("ag-Grid: " + item + " is only valid in ag-Grid-Enterprise, your column definition should not have " + item);
+                }
+            });
+        }
+        if (this.gridOptionsWrapper.isTreeData()) {
+            var itemsNotAllowedWithTreeData = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'pivot', 'pivotIndex'];
+            itemsNotAllowedWithTreeData.forEach(function (item) {
+                if (utils_1.Utils.exists(colDefAny[item])) {
+                    console.warn("ag-Grid: " + item + " is not possible when doing tree data, your column definition should not have " + item);
+                }
+            });
         }
         if (utils_1.Utils.exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             console.warn('ag-Grid: colDef.width should be a number, not ' + typeof this.colDef.width);
@@ -133,7 +129,6 @@ var Column = (function () {
         if (utils_1.Utils.get(this, 'colDef.cellRendererParams.keyMap', null)) {
             console.warn('ag-Grid: Since ag-grid 11.0.0 cellRendererParams.keyMap is deprecated. You should use colDef.keyCreator');
         }
-        var colDefAny = this.colDef;
         if (colDefAny.floatingCellRenderer) {
             console.warn('ag-Grid: since v11, floatingCellRenderer is now pinnedRowCellRenderer');
             this.colDef.pinnedRowCellRenderer = colDefAny.floatingCellRenderer;
@@ -181,8 +176,8 @@ var Column = (function () {
         // if function, then call the function to find out
         if (typeof this.colDef.suppressNavigable === 'function') {
             var params = this.createIsColumnFuncParams(rowNode);
-            var suppressNaviableFunc = this.colDef.suppressNavigable;
-            return suppressNaviableFunc(params);
+            var userFunc = this.colDef.suppressNavigable;
+            return userFunc(params);
         }
         return false;
     };

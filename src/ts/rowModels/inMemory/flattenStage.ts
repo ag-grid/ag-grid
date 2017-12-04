@@ -45,7 +45,7 @@ export class FlattenStage implements IRowNodeStage {
 
     private resetRowTops(rowNode: RowNode): void {
         rowNode.clearRowTop();
-        if (rowNode.group) {
+        if (rowNode.hasChildren()) {
             if (rowNode.childrenAfterGroup) {
                 for (let i = 0; i<rowNode.childrenAfterGroup.length; i++) {
                     this.resetRowTops(rowNode.childrenAfterGroup[i])
@@ -63,22 +63,26 @@ export class FlattenStage implements IRowNodeStage {
 
         let groupSuppressRow = this.gridOptionsWrapper.isGroupSuppressRow();
         let hideOpenParents = this.gridOptionsWrapper.isGroupHideOpenParents();
-        let removeSingleChildrenGroups = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
+        let groupRemoveSingleChildren = this.gridOptionsWrapper.isGroupRemoveSingleChildren();
+        let groupRemoveLowestSingleChildren = this.gridOptionsWrapper.isGroupRemoveLowestSingleChildren();
 
         for (let i = 0; i < rowsToFlatten.length; i++) {
             let rowNode = rowsToFlatten[i];
 
             // check all these cases, for working out if this row should be included in the final mapped list
-            let isGroupSuppressedNode = groupSuppressRow && rowNode.group;
-            let isSkippedLeafNode = skipLeafNodes && !rowNode.group;
-            let isRemovedSingleChildrenGroup = removeSingleChildrenGroups && rowNode.group && rowNode.childrenAfterGroup.length === 1;
+            let isParent = rowNode.hasChildren();
+            let isGroupSuppressedNode = groupSuppressRow && isParent;
+            let isSkippedLeafNode = skipLeafNodes && !isParent;
+            let isRemovedSingleChildrenGroup = groupRemoveSingleChildren && isParent && rowNode.childrenAfterGroup.length === 1;
+            let isRemovedLowestSingleChildrenGroup = groupRemoveLowestSingleChildren && isParent && rowNode.leafGroup && rowNode.childrenAfterGroup.length === 1;
+
             // hide open parents means when group is open, we don't show it. we also need to make sure the
             // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
             // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
             let neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
             let isHiddenOpenParent = hideOpenParents && rowNode.expanded && (!neverAllowToExpand);
 
-            let thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup;
+            let thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup && !isRemovedLowestSingleChildrenGroup;
 
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
@@ -87,7 +91,7 @@ export class FlattenStage implements IRowNodeStage {
             // if we are pivoting, we never map below the leaf group
             if (skipLeafNodes && rowNode.leafGroup) { continue; }
 
-            if (rowNode.group) {
+            if (isParent) {
                 // we traverse the group if it is expended, however we always traverse if the parent node
                 // was removed (as the group will never be opened if it is not displayed, we show the children instead)
                 if (rowNode.expanded || isRemovedSingleChildrenGroup) {
@@ -105,9 +109,9 @@ export class FlattenStage implements IRowNodeStage {
                 } else {
 
                 }
-            } else if (rowNode.canFlower && rowNode.expanded) {
-                let flowerNode = this.createFlowerNode(rowNode);
-                this.addRowNodeToRowsToDisplay(flowerNode, result, nextRowTop, uiLevel);
+            } else if (rowNode.master && rowNode.expanded) {
+                let detailNode = this.createDetailNode(rowNode);
+                this.addRowNodeToRowsToDisplay(detailNode, result, nextRowTop, uiLevel);
             }
         }
     }
@@ -148,22 +152,25 @@ export class FlattenStage implements IRowNodeStage {
         groupNode.sibling = footerNode;
     }
 
-    private createFlowerNode(parentNode: RowNode): RowNode {
+    private createDetailNode(masterNode: RowNode): RowNode {
 
-        if (_.exists(parentNode.childFlower)) {
-            return parentNode.childFlower;
+        if (_.exists(masterNode.detailNode)) {
+            return masterNode.detailNode;
         } else {
-            let flowerNode = new RowNode();
-            this.context.wireBean(flowerNode);
-            flowerNode.flower = true;
-            flowerNode.parent = parentNode;
-            if (_.exists(parentNode.id)) {
-                flowerNode.id = 'flowerNode_' + parentNode.id;
+            let detailNode = new RowNode();
+            this.context.wireBean(detailNode);
+            detailNode.detail = true;
+            // flower was renamed to 'detail', but keeping for backwards compatibility
+            detailNode.flower = detailNode.detail;
+            detailNode.parent = masterNode;
+            if (_.exists(masterNode.id)) {
+                detailNode.id = 'detail_' + masterNode.id;
             }
-            flowerNode.data = parentNode.data;
-            flowerNode.level = parentNode.level + 1;
-            parentNode.childFlower = flowerNode;
-            return flowerNode;
+            detailNode.data = masterNode.data;
+            detailNode.level = masterNode.level + 1;
+            masterNode.detailNode = detailNode;
+            masterNode.childFlower = masterNode.detailNode; // for backwards compatibility
+            return detailNode;
         }
 
     }

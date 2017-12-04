@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -34,6 +34,7 @@ export declare class HeaderWrapperComp extends Component {
     private setupSortableClass(enableSorting);
     private onFilterChanged();
     private appendHeaderComp(displayName, enableSorting, enableMenu);
+    private afterHeaderCompCreated(displayName, headerComp);
     private onColumnMovingChanged();
     private setupMove(eHeaderCellLabel, displayName);
     private createDragItem();

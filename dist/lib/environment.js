@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,16 +16,64 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
-var themes = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'theme-material'];
-var themeCLass = new RegExp("ag-(" + themes.join('|') + ")");
+var themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material'];
+var themes = themeNames.concat(themeNames.map(function (name) { return "theme-" + name; }));
+var themeClass = new RegExp("ag-(" + themes.join('|') + ")");
+var matGridSize = 8;
+var freshGridSize = 4;
+var HARD_CODED_SIZES = {
+    'ag-theme-material': {
+        headerHeight: matGridSize * 7,
+        virtualItemHeight: matGridSize * 5,
+        rowHeight: matGridSize * 6
+    },
+    'ag-theme-classic': {
+        headerHeight: 25,
+        virtualItemHeight: freshGridSize * 5,
+        rowHeight: 25
+    }
+};
 var Environment = (function () {
     function Environment() {
+        this.sassVariables = {};
     }
+    // Approach described here:
+    // https://www.ofcodeandcolor.com/2017/04/02/encoding-data-in-css/
+    Environment.prototype.loadSassVariables = function () {
+        /*
+        var element = document.createElement('div');
+        element.className = 'sass-variables';
+        this.eGridDiv.appendChild(element);
+
+        var content = window.getComputedStyle(element, '::after').content;
+
+        try {
+            this.sassVariables = JSON.parse(JSON.parse(content));
+        } catch (e) {
+            throw new Error("Failed loading the theme sizing - check that you have the theme set up correctly.");
+        }
+
+        this.eGridDiv.removeChild(element);
+        */
+    };
+    Environment.prototype.getSassVariable = function (theme, key) {
+        if (theme == 'ag-theme-material') {
+            return HARD_CODED_SIZES['ag-theme-material'][key];
+        }
+        return HARD_CODED_SIZES['ag-theme-classic'][key];
+        /*
+        const result = parseInt(this.sassVariables[key]);
+        if (!result || isNaN(result)) {
+            throw new Error(`Failed loading ${key} Sass variable from ${this.sassVariables}`);
+        }
+        return result;
+        */
+    };
     Environment.prototype.getTheme = function () {
         var themeMatch;
         var element = this.eGridDiv;
         while (element != document.documentElement && themeMatch == null) {
-            themeMatch = element.className.match(themeCLass);
+            themeMatch = element.className.match(themeClass);
             element = element.parentElement;
             if (element == null) {
                 break;

@@ -1,11 +1,10 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
 import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
 import { AbstractColDef, ColDef, IAggFunc } from "./colDef";
 import { RowNode } from "./rowNode";
-import { IFilter } from "../interfaces/iFilter";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEventEmitter {
     static EVENT_MOVING_CHANGED: string;
@@ -54,7 +53,6 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private pivotActive;
     private aggregationActive;
     private primary;
-    private filter;
     private parent;
     constructor(colDef: ColDef, colId: String, primary: boolean);
     setParent(parent: ColumnGroupChild): void;
@@ -62,9 +60,6 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     initialise(): void;
     isEmptyGroup(): boolean;
     isRowGroupDisplayed(colId: string): boolean;
-    getFilter(): {
-        new (): IFilter;
-    } | string;
     getUniqueId(): string;
     isPrimary(): boolean;
     isFilterAllowed(): boolean;

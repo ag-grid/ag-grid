@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56,7 +56,7 @@ var RenderedHeaderCell = (function (_super) {
     };
     RenderedHeaderCell.prototype.init = function () {
         var eGui = this.headerTemplateLoader.createHeaderElement(this.column);
-        this.setHtmlElementNoHydrate(eGui);
+        this.setGui(eGui);
         this.createScope();
         this.addAttributes();
         cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.column.getColDef(), eGui, this.gridOptionsWrapper, this.column, null);
@@ -82,7 +82,7 @@ var RenderedHeaderCell = (function (_super) {
         var colDef = this.column.getColDef();
         // add tooltip if exists
         if (colDef.headerTooltip) {
-            this.getHtmlElement().title = colDef.headerTooltip;
+            this.getGui().title = colDef.headerTooltip;
         }
     };
     RenderedHeaderCell.prototype.setupText = function () {
@@ -118,7 +118,7 @@ var RenderedHeaderCell = (function (_super) {
     };
     RenderedHeaderCell.prototype.onFilterChanged = function () {
         var filterPresent = this.column.isFilterActive();
-        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-filtered', filterPresent);
+        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-filtered', filterPresent);
         utils_1.Utils.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !filterPresent);
     };
     RenderedHeaderCell.prototype.setupWidth = function () {
@@ -126,7 +126,7 @@ var RenderedHeaderCell = (function (_super) {
         this.onColumnWidthChanged();
     };
     RenderedHeaderCell.prototype.onColumnWidthChanged = function () {
-        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
+        this.getGui().style.width = this.column.getActualWidth() + 'px';
     };
     RenderedHeaderCell.prototype.createScope = function () {
         var _this = this;
@@ -141,7 +141,7 @@ var RenderedHeaderCell = (function (_super) {
         }
     };
     RenderedHeaderCell.prototype.addAttributes = function () {
-        this.getHtmlElement().setAttribute("colId", this.column.getColId());
+        this.getGui().setAttribute("colId", this.column.getColId());
     };
     RenderedHeaderCell.prototype.setupMenu = function () {
         var _this = this;
@@ -181,10 +181,10 @@ var RenderedHeaderCell = (function (_super) {
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
         if (this.column.isMoving()) {
-            utils_1.Utils.addCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
+            utils_1.Utils.addCssClass(this.getGui(), 'ag-header-cell-moving');
         }
         else {
-            utils_1.Utils.removeCssClass(this.getHtmlElement(), 'ag-header-cell-moving');
+            utils_1.Utils.removeCssClass(this.getGui(), 'ag-header-cell-moving');
         }
     };
     RenderedHeaderCell.prototype.setupMove = function (eHeaderCellLabel) {
@@ -220,7 +220,7 @@ var RenderedHeaderCell = (function (_super) {
         if (this.gridOptionsWrapper.isSuppressTouch()) {
             return;
         }
-        var touchListener = new touchListener_1.TouchListener(this.getHtmlElement());
+        var touchListener = new touchListener_1.TouchListener(this.getGui());
         var tapListener = function (event) {
             _this.sortController.progressSort(_this.column, false);
         };
@@ -293,7 +293,7 @@ var RenderedHeaderCell = (function (_super) {
     RenderedHeaderCell.prototype.setupSort = function (eHeaderCellLabel) {
         var _this = this;
         var enableSorting = this.gridOptionsWrapper.isEnableSorting() && !this.column.getColDef().suppressSorting;
-        var element = this.getHtmlElement();
+        var element = this.getGui();
         if (!enableSorting) {
             utils_1.Utils.removeFromParent(element.querySelector('#agSortAsc'));
             utils_1.Utils.removeFromParent(element.querySelector('#agSortDesc'));
@@ -316,9 +316,9 @@ var RenderedHeaderCell = (function (_super) {
         this.onSortChanged();
     };
     RenderedHeaderCell.prototype.onSortChanged = function () {
-        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-asc', this.column.isSortAscending());
-        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-desc', this.column.isSortDescending());
-        utils_1.Utils.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-none', this.column.isSortNone());
+        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.column.isSortAscending());
+        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.column.isSortDescending());
+        utils_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.column.isSortNone());
         if (this.eSortAsc) {
             utils_1.Utils.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.column.isSortAscending());
         }

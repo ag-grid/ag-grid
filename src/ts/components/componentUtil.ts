@@ -132,11 +132,11 @@ export class ComponentUtil {
         }
 
         if (changes.pinnedTopRowData) {
-            api.setFloatingTopRowData(changes.pinnedTopRowData.currentValue);
+            api.setPinnedTopRowData(changes.pinnedTopRowData.currentValue);
         }
 
         if (changes.pinnedBottomRowData) {
-            api.setFloatingBottomRowData(changes.pinnedBottomRowData.currentValue);
+            api.setPinnedBottomRowData(changes.pinnedBottomRowData.currentValue);
         }
 
         if (changes.columnDefs) {

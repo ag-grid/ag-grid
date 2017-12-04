@@ -1,8 +1,8 @@
 ag-grid-angular {
-  display: inline-block; }
+  display: block; }
 
 ag-grid-ng2 {
-  display: inline-block; }
+  display: block; }
 
 ag-grid {
   display: block; }
@@ -611,7 +611,9 @@ ag-grid-aurelia {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  user-select: none; }
+  user-select: none;
+  max-height: 100%;
+  overflow-y: auto; }
 
 .ag-menu-column-select-wrapper {
   width: 200px;
@@ -675,9 +677,13 @@ ag-grid-aurelia {
 .ag-virtual-list-item {
   position: absolute;
   width: 100%; }
+  .ag-virtual-list-item span:empty:not(.ag-icon) {
+    border-left: 1px solid transparent; }
 
 .ag-filter-filter {
-  width: 100%; }
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box; }
 
 .ag-floating-filter-body input {
   width: 100%;
@@ -1146,3 +1152,20 @@ ag-grid-aurelia {
   background-size: 12px 12px;
   -webkit-filter: "initial";
   filter: "initial"; }
+
+.loading-filter {
+  position: absolute;
+  height: 100%;
+  top: 34px;
+  background-color: #e6e6e6;
+  z-index: 1;
+  width: 100%;
+  padding: 5px; }
+
+.ag-details-row {
+  width: 100%;
+  height: 100%; }
+
+.ag-details-grid {
+  width: 100%;
+  height: 100%; }

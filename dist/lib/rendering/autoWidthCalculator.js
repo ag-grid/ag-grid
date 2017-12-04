@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56,7 +56,8 @@ var AutoWidthCalculator = (function () {
         var dummyContainerWidth = eDummyContainer.offsetWidth;
         // we are finished with the dummy container, so get rid of it
         eBodyContainer.removeChild(eDummyContainer);
-        // we add padding as I found without it, the gui still put '...' after some of the texts
+        // we add padding as I found sometimes the gui still put '...' after some of the texts. so the
+        // user can configure the grid to add a few more pixels after the calculated width
         var autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
         return dummyContainerWidth + autoSizePadding;
     };
@@ -77,7 +78,7 @@ var AutoWidthCalculator = (function () {
                 }
             }
         });
-        return comp ? comp.getHtmlElement() : null;
+        return comp ? comp.getGui() : null;
     };
     AutoWidthCalculator.prototype.putRowCellsIntoDummyContainer = function (column, eDummyContainer) {
         var _this = this;

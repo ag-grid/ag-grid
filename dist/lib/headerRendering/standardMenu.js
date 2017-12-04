@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,7 +47,9 @@ var StandardMenuFactory = (function () {
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column);
         var eMenu = document.createElement('div');
         utils_1.Utils.addCssClass(eMenu, 'ag-menu');
-        eMenu.appendChild(filterWrapper.gui);
+        filterWrapper.guiPromise.promise.then(function (gui) {
+            eMenu.appendChild(gui);
+        });
         var hidePopup;
         var bodyScrollListener = function (event) {
             // if h scroll, popup is no longer over the column
@@ -64,13 +66,14 @@ var StandardMenuFactory = (function () {
         // is visible can we find out what the width of it is
         hidePopup = this.popupService.addAsModalPopup(eMenu, true, closedCallback);
         positionCallback(eMenu);
-        if (filterWrapper.filter.afterGuiAttached) {
-            var params = {
-                hidePopup: hidePopup,
-                eComponent: filterWrapper.gui
-            };
-            filterWrapper.filter.afterGuiAttached(params);
-        }
+        filterWrapper.filterPromise.then(function (filter) {
+            if (filter.afterGuiAttached) {
+                var params = {
+                    hidePopup: hidePopup
+                };
+                filter.afterGuiAttached(params);
+            }
+        });
         column.setMenuVisible(true);
     };
     StandardMenuFactory.prototype.isMenuEnabled = function (column) {

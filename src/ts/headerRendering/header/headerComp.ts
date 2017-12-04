@@ -6,7 +6,7 @@ import {IMenuFactory} from "../../interfaces/iMenuFactory";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {SortController} from "../../sortController";
 import {LongTapEvent, TouchListener} from "../../widgets/touchListener";
-import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
+import {IComponent} from "../../interfaces/iComponent";
 import {EventService} from "../../eventService";
 import {RefSelector} from "../../widgets/componentAnnotations";
 import {Events} from "../../events";
@@ -23,14 +23,15 @@ export interface IHeaderParams {
     setSort: (sort: Column.NullableSortDir, multiSort?: boolean)=>void;
     columnApi: ColumnApi,
     api: GridApi,
-    context: any
+    context: any,
+    template: string
 }
 
 export interface IHeader {
 
 }
 
-export interface IHeaderComp extends IHeader, IComponent<IHeaderParams, IAfterGuiAttachedParams> {
+export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
 
 }
 
@@ -66,11 +67,14 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private params:IHeaderParams;
 
-    constructor() {
-        super(HeaderComp.TEMPLATE);
-    }
 
     public init(params: IHeaderParams): void {
+        let template:string = _.firstExistingValue(
+            params.template,
+            HeaderComp.TEMPLATE
+        );
+
+        this.setTemplate(template);
         this.params = params;
 
         this.setupTap();
@@ -82,7 +86,9 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupText(displayName: string): void {
-        this.eText.innerHTML = displayName;
+        if (this.eText) {
+            this.eText.innerHTML = displayName;
+        }
     }
 
     private setupIcons(column:Column): void {
@@ -94,6 +100,8 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
+        if (eParent == null) return;
+
         let eIcon = _.createIconNoSpan(iconName, this.gridOptionsWrapper, column);
         eParent.appendChild(eIcon);
     }
@@ -101,7 +109,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private setupTap(): void {
         if (this.gridOptionsWrapper.isSuppressTouch()) { return; }
 
-        let touchListener = new TouchListener(this.getHtmlElement());
+        let touchListener = new TouchListener(this.getGui());
 
         if (this.params.enableMenu) {
             let longTapListener = (event: LongTapEvent)=> {
@@ -184,9 +192,9 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private onSortChanged(): void {
 
-        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
-        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
-        _.addOrRemoveCssClass(this.getHtmlElement(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
 
         if (this.eSortAsc) {
             _.addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.params.column.isSortAscending());

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,7 +43,7 @@ var CheckboxSelectionComponent = (function (_super) {
         this.eCheckedIcon = utils_1.Utils.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
         this.eUncheckedIcon = utils_1.Utils.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
         this.eIndeterminateIcon = utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.column);
-        var element = this.getHtmlElement();
+        var element = this.getGui();
         element.appendChild(this.eCheckedIcon);
         element.appendChild(this.eUncheckedIcon);
         element.appendChild(this.eIndeterminateIcon);

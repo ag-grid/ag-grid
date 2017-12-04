@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -89,7 +89,7 @@ export declare class RowRenderer extends BeanStub {
     tabToNextCell(backwards: boolean): boolean;
     private moveToCellAfter(previousRenderedCell, backwards);
     private moveEditToNextCell(previousRenderedCell, nextRenderedCell);
-    private moveEditToNextRow(previousRenderedCell, nextRenderedCell);
+    private moveEditToNextCellOrRow(previousRenderedCell, nextRenderedCell);
     private findNextCellToFocusOn(gridCell, backwards, startEditing);
 }
 export interface RefreshViewParams {

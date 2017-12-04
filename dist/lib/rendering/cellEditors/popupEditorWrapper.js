@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
-var utils_1 = require("../../utils");
 var PopupEditorWrapper = (function (_super) {
     __extends(PopupEditorWrapper, _super);
     function PopupEditorWrapper(cellEditor) {
@@ -44,7 +43,7 @@ var PopupEditorWrapper = (function (_super) {
         // we call getGui() on child here (rather than in the constructor)
         // as we should wait for 'init' to be called on child first.
         if (!this.getGuiCalledOnChild) {
-            this.appendChild(utils_1._.assertHtmlElement(this.cellEditor.getGui()));
+            this.appendChild(this.cellEditor.getGui());
             this.getGuiCalledOnChild = true;
         }
         return _super.prototype.getGui.call(this);
@@ -52,7 +51,7 @@ var PopupEditorWrapper = (function (_super) {
     PopupEditorWrapper.prototype.init = function (params) {
         var _this = this;
         this.params = params;
-        this.gridOptionsWrapper.setDomData(this.getHtmlElement(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
+        this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
         this.addDestroyFunc(function () {
             if (_this.cellEditor.destroy) {
                 _this.cellEditor.destroy();
@@ -62,13 +61,11 @@ var PopupEditorWrapper = (function (_super) {
         // this needs to be 'super' and not 'this' as if we call 'this',
         // it ends up called 'getGui()' on the child before 'init' was called,
         // which is not good
-        _super.prototype.getHtmlElement.call(this), 'keydown', this.onKeyDown.bind(this));
+        _super.prototype.getGui.call(this), 'keydown', this.onKeyDown.bind(this));
     };
     PopupEditorWrapper.prototype.afterGuiAttached = function () {
         if (this.cellEditor.afterGuiAttached) {
-            this.cellEditor.afterGuiAttached({
-                eComponent: utils_1._.assertHtmlElement(this.cellEditor.getGui())
-            });
+            this.cellEditor.afterGuiAttached();
         }
     };
     PopupEditorWrapper.prototype.getValue = function () {

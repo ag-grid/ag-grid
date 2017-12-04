@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,7 +48,8 @@ var HeaderRowComp = (function (_super) {
     __extends(HeaderRowComp, _super);
     function HeaderRowComp(dept, type, pinned, eRoot, dropTarget) {
         var _this = _super.call(this, "<div class=\"ag-header-row\" role=\"presentation\"/>") || this;
-        _this.headerComps = {};
+        _this.headerCompPromises = {};
+        _this.warnedUserOnOldHeaderTemplate = false;
         _this.dept = dept;
         _this.type = type;
         _this.pinned = pinned;
@@ -58,25 +59,27 @@ var HeaderRowComp = (function (_super) {
     }
     HeaderRowComp.prototype.forEachHeaderElement = function (callback) {
         var _this = this;
-        Object.keys(this.headerComps).forEach(function (key) {
-            var headerElement = _this.headerComps[key];
-            callback(headerElement);
+        var promises = [];
+        Object.keys(this.headerCompPromises).forEach(function (key) {
+            promises.push(_this.headerCompPromises[key]);
         });
+        utils_1.Promise.all(promises).then(function (combined) { return combined.forEach(function (headerElement) { return callback(headerElement); }); });
     };
     HeaderRowComp.prototype.destroy = function () {
-        var idsOfAllChildren = Object.keys(this.headerComps);
+        var idsOfAllChildren = Object.keys(this.headerCompPromises);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
         _super.prototype.destroy.call(this);
     };
     HeaderRowComp.prototype.removeAndDestroyChildComponents = function (idsToDestroy) {
         var _this = this;
         idsToDestroy.forEach(function (id) {
-            var child = _this.headerComps[id];
-            _this.getHtmlElement().removeChild(utils_1.Utils.assertHtmlElement(child.getGui()));
-            if (child.destroy) {
-                child.destroy();
-            }
-            delete _this.headerComps[id];
+            _this.headerCompPromises[id].then(function (childPromise) {
+                _this.getGui().removeChild(childPromise.getGui());
+                if (childPromise.destroy) {
+                    childPromise.destroy();
+                }
+                delete _this.headerCompPromises[id];
+            });
         });
     };
     HeaderRowComp.prototype.onRowHeightChanged = function () {
@@ -108,8 +111,8 @@ var HeaderRowComp = (function (_super) {
         var rowHeight = 0;
         for (var i = 0; i < this.dept; i++)
             rowHeight += sizes[i];
-        this.getHtmlElement().style.top = rowHeight + 'px';
-        this.getHtmlElement().style.height = sizes[this.dept] + 'px';
+        this.getGui().style.top = rowHeight + 'px';
+        this.getGui().style.height = sizes[this.dept] + 'px';
     };
     //noinspection JSUnusedLocalSymbols
     HeaderRowComp.prototype.init = function () {
@@ -131,13 +134,13 @@ var HeaderRowComp = (function (_super) {
     };
     HeaderRowComp.prototype.setWidth = function () {
         var mainRowWidth = this.columnController.getContainerWidth(this.pinned) + 'px';
-        this.getHtmlElement().style.width = mainRowWidth;
+        this.getGui().style.width = mainRowWidth;
     };
     HeaderRowComp.prototype.onGridColumnsChanged = function () {
         this.removeAndDestroyAllChildComponents();
     };
     HeaderRowComp.prototype.removeAndDestroyAllChildComponents = function () {
-        var idsOfAllChildren = Object.keys(this.headerComps);
+        var idsOfAllChildren = Object.keys(this.headerCompPromises);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
     };
     HeaderRowComp.prototype.onDisplayedColumnsChanged = function () {
@@ -146,7 +149,7 @@ var HeaderRowComp = (function (_super) {
     };
     HeaderRowComp.prototype.onVirtualColumnsChanged = function () {
         var _this = this;
-        var currentChildIds = Object.keys(this.headerComps);
+        var currentChildIds = Object.keys(this.headerCompPromises);
         var itemsAtDepth = this.columnController.getVirtualHeaderGroupRow(this.pinned, this.type == HeaderRowType.FLOATING_FILTER ?
             this.dept - 1 :
             this.dept);
@@ -161,31 +164,36 @@ var HeaderRowComp = (function (_super) {
                 return;
             }
             var idOfChild = child.getUniqueId();
-            var eParentContainer = _this.getHtmlElement();
+            var eParentContainer = _this.getGui();
             // if we already have this cell rendered, do nothing
             var colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
-            var headerComp;
+            var headerCompPromise;
             var eHeaderCompGui;
             if (colAlreadyInDom) {
                 utils_1.Utils.removeFromArray(currentChildIds, idOfChild);
-                headerComp = _this.headerComps[idOfChild];
-                eHeaderCompGui = utils_1.Utils.assertHtmlElement(headerComp.getGui());
-                if (ensureDomOrder) {
-                    utils_1.Utils.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
-                }
+                headerCompPromise = _this.headerCompPromises[idOfChild];
+                headerCompPromise.then(function (headerComp) {
+                    eBefore = eHeaderCompGui;
+                    eHeaderCompGui = headerComp.getGui();
+                    if (ensureDomOrder) {
+                        utils_1.Utils.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
+                    }
+                });
             }
             else {
-                headerComp = _this.createHeaderComp(child);
-                _this.headerComps[idOfChild] = headerComp;
-                eHeaderCompGui = utils_1.Utils.assertHtmlElement(headerComp.getGui());
-                if (ensureDomOrder) {
-                    utils_1.Utils.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
-                }
-                else {
-                    eParentContainer.appendChild(eHeaderCompGui);
-                }
+                headerCompPromise = _this.createHeaderComp(child);
+                _this.headerCompPromises[idOfChild] = headerCompPromise;
+                headerCompPromise.then(function (headerComp) {
+                    eBefore = eHeaderCompGui;
+                    eHeaderCompGui = headerComp.getGui();
+                    if (ensureDomOrder) {
+                        utils_1.Utils.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
+                    }
+                    else {
+                        eParentContainer.appendChild(eHeaderCompGui);
+                    }
+                });
             }
-            eBefore = eHeaderCompGui;
         });
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
         this.removeAndDestroyChildComponents(currentChildIds);
@@ -193,7 +201,7 @@ var HeaderRowComp = (function (_super) {
     // check if user is using the deprecated
     HeaderRowComp.prototype.isUsingOldHeaderRenderer = function (column) {
         var colDef = column.getColDef();
-        return utils_1.Utils.anyExists([
+        var usingOldHeaderRenderer = utils_1.Utils.anyExists([
             // header template
             this.gridOptionsWrapper.getHeaderCellTemplateFunc(),
             this.gridOptionsWrapper.getHeaderCellTemplate(),
@@ -202,43 +210,56 @@ var HeaderRowComp = (function (_super) {
             colDef.headerCellRenderer,
             this.gridOptionsWrapper.getHeaderCellRenderer()
         ]);
+        if (usingOldHeaderRenderer && !this.warnedUserOnOldHeaderTemplate) {
+            if (this.gridOptionsWrapper.getHeaderCellTemplate() || this.gridOptionsWrapper.getHeaderCellTemplateFunc()) {
+                console.warn('ag-Grid: Since ag-Grid v14 you can now specify a template for the default header component. The ability to specify header template using colDef.headerCellTemplate is now deprecated and will be removed in v15. Please change your code to specify the template as colDef.headerComponentParams.template');
+            }
+            if (this.gridOptionsWrapper.getHeaderCellRenderer()) {
+                console.warn('ag-Grid: Using headerCellRenderer is deprecated and will be removed in ag-Grid v15. Please use Header Component instead.');
+            }
+            this.warnedUserOnOldHeaderTemplate = true;
+        }
+        return usingOldHeaderRenderer;
     };
     HeaderRowComp.prototype.createHeaderComp = function (columnGroupChild) {
-        var result;
+        var _this = this;
+        var resultPromise;
         switch (this.type) {
             case HeaderRowType.COLUMN:
                 if (this.isUsingOldHeaderRenderer(columnGroupChild)) {
-                    result = new renderedHeaderCell_1.RenderedHeaderCell(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+                    resultPromise = utils_1.Promise.resolve(new renderedHeaderCell_1.RenderedHeaderCell(columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
                 }
                 else {
-                    result = new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+                    resultPromise = utils_1.Promise.resolve(new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
                 }
                 break;
             case HeaderRowType.COLUMN_GROUP:
-                result = new headerGroupWrapperComp_1.HeaderGroupWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
+                resultPromise = utils_1.Promise.resolve(new headerGroupWrapperComp_1.HeaderGroupWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
                 break;
             case HeaderRowType.FLOATING_FILTER:
                 var column = columnGroupChild;
-                result = this.createFloatingFilterWrapper(column);
+                resultPromise = this.createFloatingFilterWrapper(column);
                 break;
         }
-        this.context.wireBean(result);
-        return result;
+        resultPromise.then(function (result) { return _this.context.wireBean(result); });
+        return resultPromise;
     };
     HeaderRowComp.prototype.createFloatingFilterWrapper = function (column) {
         var _this = this;
         var floatingFilterParams = this.createFloatingFilterParams(column);
-        var floatingFilterWrapper = this.componentRecipes.newFloatingFilterWrapperComponent(column, floatingFilterParams);
-        this.addDestroyableEventListener(column, column_1.Column.EVENT_FILTER_CHANGED, function () {
-            var filterComponent = _this.filterManager.getFilterComponent(column);
-            floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
+        var floatingFilterWrapperPromise = this.componentRecipes.newFloatingFilterWrapperComponent(column, floatingFilterParams);
+        floatingFilterWrapperPromise.then(function (floatingFilterWrapper) {
+            _this.addDestroyableEventListener(column, column_1.Column.EVENT_FILTER_CHANGED, function () {
+                var filterComponentPromise = _this.filterManager.getFilterComponent(column);
+                floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, function (filter) { return filter.getModel(); }));
+            });
+            var cachedFilter = _this.filterManager.cachedFilter(column);
+            if (cachedFilter) {
+                var filterComponentPromise = _this.filterManager.getFilterComponent(column);
+                floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, function (filter) { return filter.getModel(); }));
+            }
         });
-        var cachedFilter = this.filterManager.cachedFilter(column);
-        if (cachedFilter) {
-            var filterComponent = this.filterManager.getFilterComponent(column);
-            floatingFilterWrapper.onParentModelChanged(filterComponent.getModel());
-        }
-        return floatingFilterWrapper;
+        return floatingFilterWrapperPromise;
     };
     HeaderRowComp.prototype.createFloatingFilterParams = function (column) {
         var _this = this;
@@ -250,28 +271,38 @@ var HeaderRowComp = (function (_super) {
         var baseParams = {
             column: column,
             currentParentModel: function () {
-                var filterComponent = _this.filterManager.getFilterComponent(column);
-                return (filterComponent.getNullableModel) ?
-                    filterComponent.getNullableModel() :
-                    filterComponent.getModel();
+                var filterComponentPromise = _this.filterManager.getFilterComponent(column);
+                return filterComponentPromise.resolveNow(null, function (filter) {
+                    return (filter.getNullableModel) ?
+                        filter.getNullableModel() :
+                        filter.getModel();
+                });
             },
             onFloatingFilterChanged: function (change) {
-                var filterComponent = _this.filterManager.getFilterComponent(column);
-                if (filterComponent.onFloatingFilterChanged) {
-                    //If going through this branch of code the user MUST
-                    //be passing an object of type change that contains
-                    //a model propery inside and some other stuff
-                    return filterComponent.onFloatingFilterChanged(change);
-                }
-                else {
-                    //If going through this branch of code the user MUST
-                    //be passing the plain model and delegating to ag-Grid
-                    //the responsibility to set the parent model and refresh
-                    //the filters
-                    filterComponent.setModel(change);
-                    _this.filterManager.onFilterChanged();
-                    return true;
-                }
+                var captureModelChangedResolveFunc;
+                var modelChanged = new utils_1.Promise(function (resolve) {
+                    captureModelChangedResolveFunc = resolve;
+                });
+                var filterComponentPromise = _this.filterManager.getFilterComponent(column);
+                filterComponentPromise.then(function (filterComponent) {
+                    if (filterComponent.onFloatingFilterChanged) {
+                        //If going through this branch of code the user MUST
+                        //be passing an object of type change that contains
+                        //a model propery inside and some other stuff
+                        var result = filterComponent.onFloatingFilterChanged(change);
+                        captureModelChangedResolveFunc(result);
+                    }
+                    else {
+                        //If going through this branch of code the user MUST
+                        //be passing the plain model and delegating to ag-Grid
+                        //the responsibility to set the parent model and refresh
+                        //the filters
+                        filterComponent.setModel(change);
+                        _this.filterManager.onFilterChanged();
+                        captureModelChangedResolveFunc(true);
+                    }
+                });
+                return modelChanged.resolveNow(true, function (modelChanged) { return modelChanged; });
             },
             //This one might be overriden from the colDef
             suppressFilterButton: false

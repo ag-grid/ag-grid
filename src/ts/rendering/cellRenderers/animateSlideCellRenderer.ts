@@ -40,12 +40,12 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
         // if old animation, remove it
         if (this.ePrevious) {
-            this.getHtmlElement().removeChild(this.ePrevious);
+            this.getGui().removeChild(this.ePrevious);
         }
 
         this.ePrevious = _.loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
         this.ePrevious.innerHTML = this.eCurrent.innerHTML;
-        this.getHtmlElement().insertBefore(this.ePrevious, this.eCurrent);
+        this.getGui().insertBefore(this.ePrevious, this.eCurrent);
 
         // having timeout of 0 allows use to skip to the next css turn,
         // so we know the previous css classes have been applied. so the
@@ -57,7 +57,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
 
         setTimeout( ()=> {
             if (refreshCountCopy !== this.refreshCount) { return; }
-            this.getHtmlElement().removeChild(this.ePrevious);
+            this.getGui().removeChild(this.ePrevious);
             this.ePrevious = null;
         }, 3000);
     }

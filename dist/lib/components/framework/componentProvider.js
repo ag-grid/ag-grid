@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,6 +31,8 @@ var selectCellEditor_1 = require("../../rendering/cellEditors/selectCellEditor")
 var popupTextCellEditor_1 = require("../../rendering/cellEditors/popupTextCellEditor");
 var popupSelectCellEditor_1 = require("../../rendering/cellEditors/popupSelectCellEditor");
 var largeTextCellEditor_1 = require("../../rendering/cellEditors/largeTextCellEditor");
+var textFilter_1 = require("../../filter/textFilter");
+var numberFilter_1 = require("../../filter/numberFilter");
 var RegisteredComponentSource;
 (function (RegisteredComponentSource) {
     RegisteredComponentSource[RegisteredComponentSource["DEFAULT"] = 0] = "DEFAULT";
@@ -83,7 +85,11 @@ var ComponentProvider = (function () {
             popupSelectCellEditor: popupSelectCellEditor_1.PopupSelectCellEditor,
             popupSelect: popupSelectCellEditor_1.PopupSelectCellEditor,
             largeTextCellEditor: largeTextCellEditor_1.LargeTextCellEditor,
-            largeText: largeTextCellEditor_1.LargeTextCellEditor
+            largeText: largeTextCellEditor_1.LargeTextCellEditor,
+            //filter
+            textColumnFilter: textFilter_1.TextFilter,
+            numberColumnFilter: numberFilter_1.NumberFilter,
+            dateColumnFilter: dateFilter_1.DateFilter,
         };
     };
     ComponentProvider.prototype.registerComponent = function (name, component) {

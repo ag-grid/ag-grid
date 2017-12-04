@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -170,8 +170,10 @@ var ComponentResolver = (function () {
      *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
      *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
+     *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
+     *  params are and the component that init is about to get called for
      */
-    ComponentResolver.prototype.createAgGridComponent = function (holderOpt, agGridParams, propertyName, componentNameOpt, mandatory) {
+    ComponentResolver.prototype.createAgGridComponent = function (holderOpt, agGridParams, propertyName, componentNameOpt, mandatory, customInitParamsCb) {
         if (mandatory === void 0) { mandatory = true; }
         var holder = holderOpt == null ? this.gridOptions : holderOpt;
         var componentName = componentNameOpt == null ? propertyName : componentNameOpt;
@@ -179,18 +181,35 @@ var ComponentResolver = (function () {
         var component = this.newAgGridComponent(holder, propertyName, componentName, mandatory);
         if (!component)
             return null;
-        //Wire the component and call the init mehtod with the correct params
+        //Wire the component and call the init method with the correct params
         var finalParams = this.mergeParams(holder, propertyName, agGridParams);
         this.context.wireBean(component);
-        component.init(finalParams);
-        return component;
+        var deferredInit;
+        if (customInitParamsCb == null) {
+            deferredInit = component.init(finalParams);
+        }
+        else {
+            deferredInit = component.init(customInitParamsCb(finalParams, component));
+        }
+        if (deferredInit == null) {
+            return utils_1.Promise.resolve(component);
+            // return new Promise<A> (resolve=>{
+            //     setTimeout(
+            //         ()=>resolve(component),
+            //         500
+            //     )
+            // })
+        }
+        else {
+            var asPromise = deferredInit;
+            return asPromise.map(function (notRelevant) { return component; });
+        }
     };
     ComponentResolver.prototype.newAgGridComponent = function (holder, propertyName, componentName, mandatory) {
         if (mandatory === void 0) { mandatory = true; }
         var componentToUse = this.getComponentToUse(holder, propertyName, componentName);
         if (!componentToUse || !componentToUse.component) {
             if (mandatory) {
-                debugger;
                 console.error("Error creating component " + propertyName + "=>" + componentName);
             }
             return null;

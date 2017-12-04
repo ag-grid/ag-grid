@@ -1,6 +1,7 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { ExternalPromise, Promise } from "../utils";
 import { Column } from "../entities/column";
 import { IFilterComp } from "../interfaces/iFilter";
 export declare class FilterManager {
@@ -17,16 +18,15 @@ export declare class FilterManager {
     private context;
     private columnApi;
     private gridApi;
+    private componentResolver;
     static QUICK_FILTER_SEPARATOR: string;
     private allFilters;
     private quickFilter;
     private advancedFilterPresent;
     private externalFilterPresent;
-    private availableFilters;
     init(): void;
-    registerFilter(key: string, Filter: any): void;
     setFilterModel(model: any): void;
-    private setModelOnFilterWrapper(filter, newModel);
+    private setModelOnFilterWrapper(filterPromise, newModel);
     getFilterModel(): any;
     isAdvancedFilterPresent(): boolean;
     private setAdvancedFilterPresent();
@@ -47,24 +47,21 @@ export declare class FilterManager {
     private aggregateRowForQuickFilter(node);
     private onNewRowsLoaded();
     private createValueGetter(column);
-    getFilterComponent(column: Column): IFilterComp;
+    getFilterComponent(column: Column): Promise<IFilterComp>;
     getOrCreateFilterWrapper(column: Column): FilterWrapper;
     cachedFilter(column: Column): FilterWrapper;
-    private createFilterInstance(column);
-    private checkFilterHasAllMandatoryMethods(filterInstance, column);
-    private createParams(filterWrapper);
+    private createFilterInstance(column, $scope);
+    private translateFilter(target, toTranslate);
     private createFilterWrapper(column);
-    private initialiseFilterAndPutIntoGui(filterWrapper);
-    private getFilterFromCache(filterType);
+    private putIntoGui(filterWrapper);
     private onNewColumnsLoaded();
     destroyFilter(column: Column): void;
     private disposeFilterWrapper(filterWrapper);
     destroy(): void;
-    private assertMethodHasNoParameters(theMethod);
 }
 export interface FilterWrapper {
     column: Column;
-    filter: IFilterComp;
+    filterPromise: Promise<IFilterComp>;
     scope: any;
-    gui: HTMLElement;
+    guiPromise: ExternalPromise<HTMLElement>;
 }

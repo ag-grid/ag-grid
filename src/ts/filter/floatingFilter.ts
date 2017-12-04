@@ -2,9 +2,9 @@ import {Autowired} from "../context/context";
 import {SerializedTextFilter} from "./textFilter";
 import {DateFilter, SerializedDateFilter} from "./dateFilter";
 import {SerializedNumberFilter} from "./numberFilter";
-import {IAfterGuiAttachedParams, IComponent} from "../interfaces/iComponent";
+import {IComponent} from "../interfaces/iComponent";
 import {RefSelector} from "../widgets/componentAnnotations";
-import {_} from "../utils";
+import {_, Promise} from "../utils";
 import {IDateComp, IDateParams} from "../rendering/dateComponent";
 import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {Component} from "../widgets/component";
@@ -26,7 +26,7 @@ export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IF
     onParentModelChanged(parentModel: M): void;
 }
 
-export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P, IAfterGuiAttachedParams> {
+export interface IFloatingFilterComp<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> extends IFloatingFilter<M, F, P>, IComponent<P> {
 }
 
 export interface BaseFloatingFilterChange<M> extends FloatingFilterChange {
@@ -129,7 +129,7 @@ export class TextFloatingFilterComp extends InputTextFloatingFilterComp<Serializ
 export class DateFloatingFilterComp extends Component implements IFloatingFilter <SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>, IFloatingFilterParams<SerializedDateFilter, BaseFloatingFilterChange<SerializedDateFilter>>> {
     @Autowired('componentRecipes')
     private componentRecipes: ComponentRecipes;
-    private dateComponent: IDateComp;
+    private dateComponentPromise: Promise<IDateComp>;
 
     onFloatingFilterChanged: (change: BaseFloatingFilterChange<SerializedDateFilter>) => void;
     currentParentModel: () => SerializedDateFilter;
@@ -143,10 +143,13 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
         let dateComponentParams: IDateParams = {
             onDateChanged: toDebounce
         };
-        this.dateComponent = this.componentRecipes.newDateComponent(dateComponentParams);
+        this.dateComponentPromise = this.componentRecipes.newDateComponent(dateComponentParams);
+
         let body: HTMLElement = _.loadTemplate(`<div></div>`);
-        body.appendChild(_.ensureElement(this.dateComponent.getGui()));
-        this.setHtmlElement(body);
+        this.dateComponentPromise.then(dateComponent=>{
+            body.appendChild(dateComponent.getGui());
+        });
+        this.setTemplateFromElement(body);
     }
 
     private onDateChanged(): void {
@@ -181,7 +184,7 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 
     asParentModel(): SerializedDateFilter {
         let currentParentModel = this.currentParentModel();
-        let filterValueDate: Date = this.dateComponent.getDate();
+        let filterValueDate: Date = this.dateComponentPromise.resolveNow(null, dateComponent=>dateComponent.getDate());
         let filterValueText: string = _.serializeDateToYyyyMmDd(DateFilter.removeTimezone(filterValueDate), "-");
 
         return {
@@ -195,11 +198,13 @@ export class DateFloatingFilterComp extends Component implements IFloatingFilter
 
     onParentModelChanged(parentModel: SerializedDateFilter): void {
         this.lastKnownModel = parentModel;
-        if (!parentModel || !parentModel.dateFrom) {
-            this.dateComponent.setDate(null);
-            return;
-        }
-        this.dateComponent.setDate(_.parseYyyyMmDdToDate(parentModel.dateFrom, '-'));
+        this.dateComponentPromise.then(dateComponent=>{
+            if (!parentModel || !parentModel.dateFrom) {
+                dateComponent.setDate(null);
+                return;
+            }
+            dateComponent.setDate(_.parseYyyyMmDdToDate(parentModel.dateFrom, '-'));
+        })
     }
 }
 

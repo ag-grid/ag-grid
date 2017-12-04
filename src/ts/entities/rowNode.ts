@@ -18,7 +18,7 @@ import {RowNodeCache, RowNodeCacheParams} from "../rowModels/cache/rowNodeCache"
 import {RowNodeBlock} from "../rowModels/cache/rowNodeBlock";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
 import {ValueCache} from "../valueService/valueCache";
-import {GridApi} from "../gridApi";
+import {DetailGridInfo, GridApi} from "../gridApi";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -53,7 +53,7 @@ export class RowNode implements IEventEmitter {
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_DATA_CHANGED = 'dataChanged';
     public static EVENT_CELL_CHANGED = 'cellChanged';
-    public static EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED = 'allChildrenCountChanged';
+    public static EVENT_ALL_CHILDREN_COUNT_CHANGED = 'allChildrenCountChanged';
     public static EVENT_MOUSE_ENTER = 'mouseEnter';
     public static EVENT_MOUSE_LEAVE = 'mouseLeave';
     public static EVENT_HEIGHT_CHANGED = 'heightChanged';
@@ -96,12 +96,23 @@ export class RowNode implements IEventEmitter {
     public rowGroupIndex: number;
     /** True if this node is a group node (ie has children) */
     public group: boolean;
-    /** True if this node can flower (ie can be expanded, but has no direct children) */
+
+    /** True if this row is a master row, part of master / detail (ie row can be expanded to show detail) */
+    public master: boolean;
+    /** True if this row is a detail row, part of master / detail (ie child row of an expanded master row)*/
+    public detail: boolean;
+    /** If this row is a master row that was expanded, this points to the associated detail row. */
+    public detailNode: RowNode;
+    /** If master detail, this contains details about the detail grid */
+    public detailGridInfo: DetailGridInfo;
+
+    /** Same as master, kept for legacy reasons */
     public canFlower: boolean;
-    /** True if this node is a flower */
+    /** Same as detail, kept for legacy reasons */
     public flower: boolean;
-    /** The child flower of this node */
+    /** Same as detailNode, kept for legacy reasons */
     public childFlower: RowNode;
+
     /** True if this node is a group and the group is the bottom level in the tree */
     public leafGroup: boolean;
     /** True if this is the first child in this group */
@@ -312,7 +323,7 @@ export class RowNode implements IEventEmitter {
         if (this.allChildrenCount === allChildrenCount) { return; }
         this.allChildrenCount = allChildrenCount;
         if (this.eventService) {
-            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CELL_CHANGED));
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED));
         }
     }
 
@@ -405,10 +416,21 @@ export class RowNode implements IEventEmitter {
         if (this.eventService) {
             colIds.forEach( colId => {
                 let column = this.columnController.getGridColumn(colId);
-                let value = this.data ? this.data[colId] : undefined;
+                let value = this.aggData ? this.aggData[colId] : undefined;
                 this.dispatchCellChangedEvent(column, value);
             });
         }
+    }
+
+    public hasChildren(): boolean {
+        // we need to return true when this.group=true, as this is used by enterprise row model
+        // (as children are lazy loaded and stored in a cache anyway). otherwise we return true
+        // if children exist.
+        return this.group || (this.childrenAfterGroup && this.childrenAfterGroup.length > 0);
+    }
+
+    public isEmptyFillerNode(): boolean {
+        return this.group && _.missingOrEmpty(this.childrenAfterGroup);
     }
 
     private dispatchCellChangedEvent(column: Column, newValue: any): void {
@@ -426,7 +448,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public isExpandable(): boolean {
-        return this.group || this.canFlower;
+        return this.hasChildren() || this.master;
     }
 
     public isSelected(): boolean {

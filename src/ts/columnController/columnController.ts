@@ -274,6 +274,7 @@ export class ColumnController {
     private autoGroupsNeedBuilding = false;
 
     private pivotMode = false;
+    private usingTreeData: boolean;
 
     // for horizontal visualisation of columns
     private scrollWidth: number;
@@ -290,7 +291,11 @@ export class ColumnController {
 
     @PostConstruct
     public init(): void {
-        this.pivotMode = this.gridOptionsWrapper.isPivotMode();
+        let pivotMode = this.gridOptionsWrapper.isPivotMode();
+        if (this.isPivotSettingAllowed(pivotMode)) {
+            this.pivotMode = pivotMode;
+        }
+        this.usingTreeData = this.gridOptionsWrapper.isTreeData();
     }
 
     private setVirtualViewportLeftAndRight(): void {
@@ -353,8 +358,24 @@ export class ColumnController {
         return this.pivotMode;
     }
 
+    private isPivotSettingAllowed(pivot: boolean): boolean {
+        if (pivot) {
+            if (this.gridOptionsWrapper.isTreeData()) {
+                console.warn("ag-Grid: Pivot mode not available in conjunction Tree Data i.e. 'gridOptions.treeData: true'");
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
     public setPivotMode(pivotMode: boolean): void {
         if (pivotMode === this.pivotMode) { return; }
+
+        if (!this.isPivotSettingAllowed(this.pivotMode)) { return; }
+
         this.pivotMode = pivotMode;
         this.updateDisplayedColumns();
         let event: ColumnPivotModeChangedEvent = {
@@ -2278,7 +2299,7 @@ export class ColumnController {
         this.autoGroupsNeedBuilding = false;
 
         // see if we need to insert the default grouping column
-        let needAutoColumns = this.rowGroupColumns.length > 0
+        let needAutoColumns = (this.rowGroupColumns.length > 0 || this.usingTreeData)
             && !this.gridOptionsWrapper.isGroupSuppressAutoColumn()
             && !this.gridOptionsWrapper.isGroupUseEntireRow()
             && !this.gridOptionsWrapper.isGroupSuppressRow();

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50,7 +50,7 @@ var SortService = (function () {
         this.pullDownDataForHideOpenParents(rowNode, false);
         // sort any groups recursively
         rowNode.childrenAfterFilter.forEach(function (child) {
-            if (child.group) {
+            if (child.hasChildren()) {
                 _this.sort(child, sortOptions);
             }
         });

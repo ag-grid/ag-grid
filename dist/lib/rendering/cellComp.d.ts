@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -34,6 +34,8 @@ export declare class CellComp extends Component {
     private value;
     private colsSpanning;
     private scope;
+    private cellEditorVersion;
+    private cellRendererVersion;
     constructor(scope: any, beans: Beans, column: Column, rowNode: RowNode, rowComp: RowComp);
     getCreateTemplate(): string;
     afterAttached(): void;
@@ -76,6 +78,7 @@ export declare class CellComp extends Component {
     setUsingWrapper(): void;
     private chooseCellRenderer();
     private createCellRendererInstance();
+    private afterCellRendererCreated(cellRendererVersion, cellRenderer);
     private attachCellRenderer();
     private createCellRendererParams(valueFormatted);
     private formatValue(value);
@@ -88,12 +91,12 @@ export declare class CellComp extends Component {
     private onCellDoubleClicked(mouseEvent);
     startRowOrCellEdit(keyPress?: number, charPress?: string): void;
     isCellEditable(): boolean;
-    startEditingIfEnabled(keyPress?: number, charPress?: string, cellStartedEdit?: boolean): boolean;
+    startEditingIfEnabled(keyPress?: number, charPress?: string, cellStartedEdit?: boolean): void;
+    private afterCellEditorCreated(cellEditorVersion, cellEditor);
     private addInCellEditor();
     private addPopupCellEditor();
     private onPopupEditorClosed();
     private setInlineEditingClass();
-    private createCellEditor(keyPress, charPress, cellStartedEdit);
     private createCellEditorParams(keyPress, charPress, cellStartedEdit);
     private stopEditingAndFocus();
     private parseValue(newValue);

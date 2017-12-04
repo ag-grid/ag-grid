@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -11,6 +11,9 @@ import { ColumnApi } from "../columnController/columnController";
 import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp";
 import { IFloatingFilterComp } from "../filter/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
+/****************************************************************
+ * Don't forget to update ComponentUtil if changing this class. PLEASE!*
+ ****************************************************************/
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
     /** The name to render in the column header */
@@ -41,12 +44,19 @@ export interface ColGroupDef extends AbstractColDef {
     headerGroupComponent?: {
         new (): IHeaderGroupComp;
     };
+    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
+    headerGroupComponentFramework?: {
+        new (): any;
+    };
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
     headerGroupComponentParams?: any;
 }
 export interface IAggFunc {
     (input: any[]): any;
 }
+/****************************************************************
+ * Don't forget to update ComponentUtil if changing this class. PLEASE!*
+ ****************************************************************/
 export interface ColDef extends AbstractColDef {
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      *  If both field and colId are missing, a unique ID will be generated.

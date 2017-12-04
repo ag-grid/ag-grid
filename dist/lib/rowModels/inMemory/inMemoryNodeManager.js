@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,19 @@ var InMemoryNodeManager = (function () {
         this.rootNode.childrenAfterGroup = [];
         this.rootNode.childrenAfterSort = [];
         this.rootNode.childrenAfterFilter = [];
+        // if we make this class a bean, then can annotate postConstruct
+        this.postConstruct();
     }
+    // @PostConstruct - this is not a bean, so postConstruct called by constructor
+    InMemoryNodeManager.prototype.postConstruct = function () {
+        // func below doesn't have 'this' pointer, so need to pull out these bits
+        this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
+        this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
+        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
+        this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+        this.doingLegacyTreeData = utils_1.Utils.exists(this.getNodeChildDetails);
+        this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
+    };
     InMemoryNodeManager.prototype.getCopyOfNodesMap = function () {
         var result = utils_1.Utils.cloneObject(this.allNodesMap);
         return result;
@@ -45,14 +57,9 @@ var InMemoryNodeManager = (function () {
             this.rootNode.childrenAfterGroup = [];
             return;
         }
-        // func below doesn't have 'this' pointer, so need to pull out these bits
-        this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
-        this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
-        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
-        var rowsAlreadyGrouped = utils_1.Utils.exists(this.getNodeChildDetails);
         // kick off recursion
         var result = this.recursiveFunction(rowData, null, InMemoryNodeManager.TOP_LEVEL);
-        if (rowsAlreadyGrouped) {
+        if (this.doingLegacyTreeData) {
             this.rootNode.childrenAfterGroup = result;
             this.setLeafChildren(this.rootNode);
         }
@@ -60,9 +67,9 @@ var InMemoryNodeManager = (function () {
             this.rootNode.allLeafChildren = result;
         }
     };
-    InMemoryNodeManager.prototype.updateRowData = function (rowDataTran) {
+    InMemoryNodeManager.prototype.updateRowData = function (rowDataTran, rowNodeOrder) {
         var _this = this;
-        if (this.isRowsAlreadyGrouped()) {
+        if (this.isLegacyTreeData()) {
             return null;
         }
         var add = rowDataTran.add, addIndex = rowDataTran.addIndex, remove = rowDataTran.remove, update = rowDataTran.update;
@@ -102,6 +109,9 @@ var InMemoryNodeManager = (function () {
                     rowNodeTransaction.update.push(updatedRowNode);
                 }
             });
+        }
+        if (rowNodeOrder) {
+            utils_1.Utils.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
         return rowNodeTransaction;
     };
@@ -164,24 +174,48 @@ var InMemoryNodeManager = (function () {
     InMemoryNodeManager.prototype.createNode = function (dataItem, parent, level) {
         var node = new rowNode_1.RowNode();
         this.context.wireBean(node);
-        var nodeChildDetails = this.getNodeChildDetails ? this.getNodeChildDetails(dataItem) : null;
+        var doingTreeData = this.gridOptionsWrapper.isTreeData();
+        var doingLegacyTreeData = !doingTreeData && utils_1.Utils.exists(this.getNodeChildDetails);
+        var nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
             node.childrenAfterGroup = this.recursiveFunction(nodeChildDetails.children, node, level + 1);
             node.expanded = nodeChildDetails.expanded === true;
             node.field = nodeChildDetails.field;
             node.key = nodeChildDetails.key;
-            node.canFlower = false;
+            node.canFlower = node.master; // deprecated, is now 'master'
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         }
         else {
             node.group = false;
-            node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
-            if (node.canFlower) {
-                node.expanded = this.isExpanded(level);
+            if (doingTreeData) {
+                node.master = false;
+                node.expanded = false;
+            }
+            else {
+                // this is the default, for when doing grid data
+                if (this.doesDataFlower) {
+                    node.master = this.doesDataFlower(dataItem);
+                }
+                else if (this.doingMasterDetail) {
+                    // if we are doing master detail, then the
+                    // default is that everything can flower.
+                    if (this.isRowMasterFunc) {
+                        node.master = this.isRowMasterFunc(dataItem);
+                    }
+                    else {
+                        node.master = true;
+                    }
+                }
+                else {
+                    node.master = false;
+                }
+                node.expanded = node.master ? this.isExpanded(level) : false;
             }
         }
+        // support for backwards compatibility, canFlow is now called 'master'
+        node.canFlower = node.master;
         if (parent && !this.suppressParentsInRowNodes) {
             node.parent = parent;
         }
@@ -200,6 +234,7 @@ var InMemoryNodeManager = (function () {
             return level < expandByDefault;
         }
     };
+    // this is only used for doing legacy tree data
     InMemoryNodeManager.prototype.setLeafChildren = function (node) {
         node.allLeafChildren = [];
         if (node.childrenAfterGroup) {
@@ -216,7 +251,7 @@ var InMemoryNodeManager = (function () {
         }
     };
     InMemoryNodeManager.prototype.insertItemsAtIndex = function (index, rowData) {
-        if (this.isRowsAlreadyGrouped()) {
+        if (this.isLegacyTreeData()) {
             return null;
         }
         var nodeList = this.rootNode.allLeafChildren;
@@ -234,33 +269,15 @@ var InMemoryNodeManager = (function () {
         }
         return newNodes.length > 0 ? newNodes : null;
     };
-    InMemoryNodeManager.prototype.removeItems = function (rowNodes) {
-        var _this = this;
-        if (this.isRowsAlreadyGrouped()) {
-            return;
-        }
-        var nodeList = this.rootNode.allLeafChildren;
-        var removedNodes = [];
-        rowNodes.forEach(function (rowNode) {
-            var indexOfNode = nodeList.indexOf(rowNode);
-            if (indexOfNode >= 0) {
-                rowNode.setSelected(false);
-                nodeList.splice(indexOfNode, 1);
-                _this.allNodesMap[rowNode.id] = undefined;
-            }
-            removedNodes.push(rowNode);
-        });
-        return removedNodes.length > 0 ? removedNodes : null;
-    };
     InMemoryNodeManager.prototype.addItems = function (items) {
         var nodeList = this.rootNode.allLeafChildren;
         return this.insertItemsAtIndex(nodeList.length, items);
     };
-    InMemoryNodeManager.prototype.isRowsAlreadyGrouped = function () {
+    InMemoryNodeManager.prototype.isLegacyTreeData = function () {
         var rowsAlreadyGrouped = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) {
             console.warn('ag-Grid: adding and removing rows is not supported when using nodeChildDetailsFunc, ie it is not ' +
-                'supported if providing groups');
+                'supported for legacy tree data. Please see the docs on the new preferred way of providing tree data that works with delta updates.');
             return true;
         }
         else {

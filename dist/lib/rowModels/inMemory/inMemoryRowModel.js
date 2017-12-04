@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,15 +42,18 @@ var InMemoryRowModel = (function () {
     function InMemoryRowModel() {
     }
     InMemoryRowModel.prototype.init = function () {
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_EVERYTHING }));
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_EVERYTHING }));
+        var refreshEverythingFunc = this.refreshModel.bind(this, { step: constants_1.Constants.STEP_EVERYTHING });
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingFunc);
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_PIVOT }));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_PIVOT }));
-        this.gridOptionsWrapper.addEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshModel.bind(this, { step: constants_1.Constants.STEP_MAP, keepRenderedRows: true, animate: true }));
+        this.eventService.addModalPriorityEventListener(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
+        var refreshMapFunc = this.refreshModel.bind(this, { step: constants_1.Constants.STEP_MAP, keepRenderedRows: true, animate: true });
+        this.gridOptionsWrapper.addEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, refreshMapFunc);
+        this.gridOptionsWrapper.addEventListener(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapFunc);
         this.rootNode = new rowNode_1.RowNode();
         this.nodeManager = new inMemoryNodeManager_1.InMemoryNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService, this.columnController);
         this.context.wireBean(this.rootNode);
@@ -143,7 +146,7 @@ var InMemoryRowModel = (function () {
         switch (params.step) {
             case constants_1.Constants.STEP_EVERYTHING:
                 // start = new Date().getTime();
-                this.doRowGrouping(params.groupState, params.rowNodeTransaction, changedPath);
+                this.doRowGrouping(params.groupState, params.rowNodeTransaction, params.rowNodeOrder, changedPath);
             // console.log('rowGrouping = ' + (new Date().getTime() - start));
             case constants_1.Constants.STEP_FILTER:
                 // start = new Date().getTime();
@@ -181,8 +184,8 @@ var InMemoryRowModel = (function () {
     };
     InMemoryRowModel.prototype.isEmpty = function () {
         var rowsMissing;
-        var rowsAlreadyGrouped = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (rowsAlreadyGrouped) {
+        var doingLegacyTreeData = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (doingLegacyTreeData) {
             rowsMissing = utils_1.Utils.missing(this.rootNode.childrenAfterGroup) || this.rootNode.childrenAfterGroup.length === 0;
         }
         else {
@@ -336,7 +339,7 @@ var InMemoryRowModel = (function () {
                 var node = nodes[i];
                 callback(node, index++);
                 // go to the next level if it is a group
-                if (node.group) {
+                if (node.hasChildren()) {
                     // depending on the recursion type, we pick a difference set of children
                     var nodeChildren = void 0;
                     switch (recursionType) {
@@ -391,16 +394,17 @@ var InMemoryRowModel = (function () {
     InMemoryRowModel.prototype.doSort = function () {
         this.sortStage.execute({ rowNode: this.rootNode });
     };
-    InMemoryRowModel.prototype.doRowGrouping = function (groupState, rowNodeTransaction, changedPath) {
+    InMemoryRowModel.prototype.doRowGrouping = function (groupState, rowNodeTransaction, rowNodeOrder, changedPath) {
         // grouping is enterprise only, so if service missing, skip the step
-        var rowsAlreadyGrouped = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
-        if (rowsAlreadyGrouped) {
+        var doingLegacyTreeData = utils_1.Utils.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
+        if (doingLegacyTreeData) {
             return;
         }
         if (this.groupStage) {
             if (rowNodeTransaction) {
                 this.groupStage.execute({ rowNode: this.rootNode,
                     rowNodeTransaction: rowNodeTransaction,
+                    rowNodeOrder: rowNodeOrder,
                     changedPath: changedPath });
             }
             else {
@@ -476,12 +480,13 @@ var InMemoryRowModel = (function () {
             newData: true
         });
     };
-    InMemoryRowModel.prototype.updateRowData = function (rowDataTran) {
+    InMemoryRowModel.prototype.updateRowData = function (rowDataTran, rowNodeOrder) {
         this.valueCache.onDataChanged();
-        var rowNodeTran = this.nodeManager.updateRowData(rowDataTran);
+        var rowNodeTran = this.nodeManager.updateRowData(rowDataTran, rowNodeOrder);
         this.refreshModel({
             step: constants_1.Constants.STEP_EVERYTHING,
             rowNodeTransaction: rowNodeTran,
+            rowNodeOrder: rowNodeOrder,
             keepRenderedRows: true,
             animate: true,
             keepEditingRows: true

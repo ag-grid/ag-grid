@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,26 +17,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var componentMetadataProvider_1 = require("./componentMetadataProvider");
-var DefaultCellRenderer = (function () {
-    function DefaultCellRenderer() {
-    }
-    DefaultCellRenderer.prototype.init = function (params) {
-        this.params = params;
-    };
-    DefaultCellRenderer.prototype.refresh = function (params) {
-        this.params = params;
-        //We update params, but still wish to be called on getGui
-        return false;
-    };
-    DefaultCellRenderer.prototype.getGui = function () {
-        var valueToUse = this.params.valueFormatted != null ? this.params.valueFormatted : this.params.value;
-        if (valueToUse == null)
-            return '';
-        return '<span>' + valueToUse + '</span>';
-    };
-    return DefaultCellRenderer;
-}());
-exports.DefaultCellRenderer = DefaultCellRenderer;
+var utils_1 = require("../../utils");
 var AgComponentUtils = (function () {
     function AgComponentUtils() {
     }
@@ -67,11 +48,9 @@ var AgComponentUtils = (function () {
             };
             Adapter.prototype.getGui = function () {
                 var callbackResult = callback(this.params);
-                if (callbackResult == null)
-                    return '';
                 if (typeof callbackResult != 'string')
                     return callbackResult;
-                return callbackResult;
+                return utils_1._.loadTemplate('<span>' + callbackResult + '</span>');
             };
             Adapter.prototype.init = function (params) {
                 this.params = params;

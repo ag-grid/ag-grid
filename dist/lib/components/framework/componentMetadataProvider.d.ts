@@ -1,13 +1,13 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { IAfterGuiAttachedParams, IComponent } from "../../interfaces/iComponent";
+import { IComponent } from "../../interfaces/iComponent";
 import { AgGridComponentFunctionInput } from "./componentProvider";
 export interface ComponentMetadata {
     mandatoryMethodList: string[];
     optionalMethodList: string[];
     functionAdapter?: (callback: AgGridComponentFunctionInput) => {
-        new (): IComponent<any, IAfterGuiAttachedParams>;
+        new (): IComponent<any>;
     };
 }
 export declare class ComponentMetadataProvider {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -53,6 +53,7 @@ var pinnedRowModel_1 = require("../rowModels/pinnedRowModel");
 var gridApi_1 = require("../gridApi");
 var animationFrameService_1 = require("../misc/animationFrameService");
 var rowComp_1 = require("../rendering/rowComp");
+var navigationService_1 = require("./navigationService");
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 var HEADER_SNIPPET = '<div class="ag-header" role="row">' +
@@ -352,16 +353,10 @@ var GridPanel = (function (_super) {
         }
         switch (eventName) {
             case 'keydown':
-                var pageScrollingKeys = [
-                    constants_1.Constants.DIAGONAL_SCROLL_KEYS,
-                    constants_1.Constants.HORIZONTAL_SCROLL_KEYS,
-                    constants_1.Constants.VERTICAL_SCROLL_KEYS
-                ];
-                var result = testKeyboardBindingGroups(pageScrollingKeys, keyboardEvent);
-                if (result) {
-                    this.handlePageScrollingKey(result.trappedKeyboardBindingGroup.id, result.trappedKeyboardBinding.id, keyboardEvent);
-                }
-                else {
+                // first see if it's a scroll key, page up / down, home / end etc
+                var wasScrollKey = this.navigationService.handlePageScrollingKey(keyboardEvent);
+                // if not a scroll key, then we pass onto cell
+                if (!wasScrollKey) {
                     renderedCell.onKeyDown(keyboardEvent);
                 }
                 break;
@@ -370,189 +365,12 @@ var GridPanel = (function (_super) {
                 break;
         }
     };
-    GridPanel.prototype.handlePageScrollingKey = function (pagingKeyGroup, pagingKey, keyboardEvent) {
-        switch (pagingKeyGroup) {
-            case constants_1.Constants.DIAGONAL_SCROLL_KEYS_ID:
-                this.pageDiagonally(pagingKey);
-                break;
-            case constants_1.Constants.VERTICAL_SCROLL_KEYS_ID:
-                this.pageVertically(pagingKey);
-                break;
-            case constants_1.Constants.HORIZONTAL_SCROLL_KEYS_ID:
-                this.pageHorizontally(pagingKey);
-                break;
-        }
-        //***************************************************************************
-        //Stop event defaults and propagation
-        keyboardEvent.preventDefault();
-    };
-    //Either CTL LEFT/RIGHT
-    GridPanel.prototype.pageHorizontally = function (pagingKey) {
-        //***************************************************************************
-        //column to select
-        var allColumns = this.columnController.getAllDisplayedColumns();
-        var columnToSelect = pagingKey === constants_1.Constants.KEY_CTRL_LEFT_NAME ?
-            allColumns[0] :
-            allColumns[allColumns.length - 1];
-        var horizontalScroll = {
-            type: ScrollType.HORIZONTAL,
-            columnToScrollTo: columnToSelect,
-            columnToFocus: columnToSelect
-        };
-        this.performScroll(horizontalScroll);
-    };
-    // Either HOME OR END
-    GridPanel.prototype.pageDiagonally_new = function (pagingKey) {
-        var homeKey = pagingKey === constants_1.Constants.KEY_PAGE_HOME_NAME;
-        var allColumns = this.columnController.getAllDisplayedColumns();
-        var columnToSelect = homeKey ? allColumns[0] : allColumns[allColumns.length - 1];
-        var rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();
-        this.ensureColumnVisible(columnToSelect);
-        this.ensureIndexVisible(rowIndexToScrollTo);
-        // make sure the cell is rendered, needed if we are to focus
-        this.animationFrameService.flushAllFrames();
-        this.focusedCellController.setFocusedCell(rowIndexToScrollTo, columnToSelect, null, true);
-    };
-    GridPanel.prototype.pageDiagonally = function (pagingKey) {
-        //***************************************************************************
-        //where to place the newly selected cell cursor after the scroll
-        var pageSize = this.getPrimaryScrollViewport().offsetHeight;
-        var selectionTopDelta = pagingKey === constants_1.Constants.KEY_PAGE_HOME_NAME ?
-            0 :
-            pageSize;
-        //***************************************************************************
-        //where to scroll to
-        var rowIndexToScrollTo = pagingKey === constants_1.Constants.KEY_PAGE_HOME_NAME ?
-            0 :
-            this.paginationProxy.getPageLastRow();
-        var rowToScrollTo = this.paginationProxy.getRow(rowIndexToScrollTo);
-        //***************************************************************************
-        //column to select
-        var allColumns = this.columnController.getAllDisplayedColumns();
-        var columnToSelect = pagingKey === constants_1.Constants.KEY_PAGE_HOME_NAME ?
-            allColumns[0] :
-            allColumns[allColumns.length - 1];
-        var diagonalScroll = {
-            focusedRowTopDelta: selectionTopDelta,
-            type: ScrollType.DIAGONAL,
-            rowToScrollTo: rowToScrollTo,
-            columnToScrollTo: columnToSelect
-        };
-        this.performScroll(diagonalScroll);
-    };
-    //EITHER CTRL UP/DOWN or PAGE UP/DOWN
-    GridPanel.prototype.pageVertically = function (pagingKey) {
-        if (pagingKey === constants_1.Constants.KEY_CTRL_UP_NAME) {
-            this.performScroll({
-                rowToScrollTo: this.paginationProxy.getRow(0),
-                focusedRowTopDelta: 0,
-                type: ScrollType.VERTICAL
-            });
-            return;
-        }
-        if (pagingKey === constants_1.Constants.KEY_CTRL_DOWN_NAME) {
-            this.performScroll({
-                rowToScrollTo: this.paginationProxy.getRow(this.paginationProxy.getPageLastRow()),
-                focusedRowTopDelta: this.getPrimaryScrollViewport().offsetHeight,
-                type: ScrollType.VERTICAL
-            });
-            return;
-        }
-        //*********PAGING KEYS******************************************************
-        //***************************************************************************
-        //where to place the newly selected cell cursor after the scroll
-        //  before we move the scroll
-        //      a) find the top position of the current selected cell
-        //      b) find what is the delta of that compared to the current scroll
-        var focusedCell = this.focusedCellController.getFocusedCell();
-        var focusedRowNode = this.paginationProxy.getRow(focusedCell.rowIndex);
-        var focusedAbsoluteTop = focusedRowNode.rowTop;
-        var selectionTopDelta = (focusedAbsoluteTop - this.getPrimaryScrollViewport().scrollTop) - this.paginationProxy.getPixelOffset();
-        //***************************************************************************
-        //how much to scroll:
-        //  a) One entire page from or to
-        //  b) the top of the first row in the current view
-        //  c) then find what is the row that would appear the first one in the screen and adjust it to its top pos
-        //      this will avoid having half printed rows at the top
-        var currentPageTopmostPixel = this.getPrimaryScrollViewport().scrollTop;
-        var currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopmostPixel + this.paginationProxy.getPixelOffset());
-        var currentPageTopmostRow = this.paginationProxy.getRow(currentPageTopRow);
-        var viewportSize = this.getPrimaryScrollViewport().offsetHeight;
-        var maxPageSize = this.paginationProxy.getCurrentPageHeight();
-        var pageSize = maxPageSize < viewportSize ? maxPageSize : viewportSize;
-        var currentTopmostRowBottom = currentPageTopmostRow.rowTop + currentPageTopmostRow.rowHeight;
-        var toScrollUnadjusted = pagingKey == constants_1.Constants.KEY_PAGE_DOWN_NAME ?
-            pageSize + currentTopmostRowBottom :
-            currentTopmostRowBottom - pageSize;
-        var nextScreenTopmostRow = this.paginationProxy.getRow(this.paginationProxy.getRowIndexAtPixel(toScrollUnadjusted));
-        var verticalScroll = {
-            rowToScrollTo: nextScreenTopmostRow,
-            focusedRowTopDelta: selectionTopDelta,
-            type: ScrollType.VERTICAL
-        };
-        this.performScroll(verticalScroll);
-    };
     // gets called by rowRenderer when new data loaded, as it will want to scroll
     // to the top
     GridPanel.prototype.scrollToTop = function () {
         if (!this.forPrint) {
             this.getPrimaryScrollViewport().scrollTop = 0;
         }
-    };
-    //Performs any scroll
-    GridPanel.prototype.performScroll = function (scroll) {
-        var verticalScroll;
-        var diagonalScroll;
-        var horizontalScroll;
-        var focusedCellBeforeScrolling = this.focusedCellController.getFocusedCell();
-        //***************************************************************************
-        // Scroll screen
-        var newScrollTop;
-        switch (scroll.type) {
-            case ScrollType.VERTICAL:
-                verticalScroll = scroll;
-                this.ensureIndexVisible(verticalScroll.rowToScrollTo.rowIndex);
-                newScrollTop = verticalScroll.rowToScrollTo.rowTop - this.paginationProxy.getPixelOffset();
-                this.getPrimaryScrollViewport().scrollTop = newScrollTop;
-                break;
-            case ScrollType.DIAGONAL:
-                diagonalScroll = scroll;
-                this.ensureIndexVisible(diagonalScroll.rowToScrollTo.rowIndex);
-                newScrollTop = diagonalScroll.rowToScrollTo.rowTop - this.paginationProxy.getPixelOffset();
-                this.getPrimaryScrollViewport().scrollTop = newScrollTop;
-                this.getPrimaryScrollViewport().scrollLeft = diagonalScroll.columnToScrollTo.getLeft();
-                break;
-            case ScrollType.HORIZONTAL:
-                horizontalScroll = scroll;
-                this.getPrimaryScrollViewport().scrollLeft = horizontalScroll.columnToScrollTo.getLeft();
-                break;
-        }
-        //***************************************************************************
-        // This is needed so that when we try to focus on the cell is actually rendered.
-        var refreshViewParams = {
-            onlyBody: true,
-            suppressKeepFocus: true
-        };
-        this.rowRenderer.redrawAfterModelUpdate(refreshViewParams);
-        //***************************************************************************
-        // New focused cell
-        var focusedRowIndex;
-        var focusedColumn;
-        switch (scroll.type) {
-            case ScrollType.VERTICAL:
-                focusedRowIndex = this.paginationProxy.getRowIndexAtPixel(newScrollTop + this.paginationProxy.getPixelOffset() + verticalScroll.focusedRowTopDelta);
-                focusedColumn = focusedCellBeforeScrolling.column;
-                break;
-            case ScrollType.DIAGONAL:
-                focusedRowIndex = this.paginationProxy.getRowIndexAtPixel(newScrollTop + this.paginationProxy.getPixelOffset() + diagonalScroll.focusedRowTopDelta);
-                focusedColumn = diagonalScroll.columnToScrollTo;
-                break;
-            case ScrollType.HORIZONTAL:
-                focusedRowIndex = focusedCellBeforeScrolling.rowIndex;
-                focusedColumn = horizontalScroll.columnToScrollTo;
-                break;
-        }
-        this.focusedCellController.setFocusedCell(focusedRowIndex, focusedColumn, null, true);
     };
     GridPanel.prototype.processMouseEvent = function (eventName, mouseEvent) {
         var cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
@@ -747,7 +565,7 @@ var GridPanel = (function (_super) {
                 newScrollPosition = rowBottomPixel - viewportHeight;
                 break;
             case 'middle':
-                newScrollPosition = rowTopPixel + halfScreenHeight;
+                newScrollPosition = halfScreenHeight;
                 // The if/else logic here protects us from over scrolling
                 // ie: Trying to scroll past the row (ie ensureNodeVisible (0, 'middle'))
                 newScrollPosition = newScrollPosition > rowTopPixel ? rowTopPixel : newScrollPosition;
@@ -936,8 +754,11 @@ var GridPanel = (function (_super) {
         }
         var viewportScrolledPastCol = viewportLeftPixel > colLeftPixel;
         var viewportScrolledBeforeCol = viewportRightPixel < colRightPixel;
-        if (viewportScrolledPastCol) {
-            // if viewport's left side is after col's left side, scroll right to pull col into viewport at left
+        var colToSmallForViewport = viewportWidth < column.getActualWidth();
+        var alignColToLeft = viewportScrolledPastCol || colToSmallForViewport;
+        var alignColToRight = viewportScrolledBeforeCol;
+        if (alignColToLeft) {
+            // if viewport's left side is after col's left side, scroll left to pull col into viewport at left
             if (this.enableRtl) {
                 var newScrollPosition = bodyWidth - viewportWidth - colLeftPixel;
                 this.setBodyViewportScrollLeft(newScrollPosition);
@@ -946,8 +767,8 @@ var GridPanel = (function (_super) {
                 this.setBodyViewportScrollLeft(colLeftPixel);
             }
         }
-        else if (viewportScrolledBeforeCol) {
-            // if viewport's right side is before col's right side, scroll left to pull col into viewport at right
+        else if (alignColToRight) {
+            // if viewport's right side is before col's right side, scroll right to pull col into viewport at right
             if (this.enableRtl) {
                 var newScrollPosition = bodyWidth - colRightPixel;
                 this.setBodyViewportScrollLeft(newScrollPosition);
@@ -1006,8 +827,13 @@ var GridPanel = (function (_super) {
             }
             else if (nextTimeout === 100) {
                 setTimeout(function () {
-                    _this.sizeColumnsToFit(-1);
+                    _this.sizeColumnsToFit(500);
                 }, 100);
+            }
+            else if (nextTimeout === 500) {
+                setTimeout(function () {
+                    _this.sizeColumnsToFit(-1);
+                }, 500);
             }
             else {
                 console.log('ag-Grid: tried to call sizeColumnsToFit() but the grid is coming back with ' +
@@ -1141,7 +967,7 @@ var GridPanel = (function (_super) {
                 this.eFloatingTop, this.eFloatingBottom, this.eFullWidthCellContainer
             ];
             this.rowContainerComponents = {
-                body: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eBodyContainer, eViewport: this.eBodyViewport }),
+                body: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eBodyContainer, eViewport: this.eBodyViewport, body: true }),
                 fullWidth: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eFullWidthCellContainer, hideWhenNoChildren: true, eViewport: this.eFullWidthCellViewport }),
                 pinnedLeft: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.ePinnedLeftColsContainer, eViewport: this.ePinnedLeftColsViewport }),
                 pinnedRight: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.ePinnedRightColsContainer, eViewport: this.ePinnedRightColsViewport }),
@@ -1658,6 +1484,10 @@ var GridPanel = (function (_super) {
         __metadata("design:type", animationFrameService_1.AnimationFrameService)
     ], GridPanel.prototype, "animationFrameService", void 0);
     __decorate([
+        context_1.Autowired('navigationService'),
+        __metadata("design:type", navigationService_1.NavigationService)
+    ], GridPanel.prototype, "navigationService", void 0);
+    __decorate([
         context_1.Autowired('paginationProxy'),
         __metadata("design:type", paginationProxy_1.PaginationProxy)
     ], GridPanel.prototype, "paginationProxy", void 0);
@@ -1737,30 +1567,3 @@ var GridPanel = (function (_super) {
     return GridPanel;
 }(beanStub_1.BeanStub));
 exports.GridPanel = GridPanel;
-var ScrollType;
-(function (ScrollType) {
-    ScrollType[ScrollType["HORIZONTAL"] = 0] = "HORIZONTAL";
-    ScrollType[ScrollType["VERTICAL"] = 1] = "VERTICAL";
-    ScrollType[ScrollType["DIAGONAL"] = 2] = "DIAGONAL";
-})(ScrollType || (ScrollType = {}));
-function testKeyboardBindingGroups(keyboardBindingGroups, event) {
-    for (var i = 0; i < keyboardBindingGroups.length; i++) {
-        var keyboardBindingGroup = keyboardBindingGroups[i];
-        for (var j = 0; j < keyboardBindingGroup.bindings.length; j++) {
-            var keyboardBinding = keyboardBindingGroup.bindings[j];
-            if (testKeyboardBinding(keyboardBinding, event)) {
-                return {
-                    trappedKeyboardBinding: keyboardBinding,
-                    trappedKeyboardBindingGroup: keyboardBindingGroup
-                };
-            }
-        }
-    }
-    return null;
-}
-function testKeyboardBinding(keyboardBinding, event) {
-    var key = event.which || event.keyCode;
-    return (keyboardBinding.ctlRequired === event.ctrlKey) &&
-        (keyboardBinding.keyCode === key) &&
-        (keyboardBinding.altRequired === event.altKey);
-}

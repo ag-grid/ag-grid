@@ -253,7 +253,7 @@
   .ag-fresh .ag-rtl .ag-group-checkbox {
     padding-left: 2px; }
   .ag-fresh .ag-group-child-count {
-    display: inline-block; }
+    /* display: inline-block; */ }
   .ag-fresh .ag-footer-cell {
     font-style: italic; }
   .ag-fresh .ag-menu {
@@ -427,3 +427,6 @@
       content: '('; }
     .ag-fresh .ag-sort-order::after {
       content: ')'; }
+  .ag-fresh .ag-details-row {
+    padding: 20px;
+    box-sizing: border-box; }

@@ -1,7 +1,7 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { ICellRendererAfterGuiAttachedParams, IComponent } from "../../interfaces/iComponent";
+import { IComponent } from "../../interfaces/iComponent";
 import { RowNode } from "../../entities/rowNode";
 import { ColDef } from "../../entities/colDef";
 import { Column } from "../../entities/column";
@@ -32,7 +32,7 @@ export interface ICellRenderer {
      * then the grid will refresh the cell for you. */
     refresh(params: any): boolean;
 }
-export interface ICellRendererComp extends ICellRenderer, IComponent<ICellRendererParams, ICellRendererAfterGuiAttachedParams> {
+export interface ICellRendererComp extends ICellRenderer, IComponent<ICellRendererParams> {
 }
 export interface ICellRendererFunc {
     (params: any): HTMLElement | string;

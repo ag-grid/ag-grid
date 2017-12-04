@@ -4,6 +4,7 @@ import {PopupEditorWrapper} from "./cellEditors/popupEditorWrapper";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColDef} from "../entities/colDef";
 import {ComponentResolver} from "../components/framework/componentResolver";
+import {_, Promise} from "../utils";
 
 @Bean('cellEditorFactory')
 export class CellEditorFactory {
@@ -18,7 +19,7 @@ export class CellEditorFactory {
     }
     
     public addCellEditor(key: string, cellEditor: {new(): ICellEditorComp}): void {
-        console.warn(`Ignoring this bwahahahahahaha!`)
+        console.warn(`ag-grid: since v13.3.1 this method is not supported anymore. If you want to register your own editor check the docs: https://www.ag-grid.com/javascript-grid-cell-editor/`)
     }
 
     // private registerEditorsFromGridOptions(): void {
@@ -28,24 +29,30 @@ export class CellEditorFactory {
     //     });
     // }
 
-    public createCellEditor(column:ColDef, params: ICellEditorParams): ICellEditorComp {
-        let cellEditor:ICellEditorComp = this.componentResolver.createAgGridComponent (
+    public createCellEditor(column:ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
+
+        let cellEditorPromise:Promise<ICellEditorComp> = this.componentResolver.createAgGridComponent (
             column,
             params,
             'cellEditor'
         );
-        if (cellEditor.isPopup && cellEditor.isPopup()) {
+        return cellEditorPromise.map(cellEditor => {
+
+            let isPopup = cellEditor.isPopup && cellEditor.isPopup();
+
+            if (!isPopup) { return cellEditor; }
 
             if (this.gridOptionsWrapper.isFullRowEdit()) {
                 console.warn('ag-Grid: popup cellEditor does not work with fullRowEdit - you cannot use them both ' +
                     '- either turn off fullRowEdit, or stop using popup editors.');
             }
 
-            cellEditor = new PopupEditorWrapper(cellEditor);
-            this.context.wireBean(cellEditor);
-            cellEditor.init(params);
-        }
-
-        return cellEditor;
+            // if a popup, then we wrap in a popup editor and return the popup
+            let popupEditorWrapper = new PopupEditorWrapper(cellEditor);
+            this.context.wireBean(popupEditorWrapper);
+            popupEditorWrapper.init(params);
+            return popupEditorWrapper;
+        });
     }
+
 }

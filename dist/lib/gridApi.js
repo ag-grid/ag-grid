@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,17 @@ var alignedGridsService_1 = require("./alignedGridsService");
 var pinnedRowModel_1 = require("./rowModels/pinnedRowModel");
 var GridApi = (function () {
     function GridApi() {
+        this.detailGridInfoMap = {};
+        /*
+        Taking these out, as we want to reconsider how we register components
+        
+        public addCellRenderer(key: string, cellRenderer: {new(): ICellRenderer} | ICellRendererFunc): void {
+            this.cellRendererFactory.addCellRenderer(key, cellRenderer);
+        }
+        
+        public addCellEditor(key: string, cellEditor: {new(): ICellEditor}): void {
+            this.cellEditorFactory.addCellEditor(key, cellEditor);
+        }*/
     }
     GridApi.prototype.init = function () {
         switch (this.rowModel.getType()) {
@@ -58,6 +69,25 @@ var GridApi = (function () {
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     GridApi.prototype.__getAlignedGridService = function () {
         return this.alignedGridsService;
+    };
+    GridApi.prototype.addDetailGridInfo = function (id, gridInfo) {
+        this.detailGridInfoMap[id] = gridInfo;
+    };
+    GridApi.prototype.removeDetailGridInfo = function (id) {
+        this.detailGridInfoMap[id] = undefined;
+    };
+    GridApi.prototype.getDetailGridInfo = function (id) {
+        return this.detailGridInfoMap[id];
+    };
+    GridApi.prototype.forEachDetailGridInfo = function (callback) {
+        var index = 0;
+        utils_1.Utils.iterateObject(this.detailGridInfoMap, function (id, gridInfo) {
+            // check for undefined, as old references will still be lying around
+            if (utils_1.Utils.exists(gridInfo)) {
+                callback(gridInfo, index);
+                index++;
+            }
+        });
     };
     GridApi.prototype.getDataAsCsv = function (params) {
         return this.csvCreator.getDataAsCsv(params);
@@ -108,8 +138,8 @@ var GridApi = (function () {
     GridApi.prototype.setRowData = function (rowData) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             if (this.gridOptionsWrapper.isDeltaRowDataMode()) {
-                var transaction = this.immutableService.createTransactionForRowData(rowData);
-                this.inMemoryRowModel.updateRowData(transaction);
+                var _a = this.immutableService.createTransactionForRowData(rowData), transaction = _a[0], orderIdMap = _a[1];
+                this.inMemoryRowModel.updateRowData(transaction, orderIdMap);
             }
             else {
                 this.selectionController.reset();
@@ -176,6 +206,11 @@ var GridApi = (function () {
     };
     GridApi.prototype.getVerticalPixelRange = function () {
         return this.gridPanel.getVerticalPixelRange();
+    };
+    GridApi.prototype.refreshToolPanel = function () {
+        if (this.toolPanel) {
+            this.toolPanel.refresh();
+        }
     };
     GridApi.prototype.refreshCells = function (params) {
         if (params === void 0) { params = {}; }
@@ -343,11 +378,6 @@ var GridApi = (function () {
         this.addRenderedRowListener(eventName, rowIndex, callback);
     };
     GridApi.prototype.addRenderedRowListener = function (eventName, rowIndex, callback) {
-        if (eventName === 'virtualRowRemoved') {
-            console.log('ag-Grid: event virtualRowRemoved is deprecated, now called renderedRowRemoved');
-            eventName = '' +
-                '';
-        }
         if (eventName === 'virtualRowSelected') {
             console.log('ag-Grid: event virtualRowSelected is deprecated, to register for individual row ' +
                 'selection events, add a listener directly to the row node.');
@@ -487,7 +517,7 @@ var GridApi = (function () {
     GridApi.prototype.getFilterInstance = function (key) {
         var column = this.columnController.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.getFilterComponent(column);
+            return this.filterManager.getFilterComponent(column).resolveNow(null, function (filterComp) { return filterComp; });
         }
     };
     GridApi.prototype.getFilterApi = function (key) {
@@ -572,6 +602,9 @@ var GridApi = (function () {
     };
     GridApi.prototype.setGroupRemoveSingleChildren = function (value) {
         this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, value);
+    };
+    GridApi.prototype.setGroupRemoveLowestSingleChildren = function (value) {
+        this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, value);
     };
     GridApi.prototype.onRowHeightChanged = function () {
         if (utils_1.Utils.exists(this.inMemoryRowModel)) {
@@ -987,6 +1020,10 @@ var GridApi = (function () {
         context_1.Autowired('valueCache'),
         __metadata("design:type", valueCache_1.ValueCache)
     ], GridApi.prototype, "valueCache", void 0);
+    __decorate([
+        context_1.Optional('toolPanel'),
+        __metadata("design:type", Object)
+    ], GridApi.prototype, "toolPanel", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

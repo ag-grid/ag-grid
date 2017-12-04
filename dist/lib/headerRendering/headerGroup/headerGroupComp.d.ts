@@ -1,8 +1,8 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
-import { IAfterGuiAttachedParams, IComponent } from "../../interfaces/iComponent";
+import { IComponent } from "../../interfaces/iComponent";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnApi } from "../../columnController/columnController";
 import { GridApi } from "../../gridApi";
@@ -16,7 +16,7 @@ export interface IHeaderGroupParams {
 }
 export interface IHeaderGroup {
 }
-export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams, IAfterGuiAttachedParams> {
+export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {
 }
 export declare class HeaderGroupComp extends Component implements IHeaderGroupComp {
     private columnController;

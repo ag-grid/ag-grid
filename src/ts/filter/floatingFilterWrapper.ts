@@ -1,7 +1,7 @@
 import {Autowired, Context} from "../context/context";
 import {IMenuFactory} from "../interfaces/iMenuFactory";
 import {Column} from "../entities/column";
-import {_} from "../utils";
+import {_, Promise} from "../utils";
 import {SetLeftFeature} from "../rendering/features/setLeftFeature";
 import {IFloatingFilterParams, IFloatingFilterComp, FloatingFilterChange} from "./floatingFilter";
 import {Component} from "../widgets/component";
@@ -12,7 +12,7 @@ import {Beans} from "../rendering/beans";
 
 export interface IFloatingFilterWrapperParams<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     column:Column;
-    floatingFilterComp:IFloatingFilterComp<M, F, P>;
+    floatingFilterComp:Promise<IFloatingFilterComp<M, F, P>>;
     suppressFilterButton: boolean;
 }
 
@@ -20,7 +20,7 @@ export interface IFloatingFilterWrapper <M>{
     onParentModelChanged(parentModel:M):void;
 }
 
-export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P, IAfterGuiAttachedParams> { }
+export interface IFloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends IFloatingFilterWrapper<M>, IComponent<P> { }
 
 export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends Component implements IFloatingFilterWrapperComp<M, F, PC, P> {
 
@@ -29,17 +29,17 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
 
     column: Column;
 
-    init (params:P):void{
+    init (params:P):void | Promise<void>{
         this.column = params.column;
 
 
         let base:HTMLElement = _.loadTemplate(`<div class="ag-header-cell" aria-hidden="true"><div class="ag-floating-filter-body" aria-hidden="true"></div></div>`);
         this.enrichBody(base);
 
-        this.setHtmlElement(base);
+        this.setTemplateFromElement(base);
         this.setupWidth();
 
-        let setLeftFeature = new SetLeftFeature(this.column, this.getHtmlElement(), this.beans);
+        let setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
     }
@@ -54,12 +54,13 @@ export abstract class BaseFilterWrapperComp<M, F extends FloatingFilterChange, P
     }
 
     private onColumnWidthChanged(): void {
-        this.getHtmlElement().style.width = this.column.getActualWidth() + 'px';
+        this.getGui().style.width = this.column.getActualWidth() + 'px';
     }
 }
 
 
 export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC extends IFloatingFilterParams<M, F>, P extends IFloatingFilterWrapperParams<M, F, PC>> extends BaseFilterWrapperComp<M, F, PC, P> {
+
     @RefSelector('eButtonShowMainFilter')
     eButtonShowMainFilter: HTMLInputElement;
 
@@ -68,44 +69,56 @@ export class FloatingFilterWrapperComp<M, F extends FloatingFilterChange, PC ext
     @Autowired('gridOptionsWrapper')
     private gridOptionsWrapper: GridOptionsWrapper;
 
-    floatingFilterComp:IFloatingFilterComp<M, F, PC>;
+    floatingFilterCompPromise:Promise<IFloatingFilterComp<M, F, PC>>;
     suppressFilterButton:boolean;
 
 
-    init (params:P):void{
-        this.floatingFilterComp = params.floatingFilterComp;
+    init(params: P): void{
+        this.floatingFilterCompPromise = params.floatingFilterComp;
         this.suppressFilterButton = params.suppressFilterButton;
         super.init(params);
-        if (!this.suppressFilterButton){
+
+        this.addEventListeners();
+
+
+    }
+
+    private addEventListeners ():void{
+        if (!this.suppressFilterButton && this.eButtonShowMainFilter){
             this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
         }
     }
 
     enrichBody(body:HTMLElement):void{
-        let floatingFilterBody:HTMLElement = <HTMLElement>body.querySelector('.ag-floating-filter-body');
-        let floatingFilterComp = _.ensureElement(this.floatingFilterComp.getGui());
-        if (this.suppressFilterButton){
-            floatingFilterBody.appendChild(floatingFilterComp);
-            _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
-            _.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body')
-        } else {
-            floatingFilterBody.appendChild(floatingFilterComp);
-            body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button" aria-hidden="true">
-                    <button ref="eButtonShowMainFilter"></button>
-            </div>`));
+        this.floatingFilterCompPromise.then(floatingFilterComp=>{
+            let floatingFilterBody:HTMLElement = <HTMLElement>body.querySelector('.ag-floating-filter-body');
+            let floatingFilterCompUi = floatingFilterComp.getGui();
+            if (this.suppressFilterButton){
+                floatingFilterBody.appendChild(floatingFilterCompUi);
+                _.removeCssClass(floatingFilterBody, 'ag-floating-filter-body');
+                _.addCssClass(floatingFilterBody, 'ag-floating-filter-full-body')
+            } else {
+                floatingFilterBody.appendChild(floatingFilterCompUi);
+                body.appendChild(_.loadTemplate(`<div class="ag-floating-filter-button" aria-hidden="true">
+                        <button ref="eButtonShowMainFilter"></button>
+                </div>`));
 
-            let eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
-            body.querySelector('button').appendChild(eIcon);
-        }
-        if (this.floatingFilterComp.afterGuiAttached){
-            this.floatingFilterComp.afterGuiAttached({
-                eComponent: floatingFilterComp
-            });
-        }
+                let eIcon = _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
+                body.querySelector('button').appendChild(eIcon);
+            }
+            if (floatingFilterComp.afterGuiAttached){
+                floatingFilterComp.afterGuiAttached();
+            }
+
+            this.wireQuerySelectors();
+            this.addEventListeners();
+        });
     }
 
     onParentModelChanged(parentModel:M):void{
-        this.floatingFilterComp.onParentModelChanged(parentModel);
+        this.floatingFilterCompPromise.then(floatingFilterComp=>{
+            floatingFilterComp.onParentModelChanged(parentModel);
+        })
     }
 
     private showParentFilter(){

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -205,7 +205,7 @@ var RowRenderer = (function (_super) {
         // all rows and insert them again from scratch
         var rowsUsingFlow = this.forPrint || this.autoHeight;
         var recycleRows = rowsUsingFlow ? false : params.recycleRows;
-        var animate = rowsUsingFlow ? false : params.animate;
+        var animate = rowsUsingFlow ? false : (params.animate && this.gridOptionsWrapper.isAnimateRows());
         var rowsToRecycle = this.binRowComps(recycleRows);
         this.redraw(rowsToRecycle, animate);
         if (!params.onlyBody) {
@@ -275,7 +275,9 @@ var RowRenderer = (function (_super) {
     };
     RowRenderer.prototype.addRenderedRowListener = function (eventName, rowIndex, callback) {
         var rowComp = this.rowCompsByIndex[rowIndex];
-        rowComp.addEventListener(eventName, callback);
+        if (rowComp) {
+            rowComp.addEventListener(eventName, callback);
+        }
     };
     RowRenderer.prototype.refreshCells = function (params) {
         var _this = this;
@@ -757,7 +759,7 @@ var RowRenderer = (function (_super) {
         if (foundCell) {
             if (editing) {
                 if (this.gridOptionsWrapper.isFullRowEdit()) {
-                    this.moveEditToNextRow(previousRenderedCell, nextRenderedCell);
+                    this.moveEditToNextCellOrRow(previousRenderedCell, nextRenderedCell);
                 }
                 else {
                     this.moveEditToNextCell(previousRenderedCell, nextRenderedCell);
@@ -777,7 +779,7 @@ var RowRenderer = (function (_super) {
         nextRenderedCell.startEditingIfEnabled(null, null, true);
         nextRenderedCell.focusCell(false);
     };
-    RowRenderer.prototype.moveEditToNextRow = function (previousRenderedCell, nextRenderedCell) {
+    RowRenderer.prototype.moveEditToNextCellOrRow = function (previousRenderedCell, nextRenderedCell) {
         var pGridCell = previousRenderedCell.getGridCell();
         var nGridCell = nextRenderedCell.getGridCell();
         var rowsMatch = (pGridCell.rowIndex === nGridCell.rowIndex)

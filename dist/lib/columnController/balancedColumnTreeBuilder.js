@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,6 +26,7 @@ var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var column_1 = require("../entities/column");
 var context_1 = require("../context/context");
 var utils_1 = require("../utils");
+var defaultColumnTypes_1 = require("../entities/defaultColumnTypes");
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 var BalancedColumnTreeBuilder = (function () {
     function BalancedColumnTreeBuilder() {
@@ -129,20 +130,27 @@ var BalancedColumnTreeBuilder = (function () {
         return colGroupDefMerged;
     };
     BalancedColumnTreeBuilder.prototype.createColumn = function (columnKeyCreator, primaryColumns, colDef) {
-        var colDefMerged = {};
-        utils_1.Utils.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
-        if (colDef.type) {
-            this.assignColumnTypes(colDef, colDefMerged);
-        }
-        utils_1.Utils.assign(colDefMerged, colDef);
+        var colDefMerged = this.mergeColDefs(colDef);
         this.checkForDeprecatedItems(colDefMerged);
         var colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
         var column = new column_1.Column(colDefMerged, colId, primaryColumns);
         this.context.wireBean(column);
         return column;
     };
+    BalancedColumnTreeBuilder.prototype.mergeColDefs = function (colDef) {
+        // start with empty merged definition
+        var colDefMerged = {};
+        // merge properties from default column definitions
+        utils_1.Utils.assign(colDefMerged, this.gridOptionsWrapper.getDefaultColDef());
+        // merge properties from column type properties
+        if (colDef.type) {
+            this.assignColumnTypes(colDef, colDefMerged);
+        }
+        // merge properties from column definitions
+        utils_1.Utils.assign(colDefMerged, colDef);
+        return colDefMerged;
+    };
     BalancedColumnTreeBuilder.prototype.assignColumnTypes = function (colDef, colDefMerged) {
-        var _this = this;
         var typeKeys;
         if (colDef.type instanceof Array) {
             var invalidArray = colDef.type.some(function (a) { return typeof a !== 'string'; });
@@ -160,8 +168,10 @@ var BalancedColumnTreeBuilder = (function () {
             console.warn("ag-grid: colDef.type should be of type 'string' | 'string[]'");
             return;
         }
+        // merge user defined with default column types
+        var allColumnTypes = utils_1.Utils.assign({}, this.gridOptionsWrapper.getColumnTypes(), defaultColumnTypes_1.DefaultColumnTypes);
         typeKeys.forEach(function (t) {
-            var typeColDef = _this.gridOptionsWrapper.getColumnTypes()[t.trim()];
+            var typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
                 utils_1.Utils.assign(colDefMerged, typeColDef);
             }

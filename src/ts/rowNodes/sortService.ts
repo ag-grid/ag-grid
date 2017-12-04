@@ -55,7 +55,7 @@ export class SortService {
 
         // sort any groups recursively
         rowNode.childrenAfterFilter.forEach(child => {
-            if (child.group) {
+            if (child.hasChildren()) {
                 this.sort(child, sortOptions);
             }
         });

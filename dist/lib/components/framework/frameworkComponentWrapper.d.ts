@@ -1,13 +1,13 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { IAfterGuiAttachedParams, IComponent } from "../../interfaces/iComponent";
+import { IComponent } from "../../interfaces/iComponent";
 /**
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
 export interface FrameworkComponentWrapper {
-    wrap<A extends IComponent<any, IAfterGuiAttachedParams>>(frameworkComponent: {
+    wrap<A extends IComponent<any>>(frameworkComponent: {
         new (): any;
     }, methodList: string[], optionalMethodList?: string[], componentName?: string): A;
 }
@@ -17,7 +17,7 @@ export interface WrapableInterface {
     addMethod(name: string, callback: Function): void;
 }
 export declare abstract class BaseComponentWrapper<F extends WrapableInterface> implements FrameworkComponentWrapper {
-    wrap<A extends IComponent<any, IAfterGuiAttachedParams>>(OriginalConstructor: {
+    wrap<A extends IComponent<any>>(OriginalConstructor: {
         new (): any;
     }, mandatoryMethodList: string[], optionalMethodList?: string[], componentName?: string): A;
     abstract createWrapper(OriginalConstructor: {

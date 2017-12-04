@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,14 +45,16 @@ var ImmutableService = (function () {
             add: []
         };
         var existingNodesMap = this.inMemoryRowModel.getCopyOfNodesMap();
+        var orderMap = {};
         if (utils_1._.exists(data)) {
             // split all the new data in the following:
             // if new, push to 'add'
             // if update, push to 'update'
             // if not changed, do not include in the transaction
-            data.forEach(function (dataItem) {
+            data.forEach(function (dataItem, index) {
                 var id = getRowNodeIdFunc(dataItem);
                 var existingNode = existingNodesMap[id];
+                orderMap[id] = index;
                 if (existingNode) {
                     var dataHasChanged = existingNode.data !== dataItem;
                     if (dataHasChanged) {
@@ -73,7 +75,7 @@ var ImmutableService = (function () {
                 transaction.remove.push(rowNode.data);
             }
         });
-        return transaction;
+        return [transaction, orderMap];
     };
     __decorate([
         context_1.Autowired('rowModel'),

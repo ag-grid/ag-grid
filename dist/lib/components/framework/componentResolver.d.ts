@@ -1,13 +1,15 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "../../entities/gridOptions";
-import { IAfterGuiAttachedParams, IComponent } from "../../interfaces/iComponent";
+import { IComponent } from "../../interfaces/iComponent";
 import { ColDef, ColGroupDef } from "../../entities/colDef";
+import { Promise } from "../../utils";
 import { AgGridRegisteredComponentInput } from "./componentProvider";
 import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
-export declare type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams;
-export declare type AgComponentPropertyInput<A extends IComponent<any, IAfterGuiAttachedParams>> = AgGridRegisteredComponentInput<A> | string;
+import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
+export declare type ComponentHolder = GridOptions | ColDef | ColGroupDef | ISetFilterParams | IRichCellEditorParams;
+export declare type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string;
 export declare enum ComponentType {
     AG_GRID = 0,
     FRAMEWORK = 1,
@@ -21,7 +23,7 @@ export declare enum ComponentSource {
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
-export interface ResolvedComponent<A extends IComponent<any, IAfterGuiAttachedParams> & B, B> {
+export interface ResolvedComponent<A extends IComponent<any> & B, B> {
     component: {
         new (): A;
     } | {
@@ -56,7 +58,7 @@ export declare class ComponentResolver {
      *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
      */
-    getComponentToUse<A extends IComponent<any, IAfterGuiAttachedParams> & B, B>(holder: ComponentHolder, propertyName: string, componentNameOpt?: string): ResolvedComponent<A, B>;
+    getComponentToUse<A extends IComponent<any> & B, B>(holder: ComponentHolder, propertyName: string, componentNameOpt?: string): ResolvedComponent<A, B>;
     /**
      * Useful to check what would be the resultant params for a given object
      *  @param holder: This is the context for which this component needs to be created, it can be gridOptions
@@ -81,7 +83,9 @@ export declare class ComponentResolver {
      *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
      *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
+     *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
+     *  params are and the component that init is about to get called for
      */
-    createAgGridComponent<A extends IComponent<any, IAfterGuiAttachedParams>>(holderOpt: ComponentHolder, agGridParams: any, propertyName: string, componentNameOpt?: string, mandatory?: boolean): A;
+    createAgGridComponent<A extends IComponent<any>>(holderOpt: ComponentHolder, agGridParams: any, propertyName: string, componentNameOpt?: string, mandatory?: boolean, customInitParamsCb?: (params: any, component: A) => any): Promise<A>;
     private newAgGridComponent<A, B>(holder, propertyName, componentName, mandatory?);
 }

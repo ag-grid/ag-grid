@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
-import { IAfterGuiAttachedParams, IComponent } from "../../interfaces/iComponent";
+import { IComponent } from "../../interfaces/iComponent";
 import { ColumnApi } from "../../columnController/columnController";
 import { GridApi } from "../../gridApi";
 export interface IHeaderParams {
@@ -17,10 +17,11 @@ export interface IHeaderParams {
     columnApi: ColumnApi;
     api: GridApi;
     context: any;
+    template: string;
 }
 export interface IHeader {
 }
-export interface IHeaderComp extends IHeader, IComponent<IHeaderParams, IAfterGuiAttachedParams> {
+export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
 }
 export declare class HeaderComp extends Component implements IHeaderComp {
     private static TEMPLATE;
@@ -37,7 +38,6 @@ export declare class HeaderComp extends Component implements IHeaderComp {
     private eLabel;
     private eText;
     private params;
-    constructor();
     init(params: IHeaderParams): void;
     private setupText(displayName);
     private setupIcons(column);

@@ -179,6 +179,7 @@ export interface GridOptions {
     groupIncludeFooter?: boolean;
     groupUseEntireRow?: boolean;
     groupRemoveSingleChildren?: boolean;
+    groupRemoveLowestSingleChildren?: boolean;
     groupSuppressRow?: boolean;
     groupHideOpenParents?: boolean;
     groupMultiAutoColumn?: boolean;
@@ -205,7 +206,14 @@ export interface GridOptions {
     overlayLoadingTemplate?: string;
     overlayNoRowsTemplate?: string;
     rowHeight?: number;
+    detailRowHeight?: number;
     headerCellTemplate?: string;
+
+    masterDetail?: boolean;
+    isRowMaster?: IsRowMaster;
+    detailCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
+    detailCellRendererFramework?: any;
+    detailCellRendererParams?: any;
 
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. *
@@ -236,7 +244,7 @@ export interface GridOptions {
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams)=>string;
     postProcessPopup?:(params: PostProcessPopupParams)=>void;
     frameworkComponents?:{[p:string]:{new(): any}}
-    components?:{[p:string]:AgGridRegisteredComponentInput<IComponent<any, IAfterGuiAttachedParams>>}
+    components?:{[p:string]:AgGridRegisteredComponentInput<IComponent<any>>}
     dateComponent?:{new(): IDateComp};
     dateComponentFramework?: any;
     groupRowRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
@@ -265,6 +273,8 @@ export interface GridOptions {
     getBusinessKeyForNode?(node: RowNode): string;
     getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?: GetNodeChildDetails;
+    getDataPath?: GetDataPath;
+    treeData?: boolean;
     getContextMenuItems?: GetContextMenuItems;
     getMainMenuItems?: GetMainMenuItems;
     getRowNodeId?: GetRowNodeIdFunc;
@@ -340,8 +350,20 @@ export interface GridOptions {
     columnApi?: ColumnApi; // change to typed
 }
 
+export interface GetDataPath {
+    (data: any): string[];
+}
+
+// export interface IsGroup {
+//     (data: any): boolean;
+// }
+
 export interface GetNodeChildDetails {
     (dataItem: any): NodeChildDetails;
+}
+
+export interface IsRowMaster {
+    (dataItem: any): boolean;
 }
 
 export interface NodeChildDetails {

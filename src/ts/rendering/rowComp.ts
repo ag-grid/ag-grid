@@ -1,6 +1,6 @@
 import {_} from "../utils";
 import {CellComp} from "./cellComp";
-import {DataChangedEvent, RowNode, CellChangedEvent} from "../entities/rowNode";
+import {CellChangedEvent, DataChangedEvent, RowNode} from "../entities/rowNode";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Column} from "../entities/column";
 import {
@@ -13,9 +13,8 @@ import {
     RowValueChangedEvent,
     VirtualRowRemovedEvent
 } from "../events";
-import {EventService} from "../eventService";
 import {Autowired} from "../context/context";
-import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "./cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {RowContainerComponent} from "./rowContainerComponent";
 import {Component} from "../widgets/component";
 import {RefSelector} from "../widgets/componentAnnotations";
@@ -54,14 +53,12 @@ export class LoadingCellRenderer extends Component {
 
 export class RowComp extends Component {
 
-    public static EVENT_ROW_REMOVED = 'rowRemoved';
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 
     private static FULL_WIDTH_CELL_RENDERER = 'fullWidthCellRenderer';
     private static GROUP_ROW_RENDERER = 'groupRowRenderer';
     private static LOADING_CELL_RENDERER = 'loadingCellRenderer';
-
-    private renderedRowEventService: EventService;
+    private static DETAIL_CELL_RENDERER = 'detailCellRenderer';
 
     private rowNode: RowNode;
 
@@ -205,7 +202,7 @@ export class RowComp extends Component {
     public getCellForCol(column: Column): HTMLElement {
         let cellComp = this.cellComps[column.getColId()];
         if (cellComp) {
-            return cellComp.getHtmlElement();
+            return cellComp.getGui();
         } else {
             return null;
         }
@@ -300,42 +297,26 @@ export class RowComp extends Component {
         }
     }
 
-    private setupRowStub(): void {
-        this.fullWidthRow = true;
-        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-        this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER);
-    }
-
     private setupRowContainers(): void {
 
         let isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
         let isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
+
+        let isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
+
         let isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow();
 
         if (this.rowNode.stub) {
-            this.setupRowStub();
+            this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER);
+        } else if (isDetailCell) {
+            this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER);
         } else if (isFullWidthCell) {
-            this.setupFullWidthContainers();
+            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER);
         } else if (isGroupSpanningRow) {
-            this.setupFullWidthGroupContainers();
+            this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER);
         } else {
             this.setupNormalRowContainers();
         }
-
-    }
-
-    private setupFullWidthContainers(): void {
-        this.fullWidthRow = true;
-        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-
-        this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER);
-    }
-
-    private setupFullWidthGroupContainers(): void {
-        this.fullWidthRow = true;
-        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-
-        this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER);
     }
 
     private setupNormalRowContainers(): void {
@@ -352,24 +333,33 @@ export class RowComp extends Component {
 
     private createFullWidthRows(type: string): void {
 
+        this.fullWidthRow = true;
+        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
+
         if (this.fullWidthRowEmbedded) {
 
             this.createFullWidthRowContainer(this.bodyContainerComp, null,
                 null, type,
-                (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
+                (eRow: HTMLElement) => {
                     this.eFullWidthRowBody = eRow;
+                },
+                (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentBody = cellRenderer;
                 });
             this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Column.PINNED_LEFT,
                 'ag-cell-last-left-pinned', type,
-                (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
+                (eRow: HTMLElement) => {
                     this.eFullWidthRowLeft = eRow;
+                },
+                (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentLeft = cellRenderer;
                 });
             this.createFullWidthRowContainer(this.pinnedRightContainerComp, Column.PINNED_RIGHT,
                 'ag-cell-first-right-pinned', type,
-                (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
+                (eRow: HTMLElement) => {
                     this.eFullWidthRowRight = eRow;
+                },
+                (cellRenderer: ICellRendererComp) => {
                     this.fullWidthRowComponentRight = cellRenderer;
                 });
 
@@ -379,13 +369,15 @@ export class RowComp extends Component {
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
             this.createFullWidthRowContainer(this.fullWidthContainerComp, null,
                 null, type,
-                (eRow: HTMLElement, cellRenderer: ICellRendererComp) => {
+                (eRow: HTMLElement) => {
                     this.eFullWidthRow = eRow;
-                    this.fullWidthRowComponent = cellRenderer;
                     // and fake the mouse wheel for the fullWidth container
                     if (!this.beans.forPrint) {
                         this.addMouseWheelListenerToFullWidthRow();
                     }
+                },
+                (cellRenderer: ICellRendererComp) => {
+                    this.fullWidthRowComponent = cellRenderer;
                 });
         }
     }
@@ -619,7 +611,7 @@ export class RowComp extends Component {
     }
 
     private ensureCellInCorrectContainer(cellComp: CellComp): void {
-        let element = cellComp.getHtmlElement();
+        let element = cellComp.getGui();
         let column = cellComp.getColumn();
         let pinnedType = column.getPinned();
         let eContainer = this.getContainerForCell(pinnedType);
@@ -777,7 +769,8 @@ export class RowComp extends Component {
 
     private createFullWidthRowContainer(rowContainerComp: RowContainerComponent, pinned: string,
                                         extraCssClass: string, cellRendererType: string,
-                                        callback: (eRow: HTMLElement, comp: ICellRendererComp) => void): void {
+                                        eRowCallback: (eRow: HTMLElement) => void,
+                                        cellRendererCallback: (comp: ICellRendererComp) => void): void {
 
         let rowTemplate = this.createTemplate('', extraCssClass);
         rowContainerComp.appendRowTemplate(rowTemplate, ()=> {
@@ -786,12 +779,22 @@ export class RowComp extends Component {
 
             let params = this.createFullWidthParams(eRow, pinned);
 
-            let cellRenderer = this.beans.componentResolver.createAgGridComponent<ICellRendererComp>(null, params, cellRendererType);
-            let gui = _.ensureElement(cellRenderer.getGui());
-            eRow.appendChild(gui);
+            let callback = (cellRenderer: ICellRendererComp)=> {
+                if (this.isAlive()) {
+                    let gui = cellRenderer.getGui();
+                    eRow.appendChild(gui);
+                    cellRendererCallback(cellRenderer);
+                } else {
+                    if (cellRenderer.destroy) {
+                        cellRenderer.destroy();
+                    }
+                }
+            };
+
+            this.beans.componentResolver.createAgGridComponent<ICellRendererComp>(null, params, cellRendererType).then(callback);
 
             this.afterRowAttached(rowContainerComp, eRow);
-            callback(eRow, cellRenderer);
+            eRowCallback(eRow);
 
             this.angular1Compile(eRow);
         });
@@ -1082,6 +1085,9 @@ export class RowComp extends Component {
         this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected) );
     }
 
+    // called:
+    // + after row created for first time
+    // + after horizontal scroll, so new cells due to column virtualisation
     private callAfterRowAttachedOnCells(newCellComps: CellComp[], eRow: HTMLElement): void {
         newCellComps.forEach( cellComp => {
             cellComp.setParentRow(eRow);
@@ -1184,20 +1190,19 @@ export class RowComp extends Component {
     }
 
     public addEventListener(eventType: string, listener: Function): void {
-        if (eventType==='renderedRowRemoved') {
-            eventType = RowComp.EVENT_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+        if (eventType==='renderedRowRemoved' || eventType==='rowRemoved') {
+            eventType = Events.EVENT_VIRTUAL_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
-        if (!this.renderedRowEventService) { this.renderedRowEventService = new EventService(); }
-        this.renderedRowEventService.addEventListener(eventType, listener);
+        super.addEventListener(eventType, listener);
     }
 
     public removeEventListener(eventType: string, listener: Function): void {
-        if (eventType==='renderedRowRemoved') {
-            eventType = RowComp.EVENT_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+        if (eventType==='renderedRowRemoved' || eventType==='rowRemoved') {
+            eventType = Events.EVENT_VIRTUAL_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved and rowRemoved is now called ' + Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
-        this.renderedRowEventService.removeEventListener(eventType, listener);
+        super.removeEventListener(eventType, listener);
     }
 
     private destroyScope(): void {
@@ -1234,9 +1239,7 @@ export class RowComp extends Component {
 
         let event: VirtualRowRemovedEvent = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
 
-        if (this.renderedRowEventService) {
-            this.renderedRowEventService.dispatchEvent(event);
-        }
+        this.dispatchEvent(event);
         this.beans.eventService.dispatchEvent(event);
     }
 

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -73,6 +73,11 @@ var ComponentMetadataProvider = (function () {
             groupRowInnerRenderer: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],
+                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+            },
+            filter: {
+                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
+                optionalMethodList: ['onNewRowsLoaded', 'onFloatingFilterChanged'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             }
         };

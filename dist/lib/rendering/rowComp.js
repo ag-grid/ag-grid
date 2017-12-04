@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,7 +31,6 @@ var rowNode_1 = require("../entities/rowNode");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var column_1 = require("../entities/column");
 var events_1 = require("../events");
-var eventService_1 = require("../eventService");
 var context_1 = require("../context/context");
 var component_1 = require("../widgets/component");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
@@ -141,7 +140,7 @@ var RowComp = (function (_super) {
     RowComp.prototype.getCellForCol = function (column) {
         var cellComp = this.cellComps[column.getColId()];
         if (cellComp) {
-            return cellComp.getHtmlElement();
+            return cellComp.getGui();
         }
         else {
             return null;
@@ -229,37 +228,26 @@ var RowComp = (function (_super) {
             return null;
         }
     };
-    RowComp.prototype.setupRowStub = function () {
-        this.fullWidthRow = true;
-        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-        this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER);
-    };
     RowComp.prototype.setupRowContainers = function () {
         var isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
         var isFullWidthCell = isFullWidthCellFunc ? isFullWidthCellFunc(this.rowNode) : false;
+        var isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
         var isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow();
         if (this.rowNode.stub) {
-            this.setupRowStub();
+            this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER);
+        }
+        else if (isDetailCell) {
+            this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER);
         }
         else if (isFullWidthCell) {
-            this.setupFullWidthContainers();
+            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER);
         }
         else if (isGroupSpanningRow) {
-            this.setupFullWidthGroupContainers();
+            this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER);
         }
         else {
             this.setupNormalRowContainers();
         }
-    };
-    RowComp.prototype.setupFullWidthContainers = function () {
-        this.fullWidthRow = true;
-        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-        this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER);
-    };
-    RowComp.prototype.setupFullWidthGroupContainers = function () {
-        this.fullWidthRow = true;
-        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
-        this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER);
     };
     RowComp.prototype.setupNormalRowContainers = function () {
         var _this = this;
@@ -274,30 +262,36 @@ var RowComp = (function (_super) {
     };
     RowComp.prototype.createFullWidthRows = function (type) {
         var _this = this;
+        this.fullWidthRow = true;
+        this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
         if (this.fullWidthRowEmbedded) {
-            this.createFullWidthRowContainer(this.bodyContainerComp, null, null, type, function (eRow, cellRenderer) {
+            this.createFullWidthRowContainer(this.bodyContainerComp, null, null, type, function (eRow) {
                 _this.eFullWidthRowBody = eRow;
+            }, function (cellRenderer) {
                 _this.fullWidthRowComponentBody = cellRenderer;
             });
-            this.createFullWidthRowContainer(this.pinnedLeftContainerComp, column_1.Column.PINNED_LEFT, 'ag-cell-last-left-pinned', type, function (eRow, cellRenderer) {
+            this.createFullWidthRowContainer(this.pinnedLeftContainerComp, column_1.Column.PINNED_LEFT, 'ag-cell-last-left-pinned', type, function (eRow) {
                 _this.eFullWidthRowLeft = eRow;
+            }, function (cellRenderer) {
                 _this.fullWidthRowComponentLeft = cellRenderer;
             });
-            this.createFullWidthRowContainer(this.pinnedRightContainerComp, column_1.Column.PINNED_RIGHT, 'ag-cell-first-right-pinned', type, function (eRow, cellRenderer) {
+            this.createFullWidthRowContainer(this.pinnedRightContainerComp, column_1.Column.PINNED_RIGHT, 'ag-cell-first-right-pinned', type, function (eRow) {
                 _this.eFullWidthRowRight = eRow;
+            }, function (cellRenderer) {
                 _this.fullWidthRowComponentRight = cellRenderer;
             });
         }
         else {
             // otherwise we add to the fullWidth container as normal
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
-            this.createFullWidthRowContainer(this.fullWidthContainerComp, null, null, type, function (eRow, cellRenderer) {
+            this.createFullWidthRowContainer(this.fullWidthContainerComp, null, null, type, function (eRow) {
                 _this.eFullWidthRow = eRow;
-                _this.fullWidthRowComponent = cellRenderer;
                 // and fake the mouse wheel for the fullWidth container
                 if (!_this.beans.forPrint) {
                     _this.addMouseWheelListenerToFullWidthRow();
                 }
+            }, function (cellRenderer) {
+                _this.fullWidthRowComponent = cellRenderer;
             });
         }
     };
@@ -506,7 +500,7 @@ var RowComp = (function (_super) {
         }
     };
     RowComp.prototype.ensureCellInCorrectContainer = function (cellComp) {
-        var element = cellComp.getHtmlElement();
+        var element = cellComp.getGui();
         var column = cellComp.getColumn();
         var pinnedType = column.getPinned();
         var eContainer = this.getContainerForCell(pinnedType);
@@ -642,17 +636,27 @@ var RowComp = (function (_super) {
             this.rowNode.setSelectedParams({ newValue: true, clearSelection: !multiSelectKeyPressed, rangeSelect: shiftKeyPressed });
         }
     };
-    RowComp.prototype.createFullWidthRowContainer = function (rowContainerComp, pinned, extraCssClass, cellRendererType, callback) {
+    RowComp.prototype.createFullWidthRowContainer = function (rowContainerComp, pinned, extraCssClass, cellRendererType, eRowCallback, cellRendererCallback) {
         var _this = this;
         var rowTemplate = this.createTemplate('', extraCssClass);
         rowContainerComp.appendRowTemplate(rowTemplate, function () {
             var eRow = rowContainerComp.getRowElement(_this.getCompId());
             var params = _this.createFullWidthParams(eRow, pinned);
-            var cellRenderer = _this.beans.componentResolver.createAgGridComponent(null, params, cellRendererType);
-            var gui = utils_1._.ensureElement(cellRenderer.getGui());
-            eRow.appendChild(gui);
+            var callback = function (cellRenderer) {
+                if (_this.isAlive()) {
+                    var gui = cellRenderer.getGui();
+                    eRow.appendChild(gui);
+                    cellRendererCallback(cellRenderer);
+                }
+                else {
+                    if (cellRenderer.destroy) {
+                        cellRenderer.destroy();
+                    }
+                }
+            };
+            _this.beans.componentResolver.createAgGridComponent(null, params, cellRendererType).then(callback);
             _this.afterRowAttached(rowContainerComp, eRow);
-            callback(eRow, cellRenderer);
+            eRowCallback(eRow);
             _this.angular1Compile(eRow);
         });
     };
@@ -903,6 +907,9 @@ var RowComp = (function (_super) {
         var selected = this.rowNode.isSelected();
         this.eAllRowContainers.forEach(function (row) { return utils_1._.addOrRemoveCssClass(row, 'ag-row-selected', selected); });
     };
+    // called:
+    // + after row created for first time
+    // + after horizontal scroll, so new cells due to column virtualisation
     RowComp.prototype.callAfterRowAttachedOnCells = function (newCellComps, eRow) {
         var _this = this;
         newCellComps.forEach(function (cellComp) {
@@ -997,21 +1004,18 @@ var RowComp = (function (_super) {
         }
     };
     RowComp.prototype.addEventListener = function (eventType, listener) {
-        if (eventType === 'renderedRowRemoved') {
-            eventType = RowComp.EVENT_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+        if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
+            eventType = events_1.Events.EVENT_VIRTUAL_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + events_1.Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
-        if (!this.renderedRowEventService) {
-            this.renderedRowEventService = new eventService_1.EventService();
-        }
-        this.renderedRowEventService.addEventListener(eventType, listener);
+        _super.prototype.addEventListener.call(this, eventType, listener);
     };
     RowComp.prototype.removeEventListener = function (eventType, listener) {
-        if (eventType === 'renderedRowRemoved') {
-            eventType = RowComp.EVENT_ROW_REMOVED;
-            console.warn('ag-Grid: Since version 11, event renderedRowRemoved is now called ' + RowComp.EVENT_ROW_REMOVED);
+        if (eventType === 'renderedRowRemoved' || eventType === 'rowRemoved') {
+            eventType = events_1.Events.EVENT_VIRTUAL_ROW_REMOVED;
+            console.warn('ag-Grid: Since version 11, event renderedRowRemoved and rowRemoved is now called ' + events_1.Events.EVENT_VIRTUAL_ROW_REMOVED);
         }
-        this.renderedRowEventService.removeEventListener(eventType, listener);
+        _super.prototype.removeEventListener.call(this, eventType, listener);
     };
     RowComp.prototype.destroyScope = function () {
         if (this.scope) {
@@ -1039,9 +1043,7 @@ var RowComp = (function (_super) {
             delayedDestroyFunctions.forEach(function (func) { return func(); });
         }
         var event = this.createRowEvent(events_1.Events.EVENT_VIRTUAL_ROW_REMOVED);
-        if (this.renderedRowEventService) {
-            this.renderedRowEventService.dispatchEvent(event);
-        }
+        this.dispatchEvent(event);
         this.beans.eventService.dispatchEvent(event);
     };
     RowComp.prototype.destroyContainingCells = function () {
@@ -1165,11 +1167,11 @@ var RowComp = (function (_super) {
     RowComp.prototype.getFullWidthRowElement = function () {
         return this.eFullWidthRow;
     };
-    RowComp.EVENT_ROW_REMOVED = 'rowRemoved';
     RowComp.DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
     RowComp.FULL_WIDTH_CELL_RENDERER = 'fullWidthCellRenderer';
     RowComp.GROUP_ROW_RENDERER = 'groupRowRenderer';
     RowComp.LOADING_CELL_RENDERER = 'loadingCellRenderer';
+    RowComp.DETAIL_CELL_RENDERER = 'detailCellRenderer';
     return RowComp;
 }(component_1.Component));
 exports.RowComp = RowComp;

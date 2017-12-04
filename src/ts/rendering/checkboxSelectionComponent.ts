@@ -35,7 +35,7 @@ export class CheckboxSelectionComponent extends Component {
         this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
         this.eIndeterminateIcon = _.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.column);
 
-        let element = this.getHtmlElement();
+        let element = this.getGui();
         element.appendChild(this.eCheckedIcon);
         element.appendChild(this.eUncheckedIcon);
         element.appendChild(this.eIndeterminateIcon);

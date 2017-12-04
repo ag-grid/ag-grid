@@ -1,15 +1,12 @@
-
 import {Component} from "../../widgets/component";
-import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
+import {IComponent} from "../../interfaces/iComponent";
 import {Utils as _} from "../../utils";
 import {ColumnGroup} from "../../entities/columnGroup";
 import {ColumnApi, ColumnController} from "../../columnController/columnController";
-import {FilterManager} from "../../filter/filterManager";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Autowired, PostConstruct} from "../../context/context";
-import {DropTarget, DragAndDropService} from "../../dragAndDrop/dragAndDropService";
+import {Autowired} from "../../context/context";
 import {TouchListener} from "../../widgets/touchListener";
-import {RefSelector, Listener} from "../../widgets/componentAnnotations";
+import {RefSelector} from "../../widgets/componentAnnotations";
 import {OriginalColumnGroup} from "../../entities/originalColumnGroup";
 import {GridApi} from "../../gridApi";
 
@@ -26,7 +23,7 @@ export interface IHeaderGroup {
 
 }
 
-export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams, IAfterGuiAttachedParams> {
+export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {
 
 }
 
@@ -117,7 +114,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         if (this.params.displayName && this.params.displayName !== '') {
 
             if (_.isBrowserSafari()) {
-                this.getHtmlElement().style.display = 'table-cell';
+                this.getGui().style.display = 'table-cell';
             }
 
             let eInnerText = this.getRefElement('agLabel');

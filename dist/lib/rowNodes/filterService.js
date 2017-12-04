@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,9 +17,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var filterManager_1 = require("../filter/filterManager");
+var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var FilterService = (function () {
     function FilterService() {
     }
+    FilterService.prototype.postConstruct = function () {
+        this.doingTreeData = this.gridOptionsWrapper.isTreeData();
+    };
     FilterService.prototype.filterAccordingToColumnState = function (rowNode) {
         var filterActive = this.filterManager.isAnyFilterPresent();
         this.filter(rowNode, filterActive);
@@ -27,39 +31,45 @@ var FilterService = (function () {
     FilterService.prototype.filter = function (rowNode, filterActive) {
         var _this = this;
         // recursively get all children that are groups to also filter
-        rowNode.childrenAfterGroup.forEach(function (child) {
-            if (child.group) {
-                _this.filter(child, filterActive);
-            }
-        });
-        // result of filter for this node
-        var filterResult;
-        if (filterActive) {
-            filterResult = [];
-            rowNode.childrenAfterGroup.forEach(function (childNode) {
-                if (childNode.group) {
+        if (rowNode.hasChildren()) {
+            rowNode.childrenAfterGroup.forEach(function (node) { return _this.filter(node, filterActive); });
+            // result of filter for this node
+            if (filterActive) {
+                rowNode.childrenAfterFilter = rowNode.childrenAfterGroup.filter(function (childNode) {
                     // a group is included in the result if it has any children of it's own.
                     // by this stage, the child groups are already filtered
-                    if (childNode.childrenAfterFilter.length > 0) {
-                        filterResult.push(childNode);
-                    }
-                }
-                else {
-                    // a leaf level node is included if it passes the filter
-                    if (_this.filterManager.doesRowPassFilter(childNode)) {
-                        filterResult.push(childNode);
-                    }
-                }
-            });
+                    var passBecauseChildren = childNode.childrenAfterFilter && childNode.childrenAfterFilter.length > 0;
+                    // both leaf level nodes and tree data nodes have data. these get added if
+                    // the data passes the filter
+                    var passBecauseDataPasses = childNode.data && _this.filterManager.doesRowPassFilter(childNode);
+                    // note - tree data nodes pass either if a) they pass themselves or b) any children of that node pass
+                    return passBecauseChildren || passBecauseDataPasses;
+                });
+            }
+            else {
+                // if not filtering, the result is the original list
+                rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
+            }
+            this.setAllChildrenCount(rowNode);
         }
         else {
-            // if not filtering, the result is the original list
-            filterResult = rowNode.childrenAfterGroup;
+            rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
+            rowNode.setAllChildrenCount(null);
         }
-        rowNode.childrenAfterFilter = filterResult;
-        this.setAllChildrenCount(rowNode);
     };
-    FilterService.prototype.setAllChildrenCount = function (rowNode) {
+    FilterService.prototype.setAllChildrenCountTreeData = function (rowNode) {
+        // for tree data, we include all children, groups and leafs
+        var allChildrenCount = 0;
+        rowNode.childrenAfterFilter.forEach(function (child) {
+            // include child itself
+            allChildrenCount++;
+            // include children of children
+            allChildrenCount += child.allChildrenCount;
+        });
+        rowNode.setAllChildrenCount(allChildrenCount);
+    };
+    FilterService.prototype.setAllChildrenCountGridGrouping = function (rowNode) {
+        // for grid data, we only count the leafs
         var allChildrenCount = 0;
         rowNode.childrenAfterFilter.forEach(function (child) {
             if (child.group) {
@@ -71,10 +81,28 @@ var FilterService = (function () {
         });
         rowNode.setAllChildrenCount(allChildrenCount);
     };
+    FilterService.prototype.setAllChildrenCount = function (rowNode) {
+        if (this.doingTreeData) {
+            this.setAllChildrenCountTreeData(rowNode);
+        }
+        else {
+            this.setAllChildrenCountGridGrouping(rowNode);
+        }
+    };
     __decorate([
         context_1.Autowired('filterManager'),
         __metadata("design:type", filterManager_1.FilterManager)
     ], FilterService.prototype, "filterManager", void 0);
+    __decorate([
+        context_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
+    ], FilterService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], FilterService.prototype, "postConstruct", null);
     FilterService = __decorate([
         context_1.Bean("filterService")
     ], FilterService);

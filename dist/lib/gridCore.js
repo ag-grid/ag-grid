@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,10 +48,10 @@ var GridCore = (function () {
         if (this.toolPanel && !this.gridOptionsWrapper.isForPrint()) {
             // if we are doing RTL, then the tool panel appears on the left
             if (this.gridOptionsWrapper.isEnableRtl()) {
-                westPanel = this.toolPanel.getHtmlElement();
+                westPanel = this.toolPanel.getGui();
             }
             else {
-                eastPanel = this.toolPanel.getHtmlElement();
+                eastPanel = this.toolPanel.getGui();
             }
         }
         var createTopPanelGui = this.createNorthPanel();
@@ -118,8 +118,8 @@ var GridCore = (function () {
         var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
         this.rowGroupComp = this.rowGroupCompFactory.create();
         this.pivotComp = this.pivotCompFactory.create();
-        topPanelGui.appendChild(this.rowGroupComp.getHtmlElement());
-        topPanelGui.appendChild(this.pivotComp.getHtmlElement());
+        topPanelGui.appendChild(this.rowGroupComp.getGui());
+        topPanelGui.appendChild(this.pivotComp.getGui());
         this.rowGroupComp.addEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
         this.pivotComp.addEventListener(component_1.Component.EVENT_VISIBLE_CHANGED, dropPanelVisibleListener);
         this.destroyFunctions.push(function () {
@@ -151,12 +151,12 @@ var GridCore = (function () {
         }
         var eSouthPanel = document.createElement('div');
         if (statusBarEnabled) {
-            eSouthPanel.appendChild(this.statusBar.getHtmlElement());
+            eSouthPanel.appendChild(this.statusBar.getGui());
         }
         if (paginationPanelEnabled) {
             var paginationComp = new paginationComp_1.PaginationComp();
             this.context.wireBean(paginationComp);
-            eSouthPanel.appendChild(paginationComp.getHtmlElement());
+            eSouthPanel.appendChild(paginationComp.getGui());
             this.destroyFunctions.push(paginationComp.destroy.bind(paginationComp));
         }
         return eSouthPanel;

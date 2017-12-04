@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,11 +39,11 @@ var AnimateSlideCellRenderer = (function (_super) {
         var refreshCountCopy = this.refreshCount;
         // if old animation, remove it
         if (this.ePrevious) {
-            this.getHtmlElement().removeChild(this.ePrevious);
+            this.getGui().removeChild(this.ePrevious);
         }
         this.ePrevious = utils_1.Utils.loadTemplate('<span class="ag-value-slide-previous ag-value-slide-out"></span>');
         this.ePrevious.innerHTML = this.eCurrent.innerHTML;
-        this.getHtmlElement().insertBefore(this.ePrevious, this.eCurrent);
+        this.getGui().insertBefore(this.ePrevious, this.eCurrent);
         // having timeout of 0 allows use to skip to the next css turn,
         // so we know the previous css classes have been applied. so the
         // complex set of setTimeout below creates the animation
@@ -57,7 +57,7 @@ var AnimateSlideCellRenderer = (function (_super) {
             if (refreshCountCopy !== _this.refreshCount) {
                 return;
             }
-            _this.getHtmlElement().removeChild(_this.ePrevious);
+            _this.getGui().removeChild(_this.ePrevious);
             _this.ePrevious = null;
         }, 3000);
     };

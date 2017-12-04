@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -18,15 +18,21 @@ export declare class InMemoryNodeManager {
     private static ROOT_NODE_ID;
     private getNodeChildDetails;
     private doesDataFlower;
+    private isRowMasterFunc;
     private suppressParentsInRowNodes;
+    private doingLegacyTreeData;
+    private doingMasterDetail;
     private allNodesMap;
     constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService, columnController: ColumnController);
+    postConstruct(): void;
     getCopyOfNodesMap(): {
         [id: string]: RowNode;
     };
     getRowNode(id: string): RowNode;
     setRowData(rowData: any[]): RowNode[];
-    updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction;
+    updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {
+        [id: string]: number;
+    }): RowNodeTransaction;
     private addRowNode(data, index?);
     private updatedRowNode(data, update);
     private recursiveFunction(rowData, parent, level);
@@ -34,7 +40,6 @@ export declare class InMemoryNodeManager {
     private isExpanded(level);
     private setLeafChildren(node);
     insertItemsAtIndex(index: number, rowData: any[]): RowNode[];
-    removeItems(rowNodes: RowNode[]): RowNode[];
     addItems(items: any): RowNode[];
-    isRowsAlreadyGrouped(): boolean;
+    isLegacyTreeData(): boolean;
 }

@@ -17,6 +17,7 @@ export {GroupInstanceIdCreator} from "./dist/lib/columnController/groupInstanceI
 
 // components
 export {ComponentUtil} from "./dist/lib/components/componentUtil";
+export {ColDefUtil} from "./dist/lib/components/colDefUtil";
 export {ComponentProvider} from "./dist/lib/components/framework/componentProvider";
 export {initialiseAgGridWithAngular1} from "./dist/lib/components/agGridNg1";
 export {initialiseAgGridWithWebComponents} from "./dist/lib/components/agGridWebComponent";
@@ -71,7 +72,7 @@ export {RowNode} from "./dist/lib/entities/rowNode";
 // filter
 export {BaseFilter} from "./dist/lib/filter/baseFilter";
 export {DateFilter} from "./dist/lib/filter/dateFilter";
-export {FilterManager} from "./dist/lib/filter/filterManager";
+export {FilterManager, FilterWrapper} from "./dist/lib/filter/filterManager";
 export {NumberFilter} from "./dist/lib/filter/numberFilter";
 export {TextFilter,SerializedTextFilter} from "./dist/lib/filter/textFilter";
 export {IFloatingFilter, IFloatingFilterParams} from "./dist/lib/filter/floatingFilter";
@@ -152,6 +153,7 @@ export {RowNodeBlockLoader} from "./dist/lib/rowModels/cache/rowNodeBlockLoader"
 export {IEnterpriseRowModel} from "./dist/lib/interfaces/iEnterpriseRowModel";
 export {IEnterpriseCache} from "./dist/lib/interfaces/iEnterpriseCache";
 export {IEnterpriseDatasource, ColumnVO} from "./dist/lib/interfaces/iEnterpriseDatasource";
+export {IToolPanel} from "./dist/lib/interfaces/iToolPanel";
 export {RowNodeCache, RowNodeCacheParams} from "./dist/lib/rowModels/cache/rowNodeCache";
 export {IGetRowsParams, IDatasource} from "./dist/lib/rowModels/iDatasource";
 
@@ -176,7 +178,7 @@ export {Constants} from "./dist/lib/constants";
 export {CsvCreator, BaseCreator} from "./dist/lib/csvCreator";
 export {Downloader} from "./dist/lib/downloader";
 export {Grid, GridParams} from "./dist/lib/grid";
-export {GridApi} from "./dist/lib/gridApi";
+export {GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo} from "./dist/lib/gridApi";
 export {Events} from "./dist/lib/events";
 export {FocusedCellController} from "./dist/lib/focusedCellController";
 export {defaultGroupComparator} from "./dist/lib/functions";
@@ -187,7 +189,7 @@ export {Logger} from "./dist/lib/logger";
 export {SelectionController} from "./dist/lib/selectionController";
 export {SortController} from "./dist/lib/sortController";
 export {TemplateService} from "./dist/lib/templateService";
-export {Utils, NumberSequence, _} from "./dist/lib/utils";
+export {Utils, NumberSequence, _, Promise, ExternalPromise} from "./dist/lib/utils";
 export {ValueService} from "./dist/lib/valueService/valueService";
 export {ExpressionService} from "./dist/lib/valueService/expressionService";
 export {XmlFactory} from "./dist/lib/xmlFactory";
@@ -211,6 +213,7 @@ export {
     GridOptions,
     GetContextMenuItemsParams,
     GetContextMenuItems,
+    GetDataPath,
     MenuItemDef,
     GetNodeChildDetails,
     NodeChildDetails,
@@ -228,7 +231,7 @@ export {IContextMenuFactory} from "./dist/lib/interfaces/iContextMenuFactory"
 export {ICompFactory} from "./dist/lib/interfaces/iCompFactory"
 export {IRowNodeStage, StageExecuteParams} from "./dist/lib/interfaces/iRowNodeStage"
 export {IFilterParams, IDoesFilterPassParams} from "./dist/lib/interfaces/iFilter"
-export {ISetFilterParams} from "./dist/lib/interfaces/iSetFilterParams"
+export {ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams} from "./dist/lib/interfaces/iSetFilterParams"
 export {IDateParams, IDate, IDateComp} from "./dist/lib/rendering/dateComponent";
 export {IAfterGuiAttachedParams, IComponent} from "./dist/lib/interfaces/iComponent";
 export {IFilter, IFilterComp} from "./dist/lib/interfaces/iFilter";
@@ -240,6 +243,7 @@ export {IsColumnFunc} from "./dist/lib/entities/colDef";
 export {ColumnApi} from "./dist/lib/columnController/columnController";
 export {IHeader} from "./dist/lib/headerRendering/header/headerComp";
 export {ICellRendererParams} from "./dist/lib/rendering/cellRenderers/iCellRenderer";
+export {IRichCellEditorParams} from "./dist/lib/interfaces/iRichCellEditorParams";
 export {WrapableInterface} from "./dist/lib/components/framework/frameworkComponentWrapper";
 export {BaseComponentWrapper} from "./dist/lib/components/framework/frameworkComponentWrapper";
 export {FrameworkComponentWrapper} from "./dist/lib/components/framework/frameworkComponentWrapper";

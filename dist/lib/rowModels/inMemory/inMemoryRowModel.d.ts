@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -11,6 +11,9 @@ export interface RefreshModelParams {
     animate?: boolean;
     keepEditingRows?: boolean;
     rowNodeTransaction?: RowNodeTransaction;
+    rowNodeOrder?: {
+        [id: string]: number;
+    };
     newData?: boolean;
 }
 export interface RowDataTransaction {
@@ -79,7 +82,7 @@ export declare class InMemoryRowModel {
     doAggregate(changedPath?: ChangedPath): void;
     expandOrCollapseAll(expand: boolean): void;
     private doSort();
-    private doRowGrouping(groupState, rowNodeTransaction, changedPath);
+    private doRowGrouping(groupState, rowNodeTransaction, rowNodeOrder, changedPath);
     private restoreGroupState(groupState);
     private doFilter();
     private doPivot();
@@ -89,7 +92,9 @@ export declare class InMemoryRowModel {
     };
     getRowNode(id: string): RowNode;
     setRowData(rowData: any[]): void;
-    updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction;
+    updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: {
+        [id: string]: number;
+    }): RowNodeTransaction;
     private doRowsToDisplay();
     onRowHeightChanged(): void;
     resetRowHeights(): void;

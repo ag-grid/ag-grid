@@ -61,7 +61,8 @@ export class AutoWidthCalculator {
         // we are finished with the dummy container, so get rid of it
         eBodyContainer.removeChild(eDummyContainer);
 
-        // we add padding as I found without it, the gui still put '...' after some of the texts
+        // we add padding as I found sometimes the gui still put '...' after some of the texts. so the
+        // user can configure the grid to add a few more pixels after the calculated width
         let autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
         return dummyContainerWidth + autoSizePadding;
     }
@@ -85,7 +86,7 @@ export class AutoWidthCalculator {
             }
         });
 
-        return comp ? comp.getHtmlElement() : null;
+        return comp ? comp.getGui() : null;
     }
     
     private putRowCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): void {

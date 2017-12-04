@@ -1,20 +1,13 @@
-export interface IAfterGuiAttachedParams {
-    eComponent: HTMLElement;
-}
+import {Promise} from "../utils";
 
-export interface IFilterAfterGuiAttachedParams extends IAfterGuiAttachedParams {
+export interface IAfterGuiAttachedParams {
     hidePopup: () => void;
 }
 
-export interface ICellRendererAfterGuiAttachedParams extends IAfterGuiAttachedParams {
-    eParentOfValue: HTMLElement;
-    eGridCell: HTMLElement;
-}
-
-export interface IComponent<T, Z extends IAfterGuiAttachedParams> {
+export interface IComponent<T> {
 
     /** Return the DOM element of your editor, this is what the grid puts into the DOM */
-    getGui(): HTMLElement|string;
+    getGui(): HTMLElement;
 
     /** Gets called once by grid after editing is finished - if your editor needs to do any cleanup, do it here */
     destroy?(): void;
@@ -27,9 +20,9 @@ export interface IComponent<T, Z extends IAfterGuiAttachedParams> {
      element. The params has one callback method 'hidePopup', which you can call at any later
      point to hide the popup - good if you have an 'Apply' button and you want to hide the popup
      after it is pressed. */
-    afterGuiAttached?(params?: Z): void;
+    afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 
     /** The init(params) method is called on the filter once. See below for details on the parameters. */
-    init?(params: T): void;
+    init?(params: T): Promise<void> | void;
 
 }

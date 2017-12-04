@@ -253,7 +253,7 @@
   .ag-bootstrap .ag-rtl .ag-group-checkbox {
     padding-left: 2px; }
   .ag-bootstrap .ag-group-child-count {
-    display: inline-block; }
+    /* display: inline-block; */ }
   .ag-bootstrap .ag-footer-cell {
     font-style: italic; }
   .ag-bootstrap .ag-menu {
@@ -427,3 +427,6 @@
       content: '('; }
     .ag-bootstrap .ag-sort-order::after {
       content: ')'; }
+  .ag-bootstrap .ag-details-row {
+    padding: 20px;
+    box-sizing: border-box; }

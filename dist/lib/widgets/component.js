@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v13.3.1
+ * @version v14.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,7 +24,6 @@ var Component = (function (_super) {
     function Component(template) {
         var _this = _super.call(this) || this;
         _this.childComponents = [];
-        _this.hydrated = false;
         _this.annotatedEventListeners = [];
         _this.visible = true;
         // unique id for this row component. this is used for getting a reference to the HTML dom.
@@ -36,20 +35,11 @@ var Component = (function (_super) {
         }
         return _this;
     }
-    Component.prototype.setTemplateNoHydrate = function (template) {
-        this.template = template;
-    };
-    Component.prototype.afterGuiAttached = function (params) {
-        if (!this.eHtmlElement && params.eComponent) {
-            this.setHtmlElement(params.eComponent);
-        }
-    };
     Component.prototype.getCompId = function () {
         return this.compId;
     };
     Component.prototype.instantiate = function (context) {
-        var element = this.getHtmlElement();
-        this.instantiateRecurse(element, context);
+        this.instantiateRecurse(this.getGui(), context);
     };
     Component.prototype.instantiateRecurse = function (parentNode, context) {
         var childCount = parentNode.childNodes ? parentNode.childNodes.length : 0;
@@ -67,8 +57,7 @@ var Component = (function (_super) {
         }
     };
     Component.prototype.swapComponentForNode = function (newComponent, parentNode, childNode) {
-        var element = newComponent.getHtmlElement();
-        parentNode.replaceChild(element, childNode);
+        parentNode.replaceChild(newComponent.getGui(), childNode);
         this.childComponents.push(newComponent);
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     };
@@ -89,25 +78,20 @@ var Component = (function (_super) {
         }
     };
     Component.prototype.setTemplate = function (template) {
-        this.template = template;
         var eGui = utils_1.Utils.loadTemplate(template);
-        this.setHtmlElement(eGui);
+        this.setTemplateFromElement(eGui);
     };
-    Component.prototype.setHtmlElement = function (element) {
-        this.eHtmlElement = element;
-        this.eHtmlElement.__agComponent = this;
-        this.hydrate();
-    };
-    Component.prototype.hydrate = function () {
+    Component.prototype.setTemplateFromElement = function (element) {
+        this.eGui = element;
+        this.eGui.__agComponent = this;
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
-        this.hydrated = true;
     };
     Component.prototype.attributesSet = function () {
     };
     Component.prototype.wireQuerySelectors = function () {
-        var element = this.getHtmlElement();
-        if (!element) {
+        var _this = this;
+        if (!this.eGui) {
             return;
         }
         var thisProto = Object.getPrototypeOf(this);
@@ -117,7 +101,7 @@ var Component = (function (_super) {
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
                 var thisNoType_1 = this_1;
                 metaData[currentProtoName].querySelectors.forEach(function (querySelector) {
-                    var resultOfQuery = element.querySelector(querySelector.querySelector);
+                    var resultOfQuery = _this.eGui.querySelector(querySelector.querySelector);
                     if (resultOfQuery) {
                         var backingComponent = resultOfQuery.__agComponent;
                         if (backingComponent) {
@@ -142,8 +126,7 @@ var Component = (function (_super) {
     Component.prototype.addAnnotatedEventListeners = function () {
         var _this = this;
         this.removeAnnotatedEventListeners();
-        var element = this.getHtmlElement();
-        if (!element) {
+        if (!this.eGui) {
             return;
         }
         var thisProto = Object.getPrototypeOf(this);
@@ -156,7 +139,7 @@ var Component = (function (_super) {
                 }
                 metaData[currentProtoName].listenerMethods.forEach(function (eventListener) {
                     var listener = _this[eventListener.methodName].bind(_this);
-                    element.addEventListener(eventListener.eventName, listener);
+                    _this.eGui.addEventListener(eventListener.eventName, listener);
                     _this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener: listener });
                 });
             }
@@ -164,55 +147,39 @@ var Component = (function (_super) {
         }
     };
     Component.prototype.removeAnnotatedEventListeners = function () {
+        var _this = this;
         if (!this.annotatedEventListeners) {
             return;
         }
-        var element = this.getHtmlElement();
-        if (!element) {
+        if (!this.eGui) {
             return;
         }
         this.annotatedEventListeners.forEach(function (eventListener) {
-            element.removeEventListener(eventListener.eventName, eventListener.listener);
+            _this.eGui.removeEventListener(eventListener.eventName, eventListener.listener);
         });
         this.annotatedEventListeners = null;
     };
     Component.prototype.getGui = function () {
-        if (this.eHtmlElement) {
-            return this.eHtmlElement;
-        }
-        else {
-            return this.template;
-        }
+        return this.eGui;
     };
-    Component.prototype.getHtmlElement = function () {
-        if (this.eHtmlElement) {
-            return this.eHtmlElement;
-        }
-        else {
-            console.warn('getHtmlElement() called on component before gui was attached');
-            return null;
-        }
-    };
-    // used by Cell Comp (and old header code), design is a bit poor, overlap with afterGuiAttached???
-    Component.prototype.setHtmlElementNoHydrate = function (eHtmlElement) {
-        this.eHtmlElement = eHtmlElement;
+    // this method is for older code, that wants to provide the gui element,
+    // it is not intended for this to be in ag-Stack
+    Component.prototype.setGui = function (eGui) {
+        this.eGui = eGui;
     };
     Component.prototype.queryForHtmlElement = function (cssSelector) {
-        var element = this.getHtmlElement();
-        return element.querySelector(cssSelector);
+        return this.eGui.querySelector(cssSelector);
     };
     Component.prototype.queryForHtmlInputElement = function (cssSelector) {
-        var element = this.getHtmlElement();
-        return element.querySelector(cssSelector);
+        return this.eGui.querySelector(cssSelector);
     };
     Component.prototype.appendChild = function (newChild) {
-        var element = this.getHtmlElement();
         if (utils_1.Utils.isNodeOrElement(newChild)) {
-            element.appendChild(newChild);
+            this.eGui.appendChild(newChild);
         }
         else {
             var childComponent = newChild;
-            element.appendChild(utils_1.Utils.ensureElement(childComponent.getGui()));
+            this.eGui.appendChild(childComponent.getGui());
             this.childComponents.push(childComponent);
         }
     };
@@ -226,10 +193,9 @@ var Component = (function (_super) {
         return this.visible;
     };
     Component.prototype.setVisible = function (visible) {
-        var element = this.getHtmlElement();
         if (visible !== this.visible) {
             this.visible = visible;
-            utils_1.Utils.addOrRemoveCssClass(element, 'ag-hidden', !visible);
+            utils_1.Utils.addOrRemoveCssClass(this.eGui, 'ag-hidden', !visible);
             var event_1 = {
                 type: Component.EVENT_VISIBLE_CHANGED,
                 visible: this.visible
@@ -238,34 +204,29 @@ var Component = (function (_super) {
         }
     };
     Component.prototype.addOrRemoveCssClass = function (className, addOrRemove) {
-        var element = this.getHtmlElement();
-        utils_1.Utils.addOrRemoveCssClass(element, className, addOrRemove);
+        utils_1.Utils.addOrRemoveCssClass(this.eGui, className, addOrRemove);
     };
     Component.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
         this.childComponents.forEach(function (childComponent) { return childComponent.destroy(); });
         this.childComponents.length = 0;
-        if (this.hydrated) {
-            this.removeAnnotatedEventListeners();
-        }
+        this.removeAnnotatedEventListeners();
     };
     Component.prototype.addGuiEventListener = function (event, listener) {
-        var element = this.getHtmlElement();
-        element.addEventListener(event, listener);
-        this.addDestroyFunc(function () { return element.removeEventListener(event, listener); });
+        var _this = this;
+        this.getGui().addEventListener(event, listener);
+        this.addDestroyFunc(function () { return _this.getGui().removeEventListener(event, listener); });
     };
     Component.prototype.addCssClass = function (className) {
-        var element = this.getHtmlElement();
-        utils_1.Utils.addCssClass(element, className);
+        utils_1.Utils.addCssClass(this.getGui(), className);
     };
     Component.prototype.removeCssClass = function (className) {
-        var element = this.getHtmlElement();
-        utils_1.Utils.removeCssClass(element, className);
+        utils_1.Utils.removeCssClass(this.getGui(), className);
     };
     Component.prototype.getAttribute = function (key) {
-        var element = this.getHtmlElement();
-        if (element) {
-            return element.getAttribute(key);
+        var eGui = this.getGui();
+        if (eGui) {
+            return eGui.getAttribute(key);
         }
         else {
             return null;

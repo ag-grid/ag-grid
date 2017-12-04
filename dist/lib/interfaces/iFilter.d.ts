@@ -1,11 +1,11 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
 import { ColDef } from "../entities/colDef";
 import { IRowModel } from "./iRowModel";
 import { RowNode } from "../entities/rowNode";
-import { IComponent, IFilterAfterGuiAttachedParams } from "./iComponent";
+import { IComponent } from "./iComponent";
 export interface IFilter {
     /** This is used to show the filter icon in the header. If true, the filter icon will be shown. */
     isFilterActive(): boolean;
@@ -49,7 +49,7 @@ export interface IFilter {
 export interface SerializedFilter {
     filterType: string;
 }
-export interface IFilterComp extends IFilter, IComponent<IFilterParams, IFilterAfterGuiAttachedParams> {
+export interface IFilterComp extends IFilter, IComponent<IFilterParams> {
 }
 export interface IDoesFilterPassParams {
     node: RowNode;

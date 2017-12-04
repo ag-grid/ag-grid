@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -142,6 +142,7 @@ export declare class ColumnController {
     private logger;
     private autoGroupsNeedBuilding;
     private pivotMode;
+    private usingTreeData;
     private scrollWidth;
     private scrollPosition;
     private bodyWidth;
@@ -156,6 +157,7 @@ export declare class ColumnController {
     private checkDisplayedVirtualColumns();
     setVirtualViewportPosition(scrollWidth: number, scrollPosition: number): void;
     isPivotMode(): boolean;
+    private isPivotSettingAllowed(pivot);
     setPivotMode(pivotMode: boolean): void;
     getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column | string): Column;
     private setBeans(loggerFactory);

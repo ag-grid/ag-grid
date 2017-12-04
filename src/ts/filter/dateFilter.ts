@@ -66,27 +66,25 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
             onDateChanged: this.onDateChanged.bind(this)
         };
 
-        this.dateToComponent = this.componentRecipes.newDateComponent(dateComponentParams);
-        this.dateFromComponent = this.componentRecipes.newDateComponent(dateComponentParams);
+        this.componentRecipes.newDateComponent(dateComponentParams).then (dateToComponent=>{
+            this.dateToComponent = dateToComponent;
 
+            let dateToElement = this.dateToComponent.getGui();
+            this.eDateToPanel.appendChild(dateToElement);
+            if (this.dateToComponent.afterGuiAttached) {
+                this.dateToComponent.afterGuiAttached();
+            }
+        });
+        this.componentRecipes.newDateComponent(dateComponentParams).then(dateFromComponent => {
+            this.dateFromComponent = dateFromComponent;
 
-        let dateFromElement = _.ensureElement(this.dateFromComponent.getGui());
-        this.eDateFromPanel.appendChild(dateFromElement);
-        let dateToElement = _.ensureElement(this.dateToComponent.getGui());
-        this.eDateToPanel.appendChild(dateToElement);
+            let dateFromElement = this.dateFromComponent.getGui();
+            this.eDateFromPanel.appendChild(dateFromElement);
+            if (this.dateFromComponent.afterGuiAttached) {
 
-
-        if (this.dateFromComponent.afterGuiAttached) {
-            this.dateFromComponent.afterGuiAttached({
-                eComponent: dateFromElement
-            });
-        }
-
-        if (this.dateToComponent.afterGuiAttached) {
-            this.dateToComponent.afterGuiAttached({
-                eComponent: dateToElement
-            });
-        }
+                this.dateFromComponent.afterGuiAttached();
+            }
+        });
     }
 
     private onDateChanged(): void {

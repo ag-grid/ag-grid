@@ -2,8 +2,8 @@
 import {RowNode} from "../../entities/rowNode";
 import {Utils as _} from "../../utils";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Context} from "../../context/context";
-import {GetNodeChildDetails} from "../../entities/gridOptions";
+import {Context, PostConstruct} from "../../context/context";
+import {GetNodeChildDetails, IsRowMaster} from "../../entities/gridOptions";
 import {EventService} from "../../eventService";
 import {RowDataTransaction, RowNodeTransaction} from "./inMemoryRowModel";
 import {ColumnController} from "../../columnController/columnController";
@@ -24,7 +24,11 @@ export class InMemoryNodeManager {
 
     private getNodeChildDetails: GetNodeChildDetails;
     private doesDataFlower: (data: any) => boolean;
+    private isRowMasterFunc: IsRowMaster;
     private suppressParentsInRowNodes: boolean;
+
+    private doingLegacyTreeData: boolean;
+    private doingMasterDetail: boolean;
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: {[id:string]: RowNode} = {};
@@ -43,6 +47,21 @@ export class InMemoryNodeManager {
         this.rootNode.childrenAfterGroup = [];
         this.rootNode.childrenAfterSort = [];
         this.rootNode.childrenAfterFilter = [];
+
+        // if we make this class a bean, then can annotate postConstruct
+        this.postConstruct();
+    }
+
+    // @PostConstruct - this is not a bean, so postConstruct called by constructor
+    public postConstruct(): void {
+        // func below doesn't have 'this' pointer, so need to pull out these bits
+        this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
+        this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
+        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
+        this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+
+        this.doingLegacyTreeData = _.exists(this.getNodeChildDetails);
+        this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
     }
 
     public getCopyOfNodesMap(): {[id:string]: RowNode} {
@@ -70,17 +89,10 @@ export class InMemoryNodeManager {
             return;
         }
 
-        // func below doesn't have 'this' pointer, so need to pull out these bits
-        this.getNodeChildDetails = this.gridOptionsWrapper.getNodeChildDetailsFunc();
-        this.suppressParentsInRowNodes = this.gridOptionsWrapper.isSuppressParentsInRowNodes();
-        this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
-
-        let rowsAlreadyGrouped = _.exists(this.getNodeChildDetails);
-
         // kick off recursion
         let result = this.recursiveFunction(rowData, null, InMemoryNodeManager.TOP_LEVEL);
 
-        if (rowsAlreadyGrouped) {
+        if (this.doingLegacyTreeData) {
             this.rootNode.childrenAfterGroup = result;
             this.setLeafChildren(this.rootNode);
         } else {
@@ -88,8 +100,8 @@ export class InMemoryNodeManager {
         }
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction): RowNodeTransaction {
-        if (this.isRowsAlreadyGrouped()) { return null; }
+    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number}): RowNodeTransaction {
+        if (this.isLegacyTreeData()) { return null; }
 
         let {add, addIndex, remove, update} = rowDataTran;
 
@@ -131,6 +143,10 @@ export class InMemoryNodeManager {
                     rowNodeTransaction.update.push(updatedRowNode);
                 }
             });
+        }
+
+        if (rowNodeOrder) {
+            _.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
 
         return rowNodeTransaction;
@@ -202,23 +218,49 @@ export class InMemoryNodeManager {
     private createNode(dataItem: any, parent: RowNode, level: number): RowNode {
         let node = new RowNode();
         this.context.wireBean(node);
-        let nodeChildDetails = this.getNodeChildDetails ? this.getNodeChildDetails(dataItem) : null;
+
+        let doingTreeData = this.gridOptionsWrapper.isTreeData();
+        let doingLegacyTreeData = !doingTreeData && _.exists(this.getNodeChildDetails);
+
+        let nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
+
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
             node.childrenAfterGroup = this.recursiveFunction(nodeChildDetails.children, node, level + 1);
             node.expanded = nodeChildDetails.expanded === true;
             node.field = nodeChildDetails.field;
             node.key = nodeChildDetails.key;
-            node.canFlower = false;
+            node.canFlower = node.master; // deprecated, is now 'master'
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         } else {
+
             node.group = false;
-            node.canFlower = this.doesDataFlower ? this.doesDataFlower(dataItem) : false;
-            if (node.canFlower) {
-                node.expanded = this.isExpanded(level);
+
+            if (doingTreeData) {
+                node.master = false;
+                node.expanded = false;
+            } else {
+                // this is the default, for when doing grid data
+                if (this.doesDataFlower) {
+                    node.master = this.doesDataFlower(dataItem);
+                } else if (this.doingMasterDetail) {
+                    // if we are doing master detail, then the
+                    // default is that everything can flower.
+                    if (this.isRowMasterFunc) {
+                        node.master = this.isRowMasterFunc(dataItem);
+                    } else {
+                        node.master = true;
+                    }
+                } else {
+                    node.master = false;
+                }
+                node.expanded = node.master ? this.isExpanded(level) : false;
             }
         }
+
+        // support for backwards compatibility, canFlow is now called 'master'
+        node.canFlower = node.master;
 
         if (parent && !this.suppressParentsInRowNodes) {
             node.parent = parent;
@@ -242,6 +284,7 @@ export class InMemoryNodeManager {
         }
     }
 
+    // this is only used for doing legacy tree data
     private setLeafChildren(node: RowNode): void {
         node.allLeafChildren = [];
         if (node.childrenAfterGroup) {
@@ -258,7 +301,7 @@ export class InMemoryNodeManager {
     }
 
     public insertItemsAtIndex(index: number, rowData: any[]): RowNode[] {
-        if (this.isRowsAlreadyGrouped()) { return null; }
+        if (this.isLegacyTreeData()) { return null; }
 
         let nodeList = this.rootNode.allLeafChildren;
 
@@ -279,35 +322,16 @@ export class InMemoryNodeManager {
         return newNodes.length > 0 ? newNodes : null;
     }
 
-    public removeItems(rowNodes: RowNode[]): RowNode[] {
-        if (this.isRowsAlreadyGrouped()) { return; }
-
-        let nodeList = this.rootNode.allLeafChildren;
-
-        let removedNodes: RowNode[] = [];
-        rowNodes.forEach( rowNode => {
-            let indexOfNode = nodeList.indexOf(rowNode);
-            if (indexOfNode>=0) {
-                rowNode.setSelected(false);
-                nodeList.splice(indexOfNode, 1);
-                this.allNodesMap[rowNode.id] = undefined;
-            }
-            removedNodes.push(rowNode);
-        });
-
-        return removedNodes.length > 0 ? removedNodes : null;
-    }
-
     public addItems(items: any): RowNode[] {
         let nodeList = this.rootNode.allLeafChildren;
         return this.insertItemsAtIndex(nodeList.length, items);
     }
 
-    public isRowsAlreadyGrouped(): boolean {
+    public isLegacyTreeData(): boolean {
         let rowsAlreadyGrouped = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (rowsAlreadyGrouped) {
             console.warn('ag-Grid: adding and removing rows is not supported when using nodeChildDetailsFunc, ie it is not ' +
-                'supported if providing groups');
+                'supported for legacy tree data. Please see the docs on the new preferred way of providing tree data that works with delta updates.');
             return true;
         } else {
             return false;

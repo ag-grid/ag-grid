@@ -1,43 +1,37 @@
-// Type definitions for ag-grid v13.3.1
+// Type definitions for ag-grid v14.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { IAfterGuiAttachedParams, IComponent } from "../interfaces/iComponent";
+import { IComponent } from "../interfaces/iComponent";
 import { AgEvent } from "../events";
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
-export declare class Component extends BeanStub implements IComponent<any, IAfterGuiAttachedParams> {
+export declare class Component extends BeanStub implements IComponent<any> {
     static EVENT_VISIBLE_CHANGED: string;
-    private template;
-    private eHtmlElement;
+    private eGui;
     private childComponents;
-    private hydrated;
     private annotatedEventListeners;
     private visible;
     private compId;
     constructor(template?: string);
-    setTemplateNoHydrate(template: string): void;
-    afterGuiAttached(params: IAfterGuiAttachedParams): void;
     getCompId(): number;
     instantiate(context: Context): void;
     private instantiateRecurse(parentNode, context);
     private swapComponentForNode(newComponent, parentNode, childNode);
     private swapInComponentForQuerySelectors(newComponent, childNode);
     setTemplate(template: string): void;
-    setHtmlElement(element: HTMLElement): void;
-    private hydrate();
+    setTemplateFromElement(element: HTMLElement): void;
     attributesSet(): void;
-    private wireQuerySelectors();
+    protected wireQuerySelectors(): void;
     private addAnnotatedEventListeners();
     private removeAnnotatedEventListeners();
-    getGui(): HTMLElement | string;
-    getHtmlElement(): HTMLElement;
-    protected setHtmlElementNoHydrate(eHtmlElement: HTMLElement): void;
+    getGui(): HTMLElement;
+    protected setGui(eGui: HTMLElement): void;
     protected queryForHtmlElement(cssSelector: string): HTMLElement;
     protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement;
-    appendChild(newChild: Node | IComponent<any, IAfterGuiAttachedParams>): void;
+    appendChild(newChild: Node | IComponent<any>): void;
     addFeature(context: Context, feature: BeanStub): void;
     isVisible(): boolean;
     setVisible(visible: boolean): void;

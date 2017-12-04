@@ -1,13 +1,10 @@
-// nib is important, as it gets stylus to include variations on the CSS for browsers.
-// eg 'user-select' gets compiled to versions '-webkit-user-select, -moz-user-select, -ms-user-select'
-//@import 'nib';
 // if we don't do this, then the width and height of the grid would be ignored,
 // as there is no default display for the element ag-grid-a2 (as it's not a natural dom element)
 ag-grid-angular {
-    display: inline-block;
+    display: block;
 }
 ag-grid-ng2 {
-    display: inline-block;
+    display: block;
 }
 ag-grid {
     display: block;
@@ -611,6 +608,8 @@ ag-grid-aurelia {
 .ag-menu {
     position: absolute;
     user-select: none;
+    max-height: 100%;
+    overflow-y: auto;
 }
 .ag-menu-column-select-wrapper {
     width: 200px;
@@ -677,9 +676,15 @@ ag-grid-aurelia {
 .ag-virtual-list-item {
     position: absolute;
     width: 100%;
+
+    span:empty:not(.ag-icon) {
+        border-left: 1px solid transparent;
+    }
 }
+
 .ag-filter-filter {
     width: 100%;
+    box-sizing: border-box;
 }
 .ag-floating-filter-body {
     input {
@@ -768,13 +773,16 @@ ag-grid-aurelia {
     }
 }
 
-$ag-icons-path: './icons/' !default;
+$icons-path: './icons/' !default;
+
+@if variable-exists(ag-icons-path) { $icons-path: $ag-icons-path; }
+
 $ag-icons-filter: 'initial' !default;
 
 @mixin icon-background($icon) {
     width: 12px;
     height: 12px;
-    background: transparent url('#{$ag-icons-path}#{$icon}.svg') center no-repeat;
+    background: transparent url('#{$icons-path}#{$icon}.svg') center no-repeat;
     background-size: 12px 12px;
     filter: $ag-icons-filter;
 }
@@ -786,4 +794,24 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
         display: inline-block;
         @include icon-background('#{$icon}');
     }
+}
+
+.loading-filter {
+    position: absolute;
+    height: 100%;
+    top: 34px;
+    background-color: #e6e6e6;
+    z-index: 1;
+    width: 100%;
+    padding: 5px;
+}
+
+.ag-details-row {
+    width: 100%;
+    height: 100%;
+}
+
+.ag-details-grid {
+    width: 100%;
+    height: 100%;
 }
