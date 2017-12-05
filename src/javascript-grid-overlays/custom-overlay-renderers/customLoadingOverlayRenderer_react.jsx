@@ -2,6 +2,10 @@ import React, {Component} from 'react';
 
 export default class CustomLoadingOverlayRenderer extends Component {
     render() {
-        return (<div><i className="fa fa-hourglass-1"> One moment please...</i></div>);
+        return (
+            <div className="ag-overlay-loading-center" style={{backgroundColor: 'lightsteelblue', height: '9%'}}>
+                <i className="fa fa-hourglass-1"> One moment please...</i>
+            </div>
+        );
     }
 }
