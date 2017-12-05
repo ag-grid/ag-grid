@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>enterprise</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M980.666667,724.333333 L1005,700 L957.484935,700 C956.112543,700 955,701.112543 955,702.484935 L955,702.484935 L955,750 L977.333333,727.666667 L968.491924,727.666667 C967.119532,727.666667 966.006989,726.554123 966.006989,725.181731 L966.006989,713.484935 C966.006989,712.112543 967.119532,711 968.491924,711 L981.006989,711 L981.006989,714.333333 L969.837309,714.333333 C969.562831,714.333333 969.340322,714.555842 969.340322,714.83032 L969.340322,714.83032 L969.340322,717.666667 L981.006989,717.666667 L981.006989,721 L969.340322,721 L969.340322,724.002009 C969.340322,724.184994 969.488662,724.333333 969.671647,724.333333 L980.666667,724.333333 Z" id="path-1"></path>
+    </defs>
+    <g id="Logo" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop" transform="translate(-955.000000, -700.000000)">
+            <mask id="mask-2" fill="white">
+                <use xlink:href="#path-1"></use>
+            </mask>
+            <use id="enterprise" fill="#E11F22" xlink:href="#path-1"></use>
+        </g>
+    </g>
+</svg>

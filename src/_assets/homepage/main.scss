@@ -1,9 +1,10 @@
-@import '../common/bootstrap.scss';
 @import '../common/vars.scss';
+@import '../common/bootstrap.scss';
 @import '../common/syntax-highlight.scss';
 @import '../common/grid.scss';
 
 @import '../common/nav.scss';
+@import '../common/footer.scss';
 @import './punch.scss';
 
 @import './demo-1.scss';
@@ -78,10 +79,13 @@
                 padding-bottom: 1em;
                 color: $blue-2;
                 height: 100%;
+                transition: all .5s ease-out;
+                will-change: color, background-color, box-shadow;
 
                 &:hover {
                     @extend %card;
-                    color: $primary;
+                    color: $white;
+                    background-color: $blue-2;
                     text-decoration: none;
                 }
             }
@@ -215,6 +219,14 @@
     @extend %stage;
     background-color: $offwhite;
 
+    .view-code {
+        @extend .text-right;
+
+        a {
+            @extend .btn, .btn-link;
+        }
+    }
+
     #heading-scenarios {
         @extend .display-4, .text-center, .full-width-row, .mb-4;
 
@@ -260,6 +272,7 @@
             display: block;
             position: absolute;
             width: calc(100% - 30px);
+            top: -10000px;
         }
 
         .current {
@@ -295,3 +308,149 @@
         }
     }
 }
+
+#stage-feature-highlights {
+    margin-bottom: 0;
+    border-bottom: 0;
+    @extend .pb-5;
+    & > h2 {
+        @extend .display-4, .text-center, .full-width-row, .mb-4;
+    }
+
+    #feature-content {
+        @extend .full-width-row, .row;
+
+        $border-width: 2px;
+
+        aside {
+            @extend .col-sm-2;
+
+            & > ul {
+                border-right: $border-width solid $gray-200;
+                font-size: 80%;
+            }
+
+            li {
+                margin-bottom: 0.5rem;
+            }
+
+            a + ul {
+                margin-top: 0.5rem;
+                margin-bottom: 1rem;
+            }
+
+            ul {
+                -webkit-padding-start: 0;
+                list-style-type: none;
+                position: -webkit-sticky;
+                position: sticky;
+                top: 1rem;
+
+                ul {
+                    font-weight: 200;
+                }
+
+                a {
+                    display: block;
+                    color: $gray-700;
+                }
+
+                a:hover {
+                    text-decoration: none;
+                }
+
+                a:after {
+                    content: '\00a0';
+                    border-right: $border-width solid $gray-200;
+                    position: absolute;
+                    right: -$border-width;
+                }
+
+                .enterprise {
+                    color: $red;
+                    vertical-align: super;
+                    font-variant: all-small-caps;
+                    font-size: 80%;
+                    text-decoration: none;
+                }
+
+                .current-feature {
+                    > a,
+                    > a:hover {
+                        color: $blue-2;
+                        text-decoration: none;
+                        cursor: default;
+                    }
+
+                    > a:after {
+                        border-right: $border-width solid $blue-2;
+                    }
+                }
+            }
+        }
+
+        section {
+            @extend .col-sm-9, .ml-auto;
+
+            & > div {
+                @extend .row, .py-5;
+                background-position-y: bottom;
+                background-position-x: center;
+                background-repeat: no-repeat;
+                background-size: 600px 1px;
+                border-bottom: 1px solid $gray-200;
+            }
+
+            & > div:nth-child(odd) {
+                div:nth-child(1) {
+                    @extend .col-sm-6;
+                }
+
+                & > pre,
+                & > div:nth-child(2) {
+                    @extend .col-sm-5, .ml-auto;
+                    a {
+                        display: block;
+                        text-align: right;
+                    }
+                }
+            }
+
+            & > div:nth-child(even) {
+                div:nth-child(1) {
+                    @extend .col-sm-6, .order-2, .ml-auto;
+                }
+
+                & > pre,
+                & > div:nth-child(2) {
+                    @extend .col-sm-5;
+                    a {
+                        display: block;
+                        text-align: right;
+                    }
+                }
+            }
+
+            img {
+                @extend .img-fluid, .rounded;
+                width: 100%;
+                border: 1px solid $gray-300;
+            }
+
+            h3,
+            h4 {
+                line-height: 2rem;
+            }
+
+            .enterprise {
+                background-image: url('./enterprise.svg');
+                background-repeat: no-repeat;
+                background-size: 50px 50px;
+                background-position-x: 0px;
+                background-position-y: 0px;
+            }
+        }
+    }
+}
+
+

@@ -22,6 +22,10 @@ module.exports = {
         hotUpdateMainFilename: 'dist/[hash].hot-update.json'
     },
 
+    resolve: {
+        extensions: [ '.ts', '.js', '.json' ]
+    },
+
     module: {
         loaders: [
             {

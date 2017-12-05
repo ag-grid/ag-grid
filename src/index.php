@@ -218,42 +218,143 @@
         <section>
             <div class="demos">
                 <div id="demo-1" class="demo current">
+                    <?php include 'home/demo-1.php' ?>
 
-                    <div id="demo-1-header">
-                        <div>
-                            <input type="text" id="quickFilterInput" placeholder="Type text to filter..."/>
-                        </div>
-
-                        <div>
-                            <span id="rowCount"></span> rows(s)
-                        </div>
+                    <div class="view-code">
+                        <a href="#">View Code</a>
                     </div>
-
-                    <div id="bestHtml5Grid" class="ag-theme-material"></div>
                 </div>
 
                 <div id="demo-2" class="demo">
                     <?php include 'home/demo-2.php' ?>
+                    <div class="view-code">
+                        <a href="#">View Code</a>
+                    </div>
                 </div>
 
                 <div id="demo-3" class="demo">
                     <?php include 'home/demo-api.php' ?>
+                    <div class="view-code">
+                        <a href="#">View Code</a>
+                    </div>
                 </div>
 
                 <div id="demo-4" class="demo">
                     <?php include 'home/file-browser.php' ?>
+                    <div class="view-code">
+                        <a href="#">View Code</a>
+                    </div>
                 </div>
             </div>
 
-            <div id="view-code">
-                <a href="#">View Code</a>
-            </div>
         </section>
+    </div>
+
+<?php
+$features = json_decode(file_get_contents('home/features.json'), true);
+$groups = json_decode(file_get_contents('home/feature-groups.json'), true);
+
+$mapped_features = [];
+foreach($features as $feature) {
+    $mapped_features[$feature['title']] = $feature;
+}
+?>
+
+    <div id="stage-feature-highlights">
+        <h2>Feature Highlights</h2>
+
+        <div id="feature-content">
+            <aside></aside>
+            <section>
+<?php
+foreach ($groups as $group) {
+    echo "<div><h3>" . $group['group'] . "</h3></div>";
+    foreach($group['items'] as $item) {
+        $feature = $mapped_features[$item];
+         
+        if (!$feature['src']) {
+            echo "<div " . ($feature["enterprise"] ? 'class="enterprise"' : '') . ">
+                <div>
+                    <h4>" . $feature['title']  . "</h4>
+                    <p>" . $feature['description']  . "</p>
+                </div>
+
+                <div>" .  ($feature["snippet"] ? '<pre><code class="language-js">' . htmlspecialchars($feature['snippet']) . '</code></pre>' : '') . "</div>
+            </div>";
+        } else {
+            echo "<div " . ($feature["enterprise"] ? 'class="enterprise"' : '') . ">
+                <div>
+                    <h4>" . $feature['title']  . "</h4>
+                    <p>" . $feature['description']  . "</p>
+                    " .  ($feature["snippet"] ? '<pre><code class="language-js">' . htmlspecialchars($feature['snippet']) . '</code></pre>' : '') . "
+                </div>
+
+                <div>
+                    <a href='#'><img src='_assets/homepage/feature-placeholder.svg' data-src='" . $feature['src'] . "' alt='" . $feature['title']. "'>See more</a>
+                </div>
+            </div>";
+        }
+    }
+}
+?>
+            </section>
+        </div>
     </div>
 
     <?= globalAgGridScript(true) ?>
     <script src="dist/homepage.js"></script>
-    <script inline src="example-rich-grid/data.js"></script>
-    <script inline src="example-rich-grid/example.js"></script>
+
+    <footer id="site-footer">
+        <div>
+            <div>
+                <h5>Documentation</h5>
+                <ul>
+                    <li><a href="#">Getting Started</a></li>
+                    <li><a href="#">Features</a></li>
+                    <li><a href="#">Changelog</a></li>
+                    <li><a href="#">Pipeline</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h5>Support &amp; Community</h5>
+                <ul>
+                    <li><a href="#">Forum</a></li>
+                    <li><a href="#">Stack Overflow</a></li>
+                    <li><a href="#">License &amp; Pricing</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h5>The Company</h5>
+                <ul>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Team</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Testimonials</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <ul>
+                    <li><a class="github-button" href="https://github.com/ag-grid/ag-grid" data-show-count="true" aria-label="Star ag-grid/ag-grid on GitHub">Star</a></li>
+                    <li><a href="https://twitter.com/ceolter?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @ceolter</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="copy">
+            <div>ag-Grid LTD registered in the United Kingdom. Company No 07318192.</div> 
+            <div>&copy; ag-Grid Ltd. 2015-2017</div>
+        </div>
+    </footer>
+
+    <script async defer src="https://platform.twitter.com/widgets.js"></script>
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+    <div id="cookie-warning" style="display: none"><div>
+        This website uses cookies to ensure you get the best experience on our website. <a class="btn btn-primary" id="cookie-accept">Got It</a>
+    </div></div>
+
 </body>
 </html>
