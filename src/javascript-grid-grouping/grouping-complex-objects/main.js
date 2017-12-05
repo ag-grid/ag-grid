@@ -5,7 +5,7 @@ var columnDefs = [
     {headerName: "Bronze", field: "bronze", width: 100},
     {headerName: "Total", field: "total", width: 100},
     {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120, rowGroupIndex: 0, hide: true, keyCreator: countryKeyCreator},
+    {headerName: "Country", field: "country", width: 120, rowGroup: true, hide: true, keyCreator: countryKeyCreator},
     {headerName: "Year", field: "year", width: 90},
     {headerName: "Date", field: "date", width: 110},
     {headerName: "Sport", field: "sport", width: 110}
