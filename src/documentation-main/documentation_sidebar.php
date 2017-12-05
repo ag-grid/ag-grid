@@ -36,6 +36,20 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">5th December 2017</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <a href="../ag-grid-datagrid-crud-part-4/">
+            <img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" style="width: 100%;"/>
+        </a>
+    </div>
+    <div>
+        <br/>
+        The fourth part in a series of blogs about <a href="../ag-grid-datagrid-crud-part-4/">Building a CRUD Application with ag-Grid</a>. In this part we take a look
+        at implementing CRUD (Create, Retrieve, Update & Delete), fron the front to the backend. It's a big one this time!
+    </div>
+</div>
+
+<div class="news-box">
     <div class="news-header">21st November 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
         <a href="../ag-grid-datagrid-crud-part-3/">
