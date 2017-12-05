@@ -14,9 +14,30 @@ include('../includes/mediaHeader.php');
         <a href="../ag-grid-blog-14-2-0/"><img style="margin-bottom:30px;" src="../ag-grid-blog-14-2-0/cover-img.jpg" width='100%'/></a>
     </div>
 
+
     <section>
         <h1>FEATURED</h1>
         <div class="row">
+            <div class="col-sm-4 col-md-4">
+                <div class="thumbnail">
+                    <a href="../ag-grid-datagrid-crud-part-4/"><img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" alt="..."></a>
+                    <div class="caption">
+                        <a style="color:black; text-decoration:none; font-size:24px; font-weight:bold" href="../ag-grid-datagrid-crud-part-4/">Building a CRUD Application with ag-Grid - Part 4</a>
+                        <div class="media">
+                            <div class="media-left">
+                                <div style="background-color:#838384; border-radius: 50%; width:35px;height:35px; padding:2px;">
+                                    <img class="media-object" src="/images/team/sean.jpg" style="width: 30px; border-radius: 50%;">
+                                </div>
+                            </div>
+                            <div class="media-body">
+                                <p style="font-size:85%; margin-bottom:0px">Sean Landsman</p>
+                                <p style="color: #838384; font-size:85%">5 December 2017</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="col-sm-4 col-md-4">
                 <div class="thumbnail">
                     <a href="../ag-grid-datagrid-crud-part-3/"><img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" alt="..."></a>
@@ -56,7 +77,8 @@ include('../includes/mediaHeader.php');
                     </div>
                 </div>
             </div>
-
+        </div>
+        <div class="row">
             <div class="col-sm-4 col-md-4">
                 <div class="thumbnail">
                     <a href="../ag-grid-datagrid-crud-part-1/"><img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" alt="..."></a>
