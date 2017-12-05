@@ -217,4 +217,31 @@ export class ValueService {
             return null;
         }
     }
+
+    // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
+    public getKeyForNode(col: Column, rowNode: RowNode): any {
+        let value = this.getValue(col, rowNode);
+        let result: any;
+        let keyCreator = col.getColDef().keyCreator;
+
+        if (keyCreator) {
+            result = keyCreator({value: value});
+        } else {
+            result = value;
+        }
+
+        // if already a string, or missing, just return it
+        if (typeof result === 'string' || result===null || result===undefined) { return result; }
+
+        result = String(result);
+
+        if (result==='[object Object]') {
+            _.doOnce( ()=> {
+                console.warn('ag-Grid: a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se ag-Grid docs) or b) to toString() on the object to return a key');
+            }, 'getKeyForNode - warn about [object,object]');
+        }
+
+        return result;
+    }
+
 }
