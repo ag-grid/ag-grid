@@ -1,6 +1,7 @@
 {
   "local-dev": false,
-  "update-mock-data": true,
+  "cache-lifetime-minutes": 30,
+  "update-mock-data": false,
   "username": "",
   "password": ""
 }
