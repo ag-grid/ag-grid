@@ -72,38 +72,87 @@ function updateLocalData($report_type, $data)
     fclose($handle);
 }
 
+function getCacheFile($report_type)
+{
+    // /jira_reports/cache
+    return dirname(__FILE__) . "/cache/" . $report_type . '.json';
+}
+
+function cacheEntryValid($report_type, $jira_config)
+{
+    clearstatcache();
+
+    $cache_file = getCacheFile($report_type);
+    $cache_lifetime_minutes = $jira_config->{"cache-lifetime-minutes"};
+    return file_exists($cache_file) && (filemtime($cache_file) > (time() - 60 * $cache_lifetime_minutes));
+}
+
+function getFromCache($report_type)
+{
+    return file_get_contents(getCacheFile($report_type));
+}
+
+function updateCache($report_type, $data)
+{
+    file_put_contents(getCacheFile($report_type), $data, LOCK_EX);
+}
+
+// retrieve the jira data - depending on config and cache state this can come from:
+// 1: local file storage (for local dev)
+// 2: cache file (live data, but up to ( $jira_config->{"cache-lifetime-minutes"} ) mins old)
+// 3: from atlassian (ie live data)
 function retrieveJiraFilterData($report_type)
 {
     $jira_config = json_decode(file_get_contents(dirname(__FILE__) . "/jira_config.json"));
 
     $maxResults = 100;
 
-    // initial query gets the first "page" of data, as well as the total number of issues to retrieve
-    $issue_list = jiraRequest($report_type, 0, $maxResults, $jira_config);
-    $tempArray = json_decode($issue_list, true);
+    if ($jira_config->{'local-dev'}) {
+        // initial query gets the first "page" of data, as well as the total number of issues to retrieve
+        $issue_list = jiraRequest($report_type, 0, $maxResults, $jira_config);
+        $tempArray = json_decode($issue_list, true);
 
-    if (!$jira_config->{'local-dev'}) {
-        // this block iterates over the number of "pages" to retrieve, maxResults at a time
-        // note: although maxResults is a variable here, Jira actually sets a max of a hundred, so
-        // dont try increase this value for performance reasons - it'll just be ignored
-        $pages = ceil($tempArray['total'] / 100);
-        for ($page = 1; $page < $pages; $page++) {
-            $issue_list = jiraRequest($report_type, ($maxResults * $page), $maxResults, $jira_config);
-            $currentPageData = json_decode($issue_list, true);
-
-            for ($x = 0; $x < count($currentPageData); $x++) {
-                array_push($tempArray['issues'], $currentPageData['issues'][$x]);
-            }
+        $dataAsJson = json_encode($tempArray);
+        if ($jira_config->{'update-mock-data'}) {
+            updateLocalData($report_type, $dataAsJson);
         }
-    }
-
-    $dataAsJson = json_encode($tempArray);
-    if ($jira_config->{'update-mock-data'}) {
-        updateLocalData($report_type, $dataAsJson);
+    } else {
+        // cache valid? retrieve from cache
+        if(cacheEntryValid($report_type, $jira_config)) {
+            $dataAsJson = getFromCache($report_type);
+        } else {
+            // other get live data and update cache for next time
+            $dataAsJson = getLiveJiraFilterData($report_type, $maxResults, $jira_config);
+            updateCache($report_type, $dataAsJson);
+        }
     }
 
     // convert back to regular object (mainly in order to be able to use existing jira_report.php)
     return json_decode($dataAsJson);
+}
+
+// live data - from atlassian servers
+function getLiveJiraFilterData($report_type, $maxResults, $jira_config)
+{
+    // initial query gets the first "page" of data, as well as the total number of issues to retrieve
+    $issue_list = jiraRequest($report_type, 0, $maxResults, $jira_config);
+    $tempArray = json_decode($issue_list, true);
+
+    // this block iterates over the number of "pages" to retrieve, maxResults at a time
+    // note: although maxResults is a variable here, Jira actually sets a max of a hundred, so
+    // don't try increase this value for performance reasons - it'll just be ignored
+    $pages = ceil($tempArray['total'] / 100);
+    for ($page = 1; $page < $pages; $page++) {
+        $issue_list = jiraRequest($report_type, ($maxResults * $page), $maxResults, $jira_config);
+        $currentPageData = json_decode($issue_list, true);
+
+        for ($x = 0; $x < count($currentPageData); $x++) {
+            array_push($tempArray['issues'], $currentPageData['issues'][$x]);
+        }
+    }
+
+    $dataAsJson = json_encode($tempArray);
+    return $dataAsJson;
 }
 
 function mapIssueType($issueType)
@@ -168,7 +217,7 @@ function getStatusForStatusAndResolution($status, $resolution)
 
 function getValueForTargetEta($sprintEta, $nextSprint)
 {
-    return "+".($sprintEta - $nextSprint + 1);
+    return "+" . ($sprintEta - $nextSprint + 1);
 }
 
 ?>

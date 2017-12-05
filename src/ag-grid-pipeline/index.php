@@ -202,7 +202,7 @@ include '../jira_reports/jira_utilities.php';
             // 1) filter out rows that DON'T match the current search
             // 2) store possible matches for later tab auto-navigation
 
-            var tableRows = $(reportTable).find("tr");
+            var tableRows = $(reportTable).find("tr.jira");
 
             // 1) filter out rows that DON'T match the current search
             tableRows.show().filter(function () {
