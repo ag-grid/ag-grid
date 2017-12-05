@@ -237,11 +237,11 @@
                 </div>
 
                 <div id="demo-3" class="demo">
-                    Demo 3
+                    <?php include 'home/demo-api.php' ?>
                 </div>
 
                 <div id="demo-4" class="demo">
-                    Demo 4
+                    <?php include 'home/file-browser.php' ?>
                 </div>
             </div>
 

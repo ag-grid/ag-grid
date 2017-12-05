@@ -259,11 +259,13 @@
             visibility: hidden;
             display: block;
             position: absolute;
+            width: calc(100% - 30px);
         }
 
         .current {
             visibility: visible;
             position: static;
+            width: auto;
         }
 
         #view-code {

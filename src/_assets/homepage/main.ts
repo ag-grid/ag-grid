@@ -14,6 +14,8 @@ $(() => {
             demos.removeClass('current');
             $(demos[index]).addClass('current');
 
+            demos[index].dispatchEvent(new CustomEvent('scenarios:show', { bubbles: false, cancelable: false }));
+
             return false;
         });
     });

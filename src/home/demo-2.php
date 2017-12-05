@@ -40,7 +40,7 @@
     .graphBox {
         color: white;
         border: 1px solid grey;
-height: 410px;
+        height: 410px;
     }
 
     span#deltaPanelPrice {
@@ -71,8 +71,7 @@ height: 410px;
 
 </style>
 
-
-<div class="container-fluid blackish text-light">
+<div class="container-fluid blackish text-light pt-2" id="dashboard-demo">
 <div class="row">
     <div class="col-md-7"> Click on a row to view historical trends.
     <a tabindex="0"
