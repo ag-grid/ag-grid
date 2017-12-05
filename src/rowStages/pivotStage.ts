@@ -127,7 +127,9 @@ export class PivotStage implements IRowNodeStage {
 
         // map the children out based on the pivot column
         children.forEach( (child: RowNode) => {
-            let key = this.valueService.getValue(pivotColumn, child);
+
+            let key: string = this.valueService.getKeyForNode(pivotColumn, child);
+
             if (Utils.missing(key)) {
                 key = '';
             }

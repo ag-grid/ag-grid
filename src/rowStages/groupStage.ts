@@ -448,7 +448,7 @@ export class GroupStage implements IRowNodeStage {
     private getGroupInfoFromGroupColumns(rowNode: RowNode, details: GroupingDetails) {
         let res: GroupInfo[] = [];
         details.groupedCols.forEach( groupCol => {
-            let key: string = this.getKeyForNode(groupCol, rowNode);
+            let key: string = this.valueService.getKeyForNode(groupCol, rowNode);
             let keyExists = key!==null && key!==undefined;
 
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make
@@ -471,28 +471,4 @@ export class GroupStage implements IRowNodeStage {
         return res;
     }
 
-    private getKeyForNode(groupColumn: Column, rowNode: RowNode): any {
-        let value = this.valueService.getValue(groupColumn, rowNode);
-        let result: any;
-        let keyCreator = groupColumn.getColDef().keyCreator;
-
-        if (keyCreator) {
-            result = keyCreator({value: value});
-        } else {
-            result = value;
-        }
-
-        // if already a string, or missing, just return it
-        if (typeof result === 'string' || result===null || result===undefined) { return result; }
-
-        result = String(result);
-
-        if (result==='[object Object]') {
-            _.doOnce( ()=> {
-                console.warn('ag-Grid: a column you are grouping by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se ag-Grid docs) or b) to toString() on the object to return a key');
-            }, 'getKeyForNode - warn about [object,object]');
-        }
-
-        return result;
-    }
 }
