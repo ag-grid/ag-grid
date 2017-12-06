@@ -63,7 +63,6 @@ var gridOptions = {
         cellRendererParams: {
             checkbox: true,
             suppressCount: true,
-            padding: 20,
             innerRenderer: getFileCellRenderer()
         }
     }
