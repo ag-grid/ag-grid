@@ -125,10 +125,3 @@ class NameCellRenderer extends React.Component {
     not handle refresh and your component will be destroyed and recreated if the underlying data changes).
 </p>
 
-<h3 id="example-rendering-using-more-complex-react-components">Example: Rendering using more complex React
-    Components</h3>
-<p>
-    Using more complex React Components in the Cell Renderer's
-</p>
-
-<?= example('Richer Dynamic Components', 'react-rich-dynamic', 'react', array( "exampleHeight" => 380, "showResult" => true, "extras" => array("bootstrap") )); ?>
