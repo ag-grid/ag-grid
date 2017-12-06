@@ -1126,9 +1126,13 @@ export class ColumnController {
             actualPinned = null;
         }
 
-        this.actionOnGridColumns(keys, (column: Column): boolean => {
-            column.setPinned(actualPinned);
-            return true;
+        this.actionOnGridColumns(keys, (col: Column): boolean => {
+            if (col.getPinned() !== actualPinned) {
+                col.setPinned(actualPinned);
+                return true;
+            } else {
+                return false;
+            }
         }, ()=> {
             let event: ColumnPinnedEvent = {
                 type: Events.EVENT_COLUMN_PINNED,
