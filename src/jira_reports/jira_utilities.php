@@ -146,7 +146,7 @@ function getLiveJiraFilterData($report_type, $maxResults, $jira_config)
         $issue_list = jiraRequest($report_type, ($maxResults * $page), $maxResults, $jira_config);
         $currentPageData = json_decode($issue_list, true);
 
-        for ($x = 0; $x < count($currentPageData); $x++) {
+        for ($x = 0; $x <= count($currentPageData); $x++) {
             array_push($tempArray['issues'], $currentPageData['issues'][$x]);
         }
     }
