@@ -119,13 +119,7 @@ var columnDefs = [
         headerName: 'ID',
         width: 50,
         valueGetter: 'node.id',
-        cellRenderer: function(params) {
-            if (params.value !== undefined) {
-                return params.value;
-            } else {
-                return '<img src="../images/loading.gif">';
-            }
-        },
+        cellRenderer: 'loadingCellRenderer',
         // we don't want to sort by the row index, this doesn't make sense as the point
         // of the row index is to know the row index in what came back from the server
         suppressSorting: true,
@@ -182,6 +176,15 @@ var gridOptions = {
     maxBlocksInCache: 2,
     getRowNodeId: function(item) {
         return item.id;
+    },
+    components: {
+        loadingCellRenderer: function(params) {
+            if (params.value !== undefined) {
+                return params.value;
+            } else {
+                return '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/loading.gif">';
+            }
+        }
     }
 };
 
@@ -296,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                     // call the success callback
                     params.successCallback(rowsThisPage, lastRow);
-                }, 500);
+                }, 3000);
             }
         };
 
