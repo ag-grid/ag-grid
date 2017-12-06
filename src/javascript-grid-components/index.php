@@ -15,15 +15,13 @@ include '../documentation-main/documentation_header.php';
         </h1>
 
         <p>
-            By default, the grid does not need to you to provide any components.
-            However to allow you to customise the grid, it allows you to plug
-            your own components into the grid.
+            You can create your own custom components to customise the behaviour
+            of the grid. For example you can customise how cells are rendered,
+            how values are edited and also create your own filters.
         </p>
 
         <p>
             The following sections show how to use your own components inside the grid.
-            Each component can be done using plain JavaScript or using one of the
-            supported frameworks.
         </p>
 
         <div class="row">
@@ -138,7 +136,152 @@ include '../documentation-main/documentation_header.php';
             </div>
         </div>
 
-        <h2>JavaScript or Framework</h2>
+        <h1>Specifying Custom Components</h1>
+
+        <p>
+            The pages for each component type (cell renderer, cell editor etc) contain details and
+            examples on how to register each component type. However it is useful here to step back
+            and focus on the component registration process which is common across all component types.
+        </p>
+
+        <p>
+            There are two ways to register custom components:
+            <ol>
+                <li>By name.</li>
+                <li>Direct reference.</li>
+            </ol>
+            Both options are fully supported by the grid, however the preferred
+            options is by name as it's more flexible. All of the examples in the documentation
+            use this approach. The direct reference approach is kept for backwards
+            compatibility reasons as this was the original way to do it in ag-Grid.
+        </p>
+
+        <h3>1. By Name</h3>
+
+        <p>
+            A component is registered with the grid by providing it through the
+            <code>components</code> grid property. The <code>components</code>
+            grid property contains a map of 'component names' to 'components classes'.
+            Components of all types (editors, renderers, filters etc) are
+            all stored together and must have unique names.
+        </p>
+
+        <snippet>
+gridOptions = {
+
+    // register the components using 'components' grid property
+    components: {
+        // 'countryCellRenderer' is mapped to class CountryCellRenderer
+        countryCellRenderer: CountryCellRenderer,
+        // 'countryFilter' is mapped to class CountryFilter
+        countryFilter: CountryFilter
+    },
+
+    // then refer to the component by name
+    columnDefs: [
+        {
+            field: 'country',
+            cellRenderer: 'countryCellRenderer',
+            filter: 'countryFilter'
+        },
+    ],
+
+    ...
+}</snippet>
+
+        <h3>2. Direct Reference</h3>
+
+        <p>
+            A shorter approach is to refer to the component class directly.
+        </p>
+<snippet>
+gridOptions = {
+
+    // then refer to the component by name
+    columnDefs: [
+        {
+            field: 'country',
+            cellRenderer: CountryCellRenderer,
+            filter: CountryFilter
+        },
+    ],
+
+    ...
+}</snippet>
+
+        <h3>Advantages of By Name</h3>
+
+        <p>
+            Registering components by name has the following advantages:
+            <ul>
+                <li>
+                    Implementations can change without having to change all the column definitions.
+                    For example, you may have 20 columns using a currency cell renderer. If you want
+                    to update the cell renderer to another currency cell renderer, you only need to
+                    do it in only place (where the cell renderer is registered) and all columns
+                    will pick up the new implementation.
+                </li>
+                <li>
+                    The part of the grid specifying column definitions is plain JSON. This is helpful
+                    for applications that read column definitions from static data. If you referred
+                    to the class name directly inside the column definition, it would not be possible
+                    to convert the column definition to JSON.
+                </li>
+            </ul>
+        </p>
+
+        <h1>Specifying Framework Components</h1>
+
+        <p>
+            If you are using a framework such as Angular or React, it is possible to provide
+            components in those frameworks. This is done by using the <code>frameworkComponents</code>
+            property rather than the <code>components</code> property. Then the component is registered
+            by name as normal.
+        </p>
+<snippet>
+gridOptions = {
+
+    // use frameworkComponents instead of components. most frameworks will allow you
+    // to specify this as a bound property.
+    frameworkComponents: {
+        countryCellRenderer: AngularCountryCellRenderer,
+        countryFilter: AngularCountryFilter
+    },
+
+    // then refer to the component by name as before
+    columnDefs: [
+        {
+            field: 'country',
+            cellRenderer: 'countryCellRenderer',
+            filter: 'countryFilter'
+        },
+    ],
+
+    ...
+}</snippet>
+
+        <p>
+            You can also refer to the component classes directly using the <code>framework</code>
+            variant of the property. For example instead of using <code>cellRenderer</code>
+            you use <code>cellRendererFramework</code>.
+        </p>
+
+<snippet>
+gridOptions = {
+
+    // then refer to the component by name
+    columnDefs: [
+        {
+            field: 'country',
+            cellRendererFramework: CountryCellRenderer,
+            filterFramework: CountryFilter
+        },
+    ],
+
+    ...
+}</snippet>
+
+        <h1>JavaScript or Framework</h1>
 
         <p>
             If you are using a framework, then you have a choice of the following:

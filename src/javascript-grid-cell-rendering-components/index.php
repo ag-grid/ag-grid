@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
     <li>function: The <code>cellRenderer</code> is a function that gets called once for each cell. The function
         should return a string (which will be treated as html) or a DOM object. Use this if you
         have no cleanup or refresh requirements of the cell - it's a 'fire and forget' approach
-        to the cell rendering.
+        to cell rendering.
     </li>
     <li>component: The grid will call 'new' on the provided class and treat the object as a component, using
         lifecycle methods. Use this if you need to do cleanup when the cell is removed or have
@@ -46,28 +46,28 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    // put the value in bold
-    colDef.cellRenderer = function(params) {
+// put the value in bold
+colDef.cellRenderer = function(params) {
     return '&lt;b&gt;' + params.value.toUpperCase() + '&lt;/b&gt;';
-    }
+}
 
-    // put a tooltip on the value
-    colDef.cellRenderer = function(params) {
+// put a tooltip on the value
+colDef.cellRenderer = function(params) {
     return '&lt;span title="the tooltip"&gt;'+params.value+'&lt;/span&gt;';
-    }
+}
 
-    // create a DOM object
-    colDef.cellRenderer = function(params) {
+// create a DOM object
+colDef.cellRenderer = function(params) {
     var eDiv = document.createElement('div');
     eDiv.innerHTML = '&lt;span class="my-css-class"&gt;&lt;button class="btn-simple"&gt;Push Me&lt;/button&gt;&lt;/span&gt;';
     var eButton = eDiv.querySelectorAll('.btn-simple')[0];
 
     eButton.addEventListener('click', function() {
-    console.log('button was clicked!!');
+        console.log('button was clicked!!');
     });
 
     return eDiv;
-    }
+}
 </snippet>
 
 <p>
@@ -98,7 +98,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    interface ICellRendererComp {
+interface ICellRendererComp {
     // Optional - Params for rendering. The same params that are passed to the cellRenderer function.
     init?(params: ICellRendererParams): void;
 
@@ -113,12 +113,12 @@ include '../documentation-main/documentation_header.php';
     // If you return false, the grid will remove the component from the DOM and create
     // a new component in it's place with the new values.
     refresh(params: any): boolean;
-    }
+}
 </snippet>
 
 <p>The interface for the cell renderer parameters is as follows:</p>
 <snippet>
-    interface ICellRendererParams {
+interface ICellRendererParams {
     value: any, // value to be rendered
     valueFormatted: any, // value to be rendered formatted
     getValue: ()=&gt; any, // convenience function to get most recent up to date value
@@ -136,7 +136,7 @@ include '../documentation-main/documentation_header.php';
     columnApi: ColumnApi, // grid column API
     context: any, // the grid's context
     refreshCell: ()=&gt;void // convenience function to refresh the cell
-    }
+}
 </snippet>
 
 <p>
@@ -144,11 +144,11 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    // function to act as a class
-    function MyCellRenderer () {}
+// function to act as a class
+function MyCellRenderer () {}
 
-    // gets called once before the renderer is used
-    MyCellRenderer.prototype.init = function(params) {
+// gets called once before the renderer is used
+MyCellRenderer.prototype.init = function(params) {
     // create the cell
     this.eGui = document.createElement('div');
     this.eGui.innerHTML = '&lt;span class="my-css-class"&gt;&lt;button class="btn-simple"&gt;Push Me&lt;/button&gt;&lt;span
@@ -163,29 +163,29 @@ include '../documentation-main/documentation_header.php';
 
     // add event listener to button
     this.eventListener = function() {
-    console.log('button was clicked!!');
+        console.log('button was clicked!!');
     };
     this.eButton.addEventListener('click', this.eventListener);
-    };
+};
 
-    // gets called once when grid ready to insert the element
-    MyCellRenderer.prototype.getGui = function() {
+// gets called once when grid ready to insert the element
+MyCellRenderer.prototype.getGui = function() {
     return this.eGui;
-    };
+};
 
-    // gets called whenever the user gets the cell to refresh
-    MyCellRenderer.prototype.refresh = function(params) {
+// gets called whenever the user gets the cell to refresh
+MyCellRenderer.prototype.refresh = function(params) {
     // set value into cell again
     this.eValue.innerHTML = params.valueFormatted ? params.valueFormatted : params.value;
     // return true to tell the grid we refreshed successfully
     return true;
-    };
+};
 
-    // gets called when the cell is removed from the grid
-    MyCellRenderer.prototype.destroy = function() {
+// gets called when the cell is removed from the grid
+MyCellRenderer.prototype.destroy = function() {
     // do cleanup, remove event listener from button
     this.eButton.removeEventListener('click', this.eventListener);
-    };
+};
 </snippet>
 
 <h1 id="cell-renderer-component-refresh">Component Refresh</h1>
@@ -285,22 +285,22 @@ In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> a
 </p>
 
 <snippet>
-    // define cellRenderer to be reused
-    var myCellRenderer = function(params) {
+// define cellRenderer to be reused
+var myCellRenderer = function(params) {
     return '&lt;span style="color: '+params.color+'"&gt;' + params.value + '&lt;/span&gt;';
-    }
+}
 
-    // use with a color
-    colDef.cellRenderer = myCellRenderer;
-    colDef.cellRendererParams = {
+// use with a color
+colDef.cellRenderer = myCellRenderer;
+colDef.cellRendererParams = {
     color: 'guinnessBlack'
-    }
+}
 
-    // use with another color
-    colDef.cellRenderer = myCellRenderer;
-    colDef.cellRendererParams = {
+// use with another color
+colDef.cellRenderer = myCellRenderer;
+colDef.cellRendererParams = {
     color: 'irishGreen'
-    }
+}
 </snippet>
 
 <h1 id="example-using-cell-renderers">Example: Using Cell Renderer's</h1>
@@ -331,17 +331,17 @@ In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> a
 <p>
     This is simply fixed by checking for the existence of the data before you use it like the following:
     <snippet>
-        colDef.cellRenderer = function(params) {
+colDef.cellRenderer = function(params) {
 
-        // check the data exists, to avoid error
-        if (!params.node.group) {
+    // check the data exists, to avoid error
+    if (!params.node.group) {
         // data exists, so we can access it
         return '&lt;b&gt;'+params.data.theBoldValue+'&lt;/b&gt;';
-        } else {
+    } else {
         // when we return null, the grid will display a blank cell
         return null;
-        }
-        };
+    }
+};
     </snippet>
 </p>
 
