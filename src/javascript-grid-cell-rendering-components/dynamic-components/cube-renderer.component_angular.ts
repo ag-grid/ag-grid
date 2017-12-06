@@ -6,7 +6,7 @@ import {ICellRendererAngularComp} from "ag-grid-angular";
     selector: 'cube-cell',
     template: `{{valueCubed()}}`
 })
-export class CubeComponent implements ICellRendererAngularComp {
+export class CubeRenderer implements ICellRendererAngularComp {
     private params: any;
     private cubed: number;
 

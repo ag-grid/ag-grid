@@ -39,6 +39,12 @@ function phpArrayToJSON(string) {
     if (!string) {
         return {};
     }
+
+    // strip off showOnly - gave up trying to do it with regex :-(
+    // regex-fu is weak in this one...
+    const lastBrackentIndex = string.lastIndexOf(')') < 0 ? string.length : string.lastIndexOf(')') + 1;
+    string = string.substring(0,  lastBrackentIndex);
+
     const replaced = string
         .replace(/^, /, '')
         .replace(/'/g, '"')

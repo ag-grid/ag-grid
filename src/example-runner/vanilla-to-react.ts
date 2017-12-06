@@ -127,6 +127,8 @@ ${additional.concat(eventHandlers, externalEventHandlers).join('\n    ')}
             </div>
         );
     }
+    
+    ${bindings.instance.join('\\\\n')}
 }
 
 ${bindings.utils.join('\n')}
