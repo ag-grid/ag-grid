@@ -17,6 +17,7 @@ import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRe
 import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
 import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
 import {Promise} from "../../utils";
+import {IOverlayWrapperRenderer} from "../../rendering/overlayRenderers/overlayWrapperRenderer";
 import {ILoadingOverlayRenderer} from "../../rendering/overlayRenderers/loadingOverlayRenderer";
 import {INoRowsOverlayRenderer} from "../../rendering/overlayRenderers/noRowsOverlayRenderer";
 
@@ -133,6 +134,10 @@ export class ComponentRecipes {
 
     public newFullRowGroupRenderer (params:ICellRendererParams):Promise<ICellRendererComp>{
         return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptionsWrapper, params, "fullWidthCellRenderer");
+    }
+
+    public newOverlayWrapperRenderer(): Promise<IOverlayWrapperRenderer> {
+        return this.componentResolver.createAgGridComponent<IOverlayWrapperRenderer>(this.gridOptions, null, "overlayWrapperRenderer");
     }
 
     public newLoadingOverlayRenderer(): Promise<ILoadingOverlayRenderer> {

@@ -24,6 +24,7 @@ import {PopupSelectCellEditor} from "../../rendering/cellEditors/popupSelectCell
 import {LargeTextCellEditor} from "../../rendering/cellEditors/largeTextCellEditor";
 import {TextFilter} from "../../filter/textFilter";
 import {NumberFilter} from "../../filter/numberFilter";
+import {OverlayWrapperRenderer} from "../../rendering/overlayRenderers/overlayWrapperRenderer";
 import {LoadingOverlayRenderer} from "../../rendering/overlayRenderers/loadingOverlayRenderer";
 import {NoRowsOverlayRenderer} from "../../rendering/overlayRenderers/noRowsOverlayRenderer";
 import {GridOptions} from "../../entities/gridOptions";
@@ -95,6 +96,7 @@ export class ComponentProvider {
             group: GroupCellRenderer,
             groupRowRenderer: GroupCellRenderer,
             loadingCellRenderer: LoadingCellRenderer,
+            overlayWrapperRenderer: OverlayWrapperRenderer,
             loadingOverlayRenderer: LoadingOverlayRenderer,
             noRowsOverlayRenderer: NoRowsOverlayRenderer,
             pinnedRowCellRenderer: null,
