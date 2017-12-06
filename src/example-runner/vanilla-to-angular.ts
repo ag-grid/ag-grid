@@ -74,7 +74,7 @@ function appComponentTemplate(bindings, componentFileNames) {
             return;
         }
 
-        if(property.name === "components") {
+        if(componentFileNames.length > 0 && property.name === "components") {
             property.name = "frameworkComponents";
         }
 
