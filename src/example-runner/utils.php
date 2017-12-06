@@ -123,7 +123,7 @@ function getTypes($dir)
     return $types;
 }
 
-function example($title, $dir, $type='vanilla', $options = array(), $showOnly = null) {
+function example($title, $dir, $type='vanilla', $options = array()) {
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));
     $multi = $type === 'multi';
     $generated = $type === 'generated';
@@ -135,8 +135,7 @@ function example($title, $dir, $type='vanilla', $options = array(), $showOnly = 
         'types' => array(),
         'title' => $title,
         'sourcePrefix' => RUNNER_SOURCE_PREFIX,
-        'showOnly' => $showOnly,
-        'options' => $options 
+        'options' => $options
     );
 
     if ($generated) {
