@@ -10,6 +10,7 @@ import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {Component} from "../widgets/component";
 import {Constants} from "../constants";
 import {Column} from "../entities/column";
+import {GridApi} from "../gridApi";
 
 export interface FloatingFilterChange {
 }
@@ -20,6 +21,7 @@ export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
     currentParentModel: () => M;
     suppressFilterButton: boolean;
     debounceMs?: number;
+    api:GridApi;
 }
 
 export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
