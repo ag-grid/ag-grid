@@ -11,7 +11,7 @@ function indexTemplate(bindings, componentFilenames) {
             return;
         }
 
-        if(property.name === "components") {
+        if(componentFilenames.length > 0 && property.name === "components") {
             property.name = "frameworkComponents";
         }
 
