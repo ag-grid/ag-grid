@@ -10,7 +10,7 @@ import {ICellRendererAngularComp} from "ag-grid-angular";
         }`
     ]
 })
-export class ChildMessageComponent implements ICellRendererAngularComp {
+export class ChildMessageRenderer implements ICellRendererAngularComp {
     public params: any;
 
     agInit(params: any): void {

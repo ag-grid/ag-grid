@@ -6,7 +6,7 @@ import {ICellRendererAngularComp} from "ag-grid-angular";
     selector: 'square-cell',
     template: `{{valueSquared()}}`
 })
-export class SquareComponent implements ICellRendererAngularComp, OnDestroy {
+export class SquareRenderer implements ICellRendererAngularComp, OnDestroy {
     private params: any;
 
     agInit(params: any): void {

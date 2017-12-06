@@ -50,6 +50,7 @@ class SquareComponent implements AgRendererComponent {
         return this.params.value * this.params.value;
     }
 }
+
 // then reference the Component in your colDef like this
 colDef = {
     {
@@ -94,7 +95,7 @@ the grid will know the framework to use is Angular.
     Using Angular Components in the Cell Renderer's
 </p>
 
-<?= example('Simple Dynamic Component', 'angular-dynamic', 'angular', array("exampleHeight" => 440, "showResult" => true, "extras" => array("bootstrap"))); ?>
+<?= example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'extras' => array('fontawesome', "bootstrap")), "angular") ?>
 
 <h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods /
     Lifecycle</h3>
