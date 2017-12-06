@@ -1,34 +1,34 @@
-    <h2 id="ng2CellEditing">
-        <img src="../images/angular2_large.png" style="width: 60px;"/>
-        Angular Cell Editing
-    </h2>
+<h2 id="ng2CellEditing">
+    <img src="../images/angular2_large.png" style="width: 60px;"/>
+    Angular Cell Editing
+</h2>
 
-    <div class="note" style="margin-bottom: 20px">
-        <img align="left" src="../images/note.png" style="margin-right: 10px;" />
-        <p>This section explains how to utilise ag-Grid Cell Editors using Angular 2+. You should read about how
+<div class="note" style="margin-bottom: 20px">
+    <img align="left" src="../images/note.png" style="margin-right: 10px;"/>
+    <p>This section explains how to utilise ag-Grid Cell Editors using Angular 2+. You should read about how
         <a href="../javascript-grid-cell-editor/">Cell Editing</a> works in ag-Grid first before trying to
         understand this section.</p>
-    </div>
+</div>
 
-    <p>
-        It is possible to provide a Angular Cell Editor for ag-Grid to use. All of the information above is
-        relevant to Angular Cell Editors. This section explains how to apply this logic to your Angular component.
-    </p>
+<p>
+    It is possible to provide a Angular Cell Editor for ag-Grid to use. All of the information above is
+    relevant to Angular Cell Editors. This section explains how to apply this logic to your Angular component.
+</p>
 
-    <p>
-        For an example of Angular cellEditing, see the
-        <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on Github.
-    </p>
+<p>
+    For an example of Angular cellEditing, see the
+    <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on Github.
+</p>
 
-    <h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular Cell Editor</h3>
+<h3><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a Angular Cell Editor</h3>
 
-    <p>
-        If you are using the ag-grid-angular component to create the ag-Grid instance,
-        then you will have the option of additionally specifying the cell editors
-        as Angular components.
-    </p>
+<p>
+    If you are using the ag-grid-angular component to create the ag-Grid instance,
+    then you will have the option of additionally specifying the cell editors
+    as Angular components.
+</p>
 
-    <snippet>
+<snippet>
 // create your Cell Editor as a Angular component
 @Component({
     selector: 'editor-cell',
@@ -117,40 +117,50 @@ colDef = {
     }
 }</snippet>
 
-    <p>Your Angular components need to implement <code>AgEditorComponent</code>.</p>
+<p>Your Angular components need to implement <code>AgEditorComponent</code>.</p>
 
-    <p>
-        By using <code>colDef.cellEditorFramework</code> (instead of <code>colDef.cellEditor</code>) the grid
-        will know it's an Angular component, based on the fact that you are using the Angular version of
-        ag-Grid.
-    </p>
+<p>
+    By using <code>colDef.cellEditorFramework</code> (instead of <code>colDef.cellEditor</code>) the grid
+    will know it's an Angular component, based on the fact that you are using the Angular version of
+    ag-Grid.
+</p>
 
 
-    <h3 id="angular-parameters"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Parameters</h3>
+<h3 id="angular-parameters"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Parameters</h3>
 
-    <p>Your Angular components need to implement <code>AgEditorComponent</code>.
-        The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the cell <code>params</code>.</p>
+<p>Your Angular components need to implement <code>AgEditorComponent</code>.
+    The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the
+    cell <code>params</code>.</p>
 
-    <h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods / Lifecycle</h3>
+<h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods /
+    Lifecycle</h3>
 
-    <p>
-        All of the methods in the <code>ICellEditor</code> interface described above are applicable
-        to the Angular Component with the following exceptions:
-    <ul>
-        <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the <code>AgRendererComponent</code> interface).</li>
-        <li><i>destroy()</i> is not used. Instead implement the Angular<code>OnDestroy</code> interface (<code>ngOnDestroy</code>) for
-            any cleanup you need to do.</li>
-        <li><i>getGui()</i> is not used. Instead do normal Angular magic in your Component via the Angular template.</li>
-        <li><i>afterGuiAttached()</i> is not used. Instead implement <code>AfterViewInit</code> (<code>ngAfterViewInit</code>) for any post Gui setup (ie to focus on an element).</li>
-    </ul>
+<p>
+    All of the methods in the <code>ICellEditor</code> interface described above are applicable
+    to the Angular Component with the following exceptions:
+<ul>
+    <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the
+        <code>AgRendererComponent</code> interface).
+    </li>
+    <li><i>destroy()</i> is not used. Instead implement the Angular<code>OnDestroy</code> interface
+        (<code>ngOnDestroy</code>) for
+        any cleanup you need to do.
+    </li>
+    <li><i>getGui()</i> is not used. Instead do normal Angular magic in your Component via the Angular template.</li>
+    <li><i>afterGuiAttached()</i> is not used. Instead implement <code>AfterViewInit</code>
+        (<code>ngAfterViewInit</code>) for any post Gui setup (ie to focus on an element).
+    </li>
+</ul>
 
-    <p>
-        All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()</i> etc)
-        should be put onto your Angular component and will work as normal.
-    </p>
+<p>
+    All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()</i> etc)
+    should be put onto your Angular component and will work as normal.
+</p>
 
-    <h3 id="example-cell-editing-using-angular-components">Example: Cell Editing using Angular Components</h3>
-    <p>
-        Using Angular Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle events.
-    </p>
-    <?= example('Editor Components', 'angular-editor', 'angular', array("enterprise" => 1, "exampleHeight" => 370, "showResult" => true)); ?>
+<h3 id="example-cell-editing-using-angular-components">Example: Cell Editing using Angular Components</h3>
+<p>
+    Using Angular Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle
+    events.
+</p>
+
+<?= example('Angular Editor Components', 'component-editor', 'generated', array('enterprise' => false, 'extras' => array('fontawesome', "bootstrap")), "angular") ?>

@@ -6,7 +6,7 @@ import {ICellEditorAngularComp} from "ag-grid-angular";
     selector: 'numeric-cell',
     template: `<input #input (keydown)="onKeyDown($event)" [(ngModel)]="value" style="width: 100%">`
 })
-export class NumericEditorComponent implements ICellEditorAngularComp, AfterViewInit {
+export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
     public value: number;
     private cancelBeforeStart: boolean = false;
