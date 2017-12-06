@@ -142,6 +142,8 @@ export class AppComponent {
         .concat(additional)
         .map(snippet => snippet.trim())
         .join('\n\n')}
+        
+    ${bindings.instance.join('\\n')}
 }
 
 ${bindings.utils.join('\n')}

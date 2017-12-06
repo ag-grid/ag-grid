@@ -3,10 +3,10 @@ import {Component} from "@angular/core";
 import {ICellRendererAngularComp} from "ag-grid-angular";
 
 @Component({
-    selector: 'params-cell',
-    template: `Field: {{params.colDef.field}}, Value: {{params.value}}`
+    selector: 'currency-cell',
+    template: `{{params.value | currency:'EUR'}}`
 })
-export class ParamsComponent implements ICellRendererAngularComp {
+export class CurrencyRenderer implements ICellRendererAngularComp {
     public params: any;
 
     agInit(params: any): void {
