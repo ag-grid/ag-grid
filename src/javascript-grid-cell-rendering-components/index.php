@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
     <li>function: The <code>cellRenderer</code> is a function that gets called once for each cell. The function
         should return a string (which will be treated as html) or a DOM object. Use this if you
         have no cleanup or refresh requirements of the cell - it's a 'fire and forget' approach
-        to the cell rendering.
+        to cell rendering.
     </li>
     <li>component: The grid will call 'new' on the provided class and treat the object as a component, using
         lifecycle methods. Use this if you need to do cleanup when the cell is removed or have
@@ -144,7 +144,7 @@ interface ICellRendererParams {
 </p>
 
 <snippet>
-    // function to act as a class
+// function to act as a class
 function MyCellRenderer () {}
 
 // gets called once before the renderer is used
@@ -328,7 +328,7 @@ colDef.cellRendererParams = {
 </p>
 <p>
     This is simply fixed by checking for the existence of the data before you use it like the following:
-<snippet>
+    <snippet>
 colDef.cellRenderer = function(params) {
     // check the data exists, to avoid error
     if (!params.node.group) {
@@ -339,7 +339,7 @@ colDef.cellRenderer = function(params) {
         return null;
     }
 };
-</snippet>
+    </snippet>
 </p>
 
 <?php include './angular.php'; ?>
