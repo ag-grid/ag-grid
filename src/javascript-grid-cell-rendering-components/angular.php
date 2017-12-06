@@ -125,7 +125,8 @@ the grid will know the framework to use is Angular.
 <h3 id="example-rendering-using-more-complex-angular-components">Example: Rendering using more complex Angular
     Components</h3>
 <p>
-    Using more complex Angular Components in the Cell Renderer's
+    Using more complex Angular Components in the Cell Renderer's - specifically how you can use nested <code>NgModule</code>'s
+    within the grid.
 </p>
 <?= example('Richer Dynamic Components', 'angular-rich-dynamic', 'angular', array("exampleHeight" => 370, "showResult" => true, "extras" => array("bootstrap"))); ?>
 
