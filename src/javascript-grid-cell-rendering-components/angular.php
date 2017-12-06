@@ -1,38 +1,18 @@
 <!-- Angular from here -->
-<h2 id="ng2CellRendering">
+<h1 id="ng2CellRendering">
     <img src="../images/angular2_large.png" style="width: 60px;"/>
-    Angular Cell Rendering
-</h2>
-
-<div class="note" style="margin-bottom: 20px">
-    <img align="left" src="../images/note.png" style="margin-right: 10px;"/>
-    <p>This section explains how to utilise ag-Grid cellRenders using Angular 2+. You should read about how
-        <a href="/">Cell Rendering works in ag-Grid</a> first before trying to
-        understand this section.</p>
-</div>
+    Angular Cell Render Components
+</h1>
 
 <p>
-    It is possible to provide a Angular cell renderer's for ag-Grid to use. All of the information above is
+    It is possible to provide a Angular cell renderer's for ag-Grid to use if you are are using the
+    Angular version of ag-Grid. All of the information above is
     relevant to Angular cell renderer's. This section explains how to apply this logic to your Angular component.
+    Note: Here we are referring to Angular versions 2 and up. This section is not relevant to AngularJS 1.
 </p>
 
-<p>
-    For examples on Angular cellRendering, see the
-    <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on Github.
-    Angular renderer's are used on all but the first Grid on this example page (the first grid uses plain JavaScript
-    renderer's)</p>
-</p>
+<p>The code snippet below shows a quick example of how to use an Angular component as a cell renderer.</p>
 
-<h3 id="specifying-a-angular-cell-renderer"><img src="../images/angular2_large.png" style="width: 20px;"/> Specifying a
-    Angular cell renderer</h3>
-
-<p>
-    If you are using the ag-grid-angular component to create the ag-Grid instance,
-    then you will have the option of additionally specifying the cell renderer's
-    as Angular components.
-
-<h3 id="cell-renderers-from-angular-components"><img src="../images/angular2_large.png" style="width: 20px;"/>
-    cell renderer's from Angular Components</h3>
 <snippet>
 // create your cell renderer as a Angular component
 @Component({
@@ -51,29 +31,53 @@ class SquareComponent implements AgRendererComponent {
     }
 }
 
-// then reference the Component in your colDef like this
-colDef = {
-    {
-        headerName: "Square Component",
-        field: "value",
-        // instead of cellRenderer we use cellRendererFramework
-        cellRendererFramework: SquareComponent
+var gridOptions = {
 
-        // specify all the other fields as normal
-        editable:true,
-        colId: "square",
-        width: 200
+    // register the cell renderer with the grid using the grid frameworkComponents property.
+    // using 'frameworkComponents' instead of 'components' tells the grid to use the underlying framework.
+    frameworkComponents: {
+        'squareCellRenderer': SquareComponent
     }
-}</snippet>
+
+    // define some columns and use the customer cell renderer
+    columnDefs: [
+        {
+            field: "square1",
+            // reference the cell renderer in the column definition by name
+            cellRenderer: 'squareCellRenderer'
+        },
+        {
+            field: "square2",
+            // alternatively the cell renderer can be referenced directly
+            cellRendererFramework: SquareComponent
+        },
+    ]
+    ...
+};
+
+</snippet>
 
 <p>Your Angular components need to implement <code>AgRendererComponent</code>.
     The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the
     cell <code>params</code>.<p>
 
+<h2>Registering Angular Cell Renderers</h2>
+
 <p>
-    By using <code>colDef.cellRendererFramework</code> (instead of <code>colDef.cellRenderer</code>) the grid
-    will know it's an Angular component, based on the fact that you are using the Angular version of
-    ag-Grid.
+    As with normal JavaScript cell renderers you can register Angular cell renderers by name
+    or reference them directly.
+</p>
+
+<p>
+    To register Angular Cell Renderers by name us the grid property
+    <code>componentFramework</code> (the 'framework' part tells the grid that you want to use
+    Angular and not normal JavaScript) and then reference the cell renderer as normal
+    using <code>colDef.cellRenderer</code>.
+</p>
+
+<p>
+    To reference Angular Cell Renderers directly use <code>colDef.cellRendererFramework</code>
+    instead of <code>colDef.cellRenderer</code>.
 </p>
 
 <p>
@@ -85,20 +89,17 @@ colDef = {
     <li>gridOptions.groupRowRenderer<b>Framework</b></li>
     <li>gridOptions.groupRowInnerRenderer<b>Framework</b></li>
 </ul>
-In other words, wherever you specify a normal cell renderer, you can now specify a Angular cell renderer
-in the property of the same name excepting ending 'Framework'. As long as you are using the Angular ag-Grid component,
-the grid will know the framework to use is Angular.
 </p>
 
-<h3 id="example-rendering-using-angular-components">Example: Rendering using Angular Components</h3>
+<h2 id="example-rendering-using-angular-components">Example: Rendering using Angular Components</h2>
 <p>
     Using Angular Components in the Cell Renderer's
 </p>
 
 <?= example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'onlyShow' => 'angular', 'extras' => array('fontawesome', "bootstrap"))) ?>
 
-<h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods /
-    Lifecycle</h3>
+<h2 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods /
+    Lifecycle</h2>
 
 <p>
     All of the methods in the <code>ICellRenderer</code> interface described above are applicable
@@ -114,7 +115,7 @@ the grid will know the framework to use is Angular.
     <li><i>getGui()</i> is not used. Instead do normal Angular magic in your Component via the Angular template.</li>
 </ul>
 
-<h3 id="handling-refresh"><img src="../images/angular2_large.png" style="width: 20px;"/> Handling Refresh</h3>
+<h2 id="handling-refresh"><img src="../images/angular2_large.png" style="width: 20px;"/> Handling Refresh</h2>
 
 <p>
     To handle refresh, implement logic inside the <code>refresh()</code> method inside your component and return true.
@@ -122,16 +123,10 @@ the grid will know the framework to use is Angular.
     not handle refresh and your component will be destroyed and recreated if the underlying data changes).
 </p>
 
-<h3 id="example-rendering-using-more-complex-angular-components">Example: Rendering using more complex Angular
-    Components</h3>
+<h2 id="example-rendering-using-more-complex-angular-components">Example: Rendering using more complex Angular
+    Components</h2>
 <p>
     Using more complex Angular Components in the Cell Renderer's - specifically how you can use nested <code>NgModule</code>'s
     within the grid.
 </p>
 <?= example('Richer Dynamic Components', 'angular-rich-dynamic', 'angular', array("exampleHeight" => 370, "showResult" => true, "extras" => array("bootstrap"))); ?>
-
-
-<note>The full <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> repo shows many
-    more examples for rendering, including grouped rows, full width renderer's
-    and so on, as well as examples on using Angular Components with both Cell Editors and Filters
-</note>
