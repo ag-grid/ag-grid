@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IComponent } from "../../../../ag-grid/src/ts/interfaces/iComponent";
+import { ICellRendererAngularComp } from "ag-grid-angular";
 
 @Component({
     selector: 'app-loading-overlay',
@@ -7,6 +7,9 @@ import { IComponent } from "../../../../ag-grid/src/ts/interfaces/iComponent";
               `   <i class="fa fa-hourglass-1"> One moment please...</i>` +
               `</div>`
 })
-export class CustomLoadingOverlayRenderer implements IComponent {
+export class CustomLoadingOverlayRenderer implements ICellRendererAngularComp {
     agInit(params: any): void {}
+    refresh(): boolean {
+        return false;
+    }
 }
