@@ -6,7 +6,7 @@ import {ICellRendererAngularComp} from "ag-grid-angular";
     selector: 'mood-cell',
     template: `<img width="20px" [src]="imgForMood"/>`
 })
-export class MoodRendererComponent implements ICellRendererAngularComp {
+export class MoodRenderer implements ICellRendererAngularComp {
     private params: any;
     private mood: string;
     public imgForMood: string;

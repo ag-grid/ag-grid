@@ -37,7 +37,7 @@ import {ICellEditorAngularComp} from "ag-grid-angular";
         }
     `]
 })
-export class MoodEditorComponent implements ICellEditorAngularComp, AfterViewInit {
+export class MoodEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
 
     @ViewChild('container', {read: ViewContainerRef}) public container;
