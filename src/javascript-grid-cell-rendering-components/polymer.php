@@ -133,13 +133,6 @@ the grid will know the framework to use is Polymer.
     not handle refresh and your component will be destroyed and recreated if the underlying data changes).
 </p>
 
-<h3 id="example-rendering-using-more-complex-polymer-components">Example: Rendering using more complex Polymer
-    Components</h3>
-<p>
-    Using more complex Polymer Components in the Cell Renderer's
-</p>
-<?= example('Richer Dynamic Components', 'polymer-rich-dynamic', 'polymer', array("exampleHeight" => 390) ) ?>
-
 <note>The full <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> repo shows many
     more examples for rendering, including grouped rows, full width renderer's
     and so on, as well as examples on using Polymer Components with both Cell Editor's and Filters

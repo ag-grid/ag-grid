@@ -77,7 +77,7 @@ the grid will know the framework to use is React.
     Using React Components in the Cell Renderer's
 </p>
 
-<?= example('Simple Dynamic Component', 'react-dynamic', 'react', array( "exampleHeight" => 460, "showResult" => true, "extras" => array("bootstrap") )); ?>
+<?= example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'extras' => array('fontawesome', "bootstrap")), "react") ?>
 
 <h3 id="react-props"><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
 
@@ -125,10 +125,3 @@ class NameCellRenderer extends React.Component {
     not handle refresh and your component will be destroyed and recreated if the underlying data changes).
 </p>
 
-<h3 id="example-rendering-using-more-complex-react-components">Example: Rendering using more complex React
-    Components</h3>
-<p>
-    Using more complex React Components in the Cell Renderer's
-</p>
-
-<?= example('Richer Dynamic Components', 'react-rich-dynamic', 'react', array( "exampleHeight" => 380, "showResult" => true, "extras" => array("bootstrap") )); ?>

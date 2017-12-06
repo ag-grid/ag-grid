@@ -160,6 +160,10 @@ class ExampleRunner {
     }
 
     getInitialType(): string {
+        if(this.config.showOnly) {
+            return this.config.showOnly;
+        }
+
         const selectedFramework = this.$cookies.get('agGridFramework');
         const selectedRunnerVersion = this.$cookies.get('agGridRunnerVersion');
 
