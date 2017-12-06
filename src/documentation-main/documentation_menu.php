@@ -259,7 +259,6 @@
     menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
 
     menuItemWithIcon('polymer-small.png', 1, 'Polymer Examples', 'Polymer Examples', 'example-polymer/', true);
-    menuItem(2, 'Polymer Dynamic', 'Cell Renderers', 'example-polymer-dynamic/');
     menuItem(2, 'Polymer Pinned Row', 'Pinned Rows', 'example-polymer-floating-row/');
     menuItem(2, 'Polymer Full Width', 'Full Width Rows', 'example-polymer-full-width-rows/');
     menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');

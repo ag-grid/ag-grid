@@ -25,7 +25,7 @@ import {IFilterAngularComp} from "ag-grid-angular";
         `
     ]
 })
-export class PartialMatchFilterComponent implements IFilterAngularComp {
+export class PartialMatchFilter implements IFilterAngularComp {
     private params: IFilterParams;
     private valueGetter: (rowNode: RowNode) => any;
     public text: string = '';

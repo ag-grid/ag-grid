@@ -96,7 +96,7 @@ var gridOptions = {
     Using Angular Components in the Cell Renderer's
 </p>
 
-<?= example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'extras' => array('fontawesome', "bootstrap")), "angular") ?>
+<?= example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'onlyShow' => 'angular', 'extras' => array('fontawesome', "bootstrap"))) ?>
 
 <h2 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods /
     Lifecycle</h2>

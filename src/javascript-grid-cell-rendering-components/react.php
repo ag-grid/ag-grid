@@ -63,7 +63,7 @@ the grid will know the framework to use is React.
     Using React Components in the Cell Renderer's
 </p>
 
-<?= example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'extras' => array('fontawesome', "bootstrap")), "react") ?>
+<?= example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'onlyShow' => 'react', 'extras' => array('fontawesome', "bootstrap"))) ?>
 
 <h3 id="react-props"><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
 
