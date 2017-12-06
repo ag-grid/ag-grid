@@ -20,6 +20,15 @@ include '../documentation-main/documentation_header.php';
             how values are edited and also create your own filters.
         </p>
 
+        <note>
+            <p>
+            </p>
+            <p>
+                An ag-Grid cell renderer Component does not need to extend any class or do anything except implement the
+                methods shown in the interface.
+            </p>
+        </note>
+
         <p>
             The following sections show how to use your own components inside the grid.
         </p>

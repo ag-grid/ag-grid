@@ -4,23 +4,9 @@
     React Cell Rendering
 </h2>
 
-<div class="note" style="margin-bottom: 20px">
-    <img align="left" src="../images/note.png" style="margin-right: 10px;" />
-    <p>This section explains how to utilise ag-Grid cell renderer's using React. You should read about how
-    <a href="/">Cell Rendering works in ag-Grid</a> first before trying to
-    understand this section.</p>
-</div>
-
 <p>
     It is possible to provide a React cell renderer for ag-Grid to use. All of the information above is
     relevant to React cell renderer's. This section explains how to apply this logic to your React component.
-</p>
-
-<p>
-    For examples on React cellRendering, see the
-    <a href="https://github.com/ag-grid/ag-grid-react-example">ag-grid-react-example</a> on Github.
-    In the example, both 'Skills' and 'Proficiency' columns use React cell renderer's. The Country column
-    uses a standard ag-Grid cell renderer, to demonstrate both working side by side.</p>
 </p>
 
 <h3 id="specifying-a-react-cell-renderer"><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React Cell Renderer</h3>
