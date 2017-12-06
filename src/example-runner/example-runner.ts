@@ -127,9 +127,9 @@ class ExampleRunner {
         this.title = this.config.title;
         this.name = this.config.name;
         this.section = this.config.section;
-        this.showFrameworksDropdown = !options.onlyShow && (this.config.type === 'multi' || this.config.type === 'generated');
+        this.showFrameworksDropdown = !options.showOnly && (this.config.type === 'multi' || this.config.type === 'generated');
 
-        this.availableTypes = options.onlyShow ? [options.onlyShow.toLowerCase()] : Object.keys(this.config.types);
+        this.availableTypes = options.showOnly ? [options.showOnly.toLowerCase()] : Object.keys(this.config.types);
 
         const divWrapper = jQuery(this.$element).find('div.example-wrapper');
 
