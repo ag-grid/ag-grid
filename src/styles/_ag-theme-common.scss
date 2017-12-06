@@ -865,6 +865,13 @@
         }
     }
 
+    .ag-floating-filter-full-body {
+        input {
+            box-sizing: border-box;
+            @include textbox($params);
+        }
+    }
+
     .ag-floating-filter-button {
         float: right;
         line-height: $icon-size;
