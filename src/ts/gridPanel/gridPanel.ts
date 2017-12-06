@@ -231,7 +231,7 @@ export class GridPanel extends BeanStub {
         this.findElements();
     }
 
-    public getVerticalPixelRange(): any {
+    public getVerticalPixelRange(): {top: number, bottom: number} {
         let container: HTMLElement = this.getPrimaryScrollViewport();
         let result = {
             top: container.scrollTop,
@@ -686,8 +686,8 @@ export class GridPanel extends BeanStub {
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
     public ensureIndexVisible(index: any, position?: string) {
-        // if for print, everything is always visible
-        if (this.gridOptionsWrapper.isForPrint()) { return; }
+        // if for print or auto height, everything is always visible
+        if (this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight()) { return; }
 
         this.logger.log('ensureIndexVisible: ' + index);
         let rowCount = this.paginationProxy.getTotalRowCount();

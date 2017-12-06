@@ -596,12 +596,12 @@ export class GridApi {
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureIndexVisible(index:any, position:string = 'top') {
+    public ensureIndexVisible(index:any, position?:string) {
         this.gridPanel.ensureIndexVisible(index, position);
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureNodeVisible(comparator:any, position:string = 'top') {
+    public ensureNodeVisible(comparator:any, position?:string) {
         this.gridCore.ensureNodeVisible(comparator, position);
     }
 
