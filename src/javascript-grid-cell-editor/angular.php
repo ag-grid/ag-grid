@@ -163,4 +163,4 @@ colDef = {
     events.
 </p>
 
-<?= example('Angular Editor Components', 'component-editor', 'generated', array('enterprise' => false, 'extras' => array('fontawesome', "bootstrap")), "angular") ?>
+<?= example('Angular Editor Components', 'component-editor', 'generated', array('enterprise' => false, "exampleHeight" => 370, 'onlyShow' => 'angular', 'extras' => array("bootstrap"))) ?>
