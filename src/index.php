@@ -1,54 +1,23 @@
-<?php require "example-runner/utils.php" ?>
+<?php 
+require "example-runner/utils.php";
+require "includes/html-helpers.php";
+define('HOMEPAGE', true);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,900" rel="stylesheet">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
-    <title>Best HTML 5 Grid in the World</title>
-
-    <meta name="description" content="A feature rich datagrid designed for Enterprise. Easily integrate with your framework to deliver filtering, grouping, aggregation, pivoting and much more.">
-    <meta name="keywords" content="javascript data grid react angularjs angular 2 web components aurelia"/>
-
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="ag-Grid" />
-    <meta property="og:description" content="Enterprise Javascript data grid that's feature rich, blazing fast and with a brilliant API. Supports Plain Javascript, React, AngularJS 1.x &amp; 2 and Web Components." />
-
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:site" content="@ceolter" />
-    <meta name="twitter:title" content="ag-Grid" />
-    <meta name="twitter:description" content="Enterprise Javascript data grid that's feature rich, blazing fast and with a brilliant API. Supports Plain Javascript, React, AngularJS 1.x &amp; 2 and Web Components." />
-
-    <link rel="icon" type="image/png" sizes="32x32" href="_assets/favicons/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="_assets/favicons/favicon-16x16.png">
-    <link rel="shortcut icon" href="_assets/favicons/favicon.ico">
-    <link rel="stylesheet" href="dist/homepage.css">
-</head>
+<?
+$title = 'Best HTML 5 Grid in the World';
+$keywords = 'javascript data grid react angularjs angular 2 web components aurelia';
+$description = 'A feature rich datagrid designed for Enterprise. Easily integrate with your framework to deliver filtering, grouping, aggregation, pivoting and much more.';
+meta_and_links($title, $keywords, $description, false);
+?>
+<link rel="stylesheet" href="dist/homepage.css">
 </head>
 
 <body>
     <header id="nav">
-        <nav>
-            <h1><a id="logo" href="#" title="The Best HTML 5 Grid in the World">ag-Grid</a></h1>
-
-            <button id="navbar-toggle" 
-                type="button" 
-                data-toggle="collapse" data-target="#main-nav" aria-controls="main-nav" aria-expanded="false" aria-label="Toggle navigation">
-                <span>&nbsp;</span>
-            </button>
-
-            <div class="collapse navbar-collapse" id="main-nav">
-                <ul>
-                    <li><a href="#">Demo</a></li>
-                    <li><a href="documentation.html">Documentation</a></li>
-                    <li><a href="#">Support</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#" id="pricing">Pricing</a></li>
-                </ul>
-            </div>
-        </nav>
+        <?php include 'includes/navbar.php' ?>
 
         <section id="punch">
             <div id="doodle-container">
@@ -303,58 +272,6 @@ foreach ($groups as $group) {
 
     <?= globalAgGridScript(true) ?>
     <script src="dist/homepage.js"></script>
-
-    <footer id="site-footer">
-        <div>
-            <div>
-                <h5>Documentation</h5>
-                <ul>
-                    <li><a href="#">Getting Started</a></li>
-                    <li><a href="#">Features</a></li>
-                    <li><a href="#">Changelog</a></li>
-                    <li><a href="#">Pipeline</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h5>Support &amp; Community</h5>
-                <ul>
-                    <li><a href="#">Forum</a></li>
-                    <li><a href="#">Stack Overflow</a></li>
-                    <li><a href="#">License &amp; Pricing</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <h5>The Company</h5>
-                <ul>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Team</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">Testimonials</a></li>
-                </ul>
-            </div>
-
-            <div>
-                <ul>
-                    <li><a class="github-button" href="https://github.com/ag-grid/ag-grid" data-show-count="true" aria-label="Star ag-grid/ag-grid on GitHub">Star</a></li>
-                    <li><a href="https://twitter.com/ceolter?ref_src=twsrc%5Etfw" class="twitter-follow-button" data-show-count="false">Follow @ceolter</a></li>
-                </ul>
-            </div>
-        </div>
-
-        <div id="copy">
-            <div>ag-Grid LTD registered in the United Kingdom. Company No 07318192.</div> 
-            <div>&copy; ag-Grid Ltd. 2015-2017</div>
-        </div>
-    </footer>
-
-    <script async defer src="https://platform.twitter.com/widgets.js"></script>
-    <script async defer src="https://buttons.github.io/buttons.js"></script>
-
-    <div id="cookie-warning" style="display: none"><div>
-        This website uses cookies to ensure you get the best experience on our website. <a class="btn btn-primary" id="cookie-accept">Got It</a>
-    </div></div>
-
+    <?php include 'includes/footer.php' ?>
 </body>
 </html>

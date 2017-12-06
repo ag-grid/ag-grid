@@ -7,14 +7,17 @@ const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 let homepage = './src/_assets/homepage/main.ts';
+let docs = './src/_assets/docs/main.ts';
 
 if (require('minimist')(process.argv.slice(2)).hmr) {
     homepage = ['./src/_assets/homepage/main.ts', 'webpack-hot-middleware/client?path=/dist/__webpack_hmr&reload=true'];
+    docs = ['./src/_assets/docs/main.ts', 'webpack-hot-middleware/client?path=/dist/__webpack_hmr&reload=true'];
 }
 
 module.exports = {
     entry: {
-        homepage: homepage
+        homepage: homepage,
+        docs: docs,
     },
     output: {
         publicPath: '/',
@@ -90,7 +93,6 @@ module.exports = {
         new webpack.NamedModulesPlugin(),
         new webpack.HotModuleReplacementPlugin(),
         new ExtractTextPlugin({filename: '[name].css'}),
-
 
         new webpack.ProvidePlugin({
             $: 'jquery',

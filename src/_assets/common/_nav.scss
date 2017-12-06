@@ -8,9 +8,11 @@
         padding-bottom: 0px !important;
     }
 
+nav { @extend .navbar, .navbar-expand-sm, .navbar-light, .full-width-row;
+    }
 
-    nav {
-        @extend .navbar, .navbar-expand-sm, .navbar-light, .full-width-row;
+    &.compact {
+        padding-bottom: 0; 
     }
 
     $logo-scale: 6;
@@ -48,13 +50,20 @@
             @extend .nav-item, .ml-4;
 
             a {
-                @extend .nav-link;
-                color: $offwhite !important;
+                display: block;
+                padding: 0.5rem 1rem;
+                color: $offwhite;
             }
 
             a.active {
                 color: $white;
             }
+
+        }
+        #trial a {
+            @extend .rounded;
+            background-color: $offwhite;
+            color: $blue-2 !important;
         }
     }
 }
