@@ -1,5 +1,7 @@
 var columnDefs = [
-    { headerName: "Athlete", field: "athlete", rowGroupIndex: 1, hide: true },
+    {
+        headerName: "Athlete", field: "athlete", rowGroupIndex: 1, hide: true
+    },
     {
         headerName: "Age", field: "age", width: 90, enableValue: true,
         icons: {
@@ -19,17 +21,16 @@ var columnDefs = [
         headerName: "Year", field: "year", width: 90, enableRowGroup: true
     },
     {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110, icons: {
-        sortAscending: function () {
-            return 'ASC';
-        },
-        sortDescending: function () {
-            return 'DESC';
-        },
-        checkboxChecked: '<i class="fa fa-arrow-left"/>',
-        checkboxUnchecked: '<i class="fa fa-arrow-right"/>',
-        checkboxIndeterminate: '<i class="fa fa-arrow-up"/>'
-    }
+    {
+        headerName: "Sport", field: "sport", width: 110,
+        icons: {
+            sortAscending: function () {
+                return 'ASC';
+            },
+            sortDescending: function () {
+                return 'DESC';
+            }
+        }
     },
     {headerName: "Gold", field: "gold", width: 100},
     {headerName: "Silver", field: "silver", width: 100},
@@ -63,14 +64,14 @@ var gridOptions = {
     // override all the defaults with font awesome
     icons: {
         // use font awesome for menu icons
-        menu: '<i class="fa fa-bath"/>',
+        menu: '<i class="fa fa-bath" style="width: 10px"/>',
         filter: '<i class="fa fa-long-arrow-down"/>',
         columns: '<i class="fa fa-handshake-o"/>',
         sortAscending: '<i class="fa fa-long-arrow-down"/>',
         sortDescending: '<i class="fa fa-long-arrow-up"/>',
         // use some strings from group
-        groupExpanded: '<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/minus.png" style="width: 15px;"/>',
-        groupContracted: '<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/plus.png" style="width: 15px;"/>',
+        groupExpanded: '<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/minus.png" style="width: 12px;padding-right: 2px"/>',
+        groupContracted: '<img src="https://cdn.rawgit.com/ag-grid/ag-grid-docs/56853d5aa6513433f77ac3f808a4681fdd21ea1d/src/javascript-grid-icons/plus.png" style="width: 12px;padding-right: 2px"/>',
         columnMovePin: '<i class="fa fa-hand-grab-o"/>',
         columnMoveAdd: '<i class="fa fa-plus-square-o"/>',
         columnMoveHide: '<i class="fa fa-remove"/>',
