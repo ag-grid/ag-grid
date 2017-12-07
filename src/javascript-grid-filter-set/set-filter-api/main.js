@@ -11,8 +11,8 @@ var columnDefs = [
         headerName: 'Country',
         field: 'country',
         width: 140,
-        cellRenderer: countryCellRenderer,
-        keyCreator: countryKeyCreator,
+        cellRenderer: 'countryCellRenderer',
+        keyCreator: 'countryKeyCreator',
         filterParams: {
             // values: ['England', 'France', 'Australia'],
             newRowsAction: 'keep'
@@ -31,7 +31,11 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     enableFilter: true,
-    enableColResize: true
+    enableColResize: true,
+    components: {
+        countryCellRenderer: countryCellRenderer,
+        countryKeyCreator: countryKeyCreator
+    }
 };
 
 function countryCellRenderer(params) {

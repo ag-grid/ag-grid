@@ -4,13 +4,7 @@ var columnDefs = [
         // it is important to have node.id here, so that when the id changes (which happens
         // when the row is loaded) then the cell is refreshed.
         valueGetter: 'node.id',
-        cellRenderer: function(params) {
-            if (params.value !== undefined) {
-                return params.value;
-            } else {
-                return '<img src="../images/loading.gif">'
-            }
-        }
+        cellRenderer: 'loadingRenderer'
     },
     {headerName: "Athlete", field: "athlete", width: 150},
     {headerName: "Age", field: "age", width: 90},
@@ -25,6 +19,16 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    components:{
+        loadingRenderer: function(params) {
+            if (params.value !== undefined) {
+                return params.value;
+            } else {
+                return '<img src="../images/loading.gif">'
+            }
+        }
+
+    },
     enableColResize: true,
     rowBuffer: 0,
     debug: true,

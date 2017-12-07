@@ -41,10 +41,10 @@ var columnDefs = [
         field: "gender",
         width: 90,
         editable: true,
-        cellRenderer: GenderCellRenderer,
+        cellRenderer: 'genderCellRenderer',
         cellEditor: 'richSelect',
         cellEditorParams: {
-            cellRenderer: GenderCellRenderer,
+            cellRenderer: 'genderCellRenderer',
             values: ['Male', 'Female']
         }
     },
@@ -53,24 +53,24 @@ var columnDefs = [
         field: "age",
         width: 70,
         editable: true,
-        cellEditor: NumericCellEditor
+        cellEditor: 'numericCellEditor'
     },
     {
         headerName: "Mood",
         field: "mood",
         width: 70,
-        cellRenderer: MoodCellRenderer,
-        cellEditor: MoodEditor,
+        cellRenderer: 'moodCellRenderer',
+        cellEditor: 'moodEditor',
         editable: true
     },
     {
         headerName: "Country",
         field: "country",
         width: 100,
-        cellRenderer: CountryCellRenderer,
+        cellRenderer: 'countryCellRenderer',
         cellEditor: 'richSelect',
         cellEditorParams: {
-            cellRenderer: CountryCellRenderer,
+            cellRenderer: 'countryCellRenderer',
             values: [
                 {name: 'Ireland', code: 'IE'},
                 {name: 'UK', code: 'UK'},
@@ -110,6 +110,13 @@ var gridOptions = {
     },
     onCellEditingStopped: function (event) {
         console.log('cellEditingStopped');
+    },
+    components:{
+        genderCellRenderer: GenderCellRenderer,
+        numericCellEditor: NumericCellEditor,
+        moodCellRenderer: MoodCellRenderer,
+        moodEditor: MoodEditor,
+        countryCellRenderer: CountryCellRenderer
     }
 };
 

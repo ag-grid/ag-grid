@@ -9,9 +9,7 @@ var columnDefs = [
     {
         headerName: 'D',
         field: 'd',
-        cellRenderer: function(params) {
-            return '<b>' + params.value.name + '</b>';
-        },
+        cellRenderer: 'boldRenderer',
         // this is needed to avoid toString=[object,object] result with objects
         getQuickFilterText: function(params) {
             return params.value.name;
@@ -22,9 +20,7 @@ var columnDefs = [
     {
         headerName: 'E',
         field: 'e',
-        cellRenderer: function(params) {
-            return '<b>' + params.value.name + '</b>';
-        }
+        cellRenderer: 'boldRenderer'
     }
 ];
 
@@ -59,7 +55,12 @@ var gridOptions = {
         editable: true
     },
     columnDefs: columnDefs,
-    rowData: createRowData()
+    rowData: createRowData(),
+    components:{
+        boldRenderer: function(params) {
+            return '<b>' + params.value.name + '</b>';
+        }
+    }
 };
 
 function onFilterTextBoxChanged() {

@@ -119,13 +119,7 @@ var columnDefs = [
         headerName: 'ID',
         width: 50,
         valueGetter: 'node.id',
-        cellRenderer: function(params) {
-            if (params.value !== undefined) {
-                return params.value;
-            } else {
-                return '<img src="../images/loading.gif">';
-            }
-        },
+        cellRenderer: 'loadingRenderer',
         // we don't want to sort by the row index, this doesn't make sense as the point
         // of the row index is to know the row index in what came back from the server
         suppressSorting: true,
@@ -166,6 +160,15 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    components:{
+        loadingRenderer:function(params) {
+            if (params.value !== undefined) {
+                return params.value;
+            } else {
+                return '<img src="../images/loading.gif">';
+            }
+        }
+    }
     floatingFilter: true,
     debug: true,
     enableServerSideSorting: true,
