@@ -189,6 +189,13 @@ export class GroupStage implements IRowNodeStage {
         this.removeOneNode(childNode, details);
         this.insertOneNode(childNode, details);
 
+        // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
+        // refreshed into the gui.
+        // this is needed to kick off the event that rowComp listens to for refresh. this in turn
+        // then will get each cell in the row to refresh - which is what we need as we don't know which
+        // columns will be displaying the rowNode.key info.
+        childNode.setData(childNode.data);
+
         // we add both old and new parents to changed path, as both will need to be refreshed.
         // we already added the old parent (in calling method), so just add the new parent here
         if (details.changedPath) {
