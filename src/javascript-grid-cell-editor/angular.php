@@ -4,7 +4,7 @@
 </h1>
 
 <p>
-    It is possible to provide a Angular cell editors's for ag-Grid to use if you are are using the
+    It is possible to provide Angular cell editors's for ag-Grid to use if you are are using the
     Angular version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
     registering framework components</a> for how to register framework components.
 </p>

@@ -5,7 +5,7 @@
 </h2>
 
 <p>
-    It is possible to provide a Aurelia cell renderer's for ag-Grid to use if you are are using the
+    It is possible to provide Aurelia cell renderer's for ag-Grid to use if you are are using the
     Aurelia version of ag-Grid.
 </p>
 

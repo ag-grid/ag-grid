@@ -1,20 +1,9 @@
 <p>
     <!-- start of aurelia -->
-    <h2 id="aureliaFiltering">
+    <h1 id="aureliaFiltering">
         <img src="../images/aurelia.png" style="width: 60px"/>
         Aurelia Filtering
-    </h2>
-
-    <div class="note" style="margin-bottom: 20px">
-        <img align="left" src="../images/note.png" style="margin-right: 10px;" />
-        <p>This section explains how to create an ag-Grid Filter using Aurelia. You should read about how
-            <a href="../javascript-grid-filter-component/">Filters Components</a> work in ag-Grid first before trying to
-            understand this section.</p>
-    </div>
-
-    <p>
-        All of the information above is relevant to Aurelia filters - this section explains how to apply this logic to your Aurelia component.
-    </p>
+    </h1>
 
     <p>
         For an example on Aurelia filtering, see the
