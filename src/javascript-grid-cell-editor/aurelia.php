@@ -4,13 +4,6 @@
         Aurelia Cell Editing
     </h2>
 
-    <div class="note" style="margin-bottom: 20px">
-        <img align="left" src="../images/note.png" style="margin-right: 10px;" />
-        <p>This section explains how to utilise ag-Grid Cell Editors using Aurelia. You should read about how
-            <a href="../javascript-grid-cell-editor/">Cell Editing</a> works in ag-Grid first before trying to
-            understand this section.</p>
-    </div>
-
     <p>
         It is possible to provide a Aurelia Cell Editor for ag-Grid to use. All of the information above is
         relevant to Aurelia Cell Editors. This section explains how to apply this logic to your Aurelia component.
