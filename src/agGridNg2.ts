@@ -337,6 +337,12 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public getDataPath: any = undefined;
     @Input() public rowClassRules: any = undefined;
     @Input() public getRowClassRules: any = undefined;
+    @Input() public loadingOverlayRenderer: any = undefined;
+    @Input() public noRowsOverlayRenderer: any = undefined;
+    @Input() public masterDetail: any = undefined;
+    @Input() public detailCellRendererParams: any = undefined;
+    @Input() public detailCellRenderer: any = undefined;
+    @Input() public detailCellRendererFramework: any = undefined;
 
     /**
      * Outputs
