@@ -1,8 +1,6 @@
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
-    {headerName: "#", width: 50, cellRenderer: function(params) {
-        return params.node.id + 1;
-    } },
+    {headerName: "#", width: 50, cellRenderer:  'rowNodeIdRenderer'},
     {headerName: "Athlete", field: "athlete", width: 150},
     {headerName: "Age", field: "age", width: 90},
     {headerName: "Country", field: "country", width: 120},
@@ -17,6 +15,11 @@ var columnDefs = [
 
 var gridOptions = {
     // note - we do not set 'virtualPaging' here, so the grid knows we are doing standard paging
+    components:{
+        rowNodeIdRenderer: function(params) {
+            return params.node.id + 1;
+        }
+    },
     enableSorting: true,
     enableFilter: true,
     enableColResize: true,
