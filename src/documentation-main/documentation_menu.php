@@ -190,7 +190,7 @@
     <h4>
         <img src="../images/svg/docs/themes.svg"/>
         &nbsp;
-        Themes <sup class="new">new</sup>
+        Themes
     </h4>
     <i class="fa fa-arrow-right" aria-hidden="true"></i>
 </div>
@@ -198,7 +198,7 @@
 <div class="docsMenu-content">
 
     <?php
-    menuItem(0, 'Styling', 'Overview <sup class="new">new</sup>', 'javascript-grid-styling/');
+    menuItem(0, 'Styling', 'Overview', 'javascript-grid-styling/');
     menuItem(0, 'Fresh Theme', 'Fresh ', 'javascript-grid-themes/fresh-theme.php');
     menuItem(0, 'Blue Theme', 'Blue', 'javascript-grid-themes/blue-theme.php');
     menuItem(0, 'Dark Theme', 'Dark', 'javascript-grid-themes/dark-theme.php');
