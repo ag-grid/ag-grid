@@ -52,13 +52,16 @@ var gridOptions = {
         return isFullWidth(rowNode.data);
     },
     // see ag-Grid docs cellRenderer for details on how to build cellRenderers
-    fullWidthCellRenderer: FullWidthCellRenderer,
+    fullWidthCellRenderer: 'fullWidthCellRenderer',
     getRowHeight: function(params) {
         // return 100px height for full width rows
         return isFullWidth(params.data) ? 100 : 25;
     },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
+    },
+    components:{
+        fullWidthCellRenderer:FullWidthCellRenderer
     }
 };
 

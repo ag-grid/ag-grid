@@ -80,7 +80,13 @@ let gridOptions = {
         }
 
         renderLineGraph(params.data.Symbol);
-    }
+    },
+    // components:{
+    //     lineChartLineRenderer: LineChartLineRenderer,
+    //     barChartLineRenderer: BarChartLineRenderer,
+    //     pieChartLineEditor: PieChartLineEditor,
+    //     pieChartLineRenderer: PieChartLineRenderer
+    // }
 };
 
 
@@ -88,22 +94,26 @@ function LineChartLineRenderer() {
 }
 
 LineChartLineRenderer.prototype.init = function (params) {
+    console.log(params);
     this.eGui = document.createElement('div');
     this.eGui.id = `${params.colDef.field}_${params.rowIndex}_line`;
 };
 
 LineChartLineRenderer.prototype.getGui = function () {
+    console.log(this.eGui);
     return this.eGui;
 };
 
 LineChartLineRenderer.prototype.refresh = function (params) {
     // first sort by date, then retrieve the Close values
+    console.log('refreshing');
     let values = params.value
         .sort((a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime())
         .map((datum) => datum.Close);
     $(`#${this.eGui.id}`).sparkline(values, {height: CELL_DIMENSION_SIZE, width: CELL_DIMENSION_SIZE});
-};
 
+    return true;
+};
 
 function BarChartLineRenderer() {
 }
@@ -130,6 +140,8 @@ BarChartLineRenderer.prototype.refresh = function (params) {
         height: CELL_DIMENSION_SIZE,
         width: CELL_DIMENSION_SIZE
     });
+
+    return true;
 };
 
 function PieChartLineRenderer() {
@@ -167,6 +179,8 @@ PieChartLineRenderer.prototype.refresh = function (params) {
             }
         }
     );
+
+    return true;
 };
 
 function PieChartLineEditor() {

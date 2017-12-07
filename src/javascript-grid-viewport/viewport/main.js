@@ -3,9 +3,7 @@ var columnDefs = [
     {
         headerName: '#',
         width: 50,
-        cellRenderer: function(params) {
-            return '' + params.rowIndex;
-        }
+        cellRenderer: 'rowIdRenderer'
     },
     {headerName: 'Code', field: 'code', width: 70},
     {headerName: 'Name', field: 'name', width: 300},
@@ -53,6 +51,11 @@ var gridOptions = {
     getRowNodeId: function(data) {
         // the code is unique, so perfect for the id
         return data.code;
+    },
+    components:{
+        rowIdRenderer: function(params) {
+            return '' + params.rowIndex;
+        }
     }
 };
 

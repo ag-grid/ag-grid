@@ -24,14 +24,19 @@ rowData.forEach( function(item, i) {
 } );
 
 var columnDefs = [
-    {field: "city", type: 'dimension', cellRenderer: cityCellRenderer},
-    {field: "country", type: 'dimension', cellRenderer: countryCellRenderer},
-    {field: "state", type: 'dimension', cellRenderer: stateCellRenderer, rowGroup: true},
+    {field: "city", type: 'dimension', cellRenderer: 'cityCellRenderer'},
+    {field: "country", type: 'dimension', cellRenderer: 'countryCellRenderer'},
+    {field: "state", type: 'dimension', cellRenderer: 'stateCellRenderer', rowGroup: true},
     {field: "val1", type: 'numberValue'},
     {field: "val2", type: 'numberValue'}
 ];
 
 var gridOptions = {
+    components:{
+        cityCellRenderer: cityCellRenderer,
+        countryCellRenderer: countryCellRenderer,
+        stateCellRenderer: stateCellRenderer
+    },
     rowData: rowData,
     columnDefs: columnDefs,
     rowGroupPanelShow: 'always',
