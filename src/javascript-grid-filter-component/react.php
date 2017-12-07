@@ -1,71 +1,13 @@
-<h2 id="reactFiltering">
+<h1 id="reactFiltering">
     <img src="../images/react.png" style="width: 60px"/>
     React Filtering
-</h2>
-
-<div class="note" style="margin-bottom: 20px">
-    <img align="left" src="../images/note.png" style="margin-right: 10px;"/>
-    <p>This section explains how to create an ag-Grid Filter using React. You should read about how
-        <a href="../javascript-grid-filter-component/">Filters Components</a> work in ag-Grid first before trying to
-        understand this section.</p>
-</div>
+</h1>
 
 <p>
-    It is possible to provide a React filter for ag-Grid to use. All of the information above is
-    relevant to React filters. This section explains how to apply this logic to your React component.
+    It is possible to provide React filters for ag-Grid to use if you are are using the
+    React version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
+    registering framework components</a> for how to register framework components.
 </p>
-
-<p>
-    For examples on React filtering, see the
-    <a href="https://github.com/ag-grid/ag-grid-react-example">ag-grid-react-example</a> on Github.
-    In the example, 'Skills' , 'DOB' and 'Proficiency' columns use React filters.</p>
-</p>
-
-<h3 id="specifying-a-react-filter"><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React Filter
-</h3>
-
-<p>
-    If you are using the ag-grid-react component to create the ag-Grid instance,
-    then you will have the option of additionally specifying the filters
-    as React components.
-</p>
-
-<snippet>
-// create your filter as a React component
-class NameFilter extends React.Component {
-
-    // put in render logic, build a nice gui in React
-    render() {
-        return &lt;span&gt;My Nice Little Filter Gui&lt;/span&gt;;
-    }
-
-    // implement the other Filter callbacks
-    isFilterActive(params) {
-        // do some filter logic
-        return filterPass ? true : false;
-    }
-
-    // etc etc, more logic, but leaving out for now
-}
-
-// then reference the Component in your colDef like this
-colDef = {
-
-    // instead of cellRenderer we use cellRendererFramework
-    filterFramework: NameFilter
-
-    // specify all the other fields as normal
-    headerName: 'Name',
-    field: 'firstName',
-    ...
-}</snippet>
-
-<p>
-    By using <i>colDef.filterFramework</i> (instead of <i>colDef.filter</i>) the grid
-    will know it's a React component, based on the fact that you are using the React version of
-    ag-Grid.
-</p>
-
 
 <h3 id="react-props"><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
 
