@@ -4,20 +4,14 @@
     Angular Floating Filters
 </h2>
 
-<div class="note" style="margin-bottom: 20px">
-    <img align="left" src="../images/note.png" style="margin-right: 10px;"/>
-    <p>This section explains how to utilise ag-Grid floatingFilter using Angular 2+. You should read about how
-        <a href="../javascript-grid-floating-filter-component/">Floating filter works in ag-Grid</a> first before trying to
-        understand this section.</p>
-</div>
+<p>
+    It is possible to provide Angular floating filter for ag-Grid to use if you are are using the
+    Angular version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
+    registering framework components</a> for how to register framework components.
+</p>
 
 <p>
-    See example below on how to create a custom floating filter reusing the out of the box number filter with angular
+    The below example show how to create a custom floating filter reusing the out of the box number filter with Angular.
 </p>
 
 <?= example('Angular Floating Filter Component', 'floating-filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 370, 'onlyShow' => 'angular', 'extras' => array("bootstrap"))) ?>
-
-<note>The full <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> repo shows many
-    more examples for rendering, including grouped rows, full width renderer's
-    and so on, as well as examples on using Angular Components with both Cell Editors and Filters
-</note>

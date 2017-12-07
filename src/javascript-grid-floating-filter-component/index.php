@@ -7,8 +7,7 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="filter-component">Floating Filter Component</h2>
-
+<h1 class="first-h1" id="filter-component">Floating Filter Component</h1>
 
 <p>
     Floating Filter components allow you to add your own floating filter types to ag-Grid. Use this:
@@ -48,16 +47,6 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <h3>Floating Filter Interface</h3>
-
-<p>
-    To provide a custom floating filter you have to provide it either through the column definition property
-    <i>floatingFilterComponent</i> if using plain JS, or via <i>floatingFilterComponentFramework</i> if you
-    are using a framework (such as <code>React</code> or <code>Angular</code>).
-</p><p>
-    For plain JS (<i>floatingFilterComponent</i>) it needs to be provided in the form of a function.
-    ag-Grid will call 'new' on this function and treat the generated class instance as a floating filter
-    component. A floating filter component class can be any function /class that implements the following interface:
-</p>
 
 <snippet>
 interface IFloatingFilterComp {
