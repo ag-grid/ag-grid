@@ -4,7 +4,7 @@
 </h1>
 
 <p>
-    It is possible to provide a React cell editors's for ag-Grid to use if you are are using the
+    It is possible to provide React cell editors's for ag-Grid to use if you are are using the
     React version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
     registering framework components</a> for how to register framework components.
 </p>
