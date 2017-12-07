@@ -2,28 +2,28 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", filter: 'text', suppressFilter: true},
     {headerName: "Gold", field: "gold", filter: 'number', suppressMenu:true,
-        floatingFilterComponent: NumberFloatingFilter,
+        floatingFilterComponent:' numberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true,
             color:'red'
         }
     },
     {headerName: "Silver", field: "silver", filter: 'number', suppressMenu:true,
-        floatingFilterComponent: NumberFloatingFilter,
+        floatingFilterComponent:' numberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true,
             color:'blue'
         }
     },
     {headerName: "Bronze", field: "bronze", filter: 'number', suppressMenu:true,
-        floatingFilterComponent: NumberFloatingFilter,
+        floatingFilterComponent:' numberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true,
             color:'green'
         }
     },
     {headerName: "Total", field: "total", filter: 'number', suppressMenu:true,
-        floatingFilterComponent: NumberFloatingFilter,
+        floatingFilterComponent:' numberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true,
             color:'orange'
@@ -32,6 +32,9 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    components:{
+        numberFloatingFilter: NumberFloatingFilter,        
+    },
     floatingFilter:true,
     columnDefs: columnDefs,
     rowData: null,
