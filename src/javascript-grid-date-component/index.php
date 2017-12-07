@@ -7,8 +7,7 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2>Date Component</h2>
-
+<h1 class="first-h1">Date Component</h1>
 
 <p>
     You can create your own date components, and ag-Grid will use them every time it needs to ask user for a date value.
@@ -60,7 +59,7 @@ interface IDateComp {
     destroy?(): void;
 }</snippet>
 
-<h4>IDateParams</h4>
+<h3>IDateParams</h3>
 
 <p>
     The method init(params) takes a params object with the items listed below. If the user provides
@@ -77,7 +76,7 @@ interface IDateParams {
 }</snippet>
 
 
-<h3>Custom Date Example</h3>
+<h1>Custom Date Example</h1>
 
 <p>
     The example below shows how to register a custom date component, and then how that component is automatically used in
