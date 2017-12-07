@@ -1,0 +1,22 @@
+.fixed-size-header {
+    background-color: #ffdddd;
+}
+
+.resizable-header {
+    background-color: #ddffdd;
+}
+
+.legend-box {
+    border: 1px solid #aaa;
+}
+
+.grid-wrapper {
+    height: 100%;
+    padding-top: 26px;
+    box-sizing: border-box;
+}
+.legend-bar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+}

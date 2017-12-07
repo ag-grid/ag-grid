@@ -2,6 +2,8 @@
 require "example-runner/utils.php";
 require "includes/html-helpers.php";
 define('HOMEPAGE', true);
+// variable necessary in navbar.php
+$version = 'latest';
 ?>
 <!DOCTYPE html>
 <html lang="en">

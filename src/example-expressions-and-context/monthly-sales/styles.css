@@ -1,0 +1,35 @@
+
+        .ag-basic .ag-cell {
+            padding-top: 2px !important;
+            padding-bottom: 2px !important;
+        }
+
+        label {
+            font-weight: normal !important;
+        }
+
+        body {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        .cell-act {
+            background: rgba(255,0,0,0.1);
+        }
+
+        .cell-bud {
+            background: rgba(0,255,0,0.1);
+        }
+
+        .cell-negative {
+            color: darkred;
+        }
+
+        .cell-figure {
+            text-align: right;
+        }
+
+        .ag-row-group {
+            font-weight: bold;
+        }
+    

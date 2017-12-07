@@ -5,3 +5,123 @@
 
 @import '../common/nav.scss';
 @import '../common/footer.scss';
+
+#documentation {
+    @extend .container-fluid;
+    background-color: $white;
+    margin-bottom: 3rem;
+
+    & > div {
+        @extend .row, .full-width-row;
+
+        aside {
+            @extend .col-md-2;
+            font-size: 90%;
+        }
+
+        & > section {
+            @extend .col-md;
+        }
+
+        #side-nav > ul > li > ul {
+            height: 0;
+            overflow: hidden;
+            transition: height 0.3s ease-out;
+        }
+
+        #side-nav,
+        #doc-nav {
+            li {
+                margin-bottom: 0.5rem;
+            }
+
+            span {
+                cursor: pointer;
+            }
+
+            // a tad more convulted way to set whitespace, due to menu collapse / expand animation
+            a + ul, span + ul {
+                & > li:first-child {
+                    margin-top: 0.5rem;
+                }
+
+                & > li:last-child {
+                    margin-bottom: 1rem;
+                }
+            }
+
+            a {
+                color: $gray-700;
+            }
+
+            ul {
+                -webkit-padding-start: 0;
+            }
+
+            & > ul > li > a,
+            & > ul > li > span
+            {
+                font-size: 115%;
+                font-weight: 500;
+            }
+
+            ul ul ul {
+                font-weight: 200;
+                font-size: 95%;
+            }
+
+            ul ul ul {
+                padding-left: 0.5rem;
+            }
+
+            ul ul ul ul {
+                padding-left: 1rem;
+            }
+        }
+
+        #doc-nav {
+            font-size: 90%;
+            border-left: 2px solid $gray-200;
+            display: none;
+            @media (min-width: 1024px) {
+                display: flex;
+            }
+
+            @media (min-width: 1690px) {
+                display: block;
+                position: fixed;
+                left: calc(50% + #{$max-width / 2} + 3rem);
+                width: 250px;
+            }
+
+            a {
+                display: block;
+                &:hover {
+                    text-decoration: none;
+                }
+
+                &:before {
+                    content: '\00a0';
+                    border-left: 2px solid $gray-200;
+                    position: absolute;
+                    left: -2px;
+                }
+
+                &.current-section {
+                    color: $blue-2;
+
+                    &:before {
+                        content: '\00a0';
+                        border-left: 2px solid $blue-2;
+                        position: absolute;
+                        left: -2px;
+                    }
+                }
+            }
+        }
+    }
+
+    aside ul {
+        list-style: none;
+    }
+}

@@ -49,5 +49,6 @@
 
 <?php include_once("../includes/analytics.php"); ?>
 
+<script src="../dist/docs.js"></script>
 </body>
 </html>

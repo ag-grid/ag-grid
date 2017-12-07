@@ -1,0 +1,34 @@
+<div style="padding: 5px;">
+    <button onclick="setRowData(0)">0 Rows</button>
+    <button onclick="setRowData(5)">5 Rows</button>
+    <button onclick="setRowData(20)">20 Rows</button>
+    <button onclick="setRowData(50)">50 Rows</button>
+    <label>
+        <input type="checkbox" id="floating-rows" onclick="cbFloatingRows()" />
+        Pinned Rows
+    </label>
+    &nbsp;
+    &nbsp;
+    &nbsp;
+    Current Row Count = <span id="currentRowCount"></span>
+</div>
+
+<div id="myGrid" class="ag-theme-fresh"></div>
+
+<div style="border: 10px solid #eee; padding: 10px; margin-top: 10px;">
+    <p style="color: #333; text-align: center;">
+        This text is under the grid and should move up and down as the height of the grid changes.
+    </p>
+
+    <p style="color: #777;">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+
+    <p style="color: #777;">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+
+    <p style="color: #777;">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    </p>
+</div>

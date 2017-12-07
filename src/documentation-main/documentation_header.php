@@ -89,7 +89,7 @@ meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
 
 <div id="documentation">
     <div>
-    <aside id="main-nav">
+    <aside id="side-nav">
         <?php include 'documentation_menu.php'; ?>
     </aside>
 

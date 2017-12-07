@@ -48,7 +48,7 @@ include 'documentation_header.php';
                     <p class="list-group-item-text">
                         A detailed look at all the features. Go here for detailed explanations and examples
                         for all features. Items that are only available
-                        in ag-Grid Enterprise are marked with the "<img src="../images/enterprise.png"/>" symbol.
+                        in ag-Grid Enterprise are marked with the "<span class="enterprise-icon">e</span>" symbol.
                     </p>
                 </div>
             </a>

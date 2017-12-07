@@ -1,0 +1,16 @@
+.grid-wrapper {
+    height: 100%;
+    box-sizing: border-box;
+    padding-top: 90px;
+}
+.button-bar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    margin-left: 10px;
+    margin-top: 0px;
+}
+
+.hidden {
+    display: none;
+}

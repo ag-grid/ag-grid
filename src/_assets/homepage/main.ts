@@ -1,11 +1,5 @@
 import './main.scss';
-import 'bootstrap';
-import * as $ from 'jquery';
-import * as lazyload from 'lazyload';
-import * as AnchorJS from 'anchor-js';
-import * as Prism from 'prismjs';
-import { initCookieDisclaimer } from '../common/cookie-warning';
-import 'prismjs/components/prism-bash';
+import {$, lazyload, AnchorJS, Prism, initCookieDisclaimer } from '../common/vendor';
 
 function resetIndent(str) {
     const leadingWhitespace = str.match(/^\n?( +)/) ;
@@ -63,7 +57,7 @@ $(() => {
             .parent()
             .hasClass('enterprise');
 
-        var link = $(`<li><a href=#${heading.id}>${$heading.text()} ${enterprise ? ' <span class="enterprise">e</span>' : ''}</a></li>`);
+        var link = $(`<li><a href=#${heading.id}>${$heading.text()} ${enterprise ? ' <span class="enterprise-icon">e</span>' : ''}</a></li>`);
 
         if (headingLevel > level) {
             list = $('<ul></ul>');

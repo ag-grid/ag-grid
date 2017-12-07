@@ -1,0 +1,20 @@
+<ag-grid-angular style="height: 525px; width: 900px;" class="ag-theme-fresh"
+
+                 [gridOptions]="gridOptions"
+                 [columnDefs]="columnDefs"
+                 [rowData]="rowData"
+
+                 [icons]="icons"
+
+                 enableColResize
+                 enableSorting
+                 enableFilter
+                 groupHeaders
+                 suppressRowClickSelection
+                 toolPanelSuppressGroups
+                 toolPanelSuppressValues
+                 rowHeight="22"
+                 rowSelection="multiple"
+
+                 (gridReady)="onReady($event)">
+</ag-grid-angular>

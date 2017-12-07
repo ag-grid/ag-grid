@@ -4,15 +4,13 @@
     background-image: linear-gradient(to top left, $blue-2, $blue-1);
     box-shadow: inset 0px -8px 121px -50px $blue-1;
 
-    &.inner-nav {
-        padding-bottom: 0px !important;
-    }
-
-nav { @extend .navbar, .navbar-expand-sm, .navbar-light, .full-width-row;
+    nav {
+        @extend .navbar, .navbar-expand-sm, .navbar-light, .full-width-row;
     }
 
     &.compact {
-        padding-bottom: 0; 
+        padding-bottom: 0;
+        margin-bottom: 3rem;
     }
 
     $logo-scale: 6;
@@ -44,7 +42,7 @@ nav { @extend .navbar, .navbar-expand-sm, .navbar-light, .full-width-row;
     }
 
     #main-nav ul {
-        @extend .navbar-nav,  .ml-md-auto;
+        @extend .navbar-nav, .ml-md-auto;
 
         li {
             @extend .nav-item, .ml-4;
@@ -58,7 +56,6 @@ nav { @extend .navbar, .navbar-expand-sm, .navbar-light, .full-width-row;
             a.active {
                 color: $white;
             }
-
         }
         #trial a {
             @extend .rounded;
@@ -67,4 +64,3 @@ nav { @extend .navbar, .navbar-expand-sm, .navbar-light, .full-width-row;
         }
     }
 }
-

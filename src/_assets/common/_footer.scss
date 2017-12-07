@@ -1,8 +1,8 @@
 footer#site-footer {
     color: $gray-300;
     @extend .text-light;
-    background-image: url('../common/hexagons.svg'), linear-gradient(170deg, $blue-1, darken($blue-1, 50));
-    background-size: 200px 200px, 100% 100%;
+    background-image: url('../common/hexagons.svg'), linear-gradient(170deg, $blue-1, darken($blue-1, 20));
+    background-size: 100px 100px, 100% 100%;
     background-repeat: repeat, no-repeat;
     font-size: 85%;
     font-weight: 300;

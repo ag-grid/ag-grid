@@ -1,0 +1,89 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "ag-grid-webcomponent@1.0.0",
+        "scope": null,
+        "escapedName": "ag-grid-webcomponent",
+        "name": "ag-grid-webcomponent",
+        "rawSpec": "1.0.0",
+        "spec": "1.0.0",
+        "type": "version"
+      },
+      "/Users/seanlandsman/IdeaProjects/ag/ag-grid/webcomponents/ag-grid-webcomponent-example"
+    ]
+  ],
+  "_from": "ag-grid-webcomponent@1.0.0",
+  "_id": "ag-grid-webcomponent@1.0.0",
+  "_inCache": true,
+  "_location": "/ag-grid-webcomponent",
+  "_nodeVersion": "6.9.1",
+  "_npmOperationalInternal": {
+    "host": "s3://npm-registry-packages",
+    "tmp": "tmp/ag-grid-webcomponent-1.0.0.tgz_1499088640870_0.05410667578689754"
+  },
+  "_npmUser": {
+    "name": "seanlandsman",
+    "email": "sean@thelandsmans.com"
+  },
+  "_npmVersion": "3.10.9",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "ag-grid-webcomponent@1.0.0",
+    "scope": null,
+    "escapedName": "ag-grid-webcomponent",
+    "name": "ag-grid-webcomponent",
+    "rawSpec": "1.0.0",
+    "spec": "1.0.0",
+    "type": "version"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/ag-grid-webcomponent/-/ag-grid-webcomponent-1.0.0.tgz",
+  "_shasum": "8f98115c23d80467a352eeeb02c0da888ee74af4",
+  "_shrinkwrap": null,
+  "_spec": "ag-grid-webcomponent@1.0.0",
+  "_where": "/Users/seanlandsman/IdeaProjects/ag/ag-grid/webcomponents/ag-grid-webcomponent-example",
+  "author": {
+    "name": "Sean Landsman",
+    "email": "sean@thelandsmans.com"
+  },
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid-webcomponent/issues"
+  },
+  "dependencies": {},
+  "description": "ag-Grid Web Component",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "8f98115c23d80467a352eeeb02c0da888ee74af4",
+    "tarball": "https://registry.npmjs.org/ag-grid-webcomponent/-/ag-grid-webcomponent-1.0.0.tgz"
+  },
+  "gitHead": "e64a047f2036120857250ee1a2d1a326a15cb077",
+  "homepage": "https://github.com/ag-grid/ag-grid-webcomponent#readme",
+  "keywords": [
+    "aggrid",
+    "grid",
+    "webcomponent",
+    "web",
+    "component"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "seanlandsman",
+      "email": "sean@thelandsmans.com"
+    }
+  ],
+  "name": "ag-grid-webcomponent",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ag-grid/ag-grid-webcomponent.git"
+  },
+  "scripts": {},
+  "version": "1.0.0"
+}
