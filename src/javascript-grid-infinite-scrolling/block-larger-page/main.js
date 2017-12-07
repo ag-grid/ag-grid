@@ -168,7 +168,7 @@ var gridOptions = {
                 return '<img src="../images/loading.gif">';
             }
         }
-    }
+    },
     floatingFilter: true,
     debug: true,
     enableServerSideSorting: true,
