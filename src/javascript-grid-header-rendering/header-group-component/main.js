@@ -1,6 +1,6 @@
 var columnDefs = [{
         headerName: "Athlete Details",
-        headerGroupComponent: MyHeaderGroupComponent,
+        headerGroupComponent: 'myHeaderGroupComponent',
         children: [
             {headerName: "Athlete", field: "athlete", width: 150},
             {headerName: "Age", field: "age", width: 90,  columnGroupShow: 'open'},
@@ -8,7 +8,7 @@ var columnDefs = [{
     ]},
     {
         headerName: "Medal details",
-        headerGroupComponent: MyHeaderGroupComponent,
+        headerGroupComponent: 'myHeaderGroupComponent',
         children: [
             {headerName: "Year", field: "year", width: 90},
             {headerName: "Date", field: "date", width: 110},
@@ -21,12 +21,16 @@ var columnDefs = [{
 ];
 
 var gridOptions = {
+    components:{
+        myHeaderComponent: MyHeaderComponent,
+        myHeaderGroupComponent: MyHeaderGroupComponent
+    },
     columnDefs: columnDefs,
     rowData: null,
     enableColResize: true,
     defaultColDef: {
         width: 100,
-        headerComponent : MyHeaderComponent,
+        headerComponent : 'myHeaderComponent',
         headerComponentParams : {
             menuIcon: 'fa-bars'
         }
