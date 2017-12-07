@@ -170,7 +170,7 @@ export class InMemoryNodeManager {
 
         let rowNode: RowNode;
         if (_.exists(rowNodeIdFunc)) {
-            // find rowNode us id
+            // find rowNode using id
             let id: string = rowNodeIdFunc(data);
             rowNode = this.allNodesMap[id];
             if (!rowNode) {
