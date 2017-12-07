@@ -1,13 +1,9 @@
 import {RowRenderer} from "./rowRenderer";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {Column} from "../entities/column";
-import {Bean} from "../context/context";
-import {Utils as _} from "../utils";
-import {Autowired} from "../context/context";
+import {Autowired, Bean} from "../context/context";
 import {HeaderRenderer} from "../headerRendering/headerRenderer";
-import {RenderedHeaderCell} from "../headerRendering/deprecated/renderedHeaderCell";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {HeaderComp} from "../headerRendering/header/headerComp";
 import {HeaderWrapperComp} from "../headerRendering/header/headerWrapperComp";
 import {Component} from "../widgets/component";
 
@@ -73,16 +69,9 @@ export class AutoWidthCalculator {
 
         // find the rendered header cell
         this.headerRenderer.forEachHeaderElement( headerElement => {
-            if (headerElement instanceof RenderedHeaderCell) {
-                let currentCell = <RenderedHeaderCell> headerElement;
-                if (currentCell.getColumn() === column) {
-                    comp = currentCell;
-                }
-            } else if (headerElement instanceof HeaderWrapperComp) {
-                let headerWrapperComp = <HeaderWrapperComp> headerElement;
-                if (headerWrapperComp.getColumn() === column) {
-                    comp = headerWrapperComp;
-                }
+            let headerWrapperComp = <HeaderWrapperComp> headerElement;
+            if (headerWrapperComp.getColumn() === column) {
+                comp = headerWrapperComp;
             }
         });
 

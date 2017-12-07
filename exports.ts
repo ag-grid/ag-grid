@@ -89,10 +89,8 @@ export {CssClassApplier} from "./dist/lib/headerRendering/cssClassApplier";
 export {HeaderContainer} from "./dist/lib/headerRendering/headerContainer";
 export {HeaderRenderer} from "./dist/lib/headerRendering/headerRenderer";
 export {HeaderRowComp} from "./dist/lib/headerRendering/headerRowComp";
-export {HeaderTemplateLoader} from "./dist/lib/headerRendering/deprecated/headerTemplateLoader";
 export {HorizontalDragService} from "./dist/lib/headerRendering/horizontalDragService";
 export {MoveColumnController} from "./dist/lib/headerRendering/moveColumnController";
-export {RenderedHeaderCell} from "./dist/lib/headerRendering/deprecated/renderedHeaderCell";
 export {StandardMenuFactory} from "./dist/lib/headerRendering/standardMenu";
 
 // layout

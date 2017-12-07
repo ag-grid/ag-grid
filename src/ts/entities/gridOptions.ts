@@ -209,7 +209,6 @@ export interface GridOptions {
     overlayNoRowsTemplate?: string;
     rowHeight?: number;
     detailRowHeight?: number;
-    headerCellTemplate?: string;
 
     masterDetail?: boolean;
     isRowMaster?: IsRowMaster;
@@ -275,10 +274,8 @@ export interface GridOptions {
     fullWidthCellRendererParams?: any;
     isFullWidthCell?(rowNode: RowNode): boolean;
 
-    headerCellRenderer?: any;
     groupRowAggNodes?(nodes: RowNode[]): any;
     getBusinessKeyForNode?(node: RowNode): string;
-    getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?: GetNodeChildDetails;
     getDataPath?: GetDataPath;
     treeData?: boolean;
