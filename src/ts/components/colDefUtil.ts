@@ -93,8 +93,6 @@ export class ColDefUtil {
         'valueGetter',
         'valueSetter',
         'keyCreator',
-        'headerCellRenderer',
-        'headerCellTemplate',
         'cellRendererFramework',
         'pinnedRowCellRenderer',
         'valueFormatter',
