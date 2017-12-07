@@ -30,30 +30,34 @@ var columnDefs = [
         suppressFilterButton:true
     }},
     {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
+    {headerName: "Gold", field: "gold", width: 100, floatingFilterComponent: 'numberFloatingFilter',
         floatingFilterComponentParams:{
             maxValue:7,
             suppressFilterButton:true
-        }, filter: NumberFilter
+        }, filter: 'numberFilter'
     },
-    {headerName: "Silver", field: "silver", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
+    {headerName: "Silver", field: "silver", width: 100, floatingFilterComponent: 'numberFloatingFilter',
         floatingFilterComponentParams:{
             maxValue:3,
             suppressFilterButton:true
-        }, filter: NumberFilter},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
+        }, filter: 'numberFilter'},
+    {headerName: "Bronze", field: "bronze", width: 100, floatingFilterComponent: 'numberFloatingFilter',
         floatingFilterComponentParams:{
             maxValue:2,
             suppressFilterButton:true
-        }, filter: NumberFilter},
-    {headerName: "Total", field: "total", width: 100, filter: 'number', floatingFilterComponent: NumberFloatingFilter,
+        }, filter: 'numberFilter'},
+    {headerName: "Total", field: "total", width: 100, floatingFilterComponent: 'numberFloatingFilter',
         floatingFilterComponentParams:{
             maxValue:5,
             suppressFilterButton:true
-        }, filter: NumberFilter}
+        }, filter: 'numberFilter'}
 ];
 
 var gridOptions = {
+    components:{
+        numberFloatingFilter: NumberFloatingFilter,
+        filter: NumberFilter
+    },
     floatingFilter:true,
     columnDefs: columnDefs,
     rowData: null,

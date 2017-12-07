@@ -79,6 +79,9 @@ var groupColumn = {
 };
 
 var gridOptions = {
+    components:{
+        personFilter: PersonFilter
+    },
     floatingFilter: true,
     suppressEnterprise: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
@@ -187,7 +190,7 @@ var firstColumn = {
     editable: true,
     enableRowGroup: true,
     // enablePivot: true,
-    filter: PersonFilter,
+    filter: 'personFilter',
     checkboxSelection: function (params) {
         // we put checkbox on the name if we are not doing no grouping
         return params.columnApi.getRowGroupColumns().length === 0;

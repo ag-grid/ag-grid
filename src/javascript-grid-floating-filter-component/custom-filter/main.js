@@ -1,13 +1,16 @@
 
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, filter: 'text', suppressFilter: true},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'number', filter: NumberFilter, suppressMenu: true},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'number', filter: NumberFilter, suppressMenu: true},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'number', filter: NumberFilter, suppressMenu: true},
-    {headerName: "Total", field: "total", width: 100, filter: 'number', filter: NumberFilter, suppressMenu: true}
+    {headerName: "Gold", field: "gold", width: 100, filter: 'numberFilter', suppressMenu: true},
+    {headerName: "Silver", field: "silver", width: 100, filter: 'numberFilter', suppressMenu: true},
+    {headerName: "Bronze", field: "bronze", width: 100, filter: 'numberFilter', suppressMenu: true},
+    {headerName: "Total", field: "total", width: 100, filter: 'numberFilter', suppressMenu: true}
 ];
 
 var gridOptions = {
+    components:{
+        numberFilter: NumberFilter
+    },
     floatingFilter:true,
     columnDefs: columnDefs,
     rowData: null,
