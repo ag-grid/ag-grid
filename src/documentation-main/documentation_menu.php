@@ -246,20 +246,17 @@
     menuItem(0, 'Examples Overview', 'Overview', 'javascript-grid-examples/');
 
     menuItemWithIcon('react_small.png', 1, 'React Examples', 'React Examples', 'example-react/', true);
-    menuItem(2, 'React Pinned Row', 'Pinned Rows', 'example-react-floating-row/');
     menuItem(2, 'React Full Width', 'Full Width Rows', 'example-react-full-width-rows/');
     menuItem(2, 'React Group Row', 'Group Rows', 'example-react-grouped-row/');
     menuItem(2, 'React Redux', 'Redux Examples', 'example-react-redux/');
 
     menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);
-    menuItem(2, 'Angular Pinned Row', 'Pinned Rows', 'example-angular-floating-row/');
     menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
     menuItem(2, 'Angular Group Row', 'Group Rows', 'example-angular-grouped-row/');
     menuItem(2, 'Angular RxJS', 'RxJS', 'example-angular-rxjs/');
     menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
 
     menuItemWithIcon('polymer-small.png', 1, 'Polymer Examples', 'Polymer Examples', 'example-polymer/', true);
-    menuItem(2, 'Polymer Pinned Row', 'Pinned Rows', 'example-polymer-floating-row/');
     menuItem(2, 'Polymer Full Width', 'Full Width Rows', 'example-polymer-full-width-rows/');
     menuItem(2, 'Polymer Group Row', 'Group Rows', 'example-polymer-grouped-row/');
 
