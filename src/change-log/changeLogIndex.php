@@ -13,6 +13,15 @@ include('../includes/mediaHeader.php');
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
 
+    <h2>Next</h2>
+
+    <ul>
+        <li>Removed deprecated items with old way of doing header templates as new way of providing header templates was introduced in v14.
+            Removed grid options are getHeaderCellTemplate, headerCellTemplate, headerCellRenderer.
+            Removed column options are headerCellTemplate and headerCellRenderer</li>
+    </ul>
+
+
     <h2>14.x</h2>
 
     <h3>Version 14.2.0 [16-NOV-2017]</h3>
