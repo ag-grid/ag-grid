@@ -85,8 +85,8 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
     public init(params: P): void {
         this.filterParams = params;
         this.defaultFilter = this.filterParams.defaultOption;
-        if (this.filterParams.filterOptions){
-            if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS)<0){
+        if (this.filterParams.filterOptions && !this.defaultFilter){
+            if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS) < 0){
                 this.defaultFilter = this.filterParams.filterOptions[0];
             }
         }
