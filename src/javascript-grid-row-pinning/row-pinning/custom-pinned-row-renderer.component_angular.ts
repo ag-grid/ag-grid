@@ -1,12 +1,11 @@
 import {Component} from '@angular/core';
-
-import {ICellRendererAngularComp} from 'ag-grid-angular';
+import {ICellRendererAngularComp} from "ag-grid-angular";
 
 @Component({
     selector: 'floating-cell',
     template: `<span [ngStyle]="style">{{params.value}}</span>`
 })
-export class StyledComponent implements ICellRendererAngularComp {
+export class CustomPinnedRowRenderer implements ICellRendererAngularComp {
     public params: any;
     public style: string;
 
