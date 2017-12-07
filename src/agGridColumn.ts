@@ -11,7 +11,7 @@ import {generateBindables} from "./agUtils";
 
 @customElement('ag-grid-column')
 @generateBindables(["colId", "sort", "sortedAt", "sortingOrder", "field", "headerValueGetter", "hideCol", "pinned",
-    "tooltipField", "headerTooltip", "valueGetter", "keyCreator", "headerCellRenderer", "headerCellTemplate",
+    "tooltipField", "headerTooltip", "valueGetter", "keyCreator",
     "width", "minWidth", "maxWidth", "cellClass", "cellStyle", "cellRenderer", "cellRendererFramework",
     "cellRendererParams", "cellEditor", "cellEditorFramework", "cellEditorParams", "floatingCellRenderer",
     "floatingCellRendererFramework", "floatingCellRendererParams", "cellFormatter(", "floatingCellFormatter",
