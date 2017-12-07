@@ -355,9 +355,9 @@ gridOptions.groupRowRendererParams: {
 
     </p>
     <p>
-        Below shows an example of aggregating,
-        then using the entire row to give a summary.
+        Below shows an example of aggregating, then using the entire row to give a summary.
     </p>
+    <p>We use Components for the groupRowRenderer in this example.</p>
 
     <?= example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', array("enterprise" => 1)) ?>
 
