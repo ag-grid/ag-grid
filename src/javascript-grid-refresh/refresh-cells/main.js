@@ -62,13 +62,14 @@ function scrambleAndRefreshAll() {
 function scrambleAndRefreshLeftToRight() {
     scramble();
 
+    var api = gridOptions.api;
     ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function(col, index) {
         var millis = index * 100;
         var params = {
             force: isForceRefreshSelected(),
             columns: [col]
         };
-        callRefreshAfterMillis(params, millis, gridOptions.api);
+        callRefreshAfterMillis(params, millis, api);
     });
 }
 
@@ -79,29 +80,30 @@ function scrambleAndRefreshTopToBottom() {
     var i;
     var rowNode;
 
-    for (i = 0; i < gridOptions.api.getPinnedTopRowCount(); i++) {
-        rowNode = gridOptions.api.getPinnedTopRow(i);
-        refreshRow(rowNode);
+    var api = gridOptions.api;
+    for (i = 0; i < api.getPinnedTopRowCount(); i++) {
+        rowNode = api.getPinnedTopRow(i);
+        refreshRow(rowNode, api);
     }
 
     for (i = 0; i < gridOptions.api.getDisplayedRowCount(); i++) {
         rowNode = gridOptions.api.getDisplayedRowAtIndex(i);
-        refreshRow(rowNode);
+        refreshRow(rowNode, api);
     }
 
     for (i = 0; i < gridOptions.api.getPinnedBottomRowCount(); i++) {
         rowNode = gridOptions.api.getPinnedBottomRow(i);
-        refreshRow(rowNode);
+        refreshRow(rowNode, api);
     }
 
-    function refreshRow(rowNode) {
+    function refreshRow(rowNode, api) {
         var millis = frame++ * 100;
         var rowNodes = [rowNode]; // params needs an array
         var params = {
             force: isForceRefreshSelected(),
             rowNodes: rowNodes
         };
-        callRefreshAfterMillis(params, millis, gridOptions.api);
+        callRefreshAfterMillis(params, millis, api);
     }
 }
 

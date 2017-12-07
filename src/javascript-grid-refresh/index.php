@@ -8,7 +8,6 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-
     <h1 class="first-h1">View Refresh</h1>
 
     <p>
