@@ -8,7 +8,7 @@ export class PropertyKeys {
         'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText',
         'icons', 'datasource', 'enterpriseDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
         'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
-        'rowClassRules', 'detailGridOptions'
+        'rowClassRules', 'detailGridOptions', 'detailCellRendererParams'
         //,'cellRenderers','cellEditors'
     ];
 
@@ -62,7 +62,7 @@ export class PropertyKeys {
         'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
         'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell', 'getDetailRowData',
        'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath', 'loadingOverlayRenderer',
-        'loadingOverlayRendererFramework', 'noRowsOverlayRenderer', 'noRowsOverlayRendererFramework'];
+        'loadingOverlayRendererFramework', 'noRowsOverlayRenderer', 'noRowsOverlayRendererFramework', 'detailCellRenderer', 'detailCellRendererFramework'];
 
      public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)

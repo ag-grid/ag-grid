@@ -24,6 +24,10 @@ export class ComponentMetadataProvider {
                 mandatoryMethodList: ['getDate', 'setDate'],
                 optionalMethodList: []
             },
+            detailCellRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
             headerComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
