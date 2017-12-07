@@ -145,12 +145,13 @@ include '../documentation-main/documentation_header.php';
             </div>
         </div>
 
-        <h1>Specifying Custom Components</h1>
+        <h1 id="registering-custom-components">Registering Custom Components</h1>
 
         <p>
-            The pages for each component type (cell renderer, cell editor etc) contain details and
-            examples on how to register each component type. However it is useful here to step back
-            and focus on the component registration process which is common across all component types.
+            The pages for each component type (cell renderer, cell editor etc) contain
+            examples on how to register and use each component type. However it is useful here to step back
+            and focus on the component registration process which is common across all component types
+            and all frameworks (React, Angular etc).
         </p>
 
         <p>
@@ -170,7 +171,7 @@ include '../documentation-main/documentation_header.php';
         <p>
             A component is registered with the grid by providing it through the
             <code>components</code> grid property. The <code>components</code>
-            grid property contains a map of 'component names' to 'components classes'.
+            grid property contains a map of 'component names' to 'component classes'.
             Components of all types (editors, renderers, filters etc) are
             all stored together and must have unique names.
         </p>
@@ -239,7 +240,7 @@ gridOptions = {
             </ul>
         </p>
 
-        <h1>Specifying Framework Components</h1>
+        <h1>Registering Framework Components</h1>
 
         <p>
             If you are using a framework such as Angular or React, it is possible to provide
@@ -290,6 +291,88 @@ gridOptions = {
     ...
 }</snippet>
 
+        <h1>Summary of Component Registration</h1>
+
+        <p>
+            Here we give an overview, as there is a lot of similar sounding information above.
+        </p>
+
+        <p>
+            The grid options has the following properties for registering components:
+        </p>
+
+        <?php include 'componentProperties.php' ?>
+
+        <h3>Component Registration</h3>
+
+        <?php printPropertiesTable($componentRegistrationGridOptions) ?>
+
+        <h3>Component Usage</h3>
+
+        <p>
+            The below table gives an overview of where components can be used. The table shows
+            both options for usage:
+            <ul>
+            <li>
+                <b>Name / Direct JavaScript:</b> This can be: 1) A component name referring to a
+                registered component (either plain JavaScript or framework component); 2) A direct
+                reference to a JavaScript component.
+            </li>
+            <li>
+                <b>Direct Framework:</b> A direct reference to a framework (React, Angular etc) component.
+            </li>
+
+        </ul>
+        </p>
+
+        <table class="row-model-table">
+            <tr class="first-row">
+                <td>Component</td><td>Where</td><td>Name / Direct JavaScript</td><td>Direct Framework</td>
+            </tr>
+            <tr class="item-row">
+                <td>Detail Cell Renderer</td><td>Grid Option</td><td>detailCellRenderer</td><td>detailCellRenderer<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Full Width Cell Renderer</td><td>Grid Option</td><td>fullWidthCellRenderer</td><td>fullWidthCellRenderer<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Group Row Cell Renderer</td><td>Grid Option</td><td>groupRowRenderer</td><td>groupRowRenderer<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Group Row Inner Cell Renderer</td><td>Grid Option</td><td>groupRowInnerRenderer</td><td>groupRowInnerRenderer<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Loading Overlay</td><td>Grid Option</td><td>loadingOverlayRenderer</td><td>loadingOverlayRenderer<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>No Rows Overlay</td><td>Grid Option</td><td>noRowsOverlayRenderer</td><td>noRowsOverlayRenderer<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Date Component</td><td>Grid Option</td><td>dateComponent</td><td>dateComponent<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Cell Renderer</td><td>Column Definition</td><td>cellRenderer</td><td>cellRenderer<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Pinned Row Cell Renderer</td><td>Column Definition</td><td>pinnedRowCellRenderer</td><td>pinnedRowCellRenderer<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Cell Editor</td><td>Column Definition</td><td>cellEditor</td><td>cellEditor<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Filter</td><td>Column Definition</td><td>filter</td><td>filter<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Floating Filter</td><td>Column Definition</td><td>floatingFilterComponent</td><td>floatingFilterComponent<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Header Component</td><td>Column Definition</td><td>headerComponent</td><td>headerComponent<b>Framework</b></td>
+            </tr>
+            <tr class="item-row">
+                <td>Header Group Component</td><td>Column Definition</td><td>headerGroupComponent</td><td>headerGroupComponent<b>Framework</b></td>
+            </tr>
+        </table>
+
         <h1>JavaScript or Framework</h1>
 
         <p>
@@ -307,6 +390,37 @@ gridOptions = {
             This is because the framework specific component builds on what you learn from the JavaScript
             component.
         </p>
+
+        <h1>Mixing JavaScript and Framework</h1>
+
+        <p>
+            It is possible to mix JavaScript and framework components in the same application.
+            The following code snippet shows how such can be configured:
+        </p>
+
+        <snippet>
+gridOptions = {
+
+    // JavaScript components registered here
+    components: {
+        countryFilter: CustomCountryFilter
+    },
+
+    // Framework components registered here
+    frameworkComponents: {
+        countryCellRenderer: CountryCellRenderer
+    },
+
+    columnDefs: [ {
+        field: 'country',
+
+        // filter is a registered plain JavaScript component
+        filter: 'countryFilter',
+
+        // cell renderer is a registered framework (React, Angular etc) component
+        cellRenderer: 'countryCellRenderer'
+    } ]
+};</snippet>
 
     </div>
 

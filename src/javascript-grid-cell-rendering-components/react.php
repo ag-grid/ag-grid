@@ -5,57 +5,8 @@
 </h2>
 
 <p>
-    It is possible to provide a React cell renderer for ag-Grid to use. All of the information above is
-    relevant to React cell renderer's. This section explains how to apply this logic to your React component.
-</p>
-
-<h3 id="specifying-a-react-cell-renderer"><img src="../images/react_large.png" style="width: 20px;"/> Specifying a React Cell Renderer</h3>
-
-<p>
-    If you are using the ag-grid-react component to create the ag-Grid instance,
-    then you will have the option of additionally specifying the cell renderer's
-    as React components.
-</p>
-
-<snippet>
-// create your cell renderer as a React component
-class NameCellRenderer extends React.Component {
-    render() {
-    // put in render logic
-        return &lt;span&gt;{this.props.value}&lt;/span&gt;;
-    }
-}
-
-// then reference the Component in your colDef like this
-colDef = {
-
-    // instead of cellRenderer we use cellRendererFramework
-    cellRendererFramework: NameCellRenderer
-
-    // specify all the other fields as normal
-    headerName: 'Name',
-    field: 'firstName',
-    ...
-}</snippet>
-
-<p>
-    By using <code>colDef.cellRendererFramework</code> (instead of <code>colDef.cellRenderer</code>) the grid
-    will know it's a React component, based on the fact that you are using the React version of
-    ag-Grid.
-</p>
-
-<p>
-    This same mechanism can be to use a React Component in the following locations:
-<ul>
-    <li>colDef.cellRenderer<b>Framework</b></li>
-    <li>colDef.floatingCellRenderer<b>Framework</b></li>
-    <li>gridOptions.fullWidthCellRenderer<b>Framework</b></li>
-    <li>gridOptions.groupRowRenderer<b>Framework</b></li>
-    <li>gridOptions.groupRowInnerRenderer<b>Framework</b></li>
-</ul>
-In other words, wherever you specify a normal cell renderer, you can now specify a React cell renderer
-in the property of the same name excepting ending 'Framework'. As long as you are using the React ag-Grid component,
-the grid will know the framework to use is React.
+    It is possible to provide a React cell renderer's for ag-Grid to use if you are are using the
+    React version of ag-Grid.
 </p>
 
 <h3 id="example-rendering-using-react-components">Example: Rendering using React Components</h3>

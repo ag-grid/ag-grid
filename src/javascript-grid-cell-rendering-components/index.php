@@ -129,46 +129,8 @@ MyCellRenderer.prototype.destroy = function() {
 <h1 id="cell-renderer-component-registering">Registering Cell Renderers with Columns</h1>
 
 <p>
-    There are two ways to associate a cell renderer with a column, either by name or
-    by reference. To register by name, you first register the cell renderer with the
-    grid and then refer to it by name inside the column definition as follows:
-</p>
-
-<snippet>
-var gridOptions = {
-
-    // register the cell renderer with the grid using the grid components property
-    components: {
-        'medalCellRenderer': MedalCellRenderer
-    }
-
-    // then reference the cell renderer in the column definition
-    columnDefs: [
-        {field: 'gold', cellRenderer: 'medalCellRenderer'}
-    ]
-    ...
-};
-</snippet>
-
-<p>
-    To use the cell renderer by reference, you reference it direction in your
-    column definition as follows:
-</p>
-
-<snippet>
-var gridOptions = {
-
-    // then reference the cell renderer in the column definition
-    columnDefs: [
-        {field: 'gold', cellRenderer: MedalCellRenderer}
-    ]
-    ...
-};
-</snippet>
-
-<p>
-    Registering the component first and then referencing it by name is cleaner. It is the pattern
-    used in all the examples in the documentation.
+    See the section <a href="../javascript-grid-components/#registering-custom-components">
+    registering custom components</a> for details on registering and using custom cell renderers.
 </p>
 
 <h1 id="cell-renderer-component-refresh">Component Refresh</h1>
