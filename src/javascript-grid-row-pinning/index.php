@@ -48,8 +48,10 @@ include '../documentation-main/documentation_header.php';
         bottom using the selection above the grid.
     </p>
 
-    <?= example('Row Pinning', 'row-pinning', 'generated') ?>
+    <p>In this example we're using Components to render custom pinned row values for Athlete and Age (color blue and italics
+    respectively).</p>
 
+    <?= example('Row Pinning', 'row-pinning', 'generated') ?>
 </div>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>
