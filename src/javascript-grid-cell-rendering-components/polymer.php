@@ -5,14 +5,8 @@
 
 <p>
     It is possible to provide a Polymer cell renderer's for ag-Grid to use if you are are using the
-    Polymer version of ag-Grid.
-</p>
-
-<p>
-    For examples on Polymer cellRendering, see the
-    <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.
-    Polymer renderer's are used on all but the first Grid on this example page (the first grid uses plain JavaScript
-    renderer's)</p>
+    Polymer version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
+    registering framework components</a> for how to register framework components.
 </p>
 
 <h3 id="example-rendering-using-polymer-components">Example: Rendering using Polymer Components</h3>

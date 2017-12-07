@@ -240,13 +240,32 @@ gridOptions = {
             </ul>
         </p>
 
-        <h1>Registering Framework Components</h1>
+        <h1 id="registering-framework-components">Registering Framework Components</h1>
 
         <p>
-            If you are using a framework such as Angular or React, it is possible to provide
-            components in those frameworks. This is done by using the <code>frameworkComponents</code>
-            property rather than the <code>components</code> property. Then the component is registered
-            by name as normal.
+            Most of the frameworks ag-Grid works with use components. It is possible to use the framework
+            components inside of ag-Grid. Configuring the components is same and explained in this section.
+            The frameworks that follow this conventions are:
+            <ul>
+                <li><b>Angular</b> (version 2 and later)</li>
+                <li><b>React</b></li>
+                <li><b>VueJS</b></li>
+                <li><b>Polymer</b></li>
+            </ul>
+            The following frameworks are not configured in this way:
+            <ul>
+                <li>
+                    <b>AngularJS 1</b>: This framework does not follow the same pattern as other frameworks. See
+                    <a href="../best-angularjs-data-grid/#angular-compiling">AngularJS</a> on how you can turn on AngularJS 1
+                    compiling to use AngularJS bindings inside ag-Grid.
+                </li>
+                <li><b>Aurelia</b>: Aurelia uses templates instead of components.</li>
+            </ul>
+        </p>
+        <p>
+            If you are using on of the supported frameworks registration is done using the
+            <code>frameworkComponents</code> property rather than the <code>components</code> property.
+            Then the component is registered by name as normal.
         </p>
 <snippet>
 gridOptions = {

@@ -6,7 +6,8 @@
 
 <p>
     It is possible to provide a React cell renderer's for ag-Grid to use if you are are using the
-    React version of ag-Grid.
+    React version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
+    registering framework components</a> for how to register framework components.
 </p>
 
 <h3 id="example-rendering-using-react-components">Example: Rendering using React Components</h3>

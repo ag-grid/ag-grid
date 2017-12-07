@@ -11,7 +11,7 @@
 
 <p>
     For examples on Aurelia cellRendering, see the
-    <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-aurelia-example</a> on Github.</p>
+    <a href="https://github.com/ag-grid/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.</p>
 </p>
 
 <h3 id="specifying-a-aurelia-cell-renderer"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia Cell Renderer</h3>

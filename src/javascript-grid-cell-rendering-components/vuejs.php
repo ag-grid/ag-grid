@@ -1,4 +1,3 @@
-<!-- vuejs from here -->
 <h2 id="vueCellRendering">
     <img src="../images/vue_large.png" style="width: 60px;"/>
     VueJS Cell Rendering
@@ -6,13 +5,8 @@
 
 <p>
     It is possible to provide a VueJS cell renderer's for ag-Grid to use if you are are using the
-    VueJS version of ag-Grid.
-</p>
-
-<p>
-    For examples on VueJS cellRendering, see the
-    <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> on Github.
-    VueJS Renderers are used on all but the first Grid on this example page (the first grid uses plain JavaScript Renderers)</p>
+    VueJS version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
+    registering framework components</a> for how to register framework components.
 </p>
 
 <h3 id="example-rendering-using-vuejs-components">Example: Rendering using VueJS Components</h3>
