@@ -3,13 +3,13 @@ import {Autowired} from "../../context/context";
 import {Component} from "../../widgets/component";
 import {IComponent} from "../../interfaces/iComponent";
 
-export interface ILoadingOverlayRendererParams {
+export interface ILoadingOverlayComponentParams {
     loadingRowsTemplate?: string
 }
 
-export interface ILoadingOverlayRenderer extends IComponent<ILoadingOverlayRendererParams> {}
+export interface ILoadingOverlayComponent extends IComponent<ILoadingOverlayComponentParams> {}
 
-export class LoadingOverlayRenderer extends Component implements ILoadingOverlayRenderer {
+export class LoadingOverlayComponent extends Component implements ILoadingOverlayComponent {
 
     private static DEFAULT_LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
 
@@ -19,11 +19,11 @@ export class LoadingOverlayRenderer extends Component implements ILoadingOverlay
         super();
     }
 
-    public init(params: ILoadingOverlayRendererParams): void {
+    public init(params: ILoadingOverlayComponentParams): void {
         let template =
             this.gridOptionsWrapper.getOverlayLoadingTemplate() ? this.gridOptionsWrapper.getOverlayLoadingTemplate() :
                 params.loadingRowsTemplate ? params.loadingRowsTemplate :
-                    LoadingOverlayRenderer.DEFAULT_LOADING_OVERLAY_TEMPLATE;
+                    LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE;
 
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         let localisedTemplate = template.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));

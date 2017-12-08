@@ -118,9 +118,9 @@ export {AnimateShowChangeCellRenderer} from "./dist/lib/rendering/cellRenderers/
 export {AnimateSlideCellRenderer} from "./dist/lib/rendering/cellRenderers/animateSlideCellRenderer";
 export {GroupCellRenderer} from "./dist/lib/rendering/cellRenderers/groupCellRenderer";
 
-// overlay renderer's
-export {ILoadingOverlayRenderer, ILoadingOverlayRendererParams} from "./dist/lib/rendering/overlayRenderers/loadingOverlayRenderer";
-export {INoRowsOverlayRenderer, INoRowsOverlayRendererParams} from "./dist/lib/rendering/overlayRenderers/noRowsOverlayRenderer";
+// overlays
+export {ILoadingOverlayComponent, ILoadingOverlayComponentParams} from "./dist/lib/rendering/overlays/loadingOverlayComponent";
+export {INoRowsOverlayComponent, INoRowsOverlayComponentParams} from "./dist/lib/rendering/overlays/noRowsOverlayComponent";
 
 // features
 export {SetLeftFeature} from "./dist/lib/rendering/features/setLeftFeature";

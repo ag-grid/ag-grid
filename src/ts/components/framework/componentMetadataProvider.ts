@@ -36,11 +36,11 @@ export class ComponentMetadataProvider {
                 mandatoryMethodList: [],
                 optionalMethodList: []
             },
-            loadingOverlayRenderer: {
+            loadingOverlayComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
             },
-            noRowsOverlayRenderer: {
+            noRowsOverlayComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
             },

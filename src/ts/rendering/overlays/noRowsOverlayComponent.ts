@@ -3,13 +3,13 @@ import {Autowired} from "../../context/context";
 import {Component} from "../../widgets/component";
 import {IComponent} from "../../interfaces/iComponent";
 
-export interface INoRowsOverlayRendererParams {
+export interface INoRowsOverlayComponentParams {
     noRowsTemplate?: string
 }
 
-export interface INoRowsOverlayRenderer extends IComponent<INoRowsOverlayRendererParams> {}
+export interface INoRowsOverlayComponent extends IComponent<INoRowsOverlayComponentParams> {}
 
-export class NoRowsOverlayRenderer extends Component implements INoRowsOverlayRenderer {
+export class NoRowsOverlayComponent extends Component implements INoRowsOverlayComponent {
     private static DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
@@ -18,11 +18,11 @@ export class NoRowsOverlayRenderer extends Component implements INoRowsOverlayRe
         super();
     }
 
-    public init(params: INoRowsOverlayRendererParams): void {
+    public init(params: INoRowsOverlayComponentParams): void {
         let template =
             this.gridOptionsWrapper.getOverlayNoRowsTemplate() ? this.gridOptionsWrapper.getOverlayNoRowsTemplate() :
                 params.noRowsTemplate ? params.noRowsTemplate :
-                    NoRowsOverlayRenderer.DEFAULT_NO_ROWS_TEMPLATE;
+                    NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
 
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         let localisedTemplate = template.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));

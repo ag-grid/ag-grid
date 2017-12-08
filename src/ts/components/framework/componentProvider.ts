@@ -24,9 +24,9 @@ import {PopupSelectCellEditor} from "../../rendering/cellEditors/popupSelectCell
 import {LargeTextCellEditor} from "../../rendering/cellEditors/largeTextCellEditor";
 import {TextFilter} from "../../filter/textFilter";
 import {NumberFilter} from "../../filter/numberFilter";
-import {OverlayWrapperRenderer} from "../../rendering/overlayRenderers/overlayWrapperRenderer";
-import {LoadingOverlayRenderer} from "../../rendering/overlayRenderers/loadingOverlayRenderer";
-import {NoRowsOverlayRenderer} from "../../rendering/overlayRenderers/noRowsOverlayRenderer";
+import {OverlayWrapperComponent} from "../../rendering/overlays/overlayWrapperComponent";
+import {LoadingOverlayComponent} from "../../rendering/overlays/loadingOverlayComponent";
+import {NoRowsOverlayComponent} from "../../rendering/overlays/noRowsOverlayComponent";
 import {GridOptions} from "../../entities/gridOptions";
 
 export enum RegisteredComponentSource {
@@ -47,6 +47,11 @@ export type RegisteredComponentInput<A extends IComponent<any> & B, B> = AgGridR
 export type AgGridRegisteredComponentInput<A extends IComponent<any>> = AgGridComponentFunctionInput | {new(): A}
 export type AgGridComponentFunctionInput = (params:any)=>string | HTMLElement ;
 
+export interface AgGridProvidedComponentDef {
+    overridable: boolean,
+    defaultImpl: AgGridRegisteredComponentInput<any>
+}
+
 
 @Bean('componentProvider')
 export class ComponentProvider {
@@ -57,7 +62,7 @@ export class ComponentProvider {
     @Autowired('context')
     private context: Context;
 
-    private agGridDefaults :{[key:string]:AgGridRegisteredComponentInput<any>};
+    private agGridDefaults :{[key:string]:AgGridProvidedComponentDef};
     private jsComponents :{[key:string]:AgGridRegisteredComponentInput<any>} = {};
     private frameworkComponents :{[key:string]:{new(): any}} = {};
 
@@ -67,57 +72,174 @@ export class ComponentProvider {
             //THE FOLLOWING COMPONENTS HAVE NO DEFAULTS, THEY NEED TO BE SPECIFIED AS AN SPECIFIC FLAVOUR
             //THERE ARE NO DEFAULTS THAT FIT ALL PURPOSES
             //THEY ARE ADDED HERE TO AVOID THE NOT FOUND WARNING.
-            filterComponent:null,
-            customFloatingFilterComponent:null,
+            filterComponent:{
+                defaultImpl: null,
+                overridable: false
+            },
+            customFloatingFilterComponent:{
+                defaultImpl: null,
+                overridable: false
+            },
 
             //date
-            dateComponent: DefaultDateComponent,
+            dateComponent: {
+                defaultImpl: DefaultDateComponent,
+                overridable: true
+            },
 
             //header
-            headerComponent: HeaderComp,
-            headerGroupComponent: HeaderGroupComp,
+            headerComponent: {
+                defaultImpl: HeaderComp,
+                overridable: true
+            },
+            headerGroupComponent: {
+                defaultImpl: HeaderGroupComp,
+                overridable: true
+            },
 
             //floating filters
-            setFloatingFilterComponent: SetFloatingFilterComp,
-            textFloatingFilterComponent: TextFloatingFilterComp,
-            numberFloatingFilterComponent:NumberFloatingFilterComp,
-            dateFloatingFilterComponent: DateFloatingFilterComp,
-            readModelAsStringFloatingFilterComponent: ReadModelAsStringFloatingFilterComp,
-            floatingFilterWrapperComponent: FloatingFilterWrapperComp,
-            emptyFloatingFilterWrapperComponent: EmptyFloatingFilterWrapperComp,
+            setFloatingFilterComponent: {
+                defaultImpl: SetFloatingFilterComp,
+                overridable: true
+            },
+            textFloatingFilterComponent: {
+                defaultImpl: TextFloatingFilterComp,
+                overridable: true
+            },
+            numberFloatingFilterComponent:{
+                defaultImpl: NumberFloatingFilterComp,
+                overridable: true
+            },
+            dateFloatingFilterComponent: {
+                defaultImpl: DateFloatingFilterComp,
+                overridable: true
+            },
+            readModelAsStringFloatingFilterComponent: {
+                defaultImpl: ReadModelAsStringFloatingFilterComp,
+                overridable: false
+            },
+            floatingFilterWrapperComponent: {
+                defaultImpl: FloatingFilterWrapperComp,
+                overridable: false
+            },
+            emptyFloatingFilterWrapperComponent: {
+                defaultImpl: EmptyFloatingFilterWrapperComp,
+                overridable: false
+            },
 
-            //renderers
-            cellRenderer: null,
-            fullWidthCellRenderer: null,
-            innerRenderer: null,
-            groupRowInnerRenderer: null,
-            animateShowChange: AnimateShowChangeCellRenderer,
-            animateSlide: AnimateSlideCellRenderer,
-            group: GroupCellRenderer,
-            groupRowRenderer: GroupCellRenderer,
-            loadingCellRenderer: LoadingCellRenderer,
-            overlayWrapperRenderer: OverlayWrapperRenderer,
-            loadingOverlayRenderer: LoadingOverlayRenderer,
-            noRowsOverlayRenderer: NoRowsOverlayRenderer,
-            pinnedRowCellRenderer: null,
+            // renderers
+            cellRenderer: {
+                defaultImpl: null,
+                overridable: true
+            },
+            fullWidthCellRenderer: {
+                defaultImpl: null,
+                overridable: true
+            },
+            innerRenderer: {
+                defaultImpl: null,
+                overridable: true
+            },
+            groupRowInnerRenderer: {
+                defaultImpl: null,
+                overridable: true
+            },
+            animateShowChange: {
+                defaultImpl: AnimateShowChangeCellRenderer,
+                overridable: true
+            },
+            animateSlide: {
+                defaultImpl: AnimateSlideCellRenderer,
+                overridable: true
+            },
+            group: {
+                defaultImpl: GroupCellRenderer,
+                overridable: true
+            },
+            groupRowRenderer: {
+                defaultImpl: GroupCellRenderer,
+                overridable: true
+            },
+            loadingCellRenderer: {
+                defaultImpl: LoadingCellRenderer,
+                overridable: true
+            },
+            overlayWrapperComponent: {
+                defaultImpl: OverlayWrapperComponent,
+                overridable: false
+            },
+            loadingOverlayComponent: {
+                defaultImpl: LoadingOverlayComponent,
+                overridable: true
+            },
+            noRowsOverlayComponent: {
+                defaultImpl: NoRowsOverlayComponent,
+                overridable: true
+            },
+            pinnedRowCellRenderer: {
+                defaultImpl: null,
+                overridable: true
+            },
 
             //editors
-            cellEditor: TextCellEditor,
-            textCellEditor: TextCellEditor,
-            text: TextCellEditor,
-            selectCellEditor: SelectCellEditor,
-            select: SelectCellEditor,
-            popupTextCellEditor: PopupTextCellEditor,
-            popupText: PopupTextCellEditor,
-            popupSelectCellEditor: PopupSelectCellEditor,
-            popupSelect: PopupSelectCellEditor,
-            largeTextCellEditor: LargeTextCellEditor,
-            largeText: LargeTextCellEditor,
+            cellEditor: {
+                defaultImpl: TextCellEditor,
+                overridable: false
+            },
+            textCellEditor: {
+                defaultImpl: TextCellEditor,
+                overridable: false
+            },
+            text: {
+                defaultImpl: TextCellEditor,
+                overridable: false
+            },
+            selectCellEditor: {
+                defaultImpl: SelectCellEditor,
+                overridable: false
+            },
+            select: {
+                defaultImpl: SelectCellEditor,
+                overridable: false
+            },
+            popupTextCellEditor: {
+                defaultImpl: PopupTextCellEditor,
+                overridable: false
+            },
+            popupText: {
+                defaultImpl: PopupTextCellEditor,
+                overridable: false
+            },
+            popupSelectCellEditor: {
+                defaultImpl: PopupSelectCellEditor,
+                overridable: false
+            },
+            popupSelect: {
+                defaultImpl: PopupSelectCellEditor,
+                overridable: false
+            },
+            largeTextCellEditor: {
+                defaultImpl: LargeTextCellEditor,
+                overridable: false
+            },
+            largeText: {
+                defaultImpl: LargeTextCellEditor,
+                overridable: false
+            },
 
             //filter
-            textColumnFilter: TextFilter,
-            numberColumnFilter: NumberFilter,
-            dateColumnFilter: DateFilter
+            textColumnFilter: {
+                defaultImpl: TextFilter,
+                overridable: false
+            },
+            numberColumnFilter: {
+                defaultImpl: NumberFilter,
+                overridable: false
+            },
+            dateColumnFilter: {
+                defaultImpl: DateFilter,
+                overridable: false
+            }
         }
     }
 
@@ -167,30 +289,41 @@ export class ComponentProvider {
      */
     public retrieve <A extends IComponent<any> & B, B> (name:string): RegisteredComponent<A, B>{
         if (this.frameworkComponents[name]){
-            return {
+            return this.assertCanBeOverride(name,{
                 type: ComponentType.FRAMEWORK,
                 component: <{new(): B}>this.frameworkComponents[name],
                 source: RegisteredComponentSource.REGISTERED
-            }
+            })
         }
         if (this.jsComponents[name]){
-            return {
+            return this.assertCanBeOverride(name,{
                 type: ComponentType.AG_GRID,
                 component: <{new(): A}>this.jsComponents[name],
                 source: RegisteredComponentSource.REGISTERED
-            }
+            })
         }
         if (this.agGridDefaults[name]){
-            return {
-                type: ComponentType.AG_GRID,
-                component: <{new(): A}>this.agGridDefaults[name],
-                source: RegisteredComponentSource.DEFAULT
-            }
+            return this.agGridDefaults[name].defaultImpl ?
+                {
+                    type: ComponentType.AG_GRID,
+                    component: <{new(): A}>this.agGridDefaults[name].defaultImpl,
+                    source: RegisteredComponentSource.DEFAULT
+                }:
+                null
         }
 
         if (Object.keys(this.agGridDefaults).indexOf(name) < 0){
             console.warn(`ag-grid: Looking for component [${name}] but it wasn't found.`);
         }
         return null;
+    }
+
+    private assertCanBeOverride <A extends IComponent<any> & B, B>(name: string, toAssert:RegisteredComponent<A, B>): RegisteredComponent<A, B>{
+        let overridable : boolean = this.agGridDefaults[name] ? this.agGridDefaults[name].overridable : true;
+        if (!overridable){
+            throw Error (`ag-grid: You are trying to register a component which is not overridable and which name it is used internally in ag-grid: [${name}]. Please change the name of the component`)
+        }
+
+        return toAssert;
     }
 }
