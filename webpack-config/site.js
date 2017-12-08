@@ -15,6 +15,8 @@ if (require('minimist')(process.argv.slice(2)).hmr) {
 }
 
 module.exports = {
+    devtool: 'inline-source-map',
+
     entry: {
         homepage: homepage,
         docs: docs,
@@ -27,6 +29,12 @@ module.exports = {
 
     resolve: {
         extensions: [ '.ts', '.js', '.json' ]
+    },
+
+    externals: {
+        'angular': 'angular',
+        'react': 'react',
+        'react-dom': 'react-dom'
     },
 
     module: {

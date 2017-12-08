@@ -9,7 +9,7 @@
                 "title": "Javascript",
                 "url": "best-javascript-data-grid/",
                 "items": [
-                    {"key": "Getting Started Javascript", "title": "Getting Started", "url": "javascript-getting-started"},
+                    {"key": "Getting Started Javascript", "title": "Getting Started", "url": "javascript-getting-started/"},
                     {"key": "More Detail Javascript", "title": "More Details", "url": "javascript-more-details/"}
                 ]
             },
@@ -210,14 +210,14 @@
                 "title": "React Examples",
                 "url": "example-react/",
                 "items": [
-                    {"key": "React Rich Grid", "title": "Rich Grid", "url": "react-getting-started#react-rich-grid-example"},
+                    {"key": "React Rich Grid", "title": "Rich Grid", "url": "react-getting-started/#react-rich-grid-example"},
                     {"key": "React Dynamic", "title": "Cell Renderers", "url": "example-react-dynamic/"},
-                    {"key": "React Editor", "title": "Editor Component", "url": "javascript-grid-cell-editor#example-cell-editing-using-react-components"},
-                    {"key": "React Filter", "title": "Filter Component", "url": "javascript-grid-filter-component#example-filtering-using-react-components"},
+                    {"key": "React Editor", "title": "Editor Component", "url": "javascript-grid-cell-editor/#example-cell-editing-using-react-components"},
+                    {"key": "React Filter", "title": "Filter Component", "url": "javascript-grid-filter-component/#example-filtering-using-react-components"},
                     {
                         "key": "React Floating Filter",
                         "title": "Floating Filter",
-                        "url": "javascript-grid-floating-filter-component#react-floating-filter-example"
+                        "url": "javascript-grid-floating-filter-component/#react-floating-filter-example"
                     },
                     {"key": "React Pinned Row", "title": "Pinned Rows", "url": "example-react-floating-row/"},
                     {"key": "React Full Width", "title": "Full Width Rows", "url": "example-react-full-width-rows/"},
@@ -231,16 +231,16 @@
                 "title": "Angular Examples",
                 "url": "example-angular/",
                 "items": [
-                    {"key": "Angular Rich Grid", "title": "Rich Grid", "url": "angular-getting-started#angular-rich-grid-example"},
-                    {"key": "Angular Markup", "title": "Grid via Markup", "url": "angular-more-details#example-rich-grid-using-markup"},
+                    {"key": "Angular Rich Grid", "title": "Rich Grid", "url": "angular-getting-started/#angular-rich-grid-example"},
+                    {"key": "Angular Markup", "title": "Grid via Markup", "url": "angular-more-details/#example-rich-grid-using-markup"},
                     {"key": "Angular Dynamic", "title": "Cell Renderers", "url": "example-angular-dynamic/"},
-                    {"key": "Angular Editor", "title": "Editor Component", "url": "javascript-grid-cell-editor#example-cell-editing-using-angular-components"},
+                    {"key": "Angular Editor", "title": "Editor Component", "url": "javascript-grid-cell-editor/#example-cell-editing-using-angular-components"},
                     {
                         "key": "Angular Filter",
                         "title": "Filter Component",
-                        "url": "javascript-grid-filter-component#example-filtering-using-angular-components"
+                        "url": "javascript-grid-filter-component/#example-filtering-using-angular-components"
                     },
-                    {"key": "Angular Floating Filter", "title": "Floating Filter", "url": "javascript-grid-floating-filter-component#ng2Angular"},
+                    {"key": "Angular Floating Filter", "title": "Floating Filter", "url": "javascript-grid-floating-filter-component/#ng2Angular"},
                     {"key": "Angular Pinned Row", "title": "Pinned Rows", "url": "example-angular-floating-row/"},
                     {"key": "Angular Full Width", "title": "Full Width Rows", "url": "example-angular-full-width-rows/"},
                     {"key": "Angular Group Row", "title": "Group Rows", "url": "example-angular-grouped-row/"},
@@ -253,15 +253,15 @@
                 "title": "Polymer Examples",
                 "url": "example-polymer/",
                 "items": [
-                    {"key": "Polymer Rich Grid", "title": "Rich Grid", "url": "polymer-getting-started#polymer-rich-grid-example"},
+                    {"key": "Polymer Rich Grid", "title": "Rich Grid", "url": "polymer-getting-started/#polymer-rich-grid-example"},
                     {"key": "Polymer Dynamic", "title": "Cell Renderers", "url": "example-polymer-dynamic/"},
-                    {"key": "Polymer Editor", "title": "Editor Component", "url": "javascript-grid-cell-editor#example-cell-editing-using-polymer-components"},
+                    {"key": "Polymer Editor", "title": "Editor Component", "url": "javascript-grid-cell-editor/#example-cell-editing-using-polymer-components"},
                     {
                         "key": "Polymer Filter",
                         "title": "Filter Component",
-                        "url": "javascript-grid-filter-component#example-filtering-using-polymer-components"
+                        "url": "javascript-grid-filter-component/#example-filtering-using-polymer-components"
                     },
-                    {"key": "Polymer Floating Filter", "title": "Floating Filter", "url": "javascript-grid-floating-filter-component#polymerFilter"},
+                    {"key": "Polymer Floating Filter", "title": "Floating Filter", "url": "javascript-grid-floating-filter-component/#polymerFilter"},
                     {"key": "Polymer Pinned Row", "title": "Pinned Rows", "url": "example-polymer-floating-row/"},
                     {"key": "Polymer Full Width", "title": "Full Width Rows", "url": "example-polymer-full-width-rows/"},
                     {"key": "Polymer Group Row", "title": "Group Rows", "url": "example-polymer-grouped-row/"}

@@ -1,4 +1,4 @@
-import './example-runner.scss';
+// import './example-runner.scss';
 
 import * as angular from 'angular';
 import * as jQuery from 'jquery';
@@ -7,6 +7,15 @@ import {whenInViewPort, trackIfInViewPort} from './lib/viewport';
 import {highlight} from './lib/highlight';
 
 const docs: angular.IModule = angular.module('documentation');
+
+function resetIndent(str) {
+    const leadingWhitespace = str.match(/^\n?( +)/) ;
+    if (leadingWhitespace) {
+        return str.replace(new RegExp(' {' + leadingWhitespace[1].length + '}', 'g'), '').trim();
+    } else {
+        return str.trim();
+    }
+}
 
 docs.service('HighlightService', function() {
     this.highlight = function(code: string, language: string) {
@@ -23,7 +32,7 @@ docs.directive('snippet', function() {
         link: function(scope, element, attrs) {
             whenInViewPort(jQuery(element), function() {
                 const language = attrs.language || 'js';
-                const highlightedSource = highlight(element.text(), language);
+                const highlightedSource = highlight(resetIndent(element.text()), language);
                 element.empty().html('<pre><code>' + highlightedSource + '</code></pre>');
             });
         }
@@ -142,7 +151,7 @@ class ExampleRunner {
                     if (visible && !this.visible) {
                         this.visible = true;
                         ACTIVE_EXAMPLE_RUNNERS.push(this);
-                        // max active examples is set in the webpack define plugin ./ webpack-config/site.js
+                        // max active examples is set in the webpack define plugin ./webpack-config/site.js
                         if (ACTIVE_EXAMPLE_RUNNERS.length > MAX_ACTIVE_EXAMPLES) { 
                             ACTIVE_EXAMPLE_RUNNERS.shift().visible = false;
                         }
