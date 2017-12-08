@@ -1,4 +1,4 @@
-import {Autowired, BaseComponentWrapper, Bean, FrameworkComponentWrapper, IComponent, WrapableInterface, IAfterGuiAttachedParams} from "ag-grid";
+import {Autowired, BaseComponentWrapper, Bean, FrameworkComponentWrapper, IComponent, WrapableInterface, Promise} from "ag-grid";
 import {AgReactComponent} from "./agReactComponent";
 import {AgGridReact} from "./agGridReact";
 
@@ -15,14 +15,13 @@ export class ReactFrameworkComponentWrapper extends BaseComponentWrapper<Wrapabl
                 super(ReactComponent, _self.agGridReact);
             }
 
-            public init(params: any) {
-                super.init(<any>params);
+            public init(params: any):Promise<void> {
+                return super.init(<any>params);
             }
 
             hasMethod(name: string): boolean {
                 let frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
                 if (frameworkComponentInstance == null){
-                    console.debug(`ag grid: ${name} It seems like you are using react fiber (>v16.0.0). Ag-grid has experimental support for it, please if there is any issue that you find let us know`);
                     return true;
                 }
                 return frameworkComponentInstance[name] != null;
