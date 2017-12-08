@@ -13,7 +13,11 @@ import {
     IFilter,
     IAfterGuiAttachedParams,
     IFloatingFilter,
-    IFloatingFilterParams
+    IFloatingFilterParams,
+    ILoadingOverlayRenderer,
+    ILoadingOverlayRendererParams,
+    INoRowsOverlayRenderer,
+    INoRowsOverlayRendererParams
 } from "ag-grid/main";
 
 export interface AgFrameworkComponent<T> {
@@ -34,3 +38,6 @@ export interface ICellEditorAngularComp extends ICellEditor, AgFrameworkComponen
 export interface AgRendererComponent extends ICellRendererAngularComp {}
 export interface AgEditorComponent extends ICellEditorAngularComp {}
 export interface AgFilterComponent extends IFilterAngularComp {}
+
+export interface ILoadingOverlayRendererAngularComp extends ILoadingOverlayRenderer, AgFrameworkComponent<ILoadingOverlayRendererParams> {}
+export interface INoRowsOverlayRendererAngularComp extends INoRowsOverlayRenderer, AgFrameworkComponent<INoRowsOverlayRendererParams> {}
