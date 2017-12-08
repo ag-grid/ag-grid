@@ -11,10 +11,10 @@ import {
     ICellEditor,
     ICellEditorParams,
     IFilter,
-    ILoadingOverlayRenderer,
-    ILoadingOverlayRendererParams,
-    INoRowsOverlayRenderer,
-    INoRowsOverlayRendererParams
+    ILoadingOverlayComponent,
+    ILoadingOverlayComponentParams,
+    INoRowsOverlayComponent,
+    INoRowsOverlayComponentParams
 } from 'ag-grid';
 
 export interface AgReactFrameworkComponent<T> {
@@ -29,5 +29,5 @@ export interface IFilterReactComp extends IFilter, AgReactFrameworkComponent<IFi
 export interface ICellRendererReactComp extends ICellRenderer, AgReactFrameworkComponent<ICellRendererParams> {}
 export interface ICellEditorReactComp extends ICellEditor, AgReactFrameworkComponent<ICellEditorParams> {}
 
-export interface ILoadingOverlayRendererAngularComp extends ILoadingOverlayRenderer, AgReactFrameworkComponent<ILoadingOverlayRendererParams> {}
-export interface INoRowsOverlayRendererAngularComp extends INoRowsOverlayRenderer, AgReactFrameworkComponent<INoRowsOverlayRendererParams>{}
+export interface ILoadingOverlayComponentAngularComp extends ILoadingOverlayComponent, AgReactFrameworkComponent<ILoadingOverlayComponentParams> {}
+export interface INoRowsOverlayComponentAngularComp extends INoRowsOverlayComponent, AgReactFrameworkComponent<INoRowsOverlayComponentParams>{}
