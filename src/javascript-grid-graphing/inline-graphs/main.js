@@ -1,34 +1,33 @@
 // for cell height & width
-
 const CELL_DIMENSION_SIZE = 90;
 
 let columnDefs = [
-    {headerName: 'Symbol', field: 'Symbol', width: 60},
-    {headerName: 'Date', field: 'Date', width: 70},
-    {headerName: 'Open', field: 'Open', width: 50},
-    {headerName: 'High', field: 'High', width: 50},
-    {headerName: 'Low', field: 'Low', width: 50},
-    {headerName: 'Close', field: 'Close', width: 50},
+    {headerName: 'Symbol', field: 'Symbol', width: 85},
+    {headerName: 'Date', field: 'Date', width: 82},
+    {headerName: 'Open', field: 'Open', width: 72},
+    {headerName: 'High', field: 'High', width: 72},
+    {headerName: 'Low', field: 'Low', width: 72},
+    {headerName: 'Close', field: 'Close', width: 72},
     {
         headerName: 'Close Trend',
         field: 'CloseTrends',
-        width: 150,
+        width: 115,
         suppressResize: true,
         suppressSizeToFit: true,
         cellRenderer: 'lineChartLineRenderer'
     },
     {
-        headerName: 'Average Volume',
+        headerName: 'Avg Volume',
         field: 'AverageVolume',
-        width: 150,
+        width: 115,
         suppressResize: true,
         suppressSizeToFit: true,
         cellRenderer: 'barChartLineRenderer'
     },
     {
-        headerName: 'Target Expenditure',
+        headerName: 'Target Exp',
         field: 'targetExpenditure',
-        width: 150,
+        width: 110,
         editable: true,
         cellEditor: 'pieChartLineEditor',
         cellEditorParams: {
@@ -60,7 +59,6 @@ let columnDefs = [
 let gridOptions = {
     columnDefs: columnDefs,
     enableSorting: true,
-    enableColResize: false,
     rowSelection: 'single',
     rowHeight: 95,
     onCellClicked: (params) => {
@@ -86,7 +84,7 @@ LineChartLineRenderer.prototype.init = function (params) {
     var eGui = document.createElement('div');
     this.eGui = eGui;
 
-    // sparkles requires the eGui to be in the dom - so we put into a timeout to allow
+    // sparklines requires the eGui to be in the dom - so we put into a timeout to allow
     // the grid to complete it's job of placing the cell into the browser.
     setTimeout( () => {
         let values = params.value
@@ -107,7 +105,7 @@ BarChartLineRenderer.prototype.init = function (params) {
     var eGui = document.createElement('div');
     this.eGui = eGui;
 
-    // sparkles requires the eGui to be in the dom - so we put into a timeout to allow
+    // sparklines requires the eGui to be in the dom - so we put into a timeout to allow
     // the grid to complete it's job of placing the cell into the browser.
     setTimeout(function(){
         let values = params.value
@@ -136,7 +134,7 @@ PieChartLineRenderer.prototype.init = function (params) {
     var eGui = document.createElement('div');
     this.eGui = eGui;
 
-    // sparkles requires the eGui to be in the dom - so we put into a timeout to allow
+    // sparklines requires the eGui to be in the dom - so we put into a timeout to allow
     // the grid to complete it's job of placing the cell into the browser.
     setTimeout( function() {
 
