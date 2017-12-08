@@ -1,4 +1,5 @@
 // for cell height & width
+
 const CELL_DIMENSION_SIZE = 90;
 
 let columnDefs = [
@@ -14,7 +15,7 @@ let columnDefs = [
         width: 150,
         suppressResize: true,
         suppressSizeToFit: true,
-        cellRenderer: LineChartLineRenderer
+        cellRenderer: 'lineChartLineRenderer'
     },
     {
         headerName: 'Average Volume',
@@ -22,14 +23,14 @@ let columnDefs = [
         width: 150,
         suppressResize: true,
         suppressSizeToFit: true,
-        cellRenderer: BarChartLineRenderer
+        cellRenderer: 'barChartLineRenderer'
     },
     {
         headerName: 'Target Expenditure',
         field: 'targetExpenditure',
         width: 150,
         editable: true,
-        cellEditor: PieChartLineEditor,
+        cellEditor: 'pieChartLineEditor',
         cellEditorParams: {
             segments: {
                 "R&D": "#3366cc",
@@ -45,7 +46,7 @@ let columnDefs = [
         width: 110,
         suppressResize: true,
         suppressSizeToFit: true,
-        cellRenderer: PieChartLineRenderer,
+        cellRenderer: 'pieChartLineRenderer',
         cellRendererParams: {
             segments: {
                 "R&D": "#3366cc",
@@ -62,31 +63,18 @@ let gridOptions = {
     enableColResize: false,
     rowSelection: 'single',
     rowHeight: 95,
-    onModelUpdated: () => {
-        let updatedNodes = [];
-        gridOptions.api.forEachNode(function (node) {
-            updatedNodes.push(node);
-        });
-        // now tell the grid it needs refresh all these column, and let jquery do its thing
-        gridOptions.api.refreshCells({
-            rowNodes: updatedNodes,
-            columns: ['CloseTrends', 'AverageVolume', 'Expenditure'],
-            force: true
-        });
-    },
     onCellClicked: (params) => {
         if (params.colDef.field !== "CloseTrends") {
             return;
         }
-
         renderLineGraph(params.data.Symbol);
     },
-    // components:{
-    //     lineChartLineRenderer: LineChartLineRenderer,
-    //     barChartLineRenderer: BarChartLineRenderer,
-    //     pieChartLineEditor: PieChartLineEditor,
-    //     pieChartLineRenderer: PieChartLineRenderer
-    // }
+    components:{
+        lineChartLineRenderer: LineChartLineRenderer,
+        barChartLineRenderer: BarChartLineRenderer,
+        pieChartLineEditor: PieChartLineEditor,
+        pieChartLineRenderer: PieChartLineRenderer
+    }
 };
 
 
@@ -94,93 +82,89 @@ function LineChartLineRenderer() {
 }
 
 LineChartLineRenderer.prototype.init = function (params) {
-    console.log(params);
-    this.eGui = document.createElement('div');
-    this.eGui.id = `${params.colDef.field}_${params.rowIndex}_line`;
+
+    var eGui = document.createElement('div');
+    this.eGui = eGui;
+
+    // sparkles requires the eGui to be in the dom - so we put into a timeout to allow
+    // the grid to complete it's job of placing the cell into the browser.
+    setTimeout( () => {
+        let values = params.value
+            .sort((a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime())
+            .map((datum) => datum.Close);
+        $(eGui).sparkline(values, {height: CELL_DIMENSION_SIZE, width: CELL_DIMENSION_SIZE});
+    }, 0);
 };
 
 LineChartLineRenderer.prototype.getGui = function () {
-    console.log(this.eGui);
     return this.eGui;
-};
-
-LineChartLineRenderer.prototype.refresh = function (params) {
-    // first sort by date, then retrieve the Close values
-    console.log('refreshing');
-    let values = params.value
-        .sort((a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime())
-        .map((datum) => datum.Close);
-    $(`#${this.eGui.id}`).sparkline(values, {height: CELL_DIMENSION_SIZE, width: CELL_DIMENSION_SIZE});
-
-    return true;
 };
 
 function BarChartLineRenderer() {
 }
 
 BarChartLineRenderer.prototype.init = function (params) {
-    this.eGui = document.createElement('div');
-    this.eGui.id = `${params.colDef.field}_${params.rowIndex}_bar`
+    var eGui = document.createElement('div');
+    this.eGui = eGui;
+
+    // sparkles requires the eGui to be in the dom - so we put into a timeout to allow
+    // the grid to complete it's job of placing the cell into the browser.
+    setTimeout(function(){
+        let values = params.value
+            .sort((a, b) => a.Year - b.Year)
+            .map((datum) => datum.AverageVolume.toFixed());
+        $(eGui).sparkline(values, {
+            type: 'bar',
+            barColor: 'green',
+            chartRangeMin: 1000000,
+            barWidth: 11,
+            height: CELL_DIMENSION_SIZE,
+            width: CELL_DIMENSION_SIZE
+        });
+    }, 0);
 };
 
 BarChartLineRenderer.prototype.getGui = function () {
     return this.eGui;
 };
 
-BarChartLineRenderer.prototype.refresh = function (params) {
-    // first sort by year, then extract values
-    let values = params.value
-        .sort((a, b) => a.Year - b.Year)
-        .map((datum) => datum.AverageVolume.toFixed());
-    $(`#${this.eGui.id}`).sparkline(values, {
-        type: 'bar',
-        barColor: 'green',
-        chartRangeMin: 1000000,
-        barWidth: 11,
-        height: CELL_DIMENSION_SIZE,
-        width: CELL_DIMENSION_SIZE
-    });
-
-    return true;
-};
-
 function PieChartLineRenderer() {
 }
 
 PieChartLineRenderer.prototype.init = function (params) {
-    this.eGui = document.createElement('div');
-    this.eGui.id = `${params.colDef.field}_${params.rowIndex}_pie`
 
-    this.segments = params.segments;
+    var eGui = document.createElement('div');
+    this.eGui = eGui;
+
+    // sparkles requires the eGui to be in the dom - so we put into a timeout to allow
+    // the grid to complete it's job of placing the cell into the browser.
+    setTimeout( function() {
+
+        let segments = params.segments;
+        // let segments = params.segments; alberto - used to be this
+
+        let colourToNames = _.invert(segments);
+        let values = Object.keys(segments).map((segment) => {
+            return params.value[segment];
+        });
+        let sliceColours = Object.values(segments);
+        $(eGui).sparkline(values,
+            {
+                type: 'pie',
+                height: CELL_DIMENSION_SIZE,
+                width: CELL_DIMENSION_SIZE,
+                sliceColors: sliceColours,
+                tooltipFormatter: (sparklines, options, segment) => {
+                    return `<div class="jqsfield"><span style="color: ${segment.color}"</span>${colourToNames[segment.color]}: ${Math.round(segment.percent)}%</div>`;
+
+                }
+            }
+        );
+    });
 };
 
 PieChartLineRenderer.prototype.getGui = function () {
     return this.eGui;
-};
-
-PieChartLineRenderer.prototype.refresh = function (params) {
-    let segments = this.segments;
-    // let segments = params.segments; alberto - used to be this
-
-    let colourToNames = _.invert(segments);
-    let values = Object.keys(segments).map((segment) => {
-        return params.value[segment];
-    });
-    let sliceColours = Object.values(segments);
-    $(`#${this.eGui.id}`).sparkline(values,
-        {
-            type: 'pie',
-            height: CELL_DIMENSION_SIZE,
-            width: CELL_DIMENSION_SIZE,
-            sliceColors: sliceColours,
-            tooltipFormatter: (sparklines, options, segment) => {
-                return `<div class="jqsfield"><span style="color: ${segment.color}"</span>${colourToNames[segment.color]}: ${Math.round(segment.percent)}%</div>`;
-
-            }
-        }
-    );
-
-    return true;
 };
 
 function PieChartLineEditor() {
@@ -199,7 +183,6 @@ PieChartLineEditor.prototype.init = function (params) {
     this.parentGui.style.paddingTop = "5px";
 
     this.eGui = document.createElement('div');
-    this.eGui.id = `${params.column.colDef.field}_${params.rowIndex}_pie_editor`;
 
     this.parentGui.appendChild(this.eGui);
 };
@@ -208,6 +191,8 @@ PieChartLineEditor.prototype.getGui = function () {
     return this.parentGui;
 };
 
+// editors have afterGuiAttached callback to know when the dom
+// element is attached. so we can use this instead of using timeouts.
 PieChartLineEditor.prototype.afterGuiAttached = function () {
     let segments = this.params.segments;
     let colourToNames = _.invert(segments);
@@ -216,7 +201,7 @@ PieChartLineEditor.prototype.afterGuiAttached = function () {
     });
     let sliceColours = Object.values(segments);
 
-    let thisSparkline = $(`#${this.eGui.id}`);
+    let thisSparkline = $(this.eGui);
     thisSparkline.sparkline(values,
         {
             type: 'pie',
