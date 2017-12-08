@@ -24,9 +24,9 @@ import {PopupSelectCellEditor} from "../../rendering/cellEditors/popupSelectCell
 import {LargeTextCellEditor} from "../../rendering/cellEditors/largeTextCellEditor";
 import {TextFilter} from "../../filter/textFilter";
 import {NumberFilter} from "../../filter/numberFilter";
-import {OverlayWrapperRenderer} from "../../rendering/overlayRenderers/overlayWrapperRenderer";
-import {LoadingOverlayRenderer} from "../../rendering/overlayRenderers/loadingOverlayRenderer";
-import {NoRowsOverlayRenderer} from "../../rendering/overlayRenderers/noRowsOverlayRenderer";
+import {OverlayWrapperComponent} from "../../rendering/overlays/overlayWrapperComponent";
+import {LoadingOverlayComponent} from "../../rendering/overlays/loadingOverlayComponent";
+import {NoRowsOverlayComponent} from "../../rendering/overlays/noRowsOverlayComponent";
 import {GridOptions} from "../../entities/gridOptions";
 
 export enum RegisteredComponentSource {
@@ -96,10 +96,12 @@ export class ComponentProvider {
             group: GroupCellRenderer,
             groupRowRenderer: GroupCellRenderer,
             loadingCellRenderer: LoadingCellRenderer,
-            overlayWrapperRenderer: OverlayWrapperRenderer,
-            loadingOverlayRenderer: LoadingOverlayRenderer,
-            noRowsOverlayRenderer: NoRowsOverlayRenderer,
             pinnedRowCellRenderer: null,
+
+            //overlays
+            overlayWrapperComponent: OverlayWrapperComponent,
+            loadingOverlayComponent: LoadingOverlayComponent,
+            noRowsOverlayComponent: NoRowsOverlayComponent,
 
             //editors
             cellEditor: TextCellEditor,

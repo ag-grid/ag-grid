@@ -5,9 +5,9 @@ import {Component} from "../../widgets/component";
 import {IComponent} from "../../interfaces/iComponent";
 import {ComponentRecipes} from "../../components/framework/componentRecipes";
 
-export interface IOverlayWrapperRendererParams {}
+export interface IOverlayWrapperComponentParams {}
 
-export interface IOverlayWrapperRenderer extends IComponent<IOverlayWrapperRendererParams> {
+export interface IOverlayWrapperComponent extends IComponent<IOverlayWrapperComponentParams> {
     showLoadingOverlay(eOverlayWrapper: HTMLElement): void
 
     showNoRowsOverlay(eOverlayWrapper: HTMLElement): void
@@ -15,7 +15,7 @@ export interface IOverlayWrapperRenderer extends IComponent<IOverlayWrapperRende
     hideOverlay(eOverlayWrapper: HTMLElement): void
 }
 
-export class OverlayWrapperRenderer extends Component implements IOverlayWrapperRenderer {
+export class OverlayWrapperComponent extends Component implements IOverlayWrapperComponent {
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
     private static LOADING_WRAPPER_OVERLAY_TEMPLATE =
@@ -38,9 +38,9 @@ export class OverlayWrapperRenderer extends Component implements IOverlayWrapper
     public init(): void {}
 
     public showLoadingOverlay(eOverlayWrapper: HTMLElement): void {
-        this.setTemplate(OverlayWrapperRenderer.LOADING_WRAPPER_OVERLAY_TEMPLATE);
+        this.setTemplate(OverlayWrapperComponent.LOADING_WRAPPER_OVERLAY_TEMPLATE);
 
-        this.componentRecipes.newLoadingOverlayRenderer().then(renderer => {
+        this.componentRecipes.newLoadingOverlayComponent().then(renderer => {
             let loadingOverlayWrapper: HTMLElement = this.getRefElement("loadingOverlayWrapper");
             _.removeAllChildren(loadingOverlayWrapper);
             loadingOverlayWrapper.appendChild(renderer.getGui());
@@ -50,9 +50,9 @@ export class OverlayWrapperRenderer extends Component implements IOverlayWrapper
     }
 
     public showNoRowsOverlay(eOverlayWrapper: HTMLElement): void {
-        this.setTemplate(OverlayWrapperRenderer.NO_ROWS_WRAPPER_OVERLAY_TEMPLATE);
+        this.setTemplate(OverlayWrapperComponent.NO_ROWS_WRAPPER_OVERLAY_TEMPLATE);
 
-        this.componentRecipes.newNoRowsOverlayRenderer().then(renderer => {
+        this.componentRecipes.newNoRowsOverlayComponent().then(renderer => {
             let noRowsOverlayWrapper: HTMLElement = this.getRefElement("noRowsOverlayWrapper");
             _.removeAllChildren(noRowsOverlayWrapper);
             noRowsOverlayWrapper.appendChild(renderer.getGui());

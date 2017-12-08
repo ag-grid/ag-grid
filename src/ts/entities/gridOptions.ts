@@ -35,8 +35,8 @@ import {
 } from "../events";
 import {IComponent} from "../interfaces/iComponent";
 import {AgGridRegisteredComponentInput} from "../components/framework/componentProvider";
-import {ILoadingOverlayRenderer} from "../rendering/overlayRenderers/loadingOverlayRenderer";
-import {INoRowsOverlayRenderer} from "../rendering/overlayRenderers/noRowsOverlayRenderer";
+import {ILoadingOverlayComponent} from "../rendering/overlays/loadingOverlayComponent";
+import {INoRowsOverlayComponent} from "../rendering/overlays/noRowsOverlayComponent";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
@@ -264,10 +264,10 @@ export interface GridOptions {
     tabToNextCell?: (params: TabToNextCellParams)=>GridCellDef;
     getDocument?: ()=> Document;
 
-    loadingOverlayRenderer?: {new(): ILoadingOverlayRenderer} | string;
-    loadingOverlayRendererFramework?: any;
-    noRowsOverlayRenderer?: {new(): INoRowsOverlayRenderer} | string;
-    noRowsOverlayRendererFramework?: any;
+    loadingOverlayComponent?: {new(): ILoadingOverlayComponent} | string;
+    loadingOverlayComponentFramework?: any;
+    noRowsOverlayComponent?: {new(): INoRowsOverlayComponent} | string;
+    noRowsOverlayComponentFramework?: any;
 
     fullWidthCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;
