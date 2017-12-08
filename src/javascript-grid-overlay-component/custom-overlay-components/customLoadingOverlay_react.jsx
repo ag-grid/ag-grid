@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-export default class CustomLoadingOverlayRenderer extends Component {
+export default class CustomLoadingOverlay extends Component {
     render() {
         return (
             <div className="ag-overlay-loading-center" style={{backgroundColor: 'lightsteelblue', height: '9%'}}>

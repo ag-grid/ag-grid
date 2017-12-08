@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ILoadingOverlayRendererAngularComp } from "ag-grid-angular";
+import { ILoadingOverlayComponentAngularComp } from "ag-grid-angular";
 
 @Component({
     selector: 'app-loading-overlay',
@@ -7,6 +7,6 @@ import { ILoadingOverlayRendererAngularComp } from "ag-grid-angular";
               `   <i class="fa fa-hourglass-1"> One moment please...</i>` +
               `</div>`
 })
-export class CustomLoadingOverlayRenderer implements ILoadingOverlayRendererAngularComp {
+export class CustomLoadingOverlay implements ILoadingOverlayComponentAngularComp {
     agInit(): void {}
 }

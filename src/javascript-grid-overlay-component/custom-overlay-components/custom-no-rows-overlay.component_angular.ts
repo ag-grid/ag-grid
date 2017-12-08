@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { INoRowsOverlayRendererAngularComp } from "ag-grid-angular";
+import { INoRowsOverlayComponentAngularComp } from "ag-grid-angular";
 
 @Component({
     selector: 'app-no-rows-overlay',
@@ -7,6 +7,6 @@ import { INoRowsOverlayRendererAngularComp } from "ag-grid-angular";
               `   <i class="fa fa-frown-o"> Sorry - no rows!</i>` +
               `</div>`
 })
-export class CustomNoRowsOverlayRenderer implements INoRowsOverlayRendererAngularComp {
+export class CustomNoRowsOverlay implements INoRowsOverlayComponentAngularComp {
     agInit(): void {}
 }

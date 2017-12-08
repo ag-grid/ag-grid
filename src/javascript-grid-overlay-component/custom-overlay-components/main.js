@@ -20,12 +20,12 @@ var gridOptions = {
     enableFilter: true,
 
     components: {
-        myLoadingOverlayRenderer: CustomLoadingOverlayRenderer,
-        myNoRowsOverlayRenderer: CustomNoRowsOverlayRenderer
+        customLoadingOverlay: CustomLoadingOverlay,
+        customNoRowsOverlay: CustomNoRowsOverlay
     },
 
-    loadingOverlayRenderer: 'myLoadingOverlayRenderer',
-    noRowsOverlayRenderer: 'myNoRowsOverlayRenderer'
+    loadingOverlayComponent: 'customLoadingOverlay',
+    noRowsOverlayComponent: 'customNoRowsOverlay'
 };
 
 function onBtShowLoading() {
