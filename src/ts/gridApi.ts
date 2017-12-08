@@ -350,7 +350,7 @@ export class GridApi {
 
     // *** deprecated
     public refreshView() {
-        console.warn('ag-Grid: since v11.1, refreshView() is deprecated, please call redrawRows() instead');
+        console.warn('ag-Grid: since v11.1, refreshView() is deprecated, please call refreshCells() or redrawRows() instead');
         this.redrawRows();
     }
 
