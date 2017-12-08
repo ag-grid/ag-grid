@@ -87,7 +87,7 @@ export class ComponentMetadataProvider {
             },
             filter:{
                 mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
-                optionalMethodList: ['onNewRowsLoaded', 'onFloatingFilterChanged'],
+                optionalMethodList: ['onNewRowsLoaded', 'onFloatingFilterChanged', 'afterGuiAttached'],
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             }
         }
