@@ -245,9 +245,9 @@
 
     menuItem(0, 'Examples Overview', 'Overview', 'javascript-grid-examples/');
 
-    menuItemWithIcon('react_small.png', 1, 'React Redux', 'React Redux', 'example-react-redux/', true);
-    menuItemWithIcon('angular2_small.png', 1, 'Angular RxJS', 'Angular RxJS', 'example-angular-rxjs/', true);
-    menuItemWithIcon('angular2_small.png', 1, 'Angular Third Party', 'Angular Third Party', 'example-angular-third-party/', true);
+    menuItemWithIcon('react_small.png', 1, 'React Redux', 'Redux', 'example-react-redux/', true);
+    menuItemWithIcon('angular2_small.png', 1, 'Angular RxJS', 'RxJS', 'example-angular-rxjs/', true);
+    menuItemWithIcon('angular2_small.png', 1, 'Angular Third Party', 'Third Party', 'example-angular-third-party/', true);
 
     menuItemWithIcon('svg/javascript.svg', 1, 'Styled Report', 'Styled Report', 'example-account-report/', true);
     menuItemWithIcon('svg/javascript.svg', 1, 'File Browser', 'File Browser', 'example-file-browser/', true);
