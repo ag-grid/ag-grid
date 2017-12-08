@@ -1163,6 +1163,7 @@ export class GridPanel extends BeanStub {
             };
 
             this.addMouseWheelEventListeners();
+            this.suppressScrollOnFloatingRow();
         }
 
         _.iterateObject(this.rowContainerComponents, (key: string, container: RowContainerComponent)=> {
@@ -1170,6 +1171,17 @@ export class GridPanel extends BeanStub {
                 this.context.wireBean(container);
             }
         });
+    }
+
+    // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
+    // scroll the column into view. we do not want this, the pinned sections should never scroll.
+    // so we listen to scrolls on these containers and reset the scroll if we find one.
+    private suppressScrollOnFloatingRow(): void {
+        let resetTopScroll = () => this.eFloatingTopViewport.scrollLeft = 0;
+        let resetBottomScroll = () => this.eFloatingTopViewport.scrollLeft = 0;
+
+        this.addDestroyableEventListener(this.eFloatingTopViewport, 'scroll', resetTopScroll);
+        this.addDestroyableEventListener(this.eFloatingBottomViewport, 'scroll', resetBottomScroll);
     }
 
     public getRowContainers(): RowContainerComponents {
