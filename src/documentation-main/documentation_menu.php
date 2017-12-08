@@ -245,42 +245,18 @@
 
     menuItem(0, 'Examples Overview', 'Overview', 'javascript-grid-examples/');
 
-    menuItemWithIcon('react_small.png', 1, 'React Examples', 'React Examples', 'example-react/', true);
-    menuItem(2, 'React Full Width', 'Full Width Rows', 'example-react-full-width-rows/');
-    menuItem(2, 'React Redux', 'Redux Examples', 'example-react-redux/');
+    menuItemWithIcon('react_small.png', 1, 'React Redux', 'Redux', 'example-react-redux/', true);
+    menuItemWithIcon('angular2_small.png', 1, 'Angular RxJS', 'RxJS', 'example-angular-rxjs/', true);
+    menuItemWithIcon('angular2_small.png', 1, 'Angular Third Party', 'Third Party', 'example-angular-third-party/', true);
 
-    menuItemWithIcon('angular2_small.png', 1, 'Angular Examples', 'Angular Examples', 'example-angular/', true);
-    menuItem(2, 'Angular Full Width', 'Full Width Rows', 'example-angular-full-width-rows/');
-    menuItem(2, 'Angular RxJS', 'RxJS', 'example-angular-rxjs/');
-    menuItem(2, 'Angular Third Party', 'Third Party', 'example-angular-third-party/');
+    menuItemWithIcon('svg/javascript.svg', 1, 'Styled Report', 'Styled Report', 'example-account-report/', true);
+    menuItemWithIcon('svg/javascript.svg', 1, 'File Browser', 'File Browser', 'example-file-browser/', true);
+    menuItemWithIcon('svg/javascript.svg', 1, 'Expressions & Context', 'Expressions & Context', 'example-expressions-and-context/', true);
+    menuItemWithIcon('svg/javascript.svg', 1, 'Import Excel', 'Import Excel', 'example-excel-import/', true);
+    menuItemWithIcon('svg/javascript.svg', 1, 'Gallery', 'Gallery', 'example-gallery/', true);
 
-    menuItemWithIcon('svg/javascript.svg', 1, 'JavaScript Examples', 'Plain JavaScript', 'example-javascript/', true);
-    menuItem(2, 'Styled Report', 'Styled Report', 'example-account-report/');
-    menuItem(2, 'File Browser', 'File Browser', 'example-file-browser/');
-    menuItem(2, 'Expressions and Context', 'Expressions', 'example-expressions-and-context/');
-    menuItem(2, 'Import Excel', 'Excel Import', 'example-excel-import/');
-    menuItem(2, 'Gallery', 'Gallery', 'example-gallery/');
-
-    ?>
-</div>
-
-<div class="docsMenu-header<?php if ($pageGroup == "thirdparty" || $expandAll == "true") { ?> active<?php } ?>"
-     data-id="thirdparty">
-    <h4>
-        <img src="../images/svg/docs/abc.svg"/>
-        &nbsp;
-        Third Party
-    </h4>
-    <i class="fa fa-arrow-right" aria-hidden="true"></i>
-</div>
-
-<div class="docsMenu-content">
-    <?php
-
-    menuItem(0, 'ag-Grid Third Party Examples', 'Overview', 'javascript-grid-third-party/');
-    menuItem(1, 'ag-Grid OpenFin', 'OpenFin', 'javascript-grid-openfin/');
-    menuItem(2, 'ag-Grid OpenFin Dashboard', 'Trader Dashboard', 'javascript-grid-openfin-dashboard/');
-    menuItem(1, 'ag-Grid Graphing', 'Graphing', 'javascript-grid-graphing/');
+    menuItem(1, 'OpenFin Dashboard', 'OpenFin Dashboard', 'javascript-grid-openfin-dashboard/', true);
+    menuItem(1, 'ag-Grid Graphing', 'Graphing', 'javascript-grid-graphing/', true);
     ?>
 </div>
 
@@ -294,6 +270,7 @@
     <div class="docsMenu-content">
         <?php
         menuItem(0, 'Change Log', 'Change Log', 'change-log/changeLogIndex.php');
+        menuItem(0, 'ag-Grid & OpenFin', 'OpenFin', 'javascript-grid-openfin/');
         menuItem(0, 'Intermediate Tutorial', 'Tutorials', 'ag-grid-tutorials/');
         menuItem(0, 'Responsiveness', 'Responsive Design', 'javascript-grid-responsiveness/');
         menuItem(0, 'Testing', 'Testing', 'javascript-grid-testing/');
