@@ -43,6 +43,8 @@ export class CellComp extends Component {
     private cellEditorInPopup: boolean;
     private hideEditorPopup: Function;
 
+    private lastIPadMouseClickEvent: number;
+
     // true if we are using a cell renderer
     private usingCellRenderer: boolean;
     // the cellRenderer class to use - this is decided once when the grid is initialised
@@ -1226,7 +1228,27 @@ export class CellComp extends Component {
         }
     }
 
+    // returns true if on iPad and this is second 'click' event in 200ms
+    private isDoubleClickOnIPad(): boolean {
+        if (!_.isUserAgentIPad()) { return false; }
+
+        let nowMillis = new Date().getTime();
+        let res = nowMillis - this.lastIPadMouseClickEvent < 200;
+        this.lastIPadMouseClickEvent = nowMillis;
+
+        return res;
+    }
+
     private onCellClicked(mouseEvent: MouseEvent): void {
+
+        // iPad doesn't have double click - so we need to mimic it do enable editing for
+        // iPad.
+        if (this.isDoubleClickOnIPad()) {
+            this.onCellDoubleClicked(mouseEvent);
+            mouseEvent.preventDefault(); // if we don't do this, then ipad zooms in
+            return;
+        }
+
         let cellClickedEvent: CellClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CLICKED);
         this.beans.eventService.dispatchEvent(cellClickedEvent);
 
