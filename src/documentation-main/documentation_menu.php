@@ -227,6 +227,7 @@
     menuItem(0, 'Floating Filter Component', 'Floating Filter Component', 'javascript-grid-floating-filter-component/');
     menuItem(0, 'Header Rendering', 'Header Component', 'javascript-grid-header-rendering/');
     menuItem(0, 'Date Component', 'Date Component', 'javascript-grid-date-component/');
+    menuItem(0, 'Overlay Component', 'Overlay Component', 'javascript-grid-overlay-component/');
     ?>
 </div>
 

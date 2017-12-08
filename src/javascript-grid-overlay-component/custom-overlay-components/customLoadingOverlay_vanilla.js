@@ -1,6 +1,6 @@
-function CustomLoadingOverlayRenderer () {}
+function CustomLoadingOverlay () {}
 
-CustomLoadingOverlayRenderer.prototype.init = function(params) {
+CustomLoadingOverlay.prototype.init = function(params) {
     this.eGui = document.createElement('div');
     this.eGui.innerHTML =
         '<div class="ag-overlay-loading-center" style="background-color: lightsteelblue; height: 9%">' +
@@ -8,6 +8,6 @@ CustomLoadingOverlayRenderer.prototype.init = function(params) {
         '</div>';
 };
 
-CustomLoadingOverlayRenderer.prototype.getGui = function() {
+CustomLoadingOverlay.prototype.getGui = function() {
     return this.eGui;
 };

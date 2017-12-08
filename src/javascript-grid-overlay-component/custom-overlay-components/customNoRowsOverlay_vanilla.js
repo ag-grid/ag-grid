@@ -1,6 +1,6 @@
-function CustomNoRowsOverlayRenderer () {}
+function CustomNoRowsOverlay () {}
 
-CustomNoRowsOverlayRenderer.prototype.init = function(params) {
+CustomNoRowsOverlay.prototype.init = function(params) {
     this.eGui = document.createElement('div');
     this.eGui.innerHTML =
         '<div class="ag-overlay-loading-center" style="background-color: lightcoral; height: 9%">' +
@@ -8,6 +8,6 @@ CustomNoRowsOverlayRenderer.prototype.init = function(params) {
         '</div>';
 };
 
-CustomNoRowsOverlayRenderer.prototype.getGui = function() {
+CustomNoRowsOverlay.prototype.getGui = function() {
     return this.eGui;
 };

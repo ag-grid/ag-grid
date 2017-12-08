@@ -70,24 +70,6 @@ gridOptions.api.hideOverlay()</snippet>
 
     <?= example('Overlays', 'overlays', 'generated') ?>
 
-    <h2 id="custom-overlays">Custom Overlay Renderer's</h2>
-
-    <p>
-        In addition to providing custom template it is also possible to supply custom renderer components for the loading
-        and no rows overlays. These custom overlays are implementations of
-        <a href="../javascript-grid-cell-rendering-components/">Cell Renderer Components</a>.
-    </p>
-
-    <p>
-        The example below demonstrate how to provide custom overlay renderer components to the grid. Notice the following:
-        <ul>
-            <li><b>Custom Loading Overlay Renderer</b> is supplied via <code>gridOptions.loadingOverlayRenderer</code>.</li>
-            <li><b>Custom No Rows Overlay Renderer</b> is supplied via <code>gridOptions.noRowsOverlayRenderer</code>.</li>
-        </ul>
-    </p>
-
-    <?= example('Custom Overlay Renderers', 'custom-overlay-renderers', 'generated', array('enterprise' => false, 'extras' => array('fontawesome')) ) ?>
-
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

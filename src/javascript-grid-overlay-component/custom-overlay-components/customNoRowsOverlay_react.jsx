@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-export default class CustomNoRowsOverlayRenderer extends Component {
+export default class CustomNoRowsOverlay extends Component {
     render() {
         return (
             <div className="ag-overlay-loading-center" style={{backgroundColor: 'lightcoral', height: '9%'}}>
