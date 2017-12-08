@@ -1,4 +1,5 @@
 // to satisfy server side compilation
+
 declare let global: any;
 let globalObj = typeof global === 'undefined' ? {} : global;
 globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
@@ -116,6 +117,10 @@ export {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "./dist/lib/re
 export {AnimateShowChangeCellRenderer} from "./dist/lib/rendering/cellRenderers/animateShowChangeCellRenderer";
 export {AnimateSlideCellRenderer} from "./dist/lib/rendering/cellRenderers/animateSlideCellRenderer";
 export {GroupCellRenderer} from "./dist/lib/rendering/cellRenderers/groupCellRenderer";
+
+// overlay renderer's
+export {ILoadingOverlayRenderer, ILoadingOverlayRendererParams} from "./dist/lib/rendering/overlayRenderers/loadingOverlayRenderer";
+export {INoRowsOverlayRenderer, INoRowsOverlayRendererParams} from "./dist/lib/rendering/overlayRenderers/noRowsOverlayRenderer";
 
 // features
 export {SetLeftFeature} from "./dist/lib/rendering/features/setLeftFeature";
