@@ -3,13 +3,13 @@ import {Autowired} from "../../context/context";
 import {Component} from "../../widgets/component";
 import {IComponent} from "../../interfaces/iComponent";
 
-export interface ILoadingOverlayComponentParams {
+export interface ILoadingOverlayParams {
     loadingRowsTemplate?: string
 }
 
-export interface ILoadingOverlayComponent extends IComponent<ILoadingOverlayComponentParams> {}
+export interface ILoadingOverlayComp extends IComponent<ILoadingOverlayParams> {}
 
-export class LoadingOverlayComponent extends Component implements ILoadingOverlayComponent {
+export class LoadingOverlayComponent extends Component implements ILoadingOverlayComp {
 
     private static DEFAULT_LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
 
@@ -19,7 +19,7 @@ export class LoadingOverlayComponent extends Component implements ILoadingOverla
         super();
     }
 
-    public init(params: ILoadingOverlayComponentParams): void {
+    public init(params: ILoadingOverlayParams): void {
         let template =
             this.gridOptionsWrapper.getOverlayLoadingTemplate() ? this.gridOptionsWrapper.getOverlayLoadingTemplate() :
                 params.loadingRowsTemplate ? params.loadingRowsTemplate :

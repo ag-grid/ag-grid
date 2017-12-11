@@ -3,13 +3,13 @@ import {Autowired} from "../../context/context";
 import {Component} from "../../widgets/component";
 import {IComponent} from "../../interfaces/iComponent";
 
-export interface INoRowsOverlayComponentParams {
+export interface INoRowsOverlayParams {
     noRowsTemplate?: string
 }
 
-export interface INoRowsOverlayComponent extends IComponent<INoRowsOverlayComponentParams> {}
+export interface INoRowsOverlayComp extends IComponent<INoRowsOverlayParams> {}
 
-export class NoRowsOverlayComponent extends Component implements INoRowsOverlayComponent {
+export class NoRowsOverlayComponent extends Component implements INoRowsOverlayComp {
     private static DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
@@ -18,7 +18,7 @@ export class NoRowsOverlayComponent extends Component implements INoRowsOverlayC
         super();
     }
 
-    public init(params: INoRowsOverlayComponentParams): void {
+    public init(params: INoRowsOverlayParams): void {
         let template =
             this.gridOptionsWrapper.getOverlayNoRowsTemplate() ? this.gridOptionsWrapper.getOverlayNoRowsTemplate() :
                 params.noRowsTemplate ? params.noRowsTemplate :
