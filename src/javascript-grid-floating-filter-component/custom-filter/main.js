@@ -1,6 +1,6 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text', suppressFilter: true},
+    {headerName: "Athlete", field: "athlete", width: 150, filter: 'agTextColumnFilter', suppressFilter: true},
     {headerName: "Gold", field: "gold", width: 100, filter: 'numberFilter', suppressMenu: true},
     {headerName: "Silver", field: "silver", width: 100, filter: 'numberFilter', suppressMenu: true},
     {headerName: "Bronze", field: "bronze", width: 100, filter: 'numberFilter', suppressMenu: true},

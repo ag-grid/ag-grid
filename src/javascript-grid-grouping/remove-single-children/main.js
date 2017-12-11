@@ -29,7 +29,7 @@ var gridOptions = {
     autoGroupColumnDef: {
         width: 200,
         headerName: 'Group',
-        cellRenderer: 'group',
+        cellRenderer:'agGroupRenderer',
         field: 'athlete'
     },
     // set this to true to remove single children

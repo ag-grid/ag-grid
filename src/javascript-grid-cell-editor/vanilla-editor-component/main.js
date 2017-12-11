@@ -84,7 +84,7 @@ var columnDefs = [
         field: "address",
         width: 502,
         editable: true,
-        cellEditor: 'largeText',
+        cellEditor: 'agLargeTextCellEditor',
         cellEditorParams: {
             maxLength: '300',   // override the editor defaults
             cols: '50',

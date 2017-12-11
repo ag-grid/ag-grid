@@ -46,21 +46,21 @@ function cbFloatingRows() {
 var columnDefs = [
     {
         headerName: 'Core',
-        children: [{headerName: 'ID', field: 'id'}, {headerName: 'Make', field: 'make'}, {headerName: 'Price', field: 'price', filter: 'number'}]
+        children: [{headerName: 'ID', field: 'id'}, {headerName: 'Make', field: 'make'}, {headerName: 'Price', field: 'price', filter: 'agNumberColumnFilter'}]
     },
     {
         headerName: 'Extra',
         children: [
-            {headerName: 'Val 1', field: 'val1', filter: 'number'},
-            {headerName: 'Val 2', field: 'val2', filter: 'number'},
-            {headerName: 'Val 3', field: 'val3', filter: 'number'},
-            {headerName: 'Val 4', field: 'val4', filter: 'number'},
-            {headerName: 'Val 5', field: 'val5', filter: 'number'},
-            {headerName: 'Val 6', field: 'val6', filter: 'number'},
-            {headerName: 'Val 7', field: 'val7', filter: 'number'},
-            {headerName: 'Val 8', field: 'val8', filter: 'number'},
-            {headerName: 'Val 9', field: 'val9', filter: 'number'},
-            {headerName: 'Val 10', field: 'val10', filter: 'number'}
+            {headerName: 'Val 1', field: 'val1', filter: 'agNumberColumnFilter'},
+            {headerName: 'Val 2', field: 'val2', filter: 'agNumberColumnFilter'},
+            {headerName: 'Val 3', field: 'val3', filter: 'agNumberColumnFilter'},
+            {headerName: 'Val 4', field: 'val4', filter: 'agNumberColumnFilter'},
+            {headerName: 'Val 5', field: 'val5', filter: 'agNumberColumnFilter'},
+            {headerName: 'Val 6', field: 'val6', filter: 'agNumberColumnFilter'},
+            {headerName: 'Val 7', field: 'val7', filter: 'agNumberColumnFilter'},
+            {headerName: 'Val 8', field: 'val8', filter: 'agNumberColumnFilter'},
+            {headerName: 'Val 9', field: 'val9', filter: 'agNumberColumnFilter'},
+            {headerName: 'Val 10', field: 'val10', filter: 'agNumberColumnFilter'}
         ]
     }
 ];

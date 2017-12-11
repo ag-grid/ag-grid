@@ -57,19 +57,19 @@ export class RxJsComponentByRow {
                 headerName: "Bid", field: "bid", width: 100,
                 cellClass: 'cell-number',
                 valueFormatter: this.numberFormatter,
-                cellRenderer: 'animateShowChange'
+                cellRenderer:'agAnimateShowChangeRenderer'
             },
             {
                 headerName: "Mid", field: "mid", width: 100,
                 cellClass: 'cell-number',
                 valueFormatter: this.numberFormatter,
-                cellRenderer: 'animateShowChange'
+                cellRenderer:'agAnimateShowChangeRenderer'
             },
             {
                 headerName: "Ask", field: "ask", width: 100,
                 cellClass: 'cell-number',
                 valueFormatter: this.numberFormatter,
-                cellRenderer: 'animateShowChange'
+                cellRenderer:'agAnimateShowChangeRenderer'
             },
             {
                 headerName: "Volume", field: "volume", width: 100,

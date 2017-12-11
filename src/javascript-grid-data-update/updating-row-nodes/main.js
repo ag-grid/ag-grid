@@ -3,7 +3,7 @@
 var columnDefs = [
     {headerName: "Make", field: "make"},
     {headerName: "Model", field: "model"},
-    {headerName: "Price", field: "price", filter: 'number'}
+    {headerName: "Price", field: "price", filter: 'agNumberColumnFilter'}
 ];
 
 var rowData = [

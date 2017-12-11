@@ -1,6 +1,6 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text'},
+    {headerName: "Athlete", field: "athlete", width: 150, filter: 'agTextColumnFilter'},
     {headerName: "Gold", field: "gold", width: 100, floatingFilterComponent:' numberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true

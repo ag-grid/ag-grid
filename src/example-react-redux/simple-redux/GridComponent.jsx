@@ -77,7 +77,7 @@ class GridComponent extends Component {
                     enableRangeSelection
                     autoColumnGroupDef={{
                         headerName: 'Symbol',
-                        cellRenderer: 'group',
+                        cellRenderer:'agGroupRenderer',
                         field: 'symbol'
                     }}
                     groupDefaultExpanded="1"

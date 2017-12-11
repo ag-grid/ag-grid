@@ -5,9 +5,9 @@ var columnDefs = [
         // this tells the grid what values to put into the cell
         showRowGroup: 'country',
         // this tells the grid what to use to render the cell
-        cellRenderer: 'group'
+        cellRenderer:'agGroupRenderer'
     },
-    {headerName: "Year", showRowGroup: 'year', cellRenderer: 'group'},
+    {headerName: "Year", showRowGroup: 'year', cellRenderer:'agGroupRenderer'},
 
     // these are the two columns we use to group by. we also hide them, so there
     // is no duplication with the values above

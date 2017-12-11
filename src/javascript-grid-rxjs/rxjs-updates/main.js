@@ -5,24 +5,24 @@ const columnDefs = [
         headerName: "Bid", field: "bid", width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer: 'animateShowChange'
+        cellRenderer:'agAnimateShowChangeRenderer'
     },
     {
         headerName: "Mid", field: "mid", width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer: 'animateShowChange'
+        cellRenderer:'agAnimateShowChangeRenderer'
     },
     {
         headerName: "Ask", field: "ask", width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer: 'animateShowChange'
+        cellRenderer:'agAnimateShowChangeRenderer'
     },
     {
         headerName: "Volume", field: "volume", width: 80,
         cellClass: 'cell-number',
-        cellRenderer: 'animateSlide'
+        cellRenderer:'agAnimateSlideRenderer'
     }
 ];
 
