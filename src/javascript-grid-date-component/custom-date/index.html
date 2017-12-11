@@ -1,15 +1,32 @@
 <style>
-    .myDateWidget {
-        margin: 2px;
+    .filter {
+        margin: 0
+    }
+
+    .dd {
+        width: 20px !important;
+    }
+
+    .mm {
+        width: 25px !important;
+    }
+
+    .yyyy {
+        width: 35px !important;
+    }
+
+    .divider {
+        margin: 0;
+        padding: 0
+    }
+
+    .reset {
+        padding: 2px;
+        background-color: red;
+        border-radius: 3px;
+        font-size: 10px;
+        margin-right: 5px;
+        color: white;
     }
 </style>
-
-<input placeholder="Filter..." type="text"
-       onpaste="onFilterChanged(this.value)"
-       oninput="onFilterChanged(this.value)"
-       onchange="onFilterChanged(this.value)"
-       onkeydown="onFilterChanged(this.value)"
-       onkeyup="onFilterChanged(this.value)"/>
 <div id="myGrid" class="ag-theme-fresh" style="height: 450px; margin-top: 4px;"></div>
-
-
