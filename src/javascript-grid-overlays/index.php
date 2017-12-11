@@ -70,6 +70,9 @@ gridOptions.api.hideOverlay()</snippet>
 
     <?= example('Overlays', 'overlays', 'generated') ?>
 
+    <note>It is also possible to provide your own custom Overlay Components - please see <a href="../javascript-grid-overlay-component">
+            Overlay Component</a> for more information.</note>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
