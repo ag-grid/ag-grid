@@ -35,8 +35,8 @@ import {
 } from "../events";
 import {IComponent} from "../interfaces/iComponent";
 import {AgGridRegisteredComponentInput} from "../components/framework/componentProvider";
-import {ILoadingOverlayComp} from "../rendering/overlays/loadingOverlayComponent";
-import {INoRowsOverlayComp} from "../rendering/overlays/noRowsOverlayComponent";
+import {ILoadingOverlayComp, ILoadingOverlayParams} from "../rendering/overlays/loadingOverlayComponent";
+import {INoRowsOverlayComp, INoRowsOverlayParams} from "../rendering/overlays/noRowsOverlayComponent";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *

@@ -3,9 +3,7 @@ import {Autowired} from "../../context/context";
 import {Component} from "../../widgets/component";
 import {IComponent} from "../../interfaces/iComponent";
 
-export interface INoRowsOverlayParams {
-    noRowsTemplate?: string
-}
+export interface INoRowsOverlayParams {}
 
 export interface INoRowsOverlayComp extends IComponent<INoRowsOverlayParams> {}
 
@@ -20,9 +18,8 @@ export class NoRowsOverlayComponent extends Component implements INoRowsOverlayC
 
     public init(params: INoRowsOverlayParams): void {
         let template =
-            this.gridOptionsWrapper.getOverlayNoRowsTemplate() ? this.gridOptionsWrapper.getOverlayNoRowsTemplate() :
-                params.noRowsTemplate ? params.noRowsTemplate :
-                    NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
+            this.gridOptionsWrapper.getOverlayNoRowsTemplate() ?
+                this.gridOptionsWrapper.getOverlayNoRowsTemplate() : NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
 
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         let localisedTemplate = template.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
