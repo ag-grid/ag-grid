@@ -1,5 +1,5 @@
 import {Utils as _} from '../utils';
-import {IOverlayWrapperComponent} from '../rendering/overlays/overlayWrapperComponent';
+import {IOverlayWrapperComp} from '../rendering/overlays/overlayWrapperComponent';
 
 
 // This should be a component
@@ -67,7 +67,7 @@ export class BorderLayout {
 
     private sizeChangeListeners = <any>[];
 
-    private overlayWrapperComponent: Promise<IOverlayWrapperComponent>;
+    private overlayWrapperComp: Promise<IOverlayWrapperComp>;
 
     constructor(params: any) {
 
@@ -108,7 +108,7 @@ export class BorderLayout {
         }
 
         if (params.componentRecipes) {
-            this.overlayWrapperComponent = params.componentRecipes.newOverlayWrapperComponent();
+            this.overlayWrapperComp = params.componentRecipes.newOverlayWrapperComponent();
         }
     }
 
@@ -309,14 +309,14 @@ export class BorderLayout {
     }
 
     public showLoadingOverlay() {
-        this.overlayWrapperComponent.then(overlayComp => overlayComp.showLoadingOverlay(this.eOverlayWrapper));
+        this.overlayWrapperComp.then(overlayComp => overlayComp.showLoadingOverlay(this.eOverlayWrapper));
     }
 
     public showNoRowsOverlay() {
-        this.overlayWrapperComponent.then(overlayComp => overlayComp.showNoRowsOverlay(this.eOverlayWrapper));
+        this.overlayWrapperComp.then(overlayComp => overlayComp.showNoRowsOverlay(this.eOverlayWrapper));
     }
 
     public hideOverlay() {
-        this.overlayWrapperComponent.then(overlayComp => overlayComp.hideOverlay(this.eOverlayWrapper));
+        this.overlayWrapperComp.then(overlayComp => overlayComp.hideOverlay(this.eOverlayWrapper));
     }
 }

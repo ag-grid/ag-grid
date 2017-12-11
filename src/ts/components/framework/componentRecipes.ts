@@ -17,9 +17,9 @@ import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRe
 import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
 import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
 import {Promise} from "../../utils";
-import {IOverlayWrapperComponent} from "../../rendering/overlays/overlayWrapperComponent";
-import {ILoadingOverlayComponent} from "../../rendering/overlays/loadingOverlayComponent";
-import {INoRowsOverlayComponent} from "../../rendering/overlays/noRowsOverlayComponent";
+import {IOverlayWrapperComp} from "../../rendering/overlays/overlayWrapperComponent";
+import {ILoadingOverlayComp} from "../../rendering/overlays/loadingOverlayComponent";
+import {INoRowsOverlayComp} from "../../rendering/overlays/noRowsOverlayComponent";
 
 enum ComponentType {
     AG_GRID, FRAMEWORK
@@ -136,16 +136,16 @@ export class ComponentRecipes {
         return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptionsWrapper, params, "fullWidthCellRenderer");
     }
 
-    public newOverlayWrapperComponent(): Promise<IOverlayWrapperComponent> {
-        return this.componentResolver.createAgGridComponent<IOverlayWrapperComponent>(this.gridOptions, null, "overlayWrapperComponent");
+    public newOverlayWrapperComponent(): Promise<IOverlayWrapperComp> {
+        return this.componentResolver.createAgGridComponent<IOverlayWrapperComp>(this.gridOptions, null, "overlayWrapperComponent");
     }
 
-    public newLoadingOverlayComponent(): Promise<ILoadingOverlayComponent> {
-        return this.componentResolver.createAgGridComponent<ILoadingOverlayComponent>(this.gridOptions, null, "loadingOverlayComponent");
+    public newLoadingOverlayComponent(): Promise<ILoadingOverlayComp> {
+        return this.componentResolver.createAgGridComponent<ILoadingOverlayComp>(this.gridOptions, null, "loadingOverlayComponent");
     }
 
-    public newNoRowsOverlayComponent(): Promise<INoRowsOverlayComponent> {
-        return this.componentResolver.createAgGridComponent<INoRowsOverlayComponent>(this.gridOptions, null, "noRowsOverlayComponent");
+    public newNoRowsOverlayComponent(): Promise<INoRowsOverlayComp> {
+        return this.componentResolver.createAgGridComponent<INoRowsOverlayComp>(this.gridOptions, null, "noRowsOverlayComponent");
     }
 
     private getFilterComponentPrototype<A extends IComponent<any> & B, B>

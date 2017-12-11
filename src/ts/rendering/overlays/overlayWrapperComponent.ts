@@ -5,9 +5,9 @@ import {Component} from "../../widgets/component";
 import {IComponent} from "../../interfaces/iComponent";
 import {ComponentRecipes} from "../../components/framework/componentRecipes";
 
-export interface IOverlayWrapperComponentParams {}
+export interface IOverlayWrapperParams {}
 
-export interface IOverlayWrapperComponent extends IComponent<IOverlayWrapperComponentParams> {
+export interface IOverlayWrapperComp extends IComponent<IOverlayWrapperParams> {
     showLoadingOverlay(eOverlayWrapper: HTMLElement): void
 
     showNoRowsOverlay(eOverlayWrapper: HTMLElement): void
@@ -15,7 +15,7 @@ export interface IOverlayWrapperComponent extends IComponent<IOverlayWrapperComp
     hideOverlay(eOverlayWrapper: HTMLElement): void
 }
 
-export class OverlayWrapperComponent extends Component implements IOverlayWrapperComponent {
+export class OverlayWrapperComponent extends Component implements IOverlayWrapperComp {
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
     private static LOADING_WRAPPER_OVERLAY_TEMPLATE =
