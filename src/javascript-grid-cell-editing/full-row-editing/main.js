@@ -5,7 +5,7 @@ var columnDefs = [
         headerName: 'Make',
         field: 'make',
         editable: true,
-        cellEditor: 'select',
+        cellEditor:'agSelectCellEditor',
         cellEditorParams: {
             values: ['AAA', 'BBB', 'CCC']
         }

@@ -10,13 +10,13 @@ var columnDefs = [
             maxValue: 7,
             suppressFilterButton: true
         },
-        filter: 'number',
+        filter: 'agNumberColumnFilter',
         suppressMenu: false
     },
     {
         headerName: "Silver",
         field: "silver",
-        filter: 'number',
+        filter: 'agNumberColumnFilter',
         floatingFilterComponent: 'sliderFloatingFilter',
         floatingFilterComponentParams: {
             maxValue: 5,
@@ -27,7 +27,7 @@ var columnDefs = [
     {
         headerName: "Bronze",
         field: "bronze",
-        filter: 'number',
+        filter: 'agNumberColumnFilter',
         floatingFilterComponent: 'sliderFloatingFilter',
         floatingFilterComponentParams: {
             maxValue: 10,

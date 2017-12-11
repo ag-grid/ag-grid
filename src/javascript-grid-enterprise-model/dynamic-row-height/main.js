@@ -15,15 +15,15 @@ function countries () {
 
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", enableRowGroup: true, suppressFilter: true},
-    {headerName: "Age", field: "age", enablePivot: true, enableRowGroup: true, filter: 'number',
+    {headerName: "Age", field: "age", enablePivot: true, enableRowGroup: true, filter: 'agNumberColumnFilter',
         filterParams: {
             filterOptions: ['equals','lessThan','greaterThan'],
             newRowsAction: 'keep'}
     },
-    {headerName: "Country", field: "country", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'set',
+    {headerName: "Country", field: "country", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'agSetColumnFilter',
         filterParams: {values: countries(), newRowsAction: 'keep'}
     },
-    {headerName: "Year", field: "year", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'set',
+    {headerName: "Year", field: "year", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'agSetColumnFilter',
         filterParams: {values: ['2000','2004','2008','2012'], newRowsAction: 'keep'}
     },
     {headerName: "Sport", field: "sport", enableRowGroup: true, enablePivot: true, suppressFilter: true},

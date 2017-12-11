@@ -1,9 +1,9 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text', floatingFilterComponentParams:{
+    {headerName: "Athlete", field: "athlete", width: 150, filter: 'agTextColumnFilter', floatingFilterComponentParams:{
         debounceMs:2000
     }},
-    {headerName: "Age", field: "age", width: 90, filter: 'number', floatingFilterComponentParams:{
+    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter', floatingFilterComponentParams:{
         debounceMs:0
     }},
     {headerName: "Country", field: "country", width: 120},

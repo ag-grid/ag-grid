@@ -24,32 +24,32 @@ function randomData() {
     return newData;
 }
 var columnDefs = [
-    {headerName: "Fruit - Normal", field: "fruit", width: 150, filter: 'set',
+    {headerName: "Fruit - Normal", field: "fruit", width: 150, filter: 'agSetColumnFilter',
         filterParams: {} // all default values
     },
-    {headerName: "Animal - Keep", field: "animal", width: 150, filter: 'set',
+    {headerName: "Animal - Keep", field: "animal", width: 150, filter: 'agSetColumnFilter',
         filterParams: {
             newRowsAction: 'keep'
         }
     },
-    {headerName: "Color - Values (Sorted)", field: "color", width: 250, filter: 'set',
+    {headerName: "Color - Values (Sorted)", field: "color", width: 250, filter: 'agSetColumnFilter',
         filterParams: {
             values: colorValues
         }
     },
-    {headerName: "Color - Values (As provided)", field: "color", width: 250, filter: 'set',
+    {headerName: "Color - Values (As provided)", field: "color", width: 250, filter: 'agSetColumnFilter',
         filterParams: {
             values: colorValues,
             suppressSorting: true
         }
     },
-    {headerName: "Location - Values + Keep", field: "location", width: 250, filter: 'set',
+    {headerName: "Location - Values + Keep", field: "location", width: 250, filter: 'agSetColumnFilter',
         filterParams: {
             values: locationValues,
             newRowsAction: 'keep'
         }
     },
-    {headerName: "Value", field: "value", width: 150, filter: 'number'}
+    {headerName: "Value", field: "value", width: 150, filter: 'agNumberColumnFilter'}
 ];
 
 var gridOptions = {

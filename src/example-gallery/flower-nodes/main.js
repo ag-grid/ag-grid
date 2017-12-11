@@ -31,7 +31,7 @@ var rowData = [
 
 function getColumnDefs() {
     var columnDefs = [
-        {headerName: 'Name', field: 'name', width: 150, cellRenderer: 'group', cellRendererParams: {innerRenderer: countryCellRenderer}},
+        {headerName: 'Name', field: 'name', width: 150, cellRenderer:'agGroupRenderer', cellRendererParams: {innerRenderer: countryCellRenderer}},
         {headerName: 'Continent', field: 'continent', width: 150},
         {headerName: 'Language', field: 'language', width: 150}
     ];

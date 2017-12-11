@@ -65,7 +65,7 @@ var groupColumn = {
     field: 'name',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
-    cellRenderer: 'group',
+    cellRenderer:'agGroupRenderer',
     cellRendererParams: {
         checkbox: true
     }
@@ -350,7 +350,7 @@ var defaultCols = [
             },
             {
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
-                cellEditor: 'select',
+                cellEditor:'agSelectCellEditor',
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,

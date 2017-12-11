@@ -131,7 +131,7 @@ var columnDefs = [
         headerName: 'Age',
         field: 'age',
         width: 90,
-        filter: 'number',
+        filter: 'agNumberColumnFilter',
         filterParams: {
             filterOptions: ['equals', 'lessThan', 'greaterThan'],
             newRowsAction: 'keep'
@@ -141,14 +141,14 @@ var columnDefs = [
         headerName: 'Country',
         field: 'country',
         width: 120,
-        filter: 'set',
+        filter: 'agSetColumnFilter',
         filterParams: {values: countries(), newRowsAction: 'keep'}
     },
     {
         headerName: 'Year',
         field: 'year',
         width: 90,
-        filter: 'set',
+        filter: 'agSetColumnFilter',
         filterParams: {values: ['2000', '2004', '2008', '2012'], newRowsAction: 'keep'}
     },
     {headerName: 'Date', field: 'date', width: 110, suppressFilter: true},

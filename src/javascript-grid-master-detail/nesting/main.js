@@ -7,7 +7,7 @@ var data = [
 
 
 var gridOptionsLevel3 = {
-    columnDefs: [{field: 'a3', cellRenderer: 'group'}, {field: 'b3'}],
+    columnDefs: [{field: 'a3', cellRenderer:'agGroupRenderer'}, {field: 'b3'}],
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     }
@@ -15,7 +15,7 @@ var gridOptionsLevel3 = {
 
 
 var gridOptionsLevel2 = {
-    columnDefs: [{field: 'a2', cellRenderer: 'group'}, {field: 'b2'}],
+    columnDefs: [{field: 'a2', cellRenderer:'agGroupRenderer'}, {field: 'b2'}],
     groupDefaultExpanded: 1,
     masterDetail: true,
     detailRowHeight: 200,
@@ -31,7 +31,7 @@ var gridOptionsLevel2 = {
 };
 
 var gridOptionsLevel1 = {
-    columnDefs: [{field: 'a1', cellRenderer: 'group'}, {field: 'b1'}],
+    columnDefs: [{field: 'a1', cellRenderer:'agGroupRenderer'}, {field: 'b1'}],
     rowData: data,
     groupDefaultExpanded: 1,
     masterDetail: true,

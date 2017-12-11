@@ -3,20 +3,20 @@ var columnDefs = [
         headerName: "Athlete Details",
         marryChildren: true,
         children: [
-            {headerName: "Athlete", field: "athlete", width: 150, filter: 'text'},
+            {headerName: "Athlete", field: "athlete", width: 150, filter: 'agTextColumnFilter'},
             {headerName: "Country", field: "country", width: 120}
         ]
     },
-    {headerName: "Age", field: "age", width: 90, filter: 'number', hide: true},
+    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter', hide: true},
     {
         headerName: "Sports Results",
         marryChildren: true,
         children: [
             {headerName: "Sport", field: "sport", width: 110},
-            {headerName: "Total", columnGroupShow: 'closed', field: "total", width: 100, filter: 'number'},
-            {headerName: "Gold", columnGroupShow: 'open', field: "gold", width: 100, filter: 'number'},
-            {headerName: "Silver", columnGroupShow: 'open', field: "silver", width: 100, filter: 'number'},
-            {headerName: "Bronze", columnGroupShow: 'open', field: "bronze", width: 100, filter: 'number'}
+            {headerName: "Total", columnGroupShow: 'closed', field: "total", width: 100, filter: 'agNumberColumnFilter'},
+            {headerName: "Gold", columnGroupShow: 'open', field: "gold", width: 100, filter: 'agNumberColumnFilter'},
+            {headerName: "Silver", columnGroupShow: 'open', field: "silver", width: 100, filter: 'agNumberColumnFilter'},
+            {headerName: "Bronze", columnGroupShow: 'open', field: "bronze", width: 100, filter: 'agNumberColumnFilter'}
         ]
     },
     {headerName: "Extra 1", field: '1', width: 100, hide: true},

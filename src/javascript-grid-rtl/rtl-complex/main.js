@@ -70,7 +70,7 @@ var groupColumn = {
             return params.data[params.colDef.field];
         }
     },
-    cellRenderer: 'group',
+    cellRenderer:'agGroupRenderer',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
     cellRendererParams: {
@@ -215,9 +215,9 @@ var defaultCols = [
         children: [
             firstColumn,
             {
-                headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
+                headerName: "Language", field: "language", width: 150, editable: true, filter: 'agSetColumnFilter',
                 cellRenderer: languageCellRenderer,
-                cellEditor: 'select',
+                cellEditor:'agSelectCellEditor',
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,
@@ -258,7 +258,7 @@ var defaultCols = [
         // column group 'Game of Choice'
         headerName: 'Game of Choice',
         children: [
-            {headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'set',
+            {headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agSetColumnFilter',
                 tooltipField: 'game.name',
                 cellClass: function () {
                     return 'alphabet';
@@ -273,7 +273,7 @@ var defaultCols = [
                 }
             },
             {
-                headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 100,
+                headerName: "Bought", field: "game.bought", filter: 'agSetColumnFilter', editable: true, width: 100,
                 // pinned: 'right',
                 // rowGroupIndex: 2,
                 // pivotIndex: 1,
@@ -323,7 +323,7 @@ var defaultCols = [
         filterParams: {cellRenderer: ratingFilterRenderer}
     },
     {
-        headerName: "Total Winnings", field: "totalWinnings", filter: 'number',
+        headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter',
         editable: true, newValueHandler: numberNewValueHandler, width: 150,
         // aggFunc: 'sum',
         enableValue: true,
@@ -343,7 +343,7 @@ defaultCols.push(monthGroup);
 months.forEach(function (month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
-        width: 100, filter: 'number', editable: true,
+        width: 100, filter: 'agNumberColumnFilter', editable: true,
         enableValue: true,
         // aggFunc: 'sum',
         //hide: true,

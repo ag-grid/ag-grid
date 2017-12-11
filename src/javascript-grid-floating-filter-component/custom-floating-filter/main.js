@@ -1,28 +1,28 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", filter: 'text', suppressFilter: true},
-    {headerName: "Gold", field: "gold", filter: 'number', suppressMenu:true,
+    {headerName: "Athlete", field: "athlete", filter: 'agTextColumnFilter', suppressFilter: true},
+    {headerName: "Gold", field: "gold", filter: 'agNumberColumnFilter', suppressMenu:true,
         floatingFilterComponent:' numberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true,
             color:'red'
         }
     },
-    {headerName: "Silver", field: "silver", filter: 'number', suppressMenu:true,
+    {headerName: "Silver", field: "silver", filter: 'agNumberColumnFilter', suppressMenu:true,
         floatingFilterComponent:' numberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true,
             color:'blue'
         }
     },
-    {headerName: "Bronze", field: "bronze", filter: 'number', suppressMenu:true,
+    {headerName: "Bronze", field: "bronze", filter: 'agNumberColumnFilter', suppressMenu:true,
         floatingFilterComponent:' numberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true,
             color:'green'
         }
     },
-    {headerName: "Total", field: "total", filter: 'number', suppressMenu:true,
+    {headerName: "Total", field: "total", filter: 'agNumberColumnFilter', suppressMenu:true,
         floatingFilterComponent:' numberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true,

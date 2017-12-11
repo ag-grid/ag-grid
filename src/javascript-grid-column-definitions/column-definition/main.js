@@ -30,7 +30,7 @@ var gridOptions = {
         // make every column editable
         editable: true,
         // make every column use 'text' filter by default
-        filter: 'text'
+        filter: 'agTextColumnFilter'
     },
 
     // default ColGroupDef, get applied to every column group
@@ -40,12 +40,12 @@ var gridOptions = {
 
     // define specific column types
     columnTypes: {
-        numberColumn: {width: 83, filter: 'number'},
+        numberColumn: {width: 83, filter: 'agNumberColumnFilter'},
         medalColumn: {width: 100, columnGroupShow: 'open', suppressFilter: true},
         nonEditableColumn: {editable: false},
         dateColumn: {
             // specify we want to use the date filter
-            filter: 'date',
+            filter: 'agDateColumnFilter',
 
             // add extra parameters for the date filter
             filterParams: {
