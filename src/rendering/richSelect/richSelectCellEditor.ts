@@ -14,14 +14,15 @@ import {
 } from "ag-grid/main";
 import {RichSelectRow} from "./richSelectRow";
 import {VirtualList} from "../virtualList";
+import {_} from "ag-grid";
 
 export class RichSelectCellEditor extends Component implements ICellEditor {
 
     private static TEMPLATE =
         // tab index is needed so we can focus, which is needed for keyboard events
         '<div class="ag-rich-select" tabindex="0">' +
-            '<div class="ag-rich-select-value"></div>' +
-            '<div class="ag-rich-select-list"></div>' +
+            '<div ref="eValue" class="ag-rich-select-value"></div>' +
+            '<div ref="eList" class="ag-rich-select-list"></div>' +
         '</div>';
 
     @Autowired('context') context: Context;
@@ -44,8 +45,6 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
 
     private selectionConfirmed = false;
 
-    private cellRenderer: {new(): ICellRendererComp} | ICellRendererFunc | string;
-
     constructor() {
         super(RichSelectCellEditor.TEMPLATE);
     }
@@ -54,7 +53,6 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
         this.params = params;
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
-        this.cellRenderer = params.cellRenderer;
         this.focusAfterAttached = params.cellStartedEdit;
 
         this.virtualList = new VirtualList();
@@ -62,7 +60,7 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
 
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
 
-        this.getGui().querySelector('.ag-rich-select-list').appendChild(this.virtualList.getGui());
+        this.getRefElement('eList').appendChild(this.virtualList.getGui());
 
         if (Utils.exists(this.params.cellHeight)) {
             this.virtualList.setRowHeight(this.params.cellHeight);
@@ -120,13 +118,15 @@ export class RichSelectCellEditor extends Component implements ICellEditor {
     }
 
     private renderSelectedValue(): void {
-        let eValue = <HTMLElement> this.getGui().querySelector('.ag-rich-select-value');
-
         let valueFormatted = this.params.formatValue(this.selectedValue);
+        let eValue = <HTMLElement> this.getRefElement('eValue');
 
-        if (this.cellRenderer) {
-            let rendererPromise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
-            rendererPromise.then(renderer=>{
+        let promise:Promise<ICellRendererComp> = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, {value: this.selectedValue, valueFormatted: valueFormatted});
+
+        let foundRenderer = _.exists(promise);
+
+        if (foundRenderer) {
+            promise.then(renderer=>{
                 if (renderer && renderer.destroy) {
                     this.addDestroyFunc( ()=> renderer.destroy() );
                 }

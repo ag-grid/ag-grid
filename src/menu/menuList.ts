@@ -59,7 +59,7 @@ export class MenuList extends Component {
 
         cMenuItem.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, (event: MenuItemSelectedEvent) => {
             if (menuItemDef.subMenu) {
-                this.showChildMenu(menuItemDef, cMenuItem);
+                this.showChildMenu(menuItemDef, cMenuItem, event.mouseEvent);
             } else {
                 this.dispatchEvent(event)
             }
@@ -103,7 +103,7 @@ export class MenuList extends Component {
             let shouldShow = timerCountCopy===this.timerCount;
             let showingThisMenu = this.subMenuParentDef === menuItemDef;
             if (shouldShow && !showingThisMenu) {
-                this.showChildMenu(menuItemDef, menuItemComp);
+                this.showChildMenu(menuItemDef, menuItemComp, null);
             }
         }, 500);
     }
@@ -112,7 +112,7 @@ export class MenuList extends Component {
         this.getGui().appendChild(_.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
     }
 
-    private showChildMenu(menuItemDef: MenuItemDef, menuItemComp: MenuItemComponent): void {
+    private showChildMenu(menuItemDef: MenuItemDef, menuItemComp: MenuItemComponent, mouseEvent: MouseEvent): void {
         this.removeChildPopup();
 
         let childMenu = new MenuList();
@@ -124,7 +124,9 @@ export class MenuList extends Component {
 
         let hidePopupFunc = this.popupService.addAsModalPopup(
             ePopup,
-            true
+            true,
+            null,
+            mouseEvent
         );
 
         this.popupService.positionPopupForMenu({

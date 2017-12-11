@@ -10,6 +10,7 @@ export interface MenuItemSelectedEvent extends AgEvent {
     subMenu: (MenuItemDef | string)[];
     cssClasses: string[];
     tooltip: string;
+    mouseEvent: MouseEvent;
 }
 
 export class MenuItemComponent extends Component {
@@ -86,7 +87,7 @@ export class MenuItemComponent extends Component {
         }
     }
 
-    private onOptionSelected(): void {
+    private onOptionSelected(mouseEvent: MouseEvent): void {
         let event: MenuItemSelectedEvent = {
             type: MenuItemComponent.EVENT_ITEM_SELECTED,
             action: this.params.action,
@@ -97,7 +98,8 @@ export class MenuItemComponent extends Component {
             name: this.params.name,
             shortcut: this.params.shortcut,
             subMenu: this.params.subMenu,
-            tooltip: this.params.tooltip
+            tooltip: this.params.tooltip,
+            mouseEvent: mouseEvent
         };
         this.dispatchEvent(event);
         if (this.params.action) {

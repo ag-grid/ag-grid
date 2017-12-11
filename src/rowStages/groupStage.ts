@@ -20,7 +20,7 @@ import {
 } from "ag-grid/main";
 
 interface GroupInfo {
-    key: any; // e.g. 'Ireland'
+    key: string; // e.g. 'Ireland'
     field: string; // e.g. 'country'
     rowGroupColumn: Column
 }
@@ -188,6 +188,13 @@ export class GroupStage implements IRowNodeStage {
 
         this.removeOneNode(childNode, details);
         this.insertOneNode(childNode, details);
+
+        // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
+        // refreshed into the gui.
+        // this is needed to kick off the event that rowComp listens to for refresh. this in turn
+        // then will get each cell in the row to refresh - which is what we need as we don't know which
+        // columns will be displaying the rowNode.key info.
+        childNode.setData(childNode.data);
 
         // we add both old and new parents to changed path, as both will need to be refreshed.
         // we already added the old parent (in calling method), so just add the new parent here
@@ -448,7 +455,7 @@ export class GroupStage implements IRowNodeStage {
     private getGroupInfoFromGroupColumns(rowNode: RowNode, details: GroupingDetails) {
         let res: GroupInfo[] = [];
         details.groupedCols.forEach( groupCol => {
-            let key: any = this.getKeyForNode(groupCol, rowNode);
+            let key: string = this.valueService.getKeyForNode(groupCol, rowNode);
             let keyExists = key!==null && key!==undefined;
 
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make
@@ -471,17 +478,4 @@ export class GroupStage implements IRowNodeStage {
         return res;
     }
 
-    private getKeyForNode(groupColumn: Column, rowNode: RowNode): any {
-        let value = this.valueService.getValue(groupColumn, rowNode);
-        let result: any;
-        let keyCreator = groupColumn.getColDef().keyCreator;
-
-        if (keyCreator) {
-            result = keyCreator({value: value});
-        } else {
-            result = value;
-        }
-
-        return result;
-    }
 }
