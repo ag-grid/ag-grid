@@ -14,7 +14,11 @@ include '../documentation-main/documentation_header.php';
     your requirements.
 </p>
 
-<h2>Loading Rows Overlay Interface</h2>
+<h2 id="loading-overlay-interface">Loading Rows Overlay Interface</h2>
+
+<p>
+    Implement this interface to provide a custom overlay when loading rows.
+</p>
 
 <snippet>
 interface ILoadingOverlayComp {
@@ -40,7 +44,11 @@ interface IFilterParams {
 }
 </snippet>
 
-<h2>No Rows Overlay Interface</h2>
+<h2 id="no-rows-overlay-interface">No Rows Overlay Interface</h2>
+
+<p>
+    Implement this interface to provide a custom overlay when no rows loaded.
+</p>
 
 <snippet>
 interface INoRowsOverlayComp {
@@ -67,21 +75,23 @@ interface INoRowsOverlayParams {
 </snippet>
 
 
-<!--<p>-->
-<!--    In addition to providing custom template it is also possible to supply custom renderer components for the loading-->
-<!--    and no rows overlays. These custom overlays are implementations of-->
-<!--    <a href="../javascript-grid-cell-rendering-components/">Cell Renderer Components</a>.-->
-<!--</p>-->
+<h1 id="overlay-component-registering">Registering Overlay Components</h1>
 
 <p>
-    The example below demonstrate how to provide custom overlay components to the grid. Notice the following:
+    See the section <a href="../javascript-grid-components/#registering-custom-components">registering custom components</a>
+    for details on registering and using custom overlays.
+</p>
+
+<h2>Example - Custom Overlay Components</h2>
+
+<p>
+    The example below demonstrates how to provide custom overlay components to the grid. Notice the following:
 <ul>
-    <li><b>Custom Loading Overlay Renderer</b> is supplied via <code>gridOptions.loadingOverlayComponent</code>.</li>
-    <li><b>Custom No Rows Overlay Renderer</b> is supplied via <code>gridOptions.noRowsOverlayComponent</code>.</li>
+    <li><b>Custom Loading Overlay Renderer</b> is supplied by name via <code>gridOptions.loadingOverlayComponent</code>.</li>
+    <li><b>Custom No Rows Overlay Renderer</b> is supplied by name via <code>gridOptions.noRowsOverlayComponent</code>.</li>
 </ul>
 
 <?= example('Custom Overlay Components', 'custom-overlay-components', 'generated', array('enterprise' => false, 'extras' => array('fontawesome')) ) ?>
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
-
