@@ -50,20 +50,27 @@ export class ComponentRecipes {
     private filterManager: FilterManager;
 
     public newDateComponent (params: IDateParams): Promise<IDateComp>{
-        return this.componentResolver.createAgGridComponent<IDateComp>(this.gridOptions, params, "dateComponent", "agDateComponent");
+        return this.componentResolver.createAgGridComponent<IDateComp>(this.gridOptions, params, "date", "agDateInput");
     }
 
     public newHeaderComponent(params:IHeaderParams): Promise<IHeaderComp> {
-        return this.componentResolver.createAgGridComponent<IHeaderComp>(params.column.getColDef(), params, "headerComponent", "agHeaderComponent");
+        return this.componentResolver.createAgGridComponent<IHeaderComp>(params.column.getColDef(), params, "header", "agColumnHeader");
     }
 
     public newHeaderGroupComponent(params:IHeaderGroupParams): Promise<IHeaderGroupComp> {
-        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agHeaderGroupComponent");
+        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroup", "agColumnHeaderGroup");
     }
 
-    private newFloatingFilterComponent<M> (type:string, colDef:ColDef, params:IFloatingFilterParams<M, any>):Promise<IFloatingFilterComp<M, any, any>>{
+    private newFloatingFilterComponent<M> (typeRaw:string, colDef:ColDef, params:IFloatingFilterParams<M, any>):Promise<IFloatingFilterComp<M, any, any>>{
+        let type:string = typeRaw;
         //type if populated must be one of ['set','number','text','date']
-        let floatingFilterName: string = type + "FloatingFilterComponent";
+        if (typeRaw.indexOf('ag') === 0) {
+            let filterPos: number = typeRaw.length - "Filter".length;
+            if (typeRaw.indexOf('Filter') === filterPos) {
+                type = typeRaw.substr(0, filterPos)
+            }
+        }
+        let floatingFilterName: string = type + "FloatingFilter";
         return this.componentResolver.createAgGridComponent<IFloatingFilterComp<M, any, any>>(
             colDef,
             params,
@@ -116,8 +123,8 @@ export class ComponentRecipes {
         return this.componentResolver.createAgGridComponent<IFloatingFilterWrapperComp<any, any, any, any>> (
             colDef,
             floatingFilterWrapperComponentParams,
-            "floatingFilterWrapperComponent",
-            "agFloatingFilterWrapperComponent"
+            "floatingFilterWrapper",
+            "agFloatingFilterWrapper"
         );
     }
 
@@ -156,20 +163,20 @@ export class ComponentRecipes {
     }
 
     public newOverlayWrapperComponent(): Promise<IOverlayWrapperComp> {
-        return this.componentResolver.createAgGridComponent<IOverlayWrapperComp>(this.gridOptions, null, "overlayWrapperComponent", "agOverlayWrapperComponent");
+        return this.componentResolver.createAgGridComponent<IOverlayWrapperComp>(this.gridOptions, null, "overlayWrapper", "agOverlayWrapper");
     }
 
     public newLoadingOverlayComponent(): Promise<ILoadingOverlayComp> {
-        return this.componentResolver.createAgGridComponent<ILoadingOverlayComp>(this.gridOptions, null, "loadingOverlayComponent", "agLoadingOverlayComponent");
+        return this.componentResolver.createAgGridComponent<ILoadingOverlayComp>(this.gridOptions, null, "loadingOverlay", "agLoadingOverlay");
     }
 
     public newNoRowsOverlayComponent(): Promise<INoRowsOverlayComp> {
-        return this.componentResolver.createAgGridComponent<INoRowsOverlayComp>(this.gridOptions, null, "noRowsOverlayComponent", "agNoRosOverlayComponent");
+        return this.componentResolver.createAgGridComponent<INoRowsOverlayComp>(this.gridOptions, null, "noRowsOverlay", "agNoRowsOverlay");
     }
 
     private getFilterComponentPrototype<A extends IComponent<any> & B, B>
     (colDef: ColDef): ComponentToUse<A, B> {
-        return <ComponentToUse<A, B>>this.componentResolver.getComponentToUse(colDef, "filterComponent", "agFilterComponent");
+        return <ComponentToUse<A, B>>this.componentResolver.getComponentToUse(colDef, "filter", "agFilter");
     }
 
     private newEmptyFloatingFilterWrapperComponent(column:Column): Promise<IFloatingFilterWrapperComp<any, any, any, any>> {
@@ -180,8 +187,8 @@ export class ComponentRecipes {
         return this.componentResolver.createAgGridComponent<IFloatingFilterWrapperComp<any, any, any, any>>(
             column.getColDef(),
             floatingFilterWrapperComponentParams,
-            "floatingFilterWrapperComponent",
-            "agEmptyFloatingFilterWrapperComponent"
+            "floatingFilterWrapper",
+            "agEmptyFloatingFilterWrapper"
         );
     }
 }

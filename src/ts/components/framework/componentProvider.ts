@@ -71,13 +71,6 @@ export class ComponentProvider {
     public postConstruct (){
 
         this.agDeprecatedNames = {
-            customFloatingFilterComponent:'agCustomFloatingFilterComponent',
-            readModelAsStringFloatingFilterComponent:'agReadModelAsStringFloatingFilterComponent',
-            numberFloatingFilterComponent:'agNumberColumnFilterFloatingFilterComponent',
-            dateFloatingFilterComponent:'agDateColumnFilterFloatingFilterComponent',
-            textFloatingFilterComponent:'agTextColumnFilterFloatingFilterComponent',
-            setFloatingFilterComponent:'agSetColumnFilterFloatingFilterComponent',
-
             set:'agSetColumnFilter',
             text:'agTextColumnFilter',
             number:'agNumberColumnFilter',
@@ -99,57 +92,57 @@ export class ComponentProvider {
             //THE FOLLOWING COMPONENTS HAVE NO DEFAULTS, THEY NEED TO BE SPECIFIED AS AN SPECIFIC FLAVOUR
             //THERE ARE NO DEFAULTS THAT FIT ALL PURPOSES
             //THEY ARE ADDED HERE TO AVOID THE NOT FOUND WARNING.
-            agFilterComponent:{
+            agColumnFilter:{
                 defaultImpl: null,
                 overridable: false
             },
-            agCustomColumnFloatingFilterComponent:{
+            agCustomColumnFloatingFilter:{
                 defaultImpl: null,
                 overridable: false
             },
 
             //date
-            agDateComponent: {
+            agDateInput: {
                 defaultImpl: DefaultDateComponent,
                 overridable: true
             },
 
             //header
-            agHeaderComponent: {
+            agColumnHeader: {
                 defaultImpl: HeaderComp,
                 overridable: true
             },
-            agHeaderGroupComponent: {
+            agColumnHeaderGroup: {
                 defaultImpl: HeaderGroupComp,
                 overridable: true
             },
 
             //floating filters
-            agSetColumnFilterFloatingFilterComponent: {
+            agSetColumnFloatingFilter: {
                 defaultImpl: SetFloatingFilterComp,
                 overridable: true
             },
-            agTextColumnFilterFloatingFilterComponent: {
+            agTextColumnFloatingFilter: {
                 defaultImpl: TextFloatingFilterComp,
                 overridable: true
             },
-            agNumberColumnFilterFloatingFilterComponent:{
+            agNumberColumnFloatingFilter:{
                 defaultImpl: NumberFloatingFilterComp,
                 overridable: true
             },
-            agDateColumnFilterFloatingFilterComponent: {
+            agDateColumnFloatingFilter: {
                 defaultImpl: DateFloatingFilterComp,
                 overridable: true
             },
-            agReadModelAsStringFloatingFilterComponent: {
+            agReadModelAsStringFloatingFilter: {
                 defaultImpl: ReadModelAsStringFloatingFilterComp,
                 overridable: false
             },
-            agFloatingFilterWrapperComponent: {
+            agFloatingFilterWrapper: {
                 defaultImpl: FloatingFilterWrapperComp,
                 overridable: false
             },
-            agEmptyFloatingFilterWrapperComponent: {
+            agEmptyFloatingFilterWrapper: {
                 defaultImpl: EmptyFloatingFilterWrapperComp,
                 overridable: false
             },
@@ -191,15 +184,15 @@ export class ComponentProvider {
                 defaultImpl: LoadingCellRenderer,
                 overridable: true
             },
-            agOverlayWrapperComponent: {
+            agOverlayWrapper: {
                 defaultImpl: OverlayWrapperComponent,
                 overridable: false
             },
-            agLoadingOverlayComponent: {
+            agLoadingOverlay: {
                 defaultImpl: LoadingOverlayComponent,
                 overridable: true
             },
-            agNoRowsOverlayComponent: {
+            agNoRowsOverlay: {
                 defaultImpl: NoRowsOverlayComponent,
                 overridable: true
             },

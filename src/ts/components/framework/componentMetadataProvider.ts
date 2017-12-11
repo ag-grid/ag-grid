@@ -52,10 +52,6 @@ export class ComponentMetadataProvider {
                 mandatoryMethodList: [],
                 optionalMethodList: []
             },
-            filterComponent:{
-                mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
-                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged']
-            },
             cellRenderer:{
                 mandatoryMethodList: ['refresh'],
                 optionalMethodList: ['afterGuiAttached'],
@@ -86,9 +82,12 @@ export class ComponentMetadataProvider {
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             filter:{
-                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
-                optionalMethodList: ['onNewRowsLoaded', 'onFloatingFilterChanged', 'afterGuiAttached'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+                mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
+                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged', 'afterGuiAttached']
+            },
+            filterComponent:{
+                mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
+                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged', 'afterGuiAttached']
             }
         }
     }
