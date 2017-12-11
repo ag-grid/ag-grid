@@ -14,10 +14,10 @@ export class EnterpriseBoot {
 
     @PreConstruct
     private init(): void {
-        this.componentProvider.registerComponent('richSelect', RichSelectCellEditor);
-        this.componentProvider.registerComponent('richSelectCellEditor', RichSelectCellEditor);
-        this.componentProvider.registerComponent('setColumnFilter', SetFilter);
-        this.componentProvider.registerComponent('detailCellRenderer', DetailCellRenderer);
+        this.componentProvider.registerComponent('agRichSelect', RichSelectCellEditor);
+        this.componentProvider.registerComponent('agRichSelectCellEditor', RichSelectCellEditor);
+        this.componentProvider.registerComponent('agSetColumnFilter', SetFilter);
+        this.componentProvider.registerComponent('agDetailCellRenderer', DetailCellRenderer);
 
         this.licenseManager.validateLicense();
     }
