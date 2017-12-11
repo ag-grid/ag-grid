@@ -17,6 +17,7 @@ import {IComponent} from "../interfaces/iComponent";
 import {FloatingFilterChange, IFloatingFilterParams} from "../filter/floatingFilter";
 import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {IFilterComp} from "../interfaces/iFilter";
+import {GridApi} from "../gridApi";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -25,6 +26,7 @@ export enum HeaderRowType {
 export class HeaderRowComp extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
@@ -260,6 +262,7 @@ export class HeaderRowComp extends Component {
         // let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
         //
         let baseParams:IFloatingFilterParams<M, F> = {
+            api:this.gridApi,
             column:column,
             currentParentModel: (): M => {
                 let filterComponentPromise: Promise<IFilterComp> = <any>this.filterManager.getFilterComponent(column);
