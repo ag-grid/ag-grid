@@ -151,7 +151,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public rowSelection: any = undefined;
     @Input() public overlayLoadingTemplate: any = undefined;
     @Input() public overlayNoRowsTemplate: any = undefined;
-    @Input() public headerCellTemplate: any = undefined;
     @Input() public quickFilterText: any = undefined;
     @Input() public rowModelType: any = undefined;
     @Input() public rowHeight: any = undefined;
@@ -170,7 +169,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public paginationOverflowSize: any = undefined;
     @Input() public paginationPageSize: any = undefined;
     @Input() public paginationInitialRowCount: any = undefined;
-    @Input() public headerCellRenderer: any = undefined;
     @Input() public localeTextFunc: any = undefined;
     @Input() public groupRowInnerRenderer: any = undefined;
     @Input() public groupRowRenderer: any = undefined;
@@ -180,7 +178,6 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public doesExternalFilterPass: any = undefined;
     @Input() public getRowClass: any = undefined;
     @Input() public getRowStyle: any = undefined;
-    @Input() public getHeaderCellTemplate: any = undefined;
     @Input() public traverseNode: any = undefined;
     @Input() public getContextMenuItems: any = undefined;
     @Input() public getMainMenuItems: any = undefined;
@@ -342,6 +339,15 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public detailGridOptions: any = undefined;
     @Input() public getDetailRowData: any = undefined;
     @Input() public masterDetail: any = undefined;
+    @Input() public detailCellRenderer: any = undefined;
+    @Input() public detailCellRendererFramework: any = undefined;
+    @Input() public detailCellRendererParams: any = undefined;
+    @Input() public loadingOverlayComponent: any = undefined;
+    @Input() public loadingOverlayComponentFramework: any = undefined;
+    @Input() public loadingOverlayComponentParams: any = undefined;
+    @Input() public noRowsOverlayComponent: any = undefined;
+    @Input() public noRowsOverlayComponentFramework: any = undefined;
+    @Input() public noRowsOverlayComponentParams: any = undefined;
 
     /**
      * Outputs

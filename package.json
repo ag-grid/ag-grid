@@ -53,7 +53,7 @@
     "core-js": "^2.4.1"
   },
   "peerDependencies": {
-    "ag-grid": "^14.0.0",
+    "ag-grid": "^14.x",
     "@angular/compiler": ">=2.1.x",
     "@angular/compiler-cli": ">=2.1.x",
     "@angular/core": ">=2.1.x",
