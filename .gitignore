@@ -3,5 +3,3 @@ node_modules/
 npm-debug.log
 
 module.tgz
-
-dist/
