@@ -6,19 +6,18 @@ import {ColumnGroup} from "../entities/columnGroup";
 import {ColumnController} from "../columnController/columnController";
 import {Column} from "../entities/column";
 import {DropTarget} from "../dragAndDrop/dragAndDropService";
-import {RenderedHeaderCell} from "./deprecated/renderedHeaderCell";
 import {EventService} from "../eventService";
 import {Events} from "../events";
 import {Promise, Utils as _} from "../utils";
 import {HeaderWrapperComp} from "./header/headerWrapperComp";
 import {HeaderGroupWrapperComp} from "./headerGroup/headerGroupWrapperComp";
 import {FilterManager} from "../filter/filterManager";
-import {BaseFilter} from "../filter/baseFilter";
 import {IFloatingFilterWrapperComp} from "../filter/floatingFilterWrapper";
 import {IComponent} from "../interfaces/iComponent";
 import {FloatingFilterChange, IFloatingFilterParams} from "../filter/floatingFilter";
 import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {IFilterComp} from "../interfaces/iFilter";
+import {GridApi} from "../gridApi";
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -27,6 +26,7 @@ export enum HeaderRowType {
 export class HeaderRowComp extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('context') private context: Context;
     @Autowired('eventService') private eventService: EventService;
@@ -188,23 +188,23 @@ export class HeaderRowComp extends Component {
                 _.removeFromArray(currentChildIds, idOfChild);
                 headerCompPromise = this.headerCompPromises[idOfChild];
                 headerCompPromise.then(headerComp=>{
-                    eBefore = eHeaderCompGui;
                     eHeaderCompGui = headerComp.getGui();
                     if (ensureDomOrder) {
                         _.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                     }
+                    eBefore = eHeaderCompGui;
                 });
             } else {
                 headerCompPromise = this.createHeaderComp(child);
                 this.headerCompPromises[idOfChild] = headerCompPromise;
                 headerCompPromise.then(headerComp=>{
-                    eBefore = eHeaderCompGui;
                     eHeaderCompGui = headerComp.getGui();
                     if (ensureDomOrder) {
                         _.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                     } else {
                         eParentContainer.appendChild(eHeaderCompGui);
                     }
+                    eBefore = eHeaderCompGui;
                 });
             }
         });
@@ -213,45 +213,12 @@ export class HeaderRowComp extends Component {
         this.removeAndDestroyChildComponents(currentChildIds);
     }
 
-    private warnedUserOnOldHeaderTemplate = false;
-
-    // check if user is using the deprecated
-    private isUsingOldHeaderRenderer(column: Column): boolean {
-        let colDef = column.getColDef();
-
-        let usingOldHeaderRenderer = _.anyExists([
-            // header template
-            this.gridOptionsWrapper.getHeaderCellTemplateFunc(),
-            this.gridOptionsWrapper.getHeaderCellTemplate(),
-            colDef.headerCellTemplate,
-            // header cellRenderer
-            colDef.headerCellRenderer,
-            this.gridOptionsWrapper.getHeaderCellRenderer()
-        ]);
-
-        if (usingOldHeaderRenderer && !this.warnedUserOnOldHeaderTemplate) {
-            if (this.gridOptionsWrapper.getHeaderCellTemplate() || this.gridOptionsWrapper.getHeaderCellTemplateFunc()) {
-                console.warn('ag-Grid: Since ag-Grid v14 you can now specify a template for the default header component. The ability to specify header template using colDef.headerCellTemplate is now deprecated and will be removed in v15. Please change your code to specify the template as colDef.headerComponentParams.template')
-            }
-            if (this.gridOptionsWrapper.getHeaderCellRenderer()) {
-                console.warn('ag-Grid: Using headerCellRenderer is deprecated and will be removed in ag-Grid v15. Please use Header Component instead.');
-            }
-            this.warnedUserOnOldHeaderTemplate = true;
-        }
-
-        return usingOldHeaderRenderer;
-    }
-
     private createHeaderComp(columnGroupChild:ColumnGroupChild): Promise<IComponent<any>> {
         let resultPromise: Promise<IComponent<any>>;
 
         switch (this.type) {
             case HeaderRowType.COLUMN :
-                if (this.isUsingOldHeaderRenderer(<Column> columnGroupChild)) {
-                    resultPromise = Promise.resolve<IComponent<any>>(new RenderedHeaderCell(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
-                } else {
-                    resultPromise = Promise.resolve<IComponent<any>>(new HeaderWrapperComp(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
-                }
+                resultPromise = Promise.resolve<IComponent<any>>(new HeaderWrapperComp(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
                 break;
             case HeaderRowType.COLUMN_GROUP :
                 resultPromise = Promise.resolve<IComponent<any>>(new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
@@ -295,6 +262,7 @@ export class HeaderRowComp extends Component {
         // let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
         //
         let baseParams:IFloatingFilterParams<M, F> = {
+            api:this.gridApi,
             column:column,
             currentParentModel: (): M => {
                 let filterComponentPromise: Promise<IFilterComp> = <any>this.filterManager.getFilterComponent(column);

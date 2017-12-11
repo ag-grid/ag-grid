@@ -10,6 +10,7 @@ import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {Component} from "../widgets/component";
 import {Constants} from "../constants";
 import {Column} from "../entities/column";
+import {GridApi} from "../gridApi";
 
 export interface FloatingFilterChange {
 }
@@ -20,6 +21,7 @@ export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
     currentParentModel: () => M;
     suppressFilterButton: boolean;
     debounceMs?: number;
+    api:GridApi;
 }
 
 export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
@@ -65,7 +67,13 @@ export abstract class InputTextFloatingFilterComp<M, P extends IFloatingFilterPa
     abstract asFloatingFilterText(parentModel: M): string;
 
     onParentModelChanged(parentModel: M): void {
-        if (this.equalModels(this.lastKnownModel, parentModel)) return;
+        if (this.equalModels(this.lastKnownModel, parentModel)) {
+            // ensure column floating filter text is blanked out when both ranges are empty
+            if(!this.lastKnownModel && !parentModel) {
+                this.eColumnFloatingFilter.value = '';
+            }
+            return;
+        }
         this.lastKnownModel = parentModel;
         let incomingTextValue = this.asFloatingFilterText(parentModel);
         if (incomingTextValue === this.eColumnFloatingFilter.value) return;

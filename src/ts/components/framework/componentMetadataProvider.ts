@@ -24,11 +24,23 @@ export class ComponentMetadataProvider {
                 mandatoryMethodList: ['getDate', 'setDate'],
                 optionalMethodList: []
             },
+            detailCellRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
             headerComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
             },
             headerGroupComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
+            loadingOverlayComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
+            noRowsOverlayComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
             },
@@ -39,10 +51,6 @@ export class ComponentMetadataProvider {
             floatingFilterWrapperComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
-            },
-            filterComponent:{
-                mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
-                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged']
             },
             cellRenderer:{
                 mandatoryMethodList: ['refresh'],
@@ -74,9 +82,12 @@ export class ComponentMetadataProvider {
                 functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
             },
             filter:{
-                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
-                optionalMethodList: ['onNewRowsLoaded', 'onFloatingFilterChanged'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+                mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
+                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged', 'afterGuiAttached']
+            },
+            filterComponent:{
+                mandatoryMethodList: ['isFilterActive','doesFilterPass','getModel','setModel'],
+                optionalMethodList: ['afterGuiAttached','onNewRowsLoaded','getModelAsString','onFloatingFilterChanged', 'afterGuiAttached']
             }
         }
     }

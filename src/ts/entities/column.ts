@@ -243,6 +243,13 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                 this.colDef.valueFormatter = colDefAny.cellFormatter;
             }
         }
+
+        if (colDefAny.headerCellTemplate) {
+            console.warn('ag-Grid: since v15, headerCellTemplate is gone, use header component instead.');
+        }
+        if (colDefAny.headerCellRenderer) {
+            console.warn('ag-Grid: since v15, headerCellRenderer is gone, use header component instead.');
+        }
     }
     
     public addEventListener(eventType: string, listener: Function): void {

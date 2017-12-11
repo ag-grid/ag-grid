@@ -134,7 +134,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
 
         let pivotModeAndLeafGroup = this.columnController.isPivotMode() && params.node.leafGroup;
 
-        if (rowNode.footer || !rowNode.isExpandable() || pivotModeAndLeafGroup) {
+        let notExpandable = !rowNode.isExpandable();
+        if (rowNode.footer || notExpandable || pivotModeAndLeafGroup) {
             paddingCount += 1;
         }
 
@@ -308,12 +309,19 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         // because we don't show the expand / contract when there are no children, we need to check every time
         // the number of children change.
         this.addDestroyableEventListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED,
-            this.showExpandAndContractIcons.bind(this));
+            this.onAllChildrenCountChanged.bind(this));
 
         // if editing groups, then double click is to start editing
         if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
             this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
+    }
+
+    private onAllChildrenCountChanged(): void {
+        // maybe if no children now, we should hide the expand / contract icons
+        this.showExpandAndContractIcons();
+        // if we have no children, this impacts the indent
+        this.setIndent();
     }
 
     private onKeyDown(event: KeyboardEvent): void {
@@ -365,18 +373,21 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    public onExpandClicked(): void {
+    public onExpandClicked(mouseEvent: MouseEvent): void {
+        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
         this.onExpandOrContract();
     }
 
-    public onCellDblClicked(event: MouseEvent): void {
+    public onCellDblClicked(mouseEvent: MouseEvent): void {
+        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+
         // we want to avoid acting on double click events on the expand / contract icon,
         // as that icons already has expand / collapse functionality on it. otherwise if
         // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
         // is open->close->open, however double click should be open->close only.
         let targetIsExpandIcon
-            = _.isElementInEventPath(this.eExpanded, event)
-            || _.isElementInEventPath(this.eContracted, event);
+            = _.isElementInEventPath(this.eExpanded, mouseEvent)
+            || _.isElementInEventPath(this.eContracted, mouseEvent);
 
         if (!targetIsExpandIcon) {
             this.onExpandOrContract();

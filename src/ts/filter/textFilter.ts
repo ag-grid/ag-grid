@@ -98,7 +98,7 @@ export class TextFilter extends ComparableBaseFilter <string, ITextFilterParams,
 
     public initialiseFilterBodyUi() {
         super.initialiseFilterBodyUi();
-        let debounceMs: number = this.filterParams.debounceMs != null ? this.filterParams.debounceMs : 500;
+        let debounceMs = this.getDebounceMs(this.filterParams);
         let toDebounce:()=>void = _.debounce(this.onFilterTextFieldChanged.bind(this), debounceMs);
         this.addDestroyableEventListener(this.eFilterTextField, 'input', toDebounce);
     }

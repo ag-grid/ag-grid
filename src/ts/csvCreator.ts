@@ -1,4 +1,4 @@
-import {Bean, Autowired} from "./context/context";
+import {Bean, Autowired, PostConstruct} from "./context/context";
 import {
     GridSerializer, RowAccumulator, BaseGridSerializingSession, RowSpanningAccumulator,
     GridSerializingSession
@@ -128,10 +128,19 @@ export class CsvSerializingSession extends BaseGridSerializingSession<string> {
     }
 }
 
+export interface BaseCreatorBeans {
+    downloader: Downloader;
+    gridSerializer: GridSerializer;
+    gridOptionsWrapper: GridOptionsWrapper;
+}
+
 export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P extends ExportParams<T>> {
-    @Autowired('downloader') private downloader: Downloader;
-    @Autowired('gridSerializer') private gridSerializer: GridSerializer;
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+
+    private beans: BaseCreatorBeans;
+
+    protected setBeans(beans: BaseCreatorBeans) {
+        this.beans = beans;
+    }
 
     public export(userParams?: P): string {
         if (this.isExportSuppressed()){
@@ -147,7 +156,7 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
             fileName = fileName + "." + this.getDefaultFileExtension();
         }
 
-        this.downloader.download(
+        this.beans.downloader.download(
             fileName,
             data,
             this.getMimeType()
@@ -161,12 +170,12 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
 
     private getMergedParamsAndData(userParams: P):{mergedParams:P, data:string} {
         let mergedParams = this.mergeDefaultParams(userParams);
-        let data = this.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
+        let data = this.beans.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
         return {mergedParams, data};
     }
 
     private mergeDefaultParams(userParams: P):P {
-        let baseParams: BaseExportParams = this.gridOptionsWrapper.getDefaultExportParams();
+        let baseParams: BaseExportParams = this.beans.gridOptionsWrapper.getDefaultExportParams();
         let params: P = <any>{};
         _.assign(params, baseParams);
         _.assign(params, userParams);
@@ -181,8 +190,22 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
 
 @Bean('csvCreator')
 export class CsvCreator extends BaseCreator<string, CsvSerializingSession, CsvExportParams>{
+
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
+
+    @Autowired('downloader') private downloader: Downloader;
+    @Autowired('gridSerializer') private gridSerializer: GridSerializer;
+    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+
+    @PostConstruct
+    public postConstruct(): void {
+        this.setBeans({
+            downloader: this.downloader,
+            gridSerializer: this.gridSerializer,
+            gridOptionsWrapper: this.gridOptionsWrapper
+        });
+    }
 
     public exportDataAsCsv(params?: CsvExportParams): string {
         return this.export(params);

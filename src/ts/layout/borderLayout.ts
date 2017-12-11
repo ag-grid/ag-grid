@@ -1,5 +1,8 @@
 import {Utils as _} from '../utils';
+import {IOverlayWrapperComp} from '../rendering/overlays/overlayWrapperComponent';
 
+
+// This should be a component
 export class BorderLayout {
 
     // this is used if there user has not specified any north or south parts
@@ -63,7 +66,8 @@ export class BorderLayout {
     private visibleLastTime = false;
 
     private sizeChangeListeners = <any>[];
-    private overlays: any;
+
+    private overlayWrapperComp: Promise<IOverlayWrapperComp>;
 
     constructor(params: any) {
 
@@ -103,8 +107,9 @@ export class BorderLayout {
             this.setupPanels(params);
         }
 
-        this.overlays = params.overlays;
-        this.setupOverlays();
+        if (params.componentRecipes) {
+            this.overlayWrapperComp = params.componentRecipes.newOverlayWrapperComponent();
+        }
     }
 
     public addSizeChangeListener(listener: Function): void {
@@ -303,31 +308,15 @@ export class BorderLayout {
         this.doLayout();
     }
 
-    private setupOverlays(): void {
-        // if no overlays, just remove the panel
-        if (!this.overlays) {
-            this.eOverlayWrapper.parentNode.removeChild(this.eOverlayWrapper);
-            return;
-        }
+    public showLoadingOverlay() {
+        this.overlayWrapperComp.then(overlayComp => overlayComp.showLoadingOverlay(this.eOverlayWrapper));
+    }
 
-        this.hideOverlay();
+    public showNoRowsOverlay() {
+        this.overlayWrapperComp.then(overlayComp => overlayComp.showNoRowsOverlay(this.eOverlayWrapper));
     }
 
     public hideOverlay() {
-        _.removeAllChildren(this.eOverlayWrapper);
-        this.eOverlayWrapper.style.display = 'none';
+        this.overlayWrapperComp.then(overlayComp => overlayComp.hideOverlay(this.eOverlayWrapper));
     }
-
-    public showOverlay(key: string) {
-        let overlay = this.overlays ? this.overlays[key] : null;
-        if (overlay) {
-            _.removeAllChildren(this.eOverlayWrapper);
-            this.eOverlayWrapper.style.display = '';
-            this.eOverlayWrapper.appendChild(overlay);
-        } else {
-            console.log('ag-Grid: unknown overlay');
-            this.hideOverlay();
-        }
-    }
-
 }

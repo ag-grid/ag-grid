@@ -21,7 +21,13 @@ ag-grid.iml
 .sass-cache
 .cache-loader
 
+dist
 package-lock.json
 module.tgz
+
+
+main.js
+main.js.map
+main.d.ts
 
 main.ngsummary.json

@@ -138,12 +138,12 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         this.checkBlockToLoad();
     }
 
-    protected removeBlockFromCache(pageToRemove: T): void {
-        if (!pageToRemove) {
+    protected removeBlockFromCache(blockToRemove: T): void {
+        if (!blockToRemove) {
             return;
         }
 
-        this.destroyBlock(pageToRemove);
+        this.destroyBlock(blockToRemove);
 
         // we do not want to remove the 'loaded' event listener, as the
         // concurrent loads count needs to be updated when the load is complete

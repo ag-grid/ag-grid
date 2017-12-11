@@ -1,7 +1,7 @@
 import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnApi, ColumnController} from "../columnController/columnController";
-import {RowRenderer, RefreshViewParams} from "../rendering/rowRenderer";
+import {RowRenderer} from "../rendering/rowRenderer";
 import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
 import {Bean, Qualifier, Autowired, PostConstruct, Optional, PreDestroy, Context} from "../context/context";
@@ -21,7 +21,6 @@ import {BeanStub} from "../context/beanStub";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {Column} from "../entities/column";
 import {RowContainerComponent} from "../rendering/rowContainerComponent";
-import {GridCell, GridCellDef} from "../entities/gridCell";
 import {RowNode} from "../entities/rowNode";
 import {PaginationProxy} from "../rowModels/paginationProxy";
 import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
@@ -31,6 +30,10 @@ import {GridApi} from "../gridApi";
 import {AnimationFrameService} from "../misc/animationFrameService";
 import {RowComp} from "../rendering/rowComp";
 import {NavigationService} from "./navigationService";
+import {CellComp} from "../rendering/cellComp";
+import {ValueService} from "../valueService/valueService";
+import {LongTapEvent, TouchListener} from "../widgets/touchListener";
+import {ComponentRecipes} from "../components/framework/componentRecipes";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -110,16 +113,6 @@ const GRID_PANEL_FOR_PRINT_TEMPLATE =
             '<div class="ag-floating-bottom-container"></div>'+
         '</div>';
 
-// wrapping in outer div, and wrapper, is needed to center the loading icon
-// The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-const OVERLAY_TEMPLATE =
-    '<div class="ag-overlay-panel" role="presentation">'+
-        '<div class="ag-overlay-wrapper ag-overlay-[OVERLAY_NAME]-wrapper">[OVERLAY_TEMPLATE]</div>'+
-    '</div>';
-
-const LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
-const NO_ROWS_TO_SHOW_OVERLAY_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
-
 export interface RowContainerComponents {
     fullWidth: RowContainerComponent;
     body: RowContainerComponent;
@@ -163,6 +156,8 @@ export class GridPanel extends BeanStub {
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
+    @Autowired('valueService') private  valueService: ValueService;
+    @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -236,7 +231,7 @@ export class GridPanel extends BeanStub {
         this.findElements();
     }
 
-    public getVerticalPixelRange(): any {
+    public getVerticalPixelRange(): {top: number, bottom: number} {
         let container: HTMLElement = this.getPrimaryScrollViewport();
         let result = {
             top: container.scrollTop,
@@ -276,14 +271,11 @@ export class GridPanel extends BeanStub {
         this.addDragListeners();
 
         this.layout = new BorderLayout({
-            overlays: {
-                loading: _.loadTemplate(this.createLoadingOverlayTemplate()),
-                noRows: _.loadTemplate(this.createNoRowsOverlayTemplate())
-            },
             center: this.eRoot,
             dontFill: this.forPrint,
             fillHorizontalOnly: this.autoHeight,
-            name: 'eGridPanel'
+            name: 'eGridPanel',
+            componentRecipes: this.componentRecipes
         });
 
         this.layout.addSizeChangeListener(this.setBodyAndHeaderHeights.bind(this));
@@ -307,6 +299,7 @@ export class GridPanel extends BeanStub {
         this.addKeyboardEvents();
         this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
+        this.mockContextMenuForIPad();
 
         if (this.$scope) {
             this.addAngularApplyCheck();
@@ -447,7 +440,7 @@ export class GridPanel extends BeanStub {
             let target = _.getTarget(mouseEvent);
             if (target===this.eBodyViewport || target===this.ePinnedLeftColsViewport || target===this.ePinnedRightColsViewport) {
                 // show it
-                this.onContextMenu(mouseEvent);
+                this.onContextMenu(mouseEvent, null, null, null, null);
                 this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
@@ -461,7 +454,7 @@ export class GridPanel extends BeanStub {
 
     }
 
-    private getRowForEvent(event: MouseEvent | KeyboardEvent): RowComp {
+    private getRowForEvent(event: Event): RowComp {
 
         let sourceElement = _.getTarget(event);
 
@@ -510,33 +503,72 @@ export class GridPanel extends BeanStub {
     }
 
     private processMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
-        let cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
-        if (cellComp) {
-            cellComp.onMouseEvent(eventName, mouseEvent);
-        }
+        if (!this.mouseEventService.isEventFromThisGrid(mouseEvent)) return;
+        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
 
-        let rowComp: RowComp = this.getRowForEvent(mouseEvent);
-        if (rowComp) {
-            rowComp.onMouseEvent(eventName, mouseEvent);
+        let rowComp = this.getRowForEvent(mouseEvent);
+        let cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
+
+        if (eventName === "contextmenu") {
+            this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellComp);
+        } else {
+            if (cellComp) cellComp.onMouseEvent(eventName, mouseEvent);
+            if (rowComp) rowComp.onMouseEvent(eventName, mouseEvent);
         }
 
         this.preventDefaultOnContextMenu(mouseEvent);
     }
 
-    private onContextMenu(mouseEvent: MouseEvent): void {
+    private mockContextMenuForIPad(): void {
+
+        // we do NOT want this when not in ipad, otherwise we will be doing
+        if (!_.isUserAgentIPad()) {return;}
+
+        this.eAllCellContainers.forEach( container => {
+            let touchListener = new TouchListener(container);
+            let longTapListener = (event: LongTapEvent)=> {
+
+                let rowComp = this.getRowForEvent(event.touchEvent);
+                let cellComp = this.mouseEventService.getRenderedCellForEvent(event.touchEvent);
+
+                this.handleContextMenuMouseEvent(null, event.touchEvent, rowComp, cellComp);
+            };
+            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+            this.addDestroyFunc( ()=> touchListener.destroy() );
+        });
+
+    }
+
+    private handleContextMenuMouseEvent(mouseEvent: MouseEvent, touchEvent: TouchEvent, rowComp: RowComp, cellComp: CellComp) {
+        let rowNode = rowComp ? rowComp.getRowNode() : null;
+        let column = cellComp ? cellComp.getColumn() : null;
+        let value = null;
+
+        if (column) {
+            let event = mouseEvent ? mouseEvent : touchEvent;
+            cellComp.dispatchCellContextMenuEvent(event);
+            value = this.valueService.getValue(column, rowNode);
+        }
+
+        this.onContextMenu(mouseEvent, touchEvent, rowNode, column, value);
+    }
+
+    private onContextMenu(mouseEvent: MouseEvent, touchEvent: TouchEvent, rowNode: RowNode, column: Column, value: any): void {
 
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
         if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
             // then do the check
-            if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) {
                 return;
             }
         }
 
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
-            this.contextMenuFactory.showMenu(null, null, null, mouseEvent);
-            mouseEvent.preventDefault();
+            let eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent.touches[0];
+            this.contextMenuFactory.showMenu(rowNode, column, value, eventOrTouch);
+            let event = mouseEvent ? mouseEvent : touchEvent;
+            event.preventDefault();
         }
     }
 
@@ -647,49 +679,6 @@ export class GridPanel extends BeanStub {
         return false;
     }
 
-    private createOverlayTemplate(name: string, defaultTemplate: string, userProvidedTemplate: string): string {
-
-        let template = OVERLAY_TEMPLATE
-            .replace('[OVERLAY_NAME]', name);
-
-        if (userProvidedTemplate) {
-            template = template.replace('[OVERLAY_TEMPLATE]', userProvidedTemplate);
-        } else {
-            template = template.replace('[OVERLAY_TEMPLATE]', defaultTemplate);
-        }
-
-        return template;
-    }
-
-    private createLoadingOverlayTemplate(): string {
-
-        let userProvidedTemplate = this.gridOptionsWrapper.getOverlayLoadingTemplate();
-
-        let templateNotLocalised = this.createOverlayTemplate(
-            'loading',
-            LOADING_OVERLAY_TEMPLATE,
-            userProvidedTemplate);
-
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        let templateLocalised = templateNotLocalised.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
-
-        return templateLocalised;
-    }
-
-    private createNoRowsOverlayTemplate(): string {
-        let userProvidedTemplate = this.gridOptionsWrapper.getOverlayNoRowsTemplate();
-
-        let templateNotLocalised = this.createOverlayTemplate(
-            'no-rows',
-            NO_ROWS_TO_SHOW_OVERLAY_TEMPLATE,
-            userProvidedTemplate);
-
-        let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        let templateLocalised = templateNotLocalised.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
-
-        return templateLocalised;
-    }
-
     // Valid values for position are bottom, middle and top
     // position should be {'top','middle','bottom', or undefined/null}.
     // if undefined/null, then the grid will to the minimal amount of scrolling,
@@ -697,8 +686,8 @@ export class GridPanel extends BeanStub {
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
     public ensureIndexVisible(index: any, position?: string) {
-        // if for print, everything is always visible
-        if (this.gridOptionsWrapper.isForPrint()) { return; }
+        // if for print or auto height, everything is always visible
+        if (this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight()) { return; }
 
         this.logger.log('ensureIndexVisible: ' + index);
         let rowCount = this.paginationProxy.getTotalRowCount();
@@ -964,13 +953,13 @@ export class GridPanel extends BeanStub {
 
     public showLoadingOverlay(): void {
         if (!this.gridOptionsWrapper.isSuppressLoadingOverlay()) {
-            this.layout.showOverlay('loading');
+            this.layout.showLoadingOverlay();
         }
     }
 
     public showNoRowsOverlay(): void {
         if (!this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
-            this.layout.showOverlay('noRows');
+            this.layout.showNoRowsOverlay();
         }
     }
 
@@ -1174,6 +1163,7 @@ export class GridPanel extends BeanStub {
             };
 
             this.addMouseWheelEventListeners();
+            this.suppressScrollOnFloatingRow();
         }
 
         _.iterateObject(this.rowContainerComponents, (key: string, container: RowContainerComponent)=> {
@@ -1181,6 +1171,17 @@ export class GridPanel extends BeanStub {
                 this.context.wireBean(container);
             }
         });
+    }
+
+    // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
+    // scroll the column into view. we do not want this, the pinned sections should never scroll.
+    // so we listen to scrolls on these containers and reset the scroll if we find one.
+    private suppressScrollOnFloatingRow(): void {
+        let resetTopScroll = () => this.eFloatingTopViewport.scrollLeft = 0;
+        let resetBottomScroll = () => this.eFloatingTopViewport.scrollLeft = 0;
+
+        this.addDestroyableEventListener(this.eFloatingTopViewport, 'scroll', resetTopScroll);
+        this.addDestroyableEventListener(this.eFloatingBottomViewport, 'scroll', resetBottomScroll);
     }
 
     public getRowContainers(): RowContainerComponents {
@@ -1251,7 +1252,8 @@ export class GridPanel extends BeanStub {
         // allow the option to pass mouse wheel events to the browser
         // https://github.com/ag-grid/ag-grid/issues/800
         // in the future, this should be tied in with 'forPrint' option, or have an option 'no vertical scrolls'
-        if (!this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel()) {
+        let shouldPreventDefault = !this.gridOptionsWrapper.isAutoHeight() && !this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel();
+        if (shouldPreventDefault) {
             // if we don't prevent default, then the whole browser will scroll also as well as the grid
             event.preventDefault();
         }
@@ -1650,8 +1652,8 @@ export class GridPanel extends BeanStub {
 
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
     // out the virtual columns again. gets called from following locations:
-    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged
-    private setLeftAndRightBounds(): void {
+    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged, API (doLayout)
+    public setLeftAndRightBounds(): void {
         if (this.gridOptionsWrapper.isForPrint()) { return; }
 
         let scrollWidth = this.eBodyViewport.clientWidth;

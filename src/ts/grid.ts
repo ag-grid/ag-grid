@@ -9,7 +9,6 @@ import {ValueService} from "./valueService/valueService";
 import {EventService} from "./eventService";
 import {GridPanel} from "./gridPanel/gridPanel";
 import {GridApi} from "./gridApi";
-import {HeaderTemplateLoader} from "./headerRendering/deprecated/headerTemplateLoader";
 import {BalancedColumnTreeBuilder} from "./columnController/balancedColumnTreeBuilder";
 import {DisplayedGroupCreator} from "./columnController/displayedGroupCreator";
 import {ExpressionService} from "./valueService/expressionService";
@@ -162,7 +161,7 @@ export class Grid {
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils, ComponentMetadataProvider,
                 ComponentProvider, ComponentResolver, ComponentRecipes, NamedComponentResolver,
-                CellRendererFactory, HorizontalDragService, HeaderTemplateLoader, PinnedRowModel, DragService,
+                CellRendererFactory, HorizontalDragService, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
                 BalancedColumnTreeBuilder, CsvCreator, Downloader, XmlFactory, GridSerializer, TemplateService,
@@ -182,28 +181,12 @@ export class Grid {
         let isLoggingFunc = ()=> contextParams.debug;
         this.context = new Context(contextParams, new Logger('Context', isLoggingFunc));
 
-        // we do this at the end, after the boot sequence is complete
-        this.registerComponents(gridOptions);
         this.setColumnsAndData();
 
         this.dispatchGridReadyEvent(gridOptions);
 
         if (gridOptions.debug) {
             console.log('ag-Grid -> initialised successfully, enterprise = ' + enterprise);
-        }
-    }
-
-    private registerComponents(gridOptions: GridOptions): void {
-        let componentProvider: ComponentProvider = this.context.getBean('componentProvider');
-        if (gridOptions.components != null) {
-            Object.keys(gridOptions.components).forEach(it=>{
-                componentProvider.registerComponent(it, gridOptions.components[it]);
-            });
-        }
-        if (gridOptions.frameworkComponents != null) {
-            Object.keys(gridOptions.frameworkComponents).forEach(it=>{
-                componentProvider.registerFwComponent(it, gridOptions.frameworkComponents[it]);
-            });
         }
     }
 

@@ -1,4 +1,5 @@
 // to satisfy server side compilation
+
 declare let global: any;
 let globalObj = typeof global === 'undefined' ? {} : global;
 globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
@@ -89,10 +90,8 @@ export {CssClassApplier} from "./dist/lib/headerRendering/cssClassApplier";
 export {HeaderContainer} from "./dist/lib/headerRendering/headerContainer";
 export {HeaderRenderer} from "./dist/lib/headerRendering/headerRenderer";
 export {HeaderRowComp} from "./dist/lib/headerRendering/headerRowComp";
-export {HeaderTemplateLoader} from "./dist/lib/headerRendering/deprecated/headerTemplateLoader";
 export {HorizontalDragService} from "./dist/lib/headerRendering/horizontalDragService";
 export {MoveColumnController} from "./dist/lib/headerRendering/moveColumnController";
-export {RenderedHeaderCell} from "./dist/lib/headerRendering/deprecated/renderedHeaderCell";
 export {StandardMenuFactory} from "./dist/lib/headerRendering/standardMenu";
 
 // layout
@@ -118,6 +117,10 @@ export {ICellRenderer, ICellRendererFunc, ICellRendererComp} from "./dist/lib/re
 export {AnimateShowChangeCellRenderer} from "./dist/lib/rendering/cellRenderers/animateShowChangeCellRenderer";
 export {AnimateSlideCellRenderer} from "./dist/lib/rendering/cellRenderers/animateSlideCellRenderer";
 export {GroupCellRenderer} from "./dist/lib/rendering/cellRenderers/groupCellRenderer";
+
+// overlays
+export {ILoadingOverlayComp, ILoadingOverlayParams} from "./dist/lib/rendering/overlays/loadingOverlayComponent";
+export {INoRowsOverlayComp, INoRowsOverlayParams} from "./dist/lib/rendering/overlays/noRowsOverlayComponent";
 
 // features
 export {SetLeftFeature} from "./dist/lib/rendering/features/setLeftFeature";

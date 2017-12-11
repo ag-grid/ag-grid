@@ -1,14 +1,15 @@
 export class PropertyKeys {
     public static STRING_PROPERTIES = [
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
-        'overlayNoRowsTemplate', 'headerCellTemplate', 'quickFilterText', 'rowModelType',
+        'overlayNoRowsTemplate', 'quickFilterText', 'rowModelType',
         'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow'];
 
     public static OBJECT_PROPERTIES = [
         'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText',
         'icons', 'datasource', 'enterpriseDatasource', 'viewportDatasource', 'groupRowRendererParams', 'aggFuncs',
         'fullWidthCellRendererParams', 'defaultColGroupDef', 'defaultColDef', 'defaultExportParams', 'columnTypes',
-        'rowClassRules', 'detailGridOptions'
+        'rowClassRules', 'detailGridOptions', 'detailCellRendererParams', 'loadingOverlayComponentParams',
+        'noRowsOverlayComponentParams'
         //,'cellRenderers','cellEditors'
     ];
 
@@ -54,14 +55,15 @@ export class PropertyKeys {
         'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail'
     ];
 
-    public static FUNCTION_PROPERTIES = ['headerCellRenderer', 'localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
+    public static FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',
         'dateComponent', 'dateComponentFramework', 'groupRowRenderer', 'groupRowRendererFramework', 'isExternalFilterPresent',
-        'getRowHeight', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getRowClassRules', 'getHeaderCellTemplate',
+        'getRowHeight', 'doesExternalFilterPass', 'getRowClass', 'getRowStyle', 'getRowClassRules',
         'traverseNode', 'getContextMenuItems', 'getMainMenuItems', 'processRowPostCreate', 'processCellForClipboard',
         'getNodeChildDetails', 'groupRowAggNodes', 'getRowNodeId', 'isFullWidthCell', 'fullWidthCellRenderer',
         'fullWidthCellRendererFramework', 'doesDataFlower', 'processSecondaryColDef', 'processSecondaryColGroupDef',
         'getBusinessKeyForNode', 'sendToClipboard', 'navigateToNextCell', 'tabToNextCell', 'getDetailRowData',
-       'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath'];
+       'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath', 'loadingOverlayComponent',
+        'loadingOverlayComponentFramework', 'noRowsOverlayComponent', 'noRowsOverlayComponentFramework', 'detailCellRenderer', 'detailCellRendererFramework'];
 
      public static ALL_PROPERTIES = PropertyKeys.ARRAY_PROPERTIES
         .concat(PropertyKeys.OBJECT_PROPERTIES)

@@ -30,9 +30,9 @@ $header-height: $grid-size * 7 !default;
 $row-height: $grid-size * 6 !default;
 $toolpanel-indent-size: $grid-size + $icon-size !default;
 $row-group-indent-size: $grid-size * 3 + $icon-size !default;
-$cell-horizontal-padding: $grid-size * 3;
+$cell-horizontal-padding: $grid-size * 3 !default;
 $virtual-item-height: $grid-size * 5;
-$header-icon-size: 14px;
+$header-icon-size: 14px !default;
 
 // Icons
 $icons-path: './material-icons/' !default;
