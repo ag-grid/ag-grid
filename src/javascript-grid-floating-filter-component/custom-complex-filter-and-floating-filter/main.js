@@ -8,7 +8,7 @@ var columnDefs = [
     }},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 130, filter:'date', filterParams:{
+    {headerName: "Date", field: "date", width: 130, filter:'agDateColumnFilter', filterParams:{
         comparator:function (filterLocalDateAtMidnight, cellValue){
             var dateAsString = cellValue;
             var dateParts  = dateAsString.split("/");

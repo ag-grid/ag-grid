@@ -89,7 +89,7 @@ var columnDefs = [
     {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter', suppressMenu:true},
     {headerName: "Country", field: "country", width: 120, filter: 'agSetColumnFilter', suppressMenu:true},
     {headerName: "Year", field: "year", width: 90, filter: 'agNumberColumnFilter', suppressMenu:true},
-    {headerName: "Date", field: "date", width: 145, filter:'date', filterParams:{
+    {headerName: "Date", field: "date", width: 145, filter:'agDateColumnFilter', filterParams:{
         comparator:function (filterLocalDateAtMidnight, cellValue){
             var dateAsString = cellValue;
             var dateParts  = dateAsString.split("/");

@@ -8,13 +8,13 @@ var columnDefs = [
             {headerName: "Year", field: "year", width: 90, enableRowGroup: true, pivotIndex: 0},
             {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true},
             {headerName: "Gold", field: "gold", width: 60, enableValue: true,
-                suppressMenu:true, filter:'number', aggFunc: 'sum'},
+                suppressMenu:true, filter:'agNumberColumnFilter', aggFunc: 'sum'},
             {headerName: "Silver", field: "silver", width: 60, enableValue: true,
-                suppressMenu:true, filter:'number', aggFunc: 'sum'},
+                suppressMenu:true, filter:'agNumberColumnFilter', aggFunc: 'sum'},
             {headerName: "Bronze", field: "bronze", width: 60, enableValue: true,
-                suppressMenu:true, filter:'number', aggFunc: 'sum'},
+                suppressMenu:true, filter:'agNumberColumnFilter', aggFunc: 'sum'},
             {headerName: "Total", field: "total", width: 60, enableValue: true,
-                suppressMenu:true, filter:'number', aggFunc: 'sum'}
+                suppressMenu:true, filter:'agNumberColumnFilter', aggFunc: 'sum'}
         ]
     }
 ];

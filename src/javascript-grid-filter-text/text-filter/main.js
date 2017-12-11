@@ -44,7 +44,7 @@ var columnDefs = [
         },
         debounceMs:2000
     }},
-    {headerName: "Year", field: "year", width: 90, filter:'number', filterParams:{
+    {headerName: "Year", field: "year", width: 90, filter:'agNumberColumnFilter', filterParams:{
         filterOptions:['inRange']
     }},
     {headerName: "Sport", field: "sport", width: 90, filter: 'agTextColumnFilter', filterParams:{
