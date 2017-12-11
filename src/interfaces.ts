@@ -14,10 +14,10 @@ import {
     IAfterGuiAttachedParams,
     IFloatingFilter,
     IFloatingFilterParams,
-    ILoadingOverlayComponent,
-    ILoadingOverlayComponentParams,
-    INoRowsOverlayComponent,
-    INoRowsOverlayComponentParams
+    ILoadingOverlayComp,
+    ILoadingOverlayParams,
+    INoRowsOverlayComp,
+    INoRowsOverlayParams
 } from "ag-grid/main";
 
 export interface AgFrameworkComponent<T> {
@@ -25,7 +25,6 @@ export interface AgFrameworkComponent<T> {
 
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
-
 
 export interface IHeaderGroupAngularComp extends IHeaderGroup, AgFrameworkComponent<IHeaderGroupParams> {}
 export interface IHeaderAngularComp extends IHeader, AgFrameworkComponent<IHeaderParams> {}
@@ -39,5 +38,5 @@ export interface AgRendererComponent extends ICellRendererAngularComp {}
 export interface AgEditorComponent extends ICellEditorAngularComp {}
 export interface AgFilterComponent extends IFilterAngularComp {}
 
-export interface ILoadingOverlayComponentAngularComp extends ILoadingOverlayComponent, AgFrameworkComponent<ILoadingOverlayComponentParams> {}
-export interface INoRowsOverlayComponentAngularComp extends INoRowsOverlayComponent, AgFrameworkComponent<INoRowsOverlayComponentParams> {}
+export interface ILoadingOverlayAngularComp extends ILoadingOverlayComp, AgFrameworkComponent<ILoadingOverlayParams> {}
+export interface INoRowsOverlayAngularComp extends INoRowsOverlayComp, AgFrameworkComponent<INoRowsOverlayParams> {}
