@@ -22,7 +22,6 @@ include '../documentation-main/documentation_header.php';
         <li><b>Header Component</b>: For rendering the normal column headers. Configured for columns.</li>
         <li><b>Header Group Component</b>: For rendering column groups. Configured for column groups.</li>
     </ul>
-    </p>
 
     <p>
         You specify the header component to use in the column definition (or you can set
@@ -300,10 +299,17 @@ colDef = {
     </ul>
     </p>
 
-    <?= example('Header component', 'header-component', 'vanilla', array("extras" => array("fontawesome"))) ?>
+    <?= example('Header component', 'header-component', 'generated', array("extras" => array("fontawesome"), 'onlyShow' => 'vanilla')) ?>
 
+    <?php include './angular.php'; ?>
 
-    <h2 id="headerGroupComponent">Header Group Component</h2>
+    <?php include './react.php'; ?>
+
+    <?php include './aurelia.php'; ?>
+
+    <?php include './vuejs.php'; ?>
+
+    <h1 id="headerGroupComponent">Header Group Component</h1>
 
     <p>
         This section details how to put a header group component into ag-Grid.
@@ -415,14 +421,6 @@ columnGroup.removeEventListener('expandedChanged', listener);</snippet>
     <h3 id="example-header-group-cells">Example - Header Group Cells</h3>
 
     <?= example('Header Group', 'header-group-component', 'vanilla', array("extras" => array("fontawesome"))) ?>
-
-    <?php include './angular.php'; ?>
-
-    <?php include './react.php'; ?>
-
-    <?php include './aurelia.php'; ?>
-
-    <?php include './vuejs.php'; ?>
 
 </div>
 
