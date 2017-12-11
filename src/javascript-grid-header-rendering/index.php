@@ -299,7 +299,7 @@ colDef = {
     </ul>
     </p>
 
-    <?= example('Header component', 'header-component', 'generated', array("extras" => array("fontawesome"), 'onlyShow' => 'vanilla')) ?>
+    <?= example('Header component', 'header-component', 'generated', array("extras" => array("fontawesome"), "showResult" => true, 'onlyShow' => 'vanilla')) ?>
 
     <?php include './angular.php'; ?>
 
@@ -391,7 +391,7 @@ var showExpandableIcons = params.columnGroup.isExpandable()
 var groupIsOpen = params.columnGroup.isExpanded();
     </snippet>
 
-    <p>
+     <p>
         To open / close a column group, use the <i>params.setExpanded(boolean)</i> method.
     </p>
 
@@ -420,7 +420,7 @@ columnGroup.removeEventListener('expandedChanged', listener);</snippet>
 
     <h3 id="example-header-group-cells">Example - Header Group Cells</h3>
 
-    <?= example('Header Group', 'header-group-component', 'vanilla', array("extras" => array("fontawesome"))) ?>
+    <?= example('Header Group', 'header-group-component', 'generated', array("extras" => array("fontawesome"), "showResult" => true)) ?>
 
 </div>
 
