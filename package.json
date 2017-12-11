@@ -24,6 +24,7 @@
     "vue": "^2.1.0"
   },
   "devDependencies": {
+    "vue": "^2.1.0",
     "babel-core": "^6.0.0",
     "babel-loader": "^6.0.0",
     "babel-preset-es2015": "^6.0.0",
