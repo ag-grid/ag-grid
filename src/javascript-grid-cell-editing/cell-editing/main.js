@@ -1,97 +1,61 @@
-function students() {
-    var students = [
-        {
-            first_name: 'Bob',
-            last_name: 'Harrison',
-            gender: 'Male',
-            address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763',
-            mood: 'Happy',
-            country: 'Ireland'
-        },
-        {
-            first_name: 'Mary',
-            last_name: 'Wilson',
-            gender: 'Female',
-            age: 11,
-            address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215',
-            mood: 'Sad',
-            country: 'Ireland'
-        },
-        {
-            first_name: 'Sadiq',
-            last_name: 'Khan',
-            gender: 'Male',
-            age: 12,
-            address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186',
-            mood: 'Happy',
-            country: 'Ireland'
-        },
-        {
-            first_name: 'Jerry',
-            last_name: 'Mane',
-            gender: 'Male',
-            age: 12,
-            address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634',
-            mood: 'Happy',
-            country: 'Ireland'
-        }
-    ];
-
-    // double the array twice, make more data!
-    students.forEach(function(item) {
-        students.push(cloneObject(item));
-    });
-    students.forEach(function(item) {
-        students.push(cloneObject(item));
-    });
-    students.forEach(function(item) {
-        students.push(cloneObject(item));
-    });
-    return students;
-}
-
-function cloneObject(obj) {
-    return JSON.parse(JSON.stringify(obj));
-}
-
 var columnDefs = [
-    {headerName: 'First Name', field: 'first_name', width: 100, editable: true},
-    {headerName: 'Last Name', field: 'last_name', width: 100, editable: true},
-    {
-        headerName: 'Gender',
-        field: 'gender',
-        width: 90,
-        editable: true
-    },
-    {
-        headerName: 'Age',
-        field: 'age',
-        width: 70,
-        editable: true
-    },
-    {
-        headerName: 'Mood',
-        field: 'mood',
-        width: 70,
-        editable: true
-    },
-    {
-        headerName: 'Country',
-        field: 'country',
-        width: 100,
-        editable: true
-    },
-    {
-        headerName: 'Address',
-        field: 'address',
-        width: 502,
-        editable: true
-    }
+    { field: 'firstName', width: 100},
+    { field: 'lastName', width: 100},
+    { field: 'gender', width: 90},
+    { field: 'age', width: 70},
+    { field: 'mood', width: 70},
+    { field: 'country', width: 100},
+    { field: 'address', width: 200}
 ];
+
+var rowData = [
+    { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland'},
+    { firstName: 'Sadiq', lastName: 'Khan', gender: 'Male', age: 12, address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Jerry', lastName: 'Mane', gender: 'Male', age: 12, address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland'},
+    { firstName: 'Sadiq', lastName: 'Khan', gender: 'Male', age: 12, address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Jerry', lastName: 'Mane', gender: 'Male', age: 12, address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland'},
+    { firstName: 'Sadiq', lastName: 'Khan', gender: 'Male', age: 12, address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Jerry', lastName: 'Mane', gender: 'Male', age: 12, address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland'},
+    { firstName: 'Sadiq', lastName: 'Khan', gender: 'Male', age: 12, address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Jerry', lastName: 'Mane', gender: 'Male', age: 12, address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland'},
+    { firstName: 'Sadiq', lastName: 'Khan', gender: 'Male', age: 12, address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Jerry', lastName: 'Mane', gender: 'Male', age: 12, address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland'},
+    { firstName: 'Sadiq', lastName: 'Khan', gender: 'Male', age: 12, address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Jerry', lastName: 'Mane', gender: 'Male', age: 12, address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634', mood: 'Happy', country: 'Ireland'},
+];
+
+function getPinnedTopData() {
+    return [
+        { firstName: '##', lastName: '##', gender: '##', address: '##', mood: '##', country: '##'}
+    ];
+}
+
+function getPinnedBottomData() {
+    return [
+        { firstName: '##', lastName: '##', gender: '##', address: '##', mood: '##', country: '##'}
+    ];
+}
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: students(),
+    rowData: rowData,
+    enableColResize: true,
+    pinnedTopRowData: getPinnedTopData(),
+    pinnedBottomRowData: getPinnedBottomData(),
+    defaultColDef: {
+        editable: true
+    },
     onGridReady: function(params) {
         params.api.sizeColumnsToFit();
     },
@@ -113,12 +77,14 @@ function onBtStopEditing() {
     gridOptions.api.stopEditing();
 }
 
-function onBtStartEditing(key, char) {
-    gridOptions.api.setFocusedCell(0, 'last_name');
+function onBtStartEditing(key, char, pinned) {
+    gridOptions.api.setFocusedCell(0, 'lastLame', pinned);
 
     gridOptions.api.startEditingCell({
         rowIndex: 0,
-        colKey: 'last_name',
+        colKey: 'lastName',
+        // set to 'top', 'bottom' or undefined
+        rowPinned: pinned,
         keyPress: key,
         charPress: char
     });

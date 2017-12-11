@@ -1,8 +1,9 @@
+
 <?php
 
 $pageTitle = "Aurelia Datagrid Support";
-$pageDescription = "ag-Grid v7 offers Auerlia Support - a discussion on what this means for ag-Grid.";
-$pageKeyboards = "ag-Grid javascript datagrid aurelia framework";
+$pageDescription = "ag-Grid now supports Aurelia - a discussion on what this means for ag-Grid.";
+$pageKeyboards = "ag-grid datagrid aurelia framework";
 
 include('../includes/mediaHeader.php');
 ?>
@@ -177,7 +178,6 @@ export class AgGridColumn {
     </div>
 </div>
 
-
 <hr/>
 
 <div id="disqus_thread"></div>
@@ -186,13 +186,16 @@ export class AgGridColumn {
     var disqus_shortname = 'aggrid';
 
     /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    (function () {
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     })();
 </script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments
+        powered by Disqus.</a></noscript>
 <hr/>
 
 <footer class="license">

@@ -1,10 +1,10 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150,
-        filter: 'text',
+        filter: 'agTextColumnFilter',
         filterParams: { applyButton: true, clearButton:true }
     },
     {headerName: "Age", field: "age", width: 90,
-        filter: 'number',
+        filter: 'agNumberColumnFilter',
         filterParams: { apply: true }
     },
     {headerName: "Country", field: "country", width: 120,
@@ -32,10 +32,10 @@ var columnDefs = [
         clearButton:true
     }},
     {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'number'},
-    {headerName: "Total", field: "total", width: 100, filter: 'number'}
+    {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
+    {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter'},
+    {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter'},
+    {headerName: "Total", field: "total", width: 100, filter: 'agNumberColumnFilter'}
 ];
 
 var gridOptions = {

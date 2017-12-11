@@ -1,7 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
+import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";
 import "../node_modules/bootstrap/dist/css/bootstrap.css";
 
 // need if you use ag-grid enterprise features

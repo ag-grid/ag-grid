@@ -127,9 +127,8 @@ class ExampleRunner {
         this.title = this.config.title;
         this.name = this.config.name;
         this.section = this.config.section;
-        this.showFrameworksDropdown = this.config.type === 'multi' || this.config.type === 'generated';
-
-        this.availableTypes = Object.keys(this.config.types);
+        this.showFrameworksDropdown = !options.onlyShow && (this.config.type === 'multi' || this.config.type === 'generated');
+        this.availableTypes = options.onlyShow ? [options.onlyShow.toLowerCase()] : Object.keys(this.config.types);
 
         const divWrapper = jQuery(this.$element).find('div.example-wrapper');
 
@@ -143,7 +142,7 @@ class ExampleRunner {
                         this.visible = true;
                         ACTIVE_EXAMPLE_RUNNERS.push(this);
                         // max active examples is set in the webpack define plugin ./ webpack-config/site.js
-                        if (ACTIVE_EXAMPLE_RUNNERS.length > MAX_ACTIVE_EXAMPLES) { 
+                        if (ACTIVE_EXAMPLE_RUNNERS.length > MAX_ACTIVE_EXAMPLES) {
                             ACTIVE_EXAMPLE_RUNNERS.shift().visible = false;
                         }
                     }
@@ -160,6 +159,10 @@ class ExampleRunner {
     }
 
     getInitialType(): string {
+        if(this.config.showOnly) {
+            return this.config.showOnly;
+        }
+
         const selectedFramework = this.$cookies.get('agGridFramework');
         const selectedRunnerVersion = this.$cookies.get('agGridRunnerVersion');
 

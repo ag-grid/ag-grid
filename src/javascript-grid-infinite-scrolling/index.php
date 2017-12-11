@@ -292,7 +292,7 @@ gridOptions.getRowNodeId: function(item) {
           This is to prevent the filter from being reset.
     </note>
 
-    <?= example('Server Side Sorting And Filtering', 'server-side', 'generated') ?>
+    <?= example('Server Side Sorting And Filtering', 'server-side', 'generated', array("enterprise" => 1)) ?>
 
     <note>
         When performing multiple row selections using 'shift-click', it is possible that not all rows are available in
@@ -587,6 +587,23 @@ loadingSpinnerColumn = {
     </p>
 
     <?= example('Block Equal Than Page', 'block-equal-page', 'generated') ?>
+
+    <h1>Overlays</h1>
+
+    <p>
+        The infinite row model does not use <a href="../javascript-grid-overlays/">overlays</a>
+        like the In Memory Row Model. The does not
+        use 'loading' overlay as rows load in blocks as it would be wrong to hide all the grid
+        because some rows are getting loaded. The grid does not use 'no rows' overlay as the
+        'no rows' could be because you have a filter set, and a grid with a filter shows an empty
+        grid when no rows pass the filter.
+    </p>
+
+    <p>
+        If you do want to show overlays, then please see
+        <a href="../javascript-grid-overlays/">overlays</a> section for details on how to show
+        the overlays manually.
+    </p>
 
 </div>
 

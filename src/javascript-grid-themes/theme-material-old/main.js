@@ -71,7 +71,7 @@ var defaultCols = [
         hide:true
     },
     {
-        headerName: "Game Name", field: "game.name", width: 267, editable: true, filter: 'set',
+        headerName: "Game Name", field: "game.name", width: 267, editable: true, filter: 'agSetColumnFilter',
         tooltipField: 'gameName',
         checkboxSelection: function (params) {
             return params.columnApi.getRowGroupColumns().length === 0;
@@ -91,8 +91,8 @@ var defaultCols = [
         floatCell: true
     },
     {
-        headerName: "Language", field: "language", width: 200, editable: true, filter: 'set',
-        cellEditor: 'select',
+        headerName: "Language", field: "language", width: 200, editable: true, filter: 'agSetColumnFilter',
+        cellEditor:'agSelectCellEditor',
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
         }

@@ -15,7 +15,7 @@ var columnDefs = [
         width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer: 'animateShowChange'
+        cellRenderer:'agAnimateShowChangeRenderer'
     },
     {
         headerName: 'Mid',
@@ -23,7 +23,7 @@ var columnDefs = [
         width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer: 'animateShowChange'
+        cellRenderer:'agAnimateShowChangeRenderer'
     },
     {
         headerName: 'Ask',
@@ -31,14 +31,14 @@ var columnDefs = [
         width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer: 'animateShowChange'
+        cellRenderer:'agAnimateShowChangeRenderer'
     },
     {
         headerName: 'Volume',
         field: 'volume',
         width: 80,
         cellClass: 'cell-number',
-        cellRenderer: 'animateSlide'
+        cellRenderer:'agAnimateSlideRenderer'
     }
 ];
 

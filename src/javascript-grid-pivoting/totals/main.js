@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
         {headerName: "Athlete", field: "athlete",  minWidth: 150},
-        {headerName: "Age", field: "age", minWidth: 50, filter: 'number'},
+        {headerName: "Age", field: "age", minWidth: 50, filter: 'agNumberColumnFilter'},
         {headerName: "Country", field: "country", width: 120, rowGroup: true},
         {headerName: "Sport", field: "sport", width: 110, pivot: true},
         {headerName: "Year", field: "year", width: 90, pivot: true},

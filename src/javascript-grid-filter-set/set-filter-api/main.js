@@ -3,16 +3,16 @@ var columnDefs = [
         headerName: 'Athlete',
         field: 'athlete',
         width: 150,
-        filter: 'set',
+        filter: 'agSetColumnFilter',
         filterParams: {cellHeight: 20}
     },
-    {headerName: 'Age', field: 'age', width: 90, filter: 'number'},
+    {headerName: 'Age', field: 'age', width: 90, filter: 'agNumberColumnFilter'},
     {
         headerName: 'Country',
         field: 'country',
         width: 140,
-        cellRenderer: countryCellRenderer,
-        keyCreator: countryKeyCreator,
+        cellRenderer: 'countryCellRenderer',
+        keyCreator: 'countryKeyCreator',
         filterParams: {
             // values: ['England', 'France', 'Australia'],
             newRowsAction: 'keep'
@@ -21,17 +21,21 @@ var columnDefs = [
     {headerName: 'Year', field: 'year', width: 90},
     {headerName: 'Date', field: 'date', width: 110},
     {headerName: 'Sport', field: 'sport', width: 110},
-    {headerName: 'Gold', field: 'gold', width: 100, filter: 'number'},
-    {headerName: 'Silver', field: 'silver', width: 100, filter: 'number'},
-    {headerName: 'Bronze', field: 'bronze', width: 100, filter: 'number'},
-    {headerName: 'Total', field: 'total', width: 100, filter: 'number'}
+    {headerName: 'Gold', field: 'gold', width: 100, filter: 'agNumberColumnFilter'},
+    {headerName: 'Silver', field: 'silver', width: 100, filter: 'agNumberColumnFilter'},
+    {headerName: 'Bronze', field: 'bronze', width: 100, filter: 'agNumberColumnFilter'},
+    {headerName: 'Total', field: 'total', width: 100, filter: 'agNumberColumnFilter'}
 ];
 
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     enableFilter: true,
-    enableColResize: true
+    enableColResize: true,
+    components: {
+        countryCellRenderer: countryCellRenderer,
+        countryKeyCreator: countryKeyCreator
+    }
 };
 
 function countryCellRenderer(params) {

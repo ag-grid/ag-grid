@@ -4,7 +4,7 @@ $pageTitle = "ag-Grid Change Log";
 $pageDescription = "ag-Grid change log. Details the items that have change between each release.";
 $pageKeyboards = "ag-Grid Change Log";
 $pageGroup = "misc";
-include '../documentation-main/documentation_header.php';
+include('../includes/mediaHeader.php');
 ?>
 
 <div style="padding: 20px;">
@@ -12,6 +12,15 @@ include '../documentation-main/documentation_header.php';
     <note>
         For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
     </note>
+
+    <h2>Next</h2>
+
+    <ul>
+        <li>Removed deprecated items with old way of doing header templates as new way of providing header templates was introduced in v14.
+            Removed grid options are getHeaderCellTemplate, headerCellTemplate, headerCellRenderer.
+            Removed column options are headerCellTemplate and headerCellRenderer</li>
+    </ul>
+
 
     <h2>14.x</h2>
 
@@ -143,7 +152,7 @@ include '../documentation-main/documentation_header.php';
             AG-693: <a href="../javascript-grid-enterprise-model/#child-count">Child Count</a> can now be set for Enterprise Row Model.
         </li>
         <li>
-            AG-800: Put in callback <a href="../javascript-grid-cell-editor/#suppress-keyboard-event">colDef.suppressKeyboardNavigation()</a>
+            AG-800: Put in callback <a href="../javascript-grid-cell-editor/#suppress-keyboard-event">colDef.suppressKeyboardEvent()</a>
             to allow suppressing keyboard events while editing.
         </li>
     </ul>

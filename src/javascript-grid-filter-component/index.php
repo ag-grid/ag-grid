@@ -7,20 +7,14 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="filter-component">Filter Component</h2>
-
+<h1 class="first-h1" id="filter-component">Filter Component</h1>
 
 <p>
     Filter components allow you to add your own filter types to ag-Grid. Use this when the provided
     filters do not meet your requirements.
 </p>
 
-<p>
-    To provide a custom filter, instead of providing a string for the filter in
-    the column definition, provide a Filter Component in the form of a function. ag-Grid will call 'new'
-    on this function and treat the generated class instance as a filter component. A filter component class
-    can be any function / class that implements the following interface:
-</p>
+<h2>Filter Interface</h2>
 
 <snippet>
 interface IFilterComp {
@@ -60,8 +54,7 @@ interface IFilterComp {
     // you want to hide the popup after it is pressed.
     afterGuiAttached?(params?: {hidePopup?: Function}): void;
 
-    // Gets called when new rows are inserted into the grid. If the filter needs to
-    change its state
+    // Gets called when new rows are inserted into the grid. If the filter needs to change its state
     // after rows are loaded, it can do it here. For example the set filters uses this to update the list of
     // available values to select from (eg 'Ireland', 'UK' etc for Country filter).
     onNewRowsLoaded?(): void;
@@ -107,7 +100,7 @@ interface IFilterComp {
 }
 </snippet>
 
-<h4 id="ifilter-params">IFilterParams</h4>
+<h2 id="ifilter-params">IFilterParams</h2>
 
 <p>
     The method init(params) takes a params object with the items listed below. If the user provides
@@ -168,7 +161,7 @@ interface IFilterParams {
 }
 </snippet>
 
-<h4 id="i-does-filter-pass-params">IDoesFilterPassParams</h4>
+<h3 id="i-does-filter-pass-params">IDoesFilterPassParams</h3>
 
 <p>
     The method doesFilterPass(params) takes the following as a parameter:
@@ -203,7 +196,7 @@ If you don't provide any of these two options for your custom filter, the displa
 will be empty.
 </p>
 
-<h3 id="custom-filter-example">Custom Filter Example</h3>
+<h1 id="custom-filter-example">Custom Filter Example</h1>
 
 <p>
     The example below shows two custom filters. The first is on the Athlete column and the

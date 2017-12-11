@@ -95,19 +95,19 @@ var columnDefs = [
         headerName: "Max Temp (˚C)",
         field: "Max temp (C)",
         width: 120,
-        cellRenderer: deltaIndicator           // Function cell renderer
+        cellRenderer: 'deltaIndicator'           // Function cell renderer
     },
     {
         headerName: "Min Temp (˚C)",
         field: "Min temp (C)",
         width: 120,
-        cellRenderer: deltaIndicator           // Function cell renderer
+        cellRenderer: 'deltaIndicator'           // Function cell renderer
     },
     {
         headerName: "Days of Air Frost",
         field: "Days of air frost (days)",
         width: 233,
-        cellRenderer: DaysFrostRenderer,       // Component Cell Renderer
+        cellRenderer: 'daysFrostRenderer',       // Component Cell Renderer
         cellRendererParams: {
             rendererImage: 'frost.png'         // Complementing the Cell Renderer parameters
         }
@@ -116,7 +116,7 @@ var columnDefs = [
         headerName: "Days Sunshine",
         field: "Sunshine (hours)",
         width: 190,
-        cellRenderer: daysSunshineRenderer,
+        cellRenderer: 'daysSunshineRenderer',
         cellRendererParams: {
             rendererImage: 'sun.png'           // Complementing the Cell Renderer parameters
         }
@@ -126,7 +126,7 @@ var columnDefs = [
         headerName: "Rainfall (10mm)",
         field: "Rainfall (mm)",
         width: 180,
-        cellRenderer: rainPerTenMmRenderer,
+        cellRenderer: 'rainPerTenMmRenderer',
         cellRendererParams: {
             rendererImage: 'rain.png'          // Complementing the Cell Renderer parameters
         }
@@ -135,7 +135,13 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: null
+    rowData: null,
+    components:{
+        deltaIndicator: deltaIndicator,
+        daysFrostRenderer: DaysFrostRenderer,
+        daysSunshineRenderer: daysSunshineRenderer,
+        rainPerTenMmRenderer: rainPerTenMmRenderer
+    }
 };
 
 // setup the grid after the page has finished loading

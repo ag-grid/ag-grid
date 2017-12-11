@@ -43,6 +43,9 @@ var rowData = [
 ];
 
 var gridOptions = {
+    components:{
+        fileCellRenderer: getFileCellRenderer()
+    },
     columnDefs: columnDefs,
     rowData: rowData,
     treeData: true,
@@ -63,8 +66,7 @@ var gridOptions = {
         cellRendererParams: {
             checkbox: true,
             suppressCount: true,
-            padding: 20,
-            innerRenderer: getFileCellRenderer()
+            innerRenderer: 'fileCellRenderer'
         }
     }
 };

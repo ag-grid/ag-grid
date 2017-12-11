@@ -177,7 +177,7 @@ import "ag-grid-enterprise";</snippet>
         Sometimes the gridReady grid event can fire before the Angular component is ready to receive it, so in
         an
         Angular
-        environment its safer to on you cannot safely rely on <code>AfterViewInit</code> instead before using
+        environment its safer to rely on <code>AfterViewInit</code> instead before using
         the API
     </note>
 

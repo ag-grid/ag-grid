@@ -1,6 +1,6 @@
 var columnDefs = [
     {
-        headerName: 'Set filter col', field: 'value', width: 150, filter: 'set', filterParams: {
+        headerName: 'Set filter col', field: 'value', width: 150, filter: 'agSetColumnFilter', filterParams: {
             values: (params)=>{
                 setTimeout(()=>{
                     params.success(['value 1', 'value 2'])

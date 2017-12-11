@@ -27,7 +27,7 @@ var columnDefs = [
         headerName: 'Athlete',
         field: 'athlete',
         width: 150,
-        filter: 'set',
+        filter: 'agSetColumnFilter',
         filterParams: {
             textFormatter: replaceAccents
         }
@@ -36,7 +36,7 @@ var columnDefs = [
         headerName: 'Age - Comparator',
         field: 'age',
         width: 200,
-        filter: 'set',
+        filter: 'agSetColumnFilter',
         filterParams: {
             values: getAllAges(),
             comparator: function(a, b) {
@@ -56,7 +56,7 @@ var columnDefs = [
         headerName: 'Age - No Comparator',
         field: 'age',
         width: 200,
-        filter: 'set',
+        filter: 'agSetColumnFilter',
         filterParams: {
             values: getAllAges()
         }

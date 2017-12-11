@@ -24972,8 +24972,8 @@
 	if(false) {
 		// When the styles change, update the <style> tags
 		if(!content.locals) {
-			module.hot.accept("!!../../../css-loader/index.js!./theme-fresh.css", function() {
-				var newContent = require("!!../../../css-loader/index.js!./theme-fresh.css");
+			module.hot.accept("!!../../../css-loader/index.js!./ag-theme-fresh.css", function() {
+				var newContent = require("!!../../../css-loader/index.js!./ag-theme-fresh.css");
 				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
 				update(newContent);
 			});
@@ -30165,19 +30165,19 @@
 	                field: 'price',
 	                headerName: 'Price',
 	                valueFormatter: _this.numberFormatter,
-	                cellRenderer: 'animateShowChange',
+	                cellRenderer:'agAnimateShowChangeRenderer',
 	                cellStyle: { 'text-align': 'right' }
 	            }, {
 	                field: 'bid',
 	                headerName: 'Bid',
 	                valueFormatter: _this.numberFormatter,
-	                cellRenderer: 'animateShowChange',
+	                cellRenderer:'agAnimateShowChangeRenderer',
 	                cellStyle: { 'text-align': 'right' }
 	            }, {
 	                field: 'ask',
 	                headerName: 'Ask',
 	                valueFormatter: _this.numberFormatter,
-	                cellRenderer: 'animateShowChange',
+	                cellRenderer:'agAnimateShowChangeRenderer',
 	                cellStyle: { 'text-align': 'right' }
 	            }]
 	        };
@@ -49264,7 +49264,7 @@
 	        }
 	    };
 	    FilterManager.prototype.getFilterFromCache = function (filterType) {
-	        var defaultFilterType = this.enterprise ? 'set' : 'text';
+	        var defaultfilter: 'agTextColumnFilter';
 	        var defaultFilter = this.availableFilters[defaultFilterType];
 	        if (utils_1.Utils.missing(filterType)) {
 	            return defaultFilter;
@@ -49722,7 +49722,7 @@
 	        return {
 	            type: this.filter,
 	            filter: from,
-	            filterType: 'text'
+	            filter: 'agTextColumnFilter'
 	        };
 	    };
 	    TextFilter.prototype.getApplicableFilterTypes = function () {
@@ -49805,7 +49805,7 @@
 	        return {
 	            type: this.filter ? this.filter : this.defaultFilter,
 	            filter: this.filterText,
-	            filterType: 'text'
+	            filter: 'agTextColumnFilter'
 	        };
 	    };
 	    TextFilter.prototype.parse = function (model) {
@@ -50627,7 +50627,7 @@
 	            floatingFilterType = colDef.filter;
 	        }
 	        else if (!colDef.filter) {
-	            floatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'set' : 'text';
+	            floatingfilter: 'agTextColumnFilter';
 	        }
 	        else {
 	            floatingFilterType = 'custom';
@@ -51968,7 +51968,7 @@
 	        return {
 	            type: currentParentModel.type,
 	            filter: this.eColumnFloatingFilter.value,
-	            filterType: 'text'
+	            filter: 'agTextColumnFilter'
 	        };
 	    };
 	    return TextFloatingFilterComp;
@@ -52758,7 +52758,7 @@
 	    CellEditorFactory.SELECT = 'select';
 	    CellEditorFactory.POPUP_TEXT = 'popupText';
 	    CellEditorFactory.POPUP_SELECT = 'popupSelect';
-	    CellEditorFactory.LARGE_TEXT = 'largeText';
+	    CellEditorFactory.LARGE_TEXT = 'agLargeTextCellEditor';
 	    __decorate([
 	        context_1.Autowired('context'),
 	        __metadata("design:type", context_1.Context)
@@ -58374,7 +58374,7 @@
 	        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 	        var defaultAutoColDef = {
 	            headerName: localeTextFunc('group', 'Group'),
-	            cellRenderer: 'group'
+	            cellRenderer:'agGroupRenderer'
 	        };
 	        // we never allow moving the group column
 	        defaultAutoColDef.suppressMovable = true;
@@ -81604,14 +81604,14 @@
 	    field: 'last',
 	    headerName: 'Last',
 	    headerClass: 'align-right',
-	    cellRenderer: 'animateShowChange',
+	    cellRenderer:'agAnimateShowChangeRenderer',
 	    cellClass: 'align-right',
 	    width: 100
 	}, {
 	    field: 'net',
 	    headerName: 'Net',
 	    headerClass: 'align-right',
-	    cellRenderer: 'animateShowChange',
+	    cellRenderer:'agAnimateShowChangeRenderer',
 	    cellClass: 'align-right',
 	    width: 90
 	}, {
@@ -81627,7 +81627,7 @@
 	        headerName: symbol,
 	        width: 67,
 	        cellClass: 'align-right',
-	        cellRenderer: 'animateShowChange',
+	        cellRenderer:'agAnimateShowChangeRenderer',
 	        cellClassRules: {
 	            'fx-positive': 'x > 0.8',
 	            'fx-null': 'x === null',
@@ -83075,19 +83075,19 @@
 	                field: 'last',
 	                headerName: 'Last',
 	                headerClass: 'align-right',
-	                cellRenderer: 'animateShowChange',
+	                cellRenderer:'agAnimateShowChangeRenderer',
 	                cellClass: 'align-right'
 	            }, {
 	                field: 'net',
 	                headerName: 'Net',
 	                headerClass: 'align-right',
-	                cellRenderer: 'animateShowChange',
+	                cellRenderer:'agAnimateShowChangeRenderer',
 	                cellClass: 'align-right'
 	            }, {
 	                field: 'pct_net_change',
 	                headerName: '% NC',
 	                headerClass: 'align-right',
-	                cellRenderer: 'animateShowChange',
+	                cellRenderer:'agAnimateShowChangeRenderer',
 	                cellClass: 'align-right',
 	                sort: 'desc',
 	                cellFormatter: function cellFormatter(params) {

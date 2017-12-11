@@ -28,7 +28,17 @@ function nodeIsFunctionNamed(node, name) {
     return node.type === 'FunctionDeclaration' && (<any>node.id).name === name;
 }
 
-function nodeIsUnusedFunction(node, used) {
+function nodeIsInScope(node, name, unboundInstanceMethods) {
+    if(!unboundInstanceMethods) {
+        return false;
+    }
+    return node.type === 'FunctionDeclaration' && unboundInstanceMethods.indexOf((<any>node.id).name) >= 0;
+}
+
+function nodeIsUnusedFunction(node, used, unboundInstanceMethods) {
+    if(nodeIsInScope(node, used, unboundInstanceMethods)) {
+        return;
+    }
     return node.type === 'FunctionDeclaration' && used.indexOf((<any>node.id).name) === -1;
 }
 
@@ -74,11 +84,11 @@ function nodeIsSimpleHttpRequest(node) {
 
 export const recognizedDomEvents = ['click', 'change', 'input'];
 
-const arrayMap = function(array, callback) {
+const arrayMap = function (array, callback) {
     return Array.prototype.map.call(array, callback);
 };
 
-const flatMap = function(array, callback) {
+const flatMap = function (array, callback) {
     return Array.prototype.concat.apply([], array.map(callback));
 };
 
@@ -95,8 +105,8 @@ const localGridOptions = esprima.parseScript('const gridInstance = this.agGrid')
 
 function generateWithReplacedGridOptions(node) {
     const code = generate(node)
-            .replace(/gridOptions.api/g, 'this.gridApi')
-            .replace(/gridOptions.columnApi/g, 'this.gridColumnApi');
+        .replace(/gridOptions.api/g, 'this.gridApi')
+        .replace(/gridOptions.columnApi/g, 'this.gridColumnApi');
 
     if (code.indexOf('gridOptions') > -1) {
         throw new Error("An event handlers contain a gridOptions reference that does not access api or columnApi");
@@ -105,13 +115,29 @@ function generateWithReplacedGridOptions(node) {
     return code;
 }
 
+let extractUnboundInstanceMethods = function (tree) {
+    const inScopeRegex = /inScope\[([\w-].*)]/;
+
+    return tree.comments
+        .map((comment) => comment.value ? comment.value.trim() : '')
+        .filter((commentValue) => commentValue.indexOf("inScope") === 0)
+        .map((commentValue) => {
+            const result = commentValue.match(inScopeRegex);
+            if (result && result.length >= 1) {
+                return result[1]
+            }
+            return ''
+        });
+};
+
 export default function parser([js, html], gridSettings) {
     const domTree = $(`<div>${html}</div>`);
 
     domTree.find('style').remove();
 
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
-    const tree = esprima.parseScript(js);
+    const tree = esprima.parseScript(js, {comment: true});
+
     const collectors = [];
     const gridOptionsCollectors = [];
     const onReadyCollectors = [];
@@ -139,8 +165,16 @@ export default function parser([js, html], gridSettings) {
         });
     });
 
+    const unboundInstanceMethods = extractUnboundInstanceMethods(tree);
     collectors.push({
-        matches: node => nodeIsUnusedFunction(node, registered),
+        matches: node => nodeIsInScope(node, registered, unboundInstanceMethods),
+        apply: (col, node) => {
+            col.instance.push(generate(node, indentOne).replace("function ", ""))
+        }
+    });
+
+    collectors.push({
+        matches: node => nodeIsUnusedFunction(node, registered, unboundInstanceMethods),
         apply: (col, node) => {
             col.utils.push(generate(node).replace(/gridOptions/g, 'gridInstance'));
         }
@@ -257,6 +291,7 @@ export default function parser([js, html], gridSettings) {
         {
             eventHandlers: [],
             properties: [],
+            instance: [],
             externalEventHandlers: [],
             utils: []
         },
@@ -281,6 +316,10 @@ export default function parser([js, html], gridSettings) {
 
     bindings.template = domTree.html().replace(/<br>/g, '<br />');
 
-    bindings.gridSettings = (<any>Object).assign({width: '100%', height: '100%', theme: 'ag-theme-fresh'}, gridSettings);
+    bindings.gridSettings = (<any>Object).assign({
+        width: '100%',
+        height: '100%',
+        theme: 'ag-theme-fresh'
+    }, gridSettings);
     return bindings;
 }

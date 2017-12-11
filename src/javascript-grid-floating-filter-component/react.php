@@ -4,20 +4,14 @@
     React Floating Filters
 </h2>
 
-<div class="note" style="margin-bottom: 20px">
-    <img align="left" src="../images/note.png" style="margin-right: 10px;"/>
-    <p>This section explains how to utilise ag-Grid floatingFilter using React. You should read about how
-        <a href="../javascript-grid-floating-filter-component/">Floating filter works in ag-Grid</a> first before trying to
-        understand this section.</p>
-</div>
-
-<p id="react-floating-filter-example">
-    See example below on how to create a custom floating filter reusing the out of the box number filter with React
+<p>
+    It is possible to provide React floating filter for ag-Grid to use if you are are using the
+    React version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
+    registering framework components</a> for how to register framework components.
 </p>
 
-<?= example('React Floating Filter', 'react-floating', 'react', array("enterprise" => 1, "exampleHeight" => 200, "showResult" => true, "extras" => array( "fontawesome" ) )); ?>
+<p>
+    The below example show how to create a custom floating filter reusing the out of the box number filter with React.
+</p>
 
-<note>The full <a href="https://github.com/ag-grid/ag-grid-react-example">ag-grid-react-example</a> repo shows many
-    more examples for rendering, including grouped rows, full width renderer's
-    and so on, as well as examples on using React Components with both Cell Editors and Filters
-</note>
+<?= example('React Floating Filter Component', 'floating-filter-component', 'generated', array('enterprise' => false, "exampleHeight" => 370, 'onlyShow' => 'react', 'extras' => array("bootstrap"))) ?>

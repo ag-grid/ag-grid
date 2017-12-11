@@ -20,7 +20,6 @@ include '../documentation-main/documentation_header.php';
 
 <p>In order to set the filter type to text you need to add the following to your column definition</p>
 
-
 <p><snippet>
 colDef:{
     filter:'text'

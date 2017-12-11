@@ -102,10 +102,7 @@ MyCellEditor.prototype.isPopup = function() {
 };
 </snippet>
 
-
-<h2 id="cell-editor-params">
-    Cell Editor Params
-</h2>
+<h1 id="cell-editor-params">Cell Editor Params</h1>
 
 <p>
     The Cell Editor component takes parameters in its init() method and contain the following:
@@ -207,7 +204,14 @@ colDef.cellEditorParams = {
 }
 </snippet>
 
-<h2 id="editing-keyboard-navigation">Keyboard Navigation While Editing</h2>
+<h1 id="cell-renderer-component-registering">Registering Cell Renderers with Columns</h1>
+
+<p>
+    See the section <a href="../javascript-grid-components/#registering-custom-components">
+        registering custom components</a> for details on registering and using custom cell renderers.
+</p>
+
+<h1 id="editing-keyboard-navigation">Keyboard Navigation While Editing</h1>
 
 <p>
     If you provide a cell editor, you may wish to disable some of the grids keyboard navigation.
@@ -314,7 +318,7 @@ interface SuppressKeyboardEventParams {
 }
 </snippet>
 
-<h2 id="cell-editing-example">Cell Editing Example</h2>
+<h1 id="cell-editing-example">Cell Editing Example</h1>
 
 <p>The example below illustrates:
 <ul>
@@ -334,7 +338,7 @@ interface SuppressKeyboardEventParams {
 </ul>
 </p>
 
-<?= example('Editor Component', 'editor-component', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Editor Component', 'vanilla-editor-component', 'vanilla', array("enterprise" => 1)) ?>
 
 <?php include './angular.php'; ?>
 

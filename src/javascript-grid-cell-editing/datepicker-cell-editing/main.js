@@ -47,7 +47,7 @@ function getDatePicker() {
 
 var columnDefs = [
     {headerName: 'Athlete', field: 'athlete'},
-    {headerName: 'Date', field: 'date', editable: true, cellEditor: getDatePicker()},
+    {headerName: 'Date', field: 'date', editable: true, cellEditor: 'datePicker'},
     {headerName: 'Age', field: 'age'},
     {headerName: 'Country', field: 'country'},
     {headerName: 'Year', field: 'year'},
@@ -59,6 +59,9 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    components:{
+        datePicker: getDatePicker()
+    },
     columnDefs: columnDefs,
     rowData: null
 };

@@ -42,19 +42,27 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
         Map<String, List<Result>> athleteNameToResults = new HashMap<>();
         buildMapForResults(olympicWinnerRecords, sportNameToSport, athleteNameToResults);
 
-        Set<Athlete> athletes = new HashSet<>();
+        Map<String, Athlete> athletes = new HashMap<>();
         for (RawOlympicWinnerRecord olympicWinnerRecord : olympicWinnerRecords) {
-            athletes.add(new Athlete(olympicWinnerRecord.athlete,
-                    countryNameToCountry.get(olympicWinnerRecord.country),
-                    athleteNameToResults.get(olympicWinnerRecord.athlete))
-            );
+            List<Result> resultsForAthlete = athleteNameToResults.get(olympicWinnerRecord.athlete);
+
+            athletes.computeIfAbsent(olympicWinnerRecord.athlete, (key) -> {
+                return new Athlete(olympicWinnerRecord.athlete,
+                        countryNameToCountry.get(olympicWinnerRecord.country),
+                        resultsForAthlete);
+            });
+
+            Athlete athlete = athletes.get(olympicWinnerRecord.athlete);
+
+            for (Result resultForAthlete : resultsForAthlete) {
+                resultForAthlete.setAthlete(athlete);
+            }
         }
 
         // we now have the test data - save it to the database
         this.countryRepository.saveAll(countryNameToCountry.values());
         this.sportRepository.saveAll(sportNameToSport.values());
-
-        this.athleteRepository.saveAll(athletes);
+        this.athleteRepository.saveAll(athletes.values());
     }
 
     private void buildMapForResults(List<RawOlympicWinnerRecord> olympicWinnerRecords, Map<String, Sport> sportNameToSport, Map<String, List<Result>> athleteNameToResults) {

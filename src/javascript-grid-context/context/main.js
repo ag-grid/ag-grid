@@ -81,7 +81,7 @@ var columnDefs = [
         headerName: 'Price Local',
         field: 'price',
         cellStyle: {'text-align': 'right'},
-        cellRenderer: getCurrencyCellRenderer(),
+        cellRenderer: 'currencyCellRenderer',
         width: 150
     },
     {
@@ -89,7 +89,7 @@ var columnDefs = [
         width: 150,
         field: 'price',
         cellStyle: {'text-align': 'right'},
-        cellRenderer: getCurrencyCellRenderer(),
+        cellRenderer: 'currencyCellRenderer',
         valueGetter: reportingCurrencyValueGetter,
         headerValueGetter: 'ctx.reportingCurrency'
     }
@@ -107,7 +107,10 @@ var gridOptions = {
         reportingCurrency: 'EUR'
     },
     columnDefs: columnDefs,
-    rowData: rowData
+    rowData: rowData,
+    components:{
+        currencyCellRenderer:getCurrencyCellRenderer()
+    }
 };
 
 // setup the grid after the page has finished loading

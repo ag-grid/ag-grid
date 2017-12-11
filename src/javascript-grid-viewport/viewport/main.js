@@ -3,9 +3,7 @@ var columnDefs = [
     {
         headerName: '#',
         width: 50,
-        cellRenderer: function(params) {
-            return '' + params.rowIndex;
-        }
+        cellRenderer: 'rowIdRenderer'
     },
     {headerName: 'Code', field: 'code', width: 70},
     {headerName: 'Name', field: 'name', width: 300},
@@ -15,7 +13,7 @@ var columnDefs = [
         width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer: 'animateShowChange'
+        cellRenderer:'agAnimateShowChangeRenderer'
     },
     {
         headerName: 'Mid',
@@ -23,7 +21,7 @@ var columnDefs = [
         width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer: 'animateShowChange'
+        cellRenderer:'agAnimateShowChangeRenderer'
     },
     {
         headerName: 'Ask',
@@ -31,14 +29,14 @@ var columnDefs = [
         width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer: 'animateShowChange'
+        cellRenderer:'agAnimateShowChangeRenderer'
     },
     {
         headerName: 'Volume',
         field: 'volume',
         width: 80,
         cellClass: 'cell-number',
-        cellRenderer: 'animateSlide'
+        cellRenderer:'agAnimateSlideRenderer'
     }
 ];
 
@@ -53,6 +51,11 @@ var gridOptions = {
     getRowNodeId: function(data) {
         // the code is unique, so perfect for the id
         return data.code;
+    },
+    components:{
+        rowIdRenderer: function(params) {
+            return '' + params.rowIndex;
+        }
     }
 };
 

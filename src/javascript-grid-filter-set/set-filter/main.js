@@ -17,29 +17,33 @@ var columnDefs = [
         headerName: 'Athlete',
         field: 'athlete',
         width: 150,
-        filter: 'set',
+        filter: 'agSetColumnFilter',
         filterParams: {cellHeight: 20, values: irishAthletes(), debounceMs: 1000}
     },
-    {headerName: 'Age', field: 'age', width: 90, filter: 'number'},
+    {headerName: 'Age', field: 'age', width: 90, filter: 'agNumberColumnFilter'},
     {
         headerName: 'Country',
         field: 'country',
         width: 140,
-        cellRenderer: countryCellRenderer,
-        keyCreator: countryKeyCreator,
-        filter: 'set',
+        cellRenderer: 'countryCellRenderer',
+        keyCreator: 'countryKeyCreator',
+        filter: 'agSetColumnFilter',
         filterParams: {selectAllOnMiniFilter: true}
     },
     {headerName: 'Year', field: 'year', width: 90},
     {headerName: 'Date', field: 'date', width: 110},
-    {headerName: 'Sport', field: 'sport', width: 110, filter: 'set', filterParams: {suppressMiniFilter: true}},
-    {headerName: 'Gold', field: 'gold', width: 100, filter: 'number'},
-    {headerName: 'Silver', field: 'silver', width: 100, filter: 'number'},
-    {headerName: 'Bronze', field: 'bronze', width: 100, filter: 'number'},
-    {headerName: 'Total', field: 'total', width: 100, filter: 'number'}
+    {headerName: 'Sport', field: 'sport', width: 110, filter: 'agSetColumnFilter', filterParams: {suppressMiniFilter: true}},
+    {headerName: 'Gold', field: 'gold', width: 100, filter: 'agNumberColumnFilter'},
+    {headerName: 'Silver', field: 'silver', width: 100, filter: 'agNumberColumnFilter'},
+    {headerName: 'Bronze', field: 'bronze', width: 100, filter: 'agNumberColumnFilter'},
+    {headerName: 'Total', field: 'total', width: 100, filter: 'agNumberColumnFilter'}
 ];
 
 var gridOptions = {
+    components:{
+        countryCellRenderer: countryCellRenderer,
+        countryKeyCreator: countryKeyCreator,
+    },
     columnDefs: columnDefs,
     rowData: null,
     enableFilter: true,

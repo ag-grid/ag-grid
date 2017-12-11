@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Context Menu</h2>
+    <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Context Menu</h1>
 
     <p>
         The user can bring up the context menu by right clicking on a cell.

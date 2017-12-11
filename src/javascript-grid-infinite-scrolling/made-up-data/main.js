@@ -1,15 +1,14 @@
-function alphabet() {
-    return 'abcdefghijklmnopqrstuvwxyz'.split('');
-}
+var ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('');
 
 function getColumnDefs() {
-    var columnDefs = [];
+    var columnDefs = [
+        {checkboxSelection: true, headerName: '', width: 34},
+        {headerName: '', width: 50, valueGetter: 'node.rowIndex'},
+    ];
 
-    var checkboxSelectionColumn = {checkboxSelection: true, headerName: '', width: 24};
-    columnDefs.push(checkboxSelectionColumn);
 
-    alphabet().forEach(function(letter) {
-        columnDefs.push({headerName: letter.toUpperCase(), field: letter, width: 80});
+    ALPHABET.forEach(function(letter) {
+        columnDefs.push({headerName: letter.toUpperCase(), field: letter, width: 110});
     });
     return columnDefs;
 }
@@ -37,7 +36,7 @@ function getDataSource(count) {
 
         for (var rowIndex = params.startRow; rowIndex < params.endRow; rowIndex++) {
             var record = {};
-            alphabet().forEach(function(letter, colIndex) {
+            ALPHABET.forEach(function(letter, colIndex) {
                 var randomNumber = 17 + rowIndex + colIndex;
                 var cellKey = letter.toUpperCase() + (rowIndex + 1);
                 record[letter] = cellKey + ' = ' + randomNumber;
@@ -49,7 +48,7 @@ function getDataSource(count) {
         setTimeout(function() {
             // no need to pass the second 'rowCount' parameter as we have already provided it
             params.successCallback(rowsThisPage);
-        }, 500);
+        }, 100);
     };
 
     return new MyDatasource(count);
