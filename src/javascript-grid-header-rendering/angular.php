@@ -57,4 +57,4 @@ interface IHeaderGroupAngularComp {
     <a href="https://github.com/ag-grid/ag-grid-angular-example">Angular Example</a>.
 </p>
 
-<?= example('Header component', 'header-component', 'generated', array("extras" => array("fontawesome"), 'onlyShow' => 'angular')) ?>
+<?= example('Header component', 'header-component', 'generated', array("extras" => array("fontawesome"), "showResult" => true, 'onlyShow' => 'angular')) ?>
