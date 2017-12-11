@@ -2,28 +2,28 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", filter: 'agTextColumnFilter', suppressFilter: true},
     {headerName: "Gold", field: "gold", filter: 'agNumberColumnFilter', suppressMenu:true,
-        floatingFilterComponent:' numberFloatingFilter',
+        floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true,
             color:'red'
         }
     },
     {headerName: "Silver", field: "silver", filter: 'agNumberColumnFilter', suppressMenu:true,
-        floatingFilterComponent:' numberFloatingFilter',
+        floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true,
             color:'blue'
         }
     },
     {headerName: "Bronze", field: "bronze", filter: 'agNumberColumnFilter', suppressMenu:true,
-        floatingFilterComponent:' numberFloatingFilter',
+        floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true,
             color:'green'
         }
     },
     {headerName: "Total", field: "total", filter: 'agNumberColumnFilter', suppressMenu:true,
-        floatingFilterComponent:' numberFloatingFilter',
+        floatingFilterComponent:'customNumberFloatingFilter',
         floatingFilterComponentParams:{
             suppressFilterButton:true,
             color:'orange'
@@ -33,7 +33,7 @@ var columnDefs = [
 
 var gridOptions = {
     components:{
-        numberFloatingFilter: NumberFloatingFilter,        
+        customNumberFloatingFilter: getNumberFloatingFilterComponent()
     },
     floatingFilter:true,
     columnDefs: columnDefs,
@@ -41,48 +41,53 @@ var gridOptions = {
     enableFilter: true
 };
 
-function NumberFloatingFilter() {
-}
+function getNumberFloatingFilterComponent (){
+    function NumberFloatingFilter() {
+    }
 
-NumberFloatingFilter.prototype.init = function (params) {
-    this.onFloatingFilterChanged = params.onFloatingFilterChanged;
-    this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '&gt; <input style="width:20px" type="text"/>'
-    this.currentValue = null;
-    this.eFilterInput = this.eGui.querySelector('input');
+    NumberFloatingFilter.prototype.init = function (params) {
+        this.onFloatingFilterChanged = params.onFloatingFilterChanged;
+        this.eGui = document.createElement('div');
+        this.eGui.innerHTML = '&gt; <input style="width:20px" type="text"/>'
+        this.currentValue = null;
+        this.eFilterInput = this.eGui.querySelector('input');
     this.eFilterInput.style.color = params.color;
-    var that = this;
-    function onInputBoxChanged(){
-        if (that.eFilterInput.value === ''){
-            //If the input box is empty we clear the filter
-            that.onFloatingFilterChanged(null);
-            return;
-        }
+        var that = this;
+        function onInputBoxChanged(){
+            if (that.eFilterInput.value === '') {
+                //Remove the filter
+                that.onFloatingFilterChanged(null);
+                return;
+            }
 
-        that.currentValue = Number(that.eFilterInput.value);
+            that.currentValue = Number(that.eFilterInput.value);
         that.onFloatingFilterChanged({model:{
             //In this example we are only interested in filtering by greaterThan
             type:'greaterThan',
             filter:that.currentValue
         }});
-    }
-    this.eFilterInput.addEventListener('input', onInputBoxChanged);
-};
+        }
+        this.eFilterInput.addEventListener('input', onInputBoxChanged);
+    };
 
-NumberFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
-    // When the filter is empty we will receive a null message her
-    if (!parentModel) {
-        this.eFilterInput.value = '';
+    NumberFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
+        // When the filter is empty we will receive a null message her
+        if (!parentModel) {
+            this.eFilterInput.value = '';
         this.currentValue = null;
-    } else {
+        } else {
         this.eFilterInput.value = parentModel.filter + '';
         this.currentValue = parentModel.filter;
-    }
-};
+        }
+    };
 
-NumberFloatingFilter.prototype.getGui = function () {
-    return this.eGui;
-};
+    NumberFloatingFilter.prototype.getGui = function () {
+        return this.eGui;
+    };
+
+    return NumberFloatingFilter;
+}
+
 
 
 // setup the grid after the page has finished loading
