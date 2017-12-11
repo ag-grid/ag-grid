@@ -63,180 +63,207 @@ export class ComponentProvider {
     private context: Context;
 
     private agGridDefaults :{[key:string]:AgGridProvidedComponentDef};
+    private agDeprecatedNames :{[key:string]:string} = {};
     private jsComponents :{[key:string]:AgGridRegisteredComponentInput<any>} = {};
     private frameworkComponents :{[key:string]:{new(): any}} = {};
 
     @PostConstruct
     public postConstruct (){
+
+        this.agDeprecatedNames = {
+            customFloatingFilterComponent:'agCustomFloatingFilterComponent',
+            readModelAsStringFloatingFilterComponent:'agReadModelAsStringFloatingFilterComponent',
+            numberFloatingFilterComponent:'agNumberColumnFilterFloatingFilterComponent',
+            dateFloatingFilterComponent:'agDateColumnFilterFloatingFilterComponent',
+            textFloatingFilterComponent:'agTextColumnFilterFloatingFilterComponent',
+            setFloatingFilterComponent:'agSetColumnFilterFloatingFilterComponent',
+
+            set:'agSetColumnFilter',
+            text:'agTextColumnFilter',
+            number:'agNumberColumnFilter',
+            date:'agDateColumnFilter',
+
+
+            group:'agGroupRenderer',
+            animateShowChange: 'agAnimateShowChangeRenderer',
+            animateSlide: 'agAnimateSlideRenderer',
+
+            select: 'agSelectCellEditor',
+            largeText: 'agLargeTextCellEditor',
+            popupSelect: 'agPopupSelectCellEditor',
+            popupText: 'agPopupTextCellEditor'
+
+        };
+
         this.agGridDefaults = {
             //THE FOLLOWING COMPONENTS HAVE NO DEFAULTS, THEY NEED TO BE SPECIFIED AS AN SPECIFIC FLAVOUR
             //THERE ARE NO DEFAULTS THAT FIT ALL PURPOSES
             //THEY ARE ADDED HERE TO AVOID THE NOT FOUND WARNING.
-            filterComponent:{
+            agFilterComponent:{
                 defaultImpl: null,
                 overridable: false
             },
-            customFloatingFilterComponent:{
+            agCustomColumnFloatingFilterComponent:{
                 defaultImpl: null,
                 overridable: false
             },
 
             //date
-            dateComponent: {
+            agDateComponent: {
                 defaultImpl: DefaultDateComponent,
                 overridable: true
             },
 
             //header
-            headerComponent: {
+            agHeaderComponent: {
                 defaultImpl: HeaderComp,
                 overridable: true
             },
-            headerGroupComponent: {
+            agHeaderGroupComponent: {
                 defaultImpl: HeaderGroupComp,
                 overridable: true
             },
 
             //floating filters
-            setFloatingFilterComponent: {
+            agSetColumnFilterFloatingFilterComponent: {
                 defaultImpl: SetFloatingFilterComp,
                 overridable: true
             },
-            textFloatingFilterComponent: {
+            agTextColumnFilterFloatingFilterComponent: {
                 defaultImpl: TextFloatingFilterComp,
                 overridable: true
             },
-            numberFloatingFilterComponent:{
+            agNumberColumnFilterFloatingFilterComponent:{
                 defaultImpl: NumberFloatingFilterComp,
                 overridable: true
             },
-            dateFloatingFilterComponent: {
+            agDateColumnFilterFloatingFilterComponent: {
                 defaultImpl: DateFloatingFilterComp,
                 overridable: true
             },
-            readModelAsStringFloatingFilterComponent: {
+            agReadModelAsStringFloatingFilterComponent: {
                 defaultImpl: ReadModelAsStringFloatingFilterComp,
                 overridable: false
             },
-            floatingFilterWrapperComponent: {
+            agFloatingFilterWrapperComponent: {
                 defaultImpl: FloatingFilterWrapperComp,
                 overridable: false
             },
-            emptyFloatingFilterWrapperComponent: {
+            agEmptyFloatingFilterWrapperComponent: {
                 defaultImpl: EmptyFloatingFilterWrapperComp,
                 overridable: false
             },
 
             // renderers
-            cellRenderer: {
+            agCellRenderer: {
                 defaultImpl: null,
                 overridable: true
             },
-            fullWidthCellRenderer: {
+            agFullWidthCellRenderer: {
                 defaultImpl: null,
                 overridable: true
             },
-            innerRenderer: {
+            agInnerRenderer: {
                 defaultImpl: null,
                 overridable: true
             },
-            groupRowInnerRenderer: {
+            agGroupRowInnerRenderer: {
                 defaultImpl: null,
                 overridable: true
             },
-            animateShowChange: {
+            agAnimateShowChangeRenderer: {
                 defaultImpl: AnimateShowChangeCellRenderer,
                 overridable: true
             },
-            animateSlide: {
+            agAnimateSlideRenderer: {
                 defaultImpl: AnimateSlideCellRenderer,
                 overridable: true
             },
-            group: {
+            agGroupRenderer: {
                 defaultImpl: GroupCellRenderer,
                 overridable: true
             },
-            groupRowRenderer: {
+            agGroupRowRenderer: {
                 defaultImpl: GroupCellRenderer,
                 overridable: true
             },
-            loadingCellRenderer: {
+            agLoadingCellRenderer: {
                 defaultImpl: LoadingCellRenderer,
                 overridable: true
             },
-            overlayWrapperComponent: {
+            agOverlayWrapperComponent: {
                 defaultImpl: OverlayWrapperComponent,
                 overridable: false
             },
-            loadingOverlayComponent: {
+            agLoadingOverlayComponent: {
                 defaultImpl: LoadingOverlayComponent,
                 overridable: true
             },
-            noRowsOverlayComponent: {
+            agNoRowsOverlayComponent: {
                 defaultImpl: NoRowsOverlayComponent,
                 overridable: true
             },
-            pinnedRowCellRenderer: {
+            agPinnedRowCellRenderer: {
                 defaultImpl: null,
                 overridable: true
             },
 
             //editors
-            cellEditor: {
+            agCellEditor: {
                 defaultImpl: TextCellEditor,
                 overridable: false
             },
-            textCellEditor: {
+            agTextCellEditor: {
                 defaultImpl: TextCellEditor,
                 overridable: false
             },
-            text: {
+            agText: {
                 defaultImpl: TextCellEditor,
                 overridable: false
             },
-            selectCellEditor: {
+            agSelectCellEditor: {
                 defaultImpl: SelectCellEditor,
                 overridable: false
             },
-            select: {
+            agSelect: {
                 defaultImpl: SelectCellEditor,
                 overridable: false
             },
-            popupTextCellEditor: {
+            agPopupTextCellEditor: {
                 defaultImpl: PopupTextCellEditor,
                 overridable: false
             },
-            popupText: {
+            agPopupText: {
                 defaultImpl: PopupTextCellEditor,
                 overridable: false
             },
-            popupSelectCellEditor: {
+            agPopupSelectCellEditor: {
                 defaultImpl: PopupSelectCellEditor,
                 overridable: false
             },
-            popupSelect: {
+            agPopupSelect: {
                 defaultImpl: PopupSelectCellEditor,
                 overridable: false
             },
-            largeTextCellEditor: {
+            agLargeTextCellEditor: {
                 defaultImpl: LargeTextCellEditor,
                 overridable: false
             },
-            largeText: {
+            agLargeText: {
                 defaultImpl: LargeTextCellEditor,
                 overridable: false
             },
 
             //filter
-            textColumnFilter: {
+            agTextColumnFilter: {
                 defaultImpl: TextFilter,
                 overridable: false
             },
-            numberColumnFilter: {
+            agNumberColumnFilter: {
                 defaultImpl: NumberFilter,
                 overridable: false
             },
-            dateColumnFilter: {
+            agDateColumnFilter: {
                 defaultImpl: DateFilter,
                 overridable: false
             }
@@ -258,8 +285,8 @@ export class ComponentProvider {
         }
     }
 
-    public registerComponent<A extends IComponent<any>> (name:string, component:AgGridRegisteredComponentInput<A>){
-        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
+    public registerComponent<A extends IComponent<any>> (rawName:string, component:AgGridRegisteredComponentInput<A>){
+        let name:string = this.translateIfDeprecated(rawName);
         if (this.frameworkComponents[name]){
             console.error(`Trying to register a component that you have already registered for frameworks: ${name}`);
             return;
@@ -272,8 +299,8 @@ export class ComponentProvider {
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    public registerFwComponent<A extends IComponent<any> & B, B> (name:string, component:{new(): IComponent<B>}){
-        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
+    public registerFwComponent<A extends IComponent<any> & B, B> (rawName:string, component:{new(): IComponent<B>}){
+        let name:string = this.translateIfDeprecated(rawName);
         if (this.jsComponents[name]){
             console.error(`Trying to register a component that you have already registered for plain javascript: ${name}`);
             return;
@@ -287,7 +314,8 @@ export class ComponentProvider {
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    public retrieve <A extends IComponent<any> & B, B> (name:string): RegisteredComponent<A, B>{
+    public retrieve <A extends IComponent<any> & B, B> (rawName:string): RegisteredComponent<A, B>{
+        let name:string = this.translateIfDeprecated(rawName);
         if (this.frameworkComponents[name]){
             return this.assertCanBeOverride(name,{
                 type: ComponentType.FRAMEWORK,
@@ -325,5 +353,14 @@ export class ComponentProvider {
         }
 
         return toAssert;
+    }
+
+    private translateIfDeprecated (raw:string):string{
+        let translatedName:string= this.agDeprecatedNames[raw];
+        if(translatedName != null){
+            console.warn(`ag-grid. Since v15.0 component names have been renamed to contain namespace. You should rename ${raw} to ${translatedName}`);
+            return translatedName;
+        }
+        return raw;
     }
 }

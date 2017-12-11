@@ -385,10 +385,10 @@ export class FilterManager {
     }
 
     private createFilterInstance(column: Column, $scope:any): Promise<IFilterComp> {
-        let defaultFilter:string = 'textColumnFilter';
+        let defaultFilter:string = 'agTextColumnFilter';
 
         if (this.gridOptionsWrapper.isEnterprise()) {
-            defaultFilter = 'setColumnFilter';
+            defaultFilter = 'agSetColumnFilter';
         }
         let sanitisedColDef:ColDef = _.cloneObject(column.getColDef());
 
@@ -397,11 +397,6 @@ export class FilterManager {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-
-        this.translateFilter(sanitisedColDef, 'set');
-        this.translateFilter(sanitisedColDef, 'text');
-        this.translateFilter(sanitisedColDef, 'number');
-        this.translateFilter(sanitisedColDef, 'date');
 
         let filterChangedCallback = this.onFilterChanged.bind(this);
         let filterModifiedCallback = () => this.eventService.dispatchEvent(event);
@@ -428,13 +423,6 @@ export class FilterManager {
                 doesRowPassOtherFilter: this.doesRowPassOtherFilters.bind(this, filter),
             })
         );
-    }
-
-    private translateFilter (target:ColDef, toTranslate:string):void {
-        if (target.filter === toTranslate) {
-            target.filter = `${toTranslate}ColumnFilter`;
-        }
-
     }
 
     private createFilterWrapper(column: Column): FilterWrapper {

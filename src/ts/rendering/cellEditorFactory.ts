@@ -34,7 +34,8 @@ export class CellEditorFactory {
         let cellEditorPromise:Promise<ICellEditorComp> = this.componentResolver.createAgGridComponent (
             column,
             params,
-            'cellEditor'
+            'cellEditor',
+            'agCellEditor'
         );
         return cellEditorPromise.map(cellEditor => {
 
