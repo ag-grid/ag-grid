@@ -50,15 +50,15 @@ export class ComponentRecipes {
     private filterManager: FilterManager;
 
     public newDateComponent (params: IDateParams): Promise<IDateComp>{
-        return this.componentResolver.createAgGridComponent<IDateComp>(this.gridOptions, params, "date", "agDateInput");
+        return this.componentResolver.createAgGridComponent<IDateComp>(this.gridOptions, params, "dateComponent", "agDateInput");
     }
 
     public newHeaderComponent(params:IHeaderParams): Promise<IHeaderComp> {
-        return this.componentResolver.createAgGridComponent<IHeaderComp>(params.column.getColDef(), params, "header", "agColumnHeader");
+        return this.componentResolver.createAgGridComponent<IHeaderComp>(params.column.getColDef(), params, "headerComponent", "agColumnHeader");
     }
 
     public newHeaderGroupComponent(params:IHeaderGroupParams): Promise<IHeaderGroupComp> {
-        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroup", "agColumnHeaderGroup");
+        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agColumnHeaderGroup");
     }
 
     private newFloatingFilterComponent<M> (typeRaw:string, colDef:ColDef, params:IFloatingFilterParams<M, any>):Promise<IFloatingFilterComp<M, any, any>>{

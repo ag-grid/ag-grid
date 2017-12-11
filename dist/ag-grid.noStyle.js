@@ -11619,13 +11619,13 @@ var ComponentRecipes = (function () {
     function ComponentRecipes() {
     }
     ComponentRecipes.prototype.newDateComponent = function (params) {
-        return this.componentResolver.createAgGridComponent(this.gridOptions, params, "date", "agDateInput");
+        return this.componentResolver.createAgGridComponent(this.gridOptions, params, "dateComponent", "agDateInput");
     };
     ComponentRecipes.prototype.newHeaderComponent = function (params) {
-        return this.componentResolver.createAgGridComponent(params.column.getColDef(), params, "header", "agColumnHeader");
+        return this.componentResolver.createAgGridComponent(params.column.getColDef(), params, "headerComponent", "agColumnHeader");
     };
     ComponentRecipes.prototype.newHeaderGroupComponent = function (params) {
-        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroup", "agColumnHeaderGroup");
+        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agColumnHeaderGroup");
     };
     ComponentRecipes.prototype.newFloatingFilterComponent = function (typeRaw, colDef, params) {
         var type = typeRaw;
@@ -11703,13 +11703,13 @@ var ComponentRecipes = (function () {
         return this.componentResolver.createAgGridComponent(this.gridOptionsWrapper, params, "fullWidthCellRenderer", "agFullWidthCellRenderer");
     };
     ComponentRecipes.prototype.newOverlayWrapperComponent = function () {
-        return this.componentResolver.createAgGridComponent(this.gridOptions, null, "overlayWrapper", "agOverlayWrapper");
+        return this.componentResolver.createAgGridComponent(this.gridOptions, null, "overlayWrapperComponent", "agOverlayWrapper");
     };
     ComponentRecipes.prototype.newLoadingOverlayComponent = function () {
-        return this.componentResolver.createAgGridComponent(this.gridOptions, null, "loadingOverlay", "agLoadingOverlay");
+        return this.componentResolver.createAgGridComponent(this.gridOptions, null, "loadingOverlayComponent", "agLoadingOverlay");
     };
     ComponentRecipes.prototype.newNoRowsOverlayComponent = function () {
-        return this.componentResolver.createAgGridComponent(this.gridOptions, null, "noRowsOverlay", "agNoRowsOverlay");
+        return this.componentResolver.createAgGridComponent(this.gridOptions, null, "noRowsOverlayComponent", "agNoRowsOverlay");
     };
     ComponentRecipes.prototype.getFilterComponentPrototype = function (colDef) {
         return this.componentResolver.getComponentToUse(colDef, "filter", "agFilter");
