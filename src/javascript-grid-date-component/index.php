@@ -28,22 +28,22 @@ include '../documentation-main/documentation_header.php';
 <snippet>
 gridOptions: {
     ...
-    // Here is where we specify the component to be used as the date picket widget
+    // Here is where we specify the component to be used as the  date picket widget
     dateComponent: MyDateEditor
 }},</snippet>
 
 <p>
-    The interface for dateComponent is like this:
-</p>
+    The interface for dateComponent is like  this:
+ </p>
 
 <snippet>
 interface IDateComp {
     // mandatory methods
 
-    // The init(params) method is called on the filter once. See below for details on the parameters.
+    // The ini t(params) method is called on the filter once. See below for details on the parameters.
     init(params: IFilterParams): void;
 
-    // Returns the GUI for this filter. The GUI can be a) a string of html or b) a DOM element or node.
+    // Returns the  GUI for this fi lter. The GUI can be a) a string of html  or b) a DOM element or node.
     getGui(): any;
 
     /** Returns the current date represented by this editor */
@@ -54,7 +54,7 @@ interface IDateComp {
 
     // optional methods
 
-    &lt;span class="codeComment"&gt;// Gets called when the component is destroyed. If your custom component needs to do
+    &lt;span class="codeComment"&gt;// Gets called when the component is destroyed. If your custom component ne eds to do
     // any resource cleaning up, do it here.&lt;/span&gt;
     destroy?(): void;
 }</snippet>
@@ -62,9 +62,9 @@ interface IDateComp {
 <h3>IDateParams</h3>
 
 <p>
-    The method init(params) takes a params object with the items listed below. If the user provides
+     The method init(params) takes a params object with the items listed below. If the user provides
     params via the <i>gridOptions.dateComponentParams</i> attribute, these will be additionally added to the
-    params object, overriding items of the same name if a name clash exists.
+    params object, overriding item s of the same name if a name clash exists.
 </p>
 
 <snippet>
@@ -79,11 +79,11 @@ interface IDateParams {
 <h1>Custom Date Example</h1>
 
 <p>
-    The example below shows how to register a custom date component, and then how that component is automatically used in
+    The example below shows how to register a cus tom date component, and then how that component is automatically used in
     the date column for both the rich filter and the floating filter.
 </p>
 
-<?= example('Auto Height', 'custom-date', 'vanilla', array("extras" => array("jquery", "jqueryui"))) ?>
+<?= example('Auto Height', 'custom-date', 'generated', array()) ?>
 
 
 
