@@ -163,15 +163,15 @@ export class ComponentRecipes {
     }
 
     public newOverlayWrapperComponent(): Promise<IOverlayWrapperComp> {
-        return this.componentResolver.createAgGridComponent<IOverlayWrapperComp>(this.gridOptions, null, "overlayWrapper", "agOverlayWrapper");
+        return this.componentResolver.createAgGridComponent<IOverlayWrapperComp>(this.gridOptions, null, "overlayWrapperComponent", "agOverlayWrapper");
     }
 
     public newLoadingOverlayComponent(): Promise<ILoadingOverlayComp> {
-        return this.componentResolver.createAgGridComponent<ILoadingOverlayComp>(this.gridOptions, null, "loadingOverlay", "agLoadingOverlay");
+        return this.componentResolver.createAgGridComponent<ILoadingOverlayComp>(this.gridOptions, null, "loadingOverlayComponent", "agLoadingOverlay");
     }
 
     public newNoRowsOverlayComponent(): Promise<INoRowsOverlayComp> {
-        return this.componentResolver.createAgGridComponent<INoRowsOverlayComp>(this.gridOptions, null, "noRowsOverlay", "agNoRowsOverlay");
+        return this.componentResolver.createAgGridComponent<INoRowsOverlayComp>(this.gridOptions, null, "noRowsOverlayComponent", "agNoRowsOverlay");
     }
 
     private getFilterComponentPrototype<A extends IComponent<any> & B, B>
