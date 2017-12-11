@@ -47,7 +47,6 @@ export declare class AgGridNg2 implements AfterViewInit {
     rowSelection: any;
     overlayLoadingTemplate: any;
     overlayNoRowsTemplate: any;
-    headerCellTemplate: any;
     quickFilterText: any;
     rowModelType: any;
     rowHeight: any;
@@ -66,7 +65,6 @@ export declare class AgGridNg2 implements AfterViewInit {
     paginationOverflowSize: any;
     paginationPageSize: any;
     paginationInitialRowCount: any;
-    headerCellRenderer: any;
     localeTextFunc: any;
     groupRowInnerRenderer: any;
     groupRowRenderer: any;
@@ -76,7 +74,6 @@ export declare class AgGridNg2 implements AfterViewInit {
     doesExternalFilterPass: any;
     getRowClass: any;
     getRowStyle: any;
-    getHeaderCellTemplate: any;
     traverseNode: any;
     getContextMenuItems: any;
     getMainMenuItems: any;
@@ -238,6 +235,15 @@ export declare class AgGridNg2 implements AfterViewInit {
     detailGridOptions: any;
     getDetailRowData: any;
     masterDetail: any;
+    detailCellRenderer: any;
+    detailCellRendererFramework: any;
+    detailCellRendererParams: any;
+    loadingOverlayComponent: any;
+    loadingOverlayComponentFramework: any;
+    loadingOverlayComponentParams: any;
+    noRowsOverlayComponent: any;
+    noRowsOverlayComponentFramework: any;
+    noRowsOverlayComponentParams: any;
     /**
      * Outputs
      */

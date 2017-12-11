@@ -35,7 +35,6 @@ var AgGridNg2 = (function () {
         this.rowSelection = undefined;
         this.overlayLoadingTemplate = undefined;
         this.overlayNoRowsTemplate = undefined;
-        this.headerCellTemplate = undefined;
         this.quickFilterText = undefined;
         this.rowModelType = undefined;
         this.rowHeight = undefined;
@@ -54,7 +53,6 @@ var AgGridNg2 = (function () {
         this.paginationOverflowSize = undefined;
         this.paginationPageSize = undefined;
         this.paginationInitialRowCount = undefined;
-        this.headerCellRenderer = undefined;
         this.localeTextFunc = undefined;
         this.groupRowInnerRenderer = undefined;
         this.groupRowRenderer = undefined;
@@ -64,7 +62,6 @@ var AgGridNg2 = (function () {
         this.doesExternalFilterPass = undefined;
         this.getRowClass = undefined;
         this.getRowStyle = undefined;
-        this.getHeaderCellTemplate = undefined;
         this.traverseNode = undefined;
         this.getContextMenuItems = undefined;
         this.getMainMenuItems = undefined;
@@ -226,6 +223,15 @@ var AgGridNg2 = (function () {
         this.detailGridOptions = undefined;
         this.getDetailRowData = undefined;
         this.masterDetail = undefined;
+        this.detailCellRenderer = undefined;
+        this.detailCellRendererFramework = undefined;
+        this.detailCellRendererParams = undefined;
+        this.loadingOverlayComponent = undefined;
+        this.loadingOverlayComponentFramework = undefined;
+        this.loadingOverlayComponentParams = undefined;
+        this.noRowsOverlayComponent = undefined;
+        this.noRowsOverlayComponentFramework = undefined;
+        this.noRowsOverlayComponentParams = undefined;
         /**
          * Outputs
          */
@@ -415,7 +421,6 @@ AgGridNg2.propDecorators = {
     'rowSelection': [{ type: core_1.Input },],
     'overlayLoadingTemplate': [{ type: core_1.Input },],
     'overlayNoRowsTemplate': [{ type: core_1.Input },],
-    'headerCellTemplate': [{ type: core_1.Input },],
     'quickFilterText': [{ type: core_1.Input },],
     'rowModelType': [{ type: core_1.Input },],
     'rowHeight': [{ type: core_1.Input },],
@@ -434,7 +439,6 @@ AgGridNg2.propDecorators = {
     'paginationOverflowSize': [{ type: core_1.Input },],
     'paginationPageSize': [{ type: core_1.Input },],
     'paginationInitialRowCount': [{ type: core_1.Input },],
-    'headerCellRenderer': [{ type: core_1.Input },],
     'localeTextFunc': [{ type: core_1.Input },],
     'groupRowInnerRenderer': [{ type: core_1.Input },],
     'groupRowRenderer': [{ type: core_1.Input },],
@@ -444,7 +448,6 @@ AgGridNg2.propDecorators = {
     'doesExternalFilterPass': [{ type: core_1.Input },],
     'getRowClass': [{ type: core_1.Input },],
     'getRowStyle': [{ type: core_1.Input },],
-    'getHeaderCellTemplate': [{ type: core_1.Input },],
     'traverseNode': [{ type: core_1.Input },],
     'getContextMenuItems': [{ type: core_1.Input },],
     'getMainMenuItems': [{ type: core_1.Input },],
@@ -606,6 +609,15 @@ AgGridNg2.propDecorators = {
     'detailGridOptions': [{ type: core_1.Input },],
     'getDetailRowData': [{ type: core_1.Input },],
     'masterDetail': [{ type: core_1.Input },],
+    'detailCellRenderer': [{ type: core_1.Input },],
+    'detailCellRendererFramework': [{ type: core_1.Input },],
+    'detailCellRendererParams': [{ type: core_1.Input },],
+    'loadingOverlayComponent': [{ type: core_1.Input },],
+    'loadingOverlayComponentFramework': [{ type: core_1.Input },],
+    'loadingOverlayComponentParams': [{ type: core_1.Input },],
+    'noRowsOverlayComponent': [{ type: core_1.Input },],
+    'noRowsOverlayComponentFramework': [{ type: core_1.Input },],
+    'noRowsOverlayComponentParams': [{ type: core_1.Input },],
     'gridReady': [{ type: core_1.Output },],
     'columnEverythingChanged': [{ type: core_1.Output },],
     'newColumnsLoaded': [{ type: core_1.Output },],
