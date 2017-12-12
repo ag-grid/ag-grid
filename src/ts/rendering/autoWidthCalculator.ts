@@ -6,6 +6,7 @@ import {HeaderRenderer} from "../headerRendering/headerRenderer";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {HeaderWrapperComp} from "../headerRendering/header/headerWrapperComp";
 import {Component} from "../widgets/component";
+import {HeaderGroupWrapperComp} from "../headerRendering/headerGroup/headerGroupWrapperComp";
 
 export interface GuiProvider {
     ():HTMLElement
@@ -69,9 +70,11 @@ export class AutoWidthCalculator {
 
         // find the rendered header cell
         this.headerRenderer.forEachHeaderElement( headerElement => {
-            let headerWrapperComp = <HeaderWrapperComp> headerElement;
-            if (headerWrapperComp.getColumn() === column) {
-                comp = headerWrapperComp;
+            if (headerElement instanceof HeaderWrapperComp) {
+                let headerWrapperComp = <HeaderWrapperComp> headerElement;
+                if (headerWrapperComp.getColumn() === column) {
+                    comp = headerWrapperComp;
+                }
             }
         });
 
