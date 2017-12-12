@@ -28,6 +28,7 @@ import {OverlayWrapperComponent} from "../../rendering/overlays/overlayWrapperCo
 import {LoadingOverlayComponent} from "../../rendering/overlays/loadingOverlayComponent";
 import {NoRowsOverlayComponent} from "../../rendering/overlays/noRowsOverlayComponent";
 import {GridOptions} from "../../entities/gridOptions";
+import {_} from "../../utils";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED
@@ -53,6 +54,11 @@ export interface AgGridProvidedComponentDef {
 }
 
 
+export interface DeprecatedComponentName {
+    propertyHolder: string,
+    newComponentName: string
+}
+
 @Bean('componentProvider')
 export class ComponentProvider {
 
@@ -63,7 +69,7 @@ export class ComponentProvider {
     private context: Context;
 
     private agGridDefaults :{[key:string]:AgGridProvidedComponentDef};
-    private agDeprecatedNames :{[key:string]:string} = {};
+    private agDeprecatedNames :{[key:string]:DeprecatedComponentName} = {};
     private jsComponents :{[key:string]:AgGridRegisteredComponentInput<any>} = {};
     private frameworkComponents :{[key:string]:{new(): any}} = {};
 
@@ -71,21 +77,62 @@ export class ComponentProvider {
     public postConstruct (){
 
         this.agDeprecatedNames = {
-            set:'agSetColumnFilter',
-            text:'agTextColumnFilter',
-            number:'agNumberColumnFilter',
-            date:'agDateColumnFilter',
+            set:{
+                newComponentName: 'agSetColumnFilter',
+                propertyHolder: 'filter'
+            },
+            text:{
+                newComponentName: 'agTextColumnFilter',
+                propertyHolder: 'filter'
+            },
+            number:{
+                newComponentName: 'agNumberColumnFilter',
+                propertyHolder: 'filter'
+            },
+            date:{
+                newComponentName: 'agDateColumnFilter',
+                propertyHolder: 'filter'
+            },
 
 
-            group:'agGroupRenderer',
-            animateShowChange: 'agAnimateShowChangeRenderer',
-            animateSlide: 'agAnimateSlideRenderer',
+            group:{
+                newComponentName: 'agGroupRenderer',
+                propertyHolder: 'cellRenderer'
+            },
+            animateShowChange:{
+                newComponentName: 'agAnimateShowChangeRenderer',
+                propertyHolder: 'cellRenderer'
+            },
+            animateSlide:{
+                newComponentName: 'agAnimateSlideRenderer',
+                propertyHolder: 'cellRenderer'
+            },
 
-            select: 'agSelectCellEditor',
-            largeText: 'agLargeTextCellEditor',
-            popupSelect: 'agPopupSelectCellEditor',
-            popupText: 'agPopupTextCellEditor',
-            richSelect: 'agRichSelect'
+            select:{
+                newComponentName: 'agSelectCellEditor',
+                propertyHolder: 'cellEditor'
+            },
+            largeText:{
+                newComponentName: 'agLargeTextCellEditor',
+                propertyHolder: 'cellEditor'
+            },
+            popupSelect:{
+                newComponentName: 'agPopupSelectCellEditor',
+                propertyHolder: 'cellEditor'
+            },
+            popupText:{
+                newComponentName: 'agPopupTextCellEditor',
+                propertyHolder: 'cellEditor'
+            },
+            richSelect:{
+                newComponentName: 'agRichSelect',
+                propertyHolder: 'cellEditor'
+            },
+
+            headerComponent:{
+                newComponentName: 'agColumnHeader',
+                propertyHolder: 'headerComponent'
+            }
 
         };
 
@@ -350,10 +397,12 @@ export class ComponentProvider {
     }
 
     private translateIfDeprecated (raw:string):string{
-        let translatedName:string= this.agDeprecatedNames[raw];
-        if(translatedName != null){
-            console.warn(`ag-grid. Since v15.0 component names have been renamed to contain namespace. You should rename ${raw} to ${translatedName}`);
-            return translatedName;
+        let deprecatedInfo:DeprecatedComponentName= this.agDeprecatedNames[raw];
+        if(deprecatedInfo != null){
+            _.doOnce(()=>{
+                console.warn(`ag-grid. Since v15.0 component names have been renamed to be namespaced. You should rename ${deprecatedInfo.propertyHolder}:${raw} to ${deprecatedInfo.propertyHolder}:${deprecatedInfo.newComponentName}`);
+            }, 'DEPREACTE_COMPONENT_' + raw);
+            return deprecatedInfo.newComponentName;
         }
         return raw;
     }
