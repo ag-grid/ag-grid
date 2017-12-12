@@ -76,7 +76,7 @@ export class CellRendererService {
         params: any
     ): Promise<ICellRendererComp> {
         let rendererToUsePromise:Promise<ICellRendererComp> = null;
-        let componentToUse:ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(target, "innerRenderer", "agInnerRenderer");
+        let componentToUse:ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(target, "innerRenderer", "agInnerCellRenderer");
 
         if (componentToUse && componentToUse.component != null && componentToUse.source != ComponentSource.DEFAULT){
             //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
