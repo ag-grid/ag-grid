@@ -26,7 +26,7 @@ var columnDefs = [
         field: 'country',
         width: 140,
         cellRenderer: 'countryCellRenderer',
-        keyCreator: 'countryKeyCreator',
+        keyCreator: countryKeyCreator,
         filter: 'agSetColumnFilter',
         filterParams: {selectAllOnMiniFilter: true}
     },
@@ -41,8 +41,7 @@ var columnDefs = [
 
 var gridOptions = {
     components:{
-        countryCellRenderer: countryCellRenderer,
-        countryKeyCreator: countryKeyCreator,
+        countryCellRenderer: countryCellRenderer
     },
     columnDefs: columnDefs,
     rowData: null,
