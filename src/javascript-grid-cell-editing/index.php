@@ -7,7 +7,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h2 id="cell-editing">Cell Editing</h2>
+    <h1 id="cell-editing">Cell Editing</h1>
 
     <p>
         Cell Renderer's and Cell Editors, the former for showing the data, the latter for editing the data.

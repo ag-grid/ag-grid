@@ -36,9 +36,9 @@ include 'includes/headerRow.php'; ?>
     <div class="row">
         <div class="col-md-12">
 
-            <h2>
+            <h1>
                 ag-Grid Enterprise Evaluation License
-            </h2>
+            </h1>
 
             <p>
                 An evaluation license for ag-Grid Enterprise is granted to anyone wishing evaluate ag-Grid Enterprise.
