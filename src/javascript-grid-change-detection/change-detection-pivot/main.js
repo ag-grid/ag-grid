@@ -171,7 +171,7 @@ function moveCourse() {
 
 var gridOptions = {
     defaultColDef: {
-        cellRenderer:'agAnimateShowChangeRenderer',
+        cellRenderer:'agAnimateShowChangeCellRenderer',
         width: 120
     },
     columnDefs: columnDefs,

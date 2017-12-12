@@ -70,7 +70,7 @@ var groupColumn = {
             return params.data[params.colDef.field];
         }
     },
-    cellRenderer:'agGroupRenderer',
+    cellRenderer:'agGroupCellRenderer',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
     cellRendererParams: {
