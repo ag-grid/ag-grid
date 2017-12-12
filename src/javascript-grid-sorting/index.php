@@ -142,7 +142,7 @@ var groupColumn = {
     headerName: "Group",
     comparator: [yourOwnComparator], // this is the important bit
     cellRenderer: {
-        renderer: "group",
+        renderer: "agGroupCellRenderer",
     }
 };
    </snippet>

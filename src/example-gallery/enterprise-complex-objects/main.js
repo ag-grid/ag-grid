@@ -43,7 +43,7 @@ var gridOptions = {
 };
 
 function DataSourceWrapper(fakeServer) {
-    this.ds = new EnterpriseDatasource(fakeServer);
+    this.ds = new EnterpriseDatasource(fakeServer, gridOptions);
 }
 
 DataSourceWrapper.prototype.getRows = function(params) {
