@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= example('Auto Height & Full Width', 'auto-height-full-width', 'generated') ?>
+    <?= example('Auto Height & Full Width', 'auto-height-full-width', 'vanilla', array("enterprise" => 1)) ?>
 
     <hr/>
 
@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
         children of the group are visible.
     </p>
 
-    <?= example('Row Group Scroll', 'row-group-scroll', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Row Group Scroll', 'row-group-scroll', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2>Enterprise Row Model & Complex Columns</h2>
 
@@ -87,7 +87,7 @@ row = {
         with dot notation, ie <code>year.name</code>
     </p>
 
-    <?= example('Enterprise Complex Objects', 'enterprise-complex-objects', 'generated', array("enterprise" => 1)) ?>
+    <?= example('Enterprise Complex Objects', 'enterprise-complex-objects', 'vanilla', array("enterprise" => 1)) ?>
 
     <h2>Flower Nodes</h2>
 
