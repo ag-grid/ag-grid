@@ -93,7 +93,7 @@
                     {
                         headerName: 'Name', field: 'name',
                         // left column is going to act as group column, with the expand / contract controls
-                        cellRenderer:'agGroupRenderer',
+                        cellRenderer:'agGroupCellRenderer',
                         // we don't want the child count - it would be one each time anyway as each parent
                         // not has exactly one child node
                         cellRendererParams: {suppressCount: true}

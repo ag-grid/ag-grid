@@ -27,21 +27,21 @@ PriceChangesGrid.prototype.init = function (exchangeService,
                 field: 'price',
                 headerName: 'Price',
                 valueFormatter: this.numberFormatter,
-                cellRenderer:'agAnimateShowChangeRenderer',
+                cellRenderer:'agAnimateShowChangeCellRenderer',
                 cellStyle: {'text-align': 'right'}
             },
             {
                 field: 'bid',
                 headerName: 'Bid',
                 valueFormatter: this.numberFormatter,
-                cellRenderer:'agAnimateShowChangeRenderer',
+                cellRenderer:'agAnimateShowChangeCellRenderer',
                 cellStyle: {'text-align': 'right'}
             },
             {
                 field: 'ask',
                 headerName: 'Ask',
                 valueFormatter: this.numberFormatter,
-                cellRenderer:'agAnimateShowChangeRenderer',
+                cellRenderer:'agAnimateShowChangeCellRenderer',
                 cellStyle: {'text-align': 'right'}
             }
         ]
