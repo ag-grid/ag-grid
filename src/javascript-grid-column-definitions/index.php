@@ -57,7 +57,7 @@ var gridOptions = {
     </p>
 
 
-    <h1 id="default-column-definitions">Custom Column Types</h1>
+    <h2 id="default-column-definitions">Custom Column Types</h2>
 
     <p>
         In addition to the above, the grid provides additional ways to
@@ -149,7 +149,7 @@ var gridOptions = {
 
 <?= example('Column Definition Example', 'column-definition', 'generated', array('enterprise' => 1, 'grid' => array('height' => '100%'))) ?>
 
-<h1>Provided Column Types</h1>
+<h2>Provided Column Types</h2>
 
 <h2 id="built-in-column-definitions">Numeric Columns</h2>
 
@@ -167,7 +167,7 @@ var gridOptions = {
     ]
 }</snippet>
 
-<h1 id="changing-column-headers">Updating Column Definitions</h1>
+<h2 id="changing-column-headers">Updating Column Definitions</h2>
 
 <p>
     After the grid has been initialised it may be necessary to update the column definition. It is important to understand
@@ -195,7 +195,7 @@ gridOptions.api.refreshHeader();</snippet>
 
 
 
-<h1 id="saving-and-restoring-column-state">Saving and Restoring Column State</h1>
+<h2 id="saving-and-restoring-column-state">Saving and Restoring Column State</h2>
 
 <p>
 It is possible to save and subsequently restore the column state via the <a href="../javascript-grid-column-api//">Column API</a>.
@@ -240,7 +240,7 @@ Examples of state include column visibility, width, row groups and values.
 </p>
 
 
-<h1 id="column-api-example">Column API Example</h1>
+<h2 id="column-api-example">Column API Example</h2>
 <p>This section illustrates how to store and restore column state using the <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
 
