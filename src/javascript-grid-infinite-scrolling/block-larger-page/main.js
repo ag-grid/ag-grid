@@ -119,13 +119,7 @@ var columnDefs = [
         headerName: 'ID',
         width: 50,
         valueGetter: 'node.id',
-        cellRenderer: function(params) {
-            if (params.value !== undefined) {
-                return params.value;
-            } else {
-                return '<img src="../images/loading.gif">';
-            }
-        },
+        cellRenderer: 'loadingRenderer',
         // we don't want to sort by the row index, this doesn't make sense as the point
         // of the row index is to know the row index in what came back from the server
         suppressSorting: true,
@@ -137,7 +131,7 @@ var columnDefs = [
         headerName: 'Age',
         field: 'age',
         width: 90,
-        filter: 'number',
+        filter: 'agNumberColumnFilter',
         filterParams: {
             filterOptions: ['equals', 'lessThan', 'greaterThan'],
             newRowsAction: 'keep'
@@ -147,14 +141,14 @@ var columnDefs = [
         headerName: 'Country',
         field: 'country',
         width: 120,
-        filter: 'set',
+        filter: 'agSetColumnFilter',
         filterParams: {values: countries(), newRowsAction: 'keep'}
     },
     {
         headerName: 'Year',
         field: 'year',
         width: 90,
-        filter: 'set',
+        filter: 'agSetColumnFilter',
         filterParams: {values: ['2000', '2004', '2008', '2012'], newRowsAction: 'keep'}
     },
     {headerName: 'Date', field: 'date', width: 110, suppressFilter: true},
@@ -166,6 +160,15 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    components:{
+        loadingRenderer:function(params) {
+            if (params.value !== undefined) {
+                return params.value;
+            } else {
+                return '<img src="../images/loading.gif">';
+            }
+        }
+    },
     floatingFilter: true,
     debug: true,
     enableServerSideSorting: true,

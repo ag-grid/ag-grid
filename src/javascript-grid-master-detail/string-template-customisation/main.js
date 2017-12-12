@@ -1,6 +1,6 @@
 var masterColumnDefs = [
     // group cell renderer needed for expand / collapse icons
-    {field: 'name', cellRenderer: 'group'},
+    {field: 'name', cellRenderer:'agGroupCellRenderer'},
     {field: 'account'},
     {field: 'calls'},
     {field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'"}

@@ -59,7 +59,8 @@
     $navKey = "blog"; include 'navbar.php';
 
     $headerTitle = "ag-Grid Blog"; include 'headerRow.php';
-    include $rootFolder.'/example-runner/utils.php';
+
+    include dirname(__FILE__) . '/../example-runner/utils.php';
 
 ?>
 

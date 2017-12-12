@@ -177,20 +177,20 @@ include '../documentation-main/documentation_header.php';
     <p>
         The grid, out of the box, comes with the following editors:
         <ul>
-        <li><b>text</b>: Simple text editor that uses standard HTML Input. This is the default.</li>
-        <li><b>select</b>: Simple editor that uses standard HTML Select.</li>
-        <li><b>popupText</b>: Same as 'text' but as popup.</li>
-        <li><b>popupSelect</b>: Same as 'select' but as popup.</li>
-        <li><b>largeText</b>: - A text popup that for inputting larger, multi-line text.</li>
-        <li><b>richSelect (ag-Grid-Enterprise only)</b>: - A rich select popup that uses row virtualisation
+        <li><b>agTextCellEditor</b>: Simple text editor that uses standard HTML Input. This is the default.</li>
+        <li><b>agSelectCellEditor</b>: Simple editor that uses standard HTML Select.</li>
+        <li><b>agPopupTextCellEditor</b>: Same as 'text' but as popup.</li>
+        <li><b>agPopupSelectCellEditor</b>: Same as 'select' but as popup.</li>
+        <li><b>agLargeTextCellEditor</b>: - A text popup that for inputting larger, multi-line text.</li>
+        <li><b>agRichSelectCellEditor (ag-Grid-Enterprise only)</b>: - A rich select popup that uses row virtualisation
     </ul>
     </p>
 
 <note>We have found the standard HTML <code>select</code> to behave odd when in the grid. This is because the browser
     doesn't have a great API for opening and closing the select's popup. We advise you don't use
-    it unless you have to - that is we advise against <code>select</code> and <code>popupSelect</code> as
+    it unless you have to - that is we advise against <code>agSelectCellEditor</code> and <code>agPopupSelectCellEditor</code> as
     they give poor user experience, especially if using keyboard navigation. If using ag-Grid Enterprise,
-    then you should use the provided <code>richSelect</code>.</note>
+    then you should use the provided <code>agRichSelectCellEditor</code>.</note>
 
     <p>
         The default text cell editor takes no parameters. The select cell editor takes a list of values
@@ -198,7 +198,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet>
-colDef.cellEditor = 'select';
+colDef.cellEditor = 'agSelectCellEditor';
 colDef.cellEditorParams = {
     values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
 }</snippet>

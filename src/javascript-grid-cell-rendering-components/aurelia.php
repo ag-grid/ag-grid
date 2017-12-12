@@ -4,21 +4,14 @@
     Aurelia Cell Rendering
 </h2>
 
-<div class="note" style="margin-bottom: 20px">
-    <img align="left" src="../images/note.png" style="margin-right: 10px;" />
-    <p>This section explains how to utilise ag-Grid cellRenders using Aurelia. You should read about how
-    <a href="/">Cell Rendering works in ag-Grid</a> first before trying to
-    understand this section.</p>
-</div>
-
 <p>
-    It is possible to provide Aurelia Component cell renderer's for ag-Grid to use, with support for two way binding. All of the information above is
-    relevant to Aurelia cell renderer's. This section explains how to apply this logic to your Aurelia component.
+    It is possible to provide Aurelia cell renderer's for ag-Grid to use if you are are using the
+    Aurelia version of ag-Grid.
 </p>
 
 <p>
     For examples on Aurelia cellRendering, see the
-    <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-aurelia-example</a> on Github.</p>
+    <a href="https://github.com/ag-grid/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.</p>
 </p>
 
 <h3 id="specifying-a-aurelia-cell-renderer"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia Cell Renderer</h3>

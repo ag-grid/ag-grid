@@ -16,11 +16,12 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css" rel="stylesheet">
+
     <!-- Bootstrap -->
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-
 
     <link rel="stylesheet" type="text/css" href="../style.css">
 
@@ -38,49 +39,55 @@ include '../includes/navbar.php';
 $headerTitle = "Pipeline";
 include '../includes/headerRow.php';
 
-include '../jira_reports/jira_utilities.php';
-
 // update when doing a release
 $CURRENT_SPRINT = "3";
+$NEXT_SPRINT = "4";
+
+include '../jira_reports/jira_utilities.php';
 ?>
 
 <div class="container info-page">
     <div class="row">
-        <div class="row">
-            <div class="col-md-12" style="padding-top: 10px; padding-bottom: 5px;">
-                <h1>Tracking your Items in the Development Pipeline</h1>
-            </div>
-        </div>
-        <div class="col-md-12 sprint-container">
-            <span class="sprint-label">Current Sprint: <?= $CURRENT_SPRINT ?> - Target Release: Week Commencing 11th December</span>
+        <div class="col-md-12" style="padding-top: 10px; padding-bottom: 5px;">
+            <h1>Next Release Target: 11th December</h1>
         </div>
     </div>
     <div class="row">
         <div class="col-md-12">
             <div class="global-search-pane">
-                <div class="report-description">                                   
-                    <ul>
-                        <li>Current Sprint: items in the next release.</li>
-                        <li>Bugs: items reported via Zendesk/Github - these are prioritised above Feature Requests.</li>
-                        <li>Standalone Feature Requests: items that can be addressed on their own. These are recorded in a backlog and prioritised.</li>
-                        <li>Epic Feature Requests: items that we group into Epics. We then prioritise based on the Epic rather than the individual feature request.</li>
-                        <li>Parked Items: items parked for the immediate due to complexity/relevance to our entire user base.</li>
-                    </ul>
-                </div>                
-
-
-
                 <input class="clearable global-report-search" type="text" id="global_search" name="" value=""
                        placeholder="Issue Search (eg. AG-1111/popup/feature)..."/>
                 <div class="global-report-search-results"></div>
             </div>
+            <div>
+                <ul class="nav nav-tabs passive-tab" style="border: none">
+                    <li><a href="" class="" style="background-color:lightgreen;width: 200px;">Next Release</a></li>
+                    <li><a href="" class="" style="background-color:lightblue;width: 935px">Future Releases</a></li>
+                </ul>
+            </div>
             <div class="tabbable boxed parentTabs">
                 <ul class="nav nav-tabs">
-                    <li class="active"><a href="#release" class="report-link">Current Sprint</a></li>
-                    <li><a href="#bugs" class="report-link">Bugs</a></li>
-                    <li><a href="#fr" class="report-link">Standalone Feature Requests</a></li>
-                    <li><a href="#epics" class="report-link">Epic Feature Requests</a></li>
-                    <li><a href="#parked" class="report-link">Parked Items</a></li>
+                    <li class="active">
+                        <a href="#release" class="report-link" style="width: 200px">Next Release
+                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover" data-content="Items targeted to be in the next release" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#bugs" class="report-link">Bugs
+                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover" data-content="Items reported via Zendesk/Github - these are prioritised above Feature Requests" aria-hidden="true"></i>
+                        </a></li>
+                    <li>
+                        <a href="#fr" class="report-link">Standard Feature Requests
+                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover" data-content="Items that can be addressed on their own. These are recorded in a backlog and prioritised" aria-hidden="true"></i>
+                        </a></li>
+                    <li>
+                        <a href="#epics" class="report-link">Complex Feature Requests
+                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover" data-content="Items that we group into Epics. We then prioritise based on the Epic rather than the individual feature request" aria-hidden="true"></i>
+                        </a></li>
+                    <li>
+                        <a href="#parked" class="report-link">Parked Items
+                            <i class="fa fa-question-circle-o" data-toggle="popover" data-trigger="hover" data-content="Items parked for the immediate due to complexity/relevance to our entire user base" aria-hidden="true"></i>
+                        </a></li>
                 </ul>
                 <div class="tab-content" style="margin-top: 5px">
                     <div class="tab-pane top-level-pane active" id="release">
@@ -116,13 +123,10 @@ $CURRENT_SPRINT = "3";
                         ?>
                     </div>
                     <div class="tab-pane top-level-pane" id="parked">
-                        <div class="report-description">
-                            Parked Items
-                        </div>
                         <?php
                         $displayEpic = 0;
-                        $report_type = 'current_release';
-                        //                        include '../jira_reports/jira_report.php';
+                        $report_type = 'parked';
+                        include '../jira_reports/jira_report.php';
                         ?>
                     </div>
                 </div>
@@ -198,7 +202,7 @@ $CURRENT_SPRINT = "3";
             // 1) filter out rows that DON'T match the current search
             // 2) store possible matches for later tab auto-navigation
 
-            var tableRows = $(reportTable).find("tr");
+            var tableRows = $(reportTable).find("tr.jira");
 
             // 1) filter out rows that DON'T match the current search
             tableRows.show().filter(function () {
@@ -265,6 +269,9 @@ $CURRENT_SPRINT = "3";
             $(this).removeClass('x onX').val('').change();
             processSearchValue(this);
         });
+
+        // register popovers
+        $("[data-toggle=popover]").popover({container: 'body'});
     });
 
 </script>

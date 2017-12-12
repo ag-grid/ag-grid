@@ -79,7 +79,7 @@ var gridOptions = {
         headerName: 'Group',
         field: 'model',
         rowGroupIndex: 1,
-        cellRenderer: 'group',
+        cellRenderer:'agGroupCellRenderer',
         cellRendererParams: {
             checkbox: true
         }

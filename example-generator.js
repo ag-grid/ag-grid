@@ -39,6 +39,7 @@ function phpArrayToJSON(string) {
     if (!string) {
         return {};
     }
+
     const replaced = string
         .replace(/^, /, '')
         .replace(/'/g, '"')

@@ -1,6 +1,7 @@
 {
-  "local-dev": true,
+  "local-dev": false,
+  "cache-lifetime-minutes": 30,
   "update-mock-data": false,
-  "username": "jira username",
-  "password": "jira password"
+  "username": "",
+  "password": ""
 }

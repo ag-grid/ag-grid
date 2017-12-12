@@ -74,7 +74,7 @@ function appComponentTemplate(bindings, componentFileNames) {
             return;
         }
 
-        if(property.name === "components") {
+        if(componentFileNames.length > 0 && property.name === "components") {
             property.name = "frameworkComponents";
         }
 
@@ -142,6 +142,8 @@ export class AppComponent {
         .concat(additional)
         .map(snippet => snippet.trim())
         .join('\n\n')}
+        
+    ${bindings.instance.join('\\n')}
 }
 
 ${bindings.utils.join('\n')}

@@ -1,5 +1,5 @@
 var columnDefs = [
-    {headerName: "Group", field: 'group', cellRenderer: 'group'},
+    {headerName: "Group", field: 'group', cellRenderer:'agGroupCellRenderer'},
     {headerName: "Athlete", field: "athlete"},
     {headerName: "Year", field: "year"},
     {headerName: "Country", field: "country"}

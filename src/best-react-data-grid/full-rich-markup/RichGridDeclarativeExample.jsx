@@ -76,7 +76,7 @@ export default class RichGridDeclarativeExample extends Component {
                         <AgGridColumn field="name" width={150} pinned editable></AgGridColumn>
                         <AgGridColumn field="country" width={150} pinned editable
                                       cellRenderer={RichGridDeclarativeExample.countryCellRenderer}
-                                      cellEditorParams={{ values: COUNTRY_LIST, cellRenderer: RichGridDeclarativeExample.countryCellRenderer}} cellEditor="richSelect"
+                                      cellEditorParams={{ values: COUNTRY_LIST, cellRenderer: RichGridDeclarativeExample.countryCellRenderer}} cellEditor="agRichSelect"
                                       filter="set" filterParams={{cellRenderer: RichGridDeclarativeExample.countryCellRenderer, cellHeight:20}}>
                         </AgGridColumn>
                         <AgGridColumn field="dob" width={110} headerName="Date of Birth" filter="date" pinned valueFormatter={RichGridDeclarativeExample.dateCellRenderer} columnGroupShow="open"></AgGridColumn>

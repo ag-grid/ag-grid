@@ -48,8 +48,8 @@ gridOptions = {
     enableFilter: true,
     ...
     columnDefs: [
-        {headerName: "Athlete", field: "athlete", filter: "text"}, // text filter
-        {headerName: "Age",     field: "age",     filter: "number"}, // number filter
+        {headerName: "Athlete", field: "athlete", filter: "agTextColumnFilter"}, // text filter
+        {headerName: "Age",     field: "age",     filter: "agNumberColumnFilter"}, // number filter
         {headerName: "Sport",   field: "sport",   suppressFilter: true} // NO filter
     ]
 }</snippet>
@@ -66,19 +66,19 @@ gridOptions = {
             <th>Description</th>
         </tr>
         <tr>
-            <th>number</th>
+            <th>agNumberColumnFilter</th>
             <td>A <a href="../javascript-grid-filter-number/">Number Filter</a> for number comparisons.</td>
         </tr>
         <tr>
-            <th>text</th>
+            <th>agTextColumnFilter</th>
             <td>A <a href="../javascript-grid-filter-text/">Text Filter</a> for string comparisons.</td>
         </tr>
         <tr>
-            <th>date</th>
+            <th>agDateColumnFilter</th>
             <td>A <a href="../javascript-grid-filter-date/">Date Filter</a> for date comparisons.</td>
         </tr>
         <tr>
-            <th>set</th>
+            <th>agSetColumnFilter</th>
             <td>A <a href="../javascript-grid-filter-set/">Set Filter</a>, influenced by how filters work in
                 Microsoft Excel. This is an ag-Grid-Enterprise
                 feature.</td>
@@ -110,7 +110,7 @@ columnDefinition = {
     field: 'athlete'
 
     // set the column to use text filter
-    filter: 'text',
+    filter: 'agTextColumnFilter',
 
     // pass in additional parameters to the text filter
     filterParams: {apply: true, newRowsAction: 'keep'}

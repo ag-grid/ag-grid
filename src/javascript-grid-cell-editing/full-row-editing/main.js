@@ -5,13 +5,13 @@ var columnDefs = [
         headerName: 'Make',
         field: 'make',
         editable: true,
-        cellEditor: 'select',
+        cellEditor:'agSelectCellEditor',
         cellEditorParams: {
             values: ['AAA', 'BBB', 'CCC']
         }
     },
     {headerName: 'Model', field: 'model', editable: true},
-    {headerName: 'Price', field: 'price', editable: true, cellEditor: getNumericCellEditor()},
+    {headerName: 'Price', field: 'price', editable: true, cellEditor: 'numericCellEditor'},
     {headerName: 'Suppress Navigable', field: 'field5', editable: true, suppressNavigable: true},
     {headerName: 'Not Editable', field: 'field6', editable: false}
 ];
@@ -28,6 +28,9 @@ function getRowData() {
 }
 
 var gridOptions = {
+    components:{
+        numericCellEditor: getNumericCellEditor()
+    },
     columnDefs: columnDefs,
     rowData: getRowData(),
     editType: 'fullRow',

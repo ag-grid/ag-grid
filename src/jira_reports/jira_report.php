@@ -2,6 +2,28 @@
     <tbody>
     <?php
     if ($report_type == 'issue_by_epic') {
+
+        function sortBySpringEta($a, $b)
+        {
+            $etaA = $a['fields']['customfield_10515'];
+            $etaB = $b['fields']['customfield_10515'];
+
+            $etaA = empty($etaA) ? 1000 : $etaA;
+            $etaB = empty($etaB) ? 1000 : $etaB;
+
+            // sort first by Sprint ETA
+            $result = $etaA - $etaB;
+
+            // then by epic priority
+            $result .= $a['fields']['epicPriority'] - $b['fields']['epicPriority'];
+
+            // and finally by epic name
+            $result .= strcmp($a['fields']['epicName'], $b['fields']['epicName']);
+
+            return $result;
+
+        }
+
         // we treat epics differently as we effective stitch the two datasets together
         // ideally we'd do this on jira side, but atm it doesnt appear to be possible to have parent epic info
         // on a child issue
@@ -9,8 +31,12 @@
 
         // build up a map for epic key=>epic name
         $epicKeyToName = array();
+        $epicKeyToSprintETA = array();
+        $epicKeyToEpicPriority = array();
         for ($x = 0; $x < count($epic_data['issues']); $x++) {
             $epicKeyToName[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['summary'];
+            $epicKeyToSprintETA[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['customfield_10515'];
+            $epicKeyToEpicPriority[$epic_data['issues'][$x]['key']] = $epic_data['issues'][$x]['fields']['priority']['id'];
         }
 
         // now add the epic name to each issue (we have the epic key, but not the name)
@@ -18,7 +44,16 @@
         for ($x = 0; $x < count($issue_data['issues']); $x++) {
             $issue_fields = $issue_data['issues'][$x]['fields'];
             $issue_data['issues'][$x]['fields']['epicName'] = $epicKeyToName[$issue_fields['customfield_10005']];
+            $issue_data['issues'][$x]['fields']['customfield_10515'] = $epicKeyToSprintETA[$issue_fields['customfield_10005']];
+            $issue_data['issues'][$x]['fields']['epicPriority'] = $epicKeyToEpicPriority[$issue_fields['customfield_10005']];
         }
+
+        // sort the issues by sprint eta - as we're sorting by the parent epic and we've stitched two datasets
+        // together here, we have to do the sort client side (ie we can't rely on JIRA sorting to do it for us)
+        $issues = $issue_data['issues'];
+        usort($issues, 'sortBySpringEta');
+        $issue_data['issues'] = $issues;
+
 
         // finally, convert back to object form
         $json_decoded = json_decode(json_encode($issue_data));
@@ -46,15 +81,25 @@
                             class="jim-table-header-content">Summary</span></th>
 
                 <?php
-                if (!$suppressTargetSprint) {
+                if ($suppressTargetSprint) {
                     ?>
+                    <!-- status -->
                     <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header"><span
-                                class="jim-table-header-content">Target Sprint</span></th>
+                                class="jim-table-header-content">Status</span></th>
+                    <?php
+                } else {
+                    ?>
+                    <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header center-align"
+                        nowrap><span
+                                class="jim-table-header-content">Release ETA</span></th>
                     <?php
                 }
                 ?>
             </tr>
             <?php
+        }
+        if (empty(filter_var($json_decoded->{'issues'}[$i]->{'key'}, FILTER_SANITIZE_STRING))) {
+            continue;
         }
         ?>
         <tr class="jira <?= $i % 2 == 0 ? 'issue-row' : 'issue-row-alternate' ?>">
@@ -75,18 +120,42 @@
             <!-- summary -->
             <td class="jira-macro-table-underline-pdfexport"><?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'summary'}, FILTER_SANITIZE_STRING); ?></td>
 
-            <!-- priority -->
+            <!-- status / sprint eta -->
             <?php
-            if (!$suppressTargetSprint) {
+            if ($suppressTargetSprint) {
                 ?>
-                <td class="jira-macro-table-underline-pdfexport center-align" nowrap>
-                    <span>
-                        <?= filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10515'}, FILTER_SANITIZE_STRING) ?>
-                    </span>
+                <!-- status -->
+                <td nowrap="true" class="jira-macro-table-underline-pdfexport">
+                                        <span
+                                                class="aui-lozenge aui-lozenge-subtle
+                                            <?= classForStatusAndResolution(
+                                                    filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING),
+                                                    filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'resolution'}->{'name'}, FILTER_SANITIZE_STRING)) ?>">
+                                            <?= getStatusForStatusAndResolution(
+                                                filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'status'}->{'name'}, FILTER_SANITIZE_STRING),
+                                                filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'resolution'}->{'name'}, FILTER_SANITIZE_STRING)
+                                            ) ?>
+                                        </span>
                 </td>
                 <?php
-            }
-            ?>
+            } else {
+                $sprintEta = filter_var($json_decoded->{'issues'}[$i]->{'fields'}->{'customfield_10515'}, FILTER_SANITIZE_STRING)
+                ?>
+                <td class="jira-macro-table-underline-pdfexport center-align" nowrap>
+                    <?php
+                    if (!empty($sprintEta)) {
+                        ?>
+                        <span><?= getValueForTargetEta($sprintEta, $NEXT_SPRINT) ?></span>
+                        <?php
+                    } else {
+                        ?>
+                        <span class="aui-lozenge aui-lozenge-subtle <?= classForStatusAndResolution("Backlog", "") ?>">Backlog</span>
+                        <?php
+                    }
+                    ?>
+                </td>
+                <?php
+            } ?>
         </tr>
         <?php
     }

@@ -1,5 +1,5 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text', filterParams:{
+    {headerName: "Athlete", field: "athlete", width: 150, filter: 'agTextColumnFilter', filterParams:{
         filterOptions:['contains', 'notContains'],
         textFormatter: function(r){
             if (r==null) return null;
@@ -44,10 +44,10 @@ var columnDefs = [
         },
         debounceMs:2000
     }},
-    {headerName: "Year", field: "year", width: 90, filter:'number', filterParams:{
+    {headerName: "Year", field: "year", width: 90, filter:'agNumberColumnFilter', filterParams:{
         filterOptions:['inRange']
     }},
-    {headerName: "Sport", field: "sport", width: 90, filter:'text', filterParams:{
+    {headerName: "Sport", field: "sport", width: 90, filter: 'agTextColumnFilter', filterParams:{
         defaultOption:'startsWith'
     }}
 ];

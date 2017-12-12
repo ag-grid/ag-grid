@@ -8,20 +8,51 @@ var columnDefs = [
     { field: 'address', width: 200}
 ];
 
-var pinnedTopData = [
-    { firstName: '##', lastName: '##', gender: '##', address: '##', mood: '##', country: '##'}
-];
-var pinnedBottomData = [
-    { firstName: '##', lastName: '##', gender: '##', address: '##', mood: '##', country: '##'}
+var rowData = [
+    { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland'},
+    { firstName: 'Sadiq', lastName: 'Khan', gender: 'Male', age: 12, address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Jerry', lastName: 'Mane', gender: 'Male', age: 12, address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland'},
+    { firstName: 'Sadiq', lastName: 'Khan', gender: 'Male', age: 12, address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Jerry', lastName: 'Mane', gender: 'Male', age: 12, address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland'},
+    { firstName: 'Sadiq', lastName: 'Khan', gender: 'Male', age: 12, address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Jerry', lastName: 'Mane', gender: 'Male', age: 12, address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland'},
+    { firstName: 'Sadiq', lastName: 'Khan', gender: 'Male', age: 12, address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Jerry', lastName: 'Mane', gender: 'Male', age: 12, address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland'},
+    { firstName: 'Sadiq', lastName: 'Khan', gender: 'Male', age: 12, address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Jerry', lastName: 'Mane', gender: 'Male', age: 12, address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Bob', lastName: 'Harrison', gender: 'Male', address: '1197 Thunder Wagon Common, Cataract, RI, 02987-1016, US, (401) 747-0763', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Mary', lastName: 'Wilson', gender: 'Female', age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215', mood: 'Sad', country: 'Ireland'},
+    { firstName: 'Sadiq', lastName: 'Khan', gender: 'Male', age: 12, address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186', mood: 'Happy', country: 'Ireland'},
+    { firstName: 'Jerry', lastName: 'Mane', gender: 'Male', age: 12, address: '2234 Sleepy Pony Mall , Drain, DC, 20078-4243, US, (202) 948-3634', mood: 'Happy', country: 'Ireland'},
 ];
 
+function getPinnedTopData() {
+    return [
+        { firstName: '##', lastName: '##', gender: '##', address: '##', mood: '##', country: '##'}
+    ];
+}
+
+function getPinnedBottomData() {
+    return [
+        { firstName: '##', lastName: '##', gender: '##', address: '##', mood: '##', country: '##'}
+    ];
+}
 
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
     enableColResize: true,
-    pinnedTopRowData: pinnedTopData,
-    pinnedBottomRowData: pinnedBottomData,
+    pinnedTopRowData: getPinnedTopData(),
+    pinnedBottomRowData: getPinnedBottomData(),
     defaultColDef: {
         editable: true
     },

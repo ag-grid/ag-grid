@@ -10,99 +10,39 @@ include '../documentation-main/documentation_header.php';
 <h1 class="first-h1" id="cell-rendering">Cell Renderer</h1>
 
 <p>
-    The Cell Renderer - the most important component of ag-Grid. With this, you can put whatever
-    you want in the grid cells. The job of the grid is to lay out the cells. What goes into the cells,
-    that's where you come in! You customise the rendering inside the cells by providing cell renderer's.
+    The job of the grid is to lay out the cells. By default the grid will create the cell values
+    using simple text. If you want more complex HTML inside the cells then this is achieved using
+    cell renderers.
 </p>
 
 <p>
-    You configure cell renderer's as part of the column definition and can be one of the following:
-<ul>
-    <li>function: The <code>cellRenderer</code> is a function that gets called once for each cell. The function
-        should return a string (which will be treated as html) or a DOM object. Use this if you
-        have no cleanup or refresh requirements of the cell - it's a 'fire and forget' approach
-        to the cell rendering.
-    </li>
-    <li>component: The grid will call 'new' on the provided class and treat the object as a component, using
-        lifecycle methods. Use this if you need to do cleanup when the cell is removed or have
-        refresh requirements.
-    </li>
-    <li>string: The cell renderer is looked up from the provided cell renderer's. Use this if you
-        want to use a built in renderer (eg 'group').
-    </li>
-</ul>
+    This page explains first how to create cell renderers using standard JavaScript. It then continues
+    on how to create cell renderers using components of different frameworks (eg how to create a cell
+    renderer using a React or Angular component). If you intend to use the framework variant, you should
+    first read the JavaScript sections as the framework sections build on this.
 </p>
 
-<h1 id="cell-renderer-function">Cell Renderer Function</h1>
+<h1 id="simple-cell-renderer-example">Simple Cell Renderer Example</h1>
 
 <p>
-    The easiest (but not as flexible) way to provide your own cell renderer is to provide a function.
-    The function takes a set of parameters (with information on what to render) and you return back
-    either a) a string of HTML or b) a DOM object.
+    The example below shows a simple cell renderer in action. It uses a cell renderer to show a hash '#'
+    symbol instead of the medal count.
 </p>
 
-<p>
-    Below are some simple examples of a cell renderer function:
-</p>
-
-<snippet>
-    // put the value in bold
-    colDef.cellRenderer = function(params) {
-    return '&lt;b&gt;' + params.value.toUpperCase() + '&lt;/b&gt;';
-    }
-
-    // put a tooltip on the value
-    colDef.cellRenderer = function(params) {
-    return '&lt;span title="the tooltip"&gt;'+params.value+'&lt;/span&gt;';
-    }
-
-    // create a DOM object
-    colDef.cellRenderer = function(params) {
-    var eDiv = document.createElement('div');
-    eDiv.innerHTML = '&lt;span class="my-css-class"&gt;&lt;button class="btn-simple"&gt;Push Me&lt;/button&gt;&lt;/span&gt;';
-    var eButton = eDiv.querySelectorAll('.btn-simple')[0];
-
-    eButton.addEventListener('click', function() {
-    console.log('button was clicked!!');
-    });
-
-    return eDiv;
-    }
-</snippet>
-
-<p>
-    See further below for the set of parameters passed to the rendering function.
-</p>
+<?= example('Simple Cell Renderer', 'simple-javascript', 'vanilla', array("showResult" => true, "exampleHeight" => 460)) ?>
 
 <h1 id="cell-renderer-component">Cell Renderer Component</h1>
-
-<p>
-    The most flexible (but a little more tricky) way to provide a cell renderer is to provide a component class.
-    The component class that you provide can have callback methods on it for refresh and destroy.
-</p>
-
-<note>
-    <p>
-        A cell renderer Component is an ag-Grid concept that is similar in how 'components' work in other frameworks.
-        Other than sharing the same concept and name, ag-Grid Components have nothing to do with Angular components,
-        React components, or any other components.
-    </p>
-    <p>
-        An ag-Grid cell renderer Component does not need to extend any class or do anything except implement the
-        methods shown in the interface.
-    </p>
-</note>
 
 <p>
     The interface for the cell renderer component is as follows:
 </p>
 
 <snippet>
-    interface ICellRendererComp {
+interface ICellRendererComp {
     // Optional - Params for rendering. The same params that are passed to the cellRenderer function.
     init?(params: ICellRendererParams): void;
 
-    // Mandatory - Return the DOM element of your editor, this is what the grid puts into the DOM
+    // Mandatory - Return the DOM element of the component, this is what the grid puts into the cell
     getGui(): HTMLElement;
 
     // Optional - Gets called once by grid after editing is finished - if your editor needs to do any cleanup,
@@ -113,12 +53,12 @@ include '../documentation-main/documentation_header.php';
     // If you return false, the grid will remove the component from the DOM and create
     // a new component in it's place with the new values.
     refresh(params: any): boolean;
-    }
+}
 </snippet>
 
 <p>The interface for the cell renderer parameters is as follows:</p>
 <snippet>
-    interface ICellRendererParams {
+interface ICellRendererParams {
     value: any, // value to be rendered
     valueFormatted: any, // value to be rendered formatted
     getValue: ()=&gt; any, // convenience function to get most recent up to date value
@@ -131,12 +71,11 @@ include '../documentation-main/documentation_header.php';
     rowIndex: number, // the current index of the row (this changes after filter and sort)
     api: GridApi, // the grid API
     eGridCell: HTMLElement, // the grid's cell, a DOM div element
-    eParentOfValue: HTMLElement, // the parent DOM item for the cell renderer, same as eGridCell unless using checkbox
-    selection
+    eParentOfValue: HTMLElement, // the parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection
     columnApi: ColumnApi, // grid column API
     context: any, // the grid's context
     refreshCell: ()=&gt;void // convenience function to refresh the cell
-    }
+}
 </snippet>
 
 <p>
@@ -144,49 +83,55 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-    // function to act as a class
-    function MyCellRenderer () {}
+// function to act as a class
+function MyCellRenderer () {}
 
-    // gets called once before the renderer is used
-    MyCellRenderer.prototype.init = function(params) {
+// gets called once before the renderer is used
+MyCellRenderer.prototype.init = function(params) {
     // create the cell
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '&lt;span class="my-css-class"&gt;&lt;button class="btn-simple"&gt;Push Me&lt;/button&gt;&lt;span
-    class="my-value"&gt;&lt;/span&gt;&lt;/span&gt;';
+    this.eGui.innerHTML = '&lt;span class="my-css-class"&gt;&lt;button class="btn-simple"&gt;Push Me&lt;/button&gt;&lt;span class="my-value"&gt;&lt;/span&gt;&lt;/span&gt;';
 
     // get references to the elements we want
-    this.eButton = this.eGui.querySelectorAll('.btn-simple')[0];
-    this.eValue = this.eGui.querySelectorAll('.my-value')[0];
+    this.eButton = this.eGui.querySelector('.btn-simple');
+    this.eValue = this.eGui.querySelector('.my-value');
 
     // set value into cell
     this.eValue.innerHTML = params.valueFormatted ? params.valueFormatted : params.value;
 
     // add event listener to button
     this.eventListener = function() {
-    console.log('button was clicked!!');
+        console.log('button was clicked!!');
     };
     this.eButton.addEventListener('click', this.eventListener);
-    };
+};
 
-    // gets called once when grid ready to insert the element
-    MyCellRenderer.prototype.getGui = function() {
+// gets called once when grid ready to insert the element
+MyCellRenderer.prototype.getGui = function() {
     return this.eGui;
-    };
+};
 
-    // gets called whenever the user gets the cell to refresh
-    MyCellRenderer.prototype.refresh = function(params) {
+// gets called whenever the user gets the cell to refresh
+MyCellRenderer.prototype.refresh = function(params) {
     // set value into cell again
     this.eValue.innerHTML = params.valueFormatted ? params.valueFormatted : params.value;
     // return true to tell the grid we refreshed successfully
     return true;
-    };
+};
 
-    // gets called when the cell is removed from the grid
-    MyCellRenderer.prototype.destroy = function() {
+// gets called when the cell is removed from the grid
+MyCellRenderer.prototype.destroy = function() {
     // do cleanup, remove event listener from button
     this.eButton.removeEventListener('click', this.eventListener);
-    };
+};
 </snippet>
+
+<h1 id="cell-renderer-component-registering">Registering Cell Renderers with Columns</h1>
+
+<p>
+    See the section <a href="../javascript-grid-components/#registering-custom-components">
+    registering custom components</a> for details on registering and using custom cell renderers.
+</p>
 
 <h1 id="cell-renderer-component-refresh">Component Refresh</h1>
 
@@ -285,25 +230,103 @@ In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> a
 </p>
 
 <snippet>
-    // define cellRenderer to be reused
-    var myCellRenderer = function(params) {
+// define cellRenderer to be reused
+var myCellRenderer = function(params) {
     return '&lt;span style="color: '+params.color+'"&gt;' + params.value + '&lt;/span&gt;';
-    }
+}
 
-    // use with a color
-    colDef.cellRenderer = myCellRenderer;
-    colDef.cellRendererParams = {
+// use with a color
+colDef.cellRenderer = myCellRenderer;
+colDef.cellRendererParams = {
     color: 'guinnessBlack'
-    }
+}
 
-    // use with another color
-    colDef.cellRenderer = myCellRenderer;
-    colDef.cellRendererParams = {
+// use with another color
+colDef.cellRenderer = myCellRenderer;
+colDef.cellRendererParams = {
     color: 'irishGreen'
-    }
+}
 </snippet>
 
-<h1 id="example-using-cell-renderers">Example: Using Cell Renderer's</h1>
+<h1 id="cell-renderers-and-row-groups">Cell Renderer's and Row Groups</h1>
+
+<p>
+    If you are mixing cell renderer's and row grouping, then you need to understand that the value and / or data
+    may be missing in the group row. You can check if you are on a group row of not by checking
+    <code>rowNode.group</code>.
+    Groups will have <code>aggData</code> and <code>groupData</code> instead of data.
+</p>
+<p>
+    This is simply fixed by checking for the existence of the data before you use it like the following:
+<snippet>
+colDef.cellRenderer = function(params) {
+    // check the data exists, to avoid error
+    if (!params.node.group) {
+        // data exists, so we can access it
+        return '&lt;b&gt;'+params.data.theBoldValue+'&lt;/b&gt;';
+    } else {
+        // when we return null, the grid will display a blank cell
+        return null;
+    }
+};
+</snippet>
+</p>
+
+<h1 id="cell-renderer-function">Cell Renderer Function</h1>
+
+<p>
+    Instead of using a component, it's possible to use a simple function for a cell renderer.
+    The function takes the same parameters as the cell renderer <code>init</code> method in the
+    component variant. The function should return back  either a) a string of HTML or b) a DOM object.
+</p>
+
+<p>
+    Use the function variant of a cell renderer if you have no refresh or cleanup requirements (ie
+    you don't need to implement the refresh or destroy functions).
+</p>
+
+<p>
+    If using a framework such as React or Angular for your cell renderers then you must provide a
+    cell renderer component. There is no function equivalent for the frameworks such as React and Angular.
+</p>
+
+<p>
+    Below are some simple examples of cell renderers provided as simple functions:
+</p>
+
+<snippet>
+// put the value in bold
+colDef.cellRenderer = function(params) {
+    return '&lt;b&gt;' + params.value.toUpperCase() + '&lt;/b&gt;';
+}
+
+// put a tooltip on the value
+colDef.cellRenderer = function(params) {
+    return '&lt;span title="the tooltip"&gt;'+params.value+'&lt;/span&gt;';
+}
+
+// create a DOM object
+colDef.cellRenderer = function(params) {
+    var eDiv = document.createElement('div');
+    eDiv.innerHTML = '&lt;span class="my-css-class"&gt;&lt;button class="btn-simple"&gt;Push Me&lt;/button&gt;&lt;/span&gt;';
+    var eButton = eDiv.querySelectorAll('.btn-simple')[0];
+
+    eButton.addEventListener('click', function() {
+        console.log('button was clicked!!');
+    });
+
+    return eDiv;
+}
+</snippet>
+
+<note>
+    You might be wondering how the grid knows if you have provided a cell renderer component class or
+    a simple function, as JavaScript uses functions to implement classes. The answer is the grid looks
+    for the getGui() method in the prototype of the function (the only mandatory method in the cell renderer
+    interface). If the getGui() method exists, it assumes a component, otherwise it assumes a function.
+</note>
+
+<h1 id="example-using-cell-renderers">Complex Cell Renderer Example</h1>
 
 <p>
     The example below shows five columns formatted, demonstrating each of the
@@ -319,31 +342,6 @@ In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> a
 </ul>
 
 <?= example('Cell Renderer', 'cell-renderer') ?>
-
-<h1 id="cell-renderers-and-row-groups">Cell Renderer's and Row Groups</h1>
-
-<p>
-    If you are mixing cell renderer's and row grouping, then you need to understand that the value and / or data
-    may be missing in the group row. You can check if you are on a group row of not by checking
-    <code>rowNode.group</code>.
-    Groups will have <code>aggData</code> and <code>groupData</code> instead of data.
-</p>
-<p>
-    This is simply fixed by checking for the existence of the data before you use it like the following:
-    <snippet>
-        colDef.cellRenderer = function(params) {
-
-        // check the data exists, to avoid error
-        if (!params.node.group) {
-        // data exists, so we can access it
-        return '&lt;b&gt;'+params.data.theBoldValue+'&lt;/b&gt;';
-        } else {
-        // when we return null, the grid will display a blank cell
-        return null;
-        }
-        };
-    </snippet>
-</p>
 
 <?php include './angular.php'; ?>
 

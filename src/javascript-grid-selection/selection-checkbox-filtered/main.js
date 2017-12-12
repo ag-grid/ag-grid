@@ -20,7 +20,7 @@ var gridOptions = {
     enableFilter:true,
     suppressRowClickSelection: true,
      autoGroupColumnDef: {headerName: "Athlete", field: "athlete", width: 200,
-        cellRenderer: 'group',
+        cellRenderer:'agGroupCellRenderer',
         cellRendererParams: {
             checkbox: true
         }

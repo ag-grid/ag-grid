@@ -86,10 +86,10 @@ function getPersonFilter() {
 
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150, filter: getPersonFilter(), suppressMenu:true},
-    {headerName: "Age", field: "age", width: 90, filter: 'number', suppressMenu:true},
-    {headerName: "Country", field: "country", width: 120, filter: 'set', suppressMenu:true},
-    {headerName: "Year", field: "year", width: 90, filter: 'number', suppressMenu:true},
-    {headerName: "Date", field: "date", width: 145, filter:'date', filterParams:{
+    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter', suppressMenu:true},
+    {headerName: "Country", field: "country", width: 120, filter: 'agSetColumnFilter', suppressMenu:true},
+    {headerName: "Year", field: "year", width: 90, filter: 'agNumberColumnFilter', suppressMenu:true},
+    {headerName: "Date", field: "date", width: 145, filter:'agDateColumnFilter', filterParams:{
         comparator:function (filterLocalDateAtMidnight, cellValue){
             var dateAsString = cellValue;
             var dateParts  = dateAsString.split("/");
@@ -108,11 +108,11 @@ var columnDefs = [
             }
         }
     }, suppressMenu:true},
-    {headerName: "Sport", field: "sport", width: 110, suppressMenu:true, filter:'text'},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'number', filterParams:{applyButton:true}, suppressMenu:true},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'number', floatingFilterComponentParams:{suppressFilterButton:true}},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'number', floatingFilterComponentParams:{suppressFilterButton:true}},
-    {headerName: "Total", field: "total", width: 100, filter: 'number', suppressFilter: true}
+    {headerName: "Sport", field: "sport", width: 110, suppressMenu:true, filter: 'agTextColumnFilter'},
+    {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter', filterParams:{applyButton:true}, suppressMenu:true},
+    {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter', floatingFilterComponentParams:{suppressFilterButton:true}},
+    {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter', floatingFilterComponentParams:{suppressFilterButton:true}},
+    {headerName: "Total", field: "total", width: 100, filter: 'agNumberColumnFilter', suppressFilter: true}
 ];
 
 var gridOptions = {
