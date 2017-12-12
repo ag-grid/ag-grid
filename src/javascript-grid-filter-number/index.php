@@ -22,8 +22,8 @@ include '../documentation-main/documentation_header.php';
 
 
 <p><snippet>
-colDef:{
-    filter:'number'
+colDef: {
+    filter:'agNumberColumnFilter'
 }</snippet></p>
 
 <h2 id="params">Number Filter Parameters</h2>
@@ -56,8 +56,8 @@ The parameters for the filter must be specified in the property filterParams ins
 object
 <p><snippet>
 colDef:{
-    filter:'number',
-    filterParams:{
+    filter: 'agNumberColumnFilter',
+    filterParams: {
         ...
     }
 }</snippet></p>

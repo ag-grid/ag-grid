@@ -647,6 +647,14 @@ gridOptions = {
             </tr>
         </table>
 
+        <p style="margin-top: 10px">
+        <div>
+            <strong>*</strong>
+            <img src="../images/enterprise.png" style="margin-bottom: 0.25em" title="Enterprise Feature"/>
+            Enterprise Feature
+        </div>
+        </p>
+
         <h3>Overriding Grid Components</h3>
 
         <p>

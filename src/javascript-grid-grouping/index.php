@@ -1,5 +1,5 @@
 <?php
-$key = "Grid Grouping";
+$key = "Row Grouping";
 $pageTitle = "ag-Grid Grid Grouping";
 $pageDescription = "ag-Grid Grid Grouping";
 $pageKeyboards = "ag-Grid Grid Grouping";
@@ -301,7 +301,7 @@ gridOptions.groupUseEntireRow = true;
 // we tell the grid what renderer to use (the built in renderer) and we
 // configure the default renderer with our own inner renderer
 gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRenderer:  'group';
+gridOptions.groupRowRenderer:  'agGroupCellRenderer';
 gridOptions.groupRowRendererParams: {
     innerRenderer: function(params) {return params.node.key;},
 };
@@ -344,7 +344,7 @@ gridOptions.groupRowRenderer: function(params) {return params.node.key;};
         but configured differently by asking for a checkbox for selection:
     <snippet>
 gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRenderer: 'group';
+gridOptions.groupRowRenderer: 'agGroupCellRenderer';
 gridOptions.groupRowRendererParams: {
     checkbox: true,
     // innerRenderer is optional, we could leave this out and use the default
