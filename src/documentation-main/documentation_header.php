@@ -73,7 +73,7 @@ function menuItemCollapsibleChild($indent, $localKey, $name, $url, $parentId, $c
 <!DOCTYPE html>
 <html>
 <head lang="en">
-<?
+<?php
 meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
 ?>
 <link rel="stylesheet" href="../dist/docs.css">
