@@ -136,6 +136,26 @@ include '../documentation-main/documentation_header.php';
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-md-6">
+                <div class="list-group">
+
+                    <a href="../javascript-grid-overlay-component/" class="list-group-item">
+                        <div class="float-parent">
+                            <div class="section-icon-container">
+                                <img src="../images/components.png" width="50"/>
+                            </div>
+                            <h3 class="list-group-item-heading">Overlay Component</h3>
+                            <p class="list-group-item-text">
+                                To customise loading and no rows overlay components.
+                            </p>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
         <h1 id="registering-custom-components">Registering Custom Components</h1>
 
         <p>
