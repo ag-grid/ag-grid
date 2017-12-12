@@ -36,13 +36,9 @@ var gridOptions = {
     enableFilter: true,
     // Here is where we specify the component to be used as the date picker widget
     components:{
-        dateComponent: CustomDateComponent
+        agDateColumnFilter: CustomDateComponent
     }
 };
-
-// function onFilterChanged(value) {
-//     gridOptions.api.setQuickFilter(value);
-// }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
