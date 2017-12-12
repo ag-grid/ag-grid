@@ -36,7 +36,7 @@ var gridOptions = {
     enableFilter: true,
     // Here is where we specify the component to be used as the date picker widget
     components:{
-        agDateColumnFilter: CustomDateComponent
+        agDateInput: CustomDateComponent
     }
 };
 
