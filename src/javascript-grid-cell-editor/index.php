@@ -297,7 +297,7 @@ colDef.suppressKeyboardEvent = function(params) {
 }
 </snippet>
 
-<p>The params for <code>suppressKeyboardEvent()</code> are as follows:</p>
+<p>The params for <code>suppressKeyboardEvent( )</code> are as follows:</p>
 
 <snippet>
 interface SuppressKeyboardEventParams {
@@ -314,7 +314,7 @@ interface SuppressKeyboardEventParams {
     colDef: ColDef;
     context: any;
     api: GridApi;
-    columnApi: ColumnApi;
+    columnApi: Co lumnApi;
 }
 </snippet>
 

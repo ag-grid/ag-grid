@@ -39,4 +39,4 @@
     Using React Components in the Cell Editors, illustrating keyboard events, rendering, validation and lifecycle
     events.
 </p>
-<?= example('React Editor Components', 'component-editor', 'generated', array('enterprise' => false, "exampleHeight" => 370, 'onlyShow' => 'react', 'extras' => array("bootstrap"))) ?>
+<?= example('React Editor Components', 'component-editor', 'generated', array('enterprise' => 1, "exampleHeight" => 370, 'onlyShow' => 'react', 'extras' => array("bootstrap"))) ?>
