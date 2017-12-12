@@ -1,5 +1,5 @@
 <?php
-$key = "Grid Grouping";
+$key = "Row Grouping";
 $pageTitle = "ag-Grid Grid Grouping";
 $pageDescription = "ag-Grid Grid Grouping";
 $pageKeyboards = "ag-Grid Grid Grouping";
@@ -301,7 +301,7 @@ gridOptions.groupUseEntireRow = true;
 // we tell the grid what renderer to use (the built in renderer) and we
 // configure the default renderer with our own inner renderer
 gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRenderer:  'group';
+gridOptions.groupRowRenderer:  'agGroupCellRenderer';
 gridOptions.groupRowRendererParams: {
     innerRenderer: function(params) {return params.node.key;},
 };
@@ -344,7 +344,7 @@ gridOptions.groupRowRenderer: function(params) {return params.node.key;};
         but configured differently by asking for a checkbox for selection:
     <snippet>
 gridOptions.groupUseEntireRow = true;
-gridOptions.groupRowRenderer: 'group';
+gridOptions.groupRowRenderer: 'agGroupCellRenderer';
 gridOptions.groupRowRendererParams: {
     checkbox: true,
     // innerRenderer is optional, we could leave this out and use the default
@@ -501,13 +501,13 @@ colDef = {
     </p>
     <snippet>
 // use a function to return a footer value
-cellRenderer:'agGroupRenderer',
+cellRenderer:'agGroupCellRenderer',
 cellRendererParams: {
     footerValueGetter: function(params) { return 'Total (' + params.value + ')'},
 }}
 
 // use an expression to return a footer value. this gives the same result as above
-cellRenderer:'agGroupRenderer',
+cellRenderer:'agGroupCellRenderer',
 cellRendererParams: {
     footerValueGetter: '"Total (" + x + ")"'
 }}</snippet>
@@ -654,7 +654,7 @@ cellRendererParams: {
     <p>
         If you do specify <i>coldef.showRowGroup</i> you are going to also tell this column how to display the contents
         of this group, the easiest way to do this is by using the out of the box
-        <a href="../javascript-grid-cell-rendering">group cell renderer</a> <code>cellRenderer:'agGroupRenderer'</code>
+        <a href="../javascript-grid-cell-rendering">group cell renderer</a> <code>cellRenderer:'agGroupCellRenderer'</code>
     </p>
 
     <p>
@@ -666,7 +666,7 @@ coldefs:[
     // We appoint this column as the column to show the country groups.
     // note that we need to provide an appropiate cell renderer.
     // in this case we are using the out of the box group cell renderer.
-    {headerName: "Country - group", showRowGroup='country', width: 120, cellRenderer:'agGroupRenderer'},
+    {headerName: "Country - group", showRowGroup='country', width: 120, cellRenderer:'agGroupCellRenderer'},
 ]</snippet>
 
     <p>The following example shows how to appoint individual columns to show individual groups</p>

@@ -28,8 +28,8 @@ include '../documentation-main/documentation_header.php';
 <p>In order to set the filter type to <code>date</code> you need to add the following to your column definition</p>
 
 <p><snippet>
-colDef:{
-    filter:'date'
+colDef: {
+    filter: 'agDateColumnFilter'
 }</snippet></p>
 
 <h2 id="dateFilterParameters">Date Filter Parameters</h2>
@@ -88,7 +88,7 @@ This pattern is intended to be similar to the JavaScript <i>compareTo(a,b)</i> f
 colDef = {
     ...
     // specify we want to use the date filter
-    filter: 'date',
+    filter: 'agDateColumnFilter',
 
     // add extra parameters for the date filter
     filterParams:{

@@ -82,23 +82,23 @@ var colDef3 = {
 <p>
     The grid comes with three built in renderer's which are:
     <ul>
-        <li><b>group</b>: For displaying group values with expand / collapse functionality.</li>
-        <li><b>animateShowChange</b> and <b>animateSlide</b>: For animating changes in data.</li>
+        <li><b>agGroupCellRenderer</b>: For displaying group values with expand / collapse functionality.</li>
+        <li><b>agAnimateShowChangeCellRenderer</b> and <b>agAnimateSlideCellRenderer</b>: For animating changes in data.</li>
     </ul>
     The following sections goes through each one in detail.
 </p>
 
-<h2 id="animate-renderer">Grid Renderer's - animateShowChange and animateSlide</h2>
+<h2 id="animate-renderer">Grid Renderer's - agAnimateShowChangeCellRenderer and agAnimateSlideCellRenderer</h2>
 
 <p>
     The grid provides two cell renderer's for animating changes to data. They are:
 <ul>
     <li>
-        <b>animateShowChange:</b> The previous value is temporarily shown beside the old value
+        <b>agAnimateShowChangeCellRenderer:</b> The previous value is temporarily shown beside the old value
         with a directional arrow showing increase or decrease in value. The old value is then faded out.
     </li>
     <li>
-        <b>animateSlide:</b> The previous value shown in a faded fashion and slides, giving a ghosting effect
+        <b>agAnimateSlideCellRenderer:</b> The previous value shown in a faded fashion and slides, giving a ghosting effect
         as the old value fades adn slides away.
     </li>
 </ul>
@@ -136,7 +136,7 @@ var colDef3 = {
     show them the <code>animateShowChange</code> :)
 </note>
 
-<h2>Grid Renderer - Group</h2>
+<h2>Grid Renderer - agGroupCellRenderer</h2>
 
 <p>
     If you are grouping in the grid, then you will need to provide a group cell renderer

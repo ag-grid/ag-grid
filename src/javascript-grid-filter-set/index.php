@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
 columnDefinition = {
     headerName: "Athlete",
     field: "athlete",
-    filter: 'set',
+    filter: 'agSetColumnFilter',
     filterParams: {cellRenderer: countryFilterCellRenderer, cellHeight: 20, values: ['A','B','C'], newRowsAction: 'keep'}
 }</snippet>
 
@@ -70,7 +70,6 @@ columnDefinition = {
             matches the <a href="../javascript-grid-filter-text/index.php#textFormatter">text formatter used for text filters</a></li>
         <li><b>debounceMs:</b> If specified, the filter will wait this amount of ms after the user stops selecting optoins in the
             mini filter before is triggered. If not specified there won't be any debounce.</li>
-    </ul>
     </ul>
     </p>
 
