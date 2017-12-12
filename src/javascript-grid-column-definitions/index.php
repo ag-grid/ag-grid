@@ -88,7 +88,7 @@ var gridOptions = {
         {headerName: 'Col A', field: 'a'},
 
         // overrides the default with a number filter
-        {headerName: 'Col B', field: 'b', filter: 'number'},
+        {headerName: 'Col B', field: 'b', filter: 'agNumberColumnFilter'},
 
         // overrides the default using a column type
         {headerName: 'Col C', field: 'c', type: 'nonEditableColumn'},
@@ -104,7 +104,7 @@ var gridOptions = {
         // make every column editable
         editable: true,
         // make every column use 'text' filter by default
-        filter: 'text'
+        filter: 'agTextColumnFilter'
     },
 
     // if we had column groups, we could provide default group items here
@@ -113,7 +113,7 @@ var gridOptions = {
     // define a column type (you can define as many as you like)
     columnTypes: {
         "nonEditableColumn": {editable: false},
-        "dateColumn": {filter: 'date', filterParams: {comparator: myDateComparator}, suppressMenu:true}
+        "dateColumn": {filter: 'agDateColumnFilter', filterParams: {comparator: myDateComparator}, suppressMenu:true}
         }
     }
 
@@ -134,13 +134,13 @@ var gridOptions = {
 {}
 
 // Step 2: default column properties are merged in
-{width: 100, editable: true, filter: 'text'}
+{width: 100, editable: true, filter: 'agTextColumnFilter'}
 
 // Step 3: column type properties are merged in (using the 'type' property)
-{width: 100, editable: false, filter: 'number'}
+{width: 100, editable: false, filter: 'agNumberColumnFilter'}
 
 // Step 4: finally column definition properties are merged in
-{headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'number'}
+{headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'agNumberColumnFilter'}
    </snippet>
 
     <p>
