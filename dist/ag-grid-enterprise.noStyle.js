@@ -9158,6 +9158,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var context_1 = __webpack_require__(7);
 	var headerRenderer_1 = __webpack_require__(94);
 	var gridOptionsWrapper_1 = __webpack_require__(4);
+	var headerWrapperComp_1 = __webpack_require__(99);
 	var AutoWidthCalculator = (function () {
 	    function AutoWidthCalculator() {
 	    }
@@ -9200,9 +9201,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var comp = null;
 	        // find the rendered header cell
 	        this.headerRenderer.forEachHeaderElement(function (headerElement) {
-	            var headerWrapperComp = headerElement;
-	            if (headerWrapperComp.getColumn() === column) {
-	                comp = headerWrapperComp;
+	            if (headerElement instanceof headerWrapperComp_1.HeaderWrapperComp) {
+	                var headerWrapperComp = headerElement;
+	                if (headerWrapperComp.getColumn() === column) {
+	                    comp = headerWrapperComp;
+	                }
 	            }
 	        });
 	        return comp ? comp.getGui() : null;
