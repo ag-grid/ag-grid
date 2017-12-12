@@ -96,15 +96,15 @@ export class ComponentProvider {
 
 
             group:{
-                newComponentName: 'agGroupRenderer',
+                newComponentName: 'agGroupCellRenderer',
                 propertyHolder: 'cellRenderer'
             },
             animateShowChange:{
-                newComponentName: 'agAnimateShowChangeRenderer',
+                newComponentName: 'agAnimateShowChangeCellRenderer',
                 propertyHolder: 'cellRenderer'
             },
             animateSlide:{
-                newComponentName: 'agAnimateSlideRenderer',
+                newComponentName: 'agAnimateSlideCellRenderer',
                 propertyHolder: 'cellRenderer'
             },
 
@@ -125,7 +125,7 @@ export class ComponentProvider {
                 propertyHolder: 'cellEditor'
             },
             richSelect:{
-                newComponentName: 'agRichSelect',
+                newComponentName: 'agRichSelectCellEditor',
                 propertyHolder: 'cellEditor'
             },
 
@@ -160,7 +160,7 @@ export class ComponentProvider {
                 defaultImpl: HeaderComp,
                 overridable: true
             },
-            agColumnHeaderGroup: {
+            agColumnGroupHeader: {
                 defaultImpl: HeaderGroupComp,
                 overridable: true
             },
@@ -198,35 +198,35 @@ export class ComponentProvider {
             // renderers
             agCellRenderer: {
                 defaultImpl: null,
-                overridable: true
+                overridable: false
             },
             agFullWidthCellRenderer: {
                 defaultImpl: null,
-                overridable: true
+                overridable: false
             },
-            agInnerRenderer: {
+            agInnerCellRenderer: {
                 defaultImpl: null,
-                overridable: true
+                overridable: false
             },
-            agGroupRowInnerRenderer: {
+            agGroupRowInnerCellRenderer: {
                 defaultImpl: null,
-                overridable: true
+                overridable: false
             },
-            agAnimateShowChangeRenderer: {
+            agAnimateShowChangeCellRenderer: {
                 defaultImpl: AnimateShowChangeCellRenderer,
                 overridable: true
             },
-            agAnimateSlideRenderer: {
+            agAnimateSlideCellRenderer: {
                 defaultImpl: AnimateSlideCellRenderer,
                 overridable: true
             },
-            agGroupRenderer: {
+            agGroupCellRenderer: {
                 defaultImpl: GroupCellRenderer,
                 overridable: true
             },
             agGroupRowRenderer: {
                 defaultImpl: GroupCellRenderer,
-                overridable: true
+                overridable: false
             },
             agLoadingCellRenderer: {
                 defaultImpl: LoadingCellRenderer,
@@ -246,7 +246,7 @@ export class ComponentProvider {
             },
             agPinnedRowCellRenderer: {
                 defaultImpl: null,
-                overridable: true
+                overridable: false
             },
 
             //editors
@@ -256,7 +256,7 @@ export class ComponentProvider {
             },
             agTextCellEditor: {
                 defaultImpl: TextCellEditor,
-                overridable: false
+                overridable: true
             },
             agText: {
                 defaultImpl: TextCellEditor,
@@ -264,7 +264,7 @@ export class ComponentProvider {
             },
             agSelectCellEditor: {
                 defaultImpl: SelectCellEditor,
-                overridable: false
+                overridable: true
             },
             agSelect: {
                 defaultImpl: SelectCellEditor,
@@ -272,7 +272,7 @@ export class ComponentProvider {
             },
             agPopupTextCellEditor: {
                 defaultImpl: PopupTextCellEditor,
-                overridable: false
+                overridable: true
             },
             agPopupText: {
                 defaultImpl: PopupTextCellEditor,
@@ -280,7 +280,7 @@ export class ComponentProvider {
             },
             agPopupSelectCellEditor: {
                 defaultImpl: PopupSelectCellEditor,
-                overridable: false
+                overridable: true
             },
             agPopupSelect: {
                 defaultImpl: PopupSelectCellEditor,
@@ -288,7 +288,7 @@ export class ComponentProvider {
             },
             agLargeTextCellEditor: {
                 defaultImpl: LargeTextCellEditor,
-                overridable: false
+                overridable: true
             },
             agLargeText: {
                 defaultImpl: LargeTextCellEditor,
