@@ -70,7 +70,7 @@ var groupColumn = {
             return params.data[params.colDef.field];
         }
     },
-    cellRenderer:'agGroupRenderer',
+    cellRenderer:'agGroupCellRenderer',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
     cellRendererParams: {
@@ -237,7 +237,7 @@ var defaultCols = [
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
-                cellEditor: 'richSelect',
+                cellEditor: 'agRichSelect',
                 cellEditorParams: {
                     cellRenderer: CountryCellRenderer,
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",

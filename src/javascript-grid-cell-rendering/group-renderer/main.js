@@ -27,16 +27,16 @@ var columnDefs = [
     {headerName: 'All Groups - No Renderer', showRowGroup: true},
 
     // add in a cell renderer
-    {headerName: 'Group Renderer A', showRowGroup: true, cellRenderer:'agGroupRenderer'},
+    {headerName: 'Group Renderer A', showRowGroup: true, cellRenderer:'agGroupCellRenderer'},
 
     // add in a field
-    {headerName: 'Group Renderer B', showRowGroup: true, cellRenderer:'agGroupRenderer', field: 'city'},
+    {headerName: 'Group Renderer B', showRowGroup: true, cellRenderer:'agGroupCellRenderer', field: 'city'},
 
     // add in a cell renderer params
     {
         headerName: 'Group Renderer C',
         showRowGroup: true,
-        cellRenderer:'agGroupRenderer',
+        cellRenderer:'agGroupCellRenderer',
         field: 'city',
         cellRendererParams: {
             suppressCount: true,

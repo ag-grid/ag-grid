@@ -1,6 +1,6 @@
 var columnDefs = [
-    {headerName: "Country", field:'country', width: 200, rowGroup:true, showRowGroup:'country', cellRenderer:'agGroupRenderer'},
-    {headerName: "Year - Group", valueGetter: function (params){return params.data ? params.data.athlete : null}, width: 150, showRowGroup:'year', cellRenderer:'agGroupRenderer'},
+    {headerName: "Country", field:'country', width: 200, rowGroup:true, showRowGroup:'country', cellRenderer:'agGroupCellRenderer'},
+    {headerName: "Year - Group", valueGetter: function (params){return params.data ? params.data.athlete : null}, width: 150, showRowGroup:'year', cellRenderer:'agGroupCellRenderer'},
     {headerName: "Year", field:'year', width: 150, rowGroup:true, hide: true},
     {headerName: "Sport", field: "sport", width: 110},
     {headerName: "Athlete", field: "athlete", width: 200},

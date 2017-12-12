@@ -44,4 +44,4 @@
     events.
 </p>
 
-<?= example('Angular Editor Components', 'component-editor', 'generated', array('enterprise' => false, "exampleHeight" => 370, 'onlyShow' => 'angular', 'extras' => array("bootstrap"))) ?>
+<?= example('Angular Editor Components', 'component-editor', 'generated', array("enterprise" => 1, "exampleHeight" => 370, 'onlyShow' => 'angular', 'extras' => array("bootstrap"))) ?>

@@ -1,6 +1,6 @@
 var columnDefs = [
     {
-        headerName: "Group", field: 'group', cellRenderer:'agGroupRenderer',
+        headerName: "Group", field: 'group', cellRenderer:'agGroupCellRenderer',
         editable: true
     },
     {headerName: "Athlete", field: "athlete", editable: true},

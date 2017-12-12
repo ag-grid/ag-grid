@@ -83,11 +83,11 @@ var gridOptions = {
             editable: true,
             aggFunc: 'sum',
             cellClass: 'number-cell',
-            cellRenderer:'agAnimateShowChangeRenderer',
+            cellRenderer:'agAnimateShowChangeCellRenderer',
             filter: 'agNumberColumnFilter',
             valueParser: numberValueParser
         },
-        totalColumn: {cellRenderer:'agAnimateShowChangeRenderer', cellClass: 'number-cell'}
+        totalColumn: {cellRenderer:'agAnimateShowChangeCellRenderer', cellClass: 'number-cell'}
     },
     autoGroupColumnDef: {width: 300},
     groupDefaultExpanded: 1,

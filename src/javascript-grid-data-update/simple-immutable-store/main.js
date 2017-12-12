@@ -160,7 +160,7 @@ var gridOptions = {
     enableRangeSelection: true,
     autoGroupColumnDef: {
         headerName: 'Symbol',
-        cellRenderer:'agGroupRenderer',
+        cellRenderer:'agGroupCellRenderer',
         field: 'symbol'
     },
     groupDefaultExpanded: 1,

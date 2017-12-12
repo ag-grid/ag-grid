@@ -30165,19 +30165,19 @@
 	                field: 'price',
 	                headerName: 'Price',
 	                valueFormatter: _this.numberFormatter,
-	                cellRenderer:'agAnimateShowChangeRenderer',
+	                cellRenderer:'agAnimateShowChangeCellRenderer',
 	                cellStyle: { 'text-align': 'right' }
 	            }, {
 	                field: 'bid',
 	                headerName: 'Bid',
 	                valueFormatter: _this.numberFormatter,
-	                cellRenderer:'agAnimateShowChangeRenderer',
+	                cellRenderer:'agAnimateShowChangeCellRenderer',
 	                cellStyle: { 'text-align': 'right' }
 	            }, {
 	                field: 'ask',
 	                headerName: 'Ask',
 	                valueFormatter: _this.numberFormatter,
-	                cellRenderer:'agAnimateShowChangeRenderer',
+	                cellRenderer:'agAnimateShowChangeCellRenderer',
 	                cellStyle: { 'text-align': 'right' }
 	            }]
 	        };
@@ -58374,7 +58374,7 @@
 	        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 	        var defaultAutoColDef = {
 	            headerName: localeTextFunc('group', 'Group'),
-	            cellRenderer:'agGroupRenderer'
+	            cellRenderer:'agGroupCellRenderer'
 	        };
 	        // we never allow moving the group column
 	        defaultAutoColDef.suppressMovable = true;
@@ -81604,14 +81604,14 @@
 	    field: 'last',
 	    headerName: 'Last',
 	    headerClass: 'align-right',
-	    cellRenderer:'agAnimateShowChangeRenderer',
+	    cellRenderer:'agAnimateShowChangeCellRenderer',
 	    cellClass: 'align-right',
 	    width: 100
 	}, {
 	    field: 'net',
 	    headerName: 'Net',
 	    headerClass: 'align-right',
-	    cellRenderer:'agAnimateShowChangeRenderer',
+	    cellRenderer:'agAnimateShowChangeCellRenderer',
 	    cellClass: 'align-right',
 	    width: 90
 	}, {
@@ -81627,7 +81627,7 @@
 	        headerName: symbol,
 	        width: 67,
 	        cellClass: 'align-right',
-	        cellRenderer:'agAnimateShowChangeRenderer',
+	        cellRenderer:'agAnimateShowChangeCellRenderer',
 	        cellClassRules: {
 	            'fx-positive': 'x > 0.8',
 	            'fx-null': 'x === null',
@@ -83075,19 +83075,19 @@
 	                field: 'last',
 	                headerName: 'Last',
 	                headerClass: 'align-right',
-	                cellRenderer:'agAnimateShowChangeRenderer',
+	                cellRenderer:'agAnimateShowChangeCellRenderer',
 	                cellClass: 'align-right'
 	            }, {
 	                field: 'net',
 	                headerName: 'Net',
 	                headerClass: 'align-right',
-	                cellRenderer:'agAnimateShowChangeRenderer',
+	                cellRenderer:'agAnimateShowChangeCellRenderer',
 	                cellClass: 'align-right'
 	            }, {
 	                field: 'pct_net_change',
 	                headerName: '% NC',
 	                headerClass: 'align-right',
-	                cellRenderer:'agAnimateShowChangeRenderer',
+	                cellRenderer:'agAnimateShowChangeCellRenderer',
 	                cellClass: 'align-right',
 	                sort: 'desc',
 	                cellFormatter: function cellFormatter(params) {

@@ -65,7 +65,7 @@ var groupColumn = {
     field: 'name',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
-    cellRenderer:'agGroupRenderer',
+    cellRenderer:'agGroupCellRenderer',
     cellRendererParams: {
         checkbox: true
     }
@@ -378,7 +378,7 @@ var defaultCols = [
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
-                cellEditor: 'richSelect',
+                cellEditor: 'agRichSelect',
                 cellEditorParams: {
                     cellRenderer: countryCellRenderer,
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
