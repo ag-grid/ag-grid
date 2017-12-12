@@ -5,6 +5,9 @@
     background-color: aliceblue;
     font-weight: bold;
 }
+.row-model-table .separator-row {
+    background-color: #ddd;
+}
 
 .row-model-table td {
     padding: 4px;
