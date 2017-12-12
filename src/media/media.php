@@ -102,7 +102,7 @@ include('../includes/mediaHeader.php');
     <section>
 
     <section>
-        <h1 style="margin-top:30px">RECENT</h1>
+        <h2 style="margin-top:30px">RECENT</h2>
         <div style="overflow: hidden; border-bottom: 1px solid lightgrey; padding: 10px; margin: 10px 5px 5px 5px;" class="caption row" >
             <div style="width: 230px;" class="media-left">
                 <a href="../change-log/v14/">
