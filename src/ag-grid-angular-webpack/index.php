@@ -1,5 +1,4 @@
 <?php
-$key = "Angular Webpack";
 $pageTitle = "Angular Webpack";
 $pageDescription = "How to build ag-Grid using Angular and Webpack.";
 $pageKeyboards = "Angular Webpack";

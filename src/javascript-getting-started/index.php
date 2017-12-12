@@ -1,5 +1,4 @@
 <?php
-$key = "Getting Started Javascript";
 $pageTitle = "JavaScript Grid";
 $pageDescription = "ag-Grid can be used as a data grid inside your plain JavaScript application. This page details how to get started.";
 $pageKeyboards = "Javascript Grid";

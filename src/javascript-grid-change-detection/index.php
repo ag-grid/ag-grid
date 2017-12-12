@@ -1,5 +1,4 @@
 <?php
-$key = "Change Detection";
 $pageTitle = "ag-Grid Change Detection";
 $pageDescription = "ag-Grid uses Change Detection to allow updating only cells that have changed values. This page explains how you can use the change detection inside of ag-Grid.";
 $pageKeyboards = "ag-Grid Change Detection";

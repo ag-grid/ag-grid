@@ -1,5 +1,4 @@
 <?php
-$key = "Cell Rendering";
 $pageTitle = "ag-Grid Cell Rendering";
 $pageDescription = "Out of the box grid rendering components and how to configure them.";
 $pageKeyboards = "ag-Grid Rendering";

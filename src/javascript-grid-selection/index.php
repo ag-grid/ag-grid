@@ -1,5 +1,4 @@
 <?php
-$key = "Selection";
 $pageTitle = "ag-Grid Selection";
 $pageDescription = "ag-Grid Selection";
 $pageKeyboards = "ag-Grid Selection";

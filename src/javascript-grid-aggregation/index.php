@@ -1,5 +1,4 @@
 <?php
-$key = "Aggregation";
 $pageTitle = "ag-Grid Aggregation";
 $pageDescription = "One of the most powerful features of ag-Grid is its ability to aggregate data. Learn how to aggregate using ag-Grid";
 $pageKeyboards = "ag-Grid JavaScript Grid Aggregation";

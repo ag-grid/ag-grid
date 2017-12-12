@@ -1,5 +1,4 @@
 <?php
-$key = "Polymer Pinned Row";
 $pageTitle = "ag-Grid Polymer Pinned Row";
 $pageDescription = "ag-Grid Polymer Pinned Row Example";
 $pageKeyboards = "ag-Grid polymer pinned row";

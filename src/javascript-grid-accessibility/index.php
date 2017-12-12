@@ -1,5 +1,4 @@
 <?php
-$key = "Accessibility";
 $pageTitle = "ag-Grid Accessibility";
 $pageDescription = "ag-Grid Accessibility";
 $pageKeyboards = "ag-Grid Accessibility";

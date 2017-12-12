@@ -1,5 +1,4 @@
 <?php
-$key = "Viewport";
 $pageTitle = "ag-Grid ViewPort";
 $pageDescription = "A Viewport is a rowModel that allows showing a 'window' of data in your client.";
 $pageKeyboards = "ag-Grid ViewPort";

@@ -2,300 +2,277 @@
     {
         "title": "Getting Started",
         "items": [
-            {"key": "Getting Started", "title": "Overview", "url": "javascript-grid-getting-started/"},
+            {"title": "Overview", "url": "javascript-grid-getting-started/"},
 
             {
-                "key": "Overview JavaScript",
                 "title": "Javascript",
                 "url": "best-javascript-data-grid/",
-                "items": [
-                    {"key": "Getting Started Javascript", "title": "Getting Started", "url": "javascript-getting-started/"},
-                    {"key": "More Detail Javascript", "title": "More Details", "url": "javascript-more-details/"}
-                ]
+                "items": [{"title": "Getting Started", "url": "javascript-getting-started/"}, {"title": "More Details", "url": "javascript-more-details/"}]
             },
 
             {
-                "key": "Overview React",
                 "title": "ReactJS",
                 "url": "best-react-data-grid/",
-                "items": [
-                    {"key": "Getting Started React", "title": "Getting Started", "url": "react-getting-started/"},
-                    {"key": "More Detail React", "title": "More Details", "url": "react-more-details/"}
-                ]
+                "items": [{"title": "Getting Started", "url": "react-getting-started/"}, {"title": "More Details", "url": "react-more-details/"}]
             },
 
             {
-                "key": "Overview Angular",
                 "title": "Angular 2.x/4.x",
                 "url": "best-angular-2-data-grid/",
                 "items": [
-                    {"key": "Getting Started Angular", "title": "Getting Started", "url": "angular-getting-started/"},
-                    {"key": "More Detail Angular", "title": "More Details", "url": "angular-more-details/"},
+                    {"title": "Getting Started", "url": "angular-getting-started/"},
+                    {"title": "More Details", "url": "angular-more-details/"},
                     {
-                        "key": "Angular Building",
                         "title": "Building",
                         "url": "angular-building/",
                         "items": [
-                            {"key": "Angular CLI", "title": "Angular CLI", "url": "ag-grid-angular-angularcli/"},
-                            {"key": "Angular Webpack", "title": "Webpack", "url": "ag-grid-angular-webpack/"},
-                            {"key": "Angular Webpack 2", "title": "Webpack 2", "url": "ag-grid-angular-webpack-2/"},
-                            {"key": "Angular ngtools Webpack", "title": "@ngtools", "url": "ag-grid-angular-ngtools-webpack/"},
-                            {"key": "Angular SystemJS", "title": "SystemJS", "url": "ag-grid-angular-systemjs/"}
+                            {"title": "Angular CLI", "url": "ag-grid-angular-angularcli/"},
+                            {"title": "Webpack", "url": "ag-grid-angular-webpack/"},
+                            {"title": "Webpack 2", "url": "ag-grid-angular-webpack-2/"},
+                            {"title": "@ngtools", "url": "ag-grid-angular-ngtools-webpack/"},
+                            {"title": "SystemJS", "url": "ag-grid-angular-systemjs/"}
                         ]
                     }
                 ]
             },
 
             {
-                "key": "Overview Polymer",
                 "title": "Polymer",
                 "url": "best-polymer-data-grid/",
-                "items": [
-                    {"key": "Getting Started Polymer", "title": "Getting Started", "url": "polymer-getting-started/"},
-                    {"key": "More Detail Polymer", "title": "More Details", "url": "polymer-more-details/"}
-                ]
+                "items": [{"title": "Getting Started", "url": "polymer-getting-started/"}, {"title": "More Details", "url": "polymer-more-details/"}]
             },
 
-            {"key": "Getting Started ng1", "title": "AngularJS 1.x", "url": "best-angularjs-data-grid/"},
+            {"title": "AngularJS 1.x", "url": "best-angularjs-data-grid/"},
 
-            {"key": "Getting Started VueJS", "title": "VueJS", "url": "best-vuejs-data-grid/"},
+            {"title": "VueJS", "url": "best-vuejs-data-grid/"},
 
-            {"key": "Getting Started Aurelia", "title": "Aurelia", "url": "best-aurelia-data-grid/"},
+            {"title": "Aurelia", "url": "best-aurelia-data-grid/"},
 
-            {"key": "Getting Started Web Components", "title": "Web Components", "url": "best-web-component-data-grid/"},
+            {"title": "Web Components", "url": "best-web-component-data-grid/"},
 
-            {"key": "Getting Started TypeScript & Webpack 2", "title": "TypeScript", "url": "ag-grid-typescript-webpack-2/"}
+            {"title": "TypeScript", "url": "ag-grid-typescript-webpack-2/"}
         ]
     },
     {
         "title": "Reference",
         "items": [
-            {"key": "Reference Overview", "title": "Overview", "url": "javascript-grid-reference-overview/"},
-            {"key": "Properties", "title": "Grid Properties", "url": "javascript-grid-properties/"},
-            {"key": "Events", "title": "Grid Events", "url": "javascript-grid-events/"},
-            {"key": "Callbacks", "title": "Grid Callbacks", "url": "javascript-grid-callbacks/"},
-            {"key": "Grid API", "title": "Grid API", "url": "javascript-grid-api/"},
-            {"key": "Column Properties", "title": "Column Properties", "url": "javascript-grid-column-properties/"},
-            {"key": "Column API", "title": "Column API", "url": "javascript-grid-column-api/"}
+            {"title": "Overview", "url": "javascript-grid-reference-overview/"},
+            {"title": "Grid Properties", "url": "javascript-grid-properties/"},
+            {"title": "Grid Events", "url": "javascript-grid-events/"},
+            {"title": "Grid Callbacks", "url": "javascript-grid-callbacks/"},
+            {"title": "Grid API", "url": "javascript-grid-api/"},
+            {"title": "Column Properties", "url": "javascript-grid-column-properties/"},
+            {"title": "Column API", "url": "javascript-grid-column-api/"}
         ]
     },
     {
         "title": "Features",
         "items": [
-            {"key": "Features", "title": "Overview", "url": "javascript-grid-features/"},
-            {"key": "ColumnDefs", "title": "Column Definitions", "url": "javascript-grid-column-definitions/"},
-            {"key": "Grouping Columns", "title": "Column Groups", "url": "javascript-grid-grouping-headers/"},
-            {"key": "Column Header", "title": "Column Headers", "url": "javascript-grid-column-header/"},
-            {"key": "Resizing", "title": "Column Resizing", "url": "javascript-grid-resizing/"},
+            {"title": "Overview", "url": "javascript-grid-features/"},
+            {"title": "Column Definitions", "url": "javascript-grid-column-definitions/"},
+            {"title": "Column Groups", "url": "javascript-grid-grouping-headers/"},
+            {"title": "Column Headers", "url": "javascript-grid-column-header/"},
+            {"title": "Column Resizing", "url": "javascript-grid-resizing/"},
             {
-                "key": "Column Filter",
                 "title": "Column Filter",
                 "url": "javascript-grid-filtering/",
                 "items": [
-                    {"key": "Text Filter", "title": "Text Filter", "url": "javascript-grid-filter-text/"},
-                    {"key": "Number Filter", "title": "Number Filter", "url": "javascript-grid-filter-number/"},
-                    {"key": "Date Filter", "title": "Date Filter", "url": "javascript-grid-filter-date/"},
-                    {"key": "Set Filtering", "title": "Set Filter", "url": "javascript-grid-filter-set/", "enterprise": true},
-                    {"key": "Custom Filter", "title": "Custom Filter", "url": "javascript-grid-filter-custom/"}
+                    {"title": "Text Filter", "url": "javascript-grid-filter-text/"},
+                    {"title": "Number Filter", "url": "javascript-grid-filter-number/"},
+                    {"title": "Date Filter", "url": "javascript-grid-filter-date/"},
+                    {"title": "Set Filter", "url": "javascript-grid-filter-set/", "enterprise": true},
+                    {"title": "Custom Filter", "url": "javascript-grid-filter-custom/"}
                 ]
             },
 
-            {"key": "Quick Filter", "title": "Quick Filter", "url": "javascript-grid-filter-quick/"},
-            {"key": "External Filter", "title": "External Filter", "url": "javascript-grid-filter-external/"},
+            {"title": "Quick Filter", "url": "javascript-grid-filter-quick/"},
+            {"title": "External Filter", "url": "javascript-grid-filter-external/"},
 
-            {"key": "Sorting", "title": "Row Sorting", "url": "javascript-grid-sorting/"},
-            {"key": "Selection", "title": "Row Selection", "url": "javascript-grid-selection/"},
-            {"key": "Range Selection", "title": "Range Selection", "url": "javascript-grid-range-selection/"},
-            {"key": "Width & Height", "title": "Grid Size", "url": "javascript-grid-width-and-height/"},
-            {"key": "Column Spanning", "title": "Column Spanning", "url": "javascript-grid-column-spanning/"},
-            {"key": "Pinning", "title": "Column Pinning", "url": "javascript-grid-pinning/"},
-            {"key": "Row Pinning", "title": "Row Pinning", "url": "javascript-grid-row-pinning/"},
-            {"key": "Row Height", "title": "Row Height", "url": "javascript-grid-row-height/"},
-            {"key": "Cell Styles", "title": "Cell Styles", "url": "javascript-grid-cell-styles/"},
-            {"key": "Row Styles", "title": "Row Styles", "url": "javascript-grid-row-styles/"},
+            {"title": "Row Sorting", "url": "javascript-grid-sorting/"},
+            {"title": "Row Selection", "url": "javascript-grid-selection/"},
+            {"title": "Range Selection", "url": "javascript-grid-range-selection/"},
+            {"title": "Grid Size", "url": "javascript-grid-width-and-height/"},
+            {"title": "Column Spanning", "url": "javascript-grid-column-spanning/"},
+            {"title": "Column Pinning", "url": "javascript-grid-pinning/"},
+            {"title": "Row Pinning", "url": "javascript-grid-row-pinning/"},
+            {"title": "Row Height", "url": "javascript-grid-row-height/"},
+            {"title": "Cell Styles", "url": "javascript-grid-cell-styles/"},
+            {"title": "Row Styles", "url": "javascript-grid-row-styles/"},
             {
-                "key": "Value Handlers",
                 "title": "Value Handlers",
                 "url": "javascript-grid-value-handlers/",
                 "items": [
-                    {"key": "Getters and Formatters", "title": "Getters & Formatters", "url": "javascript-grid-value-getters/"},
-                    {"key": "Setters and Parsers", "title": "Setters and Parsers", "url": "javascript-grid-value-setters/"},
-                    {"key": "Cell Expressions", "title": "Expressions", "url": "javascript-grid-cell-expressions/"},
-                    {"key": "Value Cache", "title": "Value Cache", "url": "javascript-grid-value-cache/"},
-                    {"key": "Reference Data", "title": "Reference Data", "url": "javascript-grid-reference-data/"}
+                    {"title": "Getters & Formatters", "url": "javascript-grid-value-getters/"},
+                    {"title": "Setters and Parsers", "url": "javascript-grid-value-setters/"},
+                    {"title": "Expressions", "url": "javascript-grid-cell-expressions/"},
+                    {"title": "Value Cache", "url": "javascript-grid-value-cache/"},
+                    {"title": "Reference Data", "url": "javascript-grid-reference-data/"}
                 ]
             },
-            {"key": "Cell Rendering", "title": "Cell Rendering", "url": "javascript-grid-cell-rendering/"},
-            {"key": "Cell Editing", "title": "Cell Editing", "url": "javascript-grid-cell-editing/"},
+            {"title": "Cell Rendering", "url": "javascript-grid-cell-rendering/"},
+            {"title": "Cell Editing", "url": "javascript-grid-cell-editing/"},
 
-            {"key": "Keyboard Navigation", "title": "Keyboard Navigation", "url": "javascript-grid-keyboard-navigation/"},
-            {"key": "Touch", "title": "Touch Support", "url": "javascript-grid-touch/"},
-            {"key": "Animation", "title": "Animation", "url": "javascript-grid-animation/"},
-            {"key": "AccessingData", "title": "Accessing Data", "url": "javascript-grid-accessing-data/"},
+            {"title": "Keyboard Navigation", "url": "javascript-grid-keyboard-navigation/"},
+            {"title": "Touch Support", "url": "javascript-grid-touch/"},
+            {"title": "Animation", "url": "javascript-grid-animation/"},
+            {"title": "Accessing Data", "url": "javascript-grid-accessing-data/"},
 
-            {"key": "Pagination", "title": "Pagination", "url": "javascript-grid-pagination/"},
-            {"key": "DataUpdate", "title": "Updating Data", "url": "javascript-grid-data-update/"},
-            {"key": "Refresh", "title": "View Refresh", "url": "javascript-grid-refresh/"},
-            {"key": "Change Detection", "title": "Change Detection", "url": "javascript-grid-change-detection/"},
-            {"key": "Internationalisation", "title": "Internationalisation", "url": "javascript-grid-internationalisation/"},
-            {"key": "Performance", "title": "Performance", "url": "javascript-grid-performance/"},
-            {"key": "Accessibility", "title": "Accessibility", "url": "javascript-grid-accessibility/"},
-            {"key": "Full Width Rows", "title": "Full Width Rows", "url": "javascript-grid-full-width-rows/"},
-            {"key": "Master Detail", "title": "Master / Detail", "url": "javascript-grid-master-detail/"},
-            {"key": "Aligned Grids", "title": "Aligned Grids", "url": "javascript-grid-aligned-grids/"},
-            {"key": "Data Export", "title": "CSV Export", "url": "javascript-grid-export/"},
-            {"key": "Excel Export", "title": "Excel Export", "url": "javascript-grid-excel/", "enterprise": true},
-            {"key": "RTL", "title": "RTL", "url": "javascript-grid-rtl/"},
-            {"key": "Icons", "title": "Custom Icons", "url": "javascript-grid-icons/"},
-            {"key": "Overlays", "title": "Overlays", "url": "javascript-grid-overlays/"},
-            {"key": "For Print", "title": "Layout For Print", "url": "javascript-grid-for-print/"},
+            {"title": "Pagination", "url": "javascript-grid-pagination/"},
+            {"title": "Updating Data", "url": "javascript-grid-data-update/"},
+            {"title": "View Refresh", "url": "javascript-grid-refresh/"},
+            {"title": "Change Detection", "url": "javascript-grid-change-detection/"},
+            {"title": "Internationalisation", "url": "javascript-grid-internationalisation/"},
+            {"title": "Performance", "url": "javascript-grid-performance/"},
+            {"title": "Accessibility", "url": "javascript-grid-accessibility/"},
+            {"title": "Full Width Rows", "url": "javascript-grid-full-width-rows/"},
+            {"title": "Master / Detail", "url": "javascript-grid-master-detail/"},
+            {"title": "Aligned Grids", "url": "javascript-grid-aligned-grids/"},
+            {"title": "CSV Export", "url": "javascript-grid-export/"},
+            {"title": "Excel Export", "url": "javascript-grid-excel/", "enterprise": true},
+            {"title": "RTL", "url": "javascript-grid-rtl/"},
+            {"title": "Custom Icons", "url": "javascript-grid-icons/"},
+            {"title": "Overlays", "url": "javascript-grid-overlays/"},
+            {"title": "Layout For Print", "url": "javascript-grid-for-print/"},
 
-            {"key": "Row Grouping", "title": "Row Grouping", "url": "javascript-grid-grouping/", "enterprise": true},
-            {"key": "Tree Data", "title": "Tree Data", "url": "javascript-grid-tree-data/", "enterprise": true},
+            {"title": "Row Grouping", "url": "javascript-grid-grouping/", "enterprise": true},
+            {"title": "Tree Data", "url": "javascript-grid-tree-data/", "enterprise": true},
 
-            {"key": "Aggregation", "title": "Aggregation", "url": "javascript-grid-aggregation/", "enterprise": true},
-            {"key": "Pivoting", "title": "Pivoting", "url": "javascript-grid-pivoting/", "enterprise": true},
-            {"key": "Tool Panel", "title": "Tool Panel", "url": "javascript-grid-tool-panel/", "enterprise": true},
-            {"key": "Clipboard", "title": "Clipboard", "url": "javascript-grid-clipboard/", "enterprise": true},
-            {"key": "Column Menu", "title": "Column Menu", "url": "javascript-grid-column-menu/", "enterprise": true},
-            {"key": "Context Menu", "title": "Context Menu", "url": "javascript-grid-context-menu/", "enterprise": true},
-            {"key": "Status Bar", "title": "Status Bar", "url": "javascript-grid-status-bar/", "enterprise": true},
-            {"key": "License Key", "title": "License Key", "url": "javascript-grid-set-license/", "enterprise": true},
+            {"title": "Aggregation", "url": "javascript-grid-aggregation/", "enterprise": true},
+            {"title": "Pivoting", "url": "javascript-grid-pivoting/", "enterprise": true},
+            {"title": "Tool Panel", "url": "javascript-grid-tool-panel/", "enterprise": true},
+            {"title": "Clipboard", "url": "javascript-grid-clipboard/", "enterprise": true},
+            {"title": "Column Menu", "url": "javascript-grid-column-menu/", "enterprise": true},
+            {"title": "Context Menu", "url": "javascript-grid-context-menu/", "enterprise": true},
+            {"title": "Status Bar", "url": "javascript-grid-status-bar/", "enterprise": true},
+            {"title": "License Key", "url": "javascript-grid-set-license/", "enterprise": true},
 
-            {"key": "Context", "title": "Context", "url": "javascript-grid-context/"}
+            {"title": "Context", "url": "javascript-grid-context/"}
         ]
     },
     {
         "title": "Row Models",
         "items": [
-            {"key": "Row Models", "title": "Overview", "url": "javascript-grid-row-models/"},
-            {"key": "Row Node", "title": "Row Node", "url": "javascript-grid-row-node/"},
-            {"key": "In Memory", "title": "In Memory", "url": "javascript-grid-in-memory/"},
-            {"key": "Infinite Scrolling", "title": "Infinite Scrolling", "url": "javascript-grid-infinite-scrolling/"},
-            {"key": "Viewport", "title": "Viewport", "url": "javascript-grid-viewport/", "enterprise": true},
-            {"key": "Enterprise", "title": "Enterprise", "url": "javascript-grid-enterprise-model/", "enterprise": true}
+            {"title": "Overview", "url": "javascript-grid-row-models/"},
+            {"title": "Row Node", "url": "javascript-grid-row-node/"},
+            {"title": "In Memory", "url": "javascript-grid-in-memory/"},
+            {"title": "Infinite Scrolling", "url": "javascript-grid-infinite-scrolling/"},
+            {"title": "Viewport", "url": "javascript-grid-viewport/", "enterprise": true},
+            {"title": "Enterprise", "url": "javascript-grid-enterprise-model/", "enterprise": true}
         ]
     },
     {
         "title": "Themes",
         "new": true,
         "items": [
-            {"key": "Styling", "title": "Overview", "url": "javascript-grid-styling/", "new": true},
-            {"key": "Fresh Theme", "title": "Fresh ", "url": "javascript-grid-themes/fresh-theme.php"},
-            {"key": "Blue Theme", "title": "Blue", "url": "javascript-grid-themes/blue-theme.php"},
-            {"key": "Dark Theme", "title": "Dark", "url": "javascript-grid-themes/dark-theme.php"},
-            {"key": "Bootstrap Theme", "title": "Bootstrap", "url": "javascript-grid-themes/bootstrap-theme.php"},
-            {"key": "Material Theme", "title": "Material", "url": "javascript-grid-themes/material-theme.php"}
+            {"title": "Overview", "url": "javascript-grid-styling/", "new": true},
+            {"title": "Fresh ", "url": "javascript-grid-themes/fresh-theme.php"},
+            {"title": "Blue", "url": "javascript-grid-themes/blue-theme.php"},
+            {"title": "Dark", "url": "javascript-grid-themes/dark-theme.php"},
+            {"title": "Bootstrap", "url": "javascript-grid-themes/bootstrap-theme.php"},
+            {"title": "Material", "url": "javascript-grid-themes/material-theme.php"}
         ]
     },
     {
         "title": "Components",
         "items": [
-            {"key": "Components", "title": "Overview", "url": "javascript-grid-components/"},
-            {"key": "Cell Rendering Components", "title": "Cell Renderer", "url": "javascript-grid-cell-rendering-components/"},
-            {"key": "Cell Editor", "title": "Cell Editor", "url": "javascript-grid-cell-editor/"},
-            {"key": "Filter Component", "title": "Filter Component", "url": "javascript-grid-filter-component/"},
-            {"key": "Floating Filter Component", "title": "Floating Filter Component", "url": "javascript-grid-floating-filter-component/"},
-            {"key": "Header Rendering", "title": "Header Component", "url": "javascript-grid-header-rendering/"},
-            {"key": "Date Component", "title": "Date Component", "url": "javascript-grid-date-component/"}
+            {"title": "Overview", "url": "javascript-grid-components/"},
+            {"title": "Cell Renderer", "url": "javascript-grid-cell-rendering-components/"},
+            {"title": "Cell Editor", "url": "javascript-grid-cell-editor/"},
+            {"title": "Filter Component", "url": "javascript-grid-filter-component/"},
+            {"title": "Floating Filter Component", "url": "javascript-grid-floating-filter-component/"},
+            {"title": "Header Component", "url": "javascript-grid-header-rendering/"},
+            {"title": "Date Component", "url": "javascript-grid-date-component/"}
         ]
     },
     {
         "title": "Examples",
         "items": [
-            {"key": "Examples Overview", "title": "Overview", "url": "javascript-grid-examples/"},
+            {"title": "Overview", "url": "javascript-grid-examples/"},
 
             {
-                "key": "React Examples",
                 "title": "React Examples",
                 "url": "example-react/",
                 "items": [
-                    {"key": "React Rich Grid", "title": "Rich Grid", "url": "react-getting-started/#react-rich-grid-example"},
-                    {"key": "React Dynamic", "title": "Cell Renderers", "url": "example-react-dynamic/"},
-                    {"key": "React Editor", "title": "Editor Component", "url": "javascript-grid-cell-editor/#example-cell-editing-using-react-components"},
-                    {"key": "React Filter", "title": "Filter Component", "url": "javascript-grid-filter-component/#example-filtering-using-react-components"},
+                    {"title": "Rich Grid", "url": "react-getting-started/#react-rich-grid-example"},
+                    {"title": "Cell Renderers", "url": "example-react-dynamic/"},
+                    {"title": "Editor Component", "url": "javascript-grid-cell-editor/#example-cell-editing-using-react-components"},
+                    {"title": "Filter Component", "url": "javascript-grid-filter-component/#example-filtering-using-react-components"},
                     {
-                        "key": "React Floating Filter",
                         "title": "Floating Filter",
                         "url": "javascript-grid-floating-filter-component/#react-floating-filter-example"
                     },
-                    {"key": "React Pinned Row", "title": "Pinned Rows", "url": "example-react-floating-row/"},
-                    {"key": "React Full Width", "title": "Full Width Rows", "url": "example-react-full-width-rows/"},
-                    {"key": "React Group Row", "title": "Group Rows", "url": "example-react-grouped-row/"},
-                    {"key": "React Redux", "title": "Redux Examples", "url": "example-react-redux/"}
+                    {"title": "Pinned Rows", "url": "example-react-floating-row/"},
+                    {"title": "Full Width Rows", "url": "example-react-full-width-rows/"},
+                    {"title": "Group Rows", "url": "example-react-grouped-row/"},
+                    {"title": "Redux Examples", "url": "example-react-redux/"}
                 ]
             },
 
             {
-                "key": "Angular Examples",
                 "title": "Angular Examples",
                 "url": "example-angular/",
                 "items": [
-                    {"key": "Angular Rich Grid", "title": "Rich Grid", "url": "angular-getting-started/#angular-rich-grid-example"},
-                    {"key": "Angular Markup", "title": "Grid via Markup", "url": "angular-more-details/#example-rich-grid-using-markup"},
-                    {"key": "Angular Dynamic", "title": "Cell Renderers", "url": "example-angular-dynamic/"},
-                    {"key": "Angular Editor", "title": "Editor Component", "url": "javascript-grid-cell-editor/#example-cell-editing-using-angular-components"},
+                    {"title": "Rich Grid", "url": "angular-getting-started/#angular-rich-grid-example"},
+                    {"title": "Grid via Markup", "url": "angular-more-details/#example-rich-grid-using-markup"},
+                    {"title": "Cell Renderers", "url": "example-angular-dynamic/"},
+                    {"title": "Editor Component", "url": "javascript-grid-cell-editor/#example-cell-editing-using-angular-components"},
                     {
-                        "key": "Angular Filter",
                         "title": "Filter Component",
                         "url": "javascript-grid-filter-component/#example-filtering-using-angular-components"
                     },
-                    {"key": "Angular Floating Filter", "title": "Floating Filter", "url": "javascript-grid-floating-filter-component/#ng2Angular"},
-                    {"key": "Angular Pinned Row", "title": "Pinned Rows", "url": "example-angular-floating-row/"},
-                    {"key": "Angular Full Width", "title": "Full Width Rows", "url": "example-angular-full-width-rows/"},
-                    {"key": "Angular Group Row", "title": "Group Rows", "url": "example-angular-grouped-row/"},
-                    {"key": "Angular RxJS", "title": "RxJS", "url": "example-angular-rxjs/"},
-                    {"key": "Angular Third Party", "title": "Third Party", "url": "example-angular-third-party/"}
+                    {"title": "Floating Filter", "url": "javascript-grid-floating-filter-component/#ng2Angular"},
+                    {"title": "Pinned Rows", "url": "example-angular-floating-row/"},
+                    {"title": "Full Width Rows", "url": "example-angular-full-width-rows/"},
+                    {"title": "Group Rows", "url": "example-angular-grouped-row/"},
+                    {"title": "RxJS", "url": "example-angular-rxjs/"},
+                    {"title": "Third Party", "url": "example-angular-third-party/"}
                 ]
             },
             {
-                "key": "Polymer Examples",
                 "title": "Polymer Examples",
                 "url": "example-polymer/",
                 "items": [
-                    {"key": "Polymer Rich Grid", "title": "Rich Grid", "url": "polymer-getting-started/#polymer-rich-grid-example"},
-                    {"key": "Polymer Dynamic", "title": "Cell Renderers", "url": "example-polymer-dynamic/"},
-                    {"key": "Polymer Editor", "title": "Editor Component", "url": "javascript-grid-cell-editor/#example-cell-editing-using-polymer-components"},
+                    {"title": "Rich Grid", "url": "polymer-getting-started/#polymer-rich-grid-example"},
+                    {"title": "Cell Renderers", "url": "example-polymer-dynamic/"},
+                    {"title": "Editor Component", "url": "javascript-grid-cell-editor/#example-cell-editing-using-polymer-components"},
                     {
-                        "key": "Polymer Filter",
                         "title": "Filter Component",
                         "url": "javascript-grid-filter-component/#example-filtering-using-polymer-components"
                     },
-                    {"key": "Polymer Floating Filter", "title": "Floating Filter", "url": "javascript-grid-floating-filter-component/#polymerFilter"},
-                    {"key": "Polymer Pinned Row", "title": "Pinned Rows", "url": "example-polymer-floating-row/"},
-                    {"key": "Polymer Full Width", "title": "Full Width Rows", "url": "example-polymer-full-width-rows/"},
-                    {"key": "Polymer Group Row", "title": "Group Rows", "url": "example-polymer-grouped-row/"}
+                    {"title": "Floating Filter", "url": "javascript-grid-floating-filter-component/#polymerFilter"},
+                    {"title": "Pinned Rows", "url": "example-polymer-floating-row/"},
+                    {"title": "Full Width Rows", "url": "example-polymer-full-width-rows/"},
+                    {"title": "Group Rows", "url": "example-polymer-grouped-row/"}
                 ]
             },
             {
-                "key": "JavaScript Examples",
                 "title": "Plain JavaScript",
                 "url": "example-javascript/",
                 "items": [
-                    {"key": "Styled Report", "title": "Styled Report", "url": "example-account-report/"},
-                    {"key": "File Browser", "title": "File Browser", "url": "example-file-browser/"},
-                    {"key": "Expressions and Context", "title": "Expressions", "url": "example-expressions-and-context/"},
-                    {"key": "Import Excel", "title": "Excel Import", "url": "example-excel-import/"},
-                    {"key": "Gallery", "title": "Gallery", "url": "example-gallery/"}
+                    {"title": "Styled Report", "url": "example-account-report/"},
+                    {"title": "File Browser", "url": "example-file-browser/"},
+                    {"title": "Expressions", "url": "example-expressions-and-context/"},
+                    {"title": "Excel Import", "url": "example-excel-import/"},
+                    {"title": "Gallery", "url": "example-gallery/"}
                 ]
             },
             {
                 "title": "Third Party",
                 "items": [
-                    {"key": "ag-Grid Third Party Examples", "title": "Overview", "url": "javascript-grid-third-party/"},
-                    {"key": "ag-Grid OpenFin", "title": "OpenFin", "url": "javascript-grid-openfin/"},
-                    {"key": "ag-Grid OpenFin Dashboard", "title": "Trader Dashboard", "url": "javascript-grid-openfin-dashboard/"},
-                    {"key": "ag-Grid Graphing", "title": "Graphing", "url": "javascript-grid-graphing/"}
+                    {"title": "Overview", "url": "javascript-grid-third-party/"},
+                    {"title": "OpenFin", "url": "javascript-grid-openfin/"},
+                    {"title": "Trader Dashboard", "url": "javascript-grid-openfin-dashboard/"},
+                    {"title": "Graphing", "url": "javascript-grid-graphing/"}
                 ]
             },
             {
                 "title": "Misc",
                 "items": [
-                    {"key": "Change Log", "title": "Change Log", "url": "change-log/changeLogIndex.php"},
-                    {"key": "Intermediate Tutorial", "title": "Tutorials", "url": "ag-grid-tutorials/"},
-                    {"key": "Responsiveness", "title": "Responsive Design", "url": "javascript-grid-responsiveness/"},
-                    {"key": "Testing", "title": "Testing", "url": "javascript-grid-testing/"},
-                    {"key": "RxJS", "title": "RxJS", "url": "javascript-grid-rxjs/"}
+                    {"title": "Change Log", "url": "change-log/changeLogIndex.php"},
+                    {"title": "Tutorials", "url": "ag-grid-tutorials/"},
+                    {"title": "Responsive Design", "url": "javascript-grid-responsiveness/"},
+                    {"title": "Testing", "url": "javascript-grid-testing/"},
+                    {"title": "RxJS", "url": "javascript-grid-rxjs/"}
                 ]
             }
         ]

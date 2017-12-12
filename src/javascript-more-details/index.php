@@ -1,5 +1,4 @@
 <?php
-$key = "More Detail Javascript";
 $pageTitle = "JavaScript Grid";
 $pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with React to deliver filtering, grouping, aggregation, pivoting and much more.";
 $pageKeyboards = "JavaScript Grid";

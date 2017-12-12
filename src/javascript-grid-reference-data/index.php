@@ -1,5 +1,4 @@
 <?php
-$key = "Reference Data";
 $pageTitle = "ag-Grid Reference Data";
 $pageDescription = "This page explains how to use Value Handlers in ag-Grid with Reference Data";
 $pageKeyboards = "ag-Grid Value Handlers";

@@ -1,5 +1,4 @@
 <?php
-$key = "Styling";
 $pageTitle = "ag-Grid Styling";
 $pageDescription = "ag-Grid Styling";
 $pageKeyboards = "ag-Grid Styling";

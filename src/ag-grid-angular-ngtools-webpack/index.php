@@ -1,5 +1,4 @@
 <?php
-$key = "Angular ngtools Webpack";
 $pageTitle = "Angular Datagrid using @ngtools/webpack";
 $pageDescription = "Demonstrate the best Angular datagrid using @ngtools/webpack.";
 $pageKeyboards = "Angular Grid ngtools webpack 2";

@@ -1,5 +1,4 @@
 <?php
-$key = "Angular Pinned Row";
 $pageTitle = "ag-Grid Angular Pinned Row";
 $pageDescription = "ag-Grid Angular Pinned Row Example";
 $pageKeyboards = "ag-Grid angular pinned row";

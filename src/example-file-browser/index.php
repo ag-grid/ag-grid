@@ -1,5 +1,4 @@
 <?php
-$key = "File Browser";
 $pageTitle = "ag-Grid File Browser";
 $pageDescription = "How to make a file browser using ag-Grid. This page gives you an example you can follow.";
 $pageKeyboards = "ag-Grid File Browser";

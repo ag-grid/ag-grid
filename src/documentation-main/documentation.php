@@ -1,5 +1,4 @@
 <?php
-$key = "index";
 $pageTitle = "ag-Grid JavaScript Grid Documentation";
 $pageDescription = "Introduction page of documentation for ag-Grid JavaScript Grid";
 $pageKeyboards = "ag-Grid JavaScript Grid Documentation";

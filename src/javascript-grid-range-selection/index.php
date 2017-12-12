@@ -1,5 +1,4 @@
 <?php
-$key = "Range Selection";
 $pageTitle = "ag-Grid Range Selection";
 $pageDescription = "Explains how to do range selection in ag-Grid.";
 $pageKeyboards = "range selection javascript grid ag-grid";

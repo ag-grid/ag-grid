@@ -1,5 +1,4 @@
 <?php
-$key = "ag-Grid Third Party Examples";
 $pageTitle = "ag-Grid Third Party Examples";
 $pageDescription = "ag-Grid Third Party Examples";
 $pageKeyboards = "ag-Grid Third Party Examples";

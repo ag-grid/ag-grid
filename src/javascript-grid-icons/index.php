@@ -1,5 +1,4 @@
 <?php
-$key = "Icons";
 $pageTitle = "ag-Grid Icons";
 $pageDescription = "ag-Grid comes with default svg icons. You can provide your own icons for the grid to use.";
 $pageKeyboards = "ag-Grid Pinning";

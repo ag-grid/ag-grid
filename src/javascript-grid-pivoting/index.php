@@ -1,5 +1,4 @@
 <?php
-$key = "Pivoting";
 $pageTitle = "Angular | Javascript | React Pivot Table";
 $pageDescription = "One of the most powerful features of ag-Grid is its ability to pivot data. Learn how to pivot using ag-Grid";
 $pageKeyboards = "ag-Grid JavaScritp Grid Pivot";

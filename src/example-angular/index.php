@@ -1,5 +1,4 @@
 <?php
-$key = "Angular Examples";
 $pageTitle = "ag-Grid Angular Examples";
 $pageDescription = "ag-Grid Angular Examples";
 $pageKeyboards = "ag-Grid angular examples";

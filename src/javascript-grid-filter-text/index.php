@@ -1,5 +1,4 @@
 <?php
-$key = "Text Filter";
 $pageTitle = "JavaScript Grid Text Filter";
 $pageDescription = "ag-Grid comes with a text filter. This sections explains how to use the text filter.";
 $pageKeyboards = "ag-Grid Text Filter";

@@ -1,5 +1,4 @@
 <?php
-$key = "Gallery";
 $pageTitle = "ag-Grid Gallery";
 $pageDescription = "Shows random examples of ag-Grid mixing different parts of the library.";
 $pageKeyboards = "ag-Grid Gallery";

@@ -1,5 +1,4 @@
 <?php
-$key = "Value Handlers";
 $pageTitle = "ag-Grid Value Handlers";
 $pageDescription = "ag-Grid Value Handlers";
 $pageKeyboards = "ag-Grid Value Handlers";

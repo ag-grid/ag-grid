@@ -1,5 +1,4 @@
 <?php
-$key = "Grid Grouping";
 $pageTitle = "ag-Grid Grid Grouping";
 $pageDescription = "ag-Grid Grid Grouping";
 $pageKeyboards = "ag-Grid Grid Grouping";

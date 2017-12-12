@@ -1,5 +1,4 @@
 <?php
-$key = "Polymer Full Width";
 $pageTitle = "ag-Grid Polymer Full Width Example";
 $pageDescription = "A Full Width Renderer Component";
 $pageKeyboards = "ag-Grid polymer full width component";

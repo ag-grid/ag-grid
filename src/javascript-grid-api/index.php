@@ -1,5 +1,4 @@
 <?php
-$key = "Grid API";
 $pageTitle = "ag-Grid API";
 $pageDescription = "ag-Grid API";
 $pageKeyboards = "ag-Grid API";

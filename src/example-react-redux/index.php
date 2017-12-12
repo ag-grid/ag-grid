@@ -1,5 +1,4 @@
 <?php
-$key = "React Redux";
 $pageTitle = "ag-Grid React Redux Examples";
 $pageDescription = "Example using Redux - utilising ag-Grids deltaRowDataMode";
 $pageKeyboards = "ag-Grid react redux immutable component";

@@ -1,5 +1,4 @@
 <?php
-$key = "Filter Component";
 $pageTitle = "JavaScript Grid Filtering";
 $pageDescription = "Describes how to implement customer filters for ag-Grid";
 $pageKeyboards = "JavaScript Grid Filtering";

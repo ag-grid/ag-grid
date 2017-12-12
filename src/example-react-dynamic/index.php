@@ -1,5 +1,4 @@
 <?php
-$key = "React Dynamic";
 $pageTitle = "ag-Grid React Dynamic Components";
 $pageDescription = "Examples showing React Components as Cell Renderers";
 $pageKeyboards = "ag-Grid react grid component dynamic cell renderer";

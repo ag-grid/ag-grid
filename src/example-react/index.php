@@ -1,5 +1,4 @@
 <?php
-$key = "React Examples";
 $pageTitle = "ag-Grid React Examples";
 $pageDescription = "ag-Grid React Examples";
 $pageKeyboards = "ag-Grid react examples";

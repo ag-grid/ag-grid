@@ -1,5 +1,4 @@
 <?php
-$key = "Overlays";
 $pageTitle = "ag-Grid Overlays";
 $pageDescription = "Overlays are placed on top of the grid when loading rows, or when no rows showing. These overlays can be customised to what you want the user to see.";
 $pageKeyboards = "ag-Grid Overlays";

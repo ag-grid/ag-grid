@@ -1,5 +1,4 @@
 <?php
-$key = "Polymer Dynamic";
 $pageTitle = "ag-Grid Polymer Dynamic Components";
 $pageDescription = "Examples showing Polymer Components as Cell Renderers";
 $pageKeyboards = "ag-Grid polymer grid component dynamic cell renderer";

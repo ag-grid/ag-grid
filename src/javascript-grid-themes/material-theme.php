@@ -1,5 +1,4 @@
 <?php
-$key = "Material Theme";
 $pageTitle = "ag-Grid Material Design Data Grid";
 $pageDescription = "ag-Grid Material Design Data Grid";
 $pageKeyboards = "ag-Grid Material Design Data Grid";

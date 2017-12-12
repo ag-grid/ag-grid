@@ -1,5 +1,4 @@
 <?php
-$key = "React Pinned Row";
 $pageTitle = "ag-Grid React Pinned Row";
 $pageDescription = "ag-Grid React Pinned Row Example";
 $pageKeyboards = "ag-Grid react pinned row";

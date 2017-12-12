@@ -1,5 +1,4 @@
 <?php
-$key = "Polymer Group Row";
 $pageTitle = "ag-Grid Polymer Grouped Row Renderer";
 $pageDescription = "ag-Grid Polymer Grouped Row Renderer Example";
 $pageKeyboards = "ag-Grid polymer grouped row component";

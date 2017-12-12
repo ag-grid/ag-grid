@@ -1,5 +1,4 @@
 <?php
-$key = "More Detail Polymer";
 $pageTitle = "polymer Grid";
 $pageDescription = "ag-Grid can be used as a data grid inside your polymer application. This page details how to get started using ag-Grid inside an polymer application.";
 $pageKeyboards = "polymer Grid";

@@ -1,5 +1,4 @@
 <?php
-$key = "Set Filtering";
 $pageTitle = "ag-Grid JavaScript Data Grid Excel Set Filtering";
 $pageDescription = "ag-Grid can filter like Excel, by providing you with a set that you can select from.";
 $pageKeyboards = "ag-Grid JavaScript Data Grid Excel Set Filtering";

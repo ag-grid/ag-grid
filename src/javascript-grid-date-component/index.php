@@ -1,5 +1,4 @@
 <?php
-$key = "Date Component";
 $pageTitle = "Date Component";
 $pageDescription = "Describes how to implement customer date components for ag-Grid";
 $pageKeyboards = "JavaScript Date Component";

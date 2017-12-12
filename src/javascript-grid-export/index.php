@@ -1,5 +1,4 @@
 <?php
-$key = "Data Export";
 $pageTitle = "ag-Grid Data Export";
 $pageDescription = "Data in the grid can be exported to csv. This page explains how to do exports along with properties you can set to get the exports done.";
 $pageKeyboards = "ag-Grid Data Export Javascript CSV";

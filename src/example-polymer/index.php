@@ -1,5 +1,4 @@
 <?php
-$key = "Polymer Examples";
 $pageTitle = "ag-Grid Polymer Examples";
 $pageDescription = "ag-Grid Polymer Examples";
 $pageKeyboards = "ag-Grid Polymer examples";

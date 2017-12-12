@@ -1,5 +1,4 @@
 <?php
-$key = "Column Menu";
 $pageTitle = "ag-Grid Javascript Grid Column Menu";
 $pageDescription = "Clicking the menu icon on a header brings up the grid's column menu. This page describes how to configure the menu.";
 $pageKeyboards = "ag-Grid Javascript Grid Column Menu";

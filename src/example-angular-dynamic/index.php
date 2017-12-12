@@ -1,5 +1,4 @@
 <?php
-$key = "Angular Dynamic";
 $pageTitle = "ag-Grid Angular Dynamic Components";
 $pageDescription = "Examples showing Angular Components as Cell Renderers";
 $pageKeyboards = "ag-Grid angular grid component dynamic cell renderer";

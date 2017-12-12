@@ -1,5 +1,4 @@
 <?php
-$key = "Context Menu";
 $pageTitle = "ag-Grid Javascript Grid Context Menu";
 $pageDescription = "Right clicking on a cell brings up the grid's context menu. You can use the default or configure your own details.";
 $pageKeyboards = "ag-Grid Javascript Grid Context Menu";

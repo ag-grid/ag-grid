@@ -1,5 +1,4 @@
 <?php
-$key = "React Full Width";
 $pageTitle = "ag-Grid React Full Width Example";
 $pageDescription = "A Full Width Renderer Component";
 $pageKeyboards = "ag-Grid react full width component";

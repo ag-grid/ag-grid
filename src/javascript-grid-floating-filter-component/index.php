@@ -1,5 +1,4 @@
 <?php
-$key = "Floating Filter Component";
 $pageTitle = "JavaScript Floating Grid Filtering";
 $pageDescription = "Describes how to implement customer floating filters for ag-Grid";
 $pageKeyboards = "JavaScript Grid Floating Filtering";

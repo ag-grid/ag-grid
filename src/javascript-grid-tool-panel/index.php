@@ -1,5 +1,4 @@
 <?php
-$key = "Tool Panel";
 $pageTitle = "ag-Grid Tool Panel";
 $pageDescription = "The tool panel allows you to work with the columns at run time, but showing and hiding, and grouping.";
 $pageKeyboards = "ag-Grid Show Hide Column Tool Panel";

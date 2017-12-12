@@ -1,5 +1,4 @@
 <?php
-$key = "Getting Started Web Components";
 $pageTitle = "Web Component Grid";
 $pageDescription = "ag-Grid can be used as a Web Component grid inside your application. This page details how to get started.";
 $pageKeyboards = "Web Component Grid";

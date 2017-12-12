@@ -1,5 +1,4 @@
 <?php
-$key = "Getters and Formatters";
 $pageTitle = "ag-Grid Value Getters";
 $pageDescription = "ag-Grid uses Value Getters to allow you to specify exactly where a value comes from. This page explains how to use Value Getters in ag-Grid";
 $pageKeyboards = "ag-Grid Value Getters";

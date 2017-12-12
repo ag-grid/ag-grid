@@ -1,5 +1,4 @@
 <?php
-$key = "Clipboard";
 $pageTitle = "Javascript Grid Clipboard";
 $pageDescription = "ag-Grid can use the clipboard. This page explains how to interact with the clipboard using ag-Grid.";
 $pageKeyboards = "Javascript Grid Clipboard";

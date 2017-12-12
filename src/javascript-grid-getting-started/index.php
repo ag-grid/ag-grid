@@ -1,5 +1,4 @@
 <?php
-$key = "Getting Started";
 $pageTitle = "JavaScript Grid";
 $pageDescription = "JavaScript Grid";
 $pageKeyboards = "JavaScript Grid";

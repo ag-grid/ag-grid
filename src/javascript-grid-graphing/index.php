@@ -1,5 +1,4 @@
 <?php
-$key = "ag-Grid Graphing";
 $pageTitle = "ag-Grid Graphing Integration";
 $pageDescription = "ag-Grid Graphing Integration Examples";
 $pageKeyboards = "ag-grid d3 d3.js sparkline examples";

@@ -1,5 +1,4 @@
 <?php
-$key = "Tree Data";
 $pageTitle = "ag-Grid Tree Data";
 $pageDescription = "ag-Grid Tree Data";
 $pageKeyboards = "ag-Grid Tree Data";

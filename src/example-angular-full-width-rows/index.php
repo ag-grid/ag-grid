@@ -1,5 +1,4 @@
 <?php
-$key = "Angular Full Width";
 $pageTitle = "ag-Grid Angular Full Width Example";
 $pageDescription = "A Full Width Renderer Component";
 $pageKeyboards = "ag-Grid angular full width component";
