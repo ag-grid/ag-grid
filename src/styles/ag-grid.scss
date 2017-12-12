@@ -815,3 +815,16 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
     width: 100%;
     height: 100%;
 }
+
+
+$toolpanel-indent-size: 10px !default;
+$row-group-indent-size: 10px !default;
+
+// Default values for themes that do not use the mixins
+@for $i from 1 to 50 {
+    .ag-ltr .ag-toolpanel-indent-#{$i} { padding-left: $i * $toolpanel-indent-size; }
+    .ag-rtl .ag-toolpanel-indent-#{$i} { padding-right: $i * $toolpanel-indent-size; }
+
+    .ag-ltr .ag-row-group-indent-#{$i} { padding-left: $i * $row-group-indent-size; }
+    .ag-rtl .ag-row-group-indent-#{$i} { padding-right: $i * $row-group-indent-size; }
+}
