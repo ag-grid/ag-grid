@@ -11,10 +11,15 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="events" class="first-h1">Grid Events</h1>
 
+    <p> All of these grid events are available through the <code>GridOptions</code> interface. </p>
+
+    <p>
+        This is done by prefixing the event name with 'on', for instance <code>gridOptions.onCellClicked</code>.
+    </p>
+
     <note>
-        TypeScript users can take advantage of the events interfaces. You can work our the interface
-        name by putting 'Event' after the event name. For example, the cellClicked event uses the interface
-        CellClickedEvent.
+        TypeScript users can take advantage of the events interfaces. You can work our the interface name by putting
+        'Event' after the event name. For example, the cellClicked event uses the interface CellClickedEvent.
     </note>
 
     <note>

@@ -11,6 +11,10 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="properties" class="first-h1">Grid Properties</h1>
 
+    <p>
+        All of these grid properties are available through the <code>GridOptions</code> interface.
+    </p>
+
     <table class="table">
         <tr class="title-row">
             <!-- TITLE ROW -->
