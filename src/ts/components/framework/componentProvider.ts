@@ -84,7 +84,8 @@ export class ComponentProvider {
             select: 'agSelectCellEditor',
             largeText: 'agLargeTextCellEditor',
             popupSelect: 'agPopupSelectCellEditor',
-            popupText: 'agPopupTextCellEditor'
+            popupText: 'agPopupTextCellEditor',
+            richSelect: 'agRichSelect'
 
         };
 
