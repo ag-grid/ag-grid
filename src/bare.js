@@ -65,7 +65,7 @@ var groupColumn = {
     field: 'name',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
-    cellRenderer:'agGroupRenderer',
+    cellRenderer:'agGroupCellRenderer',
     cellRendererParams: {
         checkbox: true
     }

@@ -2,8 +2,8 @@ var columnDefs = [
     // to mix it up a bit, here we are using a valueGetter for the year column.
     // this demonstrates that groupHideOpenParents and restrictToOneGroup works
     // with value getters also.
-    {headerName: 'Country', showRowGroup: 'country', cellRenderer:'agGroupRenderer'},
-    {headerName: 'Year', valueGetter: 'data.year', showRowGroup: 'year', cellRenderer:'agGroupRenderer'},
+    {headerName: 'Country', showRowGroup: 'country', cellRenderer:'agGroupCellRenderer'},
+    {headerName: 'Year', valueGetter: 'data.year', showRowGroup: 'year', cellRenderer:'agGroupCellRenderer'},
 
     {headerName: 'Athlete', field: 'athlete', width: 180},
     {headerName: 'Gold', field: 'gold', aggFunc: 'sum', width: 100},

@@ -34,10 +34,10 @@ var gridOptions = {
     columnTypes: {
         valueColumn: {
             editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)',
-            cellClass: 'number-cell', cellRenderer:'agAnimateShowChangeRenderer',
+            cellClass: 'number-cell', cellRenderer:'agAnimateShowChangeCellRenderer',
             filter: 'agNumberColumnFilter'
         },
-        totalColumn: { cellRenderer:'agAnimateShowChangeRenderer', cellClass: 'number-cell'}
+        totalColumn: { cellRenderer:'agAnimateShowChangeCellRenderer', cellClass: 'number-cell'}
     },
     rowData: getRowData(),
     groupDefaultExpanded: 1,
