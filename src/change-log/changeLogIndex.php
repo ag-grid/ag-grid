@@ -24,7 +24,7 @@ include('../includes/mediaHeader.php');
     </ul>
 
     <h3>Version 15.0.0 [12-DEC-2017]</h3>
-    <p>For details of this release, check our dedicated <a href="../ag-grid-blog-15-0-0/">blog post for vX.Y.z</a>.</p>
+    <p>For details of this release, check our dedicated <a href="../ag-grid-blog-15-0-0/">blog post for v15.0.0</a>.</p>
     <h4>Enhancements</h4>
     <ul>
         <li>
