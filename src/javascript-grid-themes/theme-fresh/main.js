@@ -102,7 +102,7 @@ var columnDefs = [
         field: 'country',
         width: 200,
         editable: true,
-        cellEditor: 'richSelect',
+        cellEditor: 'agRichSelect',
         cellEditorParams: {
             values: [
                 'Argentina',

@@ -42,7 +42,7 @@ var gridOptions = {
         {
             headerName: "Exterior Colour",
             field: "exteriorColour",
-            cellEditor: 'richSelect',
+            cellEditor: 'agRichSelect',
             cellEditorParams: {
                 values: extractValues(colourMappings),
                 cellRenderer: colorCellRenderer
