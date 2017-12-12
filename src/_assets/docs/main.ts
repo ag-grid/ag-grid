@@ -5,7 +5,10 @@ import {$, lazyload, AnchorJS, Prism, initCookieDisclaimer} from '../common/vend
 
 $(function() {
     var $currentlyExpanded = $('#side-nav > ul > li.expanded > ul');
-    $currentlyExpanded.css('height', $currentlyExpanded[0].scrollHeight);
+
+    if ($currentlyExpanded.length) {
+        $currentlyExpanded.css('height', $currentlyExpanded[0].scrollHeight);
+    }
     
     $('#side-nav > ul > li > span').on('click', function() {
         var $parent = $(this).parent();

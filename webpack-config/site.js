@@ -22,6 +22,7 @@ module.exports = {
         docs: docs,
     },
     output: {
+        filename: '[name].js',
         publicPath: '/',
         hotUpdateChunkFilename: 'dist/[hash].hot-update.js',
         hotUpdateMainFilename: 'dist/[hash].hot-update.json'
@@ -110,8 +111,6 @@ module.exports = {
             // In case you imported plugins individually, you must also require them here:
             // Util: 'exports-loader?Util!bootstrap/js/dist/util',
             // Dropdown: 'exports-loader?Dropdown!bootstrap/js/dist/dropdown'
-        }),
-
-        new webpack.DefinePlugin({MAX_ACTIVE_EXAMPLES: JSON.stringify(3)}),
+        })
     ]
 };

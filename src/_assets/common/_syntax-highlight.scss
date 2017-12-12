@@ -8,6 +8,7 @@ pre[class*="language-"], snippet pre {
     border: 1px solid $gray-300;
     padding: 1rem;
     font-size: 80%;
+    white-space: pre-wrap;
 }
 
 .token.string {
