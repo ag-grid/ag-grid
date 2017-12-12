@@ -1,6 +1,12 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 125, suppressMenu: true},
-    {headerName: "Age", field: "age", width: 90, suppressSorting: true, headerComponentParams: {menuIcon: 'fa-external-link'}},
+    {
+        headerName: "Age",
+        field: "age",
+        width: 90,
+        suppressSorting: true,
+        headerComponentParams: {menuIcon: 'fa-external-link'}
+    },
     {headerName: "Country", field: "country", width: 120, suppressMenu: true},
     {headerName: "Year", field: "year", width: 90, suppressSorting: true},
     {headerName: "Date", field: "date", width: 100, suppressMenu: true},
@@ -19,7 +25,7 @@ var gridOptions = {
     enableColResize: true,
     suppressMenuHide: true,
     components: {
-        headerComponent: CustomHeader
+        agColumnHeader: CustomHeader
     },
     defaultColDef: {
         width: 100,
@@ -40,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinnersSmall.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);
         }
