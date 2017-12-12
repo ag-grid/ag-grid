@@ -22,21 +22,21 @@ TopMoversGrid.prototype.init = function (fxDataService) {
                 field: 'last',
                 headerName: 'Last',
                 headerClass: 'align-right',
-                cellRenderer:'agAnimateShowChangeRenderer',
+                cellRenderer:'agAnimateShowChangeCellRenderer',
                 cellClass: 'align-right'
             },
             {
                 field: 'net',
                 headerName: 'Net',
                 headerClass: 'align-right',
-                cellRenderer:'agAnimateShowChangeRenderer',
+                cellRenderer:'agAnimateShowChangeCellRenderer',
                 cellClass: 'align-right'
             },
             {
                 field: 'pct_net_change',
                 headerName: '% NC',
                 headerClass: 'align-right',
-                cellRenderer:'agAnimateShowChangeRenderer',
+                cellRenderer:'agAnimateShowChangeCellRenderer',
                 cellClass: 'align-right',
                 sort: 'desc',
                 valueFormatter: function(params) {

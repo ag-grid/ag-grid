@@ -52,7 +52,7 @@ var columnDefs = [
 
 var gridOptions = {
     autoGroupColumnDef: {headerName : "Location", field: "city", width: 200,
-        cellRenderer:'agGroupRenderer',
+        cellRenderer:'agGroupCellRenderer',
         cellRendererParams: {
             checkbox: true
         }

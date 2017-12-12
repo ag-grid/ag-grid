@@ -22,7 +22,7 @@ var gridOptions = {
     suppressRowClickSelection: true,
     suppressAggFuncInHeader: true,
     autoGroupColumnDef: {headerName: "Athlete", field: "athlete", width: 200,
-        cellRenderer:'agGroupRenderer',
+        cellRenderer:'agGroupCellRenderer',
         cellRendererParams: {
             checkbox: function(params) {
                 return params.node.group === true;

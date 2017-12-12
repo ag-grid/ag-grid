@@ -2,11 +2,11 @@ var columnDefs = [
     {headerName: 'Editable A', field: 'a', editable: true, valueParser: numberValueParser},
     {headerName: 'Editable B', field: 'b', editable: true, valueParser: numberValueParser},
     {headerName: 'Editable C', field: 'c', editable: true, valueParser: numberValueParser},
-    {headerName: 'API D', field: 'd', valueParser: numberValueParser, cellRenderer:'agAnimateShowChangeRenderer'},
-    {headerName: 'API E', field: 'e', valueParser: numberValueParser, cellRenderer:'agAnimateShowChangeRenderer'},
+    {headerName: 'API D', field: 'd', valueParser: numberValueParser, cellRenderer:'agAnimateShowChangeCellRenderer'},
+    {headerName: 'API E', field: 'e', valueParser: numberValueParser, cellRenderer:'agAnimateShowChangeCellRenderer'},
     // these columns use value getters. volatile=true means the cells will be refreshed when we call refreshVolatileCells
-    {headerName: 'Total', valueGetter: 'data.a + data.b + data.c + data.d + data.e', volatile: true, cellRenderer:'agAnimateShowChangeRenderer'},
-    {headerName: 'Average', valueGetter: '(data.a + data.b + data.c + data.d + data.e) / 5', volatile: true, cellRenderer:'agAnimateSlideRenderer'}
+    {headerName: 'Total', valueGetter: 'data.a + data.b + data.c + data.d + data.e', volatile: true, cellRenderer:'agAnimateShowChangeCellRenderer'},
+    {headerName: 'Average', valueGetter: '(data.a + data.b + data.c + data.d + data.e) / 5', volatile: true, cellRenderer:'agAnimateSlideCellRenderer'}
 ];
 
 function createRowData() {

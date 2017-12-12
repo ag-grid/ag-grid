@@ -51,7 +51,7 @@
         width: 200,
         field: 'item',
         comparator: agGrid.defaultGroupComparator,
-        cellRenderer:'agGroupRenderer'
+        cellRenderer:'agGroupCellRenderer'
     };
 
     var gridOptions = {

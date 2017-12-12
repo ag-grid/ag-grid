@@ -126,7 +126,7 @@
 
     var columnDefs = [
         {headerName: "Name", field: "name", width: 250,
-            cellRenderer:'agGroupRenderer',
+            cellRenderer:'agGroupCellRenderer',
             cellRendererParams: {
                 innerRenderer: innerCellRenderer,
                 suppressCount: true

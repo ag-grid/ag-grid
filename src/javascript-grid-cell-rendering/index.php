@@ -28,7 +28,7 @@ var colDef1 = {
 
 // 2 - use one of the grids provided cell renderer's, reference it by name
 var colDef2 = {
-    cellRenderer:'agGroupRenderer',
+    cellRenderer:'agGroupCellRenderer',
     ...
 }
 
@@ -153,7 +153,7 @@ colDef = {
     // tell the grid we want to show group values in this column
     showRowGroup: true,
     // set the cell renderer to 'group'
-    cellRenderer:'agGroupRenderer',
+    cellRenderer:'agGroupCellRenderer',
     // provide extra params to the cellRenderer
     cellRendererParams: {
         suppressCount: false, // turn off the row count

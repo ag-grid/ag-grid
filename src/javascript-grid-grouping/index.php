@@ -501,13 +501,13 @@ colDef = {
     </p>
     <snippet>
 // use a function to return a footer value
-cellRenderer:'agGroupRenderer',
+cellRenderer:'agGroupCellRenderer',
 cellRendererParams: {
     footerValueGetter: function(params) { return 'Total (' + params.value + ')'},
 }}
 
 // use an expression to return a footer value. this gives the same result as above
-cellRenderer:'agGroupRenderer',
+cellRenderer:'agGroupCellRenderer',
 cellRendererParams: {
     footerValueGetter: '"Total (" + x + ")"'
 }}</snippet>
@@ -654,7 +654,7 @@ cellRendererParams: {
     <p>
         If you do specify <i>coldef.showRowGroup</i> you are going to also tell this column how to display the contents
         of this group, the easiest way to do this is by using the out of the box
-        <a href="../javascript-grid-cell-rendering">group cell renderer</a> <code>cellRenderer:'agGroupRenderer'</code>
+        <a href="../javascript-grid-cell-rendering">group cell renderer</a> <code>cellRenderer:'agGroupCellRenderer'</code>
     </p>
 
     <p>
@@ -666,7 +666,7 @@ coldefs:[
     // We appoint this column as the column to show the country groups.
     // note that we need to provide an appropiate cell renderer.
     // in this case we are using the out of the box group cell renderer.
-    {headerName: "Country - group", showRowGroup='country', width: 120, cellRenderer:'agGroupRenderer'},
+    {headerName: "Country - group", showRowGroup='country', width: 120, cellRenderer:'agGroupCellRenderer'},
 ]</snippet>
 
     <p>The following example shows how to appoint individual columns to show individual groups</p>
