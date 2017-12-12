@@ -18799,7 +18799,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return this.componentResolver.createAgGridComponent(params.column.getColDef(), params, "headerComponent", "agColumnHeader");
 	    };
 	    ComponentRecipes.prototype.newHeaderGroupComponent = function (params) {
-	        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agColumnHeaderGroup");
+	        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agColumnGroupHeader");
 	    };
 	    ComponentRecipes.prototype.newFloatingFilterComponent = function (typeRaw, colDef, params) {
 	        var type = typeRaw;
@@ -18865,13 +18865,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    };
 	    ComponentRecipes.prototype.newFullWidthGroupRowInnerCellRenderer = function (params) {
-	        return this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer", "agGroupRowInnerRenderer", false);
+	        return this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer", "agGroupRowInnerCellRenderer", false);
 	    };
 	    ComponentRecipes.prototype.newCellRenderer = function (target, params) {
 	        return this.componentResolver.createAgGridComponent(target, params, "cellRenderer", "agCellRenderer", false);
 	    };
 	    ComponentRecipes.prototype.newInnerCellRenderer = function (target, params) {
-	        return this.componentResolver.createAgGridComponent(target, params, "innerRenderer", "agInnerRenderer");
+	        return this.componentResolver.createAgGridComponent(target, params, "innerRenderer", "agInnerCellRenderer");
 	    };
 	    ComponentRecipes.prototype.newFullRowGroupRenderer = function (params) {
 	        return this.componentResolver.createAgGridComponent(this.gridOptionsWrapper, params, "fullWidthCellRenderer", "agFullWidthCellRenderer");
@@ -20728,6 +20728,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var overlayWrapperComponent_1 = __webpack_require__(88);
 	var loadingOverlayComponent_1 = __webpack_require__(89);
 	var noRowsOverlayComponent_1 = __webpack_require__(90);
+	var utils_1 = __webpack_require__(8);
 	var RegisteredComponentSource;
 	(function (RegisteredComponentSource) {
 	    RegisteredComponentSource[RegisteredComponentSource["DEFAULT"] = 0] = "DEFAULT";
@@ -20741,17 +20742,58 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    ComponentProvider.prototype.postConstruct = function () {
 	        this.agDeprecatedNames = {
-	            set: 'agSetColumnFilter',
-	            text: 'agTextColumnFilter',
-	            number: 'agNumberColumnFilter',
-	            date: 'agDateColumnFilter',
-	            group: 'agGroupRenderer',
-	            animateShowChange: 'agAnimateShowChangeRenderer',
-	            animateSlide: 'agAnimateSlideRenderer',
-	            select: 'agSelectCellEditor',
-	            largeText: 'agLargeTextCellEditor',
-	            popupSelect: 'agPopupSelectCellEditor',
-	            popupText: 'agPopupTextCellEditor'
+	            set: {
+	                newComponentName: 'agSetColumnFilter',
+	                propertyHolder: 'filter'
+	            },
+	            text: {
+	                newComponentName: 'agTextColumnFilter',
+	                propertyHolder: 'filter'
+	            },
+	            number: {
+	                newComponentName: 'agNumberColumnFilter',
+	                propertyHolder: 'filter'
+	            },
+	            date: {
+	                newComponentName: 'agDateColumnFilter',
+	                propertyHolder: 'filter'
+	            },
+	            group: {
+	                newComponentName: 'agGroupCellRenderer',
+	                propertyHolder: 'cellRenderer'
+	            },
+	            animateShowChange: {
+	                newComponentName: 'agAnimateShowChangeCellRenderer',
+	                propertyHolder: 'cellRenderer'
+	            },
+	            animateSlide: {
+	                newComponentName: 'agAnimateSlideCellRenderer',
+	                propertyHolder: 'cellRenderer'
+	            },
+	            select: {
+	                newComponentName: 'agSelectCellEditor',
+	                propertyHolder: 'cellEditor'
+	            },
+	            largeText: {
+	                newComponentName: 'agLargeTextCellEditor',
+	                propertyHolder: 'cellEditor'
+	            },
+	            popupSelect: {
+	                newComponentName: 'agPopupSelectCellEditor',
+	                propertyHolder: 'cellEditor'
+	            },
+	            popupText: {
+	                newComponentName: 'agPopupTextCellEditor',
+	                propertyHolder: 'cellEditor'
+	            },
+	            richSelect: {
+	                newComponentName: 'agRichSelectCellEditor',
+	                propertyHolder: 'cellEditor'
+	            },
+	            headerComponent: {
+	                newComponentName: 'agColumnHeader',
+	                propertyHolder: 'headerComponent'
+	            }
 	        };
 	        this.agGridDefaults = {
 	            //THE FOLLOWING COMPONENTS HAVE NO DEFAULTS, THEY NEED TO BE SPECIFIED AS AN SPECIFIC FLAVOUR
@@ -20775,7 +20817,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                defaultImpl: headerComp_1.HeaderComp,
 	                overridable: true
 	            },
-	            agColumnHeaderGroup: {
+	            agColumnGroupHeader: {
 	                defaultImpl: headerGroupComp_1.HeaderGroupComp,
 	                overridable: true
 	            },
@@ -20811,35 +20853,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	            // renderers
 	            agCellRenderer: {
 	                defaultImpl: null,
-	                overridable: true
+	                overridable: false
 	            },
 	            agFullWidthCellRenderer: {
 	                defaultImpl: null,
-	                overridable: true
+	                overridable: false
 	            },
-	            agInnerRenderer: {
+	            agInnerCellRenderer: {
 	                defaultImpl: null,
-	                overridable: true
+	                overridable: false
 	            },
-	            agGroupRowInnerRenderer: {
+	            agGroupRowInnerCellRenderer: {
 	                defaultImpl: null,
-	                overridable: true
+	                overridable: false
 	            },
-	            agAnimateShowChangeRenderer: {
+	            agAnimateShowChangeCellRenderer: {
 	                defaultImpl: animateShowChangeCellRenderer_1.AnimateShowChangeCellRenderer,
 	                overridable: true
 	            },
-	            agAnimateSlideRenderer: {
+	            agAnimateSlideCellRenderer: {
 	                defaultImpl: animateSlideCellRenderer_1.AnimateSlideCellRenderer,
 	                overridable: true
 	            },
-	            agGroupRenderer: {
+	            agGroupCellRenderer: {
 	                defaultImpl: groupCellRenderer_1.GroupCellRenderer,
 	                overridable: true
 	            },
 	            agGroupRowRenderer: {
 	                defaultImpl: groupCellRenderer_1.GroupCellRenderer,
-	                overridable: true
+	                overridable: false
 	            },
 	            agLoadingCellRenderer: {
 	                defaultImpl: rowComp_1.LoadingCellRenderer,
@@ -20859,7 +20901,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            agPinnedRowCellRenderer: {
 	                defaultImpl: null,
-	                overridable: true
+	                overridable: false
 	            },
 	            //editors
 	            agCellEditor: {
@@ -20868,7 +20910,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            agTextCellEditor: {
 	                defaultImpl: textCellEditor_1.TextCellEditor,
-	                overridable: false
+	                overridable: true
 	            },
 	            agText: {
 	                defaultImpl: textCellEditor_1.TextCellEditor,
@@ -20876,7 +20918,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            agSelectCellEditor: {
 	                defaultImpl: selectCellEditor_1.SelectCellEditor,
-	                overridable: false
+	                overridable: true
 	            },
 	            agSelect: {
 	                defaultImpl: selectCellEditor_1.SelectCellEditor,
@@ -20884,7 +20926,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            agPopupTextCellEditor: {
 	                defaultImpl: popupTextCellEditor_1.PopupTextCellEditor,
-	                overridable: false
+	                overridable: true
 	            },
 	            agPopupText: {
 	                defaultImpl: popupTextCellEditor_1.PopupTextCellEditor,
@@ -20892,7 +20934,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            agPopupSelectCellEditor: {
 	                defaultImpl: popupSelectCellEditor_1.PopupSelectCellEditor,
-	                overridable: false
+	                overridable: true
 	            },
 	            agPopupSelect: {
 	                defaultImpl: popupSelectCellEditor_1.PopupSelectCellEditor,
@@ -20900,7 +20942,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            },
 	            agLargeTextCellEditor: {
 	                defaultImpl: largeTextCellEditor_1.LargeTextCellEditor,
-	                overridable: false
+	                overridable: true
 	            },
 	            agLargeText: {
 	                defaultImpl: largeTextCellEditor_1.LargeTextCellEditor,
@@ -20997,10 +21039,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return toAssert;
 	    };
 	    ComponentProvider.prototype.translateIfDeprecated = function (raw) {
-	        var translatedName = this.agDeprecatedNames[raw];
-	        if (translatedName != null) {
-	            console.warn("ag-grid. Since v15.0 component names have been renamed to contain namespace. You should rename " + raw + " to " + translatedName);
-	            return translatedName;
+	        var deprecatedInfo = this.agDeprecatedNames[raw];
+	        if (deprecatedInfo != null) {
+	            utils_1._.doOnce(function () {
+	                console.warn("ag-grid. Since v15.0 component names have been renamed to be namespaced. You should rename " + deprecatedInfo.propertyHolder + ":" + raw + " to " + deprecatedInfo.propertyHolder + ":" + deprecatedInfo.newComponentName);
+	            }, 'DEPREACTE_COMPONENT_' + raw);
+	            return deprecatedInfo.newComponentName;
 	        }
 	        return raw;
 	    };
@@ -23833,7 +23877,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	    GroupCellRenderer.prototype.createLeafCell = function () {
 	        if (utils_1.Utils.exists(this.params.value)) {
-	            this.eValue.innerHTML = this.params.value;
+	            this.eValue.innerHTML = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
 	        }
 	    };
 	    GroupCellRenderer.prototype.isUserWantsSelected = function () {
@@ -24124,7 +24168,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    CellRendererService.prototype.useInnerCellRenderer = function (target, originalColumn, eTarget, params) {
 	        var _this = this;
 	        var rendererToUsePromise = null;
-	        var componentToUse = this.componentResolver.getComponentToUse(target, "innerRenderer", "agInnerRenderer");
+	        var componentToUse = this.componentResolver.getComponentToUse(target, "innerRenderer", "agInnerCellRenderer");
 	        if (componentToUse && componentToUse.component != null && componentToUse.source != componentResolver_1.ComponentSource.DEFAULT) {
 	            //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
 	            rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(target, params);
@@ -28839,7 +28883,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 	        var defaultAutoColDef = {
 	            headerName: localeTextFunc('group', 'Group'),
-	            cellRenderer: 'agGroupRenderer'
+	            cellRenderer: 'agGroupCellRenderer'
 	        };
 	        // we never allow moving the group column
 	        defaultAutoColDef.suppressMovable = true;
