@@ -71,7 +71,7 @@ var CellRendererService = (function () {
     CellRendererService.prototype.useInnerCellRenderer = function (target, originalColumn, eTarget, params) {
         var _this = this;
         var rendererToUsePromise = null;
-        var componentToUse = this.componentResolver.getComponentToUse(target, "innerRenderer", "agInnerRenderer");
+        var componentToUse = this.componentResolver.getComponentToUse(target, "innerRenderer", "agInnerCellRenderer");
         if (componentToUse && componentToUse.component != null && componentToUse.source != componentResolver_1.ComponentSource.DEFAULT) {
             //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
             rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(target, params);

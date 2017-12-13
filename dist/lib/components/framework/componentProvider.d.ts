@@ -27,6 +27,10 @@ export interface AgGridProvidedComponentDef {
     overridable: boolean;
     defaultImpl: AgGridRegisteredComponentInput<any>;
 }
+export interface DeprecatedComponentName {
+    propertyHolder: string;
+    newComponentName: string;
+}
 export declare class ComponentProvider {
     private gridOptions;
     private context;

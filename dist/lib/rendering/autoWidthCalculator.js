@@ -20,6 +20,7 @@ var gridPanel_1 = require("../gridPanel/gridPanel");
 var context_1 = require("../context/context");
 var headerRenderer_1 = require("../headerRendering/headerRenderer");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var headerWrapperComp_1 = require("../headerRendering/header/headerWrapperComp");
 var AutoWidthCalculator = (function () {
     function AutoWidthCalculator() {
     }
@@ -62,9 +63,11 @@ var AutoWidthCalculator = (function () {
         var comp = null;
         // find the rendered header cell
         this.headerRenderer.forEachHeaderElement(function (headerElement) {
-            var headerWrapperComp = headerElement;
-            if (headerWrapperComp.getColumn() === column) {
-                comp = headerWrapperComp;
+            if (headerElement instanceof headerWrapperComp_1.HeaderWrapperComp) {
+                var headerWrapperComp = headerElement;
+                if (headerWrapperComp.getColumn() === column) {
+                    comp = headerWrapperComp;
+                }
             }
         });
         return comp ? comp.getGui() : null;

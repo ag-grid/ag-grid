@@ -209,7 +209,7 @@ var GroupCellRenderer = (function (_super) {
     };
     GroupCellRenderer.prototype.createLeafCell = function () {
         if (utils_1.Utils.exists(this.params.value)) {
-            this.eValue.innerHTML = this.params.value;
+            this.eValue.innerHTML = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
         }
     };
     GroupCellRenderer.prototype.isUserWantsSelected = function () {

@@ -34,7 +34,7 @@ var ComponentRecipes = (function () {
         return this.componentResolver.createAgGridComponent(params.column.getColDef(), params, "headerComponent", "agColumnHeader");
     };
     ComponentRecipes.prototype.newHeaderGroupComponent = function (params) {
-        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agColumnHeaderGroup");
+        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agColumnGroupHeader");
     };
     ComponentRecipes.prototype.newFloatingFilterComponent = function (typeRaw, colDef, params) {
         var type = typeRaw;
@@ -100,13 +100,13 @@ var ComponentRecipes = (function () {
         }
     };
     ComponentRecipes.prototype.newFullWidthGroupRowInnerCellRenderer = function (params) {
-        return this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer", "agGroupRowInnerRenderer", false);
+        return this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer", "agGroupRowInnerCellRenderer", false);
     };
     ComponentRecipes.prototype.newCellRenderer = function (target, params) {
         return this.componentResolver.createAgGridComponent(target, params, "cellRenderer", "agCellRenderer", false);
     };
     ComponentRecipes.prototype.newInnerCellRenderer = function (target, params) {
-        return this.componentResolver.createAgGridComponent(target, params, "innerRenderer", "agInnerRenderer");
+        return this.componentResolver.createAgGridComponent(target, params, "innerRenderer", "agInnerCellRenderer");
     };
     ComponentRecipes.prototype.newFullRowGroupRenderer = function (params) {
         return this.componentResolver.createAgGridComponent(this.gridOptionsWrapper, params, "fullWidthCellRenderer", "agFullWidthCellRenderer");
