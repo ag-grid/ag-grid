@@ -49,7 +49,7 @@ include '../jira_reports/jira_utilities.php';
 <div class="container info-page">
     <div class="row">
         <div class="col-md-12" style="padding-top: 10px; padding-bottom: 5px;">
-            <h1>Next Release Target: 11th December</h1>
+            <h1>Next Release Target: TBD - 15.0.0 just released</h1>
         </div>
     </div>
     <div class="row">
