@@ -10,38 +10,32 @@ include('../includes/mediaHeader.php');
 <div style="padding: 20px;">
 
     <note>
-        For a detailed breakdown of items please refer to the detailed changelog <a href="/ag-grid-changelog/">here</a>.
+        For a detailed breakdown of items please refer to the detailed pipeline <a href="../ag-grid-pipeline/">here</a>.
     </note>
 
-    <h2>Next</h2>
 
-    <ul>
-        <li>Removed deprecated items with old way of doing header templates as new way of providing header templates was
-            introduced in v14.
-            Removed grid options are getHeaderCellTemplate, headerCellTemplate, headerCellRenderer.
-            Removed column options are headerCellTemplate and headerCellRenderer
-        </li>
-    </ul>
 
-    <h3>Version 15.0.0 [12-DEC-2017]</h3>
+    <h2>15.x</h2>
+
+    <h3>Version 15.0.0 [13-DEC-2017]</h3>
     <p>For details of this release, check our dedicated <a href="../ag-grid-blog-15-0-0/">blog post for v15.0.0</a>.</p>
     <h4>Enhancements</h4>
     <ul>
         <li>
-            AG-1161: Issue using ag-fresh and auto group column defs - No padding in the auto group col def
+            AG-1032/661: Allowing <a href="../javascript-grid-components">registering components by name</a> and renaming all componets to add ag namespace to it
         </li>
         <li>
-            AG-1137: Allow disabling navigation when editing
+            AG-76: Adding <a href="../javascript-grid-overlay-component">overlays as a new component</a> into the grid, so now they are fully customisable
         </li>
         <li>
-            AG-1128: Make Ctrl button throw an event, same as the shift button
-        </li>
-        <li>
-            AG-46: [accessibility] tab into the grid
+            AG-46: Allowing the ability to tab from outside the grid into the grid
         </li>
     </ul>
     <h4>Bugs</h4>
     <ul>
+        <li>
+            AG-1161: Issue using ag-fresh and auto group column defs - No padding in the auto group col def
+        </li>
         <li>
             AG-1188: Can't use detailCellRendererFramework. Metadata not provided!
         </li>
@@ -196,6 +190,22 @@ include('../includes/mediaHeader.php');
         </li>
         <li>
             AG-1035: Issue displaying context menu in the enterprise row model
+        </li>
+    </ul>
+    <h4>Deprecations</h4>
+
+    <ul>
+        <li>Renamed old component names to <a href="../javascript-grid-components">new namedspace components</a>
+        </li>
+    </ul>
+
+    <h4>Breaking changes</h4>
+
+    <ul>
+        <li>Removed deprecated items with old way of doing header templates as new way of providing header templates was
+            introduced in v14.
+            Removed grid options are getHeaderCellTemplate, headerCellTemplate, headerCellRenderer.
+            Removed column options are headerCellTemplate and headerCellRenderer
         </li>
     </ul>
 
