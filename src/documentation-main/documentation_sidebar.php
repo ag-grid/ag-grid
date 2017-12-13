@@ -44,7 +44,25 @@
     </div>
     <div>
         <br/>
-        Happy New ag-Grid v15.0.0
+        Happy New ag-Grid <a href="../ag-grid-blog-15-0-0/">v15.0.0</a><br><br>
+        <div>
+            Featuring:
+        </div>
+        <div>
+            <ul style="padding-left: 20px;">
+                <li>
+                    New <a href="../ag-grid-pipeline">pipeline</a>
+                </li>
+                <li>
+                    New overlay component.
+                </li>
+                <li>Registering components by name</li>
+            </ul>
+        </div>
+        <div>
+            See the <a href="../change-log/changeLogIndex.php">Change Log</a>
+            for full release details.
+        </div>
     </div>
 </div>
 
@@ -70,32 +88,22 @@
     </div>
     </br>
     <div>
-        What's new in ag-Grid v14.2.0
-    </div>
-</div>
+        <p>
+            <a href="../ag-grid-blog-14-2-0/">ag-Grid v14.2.0</a> is out!
+        </p>
 
-<div class="news-box">
-    <div class="news-header">7th November 2017</div>
-    <div style="background-color: black; padding: 10px; position: relative;">
-        <span style="font-weight: bold; color: white; font-size: 25px; position: absolute; top: 70px; left: 110px;">
-            v14.1.0
-        </span>
-        <img src="../images/logo-dark-hacked.svg"
-             style="width: 100%;"/>
-    </div>
-    <br/>
-    <div>
         <div>
             Featuring:
         </div>
         <div>
             <ul style="padding-left: 20px;">
                 <li>
-                    Support for Angular 5.
+                    New & Improved Master/Detail.
                 </li>
                 <li>
-                    Support for Firefox and Polymer
+                    React Declarative Offering
                 </li>
+                <li>Improved Themes</li>
             </ul>
         </div>
         <div>
@@ -104,6 +112,7 @@
         </div>
     </div>
 </div>
+
 
 <div class="news-box">
     <div class="news-header">
@@ -117,8 +126,14 @@
     </br>
     <div style="margin-top: 10px">
         <p>
-            ag-Grid v14 Released
+            <a href="../change-log/v14/">ag-Grid v14 Halloween</a> is out!
+        </p>
+        <p>
+            With improved
+            tree data, row grouping, examples in React and Angular and much more. Check the
+            <a href="../change-log/v14/">ag-Grid v14 Halloween</a> press release.
         </p>
     </div>
 </div>
+
 
