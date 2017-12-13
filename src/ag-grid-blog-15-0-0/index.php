@@ -35,13 +35,13 @@ include('../includes/mediaHeader.php');
     
         <h3><strong>Winter is finally here and it's packed with snow, Christmas spirit and the new version of ag-Grid!</strong></h3>
         
-        <p>The end of the year is traditionally a time for retrospectives, this is why our last release for 2017 is dedicated to cleaning our bug backlog. Of course we have also a few Christmas suprises coming with <b>v15.0.0</b>!</p>
+        <p>The end of the year is traditionally a time for retrospectives, this is why our last release for 2017 is dedicated to cleaning our bug backlog. Of course, we  also have a few Christmas surprises with <b>v15.0.0</b>!</p>
         
         <h2>Stay up to Date with Our Work</h2>
         
         <p><strong>Have you ever wondered what we are about to include in our next release?</strong></p>
         
-        <p>No more wondering! Now you can be up to date with every our decision. As of this release we introduce the <b>ag-Grid pipeline</b> which makes public all the items on our roadmap with their current status. </p>
+        <p>No more wondering! Now you can be up to date with every decision. As of this release, we introduce the <b>ag-Grid pipeline</b> which makes public all the items on our roadmap with their current status. </p>
         
         <img src="pipeline.png" alt="pipeline" width="85%" />
         
@@ -56,7 +56,7 @@ include('../includes/mediaHeader.php');
         
         <h2>Overlay Component</h2>
         
-        <p>This component allows you to add your own overlays above the grid. You can use the built-in overlays or simply create your own which suit your needs.</p>
+        <p>This component allows you to add your own overlays above the grid. You can use the built-in overlays or simply create your own to suit your needs.</p>
         
         <img src="overlay.png" alt="overlay" width="85%" />
         
@@ -64,7 +64,7 @@ include('../includes/mediaHeader.php');
         
         <h2>Register Components by Name</h2>
         
-        <p>As of <b>v15.0.0</b> you can register your custom components both by <strong>name</strong> and by <strong>direct reference</strong>. The registration by name is a commonly used technique which allows you to reuse your components and minimizes the code repetition. </p>
+        <p>As of <b>v15.0.0</b> you can register your custom components both by <strong>name</strong> and by <strong>direct reference</strong>. Registration by name is a commonly used technique which allows you to reuse your components and minimizes code repetition. </p>
         
         <p>You can find detailed information about the <a href="../javascript-grid-components/">component registration</a> in our documentation.</p>
         
