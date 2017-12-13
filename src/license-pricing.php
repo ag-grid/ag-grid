@@ -134,9 +134,9 @@ include 'includes/headerRow.php'; ?>
 
     <div class="row">
         <div class="col-md-8">
-            <h2>
+            <h1>
                 Which License should you choose?
-            </h2>
+            </h1>
 
             <p style="margin-top: 20px;">
                 ag-Grid Enterprise is our commercial product that is designed for Enterprise development teams. This page covers the licenses available. For ag-Grid Free, click <a href="/javascript-grid-getting-started/"> here.</a>

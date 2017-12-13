@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
 
     <title>ag-Grid Start Trial</title>
-    <meta name="description" content="License and Pricing details for ag-Grid">
-    <meta name="keywords" content="ag-Grid Javascript Grid License and Pricing"/>
+    <meta name="description" content="Free Trial of ag-Grid JavaScrpt Datagrid">
+    <meta name="keywords" content="Free Trial of ag-Grid JavaScrpt Datagrid"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -36,9 +36,9 @@ include 'includes/headerRow.php'; ?>
     <div class="row">
         <div class="col-md-12">
 
-            <h2>
+            <h1>
                 ag-Grid Enterprise Evaluation License
-            </h2>
+            </h1>
 
             <p>
                 An evaluation license for ag-Grid Enterprise is granted to anyone wishing evaluate ag-Grid Enterprise.

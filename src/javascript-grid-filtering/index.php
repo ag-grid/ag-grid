@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
 
-    <h2 id="filtering">Column Filter</h2>
+    <h1 id="filtering">Column Filter</h1>
 
     <p>
         Data in ag-Grid can be filtered in the following ways:
