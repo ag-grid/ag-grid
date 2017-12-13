@@ -823,15 +823,15 @@ saveAthlete() {
 
             <h4>Optimistic Locking</h4>
 
-            <p>We've adopted an optimistic locking stragety here - we assume we can edit/delete something and that no one else
+            <p>We've adopted an optimistic locking strategy here - we assume we can edit/delete something and that no one else
                 has modified what we're attempting to edit before us.</p>
 
-            <p>This is a fairly mechanism to use, but it has it's downsides. It we attempt to edit/delete something that another
+            <p>This is a fairly simple mechanism to use, but it has it's downsides. If we attempt to edit/delete something that another
             user has edited before us, we'll get an error. This again is normal and in a real application you would code
                 for this - either let the user know that this has occurred, or do a check before the user attempts it (or both).</p>
 
-            <p>This optimistic locking is by an large handled for us by Spring JPA by the use of versioning. Each time a record is
-            changes the version will be bumped up and the result stored in the DB. When a change is attemped Spring JPA will check
+            <p>This optimistic locking is by and large handled for us by Spring JPA by the use of versioning. Each time a record is
+            changed the version will be bumped up and the result stored in the DB. When a change is attemped Spring JPA will check
             the current version against the version in the DB - if they're the the same the edit can continue, but if not an error will
             be raised.</p>
 
@@ -850,7 +850,7 @@ public class Athlete {
 </snippet>
 
             <p>Here the <code>@Version</code> annotation let's Spring JPA know that we want to version this class - the
-                rest just happens automagically!</p>
+                rest just happens automatically!</p>
 
 
             <h3>Section Break!</h3>
@@ -1036,7 +1036,7 @@ deleteSelectedRows() {
 </snippet>
 
             <p>Once all the rows have been successfully deleted we let the grid know which rows to remove. This results
-                is a much faster user experience in that the Grid only redraws removed rows, and that we now no longer make
+                in a much faster user experience in that the Grid only redraws removed rows, and that we now no longer make
             another network call to retrieve the latest Grid data.</p>
 
             <p>When we create or insert rows:</p>
