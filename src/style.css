@@ -1614,3 +1614,7 @@ input.clearable:focus {
 .passive-tab a:hover {
     cursor: default;
 }
+
+.jira-more-info {
+    display: none;
+}
