@@ -13,8 +13,8 @@ import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
 
 export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
+
     private model: SetFilterModel;
-    private suppressSorting: boolean;
 
     @QuerySelector('#selectAll')
     private eSelectAll: HTMLInputElement;
@@ -25,15 +25,12 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     @RefSelector('ag-filter-loading')
     private eFilterLoading: HTMLInputElement;
 
-
     private virtualList: VirtualList;
     private debounceFilterChanged: () => void;
 
     private eCheckedIcon: HTMLElement;
     private eUncheckedIcon: HTMLElement;
     private eIndeterminateCheckedIcon: HTMLElement;
-
-    private selected: boolean = true;
 
     constructor() {
         super();
