@@ -55,7 +55,6 @@ include '../includes/headerRow.php'; ?>
             {
                 switch ($issueType) {
                     case "Task":
-//                        return "Feature Request/Improvement";
                         return "Feature Request";
                         break;
                 }

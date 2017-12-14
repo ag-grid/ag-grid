@@ -39,10 +39,6 @@ include '../includes/navbar.php';
 $headerTitle = "Pipeline";
 include '../includes/headerRow.php';
 
-// update when doing a release
-$CURRENT_SPRINT = "3";
-$NEXT_SPRINT = "4";
-
 include '../jira_reports/jira_utilities.php';
 ?>
 
