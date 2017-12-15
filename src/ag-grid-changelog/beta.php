@@ -386,15 +386,6 @@ include '../jira_reports/jira_utilities.php';
         $("[data-toggle=popover]").popover({container: 'body'});
     });
 
-    /*
-        current state:
-            hide more info rows on search
-            only consider "parent" rows on search
-            style more info rows
-    */
-
-
-
     // more info rows
     function toggleMoreInfo(id) {
         $("#" + id).toggle();
