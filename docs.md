@@ -1,5 +1,5 @@
- - [ ] javascript-grid-getting-started/
- - [ ] best-javascript-data-grid/
+ - [x] javascript-grid-getting-started/
+ - [x] best-javascript-data-grid/
  - [ ] javascript-getting-started/
  - [ ] javascript-more-details/
  - [ ] best-react-data-grid/

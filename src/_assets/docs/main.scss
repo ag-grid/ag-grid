@@ -236,8 +236,9 @@
         margin-bottom: 1rem;
     }
 
+    // docs homepage 
     .docs-homepage-section-preview {
-        @extend .card, .mb-4;
+        @extend .card, .mb-4,  .bg-light;
 
         > div {
             @extend .card-body;
@@ -258,5 +259,95 @@
                 @extend .btn, .btn-primary;
             }
         }
+    }
+
+    #get-started-frameworks {
+        margin-left: -1rem;
+        margin-right: -1rem;
+        padding: 0;
+    }
+
+    #get-started-frameworks > div > div {
+        @extend .col-md-6, .mb-4;
+    }
+
+    // get started overview
+    .get-started-framework {
+        @extend .card, .bg-light;
+
+        > div:first-child {
+            @extend .card-img-top;
+            height: 8rem;
+            background-position-y: center;
+            background-position-x: center;
+            background-repeat: no-repeat;
+            background-size: 6rem 6rem;
+            border-bottom: 1px solid $border-color;
+        }
+
+        div:nth-child(2) {
+            @extend .card-body;
+        }
+
+        h2 {
+            @extend .card-title, h4;
+        }
+
+        p:first-child {
+            @extend .card-text;
+        }
+
+        p:last-child {
+            @extend .text-right, .card-text;
+
+            a {
+                @extend .btn, .btn-primary;
+            }
+        }
+    }
+
+    $frameworks: angular react polymer vue javascript angularjs aurelia webcomponents;
+
+    @each $framework in $frameworks {
+        .get-started-framework.card-#{$framework} > div:first-child {
+            background-image: url('../fw-logos/#{$framework}.svg');
+        }
+    }
+
+    .get-started-framework.card-javascript > div:first-child {
+        background-color: #F8DF1E;
+    }
+
+    .get-started-framework.card-react > div:first-child {
+        background-color: #282C34;
+    }
+
+    .get-started-framework.card-angular > div:first-child {
+        background-color: #1976D3;
+    }
+
+    .get-started-framework.card-angularjs > div:first-child {
+        background-color: #273238;
+    }
+    
+    .get-started-framework.card-polymer > div:first-child {
+        background-color: darken(#F4F5F6, 0);
+    }
+
+    .get-started-framework.card-vue > div:first-child {
+        background-color: darken(#FCFCFF, 0);
+    }
+
+    .get-started-framework.card-aurelia > div:first-child {
+        background-color: darken(#F4F4F4, 0);
+    }
+
+    .get-started-framework.card-webcomponents > div:first-child {
+        background-color: darken(#F9F9FA, 0);
+    }
+
+    p > img:only-child {
+        display: block;
+        margin: auto;
     }
 }

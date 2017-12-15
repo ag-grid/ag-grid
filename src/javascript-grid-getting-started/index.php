@@ -3,11 +3,11 @@ $pageTitle = "JavaScript Grid";
 $pageDescription = "JavaScript Grid";
 $pageKeyboards = "JavaScript Grid";
 $pageGroup = "basics";
+define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';
 ?>
 
 <?php
-
 $link = NULL;
 switch ($GLOBALS[framework]) {
     case 'angular':
@@ -36,96 +36,82 @@ switch ($GLOBALS[framework]) {
 $linkHref = "<a href='" . $link . "'>here</a>";
 ?>
 
-<div>
+    <h1>Choose Your Framework</h1>
 
-    <h1 class="first-h framework-select-big-title">Choose Your Framework</h1>
+<div id="get-started-frameworks" class="container-fluid"><div class="row no-gutters">
 
-    <div class="row framework-select-list">
-        <div class="col-md-3">
-            <a href="../best-javascript-data-grid/">
-                <div class="framework-select-item">
-                    <img src="../images/svg/javascript.svg" alt="JavaScript Datagrid" title="JavaScript" width="100" />
-                    <div class="framework-select-label">
-                        JavaScript
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="../best-react-data-grid/">
-                <div class="framework-select-item">
-                    <img src="../images/react_large_home.png" alt="React Datagrid" title="React"/>
-                    <div class="framework-select-label">
-                        React
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="../best-angular-2-data-grid/">
-                <div class="framework-select-item">
-                    <img src="../images/angular2_large.png" alt="Angular 2 Datagrid" title="Angular"/>
-                    <div class="framework-select-label">
-                        Angular 2+
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="../best-angularjs-data-grid/">
-                <div class="framework-select-item">
-                    <img src="../images/angularjs_large.png" alt="Angular Datagrid" title="Angular"/>
-                    <div class="framework-select-label">
-                        Angular
-                    </div>
-                </div>
-            </a>
-        </div>
+<div><div class="get-started-framework card-javascript">
+    <div></div>
+    <div>
+        <h2>JavaScript</h2>
+        <p class="card-text">Start with the vanilla flavor of the ag-Grid API.</p>
+        <p><a href="../best-javascript-data-grid/">Start With JavaScript</a></p>
     </div>
+</div></div>
 
-    <div class="row framework-select-list">
-        <div class="col-md-3">
-            <a href="../best-polymer-data-grid/">
-                <div class="framework-select-item">
-                    <img src="../images/polymer-large.png" alt="Polymer Datagrid" title="Polymer"/>
-                    <div class="framework-select-label">
-                        Polymer
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="../best-vuejs-data-grid/">
-                <div class="framework-select-item">
-                    <img src="../images/vue_large_home.png" alt="VueJS Datagrid" title="VueJS"/>
-                    <div class="framework-select-label">
-                        VueJS
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="../best-aurelia-data-grid/">
-                <div class="framework-select-item">
-                    <img src="../images/aurelia_large.png" alt="Aurelia Datagrid" title="Aurelia"/>
-                    <div class="framework-select-label">
-                        Aurelia
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-3">
-            <a href="../best-web-component-data-grid/">
-                <div class="framework-select-item">
-                    <img src="../images/webComponents_large.png" alt="Web Components Datagrid" title="Web Components"/>
-                    <div class="framework-select-label">
-                        Web Components
-                    </div>
-                </div>
-            </a>
-        </div>
+<div><div class="get-started-framework card-react">
+    <div></div>
+    <div>
+        <h2>React</h2>
+        <p class="card-text">Integrate ag-Grid in your React-based project.</p>
+        <p><a href="../best-react-data-grid/">Start With React</a></p>
     </div>
+</div></div>
 
-</div>
+<div><div class="get-started-framework card-angular">
+    <div></div>
+    <div>
+        <h2>Angular 2+</h2>
+        <p class="card-text">See how ag-Grid works in the Angular 2+ context.</p>
+        <p><a href="../best-angular-2-data-grid/">Start With Angular 2+</a></p>
+    </div>
+</div></div>
+
+<div><div class="get-started-framework card-angularjs">
+    <div></div>
+    <div>
+        <h2>AngularJS 1.X</h2>
+        <p class="card-text">Learn how to use the AngularJS 1.X ag-Grid directive.</p>
+        <p><a href="../best-angularjs-data-grid/">Start With AngularJS 1.X</a></p>
+    </div>
+</div></div>
+
+<div><div class="get-started-framework card-polymer">
+    <div></div>
+    <div>
+        <h2>Polymer</h2>
+        <p class="card-text">Use ag-Grid alongside the Polymer web component suite.</p>
+        <p><a href="../best-polymer-data-grid/">Start With Polymer</a></p>
+    </div>
+</div></div>
+
+<div><div class="get-started-framework card-vue">
+    <div></div>
+    <div>
+        <h2>Vue.js</h2>
+        <p class="card-text">Get started with the Vue.js ag-Grid component wrapper.</p>
+        <p><a href="../best-vuejs-data-grid/">Start With Vue.js</a></p>
+    </div>
+</div></div>
+
+<div><div class="get-started-framework card-aurelia">
+    <div></div>
+    <div>
+        <h2>Aurelia</h2>
+        <p class="card-text">ag-Grid plays well with Aurelia, too!</p>
+        <p><a href="../best-aurelia-data-grid/">Start With Aurelia</a></p>
+    </div>
+</div></div>
+
+<div><div class="get-started-framework card-webcomponents">
+    <div></div>
+    <div>
+        <h2>Web Components</h2>
+        <p class="card-text">ag-Grid integrates with the emerging set of standards.</p>
+        <p><a href="../best-aurelia-data-grid/">Start With Web Components</a></p>
+    </div>
+</div></div>
+
+</div></div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

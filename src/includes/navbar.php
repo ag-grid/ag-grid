@@ -1,5 +1,5 @@
 <nav>
-    <a id="logo" href="#" title="The Best HTML 5 Grid in the World">ag-Grid</a>
+    <a id="logo" href="/" title="The Best HTML 5 Grid in the World">ag-Grid</a>
 
     <button id="navbar-toggle" 
         type="button" 
