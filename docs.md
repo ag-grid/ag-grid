@@ -1,7 +1,7 @@
  - [x] javascript-grid-getting-started/
  - [x] best-javascript-data-grid/
- - [ ] javascript-getting-started/
- - [ ] javascript-more-details/
+ - [x] javascript-getting-started/
+ - [ ] src/javascript-more-details/index.php
  - [ ] best-react-data-grid/
  - [ ] react-getting-started/
  - [ ] react-more-details/

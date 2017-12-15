@@ -43,11 +43,6 @@ start index.html
 open index.html
 </snippet>
 
-    <p>With those 2 commands you should now see the following application:</p>
-<div>
-
-</div>
-
     <p>Great! A working Grid application in no time at all. Let's break down the application into its main parts:</p>
 
     <h3>Row Data</h3>
