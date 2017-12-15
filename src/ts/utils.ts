@@ -1095,7 +1095,8 @@ export class Utils {
 
     // firefox doesn't have event.path set, or any alternative to it, so we hack
     // it in. this is needed as it's to late to work out the path when the item is
-    // removed from the dom
+    // removed from the dom. used by MouseEventService, where it works out if a click
+    // was from the current grid, or a detail grid (master / detail).
     static addAgGridEventPath(event: Event): void {
         (<any>event).__agGridEventPath = this.getEventPath(event);
     }
