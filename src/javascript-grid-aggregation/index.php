@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Aggregation</h2>
+    <h2 class="heading-enterprise">Aggregation</h2>
 
     <p>
         When grouping, you can apply an aggregation function to any column to populate the group

@@ -93,4 +93,4 @@ meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
         <?php include 'documentation_menu.php'; ?>
     </aside>
 
-    <section id="content">
+    <section id="content" class="<?php echo defined('skipInPageNav') ? 'skip-in-page-nav' : '' ?>">

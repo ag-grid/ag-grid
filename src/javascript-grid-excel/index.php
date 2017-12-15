@@ -8,7 +8,8 @@ include '../documentation-main/documentation_header.php';
 
 <p>
 
-    <h1><img src="../images/enterprise_50.png" title="Enterprise Feature"/> JavaScript Grid Excel</h1>
+    <h1 class="heading-enterprise">JavaScript Grid Excel</h1>
+
     <h2>Exporting ag-Grid Data to Excel</h2>
 
     <p>

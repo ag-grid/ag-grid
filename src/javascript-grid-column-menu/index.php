@@ -7,8 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Column Menu</h2>
+    <h1 class="heading-enterprise">Column Menu</h1>
 
     <h3>Showing the Column Menu</h3>
 

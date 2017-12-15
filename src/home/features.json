@@ -1,1 +1,525 @@
-[{"title":"Column Definitions","enterprise":false,"description":"Columns are configured in the grid by providing a list of <span class=\"feature-highlight\">Column Definitions</span>.\nThe attributes you set on the column definitions define how the columns behave e.g. title, width etc.","src":"javascript-grid-features/images/columns.gif","snippet":"columnDefinitions = [\n    {field: 'firstName', width: 100px},\n    {field: 'lastName', width: 100px},\n    {field: 'phoneNumber', width: 200px}\n];","level":0},{"title":"Column Groups","enterprise":false,"description":"Columns can be grouped together into <span class=\"feature-highlight\">Column Groups</span>. Additionally you\ncan configure groups to be expandable to show and hide columns within the group.","src":"javascript-grid-features/images/columnGroups.gif","snippet":"columnDefinitions = [\n    {group: 'User Details', children: [\n        {field: 'firstName', pinned: 'left'},\n        {field: 'lastName', width: 100},\n        {field: 'phoneNumber'}\n    ]};\n];","level":0},{"title":"Column Headers","enterprise":false,"description":"The display of column headers can be fine-tuned to change <span class=\"feature-highlight\">Header Height</span> and \n    <span class=\"feature-highlight\">Text Orientation</span> for example.","src":"javascript-grid-features/images/columnHeaders.gif","snippet":"// set heights as a grid option\ngridOptions = {\n    headerHeight: 25,\n    headerHeight: 40    \n}\n\n// display text vertically using CSS\n.ag-header-cell-label .ag-header-cell-text {\n    transform: rotate(90deg);\n}","level":0},{"title":"Column Resizing","enterprise":false,"description":"<span class=\"feature-highlight\">Resize columns</span> by dragging the edge of the column header, <span class=\"feature-highlight\">Auto Fill</span> to fill the grid width, or <span class=\"feature-highlight\">Auto Size</span> columns to fit their content.","src":"javascript-grid-features/images/columnResize.gif","snippet":"// get columns to fit the grid width\napi.sizeColumnsToFit();\n\n// get columns to fit content\ncolumnApi.autoSizeAllColumns();","level":0},{"title":"Column Filter","enterprise":false,"description":"<span class=\"feature-highlight\">Column Filters</span> appear in the column menu.\n        The grid comes with filters out of the box: text, number, date and set filters. You can also create your\n        own customer filter.","src":"javascript-grid-features/images/textFilter.gif","snippet":"gridOptions = {\n    // turn on filtering\n    enableFilter: true,\n    ...\n    columnDefs: [\n    {field: \"athlete\", filter: \"text\"},\n    {field: \"age\",     filter: \"number\"},\n    {field: \"sport\",   filter: MyCustomerFilter}\n]}","level":0},{"title":"Text Filter","enterprise":false,"description":"<span class=\"feature-highlight\">Text Filter</span> allows filtering text strings with \n{equals, notEqual, contains, notContains, startsWith, endsWith}.","src":"javascript-grid-features/images/textFilter.gif","snippet":"colDef = {\n    field: 'athlete',\n    filter: 'text',\n    filterOptions: {'equals', 'contains'}\n}","level":1},{"title":"Number Filter","enterprise":false,"description":"<span class=\"feature-highlight\">Number Filter</span> allows filtering numbers with \n{equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}","src":"javascript-grid-features/images/numberFilter.gif","snippet":"colDef = {\n    field: 'totalWinnings',\n    filter: 'number'\n}","level":1},{"title":"Date Filter","enterprise":false,"description":"<span class=\"feature-highlight\">Date Filter</span> allows filtering dates with \n{equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}.","src":"javascript-grid-features/images/dateFilter.gif","snippet":"colDef = {\n    field: 'date',\n    filter: 'date'\n}","level":1},{"title":"Set Filter","enterprise":true,"description":"<span class=\"feature-highlight\">Set Filter</span> works like Excel, providing checkboxes to select values from a set.","src":"javascript-grid-features/images/setFilter.gif","snippet":"colDef = {\n    field: 'country',\n    filter: 'set'\n}","level":1},{"title":"Custom Filter","enterprise":false,"description":"Create your own Custom Filter to match your own business requirements.","src":"javascript-grid-features/images/customFilter.gif","snippet":"colDef = {\n    field: 'name',\n    filter: MyCustomFilter\n}","level":1},{"title":"Quick Filter","enterprise":false,"description":"<span class=\"feature-highlight\">Quick Filter</span> filters all columns simultaneously with a simple text search,\njust like how you filter your Gmail.","src":"javascript-grid-features/images/quickFilter.gif","snippet":"// you pass the filter text to the grid\n// via the grid's API\napi.setQuickFilter(searchText)","level":0},{"title":"External Filter","enterprise":false,"description":"<span class=\"feature-highlight\">External Filter</span> allows you to build filters that live\noutside of the grid. For example, you can include your own widgets outside the grid for your own filter.","src":"javascript-grid-features/images/externalFilter.gif","snippet":null,"level":0},{"title":"Row Sorting","enterprise":false,"description":"<span class=\"feature-highlight\">Row Sorting</span> will sort the data. Sort a column by clicking the header. \nSort multiple columns by holding down shift.","src":"javascript-grid-features/images/rowSorting.gif","snippet":"// enable filtering with grid option\ngridOptions = {\n    enableSorting: true,\n    ...\n}","level":0},{"title":"Row Selection","enterprise":false,"description":"<span class=\"feature-highlight\">Row Selection</span> to select rows. Choose between click selection or checkbox selection. Selecting groups will select children.","src":"javascript-grid-features/images/rowSelection.gif","snippet":"// enable sorting with grid option\ngridOptions = {\n    // set to 'single' or 'multiple'\n    rowSelection: 'multiple',\n    ...\n}","level":0},{"title":"Range Selection","enterprise":true,"description":"Drag the mouse over cells to create a <span class=\"feature-highlight\">Range Selection</span>. \nThis is handy for highlighting data or for copying to the clipboard.","src":"javascript-grid-features/images/rangeSelection.gif","snippet":"// enable sorting with grid option\ngridOptions = {\n    enableRangeSelection: true,\n    ...\n}","level":0},{"title":"Grid Size","enterprise":false,"description":"Set the <span class=\"feature-highlight\">Width and Height</span> of the grid using CSS. If your application\nchanges the size of the grid at run time, the grid will dynamically adjust to the new size.","src":"javascript-grid-features/images/gridSize.gif","snippet":"<!-- set using exact pixel -->\n<ag-grid style=\"height: 200px; width: 400px;\"/>\n\n<!-- or set using percent -->\n<ag-grid style=\"height: 100%; width: 100%;\"/>","level":0},{"title":"Column Spanning","enterprise":false,"description":"<span class=\"feature-highlight\">Column Spanning</span> allows cells to span columns, similar to cell span in Excel","src":"javascript-grid-features/images/columnSpanning.gif","snippet":"colDef = {\n    field: 'country',\n    colSpan: function(params) {\n        // span 2 cols for Russia, otherwise 1\n        var country = params.data.country;\n        return country==='Russia' ? 2 : 1;\n    }\n    ...\n};","level":0},{"title":"Column Pinning","enterprise":false,"description":"Use <span class=\"feature-highlight\">Columm Pinning</span> to pin one or more columns to the left\nor to the right. Pinned columns are always present and not impacted by horizontal scroll.","src":"javascript-grid-features/images/columnPinning.gif","snippet":"var columns = [\n    {field: 'athlete', pinned: 'left'},\n    {field: 'total', pinned: 'right'},\n    ...\n]","level":0},{"title":"Row Pinning","enterprise":false,"description":"Use <span class=\"feature-highlight\">Pinned Rows</span> to pin one or more rows to the top\nor the bottom. Pinned rows are always present and not impacted by vertical scroll.","src":"javascript-grid-features/images/rowPinning.gif","snippet":"// set pinned column using grid property\ngridOptions = {\n    pinnedTopRowData: [],\n    pinnedBottomRowData: [],\n    ...\n}","level":0},{"title":"Row Height","enterprise":false,"description":"Rows can have different <span class=\"feature-highlight\">Row Height</span>. You can\neven change the row height dynamically at run time.","src":"javascript-grid-features/images/rowHeight.gif","snippet":"gridOptions = {\n    // getRowHeight is a grid callback\n    getRowHeight = function(params) {\n        // 25 px for even rows, 50 px for other rows\n        var rowIndex = params.node.rowIndex;\n        var rowEven = rowIndex % 2 === 0;\n        return rowEven ? 25 : 50;\n}","level":0},{"title":"Cell Styling","enterprise":false,"description":"Use CSS rules to define <span class=\"feature-highlight\">Cell Style</span> based on\ndata content, e.g. put a red background onto cells that have negative values, and green on values\ngreater than 100.","src":"javascript-grid-features/images/cellStyling.gif","snippet":"cellClassRules = {\n    // put CSS class 'highlight-negative' onto cells\n    // that have negative values.\n    'highlight-negative': 'x < 0'\n    'highlight-large-value': 'x > 100'\n}","level":0},{"title":"Value Handlers","enterprise":false,"description":"Each grid column typically has a field where it gets the value to display. However you can\n        provide more logic here to get finer control over how data is retrieved (for display) and stored (after editing)\n        with the family of <span class=\"feature-highlight\">Value Handlers</span>.","src":null,"snippet":"var columns = [\n    // two simple cols, A and B\n    {field: 'a'},\n    {field: 'b'},\n    // total column, giving sum of A and B\n    {headerName: 'Total', \n        valueGetter: function(params) {\n            var data = params.data;\n            return data.a + data.b;\n        }\n    },\n    {field: 'price', \n        // simple currency formatter putting in dollar sign\n        valueFormatter: function(params){\n            return '$' + params.value;\n        },\n    }\n];","level":0},{"title":"Value Getters & Value Formatters","enterprise":false,"description":"<span class=\"feature-highlight\">Value Getters &amp; Value Formatters</span> are about getting and formatting the\ndata to display. Use <span class=\"feature-highlight\">Value Getters</span> when the data is not a simple field.\nUse <span class=\"feature-highlight\">Value Formatters</span> to format values for display.","src":null,"snippet":"var columns = [\n    // two simple cols, A and B\n    {field: 'a'},\n    {field: 'b'},\n    // total column, giving sum of A and B\n    {headerName: 'Total', \n        valueGetter: function(params) {\n            var data = params.data;\n            return data.a + data.b;\n        }\n    },\n    {field: 'price', \n        // simple currency formatter putting in dollar sign\n        valueFormatter: function(params){\n            return '$' + params.value;\n        },\n    }\n];","level":1},{"title":"Setters and Parsers","enterprise":false,"description":"<span class=\"feature-highlight\">Value Setters and Value Parsers</span> are the inverse of value getters\nand value formatters. Value setters are for placing values into data when field cannot be used. Value parser is for parsing\nedited values, e.g. removing formatting before storing into the data.","src":null,"snippet":"var columns = [\n    // this example assumes the data is in an array,\n    // so you want to access indexes of the array rather\n    // than using field\n    {\n        // value getter returns first array element\n        valueGetter: function(params) {\n            var data = params.data;\n            return data[0];\n        },\n        // value setter sets first array element\n        valueSetter: function(params) {\n            var data = params.data;\n            data[0] = params.newValue;\n        }\n    },\n    // this column is for a number, the default editor sets\n    // strings, so we convert the string to a number\n    {\n        field: 'amount',\n        valueFormatter: function(params){\n            return Number(params.newValue);\n        }\n    }\n];","level":1},{"title":"Expressions","enterprise":false,"description":"<span class=\"feature-highlight\">Expressions</span> allow you to use simple strings instead\nof functions for value getters, setters, formatters and parsers.","src":null,"snippet":"var columns = [\n    {        \n        valueGetter: 'data[0]',\n        valueSetter: 'data[0] = newValue',\n        valueFormatter: '\"$\"+value',\n        valueParser: 'Number(params.newValue)'\n    }\n];","level":1},{"title":"Value Cache","enterprise":false,"description":"The <span class=\"feature-highlight\">Value Cache</span> is used to store\nresults of value getters. It is always on, enhancing the performance of the grid.","src":null,"snippet":null,"level":1},{"title":"Reference Data","enterprise":false,"description":"Use <span class=\"feature-highlight\">Reference Data</span> for easier editing\nof data that uses reference data for display. For example, you might have country codes in your data e.g.\n{IE, UK, USA} but you display values e.g. {Ireland, Great Britain, United States of America}). Using reference\ndata simplifies this, especially if editing.","src":null,"snippet":null,"level":1},{"title":"Cell Rendering","enterprise":false,"description":"Use <span class=\"feature-highlight\">Cell Rendering</span> to have cells rendering values other than simple strings.\nFor example, put country flags beside country names, or push buttons for actions.","src":"javascript-grid-features/images/cellRendering.gif","snippet":"colDef = {\n    field: 'country',\n    cellRenderer: MyCountryCellRenderer\n    ...\n}","level":0},{"title":"Cell Editing","enterprise":false,"description":"Users can update data with <span class=\"feature-highlight\">Cell Editing</span>. Use one of the provided\ncell editors or create your own to suit your business needs.","src":"javascript-grid-features/images/cellEditing.gif","snippet":"colDef = {\n    field: 'country',\n    cellEditor: 'richSelect',\n    cellEditorParams: {\n        values: ['Ireland','United Kingdom']\n    }\n    ...\n}","level":0},{"title":"Keyboard Navigation","enterprise":false,"description":"With <span class=\"feature-highlight\">Keyboard Navigation</span> users can use cursor keys and tab keys\nto navigate between cells.","src":"javascript-grid-features/images/keyboardNavigation.gif","snippet":null,"level":0},{"title":"Touch Support","enterprise":false,"description":"User can navigate the features of the grid on a touch device with the built-in \n<span class=\"feature-highlight\">Touch Support</span>. You don't need to do anything, it works\nout of the box.","src":"javascript-grid-features/images/touchSupport.gif","snippet":null,"level":0},{"title":"Animation","enterprise":false,"description":"Rows in the grid will <span class=\"feature-highlight\">Animate</span> into place\nafter the user sorts or filters.","src":"javascript-grid-features/images/animation.gif","snippet":"gridOptions = {\n    animateRows: true\n    ...\n}","level":0},{"title":"Accessing Data","enterprise":false,"description":"Once data is in the grid, you can <span class=\"feature-highlight\">Access the Data</span> using\nthe grid's API.","src":"javascript-grid-features/images/accessingData.gif","snippet":"// get the number of displayed rows\ngridApi.getDisplayedRowCount()\n\n// get the first row\ngridApi.getDisplayedRowAtIndex(0);","level":0},{"title":"Pagination","enterprise":false,"description":"Use <span class=\"feature-highlight\">Pagination</span> when you don't want the user\nto have to scroll. Pagination allows viewing rows one page at a time.","src":"javascript-grid-features/images/pagination.gif","snippet":"gridOptions = {\n    pagination: true,\n    ...\n}","level":0},{"title":"Updating Data","enterprise":false,"description":"Data can be <span class=\"feature-highlight\">updated in real time</span>. The grid can highlight\nthe change by flashing the cells or by animation inside the cell as the cell refreshes.","src":"javascript-grid-features/images/dataUpdate.gif","snippet":"// get a reference to the right row\nvar rowNode = api.getRowNode('22');\n\n// set new value into the row\nrowNode.setDataValue('bid', 33.24);","level":0},{"title":"View Refresh","enterprise":false,"description":"If the data changes outside of the grid, get the grid to do a <span class=\"feature-highlight\">View Refresh</span> \nto update the UI to the latest values. The grid will use change detection to only refresh values that have changed.","src":"javascript-grid-features/images/viewRefresh.gif","snippet":"// refresh all cells in the grid\ngridApi.refreshCells();","level":0},{"title":"Change Detection","enterprise":false,"description":"As you change data inside the grid, the grid runs <span class=\"feature-highlight\">Change Detection</span> to\ncheck if any other cells need to be updated to reflect the change.","src":"javascript-grid-features/images/changeDetection.gif","snippet":null,"level":0},{"title":"Internationalisation","enterprise":false,"description":"Support multiple languages with <span class=\"feature-highlight\">Internationalisation</span>.","src":"javascript-grid-features/images/internationalisation.gif","snippet":"gridOptions = {\n    localeText: {\n        lessThanOrEqual: 'menor o igual',\n        greaterThanOrEqual: 'mayor o igual',\n        ...\n    }\n}","level":0},{"title":"Performance","enterprise":false,"description":"The core grid engine gives <span class=\"feature-highlight\">Performance</span> unlike\nthat seen before. The grid uses row and column virtualisation, animation frames and many other \ntechniques.","src":"javascript-grid-features/images/performance.gif","snippet":null,"level":0},{"title":"Accessibility","enterprise":false,"description":"The grid has ARIA roles inside the cells for <span class=\"feature-highlight\">Accessibility</span> \nto enable navigation with screen readers.","level":0},{"title":"Full Width Rows","enterprise":false,"description":"<span class=\"feature-highlight\">Full Width Rows</span> allow you to have one cell that\nspans the entire width of the tables. This allows a card layout to work alongside the normal cells.","src":"javascript-grid-features/images/fullWidth.gif","snippet":"gridOptions = {\n     isFullWidthCell: function(rowNode) {\n        // return every second row as full width\n        return rowNode.rowIndex % 2 === 0;\n    },\n    // use custom component for the full width row\n    fullWidthCellRenderer: MyCardComponent\n}","level":0},{"title":"Master Detail","enterprise":true,"description":"Use <span class=\"feature-highlight\">Master Detail</span> to expand rows and have another grid\nwith different columns inside.","src":"javascript-grid-features/images/masterDetail.gif","snippet":null,"level":0},{"title":"Aligned Grids","enterprise":false,"description":"Have one or more grids horizontally <span class=\"feature-highlight\">Aligned</span> so that any\ncolumn changes in one grid impact the other grid. This allows two grids with different data to be kept horizontally\nin sync.","src":"javascript-grid-features/images/alignedGrids.gif","snippet":null,"level":0},{"title":"CSV Export","enterprise":false,"description":"Use <span class=\"feature-highlight\">CSV Export</span> to take data out of the grid and into another\napplication for further processing such as Excel.","src":"javascript-grid-features/images/csvExport.gif","snippet":null,"level":0},{"title":"Excel Export","enterprise":true,"description":"Export in native <span class=\"feature-highlight\">Excel Format</span> which will maintain the column\nwidths and also allow exporting of styles. For example, you can color cells in the grid and have the equivalent cells\ncolored in the Excel export.","src":"javascript-grid-features/images/excelExport.gif","snippet":null,"level":0},{"title":"RTL","enterprise":false,"description":"Use <span class=\"feature-highlight\">Right to Left</span> alignment to allow languages such as \nArabic &amp; Hebrew.","src":"javascript-grid-features/images/rtl.gif","snippet":null,"level":0},{"title":"Custom Icons","enterprise":false,"description":"All the icons in the grid can be replaced with your own <span class=\"feature-highlight\">Custom Icons</span>.\nYou can either use CSS or provide your own images.","src":"javascript-grid-features/images/customIcons.gif","snippet":"gridOptions = {\n    icons: {\n        // use font awesome for menu icons\n        menu: '<i class=\"fa fa-bath\"/>',\n        filter: '<i class=\"fa fa-long-arrow-down\"/>',\n        columns: '<i class=\"fa fa-handshake-o\"/>'\n    }\n    ...\n}","level":0},{"title":"Overlays","enterprise":false,"description":"Full control of <span class=\"feature-highlight\">Overlays</span> to display messages to the user\non top of the grid","src":"javascript-grid-features/images/overlays.gif","snippet":null,"level":0},{"title":"Layout For Print","enterprise":false,"description":"Use <span class=\"feature-highlight\">For Print</span> to have the grid render without using\nany scrollbars. This is useful for printing the grid, where all rows should be printed, not just what's\nvisible on the screen.","src":null,"snippet":null,"level":0},{"title":"Grouping Rows","enterprise":true,"description":"Use <span class=\"feature-highlight\">Grouping Rows</span> to group the data over selected\ndimensions. You can set the data to group by specific columns, or allow the user to drag and drop columns\nof their choice and have it grouped on the fly.","src":"javascript-grid-features/images/rowGroup.gif","snippet":"columnDefs = [\n    {field: 'country', rowGroup: true},\n    {field: 'sport'},\n    ...\n]","level":0},{"title":"Tree Data","enterprise":true,"description":"Use <span class=\"feature-highlight\">Tree Data</span> to display data that has parent / child\nrelationships where the parent / child relationships are provided as part of the data. For example, \na folder can contain zero or more files and other folders.","src":"javascript-grid-features/images/treeData.gif","snippet":null,"level":0},{"title":"Aggregation","enterprise":true,"description":"When grouping you can also do <span class=\"feature-highlight\">Aggregation</span> to get aggregate\nvalues for the data i.e. sum, min, max etc. Use the built in aggregate functions or create your own.","src":"javascript-grid-features/images/aggregation.gif","snippet":"columnDefs = [\n    {field: 'country', rowGroup: true},\n    {field: 'gold', aggFunc: 'sum'},\n    ...\n]","level":0},{"title":"Pivoting","enterprise":true,"description":"Make columns out of values by <span class=\"feature-highlight\">Pivoting</span> on the data,\nsimilar to Pivot Tables in Excel.","src":"javascript-grid-features/images/pivot.gif","snippet":"columnDefs = [\n    {field: 'country', rowGroup: true},\n    {field: 'sport', pivot: true},\n    {field: 'gold', aggFunc: 'sum'},\n    ...\n]","level":0},{"title":"Tool Panel","enterprise":true,"description":"The <span class=\"feature-highlight\">Tool Panel</span> allows the user to manipulate the\nlist of columns, such as show and hide, or drag columns to group or pivot.","src":"javascript-grid-features/images/toolPanel.gif","snippet":"gridOptions: {\n    showToolPanel: true,\n    ...\n}","level":0},{"title":"Clipboard","enterprise":true,"description":"Copy and paste data to and from the <span class=\"feature-highlight\">Clipboard</span>. Users will be\nable to edit data in Excel, then copy the data back into the grid when done.","src":"javascript-grid-features/images/clipboard.gif","snippet":null,"level":0},{"title":"Column Menu","enterprise":true,"description":"The <span class=\"feature-highlight\">Column Menu</span> drops down from the column header. Use the default\noptions or provide your own.","src":"javascript-grid-features/images/columnMenu.gif","snippet":null,"level":0},{"title":"Context Menu","enterprise":true,"description":"The <span class=\"feature-highlight\">Context Menu</span> appears when you right click on a cell. Use the\ndefault options or provide your own.","src":"javascript-grid-features/images/contextMenu.gif","snippet":null,"level":0},{"title":"Status Bar","enterprise":true,"description":"The <span class=\"feature-highlight\">Status Panel</span> appears on the bottom of the grid and shows \naggregations (sum, min, max etc.) when you select a range of cells using range selection. This is similar to what\nhappens in Excel.","src":"javascript-grid-features/images/statusBar.gif","snippet":null,"level":0},{"title":"License Key","enterprise":true,"description":"Each customer of ag-Grid Enterprise will be given a <span class=\"feature-highlight\">License Key</span> to\nput into their application.","src":null,"snippet":null,"level":0}]
+[
+    {
+        "title": "Column Definitions",
+        "enterprise": false,
+        "description":
+            "Columns are configured in the grid by providing a list of <span class=\"feature-highlight\">Column Definitions</span>.\nThe attributes you set on the column definitions define how the columns behave e.g. title, width etc.",
+        "src": "javascript-grid-features/images/columns.gif",
+        "snippet": "columnDefinitions = [\n    {field: 'firstName', width: 100px},\n    {field: 'lastName', width: 100px},\n    {field: 'phoneNumber', width: 200px}\n];",
+        "level": 0
+    },
+    {
+        "title": "Column Groups",
+        "enterprise": false,
+        "description":
+            "Columns can be grouped together into <span class=\"feature-highlight\">Column Groups</span>. Additionally you\ncan configure groups to be expandable to show and hide columns within the group.",
+        "src": "javascript-grid-features/images/columnGroups.gif",
+        "snippet":
+            "columnDefinitions = [\n    {group: 'User Details', children: [\n        {field: 'firstName', pinned: 'left'},\n        {field: 'lastName', width: 100},\n        {field: 'phoneNumber'}\n    ]};\n];",
+        "level": 0
+    },
+    {
+        "title": "Column Headers",
+        "enterprise": false,
+        "description":
+            "The display of column headers can be fine-tuned to change <span class=\"feature-highlight\">Header Height</span> and \n    <span class=\"feature-highlight\">Text Orientation</span> for example.",
+        "src": "javascript-grid-features/images/columnHeaders.gif",
+        "snippet":
+            "// set heights as a grid option\ngridOptions = {\n    headerHeight: 25,\n    headerHeight: 40    \n}\n\n// display text vertically using CSS\n.ag-header-cell-label .ag-header-cell-text {\n    transform: rotate(90deg);\n}",
+        "level": 0
+    },
+    {
+        "title": "Column Resizing",
+        "enterprise": false,
+        "description":
+            "<span class=\"feature-highlight\">Resize columns</span> by dragging the edge of the column header, <span class=\"feature-highlight\">Auto Fill</span> to fill the grid width, or <span class=\"feature-highlight\">Auto Size</span> columns to fit their content.",
+        "src": "javascript-grid-features/images/columnResize.gif",
+        "snippet": "// get columns to fit the grid width\napi.sizeColumnsToFit();\n\n// get columns to fit content\ncolumnApi.autoSizeAllColumns();",
+        "level": 0
+    },
+    {
+        "title": "Column Filter",
+        "enterprise": false,
+        "description":
+            "<span class=\"feature-highlight\">Column Filters</span> appear in the column menu.\n        The grid comes with filters out of the box: text, number, date and set filters. You can also create your\n        own customer filter.",
+        "src": "javascript-grid-features/images/textFilter.gif",
+        "snippet":
+            "gridOptions = {\n    // turn on filtering\n    enableFilter: true,\n    ...\n    columnDefs: [\n    {field: \"athlete\", filter: \"text\"},\n    {field: \"age\",     filter: \"number\"},\n    {field: \"sport\",   filter: MyCustomerFilter}\n]}",
+        "level": 0
+    },
+    {
+        "title": "Text Filter",
+        "enterprise": false,
+        "description": "<span class=\"feature-highlight\">Text Filter</span> allows filtering text strings with \n{equals, notEqual, contains, notContains, startsWith, endsWith}.",
+        "src": "javascript-grid-features/images/textFilter.gif",
+        "snippet": "colDef = {\n    field: 'athlete',\n    filter: 'text',\n    filterOptions: {'equals', 'contains'}\n}",
+        "level": 1
+    },
+    {
+        "title": "Number Filter",
+        "enterprise": false,
+        "description":
+            "<span class=\"feature-highlight\">Number Filter</span> allows filtering numbers with \n{equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}",
+        "src": "javascript-grid-features/images/numberFilter.gif",
+        "snippet": "colDef = {\n    field: 'totalWinnings',\n    filter: 'number'\n}",
+        "level": 1
+    },
+    {
+        "title": "Date Filter",
+        "enterprise": false,
+        "description":
+            "<span class=\"feature-highlight\">Date Filter</span> allows filtering dates with \n{equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}.",
+        "src": "javascript-grid-features/images/dateFilter.gif",
+        "snippet": "colDef = {\n    field: 'date',\n    filter: 'date'\n}",
+        "level": 1
+    },
+    {
+        "title": "Set Filter",
+        "enterprise": true,
+        "description": "<span class=\"feature-highlight\">Set Filter</span> works like Excel, providing checkboxes to select values from a set.",
+        "src": "javascript-grid-features/images/setFilter.gif",
+        "snippet": "colDef = {\n    field: 'country',\n    filter: 'set'\n}",
+        "level": 1
+    },
+    {
+        "title": "Custom Filter",
+        "enterprise": false,
+        "description": "Create your own Custom Filter to match your own business requirements.",
+        "src": "javascript-grid-features/images/customFilter.gif",
+        "snippet": "colDef = {\n    field: 'name',\n    filter: MyCustomFilter\n}",
+        "level": 1
+    },
+    {
+        "title": "Quick Filter",
+        "enterprise": false,
+        "description": "<span class=\"feature-highlight\">Quick Filter</span> filters all columns simultaneously with a simple text search,\njust like how you filter your Gmail.",
+        "src": "javascript-grid-features/images/quickFilter.gif",
+        "snippet": "// you pass the filter text to the grid\n// via the grid's API\napi.setQuickFilter(searchText)",
+        "level": 0
+    },
+    {
+        "title": "External Filter",
+        "enterprise": false,
+        "description":
+            "<span class=\"feature-highlight\">External Filter</span> allows you to build filters that live\noutside of the grid. For example, you can include your own widgets outside the grid for your own filter.",
+        "src": "javascript-grid-features/images/externalFilter.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Row Sorting",
+        "enterprise": false,
+        "description":
+            "<span class=\"feature-highlight\">Row Sorting</span> will sort the data. Sort a column by clicking the header. \nSort multiple columns by holding down shift.",
+        "src": "javascript-grid-features/images/rowSorting.gif",
+        "snippet": "// enable filtering with grid option\ngridOptions = {\n    enableSorting: true,\n    ...\n}",
+        "level": 0
+    },
+    {
+        "title": "Row Selection",
+        "enterprise": false,
+        "description":
+            "<span class=\"feature-highlight\">Row Selection</span> to select rows. Choose between click selection or checkbox selection. Selecting groups will select children.",
+        "src": "javascript-grid-features/images/rowSelection.gif",
+        "snippet": "// enable sorting with grid option\ngridOptions = {\n    // set to 'single' or 'multiple'\n    rowSelection: 'multiple',\n    ...\n}",
+        "level": 0
+    },
+    {
+        "title": "Range Selection",
+        "enterprise": true,
+        "description":
+            "Drag the mouse over cells to create a <span class=\"feature-highlight\">Range Selection</span>. \nThis is handy for highlighting data or for copying to the clipboard.",
+        "src": "javascript-grid-features/images/rangeSelection.gif",
+        "snippet": "// enable sorting with grid option\ngridOptions = {\n    enableRangeSelection: true,\n    ...\n}",
+        "level": 0
+    },
+    {
+        "title": "Grid Size",
+        "enterprise": false,
+        "description":
+            "Set the <span class=\"feature-highlight\">Width and Height</span> of the grid using CSS. If your application\nchanges the size of the grid at run time, the grid will dynamically adjust to the new size.",
+        "src": "javascript-grid-features/images/gridSize.gif",
+        "snippet":
+            "<!-- set using exact pixel -->\n<ag-grid style=\"height: 200px; width: 400px;\"/>\n\n<!-- or set using percent -->\n<ag-grid style=\"height: 100%; width: 100%;\"/>",
+        "level": 0
+    },
+    {
+        "title": "Column Spanning",
+        "enterprise": false,
+        "description": "<span class=\"feature-highlight\">Column Spanning</span> allows cells to span columns, similar to cell span in Excel",
+        "src": "javascript-grid-features/images/columnSpanning.gif",
+        "snippet":
+            "colDef = {\n    field: 'country',\n    colSpan: function(params) {\n        // span 2 cols for Russia, otherwise 1\n        var country = params.data.country;\n        return country==='Russia' ? 2 : 1;\n    }\n    ...\n};",
+        "level": 0
+    },
+    {
+        "title": "Column Pinning",
+        "enterprise": false,
+        "description":
+            "Use <span class=\"feature-highlight\">Columm Pinning</span> to pin one or more columns to the left\nor to the right. Pinned columns are always present and not impacted by horizontal scroll.",
+        "src": "javascript-grid-features/images/columnPinning.gif",
+        "snippet": "var columns = [\n    {field: 'athlete', pinned: 'left'},\n    {field: 'total', pinned: 'right'},\n    ...\n]",
+        "level": 0
+    },
+    {
+        "title": "Row Pinning",
+        "enterprise": false,
+        "description":
+            "Use <span class=\"feature-highlight\">Pinned Rows</span> to pin one or more rows to the top\nor the bottom. Pinned rows are always present and not impacted by vertical scroll.",
+        "src": "javascript-grid-features/images/rowPinning.gif",
+        "snippet": "// set pinned column using grid property\ngridOptions = {\n    pinnedTopRowData: [],\n    pinnedBottomRowData: [],\n    ...\n}",
+        "level": 0
+    },
+    {
+        "title": "Row Height",
+        "enterprise": false,
+        "description": "Rows can have different <span class=\"feature-highlight\">Row Height</span>. You can\neven change the row height dynamically at run time.",
+        "src": "javascript-grid-features/images/rowHeight.gif",
+        "snippet":
+            "gridOptions = {\n    // getRowHeight is a grid callback\n    getRowHeight = function(params) {\n        // 25 px for even rows, 50 px for other rows\n        var rowIndex = params.node.rowIndex;\n        var rowEven = rowIndex % 2 === 0;\n        return rowEven ? 25 : 50;\n}",
+        "level": 0
+    },
+    {
+        "title": "Cell Styling",
+        "enterprise": false,
+        "description":
+            "Use CSS rules to define <span class=\"feature-highlight\">Cell Style</span> based on\ndata content, e.g. put a red background onto cells that have negative values, and green on values\ngreater than 100.",
+        "src": "javascript-grid-features/images/cellStyling.gif",
+        "snippet":
+            "cellClassRules = {\n    // put CSS class 'highlight-negative' onto cells\n    // that have negative values.\n    'highlight-negative': 'x < 0'\n    'highlight-large-value': 'x > 100'\n}",
+        "level": 0
+    },
+    {
+        "title": "Value Handlers",
+        "enterprise": false,
+        "description":
+            "Each grid column typically has a field where it gets the value to display. However you can\n        provide more logic here to get finer control over how data is retrieved (for display) and stored (after editing)\n        with the family of <span class=\"feature-highlight\">Value Handlers</span>.",
+        "src": null,
+        "snippet":
+            "var columns = [\n    // two simple cols, A and B\n    {field: 'a'},\n    {field: 'b'},\n    // total column, giving sum of A and B\n    {headerName: 'Total', \n        valueGetter: function(params) {\n            var data = params.data;\n            return data.a + data.b;\n        }\n    },\n    {field: 'price', \n        // simple currency formatter putting in dollar sign\n        valueFormatter: function(params){\n            return '$' + params.value;\n        },\n    }\n];",
+        "level": 0
+    },
+    {
+        "title": "Value Getters & Value Formatters",
+        "enterprise": false,
+        "description":
+            "<span class=\"feature-highlight\">Value Getters &amp; Value Formatters</span> are about getting and formatting the\ndata to display. Use <span class=\"feature-highlight\">Value Getters</span> when the data is not a simple field.\nUse <span class=\"feature-highlight\">Value Formatters</span> to format values for display.",
+        "src": null,
+        "snippet":
+            "var columns = [\n    // two simple cols, A and B\n    {field: 'a'},\n    {field: 'b'},\n    // total column, giving sum of A and B\n    {headerName: 'Total', \n        valueGetter: function(params) {\n            var data = params.data;\n            return data.a + data.b;\n        }\n    },\n    {field: 'price', \n        // simple currency formatter putting in dollar sign\n        valueFormatter: function(params){\n            return '$' + params.value;\n        },\n    }\n];",
+        "level": 1
+    },
+    {
+        "title": "Setters and Parsers",
+        "enterprise": false,
+        "description":
+            "<span class=\"feature-highlight\">Value Setters and Value Parsers</span> are the inverse of value getters\nand value formatters. Value setters are for placing values into data when field cannot be used. Value parser is for parsing\nedited values, e.g. removing formatting before storing into the data.",
+        "src": null,
+        "snippet":
+            "var columns = [\n    // this example assumes the data is in an array,\n    // so you want to access indexes of the array rather\n    // than using field\n    {\n        // value getter returns first array element\n        valueGetter: function(params) {\n            var data = params.data;\n            return data[0];\n        },\n        // value setter sets first array element\n        valueSetter: function(params) {\n            var data = params.data;\n            data[0] = params.newValue;\n        }\n    },\n    // this column is for a number, the default editor sets\n    // strings, so we convert the string to a number\n    {\n        field: 'amount',\n        valueFormatter: function(params){\n            return Number(params.newValue);\n        }\n    }\n];",
+        "level": 1
+    },
+    {
+        "title": "Expressions",
+        "enterprise": false,
+        "description":
+            "<span class=\"feature-highlight\">Expressions</span> allow you to use simple strings instead\nof functions for value getters, setters, formatters and parsers.",
+        "src": null,
+        "snippet":
+            "var columns = [\n    {        \n        valueGetter: 'data[0]',\n        valueSetter: 'data[0] = newValue',\n        valueFormatter: '\"$\"+value',\n        valueParser: 'Number(params.newValue)'\n    }\n];",
+        "level": 1
+    },
+    {
+        "title": "Value Cache",
+        "enterprise": false,
+        "description":
+            "The <span class=\"feature-highlight\">Value Cache</span> is used to store\nresults of value getters. It is always on, enhancing the performance of the grid.",
+        "src": null,
+        "snippet": null,
+        "level": 1
+    },
+    {
+        "title": "Reference Data",
+        "enterprise": false,
+        "description":
+            "Use <span class=\"feature-highlight\">Reference Data</span> for easier editing\nof data that uses reference data for display. For example, you might have country codes in your data e.g.\n{IE, UK, USA} but you display values e.g. {Ireland, Great Britain, United States of America}). Using reference\ndata simplifies this, especially if editing.",
+        "src": null,
+        "snippet": null,
+        "level": 1
+    },
+    {
+        "title": "Cell Rendering",
+        "enterprise": false,
+        "description":
+            "Use <span class=\"feature-highlight\">Cell Rendering</span> to have cells rendering values other than simple strings.\nFor example, put country flags beside country names, or push buttons for actions.",
+        "src": "javascript-grid-features/images/cellRendering.gif",
+        "snippet": "colDef = {\n    field: 'country',\n    cellRenderer: MyCountryCellRenderer\n    ...\n}",
+        "level": 0
+    },
+    {
+        "title": "Cell Editing",
+        "enterprise": false,
+        "description":
+            "Users can update data with <span class=\"feature-highlight\">Cell Editing</span>. Use one of the provided\ncell editors or create your own to suit your business needs.",
+        "src": "javascript-grid-features/images/cellEditing.gif",
+        "snippet": "colDef = {\n    field: 'country',\n    cellEditor: 'richSelect',\n    cellEditorParams: {\n        values: ['Ireland','United Kingdom']\n    }\n    ...\n}",
+        "level": 0
+    },
+    {
+        "title": "Keyboard Navigation",
+        "enterprise": false,
+        "description": "With <span class=\"feature-highlight\">Keyboard Navigation</span> users can use cursor keys and tab keys\nto navigate between cells.",
+        "src": "javascript-grid-features/images/keyboardNavigation.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Touch Support",
+        "enterprise": false,
+        "description":
+            "User can navigate the features of the grid on a touch device with the built-in \n<span class=\"feature-highlight\">Touch Support</span>. You don't need to do anything, it works\nout of the box.",
+        "src": "javascript-grid-features/images/touchSupport.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Animation",
+        "enterprise": false,
+        "description": "Rows in the grid will <span class=\"feature-highlight\">Animate</span> into place\nafter the user sorts or filters.",
+        "src": "javascript-grid-features/images/animation.gif",
+        "snippet": "gridOptions = {\n    animateRows: true\n    ...\n}",
+        "level": 0
+    },
+    {
+        "title": "Accessing Data",
+        "enterprise": false,
+        "description": "Once data is in the grid, you can <span class=\"feature-highlight\">Access the Data</span> using\nthe grid's API.",
+        "src": "javascript-grid-features/images/accessingData.gif",
+        "snippet": "// get the number of displayed rows\ngridApi.getDisplayedRowCount()\n\n// get the first row\ngridApi.getDisplayedRowAtIndex(0);",
+        "level": 0
+    },
+    {
+        "title": "Pagination",
+        "enterprise": false,
+        "description":
+            "Use <span class=\"feature-highlight\">Pagination</span> when you don't want the user\nto have to scroll. Pagination allows viewing rows one page at a time.",
+        "src": "javascript-grid-features/images/pagination.gif",
+        "snippet": "gridOptions = {\n    pagination: true,\n    ...\n}",
+        "level": 0
+    },
+    {
+        "title": "Updating Data",
+        "enterprise": false,
+        "description":
+            "Data can be <span class=\"feature-highlight\">updated in real time</span>. The grid can highlight\nthe change by flashing the cells or by animation inside the cell as the cell refreshes.",
+        "src": "javascript-grid-features/images/dataUpdate.gif",
+        "snippet": "// get a reference to the right row\nvar rowNode = api.getRowNode('22');\n\n// set new value into the row\nrowNode.setDataValue('bid', 33.24);",
+        "level": 0
+    },
+    {
+        "title": "View Refresh",
+        "enterprise": false,
+        "description":
+            "If the data changes outside of the grid, get the grid to do a <span class=\"feature-highlight\">View Refresh</span> \nto update the UI to the latest values. The grid will use change detection to only refresh values that have changed.",
+        "src": "javascript-grid-features/images/viewRefresh.gif",
+        "snippet": "// refresh all cells in the grid\ngridApi.refreshCells();",
+        "level": 0
+    },
+    {
+        "title": "Change Detection",
+        "enterprise": false,
+        "description":
+            "As you change data inside the grid, the grid runs <span class=\"feature-highlight\">Change Detection</span> to\ncheck if any other cells need to be updated to reflect the change.",
+        "src": "javascript-grid-features/images/changeDetection.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Internationalisation",
+        "enterprise": false,
+        "description": "Support multiple languages with <span class=\"feature-highlight\">Internationalisation</span>.",
+        "src": "javascript-grid-features/images/internationalisation.gif",
+        "snippet": "gridOptions = {\n    localeText: {\n        lessThanOrEqual: 'menor o igual',\n        greaterThanOrEqual: 'mayor o igual',\n        ...\n    }\n}",
+        "level": 0
+    },
+    {
+        "title": "Performance",
+        "enterprise": false,
+        "description":
+            "The core grid engine gives <span class=\"feature-highlight\">Performance</span> unlike\nthat seen before. The grid uses row and column virtualisation, animation frames and many other \ntechniques.",
+        "src": "javascript-grid-features/images/performance.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Accessibility",
+        "enterprise": false,
+        "description": "The grid has ARIA roles inside the cells for <span class=\"feature-highlight\">Accessibility</span> \nto enable navigation with screen readers.",
+        "level": 0
+    },
+    {
+        "title": "Full Width Rows",
+        "enterprise": false,
+        "description":
+            "<span class=\"feature-highlight\">Full Width Rows</span> allow you to have one cell that\nspans the entire width of the tables. This allows a card layout to work alongside the normal cells.",
+        "src": "javascript-grid-features/images/fullWidth.gif",
+        "snippet":
+            "gridOptions = {\n     isFullWidthCell: function(rowNode) {\n        // return every second row as full width\n        return rowNode.rowIndex % 2 === 0;\n    },\n    // use custom component for the full width row\n    fullWidthCellRenderer: MyCardComponent\n}",
+        "level": 0
+    },
+    {
+        "title": "Master Detail",
+        "enterprise": true,
+        "description": "Use <span class=\"feature-highlight\">Master Detail</span> to expand rows and have another grid\nwith different columns inside.",
+        "src": "javascript-grid-features/images/masterDetail.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Aligned Grids",
+        "enterprise": false,
+        "description":
+            "Have one or more grids horizontally <span class=\"feature-highlight\">Aligned</span> so that any\ncolumn changes in one grid impact the other grid. This allows two grids with different data to be kept horizontally\nin sync.",
+        "src": "javascript-grid-features/images/alignedGrids.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "CSV Export",
+        "enterprise": false,
+        "description": "Use <span class=\"feature-highlight\">CSV Export</span> to take data out of the grid and into another\napplication for further processing such as Excel.",
+        "src": "javascript-grid-features/images/csvExport.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Excel Export",
+        "enterprise": true,
+        "description":
+            "Export in native <span class=\"feature-highlight\">Excel Format</span> which will maintain the column\nwidths and also allow exporting of styles. For example, you can color cells in the grid and have the equivalent cells\ncolored in the Excel export.",
+        "src": "javascript-grid-features/images/excelExport.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "RTL",
+        "enterprise": false,
+        "description": "Use <span class=\"feature-highlight\">Right to Left</span> alignment to allow languages such as \nArabic &amp; Hebrew.",
+        "src": "javascript-grid-features/images/rtl.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Custom Icons",
+        "enterprise": false,
+        "description":
+            "All the icons in the grid can be replaced with your own <span class=\"feature-highlight\">Custom Icons</span>.\nYou can either use CSS or provide your own images.",
+        "src": "javascript-grid-features/images/customIcons.gif",
+        "snippet":
+            "gridOptions = {\n    icons: {\n        // use font awesome for menu icons\n        menu: '<i class=\"fa fa-bath\"/>',\n        filter: '<i class=\"fa fa-long-arrow-down\"/>',\n        columns: '<i class=\"fa fa-handshake-o\"/>'\n    }\n    ...\n}",
+        "level": 0
+    },
+    {
+        "title": "Overlays",
+        "enterprise": false,
+        "description": "Full control of <span class=\"feature-highlight\">Overlays</span> to display messages to the user\non top of the grid",
+        "src": "javascript-grid-features/images/overlays.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Layout For Print",
+        "enterprise": false,
+        "description":
+            "Use <span class=\"feature-highlight\">For Print</span> to have the grid render without using\nany scrollbars. This is useful for printing the grid, where all rows should be printed, not just what's\nvisible on the screen.",
+        "src": null,
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Grouping Rows",
+        "enterprise": true,
+        "description":
+            "Use <span class=\"feature-highlight\">Grouping Rows</span> to group the data over selected\ndimensions. You can set the data to group by specific columns, or allow the user to drag and drop columns\nof their choice and have it grouped on the fly.",
+        "src": "javascript-grid-features/images/rowGroup.gif",
+        "snippet": "columnDefs = [\n    {field: 'country', rowGroup: true},\n    {field: 'sport'},\n    ...\n]",
+        "level": 0
+    },
+    {
+        "title": "Tree Data",
+        "enterprise": true,
+        "description":
+            "Use <span class=\"feature-highlight\">Tree Data</span> to display data that has parent / child\nrelationships where the parent / child relationships are provided as part of the data. For example, \na folder can contain zero or more files and other folders.",
+        "src": "javascript-grid-features/images/treeData.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Aggregation",
+        "enterprise": true,
+        "description":
+            "When grouping you can also do <span class=\"feature-highlight\">Aggregation</span> to get aggregate\nvalues for the data i.e. sum, min, max etc. Use the built in aggregate functions or create your own.",
+        "src": "javascript-grid-features/images/aggregation.gif",
+        "snippet": "columnDefs = [\n    {field: 'country', rowGroup: true},\n    {field: 'gold', aggFunc: 'sum'},\n    ...\n]",
+        "level": 0
+    },
+    {
+        "title": "Pivoting",
+        "enterprise": true,
+        "description": "Make columns out of values by <span class=\"feature-highlight\">Pivoting</span> on the data,\nsimilar to Pivot Tables in Excel.",
+        "src": "javascript-grid-features/images/pivot.gif",
+        "snippet": "columnDefs = [\n    {field: 'country', rowGroup: true},\n    {field: 'sport', pivot: true},\n    {field: 'gold', aggFunc: 'sum'},\n    ...\n]",
+        "level": 0
+    },
+    {
+        "title": "Tool Panel",
+        "enterprise": true,
+        "description":
+            "The <span class=\"feature-highlight\">Tool Panel</span> allows the user to manipulate the\nlist of columns, such as show and hide, or drag columns to group or pivot.",
+        "src": "javascript-grid-features/images/toolPanel.gif",
+        "snippet": "gridOptions: {\n    showToolPanel: true,\n    ...\n}",
+        "level": 0
+    },
+    {
+        "title": "Clipboard",
+        "enterprise": true,
+        "description":
+            "Copy and paste data to and from the <span class=\"feature-highlight\">Clipboard</span>. Users will be\nable to edit data in Excel, then copy the data back into the grid when done.",
+        "src": "javascript-grid-features/images/clipboard.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Column Menu",
+        "enterprise": true,
+        "description": "The <span class=\"feature-highlight\">Column Menu</span> drops down from the column header. Use the default\noptions or provide your own.",
+        "src": "javascript-grid-features/images/columnMenu.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Context Menu",
+        "enterprise": true,
+        "description": "The <span class=\"feature-highlight\">Context Menu</span> appears when you right click on a cell. Use the\ndefault options or provide your own.",
+        "src": "javascript-grid-features/images/contextMenu.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "Status Bar",
+        "enterprise": true,
+        "description":
+            "The <span class=\"feature-highlight\">Status Panel</span> appears on the bottom of the grid and shows \naggregations (sum, min, max etc.) when you select a range of cells using range selection. This is similar to what\nhappens in Excel.",
+        "src": "javascript-grid-features/images/statusBar.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
+        "title": "License Key",
+        "enterprise": true,
+        "description": "Each customer of ag-Grid Enterprise will be given a <span class=\"feature-highlight\">License Key</span> to\nput into their application.",
+        "src": null,
+        "snippet": null,
+        "level": 0
+    }
+]

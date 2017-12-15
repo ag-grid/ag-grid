@@ -1,45 +1,9 @@
-    </section>
+        </section>
         <aside id="doc-nav">
-            <ul>
-                <li><a href="#">Overview</a></li>
-                <li>
-                    <a href="#">JavaScript</a>
-                    <ul>
-                        <li><a href="#">Getting Started</a></li>
-                        <li><a href="#">More Details</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">ReactJS</a>
-                    <ul>
-                        <li><a href="#">Getting Started</a></li>
-                        <li><a href="#">More Details</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">Angular 2.x/4.x</a>
-                    <ul>
-                        <li><a href="#">Getting Started</a></li>
-                        <li><a href="#">More Details</a></li>
-                        <li>
-                            <a href="#">Building</a>
-                            <ul>
-                                <li><a href="#">Angular CLI</a></li>
-                                <li><a href="#">Webpack</a></li>
-                                <li><a href="#">Webpack 2</a></li>
-                                <li><a href="#">ngtools</a></li>
-                                <li><a href="#">SystemJS</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+            <ul></ul>
         </aside>
-
-        </div>
     </div>
-
-
+</div>
 
 <?php include_once("../includes/footer.php"); ?>
 

@@ -90,7 +90,7 @@
 
             {"title": "Row Sorting", "url": "javascript-grid-sorting/"},
             {"title": "Row Selection", "url": "javascript-grid-selection/"},
-            {"title": "Range Selection", "url": "javascript-grid-range-selection/"},
+            {"title": "Range Selection", "url": "javascript-grid-range-selection/", "enterprise": true},
             {"title": "Grid Size", "url": "javascript-grid-width-and-height/"},
             {"title": "Column Spanning", "url": "javascript-grid-column-spanning/"},
             {"title": "Column Pinning", "url": "javascript-grid-pinning/"},

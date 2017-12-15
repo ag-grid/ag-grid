@@ -8,8 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1">
-        <img style="vertical-align: middle" src="/images/react_large.png" title="React Datagrid" alt="React Datagrid" height="50px"/>
+    <h1 class="first-h1 heading-react">
         React Datagrid - More Details
     </h1>
 
@@ -66,7 +65,7 @@ include '../documentation-main/documentation_header.php';
     <snippet>
 import {AgGridReact} from 'ag-grid-react';</snippet>
 
-    <h3><img src="../images/enterprise_50.png" style="height: 22px;margin-right: 5px"/>Downloading the ag-Grid React Enterprise Dependency</h3>
+    <h3 class="heading-enterprise">Downloading the ag-Grid React Enterprise Dependency</h3>
 
     <p>If you're using the ag-Grid Enterprise features, then in addition to the ag-Grid React dependency above, you also require
     the ag-Grid React Enterprise dependency:</p>

@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Pivoting</h1>
+    <h1 class="first-h1 heading-enterprise">Pivoting</h1>
 
     <p>
         Pivoting allows you to take a columns values and turn them into columns. For example you can pivot on Country

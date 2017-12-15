@@ -10,27 +10,20 @@
 
     &.compact {
         padding-bottom: 0;
-        margin-bottom: 3rem;
+        margin-bottom: 0rem;
     }
 
     $logo-scale: 6;
 
-    h1 {
-        @extend .text-hide, .navbar-brand;
-        display: inline-block;
-        margin: 0;
-        margin-top: 6px;
-        padding: 0;
-    }
-
     #logo {
         @extend .text-hide;
-        display: inline-block;
         background-image: url('../svg/logo.svg?color1=%23FFFFFF');
         background-repeat: no-repeat;
-        width: 500px / $logo-scale;
-        height: 248px / $logo-scale;
         background-size: 100%;
+        display: inline-block;
+        height: 248px / $logo-scale;
+        margin-top: 6px;
+        width: 500px / $logo-scale;
     }
 
     #navbar-toggle {

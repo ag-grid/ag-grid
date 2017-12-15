@@ -7,7 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-    <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Tree Data</h1>
+    <h1 class="first-h1 heading-enterprise">Tree Data</h1>
 
     <p>
         Use Tree Data to display data that has parent / child relationships where the parent / child relationships are

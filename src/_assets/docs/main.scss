@@ -5,11 +5,11 @@
 
 @import '../common/nav.scss';
 @import '../common/footer.scss';
+@import './example-runner.scss';
 
 #documentation {
     @extend .container-fluid;
-    background-color: $white;
-    margin-bottom: 3rem;
+    background-color: $offwhite;
 
     & > div {
         @extend .row, .full-width-row;
@@ -17,10 +17,19 @@
         aside {
             @extend .col-md-2;
             font-size: 90%;
+
+            ul {
+                list-style: none;
+            }
         }
 
         & > section {
             @extend .col-md;
+            background-color: $white;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            border-left: 1px solid $border-color;
+            border-right: 1px solid $border-color;
         }
 
         #side-nav > ul > li > ul {
@@ -34,7 +43,13 @@
         }
 
         #side-nav,
-        #doc-nav {
+        #doc-nav,
+        & > section {
+            padding-top: 3rem;
+            padding-bottom: 3rem;
+        }
+
+        #side-nav {
             li {
                 margin-bottom: 0.5rem;
             }
@@ -65,6 +80,7 @@
 
                 &.active {
                     color: $blue-2;
+                    font-weight: 700;
                 }
             }
 
@@ -94,19 +110,77 @@
             }
         }
 
+        #side-nav > ul {
+            > li > a:after,
+            > li > span:after {
+                content: '❯ ';
+                transform: rotate(90deg);
+                display: inline-block;
+                float: right;
+                font-size: 80%;
+                line-height: 1.8rem;
+                margin-right: 1rem;
+                transition: transform 0.3s ease-out;
+                color: $gray-600;
+            }
+
+            > li.expanded > a:after,
+            > li.expanded > span:after {
+                transform: rotate(-90deg);
+            }
+        }
+
         #doc-nav {
             font-size: 90%;
-            border-left: 2px solid $gray-200;
             display: none;
+
+            ul {
+                -webkit-padding-start: 0px;
+
+                li {
+                    margin-bottom: 0.5rem;
+
+                    a {
+                        color: $gray-700;
+                        display: block;
+                    }
+
+                    &.level-1 {
+                        font-size: 115%;
+                        font-weight: 500;
+                    }
+
+                    &.level-3 {
+                        font-size: 95%;
+                        font-weight: 200;
+                        padding-left: 0.5rem;
+                    }
+
+                    &.level-4 {
+                        font-size: 90%;
+                        font-weight: 200;
+                        padding-left: 1.5rem;
+                    }
+                }
+            }
+
             @media (min-width: 1024px) {
                 display: flex;
+                flex: 0 0 1 / 12 * 2;
+                max-width: 100% / 12 * 2;
+                padding-left: 2rem;
+                position: sticky;
+                align-self: flex-start;
+                top: 0;
             }
 
             @media (min-width: 1690px) {
                 display: block;
                 position: fixed;
-                left: calc(50% + #{$max-width / 2} + 3rem);
+                left: calc(50% + #{$max-width / 2});
                 width: 250px;
+                padding-left: 3rem;
+                top: auto;
             }
 
             a {
@@ -116,242 +190,73 @@
                     text-decoration: none;
                 }
 
-                &:before {
-                    content: '\00a0';
-                    border-left: 2px solid $gray-200;
-                    position: absolute;
-                    left: -2px;
-                }
-
                 &.current-section {
                     color: $blue-2;
 
                     &:before {
                         content: '\00a0';
-                        border-left: 2px solid $blue-2;
+                        border-left: 1px solid $blue-2;
                         position: absolute;
-                        left: -2px;
+                        left: -1px;
                     }
                 }
             }
         }
     }
 
-    aside ul {
-        list-style: none;
+    .heading-enterprise {
+        background-image: url('../homepage/enterprise.svg');
+        background-repeat: no-repeat;
+        background-size: 25px 25px;
+        background-position-x: 20px;
+        background-position-y: 0px;
+        padding-left: 40px;
+        margin-left: -40px;
     }
-}
 
-.example-runner {
-    @extend .rounded;
-    min-width: 0;
-    margin-bottom: 1rem;
+    h1 .anchorjs-link {
+        display: none;
+    }
 
-    ul.primary {
-        background-image: linear-gradient(to bottom right, $blue-2, darken($blue-2, 10));
-        border-top-left-radius: $border-radius;
-        border-top-right-radius: $border-radius;
-        // background-color: $blue-2;
-        font-size: 0.8rem;
-        @extend .list-unstyled;
-        display: flex;
-        font-weight: 200;
-        margin-bottom: 0;
+    $note-background-size: 30px;
+    .note {
+        padding: 1rem;
+        padding-left: calc(#{$note-background-size} + 2rem);
+        background-image: url('../common/bulb.svg');
+        background-repeat: no-repeat;
+        background-position-x: 1rem;
+        background-position-y: 1rem;
+        background-size: $note-background-size $note-background-size;
+        // background-color: lighten($yellow, 3);
+        background-color: $gray-100;
+        color: $gray-800;
+        border: 1px solid $border-color;
+        border-radius: $border-radius;
+        min-height: calc(#{$note-background-size} + 2rem);
+        margin-bottom: 1rem;
+    }
 
-        li {
-            margin-top: 0.5rem;
-            white-space: nowrap;
-            padding: 0.5rem 1rem;
+    .docs-homepage-section-preview {
+        @extend .card, .mb-4;
+
+        > div {
+            @extend .card-body;
         }
 
-        & > li:first-child {
-            flex: 1;
-            padding-left: 1rem;
+        h2 {
+            @extend .card-title, h4;
         }
 
-        & > example-tab:last-child li {
-            padding-right: 1rem;
+        p:first-child {
+            @extend .card-text;
         }
 
-        a {
-            color: $offwhite;
-        }
-
-        a:hover {
-            text-decoration: none;
-            color: $blue-3;
-        }
-
-        .title a {
-            color: $offwhite;
-        }
-
-        .active {
-            background-color: $white;
+        p:last-child {
+            @extend .text-right, .card-text;
 
             a {
-                color: $blue-2;
+                @extend .btn, .btn-primary;
             }
         }
-    }
-
-    .tab-contents {
-        display: flex;
-        min-width: 0;
-        border: 1px solid $border-color;
-        border-top: 0;
-        border-bottom-left-radius: $border-radius;
-        border-bottom-right-radius: $border-radius;
-    }
-
-    .loading-placeholder,
-    .iframe-placeholder {
-        height: 450px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .tab-contents {
-        background-color: $white;
-
-        .result {
-            padding: 1rem;
-            position: relative;
-            width: 100%;
-        }
-
-        iframe,
-        .iframe-placeholder {
-            height: 500px;
-            width: 100%;
-            background-color: transparent;
-            border: 0;
-            margin: 0;
-        }
-
-        .code-browser {
-            display: flex;
-            width: 100%;
-
-            ul {
-                flex: 2;
-            }
-
-            pre {
-                flex: 10;
-                max-height: 450px;
-                overflow: auto;
-                padding: 1rem;
-                background-color: $white;
-                margin-bottom: 0;
-                box-shadow: rgba(0, 0, 0, 0.05) -1px 1px 3px;
-                border-bottom-right-radius: 4px;
-                code {
-                    font-size: 0.7rem;
-                    white-space: pre-wrap;
-                }
-            }
-        }
-    }
-
-    ul.secondary {
-        @extend .list-unstyled;
-        background-color: $offwhite;
-        flex-direction: column;
-        min-width: 190px;
-        overflow: auto;
-        height: 450px;
-        font-size: 0.7rem;
-        margin-bottom: 0;
-        border-bottom-left-radius: 4px;
-
-        .fa {
-            width: 12px;
-        }
-
-        li {
-            border: 0;
-            padding: 1rem;
-
-            > a {
-            }
-        }
-
-        li.active {
-            border: none;
-            border-radius: 0;
-            background-color: $white;
-            box-shadow: rgba(0, 0, 0, 0.05) 0px 1px 3px;
-            position: relative;
-            z-index: 2;
-
-            > a {
-                border-radius: 0;
-            }
-        }
-
-        li.separator {
-            margin-top: 1rem;
-            padding-left: 1rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid $gray-300;
-            color: $gray-500;
-            margin-bottom: 0;
-        }
-    }
-
-    .framework-chooser {
-        display: flex;
-        justify-content: flex-end;
-        margin-bottom: 1em;
-
-        .btn {
-            @extend .rounded;
-            border: 1px solid $border-color;
-        }
-
-        > span {
-            line-height: 38px;
-            margin-right: 1em;
-        }
-
-        .dropdown-menu {
-            @extend .dropdown-menu-right;
-        }
-    }
-
-    .runner-item {
-        height: 25px;
-        display: inline-block;
-        line-height: 25px;
-        width: 150px;
-        text-align: left;
-        padding-left: 40px;
-    }
-
-    li .runner-item {
-        box-sizing: border-box;
-        padding-left: 52px;
-        background-position: 12px center;
-        padding-top: 0.5em;
-        padding-bottom: 0.5em;
-        height: 40px;
-        width: 185px;
-    }
-
-    .runner-item-angular {
-        background: transparent url('../fw-logos/angular.svg') 0px center no-repeat;
-        background-size: 25px 25px;
-    }
-
-    .runner-item-vanilla {
-        background: transparent url('../fw-logos/javascript.svg') 0px center no-repeat;
-        background-size: 25px 25px;
-    }
-
-    .runner-item-react {
-        background: transparent url('../fw-logos/react.svg') 0px center no-repeat;
-        background-size: 25px 25px;
     }
 }

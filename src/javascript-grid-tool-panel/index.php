@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Tool Panel</h2>
+    <h1 class="heading-enterprise">Tool Panel</h1>
 
     <p>
         The tool panel is where you can change the state of the columns. This includes show / hide, move and group.
