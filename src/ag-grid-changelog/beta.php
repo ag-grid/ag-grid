@@ -160,7 +160,7 @@ include '../jira_reports/jira_utilities.php';
                                     <span class="jim-table-header-content">Key</span>
                                 </th>
 
-                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header">
+                                <th class="jira-macro-table-underline-pdfexport jira-tablesorter-header report-header" nowrap>
                                     <span class="jim-table-header-content">Issue Type</span>
                                 </th>
 
@@ -328,9 +328,8 @@ include '../jira_reports/jira_utilities.php';
         return ignore.indexOf(key) >= 0;
     }
 
-    function processSearchValue(context) {
-
-        var searchCriteria = $.trim($(context).val()).replace(/ +/g, ' ').toLowerCase();
+    function processSearchValue() {
+        var searchCriteria = $.trim(document.getElementById('global_search').value).replace(/ +/g, ' ').toLowerCase();
 
         var reportTable = $("table[id^=content_]")[0];
 
@@ -340,20 +339,16 @@ include '../jira_reports/jira_utilities.php';
         var tableRows = $(reportTable).find("tr.jira[jira_data]");
 
         // 1) filter out rows that DON'T match the current search
-        var shown = tableRows
+        tableRows
             .show()
             .filter(function() {
-                var breakingChanges = document.getElementById('breaking').checked && $(this).attr("breaking") === undefined;
-                var deprecations = document.getElementById('deprecation').checked && $(this).attr("deprecation") === undefined;
-                return breakingChanges || deprecations;
-            })
-            .filter(function () {
-                console.log("here");
+                var breakingChangesFail = document.getElementById('breaking').checked && $(this).attr("breaking") === undefined;
+                var deprecationsFail = document.getElementById('deprecation').checked && $(this).attr("deprecation") === undefined;
+
                 var text = $(this).text().replace(/\s+/g, ' ').toLowerCase();
-                if(searchCriteria === 'ff') {
-                    console.log(text);
-                }
-                return searchCriteria.length === 0 || !~text.indexOf(searchCriteria);
+                var searchTextFails = !~text.indexOf(searchCriteria);
+
+                return breakingChangesFail || deprecationsFail || searchTextFails;
             })
             .hide();
     }
@@ -364,11 +359,11 @@ include '../jira_reports/jira_utilities.php';
             return;
         }
 
-        processSearchValue(this);
+        processSearchValue();
     });
 
     function updateSearchFilter() {
-        processSearchValue($('#global_search').val());
+        processSearchValue();
     }
 
     // clearable input (x in global search input)
@@ -384,7 +379,7 @@ include '../jira_reports/jira_utilities.php';
         }).on('touchstart click', '.onX', function (ev) {
             ev.preventDefault();
             $(this).removeClass('x onX').val('').change();
-            processSearchValue(this);
+            processSearchValue();
         });
 
         // register popovers
