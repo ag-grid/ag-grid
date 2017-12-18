@@ -126,6 +126,7 @@ var gridOptions = {
 //debug: true,
 //     editType: 'fullRow',
 //     debug: true,
+    suppressMultiRangeSelection: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     pivotTotals: true,

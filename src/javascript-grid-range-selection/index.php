@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Range Selection</h2>
+    <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Range Selection</h1>
 
     <p>
         Range selection allows Excel-like range selection of cells. Once enabled, you can drag the mouse over
@@ -19,7 +19,8 @@ include '../documentation-main/documentation_header.php';
     <h3>Selecting Multiple Ranges</h3>
 
     <p>
-        To select multiple ranges, hold down ctrl while making the selection.
+        To select multiple ranges, hold down ctrl while making the selection. To prevent multiple
+        selections though the GUI, set grid property <code>suppressMultiRangeSelection=true</code>.
     </p>
 
     <h3>Ranges with Pinning and Floating</h3>
@@ -146,7 +147,7 @@ AddRangeSelectionParams{
         the range down.
     </p>
 
-    <h3>Range Selection Example</h3>
+    <h1>Range Selection Example</h1>
 
     <p>
         The example below demonstrates range selection. Use your mouse to drag over the cells
@@ -163,6 +164,15 @@ AddRangeSelectionParams{
     </p>
 
     <?= example('Range Selection', 'range-selection', 'generated', array("enterprise" => 1)) ?>
+
+    <h1>Range Selection Example - Suppress Multi</h1>
+
+    <p>
+        This example differs from above as <code>suppressMultiRangeSelection=true</code> which only allows
+        one range selection even if ctrl key is held down.
+    </p>
+
+    <?= example('Range Selection Suppress Multi', 'range-selection-suppress-multi', 'generated', array("enterprise" => 1)) ?>
 
 </div>
 
