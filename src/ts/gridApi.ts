@@ -45,6 +45,7 @@ import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 import {AgEvent} from "./events";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {GridOptions} from "./entities/gridOptions";
+import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -98,6 +99,7 @@ export class GridApi {
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
@@ -845,6 +847,15 @@ export class GridApi {
     public showColumnMenuAfterMouseClick(colKey: string|Column, mouseEvent: MouseEvent|Touch): void {
         let column = this.columnController.getPrimaryColumn(colKey);
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
+    }
+
+    public hidePopupMenu(): void {
+        // hide the context menu if in enterprise
+        if (this.contextMenuFactory) {
+            this.contextMenuFactory.hideActiveMenu();
+        }
+        // and hide the column menu always
+        this.menuFactory.hideActiveMenu();
     }
 
     public tabToNextCell(): boolean {

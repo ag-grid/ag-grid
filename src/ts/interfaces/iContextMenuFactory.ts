@@ -5,4 +5,5 @@ export interface IContextMenuFactory {
 
     showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): void;
 
+    hideActiveMenu(): void;
 }

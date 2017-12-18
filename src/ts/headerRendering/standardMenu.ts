@@ -20,6 +20,14 @@ export class StandardMenuFactory implements IMenuFactory {
     @Autowired('gridOptionsWrapper')
     private gridOptionsWrapper:GridOptionsWrapper;
 
+    private hidePopup: ()=> void;
+
+    public hideActiveMenu(): void {
+        if (this.hidePopup) {
+            this.hidePopup();
+        }
+    }
+
     public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent|Touch): void {
         this.showPopup(column, (eMenu: HTMLElement) => {
             this.popupService.positionPopupUnderMouseEvent({
@@ -76,6 +84,8 @@ export class StandardMenuFactory implements IMenuFactory {
                 filter.afterGuiAttached(params);
             }
         });
+
+        this.hidePopup = hidePopup;
 
         column.setMenuVisible(true);
     }
