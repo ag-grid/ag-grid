@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridCell } from "../entities/gridCell";
@@ -11,7 +11,7 @@ export declare class MouseEventService {
     private gridInstanceId;
     private init();
     private stampDomElementWithGridInstance();
-    getRenderedCellForEvent(event: MouseEvent | KeyboardEvent): CellComp;
+    getRenderedCellForEvent(event: Event): CellComp;
     isEventFromThisGrid(event: MouseEvent | KeyboardEvent): boolean;
     getGridCellForEvent(event: MouseEvent | KeyboardEvent): GridCell;
 }

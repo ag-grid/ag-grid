@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -53,8 +53,13 @@ var InputTextFloatingFilterComp = (function (_super) {
         }
     };
     InputTextFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
-        if (this.equalModels(this.lastKnownModel, parentModel))
+        if (this.equalModels(this.lastKnownModel, parentModel)) {
+            // ensure column floating filter text is blanked out when both ranges are empty
+            if (!this.lastKnownModel && !parentModel) {
+                this.eColumnFloatingFilter.value = '';
+            }
             return;
+        }
         this.lastKnownModel = parentModel;
         var incomingTextValue = this.asFloatingFilterText(parentModel);
         if (incomingTextValue === this.eColumnFloatingFilter.value)

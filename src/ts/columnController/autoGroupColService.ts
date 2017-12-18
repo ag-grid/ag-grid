@@ -78,7 +78,7 @@ export class AutoGroupColService {
         let localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         let defaultAutoColDef: ColDef = {
             headerName: localeTextFunc('group', 'Group'),
-            cellRenderer: 'group'
+            cellRenderer: 'agGroupCellRenderer'
         };
 
         // we never allow moving the group column

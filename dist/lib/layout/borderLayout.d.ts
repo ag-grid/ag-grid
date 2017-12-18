@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class BorderLayout {
@@ -29,7 +29,7 @@ export declare class BorderLayout {
     private centerLeftMarginLastTime;
     private visibleLastTime;
     private sizeChangeListeners;
-    private overlays;
+    private overlayWrapperComp;
     constructor(params: any);
     addSizeChangeListener(listener: Function): void;
     fireSizeChanged(): void;
@@ -45,7 +45,7 @@ export declare class BorderLayout {
     getCentreHeight(): number;
     private layoutWidth();
     setEastVisible(visible: any): void;
-    private setupOverlays();
+    showLoadingOverlay(): void;
+    showNoRowsOverlay(): void;
     hideOverlay(): void;
-    showOverlay(key: string): void;
 }

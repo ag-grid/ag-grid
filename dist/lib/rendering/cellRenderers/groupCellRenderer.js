@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -99,7 +99,8 @@ var GroupCellRenderer = (function (_super) {
         // let paddingPx: number;
         var paddingCount = rowNode.uiLevel;
         var pivotModeAndLeafGroup = this.columnController.isPivotMode() && params.node.leafGroup;
-        if (rowNode.footer || !rowNode.isExpandable() || pivotModeAndLeafGroup) {
+        var notExpandable = !rowNode.isExpandable();
+        if (rowNode.footer || notExpandable || pivotModeAndLeafGroup) {
             paddingCount += 1;
         }
         var userProvidedPaddingPixelsTheDeprecatedWay = params.padding >= 0;
@@ -208,7 +209,7 @@ var GroupCellRenderer = (function (_super) {
     };
     GroupCellRenderer.prototype.createLeafCell = function () {
         if (utils_1.Utils.exists(this.params.value)) {
-            this.eValue.innerHTML = this.params.value;
+            this.eValue.innerHTML = this.params.valueFormatted ? this.params.valueFormatted : this.params.value;
         }
     };
     GroupCellRenderer.prototype.isUserWantsSelected = function () {
@@ -249,11 +250,17 @@ var GroupCellRenderer = (function (_super) {
         this.showExpandAndContractIcons();
         // because we don't show the expand / contract when there are no children, we need to check every time
         // the number of children change.
-        this.addDestroyableEventListener(this.displayedGroup, rowNode_1.RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.showExpandAndContractIcons.bind(this));
+        this.addDestroyableEventListener(this.displayedGroup, rowNode_1.RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.onAllChildrenCountChanged.bind(this));
         // if editing groups, then double click is to start editing
         if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable()) {
             this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
+    };
+    GroupCellRenderer.prototype.onAllChildrenCountChanged = function () {
+        // maybe if no children now, we should hide the expand / contract icons
+        this.showExpandAndContractIcons();
+        // if we have no children, this impacts the indent
+        this.setIndent();
     };
     GroupCellRenderer.prototype.onKeyDown = function (event) {
         if (utils_1.Utils.isKeyPressed(event, constants_1.Constants.KEY_ENTER)) {
@@ -300,16 +307,22 @@ var GroupCellRenderer = (function (_super) {
             this.displayedGroup = rowNode;
         }
     };
-    GroupCellRenderer.prototype.onExpandClicked = function () {
+    GroupCellRenderer.prototype.onExpandClicked = function (mouseEvent) {
+        if (utils_1.Utils.isStopPropagationForAgGrid(mouseEvent)) {
+            return;
+        }
         this.onExpandOrContract();
     };
-    GroupCellRenderer.prototype.onCellDblClicked = function (event) {
+    GroupCellRenderer.prototype.onCellDblClicked = function (mouseEvent) {
+        if (utils_1.Utils.isStopPropagationForAgGrid(mouseEvent)) {
+            return;
+        }
         // we want to avoid acting on double click events on the expand / contract icon,
         // as that icons already has expand / collapse functionality on it. otherwise if
         // the icon was double clicked, we would get 'click', 'click', 'dblclick' which
         // is open->close->open, however double click should be open->close only.
-        var targetIsExpandIcon = utils_1.Utils.isElementInEventPath(this.eExpanded, event)
-            || utils_1.Utils.isElementInEventPath(this.eContracted, event);
+        var targetIsExpandIcon = utils_1.Utils.isElementInEventPath(this.eExpanded, mouseEvent)
+            || utils_1.Utils.isElementInEventPath(this.eContracted, mouseEvent);
         if (!targetIsExpandIcon) {
             this.onExpandOrContract();
         }

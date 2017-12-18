@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,6 +23,7 @@ var Constants = (function () {
     Constants.EXPORT_TYPE_CSV = 'csv';
     Constants.KEY_BACKSPACE = 8;
     Constants.KEY_TAB = 9;
+    Constants.KEY_NEW_LINE = 10;
     Constants.KEY_ENTER = 13;
     Constants.KEY_SHIFT = 16;
     Constants.KEY_ESCAPE = 27;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BorderLayout } from "../layout/borderLayout";
@@ -43,6 +43,8 @@ export declare class GridPanel extends BeanStub {
     private scrollVisibleService;
     private contextMenuFactory;
     private frameworkFactory;
+    private valueService;
+    private componentRecipes;
     private layout;
     private logger;
     private eBodyViewport;
@@ -90,7 +92,10 @@ export declare class GridPanel extends BeanStub {
     private pinningLeft;
     private useAnimationFrame;
     agWire(loggerFactory: LoggerFactory): void;
-    getVerticalPixelRange(): any;
+    getVerticalPixelRange(): {
+        top: number;
+        bottom: number;
+    };
     destroy(): void;
     private onRowDataChanged();
     private showOrHideOverlay();
@@ -108,16 +113,15 @@ export declare class GridPanel extends BeanStub {
     private processKeyboardEvent(eventName, keyboardEvent);
     scrollToTop(): void;
     private processMouseEvent(eventName, mouseEvent);
-    private onContextMenu(mouseEvent);
+    private mockContextMenuForIPad();
+    private handleContextMenuMouseEvent(mouseEvent, touchEvent, rowComp, cellComp);
+    private onContextMenu(mouseEvent, touchEvent, rowNode, column, value);
     private preventDefaultOnContextMenu(mouseEvent);
     private addShortcutKeyListeners();
     private onCtrlAndA(event);
     private onCtrlAndC(event);
     private onCtrlAndV(event);
     private onCtrlAndD(event);
-    private createOverlayTemplate(name, defaultTemplate, userProvidedTemplate);
-    private createLoadingOverlayTemplate();
-    private createNoRowsOverlayTemplate();
     ensureIndexVisible(index: any, position?: string): void;
     getPrimaryScrollViewport(): HTMLElement;
     getCenterWidth(): number;
@@ -147,6 +151,7 @@ export declare class GridPanel extends BeanStub {
     private queryHtmlElement(selector);
     private loadTemplate();
     private findElements();
+    private suppressScrollOnFloatingRow();
     getRowContainers(): RowContainerComponents;
     private addMouseWheelEventListeners();
     getHeaderViewport(): HTMLElement;
@@ -174,7 +179,7 @@ export declare class GridPanel extends BeanStub {
     private redrawRowsAfterScroll();
     private isBodyVerticalScrollActive();
     private addIEPinFix(onPinnedRightScroll, onPinnedLeftScroll);
-    private setLeftAndRightBounds();
+    setLeftAndRightBounds(): void;
     getBodyViewportScrollLeft(): number;
     setBodyViewportScrollLeft(value: number): void;
     horizontallyScrollHeaderCenterAndFloatingCenter(): void;

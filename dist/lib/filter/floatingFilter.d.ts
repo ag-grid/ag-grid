@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SerializedTextFilter } from "./textFilter";
@@ -7,6 +7,7 @@ import { SerializedNumberFilter } from "./numberFilter";
 import { IComponent } from "../interfaces/iComponent";
 import { Component } from "../widgets/component";
 import { Column } from "../entities/column";
+import { GridApi } from "../gridApi";
 export interface FloatingFilterChange {
 }
 export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
@@ -15,6 +16,7 @@ export interface IFloatingFilterParams<M, F extends FloatingFilterChange> {
     currentParentModel: () => M;
     suppressFilterButton: boolean;
     debounceMs?: number;
+    api: GridApi;
 }
 export interface IFloatingFilter<M, F extends FloatingFilterChange, P extends IFloatingFilterParams<M, F>> {
     onParentModelChanged(parentModel: M): void;

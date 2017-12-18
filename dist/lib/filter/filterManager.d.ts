@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExternalPromise, Promise } from "../utils";
@@ -51,7 +51,6 @@ export declare class FilterManager {
     getOrCreateFilterWrapper(column: Column): FilterWrapper;
     cachedFilter(column: Column): FilterWrapper;
     private createFilterInstance(column, $scope);
-    private translateFilter(target, toTranslate);
     private createFilterWrapper(column);
     private putIntoGui(filterWrapper);
     private onNewColumnsLoaded();

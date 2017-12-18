@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -306,7 +306,9 @@ var RowRenderer = (function (_super) {
             colIdsMap = {};
             params.columns.forEach(function (colKey) {
                 var column = _this.columnController.getGridColumn(colKey);
-                colIdsMap[column.getId()] = true;
+                if (utils_1.Utils.exists(column)) {
+                    colIdsMap[column.getId()] = true;
+                }
             });
         }
         var processRow = function (rowComp) {

@@ -234,6 +234,10 @@ export abstract class RowNodeBlock extends BeanStub {
                 rowNode.childrenCache.destroy();
                 rowNode.childrenCache = null;
             }
+            // this is needed, so row render knows to fade out the row, otherwise it
+            // see's row top is present, and thinks the row should be shown. maybe
+            // rowNode should have a flag on whether it is visible???
+            rowNode.clearRowTop();
         });
     }
 

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -203,7 +203,6 @@ var GridOptionsWrapper = (function () {
         return this.isAutoHeight() || isTrue(this.gridOptions.embedFullWidthRows);
     };
     GridOptionsWrapper.prototype.getBusinessKeyForNodeFunc = function () { return this.gridOptions.getBusinessKeyForNode; };
-    GridOptionsWrapper.prototype.getHeaderCellRenderer = function () { return this.gridOptions.headerCellRenderer; };
     GridOptionsWrapper.prototype.getApi = function () { return this.gridOptions.api; };
     GridOptionsWrapper.prototype.getColumnApi = function () { return this.gridOptions.columnApi; };
     GridOptionsWrapper.prototype.isDeltaRowDataMode = function () { return isTrue(this.gridOptions.deltaRowDataMode); };
@@ -296,8 +295,6 @@ var GridOptionsWrapper = (function () {
     GridOptionsWrapper.prototype.getDefaultExportParams = function () { return this.gridOptions.defaultExportParams; };
     GridOptionsWrapper.prototype.isSuppressCsvExport = function () { return isTrue(this.gridOptions.suppressCsvExport); };
     GridOptionsWrapper.prototype.isSuppressExcelExport = function () { return isTrue(this.gridOptions.suppressExcelExport); };
-    GridOptionsWrapper.prototype.getHeaderCellTemplate = function () { return this.gridOptions.headerCellTemplate; };
-    GridOptionsWrapper.prototype.getHeaderCellTemplateFunc = function () { return this.gridOptions.getHeaderCellTemplate; };
     GridOptionsWrapper.prototype.getNodeChildDetailsFunc = function () { return this.gridOptions.getNodeChildDetails; };
     GridOptionsWrapper.prototype.getDataPathFunc = function () { return this.gridOptions.getDataPath; };
     // public getIsGroupFunc(): ((dataItem: any) => boolean) { return this.gridOptions.isGroup }
@@ -549,6 +546,15 @@ var GridOptionsWrapper = (function () {
         }
         if (options.paginationStartPage) {
             console.warn("ag-grid: since version 12.x, paginationStartPage is gone, please call api.paginationGoToPage(" + options.paginationStartPage + ") instead.");
+        }
+        if (options.getHeaderCellTemplate) {
+            console.warn("ag-grid: since version 15.x, getHeaderCellTemplate is gone, please check the header documentation on how to set header templates.");
+        }
+        if (options.headerCellTemplate) {
+            console.warn("ag-grid: since version 15.x, headerCellTemplate is gone, please check the header documentation on how to set header templates.");
+        }
+        if (options.headerCellRenderer) {
+            console.warn("ag-grid: since version 15.x, headerCellRenderer is gone, please check the header documentation on how to set header templates.");
         }
     };
     GridOptionsWrapper.prototype.getLocaleTextFunc = function () {

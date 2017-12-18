@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -100,8 +100,14 @@ var EventService = (function () {
         var listenerList = this.getListenerList(eventType, async);
         utils_1.Utils.removeFromArray(listenerList, listener);
     };
-    EventService.prototype.removeGlobalListener = function (listener) {
-        utils_1.Utils.removeFromArray(this.globalSyncListeners, listener);
+    EventService.prototype.removeGlobalListener = function (listener, async) {
+        if (async === void 0) { async = false; }
+        if (async) {
+            utils_1.Utils.removeFromArray(this.globalAsyncListeners, listener);
+        }
+        else {
+            utils_1.Utils.removeFromArray(this.globalSyncListeners, listener);
+        }
     };
     // why do we pass the type here? the type is in ColumnChangeEvent, so unless the
     // type is not in other types of events???

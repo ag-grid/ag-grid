@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
@@ -11,6 +11,7 @@ export declare enum HeaderRowType {
 }
 export declare class HeaderRowComp extends Component {
     private gridOptionsWrapper;
+    private gridApi;
     private columnController;
     private context;
     private eventService;
@@ -34,8 +35,6 @@ export declare class HeaderRowComp extends Component {
     private removeAndDestroyAllChildComponents();
     private onDisplayedColumnsChanged();
     private onVirtualColumnsChanged();
-    private warnedUserOnOldHeaderTemplate;
-    private isUsingOldHeaderRenderer(column);
     private createHeaderComp(columnGroupChild);
     private createFloatingFilterWrapper(column);
     private createFloatingFilterParams<M, F>(column);

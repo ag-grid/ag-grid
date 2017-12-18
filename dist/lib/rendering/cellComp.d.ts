@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -22,8 +22,10 @@ export declare class CellComp extends Component {
     private editingCell;
     private cellEditorInPopup;
     private hideEditorPopup;
+    private lastIPadMouseClickEvent;
     private usingCellRenderer;
     private cellRendererType;
+    private cellRendererComponentName;
     private cellRenderer;
     private cellRendererGui;
     private cellEditor;
@@ -70,6 +72,7 @@ export declare class CellComp extends Component {
     private putDataIntoCellAfterRefresh();
     attemptCellRendererRefresh(): boolean;
     isVolatile(): boolean;
+    private refreshToolTip();
     private valuesAreEqual(val1, val2);
     private getToolTip();
     private processCellClassRules(onApplicableClass, onNotApplicableClass?);
@@ -84,10 +87,10 @@ export declare class CellComp extends Component {
     private formatValue(value);
     private getValue();
     onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
+    dispatchCellContextMenuEvent(event: Event): void;
     private createEvent(domEvent, eventType);
     private onMouseOut(mouseEvent);
     private onMouseOver(mouseEvent);
-    private onContextMenu(mouseEvent);
     private onCellDoubleClicked(mouseEvent);
     startRowOrCellEdit(keyPress?: number, charPress?: string): void;
     isCellEditable(): boolean;
@@ -115,6 +118,7 @@ export declare class CellComp extends Component {
     onKeyPress(event: KeyboardEvent): void;
     private onSpaceKeyPressed(event);
     private onMouseDown();
+    private isDoubleClickOnIPad();
     private onCellClicked(mouseEvent);
     private doIeFocusHack();
     private createGridCellVo();

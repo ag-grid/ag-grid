@@ -76,13 +76,13 @@ export class CellRendererService {
         params: any
     ): Promise<ICellRendererComp> {
         let rendererToUsePromise:Promise<ICellRendererComp> = null;
-        let componentToUse:ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(target, "innerRenderer");
+        let componentToUse:ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(target, "innerRenderer", "agInnerCellRenderer");
 
         if (componentToUse && componentToUse.component != null && componentToUse.source != ComponentSource.DEFAULT){
             //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
             rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(target, params);
         } else {
-            let otherRenderer: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer");
+            let otherRenderer: ResolvedComponent<any, any> = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer", "agCellRenderer");
             if (otherRenderer && otherRenderer.source != ComponentSource.DEFAULT){
                 //Only if the original column is using an specific renderer, it it is a using a DEFAULT one
                 //ignore it

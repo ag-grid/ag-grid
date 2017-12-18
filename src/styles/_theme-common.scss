@@ -129,6 +129,18 @@ $tool-panel-box-padding: 4px 4px 10px 4px;
         border-right: $ag-cell-rtl-no-focus-border-right;
         border-left: $ag-cell-rtl-no-focus-border-left;
     }
+
+    $toolpanel-indent-size: 10px;
+    $row-group-indent-size: 10px;
+    // indentation loop
+    @for $i from 1 to 50 {
+        .ag-ltr .ag-toolpanel-indent-#{$i} { padding-left: $i * $toolpanel-indent-size; }
+        .ag-rtl .ag-toolpanel-indent-#{$i} { padding-right: $i * $toolpanel-indent-size; }
+
+        .ag-ltr .ag-row-group-indent-#{$i} { padding-left: $i * $row-group-indent-size; }
+        .ag-rtl .ag-row-group-indent-#{$i} { padding-right: $i * $row-group-indent-size; }
+    }
+
     // we use rtl and ltr below, even though it's the same style, so it propertly
     .ag-rtl .ag-cell-first-right-pinned {
         border-left: $ag-border-1;

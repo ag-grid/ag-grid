@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46,7 +46,10 @@ var MoveColumnController = (function () {
             this.columnController.setColumnsVisible(columns, true);
         }
         else {
-            // restore previous state of visible columns upon re-entering
+            // restore previous state of visible columns upon re-entering. this means if the user drags
+            // a group out, and then drags the group back in, only columns that were originally visible
+            // will be visible again. otherwise a group with three columns (but only two visible) could
+            // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             var visibleState_1 = draggingEvent.dragItem.visibleState;
             var visibleColumns = columns.filter(function (column) { return visibleState_1[column.getId()]; });
             this.columnController.setColumnsVisible(visibleColumns, true);

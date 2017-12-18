@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -113,11 +113,11 @@ var RowNodeCache = (function (_super) {
         this.purgeBlocksIfNeeded(newBlock);
         this.checkBlockToLoad();
     };
-    RowNodeCache.prototype.removeBlockFromCache = function (pageToRemove) {
-        if (!pageToRemove) {
+    RowNodeCache.prototype.removeBlockFromCache = function (blockToRemove) {
+        if (!blockToRemove) {
             return;
         }
-        this.destroyBlock(pageToRemove);
+        this.destroyBlock(blockToRemove);
         // we do not want to remove the 'loaded' event listener, as the
         // concurrent loads count needs to be updated when the load is complete
         // if the purged page is in loading state

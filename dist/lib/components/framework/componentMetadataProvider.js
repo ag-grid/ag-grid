@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,11 +26,23 @@ var ComponentMetadataProvider = (function () {
                 mandatoryMethodList: ['getDate', 'setDate'],
                 optionalMethodList: []
             },
+            detailCellRenderer: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
             headerComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
             },
             headerGroupComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
+            loadingOverlayComponent: {
+                mandatoryMethodList: [],
+                optionalMethodList: []
+            },
+            noRowsOverlayComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
             },
@@ -41,10 +53,6 @@ var ComponentMetadataProvider = (function () {
             floatingFilterWrapperComponent: {
                 mandatoryMethodList: [],
                 optionalMethodList: []
-            },
-            filterComponent: {
-                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
-                optionalMethodList: ['afterGuiAttached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged']
             },
             cellRenderer: {
                 mandatoryMethodList: ['refresh'],
@@ -77,8 +85,11 @@ var ComponentMetadataProvider = (function () {
             },
             filter: {
                 mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
-                optionalMethodList: ['onNewRowsLoaded', 'onFloatingFilterChanged'],
-                functionAdapter: this.agComponentUtils.adaptCellRendererFunction.bind(this.agComponentUtils)
+                optionalMethodList: ['afterGuiAttached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged', 'afterGuiAttached']
+            },
+            filterComponent: {
+                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
+                optionalMethodList: ['afterGuiAttached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged', 'afterGuiAttached']
             }
         };
     };

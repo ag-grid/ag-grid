@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Constants {
@@ -16,6 +16,7 @@ export declare class Constants {
     static EXPORT_TYPE_CSV: string;
     static KEY_BACKSPACE: number;
     static KEY_TAB: number;
+    static KEY_NEW_LINE: number;
     static KEY_ENTER: number;
     static KEY_SHIFT: number;
     static KEY_ESCAPE: number;

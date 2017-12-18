@@ -251,7 +251,6 @@ export class GridOptionsWrapper {
     }
 
     public getBusinessKeyForNodeFunc() { return this.gridOptions.getBusinessKeyForNode; }
-    public getHeaderCellRenderer() { return this.gridOptions.headerCellRenderer; }
     public getApi(): GridApi { return this.gridOptions.api; }
     public getColumnApi(): ColumnApi { return this.gridOptions.columnApi; }
     public isDeltaRowDataMode() { return isTrue(this.gridOptions.deltaRowDataMode); }
@@ -349,8 +348,6 @@ export class GridOptionsWrapper {
     public isSuppressCsvExport() { return isTrue(this.gridOptions.suppressCsvExport); }
     public isSuppressExcelExport() { return isTrue(this.gridOptions.suppressExcelExport); }
 
-    public getHeaderCellTemplate() { return this.gridOptions.headerCellTemplate; }
-    public getHeaderCellTemplateFunc() { return this.gridOptions.getHeaderCellTemplate; }
     public getNodeChildDetailsFunc(): ((dataItem: any)=> NodeChildDetails) { return this.gridOptions.getNodeChildDetails; }
     public getDataPathFunc(): ((dataItem: any) => string[]) { return this.gridOptions.getDataPath; }
     // public getIsGroupFunc(): ((dataItem: any) => boolean) { return this.gridOptions.isGroup }
@@ -615,6 +612,17 @@ export class GridOptionsWrapper {
         if (options.paginationStartPage) {
             console.warn(`ag-grid: since version 12.x, paginationStartPage is gone, please call api.paginationGoToPage(${options.paginationStartPage}) instead.`);
         }
+
+        if (options.getHeaderCellTemplate) {
+            console.warn(`ag-grid: since version 15.x, getHeaderCellTemplate is gone, please check the header documentation on how to set header templates.`);
+        }
+        if (options.headerCellTemplate) {
+            console.warn(`ag-grid: since version 15.x, headerCellTemplate is gone, please check the header documentation on how to set header templates.`);
+        }
+        if (options.headerCellRenderer) {
+            console.warn(`ag-grid: since version 15.x, headerCellRenderer is gone, please check the header documentation on how to set header templates.`);
+        }
+
     }
 
     public getLocaleTextFunc() {

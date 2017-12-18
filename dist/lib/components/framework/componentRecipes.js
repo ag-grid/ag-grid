@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,17 +28,24 @@ var ComponentRecipes = (function () {
     function ComponentRecipes() {
     }
     ComponentRecipes.prototype.newDateComponent = function (params) {
-        return this.componentResolver.createAgGridComponent(this.gridOptions, params, "dateComponent");
+        return this.componentResolver.createAgGridComponent(this.gridOptions, params, "dateComponent", "agDateInput");
     };
     ComponentRecipes.prototype.newHeaderComponent = function (params) {
-        return this.componentResolver.createAgGridComponent(params.column.getColDef(), params, "headerComponent");
+        return this.componentResolver.createAgGridComponent(params.column.getColDef(), params, "headerComponent", "agColumnHeader");
     };
     ComponentRecipes.prototype.newHeaderGroupComponent = function (params) {
-        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent");
+        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agColumnGroupHeader");
     };
-    ComponentRecipes.prototype.newFloatingFilterComponent = function (type, colDef, params) {
+    ComponentRecipes.prototype.newFloatingFilterComponent = function (typeRaw, colDef, params) {
+        var type = typeRaw;
         //type if populated must be one of ['set','number','text','date']
-        var floatingFilterName = type + "FloatingFilterComponent";
+        if (typeRaw.indexOf('ag') === 0) {
+            var filterPos = typeRaw.length - "Filter".length;
+            if (typeRaw.indexOf('Filter') === filterPos) {
+                type = typeRaw.substr(0, filterPos);
+            }
+        }
+        var floatingFilterName = type + "FloatingFilter";
         return this.componentResolver.createAgGridComponent(colDef, params, "floatingFilterComponent", floatingFilterName, false);
     };
     ComponentRecipes.prototype.newFloatingFilterWrapperComponent = function (column, params) {
@@ -48,14 +55,14 @@ var ComponentRecipes = (function () {
             return this.newEmptyFloatingFilterWrapperComponent(column);
         }
         var floatingFilterType;
-        if (typeof colDef.filter === 'string') {
+        if (typeof colDef.filter === 'string' && this.isBasicFilterType(colDef.filter)) {
             floatingFilterType = colDef.filter;
         }
         else if (!colDef.filter) {
-            floatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'set' : 'text';
+            floatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFilter' : 'agTextColumnFilter';
         }
         else {
-            floatingFilterType = 'custom';
+            floatingFilterType = 'agCustomColumn';
         }
         var floatingFilter = this.newFloatingFilterComponent(floatingFilterType, colDef, params);
         var floatingFilterWrapperComponentParams = {
@@ -73,31 +80,55 @@ var ComponentRecipes = (function () {
                 var parentPromise = _this.filterManager.getFilterComponent(column);
                 return parentPromise.resolveNow(null, function (parent) { return parent.getModelAsString ? parent.getModelAsString(rawModelFn_1()) : null; });
             };
-            floatingFilterWrapperComponentParams.floatingFilterComp = this.newFloatingFilterComponent('readModelAsString', colDef, params);
+            floatingFilterWrapperComponentParams.floatingFilterComp = this.newFloatingFilterComponent('agReadModelAsString', colDef, params);
         }
-        return this.componentResolver.createAgGridComponent(colDef, floatingFilterWrapperComponentParams, "floatingFilterWrapperComponent");
+        return this.componentResolver.createAgGridComponent(colDef, floatingFilterWrapperComponentParams, "floatingFilterWrapper", "agFloatingFilterWrapper");
+    };
+    ComponentRecipes.prototype.isBasicFilterType = function (type) {
+        switch (type) {
+            case 'text':
+            case 'agTextColumnFilter':
+            case 'number':
+            case 'agNumberColumnFilter':
+            case 'date':
+            case 'agDateColumnFilter':
+            case 'set':
+            case 'agSetColumnFilter':
+                return true;
+            default:
+                return false;
+        }
     };
     ComponentRecipes.prototype.newFullWidthGroupRowInnerCellRenderer = function (params) {
-        return this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer", "groupRowInnerRenderer", false);
+        return this.componentResolver.createAgGridComponent(this.gridOptions, params, "groupRowInnerRenderer", "agGroupRowInnerCellRenderer", false);
     };
     ComponentRecipes.prototype.newCellRenderer = function (target, params) {
-        return this.componentResolver.createAgGridComponent(target, params, "cellRenderer", "cellRenderer", false);
+        return this.componentResolver.createAgGridComponent(target, params, "cellRenderer", "agCellRenderer", false);
     };
     ComponentRecipes.prototype.newInnerCellRenderer = function (target, params) {
-        return this.componentResolver.createAgGridComponent(target, params, "innerRenderer");
+        return this.componentResolver.createAgGridComponent(target, params, "innerRenderer", "agInnerCellRenderer");
     };
     ComponentRecipes.prototype.newFullRowGroupRenderer = function (params) {
-        return this.componentResolver.createAgGridComponent(this.gridOptionsWrapper, params, "fullWidthCellRenderer");
+        return this.componentResolver.createAgGridComponent(this.gridOptionsWrapper, params, "fullWidthCellRenderer", "agFullWidthCellRenderer");
+    };
+    ComponentRecipes.prototype.newOverlayWrapperComponent = function () {
+        return this.componentResolver.createAgGridComponent(this.gridOptions, null, "overlayWrapperComponent", "agOverlayWrapper");
+    };
+    ComponentRecipes.prototype.newLoadingOverlayComponent = function () {
+        return this.componentResolver.createAgGridComponent(this.gridOptions, null, "loadingOverlayComponent", "agLoadingOverlay");
+    };
+    ComponentRecipes.prototype.newNoRowsOverlayComponent = function () {
+        return this.componentResolver.createAgGridComponent(this.gridOptions, null, "noRowsOverlayComponent", "agNoRowsOverlay");
     };
     ComponentRecipes.prototype.getFilterComponentPrototype = function (colDef) {
-        return this.componentResolver.getComponentToUse(colDef, "filterComponent");
+        return this.componentResolver.getComponentToUse(colDef, "filter", "agFilter");
     };
     ComponentRecipes.prototype.newEmptyFloatingFilterWrapperComponent = function (column) {
         var floatingFilterWrapperComponentParams = {
             column: column,
             floatingFilterComp: null
         };
-        return this.componentResolver.createAgGridComponent(column.getColDef(), floatingFilterWrapperComponentParams, "floatingFilterWrapperComponent", "emptyFloatingFilterWrapperComponent");
+        return this.componentResolver.createAgGridComponent(column.getColDef(), floatingFilterWrapperComponentParams, "floatingFilterWrapper", "agEmptyFloatingFilterWrapper");
     };
     __decorate([
         context_1.Autowired("componentResolver"),

@@ -3,8 +3,7 @@ import {Column} from "../entities/column";
 import {CellChangedEvent, RowNode} from "../entities/rowNode";
 import {Constants} from "../constants";
 import {
-    CellClickedEvent,
-    CellContextMenuEvent,
+    CellClickedEvent, CellContextMenuEvent,
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
@@ -17,7 +16,7 @@ import {
 import {GridCell, GridCellDef} from "../entities/gridCell";
 import {ICellEditorComp, ICellEditorParams} from "./cellEditors/iCellEditor";
 import {Component} from "../widgets/component";
-import {ICellRenderer, ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
+import {ICellRendererComp, ICellRendererParams} from "./cellRenderers/iCellRenderer";
 import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {NewValueParams, SuppressKeyboardEventParams} from "../entities/colDef";
 import {Beans} from "./beans";
@@ -44,10 +43,13 @@ export class CellComp extends Component {
     private cellEditorInPopup: boolean;
     private hideEditorPopup: Function;
 
+    private lastIPadMouseClickEvent: number;
+
     // true if we are using a cell renderer
     private usingCellRenderer: boolean;
     // the cellRenderer class to use - this is decided once when the grid is initialised
     private cellRendererType: string;
+    private cellRendererComponentName: string;
 
     // instance of the cellRenderer class
     private cellRenderer: ICellRendererComp;
@@ -377,6 +379,8 @@ export class CellComp extends Component {
             this.replaceContentsAfterRefresh();
         }
 
+        this.refreshToolTip();
+
         if (!suppressFlash) {
             this.flashCell();
         }
@@ -528,17 +532,6 @@ export class CellComp extends Component {
                 this.eParentOfValue.innerText = valueToRender;
             }
         }
-        if (colDef.tooltipField) {
-            let data = this.rowNode.data;
-            if (_.exists(data)) {
-                let tooltip = _.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
-                if (_.exists(tooltip)) {
-                    this.eParentOfValue.setAttribute('title', tooltip);
-                } else {
-                    this.eParentOfValue.removeAttribute('title');
-                }
-            }
-        }
     }
 
     public attemptCellRendererRefresh(): boolean {
@@ -561,6 +554,20 @@ export class CellComp extends Component {
 
     public isVolatile() {
         return this.column.getColDef().volatile;
+    }
+
+    private refreshToolTip() {
+        if (this.column.getColDef().tooltipField) {
+            let data = this.rowNode.data;
+            if (_.exists(data)) {
+                let tooltip = _.getValueUsingField(data, this.column.getColDef().tooltipField, this.column.isTooltipFieldContainsDots());
+                if (_.exists(tooltip)) {
+                    this.eParentOfValue.setAttribute('title', tooltip);
+                } else {
+                    this.eParentOfValue.removeAttribute('title');
+                }
+            }
+        }
     }
 
     private valuesAreEqual(val1: any, val2: any): boolean {
@@ -657,14 +664,16 @@ export class CellComp extends Component {
             return;
         }
 
-        let cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer');
-        let pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer');
+        let cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer', 'agCellRenderer');
+        let pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer', 'agPinnedRowCellRenderer');
 
         if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
             this.cellRendererType = 'pinnedRowCellRenderer';
+            this.cellRendererComponentName = 'agPinnedRowCellRenderer';
             this.usingCellRenderer = true;
         } else if (cellRenderer) {
             this.cellRendererType = 'cellRenderer';
+            this.cellRendererComponentName = 'agCellRenderer';
             this.usingCellRenderer = true;
         } else {
             this.usingCellRenderer = false;
@@ -678,7 +687,7 @@ export class CellComp extends Component {
         this.cellRendererVersion++;
         let callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
 
-        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType).then(callback);
+        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType, this.cellRendererComponentName).then(callback);
     }
 
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
@@ -771,13 +780,24 @@ export class CellComp extends Component {
     }
 
     public onMouseEvent(eventName: string, mouseEvent: MouseEvent): void {
+        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+
         switch (eventName) {
             case 'click': this.onCellClicked(mouseEvent); break;
             case 'mousedown': this.onMouseDown(); break;
             case 'dblclick': this.onCellDoubleClicked(mouseEvent); break;
-            case 'contextmenu': this.onContextMenu(mouseEvent); break;
             case 'mouseout': this.onMouseOut(mouseEvent); break;
             case 'mouseover': this.onMouseOver(mouseEvent); break;
+        }
+    }
+
+    public dispatchCellContextMenuEvent(event: Event) {
+        let colDef = this.column.getColDef();
+        let cellContextMenuEvent: CellContextMenuEvent = this.createEvent(event, Events.EVENT_CELL_CONTEXT_MENU);
+        this.beans.eventService.dispatchEvent(cellContextMenuEvent);
+
+        if (colDef.onCellContextMenu) {
+            colDef.onCellContextMenu(cellContextMenuEvent);
         }
     }
 
@@ -813,32 +833,6 @@ export class CellComp extends Component {
     private onMouseOver(mouseEvent: MouseEvent): void {
         let cellMouseOverEvent: CellMouseOverEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_MOUSE_OVER);
         this.beans.eventService.dispatchEvent(cellMouseOverEvent);
-    }
-
-    private onContextMenu(mouseEvent: MouseEvent): void {
-
-        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
-        // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.beans.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
-            // then do the check
-            if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
-                return;
-            }
-        }
-
-
-        let colDef = this.column.getColDef();
-        let cellContextMenuEvent: CellContextMenuEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CONTEXT_MENU);
-        this.beans.eventService.dispatchEvent(cellContextMenuEvent);
-
-        if (colDef.onCellContextMenu) {
-            colDef.onCellContextMenu(cellContextMenuEvent);
-        }
-
-        if (this.beans.contextMenuFactory && !this.beans.gridOptionsWrapper.isSuppressContextMenu()) {
-            this.beans.contextMenuFactory.showMenu(this.rowNode, this.column, this.value, mouseEvent);
-            mouseEvent.preventDefault();
-        }
     }
 
     private onCellDoubleClicked(mouseEvent: MouseEvent) {
@@ -1161,7 +1155,7 @@ export class CellComp extends Component {
     }
 
     private onEnterKeyDown(): void {
-        if (this.editingCell) {
+        if (this.editingCell || this.rowComp.isEditing()) {
             this.stopRowOrCellEdit();
             this.focusCell(true);
         } else {
@@ -1237,7 +1231,27 @@ export class CellComp extends Component {
         }
     }
 
+    // returns true if on iPad and this is second 'click' event in 200ms
+    private isDoubleClickOnIPad(): boolean {
+        if (!_.isUserAgentIPad()) { return false; }
+
+        let nowMillis = new Date().getTime();
+        let res = nowMillis - this.lastIPadMouseClickEvent < 200;
+        this.lastIPadMouseClickEvent = nowMillis;
+
+        return res;
+    }
+
     private onCellClicked(mouseEvent: MouseEvent): void {
+
+        // iPad doesn't have double click - so we need to mimic it do enable editing for
+        // iPad.
+        if (this.isDoubleClickOnIPad()) {
+            this.onCellDoubleClicked(mouseEvent);
+            mouseEvent.preventDefault(); // if we don't do this, then ipad zooms in
+            return;
+        }
+
         let cellClickedEvent: CellClickedEvent = this.createEvent(mouseEvent, Events.EVENT_CELL_CLICKED);
         this.beans.eventService.dispatchEvent(cellClickedEvent);
 
@@ -1497,7 +1511,7 @@ export class CellComp extends Component {
 
                     // can be null if cell was previously null / contained empty string,
                     // this will result in new value not being rendered.
-                    if(eCell) {
+                    if (eCell) {
                         this.getGui().appendChild(eCell);
                     }
                 }

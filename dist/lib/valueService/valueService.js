@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -200,6 +200,29 @@ var ValueService = (function () {
         else {
             return null;
         }
+    };
+    // used by row grouping and pivot, to get key for a row. col can be a pivot col or a row grouping col
+    ValueService.prototype.getKeyForNode = function (col, rowNode) {
+        var value = this.getValue(col, rowNode);
+        var result;
+        var keyCreator = col.getColDef().keyCreator;
+        if (keyCreator) {
+            result = keyCreator({ value: value });
+        }
+        else {
+            result = value;
+        }
+        // if already a string, or missing, just return it
+        if (typeof result === 'string' || result === null || result === undefined) {
+            return result;
+        }
+        result = String(result);
+        if (result === '[object Object]') {
+            utils_1._.doOnce(function () {
+                console.warn('ag-Grid: a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se ag-Grid docs) or b) to toString() on the object to return a key');
+            }, 'getKeyForNode - warn about [object,object]');
+        }
+        return result;
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),

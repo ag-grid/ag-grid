@@ -371,7 +371,9 @@ export class RowRenderer extends BeanStub {
             colIdsMap = {};
             params.columns.forEach( (colKey: string|Column) => {
                 let column: Column = this.columnController.getGridColumn(colKey);
-                colIdsMap[column.getId()] = true
+                if (_.exists(column)) {
+                    colIdsMap[column.getId()] = true
+                }
             });
         }
 

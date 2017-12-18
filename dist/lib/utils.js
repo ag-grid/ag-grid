@@ -1,13 +1,15 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var constants_1 = require("./constants");
 var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
 var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
+var AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
 // util class, only used when debugging, for printing time to console
 var Timer = (function () {
     function Timer() {
@@ -347,6 +349,15 @@ var Utils = (function () {
     };
     Utils.isEventFromPrintableCharacter = function (event) {
         var pressedChar = String.fromCharCode(event.charCode);
+        // newline is an exception, as it counts as a printable character, but we don't
+        // want to start editing when it is pressed. without this check, if user is in chrome
+        // and editing a cell, and they press ctrl+enter, the cell stops editing, and then
+        // starts editing again with a blank value (two 'key down' events are fired). to
+        // test this, remove the line below, edit a cell in chrome and hit ctrl+enter while editing.
+        // https://ag-grid.atlassian.net/browse/AG-605
+        if (this.isKeyPressed(event, constants_1.Constants.KEY_NEW_LINE)) {
+            return false;
+        }
         if (exports._.exists(event.key)) {
             // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
             // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
@@ -918,6 +929,13 @@ var Utils = (function () {
         }
         return this.isFirefox;
     };
+    Utils.isUserAgentIPad = function () {
+        if (this.isIPad === undefined) {
+            // taken from https://davidwalsh.name/detect-ipad
+            this.isIPad = navigator.userAgent.match(/iPad/i) != null;
+        }
+        return this.isIPad;
+    };
     // srcElement is only available in IE. In all other browsers it is target
     // http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
     Utils.getTarget = function (event) {
@@ -1272,6 +1290,18 @@ var Utils = (function () {
         };
     };
     ;
+    // a user once raised an issue - they said that when you opened a popup (eg context menu)
+    // and then clicked on a selection checkbox, the popup wasn't closed. this is because the
+    // popup listens for clicks on the body, however ag-grid WAS stopping propagation on the
+    // checkbox clicks (so the rows didn't pick them up as row selection selection clicks).
+    // to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
+    // but we still let the event pass back to teh body.
+    Utils.stopPropagationForAgGrid = function (event) {
+        event[AG_GRID_STOP_PROPAGATION] = true;
+    };
+    Utils.isStopPropagationForAgGrid = function (event) {
+        return event[AG_GRID_STOP_PROPAGATION] === true;
+    };
     Utils.executeInAWhile = function (funcs) {
         this.executeAfter(funcs, 400);
     };
@@ -1325,6 +1355,23 @@ var Utils = (function () {
         var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
         return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
     };
+    // displays a message to the browser. this is useful in iPad, where you can't easily see the console.
+    // so the javascript code can use this to give feedback. this is NOT intended to be called in production.
+    // it is intended the ag-Grid developer calls this to troubleshoot, but then takes out the calls before
+    // checking in.
+    Utils.message = function (msg) {
+        var eMessage = document.createElement('div');
+        eMessage.innerHTML = msg;
+        var eBox = document.querySelector('#__ag__message');
+        if (!eBox) {
+            var template = "<div id=\"__ag__message\" style=\"display: inline-block; position: absolute; top: 0px; left: 0px; color: white; background-color: black; z-index: 20; padding: 2px; border: 1px solid darkred; height: 200px; overflow-y: auto;\"></div>";
+            eBox = this.loadTemplate(template);
+            if (document.body) {
+                document.body.appendChild(eBox);
+            }
+        }
+        eBox.appendChild(eMessage);
+    };
     // gets called by: a) InMemoryRowNodeManager and b) GroupStage to do sorting.
     // when in InMemoryRowNodeManager we always have indexes (as this sorts the items the
     // user provided) but when in GroupStage, the nodes can contain filler nodes that
@@ -1362,7 +1409,7 @@ var Utils = (function () {
             }
         });
     };
-    Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\|<>?:@~{}';
+    Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
     Utils.doOnceFlags = {};
     // static prepend(parent: HTMLElement, child: HTMLElement): void {
     //     if (this.exists(parent.firstChild)) {

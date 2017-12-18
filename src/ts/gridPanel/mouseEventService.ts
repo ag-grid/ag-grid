@@ -28,7 +28,7 @@ export class MouseEventService {
         (<any>this.eGridDiv)[MouseEventService.GRID_DOM_KEY] = this.gridInstanceId;
     }
 
-    public getRenderedCellForEvent(event: MouseEvent | KeyboardEvent): CellComp {
+    public getRenderedCellForEvent(event: Event): CellComp {
 
         let sourceElement = _.getTarget(event);
 

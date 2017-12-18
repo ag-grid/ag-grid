@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -915,9 +915,14 @@ var ColumnController = (function () {
         else {
             actualPinned = null;
         }
-        this.actionOnGridColumns(keys, function (column) {
-            column.setPinned(actualPinned);
-            return true;
+        this.actionOnGridColumns(keys, function (col) {
+            if (col.getPinned() !== actualPinned) {
+                col.setPinned(actualPinned);
+                return true;
+            }
+            else {
+                return false;
+            }
         }, function () {
             var event = {
                 type: events_1.Events.EVENT_COLUMN_PINNED,

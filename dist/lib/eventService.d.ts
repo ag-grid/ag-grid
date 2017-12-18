@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
@@ -21,7 +21,7 @@ export declare class EventService implements IEventEmitter {
     addModalPriorityEventListener(eventType: string, listener: Function, async?: boolean): void;
     addGlobalListener(listener: Function, async?: boolean): void;
     removeEventListener(eventType: string, listener: Function, async?: boolean): void;
-    removeGlobalListener(listener: Function): void;
+    removeGlobalListener(listener: Function, async?: boolean): void;
     dispatchEvent(event: AgEvent): void;
     private dispatchToListeners(event, async);
     private dispatchAsync(func);

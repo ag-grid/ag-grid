@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { NumberSequence } from "../../utils";
@@ -45,7 +45,7 @@ export declare abstract class RowNodeCache<T extends RowNodeBlock, P extends Row
     protected onPageLoaded(event: any): void;
     private purgeBlocksIfNeeded(blockToExclude);
     protected postCreateBlock(newBlock: T): void;
-    protected removeBlockFromCache(pageToRemove: T): void;
+    protected removeBlockFromCache(blockToRemove: T): void;
     protected checkBlockToLoad(): void;
     protected checkVirtualRowCount(block: T, lastRow: any): void;
     setVirtualRowCount(rowCount: number, maxRowFound?: boolean): void;

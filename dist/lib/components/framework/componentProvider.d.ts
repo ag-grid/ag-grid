@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "../../interfaces/iComponent";
@@ -23,22 +23,36 @@ export declare type AgGridRegisteredComponentInput<A extends IComponent<any>> = 
     new (): A;
 };
 export declare type AgGridComponentFunctionInput = (params: any) => string | HTMLElement;
+export interface AgGridProvidedComponentDef {
+    overridable: boolean;
+    defaultImpl: AgGridRegisteredComponentInput<any>;
+}
+export interface DeprecatedComponentName {
+    propertyHolder: string;
+    newComponentName: string;
+}
 export declare class ComponentProvider {
+    private gridOptions;
+    private context;
     private agGridDefaults;
+    private agDeprecatedNames;
     private jsComponents;
     private frameworkComponents;
     postConstruct(): void;
-    registerComponent<A extends IComponent<any>>(name: string, component: AgGridRegisteredComponentInput<A>): void;
+    private init();
+    registerComponent<A extends IComponent<any>>(rawName: string, component: AgGridRegisteredComponentInput<A>): void;
     /**
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    registerFwComponent<A extends IComponent<any> & B, B>(name: string, component: {
+    registerFwComponent<A extends IComponent<any> & B, B>(rawName: string, component: {
         new (): IComponent<B>;
     }): void;
     /**
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    retrieve<A extends IComponent<any> & B, B>(name: string): RegisteredComponent<A, B>;
+    retrieve<A extends IComponent<any> & B, B>(rawName: string): RegisteredComponent<A, B>;
+    private assertCanBeOverride<A, B>(name, toAssert);
+    private translateIfDeprecated(raw);
 }

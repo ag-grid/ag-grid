@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { BalancedColumnTreeBuilder } from "./dist/lib/columnController/balancedColumnTreeBuilder";
@@ -39,10 +39,8 @@ export { CssClassApplier } from "./dist/lib/headerRendering/cssClassApplier";
 export { HeaderContainer } from "./dist/lib/headerRendering/headerContainer";
 export { HeaderRenderer } from "./dist/lib/headerRendering/headerRenderer";
 export { HeaderRowComp } from "./dist/lib/headerRendering/headerRowComp";
-export { HeaderTemplateLoader } from "./dist/lib/headerRendering/deprecated/headerTemplateLoader";
 export { HorizontalDragService } from "./dist/lib/headerRendering/horizontalDragService";
 export { MoveColumnController } from "./dist/lib/headerRendering/moveColumnController";
-export { RenderedHeaderCell } from "./dist/lib/headerRendering/deprecated/renderedHeaderCell";
 export { StandardMenuFactory } from "./dist/lib/headerRendering/standardMenu";
 export { BorderLayout } from "./dist/lib/layout/borderLayout";
 export { TabbedLayout } from "./dist/lib/layout/tabbedLayout";
@@ -60,6 +58,8 @@ export { ICellRenderer, ICellRendererFunc, ICellRendererComp } from "./dist/lib/
 export { AnimateShowChangeCellRenderer } from "./dist/lib/rendering/cellRenderers/animateShowChangeCellRenderer";
 export { AnimateSlideCellRenderer } from "./dist/lib/rendering/cellRenderers/animateSlideCellRenderer";
 export { GroupCellRenderer } from "./dist/lib/rendering/cellRenderers/groupCellRenderer";
+export { ILoadingOverlayComp, ILoadingOverlayParams } from "./dist/lib/rendering/overlays/loadingOverlayComponent";
+export { INoRowsOverlayComp, INoRowsOverlayParams } from "./dist/lib/rendering/overlays/noRowsOverlayComponent";
 export { SetLeftFeature } from "./dist/lib/rendering/features/setLeftFeature";
 export { AutoWidthCalculator } from "./dist/lib/rendering/autoWidthCalculator";
 export { CellEditorFactory } from "./dist/lib/rendering/cellEditorFactory";

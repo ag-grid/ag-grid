@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
@@ -15,6 +15,7 @@ export declare class CheckboxSelectionComponent extends Component {
     private visibleFunc;
     constructor();
     private createAndAddIcons();
+    private onDataChanged();
     private onSelectionChanged();
     private onCheckedClicked();
     private onUncheckedClicked(event);

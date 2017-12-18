@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -171,6 +171,10 @@ var RowNodeBlock = (function (_super) {
                 rowNode.childrenCache.destroy();
                 rowNode.childrenCache = null;
             }
+            // this is needed, so row render knows to fade out the row, otherwise it
+            // see's row top is present, and thinks the row should be shown. maybe
+            // rowNode should have a flag on whether it is visible???
+            rowNode.clearRowTop();
         });
     };
     RowNodeBlock.prototype.pageLoaded = function (version, rows, lastRow) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -113,7 +113,6 @@ var RowComp = (function (_super) {
                 _this.eAllRowContainers.forEach(function (eRow) { return utils_1._.removeCssClass(eRow, 'ag-opacity-zero'); });
             });
         }
-        this.executeProcessRowPostCreateFunc();
     };
     RowComp.prototype.createTemplate = function (contents, extraCssClass) {
         if (extraCssClass === void 0) { extraCssClass = null; }
@@ -234,16 +233,16 @@ var RowComp = (function (_super) {
         var isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
         var isGroupSpanningRow = this.rowNode.group && this.beans.gridOptionsWrapper.isGroupUseEntireRow();
         if (this.rowNode.stub) {
-            this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER);
+            this.createFullWidthRows(RowComp.LOADING_CELL_RENDERER, RowComp.LOADING_CELL_RENDERER_COMP_NAME);
         }
         else if (isDetailCell) {
-            this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER);
+            this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER, RowComp.DETAIL_CELL_RENDERER_COMP_NAME);
         }
         else if (isFullWidthCell) {
-            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER);
+            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, RowComp.FULL_WIDTH_CELL_RENDERER_COMP_NAME);
         }
         else if (isGroupSpanningRow) {
-            this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER);
+            this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME);
         }
         else {
             this.setupNormalRowContainers();
@@ -260,22 +259,22 @@ var RowComp = (function (_super) {
             this.createRowContainer(this.pinnedLeftContainerComp, leftCols, function (eRow) { return _this.ePinnedLeftRow = eRow; });
         }
     };
-    RowComp.prototype.createFullWidthRows = function (type) {
+    RowComp.prototype.createFullWidthRows = function (type, name) {
         var _this = this;
         this.fullWidthRow = true;
         this.fullWidthRowEmbedded = this.beans.gridOptionsWrapper.isEmbedFullWidthRows();
         if (this.fullWidthRowEmbedded) {
-            this.createFullWidthRowContainer(this.bodyContainerComp, null, null, type, function (eRow) {
+            this.createFullWidthRowContainer(this.bodyContainerComp, null, null, type, name, function (eRow) {
                 _this.eFullWidthRowBody = eRow;
             }, function (cellRenderer) {
                 _this.fullWidthRowComponentBody = cellRenderer;
             });
-            this.createFullWidthRowContainer(this.pinnedLeftContainerComp, column_1.Column.PINNED_LEFT, 'ag-cell-last-left-pinned', type, function (eRow) {
+            this.createFullWidthRowContainer(this.pinnedLeftContainerComp, column_1.Column.PINNED_LEFT, 'ag-cell-last-left-pinned', type, name, function (eRow) {
                 _this.eFullWidthRowLeft = eRow;
             }, function (cellRenderer) {
                 _this.fullWidthRowComponentLeft = cellRenderer;
             });
-            this.createFullWidthRowContainer(this.pinnedRightContainerComp, column_1.Column.PINNED_RIGHT, 'ag-cell-first-right-pinned', type, function (eRow) {
+            this.createFullWidthRowContainer(this.pinnedRightContainerComp, column_1.Column.PINNED_RIGHT, 'ag-cell-first-right-pinned', type, name, function (eRow) {
                 _this.eFullWidthRowRight = eRow;
             }, function (cellRenderer) {
                 _this.fullWidthRowComponentRight = cellRenderer;
@@ -284,7 +283,7 @@ var RowComp = (function (_super) {
         else {
             // otherwise we add to the fullWidth container as normal
             // let previousFullWidth = ensureDomOrder ? this.lastPlacedElements.eFullWidth : null;
-            this.createFullWidthRowContainer(this.fullWidthContainerComp, null, null, type, function (eRow) {
+            this.createFullWidthRowContainer(this.fullWidthContainerComp, null, null, type, name, function (eRow) {
                 _this.eFullWidthRow = eRow;
                 // and fake the mouse wheel for the fullWidth container
                 if (!_this.beans.forPrint) {
@@ -316,7 +315,7 @@ var RowComp = (function (_super) {
         }
     };
     RowComp.prototype.isEditing = function () {
-        return false;
+        return this.editingRow;
     };
     RowComp.prototype.stopRowEditing = function (cancel) {
         this.stopEditing(cancel);
@@ -595,10 +594,16 @@ var RowComp = (function (_super) {
         return event;
     };
     RowComp.prototype.onRowDblClick = function (mouseEvent) {
+        if (utils_1._.isStopPropagationForAgGrid(mouseEvent)) {
+            return;
+        }
         var agEvent = this.createRowEventWithSource(events_1.Events.EVENT_ROW_DOUBLE_CLICKED, mouseEvent);
         this.beans.eventService.dispatchEvent(agEvent);
     };
     RowComp.prototype.onRowClick = function (mouseEvent) {
+        if (utils_1._.isStopPropagationForAgGrid(mouseEvent)) {
+            return;
+        }
         var agEvent = this.createRowEventWithSource(events_1.Events.EVENT_ROW_CLICKED, mouseEvent);
         this.beans.eventService.dispatchEvent(agEvent);
         // ctrlKey for windows, metaKey for Apple
@@ -636,7 +641,7 @@ var RowComp = (function (_super) {
             this.rowNode.setSelectedParams({ newValue: true, clearSelection: !multiSelectKeyPressed, rangeSelect: shiftKeyPressed });
         }
     };
-    RowComp.prototype.createFullWidthRowContainer = function (rowContainerComp, pinned, extraCssClass, cellRendererType, eRowCallback, cellRendererCallback) {
+    RowComp.prototype.createFullWidthRowContainer = function (rowContainerComp, pinned, extraCssClass, cellRendererType, cellRendererName, eRowCallback, cellRendererCallback) {
         var _this = this;
         var rowTemplate = this.createTemplate('', extraCssClass);
         rowContainerComp.appendRowTemplate(rowTemplate, function () {
@@ -654,7 +659,7 @@ var RowComp = (function (_super) {
                     }
                 }
             };
-            _this.beans.componentResolver.createAgGridComponent(null, params, cellRendererType).then(callback);
+            _this.beans.componentResolver.createAgGridComponent(null, params, cellRendererType, cellRendererName).then(callback);
             _this.afterRowAttached(rowContainerComp, eRow);
             eRowCallback(eRow);
             _this.angular1Compile(eRow);
@@ -1126,7 +1131,7 @@ var RowComp = (function (_super) {
             this.rowIsEven = rowIsEven;
         }
         this.eAllRowContainers.forEach(function (eRow) {
-            eRow.setAttribute('index', rowIndexStr);
+            eRow.setAttribute('row-index', rowIndexStr);
             if (rowIsEvenChanged) {
                 utils_1._.addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);
                 utils_1._.addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
@@ -1169,9 +1174,13 @@ var RowComp = (function (_super) {
     };
     RowComp.DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
     RowComp.FULL_WIDTH_CELL_RENDERER = 'fullWidthCellRenderer';
+    RowComp.FULL_WIDTH_CELL_RENDERER_COMP_NAME = 'agFullWidthCellRenderer';
     RowComp.GROUP_ROW_RENDERER = 'groupRowRenderer';
+    RowComp.GROUP_ROW_RENDERER_COMP_NAME = 'agGroupRowRenderer';
     RowComp.LOADING_CELL_RENDERER = 'loadingCellRenderer';
+    RowComp.LOADING_CELL_RENDERER_COMP_NAME = 'agLoadingCellRenderer';
     RowComp.DETAIL_CELL_RENDERER = 'detailCellRenderer';
+    RowComp.DETAIL_CELL_RENDERER_COMP_NAME = 'agDetailCellRenderer';
     return RowComp;
 }(component_1.Component));
 exports.RowComp = RowComp;

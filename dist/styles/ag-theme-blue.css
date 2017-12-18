@@ -911,7 +911,8 @@
     width: 12px;
     display: inline-block; }
   .ag-theme-blue .ag-header-cell-menu-button .ag-icon-menu {
-    height: 25px; }
+    height: 25px;
+    display: block; }
   .ag-theme-blue .ag-icon-checkbox-checked:empty {
     background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHJlY3QgaWQ9ImEiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgcng9IjEiLz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiNGRkYiIHhsaW5rOmhyZWY9IiNhIi8+PHJlY3Qgc3Ryb2tlPSIjMDAwIiB4PSIuNSIgeT0iLjUiIHdpZHRoPSIxMSIgaGVpZ2h0PSIxMSIgcng9IjEiLz48cGF0aCBzdHJva2U9IiMwMDAiIGQ9Ik05IDNMNiA4LjVsLTIuNS0yIi8+PC9nPjwvc3ZnPg==); }
   .ag-theme-blue .ag-menu {
@@ -1203,6 +1204,8 @@
     width: calc(100% - 20px); }
     .ag-theme-blue .ag-floating-filter-body input {
       box-sizing: border-box; }
+  .ag-theme-blue .ag-floating-filter-full-body input {
+    box-sizing: border-box; }
   .ag-theme-blue .ag-floating-filter-button {
     float: right;
     line-height: 12px;

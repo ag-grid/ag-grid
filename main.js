@@ -1,10 +1,11 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+// to satisfy server side compilation
 Object.defineProperty(exports, "__esModule", { value: true });
 var globalObj = typeof global === 'undefined' ? {} : global;
 globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
@@ -104,14 +105,10 @@ var headerRenderer_1 = require("./dist/lib/headerRendering/headerRenderer");
 exports.HeaderRenderer = headerRenderer_1.HeaderRenderer;
 var headerRowComp_1 = require("./dist/lib/headerRendering/headerRowComp");
 exports.HeaderRowComp = headerRowComp_1.HeaderRowComp;
-var headerTemplateLoader_1 = require("./dist/lib/headerRendering/deprecated/headerTemplateLoader");
-exports.HeaderTemplateLoader = headerTemplateLoader_1.HeaderTemplateLoader;
 var horizontalDragService_1 = require("./dist/lib/headerRendering/horizontalDragService");
 exports.HorizontalDragService = horizontalDragService_1.HorizontalDragService;
 var moveColumnController_1 = require("./dist/lib/headerRendering/moveColumnController");
 exports.MoveColumnController = moveColumnController_1.MoveColumnController;
-var renderedHeaderCell_1 = require("./dist/lib/headerRendering/deprecated/renderedHeaderCell");
-exports.RenderedHeaderCell = renderedHeaderCell_1.RenderedHeaderCell;
 var standardMenu_1 = require("./dist/lib/headerRendering/standardMenu");
 exports.StandardMenuFactory = standardMenu_1.StandardMenuFactory;
 // layout

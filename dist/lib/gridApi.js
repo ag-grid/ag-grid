@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -266,7 +266,7 @@ var GridApi = (function () {
     };
     // *** deprecated
     GridApi.prototype.refreshView = function () {
-        console.warn('ag-Grid: since v11.1, refreshView() is deprecated, please call redrawRows() instead');
+        console.warn('ag-Grid: since v11.1, refreshView() is deprecated, please call refreshCells() or redrawRows() instead');
         this.redrawRows();
     };
     // *** deprecated
@@ -314,7 +314,7 @@ var GridApi = (function () {
             console.log('ag-Grid: cannot call onGroupExpandedOrCollapsed unless using normal row model');
         }
         if (utils_1.Utils.exists(deprecated_refreshFromIndex)) {
-            console.log('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is not longer used, the grid will refresh all rows');
+            console.log('ag-Grid: api.onGroupExpandedOrCollapsed - refreshFromIndex parameter is no longer used, the grid will refresh all rows');
         }
         // we don't really want the user calling this if one one rowNode was expanded, instead they should be
         // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
@@ -481,12 +481,10 @@ var GridApi = (function () {
     };
     // Valid values for position are bottom, middle and top
     GridApi.prototype.ensureIndexVisible = function (index, position) {
-        if (position === void 0) { position = 'top'; }
         this.gridPanel.ensureIndexVisible(index, position);
     };
     // Valid values for position are bottom, middle and top
     GridApi.prototype.ensureNodeVisible = function (comparator, position) {
-        if (position === void 0) { position = 'top'; }
         this.gridCore.ensureNodeVisible(comparator, position);
     };
     GridApi.prototype.forEachLeafNode = function (callback) {
@@ -594,6 +592,11 @@ var GridApi = (function () {
     };
     GridApi.prototype.doLayout = function () {
         this.gridCore.doLayout();
+        // if the column is not visible, then made visible, it will be right size, but the
+        // correct virtual columns will not be displayed. the setLeftAndRightBounds() gets
+        // called when size changes. however when size is not changed, then wrong cols are shown.
+        // this was to fix https://ag-grid.atlassian.net/browse/AG-1081
+        this.gridPanel.setLeftAndRightBounds();
     };
     GridApi.prototype.resetRowHeights = function () {
         if (utils_1.Utils.exists(this.inMemoryRowModel)) {
@@ -632,10 +635,12 @@ var GridApi = (function () {
         this.eventService.addGlobalListener(listener, async);
     };
     GridApi.prototype.removeEventListener = function (eventType, listener) {
-        this.eventService.removeEventListener(eventType, listener);
+        var async = this.gridOptionsWrapper.useAsyncEvents();
+        this.eventService.removeEventListener(eventType, listener, async);
     };
     GridApi.prototype.removeGlobalListener = function (listener) {
-        this.eventService.removeGlobalListener(listener);
+        var async = this.gridOptionsWrapper.useAsyncEvents();
+        this.eventService.removeGlobalListener(listener, async);
     };
     GridApi.prototype.dispatchEvent = function (event) {
         this.eventService.dispatchEvent(event);
@@ -712,9 +717,16 @@ var GridApi = (function () {
             console.warn("ag-Grid: no column found for " + params.colKey);
             return;
         }
-        var gridCellDef = { rowIndex: params.rowIndex, floating: null, column: column };
+        var gridCellDef = {
+            rowIndex: params.rowIndex,
+            floating: params.rowPinned,
+            column: column
+        };
         var gridCell = new gridCell_1.GridCell(gridCellDef);
-        this.gridPanel.ensureIndexVisible(params.rowIndex);
+        var notPinned = utils_1.Utils.missing(params.rowPinned);
+        if (notPinned) {
+            this.gridPanel.ensureIndexVisible(params.rowIndex);
+        }
         this.rowRenderer.startEditingCell(gridCell, params.keyPress, params.charPress);
     };
     GridApi.prototype.addAggFunc = function (key, aggFunc) {

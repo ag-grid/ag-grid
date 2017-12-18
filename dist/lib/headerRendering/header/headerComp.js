@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -95,7 +95,10 @@ var HeaderComp = (function (_super) {
         if (!this.eMenu) {
             return;
         }
-        if (!this.params.enableMenu) {
+        // we don't show the menu if on an ipad, as the user cannot have a mouse on the ipad, so
+        // makes no sense. instead the user must long-tap if on an ipad.
+        var dontShowMenu = !this.params.enableMenu || utils_1.Utils.isUserAgentIPad();
+        if (dontShowMenu) {
             utils_1.Utils.removeFromParent(this.eMenu);
             return;
         }

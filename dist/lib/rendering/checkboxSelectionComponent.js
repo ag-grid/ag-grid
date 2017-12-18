@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,6 +48,11 @@ var CheckboxSelectionComponent = (function (_super) {
         element.appendChild(this.eUncheckedIcon);
         element.appendChild(this.eIndeterminateIcon);
     };
+    CheckboxSelectionComponent.prototype.onDataChanged = function () {
+        // when rows are loaded for the second time, this can impact the selection, as a row
+        // could be loaded as already selected (if user scrolls down, and then up again).
+        this.onSelectionChanged();
+    };
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
         var state = this.rowNode.isSelected();
         utils_1.Utils.setVisible(this.eCheckedIcon, state === true);
@@ -78,13 +83,14 @@ var CheckboxSelectionComponent = (function (_super) {
         this.onSelectionChanged();
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
         // would possibly get selected twice
-        this.addGuiEventListener('click', function (event) { return event.stopPropagation(); });
+        this.addGuiEventListener('click', function (event) { return utils_1.Utils.stopPropagationForAgGrid(event); });
         // likewise we don't want double click on this icon to open a group
-        this.addGuiEventListener('dblclick', function (event) { return event.stopPropagation(); });
+        this.addGuiEventListener('dblclick', function (event) { return utils_1.Utils.stopPropagationForAgGrid(event); });
         this.addDestroyableEventListener(this.eCheckedIcon, 'click', this.onCheckedClicked.bind(this));
         this.addDestroyableEventListener(this.eUncheckedIcon, 'click', this.onUncheckedClicked.bind(this));
         this.addDestroyableEventListener(this.eIndeterminateIcon, 'click', this.onIndeterminateClicked.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
         if (this.visibleFunc) {
             this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();

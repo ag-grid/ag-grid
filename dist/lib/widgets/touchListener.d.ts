@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IEventEmitter } from "../interfaces/iEventEmitter";
@@ -8,6 +8,7 @@ export interface TapEvent extends AgEvent {
 }
 export interface LongTapEvent extends AgEvent {
     touchStart: Touch;
+    touchEvent: TouchEvent;
 }
 export declare class TouchListener implements IEventEmitter {
     private eElement;

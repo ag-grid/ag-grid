@@ -103,12 +103,6 @@ export interface ColDef extends AbstractColDef {
      * want to a) group by this field or b) use set filter on this field. */
     keyCreator?: Function;
 
-    /** To provide custom rendering to the header. */
-    headerCellRenderer?: Function | Object;
-
-    /** To provide a template for the header. */
-    headerCellTemplate?: ( (params: any) => string | HTMLElement ) | string | HTMLElement;
-
     /** Initial width, in pixels, of the cell */
     width?: number;
 

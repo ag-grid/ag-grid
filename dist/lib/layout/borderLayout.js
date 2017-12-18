@@ -1,12 +1,13 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../utils");
+// This should be a component
 var BorderLayout = (function () {
     function BorderLayout(params) {
         this.centerHeightLastTime = -1;
@@ -47,8 +48,9 @@ var BorderLayout = (function () {
         if (params) {
             this.setupPanels(params);
         }
-        this.overlays = params.overlays;
-        this.setupOverlays();
+        if (params.componentRecipes) {
+            this.overlayWrapperComp = params.componentRecipes.newOverlayWrapperComponent();
+        }
     }
     BorderLayout.prototype.addSizeChangeListener = function (listener) {
         this.sizeChangeListeners.push(listener);
@@ -220,29 +222,17 @@ var BorderLayout = (function () {
         }
         this.doLayout();
     };
-    BorderLayout.prototype.setupOverlays = function () {
-        // if no overlays, just remove the panel
-        if (!this.overlays) {
-            this.eOverlayWrapper.parentNode.removeChild(this.eOverlayWrapper);
-            return;
-        }
-        this.hideOverlay();
+    BorderLayout.prototype.showLoadingOverlay = function () {
+        var _this = this;
+        this.overlayWrapperComp.then(function (overlayComp) { return overlayComp.showLoadingOverlay(_this.eOverlayWrapper); });
+    };
+    BorderLayout.prototype.showNoRowsOverlay = function () {
+        var _this = this;
+        this.overlayWrapperComp.then(function (overlayComp) { return overlayComp.showNoRowsOverlay(_this.eOverlayWrapper); });
     };
     BorderLayout.prototype.hideOverlay = function () {
-        utils_1.Utils.removeAllChildren(this.eOverlayWrapper);
-        this.eOverlayWrapper.style.display = 'none';
-    };
-    BorderLayout.prototype.showOverlay = function (key) {
-        var overlay = this.overlays ? this.overlays[key] : null;
-        if (overlay) {
-            utils_1.Utils.removeAllChildren(this.eOverlayWrapper);
-            this.eOverlayWrapper.style.display = '';
-            this.eOverlayWrapper.appendChild(overlay);
-        }
-        else {
-            console.log('ag-Grid: unknown overlay');
-            this.hideOverlay();
-        }
+        var _this = this;
+        this.overlayWrapperComp.then(function (overlayComp) { return overlayComp.hideOverlay(_this.eOverlayWrapper); });
     };
     // this is used if there user has not specified any north or south parts
     BorderLayout.TEMPLATE_FULL_HEIGHT = '<div class="ag-bl ag-bl-full-height">' +

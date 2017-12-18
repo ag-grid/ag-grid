@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -71,13 +71,13 @@ var CellRendererService = (function () {
     CellRendererService.prototype.useInnerCellRenderer = function (target, originalColumn, eTarget, params) {
         var _this = this;
         var rendererToUsePromise = null;
-        var componentToUse = this.componentResolver.getComponentToUse(target, "innerRenderer");
+        var componentToUse = this.componentResolver.getComponentToUse(target, "innerRenderer", "agInnerCellRenderer");
         if (componentToUse && componentToUse.component != null && componentToUse.source != componentResolver_1.ComponentSource.DEFAULT) {
             //THERE IS ONE INNER CELL RENDERER HARDCODED IN THE COLDEF FOR THIS GROUP COLUMN
             rendererToUsePromise = this.componentRecipes.newInnerCellRenderer(target, params);
         }
         else {
-            var otherRenderer = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer");
+            var otherRenderer = this.componentResolver.getComponentToUse(originalColumn, "cellRenderer", "agCellRenderer");
             if (otherRenderer && otherRenderer.source != componentResolver_1.ComponentSource.DEFAULT) {
                 //Only if the original column is using an specific renderer, it it is a using a DEFAULT one
                 //ignore it

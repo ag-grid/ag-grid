@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -106,7 +106,6 @@ export declare class GridOptionsWrapper {
     getFullWidthCellRendererParams(): any;
     isEmbedFullWidthRows(): boolean;
     getBusinessKeyForNodeFunc(): (node: RowNode) => string;
-    getHeaderCellRenderer(): any;
     getApi(): GridApi;
     getColumnApi(): ColumnApi;
     isDeltaRowDataMode(): boolean;
@@ -186,8 +185,6 @@ export declare class GridOptionsWrapper {
     getDefaultExportParams(): BaseExportParams;
     isSuppressCsvExport(): boolean;
     isSuppressExcelExport(): boolean;
-    getHeaderCellTemplate(): string;
-    getHeaderCellTemplateFunc(): (params: any) => string | HTMLElement;
     getNodeChildDetailsFunc(): ((dataItem: any) => NodeChildDetails);
     getDataPathFunc(): ((dataItem: any) => string[]);
     getGroupRowAggNodesFunc(): (nodes: RowNode[]) => any;

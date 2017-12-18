@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -150,6 +150,12 @@ var Column = (function () {
             if (utils_1.Utils.missing(this.colDef.valueFormatter)) {
                 this.colDef.valueFormatter = colDefAny.cellFormatter;
             }
+        }
+        if (colDefAny.headerCellTemplate) {
+            console.warn('ag-Grid: since v15, headerCellTemplate is gone, use header component instead.');
+        }
+        if (colDefAny.headerCellRenderer) {
+            console.warn('ag-Grid: since v15, headerCellRenderer is gone, use header component instead.');
         }
     };
     Column.prototype.addEventListener = function (eventType, listener) {

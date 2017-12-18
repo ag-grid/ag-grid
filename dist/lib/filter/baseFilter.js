@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,7 +66,7 @@ var BaseFilter = (function (_super) {
     BaseFilter.prototype.init = function (params) {
         this.filterParams = params;
         this.defaultFilter = this.filterParams.defaultOption;
-        if (this.filterParams.filterOptions) {
+        if (this.filterParams.filterOptions && !this.defaultFilter) {
             if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS) < 0) {
                 this.defaultFilter = this.filterParams.filterOptions[0];
             }
@@ -163,6 +163,13 @@ var BaseFilter = (function (_super) {
     BaseFilter.prototype.translate = function (toTranslate) {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
+    };
+    BaseFilter.prototype.getDebounceMs = function (filterParams) {
+        if (filterParams.applyButton && filterParams.debounceMs) {
+            console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
+            return 0;
+        }
+        return filterParams.debounceMs != null ? filterParams.debounceMs : 500;
     };
     BaseFilter.EQUALS = 'equals';
     BaseFilter.NOT_EQUAL = 'notEqual';

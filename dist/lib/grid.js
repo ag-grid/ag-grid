@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,7 +16,6 @@ var valueService_1 = require("./valueService/valueService");
 var eventService_1 = require("./eventService");
 var gridPanel_1 = require("./gridPanel/gridPanel");
 var gridApi_1 = require("./gridApi");
-var headerTemplateLoader_1 = require("./headerRendering/deprecated/headerTemplateLoader");
 var balancedColumnTreeBuilder_1 = require("./columnController/balancedColumnTreeBuilder");
 var displayedGroupCreator_1 = require("./columnController/displayedGroupCreator");
 var expressionService_1 = require("./valueService/expressionService");
@@ -117,7 +116,7 @@ var Grid = (function () {
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [rowModelClass, paginationProxy_1.PaginationAutoPageSizeService, gridApi_1.GridApi, componentProvider_1.ComponentProvider, agComponentUtils_1.AgComponentUtils, componentMetadataProvider_1.ComponentMetadataProvider,
                 componentProvider_1.ComponentProvider, componentResolver_1.ComponentResolver, componentRecipes_1.ComponentRecipes, namedComponentResolver_1.NamedComponentResolver,
-                cellRendererFactory_1.CellRendererFactory, horizontalDragService_1.HorizontalDragService, headerTemplateLoader_1.HeaderTemplateLoader, pinnedRowModel_1.PinnedRowModel, dragService_1.DragService,
+                cellRendererFactory_1.CellRendererFactory, horizontalDragService_1.HorizontalDragService, pinnedRowModel_1.PinnedRowModel, dragService_1.DragService,
                 displayedGroupCreator_1.DisplayedGroupCreator, eventService_1.EventService, gridOptionsWrapper_1.GridOptionsWrapper, selectionController_1.SelectionController,
                 filterManager_1.FilterManager, columnController_1.ColumnController, paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer, headerRenderer_1.HeaderRenderer, expressionService_1.ExpressionService,
                 balancedColumnTreeBuilder_1.BalancedColumnTreeBuilder, csvCreator_1.CsvCreator, downloader_1.Downloader, xmlFactory_1.XmlFactory, gridSerializer_1.GridSerializer, templateService_1.TemplateService,
@@ -135,8 +134,6 @@ var Grid = (function () {
         };
         var isLoggingFunc = function () { return contextParams.debug; };
         this.context = new context_1.Context(contextParams, new logger_1.Logger('Context', isLoggingFunc));
-        // we do this at the end, after the boot sequence is complete
-        this.registerComponents(gridOptions);
         this.setColumnsAndData();
         this.dispatchGridReadyEvent(gridOptions);
         if (gridOptions.debug) {
@@ -150,19 +147,6 @@ var Grid = (function () {
     };
     Grid.setFrameworkBeans = function (frameworkBeans) {
         this.frameworkBeans = frameworkBeans;
-    };
-    Grid.prototype.registerComponents = function (gridOptions) {
-        var componentProvider = this.context.getBean('componentProvider');
-        if (gridOptions.components != null) {
-            Object.keys(gridOptions.components).forEach(function (it) {
-                componentProvider.registerComponent(it, gridOptions.components[it]);
-            });
-        }
-        if (gridOptions.frameworkComponents != null) {
-            Object.keys(gridOptions.frameworkComponents).forEach(function (it) {
-                componentProvider.registerFwComponent(it, gridOptions.frameworkComponents[it]);
-            });
-        }
     };
     Grid.prototype.setColumnsAndData = function () {
         var gridOptionsWrapper = this.context.getBean('gridOptionsWrapper');

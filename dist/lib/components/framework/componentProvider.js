@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,6 +33,10 @@ var popupSelectCellEditor_1 = require("../../rendering/cellEditors/popupSelectCe
 var largeTextCellEditor_1 = require("../../rendering/cellEditors/largeTextCellEditor");
 var textFilter_1 = require("../../filter/textFilter");
 var numberFilter_1 = require("../../filter/numberFilter");
+var overlayWrapperComponent_1 = require("../../rendering/overlays/overlayWrapperComponent");
+var loadingOverlayComponent_1 = require("../../rendering/overlays/loadingOverlayComponent");
+var noRowsOverlayComponent_1 = require("../../rendering/overlays/noRowsOverlayComponent");
+var utils_1 = require("../../utils");
 var RegisteredComponentSource;
 (function (RegisteredComponentSource) {
     RegisteredComponentSource[RegisteredComponentSource["DEFAULT"] = 0] = "DEFAULT";
@@ -40,60 +44,249 @@ var RegisteredComponentSource;
 })(RegisteredComponentSource = exports.RegisteredComponentSource || (exports.RegisteredComponentSource = {}));
 var ComponentProvider = (function () {
     function ComponentProvider() {
+        this.agDeprecatedNames = {};
         this.jsComponents = {};
         this.frameworkComponents = {};
     }
     ComponentProvider.prototype.postConstruct = function () {
+        this.agDeprecatedNames = {
+            set: {
+                newComponentName: 'agSetColumnFilter',
+                propertyHolder: 'filter'
+            },
+            text: {
+                newComponentName: 'agTextColumnFilter',
+                propertyHolder: 'filter'
+            },
+            number: {
+                newComponentName: 'agNumberColumnFilter',
+                propertyHolder: 'filter'
+            },
+            date: {
+                newComponentName: 'agDateColumnFilter',
+                propertyHolder: 'filter'
+            },
+            group: {
+                newComponentName: 'agGroupCellRenderer',
+                propertyHolder: 'cellRenderer'
+            },
+            animateShowChange: {
+                newComponentName: 'agAnimateShowChangeCellRenderer',
+                propertyHolder: 'cellRenderer'
+            },
+            animateSlide: {
+                newComponentName: 'agAnimateSlideCellRenderer',
+                propertyHolder: 'cellRenderer'
+            },
+            select: {
+                newComponentName: 'agSelectCellEditor',
+                propertyHolder: 'cellEditor'
+            },
+            largeText: {
+                newComponentName: 'agLargeTextCellEditor',
+                propertyHolder: 'cellEditor'
+            },
+            popupSelect: {
+                newComponentName: 'agPopupSelectCellEditor',
+                propertyHolder: 'cellEditor'
+            },
+            popupText: {
+                newComponentName: 'agPopupTextCellEditor',
+                propertyHolder: 'cellEditor'
+            },
+            richSelect: {
+                newComponentName: 'agRichSelectCellEditor',
+                propertyHolder: 'cellEditor'
+            },
+            headerComponent: {
+                newComponentName: 'agColumnHeader',
+                propertyHolder: 'headerComponent'
+            }
+        };
         this.agGridDefaults = {
             //THE FOLLOWING COMPONENTS HAVE NO DEFAULTS, THEY NEED TO BE SPECIFIED AS AN SPECIFIC FLAVOUR
             //THERE ARE NO DEFAULTS THAT FIT ALL PURPOSES
             //THEY ARE ADDED HERE TO AVOID THE NOT FOUND WARNING.
-            filterComponent: null,
-            customFloatingFilterComponent: null,
+            agColumnFilter: {
+                defaultImpl: null,
+                overridable: false
+            },
+            agCustomColumnFloatingFilter: {
+                defaultImpl: null,
+                overridable: false
+            },
             //date
-            dateComponent: dateFilter_1.DefaultDateComponent,
+            agDateInput: {
+                defaultImpl: dateFilter_1.DefaultDateComponent,
+                overridable: true
+            },
             //header
-            headerComponent: headerComp_1.HeaderComp,
-            headerGroupComponent: headerGroupComp_1.HeaderGroupComp,
+            agColumnHeader: {
+                defaultImpl: headerComp_1.HeaderComp,
+                overridable: true
+            },
+            agColumnGroupHeader: {
+                defaultImpl: headerGroupComp_1.HeaderGroupComp,
+                overridable: true
+            },
             //floating filters
-            setFloatingFilterComponent: floatingFilter_1.SetFloatingFilterComp,
-            textFloatingFilterComponent: floatingFilter_1.TextFloatingFilterComp,
-            numberFloatingFilterComponent: floatingFilter_1.NumberFloatingFilterComp,
-            dateFloatingFilterComponent: floatingFilter_1.DateFloatingFilterComp,
-            readModelAsStringFloatingFilterComponent: floatingFilter_1.ReadModelAsStringFloatingFilterComp,
-            floatingFilterWrapperComponent: floatingFilterWrapper_1.FloatingFilterWrapperComp,
-            emptyFloatingFilterWrapperComponent: floatingFilterWrapper_1.EmptyFloatingFilterWrapperComp,
-            //renderers
-            cellRenderer: null,
-            fullWidthCellRenderer: null,
-            innerRenderer: null,
-            groupRowInnerRenderer: null,
-            animateShowChange: animateShowChangeCellRenderer_1.AnimateShowChangeCellRenderer,
-            animateSlide: animateSlideCellRenderer_1.AnimateSlideCellRenderer,
-            group: groupCellRenderer_1.GroupCellRenderer,
-            groupRowRenderer: groupCellRenderer_1.GroupCellRenderer,
-            loadingCellRenderer: rowComp_1.LoadingCellRenderer,
-            pinnedRowCellRenderer: null,
+            agSetColumnFloatingFilter: {
+                defaultImpl: floatingFilter_1.SetFloatingFilterComp,
+                overridable: true
+            },
+            agTextColumnFloatingFilter: {
+                defaultImpl: floatingFilter_1.TextFloatingFilterComp,
+                overridable: true
+            },
+            agNumberColumnFloatingFilter: {
+                defaultImpl: floatingFilter_1.NumberFloatingFilterComp,
+                overridable: true
+            },
+            agDateColumnFloatingFilter: {
+                defaultImpl: floatingFilter_1.DateFloatingFilterComp,
+                overridable: true
+            },
+            agReadModelAsStringFloatingFilter: {
+                defaultImpl: floatingFilter_1.ReadModelAsStringFloatingFilterComp,
+                overridable: false
+            },
+            agFloatingFilterWrapper: {
+                defaultImpl: floatingFilterWrapper_1.FloatingFilterWrapperComp,
+                overridable: false
+            },
+            agEmptyFloatingFilterWrapper: {
+                defaultImpl: floatingFilterWrapper_1.EmptyFloatingFilterWrapperComp,
+                overridable: false
+            },
+            // renderers
+            agCellRenderer: {
+                defaultImpl: null,
+                overridable: false
+            },
+            agFullWidthCellRenderer: {
+                defaultImpl: null,
+                overridable: false
+            },
+            agInnerCellRenderer: {
+                defaultImpl: null,
+                overridable: false
+            },
+            agGroupRowInnerCellRenderer: {
+                defaultImpl: null,
+                overridable: false
+            },
+            agAnimateShowChangeCellRenderer: {
+                defaultImpl: animateShowChangeCellRenderer_1.AnimateShowChangeCellRenderer,
+                overridable: true
+            },
+            agAnimateSlideCellRenderer: {
+                defaultImpl: animateSlideCellRenderer_1.AnimateSlideCellRenderer,
+                overridable: true
+            },
+            agGroupCellRenderer: {
+                defaultImpl: groupCellRenderer_1.GroupCellRenderer,
+                overridable: true
+            },
+            agGroupRowRenderer: {
+                defaultImpl: groupCellRenderer_1.GroupCellRenderer,
+                overridable: false
+            },
+            agLoadingCellRenderer: {
+                defaultImpl: rowComp_1.LoadingCellRenderer,
+                overridable: true
+            },
+            agOverlayWrapper: {
+                defaultImpl: overlayWrapperComponent_1.OverlayWrapperComponent,
+                overridable: false
+            },
+            agLoadingOverlay: {
+                defaultImpl: loadingOverlayComponent_1.LoadingOverlayComponent,
+                overridable: true
+            },
+            agNoRowsOverlay: {
+                defaultImpl: noRowsOverlayComponent_1.NoRowsOverlayComponent,
+                overridable: true
+            },
+            agPinnedRowCellRenderer: {
+                defaultImpl: null,
+                overridable: false
+            },
             //editors
-            cellEditor: textCellEditor_1.TextCellEditor,
-            textCellEditor: textCellEditor_1.TextCellEditor,
-            text: textCellEditor_1.TextCellEditor,
-            selectCellEditor: selectCellEditor_1.SelectCellEditor,
-            select: selectCellEditor_1.SelectCellEditor,
-            popupTextCellEditor: popupTextCellEditor_1.PopupTextCellEditor,
-            popupText: popupTextCellEditor_1.PopupTextCellEditor,
-            popupSelectCellEditor: popupSelectCellEditor_1.PopupSelectCellEditor,
-            popupSelect: popupSelectCellEditor_1.PopupSelectCellEditor,
-            largeTextCellEditor: largeTextCellEditor_1.LargeTextCellEditor,
-            largeText: largeTextCellEditor_1.LargeTextCellEditor,
+            agCellEditor: {
+                defaultImpl: textCellEditor_1.TextCellEditor,
+                overridable: false
+            },
+            agTextCellEditor: {
+                defaultImpl: textCellEditor_1.TextCellEditor,
+                overridable: true
+            },
+            agText: {
+                defaultImpl: textCellEditor_1.TextCellEditor,
+                overridable: false
+            },
+            agSelectCellEditor: {
+                defaultImpl: selectCellEditor_1.SelectCellEditor,
+                overridable: true
+            },
+            agSelect: {
+                defaultImpl: selectCellEditor_1.SelectCellEditor,
+                overridable: false
+            },
+            agPopupTextCellEditor: {
+                defaultImpl: popupTextCellEditor_1.PopupTextCellEditor,
+                overridable: true
+            },
+            agPopupText: {
+                defaultImpl: popupTextCellEditor_1.PopupTextCellEditor,
+                overridable: false
+            },
+            agPopupSelectCellEditor: {
+                defaultImpl: popupSelectCellEditor_1.PopupSelectCellEditor,
+                overridable: true
+            },
+            agPopupSelect: {
+                defaultImpl: popupSelectCellEditor_1.PopupSelectCellEditor,
+                overridable: false
+            },
+            agLargeTextCellEditor: {
+                defaultImpl: largeTextCellEditor_1.LargeTextCellEditor,
+                overridable: true
+            },
+            agLargeText: {
+                defaultImpl: largeTextCellEditor_1.LargeTextCellEditor,
+                overridable: false
+            },
             //filter
-            textColumnFilter: textFilter_1.TextFilter,
-            numberColumnFilter: numberFilter_1.NumberFilter,
-            dateColumnFilter: dateFilter_1.DateFilter,
+            agTextColumnFilter: {
+                defaultImpl: textFilter_1.TextFilter,
+                overridable: false
+            },
+            agNumberColumnFilter: {
+                defaultImpl: numberFilter_1.NumberFilter,
+                overridable: false
+            },
+            agDateColumnFilter: {
+                defaultImpl: dateFilter_1.DateFilter,
+                overridable: false
+            }
         };
     };
-    ComponentProvider.prototype.registerComponent = function (name, component) {
-        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
+    ComponentProvider.prototype.init = function () {
+        var _this = this;
+        var componentProvider = this.context.getBean('componentProvider');
+        if (this.gridOptions.components != null) {
+            Object.keys(this.gridOptions.components).forEach(function (it) {
+                componentProvider.registerComponent(it, _this.gridOptions.components[it]);
+            });
+        }
+        if (this.gridOptions.frameworkComponents != null) {
+            Object.keys(this.gridOptions.frameworkComponents).forEach(function (it) {
+                componentProvider.registerFwComponent(it, _this.gridOptions.frameworkComponents[it]);
+            });
+        }
+    };
+    ComponentProvider.prototype.registerComponent = function (rawName, component) {
+        var name = this.translateIfDeprecated(rawName);
         if (this.frameworkComponents[name]) {
             console.error("Trying to register a component that you have already registered for frameworks: " + name);
             return;
@@ -104,8 +297,8 @@ var ComponentProvider = (function () {
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    ComponentProvider.prototype.registerFwComponent = function (name, component) {
-        // console.warn(`ag-grid: registering components is a lab feature, is not intended to be used or supported yet.`);
+    ComponentProvider.prototype.registerFwComponent = function (rawName, component) {
+        var name = this.translateIfDeprecated(rawName);
         if (this.jsComponents[name]) {
             console.error("Trying to register a component that you have already registered for plain javascript: " + name);
             return;
@@ -116,39 +309,73 @@ var ComponentProvider = (function () {
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    ComponentProvider.prototype.retrieve = function (name) {
+    ComponentProvider.prototype.retrieve = function (rawName) {
+        var name = this.translateIfDeprecated(rawName);
         if (this.frameworkComponents[name]) {
-            return {
+            return this.assertCanBeOverride(name, {
                 type: componentResolver_1.ComponentType.FRAMEWORK,
                 component: this.frameworkComponents[name],
                 source: RegisteredComponentSource.REGISTERED
-            };
+            });
         }
         if (this.jsComponents[name]) {
-            return {
+            return this.assertCanBeOverride(name, {
                 type: componentResolver_1.ComponentType.AG_GRID,
                 component: this.jsComponents[name],
                 source: RegisteredComponentSource.REGISTERED
-            };
+            });
         }
         if (this.agGridDefaults[name]) {
-            return {
-                type: componentResolver_1.ComponentType.AG_GRID,
-                component: this.agGridDefaults[name],
-                source: RegisteredComponentSource.DEFAULT
-            };
+            return this.agGridDefaults[name].defaultImpl ?
+                {
+                    type: componentResolver_1.ComponentType.AG_GRID,
+                    component: this.agGridDefaults[name].defaultImpl,
+                    source: RegisteredComponentSource.DEFAULT
+                } :
+                null;
         }
         if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {
             console.warn("ag-grid: Looking for component [" + name + "] but it wasn't found.");
         }
         return null;
     };
+    ComponentProvider.prototype.assertCanBeOverride = function (name, toAssert) {
+        var overridable = this.agGridDefaults[name] ? this.agGridDefaults[name].overridable : true;
+        if (!overridable) {
+            throw Error("ag-grid: You are trying to register a component which is not overridable and which name it is used internally in ag-grid: [" + name + "]. Please change the name of the component");
+        }
+        return toAssert;
+    };
+    ComponentProvider.prototype.translateIfDeprecated = function (raw) {
+        var deprecatedInfo = this.agDeprecatedNames[raw];
+        if (deprecatedInfo != null) {
+            utils_1._.doOnce(function () {
+                console.warn("ag-grid. Since v15.0 component names have been renamed to be namespaced. You should rename " + deprecatedInfo.propertyHolder + ":" + raw + " to " + deprecatedInfo.propertyHolder + ":" + deprecatedInfo.newComponentName);
+            }, 'DEPREACTE_COMPONENT_' + raw);
+            return deprecatedInfo.newComponentName;
+        }
+        return raw;
+    };
+    __decorate([
+        context_1.Autowired('gridOptions'),
+        __metadata("design:type", Object)
+    ], ComponentProvider.prototype, "gridOptions", void 0);
+    __decorate([
+        context_1.Autowired('context'),
+        __metadata("design:type", context_1.Context)
+    ], ComponentProvider.prototype, "context", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)
     ], ComponentProvider.prototype, "postConstruct", null);
+    __decorate([
+        context_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ComponentProvider.prototype, "init", null);
     ComponentProvider = __decorate([
         context_1.Bean('componentProvider')
     ], ComponentProvider);

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -58,7 +58,8 @@ var TouchListener = (function () {
                 _this.moved = true;
                 var event_1 = {
                     type: TouchListener.EVENT_LONG_TAP,
-                    touchStart: _this.touchStart
+                    touchStart: _this.touchStart,
+                    touchEvent: touchEvent
                 };
                 _this.eventService.dispatchEvent(event_1);
             }

@@ -371,6 +371,7 @@
 
     .ag-header-cell-menu-button .ag-icon-menu {
         height: $header-height;
+        display: block;
     }
 
     .ag-icon-checkbox-checked:empty {
@@ -859,6 +860,13 @@
         margin-right: 0;
         width: calc(100% - #{$icon-size + $grid-size * 2});
 
+        input {
+            box-sizing: border-box;
+            @include textbox($params);
+        }
+    }
+
+    .ag-floating-filter-full-body {
         input {
             box-sizing: border-box;
             @include textbox($params);

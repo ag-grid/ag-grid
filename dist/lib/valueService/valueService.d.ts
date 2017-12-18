@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -17,4 +17,5 @@ export declare class ValueService {
     private setValueUsingField(data, field, newValue, isFieldContainsDots);
     private executeValueGetter(valueGetter, data, column, rowNode);
     private getValueCallback(node, field);
+    getKeyForNode(col: Column, rowNode: RowNode): any;
 }

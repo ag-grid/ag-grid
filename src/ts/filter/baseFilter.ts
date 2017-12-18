@@ -8,6 +8,7 @@ import {
     IFloatingFilterParams, InputTextFloatingFilterComp, FloatingFilterChange,
     BaseFloatingFilterChange
 } from "./floatingFilter";
+import {INumberFilterParams, ITextFilterParams} from "./textFilter";
 
 
 export interface Comparator<T>{
@@ -84,8 +85,8 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
     public init(params: P): void {
         this.filterParams = params;
         this.defaultFilter = this.filterParams.defaultOption;
-        if (this.filterParams.filterOptions){
-            if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS)<0){
+        if (this.filterParams.filterOptions && !this.defaultFilter){
+            if (this.filterParams.filterOptions.lastIndexOf(BaseFilter.EQUALS) < 0){
                 this.defaultFilter = this.filterParams.filterOptions[0];
             }
         }
@@ -223,6 +224,14 @@ export abstract class BaseFilter<T, P extends IFilterParams, M> extends Componen
         return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
     }
 
+    public getDebounceMs(filterParams: ITextFilterParams | INumberFilterParams): number {
+        if (filterParams.applyButton && filterParams.debounceMs) {
+            console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
+            return 0;
+        }
+
+        return filterParams.debounceMs != null ? filterParams.debounceMs : 500;
+    }
 }
 
 

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,7 +30,6 @@ var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var columnController_1 = require("../columnController/columnController");
 var column_1 = require("../entities/column");
-var renderedHeaderCell_1 = require("./deprecated/renderedHeaderCell");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var utils_1 = require("../utils");
@@ -38,6 +37,7 @@ var headerWrapperComp_1 = require("./header/headerWrapperComp");
 var headerGroupWrapperComp_1 = require("./headerGroup/headerGroupWrapperComp");
 var filterManager_1 = require("../filter/filterManager");
 var componentRecipes_1 = require("../components/framework/componentRecipes");
+var gridApi_1 = require("../gridApi");
 var HeaderRowType;
 (function (HeaderRowType) {
     HeaderRowType[HeaderRowType["COLUMN_GROUP"] = 0] = "COLUMN_GROUP";
@@ -49,7 +49,6 @@ var HeaderRowComp = (function (_super) {
     function HeaderRowComp(dept, type, pinned, eRoot, dropTarget) {
         var _this = _super.call(this, "<div class=\"ag-header-row\" role=\"presentation\"/>") || this;
         _this.headerCompPromises = {};
-        _this.warnedUserOnOldHeaderTemplate = false;
         _this.dept = dept;
         _this.type = type;
         _this.pinned = pinned;
@@ -173,18 +172,17 @@ var HeaderRowComp = (function (_super) {
                 utils_1.Utils.removeFromArray(currentChildIds, idOfChild);
                 headerCompPromise = _this.headerCompPromises[idOfChild];
                 headerCompPromise.then(function (headerComp) {
-                    eBefore = eHeaderCompGui;
                     eHeaderCompGui = headerComp.getGui();
                     if (ensureDomOrder) {
                         utils_1.Utils.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
                     }
+                    eBefore = eHeaderCompGui;
                 });
             }
             else {
                 headerCompPromise = _this.createHeaderComp(child);
                 _this.headerCompPromises[idOfChild] = headerCompPromise;
                 headerCompPromise.then(function (headerComp) {
-                    eBefore = eHeaderCompGui;
                     eHeaderCompGui = headerComp.getGui();
                     if (ensureDomOrder) {
                         utils_1.Utils.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
@@ -192,46 +190,19 @@ var HeaderRowComp = (function (_super) {
                     else {
                         eParentContainer.appendChild(eHeaderCompGui);
                     }
+                    eBefore = eHeaderCompGui;
                 });
             }
         });
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
         this.removeAndDestroyChildComponents(currentChildIds);
     };
-    // check if user is using the deprecated
-    HeaderRowComp.prototype.isUsingOldHeaderRenderer = function (column) {
-        var colDef = column.getColDef();
-        var usingOldHeaderRenderer = utils_1.Utils.anyExists([
-            // header template
-            this.gridOptionsWrapper.getHeaderCellTemplateFunc(),
-            this.gridOptionsWrapper.getHeaderCellTemplate(),
-            colDef.headerCellTemplate,
-            // header cellRenderer
-            colDef.headerCellRenderer,
-            this.gridOptionsWrapper.getHeaderCellRenderer()
-        ]);
-        if (usingOldHeaderRenderer && !this.warnedUserOnOldHeaderTemplate) {
-            if (this.gridOptionsWrapper.getHeaderCellTemplate() || this.gridOptionsWrapper.getHeaderCellTemplateFunc()) {
-                console.warn('ag-Grid: Since ag-Grid v14 you can now specify a template for the default header component. The ability to specify header template using colDef.headerCellTemplate is now deprecated and will be removed in v15. Please change your code to specify the template as colDef.headerComponentParams.template');
-            }
-            if (this.gridOptionsWrapper.getHeaderCellRenderer()) {
-                console.warn('ag-Grid: Using headerCellRenderer is deprecated and will be removed in ag-Grid v15. Please use Header Component instead.');
-            }
-            this.warnedUserOnOldHeaderTemplate = true;
-        }
-        return usingOldHeaderRenderer;
-    };
     HeaderRowComp.prototype.createHeaderComp = function (columnGroupChild) {
         var _this = this;
         var resultPromise;
         switch (this.type) {
             case HeaderRowType.COLUMN:
-                if (this.isUsingOldHeaderRenderer(columnGroupChild)) {
-                    resultPromise = utils_1.Promise.resolve(new renderedHeaderCell_1.RenderedHeaderCell(columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
-                }
-                else {
-                    resultPromise = utils_1.Promise.resolve(new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
-                }
+                resultPromise = utils_1.Promise.resolve(new headerWrapperComp_1.HeaderWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
                 break;
             case HeaderRowType.COLUMN_GROUP:
                 resultPromise = utils_1.Promise.resolve(new headerGroupWrapperComp_1.HeaderGroupWrapperComp(columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
@@ -269,6 +240,7 @@ var HeaderRowComp = (function (_super) {
         // let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
         //
         var baseParams = {
+            api: this.gridApi,
             column: column,
             currentParentModel: function () {
                 var filterComponentPromise = _this.filterManager.getFilterComponent(column);
@@ -313,6 +285,10 @@ var HeaderRowComp = (function (_super) {
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], HeaderRowComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('gridApi'),
+        __metadata("design:type", gridApi_1.GridApi)
+    ], HeaderRowComp.prototype, "gridApi", void 0);
     __decorate([
         context_1.Autowired('columnController'),
         __metadata("design:type", columnController_1.ColumnController)

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -333,9 +333,9 @@ var FilterManager = (function () {
     };
     FilterManager.prototype.createFilterInstance = function (column, $scope) {
         var _this = this;
-        var defaultFilter = 'textColumnFilter';
+        var defaultFilter = 'agTextColumnFilter';
         if (this.gridOptionsWrapper.isEnterprise()) {
-            defaultFilter = 'setColumnFilter';
+            defaultFilter = 'agSetColumnFilter';
         }
         var sanitisedColDef = utils_1.Utils.cloneObject(column.getColDef());
         var event = {
@@ -343,10 +343,6 @@ var FilterManager = (function () {
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        this.translateFilter(sanitisedColDef, 'set');
-        this.translateFilter(sanitisedColDef, 'text');
-        this.translateFilter(sanitisedColDef, 'number');
-        this.translateFilter(sanitisedColDef, 'date');
         var filterChangedCallback = this.onFilterChanged.bind(this);
         var filterModifiedCallback = function () { return _this.eventService.dispatchEvent(event); };
         var params = {
@@ -363,11 +359,6 @@ var FilterManager = (function () {
         return this.componentResolver.createAgGridComponent(sanitisedColDef, params, 'filter', defaultFilter, true, function (params, filter) { return utils_1.Utils.assign(params, {
             doesRowPassOtherFilter: _this.doesRowPassOtherFilters.bind(_this, filter),
         }); });
-    };
-    FilterManager.prototype.translateFilter = function (target, toTranslate) {
-        if (target.filter === toTranslate) {
-            target.filter = toTranslate + "ColumnFilter";
-        }
     };
     FilterManager.prototype.createFilterWrapper = function (column) {
         var filterWrapper = {

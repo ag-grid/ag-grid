@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -77,7 +77,7 @@ var AutoGroupColService = (function () {
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         var defaultAutoColDef = {
             headerName: localeTextFunc('group', 'Group'),
-            cellRenderer: 'group'
+            cellRenderer: 'agGroupCellRenderer'
         };
         // we never allow moving the group column
         defaultAutoColDef.suppressMovable = true;

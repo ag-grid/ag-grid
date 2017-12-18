@@ -60,7 +60,10 @@ export class MoveColumnController {
             // the if statement doesn't work if drag leaves grid, then enters again
             this.columnController.setColumnsVisible(columns, true);
         } else {
-            // restore previous state of visible columns upon re-entering
+            // restore previous state of visible columns upon re-entering. this means if the user drags
+            // a group out, and then drags the group back in, only columns that were originally visible
+            // will be visible again. otherwise a group with three columns (but only two visible) could
+            // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             let visibleState = draggingEvent.dragItem.visibleState;
             let visibleColumns: Column[] = columns.filter(column => visibleState[column.getId()] );
             this.columnController.setColumnsVisible(visibleColumns, true);

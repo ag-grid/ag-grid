@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -299,6 +299,7 @@ var CellComp = (function (_super) {
         if (!cellRendererRefreshed) {
             this.replaceContentsAfterRefresh();
         }
+        this.refreshToolTip();
         if (!suppressFlash) {
             this.flashCell();
         }
@@ -433,18 +434,6 @@ var CellComp = (function (_super) {
                 this.eParentOfValue.innerText = valueToRender;
             }
         }
-        if (colDef.tooltipField) {
-            var data = this.rowNode.data;
-            if (utils_1._.exists(data)) {
-                var tooltip = utils_1._.getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
-                if (utils_1._.exists(tooltip)) {
-                    this.eParentOfValue.setAttribute('title', tooltip);
-                }
-                else {
-                    this.eParentOfValue.removeAttribute('title');
-                }
-            }
-        }
     };
     CellComp.prototype.attemptCellRendererRefresh = function () {
         if (utils_1._.missing(this.cellRenderer) || utils_1._.missing(this.cellRenderer.refresh)) {
@@ -463,6 +452,20 @@ var CellComp = (function (_super) {
     };
     CellComp.prototype.isVolatile = function () {
         return this.column.getColDef().volatile;
+    };
+    CellComp.prototype.refreshToolTip = function () {
+        if (this.column.getColDef().tooltipField) {
+            var data = this.rowNode.data;
+            if (utils_1._.exists(data)) {
+                var tooltip = utils_1._.getValueUsingField(data, this.column.getColDef().tooltipField, this.column.isTooltipFieldContainsDots());
+                if (utils_1._.exists(tooltip)) {
+                    this.eParentOfValue.setAttribute('title', tooltip);
+                }
+                else {
+                    this.eParentOfValue.removeAttribute('title');
+                }
+            }
+        }
     };
     CellComp.prototype.valuesAreEqual = function (val1, val2) {
         // if the user provided an equals method, use that, otherwise do simple comparison
@@ -542,14 +545,16 @@ var CellComp = (function (_super) {
             this.usingCellRenderer = false;
             return;
         }
-        var cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer');
-        var pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer');
+        var cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer', 'agCellRenderer');
+        var pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer', 'agPinnedRowCellRenderer');
         if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
             this.cellRendererType = 'pinnedRowCellRenderer';
+            this.cellRendererComponentName = 'agPinnedRowCellRenderer';
             this.usingCellRenderer = true;
         }
         else if (cellRenderer) {
             this.cellRendererType = 'cellRenderer';
+            this.cellRendererComponentName = 'agCellRenderer';
             this.usingCellRenderer = true;
         }
         else {
@@ -561,7 +566,7 @@ var CellComp = (function (_super) {
         var params = this.createCellRendererParams(valueToRender);
         this.cellRendererVersion++;
         var callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
-        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType).then(callback);
+        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType, this.cellRendererComponentName).then(callback);
     };
     CellComp.prototype.afterCellRendererCreated = function (cellRendererVersion, cellRenderer) {
         // see if daemon
@@ -643,6 +648,9 @@ var CellComp = (function (_super) {
         }
     };
     CellComp.prototype.onMouseEvent = function (eventName, mouseEvent) {
+        if (utils_1._.isStopPropagationForAgGrid(mouseEvent)) {
+            return;
+        }
         switch (eventName) {
             case 'click':
                 this.onCellClicked(mouseEvent);
@@ -653,15 +661,20 @@ var CellComp = (function (_super) {
             case 'dblclick':
                 this.onCellDoubleClicked(mouseEvent);
                 break;
-            case 'contextmenu':
-                this.onContextMenu(mouseEvent);
-                break;
             case 'mouseout':
                 this.onMouseOut(mouseEvent);
                 break;
             case 'mouseover':
                 this.onMouseOver(mouseEvent);
                 break;
+        }
+    };
+    CellComp.prototype.dispatchCellContextMenuEvent = function (event) {
+        var colDef = this.column.getColDef();
+        var cellContextMenuEvent = this.createEvent(event, events_1.Events.EVENT_CELL_CONTEXT_MENU);
+        this.beans.eventService.dispatchEvent(cellContextMenuEvent);
+        if (colDef.onCellContextMenu) {
+            colDef.onCellContextMenu(cellContextMenuEvent);
         }
     };
     CellComp.prototype.createEvent = function (domEvent, eventType) {
@@ -692,26 +705,6 @@ var CellComp = (function (_super) {
     CellComp.prototype.onMouseOver = function (mouseEvent) {
         var cellMouseOverEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_MOUSE_OVER);
         this.beans.eventService.dispatchEvent(cellMouseOverEvent);
-    };
-    CellComp.prototype.onContextMenu = function (mouseEvent) {
-        // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
-        // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.beans.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
-            // then do the check
-            if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
-                return;
-            }
-        }
-        var colDef = this.column.getColDef();
-        var cellContextMenuEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_CONTEXT_MENU);
-        this.beans.eventService.dispatchEvent(cellContextMenuEvent);
-        if (colDef.onCellContextMenu) {
-            colDef.onCellContextMenu(cellContextMenuEvent);
-        }
-        if (this.beans.contextMenuFactory && !this.beans.gridOptionsWrapper.isSuppressContextMenu()) {
-            this.beans.contextMenuFactory.showMenu(this.rowNode, this.column, this.value, mouseEvent);
-            mouseEvent.preventDefault();
-        }
     };
     CellComp.prototype.onCellDoubleClicked = function (mouseEvent) {
         var colDef = this.column.getColDef();
@@ -997,7 +990,7 @@ var CellComp = (function (_super) {
         }
     };
     CellComp.prototype.onEnterKeyDown = function () {
-        if (this.editingCell) {
+        if (this.editingCell || this.rowComp.isEditing()) {
             this.stopRowOrCellEdit();
             this.focusCell(true);
         }
@@ -1069,7 +1062,24 @@ var CellComp = (function (_super) {
             }
         }
     };
+    // returns true if on iPad and this is second 'click' event in 200ms
+    CellComp.prototype.isDoubleClickOnIPad = function () {
+        if (!utils_1._.isUserAgentIPad()) {
+            return false;
+        }
+        var nowMillis = new Date().getTime();
+        var res = nowMillis - this.lastIPadMouseClickEvent < 200;
+        this.lastIPadMouseClickEvent = nowMillis;
+        return res;
+    };
     CellComp.prototype.onCellClicked = function (mouseEvent) {
+        // iPad doesn't have double click - so we need to mimic it do enable editing for
+        // iPad.
+        if (this.isDoubleClickOnIPad()) {
+            this.onCellDoubleClicked(mouseEvent);
+            mouseEvent.preventDefault(); // if we don't do this, then ipad zooms in
+            return;
+        }
         var cellClickedEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_CLICKED);
         this.beans.eventService.dispatchEvent(cellClickedEvent);
         var colDef = this.column.getColDef();

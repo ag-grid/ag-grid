@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v14.2.0
+ * @version v15.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,6 +54,9 @@ var gridApi_1 = require("../gridApi");
 var animationFrameService_1 = require("../misc/animationFrameService");
 var rowComp_1 = require("../rendering/rowComp");
 var navigationService_1 = require("./navigationService");
+var valueService_1 = require("../valueService/valueService");
+var touchListener_1 = require("../widgets/touchListener");
+var componentRecipes_1 = require("../components/framework/componentRecipes");
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
 var HEADER_SNIPPET = '<div class="ag-header" role="row">' +
@@ -117,13 +120,6 @@ var GRID_PANEL_FOR_PRINT_TEMPLATE = '<div class="ag-root ag-font-style">' +
     // floating bottom
     '<div class="ag-floating-bottom-container"></div>' +
     '</div>';
-// wrapping in outer div, and wrapper, is needed to center the loading icon
-// The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-var OVERLAY_TEMPLATE = '<div class="ag-overlay-panel" role="presentation">' +
-    '<div class="ag-overlay-wrapper ag-overlay-[OVERLAY_NAME]-wrapper">[OVERLAY_TEMPLATE]</div>' +
-    '</div>';
-var LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
-var NO_ROWS_TO_SHOW_OVERLAY_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
 var GridPanel = (function (_super) {
     __extends(GridPanel, _super);
     function GridPanel() {
@@ -176,14 +172,11 @@ var GridPanel = (function (_super) {
         this.addEventListeners();
         this.addDragListeners();
         this.layout = new borderLayout_1.BorderLayout({
-            overlays: {
-                loading: utils_1.Utils.loadTemplate(this.createLoadingOverlayTemplate()),
-                noRows: utils_1.Utils.loadTemplate(this.createNoRowsOverlayTemplate())
-            },
             center: this.eRoot,
             dontFill: this.forPrint,
             fillHorizontalOnly: this.autoHeight,
-            name: 'eGridPanel'
+            name: 'eGridPanel',
+            componentRecipes: this.componentRecipes
         });
         this.layout.addSizeChangeListener(this.setBodyAndHeaderHeights.bind(this));
         this.layout.addSizeChangeListener(this.setLeftAndRightBounds.bind(this));
@@ -202,6 +195,7 @@ var GridPanel = (function (_super) {
         this.addKeyboardEvents();
         this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
+        this.mockContextMenuForIPad();
         if (this.$scope) {
             this.addAngularApplyCheck();
         }
@@ -324,7 +318,7 @@ var GridPanel = (function (_super) {
             var target = utils_1.Utils.getTarget(mouseEvent);
             if (target === _this.eBodyViewport || target === _this.ePinnedLeftColsViewport || target === _this.ePinnedRightColsViewport) {
                 // show it
-                _this.onContextMenu(mouseEvent);
+                _this.onContextMenu(mouseEvent, null, null, null, null);
                 _this.preventDefaultOnContextMenu(mouseEvent);
             }
         };
@@ -373,28 +367,66 @@ var GridPanel = (function (_super) {
         }
     };
     GridPanel.prototype.processMouseEvent = function (eventName, mouseEvent) {
-        var cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
-        if (cellComp) {
-            cellComp.onMouseEvent(eventName, mouseEvent);
+        if (!this.mouseEventService.isEventFromThisGrid(mouseEvent))
+            return;
+        if (utils_1.Utils.isStopPropagationForAgGrid(mouseEvent)) {
+            return;
         }
         var rowComp = this.getRowForEvent(mouseEvent);
-        if (rowComp) {
-            rowComp.onMouseEvent(eventName, mouseEvent);
+        var cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
+        if (eventName === "contextmenu") {
+            this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellComp);
+        }
+        else {
+            if (cellComp)
+                cellComp.onMouseEvent(eventName, mouseEvent);
+            if (rowComp)
+                rowComp.onMouseEvent(eventName, mouseEvent);
         }
         this.preventDefaultOnContextMenu(mouseEvent);
     };
-    GridPanel.prototype.onContextMenu = function (mouseEvent) {
+    GridPanel.prototype.mockContextMenuForIPad = function () {
+        var _this = this;
+        // we do NOT want this when not in ipad, otherwise we will be doing
+        if (!utils_1.Utils.isUserAgentIPad()) {
+            return;
+        }
+        this.eAllCellContainers.forEach(function (container) {
+            var touchListener = new touchListener_1.TouchListener(container);
+            var longTapListener = function (event) {
+                var rowComp = _this.getRowForEvent(event.touchEvent);
+                var cellComp = _this.mouseEventService.getRenderedCellForEvent(event.touchEvent);
+                _this.handleContextMenuMouseEvent(null, event.touchEvent, rowComp, cellComp);
+            };
+            _this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_LONG_TAP, longTapListener);
+            _this.addDestroyFunc(function () { return touchListener.destroy(); });
+        });
+    };
+    GridPanel.prototype.handleContextMenuMouseEvent = function (mouseEvent, touchEvent, rowComp, cellComp) {
+        var rowNode = rowComp ? rowComp.getRowNode() : null;
+        var column = cellComp ? cellComp.getColumn() : null;
+        var value = null;
+        if (column) {
+            var event_1 = mouseEvent ? mouseEvent : touchEvent;
+            cellComp.dispatchCellContextMenuEvent(event_1);
+            value = this.valueService.getValue(column, rowNode);
+        }
+        this.onContextMenu(mouseEvent, touchEvent, rowNode, column, value);
+    };
+    GridPanel.prototype.onContextMenu = function (mouseEvent, touchEvent, rowNode, column, value) {
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
         if (!this.gridOptionsWrapper.isAllowContextMenuWithControlKey()) {
             // then do the check
-            if (mouseEvent.ctrlKey || mouseEvent.metaKey) {
+            if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) {
                 return;
             }
         }
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
-            this.contextMenuFactory.showMenu(null, null, null, mouseEvent);
-            mouseEvent.preventDefault();
+            var eventOrTouch = mouseEvent ? mouseEvent : touchEvent.touches[0];
+            this.contextMenuFactory.showMenu(rowNode, column, value, eventOrTouch);
+            var event_2 = mouseEvent ? mouseEvent : touchEvent;
+            event_2.preventDefault();
         }
     };
     GridPanel.prototype.preventDefaultOnContextMenu = function (mouseEvent) {
@@ -498,31 +530,6 @@ var GridPanel = (function (_super) {
         event.preventDefault();
         return false;
     };
-    GridPanel.prototype.createOverlayTemplate = function (name, defaultTemplate, userProvidedTemplate) {
-        var template = OVERLAY_TEMPLATE
-            .replace('[OVERLAY_NAME]', name);
-        if (userProvidedTemplate) {
-            template = template.replace('[OVERLAY_TEMPLATE]', userProvidedTemplate);
-        }
-        else {
-            template = template.replace('[OVERLAY_TEMPLATE]', defaultTemplate);
-        }
-        return template;
-    };
-    GridPanel.prototype.createLoadingOverlayTemplate = function () {
-        var userProvidedTemplate = this.gridOptionsWrapper.getOverlayLoadingTemplate();
-        var templateNotLocalised = this.createOverlayTemplate('loading', LOADING_OVERLAY_TEMPLATE, userProvidedTemplate);
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var templateLocalised = templateNotLocalised.replace('[LOADING...]', localeTextFunc('loadingOoo', 'Loading...'));
-        return templateLocalised;
-    };
-    GridPanel.prototype.createNoRowsOverlayTemplate = function () {
-        var userProvidedTemplate = this.gridOptionsWrapper.getOverlayNoRowsTemplate();
-        var templateNotLocalised = this.createOverlayTemplate('no-rows', NO_ROWS_TO_SHOW_OVERLAY_TEMPLATE, userProvidedTemplate);
-        var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-        var templateLocalised = templateNotLocalised.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
-        return templateLocalised;
-    };
     // Valid values for position are bottom, middle and top
     // position should be {'top','middle','bottom', or undefined/null}.
     // if undefined/null, then the grid will to the minimal amount of scrolling,
@@ -530,8 +537,8 @@ var GridPanel = (function (_super) {
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
     GridPanel.prototype.ensureIndexVisible = function (index, position) {
-        // if for print, everything is always visible
-        if (this.gridOptionsWrapper.isForPrint()) {
+        // if for print or auto height, everything is always visible
+        if (this.gridOptionsWrapper.isForPrint() || this.gridOptionsWrapper.isAutoHeight()) {
             return;
         }
         this.logger.log('ensureIndexVisible: ' + index);
@@ -789,12 +796,12 @@ var GridPanel = (function (_super) {
     };
     GridPanel.prototype.showLoadingOverlay = function () {
         if (!this.gridOptionsWrapper.isSuppressLoadingOverlay()) {
-            this.layout.showOverlay('loading');
+            this.layout.showLoadingOverlay();
         }
     };
     GridPanel.prototype.showNoRowsOverlay = function () {
         if (!this.gridOptionsWrapper.isSuppressNoRowsOverlay()) {
-            this.layout.showOverlay('noRows');
+            this.layout.showNoRowsOverlay();
         }
     };
     GridPanel.prototype.hideOverlay = function () {
@@ -981,12 +988,23 @@ var GridPanel = (function (_super) {
                 floatingBottomFullWith: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eFloatingBottomFullWidthCellContainer, hideWhenNoChildren: true }),
             };
             this.addMouseWheelEventListeners();
+            this.suppressScrollOnFloatingRow();
         }
         utils_1.Utils.iterateObject(this.rowContainerComponents, function (key, container) {
             if (container) {
                 _this.context.wireBean(container);
             }
         });
+    };
+    // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
+    // scroll the column into view. we do not want this, the pinned sections should never scroll.
+    // so we listen to scrolls on these containers and reset the scroll if we find one.
+    GridPanel.prototype.suppressScrollOnFloatingRow = function () {
+        var _this = this;
+        var resetTopScroll = function () { return _this.eFloatingTopViewport.scrollLeft = 0; };
+        var resetBottomScroll = function () { return _this.eFloatingTopViewport.scrollLeft = 0; };
+        this.addDestroyableEventListener(this.eFloatingTopViewport, 'scroll', resetTopScroll);
+        this.addDestroyableEventListener(this.eFloatingBottomViewport, 'scroll', resetBottomScroll);
     };
     GridPanel.prototype.getRowContainers = function () {
         return this.rowContainerComponents;
@@ -1044,7 +1062,8 @@ var GridPanel = (function (_super) {
         // allow the option to pass mouse wheel events to the browser
         // https://github.com/ag-grid/ag-grid/issues/800
         // in the future, this should be tied in with 'forPrint' option, or have an option 'no vertical scrolls'
-        if (!this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel()) {
+        var shouldPreventDefault = !this.gridOptionsWrapper.isAutoHeight() && !this.gridOptionsWrapper.isSuppressPreventDefaultOnMouseWheel();
+        if (shouldPreventDefault) {
             // if we don't prevent default, then the whole browser will scroll also as well as the grid
             event.preventDefault();
         }
@@ -1211,12 +1230,12 @@ var GridPanel = (function (_super) {
         // in this page based on the height of the grid
         if (this.bodyHeight !== bodyHeight) {
             this.bodyHeight = bodyHeight;
-            var event_1 = {
+            var event_3 = {
                 type: events_1.Events.EVENT_BODY_HEIGHT_CHANGED,
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
-            this.eventService.dispatchEvent(event_1);
+            this.eventService.dispatchEvent(event_3);
         }
     };
     GridPanel.prototype.getBodyHeight = function () {
@@ -1385,7 +1404,7 @@ var GridPanel = (function (_super) {
     };
     // this gets called whenever a change in the viewport, so we can inform column controller it has to work
     // out the virtual columns again. gets called from following locations:
-    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged
+    // + ensureColVisible, scroll, init, layoutChanged, displayedColumnsChanged, API (doLayout)
     GridPanel.prototype.setLeftAndRightBounds = function () {
         if (this.gridOptionsWrapper.isForPrint()) {
             return;
@@ -1543,6 +1562,14 @@ var GridPanel = (function (_super) {
         context_1.Autowired('frameworkFactory'),
         __metadata("design:type", Object)
     ], GridPanel.prototype, "frameworkFactory", void 0);
+    __decorate([
+        context_1.Autowired('valueService'),
+        __metadata("design:type", valueService_1.ValueService)
+    ], GridPanel.prototype, "valueService", void 0);
+    __decorate([
+        context_1.Autowired('componentRecipes'),
+        __metadata("design:type", componentRecipes_1.ComponentRecipes)
+    ], GridPanel.prototype, "componentRecipes", void 0);
     __decorate([
         __param(0, context_1.Qualifier('loggerFactory')),
         __metadata("design:type", Function),

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
@@ -6,6 +6,7 @@ import { IFilterComp, IDoesFilterPassParams, IFilterParams } from "../interfaces
 import { Context } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { FloatingFilterChange } from "./floatingFilter";
+import { INumberFilterParams, ITextFilterParams } from "./textFilter";
 export interface Comparator<T> {
     (left: T, right: T): number;
 }
@@ -64,6 +65,7 @@ export declare abstract class BaseFilter<T, P extends IFilterParams, M> extends 
     generateFilterHeader(): string;
     private generateTemplate();
     translate(toTranslate: string): string;
+    getDebounceMs(filterParams: ITextFilterParams | INumberFilterParams): number;
 }
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values

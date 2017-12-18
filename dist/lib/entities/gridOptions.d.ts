@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -16,6 +16,8 @@ import { CsvExportParams, ProcessCellForExportParams } from "../exportParams";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, FilterChangedEvent, FilterModifiedEvent, GridColumnsChangedEvent, GridReadyEvent, GridSizeChangedEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent, RowClickedEvent, RowDataChangedEvent, RowDoubleClickedEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { AgGridRegisteredComponentInput } from "../components/framework/componentProvider";
+import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
+import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. *
  ****************************************************************/
@@ -125,7 +127,7 @@ export interface GridOptions {
     minColWidth?: number;
     maxColWidth?: number;
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. GOD DAMN IT!*
+     * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
     localeText?: any;
     localeTextFunc?: Function;
@@ -134,7 +136,7 @@ export interface GridOptions {
     defaultColDef?: ColDef;
     defaultExportParams?: CsvExportParams;
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. FOR FUCKS SAKE! *
+     * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
@@ -151,7 +153,7 @@ export interface GridOptions {
     autoGroupColumnDef?: ColDef;
     forPrint?: boolean;
     /****************************************************************
-     * Don't forget to update ComponentUtil if changing this class. YOU'VE BEEN WARNED*
+     * Don't forget to update ComponentUtil if changing this class. *
      ****************************************************************/
     context?: any;
     rowStyle?: any;
@@ -165,7 +167,6 @@ export interface GridOptions {
     overlayNoRowsTemplate?: string;
     rowHeight?: number;
     detailRowHeight?: number;
-    headerCellTemplate?: string;
     masterDetail?: boolean;
     isRowMaster?: IsRowMaster;
     detailCellRenderer?: {
@@ -230,16 +231,22 @@ export interface GridOptions {
     navigateToNextCell?: (params: NavigateToNextCellParams) => GridCellDef;
     tabToNextCell?: (params: TabToNextCellParams) => GridCellDef;
     getDocument?: () => Document;
+    loadingOverlayComponent?: {
+        new (): ILoadingOverlayComp;
+    } | string;
+    loadingOverlayComponentFramework?: any;
+    noRowsOverlayComponent?: {
+        new (): INoRowsOverlayComp;
+    } | string;
+    noRowsOverlayComponentFramework?: any;
     fullWidthCellRenderer?: {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;
     fullWidthCellRendererParams?: any;
     isFullWidthCell?(rowNode: RowNode): boolean;
-    headerCellRenderer?: any;
     groupRowAggNodes?(nodes: RowNode[]): any;
     getBusinessKeyForNode?(node: RowNode): string;
-    getHeaderCellTemplate?: (params: any) => string | HTMLElement;
     getNodeChildDetails?: GetNodeChildDetails;
     getDataPath?: GetDataPath;
     treeData?: boolean;

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v14.2.0
+// Type definitions for ag-grid v15.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -45,5 +45,7 @@ export declare class PopupService {
     private positionPopup(params);
     private keepYWithinBounds(params, y);
     private keepXWithinBounds(params, x);
-    addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void): (event?: any) => void;
+    addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch): (event?: any) => void;
+    private isEventFromCurrentPopup(mouseEvent, touchEvent, eChild);
+    private isEventSameChainAsOriginalEvent(originalClick, mouseEvent, touchEvent);
 }
