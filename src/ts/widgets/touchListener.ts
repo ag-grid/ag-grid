@@ -40,12 +40,13 @@ export class TouchListener implements IEventEmitter {
 
         this.eElement.addEventListener('touchstart', startListener, <any>{passive:true});
         this.eElement.addEventListener('touchmove', moveListener, <any>{passive:true});
-        this.eElement.addEventListener('touchend', endListener, <any>{passive:true});
+        // we set passive=false, as we want to prevent default on this event
+        this.eElement.addEventListener('touchend', endListener, <any>{passive:false});
 
         this.destroyFuncs.push( ()=> {
             this.eElement.addEventListener('touchstart', startListener, <any>{passive:true});
             this.eElement.addEventListener('touchmove', moveListener, <any>{passive:true});
-            this.eElement.addEventListener('touchend', endListener, <any>{passive:true});
+            this.eElement.addEventListener('touchend', endListener, <any>{passive:false});
         });
     }
 
@@ -119,6 +120,9 @@ export class TouchListener implements IEventEmitter {
                 touchStart: this.touchStart
             };
             this.eventService.dispatchEvent(event);
+
+            // stops the tap from also been processed as a mouse click
+            touchEvent.preventDefault();
         }
 
         this.touching = false;
