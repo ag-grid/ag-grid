@@ -52,7 +52,7 @@ export class PropertyKeys {
         'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
         'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection',
         'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame',
-        'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail'
+        'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail', 'suppressMultiRangeSelection'
     ];
 
     public static FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',

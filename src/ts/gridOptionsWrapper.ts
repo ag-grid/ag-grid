@@ -313,6 +313,7 @@ export class GridOptionsWrapper {
     public isSuppressAggFuncInHeader() { return isTrue(this.gridOptions.suppressAggFuncInHeader); }
     public isSuppressAggAtRootLevel() { return isTrue(this.gridOptions.suppressAggAtRootLevel); }
     public isEnableRangeSelection(): boolean { return isTrue(this.gridOptions.enableRangeSelection); }
+    public isSuppressMultiRangeSelection(): boolean { return isTrue(this.gridOptions.suppressMultiRangeSelection); }
     public isPaginationAutoPageSize(): boolean { return isTrue(this.gridOptions.paginationAutoPageSize); }
     public isRememberGroupStateWhenNewData(): boolean { return isTrue(this.gridOptions.rememberGroupStateWhenNewData); }
     public getIcons() { return this.gridOptions.icons; }

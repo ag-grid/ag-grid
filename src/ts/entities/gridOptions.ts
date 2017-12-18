@@ -105,6 +105,7 @@ export interface GridOptions {
     pivotMode?: boolean;
     pivotTotals?: boolean;
     enableRangeSelection?: boolean;
+    suppressMultiRangeSelection?: boolean;
     // enterprise only
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;
