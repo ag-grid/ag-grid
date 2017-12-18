@@ -368,6 +368,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public noRowsOverlayComponent: any = undefined;
     @Input() public noRowsOverlayComponentFramework: any = undefined;
     @Input() public noRowsOverlayComponentParams: any = undefined;
+    @Input() public suppressMultiRangeSelection: any = undefined;
 
     /**
      * Outputs
