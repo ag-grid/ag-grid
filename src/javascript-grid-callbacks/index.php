@@ -8,6 +8,10 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="callbacks" class="first-h1">Grid Callbacks</h1>
 
+    <p>
+        All of these grid callbacks are available through the <code>GridOptions</code> interface.
+    </p>
+
     <table class="table">
         <tr class="title-row">
             <!-- TITLE ROW -->

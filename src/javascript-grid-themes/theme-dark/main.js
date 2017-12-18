@@ -88,7 +88,7 @@ var columnDefs = [
         field: 'game.name',
         width: 267,
         editable: true,
-        filter: 'set',
+        filter: 'agSetColumnFilter',
         tooltipField: 'gameName',
         checkboxSelection: function(params) {
             return params.columnApi.getRowGroupColumns().length === 0;
@@ -102,7 +102,7 @@ var columnDefs = [
         field: 'country',
         width: 200,
         editable: true,
-        cellEditor: 'richSelect',
+        cellEditor: 'agRichSelect',
         cellEditorParams: {
             values: [
                 'Argentina',
@@ -136,8 +136,8 @@ var columnDefs = [
         field: 'language',
         width: 200,
         editable: true,
-        filter: 'set',
-        cellEditor: 'select',
+        filter: 'agSetColumnFilter',
+        cellEditor:'agSelectCellEditor',
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
         }

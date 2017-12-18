@@ -10,6 +10,10 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="properties" class="first-h1">Grid Properties</h1>
 
+    <p>
+        All of these grid properties are available through the <code>GridOptions</code> interface.
+    </p>
+
     <table class="table">
         <tr class="title-row">
             <!-- TITLE ROW -->
@@ -490,6 +494,48 @@ include '../documentation-main/documentation_header.php';
             <td>You can change the text in the paging panels and the default filters by providing a <i>localeText</i> or
                 a <i>localeTextFunc</i> (see below). See <a href="../javascript-grid-internationalisation/">Internationalisation</a>.</td>
         </tr>
+
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Overlays</td>
+        </tr>
+        <tr>
+            <th>suppressLoadingOverlay</th>
+            <td>Disables the 'loading' <a href="../javascript-grid-overlays/">overlay</a>.</td>
+        </tr>
+        <tr>
+            <th>suppressNoRowsOverlay</th>
+            <td>Disables the 'no rows' <a href="../javascript-grid-overlays/">overlay</a>.</td>
+        </tr>
+        <tr>
+            <th>overlayLoadingTemplate</th>
+            <td>
+                Provide a template for 'loading' <a href="../javascript-grid-overlays/">overlay</a>
+                if not happy with the provided.
+            </td>
+        </tr>
+        <tr>
+            <th>overlayNoRowsTemplate</th>
+            <td>
+                Provide a template for 'no rows' <a href="../javascript-grid-overlays/">overlay</a>
+                if not happy with the provided.
+            </td>
+        </tr>
+
+        <tr>
+            <th>loadingOverlayComponent <br/>loadingOverlayComponentFramework </th>
+            <td>
+                Provide a custom <a href="../javascript-grid-overlay-component/#loading-overlay-interface">loading overlay component</a>.
+            </td>
+        </tr>
+
+        <tr>
+            <th>noRowsOverlayComponent <br/>noRowsOverlayComponentFramework </th>
+            <td>
+                Provide a custom <a href="../javascript-grid-overlays/#no-rows-overlay-interface">no rows overlay component</a>.
+            </td>
+        </tr>
+
         <tr class="title-row">
             <!-- TITLE ROW -->
             <td colspan="2">Miscellaneous</td>
@@ -553,29 +599,7 @@ include '../documentation-main/documentation_header.php';
                 If grids are aligned then the columns and horizontal scrolling
                 will be kept in sync.</td>
         </tr>
-        <tr>
-            <th>suppressLoadingOverlay</th>
-            <td>Disables the 'loading' <a href="../javascript-grid-overlays/">overlay</a>.</td>
-        </tr>
-        <tr>
-            <th>suppressNoRowsOverlay</th>
-            <td>Disables the 'no rows' <a href="../javascript-grid-overlays/">overlay</a>.</td>
-        </tr>
-        <tr>
-            <th>overlayLoadingTemplate</th>
-            <td>
-                Provide a template for 'loading' <a href="../javascript-grid-overlays/">overlay</a>
-                if not happy with the provided.
-            </td>
-        </tr>
-        <tr>
-            <th>overlayNoRowsTemplate</th>
-            <td>
-                Provide a template for 'no rows' <a href="../javascript-grid-overlays/">overlay</a>
-                if not happy with the provided.
-            </td>
-        </tr>
-        <tr>
+                <tr>
             <th>suppressParentsInRowNodes</th>
             <td>
                 If true, rowNodes don't get their parents set. The grid doesn't use the parent reference,

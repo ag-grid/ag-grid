@@ -13,7 +13,7 @@ var columnDefs = [
                 width: 60,
                 enableValue: true,
                 suppressMenu: true,
-                filter: 'number',
+                filter: 'agNumberColumnFilter',
                 aggFunc: 'sum'
             },
             {
@@ -22,7 +22,7 @@ var columnDefs = [
                 width: 60,
                 enableValue: true,
                 suppressMenu: true,
-                filter: 'number',
+                filter: 'agNumberColumnFilter',
                 aggFunc: 'sum'
             },
             {
@@ -31,7 +31,7 @@ var columnDefs = [
                 width: 60,
                 enableValue: true,
                 suppressMenu: true,
-                filter: 'number',
+                filter: 'agNumberColumnFilter',
                 aggFunc: 'sum'
             },
             {
@@ -40,7 +40,7 @@ var columnDefs = [
                 width: 60,
                 enableValue: true,
                 suppressMenu: true,
-                filter: 'number',
+                filter: 'agNumberColumnFilter',
                 aggFunc: 'sum'
             }
         ]

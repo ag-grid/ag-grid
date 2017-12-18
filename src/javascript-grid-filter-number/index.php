@@ -21,8 +21,8 @@ include '../documentation-main/documentation_header.php';
 
 
 <p><snippet>
-colDef:{
-    filter:'number'
+colDef: {
+    filter:'agNumberColumnFilter'
 }</snippet></p>
 
 <h2 id="params">Number Filter Parameters</h2>
@@ -38,9 +38,9 @@ colDef:{
     <li><b>inRangeInclusive:</b> Set to true so that when doing inRange number filters it will include
         the numbers you specify as minimum and maximum, otherwise it selects only the numbers in between.</li>
     <li><b>filterOptions:</b> If specified, limits the amount of options presented in the filter UI, it must be
-        a string array containing some of the following values  {equals, notEquals, lessThanOrEqual, greaterThan,
+        a string array containing some of the following values  {equals, notEqual, lessThanOrEqual, greaterThan,
         greaterThanOrEqual, inRange}</li>
-    <li><b>defaultOption:</b> If specified, changes the default filter option to one of {equals, notEquals,
+    <li><b>defaultOption:</b> If specified, changes the default filter option to one of {equals, notEqual,
         lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. If not specified the default type is {equals},
         if {equals} is not available because is removed using <i>filterOptions</i>, then the default
         is the first item in the filterOptions</li>
@@ -55,8 +55,8 @@ The parameters for the filter must be specified in the property filterParams ins
 object
 <p><snippet>
 colDef:{
-    filter:'number',
-    filterParams:{
+    filter: 'agNumberColumnFilter',
+    filterParams: {
         ...
     }
 }</snippet></p>
@@ -94,7 +94,7 @@ ageFilterComponent.onFilterChanged()</snippet></p>
     The number filter model has the following attributes:
 </p>
 <ul>
-    <li><b>type:</b> The type of number filter to apply. One of: {equals, notEquals, lessThanOrEqual, greaterThan,
+    <li><b>type:</b> The type of number filter to apply. One of: {equals, notEqual, lessThanOrEqual, greaterThan,
         greaterThanOrEqual, inRange}</li>
     <li><b>filter:</b> The actual filter number to apply, or the start of the range if the filter type is inRange</li>
     <li><b>filterTo:</b> The end range of the filter if the filter type is inRange, otherwise has no effect.</li>

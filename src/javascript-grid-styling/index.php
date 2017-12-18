@@ -21,10 +21,10 @@ dt code {
 </style>
 
 <div>
-    <h2 class="first-h1" id="themes">
+    <h1 class="first-h1" id="themes">
         <img src="../images/svg/docs/themes.svg" width="50" />
         Themes
-    </h2>
+    </h1>
 
 <note>
     <h3 style="margin-top: 4px;">Legacy Themes</h3>

@@ -1,24 +1,10 @@
 <p>
-    <h2 id="polymerFiltering">
-        <img src="../images/polymer-large.png" style="width: 60px"/>
-        Polymer Filtering
-    </h2>
-
-    <div class="note" style="margin-bottom: 20px">
-        <img align="left" src="../images/note.png" style="margin-right: 10px;" />
-        <p>This section explains how to create an ag-Grid Filter using Polymer. You should read about how
-        <a href="../javascript-grid-filter-component/">Filters Components</a> work in ag-Grid first before trying to
-        understand this section.</p>
-    </div>
+    <h1 id="polymerFiltering"><img src="../images/polymer-large.png" style="width: 60px"/>Polymer Filtering</h1>
 
     <p>
-        It is possible to provide a Polymer Component filter for ag-Grid to use. All of the information above is
-        relevant to Polymer filters. This section explains how to apply this logic to your Polymer component.
-    </p>
-
-    <p>
-        For an example on Polymer filtering, see the
-        <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> on Github.</p>
+        It is possible to provide Polymer filters for ag-Grid to use if you are are using the
+        Polymer version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
+        registering framework components</a> for how to register framework components.
     </p>
 
     <h3 id="specifying-a-polymer-filter"><img src="../images/polymer-large.png" style="width: 20px;"/> Specifying a Polymer Filter</h3>
@@ -106,14 +92,10 @@ colDef = {
     ...
 }</snippet>
 
-    <p>Your Polymer components need to implement <code>IFilter</code>. The ag Framework expects to find the
-        mandatory methods on the interface on the created component (and will call optional methods if they're present)
-        as well as <code>agInit</code>, which the grid uses to provide initial state & parameters.</p>
-
     <p>
-        By using <i>colDef.filterFramework</i> (instead of <i>colDef.filter</i>) the grid
-        will know it's a Polymer component, based on the fact that you are using the Polymer version of
-        ag-Grid.
+        Your Polymer components need to implement <code>IFilter</code>. The ag Framework expects to find the
+        mandatory methods on the interface on the created component (and will call optional methods if they're present)
+        as well as <code>agInit</code>, which the grid uses to provide initial state & parameters.
     </p>
 
     <h3 id="polymer-params"><img src="../images/polymer-large.png" style="width: 20px;"/> Polymer Params</h3>

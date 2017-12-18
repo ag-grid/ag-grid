@@ -93,7 +93,7 @@ export class RichGridComponent {
                             cellRenderer: countryCellRenderer,
                             cellHeight: 20
                         },
-                        cellEditor: 'richSelect',
+                        cellEditor: 'agRichSelect',
                         cellEditorParams: {
                             values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
                                 "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",

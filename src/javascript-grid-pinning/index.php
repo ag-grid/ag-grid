@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="pinning">Column Pinning</h2>
+    <h2 class="first-h1" id="pinning">Column Pinning</h2>
 
     <p>
         You can pin columns by setting the pinned attribute on the column definition to either 'left' or 'right'.
@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
 colDef = {
     headerName: "Athlete",
     field: "athlete",
-    &lt;b&gt;pinned: 'left'&lt;/b&gt;
+    pinned: 'left'
 }</snippet>
 
     <p>Below shows an example with two pinned columns on the left and one pinned columns on the right.

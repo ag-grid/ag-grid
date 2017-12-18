@@ -335,6 +335,11 @@ interface RowDataTransaction {
         items are to be added, removed and updated.
     </p>
 
+    <p>
+        For this to work, you must be treating your data as immutable. This means instead of
+        updating records, you should replace the record with a new object.
+    </p>
+
     <note>
         <p>
             The deltaRowDataMode is designed to allow ag-Grid work with immutable

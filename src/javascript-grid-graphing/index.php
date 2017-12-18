@@ -25,7 +25,7 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Inline Graphs using jQuery Sparklines</h3>
 
-    <p>jQuery Sparklines is a great library that offers small but rich graphs - idea for use within ag-Grid.</p>
+    <p>jQuery Sparklines is a great library that offers small but rich graphs - ideal for use within ag-Grid.</p>
 
     <p>In this example we demonstrate the following:</p>
 

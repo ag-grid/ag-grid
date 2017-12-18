@@ -78,24 +78,24 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Custom Controls', 'custom-controls', 'generated', array("enterprise" => 1)) ?>
 
-    <h1 id="properties">Pagination Properties</h1>
+    <h2 id="properties">Pagination Properties</h2>
     <?php include_once 'paginationProperties.php' ?>
     <?php printPropertiesTable($paginationProperties) ?>
 
     <p>The following methods compose the pagination API are all available from <i>gridOptions.api</i></p>
 
-    <h1 id="properties">Pagination API</h1>
+    <h2 id="properties">Pagination API</h2>
 
     <?php include_once 'paginationProperties.php' ?>
     <?php printPropertiesTable($paginationApi) ?>
 
-    <h1 id="properties">Pagination Callbacks</h1>
+    <h2 id="properties">Pagination Callbacks</h2>
 
     <?php include_once 'paginationProperties.php' ?>
     <?php printPropertiesTable($paginationCallbacks) ?>
 
     <br>
-    <h1 id="events">Pagination Events</h1>
+    <h2 id="events">Pagination Events</h2>
     <table class="table">
         <tr>
             <th>Event</th>

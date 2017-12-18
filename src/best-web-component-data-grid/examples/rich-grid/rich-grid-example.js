@@ -145,9 +145,9 @@ const columnDefs = [
     {
         headerName: 'Contact',
         children: [
-            {headerName: "Mobile", field: "mobile", width: 150, filter: 'text'},
-            {headerName: "Land-line", field: "landline", width: 150, filter: 'text'},
-            {headerName: "Address", field: "address", width: 500, filter: 'text'}
+            {headerName: "Mobile", field: "mobile", width: 150, filter: 'agTextColumnFilter'},
+            {headerName: "Land-line", field: "landline", width: 150, filter: 'agTextColumnFilter'},
+            {headerName: "Address", field: "address", width: 500, filter: 'agTextColumnFilter'}
         ]
     }
 ];

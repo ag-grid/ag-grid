@@ -2,7 +2,7 @@ var columnDefs = [
     {headerName: 'Athlete', field: 'athlete'},
     {headerName: 'Age', field: 'age'},
     {headerName: 'Country', field: 'country'},
-    {headerName: 'Year', field: 'year', cellEditor: getYearCellEditor()},
+    {headerName: 'Year', field: 'year', cellEditor: 'yearCellEditor'},
     {headerName: 'Date', field: 'date'},
     {headerName: 'Sport', field: 'sport'},
     {headerName: 'Gold', field: 'gold'},
@@ -12,6 +12,9 @@ var columnDefs = [
 ];
 
 var gridOptions = {
+    components:{
+        yearCellEditor: getYearCellEditor()
+    },
     columnDefs: columnDefs,
     rowData: null,
     enableFilter: true,

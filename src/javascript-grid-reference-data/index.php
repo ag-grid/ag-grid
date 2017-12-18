@@ -62,7 +62,7 @@ var colourMappings = {
 {
     headerName: "Make",
     field: "make",
-    cellEditor: "select",
+    cellEditor: "agSelectCellEditor",
     cellEditorParams: {
         values: extractValues(carMappings)
     },
@@ -88,7 +88,7 @@ var colourMappings = {
     </p>
 
 <snippet>
-cellEditor: 'text',
+cellEditor: 'agTextCellEditor',
 cellEditorParams: {
    useFormatter: true
 }</snippet>
@@ -110,7 +110,7 @@ cellEditorParams: {
 {
     headerName: "Make",
     field: "make",
-    cellEditor: "select",
+    cellEditor: "agSelectCellEditor",
     cellEditorParams: {
        values: extractValues(carMappings)
     },
