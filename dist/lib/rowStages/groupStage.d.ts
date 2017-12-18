@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 import { IRowNodeStage, StageExecuteParams } from "ag-grid/main";
 export declare class GroupStage implements IRowNodeStage {
     private selectionController;
@@ -34,5 +34,4 @@ export declare class GroupStage implements IRowNodeStage {
     private getGroupInfo(rowNode, details);
     private getGroupInfoFromCallback(rowNode);
     private getGroupInfoFromGroupColumns(rowNode, details);
-    private getKeyForNode(groupColumn, rowNode);
 }

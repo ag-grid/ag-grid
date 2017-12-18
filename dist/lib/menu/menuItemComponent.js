@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -80,7 +80,7 @@ var MenuItemComponent = (function (_super) {
             this.params.cssClasses.forEach(function (it) { return ag_grid_1.Utils.addCssClass(_this.getGui(), it); });
         }
     };
-    MenuItemComponent.prototype.onOptionSelected = function () {
+    MenuItemComponent.prototype.onOptionSelected = function (mouseEvent) {
         var event = {
             type: MenuItemComponent.EVENT_ITEM_SELECTED,
             action: this.params.action,
@@ -91,7 +91,8 @@ var MenuItemComponent = (function (_super) {
             name: this.params.name,
             shortcut: this.params.shortcut,
             subMenu: this.params.subMenu,
-            tooltip: this.params.tooltip
+            tooltip: this.params.tooltip,
+            mouseEvent: mouseEvent
         };
         this.dispatchEvent(event);
         if (this.params.action) {

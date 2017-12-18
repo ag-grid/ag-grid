@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -126,6 +126,10 @@ var EnterpriseCache = (function (_super) {
         //TODO: purged
         this.logger.log("getRowIndexAtPixel(" + pixel + ") result = " + result);
         return result;
+    };
+    EnterpriseCache.prototype.clearRowTops = function () {
+        var _this = this;
+        this.forEachBlockInOrder(function (block) { return block.clearRowTops(_this.getVirtualRowCount()); });
     };
     EnterpriseCache.prototype.setDisplayIndexes = function (displayIndexSeq, nextRowTop) {
         var _this = this;

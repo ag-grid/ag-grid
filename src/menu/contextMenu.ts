@@ -17,7 +17,8 @@ import {
     GridApi,
     IRowModel,
     IComponent,
-    IAfterGuiAttachedParams
+    IAfterGuiAttachedParams,
+    _
 } from "ag-grid";
 import {ClipboardService} from "../clipboardService";
 import {MenuItemComponent} from "./menuItemComponent";
@@ -39,9 +40,18 @@ export class ContextMenuFactory implements IContextMenuFactory {
     private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef|string)[] {
         let defaultMenuOptions: string[];
         if (Utils.exists(node)) {
+
+            defaultMenuOptions = [];
+
+            if(column) {
+                // only makes sense if column exists, could have originated from a row
+                defaultMenuOptions = ['copy','copyWithHeaders','paste', 'separator'];
+            }
+
+            defaultMenuOptions.push('toolPanel');
+
             // if user clicks a cell
             let anyExport:boolean = !this.gridOptionsWrapper.isSuppressExcelExport() || !this.gridOptionsWrapper.isSuppressCsvExport();
-            defaultMenuOptions = ['copy','copyWithHeaders','paste','separator','toolPanel'];
             if (anyExport){
                 defaultMenuOptions.push('export')
             }
@@ -67,7 +77,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         }
     }
 
-    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent): void {
+    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): void {
 
         let menuItems = this.getMenuItems(node, column, value);
 
@@ -83,7 +93,8 @@ export class ContextMenuFactory implements IContextMenuFactory {
         let hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
-            ()=> menu.destroy()
+            ()=> menu.destroy(),
+            mouseEvent
         );
 
         this.popupService.positionPopupUnderMouseEvent({

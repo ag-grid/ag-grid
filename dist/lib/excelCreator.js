@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -213,6 +213,13 @@ var ExcelCreator = (function (_super) {
     function ExcelCreator() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
+    ExcelCreator.prototype.postConstruct = function () {
+        this.setBeans({
+            downloader: this.downloader,
+            gridSerializer: this.gridSerializer,
+            gridOptionsWrapper: this.gridOptionsWrapper
+        });
+    };
     ExcelCreator.prototype.exportDataAsExcel = function (params) {
         return this.export(params);
     };
@@ -280,6 +287,24 @@ var ExcelCreator = (function (_super) {
         main_1.Autowired('stylingService'),
         __metadata("design:type", main_1.StylingService)
     ], ExcelCreator.prototype, "stylingService", void 0);
+    __decorate([
+        main_1.Autowired('downloader'),
+        __metadata("design:type", main_1.Downloader)
+    ], ExcelCreator.prototype, "downloader", void 0);
+    __decorate([
+        main_1.Autowired('gridSerializer'),
+        __metadata("design:type", main_1.GridSerializer)
+    ], ExcelCreator.prototype, "gridSerializer", void 0);
+    __decorate([
+        main_1.Autowired('gridOptionsWrapper'),
+        __metadata("design:type", main_1.GridOptionsWrapper)
+    ], ExcelCreator.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        main_1.PostConstruct,
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
+    ], ExcelCreator.prototype, "postConstruct", null);
     ExcelCreator = __decorate([
         main_1.Bean('excelCreator')
     ], ExcelCreator);

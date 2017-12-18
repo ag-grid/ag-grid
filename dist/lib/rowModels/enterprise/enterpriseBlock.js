@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -248,9 +248,41 @@ var EnterpriseBlock = (function (_super) {
         console.warn("ag-Grid: invalid pixel range for enterprise block " + pixel);
         return 0;
     };
+    EnterpriseBlock.prototype.clearRowTops = function (virtualRowCount) {
+        this.forEachRowNode(virtualRowCount, function (rowNode) {
+            rowNode.clearRowTop();
+            var hasChildCache = rowNode.group && ag_grid_1._.exists(rowNode.childrenCache);
+            if (hasChildCache) {
+                var enterpriseCache = rowNode.childrenCache;
+                enterpriseCache.clearRowTops();
+            }
+        });
+    };
     EnterpriseBlock.prototype.setDisplayIndexes = function (displayIndexSeq, virtualRowCount, nextRowTop) {
         this.displayIndexStart = displayIndexSeq.peek();
         this.blockTop = nextRowTop.value;
+        this.forEachRowNode(virtualRowCount, function (rowNode) {
+            var rowIndex = displayIndexSeq.next();
+            rowNode.setRowIndex(rowIndex);
+            rowNode.setRowTop(nextRowTop.value);
+            nextRowTop.value += rowNode.rowHeight;
+            var hasChildCache = rowNode.group && ag_grid_1._.exists(rowNode.childrenCache);
+            if (hasChildCache) {
+                var enterpriseCache = rowNode.childrenCache;
+                if (rowNode.expanded) {
+                    enterpriseCache.setDisplayIndexes(displayIndexSeq, nextRowTop);
+                }
+                else {
+                    // we need to clear the row tops, as the row renderer depends on
+                    // this to know if the row should be faded out
+                    enterpriseCache.clearRowTops();
+                }
+            }
+        });
+        this.displayIndexEnd = displayIndexSeq.peek();
+        this.blockHeight = nextRowTop.value - this.blockTop;
+    };
+    EnterpriseBlock.prototype.forEachRowNode = function (virtualRowCount, callback) {
         var start = this.getStartRow();
         var end = this.getEndRow();
         for (var i = start; i <= end; i++) {
@@ -261,18 +293,9 @@ var EnterpriseBlock = (function (_super) {
             }
             var rowNode = this.getRowUsingLocalIndex(i);
             if (rowNode) {
-                var rowIndex = displayIndexSeq.next();
-                rowNode.setRowIndex(rowIndex);
-                rowNode.setRowTop(nextRowTop.value);
-                nextRowTop.value += rowNode.rowHeight;
-                if (rowNode.group && rowNode.expanded && ag_grid_1._.exists(rowNode.childrenCache)) {
-                    var enterpriseCache = rowNode.childrenCache;
-                    enterpriseCache.setDisplayIndexes(displayIndexSeq, nextRowTop);
-                }
+                callback(rowNode);
             }
         }
-        this.displayIndexEnd = displayIndexSeq.peek();
-        this.blockHeight = nextRowTop.value - this.blockTop;
     };
     EnterpriseBlock.prototype.createLoadParams = function () {
         var groupKeys = this.createGroupKeys(this.parentRowNode);

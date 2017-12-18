@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 import { ICellEditor, Component, Context, CellRendererService, IRichCellEditorParams } from "ag-grid/main";
 export declare class RichSelectCellEditor extends Component implements ICellEditor {
     private static TEMPLATE;
@@ -10,7 +10,6 @@ export declare class RichSelectCellEditor extends Component implements ICellEdit
     private selectedValue;
     private originalSelectedValue;
     private selectionConfirmed;
-    private cellRenderer;
     constructor();
     init(params: IRichCellEditorParams): void;
     private onKeyDown(event);

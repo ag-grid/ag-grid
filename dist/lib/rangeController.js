@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -204,7 +204,7 @@ var RangeController = (function () {
         this.dispatchChangedEvent(true, false);
     };
     RangeController.prototype.onDragging = function (mouseEvent) {
-        if (!this.dragging) {
+        if (!this.dragging || !this.activeRange) {
             return;
         }
         this.lastMouseEvent = mouseEvent;

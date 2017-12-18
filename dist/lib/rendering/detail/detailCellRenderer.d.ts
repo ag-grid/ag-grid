@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 import { RowNode, Component, GridOptions, ICellRendererParams } from "ag-grid/main";
 export declare class DetailCellRenderer extends Component {
     private static TEMPLATE;

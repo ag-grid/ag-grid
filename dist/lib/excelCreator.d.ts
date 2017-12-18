@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 import { BaseCreator, BaseGridSerializingSession, Column, ColumnController, ExcelCell, ExcelExportParams, ExcelStyle, GridOptionsWrapper, IExcelCreator, ProcessCellForExportParams, ProcessHeaderForExportParams, RowAccumulator, RowNode, RowSpanningAccumulator, RowType, ValueService } from "ag-grid/main";
 import { ExcelXmlFactory } from "./excelXmlFactory";
 export interface ExcelMixedStyle {
@@ -40,6 +40,10 @@ export declare class ExcelCreator extends BaseCreator<ExcelCell[][], ExcelGridSe
     private valueService;
     private gridOptions;
     private stylingService;
+    private downloader;
+    private gridSerializer;
+    gridOptionsWrapper: GridOptionsWrapper;
+    postConstruct(): void;
     exportDataAsExcel(params?: ExcelExportParams): string;
     getDataAsExcelXml(params?: ExcelExportParams): string;
     getMimeType(): string;

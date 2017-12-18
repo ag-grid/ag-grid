@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 import { ColumnVO, IEnterpriseCache, IEnterpriseDatasource, NumberSequence, RowNode, RowNodeCache, RowNodeCacheParams, RowBounds } from "ag-grid";
 import { EnterpriseBlock } from "./enterpriseBlock";
 export interface EnterpriseCacheParams extends RowNodeCacheParams {
@@ -24,6 +24,7 @@ export declare class EnterpriseCache extends RowNodeCache<EnterpriseBlock, Enter
     getRowBounds(index: number): RowBounds;
     protected destroyBlock(block: EnterpriseBlock): void;
     getRowIndexAtPixel(pixel: number): number;
+    clearRowTops(): void;
     setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: {
         value: number;
     }): void;

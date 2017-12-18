@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -23,6 +23,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var richSelectRow_1 = require("./richSelectRow");
 var virtualList_1 = require("../virtualList");
+var ag_grid_1 = require("ag-grid");
 var RichSelectCellEditor = (function (_super) {
     __extends(RichSelectCellEditor, _super);
     function RichSelectCellEditor() {
@@ -34,12 +35,11 @@ var RichSelectCellEditor = (function (_super) {
         this.params = params;
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
-        this.cellRenderer = params.cellRenderer;
         this.focusAfterAttached = params.cellStartedEdit;
         this.virtualList = new virtualList_1.VirtualList();
         this.context.wireBean(this.virtualList);
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
-        this.getGui().querySelector('.ag-rich-select-list').appendChild(this.virtualList.getGui());
+        this.getRefElement('eList').appendChild(this.virtualList.getGui());
         if (main_1.Utils.exists(this.params.cellHeight)) {
             this.virtualList.setRowHeight(this.params.cellHeight);
         }
@@ -85,11 +85,12 @@ var RichSelectCellEditor = (function (_super) {
     };
     RichSelectCellEditor.prototype.renderSelectedValue = function () {
         var _this = this;
-        var eValue = this.getGui().querySelector('.ag-rich-select-value');
         var valueFormatted = this.params.formatValue(this.selectedValue);
-        if (this.cellRenderer) {
-            var rendererPromise = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, { value: this.selectedValue, valueFormatted: valueFormatted });
-            rendererPromise.then(function (renderer) {
+        var eValue = this.getRefElement('eValue');
+        var promise = this.cellRendererService.useRichSelectCellRenderer(this.params.column.getColDef(), eValue, { value: this.selectedValue, valueFormatted: valueFormatted });
+        var foundRenderer = ag_grid_1._.exists(promise);
+        if (foundRenderer) {
+            promise.then(function (renderer) {
                 if (renderer && renderer.destroy) {
                     _this.addDestroyFunc(function () { return renderer.destroy(); });
                 }
@@ -167,8 +168,8 @@ var RichSelectCellEditor = (function (_super) {
     RichSelectCellEditor.TEMPLATE = 
     // tab index is needed so we can focus, which is needed for keyboard events
     '<div class="ag-rich-select" tabindex="0">' +
-        '<div class="ag-rich-select-value"></div>' +
-        '<div class="ag-rich-select-list"></div>' +
+        '<div ref="eValue" class="ag-rich-select-value"></div>' +
+        '<div ref="eList" class="ag-rich-select-list"></div>' +
         '</div>';
     __decorate([
         main_1.Autowired('context'),

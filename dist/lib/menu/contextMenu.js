@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -33,9 +33,14 @@ var ContextMenuFactory = (function () {
     ContextMenuFactory.prototype.getMenuItems = function (node, column, value) {
         var defaultMenuOptions;
         if (ag_grid_1.Utils.exists(node)) {
+            defaultMenuOptions = [];
+            if (column) {
+                // only makes sense if column exists, could have originated from a row
+                defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator'];
+            }
+            defaultMenuOptions.push('toolPanel');
             // if user clicks a cell
             var anyExport = !this.gridOptionsWrapper.isSuppressExcelExport() || !this.gridOptionsWrapper.isSuppressCsvExport();
-            defaultMenuOptions = ['copy', 'copyWithHeaders', 'paste', 'separator', 'toolPanel'];
             if (anyExport) {
                 defaultMenuOptions.push('export');
             }
@@ -72,7 +77,7 @@ var ContextMenuFactory = (function () {
         var eMenuGui = menu.getGui();
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () { return menu.destroy(); });
+        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () { return menu.destroy(); }, mouseEvent);
         this.popupService.positionPopupUnderMouseEvent({
             column: column,
             rowNode: node,

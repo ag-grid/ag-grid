@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 import { MenuItemDef, Component } from "ag-grid";
 export declare class MenuList extends Component {
     private context;
@@ -18,7 +18,7 @@ export declare class MenuList extends Component {
     private removeActiveItem();
     private addHoverForChildPopup(menuItemDef, menuItemComp);
     addSeparator(): void;
-    private showChildMenu(menuItemDef, menuItemComp);
+    private showChildMenu(menuItemDef, menuItemComp, mouseEvent);
     private removeChildPopup();
     destroy(): void;
 }

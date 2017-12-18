@@ -158,6 +158,10 @@ export class EnterpriseCache extends RowNodeCache<EnterpriseBlock, EnterpriseCac
         return result;
     }
 
+    public clearRowTops(): void {
+        this.forEachBlockInOrder( block => block.clearRowTops(this.getVirtualRowCount()));
+    }
+
     public setDisplayIndexes(displayIndexSeq: NumberSequence,
                              nextRowTop: {value: number}): void {
         this.displayIndexStart = displayIndexSeq.peek();

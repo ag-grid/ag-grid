@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 import { Component } from "ag-grid/main";
 import { IToolPanel } from 'ag-grid';
 export declare class ToolPanelComp extends Component implements IToolPanel {

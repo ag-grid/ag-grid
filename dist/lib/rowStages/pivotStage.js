@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -94,7 +94,7 @@ var PivotStage = (function () {
         var pivotColumn = pivotColumns[pivotIndex];
         // map the children out based on the pivot column
         children.forEach(function (child) {
-            var key = _this.valueService.getValue(pivotColumn, child);
+            var key = _this.valueService.getKeyForNode(pivotColumn, child);
             if (main_1.Utils.missing(key)) {
                 key = '';
             }

@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -29,7 +29,8 @@ var RichSelectRow = (function (_super) {
         return _this;
     }
     RichSelectRow.prototype.setState = function (value, valueFormatted, selected) {
-        if (!this.populateWithRenderer(value, valueFormatted)) {
+        var rendererSuccessful = this.populateWithRenderer(value, valueFormatted);
+        if (!rendererSuccessful) {
             this.populateWithoutRenderer(value, valueFormatted);
         }
         main_1.Utils.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
@@ -49,13 +50,19 @@ var RichSelectRow = (function (_super) {
     };
     RichSelectRow.prototype.populateWithRenderer = function (value, valueFormatted) {
         var _this = this;
-        var childComponentPromise = this.cellRendererService.useRichSelectCellRenderer(this.columnDef, this.getGui(), { value: value, valueFormatted: valueFormatted });
-        childComponentPromise.then(function (childComponent) {
-            if (childComponent && childComponent.destroy) {
-                _this.addDestroyFunc(childComponent.destroy.bind(childComponent));
-            }
-        });
-        return childComponentPromise;
+        var promise = this.cellRendererService.useRichSelectCellRenderer(this.columnDef, this.getGui(), { value: value, valueFormatted: valueFormatted });
+        var foundRenderer = main_1._.exists(promise);
+        if (foundRenderer) {
+            promise.then(function (childComponent) {
+                if (childComponent && childComponent.destroy) {
+                    _this.addDestroyFunc(childComponent.destroy.bind(childComponent));
+                }
+            });
+            return true;
+        }
+        else {
+            return false;
+        }
     };
     __decorate([
         main_1.Autowired('cellRendererService'),

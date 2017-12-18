@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -61,7 +61,7 @@ var MenuList = (function (_super) {
         this.addDestroyFunc(function () { return cMenuItem.destroy(); });
         cMenuItem.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, function (event) {
             if (menuItemDef.subMenu) {
-                _this.showChildMenu(menuItemDef, cMenuItem);
+                _this.showChildMenu(menuItemDef, cMenuItem, event.mouseEvent);
             }
             else {
                 _this.dispatchEvent(event);
@@ -99,14 +99,14 @@ var MenuList = (function (_super) {
             var shouldShow = timerCountCopy === _this.timerCount;
             var showingThisMenu = _this.subMenuParentDef === menuItemDef;
             if (shouldShow && !showingThisMenu) {
-                _this.showChildMenu(menuItemDef, menuItemComp);
+                _this.showChildMenu(menuItemDef, menuItemComp, null);
             }
         }, 500);
     };
     MenuList.prototype.addSeparator = function () {
         this.getGui().appendChild(ag_grid_1.Utils.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
     };
-    MenuList.prototype.showChildMenu = function (menuItemDef, menuItemComp) {
+    MenuList.prototype.showChildMenu = function (menuItemDef, menuItemComp, mouseEvent) {
         var _this = this;
         this.removeChildPopup();
         var childMenu = new MenuList();
@@ -114,7 +114,7 @@ var MenuList = (function (_super) {
         childMenu.addMenuItems(menuItemDef.subMenu);
         var ePopup = ag_grid_1.Utils.loadTemplate('<div class="ag-menu"></div>');
         ePopup.appendChild(childMenu.getGui());
-        var hidePopupFunc = this.popupService.addAsModalPopup(ePopup, true);
+        var hidePopupFunc = this.popupService.addAsModalPopup(ePopup, true, null, mouseEvent);
         this.popupService.positionPopupForMenu({
             eventSource: menuItemComp.getGui(),
             ePopup: ePopup

@@ -24,7 +24,10 @@ import {
     RowType,
     StylingService,
     Utils,
-    ValueService
+    ValueService,
+    GridSerializer,
+    Downloader,
+    PostConstruct
 } from "ag-grid/main";
 
 import {ExcelXmlFactory} from "./excelXmlFactory";
@@ -253,11 +256,25 @@ export class ExcelGridSerializingSession extends BaseGridSerializingSession<Exce
 
 @Bean('excelCreator')
 export class ExcelCreator extends BaseCreator<ExcelCell[][], ExcelGridSerializingSession, ExcelExportParams> implements IExcelCreator {
+
     @Autowired('excelXmlFactory') private excelXmlFactory: ExcelXmlFactory;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('stylingService') private stylingService: StylingService;
+
+    @Autowired('downloader') private downloader: Downloader;
+    @Autowired('gridSerializer') private gridSerializer: GridSerializer;
+    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+
+    @PostConstruct
+    public postConstruct(): void {
+        this.setBeans({
+            downloader: this.downloader,
+            gridSerializer: this.gridSerializer,
+            gridOptionsWrapper: this.gridOptionsWrapper
+        });
+    }
 
     public exportDataAsExcel(params?: ExcelExportParams): string {
         return this.export(params);

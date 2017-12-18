@@ -1,4 +1,4 @@
-// ag-grid-enterprise v14.2.0
+// ag-grid-enterprise v15.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -129,6 +129,12 @@ var GroupStage = (function () {
     GroupStage.prototype.moveNode = function (childNode, details) {
         this.removeOneNode(childNode, details);
         this.insertOneNode(childNode, details);
+        // hack - if we didn't do this, then renaming a tree item (ie changing rowNode.key) wouldn't get
+        // refreshed into the gui.
+        // this is needed to kick off the event that rowComp listens to for refresh. this in turn
+        // then will get each cell in the row to refresh - which is what we need as we don't know which
+        // columns will be displaying the rowNode.key info.
+        childNode.setData(childNode.data);
         // we add both old and new parents to changed path, as both will need to be refreshed.
         // we already added the old parent (in calling method), so just add the new parent here
         if (details.changedPath) {
@@ -348,7 +354,7 @@ var GroupStage = (function () {
         var _this = this;
         var res = [];
         details.groupedCols.forEach(function (groupCol) {
-            var key = _this.getKeyForNode(groupCol, rowNode);
+            var key = _this.valueService.getKeyForNode(groupCol, rowNode);
             var keyExists = key !== null && key !== undefined;
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make
             // mathematical sense as you are building up a cube. so if pivot mode, we put in a blank key where missing.
@@ -367,18 +373,6 @@ var GroupStage = (function () {
             }
         });
         return res;
-    };
-    GroupStage.prototype.getKeyForNode = function (groupColumn, rowNode) {
-        var value = this.valueService.getValue(groupColumn, rowNode);
-        var result;
-        var keyCreator = groupColumn.getColDef().keyCreator;
-        if (keyCreator) {
-            result = keyCreator({ value: value });
-        }
-        else {
-            result = value;
-        }
-        return result;
     };
     __decorate([
         main_1.Autowired('selectionController'),
