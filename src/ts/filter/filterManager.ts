@@ -398,6 +398,11 @@ export class FilterManager {
             columnApi: this.columnApi
         };
 
+        this.translateFilter(sanitisedColDef, 'set', 'agSet');
+        this.translateFilter(sanitisedColDef, 'text', 'agText');
+        this.translateFilter(sanitisedColDef, 'number', 'agNumber');
+        this.translateFilter(sanitisedColDef, 'date', 'agDate');
+
         let filterChangedCallback = this.onFilterChanged.bind(this);
         let filterModifiedCallback = () => this.eventService.dispatchEvent(event);
 
@@ -423,6 +428,13 @@ export class FilterManager {
                 doesRowPassOtherFilter: this.doesRowPassOtherFilters.bind(this, filter),
             })
         );
+    }
+
+    private translateFilter (target:ColDef, toTranslate:string, componentName:string):void {
+        if (target.filter === toTranslate) {
+            target.filter = `${componentName}ColumnFilter`;
+        }
+
     }
 
     private createFilterWrapper(column: Column): FilterWrapper {
