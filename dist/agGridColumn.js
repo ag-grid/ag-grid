@@ -71,8 +71,6 @@ AgGridColumn.propDecorators = {
     'valueGetter': [{ type: core_1.Input },],
     'valueSetter': [{ type: core_1.Input },],
     'keyCreator': [{ type: core_1.Input },],
-    'headerCellRenderer': [{ type: core_1.Input },],
-    'headerCellTemplate': [{ type: core_1.Input },],
     'width': [{ type: core_1.Input },],
     'minWidth': [{ type: core_1.Input },],
     'maxWidth': [{ type: core_1.Input },],

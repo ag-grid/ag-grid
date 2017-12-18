@@ -115,10 +115,6 @@ export class AgGridColumn {
     /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
      * want to a) group by this field or b) use set filter on this field. */
     @Input() public keyCreator?: Function;
-    /** To provide custom rendering to the header. */
-    @Input() public headerCellRenderer?: Function | Object;
-    /** To provide a template for the header. */
-    @Input() public headerCellTemplate?: ((params: any) => string | HTMLElement) | string | HTMLElement;
     /** Initial width, in pixels, of the cell */
     @Input() public width?: number;
     /** Min width, in pixels, of the cell */
