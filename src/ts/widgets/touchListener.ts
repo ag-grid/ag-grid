@@ -31,8 +31,11 @@ export class TouchListener implements IEventEmitter {
     public static EVENT_TAP = 'tap';
     public static EVENT_LONG_TAP = 'longTap';
 
-    constructor(eElement: HTMLElement) {
+    private preventMouseClick: boolean;
+
+    constructor(eElement: HTMLElement, preventMouseClick = false) {
         this.eElement = eElement;
+        this.preventMouseClick = preventMouseClick;
 
         let startListener = this.onTouchStart.bind(this);
         let moveListener = this.onTouchMove.bind(this);
@@ -122,7 +125,9 @@ export class TouchListener implements IEventEmitter {
             this.eventService.dispatchEvent(event);
 
             // stops the tap from also been processed as a mouse click
-            touchEvent.preventDefault();
+            if (this.preventMouseClick) {
+                touchEvent.preventDefault();
+            }
         }
 
         this.touching = false;
