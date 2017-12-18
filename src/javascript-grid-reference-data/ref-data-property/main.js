@@ -37,12 +37,12 @@ var gridOptions = {
         {
             headerName: "Exterior Colour",
             field: "exteriorColour",
-            cellEditor: 'richSelect',
+            cellEditor: 'agRichSelect',
             cellEditorParams: {
                 values: extractValues(colourMappings),
                 cellRenderer: colorCellRenderer
             },
-            filter: 'set',
+            filter: 'agSetColumnFilter',
             filterParams: {
                 values: extractValues(colourMappings),
                 cellRenderer: colorCellRenderer
@@ -53,7 +53,7 @@ var gridOptions = {
         {
             headerName: "Interior Colour",
             field: "interiorColour",
-            filter: 'set',
+            filter: 'agSetColumnFilter',
             filterParams: {
                 cellRenderer: colorCellRenderer
             },

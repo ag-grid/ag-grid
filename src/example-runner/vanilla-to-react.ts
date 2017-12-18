@@ -1,7 +1,7 @@
 import parser, {recognizedDomEvents} from './vanilla-src-parser';
 import styleConvertor from './lib/convert-style-to-react';
 
-function indexTemplate(bindings) {
+function indexTemplate(bindings, componentFilenames) {
     const imports = [];
     const propertyAssignments = [];
     const componentAttributes = [];
@@ -10,11 +10,16 @@ function indexTemplate(bindings) {
         if (property.value === 'null') {
             return;
         }
+
+        if(componentFilenames.length > 0 && property.name === "components") {
+            property.name = "frameworkComponents";
+        }
+
         if (property.value === 'true' || property.value === 'false') {
-            componentAttributes.push( `${property.name}={${property.value}}`);
+            componentAttributes.push(`${property.name}={${property.value}}`);
         } else {
-            propertyAssignments.push( `${property.name}: ${property.value}`);
-            componentAttributes.push( `${property.name}={this.state.${property.name}}`);
+            propertyAssignments.push(`${property.name}: ${property.value}`);
+            componentAttributes.push(`${property.name}={this.state.${property.name}}`);
         }
     });
 
@@ -27,6 +32,15 @@ function indexTemplate(bindings) {
 
     if (bindings.gridSettings.enterprise) {
         imports.push('import "ag-grid-enterprise";');
+    }
+
+    if (componentFilenames) {
+        let titleCase = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+
+        componentFilenames.forEach(filename => {
+            let componentName = titleCase(filename).split('.')[0];
+            imports.push('import ' + componentName + ' from "./' + filename + '";');
+        });
     }
 
     const additionalInReady = [];
@@ -113,6 +127,8 @@ ${additional.concat(eventHandlers, externalEventHandlers).join('\n    ')}
             </div>
         );
     }
+    
+    ${bindings.instance.join('\\\\n')}
 }
 
 ${bindings.utils.join('\n')}
@@ -124,9 +140,9 @@ render(
 `;
 }
 
-export function vanillaToReact(src, gridSettings) {
+export function vanillaToReact(src, gridSettings, componentFilenames) {
     const bindings = parser(src, gridSettings);
-    return indexTemplate(bindings);
+    return indexTemplate(bindings, componentFilenames);
 }
 
 if (typeof window !== 'undefined') {

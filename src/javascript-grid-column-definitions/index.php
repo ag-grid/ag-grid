@@ -57,7 +57,7 @@ var gridOptions = {
     </p>
 
 
-    <h1 id="default-column-definitions">Custom Column Types</h1>
+    <h2 id="default-column-definitions">Custom Column Types</h2>
 
     <p>
         In addition to the above, the grid provides additional ways to
@@ -88,7 +88,7 @@ var gridOptions = {
         {headerName: 'Col A', field: 'a'},
 
         // overrides the default with a number filter
-        {headerName: 'Col B', field: 'b', filter: 'number'},
+        {headerName: 'Col B', field: 'b', filter: 'agNumberColumnFilter'},
 
         // overrides the default using a column type
         {headerName: 'Col C', field: 'c', type: 'nonEditableColumn'},
@@ -104,7 +104,7 @@ var gridOptions = {
         // make every column editable
         editable: true,
         // make every column use 'text' filter by default
-        filter: 'text'
+        filter: 'agTextColumnFilter'
     },
 
     // if we had column groups, we could provide default group items here
@@ -113,7 +113,7 @@ var gridOptions = {
     // define a column type (you can define as many as you like)
     columnTypes: {
         "nonEditableColumn": {editable: false},
-        "dateColumn": {filter: 'date', filterParams: {comparator: myDateComparator}, suppressMenu:true}
+        "dateColumn": {filter: 'agDateColumnFilter', filterParams: {comparator: myDateComparator}, suppressMenu:true}
         }
     }
 
@@ -134,13 +134,13 @@ var gridOptions = {
 {}
 
 // Step 2: default column properties are merged in
-{width: 100, editable: true, filter: 'text'}
+{width: 100, editable: true, filter: 'agTextColumnFilter'}
 
 // Step 3: column type properties are merged in (using the 'type' property)
-{width: 100, editable: false, filter: 'number'}
+{width: 100, editable: false, filter: 'agNumberColumnFilter'}
 
 // Step 4: finally column definition properties are merged in
-{headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'number'}
+{headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'agNumberColumnFilter'}
    </snippet>
 
     <p>
@@ -149,7 +149,7 @@ var gridOptions = {
 
 <?= example('Column Definition Example', 'column-definition', 'generated', array('enterprise' => 1, 'grid' => array('height' => '100%'))) ?>
 
-<h1>Provided Column Types</h1>
+<h2>Provided Column Types</h2>
 
 <h2 id="built-in-column-definitions">Numeric Columns</h2>
 
@@ -167,7 +167,7 @@ var gridOptions = {
     ]
 }</snippet>
 
-<h1 id="changing-column-headers">Updating Column Definitions</h1>
+<h2 id="changing-column-headers">Updating Column Definitions</h2>
 
 <p>
     After the grid has been initialised it may be necessary to update the column definition. It is important to understand
@@ -195,10 +195,10 @@ gridOptions.api.refreshHeader();</snippet>
 
 
 
-<h1 id="saving-and-restoring-column-state">Saving and Restoring Column State</h1>
+<h2 id="saving-and-restoring-column-state">Saving and Restoring Column State</h2>
 
 <p>
-It is possible to save and subsequently restore the column state via the <a href="../javascript-column-api/">Column API</a>.
+It is possible to save and subsequently restore the column state via the <a href="../javascript-grid-column-api//">Column API</a>.
 Examples of state include column visibility, width, row groups and values.
 </p>
 <p>
@@ -240,7 +240,7 @@ Examples of state include column visibility, width, row groups and values.
 </p>
 
 
-<h1 id="column-api-example">Column API Example</h1>
+<h2 id="column-api-example">Column API Example</h2>
 <p>This section illustrates how to store and restore column state using the <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
 

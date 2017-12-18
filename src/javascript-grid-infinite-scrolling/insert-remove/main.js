@@ -3,13 +3,7 @@ var columnDefs = [
         headerName: 'Item ID',
         field: 'id',
         valueGetter: 'node.id',
-        cellRenderer: function(params) {
-            if (params.value !== undefined) {
-                return params.value;
-            } else {
-                return '<img src="../images/loading.gif">';
-            }
-        }
+        cellRenderer: 'loadingRenderer'
     },
     {headerName: 'Make', field: 'make'},
     {headerName: 'Model', field: 'model'},
@@ -154,6 +148,15 @@ var datasource = {
 };
 
 var gridOptions = {
+    components:{
+        loadingRenderer: function(params) {
+            if (params.value !== undefined) {
+                return params.value;
+            } else {
+                return '<img src="../images/loading.gif">';
+            }
+        }
+    },
     enableColResize: true,
     rowSelection: 'multiple',
     rowDeselection: true,

@@ -38,10 +38,10 @@ var gridOptions = {
             aggFunc: 'sum',
             valueParser: 'Number(newValue)',
             cellClass: 'number-cell',
-            cellRenderer: 'animateShowChange',
-            filter: 'number'
+            cellRenderer:'agAnimateShowChangeCellRenderer',
+            filter: 'agNumberColumnFilter'
         },
-        totalColumn: {cellRenderer: 'animateShowChange', cellClass: 'number-cell'}
+        totalColumn: {cellRenderer:'agAnimateShowChangeCellRenderer', cellClass: 'number-cell'}
     },
     rowData: getRowData(),
     groupDefaultExpanded: 1,

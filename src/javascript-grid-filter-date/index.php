@@ -28,8 +28,8 @@ include '../documentation-main/documentation_header.php';
 <p>In order to set the filter type to <code>date</code> you need to add the following to your column definition</p>
 
 <p><snippet>
-colDef:{
-    filter:'date'
+colDef: {
+    filter: 'agDateColumnFilter'
 }</snippet></p>
 
 <h2 id="dateFilterParameters">Date Filter Parameters</h2>
@@ -46,9 +46,9 @@ A date filter can take the following parameters:
     <li><b>inRangeInclusive:</b> Set to true so that when doing inRange date filters it will include
         the dates you specify as minimum and maximum, otherwise it selects only the dates in between.</li>
     <li><b>filterOptions:</b> If specified, limits the amount of options presented in the filter UI, it must be
-        a string array containing some of the following values  {equals, notEquals, lessThanOrEqual, greaterThan,
+        a string array containing some of the following values  {equals, notEqual, lessThanOrEqual, greaterThan,
         greaterThanOrEqual, inRange}</li>
-    <li><b>defaultOption:</b> If specified, changes the default filter option to one of {equals, notEquals,
+    <li><b>defaultOption:</b> If specified, changes the default filter option to one of {equals, notEqual,
         lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. If not specified the default type is {equals},
         if {equals} is not available because is removed using <i>filterOptions</i>, then the default
         is the first item in the filterOptions</li>
@@ -88,7 +88,7 @@ This pattern is intended to be similar to the JavaScript <i>compareTo(a,b)</i> f
 colDef = {
     ...
     // specify we want to use the date filter
-    filter: 'date',
+    filter: 'agDateColumnFilter',
 
     // add extra parameters for the date filter
     filterParams:{
@@ -153,7 +153,7 @@ gridOptions.api.onFilterChanged()</snippet></p>
     The number filter model has the following attributes:
 </p>
 <ul>
-    <li><b>type:</b> The type of date filter to apply. One of: {equals, notEquals, lessThanOrEqual, greaterThan,
+    <li><b>type:</b> The type of date filter to apply. One of: {equals, notEqual, lessThanOrEqual, greaterThan,
         greaterThanOrEqual, inRange}</li>
     <li><b>date:</b> The actual filter date to apply, or the start of the range if the filter type is inRange</li>
     <li><b>dateTo:</b> The end range of the filter if the filter type is inRange, otherwise has no effect.</li>

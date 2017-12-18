@@ -18,7 +18,7 @@ export default class ColumnDefinitionFactory {
                         cellRenderer: countryCellRenderer,
                         cellEditorParams: { values: COUNTRY_LIST, cellRenderer: countryCellRenderer},
                         filterParams: { cellRenderer: countryCellRenderer, cellHeight: 20},
-                        cellEditor: 'richSelect'
+                        cellEditor: 'agRichSelect'
                     },
                     { headerName: "Date of Birth", field: "dob", width: 110, filter: 'date', pinned: true,
                         // simple cell formatter for formatting dates

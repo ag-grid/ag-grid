@@ -78,9 +78,9 @@
     <div class="row">
 
         <div class="col-md-12" style="padding-top: 40px;">
-            <h2>
+            <h1>
                 Our Mission:
-            </h2>
+            </h1>
             <hr/>
             <p>
                 At ag-Grid, our mission is simple:

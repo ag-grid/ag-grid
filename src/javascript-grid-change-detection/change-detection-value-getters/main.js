@@ -32,7 +32,7 @@ function getRowData() {
 
 var gridOptions = {
     columnTypes: {
-        valueColumn: {editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)', filter: 'number'}
+        valueColumn: {editable: true, aggFunc: 'sum', valueParser: 'Number(newValue)', filter: 'agNumberColumnFilter'}
     },
     columnDefs: columnDefs,
     rowData: getRowData(),

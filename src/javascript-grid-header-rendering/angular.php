@@ -56,3 +56,5 @@ interface IHeaderGroupAngularComp {
 <p>For a full working example of Header Components in Angular see
     <a href="https://github.com/ag-grid/ag-grid-angular-example">Angular Example</a>.
 </p>
+
+<?= example('Header component', 'header-component', 'generated', array("extras" => array("fontawesome"), "showResult" => true, 'onlyShow' => 'angular')) ?>

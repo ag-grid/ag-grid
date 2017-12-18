@@ -51,7 +51,7 @@ gridOptions.api.hideOverlay()</snippet>
     <h3 id="custom-templates">Custom Templates</h3>
 
     <p>
-        If your not happy with the provided overlay templates, you can provide your own. This is done with
+        If you're not happy with the provided overlay templates, you can provide your own. This is done with
         the grid properties <i>overlayLoadingTemplate</i> and <i>overlayNoRowsTemplate</i>. These templates
         should be plain HTML.
     </p>
@@ -69,6 +69,10 @@ gridOptions.api.hideOverlay()</snippet>
     </p>
 
     <?= example('Overlays', 'overlays', 'generated') ?>
+
+    <note>It is also possible to provide your own custom Overlay Components - please see <a href="../javascript-grid-overlay-component">
+            Overlay Component</a> for more information.</note>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

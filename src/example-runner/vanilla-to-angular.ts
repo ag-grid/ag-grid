@@ -4,10 +4,6 @@ function removeFunction(code) {
     return code.replace(/^function /, '');
 }
 
-function convertFunctionToMethod(code, methodName) {
-    return methodName + removeFunction(code);
-}
-
 function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string }) {
     let resize = '', getData = '';
 
@@ -43,7 +39,7 @@ const toMember = property => `private ${property.name};`;
 
 const toAssignment = property => `this.${property.name} = ${property.value}`;
 
-function appComponentTemplate(bindings) {
+function appComponentTemplate(bindings, componentFileNames) {
     const diParams = [];
     const imports = [];
     const additional = [];
@@ -57,6 +53,18 @@ function appComponentTemplate(bindings) {
         imports.push('import "ag-grid-enterprise";');
     }
 
+    if (componentFileNames) {
+        let titleCase = (s) => {
+            let camelCased = s.replace(/-([a-z])/g, g => g[1].toUpperCase());
+            return camelCased.charAt(0).toUpperCase() + camelCased.slice(1);
+        };
+
+        componentFileNames.forEach(filename => {
+            let fileFragments = filename.split('.');
+            imports.push('import { ' + titleCase(fileFragments[0]) + ' } from "./' + fileFragments[0] + '.component";');
+        });
+    }
+
     const propertyAttributes =[];
     const propertyVars =[];
     const propertyAssignments =[];
@@ -65,6 +73,11 @@ function appComponentTemplate(bindings) {
         if (property.value === 'null') {
             return;
         }
+
+        if(componentFileNames.length > 0 && property.name === "components") {
+            property.name = "frameworkComponents";
+        }
+
         if (property.value === 'true' || property.value === 'false') {
             propertyAttributes.push(toConst(property));
         } else {
@@ -129,15 +142,17 @@ export class AppComponent {
         .concat(additional)
         .map(snippet => snippet.trim())
         .join('\n\n')}
+        
+    ${bindings.instance.join('\\n')}
 }
 
 ${bindings.utils.join('\n')}
 `;
 }
 
-export function vanillaToAngular(src, gridSettings) {
+export function vanillaToAngular(src, gridSettings, componentFileNames) {
     const bindings = parser(src, gridSettings);
-    return appComponentTemplate(bindings);
+    return appComponentTemplate(bindings, componentFileNames);
 }
 
 if (typeof window !== 'undefined') {

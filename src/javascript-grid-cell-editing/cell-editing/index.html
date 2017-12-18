@@ -1,11 +1,21 @@
 <div style="height: 100%; padding-top: 30px; box-sizing: border-box;">
-    <div id="myGrid" style="height: 100%;" class="ag-theme-fresh"></div>
+<div id="myGrid" style="height: 100%;" class="ag-theme-fresh"></div>
 </div>
+<style>
+    button { font-size: 12px; }
+</style>
 <div style="position: absolute; top: 0; left: 0;">
-    <button style="font-size: 12px" onclick="onBtStartEditing()">Start Editing (0, Last Name)</button>
-    <button style="font-size: 12px" onclick="onBtStartEditing(46)">Start Editing (0, Last Name with Delete)</button>
-    <button style="font-size: 12px" onclick="onBtStartEditing(null, 'T')">Start Editing (0, Last Name with 'T')</button>
-    <button style="font-size: 12px" onclick="onBtStopEditing()">Stop Editing</button>
-    <button style="font-size: 12px" onclick="onBtNextCell()">Next Cell</button>
-    <button style="font-size: 12px" onclick="onBtPreviousCell()">Previous Cell</button>
+    <div style="padding: 2px;">
+        <button onclick="onBtStartEditing()">edit (0)</button>
+        <button onclick="onBtStartEditing(46)">edit (0, Delete)</button>
+        <button onclick="onBtStartEditing(null, 'T')">edit (0, 'T')</button>
+        <button onclick="onBtStartEditing(null, null, 'top')">edit (0, Top)</button>
+        <button onclick="onBtStartEditing(null, null, 'bottom')">edit (0, Bottom)</button>
+        &nbsp;
+        &nbsp;
+        &nbsp;
+        <button onclick="onBtStopEditing()">stop ()</button>
+        <button onclick="onBtNextCell()">next ()</button>
+        <button onclick="onBtPreviousCell()">previous ()</button>
+    </div>
 </div>

@@ -159,7 +159,7 @@ include('../includes/mediaHeader.php');
 
                 // pull in the ag-grid styles we're interested in
                 import "ag-grid-root/dist/styles/ag-grid.css";
-                import "ag-grid-root/dist/styles/theme-fresh.css";
+                import "ag-grid-root/dist/styles/ag-theme-fresh.css";
 
                 // only necessary if you're using ag-Grid-Enterprise features
                 // import "ag-grid-enterprise";

@@ -7,7 +7,7 @@ const columnDefs = [
         width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer: 'animateShowChange'
+        cellRenderer:'agAnimateShowChangeCellRenderer'
     },
     {
         headerName: 'Mid',
@@ -15,7 +15,7 @@ const columnDefs = [
         width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer: 'animateShowChange'
+        cellRenderer:'agAnimateShowChangeCellRenderer'
     },
     {
         headerName: 'Ask',
@@ -23,14 +23,14 @@ const columnDefs = [
         width: 100,
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer: 'animateShowChange'
+        cellRenderer:'agAnimateShowChangeCellRenderer'
     },
     {
         headerName: 'Volume',
         field: 'volume',
         width: 80,
         cellClass: 'cell-number',
-        cellRenderer: 'animateSlide'
+        cellRenderer:'agAnimateSlideCellRenderer'
     }
 ];
 

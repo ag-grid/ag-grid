@@ -235,7 +235,7 @@ platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
     &lt;!-- problem, so I've not included how to do it here. For simplicity, and --&gt;
     &lt;!-- explicitness, the CSS files are loaded in directly here. --&gt;
     &lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet"/&gt;
-    &lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet"/&gt;
+    &lt;link href="node_modules/ag-grid/dist/styles/ag-theme-fresh.css" rel="stylesheet"/&gt;
 
     &lt;!-- Configure SystemJS --&gt;
     &lt;script src="systemjs.config.js"&gt;&lt;/script&gt;
@@ -430,7 +430,7 @@ gulp.task('aot-bundle', function () {
 cp ./node_modules/core-js/client/shim.min.js aot/
 cp ./node_modules/zone.js/dist/zone.min.js aot/
 cp ./node_modules/ag-grid/dist/styles/ag-grid.css aot/
-cp ./node_modules/ag-grid/dist/styles/theme-fresh.css aot/</snippet>
+cp ./node_modules/ag-grid/dist/styles/ag-theme-fresh.css aot/</snippet>
 
     <p>We make use of lite-server to test the application, so let's create a AOT friendly config file for it:</p>
 

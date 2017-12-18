@@ -36,7 +36,7 @@
                 <a class="btn btn-primary btn-large bigLink" href="https://www.ag-grid.com/forum/"><span class="glyphicon glyphicon-comment"></span> Go to Forum</a>
             </div>
 
-            <h2>Free Support</h2>
+            <h1>Free Support</h1>
 
             <p>
                 The free version of ag-Grid is given under MIT license and comes with no warranty or support.

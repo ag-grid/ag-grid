@@ -152,7 +152,7 @@ include('../../includes/mediaHeader.php');
     <div class="weekly-news-paragraph-title">webpack Partnership</div>
 
     <div class="weekly-news-paragraph">
-        In case you missed it, <a href="../ag-grid-partners-with-webpack/">webpack and ag-Grid are now partners</a>.
+        In case you missed it, <a href="https://www.ag-grid.com/ag-grid-partners-with-webpack/">webpack and ag-Grid are now partners</a>.
         This is part of our corporate social responsibility, helping an open source project that we believe to
         be solving a problem for the greater good.
     </div>
@@ -160,7 +160,7 @@ include('../../includes/mediaHeader.php');
     <div class="weekly-news-paragraph-title">Upcoming Features</div>
 
     <div class="weekly-news-paragraph">
-        Now that the <a href="../javascript-grid-enterprise-model/">Enterprise Row Model</a> is out,
+        Now that the <a href="https://www.ag-grid.com/javascript-grid-enterprise-model/">Enterprise Row Model</a> is out,
         that has freed us from heavy dev work. Our plan is to now
         hit the issues list very hard - to make a big impact on issues that people have been waiting on.
     </div>

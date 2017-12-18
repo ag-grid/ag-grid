@@ -128,15 +128,15 @@
                 headerName: 'IT Skills',
                 children: [
                     {headerName: "Skills", width: 125, suppressSorting: true, cellRenderer: skillsCellRenderer, filter: SkillFilter},
-                    {headerName: "Proficiency", field: "proficiency", filter: 'number', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
+                    {headerName: "Proficiency", field: "proficiency", filter: 'agNumberColumnFilter', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
                 ]
             },
             {
                 headerName: 'Contact',
                 children: [
-                    {headerName: "Mobile", field: "mobile", width: 150, filter: 'text'},
-                    {headerName: "Land-line", field: "landline", width: 150, filter: 'text'},
-                    {headerName: "Address", field: "address", width: 500, filter: 'text'}
+                    {headerName: "Mobile", field: "mobile", width: 150, filter: 'agTextColumnFilter'},
+                    {headerName: "Land-line", field: "landline", width: 150, filter: 'agTextColumnFilter'},
+                    {headerName: "Address", field: "address", width: 500, filter: 'agTextColumnFilter'}
                 ]
             }
         ];

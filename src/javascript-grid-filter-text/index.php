@@ -20,10 +20,9 @@ include '../documentation-main/documentation_header.php';
 
 <p>In order to set the filter type to text you need to add the following to your column definition</p>
 
-
 <p><snippet>
 colDef:{
-    filter:'text'
+    filter:'agTextColumnFilter'
 }</snippet></p>
 
 <note>
@@ -66,8 +65,8 @@ The parameters for the filter must be specified in the property filterParams ins
 object
 <p><snippet>
 colDef:{
-    filter:'text',
-    filterParams:{
+    filter:'agTextColumnFilter',
+    filterParams: {
         ...
     }
 }</snippet></p>

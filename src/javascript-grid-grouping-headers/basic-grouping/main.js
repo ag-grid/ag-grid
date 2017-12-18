@@ -2,8 +2,8 @@ var columnDefs = [
     {
         headerName: 'Athlete Details',
         children: [
-            {headerName: 'Athlete', field: 'athlete', width: 150, filter: 'text'},
-            {headerName: 'Age', field: 'age', width: 90, filter: 'number'},
+            {headerName: 'Athlete', field: 'athlete', width: 150, filter: 'agTextColumnFilter'},
+            {headerName: 'Age', field: 'age', width: 90, filter: 'agNumberColumnFilter'},
             {headerName: 'Country', field: 'country', width: 120}
         ]
     },
@@ -11,10 +11,10 @@ var columnDefs = [
         headerName: 'Sports Results',
         children: [
             {headerName: 'Sport', field: 'sport', width: 110},
-            {headerName: 'Total', columnGroupShow: 'closed', field: 'total', width: 100, filter: 'number'},
-            {headerName: 'Gold', columnGroupShow: 'open', field: 'gold', width: 100, filter: 'number'},
-            {headerName: 'Silver', columnGroupShow: 'open', field: 'silver', width: 100, filter: 'number'},
-            {headerName: 'Bronze', columnGroupShow: 'open', field: 'bronze', width: 100, filter: 'number'}
+            {headerName: 'Total', columnGroupShow: 'closed', field: 'total', width: 100, filter: 'agNumberColumnFilter'},
+            {headerName: 'Gold', columnGroupShow: 'open', field: 'gold', width: 100, filter: 'agNumberColumnFilter'},
+            {headerName: 'Silver', columnGroupShow: 'open', field: 'silver', width: 100, filter: 'agNumberColumnFilter'},
+            {headerName: 'Bronze', columnGroupShow: 'open', field: 'bronze', width: 100, filter: 'agNumberColumnFilter'}
         ]
     }
 ];

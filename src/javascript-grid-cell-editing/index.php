@@ -7,7 +7,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h2 id="cell-editing">Cell Editing</h2>
+    <h1 id="cell-editing">Cell Editing</h1>
 
     <p>
         Cell Renderer's and Cell Editors, the former for showing the data, the latter for editing the data.
@@ -177,20 +177,20 @@ include '../documentation-main/documentation_header.php';
     <p>
         The grid, out of the box, comes with the following editors:
         <ul>
-        <li><b>text</b>: Simple text editor that uses standard HTML Input. This is the default.</li>
-        <li><b>select</b>: Simple editor that uses standard HTML Select.</li>
-        <li><b>popupText</b>: Same as 'text' but as popup.</li>
-        <li><b>popupSelect</b>: Same as 'select' but as popup.</li>
-        <li><b>largeText</b>: - A text popup that for inputting larger, multi-line text.</li>
-        <li><b>richSelect (ag-Grid-Enterprise only)</b>: - A rich select popup that uses row virtualisation
+        <li><b>agTextCellEditor</b>: Simple text editor that uses standard HTML Input. This is the default.</li>
+        <li><b>agSelectCellEditor</b>: Simple editor that uses standard HTML Select.</li>
+        <li><b>agPopupTextCellEditor</b>: Same as 'text' but as popup.</li>
+        <li><b>agPopupSelectCellEditor</b>: Same as 'select' but as popup.</li>
+        <li><b>agLargeTextCellEditor</b>: - A text popup that for inputting larger, multi-line text.</li>
+        <li><b>agRichSelectCellEditor (ag-Grid-Enterprise only)</b>: - A rich select popup that uses row virtualisation
     </ul>
     </p>
 
 <note>We have found the standard HTML <code>select</code> to behave odd when in the grid. This is because the browser
     doesn't have a great API for opening and closing the select's popup. We advise you don't use
-    it unless you have to - that is we advise against <code>select</code> and <code>popupSelect</code> as
+    it unless you have to - that is we advise against <code>agSelectCellEditor</code> and <code>agPopupSelectCellEditor</code> as
     they give poor user experience, especially if using keyboard navigation. If using ag-Grid Enterprise,
-    then you should use the provided <code>richSelect</code>.</note>
+    then you should use the provided <code>agRichSelectCellEditor</code>.</note>
 
     <p>
         The default text cell editor takes no parameters. The select cell editor takes a list of values
@@ -198,7 +198,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <snippet>
-colDef.cellEditor = 'select';
+colDef.cellEditor = 'agSelectCellEditor';
 colDef.cellEditorParams = {
     values: ['English', 'Spanish', 'French', 'Portuguese', '(other)']
 }</snippet>
@@ -241,6 +241,7 @@ colDef.cellEditorParams = {
         <ul>
         <li><b>rowIndex</b>: The row index of the row to start editing.</li>
         <li><b>colKey</b>: The column key of the column to start editing.</li>
+        <li><b>rowPinned</b>: Set to 'top' or 'bottom' to started editing a pinned row.</li>
         <li><b>keyPress, charPress</b>: The keyPress and charPress that are passed to the cell editor</li>
     </ul>
     </p>
@@ -268,7 +269,38 @@ colDef.cellEditorParams = {
     <h3 id="cell-editing-example">Cell Editing Example</h3>
 
     <p>
-        The example below illustrates different parts of the editing API using the buttons at the top.
+        The example below illustrates different parts of the editing API. Each button starts
+        editing the 'Last Name' column of the first row with the following differences:
+        <ul>
+            <li>
+                <b>edit()</b>: Normal editing start.
+            </li>
+            <li>
+                <b>edit(Delete)</b>: Edit as if delete button was pressed (clears contents first).
+            </li>
+            <li>
+                <b>edit('T')</b>: Edit as if 'T' was pressed (places 'T' into cell).
+            </li>
+            <li>
+                <b>edit(top)</b>: Edits top pinned row.
+            </li>
+            <li>
+                <b>edit(bottom)</b>: Edits bottom pinned row.
+            </li>
+        </ul>
+        The example then demonstrates the following buttons for edit navigation:
+        <ul>
+            <li>
+                <b>stop()</b>: Stops editing.
+            </li>
+            <li>
+                <b>next()</b>: Edits the next cell.
+            </li>
+            <li>
+                <b>previous()</b>: Edits the previous cell.
+            </li>
+        </ul>
+
     </p>
 
     <?= example('Cell Editing', 'cell-editing', 'generated') ?>
@@ -452,6 +484,30 @@ colDef.cellEditorParams = {
 
     <note>Cell Editing can also be done via Cell Editor Components - please see <a href="../javascript-grid-cell-editor">
             Cell Editor Components</a> for more information.</note>
+
+
+    <h3 id="controllingKeyboardWhileEditing">Controlling keyboard while editing</h3>
+    <p>
+    While editing, the grid will listen to navigation events coming from the keyboard, this includes navigate to next cell,
+    next row... If you want to avoid this events from being consumed by the grid you can do so by configuring
+    <code>colDef.suppressKeyboardEvent</code>.
+    </p>
+
+
+    <p>
+    The following example shows a simple example where each cell contains a number and the arrows are used to manipulate
+    its value.
+
+    Note how the arrows are used to increase or decrease the value of the cell while editing and they are not used for
+    navigation
+    </p>
+
+    <snippet>
+suppressKeyboardEvent: function(event){
+    if (event.editing) return true;
+}</snippet>
+
+    <?= example('Controlling keyboard while editing', 'controlling-keyboard-while-editing', 'generated') ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

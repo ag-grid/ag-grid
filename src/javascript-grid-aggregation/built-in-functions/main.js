@@ -23,7 +23,7 @@ var gridOptions = {
     autoGroupColumnDef: {headerName: "Athlete",
         field: "athlete",
         width: 200,
-        cellRenderer: 'group',
+        cellRenderer:'agGroupCellRenderer',
         cellRendererParams: {
             footerValueGetter: '"Total (" + x + ")"',
             padding: 5

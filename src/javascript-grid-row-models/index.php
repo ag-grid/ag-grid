@@ -10,25 +10,6 @@ include '../documentation-main/documentation_header.php';
 <div>
 
     <style>
-        .row-model-table .item-row {
-            border-top: 1px solid lightgray;
-        }
-        .row-model-table .first-row {
-            background-color: aliceblue;
-            font-weight: bold;
-        }
-
-        .row-model-table td {
-            padding: 4px;
-            border-left: 1px solid lightgray;
-        }
-
-        .row-model-table {
-            border-top: 1px solid lightgray;
-            border-bottom: 1px solid lightgray;
-            border-right: 1px solid lightgray;
-        }
-
         .green-tick {
             color: darkgreen;
         }

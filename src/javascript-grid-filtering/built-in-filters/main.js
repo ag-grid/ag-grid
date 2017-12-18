@@ -1,9 +1,9 @@
 var columnDefs = [
     {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90, filter: 'number'},
+    {headerName: "Age", field: "age", width: 90, filter: 'agNumberColumnFilter'},
     {headerName: "Country", field: "country", width: 120},
     {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 145, filter:'date', filterParams:{
+    {headerName: "Date", field: "date", width: 145, filter:'agDateColumnFilter', filterParams:{
         comparator:function (filterLocalDateAtMidnight, cellValue){
             var dateAsString = cellValue;
             var dateParts  = dateAsString.split("/");
@@ -23,10 +23,10 @@ var columnDefs = [
         }
     }},
     {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'number'},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'number'},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'number'},
-    {headerName: "Total", field: "total", width: 100, filter: 'number', suppressFilter: true}
+    {headerName: "Gold", field: "gold", width: 100, filter: 'agNumberColumnFilter'},
+    {headerName: "Silver", field: "silver", width: 100, filter: 'agNumberColumnFilter'},
+    {headerName: "Bronze", field: "bronze", width: 100, filter: 'agNumberColumnFilter'},
+    {headerName: "Total", field: "total", width: 100, filter: 'agNumberColumnFilter', suppressFilter: true}
 ];
 
 var gridOptions = {

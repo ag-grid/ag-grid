@@ -65,7 +65,7 @@ var groupColumn = {
     field: 'name',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
-    cellRenderer: 'group',
+    cellRenderer:'agGroupCellRenderer',
     cellRendererParams: {
         checkbox: true
     }
@@ -350,7 +350,7 @@ var defaultCols = [
             },
             {
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
-                cellEditor: 'select',
+                cellEditor:'agSelectCellEditor',
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,
@@ -378,7 +378,7 @@ var defaultCols = [
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
-                cellEditor: 'richSelect',
+                cellEditor: 'agRichSelect',
                 cellEditorParams: {
                     cellRenderer: countryCellRenderer,
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",

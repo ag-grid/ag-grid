@@ -1,7 +1,5 @@
 package com.aggrid.crudapp.bootstrap;
 
-import java.util.Date;
-
 public class RawOlympicWinnerRecord {
     public String athlete;
     public int age;

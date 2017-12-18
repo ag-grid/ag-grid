@@ -8,7 +8,6 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-
     <h1 class="first-h1">View Refresh</h1>
 
     <p>
@@ -46,7 +45,7 @@ include '../documentation-main/documentation_header.php';
         suit your needs.
     </p>
 
-    <h1>Refresh Cells</h1>
+    <h2>Refresh Cells</h2>
 
     <p>
         To get the grid to refresh the cells, call <code>api.refreshCells()</code>. The interface is as follows:
@@ -153,7 +152,7 @@ interface RefreshCellsParams {
         you may wish to update the cells even though the underlying data has not changed.
     </note>
 
-    <h1>Redraw Rows</h1>
+    <h2>Redraw Rows</h2>
 
     <p>
         Redraw rows is a much heavier operation than refreshing cells. If refreshing cells meets your needs, then don't

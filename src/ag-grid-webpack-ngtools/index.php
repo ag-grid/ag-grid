@@ -277,7 +277,7 @@ module.exports = {
 
         <p>Using this we'll get the following output:</p>
 
-        <a href="../images/ngtools_3png" target="_blank"><img src="../images/ngtools_3.png" style="width: 100%;padding-bottom: 15px"></a>
+        <a href="../images/ngtools_3.png" target="_blank"><img src="../images/ngtools_3.png" style="width: 100%;padding-bottom: 15px"></a>
 
         <p>4.3MB and 700ms to load - already a big improvement! But we can go further - let's add minification to our setup:</p>
 
@@ -312,7 +312,7 @@ plugins: [
     })
 ]</snippet>
 
-        <a href="../images/ngtools_4png" target="_blank"><img src="../images/ngtools_4.png" style="width: 100%;padding-bottom: 15px"></a>
+        <a href="../images/ngtools_4.png" target="_blank"><img src="../images/ngtools_4.png" style="width: 100%;padding-bottom: 15px"></a>
 
         <p>1.3MB and 686ms to load. With very little configuration we've got a pretty respectable build config working here.</p>
 
@@ -487,7 +487,7 @@ new AotPlugin({
 
         <p>The output of running this configuration would be:</p>
 
-        <a href="../images/ngtools_5png" target="_blank"><img src="../images/ngtools_5.png" style="width: 100%;padding-bottom: 15px"></a>
+        <a href="../images/ngtools_5.png" target="_blank"><img src="../images/ngtools_5.png" style="width: 100%;padding-bottom: 15px"></a>
 
         <p>951kb and 549ms to load. What a huge improvement in file size - thats almost all due to us no longer including the Angular Compiler
             in our application anymore.</p>
@@ -635,20 +635,20 @@ export class AppComponent {
 
         <p>The output of the application now looks like this:</p>
 
-        <a href="../images/ngtools_8png" target="_blank"><img src="../images/ngtools_8.png" style="width: 100%;padding-bottom: 15px"></a>
+        <a href="../images/ngtools_8.png" target="_blank"><img src="../images/ngtools_8.png" style="width: 100%;padding-bottom: 15px"></a>
 
         <p>Still simple, we just have a few more components this time around.</p>
 
         <p>The results of running this with the non-AOT configuration would be:</p>
 
-        <a href="../images/ngtools_6png" target="_blank"><img src="../images/ngtools_6.png" style="width: 100%;padding-bottom: 15px"></a>
+        <a href="../images/ngtools_6.png" target="_blank"><img src="../images/ngtools_6.png" style="width: 100%;padding-bottom: 15px"></a>
 
         <p>1.3MB and 734ms to load. The increased load time would be down to Angular needing to compile there (admittedly simple)
         components at runtime.</p>
 
         <p>And running it with the AOT configuration would give us:</p>
 
-        <a href="../images/ngtools_9png" target="_blank"><img src="../images/ngtools_9.png" style="width: 100%;padding-bottom: 15px"></a>
+        <a href="../images/ngtools_9.png" target="_blank"><img src="../images/ngtools_9.png" style="width: 100%;padding-bottom: 15px"></a>
 
         <p>989kb and 535ms to load. Same size and even quicker (although that's just lucky - if we ran it again it might
             be slower next time around)!.</p>

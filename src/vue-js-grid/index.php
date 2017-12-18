@@ -209,7 +209,7 @@ import Vue from "vue";
 import App from "./App";
 
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/theme-fresh.css";
+import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";
 
 ...other imports</snippet>
 

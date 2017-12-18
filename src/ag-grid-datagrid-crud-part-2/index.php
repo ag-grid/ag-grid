@@ -4,6 +4,9 @@ $pageTitle = "Blog: Building a CRUD Application with ag-Grid Part 2";
 $pageDescription = "Building a CRUD Application with ag-Grid Part 2";
 $pageKeyboards = "ag-grid datagrid crud enterprise";
 
+$socialUrl = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-2/";
+$socialImage = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/crud_overview.png?".uniqid();
+
 include('../includes/mediaHeader.php');
 ?>
 
@@ -29,8 +32,8 @@ include('../includes/mediaHeader.php');
                     and JPA/Backend (Database)
                 </li>
                 <li class="bold-roboto">Part 2: Middle Tier: Exposing our data with a REST Service</li>
-                <li>Part 3: Front End - Initial Implementation</li>
-                <li>Part 4: Front End - Grid Features & CRUD (Creation, Updates and Deletion)</li>
+                <li><a href="../ag-grid-datagrid-crud-part-3/">Part 3</a>: Front End - Initial Implementation</li>
+                <li><a href="../ag-grid-datagrid-crud-part-3/">Part 4</a>: Front End - Grid Features & CRUD (Creation, Updates and Deletion)</li>
                 <li>Part 5: Front End - Aggregation & Pivoting</li>
                 <li>Part 6: Front End - Enterprise Row Model</li>
                 <li>Part 7: Packaging (Optional)</li>
@@ -44,6 +47,12 @@ include('../includes/mediaHeader.php');
                 with this particular section being under <a
                         href="https://github.com/seanlandsman/ag-grid-crud/tree/part-2">Part
                     2</a></note>
+
+            <note img="'../ag-grid-datagrid-crud-part-1/updated_transparent.png'" height="'50'" width="'123'">
+                <p>One part of this entry of the series have been updated as the result of a bug I found later on.</p>
+                <p>Look for the <code>Updated!</code> note (like this one) -  its in <code>AthleteController</code> section.</p>
+                <p>The lesson here? Write more tests folks!</p>
+            </note>
 
             <p>
                 In order for our data to be useful we need to make it available to users. One of the easiest ways to do
@@ -236,6 +245,10 @@ public Iterable
                         <td><code>&lt;S extends T&gt; S save(S s);</code></td>
                     </tr>
                     <tr>
+                        <td>Update an existing <code>Athlete</code>, supplying a "detached" version<span style="font-weight: bold">*</span></td>
+                        <td><code>&lt;S extends T&gt; S save(S s);</code></td>
+                    </tr>
+                    <tr>
                         <td>Update multiple existing <code style="padding-right: 0">Result</code><span
                                     style="font-size: small">s</span></td>
                         <td><code>&lt;S extends T&gt; Iterable&lt;S&gt; saveAll(Iterable&lt;S&gt; iterable);</code></td>
@@ -247,6 +260,9 @@ public Iterable
                 </table>
             </div>
 
+            <p><span style="font-weight: bold">*</span> A detached version being a version Spring/JPA/Hibernate is not
+                currently aware of. This will be the case when we pass in an existing <code>Athlete</code> vai the REST service, later.</p>
+
             <p>In an application with more real-world requirements you'd almost certainly make use of some of the other
                 methods provided.</p>
 
@@ -254,6 +270,10 @@ public Iterable
                 <code>AthleteController</code> (although you might want update <code>Results</code> directly).</p>
 
             <h3>AthleteController</h3>
+
+            <note img="'../ag-grid-datagrid-crud-part-1/updated_transparent.png'" height="'50'" width="'123'">
+                <p>Added a new test to test the scenario where we supply a detached <code>Athlete</code> in to be updated/saved.</p>
+            </note>
 
             <p>The completed controller is pretty simple - each of the calls for the above requirements simply delegates
                 to the <code>AthleteRepository</code>.</p>
@@ -311,16 +331,17 @@ Athlete[] athletes = response.getBody();
 
             <snippet>mvn clean test</snippet>
 
-<snippet>Results :
-
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
-
+<snippet>
+[INFO] Results:
+[INFO]
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+[INFO]
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 14.679 s
-[INFO] Finished at: 2017-10-04T15:37:17+01:00
-[INFO] Final Memory: 31M/321M
+[INFO] Total time: 14.372 s
+[INFO] Finished at: 2017-11-30T15:49:20Z
+[INFO] Final Memory: 37M/383M
 [INFO] ------------------------------------------------------------------------
 </snippet>
             <p>Great, so far so good. We've verified that the middle tier code we've written for the 4 use-cases above

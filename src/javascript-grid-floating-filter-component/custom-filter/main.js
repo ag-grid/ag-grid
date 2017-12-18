@@ -1,13 +1,16 @@
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, filter: 'text', suppressFilter: true},
-    {headerName: "Gold", field: "gold", width: 100, filter: 'number', filter: NumberFilter, suppressMenu: true},
-    {headerName: "Silver", field: "silver", width: 100, filter: 'number', filter: NumberFilter, suppressMenu: true},
-    {headerName: "Bronze", field: "bronze", width: 100, filter: 'number', filter: NumberFilter, suppressMenu: true},
-    {headerName: "Total", field: "total", width: 100, filter: 'number', filter: NumberFilter, suppressMenu: true}
+    {headerName: "Athlete", field: "athlete", width: 150, filter: 'agTextColumnFilter', suppressFilter: true},
+    {headerName: "Gold", field: "gold", width: 100, filter: 'customNumberFilter', suppressMenu: true},
+    {headerName: "Silver", field: "silver", width: 100, filter: 'customNumberFilter', suppressMenu: true},
+    {headerName: "Bronze", field: "bronze", width: 100, filter: 'customNumberFilter', suppressMenu: true},
+    {headerName: "Total", field: "total", width: 100, filter: 'customNumberFilter', suppressMenu: true}
 ];
 
 var gridOptions = {
+    components:{
+        customNumberFilter: getNumberFilterComponent()
+    },
     floatingFilter:true,
     columnDefs: columnDefs,
     rowData: null,
@@ -18,78 +21,83 @@ function isNumeric(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
-function NumberFilter() {
-}
+function getNumberFilterComponent (){
+    function NumberFilter() {
+    }
 
-NumberFilter.prototype.init = function (params) {
-    this.valueGetter = params.valueGetter;
-    this.filterText = null;
-    this.params = params;
-    this.setupGui();
-};
-
-// not called by ag-Grid, just for us to help setup
-NumberFilter.prototype.setupGui = function () {
-    this.gui = document.createElement('div');
-    this.gui.innerHTML =
-        '<div style="padding: 4px;">' +
-        '<div style="font-weight: bold;">Greater than: </div>' +
-        '<div><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Number of medals..."/></div>' +
-        '</div>';
-
-    var that = this;
-    this.onFilterChanged = function() {
-        that.extractFilterText();
-        that.params.filterChangedCallback();
+    NumberFilter.prototype.init = function (params) {
+        this.valueGetter = params.valueGetter;
+        this.filterText = null;
+        this.params = params;
+        this.setupGui();
     };
 
-    this.eFilterText = this.gui.querySelector('#filterText');
-    this.eFilterText.addEventListener("input", this.onFilterChanged);
-};
+    // not called by ag-Grid, just for us to help setup
+    NumberFilter.prototype.setupGui = function () {
+        this.gui = document.createElement('div');
+        this.gui.innerHTML =
+            '<div style="padding: 4px;">' +
+            '<div style="font-weight: bold;">Greater than: </div>' +
+            '<div><input style="margin: 4px 0px 4px 0px;" type="text" id="filterText" placeholder="Number of medals..."/></div>' +
+            '</div>';
 
-NumberFilter.prototype.extractFilterText = function () {
-    this.filterText = this.eFilterText.value;
-};
+        var that = this;
+        this.onFilterChanged = function() {
+            that.extractFilterText();
+            that.params.filterChangedCallback();
+        };
 
-NumberFilter.prototype.getGui = function () {
-    return this.gui;
-};
+        this.eFilterText = this.gui.querySelector('#filterText');
+        this.eFilterText.addEventListener("input", this.onFilterChanged);
+    };
 
-NumberFilter.prototype.doesFilterPass = function (params) {
-    var valueGetter = this.valueGetter;
-    var value = valueGetter(params);
-    var filterValue = this.filterText;
+    NumberFilter.prototype.extractFilterText = function () {
+        this.filterText = this.eFilterText.value;
+    };
 
-    if (this.isFilterActive()){
-        if (!value) return false;
-        return Number(value) > Number(filterValue)
-    }
-};
+    NumberFilter.prototype.getGui = function () {
+        return this.gui;
+    };
 
-NumberFilter.prototype.isFilterActive = function () {
-    return  this.filterText !== null &&
+    NumberFilter.prototype.doesFilterPass = function (params) {
+        var valueGetter = this.valueGetter;
+        var value = valueGetter(params);
+        var filterValue = this.filterText;
+
+        if (this.isFilterActive()){
+            if (!value) return false;
+            return Number(value) > Number(filterValue)
+        }
+    };
+
+    NumberFilter.prototype.isFilterActive = function () {
+        return  this.filterText !== null &&
             this.filterText !== undefined &&
             this.filterText !== '' &&
             isNumeric(this.filterText);
-};
+    };
 
-NumberFilter.prototype.getModel = function () {
-    return this.isFilterActive() ? Number(this.eFilterText.value) : null;
-};
+    NumberFilter.prototype.getModel = function () {
+        return this.isFilterActive() ? Number(this.eFilterText.value) : null;
+    };
 
-NumberFilter.prototype.setModel = function (model) {
-    this.eFilterText.value = model;
-    this.extractFilterText();
-};
+    NumberFilter.prototype.setModel = function (model) {
+        this.eFilterText.value = model;
+        this.extractFilterText();
+    };
 
 
-NumberFilter.prototype.destroy = function () {
-    this.eFilterText.removeEventListener("input", this.onFilterChanged);
-};
+    NumberFilter.prototype.destroy = function () {
+        this.eFilterText.removeEventListener("input", this.onFilterChanged);
+    };
 
-NumberFilter.prototype.getModelAsString = function () {
-    return this.isFilterActive() ? '>' + this.filterText : '';
-};
+    NumberFilter.prototype.getModelAsString = function () {
+        return this.isFilterActive() ? '>' + this.filterText : '';
+    };
+
+    return NumberFilter;
+}
+
 
 
 // setup the grid after the page has finished loading

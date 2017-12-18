@@ -40,10 +40,10 @@ var games = ["Chess", "Cross and Circle", "Daldos", "Downfall", "DVONN", "Fanoro
 ];
 var booleanValues = [true, "true", false, "false"];
 
-var firstNames = ["Dimple", "Bas", "Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
+var firstNames = ["Tony", "Andrew", "Kevin", "Dimple", "Bas", "Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
     "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
     "Ella", "Evie", "Freya", "Isla", "Poppy", "Daisy", "Layla"];
-var lastNames = ["Unalkat", "Rahman", "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
+var lastNames = ["Smith", "Connell", "Flanagan", "Unalkat", "Rahman", "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
     "Cage", "Carson", "Chandler", "Cohen", "Cole", "Corbin", "Dallas", "Dalton", "Dane",
     "Donovan", "Easton", "Fisher", "Fletcher", "Grady", "Greyson", "Griffin", "Gunner",
     "Hayden", "Hudson", "Hunter", "Jacoby", "Jagger", "Jaxon", "Jett", "Kade", "Kane",
@@ -65,7 +65,7 @@ var groupColumn = {
     field: 'name',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
-    cellRenderer: 'group',
+    cellRenderer: 'agGroupCellRenderer',
     cellRendererParams: {
         checkbox: true
     }
@@ -96,6 +96,18 @@ function suppressColumnMoveAnimation() {
 }
 
 var gridOptions = {
+    components: {
+        personFilter: PersonFilter,
+        personFloatingFilterComponent: PersonFloatingFilterComponent,
+        countryCellRenderer: countryCellRenderer,
+        countryFloatingFilterComponent: CountryFloatingFilterComponent,
+        booleanCellRenderer: booleanCellRenderer,
+        booleanFilterCellRenderer: booleanFilterCellRenderer,
+        winningsFilter: WinningsFilter,
+        ratingRenderer: ratingRenderer,
+        ratingFilterRenderer: ratingFilterRenderer
+    },
+
     defaultColDef: {
         minWidth: 50
     },
@@ -330,8 +342,8 @@ var defaultCols = [
                 editable: true,
                 enableRowGroup: true,
                 // enablePivot: true,
-                filter: PersonFilter,
-                floatingFilterComponent: PersonFloatingFilterComponent,
+                filter: 'personFilter',
+                floatingFilterComponent: 'personFloatingFilterComponent',
                 checkboxSelection: function (params) {
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
@@ -347,8 +359,8 @@ var defaultCols = [
                 }
             },
             {
-                headerName: "Language", field: "language", width: 150, editable: true, filter: 'set',
-                cellEditor: 'select',
+                headerName: "Language", field: "language", width: 150, editable: true, filter: 'agSetColumnFilter',
+                cellEditor:'agSelectCellEditor',
                 enableRowGroup: true,
                 enablePivot: true,
                 // rowGroupIndex: 0,
@@ -371,14 +383,14 @@ var defaultCols = [
             },
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
-                cellRenderer: countryCellRenderer,
+                cellRenderer: 'countryCellRenderer',
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
-                cellEditor: 'richSelect',
+                cellEditor: 'agRichSelect',
                 cellEditorParams: {
-                    cellRenderer: countryCellRenderer,
+                    cellRenderer: 'countryCellRenderer',
                     values: ["Argentina", "Brazil", "Colombia", "France", "Germany", "Greece", "Iceland", "Ireland",
                         "Italy", "Malta", "Portugal", "Norway", "Peru", "Spain", "Sweden", "United Kingdom",
                         "Uruguay", "Venezuela", "Belgium", "Luxembourg"]
@@ -386,13 +398,13 @@ var defaultCols = [
                 // pinned: 'left',
                 floatCell: true,
                 filterParams: {
-                    cellRenderer: countryCellRenderer,
+                    cellRenderer: 'countryCellRenderer',
                     // cellHeight: 20,
                     newRowsAction: 'keep',
                     selectAllOnMiniFilter: true,
                     clearButton: true
                 },
-                floatingFilterComponent: CountryFloatingFilterComponent,
+                floatingFilterComponent: 'countryFloatingFilterComponent',
                 icons: {
                     sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
                     sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
@@ -405,7 +417,7 @@ var defaultCols = [
         headerName: 'Game of Choice',
         children: [
             {
-                headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'set',
+                headerName: "Game Name", field: "game.name", width: 180, editable: true, filter: 'agSetColumnFilter',
                 tooltipField: 'game.name',
                 cellClass: function () {
                     return 'alphabet';
@@ -425,17 +437,17 @@ var defaultCols = [
                 }
             },
             {
-                headerName: "Bought", field: "game.bought", filter: 'set', editable: true, width: 150,
+                headerName: "Bought", field: "game.bought", filter: 'agSetColumnFilter', editable: true, width: 150,
                 // pinned: 'right',
                 // rowGroupIndex: 2,
                 // pivotIndex: 1,
                 enableRowGroup: true,
                 enablePivot: true,
                 enableValue: true,
-                cellRenderer: booleanCellRenderer, cellStyle: {"text-align": "center"}, comparator: booleanComparator,
+                cellRenderer: 'booleanCellRenderer', cellStyle: {"text-align": "center"}, comparator: booleanComparator,
                 floatCell: true,
                 filterParams: {
-                    cellRenderer: booleanFilterCellRenderer,
+                    cellRenderer: 'booleanFilterCellRenderer',
                     selectAllOnMiniFilter: true,
                     newRowsAction: 'keep',
                     clearButton: true
@@ -449,7 +461,7 @@ var defaultCols = [
         groupId: 'performance',
         children: [
             {headerName: "Bank Balance", field: "bankBalance", width: 180, editable: true,
-                filter: WinningsFilter, valueFormatter: currencyFormatter,
+                filter: 'winningsFilter', valueFormatter: currencyFormatter,
                 type: 'numericColumn',
                 enableValue: true,
                 // colId: 'sf',
@@ -473,15 +485,15 @@ var defaultCols = [
         ]
     },
     {
-        headerName: "Rating", field: "rating", width: 120, editable: true, cellRenderer: ratingRenderer,
+        headerName: "Rating", field: "rating", width: 120, editable: true, cellRenderer: 'ratingRenderer',
         floatCell: true,
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
-        filterParams: {cellRenderer: ratingFilterRenderer}
+        filterParams: {cellRenderer: 'ratingFilterRenderer'}
     },
     {
-        headerName: "Total Winnings", field: "totalWinnings", filter: 'number', type: 'numericColumn',
+        headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter', type: 'numericColumn',
         editable: true, valueParser: numberParser, width: 170,
         // aggFunc: 'sum',
         enableValue: true,
@@ -501,7 +513,7 @@ defaultCols.push(monthGroup);
 months.forEach(function (month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
-        width: 110, filter: 'number', editable: true, type: 'numericColumn',
+        width: 110, filter: 'agNumberColumnFilter', editable: true, type: 'numericColumn',
         enableValue: true,
         // aggFunc: 'sum',
         //hide: true,

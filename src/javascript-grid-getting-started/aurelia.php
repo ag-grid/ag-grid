@@ -104,7 +104,7 @@
     </p>
     <snippet>
         &lt;link href="node_modules/ag-grid/styles/ag-grid.css" rel="stylesheet" /&gt;
-        &lt;link href="node_modules/ag-grid/styles/theme-fresh.css" rel="stylesheet" /&gt;
+        &lt;link href="node_modules/ag-grid/styles/ag-theme-fresh.css" rel="stylesheet" /&gt;
     </snippet>
 
     <p>

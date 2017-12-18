@@ -46,7 +46,16 @@ export class AppComponent {
             {headerName: 'Country', field: 'country', width: 150},
             {headerName: 'Year', field: 'year', width: 120},
             {headerName: 'Date', field: 'date', width: 150},
-            {headerName: 'Sport', field: 'sport', width: 150}
+            {headerName: 'Sport', field: 'sport', width: 150},
+            {headerName: 'Medals',
+                children: [
+                    {headerName: "Total", columnGroupShow: 'closed', field: "total",
+                        valueGetter: "data.gold + data.silver + data.bronze", width: 200},
+                    {headerName: "Gold", columnGroupShow: 'open', field: "gold", width: 100},
+                    {headerName: "Silver", columnGroupShow: 'open', field: "silver", width: 100},
+                    {headerName: "Bronze", columnGroupShow: 'open', field: "bronze", width: 100}
+                ]
+            }
         ];
 
         this.topOptions.alignedGrids.push(this.bottomOptions);
