@@ -50,27 +50,26 @@ export class ComponentRecipes {
     private filterManager: FilterManager;
 
     public newDateComponent (params: IDateParams): Promise<IDateComp>{
-        return this.componentResolver.createAgGridComponent<IDateComp>(this.gridOptions, params, "dateComponent", "agDateInput");
+        return this.componentResolver.createAgGridComponent<IDateComp>(this.gridOptions, params, "dateComponent", "agDateComponent");
     }
 
     public newHeaderComponent(params:IHeaderParams): Promise<IHeaderComp> {
-        return this.componentResolver.createAgGridComponent<IHeaderComp>(params.column.getColDef(), params, "headerComponent", "agColumnHeader");
+        return this.componentResolver.createAgGridComponent<IHeaderComp>(params.column.getColDef(), params, "headerComponent", "agHeaderComponent");
     }
 
     public newHeaderGroupComponent(params:IHeaderGroupParams): Promise<IHeaderGroupComp> {
-        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agColumnGroupHeader");
+        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agHeaderGroupComponent");
     }
 
-    private newFloatingFilterComponent<M> (typeRaw:string, colDef:ColDef, params:IFloatingFilterParams<M, any>):Promise<IFloatingFilterComp<M, any, any>>{
-        let type:string = typeRaw;
+    private newFloatingFilterComponent<M> (type:string, colDef:ColDef, params:IFloatingFilterParams<M, any>):Promise<IFloatingFilterComp<M, any, any>>{
         //type if populated must be one of ['set','number','text','date']
-        if (typeRaw.indexOf('ag') === 0) {
-            let filterPos: number = typeRaw.length - "Filter".length;
-            if (typeRaw.indexOf('Filter') === filterPos) {
-                type = typeRaw.substr(0, filterPos)
-            }
-        }
-        let floatingFilterName: string = type + "FloatingFilter";
+        let floatingFilterName: string = type + "FloatingFilterComponent";
+        floatingFilterName = floatingFilterName
+            .replace('set', 'agSet')
+            .replace('text', 'agText')
+            .replace('number', 'agNumber')
+            .replace('date', 'agDate')
+            .replace('readModelAsString', 'agReadModelAsString');
         return this.componentResolver.createAgGridComponent<IFloatingFilterComp<M, any, any>>(
             colDef,
             params,
@@ -89,12 +88,12 @@ export class ComponentRecipes {
 
         let floatingFilterType: string;
 
-        if (typeof  colDef.filter === 'string' && this.isBasicFilterType (<string>colDef.filter)) {
+        if (typeof  colDef.filter === 'string') {
             floatingFilterType = (<string>colDef.filter);
         } else if (!colDef.filter){
-            floatingFilterType= this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFilter' : 'agTextColumnFilter';
+            floatingFilterType= this.gridOptionsWrapper.isEnterprise() ? 'set' : 'text';
         } else {
-            floatingFilterType= 'agCustomColumn';
+            floatingFilterType= 'custom';
         }
 
         let floatingFilter:Promise<IFloatingFilterComp<M, any, P>> = this.newFloatingFilterComponent(floatingFilterType, colDef, params);
@@ -116,38 +115,20 @@ export class ComponentRecipes {
                 let parentPromise:Promise<IFilterComp> = this.filterManager.getFilterComponent(column);
                 return <any>parentPromise.resolveNow(null, parent=>parent.getModelAsString ? parent.getModelAsString(rawModelFn()) : null);
             };
-            floatingFilterWrapperComponentParams.floatingFilterComp = this.newFloatingFilterComponent<M>('agReadModelAsString', colDef, params);
+            floatingFilterWrapperComponentParams.floatingFilterComp = this.newFloatingFilterComponent<M>('readModelAsString', colDef, params);
         }
 
 
         return this.componentResolver.createAgGridComponent<IFloatingFilterWrapperComp<any, any, any, any>> (
             colDef,
             floatingFilterWrapperComponentParams,
-            "floatingFilterWrapper",
-            "agFloatingFilterWrapper"
+            "floatingFilterWrapperComponent",
+            "agFloatingFilterWrapperComponent"
         );
     }
 
-    private isBasicFilterType (type:string):boolean {
-        switch (type){
-            case 'text':
-            case 'agTextColumnFilter':
-            case 'number':
-            case 'agNumberColumnFilter':
-            case 'date':
-            case 'agDateColumnFilter':
-            case 'set':
-            case 'agSetColumnFilter':
-                return true;
-
-            default:
-                return false
-        }
-
-    }
-
     public newFullWidthGroupRowInnerCellRenderer (params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptions, params, "groupRowInnerRenderer", "agGroupRowInnerCellRenderer", false);
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptions, params, "groupRowInnerRenderer", "agGroupRowInnerRenderer", false);
     }
 
     public newCellRenderer (target: ColDef | ISetFilterParams | IRichCellEditorParams, params:ICellRendererParams):Promise<ICellRendererComp>{
@@ -155,7 +136,7 @@ export class ComponentRecipes {
     }
 
     public newInnerCellRenderer (target: GroupCellRendererParams, params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "innerRenderer", "agInnerCellRenderer");
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "innerRenderer", "agInnerRenderer");
     }
 
     public newFullRowGroupRenderer (params:ICellRendererParams):Promise<ICellRendererComp>{
@@ -163,20 +144,20 @@ export class ComponentRecipes {
     }
 
     public newOverlayWrapperComponent(): Promise<IOverlayWrapperComp> {
-        return this.componentResolver.createAgGridComponent<IOverlayWrapperComp>(this.gridOptions, null, "overlayWrapperComponent", "agOverlayWrapper");
+        return this.componentResolver.createAgGridComponent<IOverlayWrapperComp>(this.gridOptions, null, "overlayWrapperComponent", "agOverlayWrapperComponent");
     }
 
     public newLoadingOverlayComponent(): Promise<ILoadingOverlayComp> {
-        return this.componentResolver.createAgGridComponent<ILoadingOverlayComp>(this.gridOptions, null, "loadingOverlayComponent", "agLoadingOverlay");
+        return this.componentResolver.createAgGridComponent<ILoadingOverlayComp>(this.gridOptions, null, "loadingOverlayComponent", "agLoadingOverlayComponent");
     }
 
     public newNoRowsOverlayComponent(): Promise<INoRowsOverlayComp> {
-        return this.componentResolver.createAgGridComponent<INoRowsOverlayComp>(this.gridOptions, null, "noRowsOverlayComponent", "agNoRowsOverlay");
+        return this.componentResolver.createAgGridComponent<INoRowsOverlayComp>(this.gridOptions, null, "noRowsOverlayComponent", "agNoRosOverlayComponent");
     }
 
     private getFilterComponentPrototype<A extends IComponent<any> & B, B>
     (colDef: ColDef): ComponentToUse<A, B> {
-        return <ComponentToUse<A, B>>this.componentResolver.getComponentToUse(colDef, "filter", "agFilter");
+        return <ComponentToUse<A, B>>this.componentResolver.getComponentToUse(colDef, "filterComponent", "agFilterComponent");
     }
 
     private newEmptyFloatingFilterWrapperComponent(column:Column): Promise<IFloatingFilterWrapperComp<any, any, any, any>> {
@@ -187,8 +168,8 @@ export class ComponentRecipes {
         return this.componentResolver.createAgGridComponent<IFloatingFilterWrapperComp<any, any, any, any>>(
             column.getColDef(),
             floatingFilterWrapperComponentParams,
-            "floatingFilterWrapper",
-            "agEmptyFloatingFilterWrapper"
+            "floatingFilterWrapperComponent",
+            "agEmptyFloatingFilterWrapperComponent"
         );
     }
 }
