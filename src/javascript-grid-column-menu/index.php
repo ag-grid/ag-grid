@@ -122,6 +122,14 @@ menuItems.push('separator')</snippet>
     width: 500px !important;
 }</snippet>
 
+    <h3>Hiding the Column Menu</h3>
+
+    <p>
+        Hide the column menu with the grid API <code>hidePopupMenu()</code>, which will hide
+        either the <a href="../javascript-grid-context-menu">context menu</a> or the column menu,
+        whichever is showing.
+    </p>
+
     <h3>Example Column Menu</h3>
 
     <p>

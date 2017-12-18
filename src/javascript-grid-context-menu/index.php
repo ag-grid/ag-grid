@@ -115,6 +115,14 @@ MenuItemDef {
         menu, even when ctrl is pressed, then set <i>allowContextMenuWithControlKey=true</i>.
     </p>
 
+    <h3>Hiding the Context Menu</h3>
+
+    <p>
+        Hide the context menu with the grid API <code>hidePopupMenu()</code>, which will hide
+        either the context menu or the <a href="../javascript-grid-column-menu">column menu</a>,
+        whichever is showing.
+    </p>
+
     <h3>Context Menu Example</h3>
 
     <p>
