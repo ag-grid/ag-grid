@@ -55,9 +55,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     public static PINNED_RIGHT = 'right';
     public static PINNED_LEFT = 'left';
 
-    public static SORT_ASC = 'asc';
-    public static SORT_DESC = 'desc';
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
@@ -74,7 +71,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private left: number;
     private oldLeft: number;
     private aggFunc: string | IAggFunc;
-    private sort: string;
+    private sort: Column.NullableSortDir;
     private sortedAt: number;
     private moving = false;
     private menuVisible = false;
@@ -342,11 +339,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.moving;
     }
 
-    public getSort(): string {
+    public getSort(): Column.NullableSortDir {
         return this.sort;
     }
 
-    public setSort(sort: string): void {
+    public setSort(sort: Column.NullableSortDir): void {
         if (this.sort !== sort) {
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_SORT_CHANGED));
@@ -365,11 +362,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     }
 
     public isSortAscending(): boolean {
-        return this.sort === Column.SORT_ASC;
+        return this.sort === Column.SortDir.Asc;
     }
 
     public isSortDescending(): boolean {
-        return this.sort === Column.SORT_DESC;
+        return this.sort === Column.SortDir.Desc;
     }
 
     public isSortNone(): boolean {
@@ -630,4 +627,22 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
         return menuTabs;
     }
+}
+
+export namespace Column {
+    /** 
+     * Valid sort directions. 
+     * See also, {@link Column.NullableSortDir}.
+     */
+    export const enum SortDir {
+        /** Sort ascending. */
+        Asc = "asc",
+        /** Sort descending. */
+        Desc = "desc"
+    }
+
+    /**
+     * A valid {@link Column.SortDir} value, or null.
+     */
+    export type NullableSortDir = SortDir | null;
 }

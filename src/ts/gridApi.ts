@@ -45,6 +45,7 @@ import {PinnedRowModel} from "./rowModels/pinnedRowModel";
 import {AgEvent} from "./events";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {GridOptions} from "./entities/gridOptions";
+import { ISortModel } from "./interfaces/iSortModel";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -665,11 +666,11 @@ export class GridApi {
         this.sortController.onSortChanged();
     }
 
-    public setSortModel(sortModel:any) {
+    public setSortModel(sortModel: ISortModel[] | null) {
         this.sortController.setSortModel(sortModel);
     }
 
-    public getSortModel() {
+    public getSortModel(): ISortModel[] {
         return this.sortController.getSortModel();
     }
 

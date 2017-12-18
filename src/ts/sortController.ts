@@ -7,11 +7,12 @@ import {Events, SortChangedEvent} from "./events";
 import {Bean} from "./context/context";
 import {Utils as _} from './utils';
 import {GridApi} from "./gridApi";
+import { ISortModel } from "./interfaces/iSortModel";
 
 @Bean('sortController')
 export class SortController {
 
-    private static DEFAULT_SORTING_ORDER = [Column.SORT_ASC, Column.SORT_DESC, null];
+    private static DEFAULT_SORTING_ORDER = [Column.SortDir.Asc, Column.SortDir.Desc, null];
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -24,10 +25,10 @@ export class SortController {
         this.setSortForColumn(column, nextDirection, multiSort);
     }
 
-    public setSortForColumn(column: Column, sort: string, multiSort: boolean): void {
+    public setSortForColumn(column: Column, sort: Column.NullableSortDir, multiSort: boolean): void {
 
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
-        if (sort!==Column.SORT_ASC && sort!==Column.SORT_DESC) { sort = null; }
+        if (sort!==Column.SortDir.Asc && sort!==Column.SortDir.Desc) { sort = null; }
 
         // update sort on current col
         column.setSort(sort);
@@ -74,9 +75,9 @@ export class SortController {
         });
     }
 
-    private getNextSortDirection(column: Column): string {
+    private getNextSortDirection(column: Column): Column.NullableSortDir {
 
-        let sortingOrder: string[];
+        let sortingOrder: Column.NullableSortDir[];
         if (column.getColDef().sortingOrder) {
             sortingOrder = column.getColDef().sortingOrder;
         } else if (this.gridOptionsWrapper.getSortingOrder()) {
@@ -93,7 +94,7 @@ export class SortController {
         let currentIndex = sortingOrder.indexOf(column.getSort());
         let notInArray = currentIndex < 0;
         let lastItemInArray = currentIndex == sortingOrder.length - 1;
-        let result: string;
+        let result: Column.NullableSortDir = null;
         if (notInArray || lastItemInArray) {
             result = sortingOrder[0];
         } else {
@@ -110,7 +111,7 @@ export class SortController {
     }
 
     // used by the public api, for saving the sort model
-    public getSortModel() {
+    public getSortModel(): ISortModel[] {
         let columnsWithSorting = this.getColumnsWithSortingOrdered();
 
         return _.map(columnsWithSorting, (column: Column) => {
@@ -121,7 +122,7 @@ export class SortController {
         });
     }
 
-    public setSortModel(sortModel: any) {
+    public setSortModel(sortModel: ISortModel[] | null) {
         if (!this.gridOptionsWrapper.isEnableSorting()) {
             console.warn('ag-grid: You are setting the sort model on a grid that does not have sorting enabled');
             return;
@@ -177,7 +178,7 @@ export class SortController {
         let columnsWithSorting = this.getColumnsWithSortingOrdered();
 
         return _.map(columnsWithSorting, (column: Column) => {
-            let ascending = column.getSort() === Column.SORT_ASC;
+            const ascending = column.isSortAscending();
             return {
                 inverter: ascending ? 1 : -1,
                 column: column

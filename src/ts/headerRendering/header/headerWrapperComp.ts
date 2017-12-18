@@ -135,7 +135,7 @@ export class HeaderWrapperComp extends Component {
             progressSort: (multiSort?:boolean) => {
                 this.sortController.progressSort(this.column, !!multiSort);
             },
-            setSort: (sort: string, multiSort?: boolean) => {
+            setSort: (sort: Column.NullableSortDir, multiSort?: boolean) => {
                 this.sortController.setSortForColumn(this.column, sort, !!multiSort);
             },
             api: this.gridApi,

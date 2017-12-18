@@ -20,7 +20,7 @@ export interface IHeaderParams {
     enableMenu: boolean;
     showColumnMenu: (source:HTMLElement)=>void;
     progressSort: (multiSort?: boolean)=>void;
-    setSort: (sort: string, multiSort?: boolean)=>void;
+    setSort: (sort: Column.NullableSortDir, multiSort?: boolean)=>void;
     columnApi: ColumnApi,
     api: GridApi,
     context: any,
