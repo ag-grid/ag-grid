@@ -424,8 +424,9 @@ export class Utils {
     }
 
     //if value is undefined, null or blank, returns null, otherwise returns the value
-    static makeNull(value: any) {
-        if (value === null || value === undefined || value === "") {
+    static makeNull<T>(value: T): T {
+        let valueNoType = <any> value;
+        if (value === null || value === undefined || valueNoType === "") {
             return null;
         } else {
             return value;
