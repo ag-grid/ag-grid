@@ -1,5 +1,4 @@
 <?php
-$key = "License Key";
 $pageTitle = "ag-Grid JavaScript Data Grid Set License Key";
 $pageDescription = "How to set the License Key in ag-Grid Enterprise";
 $pageKeyboards = "ag-Grid JavaScript Data Grid Excel License Key";
@@ -8,8 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Set License</h2>
+    <h1 class="heading-enterprise">Set License</h1>
 
     <p>
         Set the license key via the JavaScript method as described below.

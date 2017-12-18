@@ -1,5 +1,4 @@
 <?php
-$key = "Touch";
 $pageTitle = "JavaScript DataGrid Touch";
 $pageDescription = "Learn how to interact with ag-Grid on a touch device.";
 $pageKeyboards = "JavaScript DataGrid Touch";

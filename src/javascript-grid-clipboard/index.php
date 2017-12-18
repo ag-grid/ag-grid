@@ -1,5 +1,4 @@
 <?php
-$key = "Clipboard";
 $pageTitle = "Javascript Grid Clipboard";
 $pageDescription = "ag-Grid can use the clipboard. This page explains how to interact with the clipboard using ag-Grid.";
 $pageKeyboards = "Javascript Grid Clipboard";
@@ -8,8 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Clipboard</h2>
+    <h1 class="heading-enterprise">Clipboard</h1>
 
     <p>
         You can copy and paste items to and from the grid using the system clipboard.

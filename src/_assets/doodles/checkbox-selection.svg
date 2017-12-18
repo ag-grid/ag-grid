@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="312px" height="103px" viewBox="0 0 312 103" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>checkbox-selection</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Chalkboard-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD" transform="translate(-415.000000, -571.000000)">
+            <g id="checkbox-selection" transform="translate(415.000000, 571.000000)">
+                <circle id="Oval-Copy-16" stroke="#0084E7" cx="308.5" cy="39.5" r="3"></circle>
+                <circle id="Oval-Copy-17" stroke="#0084E7" cx="234.5" cy="3.5" r="3"></circle>
+                <path d="M0.5,59.5 L305.6049,59.5" id="Line-18-Copy" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M0.5,79.5 L305.6049,79.5" id="Line-18-Copy-2" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M0.5,99.5 L305.6049,99.5" id="Line-18-Copy-3" stroke="#0084E7" stroke-linecap="square"></path>
+                <g id="Group" transform="translate(6.000000, 44.000000)" stroke="#0084E7">
+                    <rect id="Rectangle-9" x="0.5" y="0.5" width="10" height="10"></rect>
+                </g>
+                <g id="Group-Copy-3" transform="translate(6.000000, 64.000000)" stroke="#0084E7">
+                    <rect id="Rectangle-9" x="0.5" y="0.5" width="10" height="10"></rect>
+                </g>
+                <g id="Group-Copy-2" transform="translate(5.000000, 62.000000)" stroke="#8ABDE3">
+                    <rect id="Rectangle-9" x="1.5" y="1.5" width="10" height="10"></rect>
+                    <rect id="Rectangle-9-Copy" transform="translate(6.500000, 6.500000) rotate(8.000000) translate(-6.500000, -6.500000) " x="1.5" y="1.5" width="10" height="10"></rect>
+                </g>
+                <g id="Group-Copy" transform="translate(5.000000, 83.000000)" stroke="#0084E7">
+                    <rect id="Rectangle-9" x="1.5" y="1.5" width="10" height="10"></rect>
+                    <rect id="Rectangle-9-Copy" transform="translate(6.500000, 6.500000) rotate(-4.000000) translate(-6.500000, -6.500000) " x="1.5" y="1.5" width="10" height="10"></rect>
+                </g>
+                <polyline id="Path-4" stroke="#8ABDE3" stroke-linecap="square" points="10 68.5 12.7613403 71.2613403 20.07844 63.9442405"></polyline>
+                <path d="M114.5,36.5 L114.5,101.507692" id="Line-18" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M234.5,6.5 L234.5,101.507692" id="Line-18-Copy-4" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M0.5,39.5 L305.6049,39.5" id="Line-18" stroke="#0084E7" stroke-linecap="square"></path>
+                <rect id="Rectangle-10" stroke="#8ABDE3" x="0.5" y="58.5" width="305" height="19"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

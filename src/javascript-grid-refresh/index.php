@@ -1,5 +1,4 @@
 <?php
-$key = "Refresh";
 $pageTitle = "ag-Grid Refresh";
 $pageDescription = "It is possible to refresh ag-Grid in many ways. This page explains how to refresh cells inside the grid.";
 $pageKeyboards = "ag-Grid Refresh";

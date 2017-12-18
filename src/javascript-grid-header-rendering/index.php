@@ -1,5 +1,4 @@
 <?php
-$key = "Header Rendering";
 $pageTitle = "ag-Grid Header Rendering";
 $pageDescription = "ag-Grid Header Rendering";
 $pageKeyboards = "ag-Grid Header Rendering";

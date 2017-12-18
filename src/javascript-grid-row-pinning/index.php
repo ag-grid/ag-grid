@@ -1,5 +1,4 @@
 <?php
-$key = "Row Pinning";
 $pageTitle = "ag-Grid Pinned Rows";
 $pageDescription = "ag-Grid Pinned Rows";
 $pageKeyboards = "ag-Grid Pinned Rows";

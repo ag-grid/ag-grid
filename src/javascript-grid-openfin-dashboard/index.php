@@ -1,5 +1,4 @@
 <?php
-$key = "OpenFin Dashboard";
 $pageTitle = "ag-Grid OpenFin Trader Dashboard";
 $pageDescription = "ag-Grid OpenFin Trader Dashboard Tear Out";
 $pageKeyboards = "ag-grid openfin examples";

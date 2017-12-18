@@ -1,5 +1,4 @@
 <?php
-$key = "Infinite Scrolling";
 $pageTitle = "ag-Grid Infinite Scrolling";
 $pageDescription = "ag-Grid allows the data to stay on the server and only load data for what is currently visible in the GUI.";
 $pageKeyboards = "ag-Grid Infinite Scrolling";

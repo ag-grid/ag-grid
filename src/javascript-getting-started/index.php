@@ -1,5 +1,4 @@
 <?php
-$key = "Getting Started Javascript";
 $pageTitle = "JavaScript Grid";
 $pageDescription = "ag-Grid can be used as a data grid inside your plain JavaScript application. This page details how to get started.";
 $pageKeyboards = "Javascript Grid";
@@ -7,11 +6,7 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>
-        <img src="../images/svg/docs/getting_started.svg" width="50"/>
-        <img style="vertical-align: middle" src="../images/svg/javascript.svg" height="25px"/>
-        JavaScript Grid
-    </h1>
+    <h1>JavaScript Grid</h1>
 
     <h2>
         Getting Started With ag-Grid and Plain JavaScript
@@ -48,16 +43,11 @@ start index.html
 open index.html
 </snippet>
 
-    <p>With those 2 commands you should now see the following application:</p>
-<div>
-
-</div>
-
-    <p>Great! A working Grid application in no time at all. Let's break down the application into it's main parts:</p>
+    <p>Great! A working Grid application in no time at all. Let's break down the application into its main parts:</p>
 
     <h3>Row Data</h3>
 
-    <p>At a minimum, a Grid requires row data & column definitions. Row data is provided to the grid as an array of
+    <p>At a minimum, a Grid requires row data &amp; column definitions. Row data is provided to the grid as an array of
         JavaScript objects:</p>
 
 <snippet>
@@ -127,13 +117,11 @@ open index.html
         any unit
         of course, including <code>%</code>.</p>
 
-    <p>Finally, we provide a <code>theme</code> for our Grid - the theme determines the Grids look and feel. Please see
-        <a
-                href="../javascript-grid-styling">Themes</a> for more information.</p>
+    <p>Finally, we provide a <code>theme</code> for our Grid - the theme determines the Grid's look and feel. Please see
+        <a href="../javascript-grid-styling">themes</a> for more information.</p>
 
-    <p>Next in our application, we define a gridOptions object that we will pass to the Grid - in this we declare the
-        row and column
-        information we want displayed:</p>
+    <p>Next in our application, we define a <code>gridOptions</code> object that we will pass to the Grid - in this we declare the
+        row and column information we want displayed:</p>
 
 <snippet>
 // Grid Definition 
@@ -198,7 +186,7 @@ var gridOptions = {
         clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
         by <code>Price</code> in ascending order (indicated by the up arrow):</p>
 
-    <img src="../images/js-gs-sorting.png" style="display: block;margin: auto;height: 200px;">
+    <p><img src="../images/js-gs-sorting.png" alt="ag-Grid with Sorting" height="183"></p>
 
     <h4>Filtering</h4>
 
@@ -228,7 +216,7 @@ var gridOptions = {
         <code>Model</code>
         column by the text <code>Celica</code> - only the row with <code>Celica</code> is shown now.</p>
 
-    <img src="../images/js-gs-filtering.png" style="display: block;margin: auto;height: 200px;">
+    <p><img src="../images/js-gs-filtering.png" height="179" alt="ag-Grid with filtering"></p>
 
     <h3 id="summary">Summary</h3>
 

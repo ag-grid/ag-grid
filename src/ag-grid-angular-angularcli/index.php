@@ -1,5 +1,4 @@
 <?php
-$key = "Angular CLI";
 $pageTitle = "Angular CLI";
 $pageDescription = "How to build ag-Grid using Angular CLI.";
 $pageKeyboards = "Angular CLI";

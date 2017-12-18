@@ -1,5 +1,4 @@
 <?php
-$key = "AccessingData";
 $pageTitle = "ag-Grid Accessing Data";
 $pageDescription = "Shows how to access the data inside ag-Grid.";
 $pageKeyboards = "ag-Grid Accessing Data";

@@ -1,5 +1,4 @@
 <?php
-$key = "Set Filtering";
 $pageTitle = "ag-Grid JavaScript Data Grid Excel Set Filtering";
 $pageDescription = "ag-Grid can filter like Excel, by providing you with a set that you can select from.";
 $pageKeyboards = "ag-Grid JavaScript Data Grid Excel Set Filtering";
@@ -8,8 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Set Filter</h2>
+    <h1 class="heading-enterprise">Set Filter</h1>
 
     <p>
         A set filter, influenced by how filters work in Microsoft Excel. Set filters can be provided with

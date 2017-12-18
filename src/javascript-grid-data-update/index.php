@@ -1,5 +1,4 @@
 <?php
-$key = "DataUpdate";
 $pageTitle = "ag-Grid Data Update";
 $pageDescription = "ag-Grid allows you to insert and remove rows into the grid without destroying the rows that are currently in the grid.";
 $pageKeyboards = "ag-Grid Insert Remove";

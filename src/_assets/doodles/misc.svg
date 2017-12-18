@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="63px" height="120px" viewBox="0 0 63 120" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>misc</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Chalkboard-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD" transform="translate(-1376.000000, -42.000000)">
+            <g id="misc" transform="translate(1406.874622, 101.736280) scale(-1, 1) rotate(7.000000) translate(-1406.874622, -101.736280) translate(1380.874622, 43.736280)">
+                <rect id="Rectangle-4-Copy-16" stroke="#0084E7" x="1.5" y="1.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-15" stroke="#0084E7" x="1.5" y="20.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-13" stroke="#0084E7" x="0.646914596" y="51.5521769" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-12" stroke="#0084E7" transform="translate(21.000000, 87.000000) rotate(2.000000) translate(-21.000000, -87.000000) " x="1.5" y="77.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-11" stroke="#0084E7" x="1.5" y="96.5" width="39" height="19"></rect>
+                <path d="M26.5,20.5 L45.5262976,20.5" id="Line-3-Copy-6" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M22.5,1.5 L41.5262976,1.5" id="Line-3-Copy-5" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M22.5,77.5 L41.5262976,77.5" id="Line-3-Copy-4" stroke="#0084E7" stroke-linecap="square"></path>
+                <circle id="Oval-Copy-18" stroke="#087FFF" cx="48.5" cy="19.5" r="3"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

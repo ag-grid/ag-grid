@@ -1,5 +1,4 @@
 <?php
-$key = "Viewport";
 $pageTitle = "ag-Grid ViewPort";
 $pageDescription = "A Viewport is a rowModel that allows showing a 'window' of data in your client.";
 $pageKeyboards = "ag-Grid ViewPort";
@@ -8,7 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-    <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Viewport Row Model</h1>
+    <h1 class="first-h1 heading-enterprise">Viewport Row Model</h1>
 
     <note>
         Don't use Viewport Row Model unless you understand what advantages it offers and whether or not you need them.</p>

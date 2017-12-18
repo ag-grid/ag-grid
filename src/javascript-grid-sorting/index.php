@@ -1,5 +1,4 @@
 <?php
-$key = "Sorting";
 $pageTitle = "ag-Grid Sorting";
 $pageDescription = "ag-Grid Sorting";
 $pageKeyboards = "ag-Grid Sorting";

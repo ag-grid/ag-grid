@@ -9,8 +9,8 @@ StockHistoricalChart.prototype.init = function (graphId) {
         left: 0
     };
 
-    this.graphHeight = 230;
-    this.graphWidth = 400;
+    this.graphHeight = 200;
+    this.graphWidth = 450;
 
     this.renderingHeight = this.graphHeight - this.margin.top - this.margin.bottom;
     this.renderingWidth = this.graphWidth - this.margin.left - this.margin.right;

@@ -1,5 +1,4 @@
 <?php
-$key = "Keyboard Navigation";
 $pageTitle = "ag-Grid Keyboard Navigation";
 $pageDescription = "ag-Grid Keyboard Navigation";
 $pageKeyboards = "ag-Grid Keyboard Navigation";

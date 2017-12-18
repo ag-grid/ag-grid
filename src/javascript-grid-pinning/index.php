@@ -1,5 +1,4 @@
 <?php
-$key = "Pinning";
 $pageTitle = "ag-Grid Pinning";
 $pageDescription = "ag-Grid Pinning";
 $pageKeyboards = "ag-Grid Pinning";

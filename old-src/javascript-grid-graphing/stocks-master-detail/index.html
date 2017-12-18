@@ -1,0 +1,71 @@
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+
+<style>
+    .line {
+        fill: none;
+        stroke: steelblue;
+        stroke-width: 1.5px;
+    }
+
+    .bar {
+        fill: steelblue;
+    }
+
+    .bar:hover {
+        fill: brown;
+    }
+</style>
+
+<div style="margin-bottom: 10px">
+    <span>
+    Metric:
+    <select onchange="metricChanged(this.value)">
+        <option>Open</option>
+        <option>High</option>
+        <option>Low</option>
+        <option selected>Close</option>
+        <option>Volume</option>
+    </select>
+    </span>
+    <span style="margin-left:10px;float:right">
+    Graph Type:
+    <select onchange="graphTypeChanged(this.value)">
+        <option selected>Multi-Line Time Series</option>
+        <option>Bar</option>
+        <!--<option>Pie</option>-->
+    </select>
+    </span>
+    <span id="date" style="display: none; float:right">
+    Year:
+    <select onchange="yearChanged(this.value)">
+        <option>2017</option>
+        <option>2016</option>
+        <option selected>2015</option>
+        <option>2014</option>
+        <option>2013</option>
+        <option>2012</option>
+        <option>2011</option>
+        <option>2010</option>
+    </select>
+    Month:
+    <select onchange="monthChanged(this.value)">
+        <option value="0" selected>Jan</option>
+        <option value="1">Feb</option>
+        <option value="2">Mar</option>
+        <option value="3">Apr</option>
+        <option value="4">May</option>
+        <option value="5">Jun</option>
+        <option value="6">Jul</option>
+        <option value="7">Aug</option>
+        <option value="8">Sep</option>
+        <option value="9">Oct</option>
+        <option value="10">Nov</option>
+        <option value="11">Dec</option>
+    </select>
+    </span>
+</div>
+<div id="myGrid" style="height: 250px" class="ag-theme-blue"></div>
+<svg id="detail" width="935" height="500"></svg>
+
+

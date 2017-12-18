@@ -1,5 +1,4 @@
 <?php
-$key = "Resizing";
 $pageTitle = "ag-Grid Resizing";
 $pageDescription = "ag-Grid Resizing";
 $pageKeyboards = "ag-Grid Resizing";

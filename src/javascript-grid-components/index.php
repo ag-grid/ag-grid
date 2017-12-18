@@ -1,5 +1,4 @@
 <?php
-$key = "Components";
 $pageTitle = "ag-Grid Components";
 $pageDescription = "ag-Grid Components";
 $pageKeyboards = "ag-Grid Components";

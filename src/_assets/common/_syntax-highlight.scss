@@ -1,0 +1,25 @@
+@import '~prismjs/themes/prism-okaidia';
+
+pre[class*="language-"], snippet pre {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    @extend .rounded;
+    background-color: $code-background-color;
+    color: $gray-100;
+    border: 1px solid $gray-300;
+    padding: 1rem;
+    font-size: 80%;
+    white-space: pre-wrap;
+}
+
+.token.keyword {
+    color: $blue-3;
+}
+
+.token.boolean {
+    color: lighten($red, 10);
+}
+
+code {
+    color: $red-highlight;
+}

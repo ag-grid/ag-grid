@@ -1,5 +1,4 @@
 <?php
-$key = "Column Properties";
 $pageTitle = "Column Properties";
 $pageDescription = "ag-Grid Column Properties";
 $pageKeyboards = "ag-Grid Column Properties";

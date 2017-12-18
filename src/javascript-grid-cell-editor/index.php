@@ -1,5 +1,4 @@
 <?php
-$key = "Cell Editor";
 $pageTitle = "ag-Grid Cell Editor Component";
 $pageDescription = "You can integrate your own editors into ag-Grid that will bind into the grids navigation.";
 $pageKeyboards = "ag-Grid Cell Editor Component";
