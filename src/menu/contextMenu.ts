@@ -52,7 +52,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
             defaultMenuOptions = [];
 
-            if(column) {
+            if (column) {
                 // only makes sense if column exists, could have originated from a row
                 defaultMenuOptions = ['copy','copyWithHeaders','paste', 'separator'];
             }
@@ -60,7 +60,10 @@ export class ContextMenuFactory implements IContextMenuFactory {
             defaultMenuOptions.push('toolPanel');
 
             // if user clicks a cell
-            let anyExport:boolean = !this.gridOptionsWrapper.isSuppressExcelExport() || !this.gridOptionsWrapper.isSuppressCsvExport();
+            let suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport();
+            let suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport();
+            let onIPad = _.isUserAgentIPad();
+            let anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport){
                 defaultMenuOptions.push('export')
             }
