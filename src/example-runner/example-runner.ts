@@ -150,14 +150,6 @@ class ExampleRunner {
                     if (visible && !this.visible) {
                         this.visible = true;
                         ACTIVE_EXAMPLE_RUNNERS.push(this);
-<<<<<<< HEAD
-                        // max active examples is set in the webpack define plugin ./ webpack-config/site.js
-                        if (ACTIVE_EXAMPLE_RUNNERS.length > MAX_ACTIVE_EXAMPLES) {
-=======
-                        if (ACTIVE_EXAMPLE_RUNNERS.length > 100) { 
->>>>>>> new
-                            ACTIVE_EXAMPLE_RUNNERS.shift().visible = false;
-                        }
                     }
                 });
             });

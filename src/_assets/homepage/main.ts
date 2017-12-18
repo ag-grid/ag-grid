@@ -1,8 +1,8 @@
 import './main.scss';
-import {$, lazyload, AnchorJS, Prism, initCookieDisclaimer } from '../common/vendor';
+import {$, lazyload, AnchorJS, Prism, initCookieDisclaimer} from '../common/vendor';
 
 function resetIndent(str) {
-    const leadingWhitespace = str.match(/^\n?( +)/) ;
+    const leadingWhitespace = str.match(/^\n?( +)/);
     if (leadingWhitespace) {
         return str.replace(new RegExp(' {' + leadingWhitespace[1].length + '}', 'g'), '').trim();
     } else {
@@ -30,7 +30,7 @@ $(() => {
         });
     });
 
-    (<any> $('[data-toggle="popover"]')).popover();
+    (<any>$('[data-toggle="popover"]')).popover();
 
     var anchors = new AnchorJS();
     anchors.options = {
@@ -44,7 +44,7 @@ $(() => {
     var level = 3;
     var prevLink = null;
     var list = $('<ul></ul>');
-    var breakpoints: { heading: any, link: any }[] = [];
+    var breakpoints: {heading: any; link: any}[] = [];
 
     nav.append(list);
 
@@ -72,25 +72,29 @@ $(() => {
 
         breakpoints.push({
             heading: $heading,
-            link: link,
+            link: link
         });
     });
 
     new lazyload(document.querySelectorAll('#stage-feature-highlights img'), {});
 
-    window.addEventListener('scroll', function(e) {
-        var scrollBottom = $(window).scrollTop();
-        var i = 0;
+    if (breakpoints.length) {
+        window.addEventListener('scroll', function(e) {
+            var scrollBottom = $(window).scrollTop();
+            var i = 0;
 
-        while (i < breakpoints.length - 1 && breakpoints[i].heading.offset().top < scrollBottom) {
-            i++;
-        }
+            while (i < breakpoints.length - 1 && breakpoints[i].heading.offset().top < scrollBottom) {
+                i++;
+            }
 
-        nav.find('li').removeClass('current-feature');
-        breakpoints[i].link.addClass('current-feature');
-    });
+            nav.find('li').removeClass('current-feature');
+            breakpoints[i].link.addClass('current-feature');
+        });
+    }
 
     // code highlighting
-    $('pre > code').each(function() { $(this).text(resetIndent($(this).text())); });
+    $('pre > code').each(function() {
+        $(this).text(resetIndent($(this).text()));
+    });
     Prism.highlightAll(false);
 });

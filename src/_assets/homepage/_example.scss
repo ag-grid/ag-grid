@@ -1,0 +1,86 @@
+.blue {
+    background-color: darkblue;
+    color: lightblue;
+}
+
+button[disabled] {
+    opacity: 0.5;
+}
+
+.ag-theme-fresh .good-score {
+    background-color: rgba(0, 200, 0, 0.4)
+}
+
+.ag-theme-blue .good-score {
+    background-color: rgba(0, 200, 0, 0.4)
+}
+
+.ag-theme-dark .good-score {
+    background-color: rgba(0, 100, 0, 0.4)
+}
+
+.ag-theme-fresh .bad-score {
+    background-color: rgba(200, 0, 0, 0.4)
+}
+
+.ag-theme-blue .bad-score {
+    background-color: rgba(200, 0, 0, 0.4)
+}
+
+.ag-theme-dark .bad-score {
+    background-color: rgba(100, 0, 0, 0.4)
+}
+
+.ag-theme-dark .star {
+    filter: invert(100%);
+}
+
+.ag-theme-material .good-score {
+    background-color: rgba(185,246,202 , 0.4);
+}
+
+.ag-theme-material .bad-score {
+    background-color: rgba(255,128,171 , 0.4);
+}
+
+
+#example-toolbar {
+    @extend .container-fluid;
+    
+    > div {
+        @extend .full-width-row, .row;
+
+        > div:first-child {
+            @extend .col-md-9;
+        }
+
+        > div:last-child {
+            @extend .col-md-3, .text-right;
+
+            a {
+                float: right;
+                margin-top: .8rem;
+                background: transparent url('./youtube.svg') left center no-repeat;
+                padding-left: 2rem;
+            }
+        }
+    }
+}
+
+#example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    #grid-wrapper {
+        flex: 1;
+        background-color: red;
+    }
+}
+
+.stretch-html {
+    height: 100%;
+    body {
+        height: 100%;
+    }
+}
