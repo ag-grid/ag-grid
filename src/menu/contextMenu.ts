@@ -18,7 +18,8 @@ import {
     IRowModel,
     IComponent,
     IAfterGuiAttachedParams,
-    _
+    _,
+    BeanStub
 } from "ag-grid";
 import {ClipboardService} from "../clipboardService";
 import {MenuItemComponent} from "./menuItemComponent";
@@ -33,8 +34,16 @@ export class ContextMenuFactory implements IContextMenuFactory {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
 
+    private activeMenu: ContextMenu;
+
     @PostConstruct
     private init(): void {
+    }
+
+    public hideActiveMenu(): void {
+        if (this.activeMenu) {
+            this.activeMenu.destroy();
+        }
     }
 
     private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef|string)[] {
@@ -107,6 +116,13 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
         menu.afterGuiAttached({
             hidePopup: hidePopup
+        });
+
+        this.activeMenu = menu;
+        menu.addEventListener(BeanStub.EVENT_DESTORYED, ()=> {
+            if (this.activeMenu===menu) {
+                this.activeMenu = null;
+            }
         });
     }
 

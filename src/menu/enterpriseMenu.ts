@@ -19,13 +19,13 @@ import {
     Constants,
     PostConstruct,
     FilterWrapper,
-    Promise
+    Promise,
+    BeanStub
 } from "ag-grid";
 import {ColumnSelectPanel} from "../toolPanel/columnsSelect/columnSelectPanel";
 import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";
-
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -39,6 +39,14 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private lastSelectedTab: string;
+
+    private activeMenu: EnterpriseMenu;
+
+    public hideActiveMenu(): void {
+        if (this.activeMenu) {
+            this.activeMenu.destroy();
+        }
+    }
 
     public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent, defaultTab?:string): void {
 
@@ -108,6 +116,13 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         } );
 
         column.setMenuVisible(true);
+
+        this.activeMenu = menu;
+        menu.addEventListener(BeanStub.EVENT_DESTORYED, ()=> {
+            if (this.activeMenu===menu) {
+                this.activeMenu = null;
+            }
+        });
     }
 
     public isMenuEnabled(column: Column): boolean {
@@ -115,7 +130,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     }
 }
 
-export class EnterpriseMenu {
+export class EnterpriseMenu extends BeanStub {
 
     public static EVENT_TAB_SELECTED = 'tabSelected';
 
@@ -142,19 +157,18 @@ export class EnterpriseMenu {
     private mainMenuList: MenuList;
 
     private columnSelectPanel: ColumnSelectPanel;
-    private localEventService = new EventService();
 
     private tabItemFilter: TabbedItem;
     private tabItemGeneral: TabbedItem;
     private tabItemColumns: TabbedItem;
 
     private initialSelection: string;
-    private destroyFunctions: Function[] = [];
     private tabFactories:{[p:string]:()=>TabbedItem} = {};
     private includeChecks:{[p:string]:()=>boolean} = {};
     private restrictTo ?: string[];
 
     constructor(column: Column, initialSelection: string, restrictTo ?: string[]) {
+        super();
         this.column = column;
         this.initialSelection = initialSelection;
         this.tabFactories[EnterpriseMenu.TAB_GENERAL] = this.createMainPanel.bind(this);
@@ -172,10 +186,6 @@ export class EnterpriseMenu {
         };
         this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = ()=> true;
         this.restrictTo = restrictTo;
-    }
-
-    public addEventListener(event: string, listener: Function): void {
-        this.localEventService.addEventListener(event, listener);
     }
 
     public getMinWidth(): number {
@@ -202,7 +212,7 @@ export class EnterpriseMenu {
         });
     }
 
-    private isValidMenuTabItem (menuTabName:string): boolean {
+    private isValidMenuTabItem(menuTabName: string): boolean {
         let isValid: boolean = true;
         let itemsToConsider: string[] = EnterpriseMenu.TABS_DEFAULT;
 
@@ -218,15 +228,13 @@ export class EnterpriseMenu {
         return isValid;
     }
 
-    private isNotSuppressed (menuTabName:string):boolean{
+    private isNotSuppressed(menuTabName: string):boolean{
         return this.includeChecks[menuTabName]();
     }
 
-    private createTab (name:string):TabbedItem{
+    private createTab(name: string):TabbedItem{
         return this.tabFactories[name]();
     }
-
-
 
     public showTabBasedOnPreviousSelection(): void {
         // show the tab the user was on last time they had a menu open
@@ -260,7 +268,7 @@ export class EnterpriseMenu {
                 type: EnterpriseMenu.EVENT_TAB_SELECTED,
                 key: key
             };
-            this.localEventService.dispatchEvent(event);
+            this.dispatchEvent(event);
         }
     }
 
@@ -271,7 +279,7 @@ export class EnterpriseMenu {
         if (this.mainMenuList) {
             this.mainMenuList.destroy();
         }
-        this.destroyFunctions.forEach(func => func());
+        super.destroy();
     }
 
     private getMenuItems(): (string|MenuItemDef)[] {
@@ -430,8 +438,10 @@ export class EnterpriseMenu {
                 params.hidePopup();
             }
         };
-        this.eventService.addEventListener('bodyScroll', onBodyScroll);
-        this.destroyFunctions.push( ()=> this.eventService.removeEventListener('bodyScroll', onBodyScroll) );
+
+        this.addDestroyFunc(params.hidePopup);
+
+        this.addDestroyableEventListener(this.eventService, 'bodyScroll', onBodyScroll);
     }
 
     public getGui(): HTMLElement {
