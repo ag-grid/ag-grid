@@ -1,6 +1,7 @@
 {
-  "local-dev": false,
-  "update-mock-data": true,
-  "username": "alberto.gutierrez@ag-grid.com",
-  "password": "eastex01"
+  "local-dev": true,
+  "cache-lifetime-minutes": 0,
+  "update-local-data": false,
+  "username": "",
+  "password": ""
 }
