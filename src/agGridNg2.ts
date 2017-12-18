@@ -1,17 +1,17 @@
 import {
+    AfterViewInit,
     Component,
+    ComponentFactoryResolver,
+    ContentChildren,
+    ElementRef,
     EventEmitter,
     Input,
     Output,
-    ViewEncapsulation,
-    ViewContainerRef,
-    ElementRef,
-    ContentChildren,
     QueryList,
-    AfterViewInit,
-    ComponentFactoryResolver
+    ViewContainerRef,
+    ViewEncapsulation
 } from "@angular/core";
-import {Grid, GridOptions, GridApi, ColumnApi, GridParams, ComponentUtil} from "ag-grid/main";
+import {ColumnApi, ComponentUtil, Grid, GridApi, GridOptions, GridParams, Promise} from "ag-grid/main";
 import {Ng2FrameworkFactory} from "./ng2FrameworkFactory";
 import {AgGridColumn} from "./agGridColumn";
 import {Ng2FrameworkComponentWrapper} from "./ng2FrameworkComponentWrapper";
@@ -34,6 +34,12 @@ export class AgGridNg2 implements AfterViewInit {
     private _destroyed = false;
 
     private gridParams: GridParams;
+
+    // in order to ensure firing of gridReady is deterministic
+    private _fullyReady: Promise<boolean> = new Promise<boolean>(resolve => {
+            resolve(true);
+        }
+    );
 
     // making these public, so they are accessible to people using the ng2 component references
     public api: GridApi;
@@ -93,6 +99,11 @@ export class AgGridNg2 implements AfterViewInit {
         }
 
         this._initialised = true;
+
+        // sometimes, especially in large client apps gridReady can fire before ngAfterViewInit
+        // this ties these together so that gridReady will always fire after AgGridNg2's ngAfterViewInit
+        // the actual containing component's ngAfterViewInit will fire just after AgGridNg2's
+        this._fullyReady.resolveNow(null, resolve => resolve);
     }
 
     public ngOnChanges(changes: any): void {
@@ -116,10 +127,19 @@ export class AgGridNg2 implements AfterViewInit {
         if (this._destroyed) {
             return;
         }
+
         // generically look up the eventType
         let emitter = <EventEmitter<any>> (<any>this)[eventType];
         if (emitter) {
-            emitter.emit(event);
+            if (eventType === 'gridReady') {
+                // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit the
+                // gridReady event
+                this._fullyReady.then((result => {
+                    emitter.emit(event);
+                }));
+            } else {
+                emitter.emit(event);
+            }
         } else {
             console.log('ag-Grid-ng2: could not find EventEmitter: ' + eventType);
         }
