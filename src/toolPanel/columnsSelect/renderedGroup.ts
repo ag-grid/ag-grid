@@ -89,7 +89,7 @@ export class RenderedGroup extends Component {
         this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
 
         let eCheckboxAndText = this.queryForHtmlElement('#eCheckboxAndText');
-        let touchListener = new TouchListener(eCheckboxAndText);
+        let touchListener = new TouchListener(eCheckboxAndText, true);
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onClick.bind(this) );
         this.addDestroyFunc( touchListener.destroy.bind(touchListener) );
 
@@ -148,7 +148,7 @@ export class RenderedGroup extends Component {
         this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
 
         let eColumnGroupIcons = this.queryForHtmlElement('#eColumnGroupIcons');
-        let touchListener = new TouchListener(eColumnGroupIcons);
+        let touchListener = new TouchListener(eColumnGroupIcons, true);
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
         this.addDestroyFunc( touchListener.destroy.bind(touchListener) );
     }

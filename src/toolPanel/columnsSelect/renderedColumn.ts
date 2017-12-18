@@ -94,7 +94,7 @@ export class RenderedColumn extends Component {
     }
 
     private addTap(): void {
-        let touchListener = new TouchListener(this.getGui());
+        let touchListener = new TouchListener(this.getGui(), true);
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onClick.bind(this));
         this.addDestroyFunc( touchListener.destroy.bind(touchListener) );
     }
