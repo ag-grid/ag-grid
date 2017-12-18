@@ -205,7 +205,10 @@ export class RangeController implements IRangeController {
         if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
 
         // ctrlKey for windows, metaKey for Apple
-        let multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        let multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        let allowMulti = !this.gridOptionsWrapper.isSuppressMultiRangeSelection();
+        let multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
+
         if (Utils.missing(this.cellRanges) || !multiSelectKeyPressed) {
             this.cellRanges = [];
         }
