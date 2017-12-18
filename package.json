@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-vue",
   "description": "ag-Grid Vue Component",
-  "version": "14.2.0",
+  "version": "15.0.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -20,10 +20,11 @@
     "vuejs"
   ],
   "peerDependencies": {
-    "ag-grid": "^14.0.0",
+    "ag-grid": "^15.x",
     "vue": "^2.1.0"
   },
   "devDependencies": {
+    "vue": "^2.1.0",
     "babel-core": "^6.0.0",
     "babel-loader": "^6.0.0",
     "babel-preset-es2015": "^6.0.0",
