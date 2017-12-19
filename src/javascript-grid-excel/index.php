@@ -7,7 +7,6 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <p>
-
     <h1 class="heading-enterprise">JavaScript Grid Excel</h1>
 
     <h2>Exporting ag-Grid Data to Excel</h2>
@@ -498,5 +497,15 @@ function download (params, content){
     </ul>
 
     <?= example('Custom XLSX', 'custom-xlsx', 'generated', array("enterprise" => 1, "extras" => array('xlsx'))) ?>
+
+    <h1>Export to Excel with iPad</h1>
+
+    <p>
+        It is not possible to download files directly from JavaScript to an iPad. This is a restriction
+        on iPads and not something wrong with ag-Grid. For this reason, the download links in the context
+        menu are removed when running on iPad. If you do want to download on iPad, then it is recommended
+        you use the api function <code>getDataAsCsv()</code> to get the export data and then send this
+        to the server to allow building an endpoint for doing the download.
+    </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -202,7 +202,10 @@ interface RowDataTransaction {
 
     <note>
         The index to add is put in for historical purposes and should not be used. If you want the
-        grid to display in a certain order, you should apply a grid sort and have the row data sorted.
+        grid to display in a certain order, you should set
+        <a href="#delta-row-data">deltaRowDataMode=true</a> and then set
+        row data, which will maintain the row order while also working out the update, deletes and
+        adds for you.
     </note>
 
     <h3>Removing Rows</h3>

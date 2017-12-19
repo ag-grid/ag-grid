@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="data-export">CSV Export</h2>
+    <h1 class="first-h1" id="data-export">CSV Export</h1>
 
     <note>
         If you are looking to export your data formatted for Excel use the ag-Grid Enterprise feature
@@ -125,6 +125,16 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <?= example('CSV Export', 'csv-export', 'generated', array("enterprise" => 1)) ?>
+
+    <h1>Export to CSV with iPad</h1>
+
+    <p>
+        It is not possible to download files directly from JavaScript to an iPad. This is a restriction
+        on iPads and not something wrong with ag-Grid. For this reason, the download links in the context
+        menu are removed when running on iPad. If you do want to download on iPad, then it is recommended
+        you use the api function <code>getDataAsCsv()</code> to get the export data and then send this
+        to the server to allow building an endpoint for doing the download.
+    </p>
 
 </div>
 

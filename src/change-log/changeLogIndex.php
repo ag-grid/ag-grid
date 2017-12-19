@@ -12,6 +12,13 @@ include('../includes/mediaHeader.php');
         For a detailed breakdown of items please refer to the detailed pipeline <a href="../ag-grid-pipeline/">here</a>.
     </note>
 
+    <h2>Next</h2>
+
+    <ul>
+        <li>AG-1208: Set filter 'mini search' is now case insensitive.</li>
+        <li>AG-1119: New api method <code>hidePopupMenu()</code> for closing column menu and context menu.</li>
+        <li>AG-1258: Now consistent behaviour for indeterminate checkbox across selection and set filter.</li>
+    </ul>
 
 
     <h2>15.x</h2>
