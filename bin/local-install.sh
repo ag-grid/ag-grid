@@ -85,18 +85,6 @@ npm i "file:../../ag-grid"
 npm i "file:../../ag-grid-enterprise"
 npm i "file:../../ag-grid-angular"
 
-echo "Processing ag-grid-angular ngtools"
-cd ../ngtools_webpack
-rm -rf dist
-npm install > ../ag-grid-ngtools-install.log
-rm -rf node_modules/ag-grid
-rm -rf node_modules/ag-grid-angular-
-rm -rf node_modules/ag-grid-enterprise
-npm i "file:../../ag-grid"
-npm i "file:../../ag-grid-enterprise"
-npm i "file:../../ag-grid-angular"
-
-
 echo "Processing ag-grid-react"
 cd ../../ag-grid-react
 rm -rf dist

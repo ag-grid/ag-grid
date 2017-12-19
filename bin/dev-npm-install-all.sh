@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 set -e
 
 core_projects=('ag-grid' 'ag-grid-enterprise' 'ag-grid-angular' 'ag-grid-react' 'ag-grid-vue' 'ag-grid-aurelia')
@@ -9,7 +11,7 @@ for core_project in ${core_projects[@]}; do
   if [ -d "$core_project" ]; then
     cd $core_project
     npm install 
-    npm-install-peers
+    #npm-install-peers
     cd ..
   fi
 done
@@ -17,7 +19,7 @@ done
 if [ -d "ag-grid-angular-example" ]; then
   cd ag-grid-angular-example
 
-  angular_projects=('webpack' 'webpack2' 'systemjs_aot' 'ngtools_webpack' 'angular-cli')
+  angular_projects=('webpack' 'webpack2' 'systemjs_aot' 'angular-cli')
 
   for angular_project in ${angular_projects[@]}; do
     echo "*********************************************************************************"
