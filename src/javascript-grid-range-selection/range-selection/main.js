@@ -56,7 +56,7 @@ function onRangeSelectionChanged(event) {
 
     var rangeSelections = gridOptions.api.getRangeSelections();
 
-    // if no selection, clear all the reuslts and do nothing more
+    // if no selection, clear all the results and do nothing more
     if (!rangeSelections || rangeSelections.length===0) {
         lbRangeCount.innerHTML = '0';
         lbEagerSum.innerHTML = '-';
@@ -76,11 +76,12 @@ function onRangeSelectionChanged(event) {
     var startRow = Math.min(firstRange.start.rowIndex, firstRange.end.rowIndex);
     var endRow = Math.max(firstRange.start.rowIndex, firstRange.end.rowIndex);
 
+    var api = gridOptions.api;
     for (var rowIndex = startRow; rowIndex<=endRow; rowIndex++) {
         firstRange.columns.forEach( function(column) {
-            var rowModel = gridOptions.api.getModel();
+            var rowModel = api.getModel();
             var rowNode = rowModel.getRow(rowIndex);
-            var value = gridOptions.api.getValue(column, rowNode);
+            var value = api.getValue(column, rowNode);
             if (typeof value === 'number') {
                 sum += value;
             }
