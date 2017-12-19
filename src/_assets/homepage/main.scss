@@ -8,7 +8,27 @@
 @import './punch.scss';
 
 @import './demo-1.scss';
-@import './example.scss';
+@import '../pages/example.scss';
+@import '../pages/support.scss';
+
+
+
+.info-page {
+    @extend .container-fluid;
+    background-color: $offwhite;
+
+    .row {
+        @extend .full-width-row, .py-5, .px-2;
+        background-color: $white;
+        border-right: 1px solid $border-color;
+        border-left: 1px solid $border-color;
+
+
+        h1 {
+            margin-bottom: 2rem;
+        }
+    }
+}
 
 #news-flash {
     & > div {
