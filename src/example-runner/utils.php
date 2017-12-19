@@ -162,6 +162,10 @@ function example($title, $dir, $type='vanilla', $options = array()) {
         $query['enterprise'] = true;
     }
 
+    if ($options['noStyle']) {
+        $query['noStyle'] = true;
+    }
+
     if ($multi) {
         $query['multi'] = 1;
     }
@@ -172,6 +176,7 @@ function example($title, $dir, $type='vanilla', $options = array()) {
 
     $gridSettings = array(
         'theme' => 'ag-theme-fresh',
+        'noStyle' => $options['noStyle'] ? $options['noStyle'] : 0,
         'height' => '100%',
         'width' => '100%',
         'enterprise' => $options['enterprise']
