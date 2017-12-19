@@ -321,7 +321,7 @@ this.params.context.componentParent</snippet>
             <a href="/ag-grid-angular-webpack-2"> Webpack 2</a>
         </li>
         <li>
-            <a href="/ag-grid-angular-ngtools-webpack"> @ngTools/Webpack</a>
+            <a href="/ag-grid-angular-webpack-3"> Webpack 2</a>
         </li>
         <li>
             <a href="/ag-grid-angular-systemjs"> SystemJS</a>
