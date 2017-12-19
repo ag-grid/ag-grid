@@ -11,22 +11,40 @@
 @import '../pages/example.scss';
 @import '../pages/support.scss';
 
-
-
 .info-page {
     @extend .container-fluid;
     background-color: $offwhite;
 
-    .row {
+    > .row {
         @extend .full-width-row, .py-5, .px-2;
         background-color: $white;
         border-right: 1px solid $border-color;
         border-left: 1px solid $border-color;
 
-
         h1 {
             margin-bottom: 2rem;
         }
+
+        .row {
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+            p {
+                max-width: 330px;
+            }
+
+            img {
+                @extend .rounded;
+                margin-bottom: 1rem;
+            }
+        }
+    }
+
+    > h1,
+    > h2 {
+        @extend .row, .full-width-row;
+        margin-bottom: 0;
+        margin-top: 0;
+        padding: 1.5rem !important;
     }
 }
 
@@ -100,7 +118,7 @@
                 padding-bottom: 1em;
                 color: $blue-2;
                 height: 100%;
-                transition: all .5s ease-out;
+                transition: all 0.5s ease-out;
                 will-change: color, background-color, box-shadow;
 
                 &:hover {
@@ -465,5 +483,3 @@
         }
     }
 }
-
-
