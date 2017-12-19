@@ -82,18 +82,21 @@ meta_and_links("ag-Grid Data Grid Example", "react angular angularjs data grid e
 </div> <!-- example wrapper -->
 
 <!-- The Video Modal -->
-<div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModal" aria-hidden="true">
-    <div class="modal-dialog" style="width: 887px;">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button type="button" class="close videoClose" onclick="closeVideo('tsuhoLiSWmU')" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <div style="padding-top: 30px">
-                    <iframe width="100%" id="tsuhoLiSWmU" height="315" src="https://www.youtube.com/embed/tsuhoLiSWmU?version=3&enablejsapi=1" frameborder="0"
-                            allowfullscreen></iframe>
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="modal fade" role="document" id="videoModal" tabindex="-1" aria-labelledby="videoModal" aria-hidden="true">
+<div class="modal-dialog modal-lg">
+<div class="modal-content">
+  <div class="modal-header">
+    <h2 class="modal-title">ag-Grid Tour</h2>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+                <iframe width="100%" id="tsuhoLiSWmU" height="315" src="https://www.youtube.com/embed/tsuhoLiSWmU?version=3&enablejsapi=1" frameborder="0"
+                        allowfullscreen></iframe>
+  </div>
+</div>
+</div>
 </div>
 
 <?= globalAgGridScript(true) ?>
