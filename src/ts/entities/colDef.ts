@@ -177,6 +177,8 @@ export interface ColDef extends AbstractColDef {
     /** If true, the header checkbox selection will work on filtered items*/
     headerCheckboxSelectionFilteredOnly?: boolean;
 
+    rowDraggable?: boolean | ((params: any)=>boolean);
+
     /** Set to true if no menu should be shown for this column header. */
     suppressMenu?: boolean;
 

@@ -21,6 +21,7 @@ import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {NewValueParams, SuppressKeyboardEventParams} from "../entities/colDef";
 import {Beans} from "./beans";
 import {RowComp} from "./rowComp";
+import {RowDraggingComp} from "./rowDraggingComp";
 
 
 export class CellComp extends Component {
@@ -36,7 +37,11 @@ export class CellComp extends Component {
     private eParentRow: HTMLElement;
     private gridCell: GridCell;
     private rangeCount: number;
+
     private usingWrapper: boolean;
+
+    private includeSelectionComponent: boolean;
+    private includeRowDraggingCompnoent: boolean;
 
     private cellFocused: boolean;
     private editingCell = false;
@@ -150,7 +155,7 @@ export class CellComp extends Component {
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         this.addDomData();
-        this.addSelectionCheckbox();
+        this.populateTemplate();
         this.attachCellRenderer();
         this.angular1Compile();
 
@@ -639,18 +644,21 @@ export class CellComp extends Component {
     public setUsingWrapper(): void {
         let colDef = this.column.getColDef();
 
-        // never allow selection on pinned rows
+        // never allow selection or dragging on pinned rows
         if (this.rowNode.rowPinned) {
             this.usingWrapper = false;
-        } else if (typeof colDef.checkboxSelection === 'boolean') {
-            this.usingWrapper = <boolean> colDef.checkboxSelection;
-        } else if (typeof colDef.checkboxSelection === 'function') {
-            // if checkboxSelection is a function, then the checkbox may or may not be present,
-            // so we include the HTML wrapper to cater for either case
-            this.usingWrapper = true;
-        } else {
-            this.usingWrapper = false;
+            this.includeSelectionComponent = false;
+            this.includeRowDraggingCompnoent = false;
+            return;
         }
+
+        let cbSelectionIsFunc = typeof colDef.checkboxSelection === 'function';
+        let rowDraggableIsFunc = typeof colDef.rowDraggable === 'function';
+
+        this.includeSelectionComponent = cbSelectionIsFunc || colDef.checkboxSelection===true;
+        this.includeRowDraggingCompnoent = rowDraggableIsFunc || colDef.rowDraggable===true;
+
+        this.usingWrapper = this.includeRowDraggingCompnoent || this.includeSelectionComponent;
     }
 
     private chooseCellRenderer(): void {
@@ -1391,26 +1399,51 @@ export class CellComp extends Component {
         }
     }
 
-    private addSelectionCheckbox(): void {
+    private populateTemplate(): void {
         if (this.usingWrapper) {
+
             this.eParentOfValue = this.getRefElement('eCellValue');
             this.eCellWrapper = this.getRefElement('eCellWrapper');
 
-            let cbSelectionComponent = new CheckboxSelectionComponent();
-            this.beans.context.wireBean(cbSelectionComponent);
-
-            let visibleFunc = this.column.getColDef().checkboxSelection;
-            visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
-
-            cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
-            this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
-
-            // put the checkbox in before the value
-            this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);
-
+            if (this.includeSelectionComponent) {
+                this.addSelectionCheckbox();
+            }
+            if (this.includeRowDraggingCompnoent) {
+                this.addRowDragging();
+            }
         } else {
             this.eParentOfValue = this.getGui();
         }
+    }
+
+    private addRowDragging(): void {
+
+        let rowDraggingComp = new RowDraggingComp();
+        this.beans.context.wireBean(rowDraggingComp);
+
+        // let visibleFunc = this.column.getColDef().checkboxSelection;
+        // visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
+        // cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
+
+        this.addDestroyFunc( ()=> rowDraggingComp.destroy() );
+
+        // put the checkbox in before the value
+        this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eParentOfValue);
+    }
+
+    private addSelectionCheckbox(): void {
+
+        let cbSelectionComponent = new CheckboxSelectionComponent();
+        this.beans.context.wireBean(cbSelectionComponent);
+
+        let visibleFunc = this.column.getColDef().checkboxSelection;
+        visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
+
+        cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
+        this.addDestroyFunc( ()=> cbSelectionComponent.destroy() );
+
+        // put the checkbox in before the value
+        this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);
     }
 
     private addDomData(): void {
