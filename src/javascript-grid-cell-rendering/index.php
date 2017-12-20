@@ -157,7 +157,6 @@ colDef = {
     cellRendererParams: {
         suppressCount: false, // turn off the row count
         checkbox: true, // enable checkbox selection
-        padding: 10, // set padding to 10px
         innerRenderer: myInnerRenderer, // provide an inner renderer
         footerValueGetter: myFooterValueGetter // provide a footer value getter
     }
@@ -169,7 +168,6 @@ colDef = {
 <ul>
     <li><b>suppressCount:</b> One of [true, false], if true, count is not displayed beside the name.</li>
     <li><b>checkbox:</b> One of [true,false], if true, a selection checkbox is included.</li>
-    <li><b>padding:</b> A positive number. The amount of padding, in pixels, to indent each group.</li>
     <li><b>suppressPadding:</b> Set to true to node including any padding (indentation) in the child rows.</li>
     <li><b>innerRenderer:</b> The renderer to use for inside the cell (after grouping functions are added).</li>
     <li><b>footerValueGetter:</b> The value getter for the footer text. Can be a function or expression.</li>
