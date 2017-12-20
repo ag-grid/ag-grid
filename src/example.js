@@ -338,6 +338,7 @@ var defaultCols = [
         children: [
             {
                 headerName: 'Name',
+                // rowDraggable: true,
                 field: 'name',
                 width: 200,
                 editable: true,
@@ -384,6 +385,7 @@ var defaultCols = [
             },
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
+                // rowDraggable: true,
                 cellRenderer: 'countryCellRenderer',
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
