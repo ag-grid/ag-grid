@@ -6,12 +6,16 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {DragService, DragListenerParams} from "./dragService";
 import {ColumnController} from "../columnController/columnController";
 import {Environment} from "../environment";
+import {RowNode} from "../entities/rowNode";
 
-export enum DragSourceType { ToolPanel, HeaderCell }
+export enum DragSourceType { ToolPanel, HeaderCell, RowDrag }
 
 export interface DragItem {
-    columns: Column[],
-    visibleState: {[key: string]: boolean};
+    // if moving a row, the, this contains the row node
+    rowNode?: RowNode,
+    // if moving columns, this contains the columns and the visible state
+    columns?: Column[],
+    visibleState?: {[key: string]: boolean};
 }
 
 export interface DragSource {
@@ -173,7 +177,9 @@ export class DragAndDropService {
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
         this.dragItem = this.dragSource.dragItemCallback();
-        this.dragItem.columns.forEach(column => column.setMoving(true));
+        if (this.dragItem.columns) {
+            this.dragItem.columns.forEach(column => column.setMoving(true));
+        }
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
         this.createGhost();
     }
@@ -182,7 +188,9 @@ export class DragAndDropService {
         this.eventLastTime = null;
         this.dragging = false;
 
-        this.dragItem.columns.forEach( column => column.setMoving(false) );
+        if (this.dragItem.columns) {
+            this.dragItem.columns.forEach( column => column.setMoving(false) );
+        }
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
             let draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);

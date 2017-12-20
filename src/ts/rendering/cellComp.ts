@@ -70,6 +70,7 @@ export class CellComp extends Component {
     private rangeSelectionEnabled: boolean;
 
     private value: any;
+    private valueFormatted: any;
     private colsSpanning: Column[];
 
     private scope: null;
@@ -102,7 +103,7 @@ export class CellComp extends Component {
             this.rangeCount = this.beans.rangeController.getCellRangeCount(this.gridCell);
         }
 
-        this.value = this.getValue();
+        this.getValueAndFormat();
         this.setUsingWrapper();
         this.chooseCellRenderer();
         this.setupColSpan();
@@ -322,10 +323,7 @@ export class CellComp extends Component {
                 return '';
             }
         } else {
-            let valueFormatted = this.beans.valueFormatterService.formatValue(
-                this.column, this.rowNode, null, this.value);
-            let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-            return valueFormattedExits ? valueFormatted : this.value;
+            return this.getValueToUse();
         }
     }
 
@@ -356,7 +354,7 @@ export class CellComp extends Component {
         if (volatile && !this.isVolatile()) { return; }
 
         let oldValue = this.value;
-        this.value = this.getValue();
+        this.getValueAndFormat();
 
         // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
         // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
@@ -530,11 +528,9 @@ export class CellComp extends Component {
         } else if (this.usingCellRenderer) {
             this.attachCellRenderer();
         } else {
-            let valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
-            let valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-            let valueToRender = valueFormattedExits ? valueFormatted : this.value;
-            if (valueToRender!==null && valueToRender!==undefined) {
-                this.eParentOfValue.innerText = valueToRender;
+            let valueToUse = this.getValueToUse();
+            if (valueToUse!==null && valueToUse!==undefined) {
+                this.eParentOfValue.innerText = valueToUse;
             }
         }
     }
@@ -546,8 +542,7 @@ export class CellComp extends Component {
 
         // if the cell renderer has a refresh method, we call this instead of doing a refresh
         // note: should pass in params here instead of value?? so that client has formattedValue
-        let valueFormatted = this.formatValue(this.value);
-        let params = this.createCellRendererParams(valueFormatted);
+        let params = this.createCellRendererParams();
         let result: boolean | void = this.cellRenderer.refresh(params);
 
         // NOTE on undefined: previous version of the cellRenderer.refresh() interface
@@ -689,8 +684,7 @@ export class CellComp extends Component {
     }
 
     private createCellRendererInstance(): void {
-        let valueToRender = this.formatValue(this.value);
-        let params = this.createCellRendererParams(valueToRender);
+        let params = this.createCellRendererParams();
 
         this.cellRendererVersion++;
         let callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
@@ -726,11 +720,11 @@ export class CellComp extends Component {
         this.createCellRendererInstance();
     }
 
-    private createCellRendererParams(valueFormatted: string): ICellRendererParams {
+    private createCellRendererParams(): ICellRendererParams {
 
         let params = <ICellRendererParams> {
             value: this.value,
-            valueFormatted: valueFormatted,
+            valueFormatted: this.valueFormatted,
             getValue: this.getValue.bind(this),
             setValue: (value: any) => { this.beans.valueService.setValue(this.rowNode, this.column, value) },
             formatValue: this.formatValue.bind(this),
@@ -767,6 +761,16 @@ export class CellComp extends Component {
         let valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, value);
         let valueFormattedExists = valueFormatted !== null && valueFormatted !== undefined;
         return valueFormattedExists ? valueFormatted : value;
+    }
+
+    private getValueToUse(): any {
+        let valueFormattedExists = this.valueFormatted !== null && this.valueFormatted !== undefined;
+        return valueFormattedExists ? this.valueFormatted : this.value;
+    }
+
+    private getValueAndFormat(): void {
+        this.value = this.getValue();
+        this.valueFormatted = this.beans.valueFormatterService.formatValue(this.column, this.rowNode, this.scope, this.value);
     }
 
     private getValue(): any {
@@ -1418,7 +1422,7 @@ export class CellComp extends Component {
 
     private addRowDragging(): void {
 
-        let rowDraggingComp = new RowDraggingComp();
+        let rowDraggingComp = new RowDraggingComp(this.rowNode, this.getValueToUse());
         this.beans.context.wireBean(rowDraggingComp);
 
         // let visibleFunc = this.column.getColDef().checkboxSelection;
@@ -1506,7 +1510,7 @@ export class CellComp extends Component {
             if (!userWantsToCancel) {
                 let newValue = this.cellEditor.getValue();
                 this.rowNode.setDataValue(this.column, newValue);
-                this.value = this.getValue();
+                this.getValueAndFormat();
             }
         }
 
