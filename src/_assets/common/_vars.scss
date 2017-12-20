@@ -35,7 +35,8 @@ body {
 
 .enterprise-icon {
     color: $red;
-    vertical-align: super;
+    transform: translatey(-8px);
     font-variant: all-small-caps;
     font-size: 80%;
+    display: inline-block;
 }

@@ -2,9 +2,10 @@
 @import '../common/bootstrap.scss';
 @import '../common/syntax-highlight.scss';
 @import '../common/grid.scss';
-
+@import '../common/content.scss';
 @import '../common/nav.scss';
 @import '../common/footer.scss';
+@import '../common/note.scss';
 @import './example-runner.scss';
 
 #documentation {
@@ -204,38 +205,9 @@
         }
     }
 
-    .heading-enterprise {
-        background-image: url('../homepage/enterprise.svg');
-        background-repeat: no-repeat;
-        background-size: 25px 25px;
-        background-position-x: 20px;
-        background-position-y: 0px;
-        padding-left: 40px;
-        margin-left: -40px;
-    }
-
     h1 .anchorjs-link {
         display: none;
     }
-
-    $note-background-size: 30px;
-    .note {
-        padding: 1rem;
-        padding-left: calc(#{$note-background-size} + 2rem);
-        background-image: url('../common/bulb.svg');
-        background-repeat: no-repeat;
-        background-position-x: 1rem;
-        background-position-y: 1rem;
-        background-size: $note-background-size $note-background-size;
-        // background-color: lighten($yellow, 3);
-        background-color: $gray-100;
-        color: $gray-800;
-        border: 1px solid $border-color;
-        border-radius: $border-radius;
-        min-height: calc(#{$note-background-size} + 2rem);
-        margin-bottom: 1rem;
-    }
-
     // docs homepage 
     .docs-homepage-section-preview {
         @extend .card, .mb-4,  .bg-light;

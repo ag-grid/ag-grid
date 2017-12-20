@@ -5,6 +5,8 @@
 
 @import '../common/nav.scss';
 @import '../common/footer.scss';
+@import '../common/content.scss';
+@import '../common/note.scss';
 @import './punch.scss';
 
 @import './demo-1.scss';
@@ -16,7 +18,9 @@
     background-color: $offwhite;
 
     > .row {
-        @extend .full-width-row, .py-5, .px-2;
+        @extend .full-width-row, .py-5;
+        padding-left: 2rem;
+        padding-right: 2rem;
         background-color: $white;
         border-right: 1px solid $border-color;
         border-left: 1px solid $border-color;
@@ -28,9 +32,6 @@
         .row {
             margin-bottom: 1rem;
             padding-top: 1rem;
-            p {
-                max-width: 330px;
-            }
 
             img {
                 @extend .rounded;
