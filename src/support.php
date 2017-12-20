@@ -16,8 +16,8 @@ meta_and_links("ag-Grid Support", "ag-Grid Javascript Grid Support", "ag-Grid co
 <div >
 <header id="nav" class="compact">
 <?php 
-    $version = 'latest';
-    include './includes/navbar.php';
+$version = 'latest';
+include './includes/navbar.php';
 ?>
 </header>
 
@@ -28,11 +28,13 @@ meta_and_links("ag-Grid Support", "ag-Grid Javascript Grid Support", "ag-Grid co
 
             <h2>Changelog and Pipeline of Work</h2>
 
-            <p>You have encountered a bug or you have a feature request in mind? Chances are that we are already aware of it; please check the changelog and the pipeline first.</p>
+            <p>You have encountered a bug or you have a feature request in mind? 
+                Chances are that we are already aware of it. Please check the changelog and the pipeline first.</p>
 
-            <p> For the Changelog covering versions 7.x and earlier please go to <a href="/change-log/changeLogIndex.php">here</a>.  </p>
-
-            <p> To see our Pipeline of up and coming Features and Bug Fixes, please go <a href="/ag-grid-pipeline">here</a>.  </p>
+            <ul class="content-list">
+                <li><a href="/change-log/changeLogIndex.php">Changelog covering versions 7.x and earlier</a></li>
+                <li><a href="/ag-grid-pipeline">Pipeline of up and coming features and Bug Fixes</a></li>
+            </ul>
 
             <h2>Free Support</h2>
 
@@ -43,78 +45,108 @@ meta_and_links("ag-Grid Support", "ag-Grid Javascript Grid Support", "ag-Grid co
 
             <p>
                 If you are only interested in the free features of ag-Grid but require support, you can
-                purchase a Enterprise license to access support. If you don't require support, you can
+                purchase a <strong>Enterprise license</strong> to access support. If you don't require support, you can
                 "give back" to the ag-Grid project by purchasing a token license. 
                 The donation will contribute towards the product future growth.
             </p>
 
-            <h2>Enterprise Support</h2>
+            <h2 class="heading-enterprise">Enterprise Support</h2>
 
             <p>
-                ag-Grid Enterprise users have access to guaranteed support through our private ticketing system.  
+                ag-Grid Enterprise users have access to guaranteed support through our <strong>private ticketing system</strong>.  
                 Feature requests and bugs raised by Enterprise users will be given priority and serious consideration. 
                 Discussions had with Enterprise users will also help dictate the ag-Grid roadmap.
             </p>
 
-            <h2>I Need Some Help!</h2>
+            
+            <div class="note">
+                If you are a commercial license holder and do not have the necessary credentials for the <strong>ticketing system</strong>, <br>
+                please contact us at <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
+            </div>
+
+            <h2>In Need of Help?</h2>
 
             <p>Following are several common question types and the recommended way to address them accordingly based on the license you are using:
 
             <section id="support-question-examples">
                 <h3>I Got This Error, Why?</h3>
 
-                <h4>ag-Grid (MIT)</h4>
-                <p>Look for similar problems in the <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow <code>ag-grid</code> tag</a>. If nothing seems related, post a new message there.</p>
+<div class="container-fluid"> <div class="row"> <div class="col-md-6">
 
-                <h4>ag-Grid Enterprise (Commercial License)</h4>
-                <p>Contact us through the private ticketing system. If you are a commercial license holder and do not have the necessary credentials, please contact us as <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.</p>
+<h4>ag-Grid (MIT)</h4>
+<p>Look for similar problems in the <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow <code>ag-grid</code> tag</a>. If nothing seems related, post a new message there.</p>
+
+</div> <div class="col-md-6">
+
+<h4>ag-Grid Enterprise (Commercial License)</h4>
+<p>Contact us through the private ticketing system.</p>
+
+</div> </div>  </div>
+
 
                 <h3>Please Review my Code</h3>
 
+<div class="container-fluid"> <div class="row"> <div class="col-md-6">
                 <h4>ag-Grid (MIT)</h4>
                 <p>You can request such assistance in the <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow <code>ag-grid</code></a> channel.</p>
 
+</div> <div class="col-md-6">
                 <h4>ag-Grid Enterprise (Commercial License)</h4>
-                <p>Contact us through the private ticketing system. If you are a commercial license holder and do not have the necessary credentials, please contact us as <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.</p>
+                <p>Contact us through the private ticketing system.</p>
 
+</div> </div>  </div>
                 <h3>I Got an Error and 99% Sure it's a Bug</h3>
 
+<div class="container-fluid"> <div class="row"> <div class="col-md-6">
                 <h4>ag-Grid (MIT)</h4>
-                <p>Browse the documentation section and find an example similar to your case. 
-                    Launch a new plunker instance from it and modify it so that the issue is reproducible. 
-                    Send the plunker url along with the necessary steps to reproduce as a <a href="https://github.com/ag-grid/ag-grid/issues">Github issue in the ag-grid project</a>.
-                </p>
+<ul class="content-list">
+<li>Browse the documentation section and find an example similar to your case.</li> 
+<li>Launch a new plunker from the example and modify it so that the issue is reproducible. </li> 
+<li>Post the plunker url along with the necessary steps to reproduce as a <a href="https://github.com/ag-grid/ag-grid/issues">Github issue in the ag-grid project</a>.  </li>
+</ul>
 
+</div> <div class="col-md-6">
                 <h4>ag-Grid Enterprise (Commercial License)</h4>
+                <p>Either follow the repro steps from the MIT version or contact us through the private ticketing system.  <br /> We will still need a reproduction to address the problem.</p>
+</div> </div>  </div>
 
-                <p>Either follow the steps above or contact us through the private ticketing system - we will still need a reproduction in order to address the problem further. 
-                    If you are a commercial license holder and do not have the necessary credentials, please contact us as <a href="mailto:info@ag-grid.com">info@ag-grid.com</a></p>
+                <h3>I Have an Idea or Feature Request</h3>
 
-                <h3>I Have an Idea/Request</h3>
-
+<div class="container-fluid"> <div class="row"> <div class="col-md-6">
                 <h4>ag-Grid (MIT)</h4>
 
                 <p>Post it as an <a href="https://github.com/ag-grid/ag-grid/issues">Github issue in the ag-grid project</a>.</p>
 
+</div> <div class="col-md-6">
                 <h4>ag-Grid Enterprise (Commercial License)</h4>
 
-                <p>Contact us through the private ticketing system. If you are a commercial license holder and do not have the necessary credentials, please contact us as <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.</p>
+                <p>Contact us through the private ticketing system.</p>
+
+</div> </div>  </div>
 
                 <h3>When Will You Implement &hellip; / Fix &hellip;?</h3>
 
+<div class="container-fluid"> <div class="row"> <div class="col-md-6">
                 <h4>ag-Grid (MIT)</h4>
 
                 <p>The MIT license does not cover such level of assistance - in case you need such, please consider purchasing a commercial license.</p>
 
+</div> <div class="col-md-6">
                 <h4>ag-Grid Enterprise (Commercial License)</h4>
 
-                <p>Contact us through the private ticketing system. If you are a commercial license holder and do not have the necessary credentials, please contact us as <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.</p>
+                <p>Contact us through the private ticketing system. </p>
+
+</div> </div>  </div>
 
                 <h3>I Have Billing Issues</h3>
 
+<div class="container-fluid"> <div class="row"> <div class="col-md-6">
+    <h4>ag-Grid (MIT)</h4>
+    <p>That's unlikely - have you considered becoming an enterprise user? Please shoot an email at <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
+</div> <div class="col-md-6">
                 <h4>ag-Grid Enterprise (Commercial License)</h4>
-
-                <p>Contact us through the private ticketing system. If you are a commercial license holder and do not have the necessary credentials, please contact us as <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.</p>
+                <p>Contact us through the private ticketing system.</p>
+</div> </div>  </div>
 
             </section>
 
@@ -125,11 +157,6 @@ meta_and_links("ag-Grid Support", "ag-Grid Javascript Grid Support", "ag-Grid co
 </div>
 
 <?php include_once("./includes/footer.php"); ?>
-
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.2/angular-cookies.min.js"></script>
-<script src="../documentation-main/documentation.js"></script>
-
 <?php include_once("./includes/analytics.php"); ?>
 </body>
 </html>

@@ -18,12 +18,28 @@
         margin-bottom: 2rem;
     }
 
+
+    .row > div:last-child h4:after {
+        @extend .enterprise-icon;
+        content: 'E';
+    }
+
     h4 {
-        font-size: 1rem;
+        font-size: 0.8rem;
+        font-weight: 300;
     }
 
     h3:not(:first-child) {
         border-top: 1px solid $gray-200;
         padding-top: 2rem;
+    }
+
+    .row {
+        // @extend .no-gutters;
+    }
+
+    .container-fluid {
+        margin: 0;
+        padding: 0;
     }
 }
