@@ -13,7 +13,6 @@ meta_and_links("ag-Grid Support", "ag-Grid Javascript Grid Support", "ag-Grid co
 </head>
 
 <body>
-<div >
 <header id="nav" class="compact">
 <?php 
 $version = 'latest';
