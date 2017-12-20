@@ -1,5 +1,4 @@
 <?php
-$key = "Angular Group Row";
 $pageTitle = "ag-Grid Angular Grouped Row Renderer";
 $pageDescription = "ag-Grid Angular Grouped Row Renderer Example";
 $pageKeyboards = "ag-Grid angular grouped row component";

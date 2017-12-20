@@ -1,5 +1,4 @@
 <?php
-$key = "Blue Theme";
 $pageTitle = "ag-Grid Blue Theme Data Grid";
 $pageDescription = "ag-Grid Blue Theme Data Grid";
 $pageKeyboards = "ag-Grid Blue Theme Data Grid";

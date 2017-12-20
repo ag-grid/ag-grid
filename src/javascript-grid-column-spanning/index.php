@@ -1,5 +1,4 @@
 <?php
-$key = "Column Spanning";
 $pageTitle = "Javascript Grid Column Spanning";
 $pageDescription = "Explains how to set column spanning on ag-Grid, to all the grid's cells to span multiple columns.";
 $pageKeyboards = "Javascript Grid Column Spanning";

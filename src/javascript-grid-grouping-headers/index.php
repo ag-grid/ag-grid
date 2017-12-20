@@ -1,5 +1,4 @@
 <?php
-$key = "Grouping Columns";
 $pageTitle = "ag-Grid Group Columns ag-Grid";
 $pageDescription = "ag-Grid Group Columns ag-Grid";
 $pageKeyboards = "ag-Grid Group Columns ag-Grid";

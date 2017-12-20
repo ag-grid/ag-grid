@@ -1,5 +1,4 @@
 <?php
-$key = "Range Selection";
 $pageTitle = "ag-Grid Range Selection";
 $pageDescription = "Explains how to do range selection in ag-Grid.";
 $pageKeyboards = "range selection javascript grid ag-grid";
@@ -8,8 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-
-    <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Range Selection</h1>
+    <h1 class="heading-enterprise">Range Selection</h1>
 
     <p>
         Range selection allows Excel-like range selection of cells. Once enabled, you can drag the mouse over

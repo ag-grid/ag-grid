@@ -1,5 +1,4 @@
 <?php
-$key = "Angular Third Party";
 $pageTitle = "ag-Grid Angular Third Party Examples";
 $pageDescription = "A feature rich Grid example, demonstrating many of ag-Grid's features, including Date, Header and Header Group Components.";
 $pageKeyboards = "ag-Grid angular features third party material design typeahead bootstrap";

@@ -1,5 +1,4 @@
 <?php
-$key = "Dark Theme";
 $pageTitle = "ag-Grid Dark Theme";
 $pageDescription = "ag-Grid Dark Theme";
 $pageKeyboards = "ag-Grid Dark Theme";

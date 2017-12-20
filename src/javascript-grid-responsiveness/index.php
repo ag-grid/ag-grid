@@ -1,5 +1,4 @@
 <?php
-$key = "Responsiveness";
 $pageTitle = "ag-Grid Responsiveness";
 $pageDescription = "ag-Grid Responsive Web Design";
 $pageKeyboards = "ag-Grid Responsive Web Design";

@@ -1,5 +1,4 @@
 <?php
-$key = "Date Filter";
 $pageTitle = "JavaScript Grid Date Filter";
 $pageDescription = "ag-Grid comes with a date filter. This sections explains how to use the date filter.";
 $pageKeyboards = "ag-Grid Date Filter";

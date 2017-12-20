@@ -1,5 +1,4 @@
 <?php
-$key = "Column Header";
 $pageTitle = "Column Header";
 $pageDescription = "Explains details about the column header.";
 $pageKeyboards = "grid header";

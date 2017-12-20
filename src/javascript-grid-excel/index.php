@@ -1,5 +1,4 @@
 <?php
-$key = "Excel Export";
 $pageTitle = "Javascript Grid Excel";
 $pageDescription = "We are now supporting JavaScript Export to Excel. This page explains how to use this new feature to Export to Excel along with properties you can set to get the configure the exports.";
 $pageKeyboards = "JavaScript Grid Excel";
@@ -8,8 +7,8 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <p>
+    <h1 class="heading-enterprise">JavaScript Grid Excel</h1>
 
-    <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> JavaScript Grid Excel</h1>
     <h2>Exporting ag-Grid Data to Excel</h2>
 
     <p>

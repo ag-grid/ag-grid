@@ -1,5 +1,4 @@
 <?php
-$key = "Column Filter";
 $pageTitle = "ag-Grid Filtering";
 $pageDescription = "ag-Grid Filtering";
 $pageKeyboards = "ag-Grid Filtering";

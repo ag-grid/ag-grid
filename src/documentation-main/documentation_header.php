@@ -1,5 +1,7 @@
 <?php
-include '../example-runner/utils.php';
+include_once '../example-runner/utils.php';
+include_once '../includes/html-helpers.php';
+include_once '../php-utils/printPropertiesTable.php';
 
 $version = 'latest';
 
@@ -68,84 +70,27 @@ function menuItemCollapsibleChild($indent, $localKey, $name, $url, $parentId, $c
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-    <title><?php echo $pageTitle; ?></title>
-    <meta name="description" content="<?php echo $pageDescription; ?>">
-    <meta name="keywords" content="<?php echo $pageKeyboards; ?>"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Bootstrap -->
-    <link inline rel="stylesheet" href="../dist/bootstrap/css/bootstrap.css">
-
-    <link rel="stylesheet" href="../dist/prism/prism.css">
-    <link inline rel="stylesheet" href="../style.css">
-    <link rel="stylesheet" href="../documentation-main/documentation.css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-
-    <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
+<?php
+meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
+?>
+<link rel="stylesheet" href="../dist/docs.css">
 </head>
 
 <body ng-app="documentation">
-<?php include_once '../php-utils/printPropertiesTable.php' ?>
-<?php if ($version == 'latest') {
+<header id="nav" class="compact">
+<?php 
     $navKey = "documentation";
     include '../includes/navbar.php';
-} else { ?>
-    <nav class="navbar-inverse">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 top-header big-text">
-                        <span class="top-button-wrapper">
-                            <a class="top-button" href="<?php print($rootFolder) ?>"> <i class="fa fa-users"></i> ag-Grid Archive Documentation <?php print($version) ?></a>
-                        </span>
-                </div>
-            </div>
+ ?>
+</header>
 
-        </div>
-    </nav>
-<?php } ?>
+<div id="documentation">
+    <div>
+    <aside id="side-nav">
+        <?php include 'documentation_menu.php'; ?>
+    </aside>
 
-<div class="header-row">
-
-    <div class="container">
-
-        <div class="row">
-            <div class="col-md-12">
-                <div style="float: right;">
-                    <h2>
-                        <a class="btn btn-primary btn-large" href="../start-trial.php">
-                            Try ag-Grid Enterprise for Free
-                        </a>
-                    </h2>
-                </div>
-                <div id="documentationSearch">
-                    <img src="/images/spinner.svg" class="documentationSearch-spinner active" width="24" height="24"/>
-                    <div id="documentationSearchBox" style="opacity: 0">
-                        <gcse:searchbox enableAutoComplete="true" enableHistory="true" autoCompleteMaxCompletions="5"
-                                        autoCompleteMatchType="any"></gcse:searchbox>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-</div>
-
-<div class="container documentationContainer" style="margin-top: 20px">
-
-    <div class="row">
-
-        <div class="col-sm-3 col-md-2">
-            <?php include 'documentation_menu.php'; ?>
-        </div>
-
-        <div class="col-sm-9 col-md-10 blog-main">
-
-            <div id="googleSearchResults" style="display: none;">
-                <gcse:searchresults></gcse:searchresults>
-            </div>
+    <section id="content" class="<?php echo defined('skipInPageNav') ? 'skip-in-page-nav' : '' ?>">

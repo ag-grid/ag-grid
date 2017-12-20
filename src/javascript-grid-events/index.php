@@ -1,5 +1,4 @@
 <?php
-$key = "Events";
 $pageTitle = "ag-Grid Events";
 $pageDescription = "Learn how each events impacts ag-Grid.";
 $pageKeyboards = "javascript data grid ag-Grid events";

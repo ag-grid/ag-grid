@@ -1,5 +1,4 @@
 <?php
-$key = "Selection";
 $pageTitle = "ag-Grid Selection";
 $pageDescription = "ag-Grid Selection";
 $pageKeyboards = "ag-Grid Selection";
@@ -9,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 id="selection">Row Selection</h2>
+    <h1 id="selection">Row Selection</h1>
 
     <p>
         Configure row selection with the following properties:
@@ -121,7 +120,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Group Selection', 'group-selection', 'generated', array("enterprise" => 1)) ?>
 
-    <h4 id="groupsSelectionExample2"><img src="../images/enterprise_50.png" title="Enterprise Feature" /> Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h4>
+    <h4 id="groupsSelectionExample2" class="heading-enterprise">Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h4>
 
     <p>
         The example below is similar to the previous example except it does not put checkboxes

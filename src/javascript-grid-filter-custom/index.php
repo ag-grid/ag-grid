@@ -1,5 +1,4 @@
 <?php
-$key = "Custom Filter";
 $pageTitle = "JavaScript Grid Custom Filter";
 $pageDescription = "ag-Grid comes with a custom filter. This sections explains how to use the custom filter.";
 $pageKeyboards = "ag-Grid Custom Filter";

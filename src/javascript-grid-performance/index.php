@@ -1,5 +1,4 @@
 <?php
-$key = "Performance";
 $pageTitle = "ag-Grid Performance";
 $pageDescription = "ag-Grid Performance";
 $pageKeyboards = "ag-Grid Performance";

@@ -1,5 +1,4 @@
 <?php
-$key = "Getting Started React";
 $pageTitle = "React Datagrid";
 $pageDescription = "ag-Grid can be used as a data grid inside your React application. This page details how to get started.";
 $pageKeyboards = "React Datagrid";

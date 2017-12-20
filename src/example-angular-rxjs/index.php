@@ -1,5 +1,4 @@
 <?php
-$key = "Angular RxJS";
 $pageTitle = "ag-Grid Angular Components with RxJS";
 $pageDescription = "Examples of using ag-Grid with Angular and RxJS";
 $pageKeyboards = "ag-Grid angular rxjs";

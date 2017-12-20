@@ -1,5 +1,4 @@
 <?php
-$key = "Value Cache";
 $pageTitle = "ag-Grid Value Cache";
 $pageDescription = "ag-Grid uses a Value Cache to store the results from executing value getters. This cache can be configured to behave in different ways depending on how changeable your data is.";
 $pageKeyboards = "ag-Grid Value Cache";

@@ -1,0 +1,17 @@
+<div style="height: 100%; padding-top: 35px; box-sizing: border-box;">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-fresh"></div>
+</div>
+<div style="position: absolute; padding-top: 4px; top: 0px; left: 0px;">
+    <input type="text" id="filter-text-box" placeholder="Filter..." oninput="onFilterTextBoxChanged()"/>
+    <button style="margin-left: 20px;" onclick="onPrintQuickFilterTexts()">Print Quick Filter Texts</button>
+    <span style="margin-left: 50px">
+        <label>
+            <input type="radio" onchange="onQuickFilterTypeChanged()" id="cbNormal" checked name="cache" />
+            Normal Quick Filter
+        </label>
+        <label>
+            <input type="radio" onchange="onQuickFilterTypeChanged()" id="cbCache" name="cache"/>
+            Cache Quick Filter
+        </label>
+    </span>
+</div>

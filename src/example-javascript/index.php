@@ -1,5 +1,4 @@
 <?php
-$key = "JavaScript Examples";
 $pageTitle = "ag-Grid JavaScript Examples";
 $pageDescription = "ag-Grid JavaScript Examples";
 $pageKeyboards = "ag-Grid JavaScript examples";

@@ -1,0 +1,53 @@
+
+.ag-account .ag-cell {
+    padding: 4px 10px 4px 4px;
+}
+
+.ag-account .ag-header-container {
+    font-weight: bold;
+}
+
+.ag-account .ag-header-cell {
+    border-bottom: 1px solid black;
+}
+
+.ag-account .cell-col-0 {
+    border-right: 1px solid black;
+}
+
+.ag-account .cell-col-2 {
+    background-color: aliceblue;
+}
+.ag-account .cell-col-4 {
+    background-color: aliceblue;
+}
+.ag-account .cell-col-6 {
+    background-color: aliceblue;
+}
+.ag-account .cell-col-8 {
+    background-color: aliceblue;
+}
+
+.ag-account .ag-group-cell {
+    font-weight: bold;
+}
+
+.ag-account .ag-row-group-cell-text {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.ag-account .ag-footer-cell {
+    border-top: 1px solid grey;
+    border-bottom: 4px double grey;
+}
+
+.ag-account {
+    background-color: ivory;
+    border: 1px solid darkgoldenrod;
+    box-shadow: 10px 10px 5px #888888;
+}
+
+label {
+    font-weight: normal !important;
+}

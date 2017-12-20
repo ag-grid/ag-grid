@@ -1,5 +1,4 @@
 <?php
-$key = "More Detail Javascript";
 $pageTitle = "JavaScript Grid";
 $pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with React to deliver filtering, grouping, aggregation, pivoting and much more.";
 $pageKeyboards = "JavaScript Grid";
@@ -9,35 +8,23 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>
-        <img src="../images/svg/docs/getting_started.svg" width="50"/>
-        <img style="vertical-align: middle" src="/images/svg/javascript.svg" height="25px"/>
-        JavaScript Grid
-    </h1>
+    <h1>JavaScript Grid</h1>
 
     <h2>Download ag-Grid</h2>
 
-    <p>ag-Grid is distributed as both a self contained bundle and also via a CommonJS package.</p>
+    <p>ag-Grid is distributed as both a self contained bundle and also via a JavaScript module package.</p>
 
-    <p>As shown in the <a href="../best-javascript-data-grid">Getting Started</a> section you can reference the ag-Grid
-        library
-        directly via a CDN:</p>
+    <p>You can reference the ag-Grid library directly via a CDN (for example, <a href="https://unpkg.com/ag-grid">unpkg</a> or <a href="https://cdnjs.com/libraries/ag-grid">cloudflare</a>):</p>
 
 <snippet language="html">
 &lt;script src="_url_to_your_chosen_cdn_/ag-grid.js"&gt;&lt;/script&gt;
 </snippet>
 
-    <p>But you can also download the library in the following ways:</p>
+    <p>You can also download the library in the following ways:</p>
 
     <table>
         <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
-            <td>
-                <b>Bower</b><br/>
-                bower install ag-grid
-            </td>
 
-            <td style="width: 20px;"/>
 
             <td style="padding: 10px;"><img src="../images/npm.png"/></td>
             <td>
@@ -45,12 +32,20 @@ include '../documentation-main/documentation_header.php';
                 <code>npm install ag-grid</code>
             </td>
 
-            <td style="width: 20px;"/>
+            <td style="width: 20px;">&nbsp;</td>
 
             <td style="padding: 10px;"><img src="../images/github.png"/></td>
             <td>
                 <b>Github</b><br/>
                 Download from <a href="https://github.com/ag-grid/ag-grid">Github</a>
+            </td>
+
+            <td style="width: 20px;">&nbsp;</td>
+
+            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
+            <td>
+                <b>Bower</b><br/>
+                <code>bower install ag-grid</code>
             </td>
         </tr>
     </table>
@@ -76,11 +71,11 @@ include '../documentation-main/documentation_header.php';
     </ul>
     </p>
 
-    <h3>CommonJS</h3>
+    <h3>JavaScript modules</h3>
 
     <p>
-        To use CommonJS, it's best to download the packages via NPM and then either <i>require</i> (ECMA 5) or
-        <i>import</i> (ECMA 6)
+        To consume ag-Grid as a module, it's best to download the packages via NPM and then either <code>require</code> (ECMA 5) or
+        <code>import</code> (ECMA 6)
         them into your project.
     </p>
 
@@ -95,10 +90,10 @@ import {Grid} from 'ag-grid/main';
     <h2>Download ag-Grid-Enterprise</h2>
 
     <p>As with the main ag-Grid library above, the ag-Grid-Enterprise library is also distributed as both a self
-        contained bundle and also via a CommonJS package. </p>
+        contained bundle and also via a JavaScript module package. </p>
 
     <p>If you're using the bundled version you only need the bundled version (i.e. <code>ag-grid-enterprise.js</code>), but
-    if you're using the CommonJS package then you'll require both the <code>ag-grid</code> and <code>ag-grid-enterprise</code>
+    if you're using the module package then you'll require both the <code>ag-grid</code> and <code>ag-grid-enterprise</code>
         dependency.</p>
 
     <p>If you're using the bundled version, you can reference the ag-Grid-Enterprise library via CDN:</p>
@@ -111,13 +106,6 @@ import {Grid} from 'ag-grid/main';
 
     <table>
         <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
-            <td>
-                <b>Bower</b><br/>
-                <code>bower install ag-grid-enterprise</code>
-            </td>
-
-            <td style="width: 20px;"/>
 
             <td style="padding: 10px;"><img src="../images/npm.png"/></td>
             <td>
@@ -125,12 +113,20 @@ import {Grid} from 'ag-grid/main';
                 <code>npm install ag-grid-enterprise</code>
             </td>
 
-            <td style="width: 20px;"/>
+            <td style="width: 20px;">&nbsp;</td>
 
             <td style="padding: 10px;"><img src="../images/github.png"/></td>
             <td>
                 <b>Github</b><br/>
                 Download from <a href="https://github.com/ag-grid/ag-grid-enterprise">Github</a>
+            </td>
+
+            <td style="width: 20px;">&nbsp;</td>
+
+            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
+            <td>
+                <b>Bower</b><br/>
+                <code>bower install ag-grid-enterprise</code>
             </td>
         </tr>
     </table>
@@ -153,10 +149,10 @@ import {Grid} from 'ag-grid/main';
         <li><code>dist/ag-grid-enterprise.min.noStyle.js </code> &mdash; minified bundle containing JavaScript without CSS</li>
     </ul>
 
-    <h3>CommonJS</h3>
+    <h3>JavaScript modules</h3>
     <p>
-        If using CommonJS, you one need to include ag-Grid-Enterprise into your project. You do not need to
-        execute any code inside it. When ag-Grid-Enterprise loads, it will register with ag-Grid such that the
+        If using modules, you only need to include ag-Grid-Enterprise into your project. You do not need to
+        import anything from the package. When ag-Grid-Enterprise loads, it will register with ag-Grid such that the
         enterprise features are available when you use ag-Grid.
     </p>
 
@@ -208,7 +204,7 @@ it('select all button selects all rows', () => {
 });
 </snippet>
 
-    <h2 id="next-steps">Next Steps...</h2>
+    <h2 id="next-steps">Next Steps</h2>
 
     <p>
         Now you can go to <a href="../javascript-grid-reference-overview/">reference</a>

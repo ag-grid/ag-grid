@@ -1,5 +1,4 @@
 <?php
-$key = "Angular Webpack";
 $pageTitle = "Angular Webpack";
 $pageDescription = "How to build ag-Grid using Angular and Webpack.";
 $pageKeyboards = "Angular Webpack";
@@ -29,21 +28,21 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Initialise Project</h3>
 
-<snippet>
+<snippet language="sh">
 mkdir ag-grid-webpack
 cd ag-grid-webpack
-npm init
-// accept defaults</snippet>
+npm init -y
+</snippet>
 
     <h3>Install Dependencies</h3>
 
-<snippet>
+<snippet language="sh">
 npm i --save ag-grid ag-grid-angular
 npm i --save @angular/common @angular/compiler @angular/compiler-cli @angular/core @angular/platform-browser @angular/platform-browser-dynamic typescript rxjs core-js zone.js
 npm i --save-dev webpack@1.14.x webpack-dev-server@1.16.x angular2-template-loader@0.6.x awesome-typescript-loader@3.1.x extract-text-webpack-plugin@1.0.x file-loader canonical-path @types/node
 npm i --save-dev css-loader style-loader html-loader html-webpack-plugin raw-loader url-loader
 
-// optional - only necessary if you're using any of the Enterprise features
+# optional - only necessary if you're using any of the Enterprise features
 npm i --save ag-grid-enterprise</snippet>
 
     <h3>Create Application</h3>
@@ -53,7 +52,7 @@ npm i --save ag-grid-enterprise</snippet>
     <note>You can either create the project by hand, or check it out from our Angular Seed Repo in <a href="https://github.com/ag-grid/ag-grid-angular-seed">GitHub.</a></note>
 
     <p>The resulting project structure will look like this:</p>
-<snippet>
+<snippet language="sh">
 └── ag-grid-webpack
     ├── app
     │   ├── app.component.html
@@ -71,7 +70,7 @@ npm i --save ag-grid-enterprise</snippet>
     ├── package.json
     └── tsconfig.json</snippet>
 
-<snippet>
+<snippet language="ts">
 // app/app.module.ts 
 import {NgModule} from "@angular/core";
 import {BrowserModule} from "@angular/platform-browser";
@@ -127,8 +126,8 @@ export class AppComponent {
         ];
     }
 }</snippet>
-<snippet>
-// app/app.component.html 
+<snippet language="html">
+<!-- app/app.component.html  -->
 &lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-fresh"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
@@ -172,9 +171,10 @@ import 'ag-grid/dist/styles/ag-grid.css';
 import 'ag-grid/dist/styles/ag-theme-fresh.css';
 
 import 'ag-grid-angular/main'</snippet>
+
 <snippet>
 // for ag-grid-enterprise users only 
-//import 'ag-grid-enterprise/main';</snippet>
+import 'ag-grid-enterprise/main';</snippet>
 
 <h2>tsconfig.json</h2>
     <p>We use this to let the TypeScript compiler know what our target is (es5), what libraries we depend on (dom and es2015) and so on:</p>
@@ -213,7 +213,8 @@ function root(args) {
     return path.join.apply(path, [_root].concat(args));
 }
 exports.root = root;</snippet>
-<snippet>
+
+<snippet language="html">
 &lt;!-- config/index.html --&gt;
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
@@ -473,14 +474,17 @@ if (process.env.ENV === 'production') {
     <ul>
         <li>Place your application-wide CSS file(s) in a directory other than <code>./app</code> - for example <code>./css/</code>.
             Remember that CSS under <code>./app</code> is treated differently - it is used for component-scoped styles.</li>
-        <li>In a suitable component - we suggest <code>boot.ts</code> import the CSS you want to include:</li>
-        <snippet>
-import '../css/app.css';</snippet>
+        <li>
+            <p>In a suitable component - we suggest <code>boot.ts</code> import the CSS you want to include:</p>
+            <snippet>
+    import '../css/app.css';</snippet>
+        </li>
+        
     </ul>
 
     <p>And that's it - you can now override ag-Grid CSS with your own in <code>./css/app.css</code>. For example, the following
     would set the cell background to green across the board.</p>
-<snippet>
+<snippet language="css">
 .ag-cell {
     background-color: green;
 }</snippet>
