@@ -167,13 +167,15 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </p>
 
 <h2 id="basic-angularjs-1-x-example">Basic AngularJS 1.x Example</h2>
-<?= example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', array( 'extras' => array('angularjs1'))) ?>
+<?= example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', array("exampleHeight" => 130, 'extras' => array('angularjs1'))) ?>
 <h2 class="components">Components</h2>
 
-<p>When using <a href="../javascript-grid-components">Components</a> within an AngularJS 1.x application you need to manage
+<p>When using <a href="../javascript-grid-components">Components</a> within an AngularJS 1.x application you need to
+    manage
     both the scope yourself - the Grid does not provide the scope to the Components nor will it destroy it.</p>
 
-<p>You need to ensure provide an appropriate scope to the Components and ensure you delete it when the component is destroyed.</p>
+<p>You need to ensure provide an appropriate scope to the Components and ensure you delete it when the component is
+    destroyed.</p>
 
 <p><code>angularCompileRows</code>, <code>angularCompileFilters</code> and <code>angularCompileHeaders</code> are not
     supported within Components.</p>
@@ -185,7 +187,6 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     and releases all resources when the directive is destroyed.
 </p>
 
-<!--
 <h2 id="advanced-angularjs-1-x-example">Advanced AngularJS 1.x Example</h2>
 
 <p>
@@ -194,8 +195,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     different options are configured is explained in the relevant parts of the documentation.
 </p>
 
-<?= example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', array( 'extras' => array('angularjs1'))) ?>
--->
+<?= example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', array('extras' => array('angularjs1'))) ?>
 
 <h2 id="angular-compiling">Angular Compiling</h2>
 
@@ -248,7 +248,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     <li><b>Country:</b> Uses a custom Angular directive to display the country.</li>
 </ul>
 
-<?= example('Angular compiling', 'compiling', 'vanilla', array( 'extras' => array('angularjs1'))) ?>
+<?= example('Angular compiling', 'compiling', 'vanilla', array('extras' => array('angularjs1'))) ?>
 
 <note>
     When scrolling the example above up and down, the cells rendered using Angular are blank
@@ -291,12 +291,13 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     This is waiting for the AngularJS 1.x digest cycle to kick in to populate the values into these rows.
 </note>
 
-<?= example('Cell Templates', 'cell-templates', 'vanilla', array( 'enterprise' => true, 'extras' => array('angularjs1'))) ?>
+<?= example('Cell Templates', 'cell-templates', 'vanilla', array('enterprise' => true, 'extras' => array('angularjs1'))) ?>
 
 <h2 id="ng1Components">Angular 1.x and ag-Grid Components</h2>
 
 <p>
-    ag-Grid does not provide direct support for it's <a href="../javascript-grid-components/">components</a> and AngularJS 1.x. If you want to put custom
+    ag-Grid does not provide direct support for it's <a href="../javascript-grid-components/">components</a> and
+    AngularJS 1.x. If you want to put custom
     AngularJS 1.x components into ag-Grid, follow the instructions for plain JavaScript component. You will
     then need to manage creating and destroying child scopes yourself inside the <i>init()</i> and
     <i>destroy()</i> methods.
