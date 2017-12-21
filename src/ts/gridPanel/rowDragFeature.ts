@@ -1,9 +1,9 @@
 import {DragAndDropService, DraggingEvent, DragSourceType, DropTarget} from "../dragAndDrop/dragAndDropService";
 import {Autowired, Optional} from "../context/context";
-import {IRowModel} from "../interfaces/iRowModel";
 import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
+import {GridPanel} from "./gridPanel";
 
 export class RowDragFeature implements DropTarget {
 
@@ -11,6 +11,7 @@ export class RowDragFeature implements DropTarget {
     // this feature is only created when row model in InMemory, so we can type it as InMemory
     @Autowired('rowModel') private inMemoryRowModel: InMemoryRowModel;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('gridPanel') private gridPanel: GridPanel;
     @Optional('rangeController') private rangeController: IRangeController;
 
     private eContainer: HTMLElement;
@@ -46,7 +47,8 @@ export class RowDragFeature implements DropTarget {
     private onEnterOrDragging(params: DraggingEvent): void {
 
         let rowNode = params.dragItem.rowNode;
-        let rowWasMoved = this.inMemoryRowModel.ensureRowAtPixel(rowNode, params.y);
+        let pixel = this.normaliseForScroll(params.y);
+        let rowWasMoved = this.inMemoryRowModel.ensureRowAtPixel(rowNode, pixel);
 
         if (rowWasMoved) {
             this.focusedCellController.clearFocusedCell();
@@ -54,6 +56,11 @@ export class RowDragFeature implements DropTarget {
                 this.rangeController.clearSelection();
             }
         }
+    }
+
+    private normaliseForScroll(pixel: number): number {
+        let pixelRange = this.gridPanel.getVerticalPixelRange();
+        return pixel + pixelRange.top;
     }
 
     public onDragLeave(params: DraggingEvent): void {}
