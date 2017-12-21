@@ -40,10 +40,10 @@ var games = ["Chess", "Cross and Circle", "Daldos", "Downfall", "DVONN", "Fanoro
 ];
 var booleanValues = [true, "true", false, "false"];
 
-var firstNames = ["Tony", "Andrew", "Kevin", "Dimple", "Bas", "Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
+var firstNames = ["Tony", "Andrew", "Kevin", "Bricker", "Dimple", "Bas", "Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
     "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
     "Ella", "Evie", "Freya", "Isla", "Poppy", "Daisy", "Layla"];
-var lastNames = ["Smith", "Connell", "Flanagan", "Unalkat", "Rahman", "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
+var lastNames = ["Smith", "Connell", "Flanagan", "McGee", "Unalkat", "Rahman", "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
     "Cage", "Carson", "Chandler", "Cohen", "Cole", "Corbin", "Dallas", "Dalton", "Dane",
     "Donovan", "Easton", "Fisher", "Fletcher", "Grady", "Greyson", "Griffin", "Gunner",
     "Hayden", "Hudson", "Hunter", "Jacoby", "Jagger", "Jaxon", "Jett", "Kade", "Kane",
@@ -338,7 +338,7 @@ var defaultCols = [
         children: [
             {
                 headerName: 'Name',
-                // rowDraggable: true,
+                rowDraggable: true,
                 field: 'name',
                 width: 200,
                 editable: true,
@@ -385,7 +385,6 @@ var defaultCols = [
             },
             {
                 headerName: "Country", field: "country", width: 150, editable: true,
-                // rowDraggable: true,
                 cellRenderer: 'countryCellRenderer',
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
