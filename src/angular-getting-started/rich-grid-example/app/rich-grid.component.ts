@@ -4,7 +4,6 @@ import {GridOptions} from "ag-grid/main";
 import ProficiencyFilter from "./filters/proficiencyFilter.ts";
 import SkillFilter from "./filters/skillFilter.ts";
 import RefData from "./data/refData.ts";
-
 // only import this if you are using the ag-Grid-Enterprise
 import "ag-grid-enterprise";
 
@@ -118,14 +117,14 @@ export class RichGridComponent {
                     {
                         headerName: "Date of Birth",
                         field: "dob",
-                        width: 170,
+                        width: 175,
                         pinned: true,
                         cellRenderer: function (params) {
                             return pad(params.value.getDate(), 2) + '/' +
                                 pad(params.value.getMonth() + 1, 2) + '/' +
                                 params.value.getFullYear();
                         },
-                        filter: 'date',
+                        filter: 'agDateColumnFilter',
                         columnGroupShow: 'open'
                     }
                 ]
@@ -152,9 +151,9 @@ export class RichGridComponent {
             {
                 headerName: 'Contact',
                 children: [
-                    {headerName: "Mobile", field: "mobile", width: 150, filter: 'text'},
-                    {headerName: "Land-line", field: "landline", width: 150, filter: 'text'},
-                    {headerName: "Address", field: "address", width: 500, filter: 'text'}
+                    {headerName: "Mobile", field: "mobile", width: 150, filter: 'agTextColumnFilter'},
+                    {headerName: "Land-line", field: "landline", width: 150, filter: 'agTextColumnFilter'},
+                    {headerName: "Address", field: "address", width: 500, filter: 'agTextColumnFilter'}
                 ]
             }
         ];
