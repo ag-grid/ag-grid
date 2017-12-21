@@ -12,7 +12,8 @@ import {
     DropTarget,
     Events,
     DraggingEvent,
-    Column
+    Column,
+    DragSourceType
 } from "ag-grid/main";
 import {ColumnComponent} from "./columnComponent";
 
@@ -113,9 +114,15 @@ export abstract class AbstractColumnDropPanel extends Component {
             onDragging: this.onDragging.bind(this),
             onDragEnter: this.onDragEnter.bind(this),
             onDragLeave: this.onDragLeave.bind(this),
-            onDragStop: this.onDragStop.bind(this)
+            onDragStop: this.onDragStop.bind(this),
+            isInterestedIn: this.isInterestedIn.bind(this)
         };
         this.beans.dragAndDropService.addDropTarget(this.dropTarget);
+    }
+
+    private isInterestedIn(type: DragSourceType): boolean {
+        // not interested in row drags
+        return type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel;
     }
 
     private checkInsertIndex(draggingEvent: DraggingEvent): boolean {
