@@ -12,6 +12,8 @@
 @import './demo-1.scss';
 @import '../pages/example.scss';
 @import '../pages/support.scss';
+@import '../pages/license-pricing.scss';
+
 
 .info-page {
     @extend .container-fluid;
@@ -46,6 +48,17 @@
         margin-bottom: 0;
         margin-top: 0;
         padding: 1.5rem !important;
+    }
+
+    .team p {
+        max-width: 330px;
+    }
+
+    .job:not(:last-child) {
+        margin-top: 2rem;
+        border-bottom: 1px solid $border-color;
+        padding-bottom: 2rem;
+        margin-bottom: 2rem;
     }
 }
 

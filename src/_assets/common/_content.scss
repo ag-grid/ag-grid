@@ -16,3 +16,20 @@
     padding-left: 40px;
     margin-left: -40px;
 }
+
+.inline-container {
+    @extend .container-fluid;
+    margin: 0;
+    padding: 0;
+
+    .row {
+        margin: 0;
+        padding: 0;
+        @extend .no-gutters;
+    }
+}
+
+h2.small-block {
+    font-size: 1rem;
+    font-weight: 600;
+}

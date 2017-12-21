@@ -58,10 +58,10 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
 
             <p>We give away what others charge for. <strong>ag-Grid Free</strong> provides all of the features of our competion. We only charge when we go above and beyond, with features that other grids don’t provide.  </p>
         
-            <h2 id="tech_team"> The Technical Team</h2>
+            <h2 id="tech_team">The Technical Team</h2>
 
 
-            <div class="container-fluid">
+            <div class="inline-container team">
                 <div class="row">
 
                     <div class="col-md-4">
@@ -80,7 +80,7 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
                             <img src='images/team/sean.jpg'/>
                         </div>
                         <h3>Sean Landsman</h3>
-                        <h4>Lead Developer - Frameworks</h4>
+                        <h4>Lead Developer, <br> Frameworks</h4>
                         <p>
                             Sean was the first person that Niall asked to join the team. Sean ensures that we can keep the agnostic in ag-Grid... he is responsible for integrating with all of our supported frameworks. Many of customers will be familiar with Sean as he is very active in our user forums supporting the needs of our customers. He has also recently given a number of talks at conferences where his calm manner belies his years of experience.
                         </p>
@@ -91,13 +91,14 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
                             <img src='images/team/alberto.jpg'/>
                         </div>
                         <h3>Alberto Gutierrez</h3>
-                        <h4>Lead Developer - Data Internals</h4>
+                        <h4>Lead Developer, <br> Data Internals</h4>
                         <p>
                             Alberto joined the team in early 2017 and further broadens the Enterprise applications experience. With over 15 years across multiple industries, Alberto has been involved in all aspects of the software development lifecycle. He has joined Niall in enhancing and expanding the core features of the grid as well as contributing technical and industry knowledge. 
                         </p>
                     </div>
 
                 </div>
+
                 <div class="row">
 
                     <div class="col-md-4">
@@ -105,7 +106,7 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
                             <img src='images/team/rob.jpg'/>
                         </div>
                         <h3>Rob Clarke</h3>
-                        <h4>Lead Developer - Enterprise Applications</h4>
+                        <h4>Lead Developer, <br> Enterprise Applications</h4>
                         <p>
                             Rob is a Software Architect and Developer who specialises in complex data-centric enterprise applications within Finance. He is expert in numerous server and client side programming languages and technologies which he uses to drive forward the core engine of ag-Grid.
                         </p>
@@ -116,7 +117,7 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
                             <img src='images/team/petyo.jpg'/>
                         </div>
                         <h3>Petyo Ivanov</h3>
-                        <h4>Lead Developer - UI</h4>
+                        <h4>Lead Developer, UI</h4>
                         <p>
                             With more than a decade of experience in front-end web technologies, Petyo ensures that ag-Grid takes advantage of industry best practice. He is also charged with improving the look and feel of the grid and the overall user experience.
                         </p>
@@ -140,7 +141,7 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
 
             <h2 id="customer_team"> The Customer Experience Team</h2>
 
-            <div class="container-fluid">
+            <div class="inline-container team">
                 <div class="row">
 
                     <div class="col-md-4">
@@ -181,10 +182,9 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
 
             <h2 id="contact"> Contact Us </h2>
 
-            <div class="container-fluid">
+            <div class="inline-container">
                 <div class="row">
                     <div class="col-md-6">
-                        <p>
                             <h3>Our Address</h3>
 
                             <address>
@@ -193,8 +193,6 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
                                 London, SW12 9SG
                                 United Kingdom<br>
                             </address>
-
-                        </p> 
 
                         <p>Email Enquiries: <a href="mailto:accounts@ag-grid.com">accounts@ag-grid.com</a></p>
                     </div>
@@ -210,13 +208,6 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
 
         </div>
     </div>
-
-
-
-
-
-
-
 </div>
 
 <?php include_once("./includes/footer.php"); ?>
