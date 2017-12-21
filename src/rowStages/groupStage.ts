@@ -448,6 +448,12 @@ export class GroupStage implements IRowNodeStage {
 
     private getGroupInfoFromCallback(rowNode: RowNode) : GroupInfo[] {
         let keys: string[] = this.getDataPath(rowNode.data);
+        if (keys===null || keys===undefined || keys.length===0) {
+            _.doOnce(
+                () => console.warn(`getDataPath() should not return an empty path for data`, rowNode.data),
+                'groupStage.getGroupInfoFromCallback'
+            );
+        }
         let groupInfoMapper = (key: string) => <GroupInfo> {key: key, field: null, rowGroupColumn: null};
         return keys ? keys.map(groupInfoMapper) : [];
     }
