@@ -1,4 +1,4 @@
-var masterColumnDefs = [
+var columnDefs = [
     // group cell renderer needed for expand / collapse icons
     {field: 'name', cellRenderer:'agGroupCellRenderer'},
     {field: 'account'},
@@ -6,32 +6,28 @@ var masterColumnDefs = [
     {field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'"}
 ];
 
-var detailColumnDefs = [
-    {field: 'callId'},
-    {field: 'direction'},
-    {field: 'number'},
-    {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
-    {field: 'switchCode'}
-];
-
-var detailGridOptions = {
-    columnDefs: detailColumnDefs,
-    enableColResize: true,
-    defaultColDef: {
-        editable: true
-    },
-    onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
-    }
-};
-
-var masterGridOptions = {
-    columnDefs: masterColumnDefs,
+var gridOptions = {
+    columnDefs: columnDefs,
     rowData: rowData,
     enableColResize: true,
     masterDetail: true,
     detailCellRendererParams: {
-        detailGridOptions: detailGridOptions,
+        detailGridOptions: {
+            columnDefs: [
+                {field: 'callId'},
+                {field: 'direction'},
+                {field: 'number'},
+                {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
+                {field: 'switchCode'}
+            ],
+            enableColResize: true,
+            defaultColDef: {
+                editable: true
+            },
+            onGridReady: function(params) {
+                params.api.sizeColumnsToFit();
+            }
+        },
         getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
         }
@@ -41,13 +37,13 @@ var masterGridOptions = {
         editable: true
     },
     onGridReady: function (params) {
-        expandMasterRow1();
+        expandMasterRow1(params.api);
         params.api.sizeColumnsToFit();
     }
 };
 
 function expandMasterRow1() {
-    masterGridOptions.api.forEachNode(function (node) {
+    gridOptions.api.forEachNode(function (node) {
         node.setExpanded(node.id === "1" ? true : node.expanded);
     });
 }
@@ -55,25 +51,25 @@ function expandMasterRow1() {
 function startEditingInMasterRow() {
     stopEditingInDetailRows();
     setTimeout(function () {
-        masterGridOptions.api.startEditingCell({rowIndex: 0, colKey: 'calls'});
+        gridOptions.api.startEditingCell({rowIndex: 0, colKey: 'calls'});
     }, 100);
 }
 
 function stopEditingInMasterRows() {
-    masterGridOptions.api.stopEditing();
+    gridOptions.api.stopEditing();
 }
 
-function startEditingInDetailRow() {
+function startEditingInDetailRow(api) {
     stopEditingInMasterRows();
     expandMasterRow1();
     setTimeout(function () {
-        var detailGrid = masterGridOptions.api.getDetailGridInfo("detail_1");
+        var detailGrid = api.getDetailGridInfo("detail_1");
         detailGrid.api.startEditingCell({rowIndex: 0, colKey: 'number'});
-    }, 100);
+    }, 500);
 }
 
 function stopEditingInDetailRows() {
-    masterGridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
+    gridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
         detailGridApi.api.stopEditing();
     });
 }
@@ -81,5 +77,9 @@ function stopEditingInDetailRows() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, masterGridOptions);
+    new agGrid.Grid(gridDiv, gridOptions);
+
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/cell-editing/data/data.json'}).then(function(data) {
+        gridOptions.api.setRowData(data);
+    });
 });
