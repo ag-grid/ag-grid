@@ -10,11 +10,8 @@ export class RowDraggingComp extends Component {
     private rowNode: RowNode;
     private cellValue: string;
 
-    private static BACKGROUND_IMAGE = `url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=)`;
-
     constructor(rowNode: RowNode, cellValue: string) {
-        // super(`<span style="display: inline-block; border: 1px solid grey; width: 15px; height: 15px; margin-right: 10px; background-color: #00ACC1;"></span>`);
-        super(`<span style="display: inline-block; background-image: ${RowDraggingComp.BACKGROUND_IMAGE}; width: 8px; height: 16px; position: relative; top: 4px; margin-right: 10px;  "></span>`);
+        super(`<span class="ag-row-drag"></span>`);
         this.rowNode = rowNode;
         this.cellValue = cellValue;
     }
