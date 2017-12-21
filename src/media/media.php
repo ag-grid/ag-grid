@@ -20,6 +20,26 @@ include('../includes/mediaHeader.php');
         <div class="row">
             <div class="col-sm-4 col-md-4">
                 <div class="thumbnail">
+                    <a href="../pivoting-blog/"><img src="../pivoting-blog/img-pivot.png" alt="..."></a>
+                    <div class="caption">
+                        <a style="color:black; text-decoration:none; font-size:24px; font-weight:bold" href="../pivoting-blog/">Understand your data: The power of pivot tables</a>
+                        <div class="media">
+                            <div class="media-left">
+                                <div style="background-color:#838384; border-radius: 50%; width:35px;height:35px; padding:2px;">
+                                    <img class="media-object" src="/images/team/sophia.jpg" style="width: 30px; border-radius: 50%;">
+                                </div>
+                            </div>
+                            <div class="media-body">
+                                <p style="font-size:85%; margin-bottom:0px">Sophia Lazarova</p>
+                                <p style="color: #838384; font-size:85%">15 December 2017</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4 col-md-4">
+                <div class="thumbnail">
                     <a href="../ag-grid-datagrid-crud-part-4/"><img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" alt="..."></a>
                     <div class="caption">
                         <a style="color:black; text-decoration:none; font-size:24px; font-weight:bold" href="../ag-grid-datagrid-crud-part-4/">Building a CRUD Application with ag-Grid - Part 4</a>
@@ -57,26 +77,6 @@ include('../includes/mediaHeader.php');
                     </div>
                 </div>
             </div>
-
-            <div class="col-sm-4 col-md-4">
-                <div class="thumbnail">
-                    <a href="../ag-grid-datagrid-crud-part-2/"><img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" alt="..."></a>
-                    <div class="caption">
-                        <a style="color:black; text-decoration:none; font-size:24px; font-weight:bold" href="../ag-grid-datagrid-crud-part-2/">Building a CRUD Application with ag-Grid - Part 2</a>
-                        <div class="media">
-                            <div class="media-left">
-                                <div style="background-color:#838384; border-radius: 50%; width:35px;height:35px; padding:2px;">
-                                    <img class="media-object" src="/images/team/sean.jpg" style="width: 30px; border-radius: 50%;">
-                                </div>
-                            </div>
-                            <div class="media-body">
-                                <p style="font-size:85%; margin-bottom:0px">Sean Landsman</p>
-                                <p style="color: #838384; font-size:85%">07 November 2017</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     <section>
 
@@ -102,6 +102,30 @@ include('../includes/mediaHeader.php');
                     <div class="media-body">
                         <p style="font-size:85%; margin-bottom:0px">Sophia Lazarova</p>
                         <p style="color: #838384; font-size:85%">14 November 2017</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="overflow: hidden; border-bottom: 1px solid lightgrey; padding: 10px; margin: 10px 5px 5px 5px;" class="caption row" >
+            <div style="width: 230px;" class="media-left">
+                <a href="../ag-grid-datagrid-crud-part-2/">
+                    <img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" style="width: 225px;"/>
+                </a>
+            </div>
+            <div class="media-body">
+                <a style="color:black; text-decoration:none; font-size:28px; font-weight:bold" href="../ag-grid-datagrid-crud-part-3/">Building a CRUD Application with ag-Grid - Part 2</a>
+                <p style="color:grey; margin-top:10px;"> In the second part of this series we will go into more detail into the Middle Tier, exposing our data via a REST service. Enjoy!</p>
+
+                <div class="caption" style="margin-top:20px;">
+                    <div class="media-left">
+                        <div style="background-color:#838384; border-radius: 50%; width:35px; height:35px; padding:2px;">
+                            <img class="media-object" src="/images/team/sean.jpg" style="width: 30px; border-radius: 50%;">
+                        </div>
+                    </div>
+                    <div class="media-body">
+                        <p style="font-size:85%; margin-bottom:0px">Sean Landsman</p>
+                        <p style="color: #838384; font-size:85%">07 November 2017</p>
                     </div>
                 </div>
             </div>
