@@ -3,7 +3,7 @@ $navKey = "about";
 include_once '../includes/html-helpers.php';
 ?>
 <!DOCTYPE html>
-<html class="stretch-html">
+<html>
 <head lang="en">
 <?php
 $socialUrl = "https://www.ag-grid.com/ag-grid-jobs-board/";

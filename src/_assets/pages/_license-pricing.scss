@@ -5,7 +5,7 @@
 
 #licenses {
     .col-md-4 {
-        @extend .align-self-start;
+        @extend .align-self-center;
     }
 
     .col-md-4:first-child .license {
@@ -35,12 +35,11 @@
         padding-top: 49px;
 
         margin: 1rem;
-        align-self: center;
         @extend .card, .text-center;
         background-color: $gray-100;
 
         .btn {
-            @extend .btn-outline-primary, .btn-lg;
+            @extend .btn-outline-secondary, .btn-lg;
             background-color: $white;
             display: block;
         }
@@ -69,4 +68,37 @@
         background-color: transparent;
         border-top: 0;
     }
+}
+
+#faq {
+    margin-top: 1rem;
+    dt {
+        margin-bottom: 1rem;
+    }
+
+    dd {
+        margin-bottom: 2rem;
+    }
+}
+
+// taken from old CSS
+.hide {
+    display: none;
+}
+
+.form-control {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.curved-border {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-top: 15px;
+}
+
+.popover{
+    max-width: 100%;
+    width: 600px;
 }

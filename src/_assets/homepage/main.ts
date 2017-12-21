@@ -10,6 +10,94 @@ function resetIndent(str) {
     }
 }
 
+// order form
+$(() => {
+    $('[data-order-form]').each(function() {
+        // dynamic methods as we have three order forms on pricing page
+
+        var formKey = $(this).data('orderForm');
+        let field;
+
+        window[formKey + '_getParameterByName'] = function(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        };
+        window[formKey + '_findField'] = function(fieldName) {
+            return document.forms[formKey]['WebToContact[' + fieldName + ']'];
+        };
+        window[formKey + '_fieldFocus'] = function(fieldName) {
+            field = window[formKey + '_findField'](fieldName);
+            if (field) return field.focus();
+        };
+        window[formKey + '_fieldVal'] = function(fieldName) {
+            field = window[formKey + '_findField'](fieldName);
+            if (field) return field.value;
+            return '';
+        };
+        window[formKey + '_validateEmail'] = function(fieldName) {
+            var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,20})?$/;
+            if (window[formKey + '_findField'](fieldName) == '' || !emailReg.test(window[formKey + '_fieldVal'](fieldName))) {
+                alert('Invalid Email Address!');
+                window[formKey + '_fieldFocus'](fieldName);
+                return false;
+            } else {
+                // append site key for internal use
+                document.forms[formKey]['WebToContact[message]'].value += ' | Form: ' + formKey + '';
+
+                return true;
+            }
+        };
+
+        window[formKey + '_validateForm'] = function() {
+            var mandFields = new Array('first_name', 'last_name', 'company_name', 'email', 'message');
+            var fieldLbl = new Array('First Name', 'Last Name', 'Company Name', 'Email', 'Message');
+            for (var i = 0; i < mandFields.length; i++) {
+                let fieldValue = window[formKey + '_fieldVal'](mandFields[i]);
+                if (fieldValue.replace(/^s+|s+$/g, '').length == 0) {
+                    alert(fieldLbl[i] + ' cannot be empty');
+                    window[formKey + '_fieldFocus'](mandFields[i]);
+                    return false;
+                } else {
+                    field = window[formKey + '_findField'](mandFields[i]);
+                    if (field.nodeName == 'SELECT') {
+                        if (field.options[field.selectedIndex].value == '-None-') {
+                            alert('You must select an option for: ' + fieldLbl[i]);
+                            field.focus();
+                            return false;
+                        }
+                    }
+                }
+            }
+
+            if (window[formKey + '_validateEmail']('email')) {
+                var field = window[formKey + '_findField']('btn_submit');
+                if (field) field.disabled = true;
+                return true;
+            }
+            return false;
+        };
+
+        (<any>$('[data-toggle="popover"]')).popover({
+            placement: 'top',
+            trigger: 'hover',
+            html: true
+        });
+
+        var submitted = window[formKey + '_getParameterByName']('submitted');
+
+        if (submitted) {
+            $('#thankyou').show();
+        } else {
+            $('#thankyou').hide();
+        }
+    });
+});
+
 $(() => {
     initCookieDisclaimer();
 

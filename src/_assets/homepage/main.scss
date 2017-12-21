@@ -14,18 +14,37 @@
 @import '../pages/support.scss';
 @import '../pages/license-pricing.scss';
 
+.stretch-contents {
+    background-color: red;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 
+    > .info-page {
+        flex: 1;
+
+        > .row {
+            height: 100%;
+        }
+    }
+}
 .info-page {
     @extend .container-fluid;
     background-color: $offwhite;
 
     > .row {
-        @extend .full-width-row, .py-5;
-        padding-left: 2rem;
-        padding-right: 2rem;
+        @extend .full-width-row;
         background-color: $white;
-        border-right: 1px solid $border-color;
         border-left: 1px solid $border-color;
+        border-right: 1px solid $border-color;
+
+        aside {
+            @extend .py-5, .col-md-2;
+        }
+
+        > section {
+            @extend .py-5, .col-md-8, .offset-md-2;
+        }
 
         h1 {
             margin-bottom: 2rem;
@@ -34,11 +53,6 @@
         .row {
             margin-bottom: 1rem;
             padding-top: 1rem;
-
-            img {
-                @extend .rounded;
-                margin-bottom: 1rem;
-            }
         }
     }
 
@@ -50,8 +64,19 @@
         padding: 1.5rem !important;
     }
 
-    .team p {
-        max-width: 330px;
+    .team {
+        p, h4, img {
+            max-width: 90%;
+        }
+
+        h4 {
+            font-size: 1rem;
+        }
+
+        img {
+            @extend .rounded;
+            margin-bottom: 1rem;
+        }
     }
 
     .job:not(:last-child) {
