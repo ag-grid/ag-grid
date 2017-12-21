@@ -40,7 +40,7 @@
         background-color: $gray-100;
 
         .btn {
-            @extend .btn-outline-primary, .btn-lg;
+            @extend .btn-outline-secondary, .btn-lg;
             background-color: $white;
             display: block;
         }
