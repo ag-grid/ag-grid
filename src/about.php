@@ -3,12 +3,12 @@ $navKey = "about";
 include_once 'includes/html-helpers.php';
 ?>
 <!DOCTYPE html>
-<html class="stretch-html">
+<html>
 <head lang="en">
 <?php
-meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and explains our mission, where we came from and who we are.", false);
+meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
 ?>
-<link rel="stylesheet" href="../dist/homepage.css">
+<link rel="stylesheet" href="dist/homepage.css">
 </head>
 
 <body>
@@ -20,17 +20,15 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
 </header>
 
 <div class="info-page">
-
-
     <div class="row">
-        <div class="col-md-12">
+        <section>
 
             <h1>Our Mission</h1>
 
-            <p>
+            <p class="lead">
                 At ag-Grid, our mission is simple: <strong>Build the best data grid in the world</strong>.  
             </p>
-               
+
             <blockquote>
             </blockquote>
 
@@ -57,7 +55,7 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
             <p>Our experience is in building Enterprise applications: we know that the datagrid is at the core of an Enterprise application, and needs to deliver performance and a rich feature set.  </p>
 
             <p>We give away what others charge for. <strong>ag-Grid Free</strong> provides all of the features of our competion. We only charge when we go above and beyond, with features that other grids don’t provide.  </p>
-        
+
             <h2 id="tech_team">The Technical Team</h2>
 
 
@@ -206,7 +204,7 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
                 </div> <!-- end row -->
             </div>
 
-        </div>
+        </section>
     </div>
 </div>
 

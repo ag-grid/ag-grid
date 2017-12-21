@@ -3,10 +3,10 @@ $navKey = "licenseAndPricing";
 include_once 'includes/html-helpers.php';
 ?>
 <!DOCTYPE html>
-<html class="stretch-html">
+<html>
 <head lang="en">
 <?php
-meta_and_links("ag-Grid License and Pricing", "ag-Grid Javascript Grid License and Pricing", "License and Pricing details for ag-Grid", false);
+meta_and_links("ag-Grid License and Pricing", "ag-Grid Javascript Grid License and Pricing", "License and Pricing details for ag-Grid", true);
 ?>
 
 <!-- Facebook Pixel Code -->
@@ -25,7 +25,11 @@ src="https://www.facebook.com/tr?id=512303249109564&ev=PageView&noscript=1"
 <!-- DO NOT MODIFY -->
 <!-- End Facebook Pixel Code -->
 
-<link rel="stylesheet" href="../dist/homepage.css">
+<link rel="stylesheet" href="dist/homepage.css">
+
+<style>
+</style>
+
 </head>
 
 <body ng-app="index">
@@ -58,31 +62,17 @@ include './includes/navbar.php';
 </header>
 
 <div class="info-page">
-
     <div class="row">
-        <div class="col-md-12">
-
+        <section>
             <div id="thankyou" style="display: none"> Thank you for contacting ag-Grid. We'll be in contact shortly.  </div>
 
             <h1>License and Pricing for ag-Grid Enterprise</h1>
 
-            <div class="inline-container">
-            <div class="row">
-                <div class="col-md-8">
-
-                    <p>
-                        <strong>ag-Grid Enterprise</strong> is our commercial product that is designed for Enterprise development teams. 
-                    </p>   
-
-                        <p>The commercial licenses are <strong>perpetual</strong> and include <strong>one year</strong> of support, maintenance and upgrades.</p>
-                
-                    <p>We offer three flavors &ndash; <strong>Single Application Developer</strong>, <strong>Multiple Application Developer</strong> and <strong>SaaS / OEM</strong>.</p>
-
-                </div>
-
-                <div class="col-md-3 offset-md-1"><!-- placeholder --></div>
-</div>
-            </div>
+            <p class="lead">
+                <strong>ag-Grid Enterprise</strong> is our commercial product that is designed for Enterprise development teams. 
+                The commercial licenses are <strong>perpetual</strong> and include <strong>one year</strong> of support, maintenance and upgrades.
+We offer three flavors &ndash; <strong>Single Application Developer</strong>, <strong>Multiple Application Developer</strong> and <strong>SaaS / OEM</strong>.
+            </p>   
 
                 <div class="inline-container">
 
@@ -163,12 +153,12 @@ include './includes/navbar.php';
                 <h3 class="license-question">&mdash; Is your application for an internal or external end-user?</h3>
 
                 <p>If external, then you also need SaaS or OEM licensing.</p>
-    
+
                 <p>If you still need help figuring out which one of the above is most suitable for your case, <a href="mailto:accounts@ag-grid.com?Subject=ag-Grid%20Enquiry">contact us.</a></p>
-        </div>
 
+                <?php include("includes/commonQuestions.php"); ?>
 
-        <?php // include("includes/commonQuestions.php"); ?>
+    </section>
     </div>
 </div>
 
@@ -178,8 +168,10 @@ include './includes/navbar.php';
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title">Order Enquiry</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         <div class="modal-body">
             <?php 
@@ -195,8 +187,10 @@ include './includes/navbar.php';
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title">Order Enquiry</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         <div class="modal-body">
             <?php 
@@ -212,8 +206,10 @@ include './includes/navbar.php';
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title">Order Enquiry</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         <div class="modal-body">
             <?php 
@@ -234,8 +230,6 @@ if(window.location.href.indexOf("/license-pricing.php?submitted=true") !=-1)
 (new Image()).src="//www.googleadservices.com/pagead/conversion/873243008/?label=8TOnCM7BnWsQgMOyoAM&guid=ON&script=0";
 }
 </script>
-
+<script src="dist/homepage.js"></script>
 </body>
-
-
 </html>

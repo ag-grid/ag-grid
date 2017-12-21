@@ -3,13 +3,12 @@ $navKey = "support";
 include_once 'includes/html-helpers.php';
 ?>
 <!DOCTYPE html>
-<html class="stretch-html">
+<html>
 <head lang="en">
 <?php
 meta_and_links("ag-Grid Support", "ag-Grid Javascript Grid Support", "ag-Grid comes either as free or as Enterprise with support. This page explains the different support models for the free and Enterprise versions of ag-Grid.", false);
 ?>
 <link rel="stylesheet" href="../dist/homepage.css">
-
 </head>
 
 <body>
@@ -22,7 +21,7 @@ include './includes/navbar.php';
 
 <div class="info-page">
     <div class="row">
-        <div class="col-md-12">
+        <section>
             <h1>ag-Grid support</h1>
 
             <h2>Changelog and Pipeline of Work</h2>
@@ -57,9 +56,9 @@ include './includes/navbar.php';
                 Discussions had with Enterprise users will also help dictate the ag-Grid roadmap.
             </p>
 
-            
+
             <div class="note">
-                If you are a commercial license holder and do not have the necessary credentials for the <strong>ticketing system</strong>, <br>
+                If you are a commercial license holder and do not have the necessary credentials for the <strong>ticketing system</strong>,
                 please contact us at <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
             </div>
 
@@ -149,7 +148,7 @@ include './includes/navbar.php';
 
             </section>
 
-        </div> <!-- end col -->
+        </section> <!-- end col -->
 
     </div> <!-- end row -->
 

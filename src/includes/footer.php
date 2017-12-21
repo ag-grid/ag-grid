@@ -13,7 +13,6 @@
         <div>
             <h5>Support &amp; Community</h5>
             <ul>
-                <li><a href="#">Forum</a></li>
                 <li><a href="#">Stack Overflow</a></li>
                 <li><a href="#">License &amp; Pricing</a></li>
             </ul>
