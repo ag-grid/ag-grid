@@ -1,5 +1,4 @@
 <?php
-$key = "Number Filter";
 $pageTitle = "JavaScript Grid Number Filter";
 $pageDescription = "ag-Grid comes with a number filter. This sections explains how to use the number filter.";
 $pageKeyboards = "ag-Grid Number Filter";

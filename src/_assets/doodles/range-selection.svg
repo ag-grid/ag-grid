@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="170px" height="126px" viewBox="0 0 170 126" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>range-selection</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Chalkboard-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD" transform="translate(-571.000000, -341.000000)">
+            <g id="range-selection" transform="translate(571.000000, 341.000000)">
+                <rect id="Rectangle-4" stroke="#0084E7" x="81.5" y="1.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy" stroke="#0084E7" x="81.5" y="20.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-2" stroke="#0084E7" transform="translate(101.000000, 49.000000) rotate(4.000000) translate(-101.000000, -49.000000) " x="81.5" y="39.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-3" stroke="#0084E7" x="81.5" y="58.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-4" stroke="#0084E7" transform="translate(101.000000, 87.000000) rotate(-3.000000) translate(-101.000000, -87.000000) " x="81.5" y="77.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-5" stroke="#0084E7" x="81.5" y="96.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4" stroke="#0084E7" x="119.5" y="11.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy" stroke="#0084E7" x="119.5" y="30.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-2" stroke="#0084E7" x="119.5" y="49.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-3" stroke="#0084E7" x="119.5" y="68.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-9" stroke="#0084E7" x="2.5" y="12.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-8" stroke="#0084E7" x="2.5" y="31.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-7" stroke="#0084E7" x="2.5" y="50.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-6" stroke="#0084E7" x="2.5" y="69.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-10" stroke="#0084E7" x="2.5" y="89.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-4" stroke="#0084E7" transform="translate(139.000000, 97.000000) rotate(2.000000) translate(-139.000000, -97.000000) " x="119.5" y="87.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-5" stroke="#0084E7" x="119.5" y="106.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4" stroke="#0084E7" x="42.5" y="0.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy" stroke="#0084E7" x="42.5" y="19.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-2" stroke="#0084E7" x="42.5" y="38.5" width="39" height="19"></rect>
+                <circle id="Oval-Copy-10" stroke="#8ABDE3" cx="120.5" cy="77.5" r="4"></circle>
+                <rect id="Rectangle-4-Copy-3" stroke="#0084E7" x="42.5" y="57.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-4" stroke="#0084E7" transform="translate(62.000000, 86.000000) rotate(1.000000) translate(-62.000000, -86.000000) " x="42.5" y="76.5" width="39" height="19"></rect>
+                <rect id="Rectangle-4-Copy-5" stroke="#0084E7" x="42.5" y="95.5" width="39" height="19"></rect>
+                <rect id="Rectangle-5" stroke="#8ABDE3" x="42.5" y="19.5" width="78" height="58"></rect>
+                <rect id="Rectangle-5-Copy" stroke="#8ABDE3" x="2.5" y="54.5" width="78" height="58"></rect>
+                <path d="M144.5,30.5 L163.526298,30.5" id="Line-3" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M140.5,11.5 L159.526298,11.5" id="Line-3-Copy" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M0.5,12.5 L19.5262976,12.5" id="Line-3-Copy-3" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M140.5,87.5 L159.526298,87.5" id="Line-3-Copy-2" stroke="#0084E7" stroke-linecap="square"></path>
+                <circle id="Oval-Copy-12" stroke="#087FFF" cx="166.5" cy="29.5" r="3"></circle>
+            </g>
+        </g>
+    </g>
+</svg>

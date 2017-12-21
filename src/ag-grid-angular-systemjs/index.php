@@ -1,5 +1,4 @@
 <?php
-$key = "Angular SystemJS";
 $pageTitle = "Angular Datagrid using SystemJS";
 $pageDescription = "Demonstrate the best Angular datagrid using SystemJS and SystemJS Builder";
 $pageKeyboards = "Angular Grid SystemJS";

@@ -1,0 +1,42 @@
+@function encodecolor($string) {
+    @if $string == null {
+        @return '';
+    }
+
+    @if type-of($string) == 'color' {
+        $hex: str-slice(ie-hex-str($string), 4);
+        $string: unquote('#{$hex}');
+    }
+    $string: '%23' + $string;
+    @return $string;
+}
+
+$red: #e11f22;
+$red-highlight: #EB1C17;
+$blue-1: #00407f;
+$blue-2: #0084e7;
+$blue-3: #8abde3;
+$blue-4: #f1f7ff;
+$offwhite: rgb(249, 252, 255);
+$white: #ffffff;
+$yellow: #FFFBD9;
+
+$max-width: 1380px;
+
+$primary: $blue-2;
+$secondary: #A3A4A5;
+
+$border-color: #dee2e6;
+$code-background-color: #212529;
+
+body {
+    background-color: $white;
+}
+
+.enterprise-icon {
+    color: $red;
+    transform: translatey(-8px);
+    font-variant: all-small-caps;
+    font-size: 80%;
+    display: inline-block;
+}

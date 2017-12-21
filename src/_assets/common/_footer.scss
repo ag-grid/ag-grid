@@ -1,0 +1,62 @@
+footer#site-footer {
+    color: $gray-300;
+    @extend .text-light;
+    background-image: url('../common/hexagons.svg'), linear-gradient(170deg, $blue-1, darken($blue-1, 20));
+    background-size: 100px 100px, 100% 100%;
+    background-repeat: repeat, no-repeat;
+    font-size: 85%;
+    font-weight: 300;
+    text-shadow: 1px 1px 20px $blue-1;
+
+    h5 {
+        font-variant: all-small-caps;
+    }
+
+    ul {
+        padding-left: 0;
+
+        li {
+            list-style: none;
+        }
+        a,
+        a:hover {
+            color: $gray-500;
+        }
+    }
+
+    & > div {
+        @extend .full-width-row, .row, .mb-0, .py-5;
+
+        & > div {
+            @extend .col-sm-3;
+        }
+    }
+
+    #copy {
+        color: $gray-600;
+        & > div:nth-child(1) {
+            @extend .col-sm-7;
+        }
+        
+        & > div:nth-child(2) {
+            @extend .col-sm-3, .ml-auto;
+        }
+    }
+}
+
+#cookie-warning {
+    @extend .container-fluid;
+    background-color: $blue-2;
+    color: $offwhite;
+    z-index: 1000;
+    position: fixed;
+    bottom: 0;
+
+    & > div {
+        @extend .full-width-row, .text-center, .py-3;
+
+        a {
+            @extend .btn, .btn-light, .mx-5;
+        }
+    }
+}

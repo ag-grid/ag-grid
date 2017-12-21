@@ -1,5 +1,4 @@
 <?php
-$key = "For Print";
 $pageTitle = "ag-Grid Printing";
 $pageDescription = "If you want to print your grid, then it should be rendered without scrolls. This page shows you how to do it.";
 $pageKeyboards = "ag-Grid Printing";

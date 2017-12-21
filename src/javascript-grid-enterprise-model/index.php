@@ -1,5 +1,4 @@
 <?php
-$key = "Enterprise";
 $pageTitle = "ag-Grid New Enterprise Model";
 $pageDescription = "ag-Grid is going bringing datagrids to the next level with its Enterprise Data Model, allowing slicing and dicing of data driven by your UI.";
 $pageKeyboards = "ag-Grid Enterprise Row Model";
@@ -7,10 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1" id="enterpriseRowModel">
-    <img src="../images/enterprise_50.png" title="Enterprise Feature"/>
-    Enterprise Row Model
-</h1>
+<h1 class="first-h1 heading-enterprise" id="enterpriseRowModel"> Enterprise Row Model </h1>
 
 <p>
     The Enterprise Row Model is arguably the most powerful of the row models in ag-Grid

@@ -1,5 +1,4 @@
 <?php
-$key = "RTL";
 $pageTitle = "ag-Grid RTL";
 $pageDescription = "ag-Grid RTL";
 $pageKeyboards = "ag-Grid RTL";

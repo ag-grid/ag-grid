@@ -1,0 +1,26 @@
+{
+  "name": "ag-grid-polymer",
+  "description": "ag-Grid Polymer Web Component",
+  "main": "index.js",
+  "authors": [
+    "Sean Landsman <sean@thelandsmans.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "ag-grid",
+    "polymer",
+    "web",
+    "component"
+  ],
+  "homepage": "https://github.com/ag-grid/ag-grid-polymer",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "ag-grid": "^11.0.0"
+  }
+}

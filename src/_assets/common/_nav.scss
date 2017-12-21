@@ -1,0 +1,59 @@
+#nav {
+    @extend .bg-light;
+    padding-bottom: 2rem;
+    background-image: linear-gradient(to top left, $blue-2, $blue-1);
+    box-shadow: inset 0px -8px 121px -50px $blue-1;
+
+    nav {
+        @extend .navbar, .navbar-expand-sm, .navbar-light, .full-width-row;
+    }
+
+    &.compact {
+        padding-bottom: 0;
+        margin-bottom: 0rem;
+    }
+
+    $logo-scale: 6;
+
+    #logo {
+        @extend .text-hide;
+        background-image: url('../svg/logo.svg?color1=%23FFFFFF');
+        background-repeat: no-repeat;
+        background-size: 100%;
+        display: inline-block;
+        height: 248px / $logo-scale;
+        margin-top: 6px;
+        width: 500px / $logo-scale;
+    }
+
+    #navbar-toggle {
+        @extend .navbar-toggler;
+
+        span {
+            @extend .navbar-toggler-icon;
+        }
+    }
+
+    #main-nav ul {
+        @extend .navbar-nav, .ml-md-auto;
+
+        li {
+            @extend .nav-item, .ml-4;
+
+            a {
+                display: block;
+                padding: 0.5rem 1rem;
+                color: $offwhite;
+            }
+
+            a.active {
+                color: $white;
+            }
+        }
+        #trial a {
+            @extend .rounded;
+            background-color: $offwhite;
+            color: $blue-2 !important;
+        }
+    }
+}

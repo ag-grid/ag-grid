@@ -1,5 +1,4 @@
 <?php
-$key = "Row Styles";
 $pageTitle = "ag-Grid Row Styles";
 $pageDescription = "You can change the CSS row style in ag-Grid. This is done by providing style and class callbacks in the column definition.";
 $pageKeyboards = "ag-Grid Row Styles";

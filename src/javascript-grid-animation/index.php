@@ -1,5 +1,4 @@
 <?php
-$key = "Animation";
 $pageTitle = "Javascript Grid Animation";
 $pageDescription = "ag-Grid can use animation for rows and columns inside the grid. Learn how this animation works and how it can be customised.";
 $pageKeyboards = "Javascript Grid Animation";

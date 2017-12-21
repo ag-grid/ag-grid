@@ -1,0 +1,35 @@
+.content-list {
+    padding-inline-start: 1rem;
+    padding-block-start: 0;
+
+    li {
+        margin-bottom: 0.5rem;
+    }
+}
+
+.heading-enterprise {
+    background-image: url('../homepage/enterprise.svg');
+    background-repeat: no-repeat;
+    background-size: 25px 25px;
+    background-position-x: 20px;
+    background-position-y: 0px;
+    padding-left: 40px;
+    margin-left: -40px;
+}
+
+.inline-container {
+    @extend .container-fluid;
+    margin: 0;
+    padding: 0;
+
+    .row {
+        margin: 0;
+        padding: 0;
+        @extend .no-gutters;
+    }
+}
+
+h2.small-block {
+    font-size: 1rem;
+    font-weight: 600;
+}

@@ -1,5 +1,4 @@
 <?php
-$key = "Testing";
 $pageTitle = "ag-Grid Testing";
 $pageDescription = "ag-Grid End to End (e2e) Testing";
 $pageKeyboards = "ag-Grid e2e testing";

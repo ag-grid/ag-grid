@@ -1,5 +1,4 @@
 <?php
-$key = "Full Width Rows";
 $pageTitle = "ag-Grid Full Width Rows";
 $pageDescription = "You can have rows span the full widht of the grid, hence now using the columsn to generate cells..";
 $pageKeyboards = "JavaScript Grid Full Width";

@@ -1,5 +1,4 @@
 <?php
-$key = "Aligned Grids";
 $pageTitle = "ag-Grid Aligned Grids";
 $pageDescription = "ag-Grid Aligned Grids";
 $pageKeyboards = "ag-Grid Aligned Grids";

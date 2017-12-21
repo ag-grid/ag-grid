@@ -1,5 +1,4 @@
 <?php
-$key = "Overview Polymer";
 $pageTitle = "Polymer Grid";
 $pageDescription = "A feature rich data grid designed for Enterprise. Easily integrate with Polymer to deliver filtering, grouping, aggregation, pivoting and much more.";
 $pageKeyboards = "Polymer Grid";

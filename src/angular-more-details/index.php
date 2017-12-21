@@ -1,5 +1,4 @@
 <?php
-$key = "More Detail Angular";
 $pageTitle = "Angular 2 Grid";
 $pageDescription = "ag-Grid can be used as a data grid inside your Angular 2 application. This page details how to get started using ag-Grid inside an Angular 2 application.";
 $pageKeyboards = "Angular 2 Grid";
@@ -9,10 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1">
-        <img style="vertical-align: middle" src="../images/angular2_large.png" height="50px"/>
-        Angular 2+ Datagrid - More Details
-    </h1>
+    <h1 class="first-h1 heading-enterprise">Angular 2+ Datagrid - More Details</h1>
 
     <note>Full working examples of ag-Grid and Angular can be found in <a href="https://github.com/ag-grid/ag-grid-angular-example">Github</a>, illustrating
         (amongst others) Rich Grids, Filtering with Angular Components, Master/Detail Grid and so on.</note>
@@ -325,7 +321,7 @@ this.params.context.componentParent</snippet>
             <a href="/ag-grid-angular-webpack-2"> Webpack 2</a>
         </li>
         <li>
-            <a href="/ag-grid-angular-ngtools-webpack"> @ngTools/Webpack</a>
+            <a href="/ag-grid-angular-webpack-3"> Webpack 2</a>
         </li>
         <li>
             <a href="/ag-grid-angular-systemjs"> SystemJS</a>

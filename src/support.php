@@ -1,210 +1,153 @@
+<?php
+$navKey = "support";
+include_once 'includes/html-helpers.php';
+?>
 <!DOCTYPE html>
-<html>
+<html class="stretch-html">
 <head lang="en">
-    <meta charset="UTF-8">
-
-    <title>ag-Grid Support</title>
-    <meta name="description" content="ag-Grid comes either as free or as Enterprise with support. This page explains the different support models for the free and Enterprise versions of ag-Grid.">
-    <meta name="keywords" content="ag-Grid Javascript Grid Support"/>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-
-    <link rel="stylesheet" type="text/css" href="/style.css">
-
-    <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico" />
+<?php
+meta_and_links("ag-Grid Support", "ag-Grid Javascript Grid Support", "ag-Grid comes either as free or as Enterprise with support. This page explains the different support models for the free and Enterprise versions of ag-Grid.", false);
+?>
+<link rel="stylesheet" href="../dist/homepage.css">
 
 </head>
 
-<body ng-app="index" class="big-text">
+<body>
+<header id="nav" class="compact">
+<?php 
+$version = 'latest';
+include './includes/navbar.php';
+?>
+</header>
 
-<?php $navKey = "support"; include 'includes/navbar.php'; ?>
-
-<?php $headerTitle = "Support"; include 'includes/headerRow.php'; ?>
-
-
-<div class="container info-page">
-
+<div class="info-page">
     <div class="row">
-
         <div class="col-md-12">
+            <h1>ag-Grid support</h1>
 
-            <div class="pull-right">
-                <a class="btn btn-primary btn-large bigLink" href="https://www.ag-grid.com/forum/"><span class="glyphicon glyphicon-comment"></span> Go to Forum</a>
-            </div>
+            <h2>Changelog and Pipeline of Work</h2>
 
-            <h1>Free Support</h1>
+            <p>You have encountered a bug or you have a feature request in mind? 
+                Chances are that we are already aware of it. Please check the changelog and the pipeline first.</p>
+
+            <ul class="content-list">
+                <li><a href="/change-log/changeLogIndex.php">Changelog covering versions 7.x and earlier</a></li>
+                <li><a href="/ag-grid-pipeline">Pipeline of up and coming features and Bug Fixes</a></li>
+            </ul>
+
+            <h2>Free Support</h2>
 
             <p>
-                The free version of ag-Grid is given under MIT license and comes with no warranty or support.
-                All feature request and bugs raised by the community will be taken as advice.
+                The free version of ag-Grid is distributed under <strong>MIT license</strong> and comes with no warranty or support.
+                All feature requests and bugs raised by the community are taken as advice.
             </p>
 
             <p>
                 If you are only interested in the free features of ag-Grid but require support, you can
-                purchase a Enterprise license to access support. If you don't require support, you can
-                'give back' to the ag-Grid project by purchasing a token license. The donation will help ag-Grid
-                grow into the future.
+                purchase a <strong>Enterprise license</strong> to access support. If you don't require support, you can
+                "give back" to the ag-Grid project by purchasing a token license. 
+                The donation will contribute towards the product future growth.
             </p>
 
-            <h2>Enterprise Support</h2>
+            <h2 class="heading-enterprise">Enterprise Support</h2>
 
             <p>
-                ag-Grid Enterprise users have access to guaranteed support through the members only forum.
-                The members forum is monitored by the ag-Grid team and the team will endeavour to progress all
-                threads within one working day. A time slot is committed each day to making sure all items
-                on the forum are progressing.
+                ag-Grid Enterprise users have access to guaranteed support through our <strong>private ticketing system</strong>.  
+                Feature requests and bugs raised by Enterprise users will be given priority and serious consideration. 
+                Discussions had with Enterprise users will also help dictate the ag-Grid roadmap.
             </p>
 
-            <p>
-                Feature requests and bugs raised by Enterprise users will be given priority and serious
-                consideration. Discussions had with Enterprise users will also help dictate the ag-Grid
-                road-map.
-            </p>
+            
+            <div class="note">
+                If you are a commercial license holder and do not have the necessary credentials for the <strong>ticketing system</strong>, <br>
+                please contact us at <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
+            </div>
 
-            <h2>Support Channels</h2>
+            <h2>In Need of Help?</h2>
 
-            <table class="table">
-                <tr>
-                    <th>
-                        Query
-                    </th>
-                    <th>
-                        ag-Grid (free)
-                    </th>
-                    <th>
-                        ag-Grid-Enterprise
-                    </th>
-                </tr>
-                <tr>
-                    <td>
-                        I got this error, why?
-                    </td>
-                    <td>
-                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a>
-                    </td>
-                    <td>
-                        <a href="https://www.ag-grid.com/forum/">Members Forum</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Please look at my code?
-                    </td>
-                    <td>
-                        <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a>
-                    </td>
-                    <td>
-                        <a href="https://www.ag-grid.com/forum/">Members Forum</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        I got an error and 99% sure it's a bug
-                    </td>
-                    <td>
-                        Github issue
-                    </td>
-                    <td>
-                        Github issue or <a href="https://www.ag-grid.com/forum/">Members Forum</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        I have an idea/request
-                    </td>
-                    <td>
-                        Github issue
-                    </td>
-                    <td>
-                        Github issue or <a href="https://www.ag-grid.com/forum/">Members Forum</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Why do you?
-                    </td>
-                    <td>
-                        Not covered
-                    </td>
-                    <td>
-                        <a href="https://www.ag-grid.com/forum/">Members Forum</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        When will you?
-                    </td>
-                    <td>
-                        Not covered
-                    </td>
-                    <td>
-                        <a href="https://www.ag-grid.com/forum/">Members Forum</a>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Billing issues
-                    </td>
-                    <td>
-                        Not covered
-                    </td>
-                    <td>
-                        Email
-                        <a href="mailto:accounts@ag-grid.com?Subject=Query" target="_top">accounts@ag-grid.com</a>
-                    </td>
-                </tr>
-            </table>
+            <p>Following are several common question types and the recommended way to address them accordingly based on the license you are using:
 
-            <h2>Changelog and Pipeline of Work</h2>
+            <section id="support-question-examples">
+                <h3>I Got This Error, Why?</h3>
 
-            <!--
-            <p>
-                For the Changelog covering versions 8.x and above please go to <a href="/ag-grid-changelog">here</a>.
-            </p>
-            -->
-            <p>
-                For the Changelog covering versions 7.x and earlier please go to <a href="/change-log/changeLogIndex.php">here</a>.
-            </p>
-            <p>
-                To see our Pipeline of up and coming Features and Bug Fixes, please go <a href="/ag-grid-pipeline">here</a>.
-            </p>
+<div class="container-fluid"> <div class="row"> <div class="col-md-6">
+
+<h4>ag-Grid (MIT)</h4>
+<p>Look for similar problems in the <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow <code>ag-grid</code> tag</a>. If nothing seems related, post a new message there.</p>
+
+</div> <div class="col-md-6">
+
+<h4>ag-Grid Enterprise (Commercial License)</h4>
+<p>Contact us through the private ticketing system.</p>
+
+</div> </div>  </div>
 
 
-            <h2>Github Issues</h2>
+                <h3>Please Review my Code</h3>
 
-            <p>
-                Github should not be used for requesting help. Issues in Github are for tracking bugs and potential
-                features inside ag-Grid only.
-            </p>
+<div class="container-fluid"> <div class="row"> <div class="col-md-6">
+                <h4>ag-Grid (MIT)</h4>
+                <p>You can request such assistance in the <a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow <code>ag-grid</code></a> channel.</p>
 
-            <h2>Stack Overflow</h2>
+</div> <div class="col-md-6">
+                <h4>ag-Grid Enterprise (Commercial License)</h4>
+                <p>Contact us through the private ticketing system.</p>
 
-            <p>
-                Stack Overflow should be used for unofficial 'free' ag-Grid support. All ag-Grid related
-                queries should be tagged with
-                <a href="http://stackoverflow.com/questions/tagged/ag-grid">ag-Grid</a>
-            </p>
+</div> </div>  </div>
+                <h3>I Got an Error and 99% Sure it's a Bug</h3>
 
-            <h2>Members Forum</h2>
+<div class="container-fluid"> <div class="row"> <div class="col-md-6">
+                <h4>ag-Grid (MIT)</h4>
+<ul class="content-list">
+<li>Browse the documentation section and find an example similar to your case.</li> 
+<li>Launch a new plunker from the example and modify it so that the issue is reproducible. </li> 
+<li>Post the plunker url along with the necessary steps to reproduce as a <a href="https://github.com/ag-grid/ag-grid/issues">Github issue in the ag-grid project</a>.  </li>
+</ul>
 
-            <p>
-                Only customers of ag-Grid Enterprise can post in the members forum. However anyone can
-                view the forum, it's free to browse.
-            </p>
+</div> <div class="col-md-6">
+                <h4>ag-Grid Enterprise (Commercial License)</h4>
+                <p>Either follow the repro steps from the MIT version or contact us through the private ticketing system.  <br /> We will still need a reproduction to address the problem.</p>
+</div> </div>  </div>
 
-            <h2>Raising Bugs</h2>
+                <h3>I Have an Idea or Feature Request</h3>
 
-            <p>
-                Use Github Issues to report bugs. When reporting a bug please:
-                <ul>
-                <li>Write steps to reproduce the error.</li>
-                <li>If the bug cannot be reproduced via one of the documentation examples, provide a Plunker (or use a similar website)</li>
-                <ul>
-            </p>
+<div class="container-fluid"> <div class="row"> <div class="col-md-6">
+                <h4>ag-Grid (MIT)</h4>
+
+                <p>Post it as an <a href="https://github.com/ag-grid/ag-grid/issues">Github issue in the ag-grid project</a>.</p>
+
+</div> <div class="col-md-6">
+                <h4>ag-Grid Enterprise (Commercial License)</h4>
+
+                <p>Contact us through the private ticketing system.</p>
+
+</div> </div>  </div>
+
+                <h3>When Will You Implement &hellip; / Fix &hellip;?</h3>
+
+<div class="container-fluid"> <div class="row"> <div class="col-md-6">
+                <h4>ag-Grid (MIT)</h4>
+
+                <p>The MIT license does not cover such level of assistance - in case you need such, please consider purchasing a commercial license.</p>
+
+</div> <div class="col-md-6">
+                <h4>ag-Grid Enterprise (Commercial License)</h4>
+
+                <p>Contact us through the private ticketing system. </p>
+
+</div> </div>  </div>
+
+                <h3>I Have Billing Issues</h3>
+
+<div class="container-fluid"> <div class="row"> <div class="col-md-6">
+    <h4>ag-Grid (MIT)</h4>
+    <p>That's unlikely - have you considered becoming an enterprise user? Please shoot an email at <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
+</div> <div class="col-md-6">
+                <h4>ag-Grid Enterprise (Commercial License)</h4>
+                <p>Contact us through the private ticketing system.</p>
+</div> </div>  </div>
+
+            </section>
 
         </div> <!-- end col -->
 
@@ -212,10 +155,7 @@
 
 </div>
 
-<?php include("includes/footer.php"); ?>
-
+<?php include_once("./includes/footer.php"); ?>
+<?php include_once("./includes/analytics.php"); ?>
 </body>
-
-<?php include_once("includes/analytics.php"); ?>
-
 </html>

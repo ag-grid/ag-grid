@@ -1,5 +1,4 @@
 <?php
-$key = "Intermediate Tutorial";
 $pageTitle = "ag-Grid Intermediate Tutorials and Examples";
 $pageDescription = "This page has step by step videos on building up ag-Grid. Follow the videos to learn how the examples are build.";
 $pageKeyboards = "ag-Grid tutorials";

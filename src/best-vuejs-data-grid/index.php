@@ -1,5 +1,4 @@
 <?php
-$key = "Getting Started VueJS";
 $pageTitle = "VueJS Grid";
 $pageDescription = "ag-Grid can be used as a data grid inside your VueJS application. This page details how to get started using ag-Grid inside an VueJS application.";
 $pageKeyboards = "VueJS Grid";

@@ -1,5 +1,4 @@
 <?php
-$key = "Import Excel";
 $pageTitle = "Import Excel Speadsheet into ag-Grid";
 $pageDescription = "Example on how to import an Excel Speadsheet into ag-Grid using a third-party library";
 $pageKeyboards = "ag-Grid import excel";

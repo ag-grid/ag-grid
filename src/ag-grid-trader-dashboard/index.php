@@ -1,5 +1,4 @@
 <?php
-$key = "Trader Dashboard";
 $pageTitle = "Trader Dashboard";
 $pageDescription = "An example of using ag-Grid in a Trader Dashboard, utilising many of the update options available.";
 $pageKeyboards = "Javascript Grid";

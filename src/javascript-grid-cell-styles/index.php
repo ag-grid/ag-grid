@@ -1,5 +1,4 @@
 <?php
-$key = "Cell Styles";
 $pageTitle = "ag-Grid Cell Styles";
 $pageDescription = "You can change the CSS cell styles in ag-Grid. This is done by providing style and class callbacks in the column definition.";
 $pageKeyboards = "ag-Grid Cell Styles";

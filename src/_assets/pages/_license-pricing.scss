@@ -1,0 +1,72 @@
+.license-question {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+#licenses {
+    .col-md-4 {
+        @extend .align-self-start;
+    }
+
+    .col-md-4:first-child .license {
+        margin-left: 0;
+    }
+
+    .col-md-4:last-child .license {
+        margin-right: 0;
+    }
+
+    .license.recommended {
+        padding-top: 0rem;
+
+        .card-header {
+            background-color: $blue-2;
+            color: $white;
+        }
+
+        border-color: $blue-2;
+
+        .btn {
+            @extend .btn-primary;
+        }
+    }
+
+    .license {
+        padding-top: 49px;
+
+        margin: 1rem;
+        align-self: center;
+        @extend .card, .text-center;
+        background-color: $gray-100;
+
+        .btn {
+            @extend .btn-outline-primary, .btn-lg;
+            background-color: $white;
+            display: block;
+        }
+
+        p {
+            @extend .mt-5;
+            font-size: 0.9rem;
+        }
+    }
+
+    h3 {
+        font-size: 1rem;
+    }
+
+    h4 {
+        font-size: 2rem;
+        margin-top: 2rem;
+        span {
+            font-size: 0.7rem;
+            display: block;
+            font-weight: 300;
+        }
+    }
+
+    .card-footer {
+        background-color: transparent;
+        border-top: 0;
+    }
+}

@@ -1,5 +1,4 @@
 <?php
-$key = "Column Menu";
 $pageTitle = "ag-Grid Javascript Grid Column Menu";
 $pageDescription = "Clicking the menu icon on a header brings up the grid's column menu. This page describes how to configure the menu.";
 $pageKeyboards = "ag-Grid Javascript Grid Column Menu";
@@ -8,8 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Column Menu</h2>
+    <h1 class="heading-enterprise">Column Menu</h1>
 
     <h3>Showing the Column Menu</h3>
 
@@ -121,6 +119,14 @@ menuItems.push('separator')</snippet>
 .ag-set-filter-list {
     width: 500px !important;
 }</snippet>
+
+    <h3>Hiding the Column Menu</h3>
+
+    <p>
+        Hide the column menu with the grid API <code>hidePopupMenu()</code>, which will hide
+        either the <a href="../javascript-grid-context-menu">context menu</a> or the column menu,
+        whichever is showing.
+    </p>
 
     <h3>Example Column Menu</h3>
 

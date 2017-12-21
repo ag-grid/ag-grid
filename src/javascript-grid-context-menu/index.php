@@ -1,5 +1,4 @@
 <?php
-$key = "Context Menu";
 $pageTitle = "ag-Grid Javascript Grid Context Menu";
 $pageDescription = "Right clicking on a cell brings up the grid's context menu. You can use the default or configure your own details.";
 $pageKeyboards = "ag-Grid Javascript Grid Context Menu";
@@ -9,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Context Menu</h1>
+    <h1 class="first-h1 heading-enterprise">Context Menu</h1>
 
     <p>
         The user can bring up the context menu by right clicking on a cell.
@@ -113,6 +112,14 @@ MenuItemDef {
     <p>
         Holding down ctrl & context menu bypasses the grids context menu. If you do want the grids context
         menu, even when ctrl is pressed, then set <i>allowContextMenuWithControlKey=true</i>.
+    </p>
+
+    <h3>Hiding the Context Menu</h3>
+
+    <p>
+        Hide the context menu with the grid API <code>hidePopupMenu()</code>, which will hide
+        either the context menu or the <a href="../javascript-grid-column-menu">column menu</a>,
+        whichever is showing.
     </p>
 
     <h3>Context Menu Example</h3>

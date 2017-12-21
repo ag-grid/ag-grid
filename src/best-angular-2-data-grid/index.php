@@ -1,5 +1,4 @@
 <?php
-$key = "Overview Angular";
 $pageTitle = "Angular 2 Grid";
 $pageDescription = "A feature rich data grid designed for Enterprise. Easily integrate with Angular 2 to deliver filtering, grouping, aggregation, pivoting and much more.";
 $pageKeyboards = "Angular 2 Grid";

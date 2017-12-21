@@ -1,5 +1,4 @@
 <?php
-$key = "Master Detail";
 $pageTitle = "ag-Grid JavaScript Master Detail DataGrid";
 $pageDescription = "ag-Grid allows to use one component to span the entire width of the grid. This can be used to achieve a master detail datagrid, or grids inside grids.";
 $pageKeyboards = "ag-Grid full width master detail javascript datagrid";
@@ -7,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Master / Detail</h1>
+<h1 class="first-h1 heading-enterprise">Master / Detail</h1>
 
 <p>
     Master / Detail allows you to nest grids inside grids. The top level grid is referred to as the 'master grid'.

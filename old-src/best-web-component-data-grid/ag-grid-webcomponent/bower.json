@@ -1,0 +1,25 @@
+{
+  "name": "ag-grid-webcomponent",
+  "homepage": "https://github.com/ag-grid/ag-grid-webcomponent",
+  "version": "1.0.0",
+  "authors": [
+    "Sean Landsman <sean@thelandsmans.com>"
+  ],
+  "description": "ag-Grid Web Component",
+  "main": "",
+  "keywords": [
+    "ag-grid",
+    "grid",
+    "webcomponent",
+    "web",
+    "component"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

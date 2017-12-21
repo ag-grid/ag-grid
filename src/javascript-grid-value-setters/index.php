@@ -1,5 +1,4 @@
 <?php
-$key = "Setters and Parsers";
 $pageTitle = "ag-Grid Value Setters and Parsers";
 $pageDescription = "ag-Grid uses Value Setters and Parsers to allow you to specify how to store values and how to parse them. This page explains how to use Value Setters and parsers in ag-Grid";
 $pageKeyboards = "ag-Grid Value Setters";

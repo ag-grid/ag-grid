@@ -1,5 +1,4 @@
 <?php
-$key = "Grid API";
 $pageTitle = "ag-Grid API";
 $pageDescription = "ag-Grid API";
 $pageKeyboards = "ag-Grid API";
@@ -528,6 +527,13 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>addAggFunc(key, aggFunc), addAggFuncs(aggFuncs), clearAggFuncs()</th>
             <td>Adding and clearing of aggregation functions.</td>
+        </tr>
+        <tr>
+            <th>hidePopupMenu()</th>
+            <td>
+                Hides any showing <a href="../javascript-grid-context-menu">context menu</a>
+                or <a href="../javascript-grid-column-menu">column menu</a>.
+            </td>
         </tr>
     </table>
 </div>

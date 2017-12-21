@@ -1,5 +1,4 @@
 <?php
-$key = "Cell Rendering Components";
 $pageTitle = "ag-Grid Cell Rendering";
 $pageDescription = "You can customise every cell in ag-Grid. This is done by providing cell renderers. This page describe creating cell renderers.";
 $pageKeyboards = "ag-Grid Cell Renderers";
@@ -248,7 +247,7 @@ colDef.cellRendererParams = {
 }
 </snippet>
 
-<h1 id="cell-renderers-and-row-groups">Cell Renderer's and Row Groups</h1>
+<h1 id="cell-renderers-and-row-groups">Cell Renderers and Row Groups</h1>
 
 <p>
     If you are mixing cell renderer's and row grouping, then you need to understand that the value and / or data

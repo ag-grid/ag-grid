@@ -1,5 +1,4 @@
 <?php
-$key = "Styled Report";
 $pageTitle = "ag-Grid Styled Report";
 $pageDescription = "How to make a Styled Report using ag-Grid. This page gives you an example you can follow.";
 $pageKeyboards = "ag-Grid Styled Report";

@@ -1,5 +1,4 @@
 <?php
-$key = "ag-Grid OpenFin";
 $pageTitle = "ag-Grid OpenFin Integration";
 $pageDescription = "ag-Grid OpenFin Integration Examples";
 $pageKeyboards = "ag-grid openfin examples";

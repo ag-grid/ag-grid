@@ -1,5 +1,4 @@
 <?php
-$key = "Getting Started Aurelia";
 $pageTitle = "Aurelia Datagrid";
 $pageDescription = "ag-Grid can be used as a data grid inside your Aurelia application. This page details how to get started.";
 $pageKeyboards = "Aurelia Datagrid";

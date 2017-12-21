@@ -1,5 +1,4 @@
 <?php
-$key = "Row Grouping";
 $pageTitle = "ag-Grid Grid Grouping";
 $pageDescription = "ag-Grid Grid Grouping";
 $pageKeyboards = "ag-Grid Grid Grouping";
@@ -8,8 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-
-    <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Row Grouping</h1>
+    <h1 class="first-h1 heading-enterprise">Row Grouping</h1>
 
     <p>
         This page shows how to group your rows. It starts off with Auto Column Groups, the simplest way to configure row

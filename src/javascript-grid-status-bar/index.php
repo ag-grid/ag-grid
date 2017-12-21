@@ -1,5 +1,4 @@
 <?php
-$key = "Status Bar";
 $pageTitle = "ag-Grid JavaScript Grid Status Bar";
 $pageDescription = "The status bar provides details about the grid for example aggregation details for the selected range.";
 $pageKeyboards = "ag-Grid JavaScript Grid Status Bar";
@@ -9,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Status Bar</h2>
+    <h2 class="heading-enterprise">Status Bar</h2>
 
     <p>The status bar appears below the grid. When used in combination with the range selection it displays
     aggregation data about the selected range giving the following: average, count, min, max, sum.</p>

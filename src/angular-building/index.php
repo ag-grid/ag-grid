@@ -1,5 +1,4 @@
 <?php
-$key = "Angular Building";
 $pageTitle = "Building Angular 2";
 $pageDescription = "Building ag-Grid with Angular 2 and different build tools";
 $pageKeyboards = "Building Angular 2";
@@ -49,15 +48,14 @@ include '../documentation-main/documentation_header.php';
                     </p>
                 </div>
             </a>
-            <a href="/ag-grid-angular-ngtools-webpack/" class="list-group-item">
+            <a href="/ag-grid-angular-webpack-3/" class="list-group-item">
                 <div class="float-parent">
                     <div class="section-icon-container">
-                        <img src="../images/angular2_small.png" width="25" />
-                        <img src="../images/webpack_small.png" width="25" />
+                        <img src="../images/webpack_large.png" width="50" />
                     </div>
-                    <h4 class="list-group-item-heading">@ngtools/Webpack</h4>
+                    <h4 class="list-group-item-heading">Webpack 3</h4>
                     <p class="list-group-item-text">
-                        Learn how to get a simple application working using ag-Grid and Angular using @ngtools/Webpack.
+                        Learn how to get a simple application working using ag-Grid and Angular using Webpack 3.
                     </p>
                 </div>
             </a>

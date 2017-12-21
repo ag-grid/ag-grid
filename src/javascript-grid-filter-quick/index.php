@@ -1,5 +1,4 @@
 <?php
-$key = "Quick Filter";
 $pageTitle = "JavaScript Grid Quick Filter";
 $pageDescription = "ag-Grid comes with a quick filter. This section explains how to use the quick filter.";
 $pageKeyboards = "ag-Grid Quick Filter";

@@ -1,5 +1,4 @@
 <?php
-$key = "Row Node";
 $pageTitle = "ag-Grid Row Node";
 $pageDescription = "Each piece of row data provided to the grid is wrapped in a Row Node. This section describes the Row Node and how you can use it in your applications.";
 $pageKeyboards = "ag-Grid data row model";

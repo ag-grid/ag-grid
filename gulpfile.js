@@ -25,14 +25,9 @@ gulp.task('default', ['release']);
 gulp.task('bundle-site', () => {
     const theWebpack = require('webpack')
     const webpackConfig = require('./webpack-config/site.js');
-    webpackConfig.entry.site = './src/_assets/ts/site';
-    webpackConfig.plugins = [ new theWebpack.DefinePlugin({
-        MAX_ACTIVE_EXAMPLES: JSON.stringify(100)
-    }) ];
-    webpackConfig.output.filename = 'site.js'
 
     return gulp
-        .src('./src/_assets/ts/site.ts')
+        .src('./src/_assets/homepage/main.ts')
         .pipe(named())
         .pipe(webpack(webpackConfig))
         .pipe(gulp.dest('dist/dist'));
