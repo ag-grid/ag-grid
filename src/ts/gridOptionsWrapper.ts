@@ -217,6 +217,7 @@ export class GridOptionsWrapper {
 
     public isForPrint() { return this.gridOptions.domLayout === 'forPrint'; }
     public isAutoHeight() { return this.gridOptions.domLayout === 'autoHeight'; }
+    public isNormalDomLayout() { return !this.isForPrint() && !this.isAutoHeight(); }
 
     public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }

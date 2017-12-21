@@ -1509,11 +1509,23 @@ export class GridPanel extends BeanStub {
         }
     }
 
+    public setVerticalScrollPosition(vScrollPosition: number): void {
+        this.eBodyViewport.scrollTop = vScrollPosition;
+    }
+
     // tries to scroll by pixels, but returns what the result actually was
     public scrollHorizontally(pixels: number): number {
         let oldScrollPosition = this.eBodyViewport.scrollLeft;
         this.setHorizontalScrollPosition(oldScrollPosition + pixels);
         let newScrollPosition = this.eBodyViewport.scrollLeft;
+        return newScrollPosition - oldScrollPosition;
+    }
+
+    // tries to scroll by pixels, but returns what the result actually was
+    public scrollVertically(pixels: number): number {
+        let oldScrollPosition = this.eBodyViewport.scrollTop;
+        this.setVerticalScrollPosition(oldScrollPosition + pixels);
+        let newScrollPosition = this.eBodyViewport.scrollTop;
         return newScrollPosition - oldScrollPosition;
     }
 

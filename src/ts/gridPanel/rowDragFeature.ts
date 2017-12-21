@@ -4,6 +4,7 @@ import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
 import {GridPanel} from "./gridPanel";
+import {GridOptionsWrapper} from "../gridOptionsWrapper";
 
 export class RowDragFeature implements DropTarget {
 
@@ -12,9 +13,18 @@ export class RowDragFeature implements DropTarget {
     @Autowired('rowModel') private inMemoryRowModel: InMemoryRowModel;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
     @Autowired('gridPanel') private gridPanel: GridPanel;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Optional('rangeController') private rangeController: IRangeController;
 
     private eContainer: HTMLElement;
+
+    private needToMoveUp: boolean;
+    private needToMoveDown: boolean;
+
+    private movingIntervalId: number;
+    private intervalCount: number;
+
+    private lastDraggingEvent: DraggingEvent;
 
     constructor(eContainer: HTMLElement) {
         this.eContainer = eContainer;
@@ -35,19 +45,21 @@ export class RowDragFeature implements DropTarget {
         return DragAndDropService.ICON_MOVE;
     }
 
-    public onDragEnter(params: DraggingEvent): void {
+    public onDragEnter(draggingEvent: DraggingEvent): void {
         this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
-        this.onEnterOrDragging(params);
+        this.onEnterOrDragging(draggingEvent);
     }
 
-    public onDragging(params: DraggingEvent): void {
-        this.onEnterOrDragging(params);
+    public onDragging(draggingEvent: DraggingEvent): void {
+        this.onEnterOrDragging(draggingEvent);
     }
 
-    private onEnterOrDragging(params: DraggingEvent): void {
+    private onEnterOrDragging(draggingEvent: DraggingEvent): void {
 
-        let rowNode = params.dragItem.rowNode;
-        let pixel = this.normaliseForScroll(params.y);
+        this.lastDraggingEvent = draggingEvent;
+
+        let rowNode = draggingEvent.dragItem.rowNode;
+        let pixel = this.normaliseForScroll(draggingEvent.y);
         let rowWasMoved = this.inMemoryRowModel.ensureRowAtPixel(rowNode, pixel);
 
         if (rowWasMoved) {
@@ -56,15 +68,82 @@ export class RowDragFeature implements DropTarget {
                 this.rangeController.clearSelection();
             }
         }
+
+        this.checkCenterForScrolling(pixel);
     }
 
     private normaliseForScroll(pixel: number): number {
-        let pixelRange = this.gridPanel.getVerticalPixelRange();
-        return pixel + pixelRange.top;
+        let gridPanelHasScrolls = this.gridOptionsWrapper.isNormalDomLayout();
+        if (gridPanelHasScrolls) {
+            let pixelRange = this.gridPanel.getVerticalPixelRange();
+            return pixel + pixelRange.top;
+        } else {
+            return pixel;
+        }
     }
 
-    public onDragLeave(params: DraggingEvent): void {}
+    private checkCenterForScrolling(pixel: number): void {
 
-    public onDragStop(params: DraggingEvent): void {}
+        // scroll if the mouse is within 50px of the grid edge
+        let pixelRange = this.gridPanel.getVerticalPixelRange();
+
+        // console.log(`pixelRange = (${pixelRange.top}, ${pixelRange.bottom})`);
+
+        this.needToMoveUp = pixel < (pixelRange.top + 50);
+        this.needToMoveDown = pixel > (pixelRange.bottom - 50);
+
+        // console.log(`needToMoveUp = ${this.needToMoveUp} = pixel < (pixelRange.top + 50) = ${pixel} < (${pixelRange.top} + 50)`);
+        // console.log(`needToMoveDown = ${this.needToMoveDown} = pixel < (pixelRange.top + 50) = ${pixel} < (${pixelRange.top} + 50)`);
+
+        if (this.needToMoveUp || this.needToMoveDown) {
+            this.ensureIntervalStarted();
+        } else {
+            this.ensureIntervalCleared();
+        }
+    }
+
+    private ensureIntervalStarted(): void {
+        if (!this.movingIntervalId) {
+            this.intervalCount = 0;
+            this.movingIntervalId = setInterval(this.moveInterval.bind(this), 100);
+        }
+    }
+
+    private ensureIntervalCleared(): void {
+        if (this.moveInterval) {
+            clearInterval(this.movingIntervalId);
+            this.movingIntervalId = null;
+        }
+    }
+
+    private moveInterval(): void {
+        // the amounts we move get bigger at each interval, so the speed accelerates, starting a bit slow
+        // and getting faster. this is to give smoother user experience. we max at 100px to limit the speed.
+        let pixelsToMove: number;
+        this.intervalCount++;
+        pixelsToMove = 10 + (this.intervalCount * 5);
+        if (pixelsToMove > 100) {
+            pixelsToMove = 100;
+        }
+
+        let pixelsMoved: number;
+        if (this.needToMoveDown) {
+            pixelsMoved = this.gridPanel.scrollVertically(pixelsToMove);
+        } else if (this.needToMoveUp) {
+            pixelsMoved = this.gridPanel.scrollVertically(-pixelsToMove);
+        }
+
+        if (pixelsMoved !== 0) {
+            this.onDragging(this.lastDraggingEvent);
+        }
+    }
+
+    public onDragLeave(params: DraggingEvent): void {
+        this.ensureIntervalCleared();
+    }
+
+    public onDragStop(params: DraggingEvent): void {
+        this.ensureIntervalCleared();
+    }
 
 }

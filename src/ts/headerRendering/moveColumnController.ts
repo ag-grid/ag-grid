@@ -329,6 +329,8 @@ export class MoveColumnController implements DropListener {
     }
 
     private moveInterval(): void {
+        // the amounts we move get bigger at each interval, so the speed accelerates, starting a bit slow
+        // and getting faster. this is to give smoother user experience. we max at 100px to limit the speed.
         let pixelsToMove: number;
         this.intervalCount++;
         pixelsToMove = 10 + (this.intervalCount * 5);
@@ -347,6 +349,8 @@ export class MoveColumnController implements DropListener {
             this.onDragging(this.lastDraggingEvent);
             this.failedMoveAttempts = 0;
         } else {
+            // we count the failed move attempts. if we fail to move 7 times, then we ping the column.
+            // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
             if (this.failedMoveAttempts > 7) {
