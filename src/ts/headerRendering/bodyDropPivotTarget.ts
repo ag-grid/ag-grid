@@ -4,8 +4,9 @@ import {Column} from "../entities/column";
 import {ColumnController} from "../columnController/columnController";
 import {Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {DropListener} from "./bodyDropTarget";
 
-export class BodyDropPivotTarget {
+export class BodyDropPivotTarget implements DropListener {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

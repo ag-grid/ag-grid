@@ -1,14 +1,12 @@
-
-import {DropTarget, DraggingEvent, DragAndDropService, DragSourceType} from "../dragAndDrop/dragAndDropService";
-import {Autowired, PostConstruct, Context, PreDestroy} from "../context/context";
+import {DragAndDropService, DraggingEvent, DragSourceType, DropTarget} from "../dragAndDrop/dragAndDropService";
+import {Autowired, Context, PostConstruct} from "../context/context";
 import {MoveColumnController} from "./moveColumnController";
 import {Column} from "../entities/column";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {BodyDropPivotTarget} from "./bodyDropPivotTarget";
 import {ColumnController} from "../columnController/columnController";
-import {BeanStub} from "../context/beanStub";
 
-interface DropListener {
+export interface DropListener {
     getIconName(): string;
     onDragEnter(params: DraggingEvent): void;
     onDragLeave(params: DraggingEvent): void;
@@ -16,35 +14,7 @@ interface DropListener {
     onDragStop(params: DraggingEvent): void;
 }
 
-enum DropType { ColumnMove, RowMove, Pivot }
-
-class RowDragController implements DropListener {
-
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-
-    public getIconName(): string {
-        console.log('getIconName');
-        return DragAndDropService.ICON_MOVE;
-    }
-
-    public onDragEnter(params: DraggingEvent): void {
-        this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
-        console.log('onDragEnter', params)
-    }
-
-    public onDragLeave(params: DraggingEvent): void {
-        console.log('onDragLeave', params)
-    }
-
-    public onDragging(params: DraggingEvent): void {
-        console.log('onDragging', params)
-    }
-
-    public onDragStop(params: DraggingEvent): void {
-        console.log('onDragStop', params)
-    }
-
-}
+enum DropType { ColumnMove, Pivot }
 
 export class BodyDropTarget implements DropTarget {
 
@@ -70,6 +40,11 @@ export class BodyDropTarget implements DropTarget {
         this.eContainer = eContainer;
     }
 
+    public isInterestedIn(type: DragSourceType): boolean {
+        // not interested in row drags
+        return type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel;
+    }
+
     public getSecondaryContainers(): HTMLElement[] {
         return this.eSecondaryContainers;
     }
@@ -87,12 +62,8 @@ export class BodyDropTarget implements DropTarget {
         let bodyDropPivotTarget = new BodyDropPivotTarget(this.pinned);
         this.context.wireBean(bodyDropPivotTarget);
 
-        let rowDragController = new RowDragController();
-        this.context.wireBean(rowDragController);
-
         this.dropListeners[DropType.ColumnMove] = moveColumnController;
         this.dropListeners[DropType.Pivot] = bodyDropPivotTarget;
-        this.dropListeners[DropType.RowMove] = rowDragController;
 
         switch (this.pinned) {
             case Column.PINNED_LEFT: this.eSecondaryContainers = this.gridPanel.getDropTargetLeftContainers(); break;
@@ -112,10 +83,7 @@ export class BodyDropTarget implements DropTarget {
     // dropped into the grid's body.
     private getDropType(draggingEvent: DraggingEvent): DropType {
 
-        if (draggingEvent.dragSource.type===DragSourceType.RowDrag) {
-            // moving a row, so always do row move
-            return DropType.RowMove;
-        } else if (this.columnController.isPivotMode()) {
+        if (this.columnController.isPivotMode()) {
             // in pivot mode, then if moving a column (ie didn't come from toolpanel) then it's
             // a standard column move, however if it came from teh toolpanel, then we are introducing
             // dimensions or values to the grid

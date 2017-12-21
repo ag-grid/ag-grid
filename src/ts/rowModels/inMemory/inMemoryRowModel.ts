@@ -109,6 +109,21 @@ export class InMemoryRowModel {
         this.context.wireBean(this.rootNode);
     }
 
+    // returns false if row was moved, otherwise true
+    public ensureRowAtPixel(rowNode: RowNode, pixel: number): boolean {
+        let indexAtPixelNow = this.getRowIndexAtPixel(pixel);
+        let rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
+
+        if (rowNodeAtPixelNow===rowNode) { return false; }
+
+        _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+        _.insertIntoArray(this.rootNode.allLeafChildren, rowNode, indexAtPixelNow);
+
+        this.refreshModel({step: Constants.STEP_EVERYTHING, keepRenderedRows: true, animate: true, keepEditingRows: true});
+
+        return true;
+    }
+
     public isLastRowFound(): boolean {
         return true;
     }

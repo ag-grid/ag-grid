@@ -134,6 +134,13 @@ export class DragService {
 
     // gets called whenever mouse down on any drag source
     private onMouseDown(params: DragListenerParams, mouseEvent: MouseEvent): void {
+
+        // if there are two elements with parent / child relationship, and both are draggable,
+        // when we drag the child, we should NOT drag the parent. an example of this is row moving
+        // and range selection - row moving should get preference when use drags the rowDrag component.
+        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
+        _.stopPropagationForAgGrid(mouseEvent);
+
         // only interested in left button clicks
         if (mouseEvent.button!==0) { return; }
 

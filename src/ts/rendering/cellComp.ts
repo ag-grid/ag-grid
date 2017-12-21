@@ -41,7 +41,7 @@ export class CellComp extends Component {
     private usingWrapper: boolean;
 
     private includeSelectionComponent: boolean;
-    private includeRowDraggingCompnoent: boolean;
+    private includeRowDraggingComponent: boolean;
 
     private cellFocused: boolean;
     private editingCell = false;
@@ -643,7 +643,7 @@ export class CellComp extends Component {
         if (this.rowNode.rowPinned) {
             this.usingWrapper = false;
             this.includeSelectionComponent = false;
-            this.includeRowDraggingCompnoent = false;
+            this.includeRowDraggingComponent = false;
             return;
         }
 
@@ -651,9 +651,9 @@ export class CellComp extends Component {
         let rowDraggableIsFunc = typeof colDef.rowDraggable === 'function';
 
         this.includeSelectionComponent = cbSelectionIsFunc || colDef.checkboxSelection===true;
-        this.includeRowDraggingCompnoent = rowDraggableIsFunc || colDef.rowDraggable===true;
+        this.includeRowDraggingComponent = rowDraggableIsFunc || colDef.rowDraggable===true;
 
-        this.usingWrapper = this.includeRowDraggingCompnoent || this.includeSelectionComponent;
+        this.usingWrapper = this.includeRowDraggingComponent || this.includeSelectionComponent;
     }
 
     private chooseCellRenderer(): void {
@@ -1409,11 +1409,11 @@ export class CellComp extends Component {
             this.eParentOfValue = this.getRefElement('eCellValue');
             this.eCellWrapper = this.getRefElement('eCellWrapper');
 
+            if (this.includeRowDraggingComponent) {
+                this.addRowDragging();
+            }
             if (this.includeSelectionComponent) {
                 this.addSelectionCheckbox();
-            }
-            if (this.includeRowDraggingCompnoent) {
-                this.addRowDragging();
             }
         } else {
             this.eParentOfValue = this.getGui();
@@ -1421,6 +1421,12 @@ export class CellComp extends Component {
     }
 
     private addRowDragging(): void {
+
+        // row dragging only available in default row model
+        if (!this.beans.gridOptionsWrapper.isRowModelDefault()) {
+            _.doOnce( ()=> console.warn('ag-Grid: row dragging is only allowed in the In Memory Row Model'), 'CellComp.addRowDragging')
+            return;
+        }
 
         let rowDraggingComp = new RowDraggingComp(this.rowNode, this.getValueToUse());
         this.beans.context.wireBean(rowDraggingComp);

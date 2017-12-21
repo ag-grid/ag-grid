@@ -34,6 +34,8 @@ import {CellComp} from "../rendering/cellComp";
 import {ValueService} from "../valueService/valueService";
 import {LongTapEvent, TouchListener} from "../widgets/touchListener";
 import {ComponentRecipes} from "../components/framework/componentRecipes";
+import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
+import {RowDragFeature} from "./rowDragFeature";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -158,6 +160,7 @@ export class GridPanel extends BeanStub {
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
     @Autowired('valueService') private  valueService: ValueService;
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -310,12 +313,21 @@ export class GridPanel extends BeanStub {
         this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
         this.mockContextMenuForIPad();
+        this.addRowDragListener();
 
         if (this.$scope) {
             this.addAngularApplyCheck();
         }
 
         this.onDisplayedColumnsWidthChanged();
+    }
+
+    private addRowDragListener(): void {
+
+        let rowDragFeature = new RowDragFeature(this.eBody);
+        this.context.wireBean(rowDragFeature);
+
+        this.dragAndDropService.addDropTarget(rowDragFeature);
     }
 
     private addStopEditingWhenGridLosesFocus(): void {

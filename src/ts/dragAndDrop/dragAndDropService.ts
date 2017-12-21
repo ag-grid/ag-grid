@@ -42,6 +42,8 @@ export interface DropTarget {
     /** Icon to show when drag is over*/
     getIconName?(): string;
 
+    isInterestedIn(type: DragSourceType): boolean;
+
     /** Callback for when drag enters */
     onDragEnter?(params: DraggingEvent): void;
     /** Callback for when drag leaves */
@@ -251,7 +253,7 @@ export class DragAndDropService {
     private isMouseOnDropTarget(mouseEvent: MouseEvent, dropTarget: DropTarget): boolean {
         let allContainers = this.getAllContainersFromDropTarget(dropTarget);
 
-        let gotMatch: boolean = false;
+        let mouseOverTarget: boolean = false;
         allContainers.forEach( (eContainer: HTMLElement) => {
             if (!eContainer) { return; } // secondary can be missing
             let rect = eContainer.getBoundingClientRect();
@@ -266,10 +268,16 @@ export class DragAndDropService {
             //console.log(`rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
 
             if (horizontalFit && verticalFit) {
-                gotMatch = true;
+                mouseOverTarget = true;
             }
         });
-        return gotMatch;
+
+        if (mouseOverTarget) {
+            let mouseOverTargetAndInterested = dropTarget.isInterestedIn(this.dragSource.type);
+            return mouseOverTargetAndInterested;
+        } else {
+            return false;
+        }
     }
 
     public addDropTarget(dropTarget: DropTarget) {

@@ -9,8 +9,9 @@ import {
 } from "../dragAndDrop/dragAndDropService";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {DropListener} from "./bodyDropTarget";
 
-export class MoveColumnController {
+export class MoveColumnController implements DropListener {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('columnController') private columnController: ColumnController;
