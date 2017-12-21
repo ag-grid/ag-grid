@@ -1,8 +1,9 @@
 import {DragAndDropService, DraggingEvent, DragSourceType, DropTarget} from "../dragAndDrop/dragAndDropService";
-import {Autowired} from "../context/context";
+import {Autowired, Optional} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
 import {FocusedCellController} from "../focusedCellController";
+import {IRangeController} from "../interfaces/iRangeController";
 
 export class RowDragFeature implements DropTarget {
 
@@ -10,6 +11,7 @@ export class RowDragFeature implements DropTarget {
     // this feature is only created when row model in InMemory, so we can type it as InMemory
     @Autowired('rowModel') private inMemoryRowModel: InMemoryRowModel;
     @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Optional('rangeController') private rangeController: IRangeController;
 
     private eContainer: HTMLElement;
 
@@ -48,22 +50,10 @@ export class RowDragFeature implements DropTarget {
 
         if (rowWasMoved) {
             this.focusedCellController.clearFocusedCell();
+            if (this.rangeController) {
+                this.rangeController.clearSelection();
+            }
         }
-
-        let y = params.y;
-        let rowBottom = rowNode.rowTop + rowNode.rowHeight;
-
-        let result: string;
-
-        if (rowNode.rowTop > y) {
-            result = 'go up';
-        } else if (rowBottom < y) {
-            result = 'go down';
-        } else {
-            result = 'do nothing';
-        }
-
-        console.log(`rowTop = ${rowNode.rowTop}, rowBottom = ${rowBottom}, x = ${y}, result = ${result}`);
     }
 
     public onDragLeave(params: DraggingEvent): void {}

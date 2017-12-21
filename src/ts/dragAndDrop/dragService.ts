@@ -138,8 +138,8 @@ export class DragService {
         // if there are two elements with parent / child relationship, and both are draggable,
         // when we drag the child, we should NOT drag the parent. an example of this is row moving
         // and range selection - row moving should get preference when use drags the rowDrag component.
-        if (_.isStopPropagationForAgGrid(mouseEvent)) { return; }
-        _.stopPropagationForAgGrid(mouseEvent);
+        if ((<any>mouseEvent)._alreadyProcessedByDragService) { return; }
+        (<any>mouseEvent)._alreadyProcessedByDragService = true;
 
         // only interested in left button clicks
         if (mouseEvent.button!==0) { return; }
