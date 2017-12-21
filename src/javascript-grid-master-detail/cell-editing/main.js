@@ -8,7 +8,6 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: rowData,
     enableColResize: true,
     masterDetail: true,
     detailCellRendererParams: {
@@ -37,35 +36,43 @@ var gridOptions = {
         editable: true
     },
     onGridReady: function (params) {
-        expandMasterRow1(params.api);
-        params.api.sizeColumnsToFit();
+        setInitialLayout(params.api);
     }
 };
 
-function expandMasterRow1() {
-    gridOptions.api.forEachNode(function (node) {
-        node.setExpanded(node.id === "1" ? true : node.expanded);
-    });
+function setInitialLayout(api) {
+    api.sizeColumnsToFit();
+
+    // arbitrarily expand a row for presentational purposes
+    setTimeout(function() {
+        var rowCount = 0;
+        api.forEachNode(function (node) {
+            node.setExpanded(rowCount++ === 1);
+        });
+    }, 500);
 }
 
 function startEditingInMasterRow() {
-    stopEditingInDetailRows();
-    setTimeout(function () {
-        gridOptions.api.startEditingCell({rowIndex: 0, colKey: 'calls'});
-    }, 100);
+    // stop editing in detail grid
+    gridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
+        detailGridApi.api.stopEditing();
+    });
+
+    // start editing in master grid
+    gridOptions.api.startEditingCell({rowIndex: 0, colKey: 'calls'});
 }
 
 function stopEditingInMasterRows() {
     gridOptions.api.stopEditing();
 }
 
-function startEditingInDetailRow(api) {
-    stopEditingInMasterRows();
-    expandMasterRow1();
-    setTimeout(function () {
-        var detailGrid = api.getDetailGridInfo("detail_1");
-        detailGrid.api.startEditingCell({rowIndex: 0, colKey: 'number'});
-    }, 500);
+function startEditingInDetailRow() {
+    // stop editing in master grid
+    gridOptions.api.stopEditing();
+
+    // start editing in detail grid
+    var detailGrid = gridOptions.api.getDetailGridInfo("detail_1");
+    detailGrid.api.startEditingCell({rowIndex: 0, colKey: 'number'});
 }
 
 function stopEditingInDetailRows() {
