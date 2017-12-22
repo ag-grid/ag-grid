@@ -1435,14 +1435,12 @@ export class CellComp extends Component {
             return;
         }
 
-        let rowDraggingComp = new RowDraggingComp(this.rowNode, this.getValueToUse());
-        this.beans.context.wireBean(rowDraggingComp);
+        let rowDraggingComp = new RowDraggingComp(this.rowNode, this.getValueToUse(), this.beans);
+        this.addFeature(this.beans.context, rowDraggingComp);
 
         // let visibleFunc = this.column.getColDef().checkboxSelection;
         // visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
         // cbSelectionComponent.init({rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc});
-
-        this.addDestroyFunc( ()=> rowDraggingComp.destroy() );
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eParentOfValue);

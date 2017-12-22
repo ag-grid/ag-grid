@@ -214,6 +214,7 @@ export class GridOptionsWrapper {
     public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
     public isSuppressDragLeaveHidesColumns() { return isTrue(this.gridOptions.suppressDragLeaveHidesColumns); }
     public isSuppressScrollOnNewData() { return isTrue(this.gridOptions.suppressScrollOnNewData); }
+    public isRowDragFiresEvents() { return isTrue(this.gridOptions.rowDragFiresEvents); }
 
     public isForPrint() { return this.gridOptions.domLayout === 'forPrint'; }
     public isAutoHeight() { return this.gridOptions.domLayout === 'autoHeight'; }

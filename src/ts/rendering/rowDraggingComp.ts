@@ -9,78 +9,32 @@ import {Events} from "../eventKeys";
 import {SortController} from "../sortController";
 import {_} from "../utils";
 import {ColumnController} from "../columnController/columnController";
+import {Beans} from "./beans";
+import {BeanStub} from "../context/beanStub";
 
 export class RowDraggingComp extends Component {
 
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('sortController') private sortController: SortController;
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('columnController') private columnController: ColumnController;
+    private beans: Beans;
 
     private rowNode: RowNode;
     private cellValue: string;
 
-    private sortActive: boolean;
-    private filterActive: boolean;
-    private rowGroupActive: boolean;
-
-    constructor(rowNode: RowNode, cellValue: string) {
+    constructor(rowNode: RowNode, cellValue: string, beans: Beans) {
         super(`<span class="ag-row-drag"></span>`);
         this.rowNode = rowNode;
         this.cellValue = cellValue;
+        this.beans = beans;
     }
 
     @PostConstruct
     private postConstruct(): void {
         this.addDragSource();
 
-        // we do not show the component if sort, filter or grouping is active
+        if (this.beans.gridOptionsWrapper.isRowDragFiresEvents()) {
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-
-        this.updateSortActive();
-        this.updateFilterActive();
-        this.updateRowGroupActive();
-
-        this.workOutVisibility();
-    }
-
-    private updateRowGroupActive(): void {
-        let rowGroups = this.columnController.getRowGroupColumns();
-        this.rowGroupActive = _.missingOrEmpty(rowGroups);
-    }
-
-    private onRowGroupChanged(): void {
-        this.updateRowGroupActive();
-        this.workOutVisibility();
-    }
-
-    private updateSortActive(): void {
-        let sortModel = this.sortController.getSortModel();
-        this.sortActive = !_.missingOrEmpty(sortModel);
-    }
-
-    private onSortChanged(): void {
-        this.updateSortActive();
-        this.workOutVisibility();
-    }
-
-    private updateFilterActive(): void {
-        this.filterActive = this.filterManager.isAnyFilterPresent();
-    }
-
-    private onFilterChanged(): void {
-        this.updateFilterActive();
-        this.workOutVisibility();
-    }
-
-    private workOutVisibility(): void {
-        // only show the drag if both sort and filter are not present
-        let visible = !this.sortActive && !this.filterActive;
-        this.setVisible(visible);
+        } else {
+            this.addFeature(this.beans.context, new DefaultVisibilityStrategy(this, this.beans) );
+        }
     }
 
     private addDragSource(): void {
@@ -95,7 +49,73 @@ export class RowDraggingComp extends Component {
             dragItemName: this.cellValue,
             dragItemCallback: () => dragItem
         };
-        this.dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
+        this.beans.dragAndDropService.addDragSource(dragSource, true);
+        this.addDestroyFunc( ()=> this.beans.dragAndDropService.removeDragSource(dragSource) );
+    }
+}
+
+class DefaultVisibilityStrategy extends BeanStub {
+
+    private parent: RowDraggingComp;
+    private beans: Beans;
+
+    private sortActive: boolean;
+    private filterActive: boolean;
+    private rowGroupActive: boolean;
+
+    constructor(parent: RowDraggingComp, beans: Beans) {
+        super();
+        this.parent = parent;
+        this.beans = beans;
+    }
+
+    @PostConstruct
+    private postConstruct(): void {
+        // we do not show the component if sort, filter or grouping is active
+
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+
+        this.updateSortActive();
+        this.updateFilterActive();
+        this.updateRowGroupActive();
+
+        this.workOutVisibility();
+    }
+
+    private updateRowGroupActive(): void {
+        let rowGroups = this.beans.columnController.getRowGroupColumns();
+        this.rowGroupActive = _.missingOrEmpty(rowGroups);
+    }
+
+    private onRowGroupChanged(): void {
+        this.updateRowGroupActive();
+        this.workOutVisibility();
+    }
+
+    private updateSortActive(): void {
+        let sortModel = this.beans.sortController.getSortModel();
+        this.sortActive = !_.missingOrEmpty(sortModel);
+    }
+
+    private onSortChanged(): void {
+        this.updateSortActive();
+        this.workOutVisibility();
+    }
+
+    private updateFilterActive(): void {
+        this.filterActive = this.beans.filterManager.isAnyFilterPresent();
+    }
+
+    private onFilterChanged(): void {
+        this.updateFilterActive();
+        this.workOutVisibility();
+    }
+
+    private workOutVisibility(): void {
+        // only show the drag if both sort and filter are not present
+        let visible = !this.sortActive && !this.filterActive;
+        this.parent.setVisible(visible);
     }
 }
