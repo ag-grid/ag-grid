@@ -4,14 +4,16 @@ import {ICellEditorAngularComp} from "ag-grid-angular/main";
 @Component({
     selector: 'input-cell',
     template: `
-        <div class="container" tabindex="0" (keydown)="onKeyDown($event)">
-            <md-input-container class="example-full-width">
-                <input #input mdInput [required]="true" [(ngModel)]="firstName" placeholder="First name">
-            </md-input-container>
-            <md-input-container class="example-full-width">
-                <input #input mdInput [required]="true" [(ngModel)]="lastName" placeholder="Last Name">
-            </md-input-container>
-        </div>
+        <form class="container" tabindex="0" (keydown)="onKeyDown($event)">
+            <mat-form-field class="example-full-width">
+                <input #input matInput [(ngModel)]="firstName" placeholder="First name"
+                       [ngModelOptions]="{standalone: true}">
+            </mat-form-field>
+            <mat-form-field class="example-full-width">
+                <input #input matInput [(ngModel)]="lastName" placeholder="Last Name"
+                       [ngModelOptions]="{standalone: true}">
+            </mat-form-field>
+        </form>
     `,
     styles: [
             `
@@ -25,7 +27,7 @@ import {ICellEditorAngularComp} from "ag-grid-angular/main";
         `
     ]
 })
-export class MdInputComponent implements ICellEditorAngularComp {
+export class MatInputComponent implements ICellEditorAngularComp {
     private params: any;
 
     private firstName: string;

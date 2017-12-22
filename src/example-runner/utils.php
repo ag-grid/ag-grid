@@ -12,11 +12,11 @@ if (isset($_SERVER['HTTP_X_PROXY_HTTP_HOST'])) {
 
 if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
     $archiveSegment = $matches[0];
-    $prefix =  "//$host/$archiveSegment/dev";
+    $prefix = "//$host/$archiveSegment/dev";
     define('RUNNER_SOURCE_PREFIX', "/$archiveSegment");
     define('POLYMER_BASE_HREF_PREFIX', "//$host/$archiveSegment/");
 } else {
-    $prefix =  "//$host/dev";
+    $prefix = "//$host/dev";
     define('RUNNER_SOURCE_PREFIX', "");
     define('POLYMER_BASE_HREF_PREFIX', "//$host/");
 }
@@ -27,11 +27,11 @@ if (USE_LOCAL) {
     define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "$prefix/ag-grid-enterprise-bundle/ag-grid-enterprise.js");
 
     $systemJsMap = array(
-        "ag-grid" =>                       "$prefix/ag-grid/dist/ag-grid.js",
-        "ag-grid/main" =>                  "$prefix/ag-grid/dist/ag-grid.js",
-        "ag-grid-enterprise" =>            "$prefix/ag-grid-enterprise",
-        "ag-grid-react" =>                 "$prefix/ag-grid-react",
-        "ag-grid-angular" =>               "$prefix/ag-grid-angular"
+        "ag-grid" => "$prefix/ag-grid/dist/ag-grid.js",
+        "ag-grid/main" => "$prefix/ag-grid/dist/ag-grid.js",
+        "ag-grid-enterprise" => "$prefix/ag-grid-enterprise",
+        "ag-grid-react" => "$prefix/ag-grid-react",
+        "ag-grid-angular" => "$prefix/ag-grid-angular"
     );
 // production mode, return from unpkg
 } else {
@@ -39,26 +39,29 @@ if (USE_LOCAL) {
     define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.js");
 
     $systemJsMap = array(
-        "ag-grid" =>                        "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
-        "ag-grid/main" =>                   "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
-        "ag-grid-enterprise" =>             "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/",
-        "ag-grid-react" =>                  "npm:ag-grid-react@" . AG_GRID_REACT_VERSION . "/",
-        "ag-grid-angular" =>                "npm:ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/"
+        "ag-grid" => "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
+        "ag-grid/main" => "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
+        "ag-grid-enterprise" => "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/",
+        "ag-grid-react" => "npm:ag-grid-react@" . AG_GRID_REACT_VERSION . "/",
+        "ag-grid-angular" => "npm:ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/"
     );
 }
 
-function globalAgGridScript($enteprise = false) {
-$path = $enteprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
+function globalAgGridScript($enteprise = false)
+{
+    $path = $enteprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
     return <<<SCR
     <script src="$path"></script>
 SCR;
 }
 
-function path_combine(...$parts) {
+function path_combine(...$parts)
+{
     return join("/", $parts);
 }
 
-function moveIndexFirst($a, $b) {
+function moveIndexFirst($a, $b)
+{
     if ($a == "index.html") {
         return -1;
     } elseif ($b == "index.html") {
@@ -68,34 +71,37 @@ function moveIndexFirst($a, $b) {
     }
 }
 
-function getDirContents($dir, &$results = array(), $prefix = ""){
+function getDirContents($dir, &$results = array(), $prefix = "")
+{
     $files = scandir($dir);
 
     usort($files, 'moveIndexFirst');
 
-    foreach($files as $key => $value){
-        $path = realpath($dir."/".$value);
+    foreach ($files as $key => $value) {
+        $path = realpath($dir . "/" . $value);
 
         if (substr($value, 0, 1) == ".") {
             continue;
         }
 
-        if(!is_dir($path)) {
+        if (!is_dir($path)) {
             $results[] = $prefix . $value;
-        } else if($value != "." && $value != "..") {
-            getDirContents($path, $results, $prefix.$value."/");
+        } else if ($value != "." && $value != "..") {
+            getDirContents($path, $results, $prefix . $value . "/");
         }
     }
 
     return $results;
 }
 
-function toQueryString($key, $value) {
+function toQueryString($key, $value)
+{
     $value = urlencode($value);
     return "$key=$value";
 }
 
-function moveVanillaFirst($a, $b) {
+function moveVanillaFirst($a, $b)
+{
     if ($a == "vanilla") {
         return -1;
     } elseif ($b == "vanilla") {
@@ -109,8 +115,8 @@ function getTypes($dir)
 {
     $types = array();
     $files = scandir($dir);
-    foreach($files as $file) {
-        if(substr($file, 0, 1) == ".") {
+    foreach ($files as $file) {
+        if (substr($file, 0, 1) == ".") {
             continue;
         }
         if (is_dir(realpath($dir . "/" . $file))) {
@@ -123,14 +129,15 @@ function getTypes($dir)
     return $types;
 }
 
-function example($title, $dir, $type='vanilla', $options = array()) {
+function example($title, $dir, $type = 'vanilla', $options = array())
+{
     $section = basename(dirname($_SERVER['SCRIPT_NAME']));
     $multi = $type === 'multi';
     $generated = $type === 'generated';
 
     $config = array(
         'type' => $type,
-        'name' => $dir, 
+        'name' => $dir,
         'section' => $section,
         'types' => array(),
         'title' => $title,
@@ -139,12 +146,11 @@ function example($title, $dir, $type='vanilla', $options = array()) {
     );
 
     if ($generated) {
-        $types = array( 'vanilla', 'angular', 'react' );
-    }
-    else if ($multi) {
+        $types = array('vanilla', 'angular', 'react');
+    } else if ($multi) {
         $types = getTypes($dir);
     } else {
-        $types = [ $type ];
+        $types = [$type];
     }
 
     $query = array(
@@ -153,7 +159,7 @@ function example($title, $dir, $type='vanilla', $options = array()) {
     );
 
     if ($options['extras']) {
-        foreach($options['extras'] as $extra) {
+        foreach ($options['extras'] as $extra) {
             $query[$extra] = "1";
         }
     }
@@ -187,7 +193,7 @@ function example($title, $dir, $type='vanilla', $options = array()) {
     }
 
     $config['options']['grid'] = $gridSettings;
-    
+
     $query['grid'] = json_encode($gridSettings);
 
     $queryString = join("&", array_map('toQueryString', array_keys($query), $query));
@@ -195,18 +201,18 @@ function example($title, $dir, $type='vanilla', $options = array()) {
     foreach ($types as $theType) {
         $entry = array();
         if ($multi) {
-            $entry['files'] = getDirContents($dir . "/" . $theType); 
+            $entry['files'] = getDirContents($dir . "/" . $theType);
         } else if ($generated) {
-            $entry['files'] = getDirContents($dir . "/_gen/" . $theType); 
+            $entry['files'] = getDirContents($dir . "/_gen/" . $theType);
         } else {
-            $entry['files'] = getDirContents($dir); 
+            $entry['files'] = getDirContents($dir);
         }
 
         if ($theType != "vanilla" && $theType != "polymer") {
-            $entry['boilerplatePath'] =  "../example-runner/$theType-boilerplate";
+            $entry['boilerplatePath'] = "../example-runner/$theType-boilerplate";
             $entry['boilerplateFiles'] = getDirContents($entry['boilerplatePath']);
         }
-        
+
         $entry['resultUrl'] = "../example-runner/$theType.php?$queryString";
 
         $config['types'][$theType] = $entry;
@@ -219,7 +225,8 @@ function example($title, $dir, $type='vanilla', $options = array()) {
 NG;
 }
 
-function preview($title, $name, $url, $sourceCodeUrl, $options = array()) {
+function preview($title, $name, $url, $sourceCodeUrl, $options = array())
+{
     $jsonOptions = json_encode($options);
 
     return <<<NG
@@ -236,20 +243,23 @@ NG;
 }
 
 // helpers in the example render, shared between angular and react
-function renderStyles($styles) {
+function renderStyles($styles)
+{
     foreach ($styles as $style) {
-        echo '    <link rel="stylesheet" href="'.$style.'">' . "\n";
+        echo '    <link rel="stylesheet" href="' . $style . '">' . "\n";
     }
 }
 
 // helpers in the example render, shared between angular and react
-function renderNonGeneratedScripts($scripts) {
+function renderNonGeneratedScripts($scripts)
+{
     foreach ($scripts as $script) {
-        echo '    <script src="'.$script.'"></script>' . "\n";
+        echo '    <script src="' . $script . '"></script>' . "\n";
     }
 }
 
-function filterByExt($files, $root, $preview, $ext) {
+function filterByExt($files, $root, $preview, $ext)
+{
     $matching = array();
     foreach ($files as $file) {
         $path = path_combine($root, $file);
@@ -263,23 +273,28 @@ function filterByExt($files, $root, $preview, $ext) {
     return $matching;
 }
 
-function getStyles($files, $root, $preview) {
+function getStyles($files, $root, $preview)
+{
     return filterByExt($files, $root, $preview, 'css');
 }
 
-function getScripts($files, $root, $preview) {
+function getScripts($files, $root, $preview)
+{
     return filterByExt($files, $root, $preview, 'js');
 }
 
-function getDocuments($files, $root, $preview) {
+function getDocuments($files, $root, $preview)
+{
     return filterByExt($files, $root, $preview, 'html');
 }
 
-function getGridSettings() {
+function getGridSettings()
+{
     return json_decode($_GET['grid'], true);
 }
 
-function getExampleInfo($boilerplatePrefix) {
+function getExampleInfo($boilerplatePrefix)
+{
     $preview = isset($_GET['preview']);
     $multi = isset($_GET['multi']);
     $generated = isset($_GET['generated']);
@@ -321,7 +336,8 @@ function getExampleInfo($boilerplatePrefix) {
     );
 }
 
-function renderExampleExtras($config) {
+function renderExampleExtras($config)
+{
 
     // bootstrap script wants jQuery
     if ($config['bootstrap']) {
@@ -334,51 +350,57 @@ function renderExampleExtras($config) {
     }
 
     $extras = array(
-        'xlsx' => array( 
-            'scripts' => array( 
+        'xlsx' => array(
+            'scripts' => array(
                 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.10.3/xlsx.core.min.js'
             )
-         ),
+        ),
         'jquery' => array(
-            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js' )
+            'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.1/jquery.min.js')
         ),
         'jqueryui' => array(
-            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js' ),
-            'styles' => array ( 'https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css' )
+            'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'),
+            'styles' => array('https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.css')
         ),
         'rxjs' => array(
-            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.0/Rx.min.js' )
+            'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.0/Rx.min.js')
         ),
         'lodash' => array(
-            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js' )
+            'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js')
         ),
         'd3' => array(
-            'scripts' => array( 'https://d3js.org/d3.v4.min.js' )
+            'scripts' => array('https://d3js.org/d3.v4.min.js')
         ),
         'sparkline' => array(
-            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js' )
+            'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/jquery-sparklines/2.1.2/jquery.sparkline.min.js')
         ),
         'bootstrap' => array(
-            'scripts' => array( 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js' ),
+            'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js'),
             'styles' => array(
-                'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css' ,
+                'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css',
                 'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap-theme.min.css'
             )
         ),
         'roboto' => array(
-            'styles' => array( 
-                'https://fonts.googleapis.com/css?family=Roboto' 
+            'styles' => array(
+                'https://fonts.googleapis.com/css?family=Roboto'
             )
         ),
         'fontawesome' => array(
-            'styles' => array( 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css' )
+            'styles' => array('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
         ),
         'xlsx-style' => array(
-            'scripts' => array( 'https://unpkg.com/xlsx-style@0.8.13/dist/xlsx.full.min.js' )
+            'scripts' => array('https://unpkg.com/xlsx-style@0.8.13/dist/xlsx.full.min.js')
         ),
         'angularjs1' => array(
             'scripts' => array(
                 'https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js'
+            )
+        ),
+        'materialdesign' => array(
+            'styles' => array(
+                'https://unpkg.com/@angular/material/prebuilt-themes/indigo-pink.css',
+                'https://fonts.googleapis.com/icon?family=Material+Icons'
             )
         )
     );
@@ -388,7 +410,7 @@ function renderExampleExtras($config) {
             if (isset($resources['styles'])) {
                 foreach ($resources['styles'] as $style) {
                     echo "    ";
-                    echo '<link rel="stylesheet" href="'.$style.'"/>';
+                    echo '<link rel="stylesheet" href="' . $style . '"/>';
                     echo "\n";
                 }
             }
@@ -396,11 +418,12 @@ function renderExampleExtras($config) {
             if (isset($resources['scripts'])) {
                 foreach ($resources['scripts'] as $script) {
                     echo "\t";
-                    echo '<script src="'.$script.'"></script>';
+                    echo '<script src="' . $script . '"></script>';
                     echo "\n";
                 }
             }
         }
     }
 }
+
 ?>

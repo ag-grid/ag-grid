@@ -1,16 +1,16 @@
 import {Component, ViewChildren} from "@angular/core";
 import {ICellEditorAngularComp} from "ag-grid-angular/main";
-import {MdRadioButton} from "@angular/material";
+import {MatRadioButton} from "@angular/material";
 
 @Component({
     selector: 'radio-cell',
     template: `
         <div class="container" tabindex="0" (keydown)="onKeyDown($event)">
-            <md-radio-group class="radio-group" [(ngModel)]="favouriteFruit">
-                <md-radio-button class="radio-button" *ngFor="let fruit of fruits" [value]="fruit">
+            <mat-radio-group class="radio-group" [(ngModel)]="favouriteFruit">
+                <mat-radio-button class="radio-button" *ngFor="let fruit of fruits" [value]="fruit">
                     {{fruit}}
-                </md-radio-button>
-            </md-radio-group>
+                </mat-radio-button>
+            </mat-radio-group>
         </div>
     `,
     styles: [
@@ -33,14 +33,14 @@ import {MdRadioButton} from "@angular/material";
         `
     ]
 })
-export class MdRadioComponent implements ICellEditorAngularComp {
+export class MatRadioComponent implements ICellEditorAngularComp {
     private params: any;
 
     private fruits: string[];
     private favouriteFruit: string;
     private selectedIndex: number;
 
-    @ViewChildren(MdRadioButton) public fruitRadios;
+    @ViewChildren(MatRadioButton) public fruitRadios;
 
     agInit(params: any): void {
         this.params = params;

@@ -1,17 +1,16 @@
 import {Component} from "@angular/core";
 
 import {GridOptions} from "ag-grid/main";
-import {MdCheckboxComponent} from "./md-checkbox.component";
-import {MdInputComponent} from "./md-input.component";
-import {MdRadioComponent} from "./md-radio.component";
-import {MdSelectComponent} from "./md-select.component";
+import {MatCheckboxComponent} from "./mat-checkbox.component";
+import {MatInputComponent} from "./mat-input.component";
+import {MatRadioComponent} from "./mat-radio.component";
+import {MatSelectComponent} from "./mat-select.component";
 
 @Component({
-    moduleId: module.id,
-    selector: 'ag-md-editor-component-one',
-    templateUrl: 'md-editor-one.component.html'
+    selector: 'my-app',
+    templateUrl: './mat-editor-one.component.html'
 })
-export class MdEditorComponentOne {
+export class MatEditorComponentOne {
     public gridOptions: GridOptions;
 
     constructor() {
@@ -21,7 +20,13 @@ export class MdEditorComponentOne {
             onGridReady: () => {
                 this.gridOptions.api.sizeColumnsToFit();
             },
-            rowHeight: 48 // recommended row height for material design data grids,
+            rowHeight: 48, // recommended row height for material design data grids,
+            frameworkComponents: {
+                'checkboxRenderer': MatCheckboxComponent,
+                'inputRenderer': MatInputComponent,
+                'radioEditor': MatRadioComponent,
+                'selectEditor': MatSelectComponent
+            }
         }
     }
 
@@ -30,18 +35,18 @@ export class MdEditorComponentOne {
             {
                 headerName: "Checkbox (inline editing)",
                 field: "on_off",
-                cellRendererFramework: MdCheckboxComponent
+                cellRenderer: 'checkboxRenderer'
             },
             {
                 headerName: "Full Name (popup input editor)",
                 field: "full_name",
-                cellEditorFramework: MdInputComponent,
+                cellEditor: 'inputRenderer',
                 editable: true
             },
             {
                 headerName: "Fruit (popup radio editor)",
                 field: "fruit",
-                cellEditorFramework: MdRadioComponent,
+                cellEditor: 'radioEditor',
                 cellEditorParams: {
                     fruits: ['Apple', 'Orange', 'Banana']
                 },
@@ -50,7 +55,7 @@ export class MdEditorComponentOne {
             {
                 headerName: "Vegetables (popup select editor)",
                 field: "vegetable",
-                cellEditorFramework: MdSelectComponent,
+                cellEditor: 'selectEditor',
                 cellEditorParams: {
                     vegetables: ['Carrot', 'Broccoli', 'Potato']
                 },

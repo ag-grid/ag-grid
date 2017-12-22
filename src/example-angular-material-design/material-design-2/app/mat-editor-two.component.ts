@@ -1,18 +1,16 @@
 import {AfterViewInit, Component} from "@angular/core";
 
 import {GridOptions} from "ag-grid/main";
-import {MdSliderComponent} from "./md-slider.component";
-import {MdButtonToggleHeaderComponent} from "./md-button-toggle.component";
-
-import {ColumnAlignmentService} from "../services/columnAlignmentService";
-import {MdProgressSpinnerComponent} from "./md-progress-spinner.component";
+import {MatSliderComponent} from "./mat-slider.component";
+import {MatButtonToggleHeaderComponent} from "./mat-button-toggle.component";
+import {ColumnAlignmentService} from "./columnAlignmentService";
+import {MatProgressSpinnerComponent} from "./mat-progress-spinner.component";
 
 @Component({
-    moduleId: module.id,
-    selector: 'ag-md-editor-component-two',
-    templateUrl: 'md-editor-two.component.html'
+    selector: 'my-app',
+    templateUrl: './mat-editor-two.component.html'
 })
-export class MdEditorComponentTwo implements AfterViewInit {
+export class MatEditorComponentTwo implements AfterViewInit {
     public gridOptions: GridOptions;
     public onOffColumnAlignment: string = 'left';
 
@@ -24,7 +22,12 @@ export class MdEditorComponentTwo implements AfterViewInit {
                 this.gridOptions.api.sizeColumnsToFit();
             },
             rowHeight: 48, // recommended row height for material design data grids,
-            headerHeight: 48
+            headerHeight: 48,
+            frameworkComponents: {
+                'sliderEditor': MatSliderComponent,
+                'toggleHeaderRenderer': MatButtonToggleHeaderComponent,
+                'progressRenderer': MatProgressSpinnerComponent
+            }
         };
 
         this.columnAlignmentService.alignmentChanged$.subscribe(
@@ -34,7 +37,13 @@ export class MdEditorComponentTwo implements AfterViewInit {
                 this.gridOptions.api.forEachNode((node) => {
                     nodesToUpdate.push(node)
                 });
-                this.gridOptions.api.refreshCells(nodesToUpdate, ['on_off']);
+
+                this.gridOptions.api.refreshCells({
+                        rowNodes: nodesToUpdate,
+                        columns: ['on_off'],
+                        force: true
+                    }
+                );
             }
         );
     }
@@ -47,7 +56,10 @@ export class MdEditorComponentTwo implements AfterViewInit {
         this.gridOptions.api.forEachNode((rowNode) => {
             setTimeout(() => {
                 rowNode.setDataValue('random_col', this.randomNumberUpTo(100));
-                this.gridOptions.api.refreshCells([rowNode], ["random_col"])
+                this.gridOptions.api.refreshCells({
+                    rowNodes: [rowNode],
+                    columns: ["random_col"]
+                })
             }, this.randomNumberUpTo(60) * 1000);
         });
     }
@@ -57,7 +69,7 @@ export class MdEditorComponentTwo implements AfterViewInit {
             {
                 headerName: "Percentage (popup slider editor)",
                 field: "percentage",
-                cellEditorFramework: MdSliderComponent,
+                cellEditor: 'sliderEditor',
                 cellEditorParams: {
                     thumbLabel: true
                 },
@@ -66,7 +78,7 @@ export class MdEditorComponentTwo implements AfterViewInit {
             {
                 headerName: "On/Off (button toggle header)",
                 field: "on_off",
-                headerComponentFramework: MdButtonToggleHeaderComponent,
+                headerComponent: 'toggleHeaderRenderer',
                 cellStyle: (params) => {
                     return {'text-align': this.onOffColumnAlignment};
                 }
@@ -74,7 +86,7 @@ export class MdEditorComponentTwo implements AfterViewInit {
             {
                 headerName: "Random (progress spinner)",
                 field: "random_col",
-                cellRendererFramework: MdProgressSpinnerComponent,
+                cellRenderer: 'progressRenderer',
                 cellStyle: () => {
                     return {'padding': '0px'}
                 }

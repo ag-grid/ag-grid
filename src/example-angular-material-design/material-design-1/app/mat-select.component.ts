@@ -1,15 +1,15 @@
-import {Component, ViewContainerRef, ViewChild} from "@angular/core";
+import {Component, ViewChild, ViewContainerRef} from "@angular/core";
 import {ICellEditorAngularComp} from "ag-grid-angular/main";
 
 @Component({
     selector: 'radio-cell',
     template: `
         <div class="container" #group tabindex="0" (keydown)="onKeyDown($event)">
-            <md-select [(ngModel)]="favouriteVegetable">
-                <md-option *ngFor="let vegetable of vegetables" [value]="vegetable">
+            <mat-select [(ngModel)]="favouriteVegetable">
+                <mat-option *ngFor="let vegetable of vegetables" [value]="vegetable">
                     {{ vegetable }}
-                </md-option>
-            </md-select>
+                </mat-option>
+            </mat-select>
         </div>
     `,
     styles: [
@@ -19,17 +19,17 @@ import {ICellEditorAngularComp} from "ag-grid-angular/main";
                 border: 1px solid grey;
                 background: #fff;
                 width: 190px;
-                height: 35px;
+                height: 45px;
                 padding-left: 15px;
             }
-            
+
             .container:focus {
                 outline: none;
             }
         `
     ]
 })
-export class MdSelectComponent implements ICellEditorAngularComp {
+export class MatSelectComponent implements ICellEditorAngularComp {
     private params: any;
 
     private vegetables: string[];
@@ -51,7 +51,9 @@ export class MdSelectComponent implements ICellEditorAngularComp {
 
     // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
-        this.group.element.nativeElement.focus();
+        setTimeout(() => {
+            this.group.element.nativeElement.focus();
+        });
         this.selectFavouriteVegetableBasedOnSelectedIndex();
     }
 

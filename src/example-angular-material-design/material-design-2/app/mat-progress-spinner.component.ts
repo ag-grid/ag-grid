@@ -4,10 +4,10 @@ import {ICellRendererAngularComp} from "ag-grid-angular/dist/interfaces";
 @Component({
     selector: 'progress-component',
     template: `
-        <md-progress-spinner *ngIf="!value"
-                [attr.color]="color"
-                [mode]="mode">
-        </md-progress-spinner>
+        <mat-progress-spinner *ngIf="!value"
+                              [attr.color]="color"
+                              [mode]="mode">
+        </mat-progress-spinner>
         <div class="value" *ngIf="value">{{value}}</div>
     `,
     styles: [`
@@ -16,14 +16,20 @@ import {ICellRendererAngularComp} from "ag-grid-angular/dist/interfaces";
             line-height: 48px;
         }
 
-        /deep/
+        ::ng-deep
         .mat-progress-spinner {
-            height: 48px !important;
-            width: 48px !important;
+            height: 45px !important;
+            width: 45px !important;
+        }
+
+        ::ng-deep
+        .mat-progress-spinner > svg {
+            height: 45px !important;
+            width: 45px !important;
         }
     `]
 })
-export class MdProgressSpinnerComponent implements ICellRendererAngularComp {
+export class MatProgressSpinnerComponent implements ICellRendererAngularComp {
     params: any;
     value: any = null;
 
@@ -35,9 +41,10 @@ export class MdProgressSpinnerComponent implements ICellRendererAngularComp {
         this.value = this.params.value;
     }
 
-    refresh(params: any) {
+    refresh(params: any): boolean {
         this.params = params;
         this.value = this.params.value;
+        return true;
     }
 }
 

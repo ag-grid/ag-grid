@@ -1,11 +1,11 @@
-import {Component, ViewChild, ViewContainerRef, ElementRef} from "@angular/core";
+import {Component, ElementRef} from "@angular/core";
 import {ICellEditorAngularComp} from "ag-grid-angular/main";
 
 @Component({
     selector: 'slider-cell',
     template: `
         <div class="container" (keydown)="onKeyDown($event)">
-            <md-slider
+            <mat-slider
                     [max]="max"
                     [min]="min"
                     [step]="step"
@@ -14,7 +14,7 @@ import {ICellEditorAngularComp} from "ag-grid-angular/main";
                     [value]="value"
                     [(ngModel)]="value"
             >
-            </md-slider>
+            </mat-slider>
         </div>
     `,
     styles: [`
@@ -30,14 +30,14 @@ import {ICellEditorAngularComp} from "ag-grid-angular/main";
         .mat-slider-horizontal {
             width: 100px;
         }
-        
+
         /deep/
         .mat-slider-thumb:focus {
             outline: none;
         }
     `]
 })
-export class MdSliderComponent implements ICellEditorAngularComp {
+export class MatSliderComponent implements ICellEditorAngularComp {
     private params: any;
 
     private max: number;
@@ -57,14 +57,16 @@ export class MdSliderComponent implements ICellEditorAngularComp {
         this.value = this.params.value;
     }
 
-    constructor(private elRef:ElementRef) {
+    constructor(private elRef: ElementRef) {
     }
 
     // don't use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
         let sliderThumb = this.elRef.nativeElement.querySelector('.mat-slider-thumb');
         sliderThumb.tabIndex = 0;
-        sliderThumb.focus();
+        setTimeout(() => {
+            sliderThumb.focus();
+        })
     }
 
     getValue() {
