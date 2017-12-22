@@ -8,7 +8,6 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: rowData,
     masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: {
@@ -30,6 +29,9 @@ var gridOptions = {
     isRowMaster: function (dataItem) {
         console.log("asdfasdfasdfadsf");
         return dataItem ? dataItem.callRecords.length > 0 : false;
+    },
+    isFullWidthCell: function() {
+        return false;
     },
     onGridReady: function(params) {
         setInitialLayout(params.api);
