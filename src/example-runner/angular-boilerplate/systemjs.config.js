@@ -83,7 +83,9 @@
                 '@angular/cdk/stepper': 'npm:@angular/cdk/bundles/cdk-stepper.umd.js',
                 // ngx bootstrap
                 'ngx-bootstrap': 'npm:ngx-bootstrap/bundles/ngx-bootstrap.umd.js',
-
+                // ng2 typeahead
+                'ng2-typeahead': 'npm:ng2-typeahead@1.2.0',
+                
                 ts: 'npm:plugin-typescript@5.2.7/lib/plugin.js',
                 tslib: 'npm:tslib@1.7.1/tslib.js',
                 typescript: 'npm:typescript@2.3.2/lib/typescript.js',
