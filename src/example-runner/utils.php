@@ -402,6 +402,11 @@ function renderExampleExtras($config)
                 'https://unpkg.com/@angular/material/prebuilt-themes/indigo-pink.css',
                 'https://fonts.googleapis.com/icon?family=Material+Icons'
             )
+        ),
+        'ngx-bootstrap' => array(
+            'styles' => array(
+                'https://unpkg.com/bootstrap/dist/css/bootstrap.min.css'
+            )
         )
     );
 

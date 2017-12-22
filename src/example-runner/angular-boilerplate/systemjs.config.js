@@ -81,6 +81,8 @@
                 '@angular/cdk/layout': 'npm:@angular/cdk/bundles/cdk-layout.umd.js',
                 '@angular/cdk/table': 'npm:@angular/cdk/bundles/cdk-table.umd.js',
                 '@angular/cdk/stepper': 'npm:@angular/cdk/bundles/cdk-stepper.umd.js',
+                // ngx bootstrap
+                'ngx-bootstrap': 'npm:ngx-bootstrap/bundles/ngx-bootstrap.umd.js',
 
                 ts: 'npm:plugin-typescript@5.2.7/lib/plugin.js',
                 tslib: 'npm:tslib@1.7.1/tslib.js',
