@@ -333,6 +333,15 @@
         margin-right: $grid-size * 3;
     }
 
+    .ag-row-dragging {
+        opacity: 0.5;
+        // very bad putting z-index in here, we have avoided it everywhere else in the grid,
+        // however feel it's a minor issue - as it's only a temporary thing while row is dragging,
+        // - it's unlikely user will have something on top of the grid while also moving a row in
+        // the grid.
+        z-index: 10000;
+    }
+
     ////////////////////////////////////////
     // Navigation
     ////////////////////////////////////////

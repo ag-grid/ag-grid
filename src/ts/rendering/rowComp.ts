@@ -427,8 +427,8 @@ export class RowComp extends Component {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
-
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
 
         let eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
@@ -468,7 +468,6 @@ export class RowComp extends Component {
         this.postProcessCss();
     }
 
-
     private onRowNodeCellChanged(event: CellChangedEvent): void {
         // as data has changed, then the style and class needs to be recomputed
         this.postProcessCss();
@@ -478,6 +477,16 @@ export class RowComp extends Component {
         this.postProcessStylesFromGridOptions();
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
+        this.postProcessRowDragging();
+    }
+
+    private onRowNodeDraggingChanged(): void {
+        this.postProcessRowDragging();
+    }
+
+    private postProcessRowDragging(): void {
+        let dragging = this.rowNode.dragging;
+        this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-dragging', dragging) );
     }
 
     private onExpandedChanged(): void {
@@ -891,6 +900,10 @@ export class RowComp extends Component {
 
         if (this.rowNode.group && !this.rowNode.footer) {
             classes.push(this.rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
+        }
+
+        if (this.rowNode.dragging) {
+            classes.push('ag-row-dragging');
         }
 
         _.pushAll(classes, this.processClassesFromGridOptions());

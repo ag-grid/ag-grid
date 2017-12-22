@@ -47,6 +47,7 @@ export class RowDragFeature implements DropTarget {
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
         this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
+        draggingEvent.dragItem.rowNode.setDragging(true);
         this.onEnterOrDragging(draggingEvent);
     }
 
@@ -138,12 +139,16 @@ export class RowDragFeature implements DropTarget {
         }
     }
 
-    public onDragLeave(params: DraggingEvent): void {
-        this.ensureIntervalCleared();
+    public onDragLeave(draggingEvent: DraggingEvent): void {
+        this.stopDragging(draggingEvent);
     }
 
-    public onDragStop(params: DraggingEvent): void {
-        this.ensureIntervalCleared();
+    public onDragStop(draggingEvent: DraggingEvent): void {
+        this.stopDragging(draggingEvent);
     }
 
+    private stopDragging(draggingEvent: DraggingEvent): void {
+        this.ensureIntervalCleared();
+        draggingEvent.dragItem.rowNode.setDragging(false);
+    }
 }
