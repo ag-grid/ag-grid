@@ -210,6 +210,10 @@
         "url": "javascript-grid-sorting/"
       },
       {
+        "title": "Row Dragging",
+        "url": "javascript-grid-row-dragging/"
+      },
+      {
         "title": "Row Selection",
         "url": "javascript-grid-selection/"
       },
