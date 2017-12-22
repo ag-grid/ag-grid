@@ -27,7 +27,6 @@ var gridOptions = {
         }
     },
     isRowMaster: function (dataItem) {
-        console.log("asdfasdfasdfadsf");
         return dataItem ? dataItem.callRecords.length > 0 : false;
     },
     isFullWidthCell: function() {
