@@ -107,6 +107,15 @@
         "level": 0
     },
     {
+        "title": "Row Dragging",
+        "enterprise": false,
+        "description":
+            "<span class=\"feature-highlight\">Row Dragging</span> allows you to re-arrange rows by dragging them.",
+        "src": "javascript-grid-features/images/rowDragging.gif",
+        "snippet": null,
+        "level": 0
+    },
+    {
         "title": "Row Sorting",
         "enterprise": false,
         "description":

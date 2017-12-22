@@ -13,6 +13,10 @@
 @import '../pages/example.scss';
 @import '../pages/support.scss';
 @import '../pages/license-pricing.scss';
+@import '../pages/testimonials.scss';
+@import '../pages/testimonials.scss';
+@import '../pages/pipeline.scss';
+
 
 .stretch-contents {
     background-color: red;
@@ -28,6 +32,7 @@
         }
     }
 }
+
 .info-page {
     @extend .container-fluid;
     background-color: $offwhite;
@@ -177,7 +182,11 @@
             #fw-#{$framework} a {
                 background-image: url('../fw-logos/#{$framework}.svg');
 
-                @include media-breakpoint-only(md) {
+                @media (max-width: 729px) {
+                    border-bottom: 1px solid $gray-300;
+                }
+
+                @media (min-width: 729px) and (max-width: 1024px) {
                     @if $i < 7 {
                         border-bottom: 1px solid $gray-300;
                     }
@@ -187,7 +196,7 @@
                     }
                 }
 
-                @include media-breakpoint-only(lg) {
+                @media (min-width: 1025px) and (max-width: 1300px) {
                     @if $i < 7 {
                         border-bottom: 1px solid $gray-300;
                     }
@@ -197,7 +206,7 @@
                     }
                 }
 
-                @include media-breakpoint-only(xl) {
+                @media (min-width: 1301px) {
                     @if $i < 5 {
                         border-bottom: 1px solid $gray-300;
                     }

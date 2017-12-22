@@ -58,8 +58,8 @@ meta_and_links($title, $keywords, $description, false);
                     </li>
                 </ul>
 
-                <a href="#" id="free-cta">Use Free Version</a>
-                <a href="#" id="enterprise-cta">Try Enterprise Version</a>
+                <a href="/javascript-grid-getting-started/" id="free-cta">Use Free Version</a>
+                <a href="/start-trial.php" id="enterprise-cta">Try Enterprise Version</a>
             </div>
         </section>
     </header>
@@ -67,7 +67,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                Nov 15, 2017: version 14.2.0 is here! <a href="#">See what is new</a>.
+                Nov 15, 2017: version 14.2.0 is here! <a href="/404">See what is new</a>.
             </div>
         </section>
 
@@ -84,14 +84,14 @@ meta_and_links($title, $keywords, $description, false);
 
             <div>
                 <ul id="frameworks">
-                    <li id="fw-angular"><a href="#">Angular</a></li>
-                    <li id="fw-react"><a href="#">React</a></li>
-                    <li id="fw-polymer"><a href="#">Polymer</a></li>
-                    <li id="fw-vue"><a href="#">Vue.js</a></li>
-                    <li id="fw-javascript"><a href="#">JavaScript</a></li>
-                    <li id="fw-angularjs"><a href="#">AngularJS 1.x</a></li>
-                    <li id="fw-aurelia"><a href="#">Aurelia</a></li>
-                    <li id="fw-webcomponents"><a href="#">Web Components</a></li>
+                    <li id="fw-angular"><a href="./best-angular-2-data-grid/">Angular</a></li>
+                    <li id="fw-react"><a href="./best-react-data-grid/">React</a></li>
+                    <li id="fw-polymer"><a href="./best-polymer-data-grid/">Polymer</a></li>
+                    <li id="fw-vue"><a href="./best-vuejs-data-grid/">Vue.js</a></li>
+                    <li id="fw-javascript"><a href="./best-javascript-data-grid/">JavaScript</a></li>
+                    <li id="fw-angularjs"><a href="./best-angularjs-data-grid/">AngularJS 1.x</a></li>
+                    <li id="fw-aurelia"><a href="./best-aurelia-data-grid/">Aurelia</a></li>
+                    <li id="fw-webcomponents"><a href="./best-web-component-data-grid/">Web Components</a></li>
                 </ul>
             </div>
         </section>
@@ -159,7 +159,7 @@ meta_and_links($title, $keywords, $description, false);
                 <img src="_assets/fw-logos/webpack.svg" />
                 <div class="media-body">
                     <h3>Webpack</h3>
-                    <p><a href="#">Read about ag-Grid's Partnership with webpack.</a></p>
+                    <p><a href="/ag-grid-partners-with-webpack/">Read about ag-Grid's Partnership with webpack.</a></p>
                 </div>
             </div>
 
@@ -190,30 +190,29 @@ meta_and_links($title, $keywords, $description, false);
             <div class="demos">
                 <div id="demo-1" class="demo current">
                     <?php include 'home/demo-1.php' ?>
-
                     <div class="view-code">
-                        <a href="#">View Code</a>
+                        <a href="/javascript-getting-started#summary">View Code</a>
                     </div>
                 </div>
 
                 <div id="demo-2" class="demo">
                     <?php include 'home/demo-2.php' ?>
                     <div class="view-code">
-                        <a href="#">View Code</a>
+                        <a href="/ag-grid-trader-dashboard/">View Code</a>
                     </div>
                 </div>
 
                 <div id="demo-3" class="demo">
                     <?php include 'home/demo-api.php' ?>
                     <div class="view-code">
-                        <a href="#">View Code</a>
+                        <a href="/javascript-grid-animation/">View Code</a>
                     </div>
                 </div>
 
                 <div id="demo-4" class="demo">
                     <?php include 'home/file-browser.php' ?>
                     <div class="view-code">
-                        <a href="#">View Code</a>
+                        <a href="/example-file-browser/">View Code</a>
                     </div>
                 </div>
             </div>

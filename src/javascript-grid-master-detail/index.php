@@ -81,8 +81,7 @@ var detailGridOptions = {
     </ul>
 </p>
 <br/>
-<?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
-
+<?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1)) ?>
 
 <h1 id="overriding-default-detail-cell-renderer">Overriding the Default Detail Cell Renderer</h1>
     <p>
@@ -90,9 +89,8 @@ var detailGridOptions = {
         way to provide custom layouts and styles to the detail rows.
     </p>
 
-   <p>
+    <p>
         There are two ways to achieve this:
-
         <ul>
             <li>
                 <b>String Template</b> - statically overrides the template used by the grid.
@@ -145,7 +143,7 @@ detailCellRendererParams: {
     property to customise the layout and background colour.
 </p>
 
-<?= example('Customising via String Template', 'string-template-customisation', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Customising via String Template', 'string-template-customisation', 'generated', array("enterprise" => 1)) ?>
 
 <h3>Example - Customising via Template Callback</h3>
 
@@ -154,7 +152,7 @@ detailCellRendererParams: {
     the layout and background colour. It additionally adds the name from the master row using the data supplied via callback parameters.
 </p>
 
-<?= example('Customising via Template Callback', 'template-callback-customisation', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Customising via Template Callback', 'template-callback-customisation', 'generated', array("enterprise" => 1)) ?>
 
 
 <h1 id="providing-custom-detail-cell-renderer">Providing a custom Detail Cell Renderer</h1>
@@ -181,8 +179,7 @@ detailCellRendererParams: {
     This example demonstrates how to embeds a grid into the detail row using a custom Cell Renderer component:
 </p>
 
-<?= example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'vanilla', array("enterprise" => 1)) ?>
-
+<?= example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'generated', array("enterprise" => 1)) ?>
 
 <h3>Example - Custom Detail Cell Renderer with a Form</h3>
 
@@ -190,8 +187,7 @@ detailCellRendererParams: {
     This example demonstrates a custom Cell Renderer Component that uses a form rather than a grid:
 </p>
 
-<?= example('Custom Detail Cell Renderer with Form', 'custom-detail-with-form', 'vanilla', array("enterprise" => 1)) ?>
-
+<?= example('Custom Detail Cell Renderer with Form', 'custom-detail-with-form', 'generated', array("enterprise" => 1)) ?>
 
 <h1 id="accessing-detail-grid-api">Accessing Detail Grid API</h1>
 
@@ -262,7 +258,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 </p>
 <br/>
 
-<?= example('Editing Cells with Master / Detail', 'cell-editing', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Editing Cells with Master / Detail', 'cell-editing', 'generated', array("enterprise" => 1)) ?>
 
 
 <h1 id="dynamically-specify-master-nodes">Dynamically Specify Master Nodes</h1>
@@ -293,7 +289,7 @@ masterGridOptions.isRowMaster = function (dataItem) {
     The following example only shows detail rows when there are corresponding child records.
 </p>
 
-<?= example('Dynamically Specify Master Nodes', 'dynamic-master-nodes', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Dynamically Specify Master Nodes', 'dynamic-master-nodes', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Nesting Master / Detail</h2>
 
@@ -345,7 +341,7 @@ var gridOptionsLevel3Detail = {
     The example has very little data - this is on purpose to focus on the nesting.
 </p>
 
-<?= example('Nesting Master / Detail', 'nesting', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Nesting Master / Detail', 'nesting', 'generated', array("enterprise" => 1)) ?>
 
 
 <h1 id="detail-row-height">Detail Row Height</h1>
@@ -400,14 +396,14 @@ masterGridOptions.getRowHeight = function (params) {
     The following demonstrates a fixed detail row height:
 </p>
 
-<?= example('Fixed Detail Row Height', 'fixed-detail-row-height', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Fixed Detail Row Height', 'fixed-detail-row-height', 'generated', array("enterprise" => 1)) ?>
 
 <h3>Example - Dynamic Detail Row Height</h3>
 <p>
     The following example demonstrates dynamic detail row heights:
 </p>
 
-<?= example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', array("enterprise" => 1)) ?>
 
 <h1 id="filtering-and-sorting">Filtering and Sorting</h1>
 <p>
@@ -421,7 +417,7 @@ masterGridOptions.getRowHeight = function (params) {
     Below shows a simple Master / Detail setup which has filtering and sorting enabled in both master and detail grids.
 </p>
 
-<?= example('Filtering with Sort', 'filtering-with-sort', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Filtering with Sort', 'filtering-with-sort', 'generated', array("enterprise" => 1)) ?>
 
 <h1 id="lazy-load-detail-rows">Lazy Load Detail Rows</h1>
 <p>
@@ -459,8 +455,7 @@ var masterGridOptions = {
     in the detail rows:
 </p>
 
-<?= example('Lazy Load Detail Rows', 'lazy-load-rows', 'vanilla', array("enterprise" => 1)) ?>
-
+<?= example('Lazy Load Detail Rows', 'lazy-load-rows', 'generated', array("enterprise" => 1)) ?>
 
 <h1 id="supported-modes">Supported Modes</h1>
 

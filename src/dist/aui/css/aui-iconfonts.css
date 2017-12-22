@@ -1,0 +1,945 @@
+/** white / black / grey colours */
+/** colours */
+/** link visited */
+/** restful table */
+/**
+* Basic icon styles. Allows you to easily render sprite icons.
+*
+* .aui-icon must be present on all iconified elements
+* All iconified elements must include class names prefixed with 'aui-icon-'
+* Icons assume light backgrounds. Icon classnames for dark backgrounds must be suffixed with '-d'
+* For elements whose background changes in app, we advise maintaining light/dark state in the app.
+*
+*/
+.aui-icon {
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  border: none;
+  display: inline-block;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  text-indent: -999em;
+  vertical-align: text-bottom;
+  width: 16px;
+}
+.aui-icon-small,
+.aui-icon-large {
+  line-height: 0;
+  position: relative;
+  vertical-align: text-top;
+}
+.aui-icon-small {
+  height: 16px;
+  width: 16px;
+}
+.aui-icon-large {
+  height: 32px;
+  width: 32px;
+}
+.aui-icon-small:before,
+.aui-icon-large:before {
+  color: inherit;
+  font-family: "Atlassian Icons";
+  font-weight: normal;
+  -webkit-font-smoothing: antialiased;
+  /* Improves the rendering of icons */
+  font-style: normal;
+  left: 0;
+  line-height: 1;
+  position: absolute;
+  text-indent: 0;
+  speak: none;
+  /* This prevents screen readers from pronouncing the pseudo element text content used to trigger the icon font */
+  top: 50%;
+}
+.aui-icon-small:before {
+  font-size: 16px;
+  margin-top: -8px;
+}
+.aui-icon-large:before {
+  font-size: 32px;
+  margin-top: -16px;
+}
+.icon-move,
+.icon-move-d,
+.icon-dropdown,
+.icon-dropdown-d,
+.icon-dropdown-active,
+.icon-dropdown-active-d,
+.icon-minimize,
+.icon-minimize-d,
+.icon-maximize,
+.icon-maximize-d {
+  background-repeat: no-repeat;
+}
+.aui-icon.icon-move,
+.aui-icon.icon-move-d,
+.aui-icon.icon-dropdown,
+.aui-icon.icon-dropdown-d,
+.aui-icon.icon-dropdown-active,
+.aui-icon.icon-dropdown-active-d,
+.aui-icon.icon-minimize,
+.aui-icon.icon-minimize-d,
+.aui-icon.icon-maximize,
+.aui-icon.icon-maximize-d {
+  background-position: 0 0 !important;
+  /* This is for legacy support */
+  height: 13px;
+  vertical-align: baseline;
+  width: 13px;
+}
+/* Core icons - deprecated */
+.icon-move {
+  /* icon-move.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANAQAAAABakNnRAAAAAnRSTlMAAHaTzTgAAAAlSURBVHgBY2BiYGBnYOBvADGUFBiSDBj+/wCSIDYTSBwoC2QAAF4LBNQUu22rAAAAAElFTkSuQmCC');
+  cursor: move;
+}
+.icon-move-d {
+  /* icon-move-d.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAAAAABXgLugAAAAAnRSTlMAAHaTzTgAAAAtSURBVHgBY4CAXDAJ4+TmInOgXAyVuXAMIuC8XCBGBqhyMBaaSTjtg3DQVQIAa64U3lyaxpQAAAAASUVORK5CYII=');
+  cursor: move;
+}
+.icon-dropdown {
+  /* icon-dropdown.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAKUlEQVQY02NgwAf+YwFQCezKKZRCtwdFF4oD0A1ESFDBGVil8IQGbgAAiaBjnU8tP0kAAAAASUVORK5CYII=');
+}
+.icon-dropdown-d {
+  /* icon-dropdown-d.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAKklEQVQY02NgwAdy/2NCqAR25RRKoduDogvFAegGIiSo4AysUnhCAzcAAJOYRxkKj+5hAAAAAElFTkSuQmCC');
+}
+.icon-dropdown-active {
+  /* icon-dropdown-active.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAKElEQVQY02NgwAf+YwE4JaCSlEhh2o2kC91RKAYyoPOo7kI8oYEbAACHhecZSiXhsAAAAABJRU5ErkJggg==');
+}
+.icon-dropdown-active-d {
+  /* icon-dropdown-active-d.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAKElEQVQY02NgwAdy/2NCnBJQSUqkMO1G0oXuKBQDGdB5VHchntDADQAE0qTxqu2HqgAAAABJRU5ErkJggg==');
+}
+.icon-minimize {
+  /* icon-minimize.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAHklEQVQY02NgwAf+YwE4JaCS5Epht3/wSOEJDdwAAFcvh3lwBRT4AAAAAElFTkSuQmCC');
+}
+.icon-minimize-d {
+  /* icon-minimize-d.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAH0lEQVQY02NgwAdy/2NCnBJQSXKlsNs/eKTwhAZuAAAbK2Cx/Io00wAAAABJRU5ErkJggg==');
+}
+.icon-maximize {
+  /* icon-maximize.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAJUlEQVQY02NgIAT+YwDipNBNwS+F3SjCUtjdSoYDiJDC6VncAAAKY3uF7U/mdQAAAABJRU5ErkJggg==');
+}
+.icon-maximize-d {
+  /* icon-maximize-d.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAANCAQAAADY4iz3AAAAJklEQVQY02NgIARy/6ND4qTQTcEvhd0owlLY3UqGA4iQwulZ3AAAn8BYKXiL6OYAAAAASUVORK5CYII=');
+}
+/* Form icons - deprecated */
+form.aui .icon-date,
+.aui-icon-date {
+  /* icon-date.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAARElEQVR4AWMoIBGANFgXr8dE927fw0TkaCDLSf/B4O7duwQZ5Gq4iwNccDGHI4gIARuA6tAYJGig1En0DyVMQFcnkQgA7103vYurRvEAAAAASUVORK5CYII=');
+}
+form.aui .icon-range,
+.aui-icon-range {
+  /* icon-range.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAARklEQVR4AWMoIBGANFgXr8dEd7EBcjSQ5aT/YAA0gCCDXA0Q911wMSeIUGwA8gkyyNWAsJRyJ6F5mmQNhJ2EFtN0ijgSAQD0WQfB7IGD0QAAAABJRU5ErkJggg==');
+}
+form.aui .icon-required,
+.aui-icon-required {
+  /* icon-required.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAARUlEQVR4AWOAgQsu5v8ZSAIIjaVAbA4yAEqXkmpAMxDfABkApZtJNYARiHtABkBpRlIN0AbiK0AcBMQrQHyGkQdGwSgAAPtCJnBUV/TSAAAAAElFTkSuQmCC');
+}
+form.aui .icon-users,
+.aui-icon-users {
+  /* icon-users.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAArElEQVR4AWOgCbAuXi8HxLuA+DOUliPVgN1A/B8J78epuKCgwBOIn0GxJ9SAz2gG/MSllgHK+Q/Fz/C5AFMtpuBzWBhADfkCpeWxqoUKeoE4QPwExMbhU9LUAm2UAuK9IL8D8R4glmQgYLIGCCMZsBYtDNZiqkUIlCH5qxxqwCc0Az5jVQsVfI4k+A5qwH90jEstA4SDwLgNwFQ7jAy4gSR4F2rAaTQDjuFSCwBFeGK4drVwMAAAAABJRU5ErkJggg==');
+}
+form.aui .icon-help,
+.aui-icon-help,
+form.aui .icon-inline-help,
+.aui-icon-inline-help {
+  /* icon-help.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAABG0lEQVR4AU2RNVYtQRiE+7m7IxHRlRxnHWwAty9lDbg7K4AUh7kJ7vDwEGLcvU6f6cP8NVJVXe3GFWGqWedSWBcLm2DxjmZuuSFGgxATu9X/tWt+zTAPdBNnnBNHl5whP0KDRJm1ezjimn6SpArlNhqRCLd02eA0h+SSzS47PJfuUEvEUMMN/yR/8UC5DVaKJej/T6PVGNbxjC1SeKtvBgfMawQVHhuGS9oC+8ninGW3XNq4MlwRDAyzx1enFDgxbOAFAhP0BpTHf7dIZyW64f1F1hqi3NLhW584Ej77StskKkIjD5Ra6y0bwlvLC7inyR31iCJd2MF5Zs+0U84wr58uq5U7bvBoEDxupBrVHCwi1LLJNaf8F4s4/xGiuqDPs2tUOAAAAABJRU5ErkJggg==');
+}
+/* Message icons */
+.aui-message .icon-close,
+.aui-icon-close {
+  /* icon-close.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAAOUlEQVR4AWOgGogCQjQ+KrcfCKMw+MgCECEMHqYSdGlMJZjSCCWo0oQVELaCsCMJe5NwQBEOasoBAGP2Kx0Yi3q/AAAAAElFTkSuQmCC');
+}
+.aui-message .icon-close-inverted,
+.aui-message.error .icon-close,
+.aui-icon-close-inverted {
+  /* icon-close-inverted.png */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAQAAAC1+jfqAAAAOklEQVR4AWOgFvi/4P8CdD4qFwQWYPCRBSBCGDxMJejSmEowpRFKUKUJKyBsBWFHEvYm4YAiHNSUAwDHH6hxrraMqwAAAABJRU5ErkJggg==');
+}
+/* Dropdown icon (downwards arrow)
+* - achieved via pseudo element
+*/
+.aui-icon-dropdown {
+  border: 4px solid transparent;
+  border-top-color: #333;
+  content: "";
+  display: inline-block;
+  height: 0;
+  overflow: hidden;
+  text-align: left;
+  text-indent: -999em;
+  position: relative;
+  vertical-align: baseline;
+  width: 0;
+}
+.aui-button[aria-disabled="true"] .aui-icon,
+.aui-button[disabled] .aui-icon {
+  color: rgba(112, 112, 112, 0.5);
+}
+/*
+* Icon Font
+* - use when you need to change the colour of the icon via CSS - eg on hover or to match Look and Feel customisations
+*
+* Ranges
+*
+* UTF+E001 - UTF+E3FF - Global
+* UTF+E400 - UTF+E7FF - Conf
+* UTF+E800 - UTF+EBFF - JIRA
+* UTF+EC00 - UTF+EFFF - Dev Tools
+*/
+@font-face {
+  font-family: "Atlassian Icons";
+  src: url(fonts/atlassian-icons.eot);
+  src: url(fonts/atlassian-icons.eot?#iefix) format("embedded-opentype"), url(fonts/atlassian-icons.woff) format("woff"), url(fonts/atlassian-icons.ttf) format("truetype"), url(fonts/atlassian-icons.svg#atlassian-icons) format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+.aui-iconfont-add:before {
+  content: "\f101";
+}
+.aui-iconfont-add-comment:before {
+  content: "\f102";
+}
+.aui-iconfont-add-small:before {
+  content: "\f103";
+}
+.aui-iconfont-approve:before {
+  content: "\f104";
+}
+.aui-iconfont-appswitcher:before {
+  content: "\f105";
+}
+.aui-iconfont-arrows-down:before {
+  content: "\f106";
+}
+.aui-iconfont-arrows-left:before {
+  content: "\f107";
+}
+.aui-iconfont-arrows-right:before {
+  content: "\f108";
+}
+.aui-iconfont-arrows-up:before {
+  content: "\f109";
+}
+.aui-iconfont-attachment:before {
+  content: "\f10a";
+}
+.aui-iconfont-attachment-small:before {
+  content: "\f10b";
+}
+.aui-iconfont-autocomplete-date:before {
+  content: "\f10c";
+}
+.aui-iconfont-back-page:before {
+  content: "\f10d";
+}
+.aui-iconfont-blogroll:before {
+  content: "\f10e";
+}
+.aui-iconfont-bp-decisions:before {
+  content: "\f10f";
+}
+.aui-iconfont-bp-default:before {
+  content: "\f110";
+}
+.aui-iconfont-bp-files:before {
+  content: "\f111";
+}
+.aui-iconfont-bp-requirements:before {
+  content: "\f112";
+}
+.aui-iconfont-bp-howto:before {
+  content: "\f113";
+}
+.aui-iconfont-bp-jira:before {
+  content: "\f114";
+}
+.aui-iconfont-bp-meeting:before {
+  content: "\f115";
+}
+.aui-iconfont-bp-retrospective:before {
+  content: "\f116";
+}
+.aui-iconfont-bp-sharedlinks:before {
+  content: "\f117";
+}
+.aui-iconfont-bp-troubleshooting:before {
+  content: "\f118";
+}
+.aui-iconfont-build:before {
+  content: "\f119";
+}
+.aui-iconfont-calendar:before {
+  content: "\f11a";
+}
+.aui-iconfont-close-dialog:before {
+  content: "\f11b";
+}
+.aui-iconfont-collapsed:before {
+  content: "\f11c";
+}
+.aui-iconfont-comment:before {
+  content: "\f11d";
+}
+.aui-iconfont-configure:before {
+  content: "\f11e";
+}
+.aui-iconfont-confluence:before {
+  content: "\f11f";
+}
+.aui-iconfont-copy-clipboard:before {
+  content: "\f120";
+}
+.aui-iconfont-custom-bullet:before {
+  content: "\f121";
+}
+.aui-iconfont-delete:before {
+  content: "\f122";
+}
+.aui-iconfont-deploy:before {
+  content: "\f123";
+}
+.aui-iconfont-details:before {
+  content: "\f124";
+}
+.aui-iconfont-devtools-arrow-left:before {
+  content: "\f125";
+}
+.aui-iconfont-devtools-arrow-right:before {
+  content: "\f126";
+}
+.aui-iconfont-devtools-branch:before {
+  content: "\f127";
+}
+.aui-iconfont-devtools-branch-small:before {
+  content: "\f128";
+}
+.aui-iconfont-devtools-browse-up:before {
+  content: "\f129";
+}
+.aui-iconfont-devtools-checkout:before {
+  content: "\f12a";
+}
+.aui-iconfont-devtools-clone:before {
+  content: "\f12b";
+}
+.aui-iconfont-devtools-commit:before {
+  content: "\f12c";
+}
+.aui-iconfont-devtools-compare:before {
+  content: "\f12d";
+}
+.aui-iconfont-devtools-file:before {
+  content: "\f12e";
+}
+.aui-iconfont-devtools-file-binary:before {
+  content: "\f12f";
+}
+.aui-iconfont-devtools-file-commented:before {
+  content: "\f130";
+}
+.aui-iconfont-devtools-folder-closed:before {
+  content: "\f131";
+}
+.aui-iconfont-devtools-folder-open:before {
+  content: "\f132";
+}
+.aui-iconfont-devtools-fork:before {
+  content: "\f133";
+}
+.aui-iconfont-devtools-pull-request:before {
+  content: "\f134";
+}
+.aui-iconfont-devtools-repository:before {
+  content: "\f135";
+}
+.aui-iconfont-devtools-repository-forked:before {
+  content: "\f136";
+}
+.aui-iconfont-devtools-repository-locked:before {
+  content: "\f137";
+}
+.aui-iconfont-devtools-side-diff:before {
+  content: "\f138";
+}
+.aui-iconfont-devtools-submodule:before {
+  content: "\f139";
+}
+.aui-iconfont-devtools-tag:before {
+  content: "\f13a";
+}
+.aui-iconfont-devtools-tag-small:before {
+  content: "\f13b";
+}
+.aui-iconfont-devtools-task-cancelled:before {
+  content: "\f13c";
+}
+.aui-iconfont-devtools-task-disabled:before {
+  content: "\f13d";
+}
+.aui-iconfont-devtools-task-in-progress:before {
+  content: "\f13e";
+}
+.aui-iconfont-doc:before {
+  content: "\f13f";
+}
+.aui-iconfont-down:before {
+  content: "\f140";
+}
+.aui-iconfont-drag-vertical:before {
+  content: "\f141";
+}
+.aui-iconfont-edit:before {
+  content: "\f142";
+}
+.aui-iconfont-edit-small:before {
+  content: "\f143";
+}
+.aui-iconfont-editor-align-center:before {
+  content: "\f144";
+}
+.aui-iconfont-editor-align-left:before {
+  content: "\f145";
+}
+.aui-iconfont-editor-align-right:before {
+  content: "\f146";
+}
+.aui-iconfont-editor-bold:before {
+  content: "\f147";
+}
+.aui-iconfont-editor-color:before {
+  content: "\f148";
+}
+.aui-iconfont-editor-emoticon:before {
+  content: "\f149";
+}
+.aui-iconfont-editor-help:before {
+  content: "\f14a";
+}
+.aui-iconfont-editor-hr:before {
+  content: "\f14b";
+}
+.aui-iconfont-editor-indent:before {
+  content: "\f14c";
+}
+.aui-iconfont-editor-italic:before {
+  content: "\f14d";
+}
+.aui-iconfont-editor-layout:before {
+  content: "\f14e";
+}
+.aui-iconfont-editor-list-bullet:before {
+  content: "\f14f";
+}
+.aui-iconfont-editor-list-number:before {
+  content: "\f150";
+}
+.aui-iconfont-editor-macro-toc:before {
+  content: "\f151";
+}
+.aui-iconfont-editor-mention:before {
+  content: "\f152";
+}
+.aui-iconfont-editor-outdent:before {
+  content: "\f153";
+}
+.aui-iconfont-editor-styles:before {
+  content: "\f154";
+}
+.aui-iconfont-editor-symbol:before {
+  content: "\f155";
+}
+.aui-iconfont-editor-table:before {
+  content: "\f156";
+}
+.aui-iconfont-editor-task:before {
+  content: "\f157";
+}
+.aui-iconfont-editor-underline:before {
+  content: "\f158";
+}
+.aui-iconfont-email:before {
+  content: "\f159";
+}
+.aui-iconfont-error:before {
+  content: "\f15a";
+}
+.aui-iconfont-expanded:before {
+  content: "\f15b";
+}
+.aui-iconfont-file-code:before {
+  content: "\f15c";
+}
+.aui-iconfont-file-doc:before {
+  content: "\f15d";
+}
+.aui-iconfont-file-java:before {
+  content: "\f15e";
+}
+.aui-iconfont-file-pdf:before {
+  content: "\f15f";
+}
+.aui-iconfont-file-ppt:before {
+  content: "\f160";
+}
+.aui-iconfont-file-txt:before {
+  content: "\f161";
+}
+.aui-iconfont-file-wav:before {
+  content: "\f162";
+}
+.aui-iconfont-file-xls:before {
+  content: "\f163";
+}
+.aui-iconfont-file-zip:before {
+  content: "\f164";
+}
+.aui-iconfont-flag:before {
+  content: "\f165";
+}
+.aui-iconfont-focus:before {
+  content: "\f166";
+}
+.aui-iconfont-group:before {
+  content: "\f167";
+}
+.aui-iconfont-handle-horizontal:before {
+  content: "\f168";
+}
+.aui-iconfont-help:before {
+  content: "\f169";
+}
+.aui-iconfont-hipchat:before {
+  content: "\f16a";
+}
+.aui-iconfont-homepage:before {
+  content: "\f16b";
+}
+.aui-iconfont-image:before {
+  content: "\f16c";
+}
+.aui-iconfont-image-extrasmall:before {
+  content: "\f16d";
+}
+.aui-iconfont-image-small:before {
+  content: "\f16e";
+}
+.aui-iconfont-info:before {
+  content: "\f16f";
+}
+.aui-iconfont-jira:before {
+  content: "\f170";
+}
+.aui-iconfont-jira-completed-task:before {
+  content: "\f171";
+}
+.aui-iconfont-jira-test-session:before {
+  content: "\f172";
+}
+.aui-iconfont-like:before {
+  content: "\f173";
+}
+.aui-iconfont-like-small:before {
+  content: "\f174";
+}
+.aui-iconfont-weblink:before {
+  content: "\f175";
+}
+.aui-iconfont-link:before {
+  content: "\f176";
+}
+.aui-iconfont-list-add:before {
+  content: "\f177";
+}
+.aui-iconfont-list-remove:before {
+  content: "\f178";
+}
+.aui-iconfont-locked:before {
+  content: "\f179";
+}
+.aui-iconfont-locked-small:before {
+  content: "\f17a";
+}
+.aui-iconfont-macro-code:before {
+  content: "\f17b";
+}
+.aui-iconfont-macro-default:before {
+  content: "\f17c";
+}
+.aui-iconfont-macro-gallery:before {
+  content: "\f17d";
+}
+.aui-iconfont-macro-status:before {
+  content: "\f17e";
+}
+.aui-iconfont-more:before {
+  content: "\f17f";
+}
+.aui-iconfont-nav-children:before {
+  content: "\f180";
+}
+.aui-iconfont-page-blank:before {
+  content: "\f181";
+}
+.aui-iconfont-page-blogpost:before {
+  content: "\f182";
+}
+.aui-iconfont-page-default:before {
+  content: "\f183";
+}
+.aui-iconfont-page-template:before {
+  content: "\f184";
+}
+.aui-iconfont-pages:before {
+  content: "\f185";
+}
+.aui-iconfont-quote:before {
+  content: "\f186";
+}
+.aui-iconfont-redo:before {
+  content: "\f187";
+}
+.aui-iconfont-remove:before {
+  content: "\f188";
+}
+.aui-iconfont-remove-label:before {
+  content: "\f189";
+}
+.aui-iconfont-review:before {
+  content: "\f18a";
+}
+.aui-iconfont-rss:before {
+  content: "\f18b";
+}
+.aui-iconfont-search:before {
+  content: "\f18c";
+}
+.aui-iconfont-search-small:before {
+  content: "\f18d";
+}
+.aui-iconfont-share:before {
+  content: "\f18e";
+}
+.aui-iconfont-sidebar-link:before {
+  content: "\f18f";
+}
+.aui-iconfont-sourcetree:before {
+  content: "\f190";
+}
+.aui-iconfont-space-default:before {
+  content: "\f191";
+}
+.aui-iconfont-space-personal:before {
+  content: "\f192";
+}
+.aui-iconfont-star:before {
+  content: "\f193";
+}
+.aui-iconfont-success:before {
+  content: "\f194";
+}
+.aui-iconfont-table-bg:before {
+  content: "\f195";
+}
+.aui-iconfont-table-col-left:before {
+  content: "\f196";
+}
+.aui-iconfont-table-col-remove:before {
+  content: "\f197";
+}
+.aui-iconfont-table-col-right:before {
+  content: "\f198";
+}
+.aui-iconfont-table-copy-row:before {
+  content: "\f199";
+}
+.aui-iconfont-table-cut-row:before {
+  content: "\f19a";
+}
+.aui-iconfont-table-header-column:before {
+  content: "\f19b";
+}
+.aui-iconfont-table-header-row:before {
+  content: "\f19c";
+}
+.aui-iconfont-table-merge:before {
+  content: "\f19d";
+}
+.aui-iconfont-table-no-bg:before {
+  content: "\f19e";
+}
+.aui-iconfont-table-paste-row:before {
+  content: "\f19f";
+}
+.aui-iconfont-table-remove:before {
+  content: "\f1a0";
+}
+.aui-iconfont-table-row-down:before {
+  content: "\f1a1";
+}
+.aui-iconfont-table-row-remove:before {
+  content: "\f1a2";
+}
+.aui-iconfont-table-row-up:before {
+  content: "\f1a3";
+}
+.aui-iconfont-table-split:before {
+  content: "\f1a4";
+}
+.aui-iconfont-teamcals:before {
+  content: "\f1a5";
+}
+.aui-iconfont-time:before {
+  content: "\f1a6";
+}
+.aui-iconfont-undo:before {
+  content: "\f1a7";
+}
+.aui-iconfont-unfocus:before {
+  content: "\f1a8";
+}
+.aui-iconfont-unlocked:before {
+  content: "\f1a9";
+}
+.aui-iconfont-unstar:before {
+  content: "\f1aa";
+}
+.aui-iconfont-unwatch:before {
+  content: "\f1ab";
+}
+.aui-iconfont-up:before {
+  content: "\f1ac";
+}
+.aui-iconfont-user:before {
+  content: "\f1ad";
+}
+.aui-iconfont-user-status:before {
+  content: "\f1ae";
+}
+.aui-iconfont-view:before {
+  content: "\f1af";
+}
+.aui-iconfont-view-card:before {
+  content: "\f1b0";
+}
+.aui-iconfont-view-list:before {
+  content: "\f1b1";
+}
+.aui-iconfont-view-table:before {
+  content: "\f1b2";
+}
+.aui-iconfont-warning:before {
+  content: "\f1b3";
+}
+.aui-iconfont-watch:before {
+  content: "\f1b4";
+}
+.aui-iconfont-workbox:before {
+  content: "\f1b5";
+}
+.aui-iconfont-workbox-empty:before {
+  content: "\f1b6";
+}
+.aui-iconfont-configure-columns:before {
+  content: "\f1b7";
+}
+.aui-iconfont-export:before {
+  content: "\f1b8";
+}
+.aui-iconfont-export-list:before {
+  content: "\f1b9";
+}
+.aui-iconfont-file-image:before {
+  content: "\f1ba";
+}
+.aui-iconfont-admin-fusion:before {
+  content: "\f1bb";
+}
+.aui-iconfont-admin-jira-fields:before {
+  content: "\f1bc";
+}
+.aui-iconfont-admin-issue:before {
+  content: "\f1bd";
+}
+.aui-iconfont-admin-notifications:before {
+  content: "\f1be";
+}
+.aui-iconfont-admin-roles:before {
+  content: "\f1bf";
+}
+.aui-iconfont-admin-jira-screens:before {
+  content: "\f1c0";
+}
+.aui-iconfont-pause:before {
+  content: "\f1c1";
+}
+.aui-iconfont-priority-highest:before {
+  content: "\f1c2";
+}
+.aui-iconfont-priority-high:before {
+  content: "\f1c3";
+}
+.aui-iconfont-priority-medium:before {
+  content: "\f1c4";
+}
+.aui-iconfont-priority-low:before {
+  content: "\f1c5";
+}
+.aui-iconfont-priority-lowest:before {
+  content: "\f1c6";
+}
+.aui-iconfont-refresh-small:before {
+  content: "\f1c7";
+}
+.aui-iconfont-share-list:before {
+  content: "\f1c8";
+}
+.aui-iconfont-switch-small:before {
+  content: "\f1c9";
+}
+.aui-iconfont-version:before {
+  content: "\f1ca";
+}
+.aui-iconfont-workflow:before {
+  content: "\f1cb";
+}
+.aui-iconfont-admin-jira-settings:before {
+  content: "\f1cc";
+}
+.aui-iconfont-component:before {
+  content: "\f1cd";
+}
+.aui-iconfont-reopen:before {
+  content: "\f1ce";
+}
+.aui-iconfont-roadmap:before {
+  content: "\f1cf";
+}
+.aui-iconfont-deploy-success:before {
+  content: "\f1d0";
+}
+.aui-iconfont-deploy-fail:before {
+  content: "\f1d1";
+}
+.aui-iconfont-file-generic:before {
+  content: "\f1d2";
+}
+.aui-iconfont-arrow-down:before {
+  content: "\f1d3";
+}
+.aui-iconfont-arrow-up:before {
+  content: "\f1d4";
+}
+.aui-iconfont-file-video:before {
+  content: "\f1d5";
+}
+.aui-iconfont-filter:before {
+  content: "\f1d6";
+}
+.aui-iconfont-table-copy-column:before {
+  content: "\f1d7";
+}
+.aui-iconfont-table-paste-column:before {
+  content: "\f1d8";
+}
+.aui-iconfont-table-cut-column:before {
+  content: "\f1d9";
+}
+.aui-iconfont-maximise-small:before {
+  content: "\f1da";
+}
+.aui-iconfont-minimise-small:before {
+  content: "\f1db";
+}
+.aui-iconfont-more-small:before {
+  content: "\f1dc";
+}
+.aui-iconfont-move-small:before {
+  content: "\f1dd";
+}
+.aui-iconfont-download:before {
+  content: "\f1de";
+}
+.aui-iconfont-upload:before {
+  content: "\f1df";
+}
+.aui-iconfont-version-unreleased:before {
+  content: "\f1e0";
+}
+.aui-iconfont-puzzle:before {
+  content: "\f1e1";
+}
+.aui-iconfont-editor-files:before {
+  content: "\f1e2";
+}
+.aui-iconfont-bp-sprint:before {
+  content: "\f1e3";
+}
+.aui-iconfont-jira-issues:before {
+  content: "\f1e4";
+}
+.aui-iconfont-bitbucket:before {
+  content: "\f1e5";
+}
+.aui-iconfont-blogroll-large:before {
+  content: "\f1e6";
+}
+.aui-iconfont-email-large:before {
+  content: "\f1e7";
+}
+.aui-iconfont-layout-1col-large:before {
+  content: "\f1e8";
+}
+.aui-iconfont-layout-2col-large:before {
+  content: "\f1e9";
+}
+.aui-iconfont-layout-2col-left-large:before {
+  content: "\f1ea";
+}
+.aui-iconfont-layout-2col-right-large:before {
+  content: "\f1eb";
+}
+.aui-iconfont-layout-3col-center-large:before {
+  content: "\f1ec";
+}
+.aui-iconfont-layout-3col-large:before {
+  content: "\f1ed";
+}
+.aui-iconfont-nav-children-large:before {
+  content: "\f1ee";
+}
+.aui-iconfont-pages-large:before {
+  content: "\f1ef";
+}
+.aui-iconfont-sidebar-link-large:before {
+  content: "\f1f0";
+}
+.aui-iconfont-teamcals-large:before {
+  content: "\f1f1";
+}
+.aui-iconfont-user-large:before {
+  content: "\f1f2";
+}
+/* Fonts and line heights */
+/* Primary Colors */
+/* Secondary Colors */
+/* Derivative Colors */
+/* Fonts and line heights */
+/* 30px - using ems so the fields increase in line with user specified font-sizes */
