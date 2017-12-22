@@ -648,10 +648,10 @@ export class CellComp extends Component {
         }
 
         let cbSelectionIsFunc = typeof colDef.checkboxSelection === 'function';
-        let rowDraggableIsFunc = typeof colDef.rowDraggable === 'function';
+        let rowDraggableIsFunc = typeof colDef.rowDrag === 'function';
 
         this.includeSelectionComponent = cbSelectionIsFunc || colDef.checkboxSelection===true;
-        this.includeRowDraggingComponent = rowDraggableIsFunc || colDef.rowDraggable===true;
+        this.includeRowDraggingComponent = rowDraggableIsFunc || colDef.rowDrag===true;
 
         this.usingWrapper = this.includeRowDraggingComponent || this.includeSelectionComponent;
     }
