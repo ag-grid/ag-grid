@@ -31,7 +31,6 @@
             "Custom Filter",
             "Date Filter",
             "External Filter",
-            "Row Dragging",
             "Keyboard Navigation",
             "Layout For Print",
             "Number Filter",
@@ -39,6 +38,7 @@
             "Quick Filter",
             "Row Selection",
             "Row Sorting",
+            "Row Dragging",
             "Text Filter",
             "Touch Support"
         ]
