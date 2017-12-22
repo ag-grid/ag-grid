@@ -1,5 +1,6 @@
 import './main.scss';
 import {$, lazyload, AnchorJS, Prism, initCookieDisclaimer} from '../common/vendor';
+import './pipeline.ts';
 
 function resetIndent(str) {
     const leadingWhitespace = str.match(/^\n?( +)/);
