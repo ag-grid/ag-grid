@@ -159,7 +159,7 @@ meta_and_links($title, $keywords, $description, false);
                 <img src="_assets/fw-logos/webpack.svg" />
                 <div class="media-body">
                     <h3>Webpack</h3>
-                    <p><a href="#">Read about ag-Grid's Partnership with webpack.</a></p>
+                    <p><a href="/ag-grid-partners-with-webpack/">Read about ag-Grid's Partnership with webpack.</a></p>
                 </div>
             </div>
 
@@ -190,30 +190,29 @@ meta_and_links($title, $keywords, $description, false);
             <div class="demos">
                 <div id="demo-1" class="demo current">
                     <?php include 'home/demo-1.php' ?>
-
                     <div class="view-code">
-                        <a href="#">View Code</a>
+                        <a href="/javascript-getting-started#summary">View Code</a>
                     </div>
                 </div>
 
                 <div id="demo-2" class="demo">
                     <?php include 'home/demo-2.php' ?>
                     <div class="view-code">
-                        <a href="#">View Code</a>
+                        <a href="/ag-grid-trader-dashboard/">View Code</a>
                     </div>
                 </div>
 
                 <div id="demo-3" class="demo">
                     <?php include 'home/demo-api.php' ?>
                     <div class="view-code">
-                        <a href="#">View Code</a>
+                        <a href="/javascript-grid-animation/">View Code</a>
                     </div>
                 </div>
 
                 <div id="demo-4" class="demo">
                     <?php include 'home/file-browser.php' ?>
                     <div class="view-code">
-                        <a href="#">View Code</a>
+                        <a href="/example-file-browser/">View Code</a>
                     </div>
                 </div>
             </div>
