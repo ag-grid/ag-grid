@@ -140,7 +140,7 @@ We offer three flavors &ndash; <strong>Single Application Developer</strong>, <s
                 </div>
                 </div>
 
-                <p> <a href="/javascript-grid-getting-started/">An open source version with smaller set of features</a> is also available, free of charge.</p>
+                <p> <a href="/javascript-grid-getting-started/">An open source ag-Grid version with less features</a> is also available, free of charge.</p>
 
                 <h2 class="small-block">Which License Should You Choose? </h2>
 

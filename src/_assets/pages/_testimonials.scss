@@ -1,0 +1,31 @@
+#page-testimonials {
+    blockquote {
+        @extend .blockquote;
+        padding-bottom: 2rem;
+        margin-bottom: 3rem;
+        border-bottom: 1px solid $border-color;
+
+
+        p {
+            margin-top: 1rem;
+            &:before {
+                content: '\201C';
+            }
+
+            &:after {
+                content: '\201D';
+            }
+        }
+
+        footer {
+            @extend .blockquote-footer;
+            color: $gray-600;
+
+            .position {
+                font-size: 0.9rem;
+                color: $gray-500;
+                display: block;
+            }
+        }
+    }
+}
