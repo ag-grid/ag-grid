@@ -532,8 +532,16 @@
         "url": "example-angular-rxjs/"
       },
       {
-        "title": "Angular Third Party",
-        "url": "example-angular-third-party/"
+        "title": "Angular & Material Design",
+        "url": "example-angular-material-design/"
+      },
+      {
+        "title": "Angular & ngx Bootstrap",
+        "url": "example-angular-ngx-bootstrap/"
+      },
+      {
+        "title": "Angular with Typeahead",
+        "url": "example-angular-typeahead/"
       },
       {
         "title": "Styled Report",
