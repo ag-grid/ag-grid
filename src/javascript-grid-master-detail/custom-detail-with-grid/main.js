@@ -8,7 +8,6 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: rowData,
     masterDetail: true,
     detailRowHeight: 260,
     detailCellRenderer: "myDetailCellRenderer",
