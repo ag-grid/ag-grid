@@ -112,7 +112,7 @@ var gridOptions = {
         minWidth: 50
     },
     enableCellChangeFlash: true,
-    rowDragFiresEvents: true,
+    // rowDragFiresEvents: true,
     // ensureDomOrder: true,
     // postProcessPopup: function(params) {
     //     console.log(params);
@@ -339,7 +339,7 @@ var defaultCols = [
         children: [
             {
                 headerName: 'Name',
-                rowDraggable: true,
+                rowDrag: true,
                 field: 'name',
                 width: 200,
                 editable: true,

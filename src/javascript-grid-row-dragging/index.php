@@ -15,6 +15,12 @@ include '../documentation-main/documentation_header.php';
     <p>
     </p>
 
+    <?= example('Simple Example', 'simple', 'generated') ?>
+
+    <?= example('Events Example', 'events', 'generated') ?>
+
+    <?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1)) ?>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
