@@ -3,10 +3,10 @@ $navKey = "licenseAndPricing";
 include_once 'includes/html-helpers.php';
 ?>
 <!DOCTYPE html>
-<html class="stretch-html">
+<html>
 <head lang="en">
 <?php
-meta_and_links("ag-Grid License and Pricing", "ag-Grid Javascript Grid License and Pricing", "License and Pricing details for ag-Grid", false);
+meta_and_links("ag-Grid License and Pricing", "ag-Grid Javascript Grid License and Pricing", "License and Pricing details for ag-Grid", true);
 ?>
 
 <!-- Facebook Pixel Code -->
@@ -25,7 +25,11 @@ src="https://www.facebook.com/tr?id=512303249109564&ev=PageView&noscript=1"
 <!-- DO NOT MODIFY -->
 <!-- End Facebook Pixel Code -->
 
-<link rel="stylesheet" href="../dist/homepage.css">
+<link rel="stylesheet" href="dist/homepage.css">
+
+<style>
+</style>
+
 </head>
 
 <body ng-app="index">
@@ -58,31 +62,17 @@ include './includes/navbar.php';
 </header>
 
 <div class="info-page">
-
     <div class="row">
-        <div class="col-md-12">
-
+        <section>
             <div id="thankyou" style="display: none"> Thank you for contacting ag-Grid. We'll be in contact shortly.  </div>
 
             <h1>License and Pricing for ag-Grid Enterprise</h1>
 
-            <div class="inline-container">
-            <div class="row">
-                <div class="col-md-8">
-
-                    <p>
-                        <strong>ag-Grid Enterprise</strong> is our commercial product that is designed for Enterprise development teams. 
-                    </p>   
-
-                        <p>The commercial licenses are <strong>perpetual</strong> and include <strong>one year</strong> of support, maintenance and upgrades.</p>
-                
-                    <p>We offer three flavors &ndash; <strong>Single Application Developer</strong>, <strong>Multiple Application Developer</strong> and <strong>SaaS / OEM</strong>.</p>
-
-                </div>
-
-                <div class="col-md-3 offset-md-1"><!-- placeholder --></div>
-</div>
-            </div>
+            <p class="lead">
+                <strong>ag-Grid Enterprise</strong> is our commercial product that is designed for Enterprise development teams. 
+                The commercial licenses are <strong>perpetual</strong> and include <strong>one year</strong> of support, maintenance and upgrades.
+We offer three flavors &ndash; <strong>Single Application Developer</strong>, <strong>Multiple Application Developer</strong> and <strong>SaaS / OEM</strong>.
+            </p>   
 
                 <div class="inline-container">
 
@@ -163,23 +153,87 @@ include './includes/navbar.php';
                 <h3 class="license-question">&mdash; Is your application for an internal or external end-user?</h3>
 
                 <p>If external, then you also need SaaS or OEM licensing.</p>
-    
+
                 <p>If you still need help figuring out which one of the above is most suitable for your case, <a href="mailto:accounts@ag-grid.com?Subject=ag-Grid%20Enquiry">contact us.</a></p>
-        </div>
 
 
-        <?php // include("includes/commonQuestions.php"); ?>
+                <hr>
+
+                <h2>Frequently Asked Questions</h2>
+
+                <dl id="faq">
+                <dt>What is the difference between Single Application Developer License and Multiple Application Developer License?</dt>
+                <dd>
+                    <p>
+                        Single Application developer license ties the license to <strong>one particular application</strong> within your organisation.
+                        A typical example is <strong>5 licenses</strong> to cover an application with <strong>5 developers</strong> working concurrently on it.
+                        This is best if you a) have only one (or a fixed number) of applications you need to license or b) you
+                        want to <strong>charge the license</strong> to a particular project(s).
+                    </p>
+
+                    <p>
+                        Multiple Application developer license allows unlimited applications to be developed by a fixed number of developers.
+                        A typical example is 5 license to cover an <strong>unlimited number of applications</strong> with 5 developers working
+                        across all applications concurrently. Use site license if you want to cover a group
+                        of developers developing any number of applications.
+                    </p>
+                </dd>
+
+                <dt>What are OEM and SaaS Licenses?</dt>
+                <dd>
+                    <p>
+                        SaaS is <a href="https://en.wikipedia.org/wiki/Software_as_a_service">Software as a Service</a>.
+                        If you will be <strong>selling
+                        ag-Grid</strong> as part of a SaaS then you require an additional SaaS license.
+                    </p>
+
+                    <p>
+                        OEM is <a href="https://en.wikipedia.org/wiki/Original_equipment_manufacturer">Original Equipment
+                            Manufacturer</a>. If you will be <strong>selling
+                        ag-Grid</strong> as part of your product then you require additional OEM license.
+                    </p>
+                </dd>
+
+                <dt>Do developers have to be named?</dt>
+                <dd>
+                    <p>
+                        No. If you license an application you provide the number of developers working on that application.
+                        We trust that you do not go over the number of concurrent developers on that application at any
+                        given time. Developers moving on and off projects is expected to be normal.
+                    </p>
+                </dd>
+
+                <dt>What does perpetual mean?</dt>
+                <dd>
+                    <p>
+                        The perpetual nature of the Enterprise license means you can continue to use the version of
+                        <strong>ag-Grid Enterprise</strong>, plus any release for one year, indefinitely. There is no requirement to
+                        pay again to continue using the software. However if you wish to keep up to date with the
+                        latest versions of <strong>ag-Grid</strong> after one year and continue with support, you must extend the
+                        license.
+                    </p>
+                </dd>
+
+                <dt>Do you provide bulk or other license types?</dt>
+                <dd>
+                    <p>
+                        Yes. Get in touch and tell us what you are looking for. We are always open to dicussion and will propose what we think is fair.
+                    </p>
+                </dd>
+                </dl>
+    </section>
     </div>
 </div>
-
 
 <!-- The Order Form Modal -->
 <div class="modal fade orderForm-applicationDeveloper" tabindex="-1" role="dialog" aria-labelledby="orderFormLabel">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title">Order Enquiry</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         <div class="modal-body">
             <?php 
@@ -195,8 +249,10 @@ include './includes/navbar.php';
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title">Order Enquiry</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         <div class="modal-body">
             <?php 
@@ -212,8 +268,10 @@ include './includes/navbar.php';
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <h4 class="modal-title">Order Enquiry</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
         </div>
         <div class="modal-body">
             <?php 
@@ -234,8 +292,6 @@ if(window.location.href.indexOf("/license-pricing.php?submitted=true") !=-1)
 (new Image()).src="//www.googleadservices.com/pagead/conversion/873243008/?label=8TOnCM7BnWsQgMOyoAM&guid=ON&script=0";
 }
 </script>
-
+<script src="dist/homepage.js"></script>
 </body>
-
-
 </html>

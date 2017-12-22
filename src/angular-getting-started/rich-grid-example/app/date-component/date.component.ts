@@ -24,7 +24,7 @@ export class DateComponent implements IDateAngularComp {
     }
 
     // when the date filter X is clicked on the date fields clear as expected, but the filter doesn't update
-    // how should this work? todo alboert
+    // how should this work? todo alberto
     onResetDate() {
         this.dd = '';
         this.mm = '';

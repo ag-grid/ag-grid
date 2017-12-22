@@ -3,29 +3,26 @@
         <div>
             <h5>Documentation</h5>
             <ul>
-                <li><a href="#">Getting Started</a></li>
-                <li><a href="#">Features</a></li>
-                <li><a href="#">Changelog</a></li>
-                <li><a href="#">Pipeline</a></li>
+                <li><a href="/javascript-grid-getting-started/">Getting Started</a></li>
+                <li><a href="/ag-grid-changelog/">Changelog</a></li>
+                <li><a href="/ag-grid-pipeline/">Pipeline</a></li>
             </ul>
         </div>
 
         <div>
             <h5>Support &amp; Community</h5>
             <ul>
-                <li><a href="#">Forum</a></li>
-                <li><a href="#">Stack Overflow</a></li>
-                <li><a href="#">License &amp; Pricing</a></li>
+                <li><a href="http://stackoverflow.com/questions/tagged/ag-grid">Stack Overflow</a></li>
+                <li><a href="/license-pricing.php">License &amp; Pricing</a></li>
             </ul>
         </div>
-
         <div>
             <h5>The Company</h5>
             <ul>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Team</a></li>
-                <li><a href="#">Blog</a></li>
-                <li><a href="#">Testimonials</a></li>
+                <li><a href="/about.php">About</a></li>
+                <li><a href="/about.php#team">Team</a></li>
+                <li><a href="/media/media.php">Blog</a></li>
+                <li><a href="/testimonials.php">Testimonials</a></li>
             </ul>
         </div>
 
