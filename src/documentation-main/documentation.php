@@ -47,7 +47,8 @@ include 'documentation_header.php';
     <div>
     <h2>Deal With Large Data Sets Easily</h2>
     <p>
-        The grid supports many ways to load data like <strong>pagination</strong> and <strong>virtual scrolling</strong>. 
+        The grid supports many ways to load data including <strong>infinite scrolling</strong>
+        and <strong>lazy loading</strong> of group data.
         Learn how to apply these techniques to manage large amounts of data.
     </p>
 
