@@ -8,11 +8,11 @@
     "author": "sophia"
   },
   {
-    "title": "Building a CRUD Application with ag-Grid - Part 1",
-    "summary": "Welcome to the first part of the ultimate series on how to build CRUD applications with ag-Grid!",
-    "link": "../ag-grid-datagrid-crud-part-1/",
+    "title": "Building a CRUD Application with ag-Grid - Part 2",
+    "summary": "In Part 2 of this Series, we go into more detail into the Middle Tier, exposing our data via a REST service.  ",
+    "link": "../ag-grid-datagrid-crud-part-2/",
     "img": "../ag-grid-datagrid-crud-part-1/crud_overview.png",
-    "date": "24 October 2017",
+    "date": "07 November 2017",
     "author": "sean"
   },
   {
@@ -22,6 +22,14 @@
     "img": "../change-log/v14/v14-200.png",
     "date": "02 November 2017",
     "author": "niall"
+  },
+  {
+    "title": "Building a CRUD Application with ag-Grid - Part 1",
+    "summary": "Welcome to the first part of the ultimate series on how to build CRUD applications with ag-Grid!",
+    "link": "../ag-grid-datagrid-crud-part-1/",
+    "img": "../ag-grid-datagrid-crud-part-1/crud_overview.png",
+    "date": "24 October 2017",
+    "author": "sean"
   },
   {
     "title": " 8 Performance Hacks for JavaScript",
