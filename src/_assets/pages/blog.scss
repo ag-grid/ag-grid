@@ -70,3 +70,13 @@
         border-bottom: 1px solid $border-color;
     }
 }
+
+.blog-author {
+    color: $secondary;
+    font-weight: 300;
+}
+
+.large-cover-img {
+    @extend .img-fluid;
+    margin-bottom: 2rem;
+}

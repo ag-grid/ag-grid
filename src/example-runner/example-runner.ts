@@ -586,7 +586,7 @@ docs.directive('showSources', function() {
                         .then(function(response) {
                             const language = $attrs.language ? $attrs.language : 'js';
                             const content = $attrs.highlight ? HighlightService.highlight(response.data, language) : response.data;
-                            $scope.extraPageContent[file] = $sce.trustAsHtml('<code><pre>' + content + '</code></pre>');
+                            $scope.extraPageContent[file] = $sce.trustAsHtml('<pre class="language-' + language + '"><code>' + content + '</code></pre>');
                         })
                         .catch(function(response) {
                             $scope.extraPageContent[file] = response.data;

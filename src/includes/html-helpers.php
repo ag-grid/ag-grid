@@ -53,4 +53,15 @@ META;
     <link rel="shortcut icon" href="{$prefix}_assets/favicons/favicon.ico">
 META;
 }
+
+function docScripts() {
+    echo <<<SCRIPT
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-cookies.min.js"></script>
+<script src="../documentation-main/documentation.js"></script>
+<script src="../dist/docs.js"></script>
+SCRIPT;
+}
 ?>
+
+

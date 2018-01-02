@@ -11,6 +11,7 @@
 
 <?php include_once($rootFolder."/includes/footer.php"); ?>
 <?php include_once($rootFolder."/includes/analytics.php"); ?>
+<?php docScripts(); ?>
 
 </body>
 </html>
