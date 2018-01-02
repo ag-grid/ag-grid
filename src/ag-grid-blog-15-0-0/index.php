@@ -9,11 +9,12 @@ $socialImage = "https://www.ag-grid.com/ag-grid-blog-15-0-0/img15-0-0.png";
 include('../includes/mediaHeader.php');
 ?>
 
-<div class="container-fluid">
+<div>
 
     <!-- <link rel="stylesheet" href="../documentation-main/documentation.css"> -->
-    <h1 style='font-size: 70px;'>Happy New ag-Grid v15.0.0</h1>
-    <p style='display: inline'>Sophia Lazarova | 13th December 2017</p>
+    <h1>Happy New ag-Grid v15.0.0</h1>
+    <p class="blog-author">Sophia Lazarova | 13th December 2017</p>
+
     <div>
         <a href="https://twitter.com/share" class="twitter-share-button"
             data-url="https://www.ag-grid.com/ag-grid-blog-15-0-0/"
@@ -30,10 +31,13 @@ include('../includes/mediaHeader.php');
             }(document, 'script', 'twitter-wjs');</script>
     </div>
 
-    <img src="cover15-0-0.png" width='94%'/>
-    <div style="margin-top: 20px;" class="col-md-8">
+    <img src="cover15-0-0.png" class="large-cover-img">
+<div class="row">
+    <div class="col-md-8">
     
-        <h3><strong>Winter is finally here and it's packed with snow, Christmas spirit and the new version of ag-Grid!</strong></h3>
+<p class="lead">
+    Winter is finally here and it's packed with snow, Christmas spirit and the new version of ag-Grid!
+</p>
         
         <p>The end of the year is traditionally a time for retrospectives, this is why our last release for 2017 is dedicated to cleaning our bug backlog. Of course, we  also have a few Christmas surprises with <b>v15.0.0</b>!</p>
         
@@ -113,28 +117,14 @@ include('../includes/mediaHeader.php');
             </table>
         </div>
     </div>
+
+<?php 
+    include '../blog-authors/sophia.php';
+?>
+
+</div>
     
 
-    <div class="col-md-3" style="font-size: 14px; background-color: #efefef; padding: 15px;margin-top: 40px;margin-left:15px;">
-        <p>
-            <img src="/images/team/sophia.jpg" width="100%"/>
-        </p>
-        <p style="font-weight: bold;">
-            Sophia Lazarova
-        </p>
-        <p>
-            Sophia recently switched her carreer path from being a developer to becoming member of the ag-Grid team as a Developer Advocate.
-            She is interested in various areas of the programming but her tech passion is the mobile world and the mobile technologies.
-            In her "not a techie time" you can find her buying plane tickets and planning her next adventures.
-        </p>
-
-        <div>
-            <br/>
-            <a href="https://twitter.com/sophialazarova" class="twitter-follow-button" data-show-count="false" data-size="large">@sophialazarova</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-        </div>
-
-    </div>
 </div>
 
 
@@ -154,10 +144,6 @@ include('../includes/mediaHeader.php');
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 <hr/>
-
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

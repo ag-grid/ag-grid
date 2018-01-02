@@ -1,32 +1,43 @@
 <?php
-$navKey = "about";
-include_once '../includes/html-helpers.php';
-?>
-<!DOCTYPE html>
-<html>
-<head lang="en">
-<?php
+
+$pageTitle = "Jobs at ag-Grid";
+$pageDescription = "We are looking for the best and the brightest to join us on our mission to create the best datagrid in the world.";
+$pageKeyboards = "ag-Grid jobs";
+
 $socialUrl = "https://www.ag-grid.com/ag-grid-jobs-board/";
 $socialImage = "https://www.ag-grid.com/ag-grid-jobs-board/images/jobs_board.png";
 
-meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best and the brightest to join us on our mission to create the best datagrid in the world.", false);
+include('../includes/jobsHeader.php');
 ?>
-<link rel="stylesheet" href="../dist/homepage.css">
-</head>
-<body>
-<header id="nav" class="compact">
-<?php 
-    $version = 'latest';
-    include '../includes/navbar.php';
-?>
-</header>
 
-<div class="info-page">
-    <div class="row">
-        <div class="col-md-12">
+<style>
+    .job {
+        border: 2px solid #eee;
+        padding-left: 10px;
+        margin-top: 20px;
+        display: inline-block;
+        background: #fafafa;
+    }
 
+    .job-title {
+        font-size: 25px;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .job-location {
+        font-size: 16px;
+        font-weight: bold;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
         <h1>Working at ag-Grid</h1>
+    </div>
+</div>
 
+<div class="row">
+    <div class="col-md-9">
         <p>
         ag-Grid is used by thousands of banks, insurance companies, government agencies and blue chip software companies all over the world. Our customers rely on us to be experts in our field of data grids and integration with various frameworks. Following a very succesful introduction to the market in March 2016, we are rapidly expanding into 2018 to challenge the market with our superior product. As a provider of a leading software library, we stay ahead of the curve and are experts in JavaScript and associated libraries such as Angular, React, Vue, Aurelia and Web Components.
         </p>
@@ -51,13 +62,19 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
 
         <h2>How to Apply</h2>
         <p>
-        If you think this sounds like the place for you, please send your CV to <a href="mailto:info@ag-grid.com">info@ag-grid.com</a>.
+        If you think this sounds like the place for you, please send your CV to info@ag-grid.com
         </p>
         <h2>Current Opportunities</h2>
+    </div>
+</div>
 
+<div class="row">
+    <div class="col-md-9">
         <div class="job">
-            <h3> Customer Success Engineer (Various Levels)</h3>
-            <p class="lead">London, UK.</p>
+            <p class="job-title">
+                Customer Success Engineer (Various Levels)
+                <span class="job-location">London, UK.</span>
+            </p>
 
             <p>
                 ag-Grid has almost 900 customers that periodically require assistance using ag-Grid. As a customer success engineer, you will become expert in ag-Grid and associated JavaScript libraries (React, Angular etc.) to ensure customers with queries are assisted. In addition, you will create and improve our documenation and video content to improve customer knowledge. Through this role, you will learn how to use ag-Grid as well as being exposed to the development teams of some of the world's largest companies. This is ideal for people at all levels to improve their all round skills.
@@ -83,10 +100,16 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
             </ul>
             </p>
         </div>
+    </div>
+</div>
 
+<div class="row">
+    <div class="col-md-9">
         <div class="job">
-                <h3>Customer Experience Representative</h3>
-                <p class="lead">London, UK.</p>
+            <p class="job-title">
+                Customer Experience Representative
+                <span class="job-location">London, UK.</span>
+            </p>
 
             <p>
                 You will be on the frontlines dealing directly with these companies through inbound sales enquiries. 
@@ -118,10 +141,16 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
             </ul>
             </p>
         </div>
+    </div>
+</div>
 
+<div class="row">
+    <div class="col-md-9">
         <div class="job">
-                <h3>JavaScript Web Developer (Various Levels)</h3>
-                <p class="lead">London, UK.</p>
+            <p class="job-title">
+                JavaScript Web Developer (Various Levels)
+                <span class="job-location">London, UK.</span>
+            </p>
 
             <p>
                 Our website has over 140,000 visitors per month and growing. As part of our growth strategy, 
@@ -148,10 +177,16 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
             </ul>
             </p>
         </div>
+    </div>
+</div>
 
+<div class="row">
+    <div class="col-md-9">
         <div class="job">
-                <h3>JavaScript Enterprise Developer</h3>
-                <p class="lead">London, UK.</p>
+            <p class="job-title">
+                JavaScript Enterprise Developer
+                <span class="job-location">London, UK.</span>
+            </p>
 
             <p>
                 ag-Grid is one of the worlds leading JavaScript grid libraries used in thousands 
@@ -184,10 +219,16 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
             </ul>
             </p>
         </div>
+    </div>
+</div>
 
+<div class="row">
+    <div class="col-md-9">
         <div class="job">
-                <h3>Developer Advocate</h3>
-                <p class="lead">London, UK.</p>
+            <p class="job-title">
+                Developer Advocate
+                <span class="job-location">London, UK.</span>
+            </p>
 
             <p>
                 Part of the success of ag-Grid is due to the online content and conference attendance spreading
@@ -215,16 +256,19 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
                 <li>Blog / tutorial skills.</li>
                 <li>Video editing advantage.</li>
                 <li>Web design advantage.</li>
-                <li>Experience with JavaScript &amp; Frameworks (Angular, React etc).</li>
+                <li>Experience with JavaScript & Frameworks (Angular, React etc).</li>
             </ul>
             </p>
-        </div>
-
         </div>
     </div>
 </div>
 
-<?php include_once("../includes/footer.php"); ?>
-<?php include_once("../includes/analytics.php"); ?>
-</body>
-</html>
+<hr/>
+
+<footer class="license">
+    © ag-Grid Ltd. 2015-2017
+</footer>
+
+<?php
+include('../includes/mediaFooter.php');
+?>

@@ -65,6 +65,10 @@ $(function() {
     }
 
     $(window).on('scroll', function(e) {
+        if (!breakpoints.length) {
+            return;
+        }
+        
         var scrollBottom = $(window).scrollTop();
         var i = 0;
 

@@ -1,5 +1,25 @@
 <?php
 function meta_and_links($title, $keywords, $description, $root = false) {
+    $socialImage = $GLOBALS['socialImage'];
+    if ($socialImage) {
+        $socialImageMeta = <<<META
+    <meta property="og:image" content="$socialImage" />
+    <meta name="twitter:image" content="$socialImage" />
+META;
+    } else {
+        $socialImageMeta = '';
+    }
+
+    $socialUrl = $GLOBALS['socialUrl'];
+    if ($socialUrl) {
+        $socialUrlMeta = <<<META
+    <meta property="og:image" content="$socialUrlMeta" />
+    <meta name="twitter:image" content="$socialUrlMeta" />
+META;
+    } else {
+        $socialUrlMeta = '';
+    }
+
     if ($root) {
         $prefix = "";
     } else {
@@ -25,9 +45,23 @@ function meta_and_links($title, $keywords, $description, $root = false) {
     <meta name="twitter:title" content="ag-Grid">
     <meta name="twitter:description" content="$description">
 
+    $socialUrlMeta
+    $socialImageMeta
+
     <link rel="icon" type="image/png" sizes="32x32" href="{$prefix}_assets/favicons/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="{$prefix}_assets/favicons/favicon-16x16.png">
     <link rel="shortcut icon" href="{$prefix}_assets/favicons/favicon.ico">
 META;
 }
+
+function docScripts() {
+    echo <<<SCRIPT
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-cookies.min.js"></script>
+<script src="../documentation-main/documentation.js"></script>
+<script src="../dist/docs.js"></script>
+SCRIPT;
+}
 ?>
+
+
