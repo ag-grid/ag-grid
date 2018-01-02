@@ -8,16 +8,12 @@ include('../includes/mediaHeader.php');
 ?>
 
 
-<div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2>Announcing ag-Grid v5 and Pivot</h2>
-    </div>
-</div>
+        <h1>Announcing ag-Grid v5 and Pivot</h1>
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-8">
 
-        <p>
+        <p class="lead">
             This week saw the release of version 5.x of ag-Grid. This release signifies a large step forward
             for ag-Grid, as it's a big leap into new territory for any general purpose JavaScript datagrid.
             All other grids on the market either provide a) general features or b) specialise
@@ -61,42 +57,8 @@ include('../includes/mediaHeader.php');
         </div>
 
     </div>
-    <div class="col-md-3">
-
-        <div>
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-javascript-pivot-grid/" data-text="Announcing ag-Grid v5 and Pivot" data-via="ceolter" data-size="large">Tweet</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-        </div>
-
-        <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-            <p>
-                <img src="/niall.png"/>
-            </p>
-            <p>
-                About Me
-            </p>
-            <p>
-                I have been writing software all my life. Starting with Assembly, C++ and MFC, moving onto full stack Java / JSP / GWT and now focusing on full stack Java / Javascript.
-            </p>
-            <p>
-                Currently work on ag-Grid full time.
-            </p>
-
-            <div>
-                <br/>
-                <a href="http://uk.linkedin.com/in/niallcrosby"><img src="/images/linked-in.png"/></a>
-                <br/>
-                <br/>
-                <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-        </div>
-
-    </div>
+<?php include '../blog-authors/niall.php' ?>
 </div>
-
 
 <hr/>
 
@@ -115,9 +77,6 @@ include('../includes/mediaHeader.php');
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 <hr/>
 
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

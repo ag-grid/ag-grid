@@ -7,24 +7,12 @@ $pageKeyboards = "Review angularjs grid";
 include('../includes/mediaHeader.php');
 ?>
 
-<link rel="stylesheet" href="../documentation-main/documentation.css">
-<script src="../documentation-main/documentation.js"></script>
-
-
-<div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
         <h1>From Hater to Fan – How I fell in Love with ag-Grid</h1>
-    </div>
-</div>
 
 <div class="row" ng-app="documentation">
-    <div class="col-md-9">
+    <div class="col-md-8">
 
-
-    <blockquote>
-      <p>This blog features a guest writer - Amit Moryossef - who describes his experiences in using ag-Grid.</p>
-      <footer>ag-Grid Team</footer>
-    </blockquote>
+      <p class="lead">This blog features a guest writer - Amit Moryossef - who describes his experiences in using ag-Grid.</p>
 
         <h2>A little bit of history:</h2>
 
@@ -98,9 +86,6 @@ include('../includes/mediaHeader.php');
         powered by Disqus.</a></noscript>
 <hr/>
 
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

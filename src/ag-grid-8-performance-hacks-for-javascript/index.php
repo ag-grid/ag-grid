@@ -15,14 +15,10 @@ include('../includes/mediaHeader.php');
     }
 </style>
 
-<div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
         <h1>8 Performance Hacks for JavaScript</h1>
-    </div>
-</div>
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-8">
 
         <h2>Make It Faster</h2>
 
@@ -386,34 +382,9 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
         </div>
 
     </div>
-    <div class="col-md-3
-    ">
+    
+        <?php include '../blog-authors/niall.php'; ?>
 
-        <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-            <p>
-            <img src='../images/niall.png' width="232.5px"/>
-            </p>
-
-            <p>
-                <b>Niall Crosby, CEO & CTO</b>
-            </p>
-            <p>
-                Niall provides the technical vision for ag-Grid, juggling this with the usual CEO duties. 15 years of experience building Enterprise applications has given Niall unique insight into the challenges while equipping him with the technical skills to deliver the correct solutions. Niall focuses primarily on developing and maintaining the core of ag-Grid and is very much at the heartbeat of the company.
-            </p>
-
-            <div>
-                <br/>
-                <a href="http://uk.linkedin.com/in/niallcrosby"><img src="/images/linked-in.png"/></a>
-                <br/>
-                <br/>
-                <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-        </div>
-
-    </div>
 </div>
 
 
@@ -433,10 +404,6 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 <hr/>
-
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

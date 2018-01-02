@@ -18,8 +18,8 @@
   {
     "title": "ag-Grid v14 Released",
     "summary": "With improved tree data, row grouping, examples in React and Angular and much more.",
-    "link": "../change-log/v14/",
-    "img": "../change-log/v14/v14-200.png",
+    "link": "../ag-grid-blog-14-0-0/",
+    "img": "../ag-grid-blog-14-0-0/v14-200.png",
     "date": "02 November 2017",
     "author": "niall"
   },
@@ -48,7 +48,7 @@
     "author": "niall"
   },
   {
-    "title": "Using React and Redux with ag-Grid",
+    "title": "Building a React Datagrid with Redux and ag-Grid",
     "summary": "Learn how to combine ag-Grid, React and Redux, getting the best from all three great libraries.",
     "link": "../ag-grid-react-datagrid/",
     "img": "../images/react.png",
@@ -59,7 +59,7 @@
     "title": "ag-Grid Partners with Webpack",
     "summary": "ag-Grid and webpack announce their partnership that will see ag-Grid contribute to the future of webpack. This is the first commitment in our Corporate Social Responsibility as we give back to the community that we come from.",
     "link": "../ag-grid-partners-with-webpack/",
-    "img": "../images/ag_grid_and_webpack.png",
+    "img": "../images/ag_grid_and_webpack_small.png",
     "date": "20 March 2017",
     "author": "niall"
   },
@@ -109,7 +109,7 @@
     "link": "../ag-grid-angular2-support-v7/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "30 November 2016",
-    "author": "niall"
+    "author": "sean"
   },
   {
     "title": "ag-Grid - The Enterprise Datagrid For Aurelia",
@@ -117,7 +117,7 @@
     "link": "/ag-grid-datagrid-aurelia/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "30 November 2016",
-    "author": "niall"
+    "author": "sean"
   },
   {
     "title": "8 reasons to choose ag-Grid as your JavaScript Datagrid",
