@@ -1,5 +1,4 @@
-<?php
-$navKey = "about";
+<?php $navKey = "about";
 include_once 'includes/html-helpers.php';
 ?>
 <!DOCTYPE html>
@@ -28,9 +27,6 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
             <p class="lead">
                 At ag-Grid, our mission is simple: <strong>Build the best data grid in the world</strong>.  
             </p>
-
-            <blockquote>
-            </blockquote>
 
             <p>
                 Born out of frustration with existing solutions, <strong>ag-Grid</strong> evolved from a side project to becoming the leading JavaScript datagrid on the market. We are a company built by developers for developers, and - true to our roots - we offer <strong>ag-Grid Free</strong>: an open-source project that delivers world class grid performance. <strong>ag-Grid Enterprise</strong> is our commercially-licensed offering which has enjoyed widespread adoption and permits us to keep delivering on our mission.

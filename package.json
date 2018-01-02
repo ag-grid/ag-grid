@@ -95,6 +95,7 @@
     "precss": "^2.0.0",
     "prismjs": "^1.8.4",
     "protractor": "5.1.x",
+    "resolve-url-loader": "^2.2.1",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
     "svg-colorize-loader": "^0.1.1",
