@@ -15,11 +15,29 @@ include '../documentation-main/documentation_header.php';
     <p>
     </p>
 
-    <?= example('Simple Example', 'simple', 'generated') ?>
+    <h2>Simple</h2>
 
-    <?= example('Events Example', 'events', 'generated') ?>
+    <?= example('Row Drag Simple', 'simple', 'generated') ?>
 
-    <?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1)) ?>
+    <h2>Suppress Row Drag</h2>
+
+    <?= example('Suppress Row Drag', 'suppress-row-drag', 'generated') ?>
+
+    <h2>Passive Events</h2>
+
+    <?= example('Row Drag Passive Events', 'passive-events', 'generated') ?>
+
+    <h2>Simple Passive Moving</h2>
+
+    <?= example('Row Drag Simple Passive Moving', 'simple-passive-moving', 'generated') ?>
+
+    <h2>Dragging with Row Groups</h2>
+
+    <?= example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', array("enterprise" => 1)) ?>
+
+    <h2>Dragging with Tree Data</h2>
+
+    <h2>Other Row Models</h2>
 
 </div>
 

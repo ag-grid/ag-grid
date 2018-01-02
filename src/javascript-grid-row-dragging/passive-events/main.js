@@ -10,12 +10,33 @@ var columnDefs = [
 ];
 
 var gridOptions = {
-    defaultColDef: { width: 150 },
+    defaultColDef: {width: 150},
     columnDefs: columnDefs,
     animateRows: true,
     enableSorting: true,
-    enableFilter: true
+    enableFilter: true,
+    rowDragPassive: true,
+    onRowDragEnter: onRowDragEnter,
+    onRowDragExit: onRowDragExit,
+    onRowDragMove: onRowDragMove,
+    onRowDragLeave: onRowDragLeave
 };
+
+function onRowDragEnter() {
+    console.log('onRowDragEnter');
+}
+
+function onRowDragExit() {
+    console.log('onRowDragExit');
+}
+
+function onRowDragMove() {
+    console.log('onRowDragMove');
+}
+
+function onRowDragLeave() {
+    console.log('onRowDragLeave');
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

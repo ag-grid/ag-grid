@@ -1,5 +1,6 @@
 var columnDefs = [
-    {field: "country", rowDrag: true},
+    {field: "athlete", rowDrag: true},
+    {field: "country"},
     {field: "year"},
     {field: "date"},
     {field: "sport"},
@@ -13,9 +14,16 @@ var gridOptions = {
     columnDefs: columnDefs,
     animateRows: true,
     enableSorting: true,
-    enableFilter: true,
-    rowDragFiresEvents: true
+    enableFilter: true
 };
+
+function onBtSuppressRowDrag() {
+    this.gridOptions.api.setSuppressRowDrag(true);
+}
+
+function onBtShowRowDrag() {
+    this.gridOptions.api.setSuppressRowDrag(false);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
