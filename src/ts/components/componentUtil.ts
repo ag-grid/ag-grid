@@ -163,6 +163,10 @@ export class ComponentUtil {
             api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changes.groupRemoveSingleChildren.currentValue));
         }
 
+        if (changes.suppressRowDrag) {
+            api.setSuppressRowDrag(ComponentUtil.toBoolean(changes.suppressRowDrag.currentValue));
+        }
+
         // copy changes into an event for dispatch
         let event: ComponentStateChangedEvent = {
             type: Events.EVENT_COMPONENT_STATE_CHANGED,

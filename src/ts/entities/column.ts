@@ -263,6 +263,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private createIsColumnFuncParams(rowNode: RowNode): IsColumnFuncParams {
         return {
             node: rowNode,
+            data: rowNode.data,
             column: this,
             colDef: this.colDef,
             context: this.gridOptionsWrapper.getContext(),
@@ -295,6 +296,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
 
         return this.isColumnFunc(rowNode, this.colDef.editable);
+    }
+
+    public isRowDrag(rowNode: RowNode): boolean {
+        return this.isColumnFunc(rowNode, this.colDef.rowDrag);
+    }
+
+    public isCellCheckboxSelection(rowNode: RowNode): boolean {
+        return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);
     }
 
     public isSuppressPaste(rowNode: RowNode): boolean {

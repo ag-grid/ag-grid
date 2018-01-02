@@ -303,6 +303,7 @@ export interface IsColumnFunc {
 
 export interface IsColumnFuncParams {
     node: RowNode;
+    data: any;
     column: Column;
     colDef: ColDef;
     context: any;

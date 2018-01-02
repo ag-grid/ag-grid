@@ -1132,6 +1132,7 @@ export class CellComp extends Component {
                 column: this.column,
                 api: this.beans.gridOptionsWrapper.getApi(),
                 node: this.rowNode,
+                data: this.rowNode.data,
                 colDef: this.column.getColDef(),
                 context: this.beans.gridOptionsWrapper.getContext(),
                 columnApi: this.beans.gridOptionsWrapper.getColumnApi()
@@ -1435,7 +1436,7 @@ export class CellComp extends Component {
             return;
         }
 
-        let rowDraggingComp = new RowDraggingComp(this.rowNode, this.getValueToUse(), this.beans);
+        let rowDraggingComp = new RowDraggingComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
         this.addFeature(this.beans.context, rowDraggingComp);
 
         // let visibleFunc = this.column.getColDef().checkboxSelection;

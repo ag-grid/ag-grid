@@ -695,6 +695,10 @@ export class GridApi {
         this.focusedCellController.setFocusedCell(rowIndex, colKey, floating, true);
     }
 
+    public setSuppressRowDrag(value: boolean): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_ROW_DRAG, value);
+    }
+
     public setHeaderHeight(headerHeight: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_HEADER_HEIGHT, headerHeight);
         this.doLayout();

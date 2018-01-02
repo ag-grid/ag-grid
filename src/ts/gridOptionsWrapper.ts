@@ -83,6 +83,8 @@ export class GridOptionsWrapper {
 
     public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
 
+    public static PROP_SUPPRESS_ROW_DRAG = 'suppressRowDrag';
+
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
@@ -214,7 +216,8 @@ export class GridOptionsWrapper {
     public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
     public isSuppressDragLeaveHidesColumns() { return isTrue(this.gridOptions.suppressDragLeaveHidesColumns); }
     public isSuppressScrollOnNewData() { return isTrue(this.gridOptions.suppressScrollOnNewData); }
-    public isRowDragFiresEvents() { return isTrue(this.gridOptions.rowDragFiresEvents); }
+    public isRowDragPassive() { return isTrue(this.gridOptions.rowDragPassive); }
+    public isSuppressRowDrag() { return isTrue(this.gridOptions.suppressRowDrag); }
 
     public isForPrint() { return this.gridOptions.domLayout === 'forPrint'; }
     public isAutoHeight() { return this.gridOptions.domLayout === 'autoHeight'; }

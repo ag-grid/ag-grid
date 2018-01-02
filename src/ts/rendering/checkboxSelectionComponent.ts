@@ -24,8 +24,6 @@ export class CheckboxSelectionComponent extends Component {
     private rowNode: RowNode;
     private column: Column;
 
-    private visibleFunc: Function;
-
     constructor() {
         super(`<span class="ag-selection-checkbox"/>`);
     }
@@ -77,7 +75,6 @@ export class CheckboxSelectionComponent extends Component {
 
         this.rowNode = params.rowNode;
         this.column = params.column;
-        this.visibleFunc = params.visibleFunc;
 
         this.createAndAddIcons();
 
@@ -96,28 +93,14 @@ export class CheckboxSelectionComponent extends Component {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
 
-        if (this.visibleFunc) {
+        if (typeof this.column.getColDef().checkboxSelection === 'function') {
             this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();
         }
     }
 
     private showOrHideSelect(): void {
-        let params = this.createParams();
-        let visible = this.visibleFunc(params);
+        let visible = this.column.isCellCheckboxSelection(this.rowNode);
         this.setVisible(visible);
-    }
-
-    private createParams(): any {
-        let params = {
-            node: this.rowNode,
-            data: this.rowNode.data,
-            column: this.column,
-            colDef: this.column.getColDef(),
-            context: this.gridOptionsWrapper.getContext(),
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        return params;
     }
 }

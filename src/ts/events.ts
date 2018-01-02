@@ -5,6 +5,7 @@ import {GridApi} from "./gridApi";
 import {ColumnApi} from "./columnController/columnController";
 import {ColumnGroup} from "./entities/columnGroup";
 import {OriginalColumnGroup} from "./entities/originalColumnGroup";
+import {HDirection, VDirection} from "./dragAndDrop/dragAndDropService";
 export { Events } from './eventKeys';
 
 
@@ -56,6 +57,20 @@ export interface BodyHeightChangedEvent extends AgGridEvent {} // not documented
 // has 'rowData', so this property should have 'rowData' also, so that when the row
 // data changes via the framework bound property, this event has that attribute set.
 export interface ComponentStateChangedEvent extends AgGridEvent {}
+
+export interface RowDragEvent extends AgGridEvent {
+    node: RowNode,
+    y: number,
+    vDirection: VDirection,
+    event: MouseEvent,
+    overIndex: number,
+    overNode: RowNode
+}
+
+export interface RowDragEnterEvent extends RowDragEvent {}
+export interface RowDragExitEvent extends RowDragEvent {}
+export interface RowDragMoveEvent extends RowDragEvent {}
+export interface RowDragLeaveEvent extends RowDragEvent {}
 
 export interface GridSizeChangedEvent extends AgGridEvent {
     clientWidth: number;
