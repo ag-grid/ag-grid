@@ -1,4 +1,5 @@
 <?php
+$key = "Getting Started TypeScript & Webpack 2";
 $pageTitle = "TypeScript Datagrid using Webpack 2";
 $pageDescription = "Demonstrate the best TypeScript datagrid using Webpack 2.";
 $pageKeyboards = "TypeScript Grid Webpack 2";

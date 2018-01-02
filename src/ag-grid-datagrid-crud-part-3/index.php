@@ -35,7 +35,7 @@ include('../includes/mediaHeader.php');
                     Service
                 </li>
                 <li class="bold-roboto">Part 3: Front End - Initial Implementation</li>
-                <li><a href="../ag-grid-datagrid-crud-part-4/">Part 4</a>: CRUD (Creation, Updates and Deletion)</li>
+                <li>Part 4: Front End - Grid Features & CRUD (Creation, Updates and Deletion)</li>
                 <li>Part 5: Front End - Aggregation & Pivoting</li>
                 <li>Part 6: Front End - Enterprise Row Model</li>
                 <li>Part 7: Packaging (Optional)</li>
