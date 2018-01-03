@@ -6,16 +6,11 @@ $pageKeyboards = "ag-Grid JavaScript ";
 include('../includes/mediaHeader.php');
 ?>
 
-<div class="row">
-    <div class="col-md-9">
-
         <h1>ag-Grid partners with webpack</h1>
+        <img src="../images/ag_grid_and_webpack.png" class="large-cover-img">
+<div class="row">
+    <div class="col-md-8">
 
-        <div>
-            <i>Niall Crosby, 20th March 2017.</i>
-             </p>
-        </div>
-        <img src="../images/ag_grid_and_webpack.png" style="width: 400px; padding: 20px;"/>
         <p>
             ag-Grid started life as an open source project and true to these roots, it now comes in two versions; ag-Grid Free 
             and ag-Grid Enterprise. ag-Grid Free is a feature rich datagrid that is and will always remain free to use.
@@ -141,33 +136,7 @@ include('../includes/mediaHeader.php');
         </div>
 
     </div>
-    <div class="col-md-3">
-
-        <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-            <p>
-            <img src='../images/niall.png'/>
-            </p>
-
-            <p>
-                <b>Niall Crosby, CEO & CTO</b>
-            </p>
-            <p>
-                Niall provides the technical vision for ag-Grid, juggling this with the usual CEO duties. 15 years of experience building Enterprise applications has given Niall unique insight into the challenges while equipping him with the technical skills to deliver the correct solutions. Niall focuses primarily on developing and maintaining the core of ag-Grid and is very much at the heartbeat of the company.
-            </p>
-
-            <div>
-                <br/>
-                <a href="http://uk.linkedin.com/in/niallcrosby"><img src="/images/linked-in.png"/></a>
-                <br/>
-                <br/>
-                <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-        </div>
-
-    </div>
+    <?php include '../blog-authors/niall.php'; ?>
 </div>
 
 
@@ -188,9 +157,6 @@ include('../includes/mediaHeader.php');
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 <hr/>
 
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

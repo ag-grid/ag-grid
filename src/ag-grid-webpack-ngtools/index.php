@@ -7,18 +7,11 @@ $pageKeyboards = "webpack tutorial ngtools";
 include('../includes/mediaHeader.php');
 ?>
 
-<link rel="stylesheet" href="../documentation-main/documentation.css">
-<script src="../documentation-main/documentation.js"></script>
 
-
-<div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1><img src="../images/webpack_large.png"/> Webpack Tutorial: Understanding @ngtools/webpack</h1>
-    </div>
-</div>
+        <h1> Webpack Tutorial: Understanding @ngtools/webpack</h1>
 
 <div class="row" ng-app="documentation">
-    <div class="col-md-9">
+    <div class="col-md-8">
 
         <h2>Motivation</h2>
 
@@ -711,58 +704,7 @@ export class AppComponent {
         </div>
 
     </div>
-    <div class="col-md-3">
-
-        <div>
-            <a href="https://twitter.com/share" class="twitter-share-button"
-               data-url="https://www.ag-grid.com/ag-grid-webpack-ngtools/"
-               data-text="Webpack Tutorial: Understanding ngtools/webpack" data-via="seanlandsman"
-               data-size="large">Tweet</a>
-            <script>!function (d, s, id) {
-                    var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                    if (!d.getElementById(id)) {
-                        js = d.createElement(s);
-                        js.id = id;
-                        js.src = p + '://platform.twitter.com/widgets.js';
-                        fjs.parentNode.insertBefore(js, fjs);
-                    }
-                }(document, 'script', 'twitter-wjs');</script>
-        </div>
-
-        <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-            <p><img src="../images/sean.png"/></p>
-            <p style="font-weight: bold;">
-                Sean Landsman
-            </p>
-            <p>                
-                Sean was the first person that Niall asked to join the team. Sean ensures that we can keep the agnostic in ag-Grid... he is responsible for integrating with all of our supported frameworks. Many of customers will be familiar with Sean as he is very active in our user forums supporting the needs of our customers. He has also recently given a number of talks at conferences where his calm manner belies his years of experience.
-            </p>
-            <p>
-               Lead Developer - Frameworks
-            </p>
-
-            <div>
-                <br/>
-                <a href="https://www.linkedin.com/in/sean-landsman-9780092"><img src="/images/linked-in.png"/></a>
-                <br/>
-                <br/>
-                <a href="https://twitter.com/seanlandsman" class="twitter-follow-button" data-show-count="false"
-                   data-size="large">@seanlandsman</a>
-                <script>!function (d, s, id) {
-                        var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                        if (!d.getElementById(id)) {
-                            js = d.createElement(s);
-                            js.id = id;
-                            js.src = p + '://platform.twitter.com/widgets.js';
-                            fjs.parentNode.insertBefore(js, fjs);
-                        }
-                    }(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-        </div>
-
-    </div>
+<?php include '../blog-authors/sean.php'; ?>
 </div>
 
 
@@ -785,10 +727,6 @@ export class AppComponent {
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments
         powered by Disqus.</a></noscript>
 <hr/>
-
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');
