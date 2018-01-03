@@ -134,6 +134,9 @@
         #doc-nav {
             font-size: 90%;
             display: none;
+            height: 100vh;
+            overflow: auto;
+            max-height: 50%;
 
             ul {
                 -webkit-padding-start: 0px;
