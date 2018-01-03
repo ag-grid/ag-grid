@@ -87,14 +87,13 @@ open index.html
     <p>Ok, so now we know how to define our row and column data - how do we define our actual Grid?</p>
 
     <p>For a JavaScript application, you need to reference ag-Grid in your html file and provide a container (typically
-        a
-        <code>div</code> for ag-Grid to use::</p>
+        a <code>div</code> for ag-Grid to use:</p>
 
 <snippet language="html">
 &lt;html&gt;
 &lt;head&gt;
     &lt;!-- reference the ag-Grid library--&gt;
-    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/10.1.0/ag-grid.js"&gt;&lt;/script&gt;
+    &lt;script src="https://unpkg.com/ag-grid/dist/ag-grid.min.js"&gt;&lt;/script&gt;
 
     &lt;!-- our application code --&gt;
     &lt;script src="example.js"&gt;&lt;/script&gt;
@@ -109,7 +108,7 @@ open index.html
 &lt;/html&gt;
 </snippet>
 
-    <p>Here we're referencing version 10.1.0 from a CDN. You can use a CDN too, download ag-Grid (see <a
+    <p>Here we're referencing the latest version from the <a href="https://unpkg.com/ag-grid/">unpkg CDN service</a>. You can use a CDN too, download ag-Grid (see <a
                 href="../javascript-more-details">More Details</a>) or bundle it with a tool like <a
                 href="https://webpack.github.io/">Webpack</a>.</p>
 
