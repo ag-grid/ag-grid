@@ -4,6 +4,9 @@ var columnDefs = [
         field: 'dateModified',
         comparator: function(d1, d2) {
             return new Date(d1).getTime() < new Date(d2).getTime() ? -1 : 1;
+        },
+        cellClassRules: {
+            'hover-over': function(params) { return params.node === potentialParent; }
         }
     },
     {
@@ -11,6 +14,9 @@ var columnDefs = [
         aggFunc: 'sum',
         valueFormatter: function(params) {
             return params.value ? Math.round(params.value * 10) / 10 + ' MB' : '0 MB';
+        },
+        cellClassRules: {
+            'hover-over': function(params) { return params.node === potentialParent; }
         }
     }
 ];
@@ -30,7 +36,8 @@ var rowData = [
     {id: 11, filePath: ['Music'], type: 'folder'},
     {id: 12, filePath: ['Music', 'mp3'], type: 'folder'},
     {id: 13, filePath: ['Music', 'mp3', 'theme.mp3'], type: 'file', dateModified: 'Sep 11 2016 08:03:00 PM', size: 14.3},
-    {id: 14, filePath: ['temp.txt'], type: 'file', dateModified: 'Aug 12 2016 10:50:00 PM', size: 101}
+    {id: 11, filePath: ['Misc'], type: 'folder'},
+    {id: 14, filePath: ['Misc', 'temp.txt'], type: 'file', dateModified: 'Aug 12 2016 10:50:00 PM', size: 101}
 ];
 
 var gridOptions = {
@@ -51,9 +58,7 @@ var gridOptions = {
         return data.id;
     },
     autoGroupColumnDef: {
-        rowDrag: function(params) {
-            return params.node.data && params.node.data.type==='file';
-        },
+        rowDrag: true,
         headerName: 'Files',
         width: 250,
         cellRendererParams: {
@@ -61,10 +66,7 @@ var gridOptions = {
             innerRenderer: 'fileCellRenderer'
         },
         cellClassRules: {
-            'hover-over': function(params) {
-                console.log('refresh ' + params.node.id + ' ' + (params.node === potentialParent));
-                return params.node === potentialParent;
-            }
+            'hover-over': function(params) { return params.node === potentialParent; }
         }
     },
     onRowDragEnd: onRowDragEnd,
@@ -86,7 +88,6 @@ function onRowDragLeave() {
 function onRowDragEnd(event) {
     if (!potentialParent) { return; }
 
-    // var parentFolder = pickParentFolder(event.overNode);
     var movingData = event.node.data;
 
     // take new parent path from parent, if data is missing, means it's the root node,
@@ -94,25 +95,52 @@ function onRowDragEnd(event) {
     var newParentPath = potentialParent.data ? potentialParent.data.filePath : [];
     var needToChangeParent = !arePathsEqual(newParentPath, movingData.filePath);
 
-    if (needToChangeParent) {
-        // last part of the file path is the file name
-        var fileName = movingData.filePath[movingData.filePath.length-1];
-        var newPath = [];
-        newParentPath.forEach( function(item) {
-            newPath.push(item);
-        });
-        newPath.push(fileName);
+    // check we are not moving a folder into a child folder
+    var invalidMode = isSelectionParentOfTarget(event.node, potentialParent);
+    if (invalidMode) {
+        console.log('invalid move');
+    }
 
-        movingData.filePath = newPath;
+    if (needToChangeParent && !invalidMode) {
+
+        var updatedRows = [];
+        moveToPath(newParentPath, event.node, updatedRows);
 
         gridOptions.api.updateRowData({
-            update: [movingData]
+            update: updatedRows
         });
         gridOptions.api.clearFocusedCell();
     }
 
     // clear node to highlight
     setPotentialParentForNode(null);
+}
+
+function moveToPath(newParentPath, node, allUpdatedNodes) {
+    // last part of the file path is the file name
+    var oldPath = node.data.filePath;
+    var fileName = oldPath[oldPath.length-1];
+    var newChildPath = newParentPath.slice();
+    newChildPath.push(fileName);
+
+    node.data.filePath = newChildPath;
+
+    allUpdatedNodes.push(node.data);
+
+    if (node.childrenAfterGroup) {
+        node.childrenAfterGroup.forEach( function(childNode) {
+            moveToPath(newChildPath, childNode, allUpdatedNodes);
+        });
+    }
+}
+
+function isSelectionParentOfTarget(selectedNode, targetNode) {
+    var children = selectedNode.childrenAfterGroup;
+    for (var i = 0; i < children.length; i++) {
+        if (targetNode && children[i].key === targetNode.key) return true;
+        isSelectionParentOfTarget(children[i], targetNode);
+    }
+    return false;
 }
 
 function arePathsEqual(path1, path2) {
