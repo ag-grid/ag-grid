@@ -380,7 +380,7 @@ even change the row height dynamically at run time.',
         return rowEven ? 25 : 50;
 }');
 
-gridFeature(false, 'Cell Styling', '../javascript-grid-cell-styling/', 'cellStyling.gif',
+gridFeature(false, 'Cell Styling', '../javascript-grid-cell-styles/', 'cellStyling.gif',
     'Use CSS rules to define <span class="feature-highlight">Cell Style</span> based on
 data content, e.g. put a red background onto cells that have negative values, and green on values
 greater than 100.',

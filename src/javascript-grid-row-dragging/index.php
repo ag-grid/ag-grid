@@ -160,17 +160,17 @@ colDef = {
         There are four grid events associated with row dragging which are:
         <ul>
             <li>
-                <b>rowDragEnter</b>: A drag has started, or dragging already started and the mouse
+                <code>rowDragEnter</code>: A drag has started, or dragging already started and the mouse
                 has re-entered the grid having previously left the grid.
             </li>
             <li>
-                <b>rowDragMove</b>: The mouse has moved while dragging.
+                <code>rowDragMove</code>: The mouse has moved while dragging.
             </li>
             <li>
-                <b>rowDragLeave</b>: The mouse has left the grid while dragging.
+                <code>rowDragLeave</code>: The mouse has left the grid while dragging.
             </li>
             <li>
-                <b>rowDragEnd</b>: The drag has finished over the grid.
+                <code>rowDragEnd</code>: The drag has finished over the grid.
             </li>
         </ul>
         Typically a drag will fire the following events:
@@ -186,15 +186,15 @@ colDef = {
     <p>
         Each of the four row drag events has the following attributes:
         <ul>
-            <li><b>type</b>: One of {rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave}.</li>
-            <li><b>api</b>: The grid API.</li>
-            <li><b>columnApi</b>: The grid Column API.</li>
-            <li><b>event</b>: The underlying mouse move event associated with the drag.</li>
-            <li><b>node</b>: The row node getting dragged.</li>
-            <li><b>overIndex</b>: The row index the mouse is dragging over.</li>
-            <li><b>overNode</b>: The rows node the mouse is dragging over.</li>
-            <li><b>y</b>: The pixel index the mouse is over. This is comparable to rowNode.rowHeight and rowNode.rowTop.</li>
-            <li><b>vDirection</b>: Direction of the drag, either 'up', 'down' or blank (if mouse is moving horizontally and not vertically).</li>
+            <li><code>type</code>: One of {rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave}.</li>
+            <li><code>api</code>: The grid API.</li>
+            <li><code>columnApi</code>: The grid Column API.</li>
+            <li><code>event</code>: The underlying mouse move event associated with the drag.</li>
+            <li><code>node</code>: The row node getting dragged.</li>
+            <li><code>overIndex</code>: The row index the mouse is dragging over.</li>
+            <li><code>overNode</code>: The rows node the mouse is dragging over.</li>
+            <li><code>y</code>: The pixel index the mouse is over. This is comparable to rowNode.rowHeight and rowNode.rowTop.</li>
+            <li><code>vDirection</code>: Direction of the drag, either 'up', 'down' or blank (if mouse is moving horizontally and not vertically).</li>
         </ul>
     </p>
 
@@ -275,7 +275,7 @@ colDef = {
         <a href="../javascript-grid-grouping/">Row Grouping</a> in the grid allows grouping
         rows by a particular column. Dragging rows while grouping is possible when
         <code>rowDragPassive=true</code>.
-        The application is responsible for updating the data base on the drag events fired by
+        The application is responsible for updating the data based on the drag events fired by
         the grid.
     </p>
 
@@ -301,6 +301,11 @@ colDef = {
                 a row belongs to while the drag is happening (which is different to the next
                 Tree Data example which waits until the drag is complete).
             </li>
+            <li>
+                The application can still move rows to groups even if ordering or sorting is applied.
+                For this reason, the application does not suppress row dragging if sorting
+                or filtering is applied.
+            </li>
         </ul>
     </p>
 
@@ -308,7 +313,49 @@ colDef = {
 
     <h2>Passive & Tree Data</h2>
 
-    <?= example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
+    <p>
+        <a href="../javascript-grid-tree-data/">Tree Data</a> in the grid allows providing
+        data to the grid in parent / child relationships, similar to that required for a file
+        browser. Dragging rows while using tree data is possible when
+        <code>rowDragPassive=true</code>.
+        The application is responsible for updating the data based on the drag events fired by
+        the grid.
+    </p>
+
+    <p>
+        The example below shows <a href="../javascript-grid-tree-data/">Tree Data</a>
+        and row dragging where the following can be noted:
+        <ul>
+            <li>
+                The <a href="../javascript-grid-grouping/#auto-column-group">auto-group column</a>
+                has row drag true for all rows.
+            </li>
+            <li>
+                The example registers for <code>onRowDragMove</code> events and works out what folder
+                the mouse is over as the drag is happening.
+            </li>
+            <li>
+                The applications does NOT rearrange the rows as the drag is happening. Instead it
+                waits for the <code>onRowDragEnd</code> event before updating the data.
+            </li>
+            <li>
+                While the row is dragging, the application highlights the folder that is currently
+                selected as the destination folder (called <code>potentialParent</code> in the example
+                code).
+            </li>
+            <li>
+                The example uses <a href="../javascript-grid-cell-styles/#cellClassRules">Cell Class Rules</a>
+                to highlight the destination folder. The example adds the example provided CSS class
+                <code>hover-over</code> to all the cells of the destination folder.
+            </li>
+            <li>
+                The example uses <a href="../javascript-grid-refresh/#refresh-cells">Refresh Cells</a> to get the grid
+                to execute the Cell Class Rules again over the destination folder when the destination
+                folder changes.
+            </li>
+        </ul>
+
+        <?= example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
 
     <h2>Other Row Models</h2>
 

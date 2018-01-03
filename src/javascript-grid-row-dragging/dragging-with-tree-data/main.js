@@ -36,8 +36,8 @@ var rowData = [
     {id: 11, filePath: ['Music'], type: 'folder'},
     {id: 12, filePath: ['Music', 'mp3'], type: 'folder'},
     {id: 13, filePath: ['Music', 'mp3', 'theme.mp3'], type: 'file', dateModified: 'Sep 11 2016 08:03:00 PM', size: 14.3},
-    {id: 11, filePath: ['Misc'], type: 'folder'},
-    {id: 14, filePath: ['Misc', 'temp.txt'], type: 'file', dateModified: 'Aug 12 2016 10:50:00 PM', size: 101}
+    {id: 14, filePath: ['Misc'], type: 'folder'},
+    {id: 15, filePath: ['Misc', 'temp.txt'], type: 'file', dateModified: 'Aug 12 2016 10:50:00 PM', size: 101}
 ];
 
 var gridOptions = {
@@ -169,10 +169,6 @@ function setPotentialParentForNode(overNode) {
         newPotentialParent = null;
     }
 
-    let overNodeId = overNode ? overNode.id : 'null';
-    let potNodeId = newPotentialParent ? newPotentialParent.id : 'null';
-    console.log('over node = ' + overNodeId + ', potential = ' + potNodeId);
-
     var alreadySelected = potentialParent === newPotentialParent;
     if (alreadySelected) { return; }
 
@@ -187,9 +183,6 @@ function setPotentialParentForNode(overNode) {
     }
 
     potentialParent = newPotentialParent;
-
-    var logMsg = rowsToRefresh.map( function(item) { return item.id; } ).join(',');
-    console.log('refreshing rows ' + logMsg);
 
     refreshRows(rowsToRefresh);
 }
