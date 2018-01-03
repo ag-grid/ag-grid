@@ -61,7 +61,7 @@ export interface ComponentStateChangedEvent extends AgGridEvent {}
 export interface RowDragEvent extends AgGridEvent {
     node: RowNode,
     y: number,
-    vDirection: VDirection,
+    vDirection: string,
     event: MouseEvent,
     overIndex: number,
     overNode: RowNode

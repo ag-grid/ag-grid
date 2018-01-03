@@ -1,4 +1,7 @@
-import {DragAndDropService, DraggingEvent, DragSourceType, DropTarget} from "../dragAndDrop/dragAndDropService";
+import {
+    DragAndDropService, DraggingEvent, DragSourceType, DropTarget,
+    VDirection
+} from "../dragAndDrop/dragAndDropService";
 import {Autowired, Optional, PostConstruct} from "../context/context";
 import {InMemoryRowModel} from "../rowModels/inMemory/inMemoryRowModel";
 import {FocusedCellController} from "../focusedCellController";
@@ -171,6 +174,19 @@ export class RowDragFeature implements DropTarget {
         let indexAtPixelNow = this.rowModel.getRowIndexAtPixel(yNormalised);
         let rowNodeAtPixelNow = this.rowModel.getRow(indexAtPixelNow);
 
+        let vDirectionString: string;
+        switch (draggingEvent.vDirection) {
+            case VDirection.Down:
+                vDirectionString = 'down';
+                break;
+            case VDirection.Up:
+                vDirectionString = 'up';
+                break;
+            default:
+                vDirectionString = null;
+                break;
+        }
+
         let event: RowDragEvent = {
             type: type,
             api: this.gridOptionsWrapper.getApi(),
@@ -180,7 +196,7 @@ export class RowDragFeature implements DropTarget {
             overIndex: indexAtPixelNow,
             overNode: rowNodeAtPixelNow,
             y: yNormalised,
-            vDirection: draggingEvent.vDirection
+            vDirection: vDirectionString
         };
 
         this.eventService.dispatchEvent(event);
