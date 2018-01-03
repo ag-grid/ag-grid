@@ -54,9 +54,9 @@ export interface DropTarget {
     onDragStop?(params: DraggingEvent): void;
 }
 
-export enum VDirection {Up, Down}
+export enum VDirection {Up = 'up', Down = 'down'}
 
-export enum HDirection {Left, Right}
+export enum HDirection {Left = 'left', Right = 'right'}
 
 export interface DraggingEvent {
     event: MouseEvent;
