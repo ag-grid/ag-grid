@@ -27,10 +27,10 @@ var rowData = [
     {id: 8, filePath: ['Documents', 'xls', 'accounts.xls'], type: 'file', dateModified: 'Aug 12 2016 10:50:00 AM', size: 4.3},
     {id: 9, filePath: ['Documents', 'stuff'], type: 'folder'},
     {id: 10, filePath: ['Documents', 'stuff', 'xyz.txt'], type: 'file', dateModified: 'Jan 17 2016 08:03:00 PM', size: 1.1},
-    {id: 1, filePath: ['Music'], type: 'folder'},
-    {id: 2, filePath: ['Music', 'mp3'], type: 'folder'},
-    {id: 11, filePath: ['Music', 'mp3', 'theme.mp3'], type: 'file', dateModified: 'Sep 11 2016 08:03:00 PM', size: 14.3},
-    {id: 12, filePath: ['temp.txt'], type: 'file', dateModified: 'Aug 12 2016 10:50:00 PM', size: 101}
+    {id: 11, filePath: ['Music'], type: 'folder'},
+    {id: 12, filePath: ['Music', 'mp3'], type: 'folder'},
+    {id: 13, filePath: ['Music', 'mp3', 'theme.mp3'], type: 'file', dateModified: 'Sep 11 2016 08:03:00 PM', size: 14.3},
+    {id: 14, filePath: ['temp.txt'], type: 'file', dateModified: 'Aug 12 2016 10:50:00 PM', size: 101}
 ];
 
 var gridOptions = {
@@ -59,32 +59,45 @@ var gridOptions = {
         cellRendererParams: {
             suppressCount: true,
             innerRenderer: 'fileCellRenderer'
+        },
+        cellClassRules: {
+            'hover-over': function(params) {
+                console.log('refresh ' + params.node.id + ' ' + (params.node === potentialParent));
+                return params.node === potentialParent;
+            }
         }
     },
-    onRowDragEnd: onRowDragEnd
+    onRowDragEnd: onRowDragEnd,
+    onRowDragMove: onRowDragMove,
+    onRowDragLeave: onRowDragLeave,
 };
 
+var potentialParent = null;
+
+function onRowDragMove(event) {
+    setPotentialParentForNode(event.overNode);
+}
+
+function onRowDragLeave() {
+    // clear node to highlight
+    setPotentialParentForNode(null);
+}
+
 function onRowDragEnd(event) {
-    let movingData = event.node.data;
-    let overNode = event.overNode;
-    let overData = event.overNode.data;
+    if (!potentialParent) { return; }
 
-    // find out what folder we are hovering over
-    let newParentPath;
-    if (overData.type==='folder') {
-        // if over a folder, we take the folder path
-        newParentPath = overData.filePath;
-    } else {
-        // if over a file, we take the parent path
-        newParentPath = overNode.parent.data.filePath;
-    }
+    // var parentFolder = pickParentFolder(event.overNode);
+    var movingData = event.node.data;
 
-    let needToChangeParent = !arePathsEqual(newParentPath, movingData.filePath);
+    // take new parent path from parent, if data is missing, means it's the root node,
+    // which has no data.
+    var newParentPath = potentialParent.data ? potentialParent.data.filePath : [];
+    var needToChangeParent = !arePathsEqual(newParentPath, movingData.filePath);
 
     if (needToChangeParent) {
         // last part of the file path is the file name
-        let fileName = movingData.filePath[movingData.filePath.length-1];
-        let newPath = [];
+        var fileName = movingData.filePath[movingData.filePath.length-1];
+        var newPath = [];
         newParentPath.forEach( function(item) {
             newPath.push(item);
         });
@@ -97,6 +110,9 @@ function onRowDragEnd(event) {
         });
         gridOptions.api.clearFocusedCell();
     }
+
+    // clear node to highlight
+    setPotentialParentForNode(null);
 }
 
 function arePathsEqual(path1, path2) {
@@ -110,6 +126,57 @@ function arePathsEqual(path1, path2) {
     });
 
     return equal;
+}
+
+function setPotentialParentForNode(overNode) {
+
+    var newPotentialParent;
+    if (overNode) {
+        newPotentialParent = overNode.data.type === 'folder'
+            // if over a folder, we take the immediate row
+            ? overNode
+            // if over a file, we take the parent row (which will be a folder)
+            : overNode.parent;
+    } else {
+        newPotentialParent = null;
+    }
+
+    let overNodeId = overNode ? overNode.id : 'null';
+    let potNodeId = newPotentialParent ? newPotentialParent.id : 'null';
+    console.log('over node = ' + overNodeId + ', potential = ' + potNodeId);
+
+    var alreadySelected = potentialParent === newPotentialParent;
+    if (alreadySelected) { return; }
+
+    // we refresh the previous selection (if it exists) to clear
+    // the highlighted and then the new selection.
+    var rowsToRefresh = [];
+    if (potentialParent) {
+        rowsToRefresh.push(potentialParent);
+    }
+    if (newPotentialParent) {
+        rowsToRefresh.push(newPotentialParent);
+    }
+
+    potentialParent = newPotentialParent;
+
+    var logMsg = rowsToRefresh.map( function(item) { return item.id; } ).join(',');
+    console.log('refreshing rows ' + logMsg);
+
+    refreshRows(rowsToRefresh);
+}
+
+function refreshRows(rowsToRefresh) {
+    var params = {
+        // refresh these rows only.
+        rowNodes: rowsToRefresh,
+        // because the grid does change detection, the refresh
+        // will not happen because the underlying value has not
+        // changed. to get around this, we force the refresh,
+        // which skips change detection.
+        force: true
+    };
+    gridOptions.api.refreshCells(params);
 }
 
 function getFileCellRenderer() {
