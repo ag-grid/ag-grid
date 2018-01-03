@@ -33,12 +33,27 @@ export class RowDraggingComp extends Component {
     private postConstruct(): void {
         this.addDragSource();
 
+        this.checkCompatibility();
+
         if (this.beans.gridOptionsWrapper.isRowDragPassive()) {
             this.addFeature(this.beans.context,
                 new PassiveVisibilityStrategy(this, this.beans, this.rowNode, this.column) );
         } else {
             this.addFeature(this.beans.context,
                 new DefaultVisibilityStrategy(this, this.beans, this.rowNode, this.column) );
+        }
+    }
+
+    // returns true if all compatibility items work out
+    private checkCompatibility(): void {
+        let passive = this.beans.gridOptionsWrapper.isRowDragPassive();
+        let treeData = this.beans.gridOptionsWrapper.isTreeData();
+
+        if (treeData && !passive) {
+            _.doOnce( ()=>
+                console.warn('ag-Grid: If using row drag with tree data, you MUST set rowDragPassive=true'),
+                'RowDraggingComp.passiveAndTreeData'
+            );
         }
     }
 
