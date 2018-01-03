@@ -18,8 +18,18 @@ include '../documentation-main/documentation_header.php';
         the first) column.
     </p>
 
-    <snippet>colDef = {
+    <snippet>// option 1 - all rows are draggable
+colDef = {
     rowDrag: true,
+    ...
+}
+
+// option 2 - only some rows are draggable
+colDef = {
+    rowDrag: function(params) {
+        // only allow non-groups to be dragged
+        return !params.node.group;
+    },
     ...
 }</snippet>
 
@@ -223,7 +233,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Row Drag Passive Events', 'passive-events', 'generated') ?>
 
-    <h2>Simple Passive Re-Order</h2>
+    <h2>Simple Passive Example</h2>
 
     <p>
         The example below shows how to implement simple row dragging using
@@ -254,18 +264,49 @@ include '../documentation-main/documentation_header.php';
     <?= example('Row Drag Simple Passive Moving', 'simple-passive-moving', 'generated') ?>
 
     <p>
-        The passive
+        The simple passive example doesn't add anything that active dragging gives (the first
+        example on this page). Things get interesting when we introduce complex scenarios
+        such as row grouping or tree data, which are explained below.
     </p>
 
-    <h2>Passive with Row Groups</h2>
+    <h2>Passive & Row Grouping</h2>
 
     <p>
+        <a href="../javascript-grid-grouping/">Row Grouping</a> in the grid allows grouping
+        rows by a particular column. Dragging rows while grouping is possible when
+        <code>rowDragPassive=true</code>.
+        The application is responsible for updating the data base on the drag events fired by
+        the grid.
+    </p>
 
+    <p>
+        The example below shows <a href="../javascript-grid-grouping/">Row Grouping</a>
+        and row dragging where the following can be noted:
+        <ul>
+            <li>
+                The column 'Athlete' has row drag true for non-group rows. This is achieved
+                using the function variant of the <code>rowDrag</code> property.
+            </li>
+            <li>
+                The grid has set <code>rowDragPassive=true</code> which results in the grid
+                NOT rearrange the rows as they are dragged.
+            </li>
+            <li>
+                The example does not re-order the rows. Instead the example demonstrates putting
+                the rows into groups. If you drag a row, you can place it in a different parent
+                group.
+            </li>
+            <li>
+                The example listens to event <code>onRowDragMove</code> and changes the group
+                a row belongs to while the drag is happening (which is different to the next
+                Tree Data example which waits until the drag is complete).
+            </li>
+        </ul>
     </p>
 
     <?= example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', array("enterprise" => 1)) ?>
 
-    <h2>Passive with Tree Data</h2>
+    <h2>Passive & Tree Data</h2>
 
     <?= example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
 
