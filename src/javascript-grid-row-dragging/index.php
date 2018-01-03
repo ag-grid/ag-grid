@@ -359,6 +359,23 @@ colDef = {
 
     <h2>Other Row Models</h2>
 
+    <p>
+        Row dragging with <code>rowDragPassive=true</code> will work with any of the row models
+        <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
+        <a href="../javascript-grid-enterprise-model/">Enterprise</a> and
+        <a href="../javascript-grid-viewport/">Viewport</a>.
+        With non-managed, the implementation of what happens when a particular drag happens up
+        to your application.
+    </p>
+
+    <p>
+        Because the grid implementation with regards row dragging is identical to the above,
+        examples of row dragging with the other row models are not given. How your application
+        behaves with regards the row drag events is the difficult bit, but that part is specific
+        to your application and how your application stores it's state. Giving an example here with
+        a different data store would be redundant.
+    </p>
+
 </div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
