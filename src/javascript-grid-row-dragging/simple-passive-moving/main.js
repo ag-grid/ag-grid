@@ -19,10 +19,37 @@ var gridOptions = {
     enableFilter: true,
     rowDragPassive: true,
     onRowDragMove: onRowDragMove,
-    getRowNodeId: getRowNodeId
+    getRowNodeId: getRowNodeId,
+    onSortChanged: onSortChanged,
+    onFilterChanged: onFilterChanged
 };
 
 var immutableStore;
+
+var sortActive = false;
+var filterActive = false;
+
+// listen for change on sort changed
+function onSortChanged() {
+    var sortModel = gridOptions.api.getSortModel();
+    sortActive = sortModel && sortModel.length > 0;
+    updateRowDrag();
+}
+
+// listen for changes on filter changed
+function onFilterChanged() {
+    filterActive = gridOptions.api.isAnyFilterPresent();
+    updateRowDrag();
+}
+
+function updateRowDrag() {
+    // suppress row drag if either sort or filter is active
+    var suppressRowDrag = sortActive || filterActive;
+    console.log('sortActive = ' + sortActive
+        + ', filterActive = ' + filterActive
+        + ', allowRowDrag = ' + suppressRowDrag);
+    gridOptions.api.setSuppressRowDrag(suppressRowDrag);
+}
 
 function getRowNodeId(data) {
     return data.id

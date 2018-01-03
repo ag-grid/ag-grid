@@ -29,6 +29,15 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Simple Passive Moving</h2>
 
+    <ul>
+        <li>
+            Property suppressRowDrag=true when sorting or filtering is active,
+            as the simplistic moving logic only considers the non-sorted non-filtered
+            data. If sorted or filtered data is to be considered, the application (not
+            the grid) needs to consider what logic to apply in these circumstances.
+        </li>
+    </ul>
+
     <?= example('Row Drag Simple Passive Moving', 'simple-passive-moving', 'generated') ?>
 
     <h2>Dragging with Row Groups</h2>
@@ -36,6 +45,8 @@ include '../documentation-main/documentation_header.php';
     <?= example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', array("enterprise" => 1)) ?>
 
     <h2>Dragging with Tree Data</h2>
+
+    <?= example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
 
     <h2>Other Row Models</h2>
 

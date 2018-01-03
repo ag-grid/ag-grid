@@ -302,6 +302,14 @@ gridOptions = {
     ...
 }');
 
+gridFeature(false, 'Row Dragging', '../javascript-grid-row-dragging/', 'rowDragging.gif',
+    '<span class="feature-highlight">Row Dragging</span> allows you to re-order rows by dragging them.',
+'// enable filtering with grid option
+colDef = {
+    rowDrag: true,
+    ...
+}');
+
 gridFeature(false, 'Row Selection', '../javascript-grid-selection/', 'rowSelection.gif', '<span class="feature-highlight">Row Selection</span> to select rows. Choose between click selection or checkbox selection. Selecting groups will select children.',
     '// enable sorting with grid option
 gridOptions = {
