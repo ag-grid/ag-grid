@@ -22,20 +22,20 @@ var gridOptions = {
     onRowDragLeave: onRowDragLeave
 };
 
-function onRowDragEnter() {
-    console.log('onRowDragEnter');
+function onRowDragEnter(e) {
+    console.log('onRowDragEnter', e);
 }
 
-function onRowDragEnd() {
-    console.log('onRowDragEnd');
+function onRowDragEnd(e) {
+    console.log('onRowDragEnd', e);
 }
 
-function onRowDragMove() {
-    console.log('onRowDragMove');
+function onRowDragMove(e) {
+    console.log('onRowDragMove', e);
 }
 
-function onRowDragLeave() {
-    console.log('onRowDragLeave');
+function onRowDragLeave(e) {
+    console.log('onRowDragLeave', e);
 }
 
 // setup the grid after the page has finished loading
