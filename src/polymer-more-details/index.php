@@ -64,7 +64,7 @@ bower install -save ag-grid-polymer</snippet>
          rowData="{{rowData}}"
 columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
 
-    <h3><img src="../images/enterprise_50.png" style="height: 22px;margin-right: 5px"/>Downloading the ag-Grid Polymer Enterprise Dependency</h3>
+    <h3 class="heading-enterprise">Downloading the ag-Grid Polymer Enterprise Dependency</h3>
 
     <p>If you're using the ag-Grid Enterprise features, then in addition to the ag-Grid Polymer dependency above, you also require
     the ag-Grid Polymer Enterprise dependency:</p>

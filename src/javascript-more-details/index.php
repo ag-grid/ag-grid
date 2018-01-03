@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>You can also download the library in the following ways:</p>
 
-    <table>
+    <table class="content">
         <tr>
 
 
@@ -84,7 +84,7 @@ include '../documentation-main/documentation_header.php';
 var AgGrid = require('ag-grid');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid/main';
+import {Grid} from 'ag-grid';
 </snippet>
 
     <h2>Download ag-Grid-Enterprise</h2>
@@ -104,7 +104,7 @@ import {Grid} from 'ag-grid/main';
 
     <p>But you can also download the library in the following ways:</p>
 
-    <table>
+    <table class="content">
         <tr>
 
             <td style="padding: 10px;"><img src="../images/npm.png"/></td>
@@ -163,9 +163,9 @@ var AgGrid = require('ag-grid');
 require('ag-grid-enterprise');
 
 // ECMA 6 - using the system import method
-import {Grid} from 'ag-grid/main';
+import {Grid} from 'ag-grid';
 // only include this line if you want to use ag-grid-enterprise
-import 'ag-grid-enterprise/main';
+import 'ag-grid-enterprise';
 </snippet>
 
 

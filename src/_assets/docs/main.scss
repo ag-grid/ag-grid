@@ -210,22 +210,16 @@
     }
     // docs homepage 
     .docs-homepage-section-preview {
-        @extend .card, .mb-4,  .bg-light;
-
-        > div {
-            @extend .card-body;
-        }
+        @extend .mb-4, .pb-4;
+        border-bottom: 1px solid $border-color;
 
         h2 {
-            @extend .card-title, h4;
+            @extend h4;
         }
 
-        p:first-child {
-            @extend .card-text;
-        }
 
         p:last-child {
-            @extend .text-right, .card-text;
+            @extend .text-right;
 
             a {
                 @extend .btn, .btn-primary;
@@ -247,14 +241,15 @@
     .get-started-framework {
         @extend .card, .bg-light;
 
-        > div:first-child {
-            @extend .card-img-top;
+        > a:first-child {
+            @extend .card-header;
             height: 8rem;
             background-position-y: center;
             background-position-x: center;
             background-repeat: no-repeat;
             background-size: 6rem 6rem;
-            border-bottom: 1px solid $border-color;
+            text-indent: -10000px;
+            overflow: hidden;
         }
 
         div:nth-child(2) {
@@ -281,45 +276,49 @@
     $frameworks: angular react polymer vue javascript angularjs aurelia webcomponents;
 
     @each $framework in $frameworks {
-        .get-started-framework.card-#{$framework} > div:first-child {
+        .get-started-framework.card-#{$framework} > a:first-child {
             background-image: url('../fw-logos/#{$framework}.svg');
         }
     }
 
-    .get-started-framework.card-javascript > div:first-child {
+    .get-started-framework.card-javascript > a:first-child {
         background-color: #F8DF1E;
     }
 
-    .get-started-framework.card-react > div:first-child {
+    .get-started-framework.card-react > a:first-child {
         background-color: #282C34;
     }
 
-    .get-started-framework.card-angular > div:first-child {
+    .get-started-framework.card-angular > a:first-child {
         background-color: #1976D3;
     }
 
-    .get-started-framework.card-angularjs > div:first-child {
+    .get-started-framework.card-angularjs > a:first-child {
         background-color: #273238;
     }
     
-    .get-started-framework.card-polymer > div:first-child {
+    .get-started-framework.card-polymer > a:first-child {
         background-color: darken(#F4F5F6, 0);
     }
 
-    .get-started-framework.card-vue > div:first-child {
+    .get-started-framework.card-vue > a:first-child {
         background-color: darken(#FCFCFF, 0);
     }
 
-    .get-started-framework.card-aurelia > div:first-child {
+    .get-started-framework.card-aurelia > a:first-child {
         background-color: darken(#F4F4F4, 0);
     }
 
-    .get-started-framework.card-webcomponents > div:first-child {
+    .get-started-framework.card-webcomponents > a:first-child {
         background-color: darken(#F9F9FA, 0);
     }
 
     p > img:only-child {
         display: block;
         margin: auto;
+    }
+
+    table.content {
+        margin-bottom: 2rem;
     }
 }

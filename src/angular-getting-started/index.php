@@ -167,8 +167,7 @@ npm start</snippet>
     <h3>Summary</h3>
 
     <p id="angular-rich-grid-example">We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
-        the left
-        hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
+        the left hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
     <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
 
@@ -178,9 +177,7 @@ npm start</snippet>
         scratching the surface - we've only just gotten started with with ag-Grid can do!</p>
 
     <p>Please read the <a href="../angular-more-details">More Details</a> section next to get a deeper understanding of
-        how to
-        use ag-Grid and Angular, as well as the options in installing dependencies and accessing the <code>Enterprise
-            Features</code>.</p>
+        how to use ag-Grid and Angular, as well as the options in installing dependencies and accessing the <strong>Enterprise Features</strong>.</p>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

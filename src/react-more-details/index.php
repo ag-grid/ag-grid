@@ -24,7 +24,7 @@ include '../documentation-main/documentation_header.php';
         <li>You cannot use the bundled version of ag-Grid. You must use the CommonJS distribution.</li>
     </ul>
 
-    <table>
+    <table class="content">
         <tr>
             <td style="padding: 10px;"><img src="../images/bower.png"/></td>
             <td>
@@ -33,10 +33,10 @@ include '../documentation-main/documentation_header.php';
                         <td><b>Bower</b></td>
                     </tr>
                     <tr>
-                        <td>bower install ag-grid</td>
+                        <td><code>bower install ag-grid</code></td>
                     </tr>
                     <tr>
-                        <td>bower install ag-grid-react</td>
+                        <td><code>bower install ag-grid-react</code></td>
                     </tr>
                 </table>
             </td>
@@ -50,10 +50,10 @@ include '../documentation-main/documentation_header.php';
                         <td><b>NPM</b></td>
                     </tr>
                     <tr>
-                        <td>npm install ag-grid</td>
+                        <td><code>npm install ag-grid</code></td>
                     </tr>
                     <tr>
-                        <td>npm install ag-grid-react</td>
+                        <td><code>npm install ag-grid-react</code></td>
                     </tr>
                 </table>
             </td>
@@ -72,21 +72,21 @@ import {AgGridReact} from 'ag-grid-react';</snippet>
 
     <h3>Download ag-Grid-Enterprise</h3>
 
-    <table>
+    <table class="content">
         <tr>
             <td style="padding: 10px;"><img src="../images/bower.png"/></td>
             <td>
                 <b>Bower</b><br/>
-                bower install ag-grid-enterprise
+                <code>bower install ag-grid-enterprise</code>
             </td>
 
-            <td style="width: 180px;"/>
+            <td style="width: 120px;"/>
 
 
             <td style="padding: 10px;"><img src="../images/npm.png"/></td>
             <td>
                 <b>NPM</b><br/>
-                npm install ag-grid-enterprise
+                <code>npm install ag-grid-enterprise</code>
             </td>
         </tr>
     </table>
@@ -120,7 +120,7 @@ render(
 
     <h2 id="configuring-aggridreact-component">Configuring the AgGridReact Component</h2>
 
-    <p>After the importing the <code>AgGridReact</code>  you can then reference the component inside your JSX definitions.
+    <p>After importing <code>AgGridReact</code>  you can then reference the component inside your JSX definitions.
         An example of the Grid Component can be seen below:</p>
 <snippet language="html" >
 &lt;-- Grid Definition -->
@@ -264,7 +264,7 @@ import 'ag-grid-root/dist/styles/ag-theme-fresh.css';</snippet>
 
     <p>
         You need to set a theme for the grid. You do this by giving the grid a CSS class, one
-        of ag-theme-fresh, ag-theme-blue or ag-theme-dark. You must have the CSS loaded as specified above
+        of <code>ag-theme-material</code>, <code>ag-theme-fresh</code>, <code>ag-theme-blue</code> or <code>ag-theme-dark</code>. You must have the CSS loaded as specified above
         for this to work.
     </p>
 
@@ -287,11 +287,11 @@ import 'ag-grid-root/dist/styles/ag-theme-fresh.css';</snippet>
     <h2 id="grid-api">Grid API</h2>
 
     <p>
-        When the grid is initialised, it will fire the <i>gridReady</i> event. If you want to
-        use the API of the grid, you should put an <i>onGridReady(params)</i> callback onto
+        When the grid is initialised, it will fire the <code>gridReady</code> event. If you want to
+        use the API of the grid, you should put an <code>onGridReady(params)</code> callback onto
         the grid and grab the api from the params. You can then call this api at a later
         stage to interact with the grid (on top of the interaction that can be done by
-        setting and changing the props).
+        setting and changing the props).</p>
     <snippet>
 // provide gridReady callback to the grid
 &lt;AgGridReact
@@ -309,12 +309,11 @@ somePointLater() {
     this.api.selectAll();
     this.columnApi.setColumnVisible('country', visible);
 }</snippet>
-    </p>
 
     <p>
-        The <i>api</i> and <i>columnApi</i> are also stored inside the React backing object
+        The <code>api</code> and <code>columnApi</code> are also stored inside the React backing object
         of the grid. So you can also look up the backing object via React and access the
-        <i>api</i> and <i>columnApi</i> that way.
+        <code>api</code> and <code>columnApi</code> that way.
     </p>
 
     <p>
@@ -523,13 +522,13 @@ class TopMoversGrid extends Component {
 
     <p>We provide a seed project for both "plain" React as well as when using React with TypeScript.</p>
 
-    <snippet>
+    <snippet language="sh">
 git clone https://github.com/ag-grid/ag-grid-react-seed</snippet>
 
     <p>Within this repo you'll find two projects: <code>react</code> and <code>react-typescript</code>. The latter provides
     a working example of getting up and running with ag-Grid together with React & TypeScript.</p>
 
-    <h2 id="next-steps">Next Steps...</h2>
+    <h2 id="next-steps">Next Steps</h2>
 
     <p>
         Now you can go to <a href="../javascript-grid-reference-overview/">reference</a>

@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
         <li>You cannot use the bundled version of ag-Grid. You must use the CommonJS distribution.</li>
     </ul>
 
-    <table>
+    <table class="content">
         <tr>
             <td style="padding: 10px;"><img src="../images/bower.png"/></td>
             <td>
@@ -31,15 +31,15 @@ include '../documentation-main/documentation_header.php';
                         <td><b>Bower</b></td>
                     </tr>
                     <tr>
-                        <td>bower install ag-grid</td>
+                        <td><code>bower install ag-grid</code></td>
                     </tr>
                     <tr>
-                        <td>bower install ag-grid-angular</td>
+                        <td><code>bower install ag-grid-angular</code></td>
                     </tr>
                 </table>
             </td>
 
-            <td style="width: 215px;"/>
+            <td style="width: 120px;"></td>
 
             <td style="padding: 10px;"><img src="../images/npm.png"/></td>
             <td>
@@ -48,10 +48,10 @@ include '../documentation-main/documentation_header.php';
                         <td><b>NPM</b></td>
                     </tr>
                     <tr>
-                        <td>npm install ag-grid</td>
+                        <td><code>npm install ag-grid</code></td>
                     </tr>
                     <tr>
-                        <td>npm install ag-grid-angular</td>
+                        <td><code>npm install ag-grid-angular</code></td>
                     </tr>
                 </table>
             </td>
@@ -61,7 +61,7 @@ include '../documentation-main/documentation_header.php';
     <p>You can then reference the dependency as follows in the top of your component:</p>
 
     <snippet>
-import {AgGridModule} from 'ag-grid-angular/main';</snippet>
+    import {AgGridModule} from 'ag-grid-angular';</snippet>
 
     <p>
         Which you can then use as a dependency inside your module:
@@ -83,28 +83,28 @@ import {AgGridModule} from 'ag-grid-angular/main';</snippet>
                 [columnDefs]="columnDefs"&gt;
 &lt;/ag-grid-angular&gt;</snippet>
 
-    <h3><img src="../images/enterprise_50.png" style="height: 22px;margin-right: 5px"/>Downloading the ag-Grid Angular Enterprise Dependency</h3>
+    <h3 class="heading-enterprise">Downloading the ag-Grid Angular Enterprise Dependency</h3>
 
     <p>If you're using the ag-Grid Enterprise features, then in addition to the ag-Grid Angular dependency above, you also require
     the ag-Grid Angular Enterprise dependency:</p>
 
     <h3>Download ag-Grid-Enterprise</h3>
 
-    <table>
+    <table class="content">
         <tr>
             <td style="padding: 10px;"><img src="../images/bower.png"/></td>
             <td>
                 <b>Bower</b><br/>
-                bower install ag-grid-enterprise
+                <code>bower install ag-grid-enterprise</code>
             </td>
 
-            <td style="width: 180px;"/>
+            <td style="width: 120px;"/>
 
 
             <td style="padding: 10px;"><img src="../images/npm.png"/></td>
             <td>
                 <b>NPM</b><br/>
-                npm install ag-grid-enterprise
+                <code>npm install ag-grid-enterprise</code>
             </td>
         </tr>
     </table>
@@ -129,7 +129,7 @@ import "ag-grid-enterprise";</snippet>
     <p>You can configure the grid in the following ways through Angular:</p>
     <ul>
         <li><b>Events:</b> All data out of the grid comes through events. These use
-            Angular event bindings eg <i>(modelUpdated)="onModelUpdated()"</i>.
+            Angular event bindings eg <code>(modelUpdated)="onModelUpdated()"</code>.
             As you interact with the grid, the different events are fixed and
             output text to the console (open the dev tools to see the console).
         </li>
@@ -140,32 +140,32 @@ import "ag-grid-enterprise";</snippet>
         </li>
         <li><b>Attributes:</b> When the property is just a simple string value, then
             no binding is necessary, just the value is placed as an attribute
-            eg <i>rowHeight="22"</i>. Notice that boolean attributes are defaulted
-            to 'true' IF they attribute is provided WITHOUT any value. If the attribute
+            eg <code>rowHeight="22"</code>. Notice that boolean attributes are defaulted
+            to <code>true</code> IF they attribute is provided WITHOUT any value. If the attribute
             is not provided, it is taken as false.
         </li>
         <li><b>Grid API via IDs:</b> The grid in the example is created with an id
-            by marking it with <i>#agGrid</i>. This in turn turns into a variable
+            by marking it with <code>#agGrid</code>. This in turn turns into a variable
             which can be used to access the grid's controller. The buttons
             Grid API and Column API buttons use this variable to access the grids
             API (the API's are attributes on the controller).
         </li>
-        <li><b>Changing Properties:</b> When a property changes value, AngularJS 1.x
+        <li><b>Changing Properties:</b> When a property changes value, Angular
             automatically passes the new value onto the grid. This is used in
-            the following locations in the "feature rich grid example" above:<br/>
-            a) The 'quickFilter' on the top right updates the quick filter of
+            the following locations in the feature rich grid example above:<br/>
+            a) The quickFilter on the top right updates the quick filter of
             the grid.
-            b) The 'Show Tool Panel' checkbox has it's value bound to the 'showToolPanel'
+            b) The 'Show Tool Panel' checkbox has it's value bound to the <code>showToolPanel</code>
             property of the grid.
             c) The 'Refresh Data' generates new data for the grid and updates the
-            <i>rowData</i> property.
+            <code>rowData</code> property.
         </li>
     </ul>
 
     <p>
-        Notice that the grid has it's properties marked as <b>immutable</b>. Hence for
+        Notice that the grid has its properties marked as <b>immutable</b>. Hence for
         object properties, the object reference must change for the grid to take impact.
-        For example, <i>rowData</i> must be a new list of data for the grid to be
+        For example, <code>rowData</code> must be a new list of data for the grid to be
         informed to redraw.
     </p>
 
@@ -208,15 +208,12 @@ let colDefs = [
     ...other column definitions
 ]</snippet>
     <p>Please see the relevant sections on <a
-                href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cell renderer's</a>,
+                href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cell renderers</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cell editors</a> and
-        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> for configuring and using Angular
-        Components in
-        ag-Grid.</p>
+        <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> 
+for configuring and using Angular Components in ag-Grid.</p> 
 
-    <p>
-        The example has ag-Grid configured through the template in the following ways:
-    </p>
+<p> The example has ag-Grid configured through the template in the following ways: </p>
 
     <snippet>
 // notice the grid has an id called agGrid, which can be used to call the API
@@ -291,10 +288,10 @@ this.params.context.componentParent</snippet>
     <ul>
         <li>
             <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/dynamic-component-example/dynamic.component.ts"
-               target="_blank" class="fa fa-external-link"> Parent Component</a></li>
+               target="_blank"><i class="fa fa-external-link"></i> Parent Component</a></li>
         <li>
             <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/dynamic-component-example/child-message.component.ts"
-               target="_blank" class="fa fa-external-link"> Child Component</a></li>
+               target="_blank"><i class="fa fa-external-link"></i> Child Component</a></li>
     </ul>
 
     <h3 id="building-bundling">Building & Bundling</h3>
@@ -344,8 +341,8 @@ this.params.context.componentParent</snippet>
 
     <h3 id="setting-column-properties">Setting Column Properties</h3>
     <p>There are some simple rules you should follow when setting column properties via Markup:</p>
-    <snippet ng-non-bindable>
-// string value
+
+<pre class="language-js" ng-non-bindable><code>// string value
 propertyName="String Value"
 [propertyName]="'String Value'"
 [propertyName]="{{Interpolated Value}}"
@@ -362,7 +359,8 @@ propertyName="String Value"
 
 // function value
 [propertyName]="functionName"
-[propertyName]="functionCallReturningAFunction()"</snippet>
+[propertyName]="functionCallReturningAFunction()"</code>
+</pre>
 
     <h4 id="setting-a-class-or-a-complex-value">Setting a Class or a Complex Value:</h4>
     <p>You can set a Class or a Complex property in the following way:</p>
