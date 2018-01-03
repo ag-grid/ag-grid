@@ -38,15 +38,20 @@
         @extend .navbar-nav, .ml-md-auto;
 
         li {
-            @extend .nav-item, .ml-4;
+            @extend .nav-item, .ml-3;
 
             a {
                 display: block;
                 padding: 0.5rem 1rem;
-                color: $offwhite;
+                color: lighten($blue-3, 10);
             }
 
-            a.active {
+            a:hover {
+                color: $white;
+                text-decoration: none;
+            }
+
+            &.active a {
                 color: $white;
             }
         }

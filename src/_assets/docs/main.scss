@@ -44,13 +44,15 @@
         }
 
         #side-nav,
-        #doc-nav,
         & > section {
             padding-top: 3rem;
             padding-bottom: 3rem;
         }
 
         #side-nav {
+            background-image: linear-gradient(90deg, $offwhite, $white);
+            min-width: 190px;
+
             li {
                 margin-bottom: 0.5rem;
             }
@@ -136,7 +138,14 @@
             display: none;
             height: 100vh;
             overflow: auto;
-            max-height: 50%;
+
+            > ul > li:first-child {
+                margin-top: 3rem;
+            }
+
+            > ul > li:last-child {
+                margin-bottom: 3rem;
+            }
 
             ul {
                 -webkit-padding-start: 0px;
@@ -145,8 +154,12 @@
                     margin-bottom: 0.5rem;
 
                     a {
-                        color: $gray-700;
+                        color: $gray-600;
                         display: block;
+
+                        &:hover {
+                            color: $primary;
+                        }
                     }
 
                     &.level-1 {
@@ -182,9 +195,11 @@
                 display: block;
                 position: fixed;
                 left: calc(50% + #{$max-width / 2});
-                width: 250px;
+                width: calc((100vw - #{$max-width}) / 2);
+                max-width: unset;
                 padding-left: 3rem;
                 top: auto;
+
             }
 
             a {
@@ -323,5 +338,11 @@
 
     table.content {
         margin-bottom: 2rem;
+    }
+
+    ul.content, ol.content {
+        li {
+            margin-bottom: 0.5rem;
+        }
     }
 }
