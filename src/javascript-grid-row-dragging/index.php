@@ -25,6 +25,31 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Passive Events</h2>
 
+    <p>
+        Events are:
+        <ul>
+            <li>rowDragEnter</li>
+            <li>rowDragMove</li>
+            <li>rowDragLeave</li>
+            <li>rowDragEnd</li>
+        </ul>
+    </p>
+
+    <p>
+        Params to events are:
+        <ul>
+            <li>type</li>
+            <li>api</li>
+            <li>columnApi</li>
+            <li>event</li>
+            <li>node</li>
+            <li>overIndex</li>
+            <li>overNode</li>
+            <li>y</li>
+            <li>vDirection</li>
+        </ul>
+    </p>
+
     <?= example('Row Drag Passive Events', 'passive-events', 'generated') ?>
 
     <h2>Simple Passive Moving</h2>

@@ -17,7 +17,7 @@ var gridOptions = {
     enableFilter: true,
     rowDragPassive: true,
     onRowDragEnter: onRowDragEnter,
-    onRowDragExit: onRowDragExit,
+    onRowDragEnd: onRowDragEnd,
     onRowDragMove: onRowDragMove,
     onRowDragLeave: onRowDragLeave
 };
@@ -26,8 +26,8 @@ function onRowDragEnter() {
     console.log('onRowDragEnter');
 }
 
-function onRowDragExit() {
-    console.log('onRowDragExit');
+function onRowDragEnd() {
+    console.log('onRowDragEnd');
 }
 
 function onRowDragMove() {
