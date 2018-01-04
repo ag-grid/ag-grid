@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
 
     <p style="margin-top: 5px">
         Using Angular with ag-Grid introduces a dependency on Angular. For this reason:
-    <ul>
+    <ul class="content">
         <li>You need to include the additional project ag-grid-angular, which has the Angular dependency.</li>
         <li>You cannot use the bundled version of ag-Grid. You must use the CommonJS distribution.</li>
     </ul>
@@ -127,7 +127,7 @@ import "ag-grid-enterprise";</snippet>
     <h2 id="configuring-ag-grid-in-angular">Configuring ag-Grid in Angular</h2>
 
     <p>You can configure the grid in the following ways through Angular:</p>
-    <ul>
+    <ul class="content">
         <li><b>Events:</b> All data out of the grid comes through events. These use
             Angular event bindings eg <code>(modelUpdated)="onModelUpdated()"</code>.
             As you interact with the grid, the different events are fixed and
@@ -285,7 +285,7 @@ this.params.context.componentParent</snippet>
     <p>The <span
                 style="font-style: italic">"A Simple Example, using CellRenderers created from Angular Components"</span>
         above illustrates this in the Child/Parent column:</p>
-    <ul>
+    <ul class="content">
         <li>
             <a href="https://github.com/ag-grid/ag-grid-angular-example/blob/master/systemjs_aot/app/dynamic-component-example/dynamic.component.ts"
                target="_blank"><i class="fa fa-external-link"></i> Parent Component</a></li>
@@ -307,7 +307,7 @@ this.params.context.componentParent</snippet>
     </p>
     <p>We document the main parts of these tools below, but please refer to the examples for more detail.</p>
 
-    <ul>
+    <ul class="content">
         <li>
             <a href="/ag-grid-angular-angularcli"> Angular CLI</a>
         </li>
