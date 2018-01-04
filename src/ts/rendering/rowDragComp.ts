@@ -13,7 +13,7 @@ import {Beans} from "./beans";
 import {BeanStub} from "../context/beanStub";
 import {Column} from "../entities/column";
 
-export class RowDraggingComp extends Component {
+export class RowDragComp extends Component {
 
     private beans: Beans;
 
@@ -48,11 +48,11 @@ export class RowDraggingComp extends Component {
     private checkCompatibility(): void {
         let managed = this.beans.gridOptionsWrapper.isRowDragManaged();
         let treeData = this.beans.gridOptionsWrapper.isTreeData();
-        
+
         if (treeData && managed) {
             _.doOnce( ()=>
                 console.warn('ag-Grid: If using row drag with tree data, you cannot have rowDragManaged=true'),
-                'RowDraggingComp.managedAndTreeData'
+                'RowDragComp.managedAndTreeData'
             );
         }
     }
@@ -74,14 +74,15 @@ export class RowDraggingComp extends Component {
     }
 }
 
+// when non managed, the visibility depends on suppressRowDrag property only
 class NonManagedVisibilityStrategy extends BeanStub {
 
-    private parent: RowDraggingComp;
+    private parent: RowDragComp;
     private beans: Beans;
     private column: Column;
     private rowNode: RowNode;
 
-    constructor(parent: RowDraggingComp, beans: Beans, rowNode: RowNode, column: Column) {
+    constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column: Column) {
         super();
         this.parent = parent;
         this.beans = beans;
@@ -113,9 +114,10 @@ class NonManagedVisibilityStrategy extends BeanStub {
 
 }
 
+// when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
 class ManagedVisibilityStrategy extends BeanStub {
 
-    private parent: RowDraggingComp;
+    private parent: RowDragComp;
     private column: Column;
     private rowNode: RowNode;
     private beans: Beans;
@@ -124,7 +126,7 @@ class ManagedVisibilityStrategy extends BeanStub {
     private filterActive: boolean;
     private rowGroupActive: boolean;
 
-    constructor(parent: RowDraggingComp, beans: Beans, rowNode: RowNode, column: Column) {
+    constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column: Column) {
         super();
         this.parent = parent;
         this.beans = beans;

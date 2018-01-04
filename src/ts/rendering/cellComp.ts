@@ -21,7 +21,7 @@ import {CheckboxSelectionComponent} from "./checkboxSelectionComponent";
 import {NewValueParams, SuppressKeyboardEventParams} from "../entities/colDef";
 import {Beans} from "./beans";
 import {RowComp} from "./rowComp";
-import {RowDraggingComp} from "./rowDraggingComp";
+import {RowDragComp} from "./rowDragComp";
 
 
 export class CellComp extends Component {
@@ -1436,7 +1436,7 @@ export class CellComp extends Component {
             return;
         }
 
-        let rowDraggingComp = new RowDraggingComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
+        let rowDraggingComp = new RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
         this.addFeature(this.beans.context, rowDraggingComp);
 
         // let visibleFunc = this.column.getColDef().checkboxSelection;
