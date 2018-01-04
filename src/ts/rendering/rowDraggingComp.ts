@@ -35,24 +35,24 @@ export class RowDraggingComp extends Component {
 
         this.checkCompatibility();
 
-        if (this.beans.gridOptionsWrapper.isRowDragPassive()) {
+        if (this.beans.gridOptionsWrapper.isRowDragManaged()) {
             this.addFeature(this.beans.context,
-                new PassiveVisibilityStrategy(this, this.beans, this.rowNode, this.column) );
+                new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) );
         } else {
             this.addFeature(this.beans.context,
-                new DefaultVisibilityStrategy(this, this.beans, this.rowNode, this.column) );
+                new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) );
         }
     }
 
     // returns true if all compatibility items work out
     private checkCompatibility(): void {
-        let passive = this.beans.gridOptionsWrapper.isRowDragPassive();
+        let managed = this.beans.gridOptionsWrapper.isRowDragManaged();
         let treeData = this.beans.gridOptionsWrapper.isTreeData();
-
-        if (treeData && !passive) {
+        
+        if (treeData && managed) {
             _.doOnce( ()=>
-                console.warn('ag-Grid: If using row drag with tree data, you MUST set rowDragPassive=true'),
-                'RowDraggingComp.passiveAndTreeData'
+                console.warn('ag-Grid: If using row drag with tree data, you cannot have rowDragManaged=true'),
+                'RowDraggingComp.managedAndTreeData'
             );
         }
     }
@@ -74,7 +74,7 @@ export class RowDraggingComp extends Component {
     }
 }
 
-class PassiveVisibilityStrategy extends BeanStub {
+class NonManagedVisibilityStrategy extends BeanStub {
 
     private parent: RowDraggingComp;
     private beans: Beans;
@@ -113,7 +113,7 @@ class PassiveVisibilityStrategy extends BeanStub {
 
 }
 
-class DefaultVisibilityStrategy extends BeanStub {
+class ManagedVisibilityStrategy extends BeanStub {
 
     private parent: RowDraggingComp;
     private column: Column;

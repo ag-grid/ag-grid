@@ -79,15 +79,15 @@ export class RowDragFeature implements DropTarget {
         this.lastDraggingEvent = draggingEvent;
         let pixel = this.normaliseForScroll(draggingEvent.y);
 
-        let doActiveDrag = !this.gridOptionsWrapper.isRowDragPassive();
-        if (doActiveDrag) {
-            this.doActiveDrag(draggingEvent, pixel);
+        let managedDrag = this.gridOptionsWrapper.isRowDragManaged();
+        if (managedDrag) {
+            this.doManagedDrag(draggingEvent, pixel);
         }
 
         this.checkCenterForScrolling(pixel);
     }
 
-    private doActiveDrag(draggingEvent: DraggingEvent, pixel: number): void {
+    private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
         let rowNode = draggingEvent.dragItem.rowNode;
         let rowWasMoved = this.inMemoryRowModel.ensureRowAtPixel(rowNode, pixel);
 

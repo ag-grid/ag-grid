@@ -48,7 +48,7 @@ export interface GridOptions {
      ****************************************************************/
 
     // set once in init, can never change
-    rowDragPassive?: boolean;
+    rowDragManaged?: boolean;
     suppressRowDrag?: boolean;
     ensureDomOrder?: boolean;
     deltaRowDataMode?: boolean;
