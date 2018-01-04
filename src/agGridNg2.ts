@@ -370,6 +370,8 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public noRowsOverlayComponentFramework: any = undefined;
     @Input() public noRowsOverlayComponentParams: any = undefined;
     @Input() public suppressMultiRangeSelection: any = undefined;
+    @Input() public rowDragManaged: any = undefined;
+    @Input() public suppressRowDrag: any = undefined;
 
     /**
      * Outputs
@@ -442,6 +444,10 @@ export class AgGridNg2 implements AfterViewInit {
     @Output() public paginationChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public bodyHeightChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public componentStateChanged: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public rowDragEnter: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public rowDragMove: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public rowDragLeave: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public rowDragEnd: EventEmitter<any> = new EventEmitter<any>();
 
     // deprecated
     @Output() public beforeFilterChanged: EventEmitter<any> = new EventEmitter<any>();

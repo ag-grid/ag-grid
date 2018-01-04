@@ -174,6 +174,9 @@ export class AgGridColumn {
     @Input() public headerCheckboxSelection?: boolean | ((params: any) => boolean);
     /** If true, the header checkbox selection will work on filtered items*/
     @Input() public headerCheckboxSelectionFilteredOnly?: boolean;
+
+    @Input() public rowDrag?: boolean | ((params: any)=>boolean);
+
     /** Set to true if no menu should be shown for this column header. */
     @Input() public suppressMenu?: boolean;
     /** The menu tabs to show, and in which order, the valid values for this property are:
