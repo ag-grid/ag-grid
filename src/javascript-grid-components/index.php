@@ -590,7 +590,7 @@ gridOptions = {
             </tr>
             <tr class="item-row">
                 <td>agLoadingCellRenderer</td>
-                <td>Cell editor for loading row when using Enteprise row model.</td>
+                <td>Cell editor for loading row when using Enterprise row model.</td>
             </tr>
 
             <tr class="separator-row"><td colspan="2"/></tr>

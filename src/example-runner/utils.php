@@ -47,9 +47,9 @@ if (USE_LOCAL) {
     );
 }
 
-function globalAgGridScript($enteprise = false)
+function globalAgGridScript($enterprise = false)
 {
-    $path = $enteprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
+    $path = $enterprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
     return <<<SCR
     <script src="$path"></script>
 SCR;
