@@ -112,7 +112,7 @@ var gridOptions = {
         minWidth: 50
     },
     enableCellChangeFlash: true,
-    // rowDragFiresEvents: true,
+    rowDragManaged: true,
     // ensureDomOrder: true,
     // postProcessPopup: function(params) {
     //     console.log(params);
