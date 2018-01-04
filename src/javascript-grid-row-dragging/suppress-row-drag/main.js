@@ -11,6 +11,7 @@ var columnDefs = [
 
 var gridOptions = {
     defaultColDef: { width: 150 },
+    rowDragManaged: true,
     columnDefs: columnDefs,
     animateRows: true,
     enableSorting: true,

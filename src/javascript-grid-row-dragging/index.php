@@ -6,8 +6,6 @@ $pageGroup = "features";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
     <h1 class="first-h1" id="row-models">
         Row Dragging
     </h1>
@@ -34,39 +32,38 @@ colDef = {
 }</snippet>
 
     <p>
-        There are two ways in which row dragging works in the grid, active and passive:
+        There are two ways in which row dragging works in the grid, managed and unmanaged:
         <ul>
             <li>
-                <b>Active Dragging</b>: This is the simplest and the grid will rearrange
+                <b>Managed Dragging</b>: This is the simplest and the grid will rearrange
                 rows as you drag them.
             </li>
             <li>
-                <b>Passive Dragging</b>: This is more complex and more powerful, the grid
-                will not rearrange rows as you drag. Instead the grid fires events and the
-                application is responsible for responding in a way that makes sense for the
+                <b>Unmanaged Dragging</b>: This is more complex and more powerful. The grid
+                will not rearrange rows as you drag. Instead the application is responsible
+                for responding to events fired by the grid and rows are rearranged by the
                 application.
             </li>
         </ul>
     </p>
 
-    <h2>Active Dragging</h2>
+    <h2>Managed Dragging</h2>
 
     <p>
-        In active dragging the grid is responsible for rearranging the rows as the rows
-        are dragged. Active dragging (as opposed to passive dragging) is the default,
-        there is no other configuration to do other than set <code>rowDrag=true</code>
-        on one of the columns.
+        In managed dragging, the grid is responsible for rearranging the rows as the rows
+        are dragged. Managed dragging is enabled with the property <code>rowDragManaged=true</code>.
     </p>
 
     <p>
-        The example below shows simple active dragging. The following can be noted:
+        The example below shows simple managed dragging. The following can be noted:
         <ul>
             <li>
                 The first column has <code>rowDrag=true</code> which results in a
                 draggable area included in the cell.
             </li>
             <li>
-                Dragging the row will rearrange the row to the new position.
+                The property <code>rowDragManaged</code> is set, to tell the grid to move
+                the row as the row is dragged.
             </li>
             <li>
                 If a sort (click on the header) or filter (open up the column menu) is
@@ -76,10 +73,10 @@ colDef = {
         </ul>
     </p>
 
-    <?= example('Row Drag Simple', 'simple', 'generated') ?>
+    <?= example('Row Drag Simple Managed', 'simple-managed', 'generated') ?>
 
     <p>
-        The simplistic implementation of active dragging means it has the following constraints:
+        The logic for managed dragging is simple and has the following constraints:
         <ul>
             <li>
                 Works with <a href="../javascript-grid-in-memory/">In Memory</a> row model only and
@@ -104,15 +101,14 @@ colDef = {
                 your application knows.
             </li>
         </ul>
-        These constraints are easily got around by using passive row dragging explained below.
+        These constraints are easily got around by using unmanaged row dragging explained below.
     </p>
 
     <h2>Suppress Row Drag</h2>
 
     <p>
-        You can hide the dragging icon by calling the grid API <code>setSuppressRowDrag()</code>
-        or by setting the bound property <code>suppressRowDrag=true</code> (if using a framework that
-        allows bound properties).
+        You can hide the draggable area by calling the grid API <code>setSuppressRowDrag()</code>
+        or by setting the bound property <code>suppressRowDrag</code>.
     </p>
 
     <p>
@@ -126,15 +122,17 @@ colDef = {
 
     <?= example('Suppress Row Drag', 'suppress-row-drag', 'generated') ?>
 
-    <h2>Passive Dragging</h2>
+    <h2>Unmanaged Dragging</h2>
 
     <p>
-        To turn on passive dragging set the grid property <code>rowDragPassive=true</code>.
-        Passive dragging differs from active dragging in the following ways:
+        Unmanaged dragging is the default dragging for the grid. To use it, do not set
+        the property <code>rowDragManaged</code>. Unmanaged dragging differs from managed
+        dragging in the following ways:
         <ul>
             <li>
-                The grid does not moves rows in-line, the application is expected to do this
-                following events fired by the grid.
+                The grid does not manage moving of the rows. The only thing the grid
+                responds with is firing drag events. It is up to the application to do
+                the moving of the rows (if that is what the application wants to do).
             </li>
             <li>
                 Dragging is allowed while sort is applied.
@@ -175,12 +173,14 @@ colDef = {
         </ul>
         Typically a drag will fire the following events:
         <ol>
-            <li>rowDragEnter x 1 - The drag has started.</li>
-            <li>rowDragMove x multiple - The mouse is dragging over the rows.</li>
-            <li>rowDragEnd x 1 - The drag has finished.</li>
+            <li><code>rowDragEnter</code> fired once - The drag has started.</li>
+            <li><code>rowDragMove</code> fired multiple times - The mouse is dragging over the rows.</li>
+            <li><code>rowDragEnd</code> fired once - The drag has finished.</li>
         </ol>
-        Additional rowDragLeave and rowDragEnter events are fired if the mouse leaves or
-        re-enters the grid.
+        Additional <code>rowDragLeave</code> and <code>rowDragEnter</code> events are fired if the mouse
+        leaves or re-enters the grid. If the drag is finished outside of the grid, then the
+        <code>rowDragLeave</code> is the last event fired and no <code>rowDragEnd</code> is fired,
+        as the drag did not end on the grid.
     </p>
 
     <p>
@@ -192,18 +192,31 @@ colDef = {
             <li><code>event</code>: The underlying mouse move event associated with the drag.</li>
             <li><code>node</code>: The row node getting dragged.</li>
             <li><code>overIndex</code>: The row index the mouse is dragging over.</li>
-            <li><code>overNode</code>: The rows node the mouse is dragging over.</li>
-            <li><code>y</code>: The pixel index the mouse is over. This is comparable to rowNode.rowHeight and rowNode.rowTop.</li>
-            <li><code>vDirection</code>: Direction of the drag, either 'up', 'down' or blank (if mouse is moving horizontally and not vertically).</li>
+            <li><code>overNode</code>: The row node the mouse is dragging over.</li>
+            <li>
+                <code>y</code>: The vertical pixel location the mouse is over, with zero meaning
+                the top of the first row. This can be compared to the <code>rowNode.rowHeight</code>
+                and <code>rowNode.rowTop</code> to work out the mouse position relative to rows.
+                The provided attributes <code>overIndex</code> and <code>overNode</code>
+                means the <code>y</code>
+                property is mostly redundant. The <code>y</code> property can be handy if you want more
+                information such as 'how close is the mouse to the top or bottom of the row'.
+            </li>
+            <li>
+                <code>vDirection</code>: Direction of the drag, either <code>up</code>,
+                <code>down</code> or blank (if mouse is moving
+                horizontally and not vertically).
+            </li>
         </ul>
     </p>
 
-    <h3>Example Passive Events</h3>
+    <h3>Example Row Dragging Events</h3>
 
     <p>
-        The below example demonstrates setting <code>rowDragPassive=true</code> and observing
-        events that are fired. The example does not re-order the rows - this is on purpose to
-        demonstrate the grid will not attempt to re-order rows when <code>rowDragPassive=true</code>.
+        The below example demonstrates unmanaged row dragging with no attempt by the application
+        or the grid to re-order the rows - this is on purpose to
+        demonstrate the grid will not attempt to re-order rows when unless you set the
+        <code>rowDragManaged</code> property. The example also demonstrates all the events that are fired.
     </p>
 
     <p>
@@ -214,16 +227,16 @@ colDef = {
                 area included in the cell.
             </li>
             <li>
-                The grid has set <code>rowDragPassive=true</code> which results in the grid
-                NOT rearrange the rows as they are dragged.
+                The grid has not set <code>rowDragManaged</code> which results in the grid
+                not reordering rows as they are dragged.
             </li>
             <li>
-                All of the four drag events are registered for by the example. When an event
-                is received, is it printed to the console. To best observe this, open the example
+                All of the drag events are listened for and when one is received, it is
+                printed to the console. To best see this, open the example
                 in a new tab and open the developer console.
             </li>
             <li>
-                Because <code>rowDragPassive=true</code> the row dragging is left enabled even
+                Because <code>rowDragManaged</code> is not set, the row dragging is left enabled even
                 if sorting or filtering is applied. This is because your application should decide
                 if dragging should be allowed / suppressed using the <code>suppressRowDrag</code>
                 property.
@@ -231,15 +244,15 @@ colDef = {
         </ul>
     </p>
 
-    <?= example('Row Drag Passive Events', 'passive-events', 'generated') ?>
+    <?= example('Row Drag Events', 'dragging-events', 'generated') ?>
 
-    <h2>Simple Passive Example</h2>
+    <h2>Simple Unmanaged Example</h2>
 
     <p>
         The example below shows how to implement simple row dragging using
-        passive events. The example behaves the same as the first example on this
-        page however the logic for moving the rows is with the application and
-        not the grid as the property <code>rowDragPassive=true</code> is set.
+        unmanaged row dragging and events. The example behaves the same as the first example above
+        however the logic for moving the rows is with the application and
+        not the grid.
     </p>
 
     <p>
@@ -248,7 +261,7 @@ colDef = {
             <li>
                 The property <code>suppressRowDrag=true</code> is set by the application
                 depending on whether sorting or filtering is active. This is because the logic
-                in the example doesn't cover these scenarios and hence wants to prevent row
+                in the example doesn't cover these scenarios and wants to prevent row
                 dragging when sorting or filtering is active.
             </li>
             <li>
@@ -261,35 +274,41 @@ colDef = {
         </ul>
     </p>
 
-    <?= example('Row Drag Simple Passive Moving', 'simple-passive-moving', 'generated') ?>
+    <?= example('Row Drag Simple Unmanaged', 'simple-unmanaged', 'generated') ?>
 
     <p>
-        The simple passive example doesn't add anything that active dragging gives (the first
+        The simple example doesn't add anything that managed dragging gives (the first
         example on this page). Things get interesting when we introduce complex scenarios
         such as row grouping or tree data, which are explained below.
     </p>
 
-    <h2>Passive & Row Grouping</h2>
+    <h2>Dragging & Row Grouping</h2>
 
     <p>
         <a href="../javascript-grid-grouping/">Row Grouping</a> in the grid allows grouping
-        rows by a particular column. Dragging rows while grouping is possible when
-        <code>rowDragPassive=true</code>.
+        rows by a particular column. Dragging rows while grouping is possible when doing
+        unmanaged row dragging.
         The application is responsible for updating the data based on the drag events fired by
         the grid.
     </p>
 
     <p>
-        The example below shows <a href="../javascript-grid-grouping/">Row Grouping</a>
-        and row dragging where the following can be noted:
+        The example below uses row dragging to place rows into groups. It does not try to order
+        the rows within the group. For this reason, the logic works regardless of sorting or
+        filtering.
+    </p>
+
+    <p>
+        The example below shows row dragging with <a href="../javascript-grid-grouping/">Row Grouping</a>
+        where the following can be noted:
         <ul>
             <li>
                 The column 'Athlete' has row drag true for non-group rows. This is achieved
                 using the function variant of the <code>rowDrag</code> property.
             </li>
             <li>
-                The grid has set <code>rowDragPassive=true</code> which results in the grid
-                NOT rearrange the rows as they are dragged.
+                The grid has not set <code>rowDragManaged</code> property which results in
+                unmanaged row dragging.
             </li>
             <li>
                 The example does not re-order the rows. Instead the example demonstrates putting
@@ -297,9 +316,11 @@ colDef = {
                 group.
             </li>
             <li>
-                The example listens to event <code>onRowDragMove</code> and changes the group
+                The example listens to the event <code>onRowDragMove</code> and changes the group
                 a row belongs to while the drag is happening (which is different to the next
-                Tree Data example which waits until the drag is complete).
+                Tree Data example which waits until the drag is complete). It is the choice of your
+                application whether it wants to move rows in real time during the drag, or wait
+                until the drag action is complete.
             </li>
             <li>
                 The application can still move rows to groups even if ordering or sorting is applied.
@@ -311,13 +332,13 @@ colDef = {
 
     <?= example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', array("enterprise" => 1)) ?>
 
-    <h2>Passive & Tree Data</h2>
+    <h2>Row Dragging & Tree Data</h2>
 
     <p>
         <a href="../javascript-grid-tree-data/">Tree Data</a> in the grid allows providing
         data to the grid in parent / child relationships, similar to that required for a file
-        browser. Dragging rows while using tree data is possible when
-        <code>rowDragPassive=true</code>.
+        browser. Dragging rows with tree data is possible when doing
+        unmanaged row dragging.
         The application is responsible for updating the data based on the drag events fired by
         the grid.
     </p>
@@ -344,27 +365,37 @@ colDef = {
                 code).
             </li>
             <li>
-                The example uses <a href="../javascript-grid-cell-styles/#cellClassRules">Cell Class Rules</a>
+                The example uses
+                <a href="../javascript-grid-cell-styles/#cellClassRules">Cell Class Rules</a>
                 to highlight the destination folder. The example adds the example provided CSS class
                 <code>hover-over</code> to all the cells of the destination folder.
             </li>
             <li>
-                The example uses <a href="../javascript-grid-refresh/#refresh-cells">Refresh Cells</a> to get the grid
-                to execute the Cell Class Rules again over the destination folder when the destination
-                folder changes.
+                The example uses <a href="../javascript-grid-refresh/#refresh-cells">Refresh Cells</a>
+                to get the grid to execute the Cell Class Rules again over the destination folder when
+                the destination folder changes.
             </li>
         </ul>
 
         <?= example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
+    </p>
+
+    <h2>Dragging Multiple Rows</h2>
+
+    <p>
+        With unmanaged row dragging, the application is in control of what gets dragged. So it is possible
+        to use the events to drag more than one row at a time, eg to move all selected rows in one go if
+        using row selection.
+    </p>
 
     <h2>Other Row Models</h2>
 
     <p>
-        Row dragging with <code>rowDragPassive=true</code> will work with any of the row models
+        Unmanaged row dragging will work with any of the row models
         <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
         <a href="../javascript-grid-enterprise-model/">Enterprise</a> and
         <a href="../javascript-grid-viewport/">Viewport</a>.
-        With non-managed, the implementation of what happens when a particular drag happens up
+        With non-managed, the implementation of what happens when a particular drag happens is up
         to your application.
     </p>
 
@@ -376,6 +407,5 @@ colDef = {
         a different data store would be redundant.
     </p>
 
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

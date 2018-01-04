@@ -19,7 +19,6 @@ var gridOptions = {
     animateRows: true,
     enableSorting: true,
     enableFilter: true,
-    rowDragPassive: true,
     groupDefaultExpanded: 1,
     onRowDragMove: onRowDragMove
 };

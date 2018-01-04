@@ -47,7 +47,6 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: rowData,
     treeData: true,
-    rowDragPassive: true,
     animateRows: true,
     enableColResize: true,
     groupDefaultExpanded: -1,

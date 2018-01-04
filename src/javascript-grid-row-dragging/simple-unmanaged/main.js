@@ -17,7 +17,6 @@ var gridOptions = {
     animateRows: true,
     enableSorting: true,
     enableFilter: true,
-    rowDragPassive: true,
     onRowDragMove: onRowDragMove,
     getRowNodeId: getRowNodeId,
     onSortChanged: onSortChanged,
