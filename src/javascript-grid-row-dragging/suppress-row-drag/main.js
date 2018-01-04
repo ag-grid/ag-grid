@@ -19,11 +19,11 @@ var gridOptions = {
 };
 
 function onBtSuppressRowDrag() {
-    this.gridOptions.api.setSuppressRowDrag(true);
+    gridOptions.api.setSuppressRowDrag(true);
 }
 
 function onBtShowRowDrag() {
-    this.gridOptions.api.setSuppressRowDrag(false);
+    gridOptions.api.setSuppressRowDrag(false);
 }
 
 // setup the grid after the page has finished loading

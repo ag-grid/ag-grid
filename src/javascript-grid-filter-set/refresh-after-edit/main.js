@@ -22,13 +22,13 @@ var gridOptions = {
     enableFilter: true,
     enableColResize: true,
     onCellValueChanged: onCellValueChanged,
-    onGridReady: function (event) {
+    onGridReady: function () {
         // initialise all the filters - as this example demonstrates
         // changing data AFTER the filter is initialised
-        event.api.getFilterInstance('col1');
-        event.api.getFilterInstance('col2');
-        event.api.getFilterInstance('col3');
-        event.api.getFilterInstance('col4');
+        gridOptions.api.getFilterInstance('col1');
+        gridOptions.api.getFilterInstance('col2');
+        gridOptions.api.getFilterInstance('col3');
+        gridOptions.api.getFilterInstance('col4');
     }
 };
 

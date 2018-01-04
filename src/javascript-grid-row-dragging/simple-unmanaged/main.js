@@ -20,10 +20,19 @@ var gridOptions = {
     onRowDragMove: onRowDragMove,
     getRowNodeId: getRowNodeId,
     onSortChanged: onSortChanged,
-    onFilterChanged: onFilterChanged
+    onFilterChanged: onFilterChanged,
+    onGridReady: function onGridReady() {
+
+        // add id to each item, needed for immutable store to work
+        immutableStore.forEach( function(data, index) {
+            data.id = index;
+        });
+
+        gridOptions.api.setRowData(immutableStore);
+    }
 };
 
-var immutableStore;
+var immutableStore = olympicWinnersData;
 
 var sortActive = false;
 var filterActive = false;
@@ -76,33 +85,16 @@ function onRowDragMove(event) {
 
         gridOptions.api.clearFocusedCell();
     }
-}
 
-function moveInArray(arr, fromIndex, toIndex) {
-    var element = arr[fromIndex];
-    arr.splice(fromIndex, 1);
-    arr.splice(toIndex, 0, element);
+    function moveInArray(arr, fromIndex, toIndex) {
+        var element = arr[fromIndex];
+        arr.splice(fromIndex, 1);
+        arr.splice(toIndex, 0, element);
+    }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/olympicWinners.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            immutableStore = httpResult;
-            // hack in id for each data item, this is needed when deltaRowDataMode=true
-            immutableStore.forEach( function(data, index) {
-                data.id = index;
-            });
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
 });

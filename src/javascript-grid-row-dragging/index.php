@@ -210,7 +210,7 @@ colDef = {
         </ul>
     </p>
 
-    <h3>Example Row Dragging Events</h3>
+    <h3>Example Events</h3>
 
     <p>
         The below example demonstrates unmanaged row dragging with no attempt by the application
