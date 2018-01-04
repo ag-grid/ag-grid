@@ -129,6 +129,40 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
+            <td colspan="2">Row Drag & Drop</td>
+        </tr>
+
+        <tr>
+            <th>rowDragEnter</th>
+            <td>
+                A drag has started, or dragging already started and the mouse
+                has re-entered the grid having previously left the grid.
+            </td>
+        </tr>
+
+        <tr>
+            <th>rowDragMove</th>
+            <td>
+                The mouse has moved while dragging.
+            </td>
+        </tr>
+
+        <tr>
+            <th>rowDragLeave</th>
+            <td>
+                The mouse has left the grid while dragging.
+            </td>
+        </tr>
+
+        <tr>
+            <th>rowDragEnd</th>
+            <td>
+                The drag has finished over the grid.
+            </td>
+        </tr>
+
+        <tr class="title-row">
+            <!-- TITLE ROW -->
             <td colspan="2">Columns</td>
         </tr>
 
@@ -350,6 +384,18 @@ CellValueChangedEvent {
         ├── ComponentStateChangedEvent <span class="event-properties">{
         │       // one attribute for each changed property
         │     }</span>
+        ├── RowDragEvent <span class="event-properties">{ // abstract event, never fired
+        │   │    <span class="event-attribute">event</span>: MouseEvent, // The underlying mouse move event associated with the drag.
+        │   │    <span class="event-attribute">node</span>: RowNode, // The row node getting dragged.
+        │   │    <span class="event-attribute">overIndex</span>: number, // The row index the mouse is dragging over.
+        │   │    <span class="event-attribute">overNode</span>: RowNode, // The row node the mouse is dragging over.
+        │   │    <span class="event-attribute">y</span>: number, // The vertical pixel location the mouse is over.
+        │   │    <span class="event-attribute">vDirection</span>: string, // Direction of the drag, either 'up', 'down' or null.
+        │   │  }</span>
+        │   ├── RowDragEnterEvent <span class="event-properties">{}</span> // row drag has started / re-entered
+        │   ├── RowDragMoveEvent <span class="event-properties">{}</span> // mouse moved while dragging
+        │   ├── RowDragEndEvent <span class="event-properties">{}</span> // row drag finished while mouse over grid
+        │   ├── RowDragLeaveEvent <span class="event-properties">{}</span> // mouse left grid while dragging
         ├── ColumnEvent <span class="event-properties">{
         │   │    <span class="event-attribute">column</span>: Column, // the impacted column, only set if action was on one column
         │   │    <span class="event-attribute">columns</span>: Column[] // list of all impacted columns

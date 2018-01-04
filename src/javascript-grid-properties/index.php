@@ -169,6 +169,24 @@ include '../documentation-main/documentation_header.php';
             <th>enableRangeSelection</th>
             <td>Set to true to enable <a href="../javascript-grid-range-selection/">Range Selection</a>.</td>
         </tr>
+
+        <tr class="title-row">
+            <!-- TITLE ROW -->
+            <td colspan="2">Row Dragging</td>
+        </tr>
+        <tr>
+            <th>rowDragManaged</th>
+            <td>
+                Set to true to enable <a href="../javascript-grid-row-dragging/#managed-dragging">Managed Row Dragging</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>suppressRowDrag</th>
+            <td>
+                Set to true to suppress <a href="../javascript-grid-row-dragging/">Row Dragging</a>.
+            </td>
+        </tr>
+
         <tr class="title-row">
             <!-- TITLE ROW -->
             <td colspan="2">Editing</td>

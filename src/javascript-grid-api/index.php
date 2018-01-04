@@ -535,6 +535,12 @@ include '../documentation-main/documentation_header.php';
                 or <a href="../javascript-grid-column-menu">column menu</a>.
             </td>
         </tr>
+        <tr>
+            <th>setSuppressRowDrag(value)</th>
+            <td>
+                Sets teh suppressRowDrag property.
+            </td>
+        </tr>
     </table>
 </div>
 

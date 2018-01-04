@@ -106,6 +106,10 @@ include '../documentation-main/documentation_header.php';
             <td>Boolean or Function. Set to true (or return true from function) to render a selection checkbox in the column.</td>
         </tr>
         <tr>
+            <th>rowDrag</th>
+            <td>Boolean or Function. Set to true (or return true from function) to render a row drag area in the column.</td>
+        </tr>
+        <tr>
             <th>cellClass</th>
             <td>Class to use for the cell. Can be string, array of strings, or function.</td>
         </tr>
