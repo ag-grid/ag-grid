@@ -34,10 +34,21 @@ body {
     background-color: $white;
 }
 
-.enterprise-icon {
-    color: $red;
-    transform: translatey(-8px);
-    font-variant: all-small-caps;
-    font-size: 80%;
+@mixin enterprise-icon($size) {
+    color: $white;
+    background-color: $red;
+    transform: translatey(-6px);
+    font-variant: normal;
+    font-weight: 700;
+    text-transform: lowercase;
+    font-size: $size;
     display: inline-block;
+    border-radius: $size * 1.6 / 2;
+    width: $size * 1.6;
+    height: $size * 1.6;
+    padding-left: $size / 2;
+}
+
+.enterprise-icon {
+    @include enterprise-icon(8px);
 }

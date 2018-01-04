@@ -8,13 +8,13 @@
 }
 
 .heading-enterprise {
-    background-image: url('../homepage/enterprise.svg');
-    background-repeat: no-repeat;
-    background-size: 25px 25px;
-    background-position-x: 20px;
-    background-position-y: 0px;
-    padding-left: 40px;
-    margin-left: -40px;
+    &:after {
+        @include enterprise-icon(16px);
+        font-size: 19px;
+        padding-left: 7px;
+        margin-left: 5px;
+        content: 'e';
+    }
 }
 
 .inline-container {

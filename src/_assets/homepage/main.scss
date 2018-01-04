@@ -14,7 +14,6 @@
 @import '../pages/support.scss';
 @import '../pages/license-pricing.scss';
 @import '../pages/testimonials.scss';
-@import '../pages/testimonials.scss';
 @import '../pages/pipeline.scss';
 @import '../pages/blog.scss';
 
@@ -424,7 +423,7 @@
 
             a + ul {
                 margin-top: 0.5rem;
-                margin-bottom: 1rem;
+                margin-bottom: 1.5rem;
             }
 
             ul {
@@ -522,12 +521,9 @@
                 line-height: 2rem;
             }
 
-            .enterprise {
-                background-image: url('./enterprise.svg');
-                background-repeat: no-repeat;
-                background-size: 50px 50px;
-                background-position-x: 0px;
-                background-position-y: 0px;
+            .enterprise:before {
+                @include enterprise-icon(16px);
+                content: 'e';
             }
         }
     }
