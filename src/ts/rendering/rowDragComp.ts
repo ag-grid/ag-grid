@@ -67,7 +67,8 @@ export class RowDragComp extends Component {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
             dragItemName: this.cellValue,
-            dragItemCallback: () => dragItem
+            dragItemCallback: () => dragItem,
+            dragStartPixels: 0
         };
         this.beans.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc( ()=> this.beans.dragAndDropService.removeDragSource(dragSource) );
