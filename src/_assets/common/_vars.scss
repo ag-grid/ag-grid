@@ -50,4 +50,5 @@ body {
 .enterprise-icon {
     @include enterprise-icon;
     vertical-align: baseline;
+    transform: translatey(2px);
 }
