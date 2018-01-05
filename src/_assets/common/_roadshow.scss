@@ -1,0 +1,56 @@
+@mixin roadshow {
+    & > div {
+        @extend .row, .py-5;
+        background-position-y: bottom;
+        background-position-x: center;
+        background-repeat: no-repeat;
+        background-size: 600px 1px;
+        border-bottom: 1px solid $gray-200;
+    }
+
+    & > div:nth-child(odd) {
+        div:nth-child(1) {
+            @extend .col-sm-6;
+        }
+
+        & > pre,
+        & > div:nth-child(2) {
+            @extend .col-sm-5, .ml-auto;
+            a {
+                display: block;
+                text-align: right;
+            }
+        }
+    }
+
+    & > div:nth-child(even) {
+        div:nth-child(1) {
+            @extend .col-sm-6, .order-2, .ml-auto;
+        }
+
+        & > pre,
+        & > div:nth-child(2) {
+            @extend .col-sm-5;
+            a {
+                display: block;
+                text-align: right;
+            }
+        }
+    }
+
+    img {
+        @extend .img-fluid, .rounded;
+        width: 100%;
+        border: 1px solid $gray-300;
+    }
+
+    h3,
+    h4 {
+        line-height: 2rem;
+    }
+
+    .enterprise h3:after, .enterprise h4:after {
+        @include enterprise-icon;
+        content: 'e';
+    }
+}

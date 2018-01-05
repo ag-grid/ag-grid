@@ -1,7 +1,9 @@
         </section>
+ <?php if  (!defined('skipInPageNav')) { ?>       
         <aside id="doc-nav">
             <ul></ul>
         </aside>
+<?php } ?>
     </div>
 </div>
 

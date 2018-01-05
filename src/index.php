@@ -155,21 +155,21 @@ meta_and_links($title, $keywords, $description, false);
             </div>
 
             <div>
-            <div class="media">
-                <img src="_assets/fw-logos/webpack.svg" />
-                <div class="media-body">
-                    <h3>Webpack</h3>
-                    <p><a href="/ag-grid-partners-with-webpack/">Read about ag-Grid's Partnership with webpack.</a></p>
+                <div class="media">
+                    <img src="_assets/fw-logos/webpack.svg" />
+                    <div class="media-body">
+                        <h3>Webpack</h3>
+                        <p><a href="/ag-grid-partners-with-webpack/">Read about ag-Grid's Partnership with webpack.</a></p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="media">
-                <img src="_assets/fw-logos/plunker.svg" />
-                <div class="media-body">
-                    <h3>Plunker</h3>
-                    <p><a href="#">Read about ag-Grid's Partnership with Plunker.</a></p>
+                <div class="media">
+                    <img src="_assets/fw-logos/plunker.svg" />
+                    <div class="media-body">
+                        <h3>Plunker</h3>
+                        <p><a href="#">Read about ag-Grid's Partnership with Plunker.</a></p>
+                    </div>
                 </div>
-            </div>
             </div>
         </section>
     </div>
@@ -220,53 +220,13 @@ meta_and_links($title, $keywords, $description, false);
         </section>
     </div>
 
-<?php
-$features = json_decode(file_get_contents('home/features.json'), true);
-$groups = json_decode(file_get_contents('home/feature-groups.json'), true);
-
-$mapped_features = [];
-foreach($features as $feature) {
-    $mapped_features[$feature['title']] = $feature;
-}
-?>
-
     <div id="stage-feature-highlights">
         <h2>Feature Highlights</h2>
 
         <div id="feature-content">
             <aside></aside>
             <section>
-<?php
-foreach ($groups as $group) {
-    echo "<div><h3>" . $group['group'] . "</h3></div>";
-    foreach($group['items'] as $item) {
-        $feature = $mapped_features[$item];
-         
-        if (!$feature['src']) {
-            echo "<div " . ($feature["enterprise"] ? 'class="enterprise"' : '') . ">
-                <div>
-                    <h4>" . $feature['title']  . "</h4>
-                    <p>" . $feature['description']  . "</p>
-                </div>
-
-                <div>" .  ($feature["snippet"] ? '<pre><code class="language-js">' . htmlspecialchars($feature['snippet']) . '</code></pre>' : '') . "</div>
-            </div>";
-        } else {
-            echo "<div " . ($feature["enterprise"] ? 'class="enterprise"' : '') . ">
-                <div>
-                    <h4>" . $feature['title']  . "</h4>
-                    <p>" . $feature['description']  . "</p>
-                    " .  ($feature["snippet"] ? '<pre><code class="language-js">' . htmlspecialchars($feature['snippet']) . '</code></pre>' : '') . "
-                </div>
-
-                <div>
-                    <a href='#'><img src='_assets/homepage/feature-placeholder.svg' data-src='" . $feature['src'] . "' alt='" . $feature['title']. "'>See more</a>
-                </div>
-            </div>";
-        }
-    }
-}
-?>
+            <?php include 'roadshow/roadshow.php' ?>
             </section>
         </div>
     </div>

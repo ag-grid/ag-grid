@@ -79,4 +79,6 @@ $(function() {
         docNav.find('a').removeClass('current-section');
         breakpoints[i].link.find('> a').addClass('current-section');
     });
+
+    new lazyload(document.querySelectorAll('#feature-roadshow img'), {});
 });

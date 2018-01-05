@@ -5,12 +5,12 @@
 @import '../common/content.scss';
 @import '../common/nav.scss';
 @import '../common/footer.scss';
+@import '../common/roadshow.scss';
 @import '../common/note.scss';
 @import './example-runner.scss';
 
 #documentation {
     @extend .container-fluid;
-    background-color: $offwhite;
 
     & > div {
         @extend .row, .full-width-row;
@@ -29,8 +29,10 @@
             background-color: $white;
             padding-left: 2rem;
             padding-right: 2rem;
-            border-left: 1px solid $border-color;
-            border-right: 1px solid $border-color;
+        }
+
+        & > section.skip-in-page-nav {
+            padding-right: 15px;
         }
 
         #side-nav > ul > li > ul {
@@ -50,7 +52,6 @@
         }
 
         #side-nav {
-            background-image: linear-gradient(90deg, $offwhite, $white);
             min-width: 250px;
 
             li {
@@ -139,6 +140,11 @@
             height: 100vh;
             overflow: auto;
 
+            > ul {
+                border-left: 1px solid $border-color;
+                -webkit-padding-start: 2rem;
+            }
+
             > ul > li:first-child {
                 margin-top: 3rem;
             }
@@ -148,8 +154,6 @@
             }
 
             ul {
-                -webkit-padding-start: 0px;
-
                 li {
                     margin-bottom: 0.5rem;
 
@@ -182,7 +186,7 @@
             }
 
             @media (min-width: 1024px) {
-                display: flex;
+                display: block;
                 flex: 0 0 1 / 12 * 2;
                 max-width: 100% / 12 * 2;
                 padding-left: 2rem;
@@ -228,6 +232,16 @@
     }
     // docs homepage 
     .docs-homepage-section-preview {
+        &:first-of-type {
+            @extend .pt-4, .mt-4;
+            // border-top: 1px solid $border-color;
+        }
+
+        &:first-child {
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+        }
+
         @extend .mb-4, .pb-4;
         border-bottom: 1px solid $border-color;
 
@@ -253,6 +267,10 @@
 
     #get-started-frameworks > div > div {
         @extend .col-md-6, .mb-4;
+    }
+
+    #get-started-frameworks > div > div:nth-child(2n) {
+        padding-right: 0;
     }
 
     // get started overview
@@ -345,4 +363,9 @@
             margin-bottom: 0.5rem;
         }
     }
+}
+
+#feature-roadshow {
+    @extend .container;
+    @include roadshow;
 }

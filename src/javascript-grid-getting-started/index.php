@@ -38,7 +38,9 @@ $linkHref = "<a href='" . $link . "'>here</a>";
 
     <h1>Choose Your Framework</h1>
 
-<div id="get-started-frameworks" class="container-fluid"><div class="row no-gutters">
+<div id="get-started-frameworks">
+
+<div class="row no-gutters">
 
 <div><div class="get-started-framework card-javascript">
     <a href="../best-javascript-data-grid/">JavaScript</a>

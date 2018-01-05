@@ -123,7 +123,7 @@ $(() => {
 
     var anchors = new AnchorJS();
     anchors.options = {
-        placement: 'right',
+        placement: 'left',
         visible: 'hover'
     };
 
