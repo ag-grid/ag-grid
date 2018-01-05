@@ -169,10 +169,6 @@ export class ComponentProvider {
                 defaultImpl: DateFloatingFilterComp,
                 overridable: true
             },
-            agReadModelAsStringFloatingFilter: {
-                defaultImpl: ReadModelAsStringFloatingFilterComp,
-                overridable: false
-            },
 
             // renderers
             agCellRenderer: {

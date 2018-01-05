@@ -5,7 +5,10 @@ import {IComponent} from "../../interfaces/iComponent";
 import {ColDef} from "../../entities/colDef";
 import {IHeaderGroupComp, IHeaderGroupParams} from "../../headerRendering/headerGroup/headerGroupComp";
 import {IHeaderComp, IHeaderParams} from "../../headerRendering/header/headerComp";
-import {IFloatingFilterComp, IFloatingFilterParams} from "../../filter/floatingFilter";
+import {
+    IFloatingFilterComp, IFloatingFilterParams,
+    ReadModelAsStringFloatingFilterComp
+} from "../../filter/floatingFilter";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {
     EmptyFloatingFilterWrapperComp, FloatingFilterWrapperComp, IFloatingFilterWrapperComp,
@@ -52,6 +55,20 @@ export class ComponentRecipes {
     @Autowired('filterManager')
     private filterManager: FilterManager;
 
+    private static filterToFloatingFilterNames: {[p:string]:string} = {
+        set:'agSetColumnFloatingFilter',
+        agSetColumnFilter:'agSetColumnFloatingFilter',
+
+        number:'agNumberColumnFloatingFilter',
+        agNumberColumnFilter:'agNumberColumnFloatingFilter',
+
+        date:'agDateColumnFloatingFilter',
+        agDateColumnFilter:'agDateColumnFloatingFilter',
+
+        text:'agTextColumnFloatingFilter',
+        agTextColumnFilter:'agTextColumnFloatingFilter'
+    };
+
     public newDateComponent (params: IDateParams): Promise<IDateComp>{
         return this.componentResolver.createAgGridComponent<IDateComp>(this.gridOptions, params, "dateComponent", "agDateInput");
     }
@@ -64,25 +81,6 @@ export class ComponentRecipes {
         return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agColumnGroupHeader");
     }
 
-    private newFloatingFilterComponent<M> (typeRaw:string, colDef:ColDef, params:IFloatingFilterParams<M, any>):Promise<IFloatingFilterComp<M, any, any>>{
-        let type:string = typeRaw;
-        //type if populated must be one of ['set','number','text','date']
-        if (typeRaw.indexOf('ag') === 0) {
-            let filterPos: number = typeRaw.length - "Filter".length;
-            if (typeRaw.indexOf('Filter') === filterPos) {
-                type = typeRaw.substr(0, filterPos)
-            }
-        }
-        let defaultFloatingFilterName: string = type + "FloatingFilter";
-        return this.componentResolver.createAgGridComponent<IFloatingFilterComp<M, any, any>>(
-            colDef,
-            params,
-            "floatingFilterComponent",
-            defaultFloatingFilterName,
-            false
-        );
-    }
-
     public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>> (column:Column, params:IFloatingFilterParams<M, any>):IFloatingFilterWrapperComp<M, any, any, any>{
         let colDef:ColDef = column.getColDef();
 
@@ -90,17 +88,21 @@ export class ComponentRecipes {
             return this.newEmptyFloatingFilterWrapperComponent(column);
         }
 
-        let floatingFilterType: string;
+        let defaultFloatingFilterType: string;
 
-        if (typeof  colDef.filter === 'string' && this.isBasicFilterType (<string>colDef.filter)) {
-            floatingFilterType = (<string>colDef.filter);
-        } else if (!colDef.filter){
-            floatingFilterType= this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFilter' : 'agTextColumnFilter';
-        } else {
-            floatingFilterType= 'agCustomColumn';
+        if (!colDef.filter){
+            defaultFloatingFilterType = this.gridOptionsWrapper.isEnterprise() ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
+        } else if (typeof colDef.filter === 'string' && Object.keys(ComponentRecipes.filterToFloatingFilterNames).indexOf(colDef.filter) > -1){
+            defaultFloatingFilterType = ComponentRecipes.filterToFloatingFilterNames[colDef.filter]
         }
 
-        let floatingFilter:Promise<IFloatingFilterComp<M, any, P>> = this.newFloatingFilterComponent(floatingFilterType, colDef, params);
+        let floatingFilter: Promise<IFloatingFilterComp<M, any, P>> = this.componentResolver.createAgGridComponent<IFloatingFilterComp<M, any, any>>(
+            colDef,
+            params,
+            "floatingFilterComponent",
+            defaultFloatingFilterType,
+            false
+        );
         let floatingFilterWrapperComponentParams : IFloatingFilterWrapperParams <M, any, any> = <any>{
             column: column,
             floatingFilterComp: floatingFilter,
@@ -119,7 +121,11 @@ export class ComponentRecipes {
                 let parentPromise:Promise<IFilterComp> = this.filterManager.getFilterComponent(column);
                 return <any>parentPromise.resolveNow(null, parent=>parent.getModelAsString ? parent.getModelAsString(rawModelFn()) : null);
             };
-            floatingFilterWrapperComponentParams.floatingFilterComp = this.newFloatingFilterComponent<M>('agReadModelAsString', colDef, params);
+            floatingFilterWrapperComponentParams.floatingFilterComp = Promise.resolve(this.componentResolver.createInternalAgGridComponent<IFloatingFilterComp<M, any, any>>(
+                ReadModelAsStringFloatingFilterComp,
+                params
+
+            ));
         }
 
 
