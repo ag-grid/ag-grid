@@ -74,8 +74,11 @@ export class ColumnGroup implements ColumnGroupChild {
     }
 
     public isMoving(): boolean {
+        let allLeafColumns = this.getOriginalColumnGroup().getLeafColumns();
+        if (!allLeafColumns || allLeafColumns.length===0) { return false; }
+
         let allMoving = true;
-        this.getOriginalColumnGroup().getLeafColumns().forEach( col => {
+        allLeafColumns.forEach( col => {
             if (!col.isMoving()) {
                 allMoving = false;
             }

@@ -91,6 +91,7 @@ export class OriginalColumnGroup implements OriginalColumnGroupChild, IEventEmit
     }
 
     private addLeafColumns(leafColumns: Column[]): void {
+        if (!this.children) { return; }
         this.children.forEach( (child: OriginalColumnGroupChild) => {
             if (child instanceof Column) {
                 leafColumns.push(<Column>child);
