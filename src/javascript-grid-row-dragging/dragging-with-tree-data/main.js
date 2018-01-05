@@ -76,12 +76,12 @@ var gridOptions = {
 var potentialParent = null;
 
 function onRowDragMove(event) {
-    setPotentialParentForNode(event.overNode);
+    setPotentialParentForNode(event.api, event.overNode);
 }
 
-function onRowDragLeave() {
+function onRowDragLeave(event) {
     // clear node to highlight
-    setPotentialParentForNode(null);
+    setPotentialParentForNode(event.api, null);
 }
 
 function onRowDragEnd(event) {
@@ -112,7 +112,7 @@ function onRowDragEnd(event) {
     }
 
     // clear node to highlight
-    setPotentialParentForNode(null);
+    setPotentialParentForNode(event.api, null);
 }
 
 function moveToPath(newParentPath, node, allUpdatedNodes) {
@@ -155,7 +155,7 @@ function arePathsEqual(path1, path2) {
     return equal;
 }
 
-function setPotentialParentForNode(overNode) {
+function setPotentialParentForNode(api, overNode) {
 
     var newPotentialParent;
     if (overNode) {
@@ -183,10 +183,10 @@ function setPotentialParentForNode(overNode) {
 
     potentialParent = newPotentialParent;
 
-    refreshRows(rowsToRefresh);
+    refreshRows(api, rowsToRefresh);
 }
 
-function refreshRows(rowsToRefresh) {
+function refreshRows(api, rowsToRefresh) {
     var params = {
         // refresh these rows only.
         rowNodes: rowsToRefresh,
@@ -196,7 +196,7 @@ function refreshRows(rowsToRefresh) {
         // which skips change detection.
         force: true
     };
-    gridOptions.api.refreshCells(params);
+    api.refreshCells(params);
 }
 
 function getFileCellRenderer() {
