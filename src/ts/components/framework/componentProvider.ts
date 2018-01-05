@@ -8,11 +8,9 @@ import {HeaderGroupComp} from "../../headerRendering/headerGroup/headerGroupComp
 import {
     DateFloatingFilterComp,
     NumberFloatingFilterComp,
-    ReadModelAsStringFloatingFilterComp,
     SetFloatingFilterComp,
     TextFloatingFilterComp
 } from "../../filter/floatingFilter";
-import {EmptyFloatingFilterWrapperComp, FloatingFilterWrapperComp} from "../../filter/floatingFilterWrapper";
 import {ComponentType} from "./componentResolver";
 import {GroupCellRenderer} from "../../rendering/cellRenderers/groupCellRenderer";
 import {AnimateShowChangeCellRenderer} from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
@@ -137,18 +135,6 @@ export class ComponentProvider {
         };
 
         this.agGridDefaults = {
-            //THE FOLLOWING COMPONENTS HAVE NO DEFAULTS, THEY NEED TO BE SPECIFIED AS AN SPECIFIC FLAVOUR
-            //THERE ARE NO DEFAULTS THAT FIT ALL PURPOSES
-            //THEY ARE ADDED HERE TO AVOID THE NOT FOUND WARNING.
-            agColumnFilter:{
-                defaultImpl: null,
-                overridable: false
-            },
-            agCustomColumnFloatingFilter:{
-                defaultImpl: null,
-                overridable: false
-            },
-
             //date
             agDateInput: {
                 defaultImpl: DefaultDateComponent,
@@ -181,18 +167,6 @@ export class ComponentProvider {
             agDateColumnFloatingFilter: {
                 defaultImpl: DateFloatingFilterComp,
                 overridable: true
-            },
-            agReadModelAsStringFloatingFilter: {
-                defaultImpl: ReadModelAsStringFloatingFilterComp,
-                overridable: false
-            },
-            agFloatingFilterWrapper: {
-                defaultImpl: FloatingFilterWrapperComp,
-                overridable: false
-            },
-            agEmptyFloatingFilterWrapper: {
-                defaultImpl: EmptyFloatingFilterWrapperComp,
-                overridable: false
             },
 
             // renderers
@@ -232,18 +206,6 @@ export class ComponentProvider {
                 defaultImpl: LoadingCellRenderer,
                 overridable: true
             },
-            agOverlayWrapper: {
-                defaultImpl: OverlayWrapperComponent,
-                overridable: false
-            },
-            agLoadingOverlay: {
-                defaultImpl: LoadingOverlayComponent,
-                overridable: true
-            },
-            agNoRowsOverlay: {
-                defaultImpl: NoRowsOverlayComponent,
-                overridable: true
-            },
             agPinnedRowCellRenderer: {
                 defaultImpl: null,
                 overridable: false
@@ -258,41 +220,21 @@ export class ComponentProvider {
                 defaultImpl: TextCellEditor,
                 overridable: true
             },
-            agText: {
-                defaultImpl: TextCellEditor,
-                overridable: false
-            },
             agSelectCellEditor: {
                 defaultImpl: SelectCellEditor,
                 overridable: true
-            },
-            agSelect: {
-                defaultImpl: SelectCellEditor,
-                overridable: false
             },
             agPopupTextCellEditor: {
                 defaultImpl: PopupTextCellEditor,
                 overridable: true
             },
-            agPopupText: {
-                defaultImpl: PopupTextCellEditor,
-                overridable: false
-            },
             agPopupSelectCellEditor: {
                 defaultImpl: PopupSelectCellEditor,
                 overridable: true
             },
-            agPopupSelect: {
-                defaultImpl: PopupSelectCellEditor,
-                overridable: false
-            },
             agLargeTextCellEditor: {
                 defaultImpl: LargeTextCellEditor,
                 overridable: true
-            },
-            agLargeText: {
-                defaultImpl: LargeTextCellEditor,
-                overridable: false
             },
 
             //filter
@@ -307,6 +249,20 @@ export class ComponentProvider {
             agDateColumnFilter: {
                 defaultImpl: DateFilter,
                 overridable: false
+            },
+
+            //overlays
+            agOverlayWrapper: {
+                defaultImpl: OverlayWrapperComponent,
+                overridable: false
+            },
+            agLoadingOverlay: {
+                defaultImpl: LoadingOverlayComponent,
+                overridable: true
+            },
+            agNoRowsOverlay: {
+                defaultImpl: NoRowsOverlayComponent,
+                overridable: true
             }
         }
     }
