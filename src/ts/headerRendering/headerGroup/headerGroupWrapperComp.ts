@@ -19,6 +19,7 @@ import {IHeaderGroupComp, IHeaderGroupParams} from "./headerGroupComp";
 import {GridApi} from "../../gridApi";
 import {ComponentRecipes} from "../../components/framework/componentRecipes";
 import {Beans} from "../../rendering/beans";
+import {ColumnGroupChild} from "../../entities/columnGroupChild";
 
 export class HeaderGroupWrapperComp extends Component {
 
@@ -70,10 +71,29 @@ export class HeaderGroupWrapperComp extends Component {
         this.addClasses();
         this.setupWidth();
         this.addAttributes();
+        this.setupMovingCss();
 
         let setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+    }
+
+    private setupMovingCss(): void {
+        this.columnGroup.getOriginalColumnGroup().getLeafColumns().forEach( col => {
+            this.addDestroyableEventListener(col, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
+        });
+        this.onColumnMovingChanged();
+    }
+
+    private onColumnMovingChanged(): void {
+        // this function adds or removes the moving css, based on if the col is moving.
+        // this is what makes the header go dark when it is been moved (gives impression to
+        // user that the column was picked up).
+        if (this.columnGroup.isMoving()) {
+            _.addCssClass(this.getGui(), 'ag-header-cell-moving');
+        } else {
+            _.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+        }
     }
 
     private addAttributes(): void {
@@ -122,6 +142,8 @@ export class HeaderGroupWrapperComp extends Component {
 
         if (this.isSuppressMoving()) { return; }
 
+        let allLeafColumns = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+
         if (eHeaderGroup) {
             let dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
@@ -129,7 +151,9 @@ export class HeaderGroupWrapperComp extends Component {
                 dragItemName: displayName,
                 // we add in the original group leaf columns, so we move both visible and non-visible items
                 dragItemCallback: this.getDragItemForGroup.bind(this),
-                dragSourceDropTarget: this.dragSourceDropTarget
+                dragSourceDropTarget: this.dragSourceDropTarget,
+                dragStarted: () => allLeafColumns.forEach( col => col.setMoving(true) ),
+                dragStopped: () => allLeafColumns.forEach( col => col.setMoving(false) )
             };
             this.dragAndDropService.addDragSource(dragSource, true);
             this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
