@@ -268,5 +268,5 @@ export {AgEvent, AgGridEvent, ModelUpdatedEvent, ColumnPivotModeChangedEvent, Vi
     CellDoubleClickedEvent, CellMouseOverEvent, CellMouseOutEvent, CellContextMenuEvent, CellEditingStartedEvent,
     CellEditingStoppedEvent, CellValueChangedEvent, ColumnRequestEvent, ColumnRowGroupChangeRequestEvent,
     ColumnPivotChangeRequestEvent, ColumnValueChangeRequestEvent, ColumnAggFuncChangeRequestEvent, ScrollVisibilityChangedEvent,
-    RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragExitEvent, RowDragMoveEvent}
+    RowDragEvent, RowDragLeaveEvent, RowDragEnterEvent, RowDragEndEvent, RowDragMoveEvent}
     from "./dist/lib/events";

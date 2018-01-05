@@ -87,7 +87,9 @@ export class ColDefUtil {
         'suppressPaste',
         'suppressNavigable',
         'volatile',
-        'enableCellChangeFlash'];
+        'enableCellChangeFlash',
+        'rowDrag'
+    ];
 
     public static FUNCTION_PROPERTIES = [
         'valueGetter',

@@ -31,6 +31,8 @@ export interface DragSource {
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
+    /** After how many pixels of dragging should the drag operation start. Default is 4px. */
+    dragStartPixels?: number;
 }
 
 export interface DropTarget {
@@ -142,6 +144,7 @@ export class DragAndDropService {
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
         let params = <DragListenerParams> {
             eElement: dragSource.eElement,
+            dragStartPixels: dragSource.dragStartPixels,
             onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
             onDragging: this.onDragging.bind(this)

@@ -68,7 +68,7 @@ export interface RowDragEvent extends AgGridEvent {
 }
 
 export interface RowDragEnterEvent extends RowDragEvent {}
-export interface RowDragExitEvent extends RowDragEvent {}
+export interface RowDragEndEvent extends RowDragEvent {}
 export interface RowDragMoveEvent extends RowDragEvent {}
 export interface RowDragLeaveEvent extends RowDragEvent {}
 
