@@ -507,4 +507,24 @@ gridOptions.getChildCount = function(data) {
 
 <?= example('Pagination Example', 'pagination', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
+<h1 id="crud">CRUD</h1>
+
+<p>
+    The enterprise row model acts as a cache against the original store of data which typically
+    resides on the server side of an application. To add or remove records, the pattern is to update
+    the original data set (typically on the server) and then get the enterprise row model to
+    refresh.
+</p>
+
+<p>
+    The example below shows this in action where the following can be noted:
+    <ul>
+        <li>The <b>Add Row</b> will add a row before the currently selected row.</li>
+        <li>The <b>Remove Row</b> will remove the currently selected row.</li>
+        <li>All operations are done outside of the grid and the grid is then told to refresh.</li>
+    </ul>
+</p>
+
+<?= example('Enterprise Row Model & CRUD', 'crud', 'generated', array("enterprise" => 1)) ?>
+
 <?php include '../documentation-main/documentation_footer.php';?>
