@@ -42,7 +42,7 @@ function render_menu_items($items) {
             $url = $GLOBALS['rootFolder'] . $item['url'];
             $a_class = is_current($item) ? ' class="active"' : '';
             echo <<<LINK
-                <a href="$url"$a_class>{$item['title']} $enterprise_icon</a>
+                <a href="$url"$a_class>{$item['title']}$enterprise_icon</a>
 LINK;
         } else {
             echo "<span>{$item['title']}</span>";

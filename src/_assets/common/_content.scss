@@ -9,11 +9,8 @@
 
 .heading-enterprise {
     &:after {
-        @include enterprise-icon(16px);
-        font-size: 19px;
-        padding-left: 7px;
-        margin-left: 5px;
-        content: 'e';
+        @include enterprise-icon;
+        margin-left: 6px;
     }
 }
 

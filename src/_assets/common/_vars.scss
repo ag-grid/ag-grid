@@ -34,21 +34,20 @@ body {
     background-color: $white;
 }
 
-@mixin enterprise-icon($size) {
-    color: $white;
-    background-color: $red;
-    transform: translatey(-6px);
-    font-variant: normal;
-    font-weight: 700;
-    text-transform: lowercase;
-    font-size: $size;
+@mixin enterprise-icon {
     display: inline-block;
-    border-radius: $size * 1.6 / 2;
-    width: $size * 1.6;
-    height: $size * 1.6;
-    padding-left: $size / 2;
+    height: 1em;
+    width: 1em;
+    background-image: url('../svg/enterprise.svg');
+    text-indent: -10000px;
+    background-size: 0.8em 0.8em;
+    background-position-y: bottom;
+    background-repeat: no-repeat;
+    content: 'e';
+    margin-left: 3px;
 }
 
 .enterprise-icon {
-    @include enterprise-icon(8px);
+    @include enterprise-icon;
+    vertical-align: baseline;
 }

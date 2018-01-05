@@ -522,7 +522,7 @@
             }
 
             .enterprise:before {
-                @include enterprise-icon(16px);
+                @include enterprise-icon;
                 content: 'e';
             }
         }
