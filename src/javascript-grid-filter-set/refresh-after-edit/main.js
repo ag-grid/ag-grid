@@ -32,12 +32,12 @@ var gridOptions = {
     }
 };
 
-function onCellValueChanged(event) {
-    var col = event.column;
+function onCellValueChanged(params) {
+    var col = params.column;
     switch (col.getId()) {
         case 'col2': refreshCol2(); break;
-        case 'col3': refreshCol3(event.newValue); break;
-        case 'col4': refreshCol4(event.newValue); break;
+        case 'col3': refreshCol3(params.newValue); break;
+        case 'col4': refreshCol4(params.newValue); break;
     }
 }
 
