@@ -16,41 +16,41 @@ var gridOptions = {
     enableFilter: true,
     enableColResize: true,
     onCellValueChanged: onCellValueChanged,
-    onGridReady: function() {
+    onGridReady: function(params) {
         // initialise all the filters - as this example demonstrates
         // changing data AFTER the filter is initialised
-        gridOptions.api.getFilterInstance('col1');
-        gridOptions.api.getFilterInstance('col2');
-        gridOptions.api.getFilterInstance('col3');
-        gridOptions.api.getFilterInstance('col4');
+        params.api.getFilterInstance('col1');
+        params.api.getFilterInstance('col2');
+        params.api.getFilterInstance('col3');
+        params.api.getFilterInstance('col4');
     }
 };
 
 function onCellValueChanged(params) {
-    var col = params.column;
-    switch (col.getId()) {
-        case 'col2':
-            refreshCol2();
-            break;
-        case 'col3':
-            refreshCol3(params.newValue);
-            break;
-        case 'col4':
-            refreshCol4(params.newValue);
-            break;
-    }
+        var col = params.column;
+        switch (col.getId()) {
+            case 'col2':
+                refreshCol2(params.api);
+                break;
+            case 'col3':
+                refreshCol3(params.api, params.newValue);
+                break;
+            case 'col4':
+                refreshCol4(params.api, params.newValue);
+                break;
+        }
 }
 
 // simple refresh of filter - the value state will be incorrect
-function refreshCol2() {
-    var filter = gridOptions.api.getFilterInstance('col2');
+function refreshCol2(api) {
+    var filter = api.getFilterInstance('col2');
     filter.resetFilterValues();
 }
 
 // refresh the filter, but also restore the model to the
 // state before the refresh of the values
-function refreshCol3(newValue) {
-    var filter = gridOptions.api.getFilterInstance('col3');
+function refreshCol3(api, newValue) {
+    var filter = api.getFilterInstance('col3');
     var model = filter.getModel();
     filter.resetFilterValues();
     var filterWasActive = model !== null;
@@ -60,15 +60,15 @@ function refreshCol3(newValue) {
     }
 }
 
-function refreshCol4(newValue) {
-    var filter = gridOptions.api.getFilterInstance('col4');
+function refreshCol4(api, newValue) {
+    var filter = api.getFilterInstance('col4');
     var model = filter.getModel();
     filter.resetFilterValues();
     var filterWasActive = model !== null;
     if (filterWasActive) {
         model.push(newValue);
         filter.setModel(model);
-        gridOptions.api.onFilterChanged();
+        api.onFilterChanged();
     }
 }
 
