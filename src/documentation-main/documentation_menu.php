@@ -1,16 +1,12 @@
 <?php
 $menu_items = json_decode(file_get_contents('../documentation-main/menu.json'), true);
 
-function get_last_dir($str) {
-    return end(explode(DIRECTORY_SEPARATOR, dirname($str)));
-}
-
 if (basename($_SERVER['PHP_SELF']) == 'index.php') {
     // 'my-fancy-best-dir-name/'
-    $article_id = end(explode(DIRECTORY_SEPARATOR, dirname($_SERVER['PHP_SELF']))). "/";
+    $article_id = end(explode('/', dirname($_SERVER['PHP_SELF']))). "/";
 } else {
     // 'my-fancy-best-dir-name/file.php'
-    $article_id = join('/', array_slice(explode(DIRECTORY_SEPARATOR, $_SERVER['PHP_SELF']), -2, 2));
+    $article_id = join('/', array_slice(explode('/', $_SERVER['PHP_SELF']), -2, 2));
 }
 
 define('DOC_SECTION', $article_id);
