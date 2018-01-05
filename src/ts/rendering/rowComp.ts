@@ -180,7 +180,8 @@ export class RowComp extends Component {
 
         let rowHeight = this.rowNode.rowHeight;
         let rowClasses = this.getInitialRowClasses(extraCssClass).join(' ');
-        let rowId = this.rowNode.id;
+
+        let rowIdSanitised = _.escape(this.rowNode.id);
 
         let userRowStyles = this.preProcessStylesFromGridOptions();
 
@@ -190,7 +191,7 @@ export class RowComp extends Component {
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
         templateParts.push(` row-index="${this.rowNode.getRowIndexString()}"`);
-        templateParts.push(rowId ? ` row-id="${rowId}"` : ``);
+        templateParts.push(rowIdSanitised ? ` row-id="${rowIdSanitised}"` : ``);
         templateParts.push(businessKey ? ` row-business-key="${businessKey}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
         templateParts.push(` class="${rowClasses}"`);

@@ -120,6 +120,7 @@ export class CellComp extends Component {
         let valueSanitised = _.get(this.column, 'colDef.template', null) ? valueToRender : _.escape(valueToRender);
         let tooltip = this.getToolTip();
         let tooltipSanitised = _.escape(tooltip);
+        let colIdSanitised = _.escape(col.getId());
 
         let wrapperStartTemplate: string;
         let wrapperEndTemplate: string;
@@ -137,7 +138,7 @@ export class CellComp extends Component {
         templateParts.push(` tabindex="-1"`);
         templateParts.push(` role="gridcell"`);
         templateParts.push(` comp-id="${this.getCompId()}" `);
-        templateParts.push(` col-id="${col.getId()}"`);
+        templateParts.push(` col-id="${colIdSanitised}"`);
         templateParts.push(` class="${cssClasses.join(' ')}"`);
         templateParts.push(  tooltipSanitised ? ` title="${tooltipSanitised}"` : ``);
         templateParts.push(` style="width: ${width}px; left: ${left}px; ${stylesFromColDef}" >`);
