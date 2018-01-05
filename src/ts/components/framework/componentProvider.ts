@@ -12,7 +12,6 @@ import {
     SetFloatingFilterComp,
     TextFloatingFilterComp
 } from "../../filter/floatingFilter";
-import {EmptyFloatingFilterWrapperComp, FloatingFilterWrapperComp} from "../../filter/floatingFilterWrapper";
 import {ComponentType} from "./componentResolver";
 import {GroupCellRenderer} from "../../rendering/cellRenderers/groupCellRenderer";
 import {AnimateShowChangeCellRenderer} from "../../rendering/cellRenderers/animateShowChangeCellRenderer";
@@ -172,14 +171,6 @@ export class ComponentProvider {
             },
             agReadModelAsStringFloatingFilter: {
                 defaultImpl: ReadModelAsStringFloatingFilterComp,
-                overridable: false
-            },
-            agFloatingFilterWrapper: {
-                defaultImpl: FloatingFilterWrapperComp,
-                overridable: false
-            },
-            agEmptyFloatingFilterWrapper: {
-                defaultImpl: EmptyFloatingFilterWrapperComp,
                 overridable: false
             },
 

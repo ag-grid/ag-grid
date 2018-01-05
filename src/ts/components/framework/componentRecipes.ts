@@ -7,7 +7,10 @@ import {IHeaderGroupComp, IHeaderGroupParams} from "../../headerRendering/header
 import {IHeaderComp, IHeaderParams} from "../../headerRendering/header/headerComp";
 import {IFloatingFilterComp, IFloatingFilterParams} from "../../filter/floatingFilter";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {IFloatingFilterWrapperComp, IFloatingFilterWrapperParams} from "../../filter/floatingFilterWrapper";
+import {
+    EmptyFloatingFilterWrapperComp, FloatingFilterWrapperComp, IFloatingFilterWrapperComp,
+    IFloatingFilterWrapperParams
+} from "../../filter/floatingFilterWrapper";
 import {Column} from "../../entities/column";
 import {IFilterComp} from "../../interfaces/iFilter";
 import {FilterManager} from "../../filter/filterManager";
@@ -70,17 +73,17 @@ export class ComponentRecipes {
                 type = typeRaw.substr(0, filterPos)
             }
         }
-        let floatingFilterName: string = type + "FloatingFilter";
+        let defaultFloatingFilterName: string = type + "FloatingFilter";
         return this.componentResolver.createAgGridComponent<IFloatingFilterComp<M, any, any>>(
             colDef,
             params,
             "floatingFilterComponent",
-            floatingFilterName,
+            defaultFloatingFilterName,
             false
         );
     }
 
-    public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>> (column:Column, params:IFloatingFilterParams<M, any>):Promise<IFloatingFilterWrapperComp<M, any, any, any>>{
+    public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>> (column:Column, params:IFloatingFilterParams<M, any>):IFloatingFilterWrapperComp<M, any, any, any>{
         let colDef:ColDef = column.getColDef();
 
         if (colDef.suppressFilter){
@@ -120,11 +123,9 @@ export class ComponentRecipes {
         }
 
 
-        return this.componentResolver.createAgGridComponent<IFloatingFilterWrapperComp<any, any, any, any>> (
-            colDef,
-            floatingFilterWrapperComponentParams,
-            "floatingFilterWrapper",
-            "agFloatingFilterWrapper"
+        return this.componentResolver.createInternalAgGridComponent<IFloatingFilterWrapperComp<any, any, any, any>> (
+            FloatingFilterWrapperComp,
+            floatingFilterWrapperComponentParams
         );
     }
 
@@ -176,19 +177,17 @@ export class ComponentRecipes {
 
     private getFilterComponentPrototype<A extends IComponent<any> & B, B>
     (colDef: ColDef): ComponentToUse<A, B> {
-        return <ComponentToUse<A, B>>this.componentResolver.getComponentToUse(colDef, "filter", "agFilter");
+        return <ComponentToUse<A, B>>this.componentResolver.getComponentToUse(colDef, "filter");
     }
 
-    private newEmptyFloatingFilterWrapperComponent(column:Column): Promise<IFloatingFilterWrapperComp<any, any, any, any>> {
+    private newEmptyFloatingFilterWrapperComponent(column:Column): IFloatingFilterWrapperComp<any, any, any, any> {
         let floatingFilterWrapperComponentParams : IFloatingFilterWrapperParams <any, any, any> = <any>{
             column: column,
             floatingFilterComp: null
         };
-        return this.componentResolver.createAgGridComponent<IFloatingFilterWrapperComp<any, any, any, any>>(
-            column.getColDef(),
-            floatingFilterWrapperComponentParams,
-            "floatingFilterWrapper",
-            "agEmptyFloatingFilterWrapper"
+        return this.componentResolver.createInternalAgGridComponent<IFloatingFilterWrapperComp<any, any, any, any>>(
+            EmptyFloatingFilterWrapperComp,
+            floatingFilterWrapperComponentParams
         );
     }
 }
