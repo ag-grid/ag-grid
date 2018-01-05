@@ -1,4 +1,3 @@
-
 var rowData = [
     {col1: 'A', col2: 'A', col3: 'A', col4: 'A'},
     {col1: 'B', col2: 'B', col3: 'B', col4: 'B'},
@@ -6,12 +5,7 @@ var rowData = [
     {col1: 'B', col2: 'B', col3: 'B', col4: 'B'}
 ];
 
-var columnDefs = [
-    {field: 'col1'},
-    {field: 'col2'},
-    {field: 'col3'},
-    {field: 'col4'}
-];
+var columnDefs = [{field: 'col1'}, {field: 'col2'}, {field: 'col3'}, {field: 'col4'}];
 
 var gridOptions = {
     defaultColDef: {
@@ -22,7 +16,7 @@ var gridOptions = {
     enableFilter: true,
     enableColResize: true,
     onCellValueChanged: onCellValueChanged,
-    onGridReady: function () {
+    onGridReady: function() {
         // initialise all the filters - as this example demonstrates
         // changing data AFTER the filter is initialised
         gridOptions.api.getFilterInstance('col1');
@@ -35,9 +29,15 @@ var gridOptions = {
 function onCellValueChanged(params) {
     var col = params.column;
     switch (col.getId()) {
-        case 'col2': refreshCol2(); break;
-        case 'col3': refreshCol3(params.newValue); break;
-        case 'col4': refreshCol4(params.newValue); break;
+        case 'col2':
+            refreshCol2();
+            break;
+        case 'col3':
+            refreshCol3(params.newValue);
+            break;
+        case 'col4':
+            refreshCol4(params.newValue);
+            break;
     }
 }
 
