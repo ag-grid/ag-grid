@@ -6,8 +6,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<p>
-
     <h1 id="filtering">Column Filter</h1>
 
     <p>
@@ -384,7 +382,5 @@ on the combination of filter type and your <code>columnDef.filterParams.nullComp
 <p>
     Note that <code>inRange</code> will never include <code>null</code>.
 </p>
-</div>
-
 
 <?php include '../documentation-main/documentation_footer.php';?>
