@@ -8,7 +8,6 @@ import {HeaderGroupComp} from "../../headerRendering/headerGroup/headerGroupComp
 import {
     DateFloatingFilterComp,
     NumberFloatingFilterComp,
-    ReadModelAsStringFloatingFilterComp,
     SetFloatingFilterComp,
     TextFloatingFilterComp
 } from "../../filter/floatingFilter";
