@@ -33,6 +33,10 @@ export interface DragSource {
     dragSourceDropTarget?: DropTarget;
     /** After how many pixels of dragging should the drag operation start. Default is 4px. */
     dragStartPixels?: number;
+    /** Callback for drag started */
+    dragStarted?: ()=>void;
+    /** Callback for drag stopped */
+    dragStopped?: ()=>void;
 }
 
 export interface DropTarget {
@@ -182,10 +186,12 @@ export class DragAndDropService {
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
         this.dragItem = this.dragSource.dragItemCallback();
-        if (this.dragItem.columns) {
-            this.dragItem.columns.forEach(column => column.setMoving(true));
-        }
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
+
+        if (this.dragSource.dragStarted) {
+            this.dragSource.dragStarted();
+        }
+
         this.createGhost();
     }
 
@@ -193,8 +199,8 @@ export class DragAndDropService {
         this.eventLastTime = null;
         this.dragging = false;
 
-        if (this.dragItem.columns) {
-            this.dragItem.columns.forEach( column => column.setMoving(false) );
+        if (this.dragSource.dragStopped) {
+            this.dragSource.dragStopped();
         }
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
             let draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);

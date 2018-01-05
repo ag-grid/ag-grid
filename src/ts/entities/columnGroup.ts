@@ -73,6 +73,16 @@ export class ColumnGroup implements ColumnGroupChild {
         return this.displayedChildren.length === 0;
     }
 
+    public isMoving(): boolean {
+        let allMoving = true;
+        this.getOriginalColumnGroup().getLeafColumns().forEach( col => {
+            if (!col.isMoving()) {
+                allMoving = false;
+            }
+        });
+        return allMoving;
+    }
+
     public checkLeft(): void {
         // first get all children to setLeft, as it impacts our decision below
         this.displayedChildren.forEach( (child: ColumnGroupChild) => {

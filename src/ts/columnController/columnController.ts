@@ -1094,8 +1094,12 @@ export class ColumnController {
     public setColumnsVisible(keys: (string|Column)[], visible: boolean): void {
         this.columnAnimationService.start();
         this.actionOnGridColumns(keys, (column: Column): boolean => {
-            column.setVisible(visible);
-            return true;
+            if (column.isVisible()!==visible) {
+                column.setVisible(visible);
+                return true;
+            } else {
+                return false;
+            }
         }, ()=> {
             let event: ColumnVisibleEvent = {
                 type: Events.EVENT_COLUMN_VISIBLE,

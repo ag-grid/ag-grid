@@ -181,7 +181,9 @@ export class HeaderWrapperComp extends Component {
                 eElement: eHeaderCellLabel,
                 dragItemCallback: () => this.createDragItem(),
                 dragItemName: displayName,
-                dragSourceDropTarget: this.dragSourceDropTarget
+                dragSourceDropTarget: this.dragSourceDropTarget,
+                dragStarted: () => this.column.setMoving(true),
+                dragStopped: () => this.column.setMoving(false)
             };
             this.dragAndDropService.addDragSource(dragSource, true);
             this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );

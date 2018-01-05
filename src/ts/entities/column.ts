@@ -332,7 +332,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return false;
     }
 
-    public setMoving(moving: boolean) {
+    public setMoving(moving: boolean): void {
         this.moving = moving;
         this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MOVING_CHANGED));
     }
