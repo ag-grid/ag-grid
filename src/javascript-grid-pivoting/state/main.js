@@ -33,9 +33,13 @@ function saveState() {
 }
 
 function restoreState() {
-    gridOptions.columnApi.setColumnState(savedState);
-    gridOptions.columnApi.setPivotMode(savedPivotMode);
-    console.log('column state restored');
+    if (savedState) {
+      gridOptions.columnApi.setColumnState(savedState);
+      gridOptions.columnApi.setPivotMode(savedPivotMode);
+      console.log('column state restored');
+    } else {
+      console.log('no previous column state to restore!');
+    }
 }
 
 function togglePivotMode() {
