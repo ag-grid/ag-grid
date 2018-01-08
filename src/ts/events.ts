@@ -2,7 +2,7 @@ import {RowNode} from "./entities/rowNode";
 import {Column} from "./entities/column";
 import {ColDef} from "./entities/colDef";
 import {GridApi} from "./gridApi";
-import {ColumnApi} from "./columnController/columnController";
+import {ColumnApi} from "./columnController/columnApi";
 import {ColumnGroup} from "./entities/columnGroup";
 import {OriginalColumnGroup} from "./entities/originalColumnGroup";
 import {HDirection, VDirection} from "./dragAndDrop/dragAndDropService";

@@ -4,7 +4,7 @@ import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "../rend
 import {Column} from "./column";
 import {IFilterComp} from "../interfaces/iFilter";
 import {GridApi} from "../gridApi";
-import {ColumnApi} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 import {IHeaderGroupComp} from "../headerRendering/headerGroup/headerGroupComp";
 import {IFloatingFilterComp} from "../filter/floatingFilter";
 import {CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent} from "../events";

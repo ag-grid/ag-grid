@@ -7,7 +7,8 @@ import {
     DropTarget
 } from "../../dragAndDrop/dragAndDropService";
 import {IHeaderComp, IHeaderParams} from "./headerComp";
-import {ColumnApi, ColumnController} from "../../columnController/columnController";
+import {ColumnApi} from "../../columnController/columnApi";
+import {ColumnController} from "../../columnController/columnController";
 import {HorizontalDragService} from "../horizontalDragService";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {CssClassApplier} from "../cssClassApplier";

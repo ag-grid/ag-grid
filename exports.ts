@@ -243,7 +243,7 @@ export {GetQuickFilterTextParams} from "./dist/lib/entities/colDef";
 export {IHeaderGroupParams, IHeaderGroup} from "./dist/lib/headerRendering/headerGroup/headerGroupComp";
 export {TextAndNumberFilterParameters} from "./dist/lib/filter/textAndNumberFilterParameters";
 export {IsColumnFunc} from "./dist/lib/entities/colDef";
-export {ColumnApi} from "./dist/lib/columnController/columnController";
+export {ColumnApi} from "./dist/lib/columnController/columnApi";
 export {IHeader} from "./dist/lib/headerRendering/header/headerComp";
 export {ICellRendererParams} from "./dist/lib/rendering/cellRenderers/iCellRenderer";
 export {IRichCellEditorParams} from "./dist/lib/interfaces/iRichCellEditorParams";

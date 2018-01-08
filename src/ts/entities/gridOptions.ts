@@ -1,6 +1,6 @@
 import {RowNode} from "./rowNode";
 import {GridApi} from "../gridApi";
-import {ColumnApi} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 import {Column} from "./column";
 import {IViewportDatasource} from "../interfaces/iViewportDatasource";
 import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
