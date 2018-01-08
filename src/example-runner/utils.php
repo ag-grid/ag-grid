@@ -138,6 +138,8 @@ function example($title, $dir, $type = 'vanilla', $options = array())
     $multi = $type === 'multi';
     $generated = $type === 'generated';
 
+    $options['skipDirs'] = $options['skipDirs'] ? $options['skipDirs'] : array();
+
     $config = array(
         'type' => $type,
         'name' => $dir,
