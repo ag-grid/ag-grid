@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
 
 <h2>Building an ag-Grid Application with Angular CLI</h2>
 
-<p>We walk through the main steps required when using ag-Grid, Angular and Angular CLI below, but please refer to
+<p class="lead">We walk through the main steps required when using ag-Grid, Angular and Angular CLI below, but please refer to
     <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
 
 <p>We document the main steps required when using Angular-CLI below, but please refer to
@@ -33,14 +33,14 @@ include '../documentation-main/documentation_header.php';
 <p>
     First we'll create a new project - lets call it <code>ag-grid-cli</code>:
 </p>
-<snippet>
+<snippet language="sh">
 ng new ag-grid-cli
 cd ag-grid-cli</snippet>
 
 <p>Let's update our dependencies - first let's install <code>ag-grid</code> and <code>ag-grid-angular</code>:</p>
-<snippet>
-npm i ag-grid --save
-npm i ag-grid-angular --save</snippet>
+<snippet language="sh">
+npm install --save ag-grid-angular ag-grid 
+</snippet>
 
 <p>We are also going to assume an Angular CLI version 1.0.0-rc.x and Angular versions  of 2.4.x for this example -
     you can use a higher (or lower) version here, but you'll need to ensure that you choose the corresponding version of
@@ -48,17 +48,21 @@ npm i ag-grid-angular --save</snippet>
 
 <p>Now let's create our main Application Component - this will be the component that creates the ag-Grid grid for
     us:</p>
-<snippet>
-ng generate component MyGridApplication // or my-grid-application</snippet>
+<snippet language="sh">
+ng generate component MyGridApplication # or my-grid-application</snippet>
 
 <p>And a component that we'll use in our grid:</p>
-<snippet>
-ng generate component RedComponent  // or red-component</snippet>
+
+<snippet language="sh">
+ng generate component RedComponent  # or red-component</snippet>
 
 <p>Based on the above commands, our application will have a selector of <code>app-my-grid-application></code> - you
     can change this of course, but we'll use the default here. Let's use this in our application:
-<snippet>
-// src/app/app.component.html
+</p>
+
+<snippet language="html">
+&lt;!-- src/app/app.component.html -->
+ 
 &lt;app-my-grid-application&gt;&lt;/app-my-grid-application&gt;</snippet>
 
 <p>Our grid component is going to be a simple renderer that styles its contents red:</p>
@@ -77,11 +81,13 @@ export class RedComponentComponent {
         this.params = params;
     }
 }</snippet>
-<snippet>
-// src/app/red-component/red-component.component.html
+
+<snippet language="html">
+&lt;!-- src/app/red-component/red-component.component.html -->
 &lt;span style="color: red"&gt;{{ params.value }}&lt;/span&gt;</snippet>
 
 <p>For our Application component, we'll have the following:</p>
+
 <snippet>
 // src/app/my-grid-application/my-grid-application.component.ts
 import {Component} from "@angular/core";
@@ -118,8 +124,9 @@ export class MyGridApplicationComponent {
         ]
     }
 }</snippet>
-<snippet>
-// src/app/my-grid-application/my-grid-application.component.html
+
+<snippet language="html">
+&lt;!-- src/app/my-grid-application/my-grid-application.component.html -->
 &lt;div style="width: 200px;"&gt;
     &lt;ag-grid-angular #agGrid style="width: 100%; height: 200px;" class="ag-theme-fresh"
                  [gridOptions]="gridOptions"&gt;
@@ -165,7 +172,7 @@ export class AppModule {
 
 <p>With these changes in place we can now build and run our application with:</p>
 
-<snippet>
+<snippet language="sh">
 ng serve</snippet>
 
 <p>The results of which will be:</p>

@@ -20,27 +20,27 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 id="angular-building-with-systemjs">Angular - Building with SystemJS</h1>
+    <h1>Angular - Building with SystemJS</h1>
 
-    <p>We document the main steps required when using SystemJS and SystemJS-Builder below, but please refer to
+    <p class="lead">We document the main steps required when using SystemJS and SystemJS-Builder below, but please refer to
         <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
 
-    <h3>Initialise Project</h3>
+    <h2>Initialise Project</h2>
 
-    <snippet>
+    <snippet language="sh">
 mkdir ag-grid-systemjs
 cd ag-grid-systemjs
-npm init
-// accept defaults</snippet>
+npm init --yes
+</snippet>
 
-    <h3>Install Dependencies</h3>
+    <h2>Install Dependencies</h2>
 
-    <snippet>
+    <snippet language="sh">
 npm i --save ag-grid ag-grid-angular
 npm i --save @angular/common @angular/compiler @angular/compiler-cli @angular/core @angular/platform-browser @angular/platform-browser-dynamic @angular/router typescript rxjs core-js zone.js
 npm i --save-dev systemjs@0.19.x systemjs-builder@0.15.33 concurrently@2.2.0 lite-server@2.2.2 gulp@3.9.1 gulp-ngc@0.1.x @types/node@6.0.45
 
-// optional - only necessary if you're using any of the Enterprise features
+# optional - only necessary if you're using any of the Enterprise features
 npm i --save ag-grid-enterprise</snippet>
 
     <p>Our application will be a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility & configuration files.</p>
@@ -130,14 +130,15 @@ export class AppComponent {
         ];
     }
 }</snippet>
-<snippet>
-// app/app.component.html 
+<snippet language="html">
+&lt;!-- app/app.component.html --> 
+
 &lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-fresh"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"&gt;
 &lt;/ag-grid-angular&gt;</snippet>
-    <h3 id="for-just-in-time-jit-compilation">Just in Time (JIT) Compilation</h3>
+    <h2 id="for-just-in-time-jit-compilation">Just in Time (JIT) Compilation</h2>
 
     <p>Our boot file for Just in Time (JIT) looks like this:</p>
 
@@ -153,6 +154,7 @@ import {AppModule} from "./app.module";
 platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
 
     <p>Our tsconfig.json file looks like this - note we're excluding the AOT related files (see <a href="#aotCompilation">AOT</a> below) here:</p>
+
     <snippet>
 // tsconfig.json 
 {
@@ -214,8 +216,8 @@ platformBrowserDynamic().bootstrapModule(AppModule);</snippet>
 })(this);
    </snippet>
 
-    <snippet>
-// index.html 
+<snippet language="html">
+&lt;!-- index.html --> 
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 
@@ -362,9 +364,9 @@ platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);</snippet>
 })(this);</snippet>
 
 
-    <p>Our AOT index.html file - this time we'll be using a bundled AOT version of the code. This will result is quicker startup and runtime behaviour, as well as less network traffic:</p>
+<p>Our AOT index.html file - this time we'll be using a bundled AOT version of the code. This will result is quicker startup and runtime behaviour, as well as less network traffic:</p>
 
-    <snippet>
+<snippet language="html">
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 

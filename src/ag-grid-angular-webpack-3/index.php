@@ -21,29 +21,29 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="angular-building-with-webpack">Angular Webpack 3</h1>
 
-    <p>We walk through the main steps required when using ag-Grid, Angular and Webpack 3 below, but please refer to
+    <p class="lead">We walk through the main steps required when using ag-Grid, Angular and Webpack 3 below, but please refer to
         <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>
 
-    <h3>Initialise Project</h3>
+    <h2>Initialise Project</h2>
 
-    <snippet>
+<snippet language="sh">
 mkdir ag-grid-webpack3
 cd ag-grid-webpack3
-npm init
-// accept defaults</snippet>
+npm init --yes
+</snippet>
 
-    <h3>Install Dependencies</h3>
+    <h2>Install Dependencies</h2>
 
-    <snippet>
+    <snippet language="sh">
 npm i --save ag-grid ag-grid-angular
 npm i --save @angular/common @angular/compiler @angular/compiler-cli @angular/core @angular/platform-browser @angular/platform-browser-dynamic typescript rxjs core-js zone.js
 npm i --save-dev webpack webpack-dev-server angular2-template-loader awesome-typescript-loader extract-text-webpack-plugin file-loader canonical-path @types/node
 npm i --save-dev css-loader style-loader html-loader html-webpack-plugin raw-loader url-loader
 
-// optional - only necessary if you're using any of the Enterprise features
+# optional - only necessary if you're using any of the Enterprise features
 npm i --save ag-grid-enterprise</snippet>
 
-    <h3>Create Application</h3>
+    <h2>Create Application</h2>
 
     <p>Our application will be a very simple one, consisting of a single Module, a single Component and a bootstrap file, as well a few utility files for vendor & polyfills.</p>
 
@@ -124,8 +124,8 @@ export class AppComponent {
         ];
     }
 }</snippet>
-<snippet>
-// app/app.component.html 
+<snippet language="html">
+&lt;!-- app/app.component.html--&gt;  
 &lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-fresh"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
@@ -169,11 +169,14 @@ import 'ag-grid/dist/styles/ag-grid.css';
 import 'ag-grid/dist/styles/ag-theme-fresh.css';
 
 import 'ag-grid-angular/main'</snippet>
+
 <snippet>
 // for ag-grid-enterprise users only 
-//import 'ag-grid-enterprise/main';</snippet>
+import 'ag-grid-enterprise';
+</snippet>
 
     <h2>tsconfig.json</h2>
+
     <p>We use this to let the TypeScript compiler know what our target is (es5), what libraries we depend on (dom and es2015) and so on:</p>
 
     <snippet>
@@ -210,7 +213,7 @@ function root(args) {
     return path.join.apply(path, [_root].concat(args));
 }
 exports.root = root;</snippet>
-<snippet>
+<snippet language="html">
 &lt;!-- config/index.html --&gt;
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
@@ -310,9 +313,7 @@ module.exports = {
     }
 };</snippet>
 
-    <p>
-        <code>entry</code>
-    </p>
+    <h4><code>entry</code></h4>
     <p>We could generate one large bundle, but it's better to break the bundle up into the fairly "static" dependencies
         and the more fluid application code. Using the <code>entry</code> property we can specify the entry points we
         want to use - we have specified 3 here:
@@ -323,17 +324,14 @@ module.exports = {
         <li>app: our application code.</li>
     </ul>
 
-    <p>
-        <code>resolve</code>
-    </p>
+    <h4> <code>resolve</code> </h4>
     <p>As our imports done specify what file extension to use, we need to specify what file types we want to match on - in this case
         we're looking at TypeScript and JavaScript files, but you could also add CSS & HTML files too.</p>
 
-    <p>
-        <code>module.loaders</code>
-    </p>
+    <h4> <code>module.loaders</code> </h4>
     <p>Loaders tell Webpack how & what to do with certain types of file - we have specified a few here to deal with Typescript, HTML, CSS and Images:</p>
-    <ul>
+
+    <ul class="content">
         <li>awesome-typescript-loader: transpile Typescript to ES5</li>
         <li>angular2-template-loader: processes Angular components' template/styles</li>
         <li>html</li>
@@ -342,10 +340,11 @@ module.exports = {
             second handles component-scoped styles (ie with styleUrls)</li>
     </ul>
 
-    <p>
+    <h4>
         <code>plugins</code>
-    </p>
-    <ul>
+    </h4>
+
+    <ul class="content">
         <li>CommonsChunkPlugin: separates our entry points into distinct files (one each for polyfills, vendor and application)</li>
         <li>HtmlWebpackPlugin: takes our supplied template index.html and inserts the generates JS & CSS files for us</li>
     </ul>
@@ -445,6 +444,7 @@ module.exports = {
     <p>We don't use a development server with this configuration - we generate the final artifacts in the dist/ folder and expect this to be deploy to a server.</p>
     <p>We use the plugins to remove duplicates and minify and extract the CSS into cache busting hash named files.</p>
     <p>Finally, we use the DefinePlugin to provide an environment variable that we can use in our application code to <code>enableProdMode()</code></p>
+
     <snippet>
 if (process.env.ENV === 'production') {
     enableProdMode();
@@ -466,19 +466,20 @@ if (process.env.ENV === 'production') {
 
     <img src="../images/webpack_app.png" style="width: 100%">
 
-    <h3>Override ag-Grid CSS</h3>
+    <h2>Override ag-Grid CSS</h2>
+
     <p>There are many ways to override the CSS with Webpack, but if you use the configuration above then you can override ag-Grid CSS as follows:</p>
-    <ul>
+
+    <ul class="content">
         <li>Place your application-wide CSS file(s) in a directory other than <code>./app</code> - for example <code>./css/</code>.
             Remember that CSS under <code>./app</code> is treated differently - it is used for component-scoped styles.</li>
         <li>In a suitable component - we suggest <code>boot.ts</code> import the CSS you want to include:</li>
-        <snippet>
-import '../css/app.css';</snippet>
     </ul>
+        <snippet> import '../css/app.css';</snippet> 
 
     <p>And that's it - you can now override ag-Grid CSS with your own in <code>./css/app.css</code>. For example, the following
         would set the cell background to green across the board.</p>
-    <snippet>
+<snippet language="css">
 .ag-cell {
     background-color: green;
 }</snippet>

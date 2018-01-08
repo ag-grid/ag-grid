@@ -55,20 +55,20 @@
                 "url": "ag-grid-angular-angularcli/"
               },
               {
-                "title": "Webpack",
-                "url": "ag-grid-angular-webpack/"
-              },
-              {
-                "title": "Webpack 2",
-                "url": "ag-grid-angular-webpack-2/"
+                "title": "SystemJS",
+                "url": "ag-grid-angular-systemjs/"
               },
               {
                 "title": "Webpack 3",
                 "url": "ag-grid-angular-webpack-3/"
               },
               {
-                "title": "SystemJS",
-                "url": "ag-grid-angular-systemjs/"
+                "title": "Webpack 2",
+                "url": "ag-grid-angular-webpack-2/"
+              },
+              {
+                "title": "Webpack",
+                "url": "ag-grid-angular-webpack/"
               }
             ]
           }

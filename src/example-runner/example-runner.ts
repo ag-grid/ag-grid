@@ -30,11 +30,9 @@ docs.directive('snippet', function() {
             language: '='
         },
         link: function(scope, element, attrs) {
-            whenInViewPort(jQuery(element), function() {
-                const language = attrs.language || 'js';
-                const highlightedSource = highlight(resetIndent(element.text()), language);
-                element.empty().html('<pre><code>' + highlightedSource + '</code></pre>');
-            });
+            const language = attrs.language || 'js';
+            const highlightedSource = highlight(resetIndent(element.text()), language);
+            element.empty().html('<pre><code>' + highlightedSource + '</code></pre>');
         }
     };
 });

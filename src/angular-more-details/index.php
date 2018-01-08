@@ -15,48 +15,13 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Downloading the ag-Grid Angular Component</h3>
 
-    <p style="margin-top: 5px">
-        Using Angular with ag-Grid introduces a dependency on Angular. For this reason:
+    <p> Using Angular with ag-Grid introduces a dependency on Angular. For this reason:</p> 
     <ul class="content">
         <li>You need to include the additional project ag-grid-angular, which has the Angular dependency.</li>
-        <li>You cannot use the bundled version of ag-Grid. You must use the CommonJS distribution.</li>
+        <li>You cannot use the bundled version of ag-Grid. You <strong>must use the NPM package</strong>.</li>
     </ul>
 
-    <table class="content">
-        <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
-            <td>
-                <table>
-                    <tr>
-                        <td><b>Bower</b></td>
-                    </tr>
-                    <tr>
-                        <td><code>bower install ag-grid</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>bower install ag-grid-angular</code></td>
-                    </tr>
-                </table>
-            </td>
-
-            <td style="width: 120px;"></td>
-
-            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
-            <td>
-                <table>
-                    <tr>
-                        <td><b>NPM</b></td>
-                    </tr>
-                    <tr>
-                        <td><code>npm install ag-grid</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>npm install ag-grid-angular</code></td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+    <snippet language="sh">npm install --save ag-grid ag-grid-angular</snippet>
 
     <p>You can then reference the dependency as follows in the top of your component:</p>
 
@@ -71,11 +36,12 @@ include '../documentation-main/documentation_header.php';
 @NgModule({
     imports: [
         BrowserModule,
-        AgGridModule.withComponents([...optional Angular Components to be used in the grid....]),
-        ...
+        AgGridModule.withComponents([/*optional Angular Components to be used in the grid*/]),
+        // ...
 })</snippet>
 
     <p>And finally, reference it in your template as follows:</p>
+
 <snippet>
 // component template
 &lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-fresh"
@@ -88,26 +54,7 @@ include '../documentation-main/documentation_header.php';
     <p>If you're using the ag-Grid Enterprise features, then in addition to the ag-Grid Angular dependency above, you also require
     the ag-Grid Angular Enterprise dependency:</p>
 
-    <h3>Download ag-Grid-Enterprise</h3>
-
-    <table class="content">
-        <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
-            <td>
-                <b>Bower</b><br/>
-                <code>bower install ag-grid-enterprise</code>
-            </td>
-
-            <td style="width: 120px;"/>
-
-
-            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
-            <td>
-                <b>NPM</b><br/>
-                <code>npm install ag-grid-enterprise</code>
-            </td>
-        </tr>
-    </table>
+    <snippet language="sh">npm install ag-grid-enterprise</snippet>
 
     <p>The Enterprise dependency has to be made available before any Grid related component, so we suggest importing it in your
     Angular root module if possible before kicking off the actual application - for example:</p>
@@ -190,7 +137,7 @@ imports: [
         [
             SquareComponent,
             CubeComponent,
-            ...other components</snippet>
+            // ...other components</snippet>
 
     <p>You can then use these components as editors, renderers or filters. For example, to use an Angular
         Component as a
@@ -248,7 +195,7 @@ for configuring and using Angular Components in ag-Grid.</p>
         and custom filtering.
     </p>
 
-    <h4 id="parent_child">Child to Parent Communication</h4>
+    <h3 id="parent_child">Child to Parent Communication</h3>
 
     <p>There are a variety of ways to manage component communication in Angular (shared service, local variables
         etc),
@@ -362,7 +309,7 @@ propertyName="String Value"
 [propertyName]="functionCallReturningAFunction()"</code>
 </pre>
 
-    <h4 id="setting-a-class-or-a-complex-value">Setting a Class or a Complex Value:</h4>
+<h4 id="setting-a-class-or-a-complex-value">Setting a Class or a Complex Value</h4>
     <p>You can set a Class or a Complex property in the following way:</p>
     <snippet>
 // return a Class definition for a Filter
@@ -391,7 +338,7 @@ private getCountryFilterParams():any {
 &lt;/ag-grid-column&gt;</snippet>
     <p>In this example we have a parent Column of "IT Skills", with two child columns.</p>
 
-    <h3 id="example-rich-grid-using-markup">Example: Rich Grid using Markup</h3>
+    <h2 id="example-rich-grid-using-markup">Example: Rich Grid using Markup</h2>
     <p>
         The example below shows the same rich grid as the example above, but with configuration done via Markup.
     </p>
@@ -401,7 +348,7 @@ private getCountryFilterParams():any {
 
     <p>
         It is possible to build
-        <a href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cell renderer's</a>,
+        <a href="../javascript-grid-cell-rendering-components/#ng2CellRendering">cell renderers</a>,
         <a href="../javascript-grid-cell-editing/#ng2CellEditing">cell editors</a> and
         <a href="../javascript-grid-filtering/#ng2Filtering">filters</a> using Angular. Doing each of these
         is explained in the section on each.

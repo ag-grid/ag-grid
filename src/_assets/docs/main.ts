@@ -68,16 +68,20 @@ $(function() {
         if (!breakpoints.length) {
             return;
         }
-        
-        var scrollBottom = $(window).scrollTop();
+
+        var scrollTop = $(window).scrollTop();
         var i = 0;
 
-        while (i < breakpoints.length - 1 && breakpoints[i].heading.offset().top < scrollBottom) {
+        while (i < breakpoints.length && breakpoints[i].heading.offset().top < scrollTop) {
             i++;
         }
 
         docNav.find('a').removeClass('current-section');
-        breakpoints[i].link.find('> a').addClass('current-section');
+
+        if (i == 0) {
+            i = 1;
+        }
+        breakpoints[i - 1].link.find('> a').addClass('current-section');
     });
 
     new lazyload(document.querySelectorAll('#feature-roadshow img'), {});
