@@ -79,7 +79,7 @@ export class DetailCellRenderer extends Component {
         });
     }
 
-    public selectAndSetTemplate(params: ICellRendererParams): void {
+    private selectAndSetTemplate(params: ICellRendererParams): void {
         let paramsAny = <any> params;
 
         if (_.missing(paramsAny.template)) {
@@ -133,7 +133,7 @@ export class DetailCellRenderer extends Component {
         userFunc(funcParams);
     }
 
-    public setRowData(rowData: any[]): void {
+    private setRowData(rowData: any[]): void {
         this.detailGridOptions.api.setRowData(rowData);
     }
 
