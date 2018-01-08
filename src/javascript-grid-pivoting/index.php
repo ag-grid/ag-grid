@@ -342,6 +342,6 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         <a href="../javascript-grid-change-detection/#pivot-example">Pivoting with Change Detection</a>,
         so rather that repeat, check out the example there.
     </p>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
