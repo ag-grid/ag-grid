@@ -1296,7 +1296,9 @@ export class ColumnController {
     }
 
     public setColumnState(columnState: any[]): boolean {
-        if (_.missingOrEmpty(this.primaryColumns)) { return false; }
+        if (_.missingOrEmpty(this.primaryColumns)) {
+            return false;
+        }
 
         this.autoGroupsNeedBuilding = true;
 
@@ -1309,11 +1311,11 @@ export class ColumnController {
 
         let success = true;
 
-        let rowGroupIndexes: {[key: string]: number} = {};
-        let pivotIndexes: {[key: string]: number} = {};
+        let rowGroupIndexes: { [key: string]: number } = {};
+        let pivotIndexes: { [key: string]: number } = {};
 
         if (columnState) {
-            columnState.forEach( (stateItem: any)=> {
+            columnState.forEach((stateItem: any) => {
                 let column = this.getPrimaryColumn(stateItem.colId);
                 if (!column) {
                     console.warn('ag-grid: column ' + stateItem.colId + ' not found');
@@ -1334,12 +1336,14 @@ export class ColumnController {
 
         this.copyDownGridColumns();
 
-        let orderOfColIds = columnState.map( stateItem => stateItem.colId );
-        this.gridColumns.sort( (colA: Column, colB: Column)=> {
-            let indexA = orderOfColIds.indexOf(colA.getId());
-            let indexB = orderOfColIds.indexOf(colB.getId());
-            return indexA - indexB;
-        });
+        if (columnState) {
+            let orderOfColIds = columnState.map(stateItem => stateItem.colId);
+            this.gridColumns.sort((colA: Column, colB: Column) => {
+                let indexA = orderOfColIds.indexOf(colA.getId());
+                let indexB = orderOfColIds.indexOf(colB.getId());
+                return indexA - indexB;
+            });
+        }
 
         this.updateDisplayedColumns();
 
