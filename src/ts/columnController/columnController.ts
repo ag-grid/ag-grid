@@ -106,6 +106,7 @@ export class ColumnController {
     private allDisplayedVirtualColumns: Column[] = [];
     private allDisplayedCenterVirtualColumns: Column[] = [];
 
+    // true if we are doing column spanning
     private colSpanActive: boolean;
 
     private rowGroupColumns: Column[] = [];
@@ -807,7 +808,7 @@ export class ColumnController {
             let maxIndex = Math.max.apply(Math, newIndexes);
             let minIndex = Math.min.apply(Math, newIndexes);
 
-            // width is how far the first column in this group is away from the last column
+            // spread is how far the first column in this group is away from the last column
             let spread = maxIndex - minIndex;
             let maxSpread = columnGroup.getLeafColumns().length - 1;
 
@@ -1847,7 +1848,7 @@ export class ColumnController {
     }
 
     private updateGroupsAndDisplayedColumns() {
-        this.updateGroups();
+        this.updateOpenClosedVisibilityInColumnGroups();
         this.updateDisplayedColumnsFromTrees();
         this.updateVirtualSets();
         this.updateBodyWidths();
@@ -2139,12 +2140,12 @@ export class ColumnController {
             centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, this.displayedCentreColumnTree);
     }
 
-    private updateGroups(): void {
-        let allGroups = this.getAllDisplayedColumnGroups();
-        this.columnUtils.depthFirstAllColumnTreeSearch(allGroups, (child: ColumnGroupChild)=> {
+    private updateOpenClosedVisibilityInColumnGroups(): void {
+        let allColumnGroups = this.getAllDisplayedColumnGroups();
+        this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, child => {
             if (child instanceof ColumnGroup) {
-                let group = <ColumnGroup> child;
-                group.calculateDisplayedColumns();
+                let columnGroup = <ColumnGroup> child;
+                columnGroup.calculateDisplayedColumns();
             }
         });
     }
