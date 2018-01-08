@@ -112,6 +112,11 @@ export class HeaderGroupWrapperComp extends Component {
             context: this.gridOptionsWrapper.getContext()
         };
 
+        if(!displayName) {
+            let leafCols = this.columnGroup.getLeafColumns();
+            displayName = leafCols ? leafCols[0].getColDef().headerName : '';
+        }
+
         let callback = this.afterHeaderCompCreated.bind(this, displayName);
 
         this.componentRecipes.newHeaderGroupComponent(params).then(callback);
