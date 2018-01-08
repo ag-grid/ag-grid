@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1 heading-react">
+    <h1>
         React Datagrid - More Details
     </h1>
 
@@ -17,48 +17,18 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Downloading the ag-Grid React Component</h3>
 
-    <p style="margin-top: 5px">
+    <p>
         Using ReactJS with ag-Grid introduces a dependency on React. For this reason:
-    <ul>
-        <li>You need to include the additional project ag-grid-react, which has the React dependency.</li>
-        <li>You cannot use the bundled version of ag-Grid. You must use the CommonJS distribution.</li>
+    </p>
+
+    <ul class="content">
+        <li>You need to include the additional project <code>ag-grid-react</code>, which has the React dependency.</li>
+        <li>You cannot use the bundled version of ag-Grid. You <strong>must use the NPM package</strong>.</li>
     </ul>
 
-    <table class="content">
-        <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
-            <td>
-                <table>
-                    <tr>
-                        <td><b>Bower</b></td>
-                    </tr>
-                    <tr>
-                        <td><code>bower install ag-grid</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>bower install ag-grid-react</code></td>
-                    </tr>
-                </table>
-            </td>
-
-            <td style="width: 215px;"/>
-
-            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
-            <td>
-                <table>
-                    <tr>
-                        <td><b>NPM</b></td>
-                    </tr>
-                    <tr>
-                        <td><code>npm install ag-grid</code></td>
-                    </tr>
-                    <tr>
-                        <td><code>npm install ag-grid-react</code></td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+    <snippet language="sh">
+        npm install --save ag-grid ag-grid-react
+    </snippet>
 
     <p>You can then reference the dependency as follows in the top of your component:</p>
 
@@ -72,29 +42,14 @@ import {AgGridReact} from 'ag-grid-react';</snippet>
 
     <h3>Download ag-Grid-Enterprise</h3>
 
-    <table class="content">
-        <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
-            <td>
-                <b>Bower</b><br/>
-                <code>bower install ag-grid-enterprise</code>
-            </td>
-
-            <td style="width: 120px;"/>
-
-
-            <td style="padding: 10px;"><img src="../images/npm.png"/></td>
-            <td>
-                <b>NPM</b><br/>
-                <code>npm install ag-grid-enterprise</code>
-            </td>
-        </tr>
-    </table>
+<snippet language="sh">
+npm install --save ag-grid-enterprise
+</snippet>
 
     <p>The Enterprise dependency has to be made available before any Grid related component, so we suggest importing it in your
     React bootstrap file (typically named index.js) before kicking off the actual application - for example:</p>
 
-<snippet>
+<snippet language="jsx">
 import React from "react";
 import {render} from "react-dom";
 
@@ -122,8 +77,8 @@ render(
 
     <p>After importing <code>AgGridReact</code>  you can then reference the component inside your JSX definitions.
         An example of the Grid Component can be seen below:</p>
-<snippet language="html" >
-&lt;-- Grid Definition -->
+<snippet language="jsx">
+// Grid Definition
 &lt;AgGridReact
     // listening for events
     onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
@@ -149,7 +104,7 @@ render(
 
     // column definitions
     &lt;AgGridColumn field="make">&lt;/AgGridColumn>
-/&gt;
+&lt;/AgGridReact&gt;>
 </snippet>
     </p>
 
@@ -161,7 +116,7 @@ render(
 
     <p>Defining columns declaratively:</p>
 
-<snippet language="html">
+<snippet language="jsx">
 // column definitions
 &lt;AgGridColumn field="make">&lt;/AgGridColumn>
 &lt;AgGridColumn field="model">&lt;/AgGridColumn>
@@ -169,7 +124,7 @@ render(
 </snippet>
 
     <p>Defining columns via <code>GridOptions</code>:</p>
-<snippet>
+<snippet language="jsx">
 // before render/grid initialisation
 this.state = {
     gridOptions = {
@@ -182,12 +137,11 @@ this.state = {
 }
 
 // in the render method
-&lt;AgGridReact
-    gridOptions={this.state.gridOptions}
+&lt;AgGridReact gridOptions={this.state.gridOptions}>&lt;/AgGridReact&gt;
 </snippet>
 
     <p>Defining columns by binding to a property:</p>
-<snippet>
+<snippet language="jsx">
 // before render/grid initialisation
 this.state = {
     columnDefs: [
@@ -198,8 +152,7 @@ this.state = {
 }
 
 // in the render method
-&lt;AgGridReact
-    columnDefs={this.state.columnDefs}
+&lt;AgGridReact columnDefs={this.state.columnDefs}>&lt;/AgGridReact>
 </snippet>
 
     <p>Column definitions via markup or on <code>GridOptions</code> are one-off definitions. Subsequent updates will not be
@@ -207,7 +160,7 @@ this.state = {
 
     <p>A full working Grid definition is shown below, illustrating various Grid & Column property definitions:</p>
 
-<snippet language="html" >
+<snippet language="jsx">
 &lt;AgGridReact
     // listening for events
     onGridReady=<span ng-non-bindable>{</span>this.onGridReady}
@@ -260,7 +213,7 @@ import 'ag-grid-root/dist/styles/ag-theme-fresh.css';</snippet>
                 href="https://github.com/ag-grid/ag-grid-react-example">React Examples</a>  Repo on Github.
     </p>
 
-    <h2 id="applying-theme">Applying A Theme</h2>
+    <h2 id="applying-theme">Applying a Theme</h2>
 
     <p>
         You need to set a theme for the grid. You do this by giving the grid a CSS class, one
@@ -268,7 +221,7 @@ import 'ag-grid-root/dist/styles/ag-theme-fresh.css';</snippet>
         for this to work.
     </p>
 
-    <snippet>
+    <snippet language="jsx">
 // a parent container of the grid, you could put this on your body tag
 // if you only every wanted to use one style of grid
 
@@ -292,7 +245,8 @@ import 'ag-grid-root/dist/styles/ag-theme-fresh.css';</snippet>
         the grid and grab the api from the params. You can then call this api at a later
         stage to interact with the grid (on top of the interaction that can be done by
         setting and changing the props).</p>
-    <snippet>
+
+    <snippet language="jsx">
 // provide gridReady callback to the grid
 &lt;AgGridReact
     onGridReady={this.onGridReady}
@@ -382,13 +336,10 @@ export default connect(
 
     <p>If we bind to this on our grid definition then any changes to Redux will be reflected within the grid:</p>
 
-    <snippet>
+    <snippet language="jsx">
 &lt;AgGridReact
-    // properties
     columnDefs={this.state.columnDefs}
     rowData={this.props.rowData}
-
-    // events
     onGridReady={this.onGridReady}&gt;
 &lt;/AgGridReact&gt;</snippet>
 
@@ -410,18 +361,13 @@ export default connect(
     <p>This time however, we enable <code>enableImmutableMode</code>. We also specify <code>getRowNodeId</code> which will
         allow the Grid to determine if rows have changed, by providing each row with a unique ID:</p>
 
-    <snippet>
-&lt;AgGridReact
-    // properties
+    <snippet language="jsx">
+    &lt;AgGridReact
     columnDefs={this.state.columnDefs}
     rowData={this.props.rowData}
-
     enableImmutableMode="true"
     getRowNodeId={this.getRowNodeId}
-
-    // events
-    onGridReady={this.onGridReady}&gt;
-&lt;/AgGridReact&gt;</snippet>
+    onGridReady={this.onGridReady}&gt;&lt;/AgGridReact&gt;</snippet>
 
     <p>For this to work, each row has to have something that can uniquely identify it. In our
         <a href="/ag-grid-react-trader-dashboard" target="_blank">Trader Dashboard <i class="fa fa-external-link"></i></a> example, the Top Movers panel (bottom right) uses
@@ -453,11 +399,11 @@ getRowNodeId(data) {
 
     <h3>Binding to methods in the React binding</h3>
     <p>If you have something like:</p>
-    <snippet>
+    <snippet language="jsx">
 &lt;AgGridReact
     // events
     onGridReady={this.onGridReady.bind(this)}&gt;
-    ... rest of the configuration</snippet>
+    //... rest of the configuration</snippet>
     <p>Then everytime the component renders, a new instance of <code>onGridReady</code> will be passed to ag-Grid and it will believe
         that it's a different function. To avoid this, do the binding separately (in the constructor for example):</p>
 
@@ -476,7 +422,7 @@ class TopMoversGrid extends Component {
                 &lt;AgGridReact
                     // events
                     onGridReady={this.onGridReady}&gt;
-                ... rest of the component</snippet>
+                //... rest of the component</snippet>
 
     <p>Now ag-Grid will get the same function everytime the component renders.</p>
 
@@ -513,7 +459,7 @@ class TopMoversGrid extends Component {
         return (
             &lt;AgGridReact
                 rowData={this.cleanData()}
-                ...rest of the component</snippet>
+                // ...rest of the component</snippet>
 
     <p>As above, this call will result in ag-Grid believing that the rowData has changed each time the component renders as the filtering
         operation will return a new array each time. Again to alleviate this behaviour extract data that isn't likely to change and pre-process it only once.</p>

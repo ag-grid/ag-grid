@@ -39,7 +39,7 @@ git clone https://github.com/ag-grid/ag-grid-react-seed
 cd ag-grid-react-seed/react
 
 # install the project dependencies
-npm i
+npm install
 
 # build & start the application
 npm start
@@ -75,7 +75,7 @@ npm start
         columns
         that match the data above:</p>
 
-<snippet language="html">
+<snippet language="jsx">
 // column definitions
 &lt;AgGridColumn field="make">&lt;/AgGridColumn>
 &lt;AgGridColumn field="model">&lt;/AgGridColumn>
@@ -96,7 +96,7 @@ npm start
     <p>For a React application, you need to pull in the <code>AgGridReact</code> Component and include it in your <code>render</code>
         function:</p>
 
-<snippet language="html">
+<snippet language="jsx">
 // Grid Definition 
 &lt;AgGridReact
     columnDefs={this.state.columnDefs}
@@ -128,7 +128,7 @@ npm start
     <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
         enabled by setting a the <code>enableSorting</code>Grid property. Notice that <code>enableSorting</code> is shorthand for <code>enableSorting=true</code>.</p>
 
-<snippet language="html">
+<snippet language="jsx">
 // Grid Definition 
 &lt;AgGridReact
     columnDefs={this.state.columnDefs}
@@ -158,7 +158,7 @@ npm start
 
 <p>As with sorting, enabling filtering is as easy as setting <code>enableFilter</code> in our Grid definition:</p>
 
-<snippet language="html">
+<snippet language="jsx">
 // Grid Definition 
 &lt;AgGridReact
     columnDefs={this.state.columnDefs}
