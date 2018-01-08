@@ -18,3 +18,5 @@ src/dist/ag-grid-enterprise
 _dev
 **/_gen
 screenshots
+
+!src/best-vuejs-data-grid/rich-grid/dist

@@ -71,7 +71,7 @@ function moveIndexFirst($a, $b)
     }
 }
 
-function getDirContents($dir, &$results = array(), $prefix = "")
+function getDirContents($dir, $skipDirs = array(), &$results = array(), $prefix = "")
 {
     $files = scandir($dir);
 
@@ -80,14 +80,17 @@ function getDirContents($dir, &$results = array(), $prefix = "")
     foreach ($files as $key => $value) {
         $path = realpath($dir . "/" . $value);
 
-        if (substr($value, 0, 1) == ".") {
-            continue;
-        }
+        $skipEntry = is_dir($path) && in_array($value, $skipDirs);
+        if (!$skipEntry) {
+            if (substr($value, 0, 1) == ".") {
+                continue;
+            }
 
-        if (!is_dir($path)) {
-            $results[] = $prefix . $value;
-        } else if ($value != "." && $value != "..") {
-            getDirContents($path, $results, $prefix . $value . "/");
+            if (!is_dir($path)) {
+                $results[] = $prefix . $value;
+            } else if ($value != "." && $value != "..") {
+                getDirContents($path, $skipDirs, $results, $prefix . $value . "/");
+            }
         }
     }
 
@@ -196,6 +199,7 @@ function example($title, $dir, $type = 'vanilla', $options = array())
 
     $query['grid'] = json_encode($gridSettings);
 
+
     $queryString = join("&", array_map('toQueryString', array_keys($query), $query));
 
     foreach ($types as $theType) {
@@ -205,10 +209,10 @@ function example($title, $dir, $type = 'vanilla', $options = array())
         } else if ($generated) {
             $entry['files'] = getDirContents($dir . "/_gen/" . $theType);
         } else {
-            $entry['files'] = getDirContents($dir);
+            $entry['files'] = getDirContents($dir, $options['skipDirs']);
         }
 
-        if ($theType != "vanilla" && $theType != "polymer") {
+        if ($theType != "vanilla" && $theType != "polymer" && $theType != "as-is") {
             $entry['boilerplatePath'] = "../example-runner/$theType-boilerplate";
             $entry['boilerplateFiles'] = getDirContents($entry['boilerplatePath']);
         }

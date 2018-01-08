@@ -83,6 +83,7 @@ class ExampleRunner {
     private name: string;
     private type: string;
     private currentType: string;
+    private noPlunker: boolean;
     private boilerplateFiles: string[];
     private boilerplatePath: string;
     sourcePrefix: string;
@@ -205,6 +206,8 @@ class ExampleRunner {
         this.resultUrl = typeConfig.resultUrl;
 
         this.currentType = type;
+
+        this.noPlunker = this.config.options.noPlunker;
 
         this.loadAllSources();
 
@@ -406,7 +409,8 @@ docs.component('exampleRunner', {
                 </a>
             </li>
 
-            <example-tab 
+            <example-tab
+                ng-hide="$ctrl.noPlunker"
                 value="'plunker'" 
                 current-value="$ctrl.selectedTab" 
                 title="'Plunker'"
