@@ -7,7 +7,7 @@ import {EventService} from "../eventService";
 import {Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {AgEvent} from "../events";
-import {ColumnApi} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 import {GridApi} from "../gridApi";
 
 export class ColumnGroup implements ColumnGroupChild {

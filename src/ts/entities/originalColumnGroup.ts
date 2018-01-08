@@ -5,7 +5,7 @@ import {Column} from "./column";
 import {EventService} from "../eventService";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
 import {Autowired} from "../context/context";
-import {ColumnApi} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 import {GridApi} from "../gridApi";
 import {AgEvent} from "../events";
 

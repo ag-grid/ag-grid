@@ -12,7 +12,7 @@ import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {PostConstruct} from "./context/context";
 import {Constants} from "./constants";
 import {InMemoryRowModel} from "./rowModels/inMemory/inMemoryRowModel";
-import {ColumnApi} from "./columnController/columnController";
+import {ColumnApi} from "./columnController/columnApi";
 import {GridApi} from "./gridApi";
 
 @Bean('selectionController')

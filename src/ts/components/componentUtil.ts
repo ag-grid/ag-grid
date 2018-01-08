@@ -3,7 +3,7 @@ import {GridApi} from '../gridApi';
 import {ComponentStateChangedEvent, Events} from '../events';
 import {PropertyKeys} from '../propertyKeys';
 import {Utils as _} from '../utils';
-import {ColumnApi} from '../columnController/columnController';
+import {ColumnApi} from '../columnController/columnApi';
 
 export class ComponentUtil {
     // all the events are populated in here AFTER this class (at the bottom of the file).

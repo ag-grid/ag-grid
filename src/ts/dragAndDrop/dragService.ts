@@ -4,7 +4,7 @@ import {Utils as _} from "../utils";
 import {EventService} from "../eventService";
 import {DragStartedEvent, DragStoppedEvent, Events} from "../events";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnApi} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 import {GridApi} from "../gridApi";
 
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,

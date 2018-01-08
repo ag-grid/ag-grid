@@ -1,7 +1,8 @@
 import {Column} from "./entities/column";
 import {Autowired} from "./context/context";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {ColumnApi, ColumnController} from "./columnController/columnController";
+import {ColumnApi} from "./columnController/columnApi";
+import {ColumnController} from "./columnController/columnController";
 import {EventService} from "./eventService";
 import {Events, SortChangedEvent} from "./events";
 import {Bean} from "./context/context";

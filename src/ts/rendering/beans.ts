@@ -1,6 +1,7 @@
 
 import {Autowired, Bean, Context, Optional, PostConstruct} from "../context/context";
-import {ColumnApi, ColumnController} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
+import {ColumnController} from "../columnController/columnController";
 import {GridApi} from "../gridApi";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "../valueService/expressionService";

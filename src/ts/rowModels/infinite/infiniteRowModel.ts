@@ -16,7 +16,7 @@ import {RowNodeCache} from "../cache/rowNodeCache";
 import {RowNodeBlockLoader} from "../cache/rowNodeBlockLoader";
 import {RowDataTransaction} from "../inMemory/inMemoryRowModel";
 import {GridApi} from "../../gridApi";
-import {ColumnApi} from "../../columnController/columnController";
+import {ColumnApi} from "../../columnController/columnApi";
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IRowModel {

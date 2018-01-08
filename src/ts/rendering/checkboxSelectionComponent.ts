@@ -2,13 +2,13 @@
 import {Component} from "../widgets/component";
 import {RowNode} from "../entities/rowNode";
 import {Utils as _} from '../utils';
-import {Autowired, PostConstruct} from "../context/context";
+import {Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Column} from "../entities/column";
 import {Events} from "../events";
 import {EventService} from "../eventService";
 import {GridApi} from "../gridApi";
-import {ColumnApi} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 
 export class CheckboxSelectionComponent extends Component {
 
