@@ -524,6 +524,10 @@ export class ColumnController {
 
         if (!atLeastOne) { return; }
 
+        if (this.autoGroupsNeedBuilding) {
+            this.updateGridColumns();
+        }
+
         this.updateDisplayedColumns();
 
         let event: ColumnEvent = {
@@ -619,6 +623,9 @@ export class ColumnController {
             columnCallback(added, column);
         });
 
+        if (this.autoGroupsNeedBuilding) {
+            this.updateGridColumns();
+        }
         this.updateDisplayedColumns();
 
         let event: ColumnEvent = {
@@ -1183,7 +1190,7 @@ export class ColumnController {
         this.rowGroupColumns.sort(this.sortColumnListUsingIndexes.bind(this, rowGroupIndexes));
         this.pivotColumns.sort(this.sortColumnListUsingIndexes.bind(this, pivotIndexes));
 
-        this.copyDownGridColumns();
+        this.updateGridColumns();
 
         if (columnState) {
             let orderOfColIds = columnState.map(stateItem => stateItem.colId);
@@ -1493,7 +1500,7 @@ export class ColumnController {
         this.extractPivotColumns();
         this.createValueColumns();
 
-        this.copyDownGridColumns();
+        this.updateGridColumns();
 
         this.updateDisplayedColumns();
         this.checkDisplayedVirtualColumns();
@@ -1676,17 +1683,20 @@ export class ColumnController {
         if (this.pivotMode && !this.secondaryColumnsPresent) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
-            columnsForDisplay = this.createColumnsToDisplayFromValueColumns();
+            columnsForDisplay = _.filter(this.gridColumns, column => {
+                let isAutoGroupCol = this.groupAutoColumns && this.groupAutoColumns.indexOf(column) >= 0;
+                let isValueCol = this.valueColumns && this.valueColumns.indexOf(column) >= 0;
+                return isAutoGroupCol || isValueCol;
+            });
+
         } else {
             // otherwise continue as normal. this can be working on the primary
             // or secondary columns, whatever the gridColumns are set to
-            columnsForDisplay = _.filter(this.gridColumns, column => column.isVisible() );
-        }
-
-        this.createGroupAutoColumnsIfNeeded();
-
-        if (_.exists(this.groupAutoColumns)) {
-            columnsForDisplay = this.groupAutoColumns.concat(columnsForDisplay);
+            columnsForDisplay = _.filter(this.gridColumns, column => {
+                // keep col if a) it's auto-group or b) it's visible
+                let isAutoGroupCol = this.groupAutoColumns && this.groupAutoColumns.indexOf(column) >= 0;
+                return isAutoGroupCol || column.isVisible();
+            } );
         }
 
         return columnsForDisplay;
@@ -1719,17 +1729,6 @@ export class ColumnController {
 
     public getGroupDisplayColumns(): Column[] {
         return this.groupDisplayColumns;
-    }
-
-    private createColumnsToDisplayFromValueColumns(): Column [] {
-        // make a copy of the value columns, so we have to side effects
-        let result = this.valueColumns.slice();
-        // order the columns as per the grid columns. having the order is
-        // important as without it, reordering of columns would have no impact
-        result.sort( (colA: Column, colB: Column)=> {
-            return this.gridColumns.indexOf(colA) - this.gridColumns.indexOf(colB);
-        });
-        return result;
     }
 
     private updateDisplayedColumns(): void {
@@ -1770,7 +1769,7 @@ export class ColumnController {
             this.secondaryColumnsPresent = false;
         }
 
-        this.copyDownGridColumns();
+        this.updateGridColumns();
         this.updateDisplayedColumns();
     }
 
@@ -1802,8 +1801,8 @@ export class ColumnController {
         }
     }
 
-    // called from: setColumnState, setColumnDefs, setAlternativeColumnDefs
-    private copyDownGridColumns(): void {
+    // called from: setColumnState, setColumnDefs, setSecondaryColumns
+    private updateGridColumns(): void {
         if (this.secondaryColumns) {
             this.gridBalancedTree = this.secondaryBalancedTree.slice();
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
@@ -1813,6 +1812,8 @@ export class ColumnController {
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
             this.gridColumns = this.primaryColumns.slice();
         }
+
+        this.addAutoGroupToGridColumns();
 
         this.clearDisplayedColumns();
 
@@ -1824,6 +1825,19 @@ export class ColumnController {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
+    }
+
+    private addAutoGroupToGridColumns(): void {
+        // add in auto-group here
+        this.createGroupAutoColumnsIfNeeded();
+
+        if (_.missing(this.groupAutoColumns)) { return; }
+
+        this.gridColumns = this.groupAutoColumns.concat(this.gridColumns);
+
+        let autoColBalancedTree = this.balancedColumnTreeBuilder.createForAutoGroups(this.groupAutoColumns, this.gridBalancedTree);
+
+        this.gridBalancedTree = autoColBalancedTree.concat(this.gridBalancedTree);
     }
 
     // gets called after we copy down grid columns, to make sure any part of the gui
