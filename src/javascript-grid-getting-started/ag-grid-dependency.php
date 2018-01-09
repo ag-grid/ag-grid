@@ -1,6 +1,6 @@
 <h3>Download ag-Grid</h3>
 
-<table>
+<table class="content">
     <tr>
         <td style="padding: 10px;"><img src="../images/bower.png"/></td>
         <td>
@@ -39,7 +39,7 @@
     can then use later
     when instantiating the Grid.</p>
 
-<snippet>
+<snippet language="html">
 &lt;html&gt;
 &lt;head&gt;
     &lt;script src="path-to-ag-grid-/ag-grid.js"&gt;&lt;/script&gt;
