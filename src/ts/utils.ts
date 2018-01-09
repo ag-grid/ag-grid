@@ -1681,6 +1681,16 @@ export class Promise<T> {
         }
     }
 
+    public firstOneOnly(func: (result: any)=>void) {
+        if (this.status === PromiseStatus.IN_PROGRESS){
+            if (this.listOfWaiters.length === 0) {
+                this.listOfWaiters.push(func);
+            }
+        } else {
+            func(this.resolution);
+        }
+    }
+
     public map<Z> (adapter:(from:T)=>Z):Promise<Z>{
         return new Promise<Z>((resolve)=>{
             this.then(unmapped=>{
