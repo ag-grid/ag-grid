@@ -9,11 +9,10 @@ include '../documentation-main/documentation_header.php';
 <div>
 
     <h1 class="first-h1" id="implementing-the-aurelia-datagrid">
-        <img style="vertical-align: middle" src="../images/aurelia_large.png" height="50px" alt="Aurelia Datagrid" title="Aurelia"/>
         Aurelia Datagrid
     </h1>
 
-    <p>This page shows you how to get started with ag-Grid and Aurelia.</p>
+    <p class="lead">This page shows you how to get started with ag-Grid and Aurelia.</p>
 
     <?php
     $frameworkChild = 'aurelia';
@@ -24,14 +23,6 @@ include '../documentation-main/documentation_header.php';
 
     <table>
         <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
-            <td>
-                <b>Bower</b><br/>
-                bower install ag-grid-enterprise
-            </td>
-
-            <td style="width: 20px;"/>
-
             <td style="padding: 10px;"><img src="../images/npm.png"/></td>
             <td>
                 <b>NPM</b><br/>
@@ -53,8 +44,7 @@ include '../documentation-main/documentation_header.php';
     <snippet>
 import {GridOptions} from "ag-grid";
 import "ag-grid-enterprise/main";
-
-...other dependencies';</snippet>
+</snippet>
 
     <p style="margin-top: 5px">
         If you are building an Aurelia application then you have the choice between A) using the plain JavaScript
