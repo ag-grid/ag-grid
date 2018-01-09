@@ -1,6 +1,6 @@
 import {TextCellEditor} from "../../rendering/cellEditors/textCellEditor";
 
-import {Autowired, Bean, Context, PostConstruct} from "../../context/context";
+import {Autowired, Bean, Context, PostConstruct, PreConstruct} from "../../context/context";
 import {IComponent} from "../../interfaces/iComponent";
 import {DateFilter, DefaultDateComponent} from "../../filter/dateFilter";
 import {HeaderComp} from "../../headerRendering/header/headerComp";
@@ -66,206 +66,199 @@ export class ComponentProvider {
     @Autowired('context')
     private context: Context;
 
-    private agGridDefaults :{[key:string]:AgGridProvidedComponentDef};
-    private agDeprecatedNames :{[key:string]:DeprecatedComponentName} = {};
+    private agGridDefaults :{[key:string]:AgGridProvidedComponentDef} = {
+        //date
+        agDateInput: {
+            defaultImpl: DefaultDateComponent,
+            overridable: true
+        },
+
+        //header
+        agColumnHeader: {
+            defaultImpl: HeaderComp,
+            overridable: true
+        },
+        agColumnGroupHeader: {
+            defaultImpl: HeaderGroupComp,
+            overridable: true
+        },
+
+        //floating filters
+        agSetColumnFloatingFilter: {
+            defaultImpl: SetFloatingFilterComp,
+            overridable: true
+        },
+        agTextColumnFloatingFilter: {
+            defaultImpl: TextFloatingFilterComp,
+            overridable: true
+        },
+        agNumberColumnFloatingFilter:{
+            defaultImpl: NumberFloatingFilterComp,
+            overridable: true
+        },
+        agDateColumnFloatingFilter: {
+            defaultImpl: DateFloatingFilterComp,
+            overridable: true
+        },
+
+        // renderers
+        agCellRenderer: {
+            defaultImpl: null,
+            overridable: false
+        },
+        agFullWidthCellRenderer: {
+            defaultImpl: null,
+            overridable: false
+        },
+        agInnerCellRenderer: {
+            defaultImpl: null,
+            overridable: false
+        },
+        agGroupRowInnerCellRenderer: {
+            defaultImpl: null,
+            overridable: false
+        },
+        agAnimateShowChangeCellRenderer: {
+            defaultImpl: AnimateShowChangeCellRenderer,
+            overridable: true
+        },
+        agAnimateSlideCellRenderer: {
+            defaultImpl: AnimateSlideCellRenderer,
+            overridable: true
+        },
+        agGroupCellRenderer: {
+            defaultImpl: GroupCellRenderer,
+            overridable: true
+        },
+        agGroupRowRenderer: {
+            defaultImpl: GroupCellRenderer,
+            overridable: false
+        },
+        agLoadingCellRenderer: {
+            defaultImpl: LoadingCellRenderer,
+            overridable: true
+        },
+        agPinnedRowCellRenderer: {
+            defaultImpl: null,
+            overridable: false
+        },
+
+        //editors
+        agCellEditor: {
+            defaultImpl: TextCellEditor,
+            overridable: false
+        },
+        agTextCellEditor: {
+            defaultImpl: TextCellEditor,
+            overridable: true
+        },
+        agSelectCellEditor: {
+            defaultImpl: SelectCellEditor,
+            overridable: true
+        },
+        agPopupTextCellEditor: {
+            defaultImpl: PopupTextCellEditor,
+            overridable: true
+        },
+        agPopupSelectCellEditor: {
+            defaultImpl: PopupSelectCellEditor,
+            overridable: true
+        },
+        agLargeTextCellEditor: {
+            defaultImpl: LargeTextCellEditor,
+            overridable: true
+        },
+
+        //filter
+        agTextColumnFilter: {
+            defaultImpl: TextFilter,
+            overridable: false
+        },
+        agNumberColumnFilter: {
+            defaultImpl: NumberFilter,
+            overridable: false
+        },
+        agDateColumnFilter: {
+            defaultImpl: DateFilter,
+            overridable: false
+        },
+
+        //overlays
+        agOverlayWrapper: {
+            defaultImpl: OverlayWrapperComponent,
+            overridable: false
+        },
+        agLoadingOverlay: {
+            defaultImpl: LoadingOverlayComponent,
+            overridable: true
+        },
+        agNoRowsOverlay: {
+            defaultImpl: NoRowsOverlayComponent,
+            overridable: true
+        }
+    };
+
+    private agDeprecatedNames :{[key:string]:DeprecatedComponentName} = {
+        set:{
+            newComponentName: 'agSetColumnFilter',
+            propertyHolder: 'filter'
+        },
+        text:{
+            newComponentName: 'agTextColumnFilter',
+            propertyHolder: 'filter'
+        },
+        number:{
+            newComponentName: 'agNumberColumnFilter',
+            propertyHolder: 'filter'
+        },
+        date:{
+            newComponentName: 'agDateColumnFilter',
+            propertyHolder: 'filter'
+        },
+
+
+        group:{
+            newComponentName: 'agGroupCellRenderer',
+            propertyHolder: 'cellRenderer'
+        },
+        animateShowChange:{
+            newComponentName: 'agAnimateShowChangeCellRenderer',
+            propertyHolder: 'cellRenderer'
+        },
+        animateSlide:{
+            newComponentName: 'agAnimateSlideCellRenderer',
+            propertyHolder: 'cellRenderer'
+        },
+
+        select:{
+            newComponentName: 'agSelectCellEditor',
+            propertyHolder: 'cellEditor'
+        },
+        largeText:{
+            newComponentName: 'agLargeTextCellEditor',
+            propertyHolder: 'cellEditor'
+        },
+        popupSelect:{
+            newComponentName: 'agPopupSelectCellEditor',
+            propertyHolder: 'cellEditor'
+        },
+        popupText:{
+            newComponentName: 'agPopupTextCellEditor',
+            propertyHolder: 'cellEditor'
+        },
+        richSelect:{
+            newComponentName: 'agRichSelectCellEditor',
+            propertyHolder: 'cellEditor'
+        },
+
+        headerComponent:{
+            newComponentName: 'agColumnHeader',
+            propertyHolder: 'headerComponent'
+        }
+
+    };
     private jsComponents :{[key:string]:AgGridRegisteredComponentInput<any>} = {};
     private frameworkComponents :{[key:string]:{new(): any}} = {};
-
-    @PostConstruct
-    public postConstruct (){
-
-        this.agDeprecatedNames = {
-            set:{
-                newComponentName: 'agSetColumnFilter',
-                propertyHolder: 'filter'
-            },
-            text:{
-                newComponentName: 'agTextColumnFilter',
-                propertyHolder: 'filter'
-            },
-            number:{
-                newComponentName: 'agNumberColumnFilter',
-                propertyHolder: 'filter'
-            },
-            date:{
-                newComponentName: 'agDateColumnFilter',
-                propertyHolder: 'filter'
-            },
-
-
-            group:{
-                newComponentName: 'agGroupCellRenderer',
-                propertyHolder: 'cellRenderer'
-            },
-            animateShowChange:{
-                newComponentName: 'agAnimateShowChangeCellRenderer',
-                propertyHolder: 'cellRenderer'
-            },
-            animateSlide:{
-                newComponentName: 'agAnimateSlideCellRenderer',
-                propertyHolder: 'cellRenderer'
-            },
-
-            select:{
-                newComponentName: 'agSelectCellEditor',
-                propertyHolder: 'cellEditor'
-            },
-            largeText:{
-                newComponentName: 'agLargeTextCellEditor',
-                propertyHolder: 'cellEditor'
-            },
-            popupSelect:{
-                newComponentName: 'agPopupSelectCellEditor',
-                propertyHolder: 'cellEditor'
-            },
-            popupText:{
-                newComponentName: 'agPopupTextCellEditor',
-                propertyHolder: 'cellEditor'
-            },
-            richSelect:{
-                newComponentName: 'agRichSelectCellEditor',
-                propertyHolder: 'cellEditor'
-            },
-
-            headerComponent:{
-                newComponentName: 'agColumnHeader',
-                propertyHolder: 'headerComponent'
-            }
-
-        };
-
-        this.agGridDefaults = {
-            //date
-            agDateInput: {
-                defaultImpl: DefaultDateComponent,
-                overridable: true
-            },
-
-            //header
-            agColumnHeader: {
-                defaultImpl: HeaderComp,
-                overridable: true
-            },
-            agColumnGroupHeader: {
-                defaultImpl: HeaderGroupComp,
-                overridable: true
-            },
-
-            //floating filters
-            agSetColumnFloatingFilter: {
-                defaultImpl: SetFloatingFilterComp,
-                overridable: true
-            },
-            agTextColumnFloatingFilter: {
-                defaultImpl: TextFloatingFilterComp,
-                overridable: true
-            },
-            agNumberColumnFloatingFilter:{
-                defaultImpl: NumberFloatingFilterComp,
-                overridable: true
-            },
-            agDateColumnFloatingFilter: {
-                defaultImpl: DateFloatingFilterComp,
-                overridable: true
-            },
-
-            // renderers
-            agCellRenderer: {
-                defaultImpl: null,
-                overridable: false
-            },
-            agFullWidthCellRenderer: {
-                defaultImpl: null,
-                overridable: false
-            },
-            agInnerCellRenderer: {
-                defaultImpl: null,
-                overridable: false
-            },
-            agGroupRowInnerCellRenderer: {
-                defaultImpl: null,
-                overridable: false
-            },
-            agAnimateShowChangeCellRenderer: {
-                defaultImpl: AnimateShowChangeCellRenderer,
-                overridable: true
-            },
-            agAnimateSlideCellRenderer: {
-                defaultImpl: AnimateSlideCellRenderer,
-                overridable: true
-            },
-            agGroupCellRenderer: {
-                defaultImpl: GroupCellRenderer,
-                overridable: true
-            },
-            agGroupRowRenderer: {
-                defaultImpl: GroupCellRenderer,
-                overridable: false
-            },
-            agLoadingCellRenderer: {
-                defaultImpl: LoadingCellRenderer,
-                overridable: true
-            },
-            agPinnedRowCellRenderer: {
-                defaultImpl: null,
-                overridable: false
-            },
-
-            //editors
-            agCellEditor: {
-                defaultImpl: TextCellEditor,
-                overridable: false
-            },
-            agTextCellEditor: {
-                defaultImpl: TextCellEditor,
-                overridable: true
-            },
-            agSelectCellEditor: {
-                defaultImpl: SelectCellEditor,
-                overridable: true
-            },
-            agPopupTextCellEditor: {
-                defaultImpl: PopupTextCellEditor,
-                overridable: true
-            },
-            agPopupSelectCellEditor: {
-                defaultImpl: PopupSelectCellEditor,
-                overridable: true
-            },
-            agLargeTextCellEditor: {
-                defaultImpl: LargeTextCellEditor,
-                overridable: true
-            },
-
-            //filter
-            agTextColumnFilter: {
-                defaultImpl: TextFilter,
-                overridable: false
-            },
-            agNumberColumnFilter: {
-                defaultImpl: NumberFilter,
-                overridable: false
-            },
-            agDateColumnFilter: {
-                defaultImpl: DateFilter,
-                overridable: false
-            },
-
-            //overlays
-            agOverlayWrapper: {
-                defaultImpl: OverlayWrapperComponent,
-                overridable: false
-            },
-            agLoadingOverlay: {
-                defaultImpl: LoadingOverlayComponent,
-                overridable: true
-            },
-            agNoRowsOverlay: {
-                defaultImpl: NoRowsOverlayComponent,
-                overridable: true
-            }
-        }
-    }
 
     @PostConstruct
     private init():void{
@@ -280,6 +273,19 @@ export class ComponentProvider {
                 componentProvider.registerFwComponent(it, this.gridOptions.frameworkComponents[it]);
             });
         }
+    }
+
+    public registerDefaultComponent<A extends IComponent<any>> (rawName:string, component:AgGridRegisteredComponentInput<A>, overridable:boolean = true){
+        let name:string = this.translateIfDeprecated(rawName);
+        if (this.agGridDefaults[name]){
+            console.error(`Trying to overwrite a default component. You should call registerComponent`);
+            return;
+        }
+
+        this.agGridDefaults[name] = {
+            overridable: overridable,
+            defaultImpl: component
+        };
     }
 
     public registerComponent<A extends IComponent<any>> (rawName:string, component:AgGridRegisteredComponentInput<A>){
