@@ -16,7 +16,7 @@ export class ColumnGroup implements ColumnGroupChild {
     public static HEADER_GROUP_SHOW_CLOSED = 'closed';
 
     public static EVENT_LEFT_CHANGED = 'leftChanged';
-    public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'leftChanged';
+    public static EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
 
     // this is static, a it is used outside of this class
     public static createUniqueId(groupId: string, instanceId: number): string {

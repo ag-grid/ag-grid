@@ -20,7 +20,6 @@ import {IHeaderGroupComp, IHeaderGroupParams} from "./headerGroupComp";
 import {GridApi} from "../../gridApi";
 import {ComponentRecipes} from "../../components/framework/componentRecipes";
 import {Beans} from "../../rendering/beans";
-import {ColumnGroupChild} from "../../entities/columnGroupChild";
 
 export class HeaderGroupWrapperComp extends Component {
 
@@ -80,7 +79,9 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     private setupMovingCss(): void {
-        this.columnGroup.getOriginalColumnGroup().getLeafColumns().forEach( col => {
+        let originalColumnGroup = this.columnGroup.getOriginalColumnGroup();
+        let leafColumns = originalColumnGroup.getLeafColumns();
+        leafColumns.forEach( col => {
             this.addDestroyableEventListener(col, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
         });
         this.onColumnMovingChanged();
