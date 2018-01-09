@@ -9,7 +9,8 @@ include '../documentation-main/documentation_header.php';
 <div>
 
     <h1 class="first-h1" id="implementing-the-aurelia-datagrid">
-        <img style="vertical-align: middle" src="../images/aurelia_large.png" height="50px" alt="Aurelia Datagrid" title="Aurelia"/>
+        <img style="vertical-align: middle" src="../images/aurelia_large.png" height="50px" alt="Aurelia Datagrid"
+             title="Aurelia"/>
         Aurelia Datagrid
     </h1>
 
@@ -49,7 +50,8 @@ include '../documentation-main/documentation_header.php';
     </table>
 
     <h3>Referencing ag-Grid-Enterprise</h3>
-    <p>In your application, before instantiating the grid, you need to reference the included ag-grid-enterprise dependency:</p>
+    <p>In your application, before instantiating the grid, you need to reference the included ag-grid-enterprise
+        dependency:</p>
     <snippet>
 import {GridOptions} from "ag-grid";
 import "ag-grid-enterprise/main";
@@ -292,7 +294,8 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
 
 <h2 id="ng2markup">Creating Grids with Markup</h2>
 
-<p>You can create Grids either programatically (with pure JavaScript/Typescript/Components), or declare them via declaratively with markup.</p>
+<p>You can create Grids either programatically (with pure JavaScript/Typescript/Components), or declare them via
+    declaratively with markup.</p>
 <p>The above section details how to specify the Grid itself. To declare columns you can specify them as follows:</p>
 
 <h3 id="column-definition">Column Definition</h3>
@@ -371,6 +374,9 @@ private getCountryFilterParams():any {
     the ag-grid-aurelia component, consider using plain ag-Grid Components (as explained on the pages for
     rendering etc) inside ag-Grid instead of creating Aurelia counterparts.
 </p>
+
+<?= example('ag-Grid in Aurelia', 'rich-grid', 'as-is', array("noPlunker" => 1, "usePath" => "#/?route=rich-grid")) ?>
+<?//= example('ag-Grid in Aurelia', 'rich-grid', 'as-is', array("noPlunker" => 1, "usePath" => "#/?route=full-width")) ?>
 
 <h2 id="next-steps">Next Steps...</h2>
 

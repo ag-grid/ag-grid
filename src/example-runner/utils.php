@@ -177,6 +177,10 @@ function example($title, $dir, $type = 'vanilla', $options = array())
         $query['noStyle'] = true;
     }
 
+    if ($options['usePath']) {
+        $query['usePath'] = $options['usePath'];
+    }
+
     if ($multi) {
         $query['multi'] = 1;
     }
@@ -200,7 +204,6 @@ function example($title, $dir, $type = 'vanilla', $options = array())
     $config['options']['grid'] = $gridSettings;
 
     $query['grid'] = json_encode($gridSettings);
-
 
     $queryString = join("&", array_map('toQueryString', array_keys($query), $query));
 
