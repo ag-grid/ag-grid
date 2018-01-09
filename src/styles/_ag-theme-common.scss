@@ -368,7 +368,7 @@
             overflow: hidden;
             text-indent: $grid-size;
             width: $grid-size;
-            box-sizing: initial;
+            box-sizing: content-box;
         }
     }
 
