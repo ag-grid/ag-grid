@@ -192,17 +192,19 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
      * @param notify If we should let know the model that the values of the filter have changed
      */
     public setFilterValues(options: string[], selectAll:boolean = false, notify:boolean = true): void {
-        let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
-        let isSelectAll = selectAll  || (this.selectAllState===CheckboxState.CHECKED);
+        this.model.onFilterValuesReady (()=>{
+            let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
+            let isSelectAll = selectAll  || (this.selectAllState===CheckboxState.CHECKED);
 
-        this.model.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
-        this.model.refreshValues(options, keepSelection, isSelectAll);
-        this.updateSelectAll();
-        options.forEach(option=>this.model.selectValue(option));
-        this.virtualList.refresh();
-        if (notify){
-            this.debounceFilterChanged();
-        }
+            this.model.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
+            this.model.refreshValues(options, keepSelection, isSelectAll);
+            this.updateSelectAll();
+            options.forEach(option=>this.model.selectValue(option));
+            this.virtualList.refresh();
+            if (notify){
+                this.debounceFilterChanged();
+            }
+        });
     }
 
     //noinspection JSUnusedGlobalSymbols

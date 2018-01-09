@@ -5,6 +5,7 @@ import {TextFormatter} from "ag-grid/main";
 import {TextFilter} from "ag-grid/main";
 import {InMemoryRowModel, IRowModel, Constants} from 'ag-grid';
 import {SetFilterValuesFunc, SetFilterValuesFuncParams} from "ag-grid/main";
+import {ExternalPromise, Promise} from 'ag-grid';
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
@@ -39,6 +40,9 @@ export class SetFilterModel {
     private doesRowPassOtherFilters: any;
     private modelUpdatedFunc: (values: string[]) => void;
     private isLoadingFunc: (loading: boolean) => void;
+
+    private filterValuesExternalPromise: ExternalPromise<void>;
+    private filterValuesPromise: Promise<void>;
 
     constructor(
         colDef: ColDef,
@@ -129,7 +133,10 @@ export class SetFilterModel {
         if (this.areValuesSync()) {
             let valuesToUse: string[] = this.extractSyncValuesToUse();
             this.setValues(valuesToUse);
+            this.filterValuesPromise = Promise.resolve(null);
         } else {
+            this.filterValuesExternalPromise = Promise.external<void>();
+            this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
             let callback = <SetFilterValuesFunc> this.filterParams.values;
@@ -143,6 +150,7 @@ export class SetFilterModel {
     private onAsyncValuesLoaded(values:string[]): void {
         this.modelUpdatedFunc(values);
         this.isLoadingFunc(false);
+        this.filterValuesExternalPromise.resolve(null);
     }
 
     private areValuesSync() {
@@ -423,5 +431,14 @@ export class SetFilterModel {
         } else {
             this.selectEverything();
         }
+    }
+
+    public onFilterValuesReady (callback:()=>void):void{
+        //This guarantees that if the user is racing to set values async into the set filter, only the first instance
+        //will be used
+        // ie Values are async and the user manually wants to override them before the retrieval of values is triggered
+        // (set filter values in the following example)
+        // http://plnkr.co/edit/eFka7ynvPj68tL3VJFWf?p=preview
+        this.filterValuesPromise.firstOneOnly(callback)
     }
 }
