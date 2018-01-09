@@ -236,7 +236,7 @@ import "ag-grid-enterprise/main";</snippet>
         these components in your column definitions):</p>
 
     <h4 id="simple-inline-components">Simple, Inline Components</h4>
-    <snippet ng-non-bindable>
+    <snippet>
 components: {
     'CubeComponent': {
         template: '&lt;span&gt;{{ valueCubed() }}&lt;/span&gt;',
@@ -261,7 +261,7 @@ components: {
         components below).</p>
 
     <h4 id="simple-locally-declared-components">Simple, Locally Declared Components</h4>
-    <snippet ng-non-bindable>
+    <snippet>
 let SquareComponent = Vue.extend({
     template: '&lt;span&gt;{{ valueSquared() }}&lt;/span&gt;',
     methods: {
@@ -272,7 +272,7 @@ let SquareComponent = Vue.extend({
 });</snippet>
 
     <h4 id="external-js-components">External .js Components</h4>
-    <snippet ng-non-bindable>
+    <snippet>
 // SquareComponent.js
 export default Vue.extend({
     template: '&lt;span&gt;{{ valueSquared() }}&lt;/span&gt;',
@@ -287,9 +287,9 @@ export default Vue.extend({
 import SquareComponent from './SquareComponent'</snippet>
 
     <h4 id="more-complex-external-single-file-components">More Complex, External Single File Components (.vue)</h4>
-    <snippet ng-non-bindable>
+    <snippet>
 &lt;template&gt;
-    &lt;span class="currency"&gt;{{ params.value | currency('EUR') }}&lt;/span&gt;
+    &lt;span class="currency"&gt;<span ng-non-bindable>{{</span> params.value | currency('EUR') }}&lt;/span&gt;
 &lt;/template&gt;
 
 &lt;script&gt;

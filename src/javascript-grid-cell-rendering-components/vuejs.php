@@ -13,9 +13,8 @@
 <p>
     Using VueJS Components in the Cell Renderer's
 </p>
-<show-example url="../framework-examples/vue-examples/#/dynamic"
-              jsfile="../framework-examples/vue-examples/src/dynamic-component-example/DynamicComponentExample.vue"
-              exampleHeight="525px"></show-example>
+
+<?= example('Dynamic Components with VueJS', 'vue-dynamic', 'as-is', array("noPlunker"=> 1, "skipDirs" => array("dist"))) ?>
 
 <h3 id="vuejs-methods-lifecycle"><img src="../images/vue_large.png" style="width: 20px;"/> VueJS Methods / Lifecycle</h3>
 
@@ -37,9 +36,9 @@
 <p>
     Using more complex VueJS Components in the Cell Renderer's
 </p>
-<show-example url="../framework-examples/vue-examples/#/rich-dynamic"
-              jsfile="../framework-examples/vue-examples/src/rich-dynamic-component-example/RichDynamicComponentExample.vue"
-              exampleHeight="525px"></show-example>
+<!--<show-example url="../framework-examples/vue-examples/#/rich-dynamic"-->
+<!--              jsfile="../framework-examples/vue-examples/src/rich-dynamic-component-example/RichDynamicComponentExample.vue"-->
+<!--              exampleHeight="525px"></show-example>-->
 
 <note>The full <a href="https://github.com/ag-grid/ag-grid-vue-example">ag-grid-vue-example</a> repo shows many more examples for rendering, including grouped rows, full width renderers
     and so on, as well as examples on using VueJS Components with both Cell Editors and Filters</note>

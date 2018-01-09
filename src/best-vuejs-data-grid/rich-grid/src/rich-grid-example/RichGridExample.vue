@@ -37,7 +37,7 @@
                 <button @click="createRowData()">Refresh Data</button>
             </div>
             <div style="clear: both;"></div>
-            <ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-fresh"
+            <ag-grid-vue style="width: 100%; height: 350px;" class="ag-fresh"
                          :gridOptions="gridOptions"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
@@ -153,8 +153,7 @@
                             {
                                 headerName: "Country", field: "country", width: 150,
                                 cellRenderer: countryCellRenderer, pinned: true,
-                                filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20},
-                                columnGroupShow: 'open'
+                                filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}
                             },
                             {
                                 headerName: "DOB",

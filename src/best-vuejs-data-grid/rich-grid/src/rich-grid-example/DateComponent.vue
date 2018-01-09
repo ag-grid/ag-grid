@@ -46,6 +46,8 @@
             },
 
             setDate(date) {
+                if(!date) return;
+
                 this.dd = date.getDate() + '';
                 this.mm = (date.getMonth() + 1) + '';
                 this.yyyy = date.getFullYear() + '';
@@ -54,7 +56,6 @@
             },
 
             parseDate (dd, mm, yyyy){
-                debugger
                 //If any of the three input date fields are empty, stop and return null
                 if (dd.trim() === '' || mm.trim() === '' || yyyy.trim() === '') {
                     return null;
