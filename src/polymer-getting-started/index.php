@@ -8,14 +8,9 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1>
-        <img src="../images/svg/docs/getting_started.svg" width="50"/>
-        <img style="vertical-align: middle" src="/images/polymer-large.png" height="45px"/>
-        Polymer Grid
-    </h1>
-    <h2>Getting Started</h2>
+    <h1> Polymer Grid </h1>
 
-    <p>This section documents how to get started with ag-Grid and Polymer as quickly as possible. You will start off with
+    <p class="lead">This section documents how to get started with ag-Grid and Polymer as quickly as possible. You will start off with
         a simple application and section by section add Grid features to the application ending up with a fully fledged
         application, with ag-Grid and Polymer at the heart of it.</p>
 
@@ -23,7 +18,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>You will need the following build tools installed at a minimum:</p>
 
-    <ul>
+    <ul class="content">
         <li>Git: Please see <a href="https://git-scm.com/">Git</a> for installation options</li>
         <li>npm: Please see <a href="https://www.npmjs.com/get-npm">npm</a> for installation options</li>
     </ul>
@@ -34,15 +29,15 @@ include '../documentation-main/documentation_header.php';
         this
         repo, install the dependencies and start it up:</p>
 
-    <snippet>
-// clone the ag-Grid Polymer seed project
+    <snippet language="sh">
+# clone the ag-Grid Polymer seed project
 git clone https://github.com/ag-grid/ag-grid-polymer-seed
 cd ag-grid-polymer-seed
 
-// install the project dependencies
+# install the project dependencies
 npm i
 
-// start the application
+# start the application
 npm start</snippet>
 
     <p>With those 3 commands you should now see the following application:</p>
@@ -51,7 +46,7 @@ npm start</snippet>
 
     <p>Great! A working Grid application in no time at all. Let's break down the application into it's main parts:</p>
 
-    <h3>Row Data</h3>
+    <h2>Row Data</h2>
 
     <p>At a minimum, a Grid requires row data & column definitions. Row data is provided to the grid as an array of
         JavaScript objects:</p>
@@ -67,7 +62,7 @@ npm start</snippet>
     <p>Here we have 3 rows of data, with <code>make</code>, <code>model</code> and <code>price</code> making up the
         data.</p>
 
-    <h3>Column Definitions</h3>
+    <h2>Column Definitions</h2>
 
     <p>To display this information we need to tell the Grid what data we're interested in. Let's define the three
         columns
@@ -90,7 +85,7 @@ npm start</snippet>
     us to use an Polymer Component to render the data for that cell. This is entirely optional, but does allow you to leverage
     the full power of Polymer while still gaining the performance and functionality offered by ag-Grid.</p>
 
-    <h3>Grid Definition</h3>
+    <h2>Grid Definition</h2>
 
     <p>Ok, so now we know how to define our row and column data - how do we define our actual Grid?</p>
 
@@ -110,8 +105,8 @@ npm start</snippet>
     <p>Of course there is much more we can do - in the following sections we will build on this starting point. For our
         seed application here is the complete Component:</p>
 
-    <snippet>
-// simple-grid.html 
+    <snippet language="html">
+&lt;!-- simple-grid.html  -->
 &lt;link rel="import" href="red-cell-renderer.html"&gt;
 &lt;dom-module id="simple-grid"&gt;
     &lt;template&gt;
@@ -159,25 +154,23 @@ npm start</snippet>
     &lt;/script&gt;
 &lt;/dom-module&gt;</snippet>
 
-    <h3>Adding Features</h3>
+    <h2>Adding Features</h2>
 
     <p>Ok, great - so far so good. But wouldn't it be nice to be able to sort the data to help us see which car is the
         most expensive (or least!)?</p>
 
-    <h4>Sorting</h4>
+    <h3>Sorting</h3>
 
     <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
         enabled by setting a Grid property to true:</p>
 
-    <snippet>
-// Grid Definition
+    <snippet language="html">
+&lt;!-- Grid Definition -->
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
                  class="ag-theme-fresh"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
-
-                 enableSorting // shorthand for enableSorting="true" 
-
+                 enableSorting
                  onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
 
     <p>With a single property change we are now able to sort any column by clicking the column header (you can keep
@@ -186,7 +179,7 @@ npm start</snippet>
 
     <img src="polymer-gs-sorting.png" style="display: block;margin: auto;height: 200px;">
 
-    <h4>Filtering</h4>
+    <h3>Filtering</h3>
 
     <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a
         real-world
@@ -196,15 +189,13 @@ npm start</snippet>
 
     <p>As with sorting, enabling filtering is as easy as setting a single property in our Grid definition:</p>
 
-    <snippet>
-// Grid Definition
+    <snippet language="html">
+&lt;!-- Grid Definition -->
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
                  class="ag-theme-fresh"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
-
-                 enableFilter // shorthand for enableFilter="true" 
-
+                 enableFilter="true"
                  onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
 
     <p>With the <code>enableFilter</code> property set we are now able to filter any column by clicking the column
@@ -215,7 +206,7 @@ npm start</snippet>
 
     <img src="polymer-gs-filtering.png" style="display: block;margin: auto;height: 200px;">
 
-    <h3>Summary</h3>
+    <h2>Summary</h2>
 
     <p id="polymer-rich-grid-example">We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
         the left
@@ -223,16 +214,14 @@ npm start</snippet>
 
     <?= example('Rich Polymer Grid', 'rich-grid', 'polymer', array("exampleHeight" => 500, 'enterprise' => true)) ?>
 
-    <p>This example makes use of custom <code>cellRenderers</code> to show data in a visually friendly way, demonstrates
-        <code>column grouping</code> as well as using <code>Polymer Components</code> in the name column. And even this rich
+    <p>This example makes use of custom Cell Renderers to show data in a visually friendly way, demonstrates
+        column grouping as well as using <strong>Polymer Components</strong> in the name column. And even this rich
         example is only
         scratching the surface - we've only just gotten started with with ag-Grid can do!</p>
 
     <p>Please read the <a href="../polymer-more-details">More Details</a> section next to get a deeper understanding of
         how to
-        use ag-Grid and Polymer, as well the <code>Enterprise
-            Features</code>.</p>
-
+        use ag-Grid and Polymer, as well the <strong>Enterprise Features</strong>.</p> 
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
