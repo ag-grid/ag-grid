@@ -6,15 +6,6 @@ $pageKeyboards = "Angular Grid SystemJS";
 $pageGroup = "basics";
 $angularParent = "checked";
 
-$framework = $_GET['framework'];
-if(is_null($framework)) {
-    ?>
-    <script>
-        window.location.href = '?framework=angular';
-    </script>
-    <?php
-}
-
 include '../documentation-main/documentation_header.php';
 ?>
 
