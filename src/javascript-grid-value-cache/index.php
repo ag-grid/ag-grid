@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
     <h1 class="first-h1">Value Cache</h1>
 
     <p>
-        The value cache is used for the results of <a href="../javascript-grid-value-getters">valueGetter's</a>.
+        The value cache is used for the results of <a href="../javascript-grid-value-getters">valueGetters</a>.
         If you are not using value getters, then you do not need the value cache.
     </p>
 

@@ -146,7 +146,7 @@ cellEditorParams: {
             <b>Set Filters:</b> display a list of names rather than codes.
         </li>
         <li>
-            <b>'Price' Columns:</b> additionally demonstrate the use of <code>valueGetter's</code> and <code>valueSetter's</code>.
+            <b>'Price' Columns:</b> additionally demonstrate the use of <code>valueGetters</code> and <code>valueSetters</code>.
         </li>
     </ul>
 
@@ -177,7 +177,7 @@ cellEditorParams: {
             <b>Set Filters:</b> display a list of names rather than codes.
         </li>
         <li>
-            <b>'Price' Columns:</b> additionally demonstrate the use of <code>valueGetter's</code> and <code>valueSetter's</code>.
+            <b>'Price' Columns:</b> additionally demonstrate the use of <code>valueGetters</code> and <code>valueSetters</code>.
         </li>
     </ul>
 

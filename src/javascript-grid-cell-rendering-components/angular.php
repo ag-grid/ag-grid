@@ -5,7 +5,7 @@
 </h1>
 
 <p>
-    It is possible to provide Angular cell renderer's for ag-Grid to use if you are are using the
+    It is possible to provide Angular cell renderers for ag-Grid to use if you are are using the
     Angular version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
     registering framework components</a> for how to register framework components.
 </p>
@@ -53,7 +53,7 @@
 <h2 id="example-rendering-using-more-complex-angular-components">Example: Rendering using more complex Angular
     Components</h2>
 <p>
-    Using more complex Angular Components in the Cell Renderer's - specifically how you can use nested <code>NgModule</code>'s
+    Using more complex Angular Components in the Cell Renderers - specifically how you can use nested <code>NgModule</code>'s
     within the grid.
 </p>
 <?= example('Richer Dynamic Components', 'angular-rich-dynamic', 'angular', array("exampleHeight" => 370, "showResult" => true, "extras" => array("bootstrap"))); ?>

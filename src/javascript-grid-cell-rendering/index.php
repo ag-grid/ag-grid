@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
     So for rendering your values, you have the following three options:
     <ol>
         <li>Do nothing, simple strings get used to display the data.</li>
-        <li>Use one of the grid provided cell renderer's.</li>
+        <li>Use one of the grid provided cell renderers.</li>
         <li>Build your own cell renderer.</li>
     </ol>
 
@@ -25,7 +25,7 @@ var colDef1 = {
     ...
 }
 
-// 2 - use one of the grids provided cell renderer's, reference it by name
+// 2 - use one of the grids provided cell renderers, reference it by name
 var colDef2 = {
     cellRenderer:'agGroupCellRenderer',
     ...
@@ -38,12 +38,12 @@ var colDef3 = {
 }</snippet>
 
     This section of the documentation explains the first two items above, how to use no cell
-    renderer and how to use the grid provided cell renderer's. To build your own cell renderer,
+    renderer and how to use the grid provided cell renderers. To build your own cell renderer,
     see the section <a href="../javascript-grid-cell-rendering-components/">Cell Rendering Components</a>.
 </p>
 
 <p>
-    This section of the documentation also lists how to use all the grids provided renderer's.
+    This section of the documentation also lists how to use all the grids provided renderers.
 </p>
 
 <h2>Cell Rendering Flow</h2>
@@ -66,7 +66,7 @@ var colDef3 = {
 
 <p>
     If you have no requirements for custom cells, then you should use no cell renderer.
-    Having no custom cell renderer's will result in the fastest possible grid (which might
+    Having no custom cell renderers will result in the fastest possible grid (which might
     be important to you if using Internet Explorer) as even the simplest cell renderer
     will result in some extra div's in the DOM.
 </p>
@@ -76,10 +76,10 @@ var colDef3 = {
     then you can use <code>colDef.valueFormatter</code>.
 </p>
 
-<h2>Grid Provided Renderer's</h2>
+<h2>Grid Provided Renderers</h2>
 
 <p>
-    The grid comes with three built in renderer's which are:
+    The grid comes with three built-in renderers which are:
     <ul>
         <li><b>agGroupCellRenderer</b>: For displaying group values with expand / collapse functionality.</li>
         <li><b>agAnimateShowChangeCellRenderer</b> and <b>agAnimateSlideCellRenderer</b>: For animating changes in data.</li>
@@ -87,10 +87,10 @@ var colDef3 = {
     The following sections goes through each one in detail.
 </p>
 
-<h2 id="animate-renderer">Grid Renderer's - agAnimateShowChangeCellRenderer and agAnimateSlideCellRenderer</h2>
+<h2 id="animate-renderer">Grid Renderers - agAnimateShowChangeCellRenderer and agAnimateSlideCellRenderer</h2>
 
 <p>
-    The grid provides two cell renderer's for animating changes to data. They are:
+    The grid provides two cell renderers for animating changes to data. They are:
 <ul>
     <li>
         <b>agAnimateShowChangeCellRenderer:</b> The previous value is temporarily shown beside the old value
@@ -124,9 +124,9 @@ var colDef3 = {
 <?= example('Animation Renderers', 'animation-renderers', 'generated') ?>
 
 <note>
-    We hope you like the animation cell renderer's. However you can also take inspiration from them,
-    and create your own animations in your own cell renderer's. Check out our source code on Github on
-    how we implemented these cell renderer's for inspiration.
+    We hope you like the animation cell renderers. However you can also take inspiration from them,
+    and create your own animations in your own cell renderers. Check out our source code on Github on
+    how we implemented these cell renderers for inspiration.
 </note>
 
 <note>

@@ -122,7 +122,7 @@ export class AgGridColumn {
 
         <p>This in turn woud be mapped to a column with a defined cell renderer and cell editor.</p>
 
-        <p>That's pretty much it! In time - and if there's sufficient interest - we'll look at being able to create Renderer's,
+        <p>That's pretty much it! In time - and if there's sufficient interest - we'll look at being able to create Renderers,
         Editors and Filters from Components, in the same way that we do with Angular. Based on feedback we've received this
         declarative/markup driven definition works well for now.</p>
 

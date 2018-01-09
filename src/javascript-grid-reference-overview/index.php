@@ -273,7 +273,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
         <p>
             The gridOptions are fully available as stated above for Angular. However you can take
-            advantage of Angular's properties and events provided by ag-Grids Angular Component.
+            advantage of Angulars properties and events provided by ag-Grids Angular Component.
             This is done as follows:
         </p>
 
@@ -484,7 +484,7 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
         <h3>Cell Editors, Cell Renderers, Filters etc</h3>
 
         <p>Please see the relevant sections on <a
-                    href="../javascript-grid-cell-rendering-components/#polymerCellRendering">cell renderer's</a>,
+                    href="../javascript-grid-cell-rendering-components/#polymerCellRendering">cell renderers</a>,
             <a href="../javascript-grid-cell-editing/#polymerCellEditing">cell editors</a> and
             <a href="../javascript-grid-filtering/#polymerFiltering">filters</a> for configuring and using Polymer
             Components in ag-Grid.</p>

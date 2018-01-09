@@ -126,7 +126,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        Be careful adding listeners to rowNodes in cell renderer's that you remove the listener when the rendered
+        Be careful adding listeners to rowNodes in cell renderers that you remove the listener when the rendered
         row in destroyed due to row virtualisation. You can cater for this as follows:
         <snippet>
 var renderer = function(params) {

@@ -226,7 +226,7 @@ var gridOptions = {
     <?= example('Advanced ag-Grid Example', 'rich-grid', 'vanilla', array("enterprise" => 1, "showResult" => true, "exampleHeight" => 460, "extras" => array("bootstrap", "jquery"))) ?>
 
 
-    <p>This example makes use of custom <code>cell renderer's</code> to show data in a visually friendly way, demonstrates
+    <p>This example makes use of custom <code>cell renderers</code> to show data in a visually friendly way, demonstrates
         <code>column grouping</code> as well as using <code>JavaScript Components</code> in the header. And even this
         rich
         example is only scratching the surface - we've only just gotten started with with ag-Grid can do!</p>

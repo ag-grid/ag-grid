@@ -60,7 +60,7 @@ var countryColDef = {
         <li>Column 'A + B' uses a value getter to sum the contents of cells 'A' and 'B'.</li>
         <li>
             Column 'Chain' uses a value getter than references the result of the 'A + B' value
-            getter, demonstrating how the value getter's can chain result from one to the other.
+            getter, demonstrating how the value getters can chain result from one to the other.
         </li>
         <li>Column 'Const' uses a value getter to always return back the same string value.</li>
     </ul>
@@ -104,7 +104,7 @@ colDef.valueGetter = function(params) {
 }</snippet>
 
     <note>
-        All valueGetter's must be pure functions. That means, given the same state of your
+        All valueGetters must be pure functions. That means, given the same state of your
         data, it should consistently return the same result. This is important as the grid will only call your
         valueGetter once during a redraw, even though the value may be used multiple times. For example, the
         value will be used to display the cell value, however it can additionally be used to provide values
@@ -168,7 +168,7 @@ colDef.valueFormatter = function(params) {
         Be aware that the Value Formatter params won't always have 'data' and 'node' supplied, e.g. the
         params supplied to the Value Formatter in the <a href="../javascript-grid-filter-set/">Set Filter</a>.
         As a result favour formatter implementations that rely upon the 'value' argument instead, as this
-        will lead to better reuse of your Value Formatter's.
+        will lead to better reuse of your Value Formatters.
     </note>
 
     <h2>Header Value Getters</h2>

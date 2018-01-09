@@ -615,7 +615,7 @@ include('../includes/mediaHeader.php');
         </li>
         <li>
             New feature: <a href="../javascript-grid-value-cache/">Value Cache</a>. Get better performance if your
-            valueGetter's are CPU intensive.
+            valueGetters are CPU intensive.
         </li>
         <li>
             New feature: <a href="../javascript-grid-column-spanning/">Column Spanning</a>.
@@ -2129,7 +2129,7 @@ params = {
         showColumnMenuAfterMouseClick(colKey, mouseEvent)
     </li>
     <li>Enhancement: new function colDef.valueFormatter - value formatting responsibility used to tie in cellRenderer,
-        now it's broken out into valueFormatter, allows reusing cellRenderer's against different formats.
+        now it's broken out into valueFormatter, allows reusing cellRenderers against different formats.
     </li>
     <li>Enhancement: added 'destroyFilter' api</li>
     <li>Enhancement: columnApi.addRowGroupColumn() and columnApi.removeRowGroupColumn() now work off colKey and not

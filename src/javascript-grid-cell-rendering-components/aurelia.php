@@ -5,7 +5,7 @@
 </h2>
 
 <p>
-    It is possible to provide Aurelia cell renderer's for ag-Grid to use if you are are using the
+    It is possible to provide Aurelia cell renderers for ag-Grid to use if you are are using the
     Aurelia version of ag-Grid.
 </p>
 
@@ -18,7 +18,7 @@
 
 <p>
     If you are using the ag-grid-aurelia component to create the ag-Grid instance,
-    then you will have the option of additionally specifying the cell renderer's
+    then you will have the option of additionally specifying the cell renderers
     as aurelia components. You have two options that are described below:
 <ol>
     <li>Templates</li>
@@ -29,7 +29,7 @@
 </p>
 
 
-<h3 id="cell-renderers-from-templates"><img src="../images/aurelia_large.png" style="width: 20px;"/> Cell Renderer's from Templates</h3>
+<h3 id="cell-renderers-from-templates"><img src="../images/aurelia_large.png" style="width: 20px;"/> Cell Renderers from Templates</h3>
 <snippet>
 // create your cellRenderer as an Aurelia template
 &lt;ag-grid-aurelia #agGrid style="width: 100%; height: 100%;" class="ag-theme-fresh"
