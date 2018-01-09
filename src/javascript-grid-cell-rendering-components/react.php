@@ -5,14 +5,14 @@
 </h2>
 
 <p>
-    It is possible to provide React cell renderer's for ag-Grid to use if you are are using the
+    It is possible to provide React cell renderers for ag-Grid to use if you are are using the
     React version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
     registering framework components</a> for how to register framework components.
 </p>
 
 <h3 id="example-rendering-using-react-components">Example: Rendering using React Components</h3>
 <p>
-    Using React Components in the Cell Renderer's
+    Using React Components in the Cell Renderers
 </p>
 
 <?= example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'onlyShow' => 'react', 'extras' => array('fontawesome', "bootstrap"))) ?>

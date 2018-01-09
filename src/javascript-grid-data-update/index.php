@@ -482,8 +482,8 @@ interface RowDataTransaction {
     <note>
         This is a simple and quick way to visually show to the user that the data has changed.
         It is also possible to have more intelligent animations by putting animations into custom
-        cell renderer's. Check out the grid provided
-        <a href="../javascript-grid-cell-rendering/#animate-renderer">animation cell renderer's</a>
+        cell renderers. Check out the grid provided
+        <a href="../javascript-grid-cell-rendering/#animate-renderer">animation cell renderers</a>
         or look at implementing your own refresh in a
         <a href="../javascript-grid-cell-rendering-components/">custom cell renderer</a>.
     </note>

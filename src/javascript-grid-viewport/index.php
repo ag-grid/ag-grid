@@ -245,7 +245,7 @@ interface IViewportDatasourceParams {
     </p>
 
     <p>
-        Two built in cell renderer's are used: animateShowChange (bid, mid and ask columns) and animateSlide
+        Two built in cell renderers are used: animateShowChange (bid, mid and ask columns) and animateSlide
         (volume column). You may find these useful, however they are provided to demonstrate how one could
         achieve a change animation. You will probably want to provide your own custom animation cell renderer
         as how the animation happens will be depend on your application, the type of data and frequency

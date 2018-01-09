@@ -4,7 +4,7 @@
 </h2>
 
 <p>
-    It is possible to provide Polymer cell renderer's for ag-Grid to use if you are are using the
+    It is possible to provide Polymer cell renderers for ag-Grid to use if you are are using the
     Polymer version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
     registering framework components</a> for how to register framework components.
 </p>
@@ -36,6 +36,6 @@
 </p>
 
 <note>The full <a href="https://github.com/ag-grid/ag-grid-polymer-example">ag-grid-polymer-example</a> repo shows many
-    more examples for rendering, including grouped rows, full width renderer's
-    and so on, as well as examples on using Polymer Components with both Cell Editor's and Filters
+    more examples for rendering, including grouped rows, full width renderers
+    and so on, as well as examples on using Polymer Components with both Cell Editors and Filters
 </note>

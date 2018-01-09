@@ -44,7 +44,7 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            I do not accept PR's without going through them all with a fine tooth comb. I do not release code
+            I do not accept PRs without going through them all with a fine tooth comb. I do not release code
             without doing full regression testing (takes about one full day). I constantly refactor as complexity
             grows to keep the foundations capable of managing a complex system. Large features that I implement
             take me days of undistracted full dedication, dedication that would not be given if this project was to

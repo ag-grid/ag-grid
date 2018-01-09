@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
                 the grid goes through
                 every cell in the grid and compares the current value to the previous value.
                 If the values differ, the cell is refreshed. This allows all cells using
-                <code>valueGetter's</code> to be kept up to date where a change to one cell (that was
+                <code>valueGetters</code> to be kept up to date where a change to one cell (that was
                 edited) may impact the value of another cell (that references the first cell) - just
                 like Excel!
             </li>
@@ -54,7 +54,7 @@ include '../documentation-main/documentation_header.php';
         so it will be picked up as a change from the frameworks change detection.
     </note>
 
-    <h2>Example - Change Detection and Value Getter's</h2>
+    <h2>Example - Change Detection and Value Getters</h2>
 
     <p>
         The example below shows the impact of change detection on value getters. The grid is

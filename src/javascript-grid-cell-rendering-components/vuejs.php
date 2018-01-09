@@ -4,14 +4,14 @@
 </h2>
 
 <p>
-    It is possible to provide VueJS cell renderer's for ag-Grid to use if you are are using the
+    It is possible to provide VueJS cell renderers for ag-Grid to use if you are are using the
     VueJS version of ag-Grid. See <a href="../javascript-grid-components/#registering-framework-components">
     registering framework components</a> for how to register framework components.
 </p>
 
 <h3 id="example-rendering-using-vuejs-components">Example: Rendering using VueJS Components</h3>
 <p>
-    Using VueJS Components in the Cell Renderer's
+    Using VueJS Components in the Cell Renderers
 </p>
 
 <?= example('Dynamic Components with VueJS', 'vue-dynamic', 'as-is', array("noPlunker"=> 1, "skipDirs" => array("dist"))) ?>
@@ -34,7 +34,7 @@
 
 <h3 id="example-rendering-using-more-complex-vuejs-components">Example: Rendering using more complex VueJS Components</h3>
 <p>
-    Using more complex VueJS Components in the Cell Renderer's
+    Using more complex VueJS Components in the Cell Renderers
 </p>
 <!--<show-example url="../framework-examples/vue-examples/#/rich-dynamic"-->
 <!--              jsfile="../framework-examples/vue-examples/src/rich-dynamic-component-example/RichDynamicComponentExample.vue"-->

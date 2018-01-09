@@ -10,10 +10,10 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 id="typescript-building-with-webpack"><img src="../images/typescript.png" height="50px"/>
-        <img src="../images/webpack_large.png" height="50px"/> TypeScript - Building with Webpack 2</h1>
+    <h1 id="typescript-building-with-webpack">
+         TypeScript - Building with Webpack 2</h1>
 
-    <p>We walk through the main steps required when using ag-Grid, TypeScript and Webpack below, but for more
+    <p class="lead">We walk through the main steps required when using ag-Grid, TypeScript and Webpack below, but for more
         information about
         either TypeScript or Webpack please refer to those sites for more in depth information around these tools.</p>
 
@@ -22,20 +22,20 @@ include '../documentation-main/documentation_header.php';
 
     <h3>Initialise Project</h3>
 
-    <snippet>
+    <snippet language="sh">
 mkdir ag-grid-ts-webpack
 cd ag-grid-ts-webpack
-npm init
-// accept defaults</snippet>
+npm init --yes
+</snippet>
 
     <h3>Install Dependencies</h3>
 
-    <snippet>
+    <snippet language="sh">
 npm i --save ag-grid
 npm i --save-dev typescript ts-loader webpack webpack-dev-server extract-text-webpack-plugin
 npm i --save-dev css-loader style-loader html-loader html-webpack-plugin
 
-// optional - only necessary if you're using any of the Enterprise features
+# optional - only necessary if you're using any of the Enterprise features
 npm i --save ag-grid-enterprise</snippet>
 
     <h3>Create Application</h3>
@@ -85,8 +85,8 @@ class SimpleGrid {
 }
 
 new SimpleGrid();</snippet>
-<snippet>
-// config/index.html 
+
+<snippet language="html">
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
 &lt;head&gt;
@@ -95,6 +95,7 @@ new SimpleGrid();</snippet>
 &lt;div id="myGrid" style="height: 150px;width: 600px" class="ag-theme-fresh"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</snippet>
+
     <h2>TypeScript Configuration</h2>
 
     <p>Our <code>tsconfig.json</code> is very simple in this example:</p>
@@ -166,21 +167,21 @@ module.exports = {
     ]
 };</snippet>
 
-    <p>
+    <h4>
         <code>entry</code>
-    </p>
+    </h4>
     <p>This serves as our entry point for our application.</p>
 
-    <p>
+    <h4>
         <code>resolve</code>
-    </p>
+    </h4>
     <p>As our imports done specify what file extension to use, we need to specify what file types we want to match on -
         in this case
         we're looking at TypeScript and JavaScript files, but you could also add CSS & HTML files too.</p>
 
-    <p>
+    <h4>
         <code>module.loaders</code>
-    </p>
+    </h4>
     <p>Loaders tell Webpack how & what to do with certain types of file - we have specified a few here to deal with
         Typescript, HTML, CSS and Images:</p>
     <ul>
@@ -189,9 +190,9 @@ module.exports = {
         <li>css: extract and bundle imported CSS into chunked files</li>
     </ul>
 
-    <p>
+    <h4>
         <code>plugins</code>
-    </p>
+    </h4>
     <ul>
         <li>ExtractTextPlugin: processes and extracts the imported CSS</li>
         <li>HtmlWebpackPlugin: takes our supplied template index.html and inserts the generates JS & CSS files for us

@@ -187,7 +187,7 @@ MyCellEditor.prototype.isPopup = function() {
 <h2 id="complementing-cell-editor-params">Complementing Cell Editor Params</h2>
 
 <p>
-    Again like cell renderer's, cell editors can also be provided with additional parameters.
+    Again like cell renderers, cell editors can also be provided with additional parameters.
     Do this using <code>cellEditorParams</code> like in the following example which will pass 'Ireland'
     as the 'country' parameter:
 </p>

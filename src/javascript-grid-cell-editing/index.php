@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1 id="cell-editing">Cell Editing</h1>
 
     <p>
-        Cell Renderer's and Cell Editors, the former for showing the data, the latter for editing the data.
+        Cell Renderers and Cell Editors, the former for showing the data, the latter for editing the data.
         If your application is for showing data only, such as a reporting application, then you will not
         need to use cell editors. If you are editing your data like a spreadsheet, then cell editors are
         going to be your best friend as you build your application using ag-Grid.

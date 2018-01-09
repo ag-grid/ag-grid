@@ -30,7 +30,7 @@ foreach ($groups as $group) {
                 </div>
 
                 <div>
-                    <a href='#'><img src='/_assets/homepage/feature-placeholder.svg' data-src='/" . $feature['src'] . "' alt='" . $feature['title']. "'>See more</a>
+                    <a href='/" . $feature['url'] . "'><img src='/_assets/homepage/feature-placeholder.svg' data-src='/" . $feature['src'] . "' alt='" . $feature['title']. "'>See more</a>
                 </div>
             </div>";
         }

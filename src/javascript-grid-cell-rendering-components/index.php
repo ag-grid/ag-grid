@@ -162,7 +162,7 @@ method will be called.
 </p>
 
 <p>
-    The following will <b>not</b> result in the cell renderer's refresh method getting called:
+    The following will <b>not</b> result in the cell renderers refresh method getting called:
 <ul>
     <li>
         Calling <code>rowNode.setData(data)</code> to set new data into a <code>rowNode</code>.
@@ -250,7 +250,7 @@ colDef.cellRendererParams = {
 <h1 id="cell-renderers-and-row-groups">Cell Renderers and Row Groups</h1>
 
 <p>
-    If you are mixing cell renderer's and row grouping, then you need to understand that the value and / or data
+    If you are mixing cell renderers and row grouping, then you need to understand that the value and / or data
     may be missing in the group row. You can check if you are on a group row of not by checking
     <code>rowNode.group</code>.
     Groups will have <code>aggData</code> and <code>groupData</code> instead of data.

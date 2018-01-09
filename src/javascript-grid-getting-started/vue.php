@@ -335,7 +335,7 @@
     </snippet>
 
     <p>Please see the relevant sections on <a href="../javascript-grid-cell-rendering-components/#vueCellRendering">cell
-            renderer's</a>,
+            renderers</a>,
         <a href="../javascript-grid-cell-editing/#vueCellEditing">cell editors</a> and
         <a href="../javascript-grid-filtering/#vueFiltering">filters</a> for configuring and using VueJS Components in
         ag-Grid.</p>
