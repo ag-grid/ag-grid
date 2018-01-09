@@ -241,6 +241,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 <p>
     Below then uses three columns rendered using custom Angular renderers.
 </p>
+
 <ul>
     <li><b>Athlete:</b> Uses simple binding to display text.</li>
     <li><b>Age:</b> Uses simple binding to display a button, with a button click event using ng-click.</li>

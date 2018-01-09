@@ -7,12 +7,11 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 <div>
-    <h1 class="first-h1" id="implementing-the-vuejs-datagrid">
-        <img style="vertical-align: middle" src="../images/vue_large.png" height="50px"/>
+    <h1 id="implementing-the-vuejs-datagrid">
         VueJS Grid
     </h1>
 
-    <p>
+    <p class="lead">
         This page details how to set up ag-Grid inside a VueJS application.
     </p>
 
@@ -21,14 +20,15 @@ include '../documentation-main/documentation_header.php';
     include '../javascript-grid-getting-started/ag-grid-dependency-framework.php'
     ?>
 
-    <p style="margin-top: 5px">
+    <p>
         If you are building an VueJS application then you have the choice between A) using the plain JavaScript version
         of ag-Grid or B) using the ag-Grid VueJS Component from the <a href="https://github.com/ag-grid/ag-grid-vue">
             ag-grid-vue</a> project. If you use the ag-Grid VueJS Component, then the grid's properties, events and API
         will all tie in with the VueJS ecosystem. This will make your VueJS coding easier.
     </p>
 
-    <h3>Referencing Styles</h3>
+    <h2>Referencing Styles</h2>
+
     <p>You'll need to import the ag-Grid CSS in your application, as well as a theme you wish to use:</p>
     <snippet>
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
@@ -37,22 +37,14 @@ import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";</snippet>
         documentation for more information.</p>
 
 
-    <h3>Download ag-Grid-Enterprise</h3>
+    <h2>Download ag-Grid-Enterprise</h2>
 
-    <table>
+    <table class="content">
         <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
-            <td>
-                <b>Bower</b><br/>
-                bower install ag-grid-enterprise
-            </td>
-
-            <td style="width: 20px;"/>
-
             <td style="padding: 10px;"><img src="../images/npm.png"/></td>
             <td>
                 <b>NPM</b><br/>
-                npm install ag-grid-enterprise
+                <code>npm install ag-grid-enterprise</code>
             </td>
 
             <td style="width: 20px;"/>
@@ -75,8 +67,7 @@ import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";
 
 // need if you use ag-grid enterprise features
 import "ag-grid-enterprise/main";
-
-...other dependencies'</snippet>
+</snippet>
 
     <note>Please use the github project <a href="https://github.com/ag-grid/ag-grid-vuejs">ag-grid-vue</a>
         for feedback or issue reporting around ag-Grid's support for VueJS.
@@ -90,7 +81,7 @@ import "ag-grid-enterprise/main";
         VueJS ag-Grid when it comes to features.
     </p>
 
-    <h3 id="vuejs-full-example">VueJS Full Example</h3>
+    <h2 id="vuejs-full-example">VueJS Full Example</h2>
 
     <p>
         This page goes through the
@@ -100,49 +91,49 @@ import "ag-grid-enterprise/main";
 
     <p>The example project includes a number of separate grids on a page, with each section demonstrating a different
         feature set:
-    <ul>
-        <li>A feature rich grid example, demonstrating many of ag-Grid's features using VueJS as a wrapper
+</p>
+    <ul class="content">
+        <li>
             <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/rich-grid-example/RichGridExample.vue"
-               target="_blank" class="fa fa-external-link"> Vue</a>
+               target="_blank">
+A feature rich grid example, demonstrating many of ag-Grid's features using VueJS as a wrapper<i class="fa fa-external-link"></i></a>
         </li>
-        <li>A Simple Example, using CellRenderers created from VueJS Components
+        <li>
             <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue"
-               target="_blank" class="fa fa-external-link"> Vue</a>
+               target="_blank"> Vue A Simple Example, using CellRenderers created from VueJS Components <i class="fa fa-external-link"></i></a>
         </li>
-        <li>A Richer Example, using CellRenderers created from VueJS Components, with child components, and two-way
-            binding (parent to child components events)
+        <li>
             <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/rich-dynamic-component-example/RichDynamicComponentExample.vue"
-               target="_blank" class="fa fa-external-link"> Vue</a>
+               target="_blank">A Richer Example, using CellRenderers created from VueJS Components, with child components, and two-way binding (parent to child components events)<i class="fa fa-external-link"></i></a>
         </li>
-        <li>A Cell Editor example - one with a popup editor, and another with a numeric editor. Each demonstrates
-            different editor related features
+        <li>
             <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/editor-component-example/EditorComponentExample.vue"
-               target="_blank" class="fa fa-external-link"> Vue</a>
+               target="_blank">A Cell Editor example - one with a popup editor, and another with a numeric editor. Each demonstrates different editor related features<i class="fa fa-external-link"></i></a>
         </li>
-        <li>A Pinned Row Renderer Example
+        <li>
             <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/floating-row-example/FloatingRowExample.vue"
-               target="_blank" class="fa fa-external-link"> Vue</a>
+               target="_blank">A Pinned Row Renderer Example<i class="fa fa-external-link"></i></a>
         </li>
-        <li>A Full Width Renderer Example
+        <li>
             <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/full-width-example/FullWidthExample.vue"
-               target="_blank" class="fa fa-external-link"> Vue</a>
+               target="_blank">A Full Width Renderer Example<i class="fa fa-external-link"></i></a>
         </li>
-        <li>A Group Row Inner Renderer Example
+        <li>
             <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/grouped-row-example/GroupedRowExample.vue"
-               target="_blank" class="fa fa-external-link"> Vue</a>
+               target="_blank">A Group Row Inner Renderer Example<i class="fa fa-external-link"></i></a>
         </li>
-        <li>A Filter Example, with the filter written as a VueJS Component
+        <li>
             <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/filter-example/FilterExample.vue"
-               target="_blank" class="fa fa-external-link"> Vue</a>
+               target="_blank">A Filter Example, with the filter written as a VueJS Component<i class="fa fa-external-link"></i></a>
         </li>
         <li>A Master/Detail Example, with both the Master and the Detail elements being VueJS Components
-            <ul>
-                <li>Master: <a
+            <ul class="content">
+                <li><a
                             href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/master-detail-example/MasterDetailExample.vue"
-                            target="_blank" class="fa fa-external-link"> Vue</a></li>
-                <li>Detail: <a
+                            target="_blank">Master<i class="fa fa-external-link"></i></a></li>
+                <li><a
                             href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/master-detail-example/DetailPanelComponent.vue"
-                            target="_blank" class="fa fa-external-link"> Vue</a></li>
+                            target="_blank">Detail<i class="fa fa-external-link"></i></a></li>
             </ul>
         </li>
     </ul>
@@ -196,9 +187,9 @@ import "ag-grid-enterprise/main";</snippet>
     <h2 id="configuring-ag-grid-in-vuejs">Configuring ag-Grid in VueJS</h2>
 
     <p>You can configure the grid in the following ways through VueJS:</p>
-    <ul>
+    <ul class="content">
         <li><b>Events:</b> All data out of the grid comes through events. These use
-            VueJS event bindings eg <i>:modelUpdated="onModelUpdated"</i>.
+            VueJS event bindings eg <code>:modelUpdated="onModelUpdated"</code>.
             As you interact with the grid, the different events are fixed and
             output text to the console (open the dev tools to see the console).
         </li>
@@ -209,7 +200,7 @@ import "ag-grid-enterprise/main";</snippet>
         </li>
         <li><b>Attributes:</b> When the property is just a simple string value, then
             no binding is necessary, just the value is placed as an attribute
-            eg <i>rowHeight="22"</i>.If the attribute is a boolean and a value is not provided, it is taken as false.
+            eg <code>rowHeight="22"</code>.If the attribute is a boolean and a value is not provided, it is taken as false.
         </li>
         <li><b>Changing Properties:</b> When a property changes value, VueJS
             automatically passes the new value onto the grid. This is used in
@@ -219,7 +210,7 @@ import "ag-grid-enterprise/main";</snippet>
             b) The 'Show Tool Panel' checkbox has its value bound to the 'showToolPanel'
             property of the grid.
             c) The 'Refresh Data' generates new data for the grid and updates the
-            <i>rowData</i> property.
+            <code>rowData</code> property.
         </li>
     </ul>
 
