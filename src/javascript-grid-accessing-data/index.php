@@ -67,7 +67,7 @@ rowNode.setSelected(true);</snippet>
 
     <p>
         Sometimes you may want to iterate through all the rowNodes in the grid.
-        This can be done using the grid's iteration APIs. The iteration API's
+        This can be done using the grid's iteration APIs. The iteration APIs
         go through every rowNode, regardless of whether the rowNode is displayed
         or not. For example if grouping and the group is closed, the group's children
         are not displayed by the grid, however the children are included in the

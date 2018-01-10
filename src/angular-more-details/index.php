@@ -95,7 +95,7 @@ import "ag-grid-enterprise";</snippet>
             by marking it with <code>#agGrid</code>. This in turn turns into a variable
             which can be used to access the grid's controller. The buttons
             Grid API and Column API buttons use this variable to access the grids
-            API (the API's are attributes on the controller).
+            API (the APIs are attributes on the controller).
         </li>
         <li><b>Changing Properties:</b> When a property changes value, Angular
             automatically passes the new value onto the grid. This is used in
