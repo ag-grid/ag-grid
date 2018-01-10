@@ -389,6 +389,7 @@ export class GridApi {
 
     public refreshHeader() {
         this.headerRenderer.refreshHeader();
+        this.gridPanel.setBodyAndHeaderHeights();
     }
 
     public isAnyFilterPresent(): boolean {
