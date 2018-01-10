@@ -341,8 +341,6 @@ CellValueChangedEvent {
         ├── ColumnPivotModeChangedEvent <span class="event-properties">{}</span>
         ├── ColumnEverythingChangedEvent <span class="event-properties">{}</span>
         ├── DisplayedColumnsChangedEvent <span class="event-properties">{}</span>
-        ├── DragStartedEvent <span class="event-properties">{}</span>
-        ├── DragStoppedEvent <span class="event-properties">{}</span>
         ├── CellFocusedEvent <span class="event-properties">{
         │       <span class="event-attribute">rowIndex</span>: number, // the row index of the focused cell
         │       <span class="event-attribute">column</span>: Column, // the column of the focused cell
@@ -384,6 +382,11 @@ CellValueChangedEvent {
         ├── ComponentStateChangedEvent <span class="event-properties">{
         │       // one attribute for each changed property
         │     }</span>
+        ├── DragEvent <span class="event-properties">{
+        │   │    <span class="event-attribute">type</span>: string, // one of {'cell','row','headerCell','toolPanel'}
+        │   │  }</span>
+        │   ├── DragStartedEvent <span class="event-properties">{}</span>
+        │   ├── DragStoppedEvent <span class="event-properties">{}</span>
         ├── RowDragEvent <span class="event-properties">{ // abstract event, never fired
         │   │    <span class="event-attribute">event</span>: MouseEvent, // The underlying mouse move event associated with the drag.
         │   │    <span class="event-attribute">node</span>: RowNode, // The row node getting dragged.
