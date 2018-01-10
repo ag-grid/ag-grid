@@ -113,7 +113,7 @@ export interface ColDef extends AbstractColDef {
     maxWidth?: number;
 
     /** Class to use for the cell. Can be string, array of strings, or function. */
-    cellClass?: string | string[]| ((cellClassParams:any) => string | string[]);
+    cellClass?: string | string[]| ((cellClassParams:CellClassParams) => string | string[]);
 
     /** An object of css values. Or a function returning an object of css values. */
     cellStyle?: {} | ((params:any) => {});
@@ -355,4 +355,15 @@ export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
     event: KeyboardEvent;
     // whether the cell is editing or not
     editing: boolean;
+}
+
+export interface CellClassParams {
+    value: any,
+    data: any,
+    node: RowNode,
+    colDef: ColDef,
+    rowIndex: number,
+    $scope: any,
+    api: GridApi,
+    context: any,
 }

@@ -604,6 +604,7 @@ export class CellComp extends Component {
                 colDef: this.column.getColDef(),
                 rowIndex: this.gridCell.rowIndex,
                 api: this.beans.gridOptionsWrapper.getApi(),
+                $scope: this.scope,
                 context: this.beans.gridOptionsWrapper.getContext()
             }, onApplicableClass, onNotApplicableClass);
     }
