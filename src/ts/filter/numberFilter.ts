@@ -50,6 +50,7 @@ export class NumberFilter extends ScalarBaseFilter<number, INumberFilterParams, 
     }
 
     public initialiseFilterBodyUi() {
+        super.initialiseFilterBodyUi();
         this.filterNumber = null;
         this.eFilterTextField = this.queryForHtmlInputElement("#filterText");
 
