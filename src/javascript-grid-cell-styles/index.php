@@ -90,21 +90,6 @@ var colDef4 = {
 
     </p>
 
-    <h3 id="cell-style-cell-class-params">Cell Style & Cell Class Params</h3>
-
-    <p>
-        Both cellClass and cellStyle functions take a params object with the following values:
-    </p>
-
-    <p>
-        value: The value to be rendered.<br/>
-        data: The row (from the rowData array, where value was taken) been rendered.<br/>
-        colDef: The colDef been rendered.<br/>
-        context: The context as set on the gridOptions.<br/>
-        api: A reference to the ag-Grid API.<br/>
-        $scope: If compiling to Angular, is the row's child scope, otherwise null.<br/>
-    </p>
-
     <h3 id="cellClassRules">Cell Class Rules</h3>
 
     <p>
@@ -127,11 +112,32 @@ cellClassRules: {
     // apply red to 2000
     'rag-red-outer': function(params) { return params.value === 2000}
 }</snippet>
+    <h3 id="cell-style-cell-class-params">Cell Style, Cell Class & Cell Class Rules Params</h3>
 
     <p>
-        When a function is provided the params object has the attributes: <i>value, data, node,
-        colDef, rowIndex, api</i> and <i>context</i>.
+        All cellClass cellStyle and cellClassRules functions take a params object that implements the following interface:
     </p>
+
+    <snippet>
+export interface CellClassParams {
+    // The value to be rendered.
+    value: any,
+    // The row (from the rowData array, where value was taken) been rendered.
+    data: any,
+    // The node associated to this row
+    node: RowNode,
+    // The colDef been rendered
+    colDef: ColDef,
+    // The index of the row about to be rendered
+    rowIndex: number,
+    // If compiling to Angular, is the row's child scope, otherwise null.
+    $scope: any,
+    // A reference to the ag-Grid API.
+    api: GridApi,
+    // If provided in gridOptions, a context object
+    context: any,
+}</snippet>
+
 
     <p>
         As an alternative, you can also provide shorthands of the functions using an expression.
