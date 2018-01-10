@@ -102,6 +102,11 @@ include '../documentation-main/documentation_header.php';
             <td>The field of the tooltip to apply to the cell.</td>
         </tr>
         <tr>
+            <th>tooltip</th>
+            <td>A callback that takes (value, valueFormatted, data, node , colDef, rowIndex and api) It must return the
+                string used as a tooltip. <code>tooltipField</code> takes precedence.</td>
+        </tr>
+        <tr>
             <th>checkboxSelection</th>
             <td>Boolean or Function. Set to true (or return true from function) to render a selection checkbox in the column.</td>
         </tr>
