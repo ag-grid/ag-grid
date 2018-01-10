@@ -2,7 +2,7 @@
     $formKey = "startTrial";
 }
 ?>
-    <div id="orderForm" class="container-fluid curved-border" data-order-form="<?php echo $formKey ?>">
+    <div id="orderForm" class="container-fluid" data-order-form="<?php echo $formKey ?>">
     <form action="https://app.britebiz.com/webToContact" method="POST" id="<?php echo $formKey; ?>" accept-charset="UTF-8" onSubmit="return <?php echo $formKey; ?>_validateForm();" name="<?php echo $formKey; ?>">
         <div class="hide">
             <input type="hidden" value="NB79YK" name="form_id" id="form_id"/>
