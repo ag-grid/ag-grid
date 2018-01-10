@@ -1213,7 +1213,7 @@ include('../includes/mediaHeader.php');
 
     <b>Refactoring:</b>
     <ul>
-        Refactor: Virtual Row Model is now called Infinite Row Model. All properties and API's related to this
+        Refactor: Virtual Row Model is now called Infinite Row Model. All properties and APIs related to this
         are now call 'Infinite' eg <i>setVirtualRowCount()</i> is now <i>setInfiniteRowCount()</i>. Grid will
         log to console and help you when you are using the old method and property names.
     </ul>
@@ -1306,7 +1306,7 @@ include('../includes/mediaHeader.php');
         </li>
         <li>Enhancement: Navigation support for Page Up, Page Down, Home, End, Ctrl+left, Ctrl+right.</li>
         <li>Enhancement: New APIs <i>api.selectAllFiltered()</i> and <i>api.deselectAllFiltered()</i></li>
-        <li>Enhancement: Added <i>skipRefresh</i> to the add/remove row API's, so if you want to add / remove
+        <li>Enhancement: Added <i>skipRefresh</i> to the add/remove row APIs, so if you want to add / remove
             lots of rows, you only refresh on the last update.
         </li>
         <li>Enhancement: Property <i>groupDefaultExpanded</i> now works with flower nodes</li>

@@ -18,18 +18,18 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         TypeScript users can take advantage of the events interfaces. You can work our the interface name by putting
-        'Event' after the event name. For example, the cellClicked event uses the interface CellClickedEvent.
+        <code>Event</code> after the event name. For example, the <code>cellClicked</code> event uses the interface <code>CellClickedEvent</code>.
     </note>
 
     <note>
         See the <a href="#properties-and-hierarchy">Event Properties & Hierarchy</a> below for what properties each event has.
     </note>
 
-    <table id="ag-grid-events" class="table">
+    <table id="ag-grid-events" class="table reference">
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Selection</td>
+            <td colspan="2"><h2>Selection</h2></td>
         </tr>
 
         <tr>
@@ -78,7 +78,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Editing</td>
+            <td colspan="2"><h2>Editing</h2></td>
         </tr>
 
         <tr>
@@ -105,7 +105,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Sort & Filter</td>
+            <td colspan="2"><h2>Sort & Filter</h2></td>
         </tr>
 
         <tr>
@@ -129,7 +129,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Row Drag & Drop</td>
+            <td colspan="2"><h2>Row Drag & Drop</h2></td>
         </tr>
 
         <tr>
@@ -163,7 +163,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Columns</td>
+            <td colspan="2"><h2>Columns</h2></td>
         </tr>
 
         <tr>
@@ -231,7 +231,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Miscellaneous</td>
+            <td colspan="2"><h2>Miscellaneous</h2></td>
         </tr>
         <tr>
             <th>gridReady</th>
@@ -341,8 +341,6 @@ CellValueChangedEvent {
         ├── ColumnPivotModeChangedEvent <span class="event-properties">{}</span>
         ├── ColumnEverythingChangedEvent <span class="event-properties">{}</span>
         ├── DisplayedColumnsChangedEvent <span class="event-properties">{}</span>
-        ├── DragStartedEvent <span class="event-properties">{}</span>
-        ├── DragStoppedEvent <span class="event-properties">{}</span>
         ├── CellFocusedEvent <span class="event-properties">{
         │       <span class="event-attribute">rowIndex</span>: number, // the row index of the focused cell
         │       <span class="event-attribute">column</span>: Column, // the column of the focused cell
@@ -384,6 +382,11 @@ CellValueChangedEvent {
         ├── ComponentStateChangedEvent <span class="event-properties">{
         │       // one attribute for each changed property
         │     }</span>
+        ├── DragEvent <span class="event-properties">{
+        │   │    <span class="event-attribute">type</span>: string, // one of {'cell','row','headerCell','toolPanel'}
+        │   │  }</span>
+        │   ├── DragStartedEvent <span class="event-properties">{}</span>
+        │   ├── DragStoppedEvent <span class="event-properties">{}</span>
         ├── RowDragEvent <span class="event-properties">{ // abstract event, never fired
         │   │    <span class="event-attribute">event</span>: MouseEvent, // The underlying mouse move event associated with the drag.
         │   │    <span class="event-attribute">node</span>: RowNode, // The row node getting dragged.

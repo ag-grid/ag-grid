@@ -5,19 +5,16 @@ $pageKeyboards = "javascript data grid ag-Grid properties";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
+    <h1>Grid Properties</h1>
 
-<div>
-
-    <h1 id="properties" class="first-h1">Grid Properties</h1>
-
-    <p>
+    <p class="lead">
         All of these grid properties are available through the <code>GridOptions</code> interface.
     </p>
 
-    <table class="table">
+    <table class="table content reference">
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Columns</td>
+            <th colspan="2"><h2>Columns</h2></th>
         </tr>
         <tr>
             <th>columnDefs</th>
@@ -91,7 +88,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Sort & Filter</td>
+            <td colspan="2"><h2>Sort & Filter</h2></td>
         </tr>
         <tr>
             <th>enableSorting</th>
@@ -150,7 +147,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Selection</td>
+            <td colspan="2"><h2>Selection</h2></td>
         </tr>
 
         <tr>
@@ -172,7 +169,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Row Dragging</td>
+            <td colspan="2"><h2>Row Dragging</h2></td>
         </tr>
         <tr>
             <th>rowDragManaged</th>
@@ -189,7 +186,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Editing</td>
+            <td colspan="2"><h2>Editing</h2></td>
         </tr>
         <tr>
             <th>singleClickEdit</th>
@@ -233,13 +230,13 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Headers</td>
+            <td colspan="2"><h2>Headers</h2></td>
         </tr>
         <?php include '../javascript-grid-column-header/headerHeightProperties.php' ?>
         <?php printPropertiesRowsWithHelp($headerHeightProperties) ?>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Row Grouping & Pivoting</td>
+            <td colspan="2"><h2>Row Grouping & Pivoting</h2></td>
         </tr>
         <?php include '../javascript-grid-grouping/rowGroupingProperties.php' ?>
         <?php printPropertiesRowsWithHelp($rowGroupingProperties) ?>
@@ -287,7 +284,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Tool Panel</td>
+            <td colspan="2"><h2>Tool Panel</h2></td>
         </tr>
         <tr>
             <th>toolPanelSuppressRowGroups, toolPanelSuppressValues, toolPanelSuppressPivots, toolPanelSuppressPivotMode</th>
@@ -300,7 +297,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Data & Row Models</td>
+            <td colspan="2"><h2>Data & Row Models</h2></td>
         </tr>
         <tr>
             <th>rowModelType</th>
@@ -325,7 +322,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Selection</td>
+            <td colspan="2"><h2>Selection</h2></td>
         </tr>
         <tr>
             <th>rowSelection</th>
@@ -337,7 +334,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Scrolling</td>
+            <td colspan="2"><h2>Scrolling</h2></td>
         </tr>
         <tr>
             <th>suppressHorizontalScroll</th>
@@ -372,14 +369,14 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Pagination</td>
+            <td colspan="2"><h2>Pagination</h2></td>
         </tr>
         <?php include '../javascript-grid-pagination/paginationProperties.php'?>
         <?php printPropertiesRowsWithHelp($paginationProperties) ?>
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Row Block Loading: Infinite & Enterprise Row Models</td>
+            <td colspan="2"><h2>Row Block Loading: Infinite & Enterprise Row Models</h2></td>
         </tr>
         <tr>
             <th>maxConcurrentDatasourceRequests</th>
@@ -401,7 +398,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Row Model: Viewport</td>
+            <td colspan="2"><h2>Row Model: Viewport</h2></td>
         </tr>
         <tr>
             <th>viewportRowModelPageSize</th>
@@ -418,7 +415,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Full Width Renderers</td>
+            <td colspan="2"><h2>Full Width Renderers</h2></td>
         </tr>
         <tr>
             <th>groupRowRenderer <br/>groupRowRendererFramework <br/>groupRowRendererParams</th>
@@ -444,7 +441,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Master Detail</td>
+            <td colspan="2"><h2>Master Detail</h2></td>
         </tr>
         <tr>
             <th>masterDetail</th>
@@ -461,7 +458,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Rendering & Styling</td>
+            <td colspan="2"><h2>Rendering & Styling</h2></td>
         </tr>
         <tr>
             <th>icons</th>
@@ -504,7 +501,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Localisation</td>
+            <td colspan="2"><h2>Localisation</h2></td>
         </tr>
 
         <tr>
@@ -515,7 +512,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Overlays</td>
+            <td colspan="2"><h2>Overlays</h2></td>
         </tr>
         <tr>
             <th>suppressLoadingOverlay</th>
@@ -556,7 +553,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Miscellaneous</td>
+            <td colspan="2"><h2>Miscellaneous</h2></td>
         </tr>
 
         <?php include '../javascript-grid-value-cache/valueCacheProperties.php' ?>
@@ -734,6 +731,6 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
     </table>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

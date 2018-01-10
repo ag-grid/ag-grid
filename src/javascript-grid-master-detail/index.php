@@ -214,7 +214,7 @@ interface DetailGridInfo {
 <p>
     The <code>DetailGridInfo</code> is accessed via the <code>GridApi</code> of the master
     <code>gridOptions</code>. You can either reference a particular detail grid API by ID,
-    or loop through all the existing detail grid API's.
+    or loop through all the existing detail grid APIs.
 </p>
 
 <snippet>

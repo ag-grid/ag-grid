@@ -8,15 +8,11 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="callbacks" class="first-h1">Grid Callbacks</h1>
 
-    <p>
+    <p class="lead">
         All of these grid callbacks are available through the <code>GridOptions</code> interface.
     </p>
 
-    <table class="table">
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">All Callbacks</td>
-        </tr>
+    <table class="table reference">
         <tr>
             <th>isExternalFilterPresent()</th>
             <td>Grid calls this method to know if external filter is present.</td>
@@ -48,7 +44,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>getBusinessKeyForNode(node)</th>
             <td>Return a business key for the node. If implemented, then each row in the dom will have an attribute
-                <i>row-id='abc'</i> where abc is what you return as the business key. This is useful for automated
+                <code>row-id='abc'</code> where abc is what you return as the business key. This is useful for automated
             testing, as it provides a way for your tool to identify rules based on unique business keys.</td>
         </tr>
         <tr>
@@ -142,8 +138,6 @@ include '../documentation-main/documentation_header.php';
 
         <?php include_once '../javascript-grid-pagination/paginationProperties.php' ?>
         <?php printPropertiesRows($paginationCallbacks) ?>
-
     </table>
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
