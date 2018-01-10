@@ -110,7 +110,8 @@ export class ColDefUtil {
         'onCellValueChanged',
         'onCellClicked',
         'onCellDoubleClicked',
-        'onCellContextMenu'];
+        'onCellContextMenu',
+        'tooltip'];
 
     public static ALL_PROPERTIES = ColDefUtil.ARRAY_PROPERTIES
         .concat(ColDefUtil.OBJECT_PROPERTIES)
