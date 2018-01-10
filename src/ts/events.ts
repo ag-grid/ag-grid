@@ -3,11 +3,8 @@ import {Column} from "./entities/column";
 import {ColDef} from "./entities/colDef";
 import {GridApi} from "./gridApi";
 import {ColumnApi} from "./columnController/columnApi";
-import {ColumnGroup} from "./entities/columnGroup";
 import {OriginalColumnGroup} from "./entities/originalColumnGroup";
-import {HDirection, VDirection} from "./dragAndDrop/dragAndDropService";
 export { Events } from './eventKeys';
-
 
 export interface ModelUpdatedEvent extends AgGridEvent {
     /** If true, the grid will try and animate the rows to the new positions */
@@ -46,8 +43,6 @@ export interface FilterChangedEvent extends AgGridEvent {}
 export interface FilterModifiedEvent extends AgGridEvent {}
 export interface SortChangedEvent extends AgGridEvent {}
 export interface GridReadyEvent extends AgGridEvent {}
-export interface DragStartedEvent extends AgGridEvent {}
-export interface DragStoppedEvent extends AgGridEvent {}
 export interface DisplayedColumnsWidthChangedEvent extends AgGridEvent {} // not documented
 export interface ColumnHoverChangedEvent extends AgGridEvent {} // not documented
 export interface BodyHeightChangedEvent extends AgGridEvent {} // not documented
@@ -57,6 +52,12 @@ export interface BodyHeightChangedEvent extends AgGridEvent {} // not documented
 // has 'rowData', so this property should have 'rowData' also, so that when the row
 // data changes via the framework bound property, this event has that attribute set.
 export interface ComponentStateChangedEvent extends AgGridEvent {}
+
+export interface DragEvent extends AgGridEvent {
+    type: string;
+}
+export interface DragStartedEvent extends DragEvent {}
+export interface DragStoppedEvent extends DragEvent {}
 
 export interface RowDragEvent extends AgGridEvent {
     node: RowNode,
