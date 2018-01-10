@@ -145,8 +145,20 @@ export class DragAndDropService {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
     }
 
+    private getStringType(type: DragSourceType): string {
+        switch (type) {
+            case DragSourceType.RowDrag: return 'row';
+            case DragSourceType.HeaderCell: return 'headerCell';
+            case DragSourceType.ToolPanel: return 'toolPanel';
+            default:
+                console.warn(`ag-Grid: bug - unknown drag type ${type}`);
+                return null;
+        }
+    }
+
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
-        let params = <DragListenerParams> {
+        let params: DragListenerParams = {
+            type: this.getStringType(dragSource.type),
             eElement: dragSource.eElement,
             dragStartPixels: dragSource.dragStartPixels,
             onDragStart: this.onDragStart.bind(this, dragSource),

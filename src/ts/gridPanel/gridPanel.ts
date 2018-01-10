@@ -422,7 +422,8 @@ export class GridPanel extends BeanStub {
 
         containers.forEach(container => {
             let params: DragListenerParams = {
-                dragStartPixels: 4,
+                type: 'cell',
+                dragStartPixels: 0,
                 eElement: container,
                 onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
                 onDragStop: this.rangeController.onDragStop.bind(this.rangeController),
