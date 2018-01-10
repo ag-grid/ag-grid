@@ -6,113 +6,84 @@ $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
-    <h1 class="first-h1">
-        <img src="../images/svg/docs/interfacing.svg" width="50"/>
+    <h1>
         Reference
     </h1>
 
-    <p>
+    <p class="lead">
         This section explains how to configure the the grid's properties, events, callbacks and API.
     </p>
 
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Grid Properties</h2>
+    <p>
 
-    <div class="list-group">
-        <a href="../javascript-grid-properties/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/interfacing.svg" width="50"/>
-                </div>
-                <h3 class="list-group-item-heading">Grid Properties</h3>
-                <p class="list-group-item-text">
                     Most features of the grid are set using grid properties. Eg turn on sorting by setting
-                    <code>enableSorting=true</code>, or turn on filtering with <code>enableFilter=true</code>.
-                </p>
-            </div>
-        </a>
+                    <code>enableSorting = true</code>, or turn on filtering with <code>enableFilter = true</code>.
 
-        <a href="../javascript-grid-api/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/interfacing.svg" width="50"/>
-                </div>
-                <h3 class="list-group-item-heading">Grid API</h3>
-                <p class="list-group-item-text">
-                    Interacting with the grid at run time is done through the grid API. Eg to get all the
-                    selected rows, call <code>api.getSelectedRows()</code>.
-                </p>
-            </div>
-        </a>
+    </p>
+    <p> <a href="../javascript-grid-properties/">Go to Grid Properties</a> </p>
+    </div>
+</div>
 
-        <a href="../javascript-grid-events/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/interfacing.svg" width="50"/>
-                </div>
-                <h3 class="list-group-item-heading">Grid Events</h3>
-                <p class="list-group-item-text">
-                    Your application can listen for certain events within the grid to act on them.
-                    Eg <code>sortChanged</code> gets fired when the grid is sorted, <code>rowSelected</code>
-                    gets fired when a row is selected.
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Grid API</h2>
+    <p> Interacting with the grid at run time is done through the grid API. Eg to get all the selected rows, call <code>api.getSelectedRows()</code>.
                 </p>
-            </div>
-        </a>
+        <p> <a href="../javascript-grid-api/">Go to Grid API</a> </p>
+    </div>
+</div>
 
-        <a href="../javascript-grid-callbacks/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/interfacing.svg" width="50"/>
-                </div>
-                <h3 class="list-group-item-heading">Grid Callbacks</h3>
-                <p class="list-group-item-text">
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Grid Events</h2>
+    <p>
+        Your application can listen for certain events within the grid to act on them.
+        Eg <code>sortChanged</code> gets fired when the grid is sorted, <code>rowSelected</code>
+        gets fired when a row is selected.
+    </p>
+
+    <p> <a href="../javascript-grid-events/">Go to Grid Events</a> </p>
+    </div>
+</div>
+
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Grid Callbacks</h2>
+    <p>
+
                     If the grid requires information from your application it is done through a grid callback.
                     Eg <code>getMainMenuItems()</code> is called each time a menu is shown and allows your application
                     to customise the menu.
-                </p>
-            </div>
-        </a>
 
-        <a href="../javascript-grid-column-properties/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/interfacing.svg" width="50"/>
-                </div>
-                <h3 class="list-group-item-heading">Column Properties</h3>
-                <p class="list-group-item-text">
-                    Columns are configured through column definitions. A column definition contains the column
-                    properties. Eg <code>colDef.pinned='left'</code> will set a column to be pinned to the left.
-                </p>
-            </div>
-        </a>
+    </p>
+    <p> <a href="../javascript-grid-callbacks/">Go to Grid Callbacks</a> </p>
+    </div>
+</div>
 
-        <a href="../javascript-grid-column-api/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/interfacing.svg" width="50"/>
-                </div>
-                <h3 class="list-group-item-heading">Column API</h3>
-                <p class="list-group-item-text">
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Column Properties</h2>
+    <p> Columns are configured through column definitions. A column definition contains the column properties. Eg <code>colDef.pinned='left'</code> will set a column to be pinned to the left.  </p>
+    <p> <a href="../javascript-grid-column-properties/">Go to Column Properties</a> </p>
+    </div>
+</div>
+
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Column API</h2>
+    <p>
                     The column API is similar to the grid API, the difference is that the column API groups
                     a set of API methods relevant to columns. Eg the method <code>columnApi.setColumnVisible('country',false)</code>
                     will cause the 'country' column to be hidden.
                 </p>
-            </div>
-        </a>
-
+    <p> <a href="../javascript-grid-column-api/">Go to Column API</a> </p>
     </div>
+</div>
 
-    <h2>
-        <img src="/images/svg/javascript.svg" height="50"/>
-        <img src="/images/react.png" height="50"/>
-        <img src="/images/angularjs.png" height="50"/>
-        <img src="/images/polymer-large.png" height="50"/>
-        <img src="/images/angular2.png" height="50"/>
-        <img src="/images/vue_large.png" height="50"/>
-        <img src="../images/webComponents.png" height="50"/>
-        <img src="/images/aurelia.png" height="50"/>
-        Grid Options
-    </h2>
+<h2> Grid Options </h2>
 
     <p>
         The gridOptions is a 'one stop shop' for the entire interface into the grid. The
@@ -146,10 +117,12 @@ var gridOptions = {
     isScrollLag: function() { return false; }
 }
 </snippet>
+
     <p>
-        Once the grid is initialised, then the gridOptions will also have available
+        Once the grid is initialised, then the <code>gridOptions</code> will also have available
         the grid's api and columnApi as follows:
     </p>
+
 <snippet>
 // get the grid to refresh
 gridOptions.api.refreshView();
@@ -158,15 +131,15 @@ gridOptions.api.refreshView();
 gridOptions.columnApi.sizeColumnsToFit();
 </snippet>
 
-    <h3>Two Ways of Event Listening</h3>
+<h2>Listening To Events</h2>
 
-    <p>
-        In addition to adding event listeners directly onto the gridOptions, it is possible
-        to register for events, similar to registering for events on native DOM elements.
-        This means there are two ways to listen for events, which again aligns with how DOM elements work.
-        The first is to put an <i>onXXX()</i> method (where XXX = the event name) like in
-        the example above, the second is to register for the event like in the following example:
-    </p>
+<p>
+    In addition to adding event listeners directly onto the <code>gridOptions</code> object, it is possible
+    to register for events, similar to registering for events on native DOM elements.
+    This means there are two ways to listen for events, which again aligns with how DOM elements work.
+    The first is to put an <code>onXXX()</code> method (where XXX = the event name) like in
+    the example above, the second is to register for the event like in the following example:
+</p>
 
 <snippet>
 // create handler function
@@ -185,7 +158,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         callback gets invoked.
     </p>
 
-    <h3>Default Boolean Properties</h3>
+    <h2>Default Boolean Properties</h2>
 
     <p>
         Where the property is a boolean (true or false), then false (or leave blank) is the default value.
@@ -194,31 +167,18 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         selection to be turned on.
     </p>
 
-    <div>
-        <h2>
-            <img src="/images/svg/javascript.svg" height="50"/>
-            Native Javascript
-        </h2>
+    <h2> Vanilla JavaScript </h2>
+    <p>If you are using plain Javascript then all of your interaction with ag-Grid will be through the <code>gridOptions</code>.  </p>
 
-        <p>
-            If you are using plain Javascript then all of
-            your interaction with ag-Grid will be through the gridOptions.
-        </p>
-    </div>
 
-    <div>
-        <h2>
-            <img src="/images/react.png" height="50px"/>
-            React
-        </h2>
+        <h2> React </h2>
 
-        <p>
-            The gridOptions are fully available as stated above for React. However you can take
-            advantage of React's properties and events provided by ag-Grids React Component.
+        <p> The gridOptions are fully available as stated above for React. However you can take
+            advantage of React's properties and events provided by ag-Grid's React Component.
             This is done as follows:
         </p>
 
-        <ul>
+        <ul class="content">
             <li><b>Properties</b>: Properties are defined by passing React props down to ag-Grid.</li>
             <li><b>Callbacks</b>: Callbacks are also placed as React Props.</li>
             <li><b>Event Handlers</b>: Event handlers are again placed as React Props.</li>
@@ -229,7 +189,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
             So in summary, in React, everything is done via React Props. Here is an example:
         </p>
 
-<snippet>
+<snippet language="jsx">
 &lt;ag-grid-react-component
 
     // useful for accessing the component directly via ref
@@ -249,35 +209,30 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     // these are registering event callbacks
     onCellClicked={this.onCellClicked.bind(this)}"
     onColumnResized={this.onColumnEvent.bind(this)}"
-    onGridReady={this.onGridReady.bind(this)}" // inside onGridReady, you receive the grid API's if you want
+    onGridReady={this.onGridReady.bind(this)}" // inside onGridReady, you receive the grid APIs if you want
     them
 /&gt;
 </snippet>
 
         <p>
-            The API's are accessible through the component itself. This is useful in two situations.
+            The APIs are accessible through the component itself. This is useful in two situations.
             The first is by using an <code>ref</code>. In the example above, the <code>ref</code> is given
-            as 'myGrid' which then allows something like this:
+            as <code>'myGrid'</code> which then allows something like this:
         </p>
 
-        <snippet>
-            &lt;button onClick={() =&gt; {this.refs.&lt;b&gt;agGrid&lt;/b&gt;.api.deselectAll()}}&gt;Clear Selection&lt;/button&gt;
+        <snippet language="jsx">
+            &lt;button onClick={() =&gt; {this.refs.agGrid.api.deselectAll()}}&gt;Clear Selection&lt;/button&gt;
         </snippet>
-    </div>
 
-    <div>
-        <h2>
-            <img src="/images/angular2.png" height="50px"/>
-            Angular
-        </h2>
+        <h2> Angular </h2> 
 
-        <p>
+<p>
             The gridOptions are fully available as stated above for Angular. However you can take
             advantage of Angulars properties and events provided by ag-Grids Angular Component.
             This is done as follows:
         </p>
 
-        <ul>
+        <ul class="content">
             <li><b>Attributes</b>: Attributes are defined as normal HTML attributes and set non-bound values.</li>
             <li><b>Properties</b>: Properties are defined as HTML attributes enclosed in square
                 brackets and are Angular bound values.
@@ -296,13 +251,13 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         <p>
             All of the above (attributes, properties, callbacks and event handlers) are registered
             using their 'dash' syntax and not camelcase. For example, the property enableSorting
-            is bound using enable-sorting. <i>enable-sorting</i>. The following example shows
+            is bound using enable-sorting. <code>enable-sorting</code>. The following example shows
             some bindings:
         </p>
 
 <snippet>
 &lt;ag-grid-angular
-    // give an AngularJS 1.x ID to the grid
+    // assign an angular ID to the grid
     #myGrid
 
     // these are boolean values, which if included without a value, default to true
@@ -329,25 +284,22 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 </snippet>
 
         <p>
-            The API's are accessible through the component. This is useful in two situations.
+            The APIs are accessible through the component. This is useful in two situations.
             The first is by using an Angular ID. In the example above, the ID is given
-            as '#myGrid' which then allows something like this:
+            as <code>'#myGrid'</code> which then allows something like this:
         </p>
 
         <snippet>
-            &lt;button (click)="&lt;b&gt;myGrid&lt;/b&gt;.api.deselectAll()"&gt;Clear Selection&lt;/button&gt;
+            &lt;button (click)="myGrid.api.deselectAll()"&gt;Clear Selection&lt;/button&gt;
         </snippet>
-    </div>
 
-    <div>
         <h2>
-            <img src="/images/polymer-large.png" height="50px"/>
             Polymer
         </h2>
 
         <p>
             The gridOptions are fully available, you can however you can take
-            advantage of Polymers properties and events provided by ag-Grids Polymer Component.
+            advantage of Polymer's properties and events provided by ag-Grid's polymer component.
             This is done as follows:
         </p>
 
@@ -355,7 +307,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
         <p>Properties on <code>ag-grid-polymer</code> can be provided in the following three ways:</p>
 
-        <ul>
+        <ul class="content">
             <li>LowerCase: ie: <code>enablesorting</code></li>
             <li>CamelCase: ie: <code>enableSorting</code></li>
             <li>Hyphenated Lowercase: ie: <code>enable-sorting</code></li>
@@ -363,19 +315,18 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
         <p>You can specify the properties in the following ways:</p>
 
-        <ul>
+        <ul class="content">
             <li>On the <code>ag-grid-polymer</code>component at declaration time</li>
             <li>On the <code>gridOptions</code> property</li>
         </ul>
 
         <h4>Properties on <code>ag-grid-polymer</code></h4>
 
-        <snippet>
-            // Grid Definition
+        <snippet language="html">
             &lt;ag-grid-polymer rowData="{{rowData}}"
             enableSorting
             enable-filtering
-            ...other properties&gt;&lt;/ag-grid-polymer&gt;
+            &gt;&lt;/ag-grid-polymer&gt;
         </snippet>
 
         <p>Here we've specified 3 properties: <code>rowData</code> is provided with two-way binding.
@@ -396,10 +347,8 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
         <h4>Events on <code>ag-grid-polymer</code></h4>
 
-        <snippet>
-            // Grid Definition
-            &lt;ag-grid-polymer onGridReady="{{onGridReady}}"
-            ...other properties&gt;&lt;/ag-grid-polymer&gt;
+        <snippet language="html">
+            &lt;ag-grid-polymer onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;
         </snippet>
 
         <p>Here we're listening to the <code>gridReady</code> event - as with most events we need to add the "on"
@@ -407,7 +356,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
         <note>When defining event listeners in this way it's important to note that the <code>this</code> context will
             be <code>ag-grid-polymer</code>,
-            <span>not</span> the containing application element. You will have access to the grids properties directly,
+            <span>not</span> the containing application element. You will have access to the grid's properties directly,
             but not the application element itself.
             The <code>api</code> and <code>columnApi</code> are available directly via <code>this.api</code> and <code>this.columnApi</code>.
         </note>
@@ -415,14 +364,14 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
 
         <h4>Events via the <code>gridOptions</code> property</h4>
 
-<snippet>
-// Grid Definition
+<snippet language="html">
 &lt;ag-grid-polymer
     gridOptions="{{gridOptions}}"
-    ...other properties&gt;
+&gt;
 &lt;/ag-grid-polymer&gt;
 
-// Application Code
+</snippet>
+<snippet>
 this.gridOptions.onColumnResized = (event) =&gt; {
     console.log('event via option 3: ' + event);
 };
@@ -430,13 +379,10 @@ this.gridOptions.onColumnResized = (event) =&gt; {
 
         <h4>Events via Event Listeners on an instance of <code>ag-grid-polymer</code></h4>
 
+<snippet language="html">
+&lt;ag-grid-polymer id="myGrid"&gt; &lt;/ag-grid-polymer&gt;
+</snippet>
 <snippet>
-// Grid Definition
-&lt;ag-grid-polymer id="myGrid"
-...other properties&gt;
-&lt;/ag-grid-polymer&gt;
-
-// Application Code
 this.$.myGrid.addEventListener('columnresized', (event) =&gt; {
     console.log('event via option 1: ' + event.agGridDetails);
 })
@@ -448,30 +394,26 @@ this.$.myGrid.addEventListener('columnresized', (event) =&gt; {
 
         <h4>Events via direct property access on an instance of <code>ag-grid-polymer</code></h4>
 
+<snippet language="html">
+&lt;ag-grid-polymer id="myGrid" &gt; &lt;/ag-grid-polymer&gt; 
+</snippet>
 <snippet>
-// Grid Definition
-&lt;ag-grid-polymer
-    id="myGrid"
-    ...other properties&gt;
-&lt;/ag-grid-polymer&gt;
-
-// Application Code
 this.$.myGrid.oncolumnresized = (event) =&gt; {
     console.log('event via option 2: ' + event.agGridDetails);
 }
 </snippet>
 
-        <p>In this case we need to specify an id on the <code>ag-grid-polymer</code> component in order to access it.
-        </p>
-        <p>The grid's payload will be available on the events <code>agGridDetails</code> property.</p>
+    <p>In this case we need to specify an id on the <code>ag-grid-polymer</code> component in order to access it.  </p>
+    <p>The grid's payload will be available on the events <code>agGridDetails</code> property.</p>
 
         <h3>Grid Api</h3>
 
         <p>The Grid API (both <code>api</code> and <code>columnApi</code>) will only be available after the <code>gridReady</code>
             event has been fired.</p>
 
-        <p>You can access the APIs in the following ways</p>
-        <ul>
+        <p>You can access the APIs in the following ways:</p>
+
+        <ul class="content">
             <li>Store them in the <code>gridReady</code> event - they'll be available via the params argument passed
                 into the event
             </li>
@@ -489,13 +431,8 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
             <a href="../javascript-grid-filtering/#polymerFiltering">filters</a> for configuring and using Polymer
             Components in ag-Grid.</p>
 
-    </div>
 
-    <div>
-        <h2>
-            <img src="/images/vue_large.png" height="50px"/>
-            VueJS
-        </h2>
+        <h2> VueJS </h2>
 
         <p>
             The gridOptions are fully available as stated above for VueJS. However you can take
@@ -503,7 +440,7 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
             This is done as follows:
         </p>
 
-        <ul>
+        <ul class="content">
             <li><b>Attributes</b>: Attributes are defined as normal HTML attributes and set non-bound values.</li>
             <li><b>Properties</b>: Properties are defined as HTML attributes prefixed with a colon <code>:</code>
                 and are VueJS bound values.
@@ -523,12 +460,12 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
         <p>
             All of the above (attributes, properties, callbacks and event handlers) are registered
             using their 'dash' syntax and not camelcase. For example, the property enableSorting
-            is bound using enable-sorting. <i>enable-sorting</i>. The following example shows
+            is bound using enable-sorting. <code>enable-sorting</code>. The following example shows
             some bindings:
         </p>
 
-<snippet>
-&lt;&lt;ag-grid-vue
+<snippet language="html">
+&lt;ag-grid-vue
     // these are attributes, not bound, give explicit values here
     rowHeight="22"
     rowSelection="multiple"
@@ -552,7 +489,7 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
 </snippet>
 
         <p>
-            The API's are accessible through the component. This is useful in two situations.
+            The APIs are accessible through the component. This is useful in two situations.
             The first is by using an ID. In the example above, the ID is given
             as '#myGrid' which then allows something like this:
         </p>
@@ -561,13 +498,8 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
 &lt;button @click="&lt;b&gt;myGrid&lt;/b&gt;.api.deselectAll()"&gt;Clear Selection&lt;/button&gt;
 </snippet>
 
-    </div>
 
-    <div>
-        <h2>
-            <img src="../images/webComponents.png" height="50px"/>
-            Web Components
-        </h2>
+        <h2> Web Components </h2>
 
         <p>
             The gridOptions are fully available as stated above for Web Components. However you can take
@@ -575,7 +507,7 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
             the Web Components DOM object for interacting with the component. This is done as follows:
         </p>
 
-        <ul>
+        <ul class="content">
             <li><b>Attributes</b>: Attributes are defined as normal HTML attributes and set non-bound values.</li>
             <li><b>Properties</b>: Properties are set directly onto the DOM object using javascript.</li>
             <li><b>Callbacks</b>: Callbacks, like properties, are also set directly on the DOM object using javascript.
@@ -588,7 +520,7 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
 
         <p>
             Bindings are registered using their 'dash' syntax and not camelcase. For example,
-            the property enableSorting is bound using <i>enable-sorting</i>.
+            the property enableSorting is bound using <code>enable-sorting</code>.
         </p>
 
         <p>
@@ -658,18 +590,15 @@ myGrid.quickFilterText = 'sandy';
 myGrid.showToolPanel = true;
 </snippet>
 
-    </div>
 
-    <div>
         <h2>
-            <img src="/images/aurelia.png" height="50px"/>
             Aurelia
         </h2>
-        <p>The gridOptions are fully available as stated above for Aurelia. However you can take advantage of Aurelia's
+        <p>The <code>gridOptions</code> are fully available as stated above for Aurelia. However you can take advantage of Aurelia's
             properties and events provided by ag-Grids Aurelia Component. This is done as follows:</p>
-        <ul>
+        <ul class="content">
             <li><b>Events:</b> All data out of the grid comes through events. These use
-                Aurelia event bindings eg <i>model-updated.call="onModelUpdated()"</i>.
+                Aurelia event bindings eg <code>model-updated.call="onModelUpdated()"</code>.
                 As you interact with the grid, the different events are fixed and
                 output text to the console (open the dev tools to see the console).
             </li>
@@ -680,7 +609,7 @@ myGrid.showToolPanel = true;
             </li>
             <li><b>Attributes:</b> When the property is just a simple string value, then
                 no binding is necessary, just the value is placed as an attribute
-                eg <i>row-height.bind="22"</i>.
+                eg <code>row-height.bind="22"</code>.
             </li>
             <li><b>Changing Properties:</b> When a property changes value, Aurelia
                 automatically passes the new value onto the grid. This is used in
@@ -690,7 +619,7 @@ myGrid.showToolPanel = true;
                 b) The 'Show Tool Panel' checkbox has its value bound to the 'showToolPanel'
                 property of the grid.
                 c) The 'Refresh Data' generates new data for the grid and updates the
-                <i>rowData</i> property.
+                <code>rowData</code> property.
             </li>
         </ul>
 
@@ -750,15 +679,14 @@ myGrid.showToolPanel = true;
 &lt;/ag-grid-aurelia&gt;
 </snippet>
 
-    </div>
 
-    <h2>Next Steps...</h2>
+    <h2>Next Steps</h2>
 
     <p>
         And that's it Doc, now you know how to interface with the grid. Go now and find out about all
         the great attributes, properties, callbacks and events you can use.
     </p>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
