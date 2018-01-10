@@ -1,61 +1,37 @@
+<?php 
+$navKey = "changelog";
+include_once '../includes/html-helpers.php';
+?>
 <!DOCTYPE html>
 <html>
 <head lang="en">
-    <meta charset="UTF-8">
-
-    <title>ag-Grid Changelog</title>
-    <meta name="description" content="ag-Grid - Changelog of Work.">
-    <meta name="keywords" content="ag-Grid javascript grid changelog release notes"/>
-    <meta http-equiv="Cache-control" content="public">
-    <meta http-equiv="cache-control" content="max-age=86400"/>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="../dist/aui/css/aui.min.css" media="all">
-    <link rel="stylesheet" href="../dist/aui/css/aui-experimental.min.css" media="all">
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-
-    <!-- Bootstrap -->
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-
-
-    <link rel="stylesheet" type="text/css" href="../style.css">
-
-    <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.8/angular.min.js"></script>
-    <link rel="stylesheet" href="../documentation-main/documentation.css">
-    <script src="../documentation-main/documentation.js"></script>
-
+<?php
+meta_and_links("ag-Grid Pipeline", "ag-Grid javascript grid pipeline changelog release notes", "ag-Grid - Pipeline / Changelog of Work.", false);
+?>
+<link rel="stylesheet" href="../dist/homepage.css">
+<link rel="stylesheet" href="../dist/aui/css/aui.css" media="all">
 </head>
 
-<body class="big-text" ng-app="documentation">
+<body>
+<header id="nav" class="compact">
+<?php 
+    $version = 'latest';
+    include '../includes/navbar.php';
+?>
+</header>
 
-<?php
-date_default_timezone_set('Europe/London');
-
-$navKey = "changelog";
-include '../includes/navbar.php'; ?>
-
-<?php $headerTitle = "Changelog";
-include '../includes/headerRow.php'; ?>
-
-<div class="container info-page">
+<div class="info-page" id="page-pipeline">
     <div class="row">
-        <div class="col-md-12">
-            <note>This page covers the full Changelog for all items for 8.x and above. For the Summary Changelog, or
+        <section>
+            <p class="lead">This page covers the full Changelog for all items for 8.x and above. For the Summary Changelog, or
                 the legacy changelog covering versions 7.x and above before go <a href="../change-log/changeLogIndex.php">here</a>.
-            </note>
+            </p>
 
             <?php
             function mapIssueType($issueType)
             {
                 switch ($issueType) {
                     case "Task":
-//                        return "Feature Request/Improvement";
                         return "Feature Request";
                         break;
                 }
@@ -89,13 +65,12 @@ include '../includes/headerRow.php'; ?>
                 $csvFile = "changelog.json";
                 include '../jira_report.php'; ?></tbody>
             </table>
-        </div>
+        </section>
     </div>
 </div>
-<?php include("../includes/footer.php"); ?>
 
-</body>
-
+<script src="../dist/homepage.js"></script>
+<?php include_once("../includes/footer.php"); ?>
 <?php include_once("../includes/analytics.php"); ?>
-
+</body>
 </html>
