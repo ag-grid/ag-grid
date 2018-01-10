@@ -36,13 +36,10 @@
 
 .info-page {
     @extend .container-fluid;
-    background-color: $offwhite;
+    background-color: $white;
 
     > .row {
         @extend .full-width-row;
-        background-color: $white;
-        border-left: 1px solid $border-color;
-        border-right: 1px solid $border-color;
 
         aside {
             @extend .py-5, .col-md-2;
@@ -145,7 +142,7 @@
 
         li {
             @extend .col-sm-3, .text-center, .px-0;
-            min-width: 10em;
+            min-width: 9em;
 
             a {
                 @extend .d-block;
