@@ -89,6 +89,8 @@ export interface ColDef extends AbstractColDef {
 
     /** The field where we get the tooltip on the object */
     tooltipField?: string;
+    /** The function used to calculate the tooltip of the object, tooltipField takes precedence*/
+    tooltip?: (params:TooltipParams)=>string;
     
     /** Tooltip for the column header */
     headerTooltip?: string;
@@ -359,6 +361,18 @@ export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
 
 export interface CellClassParams {
     value: any,
+    data: any,
+    node: RowNode,
+    colDef: ColDef,
+    rowIndex: number,
+    $scope: any,
+    api: GridApi,
+    context: any
+}
+
+export interface TooltipParams {
+    value: any,
+    valueFormatted: any,
     data: any,
     node: RowNode,
     colDef: ColDef,
