@@ -79,6 +79,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private moving = false;
     private menuVisible = false;
 
+    // we copy this from col def, as if it's value changes are column is created,
+    // it will break the logic in the column controller
+    private lockPosition: boolean;
+
     private lastLeftPinned: boolean;
     private firstRightPinned: boolean;
 
@@ -107,6 +111,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.sortedAt = colDef.sortedAt;
         this.colId = colId;
         this.primary = primary;
+        this.lockPosition = colDef.lockPosition === true;
+    }
+
+    public isLockPosition(): boolean {
+        return this.lockPosition;
     }
 
     public setParent(parent: ColumnGroupChild): void {

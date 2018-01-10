@@ -13,7 +13,6 @@ import {HorizontalDragService} from "../horizontalDragService";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {CssClassApplier} from "../cssClassApplier";
 import {SetLeftFeature} from "../../rendering/features/setLeftFeature";
-import {IAfterGuiAttachedParams, IComponent} from "../../interfaces/iComponent";
 import {IMenuFactory} from "../../interfaces/iMenuFactory";
 import {GridApi} from "../../gridApi";
 import {SortController} from "../../sortController";
@@ -172,6 +171,7 @@ export class HeaderWrapperComp extends Component {
     private setupMove(eHeaderCellLabel: HTMLElement, displayName: string): void {
         let suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
             || this.column.getColDef().suppressMovable
+            || this.column.isLockPosition()
             || this.gridOptionsWrapper.isForPrint();
 
         if (suppressMove) { return; }

@@ -192,6 +192,15 @@ export interface ColDef extends AbstractColDef {
     /** Set to true to not allow moving this column via dragging it's header */
     suppressMovable?: boolean;
 
+    /** Set to true to make sure this column is always first. Other columns, if movable, cannot move before this column. */
+    lockPosition?: boolean;
+
+    /** Set to true to block the user showing / hiding the column, the column can only be shown / hidden via definitions or API */
+    lockVisible?: boolean;
+
+    /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */
+    lockPin?: boolean;
+
     /** Set to true to not allow filter on this column */
     suppressFilter?: boolean;
 

@@ -13,22 +13,10 @@ import {EventService} from "../eventService";
 import {ColumnUtils} from "./columnUtils";
 import {Logger, LoggerFactory} from "../logger";
 import {
-    ColumnEvent,
-    ColumnEverythingChangedEvent,
-    ColumnGroupOpenedEvent,
-    ColumnMovedEvent,
-    ColumnPinnedEvent,
-    ColumnPivotModeChangedEvent,
-    ColumnResizedEvent,
-    ColumnRowGroupChangedEvent,
-    ColumnValueChangedEvent,
-    ColumnVisibleEvent,
-    DisplayedColumnsChangedEvent,
-    DisplayedColumnsWidthChangedEvent,
-    Events,
-    GridColumnsChangedEvent,
-    NewColumnsLoadedEvent,
-    VirtualColumnsChangedEvent
+    ColumnEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent,
+    ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent,
+    ColumnVisibleEvent, DisplayedColumnsChangedEvent, DisplayedColumnsWidthChangedEvent, Events,
+    GridColumnsChangedEvent, NewColumnsLoadedEvent, VirtualColumnsChangedEvent
 } from "../events";
 import {OriginalColumnGroup} from "../entities/originalColumnGroup";
 import {GroupInstanceIdCreator} from "./groupInstanceIdCreator";
@@ -792,11 +780,38 @@ export class ColumnController {
 
     public doesMovePassRules(columnsToMove: Column[], toIndex: number): boolean {
 
-        let allColumnsCopy = this.gridColumns.slice();
+        // make a copy of what the grid columns would look like after the move
+        let proposedColumnOrder = this.gridColumns.slice();
+        _.moveInArray(proposedColumnOrder, columnsToMove, toIndex);
 
-        _.moveInArray(allColumnsCopy, columnsToMove, toIndex);
+        // then check that the new proposed order of the columns passes all rules
+        if (!this.doesMovePassMarryChildren(proposedColumnOrder)) { return false; }
+        if (!this.doesMovePassLockedPositions(proposedColumnOrder)) { return false; }
 
-        let rulesPass = true;
+        return true;
+    }
+
+    public doesMovePassLockedPositions(proposedColumnOrder: Column[]): boolean {
+
+        let foundNonLocked = false;
+        let rulePassed = true;
+
+        // go though the cols, see if any non-locked appear before any locked
+        proposedColumnOrder.forEach( col => {
+            if (col.isLockPosition()) {
+                if (foundNonLocked) {
+                    rulePassed = false;
+                }
+            } else {
+                foundNonLocked = true;
+            }
+        });
+
+        return rulePassed;
+    }
+
+    public doesMovePassMarryChildren(allColumnsCopy: Column[]): boolean {
+        let rulePassed = true;
 
         this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, child => {
             if (!(child instanceof OriginalColumnGroup)) { return; }
@@ -821,14 +836,14 @@ export class ColumnController {
 
             // if the columns
             if (spread > maxSpread) {
-                rulesPass = false;
+                rulePassed = false;
             }
 
             // console.log(`maxIndex = ${maxIndex}, minIndex = ${minIndex}, spread = ${spread}, maxSpread = ${maxSpread}, fail = ${spread > (count-1)}`)
             // console.log(allColumnsCopy.map( col => col.getColDef().field).join(','));
         });
 
-        return rulesPass;
+        return rulePassed;
     }
 
     public moveColumn(key: string|Column, toIndex: number) {
@@ -1813,6 +1828,8 @@ export class ColumnController {
             this.gridColumns = this.primaryColumns.slice();
         }
 
+        this.putFixedColumnsFirst();
+
         this.addAutoGroupToGridColumns();
 
         this.clearDisplayedColumns();
@@ -1825,6 +1842,12 @@ export class ColumnController {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
+    }
+
+    private putFixedColumnsFirst(): void {
+        let locked = this.gridColumns.filter(c => c.isLockPosition());
+        let unlocked = this.gridColumns.filter(c => !c.isLockPosition());
+        this.gridColumns = locked.concat(unlocked);
     }
 
     private addAutoGroupToGridColumns(): void {

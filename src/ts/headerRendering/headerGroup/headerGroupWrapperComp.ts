@@ -198,7 +198,7 @@ export class HeaderGroupWrapperComp extends Component {
         // if any child is fixed, then don't allow moving
         let childSuppressesMoving = false;
         this.columnGroup.getLeafColumns().forEach( (column: Column) => {
-            if (column.getColDef().suppressMovable) {
+            if (column.getColDef().suppressMovable || column.isLockPosition()) {
                 childSuppressesMoving = true;
             }
         });
