@@ -6,13 +6,12 @@ $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
     <h1 id="grid-api" class="first-h1">Grid API</h1>
 
-    <table class="table">
+    <table class="table reference">
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Columns</td>
+            <td colspan="2"><h2>Columns</h2></td>
         </tr>
         <tr>
             <th>sizeColumnsToFit()</th>
@@ -26,7 +25,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Data</td>
+            <td colspan="2"><h2>Data</h2></td>
         </tr>
 
         <tr>
@@ -71,7 +70,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Accessing Row Nodes</td>
+            <td colspan="2"><h2>Accessing Row Nodes</h2></td>
         </tr>
 
         <?php include '../javascript-grid-accessing-data/accessingDataProperties.php' ?>
@@ -79,7 +78,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Master Detail</td>
+            <td colspan="2"><h2>Master Detail</h2></td>
         </tr>
         <tr>
             <th>getDetailGridInfo(detailGridId)</th>
@@ -98,7 +97,7 @@ include '../documentation-main/documentation_header.php';
         <!-- Selection -->
         <!------------------->
         <tr class="title-row">
-            <td colspan="2">Selection</td>
+            <td colspan="2"><h2>Selection</h2></td>
         </tr>
         <tr>
             <th>selectAll()</th>
@@ -148,7 +147,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Refresh</td>
+            <td colspan="2"><h2>Refresh</h2></td>
         </tr>
 
         <tr>
@@ -165,7 +164,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Sort & Filter</td>
+            <td colspan="2"><h2>Sort & Filter</h2></td>
         </tr>
 
         <tr>
@@ -238,7 +237,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Navigation</td>
+            <td colspan="2"><h2>Navigation</h2></td>
         </tr>
 
         <tr>
@@ -264,7 +263,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Editing</td>
+            <td colspan="2"><h2>Editing</h2></td>
         </tr>
 
         <tr>
@@ -279,7 +278,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Export</td>
+            <td colspan="2"><h2>Export</h2></td>
         </tr>
 
         <tr>
@@ -301,7 +300,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Events</td>
+            <td colspan="2"><h2>Events</h2></td>
         </tr>
 
         <tr>
@@ -328,7 +327,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Row Groups</td>
+            <td colspan="2"><h2>Row Groups</h2></td>
         </tr>
 
         <tr>
@@ -354,7 +353,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Rendering</td>
+            <td colspan="2"><h2>Rendering</h2></td>
         </tr>
 
         <tr>
@@ -366,7 +365,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2" id="scrolling">Scrolling</td>
+            <td colspan="2" id="scrolling"><h2>Scrolling</h2></td>
         </tr>
 
         <tr>
@@ -407,7 +406,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Overlays</td>
+            <td colspan="2"><h2>Overlays</h2></td>
         </tr>
 
         <tr>
@@ -425,7 +424,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Clipboard</td>
+            <td colspan="2"><h2>Clipboard</h2></td>
         </tr>
 
         <tr>
@@ -439,7 +438,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Pagination</td>
+            <td colspan="2"><h2>Pagination</h2></td>
         </tr>
 
         <?php include '../javascript-grid-pagination/paginationProperties.php' ?>
@@ -447,7 +446,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Headers</td>
+            <td colspan="2"><h2>Headers</h2></td>
         </tr>
 
         <?php include '../javascript-grid-column-header/headerHeightProperties.php' ?>
@@ -455,7 +454,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Miscellaneous</td>
+            <td colspan="2"><h2>Miscellaneous</h2></td>
         </tr>
 
         <tr>
@@ -542,6 +541,6 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
     </table>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

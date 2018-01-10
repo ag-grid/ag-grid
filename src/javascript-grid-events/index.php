@@ -18,18 +18,18 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         TypeScript users can take advantage of the events interfaces. You can work our the interface name by putting
-        'Event' after the event name. For example, the cellClicked event uses the interface CellClickedEvent.
+        <code>Event</code> after the event name. For example, the <code>cellClicked</code> event uses the interface <code>CellClickedEvent</code>.
     </note>
 
     <note>
         See the <a href="#properties-and-hierarchy">Event Properties & Hierarchy</a> below for what properties each event has.
     </note>
 
-    <table id="ag-grid-events" class="table">
+    <table id="ag-grid-events" class="table reference">
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Selection</td>
+            <td colspan="2"><h2>Selection</h2></td>
         </tr>
 
         <tr>
@@ -78,7 +78,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Editing</td>
+            <td colspan="2"><h2>Editing</h2></td>
         </tr>
 
         <tr>
@@ -105,7 +105,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Sort & Filter</td>
+            <td colspan="2"><h2>Sort & Filter</h2></td>
         </tr>
 
         <tr>
@@ -129,7 +129,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Row Drag & Drop</td>
+            <td colspan="2"><h2>Row Drag & Drop</h2></td>
         </tr>
 
         <tr>
@@ -163,7 +163,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Columns</td>
+            <td colspan="2"><h2>Columns</h2></td>
         </tr>
 
         <tr>
@@ -231,7 +231,7 @@ include '../documentation-main/documentation_header.php';
 
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Miscellaneous</td>
+            <td colspan="2"><h2>Miscellaneous</h2></td>
         </tr>
         <tr>
             <th>gridReady</th>

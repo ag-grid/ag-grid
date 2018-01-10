@@ -369,3 +369,35 @@
     @extend .container;
     @include roadshow;
 }
+
+table.reference {
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    td, th {
+        padding: .5rem 1rem;
+        vertical-align: top;
+        border-top: 1px solid $border-color;
+        border-bottom: 1px solid $border-color;
+    }
+
+    tr:nth-child(2n) {
+        td:not([colspan='2']), th {
+            background-color: $offwhite;
+        }
+    }
+}
+
+.event-hierarchy {
+    font-weight: bold;
+    width: 100%;
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+}
+.event-properties {
+    font-weight: normal;
+    color: darkgreen;
+}
+.event-attribute {
+    font-weight: bold;
+    color: darkorchid;
+}

@@ -5,30 +5,23 @@ $pageKeyboards = "ag-Grid Column API";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
+        <h1 id="column-api">Column API</h1>
 
-    <div>
-
-        <h1 id="column-api" class="first-h1">Column API</h1>
-
-        <p>
+        <p class="lead">
             Below are listed all the column API methods.
         </p>
 
         <h2 id="column-keys">Column Keys</h2>
 
         <p>
-            Some of the API methods take Column Key (named colKey) which has type <code>Column|string</code>.
+            Some of the API methods take Column Key (named <code>colKey</code>) which has type <code>Column|string</code>.
             This means you can pass either a Column object (that
             you receive from calling one of the other methods) or you pass in the Column ID (which is a string).
             The Column ID is a property of the column definition. If you do not provide the Column ID, the grid will
             create one for you (first by trying to use the field if it is unique, otherwise it will generate and ID).
         </p>
 
-        <table class="table">
-            <tr class="title-row">
-                <!-- TITLE ROW -->
-                <td colspan="2">Column API</td>
-            </tr>
+        <table class="table reference">
             <tr>
                 <th>sizeColumnsToFit(width)</th>
                 <td>
@@ -257,6 +250,6 @@ include '../documentation-main/documentation_header.php';
             </tr>
         </table>
 
-    </div>
+
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

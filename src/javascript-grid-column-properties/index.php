@@ -7,15 +7,15 @@ include '../documentation-main/documentation_header.php';
 ?>
     <h1 id="columns" class="first-h1">Column Properties</h1>
 
-    <p>
-        For column groups, the property <i>children</i> is mandatory. When the grid see's <i>children</i>
+    <p class="lead">
+        For column groups, the property <code>children</code> is mandatory. When the grid sees <code>children</code>
         it knows it's a column group.
     </p>
 
-    <table class="table">
+    <table class="table reference">
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Properties for Columns and Column Groups</td>
+            <td colspan="2"><h2>Properties for Columns and Column Groups</h2></td>
         </tr>
         <tr>
             <th>headerName</th>
@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Properties for Columns Only</td>
+            <td colspan="2"><h2>Properties for Columns Only</h2></td>
         </tr>
         <tr>
             <th>field</th>
@@ -71,7 +71,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>floatingFilterComponentParams</th>
-            <td>Custom params to be passed to floatingFilterComponent/floatingFilterComponentFramework </td>
+            <td>Custom params to be passed to <code>floatingFilterComponent</code> or <code>floatingFilterComponentFramework</code> </td>
         </tr>
         <tr>
             <th>hide</th>
@@ -275,7 +275,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Properties for Column Groups Only</td>
+            <td colspan="2"><h2>Properties for Column Groups Only</h2></td>
         </tr>
         <tr>
             <th>groupId</th>
