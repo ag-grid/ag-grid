@@ -349,7 +349,7 @@ export class MoveColumnController implements DropListener {
             this.onDragging(this.lastDraggingEvent);
             this.failedMoveAttempts = 0;
         } else {
-            // we count the failed move attempts. if we fail to move 7 times, then we ping the column.
+            // we count the failed move attempts. if we fail to move 7 times, then we pin the column.
             // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
