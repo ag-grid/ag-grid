@@ -6,7 +6,6 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
     <style>
         .green-tick {
@@ -17,12 +16,10 @@ include '../documentation-main/documentation_header.php';
         }
     </style>
 
-    <h1 class="first-h1" id="row-models">
-        <img src="../images/svg/docs/row_models.svg" width="50" />
+    <h1>
         Row Models
     </h1>
-
-    <p>
+    <p class="lead">
         Depending on your needs, the grid can be configured with different row models. The row models
         differ in how the data is loaded. You can load all the data and hand it
         over to the grid (In Memory Row Model) or you can keep most of the data on the server
@@ -33,74 +30,71 @@ include '../documentation-main/documentation_header.php';
         The following is a summary of the different row models:
     </p>
 
-    <div class="list-group">
-        <a href="../javascript-grid-in-memory/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/row_models.svg" width="50" />
-                </div>
-                <h3 class="list-group-item-heading">In Memory</h3>
-                <p class="list-group-item-text">
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>In Memory</h2>
+    <p>
+
                     This is the default. The grid will load all of the data into the grid in one go.
-                    The grid can then perform filtering, sorting, grouping, pivoting and aggregation all in memory.</li>
-                </p>
-            </div>
-        </a>
-        <a href="../javascript-grid-infinite-scrolling/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/row_models.svg" width="50" />
-                </div>
-                <h3 class="list-group-item-heading">Infinite</h3>
-                <p class="list-group-item-text">
+                    The grid can then perform filtering, sorting, grouping, pivoting and aggregation all in memory.
+                
+    </p>
+
+    <p> <a href="../javascript-grid-in-memory/">Go to In Memory Row Model</a> </p>
+    </div>
+</div>
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Infinite</h2>
+    <p>
+
+
                     This will present the data to
                     the user and load more data as the user scrolls down.
                     Use this if you want to display a large flat (not grouped) list of data.
-                </p>
-            </div>
-        </a>
-
-        <a href="../javascript-grid-enterprise-model/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/row_models.svg" width="50" />
-                </div>
-                <h3 class="list-group-item-heading">Enterprise</h3>
-                <p class="list-group-item-text">
-                    Enterprise builds on Infinite. It also lazy loads the data as the user scrolls down. In addition it
-                    allows lazy loading of grouped data with server side grouping and aggregation.
-                    Advanced users will use Enterprise Row Model to do ad-hoc slice and dice of data with server side aggregations.                </p>
-            </div>
-        </a>
-
-        <a href="../javascript-grid-viewport/" class="list-group-item">
-            <div class="float-parent">
-                <div class="section-icon-container">
-                    <img src="../images/svg/docs/row_models.svg" width="50" />
-                </div>
-                <h3 class="list-group-item-heading">Viewport</h3>
-                <p class="list-group-item-text">
-                    The grid will inform the server exactly what data it is displaying (first and last row) and the
-                    server will provide data for exactly those rows only. Use this if you want the server to know exactly
-                    what the user is viewing, useful for updates in very large live datastreams where server only
-                    sends updates to clients viewing the impacted rows.
-                </p>
-            </div>
-        </a>
-
-    </div>
-
-
-    <p>
-        What row model you use is set as a grid property <code>rowModelType</code>. Set it to one of
-        <i>{inMemory, infinite, viewport, enterprise}</i>. The default is <code>inMemory</code>.
+                
+                
     </p>
 
-    <h1 id="when-to-use">When to Use</h1>
+    <p> <a href="../javascript-grid-infinite-scrolling/">Go to Infinite Row Model</a> </p>
+    </div>
+</div>
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2 class="heading-enterprise">Enterprise</h2>
+    <p>
+        Enterprise builds on Infinite. It also lazy loads the data as the user scrolls down. In addition it
+        allows lazy loading of grouped data with server side grouping and aggregation.
+        Advanced users will use Enterprise Row Model to do ad-hoc slice and dice of data with server side aggregations.                
+    </p>
+
+    <p> <a href="../javascript-grid-enterprise-model/">Go to Enterprise Row Model</a> </p>
+    </div>
+</div>
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2 class="heading-enterprise">Viewport</h2>
+    <p>
+        The grid will inform the server exactly what data it is displaying (first and last row) and the
+        server will provide data for exactly those rows only. Use this if you want the server to know exactly
+        what the user is viewing, useful for updates in very large live datastreams where server only
+        sends updates to clients viewing the impacted rows.
+    </p>
+
+    <p> <a href="../javascript-grid-viewport/">Go to Viewport Row Model</a> </p>
+    </div>
+</div>    
+    <p>
+        What row model you use is set as a grid property <code>rowModelType</code>. Set it to one of
+        <code>inMemory, infinite, viewport, enterprise</code>. The default is <code>inMemory</code>.
+    </p>
+
+    <h2 id="when-to-use">When to Use</h2>
 
     <p>
         Which row model you use will depend on your application. Here are some quick rules of thumb:
-        <ul>
+</p>
+        <ul class="content">
             <li>
                 If using <b>ag-Grid Free</b>, use <b>In Memory Row Model</b> if you want to load all
                 your data into the browser, or <b>Infinite Row Model</b> if you want to load it in blocks.
@@ -112,14 +106,15 @@ include '../documentation-main/documentation_header.php';
                 ag-Grid Enterprise customer, you should prefer Enterprise Row Model over Infinite Row Model.
             </li>
             <li>
-                Don't use <b>Viewport Row Model</b> unless you understand what it's advantages are and when
+                Don't use <b>Viewport Row Model</b> unless you understand what its advantages are and when
                 you need them. We find many of our users use Viewport Row Model when they
                 don't need to and end up with more complicated applications as a result.
             </li>
         </ul>
 
-        Here are more detailed rules of thumb.
-        <ul>
+        <p>Here are more detailed rules of thumb.</p>
+
+        <ul class="content">
             <li>
                 If you are not sure, use default <b><a href="../javascript-grid-in-memory/">In Memory</a></b>.
                 The grid can handle massive (100k+) amounts of data. The grid will only
@@ -154,13 +149,13 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <h1 id="row-model-summary">Row Model Comparisons</h1>
+    <h2>Row Model Comparisons</h2>
 
     <p>
         Below is a quick feature comparison of all the grids features across all four row models.
     </p>
 
-    <table class="row-model-table">
+    <table class="row-model-table reference">
         <tr class="first-row">
             <td>Feature</td>
             <td>In Memory</td>
@@ -388,11 +383,11 @@ include '../documentation-main/documentation_header.php';
     </table>
 
 
-    <h1>Deeper Understanding of Row Models</h1>
+    <h2>Deeper Understanding of Row Models</h2>
 
     <p>
-        The grid follows an MVC pattern. Each data item is wrapped in a <code>Row Node</code> and then
-        stored in the <code>Row Model</code>. The grid rendering engine is called <code>Row Renderer</code>
+        The grid follows an MVC pattern. Each data item is wrapped in a <strong>Row Node</strong> and then
+        stored in the <strong>Row Model</strong>. The grid rendering engine is called <strong>Row Renderer</strong>
         and listens for changes to the row model and updates the DOM accordingly.
     </p>
 
@@ -402,18 +397,19 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        <img src="./rowmodels.svg"/>
+        <img src="./rowmodels.svg" class="img-fluid">
     </p>
 
     <p>
         The following should be noted from the diagram:
-        <ul>
+</p>
+        <ul class="content">
             <li>
-                The grid has exactly one <b>RowRenderer</b> instance. The RowRenderer contains a reference to the PaginationProxy
+                The grid has exactly one <code>RowRenderer</code> instance. The RowRenderer contains a reference to the PaginationProxy
                 where it asks for the rows one at a time for rendering.
             </li>
             <li>
-                The grid has exactly one <b>PaginationProxy</b> instance. The PaginationProxy will either a) do nothing
+                The grid has exactly one <code>PaginationProxy</code> instance. The PaginationProxy will either a) do nothing
                 if pagination is not active and just forward all requests to the Row Model or b) do pagination if
                 pagination is active. The PaginationProxy has exactly one RowModel instance.
             </li>
@@ -436,14 +432,14 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <h1 id="datasource">Pagination</h1>
+    <h2>Pagination</h2>
 
     <p>
         Pagination can be applied to any of the row model types. The documentation on each row model
         type covers pagination for that row model type.
     </p>
 
-    <h1 id="datasource">Grid Datasource</h1>
+    <h2>Grid Datasource</h2>
 
     <p>
         The <a href="../javascript-grid-in-memory/">In Memory</a> row model does not need a datasource.
@@ -453,6 +449,5 @@ include '../documentation-main/documentation_header.php';
         on each row model type explains how to configure the datasource for the particular row model.
     </p>
 
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
