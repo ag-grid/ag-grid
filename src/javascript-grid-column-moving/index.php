@@ -98,12 +98,17 @@ include '../documentation-main/documentation_header.php';
     The example below demonstrates these properties as follows:
     <ul>
         <li>
-            The column 'Locked' is locked into the first position. It is not possible
+            The column 'Age' is locked into the first position. It is not possible
             to move this column, or have other columns moved over it to impact it's position.
         </li>
         <li>
             The column 'Athlete' has moving suppressed. It is not possible to move
             this column, however it is possible to move other columns around it.
+        </li>
+        <li>
+            Age and Athlete columns have the user provided <code>locked-col</code>
+            and <code>suppress-movable-col</code> CSS classes applied to them respectively to
+            change the background color.
         </li>
     </ul>
 </p>

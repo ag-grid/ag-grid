@@ -1,3 +1,7 @@
 .locked-col {
     background: #ddd;
 }
+
+.legend-box {
+    border: 1px solid #aaa;
+}

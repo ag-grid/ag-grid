@@ -1,6 +1,6 @@
 var columnDefs = [
-    {field: 'athlete', width: 150},
-    {field: 'age', lockPosition: true},
+    {field: 'athlete', suppressMovable: true, width: 150, cellClass: 'suppress-movable-col'},
+    {field: 'age', lockPosition: true, cellClass: 'locked-col'},
     {field: 'country', width: 150},
     {field: 'year'},
     {field: 'date'},
