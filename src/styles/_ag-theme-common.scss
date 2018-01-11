@@ -326,11 +326,11 @@
     }
 
     .ag-row-drag {
-        display: inline-block;
-        background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAACCAYAAABytg0kAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABZJREFUeNpi2r9//38gYGAEESAAEGAAasgJOgzOKCoAAAAASUVORK5CYII=);
-        width: $grid-size * 2;
-        height: $grid-size * 3;
-        margin-right: $grid-size * 3;
+        @include icon-background($params, 'grip');
+        background-position-x: left;
+        float: left;
+        width: $icon-size + $grid-size * 3;
+        height: 100%;
     }
 
     .ag-row-dragging {
