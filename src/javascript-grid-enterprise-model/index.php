@@ -6,16 +6,16 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1 heading-enterprise" id="enterpriseRowModel"> Enterprise Row Model </h1>
+<h1 class="heading-enterprise"> Enterprise Row Model </h1>
 
-<p>
+<p class="lead">
     The Enterprise Row Model is arguably the most powerful of the row models in ag-Grid
     and presents the ultimate 'big data' user experience, allowing the user to
     navigate through very large data sets using a mixture of server side grouping and aggregation
     while using infinite scrolling to bring the data back in blocks to the client.
 </p>
 
-<h1>Enterprise Row Model Features</h1>
+<h2>Enterprise Row Model Features</h2>
 
 <p>
     The best way to learn what the Enterprise Model does is to break it down into the core features.
@@ -24,8 +24,7 @@ include '../documentation-main/documentation_header.php';
     enterprise row model are:
 </p>
 
-<p>
-    <ul>
+    <ul class="content">
         <li>
             <b>Lazy Loading of Groups:</b> The grid will load the top level rows only. Children
             of groups are only loaded when the user expands the group. Some applications may use
@@ -56,9 +55,9 @@ include '../documentation-main/documentation_header.php';
             your users will have an experience of slicing and dicing large data in real time, something previously
             only available in expensive reporting tools, now you can embed it into your JavaScript application.</li>
     </ul>
-</p>
 
-<h1>Enterprise Datasource</h1>
+
+<h2>Enterprise Datasource</h2>
 
 <p>
     Similar to the <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a> and
@@ -142,7 +141,7 @@ export interface ColumnVO {
     passed back as you interact with the grid.
 </p>
 
-<h1>Example - Pre-defined Grouping - Mocked Server</h1>
+<h2>Example - Pre-defined Grouping - Mocked Server</h2>
 
 <p>
     Below shows an example of pre-defined grouping using the olympic winners dataset.
@@ -170,7 +169,8 @@ export interface ColumnVO {
 
 <p>
     The example demonstrates the following:
-    <ul>
+</p>
+    <ul class="content">
         <li><b>Grouping:</b> The data is grouped by country.</li>
         <li><b>Aggregation:</b> The server always sum's gold, silver and bronze.
             The columns are not set as value columns, and hence the user cannot change
@@ -181,11 +181,10 @@ export interface ColumnVO {
             For example, sort by Athlete, then expand a group and you will
             see Athlete is sorted. </li>
     </ul>
-</p>
 
 <?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
-<h1>Example - Slice and Dice - Mocked Server</h1>
+<h2>Example - Slice and Dice - Mocked Server</h2>
 
 <p>
     The concept of 'Slice and Dice' means the user can decide what they want to group,
@@ -208,7 +207,8 @@ export interface ColumnVO {
 
 <p>
     The example demonstrates the following:
-    <ul>
+</p>
+    <ul class="content">
         <li>
             Columns <i>Athlete, Age, Country, Year</i> and <i>Sport</i> all have <code>enableRowGroup=true</code>
             which means they can be grouped on. To group you drag the columns to the row group panel section.
@@ -239,7 +239,6 @@ export interface ColumnVO {
             The columns <i>Age, Country</i> and <i>Year</i> all have a filter.
         </li>
     </ul>
-</p>
 
 <note>
     When filtering using the Enterprise Row Model it's important to specify the filter parameter: <i>newRowsAction: 'keep'</i>.
@@ -248,13 +247,15 @@ export interface ColumnVO {
 
 <?= example('Slice And Dice', 'slice-and-dice', 'generated', array("enterprise" => 1)) ?>
 
-<h1>Pivoting Challenges</h1>
+<h2>Pivoting Challenges</h2>
 
 <p>
     Achieving pivot on the server side is difficult. If you manage to implement it, you deserve lots of credit from
     your team and possibly a few hugs (disclaimer, we are not responsible for any inappropriate hugs you try). Here
     are some quick references on how you can achieve pivot in different relational databases:
-    <ul>
+    All databases will either implement pivot (like Oracle) or require you to fake it (like MySQL).
+</p>
+    <ul class="content">
         <li>Oracle: Oracle has native support for filtering which they call
             <a href="http://www.oracle.com/technetwork/articles/sql/11g-pivot-097235.html">pivot feature</a>.
         </li>
@@ -267,8 +268,6 @@ export interface ColumnVO {
             </a>.
         </li>
     </ul>
-    All databases will either implement pivot (like Oracle) or require you to fake it (like MySQL).
-</p>
 
 <p>
     To understand <a href="../javascript-grid-pivoting/#pivot-mode">Pivot Mode</a> and
@@ -307,7 +306,7 @@ export interface ColumnVO {
     <code>toolPanelSuppressValues=true</code>.
 </p>
 
-<h1>Example - Slice and Dice - Real Server</h1>
+<h2>Example - Slice and Dice - Real Server</h2>
 
 <p>
     It is not possible to put up a full end to end example of the Enterprise row model
@@ -338,7 +337,7 @@ export interface ColumnVO {
     customer demand, we may provide connectors to server sides stores.
 </note>
 
-<h1 id="selection">Selection with Enterprise Row Model</h1>
+<h2>Selection with Enterprise Row Model</h2>
 
 <p>
     Selecting rows and groups in the enterprise row model is supported.
@@ -346,7 +345,8 @@ export interface ColumnVO {
     or <i>multiple</i> as with any other row model.
 </p>
 
-<h4 id="selection"><b>Selecting Group Nodes</b></h4>
+<h3>Selecting Group Nodes</h3>
+
 <p>
     When you select a group, the children of that group may or may not be loaded
     into the grid. For this reason the setting <code>groupSelectsChildren=true</code> (which
@@ -354,19 +354,19 @@ export interface ColumnVO {
     sense. When you select a group, the group row only will be marked as selected.
 </p>
 
-<h1 id="selection">Example - Click Selection</h1>
+<h2>Example - Click Selection</h2>
 
 <p>
     The example below shows both simple 'click' selection as well as multiple 'shift-click' selections. Selecting groups
     is not allowed as clicking on groups is reserved for opening and closing the groups.
+</p>
 
-<ul>
+<ul class="content">
     <li><b>Single 'Click' Selection</b> - when you click on a leaf level row, the row is selected.</li>
     <li><b>Multiple 'Shift-Click' Selections</b> - select a leaf row (single click) and then 'shift-click' another leaf
         row within the same group to select all rows between that range.</li>
 </ul>
 
-</p>
 
 <?= example('Click Selection', 'click-selection', 'generated', array("enterprise" => 1)) ?>
 
@@ -378,11 +378,15 @@ export interface ColumnVO {
     </ul>
 </note>
 
-<h1 id="selection">Example - Checkbox Selection</h1>
+<h2>Example - Checkbox Selection</h2>
 
 <p>
     Below shows another example using checkbox selection. The example shows:
-    <ul>
+    The example shows checkboxes on two columns. This is for comparison in the example
+    only. Normal applications generally have the checkbox only on one column.
+</p>
+
+    <ul class="content">
         <li>
             Checkbox selection on the group column allowing selection of any row.
         </li>
@@ -391,14 +395,10 @@ export interface ColumnVO {
             level rows only.
         </li>
     </ul>
-    The example shows checkboxes on two columns. This is for comparison in the example
-    only. Normal applications generally have the checkbox only on one column.
-</p>
-
 <?= example('Checkbox Example', 'checkbox', 'generated', array("enterprise" => 1)) ?>
 
 
-<h1 id="child-count">Providing Child Counts</h1>
+<h2>Providing Child Counts</h2>
 
 <p>
     By default, the grid will not show row counts beside the group names. If you do want
@@ -416,7 +416,8 @@ gridOptions.getChildCount = function(data) {
 };
 </snippet>
 
-<h1 id="selection">Providing Node ID's</h1>
+<h2>Providing Node ID's</h2>
+
 <p>
     Providing node ID's is optional. If you provide your own node id's
     (using the <code>getRowNodeId()</code> callback)
@@ -431,7 +432,7 @@ gridOptions.getChildCount = function(data) {
     and will make sure they are unique.
 </p>
 
-<h1 id="enterprise-dynamic-row-height">Dynamic Row Height</h1>
+<h2>Dynamic Row Height</h2>
 
 <p>
     To enable <a href="../javascript-grid-row-height/#">Dynamic Row Height</a> when using the enterprise row model you need to provide an implementation
@@ -445,13 +446,13 @@ gridOptions.getChildCount = function(data) {
     If you are using dynamic row height, ensure 'maxBlocksInCache' is not set.
 </note>
 
-<h1 id="api">Enterprise Model API</h1>
+<h2>Enterprise Model API</h2>
 
 <p>
     The grid has the following API to allow you to interact with the enterprise cache.
 </p>
 
-<table class="table">
+<table class="table reference">
     <tr>
         <th>Method</th>
         <th>Description</th>
@@ -474,7 +475,9 @@ gridOptions.getChildCount = function(data) {
 
 <p>
     Below shows the API in action. The following can be noted:
-<ul>
+</p>
+
+<ul class="content">
     <li>
         Button <b>Purge Everything</b> purges the top level cache.
     </li>
@@ -495,11 +498,11 @@ gridOptions.getChildCount = function(data) {
         on the data?), the example sets a random number.
     </li>
 </ul>
-</p>
 
 <?= example('API example', 'api', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
-<h1 id="pagination">Pagination with Enterprise Row Model</h1>
+<h2>Pagination with Enterprise Row Model</h2>
+
 <p>
     To enable pagination when using the enterprise row model, all you have to do is turning pagination on with
     <code>pagination=true</code>. Find an example below:
@@ -507,7 +510,7 @@ gridOptions.getChildCount = function(data) {
 
 <?= example('Pagination Example', 'pagination', 'generated', array("enterprise" => 1, "extras" => array('lodash'))) ?>
 
-<h1 id="crud">CRUD</h1>
+<h2>CRUD</h2>
 
 <p>
     The enterprise row model acts as a cache against the original store of data which typically
@@ -518,12 +521,13 @@ gridOptions.getChildCount = function(data) {
 
 <p>
     The example below shows this in action where the following can be noted:
-    <ul>
+</p>
+
+    <ul class="content">
         <li>The <b>Add Row</b> will add a row before the currently selected row.</li>
         <li>The <b>Remove Row</b> will remove the currently selected row.</li>
         <li>All operations are done outside of the grid and the grid is then told to refresh.</li>
     </ul>
-</p>
 
 <?= example('Enterprise Row Model & CRUD', 'crud', 'generated', array("enterprise" => 1)) ?>
 

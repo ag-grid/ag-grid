@@ -95,16 +95,5 @@ include 'documentation_header.php';
     </div>
 </div>
 
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>We Play Well With Others, too</h2>
-    <p>
-        End to end examples demonstrating integration of ag-Grid with Third Party products.
-    </p>
-
-    <p> <a href="/javascript-grid-third-party/">Go to Third Party</a> </p>
-    </div>
-</div>
-
 
 <?php include 'documentation_footer.php'; ?>

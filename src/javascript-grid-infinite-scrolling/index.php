@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h2 class="first-h1" id="virtual-paging-infinite-scrolling">Infinite Row Model</h2>
+    <h1>Infinite Row Model</h1>
 
     <note>
         If you are an enterprise user you should consider using the <a href="../javascript-grid-enterprise-model/">enterprise row model</a> instead of the infinite
@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
         once the grid has extended the scroll to reach the last record in the table.
     </p>
 
-    <h3 id="how-it-works">How it Works</h3>
+    <h2>How it Works</h2>
 
     <p>
         The grid will ask your application, via a datasource, for the rows in blocks.
@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        <img src="high-level.png"/>
+        <img src="high-level.png" class="img-fluid"/>
     </p>
 
     <p>
@@ -46,10 +46,10 @@ include '../documentation-main/documentation_header.php';
         In the diagram, the datasource is getting the rows from a database in a remote server.
     </p>
 
-    <h3 id="turning-on-virtual-paging">Turning On Infinite Scrolling</h3>
+    <h2>Turning On Infinite Scrolling</h2>
 
     <p>
-        To turn on infinite scrolling, you must a) set the grid property rowModelType to infinite and b) provide a datasource.
+        To turn on infinite scrolling, you must a) set the grid property <code>rowModelType</code> to <code>'infinite'</code> and b) provide a datasource.
     </p>
 
     <snippet>
@@ -60,7 +60,7 @@ gridOptions.datasource = myDataSource;
 // after grid initialised, you can set or change the datasource
 gridOptions.api.setDatasource(myDataSource);</snippet>
 
-    <h2 id="datasource">Datasource</h2>
+    <h2>Datasource</h2>
 
     <p>
         A datasource must be provided to do infinite scrolling. You specify the datasource as a grid property
@@ -74,7 +74,7 @@ gridOptions.datasource = myDatasource;
 // or use the api after the grid is initialised
 gridOptions.api.setDatasource(myDatasource);</snippet>
 
-    <h3 id="changing-a-datasource">Changing the Datasource</h3>
+    <h3>Changing the Datasource</h3>
 
     <p>
         Changing the datasource after the grid is initialised will reset the infinite scrolling in the grid.
@@ -82,7 +82,7 @@ gridOptions.api.setDatasource(myDatasource);</snippet>
     </p>
 
     <note>
-        If you call <i>setDatasource()</i> the grid will act assuming
+        If you call <code>setDatasource()</code> the grid will act assuming
         it's a new datasource, resetting the block cache. However you can pass in the same datasource instance.
         So your application, for example, might have one instance of a datasource that is aware of some
         external context (eg the business date selected for a report, or the 'bank ATM instance' data you are
@@ -90,10 +90,10 @@ gridOptions.api.setDatasource(myDatasource);</snippet>
         instance. In this case, just call setDatasource() and pass the same datasource in again.
     </note>
 
-    <h3 id="the-datasource-object">Datasource Interface</h3>
+    <h3>Datasource Interface</h3>
 
     <p>
-        In a nutshell, every time the grid wants more rows, it will call <i>getRows()</i> on the datasource.
+        In a nutshell, every time the grid wants more rows, it will call <code>getRows()</code> on the datasource.
         The datasource responds with the rows requested. Your datasource for infinite scrolling should
         implement the following interface:
     </p>
@@ -107,7 +107,7 @@ interface IDatasource {
 }</snippet>
 
     <p>
-        The getRows() method takes the following parameters:
+        The <code>getRows()</code> method takes the following parameters:
     </p>
 
     <snippet>
@@ -136,12 +136,13 @@ interface IGetRowsParams {
     failCallback(): void;
 }</snippet>
 
-    <h3 id="function-get-rows">Function getRows()</h3>
+    <h3><code>getRows()</code></h3>
 
     <p>
-        The <i>getRows()</i> function is called by the grid to load a block of rows into the browser side cache of blocks.
+        The <code>getRows()</code> function is called by the grid to load a block of rows into the browser side cache of blocks.
         It takes the following as parameters:
-        <ul>
+</p>
+        <ul class="content">
             <li>
                 The <b>startRow</b> and <b>endRow</b> define the range expected for the call. For example, if block
                 size is 100, the getRows function will be called with `startRow: 0` and `endRow: 100` and the grid will
@@ -168,15 +169,14 @@ interface IGetRowsParams {
                 application state to your datasource.
             </li>
         </ul>
-    </p>
 
     <h3>Setting Last Row Index</h3>
 
     <p>
-        The success callback parameter <b>lastRow</b> is used to move the grid out of infinite scrolling.
+        The success callback parameter <code>lastRow</code> is used to move the grid out of infinite scrolling.
         If the last row is known, then this should be the index of the last row. If the last row is unknown,
         then leave blank (undefined, null or -1). This attribute is only used when in infinite scrolling.
-        Once the total record count is known, the <i>lastRow</i> parameter will be ignored.
+        Once the total record count is known, the <code>lastRow</code> parameter will be ignored.
     </p>
 
     <p>
@@ -186,24 +186,24 @@ interface IGetRowsParams {
         This will then get the grid to set the scrollbar to fit exactly 250 rows and will not ask for any more blocks.
     </p>
 
-    <h2 id="datasource">Block Cache</h2>
+    <h2>Block Cache</h2>
 
     <p>
         The grid keeps the blocks in a cache. You have the choice to never expire the blocks, or to set a
         limit to the number of blocks kept. If you set a limit, then as you scroll down, previous blocks
         will be discarded and will be loaded again if the user scrolls back up. The maximum blocks to keep
-        in the cache is set using the <i>maxBlocksInCache</i> property.
+        in the cache is set using the <code>maxBlocksInCache</code> property.
     </p>
 
-    <h3 id="block-size">Block Size</h3>
+    <h3>Block Size</h3>
 
     <p>
-        The block size is set using the grid property <i>cacheBlockSize</i>. This is how many rows each block in the
+        The block size is set using the grid property <code>cacheBlockSize</code>. This is how many rows each block in the
         cache should contain.
         Each call to your datasource will be for one block.
     </p>
 
-    <h3 id="aggregation-and-grouping">Aggregation and Grouping</h3>
+    <h3>Aggregation and Grouping</h3>
 
     <p>
         Aggregation and grouping are not available in infinite scrolling.
@@ -213,7 +213,7 @@ interface IGetRowsParams {
         Row Model</a> for doing aggregations on the server side.
     </p>
 
-    <h3 id="sorting-filtering">Sorting & Filtering</h3>
+    <h3>Sorting & Filtering</h3>
 
     <p>
         The grid cannot do sorting or filtering for you, as it does not have all of the data. 
@@ -222,7 +222,7 @@ interface IGetRowsParams {
         state to you.
     </p>
 
-    <h3 id="simple-example-no-sorting-or-filtering">Simple Example - No Sorting or Filtering</h3>
+    <h3>Simple Example - No Sorting or Filtering</h3>
 
     <p>
         The example below makes use of infinite scrolling and caching.
@@ -231,18 +231,18 @@ interface IGetRowsParams {
 
     <?= example('Simple Example', 'simple', 'generated') ?>
 
-    <h3 id="selection">Selection</h3>
+    <h3>Selection</h3>
 
     <p>
         Selection works on the rows in infinite scrolling by using the ID of the row node. If you do not
-        provide ID's for the row nodes, the index of the row node will be used. Using the index of the
+        provide ids for the row nodes, the index of the row node will be used. Using the index of the
         row breaks down when (server side) filtering or sorting, as these change the index of the rows.
-        For this reason, if you do not provide your own id's, then selection is cleared if sort or
+        For this reason, if you do not provide your own ids, then selection is cleared if sort or
         filter is changed.
     </p>
 
     <p>
-        To provide your own id's, implement the method <i>getRowNodeId(data)</i>, which takes the data
+        To provide your own ids, implement the method <code>getRowNodeId(data)</code>, which takes the data
         and should return the id for the data.
     </p>
 
@@ -253,10 +253,10 @@ gridOptions.getRowNodeId: function(item) {
 }</snippet>
 
     <p>
-        Once you have <i>getRowNodeId()</i> implemented, selection will persist across sorts and filters.
+        Once you have <code>getRowNodeId()</code> implemented, selection will persist across sorts and filters.
     </p>
 
-    <h3 id="example-sorting-filtering-and-selection">Example - Sorting, Filtering and Selection</h3>
+    <h3>Example - Sorting, Filtering and Selection</h3>
 
     <p>
         The following example extends the example above by adding server side sorting, filtering and
@@ -269,7 +269,7 @@ gridOptions.getRowNodeId: function(item) {
     </p>
 
     <p>
-        The columns <b><i>Age</i></b>, <b><i>Country</i></b> and <b><i>Year</i></b> can be filtered.
+        The columns <code>Age</code>, <code>Country</code> and <code>Year</code> can be filtered.
         When this happens, the datasource is called again with the new filtering options.
     </p>
 
@@ -281,26 +281,26 @@ gridOptions.getRowNodeId: function(item) {
         is of the row to be loaded.
     </p>
 
-    <p>
-        (note: the example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with server side
-        filtering, ag-Grid-Enterprise is not required for infinite scrolling)
-    </p>
+    <note>
+        The example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with server side
+        filtering, ag-Grid-Enterprise is not required for infinite scrolling.
+    </note>
 
 
-    <note>When filtering using the Infinite Row Model it's important to specify the filter parameter: <i>newRowsAction: 'keep'</i>.
+    <note>When filtering using the Infinite Row Model it's important to specify the filter parameter: <code>newRowsAction: 'keep'</code>.
           This is to prevent the filter from being reset.
     </note>
 
     <?= example('Server Side Sorting And Filtering', 'server-side', 'generated', array("enterprise" => 1)) ?>
 
     <note>
-        When performing multiple row selections using 'shift-click', it is possible that not all rows are available in
-        memory if the configured value of <i>maxBlocksInCache</i> doesn't cover the range. In this case multiple selections
+        When performing multiple row selections using shift-click, it is possible that not all rows are available in
+        memory if the configured value of <code>maxBlocksInCache</code> doesn't cover the range. In this case multiple selections
         will not be allowed.
     </note>
 
 
-    <h3 id="configuring-a-bit-differently">Configuring A Bit Differently</h3>
+    <h3>Configuring A Bit Differently</h3>
 
     <p>
         The examples above use old style JavaScript objects for the datasource. This example turns things around slightly
@@ -309,7 +309,7 @@ gridOptions.getRowNodeId: function(item) {
 
     <?= example('Made Up Data', 'made-up-data', 'generated') ?>
 
-    <h3 id="loading-spinner">Loading Spinner</h3>
+    <h3>Loading Spinner</h3>
 
     <p>
         The examples on this page use a loading spinner to show if the row is waiting for its data to be loaded. The
@@ -347,7 +347,7 @@ loadingSpinnerColumn = {
     </p>
 
     <h3 id="properties">Properties</h3>
-    <table class="table">
+    <table class="table reference">
         <tr>
             <th>Property</th>
             <th>Description</th>
@@ -391,8 +391,8 @@ loadingSpinnerColumn = {
         </tr>
     </table>
 
-    <h3 id="api">API - Infinite Scrolling</h3>
-    <table class="table">
+    <h3>API - Infinite Scrolling</h3>
+    <table class="table reference">
         <tr>
             <th>Method</th>
             <th>Description</th>
@@ -438,8 +438,8 @@ loadingSpinnerColumn = {
 
     </table>
 
-    <h3 id="api">API - Inserting / Removing Rows</h3>
-    <table class="table">
+    <h3>API - Inserting / Removing Rows</h3>
+    <table class="table reference">
         <tr>
             <th>Method</th>
             <th>Description</th>
@@ -474,18 +474,16 @@ loadingSpinnerColumn = {
     </table>
 
 
-    <h4 id="adding-removing-summary">&#8226; Adding / Removing Summary</h4>
-
-    <p>
+    <note>
         Adding / removing rows directly in the grid for infinite scrolling is not recommended as it will complicate
         your application. It will make your life easier if you update the data on the server and refresh the block cache.
-    </p>
+    </note>
 
     <h3 id="example-using-cache-api-methods">Example - Using Cache API Methods</h3>
 
     <p>
         Below demonstrates the different api methods via the buttons. The example outputs a lot of debugging items
-        to the console because the grid property <i>debug=true</i> is set. The buttons are as follows:
+        to the console because the grid property <code>debug=true</code> is set. The buttons are as follows:
         <ul>
         <li>
             <b>Inject 1 Row @ 2 / Inject 5 Row @ 2</b>: Inserts either one or five rows at location index 2.
@@ -523,7 +521,7 @@ loadingSpinnerColumn = {
         </li>
     </ul>
 
-    The example also makes each Honda row bold - demonstrating that the callbacks getRowStyle and getRowClass
+    The example also makes each Honda row bold - demonstrating that the callbacks <code>getRowStyle</code> and <code>getRowClass</code>
     get called after the data is set as well as when the row is created (when the data may not yet be available).
     </p>
 
@@ -536,7 +534,7 @@ loadingSpinnerColumn = {
         With infinite scrolling, it is possible to mix and match with the configuration to
         achieve different effects. The following examples are presented:
 
-        <table class="table">
+        <table class="table reference">
             <tr>
                 <th>Example</th>
                 <th>Page Size</th>
