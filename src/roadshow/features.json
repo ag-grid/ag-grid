@@ -179,10 +179,20 @@
         "url": "javascript-grid-column-spanning/"
     },
     {
+        "title": "Column Moving",
+        "enterprise": false,
+        "description":
+            "Columns can be moved inline by either dragging the column with the mouse, or my using the API.",
+        "src": "javascript-grid-features/images/columnMoving.gif",
+        "snippet": null,
+        "level": 0,
+        "url": "javascript-grid-column-moving/"
+    },
+    {
         "title": "Column Pinning",
         "enterprise": false,
         "description":
-            "Use <span class=\"feature-highlight\">Columm Pinning</span> to pin one or more columns to the left\nor to the right. Pinned columns are always present and not impacted by horizontal scroll.",
+            "Use <span class=\"feature-highlight\">Column Pinning</span> to pin one or more columns to the left\nor to the right. Pinned columns are always present and not impacted by horizontal scroll.",
         "src": "javascript-grid-features/images/columnPinning.gif",
         "snippet": "var columns = [\n    {field: 'athlete', pinned: 'left'},\n    {field: 'total', pinned: 'right'},\n    ...\n]",
         "level": 0,

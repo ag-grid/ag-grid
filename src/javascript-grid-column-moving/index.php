@@ -114,7 +114,39 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Below is a more real work example of where locked columns would be used.
-    The first column is a row number, simlliar
+    The first column is a row number, similar to the row column in Excel. The
+    second column is a buttons column - an application could have buttons for
+    actions eg 'Delete', 'Buy', 'Sell' etc.
+</p>
+
+<p>
+    From the example the following can be noted:
+    <ul>
+        <li>
+            The first two columns are locked into first position by setting
+            <code>colDef.lockPosition=true</code>. This means they cannot be moved out of place,
+            including other columns can not be moved around them.
+        </li>
+        <li>
+            The first two columns have the user provided <code>locked-col</code> CSS class
+            applied to them to change the background color.
+        </li>
+        <li>
+            The sample application listens for column pinned events. If any column is pinned,
+            then the locked columns are also pinned. This is to keep the locked columns at the
+            first position.
+            <ul>
+                <li>
+                    Clicking <b>Pin Athlete</b> will pin athlete, which will result in fixed columns
+                    getting pinned.
+                </li>
+                <li>
+                    Clicking <b>Un-Pin Athlete</b> will un-pin athlete, which will result in fixed columns
+                    getting un-pinned (assuming no other columns are left pinned).
+                </li>
+            </ul>
+        </li>
+    </ul>
 </p>
 
 <?= example('Advanced Lock', 'advanced-lock', 'generated') ?>
