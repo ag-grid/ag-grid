@@ -327,6 +327,7 @@
 
     .ag-row-drag {
         @include icon-background($params, 'grip');
+        background-position-y: $grid-size / 2 + 2px;
         background-position-x: left;
         float: left;
         width: $icon-size + $grid-size * 3;
