@@ -84,6 +84,10 @@ include '../documentation-main/documentation_header.php';
             <td>Set to 'left' or 'right' to pin.</td>
         </tr>
         <tr>
+            <th>lockPosition</th>
+            <td>Set to true to always have column displayed first.</td>
+        </tr>
+        <tr>
             <th>sort</th>
             <td>Set to 'asc' or 'desc' to sort by this column by default.</td>
         </tr>
