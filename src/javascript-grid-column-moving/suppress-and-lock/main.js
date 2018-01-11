@@ -1,5 +1,5 @@
 var columnDefs = [
-    {field: 'athlete', width: 150, suppressMovable: true},
+    {field: 'athlete', width: 150},
     {field: 'age', lockPosition: true},
     {field: 'country', width: 150},
     {field: 'year'},

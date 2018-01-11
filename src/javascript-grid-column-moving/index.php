@@ -54,7 +54,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= example('Column Moving Simple', 'column-moving-simple', 'generated') ?>
+<?= example('Column Moving Simple', 'moving-simple', 'generated') ?>
 
 <h2>Pin with Move</h2>
 
@@ -108,9 +108,15 @@ include '../documentation-main/documentation_header.php';
     </ul>
 </p>
 
-<?= example('Column Suppress & Lock', 'column-suppress-and-lock', 'generated') ?>
+<?= example('Column Suppress & Lock', 'suppress-and-lock', 'generated') ?>
 
 <h3>Advanced Lock Example</h3>
 
+<p>
+    Below is a more real work example of where locked columns would be used.
+    The first column is a row number, simlliar
+</p>
+
+<?= example('Advanced Lock', 'advanced-lock', 'generated') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
