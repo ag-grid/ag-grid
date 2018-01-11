@@ -70,7 +70,7 @@ export class MoveColumnController implements DropListener {
             this.setColumnsVisible(visibleColumns, true);
         }
 
-        this.columnController.setColumnsPinned(columns, this.pinned);
+        this.setColumnsPinned(columns, this.pinned);
         this.onDragging(draggingEvent, true);
     }
 
@@ -88,6 +88,13 @@ export class MoveColumnController implements DropListener {
         if (columns) {
             let allowedCols = columns.filter( c => !c.isLockVisible() );
             this.columnController.setColumnsVisible(allowedCols, visible);
+        }
+    }
+
+    public setColumnsPinned(columns: Column[], pinned: string) {
+        if (columns) {
+            let allowedCols = columns.filter( c => !c.isLockPinned() );
+            this.columnController.setColumnsPinned(allowedCols, pinned);
         }
     }
 
@@ -359,12 +366,17 @@ export class MoveColumnController implements DropListener {
             // we count the failed move attempts. if we fail to move 7 times, then we pin the column.
             // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
-            this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
-            if (this.failedMoveAttempts > 7) {
-                let columns = this.lastDraggingEvent.dragItem.columns;
-                let pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
-                this.columnController.setColumnsPinned(columns, pinType);
-                this.dragAndDropService.nudge();
+
+            let columns = this.lastDraggingEvent.dragItem.columns;
+            let columnsThatCanPin = columns.filter( c => !c.isLockPinned() );
+
+            if (columnsThatCanPin.length > 0) {
+                this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
+                if (this.failedMoveAttempts > 7) {
+                    let pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
+                    this.setColumnsPinned(columnsThatCanPin, pinType);
+                    this.dragAndDropService.nudge();
+                }
             }
         }
     }
