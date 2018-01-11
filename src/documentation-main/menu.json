@@ -167,6 +167,10 @@
                 "url": "javascript-grid-resizing/"
             },
             {
+                "title": "Column Moving",
+                "url": "javascript-grid-column-moving/"
+            },
+            {
                 "title": "Column Filter",
                 "url": "javascript-grid-filtering/",
                 "items": [
