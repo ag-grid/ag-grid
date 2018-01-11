@@ -1,6 +1,6 @@
-import {ColumnSelectPanel} from "./toolPanel/columnsSelect/columnSelectPanel";
-import {RenderedColumn} from "./toolPanel/columnsSelect/renderedColumn";
-import {RenderedGroup} from "./toolPanel/columnsSelect/renderedGroup";
+import {ColumnSelectComp} from "./toolPanel/columnsSelect/columnSelectComp";
+import {ToolPanelColumnComp} from "./toolPanel/columnsSelect/toolPanelColumnComp";
+import {ToolPanelGroupComp} from "./toolPanel/columnsSelect/toolPanelGroupComp";
 import {AggregationStage} from "./rowStages/aggregationStage";
 import {GroupStage} from "./rowStages/groupStage";
 import {SetFilter} from "./setFilter/setFilter";
@@ -72,9 +72,9 @@ export function populateClientExports(exports: any): void {
 
     exports.ToolPanelComp = ToolPanelComp;
 
-    exports.ColumnSelectPanel = ColumnSelectPanel;
-    exports.RenderedColumn = RenderedColumn;
-    exports.RenderedGroup = RenderedGroup;
+    exports.ColumnSelectPanel = ColumnSelectComp;
+    exports.RenderedColumn = ToolPanelColumnComp;
+    exports.RenderedGroup = ToolPanelGroupComp;
 
     exports.ViewportRowModel = ViewportRowModel;
 

@@ -11,10 +11,10 @@ import {
     Utils,
     OriginalColumnGroupChild
 } from "ag-grid/main";
-import {RenderedGroup} from "./renderedGroup";
-import {RenderedColumn} from "./renderedColumn";
+import {ToolPanelGroupComp} from "./toolPanelGroupComp";
+import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 
-export class ColumnSelectPanel extends Component {
+export class ColumnSelectComp extends Component {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private globalEventService: EventService;
@@ -30,7 +30,7 @@ export class ColumnSelectPanel extends Component {
 
     // we allow dragging in the toolPanel, but not when this component appears in the column menu
     constructor(allowDragging: boolean) {
-        super(ColumnSelectPanel.TEMPLATE);
+        super(ColumnSelectComp.TEMPLATE);
         this.allowDragging = allowDragging;
     }
 
@@ -68,7 +68,7 @@ export class ColumnSelectPanel extends Component {
         if (columnGroup.getColGroupDef() && columnGroup.getColGroupDef().suppressToolPanel) { return; }
 
         if (!columnGroup.isPadding()) {
-            let renderedGroup = new RenderedGroup(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
+            let renderedGroup = new ToolPanelGroupComp(columnGroup, dept, this.onGroupExpanded.bind(this), this.allowDragging);
             this.context.wireBean(renderedGroup);
             this.appendChild(renderedGroup.getGui());
             // we want to indent on the gui for the children
@@ -86,7 +86,7 @@ export class ColumnSelectPanel extends Component {
     private recursivelyRenderColumnComponent(column: Column, dept: number): void {
         if (column.getColDef() && column.getColDef().suppressToolPanel) { return; }
 
-        let renderedColumn = new RenderedColumn(column, dept, this.allowDragging);
+        let renderedColumn = new ToolPanelColumnComp(column, dept, this.allowDragging);
         this.context.wireBean(renderedColumn);
         this.appendChild(renderedColumn.getGui());
 
@@ -117,7 +117,7 @@ export class ColumnSelectPanel extends Component {
 
                 let newVisible: boolean;
                 if (component) {
-                    let expanded = (<RenderedGroup>component).isExpanded();
+                    let expanded = (<ToolPanelGroupComp>component).isExpanded();
                     newVisible = visible ? expanded : false;
                 } else {
                     newVisible = visible;

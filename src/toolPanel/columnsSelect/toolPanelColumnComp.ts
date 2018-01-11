@@ -24,7 +24,7 @@ import {
     Utils
 } from "ag-grid/main";
 
-export class RenderedColumn extends Component {
+export class ToolPanelColumnComp extends Component {
 
     private static TEMPLATE =
         '<div class="ag-column-select-column">' +
@@ -63,7 +63,7 @@ export class RenderedColumn extends Component {
     @PostConstruct
     public init(): void {
 
-        this.setTemplate(RenderedColumn.TEMPLATE);
+        this.setTemplate(ToolPanelColumnComp.TEMPLATE);
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         this.eText.innerHTML = this.displayName;
@@ -264,12 +264,18 @@ export class RenderedColumn extends Component {
             this.cbSelect.setSelected(this.column.isVisible());
         }
 
-        // read only in pivot mode if:
-        let checkboxReadOnly = isPivotMode
-            // a) gui is not allowed make any changes or
-            && (this.gridOptionsWrapper.isFunctionsReadOnly()
-            // b) column is not allow any functions on it
-            || !this.column.isAnyFunctionAllowed());
+        let checkboxReadOnly: boolean;
+        if (isPivotMode) {
+            // when in pivot mode, the item should be read only if:
+            //  a) gui is not allowed make any changes
+            let functionsReadOnly = this.gridOptionsWrapper.isFunctionsReadOnly();
+            //  b) column is not allow any functions on it
+            let noFunctionsAllowed = !this.column.isAnyFunctionAllowed();
+            checkboxReadOnly = functionsReadOnly || noFunctionsAllowed;
+        } else {
+            // when in normal mode, the checkbox is read only if visibility is locked
+            checkboxReadOnly = this.column.isLockVisible();
+        }
 
         this.cbSelect.setReadOnly(checkboxReadOnly);
 

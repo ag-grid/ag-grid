@@ -1,5 +1,5 @@
 import {Component, GridOptionsWrapper, PostConstruct, Bean, Autowired, Context} from "ag-grid/main";
-import {ColumnSelectPanel} from "./columnsSelect/columnSelectPanel";
+import {ColumnSelectComp} from "./columnsSelect/columnSelectComp";
 import {RowGroupColumnsPanel} from "./columnDrop/rowGroupColumnsPanel";
 import {PivotColumnsPanel} from "./columnDrop/pivotColumnsPanel";
 import {PivotModePanel} from "./columnDrop/pivotModePanel";
@@ -36,7 +36,7 @@ export class ToolPanelComp extends Component implements IToolPanel {
             this.addComponent(new PivotModePanel())
         }
 
-        this.addComponent(new ColumnSelectPanel(true));
+        this.addComponent(new ColumnSelectComp(true));
 
         if (!this.gridOptionsWrapper.isToolPanelSuppressRowGroups()) {
             this.addComponent(new RowGroupColumnsPanel(false));

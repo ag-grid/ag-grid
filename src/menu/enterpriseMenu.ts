@@ -22,7 +22,7 @@ import {
     Promise,
     BeanStub
 } from "ag-grid";
-import {ColumnSelectPanel} from "../toolPanel/columnsSelect/columnSelectPanel";
+import {ColumnSelectComp} from "../toolPanel/columnsSelect/columnSelectComp";
 import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";
@@ -156,7 +156,7 @@ export class EnterpriseMenu extends BeanStub {
     private column: Column;
     private mainMenuList: MenuList;
 
-    private columnSelectPanel: ColumnSelectPanel;
+    private columnSelectPanel: ColumnSelectComp;
 
     private tabItemFilter: TabbedItem;
     private tabItemGeneral: TabbedItem;
@@ -413,7 +413,7 @@ export class EnterpriseMenu extends BeanStub {
         let eWrapperDiv = document.createElement('div');
         Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
 
-        this.columnSelectPanel = new ColumnSelectPanel(false);
+        this.columnSelectPanel = new ColumnSelectComp(false);
         this.context.wireBean(this.columnSelectPanel);
 
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());

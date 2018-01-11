@@ -20,7 +20,7 @@ import {
     Utils
 } from "ag-grid/main";
 
-export class RenderedGroup extends Component {
+export class ToolPanelGroupComp extends Component {
 
     private static TEMPLATE =
         '<div class="ag-column-select-column-group">' +
@@ -68,7 +68,7 @@ export class RenderedGroup extends Component {
 
     @PostConstruct
     public init(): void {
-        this.setTemplate(RenderedGroup.TEMPLATE);
+        this.setTemplate(ToolPanelGroupComp.TEMPLATE);
 
         this.instantiate(this.context);
 
@@ -154,7 +154,9 @@ export class RenderedGroup extends Component {
     }
 
     private onClick(): void {
-        this.cbSelect.setSelected(!this.cbSelect.isSelected());
+        if (!this.cbSelect.isReadOnly()) {
+            this.cbSelect.setSelected(!this.cbSelect.isSelected());
+        }
     }
 
     private onCheckboxChanged(): void {
@@ -170,7 +172,8 @@ export class RenderedGroup extends Component {
                 this.actionUnCheckedReduce(childColumns)
             }
         } else {
-            this.columnController.setColumnsVisible(childColumns, selected);
+            let allowedColumns = childColumns.filter( c => !c.isLockVisible() );
+            this.columnController.setColumnsVisible(allowedColumns, selected);
         }
     }
 
@@ -236,13 +239,42 @@ export class RenderedGroup extends Component {
     }
 
     private onColumnStateChanged(): void {
-        let columnsReduced = this.columnController.isPivotMode();
+        let selectedValue = this.workOutSelectedValue();
+        let readOnlyValue = this.workOutReadOnlyValue();
+        this.processingColumnStateChange = true;
+        this.cbSelect.setSelected(selectedValue);
+        this.cbSelect.setReadOnly(readOnlyValue);
+        this.processingColumnStateChange = false;
+    }
+
+    private workOutReadOnlyValue(): boolean {
+        let pivotMode = this.columnController.isPivotMode();
+
+        let colsThatCanAction = 0;
+
+        this.columnGroup.getLeafColumns().forEach( col => {
+            if (pivotMode) {
+                if (col.isAnyFunctionAllowed()) {
+                    colsThatCanAction++;
+                }
+            } else {
+                if (!col.isLockVisible()) {
+                    colsThatCanAction++;
+                }
+            }
+        });
+
+        return colsThatCanAction === 0;
+    }
+
+    private workOutSelectedValue(): boolean {
+        let pivotMode = this.columnController.isPivotMode();
 
         let visibleChildCount = 0;
         let hiddenChildCount = 0;
 
         this.columnGroup.getLeafColumns().forEach( (column: Column) => {
-            if (this.isColumnVisible(column, columnsReduced)) {
+            if (this.isColumnVisible(column, pivotMode)) {
                 visibleChildCount++;
             } else {
                 hiddenChildCount++;
@@ -258,13 +290,11 @@ export class RenderedGroup extends Component {
             selectedValue = false;
         }
 
-        this.processingColumnStateChange = true;
-        this.cbSelect.setSelected(selectedValue);
-        this.processingColumnStateChange = false;
+        return selectedValue;
     }
 
-    private isColumnVisible(column: Column, columnsReduced: boolean): boolean {
-        if (columnsReduced) {
+    private isColumnVisible(column: Column, pivotMode: boolean): boolean {
+        if (pivotMode) {
             let pivoted = column.isPivotActive();
             let grouped = column.isRowGroupActive();
             let aggregated = column.isValueActive();
