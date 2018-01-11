@@ -310,6 +310,8 @@ export class EnterpriseMenu extends BeanStub {
     private getDefaultMenuOptions(): string[] {
         let result: string[] = [];
 
+        let allowPinning = !this.column.isLockPinned();
+
         let rowGroupCount = this.columnController.getRowGroupColumns().length;
         let doingGrouping = rowGroupCount > 0;
 
@@ -321,19 +323,24 @@ export class EnterpriseMenu extends BeanStub {
 
         let isInMemoryRowModel = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_IN_MEMORY;
 
-        result.push('pinSubMenu');
-
         let allowValueAgg =
             // if primary, then only allow aggValue if grouping and it's a value columns
             (isPrimary && doingGrouping && allowValue)
             // secondary columns can always have aggValue, as it means it's a pivot value column
             || !isPrimary;
 
+        if (allowPinning) {
+            result.push('pinSubMenu');
+        }
+
         if (allowValueAgg) {
             result.push('valueAggSubMenu');
         }
 
-        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
+        if (allowPinning || allowValueAgg) {
+            result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
+        }
+
         result.push('autoSizeThis');
         result.push('autoSizeAll');
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
