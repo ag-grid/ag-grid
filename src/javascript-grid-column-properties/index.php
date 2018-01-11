@@ -88,6 +88,14 @@ include '../documentation-main/documentation_header.php';
             <td>Set to true to always have column displayed first.</td>
         </tr>
         <tr>
+            <th>lockVisible</th>
+            <td>Set to true block making column visible / hidden via the UI (API will still work).</td>
+        </tr>
+        <tr>
+            <th>lockPinned</th>
+            <td>Set to true block pinning column via the UI (API will still work).</td>
+        </tr>
+        <tr>
             <th>sort</th>
             <td>Set to 'asc' or 'desc' to sort by this column by default.</td>
         </tr>

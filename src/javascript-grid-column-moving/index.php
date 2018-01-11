@@ -74,25 +74,33 @@ include '../documentation-main/documentation_header.php';
 
 </p>
 
-
-<h2>Suppress & Lock</h2>
+<h2>Suppress Hide Leave</h2>
 
 <p>
-    Two column properties restrict movement of columns via the UI by the user:
-    <ul>
-        <li>
-            <code>suppressMovable</code>: The column header cannot be dragged by the user to move
-            the columns. However the column can be inadvertently moved by placing other columns around it
-            thus only making it practical if all columns have this property.
-        </li>
-        <li>
-            <code>lockPosition</code>: The column will always appear first, cannot be dragged by the user,
-            and can not be moved out of position by dragging other columns.
-        </li>
-    </ul>
+    The grid property <code>suppressDragLeaveHidesColumns</code> will stop columns getting removed
+    from the grid if they are dragged outside of the grid. This is handy if the user moves a column
+    outside of the grid by accident while moving a column but doesn't intend to make it hidden.
 </p>
 
-<h3>Suppress & Lock Example</h3>
+<h2>Suppress Movable</h2>
+
+<p>
+    The column property <code>suppressMovable</code> changes whether the column can be dragged.
+    The column header cannot be dragged by the user to move
+    the columns when <code>suppressMovable=true</code>.
+    However the column can be inadvertently moved by placing other columns around it
+    thus only making it practical if all columns have this property.
+</p>
+
+<h2>Lock Position</h2>
+
+<p>
+    The column property <code>lockPosition</code> locks columns to the first position in the grid.
+    When <code>lockPosition=true</code>, the column will always appear first, cannot be dragged by the user,
+    and can not be moved out of position by dragging other columns.
+</p>
+
+<h2>Suppress Movable & Lock Position Example</h2>
 
 <p>
     The example below demonstrates these properties as follows:
@@ -106,6 +114,11 @@ include '../documentation-main/documentation_header.php';
             this column, however it is possible to move other columns around it.
         </li>
         <li>
+            The grid has <code>suppressDragLeaveHidesColumns=true</code> so columns dragged
+            outside of the grid are not hidden (normally dragging a column out of the grid
+            will hide the column).
+        </li>
+        <li>
             Age and Athlete columns have the user provided <code>locked-col</code>
             and <code>suppress-movable-col</code> CSS classes applied to them respectively to
             change the background color.
@@ -115,7 +128,7 @@ include '../documentation-main/documentation_header.php';
 
 <?= example('Column Suppress & Lock', 'suppress-and-lock', 'generated') ?>
 
-<h3>Advanced Lock Example</h3>
+<h2>Advanced Locked Position Example</h2>
 
 <p>
     Below is a more real work example of where locked columns would be used.
@@ -155,5 +168,57 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <?= example('Advanced Lock', 'advanced-lock', 'generated') ?>
+
+<h2>Lock Visible</h2>
+
+<p>
+    When you move columns around it is possible to change their visibility as follows:
+    <ul>
+        <li>You can hide a column by dragging it outside of the grid.</li>
+        <li>
+            You can show a column by dragging it from the
+            <a href="../javascript-grid-tool-panel/">tool panel</a>
+            onto the grid.
+        </li>
+    </ul>
+</p>
+
+<p>
+    The column property <code>lockVisible</code> will stop individual columns from been made
+    visible or hidden via the UI. When <code>lockVisible=true</code>, then the column will not
+    hide when it is dragged out of the grid, and columns dragged from the tool panel onto the
+    grid will not become visible.
+</p>
+
+<p>
+    There is slight overlap with the property <code>suppressDragLeaveHidesColumns</code>.
+    When <code>suppressDragLeaveHidesColumns=true</code> then all columns remain visible
+    if they are dragged outside of the grid. This is a good way to block all columns from
+    hiding as the user reorders the columns via dragging. The <code>lockVisible</code>
+    property is at the column level and blocks all UI functions that change a column's visibility.
+</p>
+
+<h3>Lock Visible Example</h3>
+
+<p>
+    The example below shows lock visible. The following can be noted:
+    <ul>
+        <li>
+            The columns Age, Gold, Silver and Bronze are all locked visible.
+            It is not possible to hide the columns by dragging them out of the grid
+            and not possible to show the columns by dragging them in from the tool panel.
+        </li>
+        <li>
+            If you make a group visible or hidden in the tool panel, the locked columns
+            are not impacted.
+        </li>
+        <li>
+            If you drag a group (eg the 'Athlete' group) out of the grid, all normal
+            columns in the group are removed and all locked columns in the group are left intact.
+        </li>
+    </ul>
+</p>
+
+<?= example('Lock Visible', 'lock-visible', 'generated', array("enterprise" => 1)) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
