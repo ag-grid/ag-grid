@@ -139,6 +139,7 @@
             display: none;
             height: 100vh;
             overflow: auto;
+            padding-left: 0;
 
             > ul {
                 border-left: 1px solid $border-color;

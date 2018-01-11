@@ -441,13 +441,13 @@
                 "url": "javascript-grid-infinite-scrolling/"
             },
             {
-                "title": "Viewport",
-                "url": "javascript-grid-viewport/",
+                "title": "Enterprise",
+                "url": "javascript-grid-enterprise-model/",
                 "enterprise": true
             },
             {
-                "title": "Enterprise",
-                "url": "javascript-grid-enterprise-model/",
+                "title": "Viewport",
+                "url": "javascript-grid-viewport/",
                 "enterprise": true
             }
         ]
