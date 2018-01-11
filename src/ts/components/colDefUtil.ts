@@ -19,8 +19,8 @@ export class ColDefUtil {
         'templateUrl',
         'filter',
         'aggFunc',
-        'cellEditor'
-
+        'cellEditor',
+        'pinned'
     ];
 
     public static OBJECT_PROPERTIES = [
@@ -66,7 +66,6 @@ export class ColDefUtil {
         'openByDefault',
         'marryChildren',
         'hide',
-        'pinned',
         'rowGroup',
         'pivot',
         'checkboxSelection',
@@ -76,6 +75,7 @@ export class ColDefUtil {
         'suppressSorting',
         'suppressMovable',
         'suppressFilter',
+        'lockPosition',
         'unSortIcon',
         'suppressSizeToFit',
         'suppressResize',
