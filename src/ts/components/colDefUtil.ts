@@ -76,6 +76,8 @@ export class ColDefUtil {
         'suppressMovable',
         'suppressFilter',
         'lockPosition',
+        'lockVisible',
+        'lockPinned',
         'unSortIcon',
         'suppressSizeToFit',
         'suppressResize',

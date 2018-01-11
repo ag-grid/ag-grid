@@ -59,7 +59,7 @@ export class MoveColumnController implements DropListener {
         let dragCameFromToolPanel = draggingEvent.dragSource.type===DragSourceType.ToolPanel;
         if (dragCameFromToolPanel) {
             // the if statement doesn't work if drag leaves grid, then enters again
-            this.columnController.setColumnsVisible(columns, true);
+            this.setColumnsVisible(columns, true);
         } else {
             // restore previous state of visible columns upon re-entering. this means if the user drags
             // a group out, and then drags the group back in, only columns that were originally visible
@@ -67,7 +67,7 @@ export class MoveColumnController implements DropListener {
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             let visibleState = draggingEvent.dragItem.visibleState;
             let visibleColumns: Column[] = columns.filter(column => visibleState[column.getId()] );
-            this.columnController.setColumnsVisible(visibleColumns, true);
+            this.setColumnsVisible(visibleColumns, true);
         }
 
         this.columnController.setColumnsPinned(columns, this.pinned);
@@ -79,9 +79,16 @@ export class MoveColumnController implements DropListener {
         if (hideColumnOnExit) {
             let dragItem = draggingEvent.dragSource.dragItemCallback();
             let columns = dragItem.columns;
-            this.columnController.setColumnsVisible(columns, false);
+            this.setColumnsVisible(columns, false);
         }
         this.ensureIntervalCleared();
+    }
+
+    public setColumnsVisible(columns: Column[], visible: boolean) {
+        if (columns) {
+            let allowedCols = columns.filter( c => !c.isLockVisible() );
+            this.columnController.setColumnsVisible(allowedCols, visible);
+        }
     }
 
     public onDragStop(): void {

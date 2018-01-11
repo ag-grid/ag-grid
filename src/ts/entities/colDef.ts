@@ -201,7 +201,7 @@ export interface ColDef extends AbstractColDef {
     lockVisible?: boolean;
 
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */
-    lockPin?: boolean;
+    lockPinned?: boolean;
 
     /** Set to true to not allow filter on this column */
     suppressFilter?: boolean;
