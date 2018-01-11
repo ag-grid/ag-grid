@@ -50,7 +50,7 @@ export class DetailCellRenderer extends Component {
     }
 
     private setupGrabMouseWheelEvent(): void {
-        let mouseWheelListener = ()=> {
+        let mouseWheelListener = (event: WheelEvent) => {
             event.stopPropagation();
         };
 
