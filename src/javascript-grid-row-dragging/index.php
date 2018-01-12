@@ -343,6 +343,8 @@ colDef = {
         the grid.
     </p>
 
+    <h3>Example Tree Data</h3>
+
     <p>
         The example below shows <a href="../javascript-grid-tree-data/">Tree Data</a>
         and row dragging where the following can be noted:
@@ -352,17 +354,39 @@ colDef = {
                 has row drag true for all rows.
             </li>
             <li>
-                The example registers for <code>onRowDragMove</code> events and works out what folder
-                the mouse is over as the drag is happening.
+                The example registers for <code>onRowDragEnd</code> events and rearranges
+                the rows when the drag completes.
             </li>
             <li>
                 The applications does NOT rearrange the rows as the drag is happening. Instead it
                 waits for the <code>onRowDragEnd</code> event before updating the data.
             </li>
+        </ul>
+
+        <?= example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
+
+    </p>
+
+    <h3>Example Highlighted Tree Data</h3>
+
+    <p>
+        The example above works, however it is not intuitive as the user is given no visual hint
+        what folder will be the destination folder. The example below continues with the example
+        about by providing hints to the user while the drag is in progress. From the example
+        the following can be observed:
+        <ul>
+            <li>
+                The example registers for <code>onRowDragMove</code> events and works out what folder
+                the mouse is over as the drag is happening.
+            </li>
             <li>
                 While the row is dragging, the application highlights the folder that is currently
                 selected as the destination folder (called <code>potentialParent</code> in the example
                 code).
+            </li>
+            <li>
+                The applications does NOT rearrange the rows as the drag is happening. As with the
+                previous example, it waits for the <code>onRowDragEnd</code> event before updating the data.
             </li>
             <li>
                 The example uses
@@ -377,7 +401,8 @@ colDef = {
             </li>
         </ul>
 
-        <?= example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
+        <?= example('Highlighting Drag with Tree Data', 'highlighting-drag-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
+
     </p>
 
     <h2>Dragging Multiple Rows</h2>

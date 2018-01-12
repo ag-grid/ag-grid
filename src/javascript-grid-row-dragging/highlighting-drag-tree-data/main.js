@@ -1,12 +1,18 @@
 // specify the columns
 var columnDefs = [
     {
-        field: 'dateModified'
+        field: 'dateModified',
+        cellClassRules: {
+            'hover-over': function(params) { return params.node === potentialParent; }
+        }
     },
     {
         field: 'size',
         valueFormatter: function(params) {
             return params.value ? params.value + ' MB' : '';
+        },
+        cellClassRules: {
+            'hover-over': function(params) { return params.node === potentialParent; }
         }
     }
 ];
@@ -53,33 +59,39 @@ var gridOptions = {
         cellRendererParams: {
             suppressCount: true,
             innerRenderer: 'fileCellRenderer'
+        },
+        cellClassRules: {
+            'hover-over': function(params) { return params.node === potentialParent; }
         }
     },
-    onRowDragEnd: onRowDragEnd
+    onRowDragEnd: onRowDragEnd,
+    onRowDragMove: onRowDragMove,
+    onRowDragLeave: onRowDragLeave,
 };
 
+var potentialParent = null;
+
+function onRowDragMove(event) {
+    setPotentialParentForNode(event.api, event.overNode);
+}
+
+function onRowDragLeave(event) {
+    // clear node to highlight
+    setPotentialParentForNode(event.api, null);
+}
+
 function onRowDragEnd(event) {
+    if (!potentialParent) { return; }
 
-    // this is the row the mouse is hovering over
-    var overNode = event.overNode;
-
-    // folder to drop into is where we are going to move the file/folder to
-    var folderToDropInto = overNode.data.type === 'folder'
-        // if over a folder, we take the immediate row
-        ? overNode
-        // if over a file, we take the parent row (which will be a folder)
-        : overNode.parent;
-
-    // the data we want to move
     var movingData = event.node.data;
 
     // take new parent path from parent, if data is missing, means it's the root node,
     // which has no data.
-    var newParentPath = folderToDropInto.data ? folderToDropInto.data.filePath : [];
+    var newParentPath = potentialParent.data ? potentialParent.data.filePath : [];
     var needToChangeParent = !arePathsEqual(newParentPath, movingData.filePath);
 
     // check we are not moving a folder into a child folder
-    var invalidMode = isSelectionParentOfTarget(event.node, folderToDropInto);
+    var invalidMode = isSelectionParentOfTarget(event.node, potentialParent);
     if (invalidMode) {
         console.log('invalid move');
     }
@@ -92,13 +104,13 @@ function onRowDragEnd(event) {
         gridOptions.api.updateRowData({
             update: updatedRows
         });
-
         gridOptions.api.clearFocusedCell();
     }
+
+    // clear node to highlight
+    setPotentialParentForNode(event.api, null);
 }
 
-// this updates the filePath locations in our data, we update the data
-// before we send it to ag-Grid
 function moveToPath(newParentPath, node, allUpdatedNodes) {
     // last part of the file path is the file name
     var oldPath = node.data.filePath;
@@ -137,6 +149,50 @@ function arePathsEqual(path1, path2) {
     });
 
     return equal;
+}
+
+function setPotentialParentForNode(api, overNode) {
+
+    var newPotentialParent;
+    if (overNode) {
+        newPotentialParent = overNode.data.type === 'folder'
+            // if over a folder, we take the immediate row
+            ? overNode
+            // if over a file, we take the parent row (which will be a folder)
+            : overNode.parent;
+    } else {
+        newPotentialParent = null;
+    }
+
+    var alreadySelected = potentialParent === newPotentialParent;
+    if (alreadySelected) { return; }
+
+    // we refresh the previous selection (if it exists) to clear
+    // the highlighted and then the new selection.
+    var rowsToRefresh = [];
+    if (potentialParent) {
+        rowsToRefresh.push(potentialParent);
+    }
+    if (newPotentialParent) {
+        rowsToRefresh.push(newPotentialParent);
+    }
+
+    potentialParent = newPotentialParent;
+
+    refreshRows(api, rowsToRefresh);
+}
+
+function refreshRows(api, rowsToRefresh) {
+    var params = {
+        // refresh these rows only.
+        rowNodes: rowsToRefresh,
+        // because the grid does change detection, the refresh
+        // will not happen because the underlying value has not
+        // changed. to get around this, we force the refresh,
+        // which skips change detection.
+        force: true
+    };
+    api.refreshCells(params);
 }
 
 function getFileCellRenderer() {
