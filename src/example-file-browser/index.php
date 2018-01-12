@@ -3,12 +3,11 @@ $pageTitle = "ag-Grid File Browser";
 $pageDescription = "How to make a file browser using ag-Grid. This page gives you an example you can follow.";
 $pageKeyboards = "ag-Grid File Browser";
 $pageGroup = "examples";
+define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
-    <h2>File Browser</h2>
+    <h1>File Browser</h1>
 
     <p>
         The example below shows how you can make complex tree structure using ag-Grid.
@@ -20,7 +19,5 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <show-example example="fileBrowser"></show-example>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

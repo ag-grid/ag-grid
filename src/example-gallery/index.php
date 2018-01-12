@@ -6,11 +6,9 @@ $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+    <h1>Gallery</h1>
 
-    <h1 class="first-h1" id="icons">Gallery</h1>
-
-    <p>
+    <p class="lead">
         This section of the documentation demonstrates different configurations of the grid.
         It is really a mixed bag section, showing combinations of grid features working together that
         doesn't fit into a particular documentation section.
@@ -20,9 +18,10 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Shows the autoHeight feature working with fullWidth and pagination.
-        <ul>
+    </p>
+        <ul class="content">
             <li>The fullWidth rows are embedded. This means:
-                <ul>
+                <ul class="content">
                     <li>Embedded rows are chopped into the pinned sections.</li>
                     <li>Embedded rows scroll horizontally with the other rows.</li>
                 </ul>
@@ -31,20 +30,18 @@ include '../documentation-main/documentation_header.php';
             one page to the other, the grid re-sizes to fit the page (10 rows on the first
                 page, 5 rows on the second page).</li>
         </ul>
-    </p>
 
     <?= example('Auto Height & Full Width', 'auto-height-full-width', 'vanilla', array("enterprise" => 1)) ?>
 
-    <hr/>
 
-    <h2 id="tree-data-vertical-scroll-location">Expanding Groups &amp; Vertical Scroll Location</h2>
+    <h2>Expanding Groups &amp; Vertical Scroll Location</h2>
 
     <p>
         Depending on your scroll position the last item's group data may not be visible when
         clicking on the expand icon.
     </p>
     <p>
-        You can resolve this by using the function <strong>api.ensureIndexVisible()</strong>.
+        You can resolve this by using the function <code>api.ensureIndexVisible()</code>.
         This ensures the index is visible, scrolling the table if needed.
     </p>
     <p>
@@ -103,6 +100,6 @@ row = {
 
     <?= example('Flower Nodes', 'flower-nodes', 'generated') ?>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

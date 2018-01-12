@@ -3,12 +3,12 @@ $pageTitle = "Grid Expressions and Context Example";
 $pageDescription = "ag-Grid Expressions and Context example. Learn how to build a grid using Expressions and Context from ag-Grid";
 $pageKeyboards = "ag-Grid expressions Context";
 $pageGroup = "examples";
+define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h2>Expressions and Context</h2>
+    <h1>Expressions and Context</h1>
 
     <p>
         Below shows extensive use of value getters (using expressions) and class rules (again using expressions).
@@ -41,6 +41,5 @@ include '../documentation-main/documentation_header.php';
 
     <?= example("Monthly Sales", "monthly-sales", "vanilla", array("enterprise" => true, "extras" => array("fontawesome", "bootstrap"))) ?>
 
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
