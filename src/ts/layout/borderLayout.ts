@@ -138,6 +138,11 @@ export class BorderLayout {
         this.eOverlayWrapper = this.getRefElement('overlay');
         this.eCenterRow = this.getRefElement('centerRow');
 
+        // initially hide the overlay. this is needed for IE10, if we don't hide the overlay,
+        // then it grabs mouse events, and it blocks clicking on the grid (as the overlay consumes
+        // the mouse events).
+        this.eOverlayWrapper.style.display = 'none';
+
         this.eNorthChildLayout = this.setupPanel(params.north, this.eNorthWrapper);
         this.eSouthChildLayout = this.setupPanel(params.south, this.eSouthWrapper);
         this.eEastChildLayout = this.setupPanel(params.east, this.eEastWrapper);
