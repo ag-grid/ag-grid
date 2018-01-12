@@ -1,5 +1,4 @@
-<h2 id="polymerCellRendering">
-    <img src="../images/polymer-large.png" style="width: 60px;"/>
+<h2>
     Polymer Cell Rendering
 </h2>
 
@@ -10,24 +9,23 @@
 </p>
 
 <h3 id="example-rendering-using-polymer-components">Example: Rendering using Polymer Components</h3>
-<p>
-    Using Polymer Components in the Cell Renderers
-</p>
+
+<p> Using Polymer Components in the Cell Renderers </p>
 <?= example('Simple Dynamic Component', 'polymer-dynamic', 'polymer', array("exampleHeight" => 460)) ?>
 
-<h3 id="polymer-methods-lifecycle"><img src="../images/polymer-large.png" style="width: 20px;"/> Polymer Methods /
-    Lifecycle</h3>
+<h3 id="polymer-methods-lifecycle"> Polymer Methods / Lifecycle</h3>
 
 <p>
     All of the methods in the <code>ICellRenderer</code> interface described above are applicable
     to the Polymer Component with the following exceptions:
-<ul>
-    <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method.
-    </li>
-    <li><i>getGui()</i> is not used. Instead do normal Polymer magic in your Component via the Polymer template.</li>
+</p>
+
+<ul class="content">
+    <li><code>init()</code> is not used. Instead implement the <code>agInit</code> method.  </li>
+    <li><code>getGui()</code> is not used. Instead do normal Polymer magic in your Component via the Polymer template.</li>
 </ul>
 
-<h3 id="handling-refresh"><img src="../images/polymer-large.png" style="width: 20px;"/> Handling Refresh</h3>
+<h3 id="handling-refresh">Handling Refresh</h3>
 
 <p>
     To handle refresh, implement logic inside the <code>refresh()</code> method inside your component and return true.

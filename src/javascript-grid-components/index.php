@@ -6,156 +6,83 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
+<h1> Components </h1>
+
+<p class="lead">
+    You can create your own custom components to customise the behaviour
+    of the grid. For example you can customise how cells are rendered,
+    how values are edited and also create your own filters.
+</p>
+
+<p>
+    The following sections show how to use your own components inside the grid:
+</p>
+
+<div class="docs-homepage-section-preview">
     <div>
+    <h2>Cell Renderer</h2>
+    <p> A cell renderer customises the contents of a cell.  </p>
+    <p> <a href="../javascript-grid-cell-rendering-components/">Go to Cell Renderer Component</a> </p>
+    </div>
+</div>
 
-        <h1 class="first-h1" id="Components">
-            <img src="../images/svg/docs/components.svg" width="50"/>
-            Components
-        </h1>
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Cell Editor</h2>
+    <p> A cell renderer customises the contents of a cell.  </p>
+    <p> <a href="../javascript-grid-cell-editor/">Go to Cell Editor Component</a> </p>
+    </div>
+</div>
 
-        <p>
-            You can create your own custom components to customise the behaviour
-            of the grid. For example you can customise how cells are rendered,
-            how values are edited and also create your own filters.
-        </p>
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Filter Component</h2>
+    <p> For custom column filter that appears inside the column menu.  </p>
+    <p> <a href="../javascript-grid-filter-component/">Go to Filter Component Component</a> </p>
+    </div>
+</div>
 
-        <p>
-            The following sections show how to use your own components inside the grid.
-        </p>
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Floating Filter</h2>
+    <p> For custom column filter that appears inside the column menu.  </p>
+    <p> <a href="../javascript-grid-floating-filter-component/">Go to Floating Filter Component</a> </p>
+    </div>
+</div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="list-group">
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Floating Filter</h2>
+    <p> For custom column floating filters that display in the header area.  </p>
+    <p> <a href="../javascript-grid-floating-filter-component/">Go to Floating Filter Component</a> </p>
+    </div>
+</div>
 
-                    <a href="../javascript-grid-cell-rendering-components/" class="list-group-item">
-                        <div class="float-parent">
-                            <div class="section-icon-container">
-                                <img src="../images/components.png" width="50"/>
-                            </div>
-                            <h3 class="list-group-item-heading">Cell Renderer</h3>
-                            <p class="list-group-item-text">
-                                A cell renderer customises the contents of a cell.
-                            </p>
-                        </div>
-                    </a>
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Date Component</h2>
+    <p> To customise the date selection component in the date filter.  </p>
+    <p> <a href="../javascript-grid-date-component/">Go to Date Component</a> </p>
+    </div>
+</div>
 
-                </div>
-            </div>
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Header Component</h2>
+    <p> To customise column headers, including column groups.  </p>
+    <p> <a href="../javascript-grid-header-rendering/">Go to Header Component</a> </p>
+    </div>
+</div>
 
-            <div class="col-md-6">
-                <div class="list-group">
+<div class="docs-homepage-section-preview">
+    <div>
+    <h2>Overlay Component</h2>
+    <p> To customise loading and no rows overlay components.  </p>
+    <p> <a href="../javascript-grid-header-rendering/">Go to Overlay Component</a> </p>
+    </div>
+</div>
 
-                    <a href="../javascript-grid-cell-editor/" class="list-group-item">
-                        <div class="float-parent">
-                            <div class="section-icon-container">
-                                <img src="../images/components.png" width="50"/>
-                            </div>
-                            <h3 class="list-group-item-heading">Cell Editor</h3>
-                            <p class="list-group-item-text">
-                                A cell editor customises the editing of a cell.
-                            </p>
-                        </div>
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="list-group">
-                    <a href="../javascript-grid-filter-component/" class="list-group-item">
-                        <div class="float-parent" style="display: block;">
-                            <div class="section-icon-container">
-                                <img src="../images/components.png" width="50"/>
-                            </div>
-                            <h3 class="list-group-item-heading">Filter Component</h3>
-                            <p class="list-group-item-text">
-                                For custom column filter that appears inside the column menu.
-                            </p>
-                        </div>
-                    </a>
-
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="list-group">
-                    <a href="../javascript-grid-floating-filter-component/" class="list-group-item">
-                        <div class="float-parent" style="display: block;">
-                            <div class="section-icon-container">
-                                <img src="../images/components.png" width="50"/>
-                            </div>
-                            <h3 class="list-group-item-heading">Floating Filter Component</h3>
-                            <p class="list-group-item-text">
-                                For custom column floating filters that display in the header area.
-                            </p>
-                        </div>
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="list-group">
-
-                    <a href="../javascript-grid-date-component/" class="list-group-item">
-                        <div class="float-parent">
-                            <div class="section-icon-container">
-                                <img src="../images/components.png" width="50"/>
-                            </div>
-                            <h3 class="list-group-item-heading">Date Component</h3>
-                            <p class="list-group-item-text">
-                                To customise the date selection component in the date filter.
-                            </p>
-                        </div>
-                    </a>
-
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <div class="list-group">
-
-                    <a href="../javascript-grid-header-rendering/" class="list-group-item">
-                        <div class="float-parent">
-                            <div class="section-icon-container">
-                                <img src="../images/components.png" width="50"/>
-                            </div>
-                            <h3 class="list-group-item-heading">Header Component</h3>
-                            <p class="list-group-item-text">
-                                To customise column headers, including column groups.
-                            </p>
-                        </div>
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="list-group">
-
-                    <a href="../javascript-grid-overlay-component/" class="list-group-item">
-                        <div class="float-parent">
-                            <div class="section-icon-container">
-                                <img src="../images/components.png" width="50"/>
-                            </div>
-                            <h3 class="list-group-item-heading">Overlay Component</h3>
-                            <p class="list-group-item-text">
-                                To customise loading and no rows overlay components.
-                            </p>
-                        </div>
-                    </a>
-
-                </div>
-            </div>
-        </div>
-
-        <h1 id="registering-custom-components">Registering Custom Components</h1>
+        <h2>Registering Custom Components</h2>
 
         <p>
             The pages for each component type (cell renderer, cell editor etc) contain
@@ -166,11 +93,13 @@ include '../documentation-main/documentation_header.php';
 
         <p>
             There are two ways to register custom components:
-        <ol>
+</p>
+        <ol class="content">
             <li>By name.</li>
             <li>Direct reference.</li>
         </ol>
-        Both options are fully supported by the grid, however the preferred
+
+        <p>Both options are fully supported by the grid, however the preferred
         options is by name as it's more flexible. All of the examples in the documentation
         use this approach. The direct reference approach is kept for backwards
         compatibility reasons as this was the original way to do it in ag-Grid.
@@ -233,7 +162,9 @@ gridOptions = {
 
         <p>
             Registering components by name has the following advantages:
-        <ul>
+        </p>
+
+        <ul class="content">
             <li>
                 Implementations can change without having to change all the column definitions.
                 For example, you may have 20 columns using a currency cell renderer. If you want
@@ -248,22 +179,25 @@ gridOptions = {
                 to convert the column definition to JSON.
             </li>
         </ul>
-        </p>
 
-        <h1 id="registering-framework-components">Registering Framework Components</h1>
+        <h2>Registering Framework Components</h2>
 
         <p>
             Most of the frameworks ag-Grid works with use components. It is possible to use the framework
             components inside of ag-Grid. Configuring the components is same and explained in this section.
             The frameworks that follow this conventions are:
-        <ul>
+        </p>
+
+        <ul class="content">
             <li><b>Angular</b> (version 2 and later)</li>
             <li><b>React</b></li>
             <li><b>VueJS</b></li>
             <li><b>Polymer</b></li>
         </ul>
-        The following frameworks are not configured in this way:
-        <ul>
+
+        <p>The following frameworks are not configured in this way:</p>
+
+        <ul class="content">
             <li>
                 <b>AngularJS 1</b>: This framework does not follow the same pattern as other frameworks. See
                 <a href="../best-angularjs-data-grid/#angular-compiling">AngularJS</a> on how you can turn on AngularJS
@@ -272,12 +206,13 @@ gridOptions = {
             </li>
             <li><b>Aurelia</b>: Aurelia uses templates instead of components.</li>
         </ul>
-        </p>
+
         <p>
             If you are using on of the supported frameworks registration is done using the
             <code>frameworkComponents</code> property rather than the <code>components</code> property.
             Then the component is registered by name as normal.
         </p>
+
 <snippet>
 gridOptions = {
 
@@ -321,7 +256,7 @@ gridOptions = {
     ...
 }</snippet>
 
-        <h1>Summary of Component Registration</h1>
+        <h2>Summary of Component Registration</h2>
 
         <p>
             Here we give an overview, as there is a lot of similar sounding information above.
@@ -342,7 +277,8 @@ gridOptions = {
         <p>
             The below table gives an overview of where components can be used. The table shows
             both options for usage:
-        <ul>
+        </p>
+        <ul class="content">
             <li>
                 <b>Name / Direct JavaScript:</b> This can be: 1) A component name referring to a
                 registered component (either plain JavaScript or framework component); 2) A direct
@@ -353,9 +289,8 @@ gridOptions = {
             </li>
 
         </ul>
-        </p>
 
-        <table class="row-model-table">
+        <table class="row-model-table reference">
             <tr class="first-row">
                 <td>Component</td>
                 <td>Where</td>
@@ -448,14 +383,18 @@ gridOptions = {
             </tr>
         </table>
 
-        <h1>JavaScript or Framework</h1>
+        <h2>JavaScript or Framework</h2>
 
         <p>
             If you are using a framework, then you have a choice of the following:
-        <ol>
+        </p>    
+
+        <ol class="content">
             <li>Provide an ag-Grid component in JavaScript.</li>
             <li>Provide an ag-Grid component as a framework component (eg React or Angular).</li>
         </ol>
+
+        <p>
         For example if you want to build a cell renderer and you are using React, you have the choice
         to build the cell renderer using React or using plain JavaScript.
         </p>
@@ -466,7 +405,7 @@ gridOptions = {
             component.
         </p>
 
-        <h1>Mixing JavaScript and Framework</h1>
+        <h2>Mixing JavaScript and Framework</h2>
 
         <p>
             It is possible to mix JavaScript and framework components in the same application.
@@ -497,7 +436,7 @@ gridOptions = {
     } ]
 };</snippet>
 
-        <h1>Grid Provided Components</h1>
+        <h2>Grid Provided Components</h2>
 
         <p>
             The grid comes with pre-registered components that can be used. Each component
@@ -506,20 +445,18 @@ gridOptions = {
             the table below.
         </p>
 
-        <table class="row-model-table">
-
-            <tr class="separator-row"><td colspan="2"/></tr>
+        <table class="row-model-table reference">
             <tr class="first-row">
-                <td colspan="2">Date Inputs</td>
+                <td colspan="2"><h3>Date Inputs</h3></td>
             </tr>
+
             <tr class="item-row">
                 <td>agDateInput</td>
                 <td>Default date input used by filters.</td>
             </tr>
-            <tr class="separator-row"><td colspan="2"/></tr>
 
             <tr class="first-row">
-                <td colspan="2">Column Headers</td>
+                <td colspan="2"><h3>Column Headers</h3></td>
             </tr>
             <tr class="item-row">
                 <td>agColumnHeader</td>
@@ -529,10 +466,9 @@ gridOptions = {
                 <td>agColumnHeaderGroup</td>
                 <td>Default column group header.</td>
             </tr>
-            <tr class="separator-row"><td colspan="2"/></tr>
 
             <tr class="first-row">
-                <td colspan="2">Column Filters</td>
+                <td colspan="2"><h3>Column Filters</h3></td>
             </tr>
             <tr class="item-row">
                 <td>agSetColumnFilter</td>
@@ -550,10 +486,9 @@ gridOptions = {
                 <td>agDateColumnFilter</td>
                 <td>Date filter.</td>
             </tr>
-            <tr class="separator-row"><td colspan="2"/></tr>
 
             <tr class="first-row">
-                <td colspan="2">Floating Filters</td>
+                <td colspan="2"><h3>Floating Filters</h3></td>
             </tr>
             <tr class="item-row">
                 <td>agSetColumnFloatingFilter</td>
@@ -571,10 +506,9 @@ gridOptions = {
                 <td>agDateColumnFloatingFilter</td>
                 <td>Floating date filter.</td>
             </tr>
-            <tr class="separator-row"><td colspan="2"/></tr>
 
             <tr class="first-row">
-                <td colspan="2">Cell Renderers</td>
+                <td colspan="2"><h3>Cell Renderers</h3></td>
             </tr>
             <tr class="item-row">
                 <td>agAnimateShowChangeCellRenderer</td>
@@ -593,9 +527,8 @@ gridOptions = {
                 <td>Cell editor for loading row when using Enterprise row model.</td>
             </tr>
 
-            <tr class="separator-row"><td colspan="2"/></tr>
             <tr class="first-row">
-                <td colspan="2">Overlays</td>
+                <td colspan="2"><h3>Overlays</h3></td>
             </tr>
             <tr class="item-row">
                 <td>agLoadingOverlay</td>
@@ -605,10 +538,9 @@ gridOptions = {
                 <td>agNoRowsOverlay</td>
                 <td>No rows overlay.</td>
             </tr>
-            <tr class="separator-row"><td colspan="2"/></tr>
 
             <tr class="first-row">
-                <td colspan="2">Cell Editors</td>
+                <td colspan="2"><h3>Cell Editors</h3></td>
             </tr>
             <tr class="item-row">
                 <td>agTextCellEditor</td>
@@ -619,7 +551,7 @@ gridOptions = {
                 <td>Select cell editor.</td>
             </tr>
             <tr class="item-row">
-                <td>agRichSelectCellEditor*</td>
+                <td>agRichSelectCellEditor<span class="enterprise-icon">e</span></td>
                 <td>Rich select editor.</td>
             </tr>
             <tr class="item-row">
@@ -635,24 +567,14 @@ gridOptions = {
                 <td>Large text cell editor.</td>
             </tr>
 
-            <tr class="separator-row"><td colspan="2"/></tr>
-
             <tr class="first-row">
-                <td colspan="2">Master Detail</td>
+                <td colspan="2"><h3>Master Detail</h3></td>
             </tr>
             <tr class="item-row">
-                <td>agDetailCellRenderer*</td>
+                <td>agDetailCellRenderer<span class="enterprise-icon">e</span></td>
                 <td>Detail panel for master / detail grid.</td>
             </tr>
         </table>
-
-        <p style="margin-top: 10px">
-        <div>
-            <strong>*</strong>
-            <img src="../images/enterprise.png" style="margin-bottom: 0.25em" title="Enterprise Feature"/>
-            Enterprise Feature
-        </div>
-        </p>
 
         <h3>Overriding Grid Components</h3>
 
@@ -660,18 +582,19 @@ gridOptions = {
             It is also possible to override components. Where the grid uses a default value,
             this means the override component will be used instead. The default components,
             where overriding makes sense, are as follows:
-            <ul>
-                <li><b>agDateInput</b>: To change the default date selection across all filters.</li>
-                <li><b>agColumnHeader</b>: To change the default column header across all columns.</li>
-                <li><b>agColumnGroupHeader</b>: To change the default column group header across all columns.</li>
-                <li><b>agLoadingCellRenderer</b>: To change the default loading cell renderer for Enterprise Row Model.</li>
-                <li><b>agLoadingOverlay</b>: To change the default 'loading' overlay.</li>
-                <li><b>agNoRowsOverlay</b>: To change the default loading 'no rows' overlay.</li>
-                <li><b>agTextCellEditor</b>: To change the default text cell editor.</li>
-                <li><b>agDetailCellRenderer</b>: To change the default detail panel for master / detail grids.</li>
-            </ul>
         </p>
 
-        </div>
+        <ul class="content">
+            <li><b>agDateInput</b>: To change the default date selection across all filters.</li>
+            <li><b>agColumnHeader</b>: To change the default column header across all columns.</li>
+            <li><b>agColumnGroupHeader</b>: To change the default column group header across all columns.</li>
+            <li><b>agLoadingCellRenderer</b>: To change the default loading cell renderer for Enterprise Row Model.</li>
+            <li><b>agLoadingOverlay</b>: To change the default 'loading' overlay.</li>
+            <li><b>agNoRowsOverlay</b>: To change the default loading 'no rows' overlay.</li>
+            <li><b>agTextCellEditor</b>: To change the default text cell editor.</li>
+            <li><b>agDetailCellRenderer</b>: To change the default detail panel for master / detail grids.</li>
+        </ul>
+
+
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

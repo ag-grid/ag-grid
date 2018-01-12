@@ -188,8 +188,8 @@
 
             @media (min-width: 1024px) {
                 display: block;
-                flex: 0 0 1 / 12 * 2;
-                max-width: 100% / 12 * 2;
+                flex: 0 0 100% / 12 * 2.5;
+                max-width: 100% / 12 * 2.5;
                 padding-left: 2rem;
                 position: sticky;
                 align-self: flex-start;
