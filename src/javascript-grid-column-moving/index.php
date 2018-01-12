@@ -56,24 +56,6 @@ include '../documentation-main/documentation_header.php';
 
 <?= example('Column Moving Simple', 'moving-simple', 'generated') ?>
 
-<h2>Pin with Move</h2>
-
-<p>
-    It is possible to pin a column by moving it in the following ways:
-    <ul>
-        <li>
-            When columns are pinned, drag the column to the pinned area.
-        </li>
-        <li>
-            When no columns are pinned, drag the column to the edge of the grid and wait
-            for approximately one second.
-        </li>
-    </ul>
-
-    <img src="./pinningByMoving.gif" style="margin: 10px; border: 1px solid #aaa;"/>
-
-</p>
-
 <h2>Suppress Hide Leave</h2>
 
 <p>
