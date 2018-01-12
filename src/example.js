@@ -338,7 +338,6 @@ var defaultCols = [
         // marryChildren: true,
         children: [
             {
-                lockPinned: true,
                 headerName: 'Name',
                 rowDrag: true,
                 field: 'name',
