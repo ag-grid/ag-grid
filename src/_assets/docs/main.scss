@@ -366,6 +366,13 @@
     }
 }
 
+.new-marker {
+    color: $red;
+    transform: translate(3px, -6px);
+    font-size: 0.7em;
+    display: inline-block;
+}
+
 #feature-roadshow {
     @extend .container;
     @include roadshow;
