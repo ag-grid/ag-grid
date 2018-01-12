@@ -649,6 +649,9 @@ export class GridOptionsWrapper {
 
     // responsible for calling the onXXX functions on gridOptions
     public globalEventHandler(eventName: string, event?: any): void {
+        if (eventName==='columnVisible') {
+            console.log('columnVisible');
+        }
         let callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
         if (typeof (<any>this.gridOptions)[callbackMethodName] === 'function') {
             (<any>this.gridOptions)[callbackMethodName](event);
