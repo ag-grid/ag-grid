@@ -166,6 +166,17 @@ export class MoveColumnController implements DropListener {
         let dragSourceType: DragSourceType = draggingEvent.dragSource.type;
         let columnsToMove = draggingEvent.dragSource.dragItemCallback().columns;
 
+        columnsToMove = columnsToMove.filter( col => {
+            if (col.isLockPinned()) {
+                // if locked return true only if both col and container are same pin type.
+                // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
+                return col.getPinned() == this.pinned;
+            } else {
+                // if not pin locked, then always allowed to be in this container
+                return true;
+            }
+        });
+
         this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
     }
 
