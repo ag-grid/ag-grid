@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "Understand your data: The power of pivot tables";
+$pageTitle = "ag-Grid Blog: How to Add JavaScript Pivot Tables to your App";
 $pageDescription = "Make the most of your data by using pivot tables to create summaries and reports.";
 $pageKeyboards = "The power of pivot tables";
 $socialUrl = "https://www.ag-grid.com/pivoting-blog/";
@@ -12,8 +12,9 @@ include('../includes/mediaHeader.php');
 
 
     <!-- <link rel="stylesheet" href="../documentation-main/documentation.css"> -->
-    <h1>What's New in ag-Grid v14.2.0</h1>
+    <h1>How to Add JavaScript Pivot Tables to your App</h1>
     <p class="blog-author">Sophia Lazarova | 14th November 2017</p>
+    <p class="lead">Data is not to be stored but to be understood! By adding pivot tables to your JavaScript application, you can empower your users to make the most of their data. This article runs through practical advice with steps on how to use ag-Grid Enterprise to quickly add pivot tables to your app for any of the major frameworks such as Angular, React or Vue.</p>
 
     <div>
         <a href="https://twitter.com/share" class="twitter-share-button"
@@ -36,22 +37,15 @@ if (!d.getElementById(id)) {
 <div class="row">
 <div class="col-md-8">
 
-<h2>Understand your data: The power of pivot tables</h2>
+<p>For your users, working with big amounts of data has never been easy. Data without insight is worthless, we end up wondering what to do with our pile of rows and records. Fear not, there is an easy way to handle your data without being a data scientist or database guru.</p>
 
-<p class="lead">Data is not to be stored but to be understood! Find out how to make the most of your data with ag-Grid Enterprise and it's pivot view.</p>
+<p>In this article, we will explore the capabilities of pivot tables. Don't worry if you still have no idea what I am referring to, we are starting from ground zero.</p>
 
-<p>Working with big amounts of data has never been easy. Once we realize data without understanding is worthless we end up wondering what to do with our pile of rows and records. Fear not, there is an easy way to handle your data without being a data scientist or database guru.</p>
+<h2>First Principles - What are Pivot Tables?</h2>
 
-<p>In this article we will explore the capabilities of pivot tables. Don't worry if you still have no idea what I am referring to, we are starting from ground zero.</p>
+<p>For most people, pivot tables means Excel spreadsheets - thousands of rows which eventually become well-shaped reports. If you are like me, you have to Google how to do it each time. It's a really powerful feature that gives the user insight into their data. Their purpose is to summarize large amounts of data by applying operations such as averaging, sorting and grouping.</p>
 
-<h2>Fancy words - help !?</h2>
-
-<p>I guess you have seen the super complexed Excel tables with thousands of rows which eventually become well-shaped reports. 
-So what the hack is this magic? </p>
-
-<p>Well, that's the magic of the pivot tables! Their purpose is to summarize big amounts of data by applying operations as averaging, sorting and grouping.</p>
-
-<h2>Words are cheap without examples</h2>
+<h2>How to add Pivot Tables to your JavaScript App</h2>
 
 <p>Let's have a look at the following example and see how things are really working. We will use <strong>ag-Grid</strong> for explaining the concept of pivot tables.</p>
 
