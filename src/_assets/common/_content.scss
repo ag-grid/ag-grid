@@ -36,3 +36,18 @@ h2.small-block {
     margin: 1rem auto;
     text-align: center;
 }
+
+dl.content {
+    dd {
+        margin-bottom: 1em;
+    }
+
+    dt code {
+        margin-left: 1em;
+    }
+}
+
+.theme-table td,
+.theme-table th {
+    padding-left: 2em;
+}

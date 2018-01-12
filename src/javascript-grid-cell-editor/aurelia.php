@@ -1,6 +1,5 @@
     <!-- start of aurelia -->
     <h2 id="aureliaCellEditing">
-        <img src="../images/aurelia_large.png" style="width: 60px;"/>
         Aurelia Cell Editing
     </h2>
 
@@ -10,11 +9,11 @@
     </p>
 
     <p>
-        For an example of Aurelia cellEditing, see the
+        For an example of Aurelia cell editing, see the
         <a href="https://github.com/ag-grid/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.
     </p>
 
-    <h3 id="specifying-a-aurelia-cell-editor"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Aurelia cellEditor</h3>
+    <h3 id="specifying-a-aurelia-cell-editor"> Specifying a Aurelia cellEditor</h3>
 
 
     <snippet>
@@ -91,9 +90,9 @@ export class NumericEditor extends BaseAureliaEditor {
     <p>Your Aurelia components should implement <code>BaseAureliaEditor</code>.</p>
 
 
-    <h3 id="aurelia-parameters"><img src="../images/aurelia_large.png" style="width: 20px;"/> Aurelia Parameters</h3>
+    <h3 id="aurelia-parameters"> Aurelia Parameters</h3>
 
     <p>
-        All of the other methods (<i>isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()</i> etc)
+        All of the other methods (<code>isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()</code> etc)
         should be put onto your Aurelia component and will work as normal.
     </p>

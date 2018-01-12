@@ -5,29 +5,13 @@ $pageKeyboards = "ag-Grid Styling";
 $pageGroup = "themes";
 include '../documentation-main/documentation_header.php';
 ?>
-<style scoped>
-dd {
-margin-bottom: 1em;
-}
 
-dt code {
-    margin-left: 1em;
-}
 
-.theme-table td,
-.theme-table th {
-    padding-left: 2em;
-}
-</style>
-
-<div>
-    <h1 class="first-h1" id="themes">
-        <img src="../images/svg/docs/themes.svg" width="50" />
-        Themes
-    </h1>
+<h1> Themes </h1>
 
 <note>
-    <h3 style="margin-top: 4px;">Legacy Themes</h3>
+    <h2>Legacy Themes</h2>
+
     <p>
     The 14.2.0 release (October 2017) included remakes of the themes with more consistent whitespace and <a href="#customizing-sass-variables">easier customization through Sass variables</a>.
     The previous ones are still shipped, but deprecated and likely to be removed after several releases.
@@ -66,7 +50,6 @@ dt code {
 
 </note>
 
-
     <p>
         ag-Grid is designed to have its look and feel derived from a theme.
     </p>
@@ -94,29 +77,35 @@ dt code {
     <p>
         To use a theme, add the theme class name to the <code>div</code> element where the ag-Grid directive is attached.
     </p>
+
     <p>
-        The following is an example of using the fresh theme:<br/>
-        <snippet language="html">
-&lt;div id="myGrid" class="ag-theme-fresh"&gt;&lt;/div&gt;
+        The following is an example of using the fresh theme:
+    </p>
+
+    <snippet language="html">
+     &lt;div id="myGrid" class="ag-theme-fresh"&gt;&lt;/div&gt; 
 </snippet>
-    </p>
+
     <p>
-        The following is an example of using the dark theme:<br/>
-        <snippet language="html">
-&lt;div id="myGrid" class="ag-theme-dark"&gt;&lt;/div&gt;</snippet>
+        The following is an example of using the dark theme:
     </p>
+
+    <snippet language="html">
+    &lt;div id="myGrid" class="ag-theme-dark"&gt;&lt;/div&gt;
+</snippet> 
 
     <h2>When to Create a Theme</h2>
 
     <p>
         You have the following options when choosing a theme:
-        <ol>
-            <li>Use one of the provided themes e.g. <code>ag-theme-fresh</code>.</li>
-            <li>Use one of the provided themes and tweak using the provided <a href="#customizing-sass-variables">Sass variables</a>.</li>
-            <li>Create your own theme from scratch. This is the most complex approach and you are more
-            exposed to breaking changes in ag-Grid releases.</li>
-        </ol>
     </p>
+
+    <ol class="content">
+        <li>Use one of the provided themes e.g. <code>ag-theme-fresh</code>.</li>
+        <li>Use one of the provided themes and tweak using the provided <a href="#customizing-sass-variables">Sass variables</a>.</li>
+        <li>Create your own theme from scratch. This is the most complex approach and you are more
+        exposed to breaking changes in ag-Grid releases.</li>
+    </ol>
 
     <p>
         You should only create your own theme when options 1 and 2 above don't suit, as it is
@@ -147,11 +136,12 @@ dt code {
 
     <h2 id="what-to-style-via-themes">What to Style via Themes</h2>
 
-    Any of the CSS classes described below can have style associated with them.
+    <p>
+        Any of the CSS classes described below can have style associated with them.  
+        However you should be cautious about overriding style that is associated outside of the theme.
+        For example, the ag-pinned-cols-viewport, has the following style:
+    </p>
 
-    However you should be cautious about overriding style that is associated outside of the theme.
-
-    For example, the ag-pinned-cols-viewport, has the following style:
     <snippet language="css">
    .ag-pinned-cols-viewport {
         float: left;
@@ -159,10 +149,12 @@ dt code {
         overflow: hidden;
     }</snippet>
 
-    The style attributes float, position and overflow are intrinsic to how the grid works. Changing
-    these values will change how the grid operates. If unsure, take a look at the styles associated
-    with an element using your browsers developer tools. If still unsure, try it out, if the style
-    you want to apply breaks the grid, then it's not a good style to apply!
+    <p>
+        The style attributes float, position and overflow are intrinsic to how the grid works. Changing
+        these values will change how the grid operates. If unsure, take a look at the styles associated
+        with an element using your browsers developer tools. If still unsure, try it out, if the style
+        you want to apply breaks the grid, then it's not a good style to apply!
+    </p>
 
     <h2 id="structure-example">Structure Example</h2>
 
@@ -182,7 +174,7 @@ dt code {
         of the table. The four quadrants are as follows:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>ag-pinned-header:</b> Contains the pinned header cells. This container does not scroll.</li>
         <li><b>ag-header-container:</b> Contains the non-pinned header cells. This container is within
             a viewport (<b>ag-header-viewport</b>) that scrolls horizontally to match the position of the ag-body-viewport. This
@@ -194,13 +186,13 @@ dt code {
             viewport (<b>ag-body-viewport</b>) that scrolls both vertically and horizontally.</li>
     </ul>
 
-    Note: Both the ag-header-viewport and ag-pinned-cols-viewport do not have scrollbars. They
-    only scroll in response to changes to the ag-body-viewport.
+    <note>
+        Both the ag-header-viewport and ag-pinned-cols-viewport do not have scrollbars. They
+        only scroll in response to changes to the ag-body-viewport.
+    </note>
 
-    <p/>
+    <h3>Core DIV Elements</h3>
 
-    <b style="padding-left: 300px;">Core DIV Elements</b>
-    <br/>
     <div class='inline' style="margin-left: 50px;">
         ag-root <br/>
         <!-- header -->
@@ -241,11 +233,11 @@ dt code {
         </div>
     </div>
 
-    <h2 id="detailed-breakdown">Detailed Breakdown</h2>
+    <h3>Detailed Breakdown</h3>
 
-    Below gives a detailed breakdown of the DOM for the example. In the example, the following is highlighted:
-    <p/>
-    <ul>
+    <p>Below gives a detailed breakdown of the DOM for the example. In the example, the following is highlighted:</p>
+
+    <ul class="content">
         <li><span class="agClass">Classes:</span> These CSS classes can have style associated with them in a theme.</li>
         <li><span class="agAttr">Row & Col Attributes:</span> These attributes can be used to identify rows and columns using CSS selectors.</li>
         <li><span class="agPos">Position Attributes:</span> Nothing to do with style, however they stick out below, so worth mentioning. These
@@ -388,7 +380,7 @@ by overriding the theme variables value and referencing the Sass source files af
 
 <p>Some of the things you can change in the theme include:</p>
 
-<ul>
+<ul class="content">
     <li>Changing the text / header / tool panel foreground and background colors</li>
     <li>Changing the icons size and color</li>
     <li>Changing the cell / row spacing*</li>
@@ -429,8 +421,7 @@ $icon-color: red;
 
 <p>Following is a list of the most common Sass variables used, their default values for the fresh theme, and a short explanation of their purpose.</p>
 
-
-<dl>
+<dl class="content">
 <dt>$accent-color<code>black </code></dt>
 <dd>
 The color for the checked checkboxes.
@@ -617,7 +608,7 @@ The indent used for the tool panel hierarchy.
 The <code>_ag-theme-common.scss</code> file contains the actual implementation, while the <code>ag-theme-*.scss</code> contain the default variable values for each theme.
 </p>
 
-</div>
+
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

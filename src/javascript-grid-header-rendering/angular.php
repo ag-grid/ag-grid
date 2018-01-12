@@ -1,21 +1,19 @@
-<h2 id="angular-header-component">
-    <img src="../images/angular2_large.png" style="width: 60px;"/>
-    Angular Header Component
-</h2>
+<h2 id="angular-header-component"> Angular Header Component </h2>
 
 
 <h3 id="header-component">Header Component</h3>
 
 <p>
     Implementing a header component in Angular differs from the standard header component in the following ways:
-    <ul>
-        <li>Implement <i>IHeaderAngularComp</i> instead of <i>IHeaderComp</i>.</li>
-        <li>Use <i>colDef.headerComponentFramework</i> instead of <i>colDef.headerComponent</i>.</li>
-    </ul>
 </p>
 
+<ul class="content">
+    <li>Implement <code>IHeaderAngularComp</code> instead of <code>IHeaderComp</code>.</li>
+    <li>Use <code>colDef.headerComponentFramework</code> instead of <code>colDef.headerComponent</code>.</li>
+</ul>
+
 <p>
-    The interface <i>IHeaderAngularComp</i> is as follows:
+    The interface <code>IHeaderAngularComp</code> is as follows:
 </p>
 
 <snippet>
@@ -33,14 +31,15 @@ interface IHeaderAngularComp {
 
 <p>
     Implementing a header group component in Angular differs from the standard header group component in the following ways:
-<ul>
-    <li>Implement <i>IHeaderGroupAngularComp</i> instead of <i>IHeaderGroupComp</i>.</li>
-    <li>Use <i>colDef.headerGroupComponentFramework</i> instead of <i>colDef.headerGroupComponent</i>.</li>
-</ul>
 </p>
 
+<ul class="content">
+    <li>Implement <code>IHeaderGroupAngularComp</code> instead of <code>IHeaderGroupComp</code>.</li>
+    <li>Use <code>colDef.headerGroupComponentFramework</code> instead of <code>colDef.headerGroupComponent</code>.</li>
+</ul>
+
 <p>
-    The interface <i>IHeaderGroupAngularComp</i> is as follows:
+    The interface <code>IHeaderGroupAngularComp</code> is as follows:
 </p>
 
 <snippet>

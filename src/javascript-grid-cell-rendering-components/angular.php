@@ -1,8 +1,7 @@
 <!-- Angular from here -->
-<h1 id="ng2CellRendering">
-    <img src="../images/angular2_large.png" style="width: 60px;"/>
+<h2>
     Angular Cell Render Components
-</h1>
+</h2>
 
 <p>
     It is possible to provide Angular cell renderers for ag-Grid to use if you are are using the
@@ -14,12 +13,11 @@
     Note: Here we are referring to Angular versions 2 and up. This section is not relevant to AngularJS 1.
 </note>
 
-<h2 id="example-rendering-using-angular-components">Example: Rendering using Angular Components</h2>
+<h3>Example: Rendering using Angular Components</h3>
 
 <?= example('Simple Dynamic Component', 'dynamic-components', 'generated', array('enterprise' => false, 'onlyShow' => 'angular', 'extras' => array('fontawesome', "bootstrap"))) ?>
 
-<h2 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods /
-    Lifecycle</h2>
+<h3>Angular Methods / Lifecycle</h3>
 
 <p>
     Your Angular components need to implement <code>AgRendererComponent</code>.
@@ -30,19 +28,20 @@
 <p>
     All of the methods in the <code>ICellRenderer</code> interface described above are applicable
     to the Angular Component with the following exceptions:
-    <ul>
-        <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the
-            <code>AgRendererComponent</code> interface).
-        </li>
-        <li><i>destroy()</i> is not used. Instead implement the Angular<code>OnDestroy</code> interface
-            (<code>ngOnDestroy</code>) for
-            any cleanup you need to do.
-        </li>
-        <li><i>getGui()</i> is not used. Instead do normal Angular magic in your Component via the Angular template.</li>
-    </ul>
 </p>
 
-<h2 id="handling-refresh"><img src="../images/angular2_large.png" style="width: 20px;"/> Handling Refresh</h2>
+<ul class="content">
+    <li><code>init()</code> is not used. Instead implement the <code>agInit</code> method (on the
+        <code>AgRendererComponent</code> interface).
+    </li>
+    <li><code>destroy()</code> is not used. Instead implement the Angular<code>OnDestroy</code> interface
+        (<code>ngOnDestroy</code>) for
+        any cleanup you need to do.
+    </li>
+    <li><code>getGui()</code> is not used. Instead do normal Angular magic in your Component via the Angular template.</li>
+</ul>
+
+<h3>Handling Refresh</h3>
 
 <p>
     To handle refresh, implement logic inside the <code>refresh()</code> method inside your component and return true.
@@ -50,8 +49,8 @@
     not handle refresh and your component will be destroyed and recreated if the underlying data changes).
 </p>
 
-<h2 id="example-rendering-using-more-complex-angular-components">Example: Rendering using more complex Angular
-    Components</h2>
+<h3>Example: Rendering using more complex Angular Components</h3>
+
 <p>
     Using more complex Angular Components in the Cell Renderers - specifically how you can use nested <code>NgModule</code>'s
     within the grid.

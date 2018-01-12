@@ -1,16 +1,12 @@
-<p>
-    <!-- start of aurelia -->
-    <h1 id="aureliaFiltering">
-        <img src="../images/aurelia.png" style="width: 60px"/>
-        Aurelia Filtering
-    </h1>
+
+    <h2> Aurelia Filtering </h2>
 
     <p>
         For an example on Aurelia filtering, see the
         <a href="https://github.com/ag-grid/ag-grid-aurelia-example">ag-grid-aurelia-example</a> on Github.</p>
-    </p>
 
-    <h3 id="specifying-a-filter-in-an-aurelia-project"><img src="../images/aurelia_large.png" style="width: 20px;"/> Specifying a Filter in an Aurelia project</h3>
+
+    <h3 id="specifying-a-filter-in-an-aurelia-project"> Specifying a Filter in an Aurelia project</h3>
 
     <p>
         If you are using the ag-grid-aurelia component to create the ag-Grid instance,

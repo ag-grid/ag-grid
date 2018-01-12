@@ -456,12 +456,10 @@
     },
     {
         "title": "Themes",
-        "new": true,
         "items": [
             {
                 "title": "Overview",
-                "url": "javascript-grid-styling/",
-                "new": true
+                "url": "javascript-grid-styling/"
             },
             {
                 "title": "Fresh ",

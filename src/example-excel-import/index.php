@@ -3,14 +3,15 @@ $pageTitle = "Import Excel Speadsheet into ag-Grid";
 $pageDescription = "Example on how to import an Excel Speadsheet into ag-Grid using a third-party library";
 $pageKeyboards = "ag-Grid import excel";
 $pageGroup = "examples";
+define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h2>Excel Import</h2>
 
-    <p>
+    <h1>Excel Import</h1>
+
+    <p class="lead">
         Below we illustrate how you might import an Excel spreadsheet into ag-Grid using a third-party library - in this
         example we're using <a href="https://github.com/protobi/js-xlsx">xlsx-style</a>
     </p>
@@ -25,6 +26,6 @@ include '../documentation-main/documentation_header.php';
     <p>The spreadsheet can be downloaded <a href="https://www.ag-grid.com/example-excel-import/OlymicData.xlsx">here.</a></p>
 
     <?= example('Import Excel into ag-Grid', 'excel-import', 'vanilla', array("showResult" => true, "exampleHeight" => 460, "extras" => array("xlsx-style"))) ?>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

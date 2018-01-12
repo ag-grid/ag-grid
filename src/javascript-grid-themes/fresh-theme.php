@@ -6,29 +6,20 @@ $pageGroup = "themes";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+<h1>Fresh Theme</h1>
 
-    <h2 id="fresh-theme">Fresh Theme</h2>
+<p class="lead">The Fresh Theme is one of the five themes supplied with ag-Grid. To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.</p>
 
-    The Fresh Theme is one of the four themes supplied with ag-Grid.
+<p>The following is an example of using the ag-theme-fresh theme:</p>
 
-    <p/>
-    <p/>
-    To use a theme, add the theme class name to the div element where the ag-Grid directive is attached.
-    <p/>
-    The following is an example of using the ag-theme-fresh theme:<br/>
-    <snippet>
+<snippet>
 &lt;div ag-grid="gridOptions" class="ag-theme-fresh"&gt;&lt;/div&gt;</snippet>
 
-    <div class="bigTitle" id="fresh-theme-example">Fresh Theme Example</div>
+<h2>Fresh Theme Example</h2>
 
-    This grouped example demonstrates some of the different facets of a theme - full, part and no checkbox selection for example, as well as general look and feel
-    <p/>
+<p>This grouped example demonstrates some of the different facets of a theme - full, part and no checkbox selection for example, as well as general look and feel.</p>
 
-    <?= example('Fresh Theme', 'theme-fresh', 'generated', array( "enterprise" => true )) ?>
+<?= example('Fresh Theme', 'theme-fresh', 'generated', array( "enterprise" => true )) ?>
 
-</pre>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

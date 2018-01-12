@@ -6,16 +6,11 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1">Date Component</h1>
+<h1>Date Component</h1>
 
-<p>
+<p class="lead">
     You can create your own date components, and ag-Grid will use them every time it needs to ask user for a date value.
-
-    The date components so far are used in ag-Grid in:
-    <ol>
-        <li>On the rich date filter</li>
-        <li>On the floating date filter</li>
-    </ol>
+    The date components so far are used in ag-Grid in <strong>rich date filter</strong> and the <strong>floating date filter</strong>.
 </p>
 
 <p>
@@ -31,9 +26,7 @@ gridOptions: {
     dateComponent: MyDateEditor
 }},</snippet>
 
-<p>
-    The interface for dateComponent is like  this:
- </p>
+<p> The interface for dateComponent is like  this: </p>
 
 <snippet>
 interface IDateComp {
@@ -58,24 +51,23 @@ interface IDateComp {
     destroy?(): void;
 }</snippet>
 
-<h3>IDateParams</h3>
+<h2>IDateParams</h2>
 
 <p>
-     The method init(params) takes a params object with the items listed below. If the user provides
-    params via the <i>gridOptions.dateComponentParams</i> attribute, these will be additionally added to the
+    The method <code>init(params)</code> takes a params object with the items listed below. If the user provides
+    params via the <code>gridOptions.dateComponentParams</code> attribute, these will be additionally added to the
     params object, overriding item s of the same name if a name clash exists.
 </p>
 
 <snippet>
 interface IDateParams {
-
     /** Callback method to call when the date has changed. */
-    onDateChanged:()=&gt;void
+    onDateChanged: () =&gt; void
 
 }</snippet>
 
 
-<h1>Custom Date Example</h1>
+<h2>Custom Date Example</h2>
 
 <p>
     The example below shows how to register a cus tom date component, and then how that component is automatically used in

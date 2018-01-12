@@ -6,9 +6,7 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
-    <h1 class="first-h1" id="header-components">Header Components</h1>
+    <h1>Header Components</h1>
 
     <p>
         You can specify what header renderer to use at the column definition level.
@@ -17,7 +15,9 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         There are two types of header components:
-    <ul>
+    </p>
+
+    <ul class="content">
         <li><b>Header Component</b>: For rendering the normal column headers. Configured for columns.</li>
         <li><b>Header Group Component</b>: For rendering column groups. Configured for column groups.</li>
     </ul>
@@ -67,28 +67,28 @@ var myColumns = {
         be worried about, eg the resizing and moving of columns. The HTML of the header cell is similar
         to the following:
     </p>
+
     <snippet language="html">
-&lt;!-- the ag-header-cell is always provided by ag-Grid --!&gt;
-&lt;!-- column moving and resize logic is put on this element by the grid --!&gt;
+&lt;!-- the ag-header-cell is always provided by ag-Grid --&gt;
+&lt;!-- column moving and resize logic is put on this element by the grid --&gt;
 &lt;div class="ag-header-cell"&gt;
 
 &lt;!-- ag-Grid will also always provide a resize bar (if column resizing
  is enabled) and take care of all the resize logic. the grid usually
- floats this element to the right.--!&gt;
+ floats this element to the right.--&gt;
 &lt;div class="ag-header-cell-resize"&gt;&lt;/div&gt;
 
 &lt;!-- checkbox for selection, if turned on.
- the grid usually floats this element to the left.
+ the grid usually floats this element to the left. --&gt;
 &lt;div class="ag-header-select-all"&gt;&lt;/div&gt;
 
-&lt;!-- the header component - this is the piece that you can customise --!&gt;
+&lt;!-- the header component - this is the piece that you can customise --&gt;
 &lt;div class="ag-header-component"&gt; &lt;/div&gt;
-&lt;/div&gt;
     </snippet>
 
-    <p>
-        The grid is always responsible for the following:
-    <ul>
+    <p> The grid is always responsible for the following: </p>
+
+    <ul class="content">
         <li><a href="../javascript-grid-resizing/"><b>Resizing:</b></a> When enabled, the grid will put an invisible
             widget to be grabbed by
             the mouse for resizing.
@@ -97,11 +97,12 @@ var myColumns = {
             checkbox for 'select all' in the header.
         </li>
     </ul>
-    </p>
 
     <p>
         The header component (your bit) will be responsible for the following:
-    <ul>
+    </p>
+
+    <ul class="content">
         <li><b>Sorting:</b> You will need to process user interaction for sorting. The default grid
             component sorts when the user clicks the header with the mouse. You may also need to display
             icons as the sort state of the column changes.
@@ -117,7 +118,6 @@ var myColumns = {
             header to add your own functionality in.
         </li>
     </ul>
-    </p>
 
     <h3 id="header-component-interface">Header Component Interface</h3>
 
@@ -140,7 +140,8 @@ interface IHeaderComp {
 }
     </snippet>
 
-    <p>The params passed to <i>init()</i> are as follows:</p>
+    <p>The params passed to <code>init()</code> are as follows:</p>
+
     <snippet>
 export interface IHeaderCompParams {
 
@@ -187,16 +188,17 @@ export interface IHeaderCompParams {
 
     <p>
         After the user requests a sort, you should call ONE of the following:
-    <ol>
-        <li><i>params.progressSort(multiSort):</i> This is the simplest. Call it to progress the sort on
+    </p>
+
+    <ol class="content">
+        <li><code>params.progressSort(multiSort):</code> This is the simplest. Call it to progress the sort on
             the column to the next stage. Using this uses the grid logic for working out what the
             next sort stage is (eg 'descending' normally follows 'ascending').
         </li>
-        <li><i>params.setSort(direction, multiSort):</i> Use this to set to sort to a specific state. Use this
+        <li><code>params.setSort(direction, multiSort):</code> Use this to set to sort to a specific state. Use this
             if you don't want to use the grids logic for working out the next sort state.
         </li>
     </ol>
-    </p>
 
     <snippet>
 // option 1) tell the grid when you want to progress the sorting
@@ -218,8 +220,9 @@ mySortDescButton.addEventListener('click', function(event) {
 
     <p>
         To know when a column's sort state has change (eg when to update your icons), you should listen
-        for <i>sortChanged</i> event on the column.
+        for <code>sortChanged</code> event on the column.
     </p>
+
     <snippet>
 // listen to the column for sort events
 column.addEventListener('sortChanged', function() {
@@ -258,7 +261,7 @@ column.addEventListener('filterChanged', function() {
 
     <p>
         How you get the user to ask for the column menu is up to you. When you want to display
-        the menu, call the <i>params.showColumnMenu()</i> callback. The callback takes the HTML
+        the menu, call the <code>params.showColumnMenu()</code> callback. The callback takes the HTML
         element for the button so that it can place the menu over the button (so the menu appears
         to drop down from the button).
     </p>
@@ -290,13 +293,14 @@ colDef = {
     <p>
         The example below shows a header component in action. The following can be observed
         in the demo:
-    <ul>
+    </p>
+
+    <ul class="content">
         <li>Column moving and resizing is working without requiring any logic in the header component.</li>
         <li>Some columns have suppressMenu=true, so the header component doesn't show the menu.</li>
         <li>Some columns have suppressSorting=true, so the header component doesn't add sorting logic.</li>
         <li>The header component uses additional parameters to allowing configuring the menu icon.</li>
     </ul>
-    </p>
 
     <?= example('Header component', 'header-component', 'generated', array("extras" => array("fontawesome"), "showResult" => true, 'onlyShow' => 'vanilla')) ?>
 
@@ -308,7 +312,7 @@ colDef = {
 
     <?php include './vuejs.php'; ?>
 
-    <h1 id="headerGroupComponent">Header Group Component</h1>
+    <h2>Header Group Component</h2>
 
     <p>
         This section details how to put a header group component into ag-Grid.
@@ -323,7 +327,7 @@ colDef = {
         The header group component (your bit) is responsible for the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>Group Open / Close:</b> If the group can expand (one or more columns visibility
             depends on the open / closed state of the group) then your header group component
             should handle the interaction with the user for opening and closing groups.
@@ -335,7 +339,7 @@ colDef = {
 
     <p>
         The header group component interface is almost identical to the above header component.
-        The only difference is the params object passed to the <i>init()</i> method.
+        The only difference is the params object passed to the <code>init()</code> method.
     </p>
 
     <snippet>
@@ -353,7 +357,7 @@ export interface IHeaderGroupComp {
 }</snippet>
 
 
-    <p>The params passed to <i>init()</i> are as follows:</p>
+    <p>The params passed to <code>init()</code> are as follows:</p>
     <snippet>
 export interface IHeaderGroupParams {
 
@@ -373,7 +377,7 @@ export interface IHeaderGroupParams {
     <p>
         Not all column groups can open and close, so you should display open / close
         features accordingly. To check if a column group should have
-        open / close functionality, check the <i>isExpandable()</i> method on the column
+        open / close functionality, check the <code>isExpandable()</code> method on the column
         group.
     </p>
 
@@ -382,7 +386,7 @@ var showExpandableIcons = params.columnGroup.isExpandable()
     </snippet>
 
     <p>
-        To check if a column group is open or closed, check the <i>isExpanded()</i> method
+        To check if a column group is open or closed, check the <code>isExpanded()</code> method
         on the column group.
     </p>
 
@@ -391,7 +395,7 @@ var groupIsOpen = params.columnGroup.isExpanded();
     </snippet>
 
      <p>
-        To open / close a column group, use the <i>params.setExpanded(boolean)</i> method.
+        To open / close a column group, use the <code>params.setExpanded(boolean)</code> method.
     </p>
 
     <snippet>
@@ -402,7 +406,7 @@ params.setExpanded(newValue);
     </snippet>
 
     <p>
-        To know if a group is expanded or collapsed, listen for the <i>expandedChanged</i>
+        To know if a group is expanded or collapsed, listen for the <code>expandedChanged</code>
         event on the column group.
     </p>
 
@@ -420,7 +424,5 @@ columnGroup.removeEventListener('expandedChanged', listener);</snippet>
     <h3 id="example-header-group-cells">Example - Header Group Cells</h3>
 
     <?= example('Header Group', 'header-group-component', 'generated', array("extras" => array("fontawesome"), "showResult" => true)) ?>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
