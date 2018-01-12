@@ -6,9 +6,9 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1" id="cell-editors">Cell Editors</h1>
+<h1>Cell Editors</h1>
 
-<p>
+<p class="lead">
     Create your own cell editor by providing a cell editor component.
 </p>
 
@@ -101,13 +101,13 @@ MyCellEditor.prototype.isPopup = function() {
 };
 </snippet>
 
-<h1 id="cell-editor-params">Cell Editor Params</h1>
+<h2>Cell Editor Params</h2>
 
 <p>
     The Cell Editor component takes parameters in its init() method and contain the following:
 </p>
 
-<table class="table">
+<table class="table reference">
     <tr>
         <th>Value</th>
         <th>Description</th>
@@ -203,14 +203,14 @@ colDef.cellEditorParams = {
 }
 </snippet>
 
-<h1 id="cell-renderer-component-registering">Registering Cell Renderers with Columns</h1>
+<h2>Registering Cell Renderers with Columns</h2>
 
 <p>
     See the section <a href="../javascript-grid-components/#registering-custom-components">
         registering custom components</a> for details on registering and using custom cell renderers.
 </p>
 
-<h1 id="editing-keyboard-navigation">Keyboard Navigation While Editing</h1>
+<h2>Keyboard Navigation While Editing</h2>
 
 <p>
     If you provide a cell editor, you may wish to disable some of the grids keyboard navigation.
@@ -228,11 +228,12 @@ colDef.cellEditorParams = {
 
 <p>
     You have two options to stop the grid from doing it's default action on certain key events:
-<ol>
+</p>
+
+<ol class="content">
     <li>Stop propagation of the event to the grid in the cell editor.</li>
     <li>Tell the grid to do nothing via the <code>colDef.suppressKeyEvent()</code> callback.</li>
 </ol>
-</p>
 
 <h3>Option 1 - Stop Propagation</h3>
 
@@ -317,10 +318,11 @@ interface SuppressKeyboardEventParams {
 }
 </snippet>
 
-<h1 id="cell-editing-example">Cell Editing Example</h1>
+<h2>Cell Editing Example</h2>
 
-<p>The example below illustrates:
-<ul>
+<p>The example below illustrates:<p>
+
+<ul class="content">
     <li>'Gender' column uses a Component cell editor that allows choices via a 'richSelect' (ag-Grid-Enterprise only),
         with values supplied by complementing the editor parameters.
     </li>
@@ -335,7 +337,6 @@ interface SuppressKeyboardEventParams {
         the country name.
     </li>
 </ul>
-</p>
 
 <?= example('Editor Component', 'vanilla-editor-component', 'vanilla', array("enterprise" => 1)) ?>
 
