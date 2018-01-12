@@ -6,7 +6,7 @@ $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1" id="filter-component">Filter Component</h1>
+<h1>Filter Component</h1>
 
 <p>
     Filter components allow you to add your own filter types to ag-Grid. Use this when the provided
@@ -103,7 +103,7 @@ interface IFilterComp {
 
 <p>
     The method init(params) takes a params object with the items listed below. If the user provides
-    params via the <i>colDef.filterParams</i> attribute, these will be additionally added to the
+    params via the <code>colDef.filterParams</code> attribute, these will be additionally added to the
     params object, overriding items of the same name if a name clash exists.
 </p>
 
@@ -163,7 +163,7 @@ interface IFilterParams {
 <h3 id="i-does-filter-pass-params">IDoesFilterPassParams</h3>
 
 <p>
-    The method doesFilterPass(params) takes the following as a parameter:
+    The method <code>doesFilterPass(params)</code> takes the following as a parameter:
 </p>
 
 <snippet>
@@ -181,21 +181,25 @@ interface IDoesFilterPassParams {
 
 <p>
     If you create your own filter you have two options to get its floating filters working for that filter:
-<ol>
+</p>
+
+<ol class="content">
     <li>
         You can <a href="../javascript-grid-floating-filter-component/">create your own floating filter</a>.
     </li>
     <li>
-        You can implement the method <i>getModelAsString()</i> in your custom filter. If you implement this method and
+        You can implement the method <code>getModelAsString()</code> in your custom filter. If you implement this method and
         you don't
         provide a custom floating filter, ag-Grid will automatically provide a read-only version of a floating filter
     </li>
 </ol>
+
+<p>
 If you don't provide any of these two options for your custom filter, the display area for the floating filter
 will be empty.
 </p>
 
-<h1 id="custom-filter-example">Custom Filter Example</h1>
+<h2>Custom Filter Example</h2>
 
 <p>
     The example below shows two custom filters. The first is on the Athlete column and the
@@ -204,14 +208,16 @@ will be empty.
 
 <?= example('Filter Component', 'custom-filter') ?>
 
-<?php include './angular.php'; ?>
+<?php 
+include './angular.php'; 
 
-<?php include './react.php'; ?>
+include './react.php'; 
 
-<?php include './polymer.php'; ?>
+include './polymer.php'; 
 
-<?php include './vuejs.php'; ?>
+include './vuejs.php'; 
 
-<?php include './aurelia.php'; ?>
+include './aurelia.php'; 
 
-<?php include '../documentation-main/documentation_footer.php'; ?>
+include '../documentation-main/documentation_footer.php'; 
+?>

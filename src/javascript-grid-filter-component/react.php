@@ -1,7 +1,4 @@
-<h1 id="reactFiltering">
-    <img src="../images/react.png" style="width: 60px"/>
-    React Filtering
-</h1>
+<h2> React Filtering </h2>
 
 <p>
     It is possible to provide React filters for ag-Grid to use if you are are using the
@@ -9,11 +6,12 @@
     registering framework components</a> for how to register framework components.
 </p>
 
-<h3 id="react-props"><img src="../images/react_large.png" style="width: 20px;"/> React Props</h3>
+<h3 id="react-props"> React Props</h3>
 
 <p>
     The React component will get the 'filter Params' as described above as its React Props.
     Therefore you can access all the parameters as React Props.
+</p>
 
     <snippet>
 // React filter Component
@@ -32,35 +30,36 @@ class NameFilter extends React.Component {
         this.props.filterChangedCallback();
     }
 }</snippet>
-</p>
 
-<h3 id="react-methods-lifecycle"><img src="../images/react_large.png" style="width: 20px;"/> React Methods / Lifecycle
-</h3>
+<h3 id="react-methods-lifecycle">React Methods / Lifecycle </h3>
 
 <p>
     All of the methods in the IFilter interface described above are applicable
     to the React Component with the following exceptions:
-<ul>
-    <li><i>init()</i> is not used. Instead use the React props passed to your Component.</li>
-    <li><i>destroy()</i> is not used. Instead use the React <i>componentWillUnmount()</i> method for
+</p>
+<ul class="content">
+    <li><code>init()</code> is not used. Instead use the React props passed to your Component.</li>
+    <li><code>destroy()</code> is not used. Instead use the React <code>componentWillUnmount()</code> method for
         any cleanup you need to do.
     </li>
-    <li><i>getGui()</i> is not used. Instead do normal React magic in your <i>render()</i> method..</li>
+    <li><code>getGui()</code> is not used. Instead do normal React magic in your <code>render()</code> method..</li>
 </ul>
 
 <p>
-    After that, all the other methods (<i>onNewRowsLoaded(), getModel(), setModel()</i> etc) behave the
+    After that, all the other methods (<code>onNewRowsLoaded(), getModel(), setModel()</code> etc) behave the
     same so put them directly onto your React Component.
 </p>
 
-<h3 id="accessing-the-react-component-instance"><img src="../images/react_large.png" style="width: 20px;"/> Accessing
+<h3 id="accessing-the-react-component-instance"> Accessing
     the React Component Instance</h3>
 
 <p>
-    ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>
+    ag-Grid allows you to get a reference to the filter instances via the <code>api.getFilterInstance(colKey)</code>
     method. If your component is a React component, then this will give you a reference to the ag-Grid's
     Component which wraps your React Component. Just like Russian Dolls. To get to the wrapped React instance
-    of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
+    of your component, use the <code>getFrameworkComponentInstance()</code> method as follows:
+</p>
+
     <snippet>
 // lets assume a React component as follows
 class NameFilter extends React.Component {
@@ -86,7 +85,7 @@ laterOnInYourApplicationSomewhere() {
     reactFilterInstance.myMethod();
 }</snippet>
 
-<h3 id="example-filtering-using-react-components"><img src="../images/react_large.png" style="width: 20px;"/> Example:
+<h3 id="example-filtering-using-react-components"> Example:
     Filtering using React Components</h3>
 <p>
     Using React Components as a partial text Filter in the "Filter Component" column, illustrating filtering and

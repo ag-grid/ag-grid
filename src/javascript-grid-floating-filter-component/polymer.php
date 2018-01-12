@@ -1,7 +1,4 @@
-<h2 id="polymerFilter">
-    <img src="../images/polymer-large.png" style="width: 60px;"/>
-    Polymer Floating Filters
-</h2>
+<h2> Polymer Floating Filters </h2>
 
 <p>
     It is possible to provide Polymer floating filter for ag-Grid to use if you are are using the
