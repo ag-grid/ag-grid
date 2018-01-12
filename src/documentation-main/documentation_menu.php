@@ -38,11 +38,12 @@ function render_menu_items($items) {
         $li_class = should_expand($item) ? ' class="expanded"' : '';
         echo "<li$li_class>";
         $enterprise_icon = ($item['enterprise'] ? '<span class="enterprise-icon">e</span>' : '');
+        $new_marker = ($item['new'] ? '<span class="new-marker">new</span>' : '');
         if ($item['url']) {
             $url = $GLOBALS['rootFolder'] . $item['url'];
             $a_class = is_current($item) ? ' class="active"' : '';
             echo <<<LINK
-                <a href="$url"$a_class>{$item['title']}$enterprise_icon</a>
+                <a href="$url"$a_class>{$item['title']}$new_marker$enterprise_icon</a>
 LINK;
         } else {
             echo "<span>{$item['title']}</span>";

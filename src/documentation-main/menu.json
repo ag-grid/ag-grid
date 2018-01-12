@@ -168,7 +168,8 @@
             },
             {
                 "title": "Column Moving",
-                "url": "javascript-grid-column-moving/"
+                "url": "javascript-grid-column-moving/",
+                "new": true
             },
             {
                 "title": "Column Filter",
@@ -211,7 +212,8 @@
             },
             {
                 "title": "Row Dragging",
-                "url": "javascript-grid-row-dragging/"
+                "url": "javascript-grid-row-dragging/",
+                "new": true
             },
             {
                 "title": "Row Selection",
