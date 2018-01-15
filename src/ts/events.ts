@@ -131,9 +131,31 @@ export interface CellFocusedEvent extends AgGridEvent {
 /**---------------*/
 /** COLUMN EVENTS */
 /**---------------*/
+
+export type ColumnEventType =
+    "SIZE_COLUMNS_TO_FIT" |
+    "AUTOSIZE_COLUMNS" |
+    "ALIGNED_GRID_CHANGED" |
+    "FILTER_CHANGED" |
+    "FILTER_DESTROYED" |
+    "GRID_OPTIONS_CHANGED" |
+    "GRID_INITIALIZING" |
+    "TOOL_PANEL_DRAG_AND_DROP" |
+    "TOOL_PANEL_UI" |
+    "UI_COLUMN_MOVED" |
+    "UI_COLUMN_RESIZED" |
+    "UI_COLUMN_DRAGGED" |
+    "UI_COLUMN_EXPANDED" |
+    "UI_COLUMN_SORTED" |
+    "CONTEXT_MENU" |
+    "COLUMN_MENU" |
+    "ROW_MODEL_UPDATED"  |
+    "API";
+
 export interface ColumnEvent extends AgGridEvent {
     column: Column;
     columns: Column[];
+    source: ColumnEventType;
 }
 
 export interface ColumnResizedEvent extends ColumnEvent {

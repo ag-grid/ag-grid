@@ -120,7 +120,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         if (this.params.enableSorting) {
             let tapListener = ()=> {
-                this.sortController.progressSort(this.params.column, false);
+                this.sortController.progressSort(this.params.column, false, "UI_COLUMN_SORTED");
             };
 
             this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, tapListener);

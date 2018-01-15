@@ -133,10 +133,10 @@ export class HeaderWrapperComp extends Component {
                 this.gridApi.showColumnMenuAfterButtonClick(this.column, source)
             },
             progressSort: (multiSort?:boolean) => {
-                this.sortController.progressSort(this.column, !!multiSort);
+                this.sortController.progressSort(this.column, !!multiSort, "UI_COLUMN_SORTED");
             },
             setSort: (sort: string, multiSort?: boolean) => {
-                this.sortController.setSortForColumn(this.column, sort, !!multiSort);
+                this.sortController.setSortForColumn(this.column, sort, !!multiSort, "UI_COLUMN_SORTED");
             },
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -183,8 +183,8 @@ export class HeaderWrapperComp extends Component {
                 dragItemCallback: () => this.createDragItem(),
                 dragItemName: displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget,
-                dragStarted: () => this.column.setMoving(true),
-                dragStopped: () => this.column.setMoving(false)
+                dragStarted: () => this.column.setMoving(true, "UI_COLUMN_MOVED"),
+                dragStopped: () => this.column.setMoving(false, "UI_COLUMN_MOVED")
             };
             this.dragAndDropService.addDragSource(dragSource, true);
             this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
@@ -226,7 +226,7 @@ export class HeaderWrapperComp extends Component {
         let weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
         if (weWantAutoSize) {
             this.addDestroyableEventListener(this.eResize, 'dblclick', () => {
-                this.columnController.autoSizeColumn(this.column);
+                this.columnController.autoSizeColumn(this.column, "UI_COLUMN_RESIZED");
             });
         }
     }
@@ -234,7 +234,7 @@ export class HeaderWrapperComp extends Component {
     public onDragging(dragChange: number, finished: boolean): void {
         let dragChangeNormalised = this.normaliseDragChange(dragChange);
         let newWidth = this.startWidth + dragChangeNormalised;
-        this.columnController.setColumnWidth(this.column, newWidth, finished);
+        this.columnController.setColumnWidth(this.column, newWidth, finished, "UI_COLUMN_DRAGGED");
     }
 
     public onDragStart(): void {

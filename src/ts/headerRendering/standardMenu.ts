@@ -68,7 +68,7 @@ export class StandardMenuFactory implements IMenuFactory {
         this.eventService.addEventListener('bodyScroll', bodyScrollListener);
         let closedCallback = ()=> {
             this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
-            column.setMenuVisible(false);
+            column.setMenuVisible(false, "CONTEXT_MENU");
         };
 
         // need to show filter before positioning, as only after filter
@@ -87,7 +87,7 @@ export class StandardMenuFactory implements IMenuFactory {
 
         this.hidePopup = hidePopup;
 
-        column.setMenuVisible(true);
+        column.setMenuVisible(true, "CONTEXT_MENU");
     }
 
     public isMenuEnabled(column: Column): boolean {

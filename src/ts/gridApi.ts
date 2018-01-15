@@ -43,7 +43,7 @@ import {ImmutableService} from "./rowModels/inMemory/immutableService";
 import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
-import {AgEvent} from "./events";
+import {AgEvent, ColumnEventType} from "./events";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {GridOptions} from "./entities/gridOptions";
 import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
@@ -275,8 +275,8 @@ export class GridApi {
         return this.pinnedRowModel.getPinnedBottomRow(index);
     }
 
-    public setColumnDefs(colDefs: (ColDef|ColGroupDef)[]) {
-        this.columnController.setColumnDefs(colDefs);
+    public setColumnDefs(colDefs: (ColDef|ColGroupDef)[], source: ColumnEventType = "API") {
+        this.columnController.setColumnDefs(colDefs, source);
     }
 
     public expireValueCache(): void {
@@ -648,7 +648,7 @@ export class GridApi {
     public destroyFilter(key: string|Column) {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.destroyFilter(column);
+            return this.filterManager.destroyFilter(column, "FILTER_DESTROYED");
         }
     }
 
@@ -669,8 +669,8 @@ export class GridApi {
         this.sortController.onSortChanged();
     }
 
-    public setSortModel(sortModel:any) {
-        this.sortController.setSortModel(sortModel);
+    public setSortModel(sortModel:any, source: ColumnEventType = "API") {
+        this.sortController.setSortModel(sortModel, source);
     }
 
     public getSortModel() {

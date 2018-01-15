@@ -1010,7 +1010,7 @@ export class GridPanel extends BeanStub {
     public sizeColumnsToFit(nextTimeout?: number) {
         let availableWidth = this.getWidthForSizeColsToFit();
         if (availableWidth>0) {
-            this.columnController.sizeColumnsToFit(availableWidth);
+            this.columnController.sizeColumnsToFit(availableWidth, "SIZE_COLUMNS_TO_FIT");
         } else {
             if (nextTimeout===undefined) {
                 setTimeout( ()=> {
