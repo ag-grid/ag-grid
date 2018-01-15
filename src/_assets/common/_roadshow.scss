@@ -47,6 +47,10 @@
     h3,
     h4 {
         line-height: 2rem;
+
+        .anchorjs-link {
+            display: none;
+        }
     }
 
     .enterprise h3:after, .enterprise h4:after {
