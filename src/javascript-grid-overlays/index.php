@@ -12,11 +12,11 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         At present, there are two overlays for the grid:
-        <ul>
+    </p>
+        <ul class="content">
         <li><b>Loading</b>: Gets displayed when the grid is loading data.</li>
         <li><b>No Rows</b>: Gets displayed when loading has complete but no rows to show.</li>
         </ul>
-    </p>
 
     <p>
         The grid manages showing and hiding of the overlays for you, so you may not ever need to call

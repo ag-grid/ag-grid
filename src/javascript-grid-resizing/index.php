@@ -78,7 +78,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The example below shows resizing in action. Things to note are as follows:
-        <ul>
+    </p>
+        <ul class="content">
         <li>Each column can be resized by dragging (or double clicking or auto resize) the
             right side of its header.</li>
         <li>The button 'Size to Fit' calls <code>api.sizeColumnsToFit()</code></li>
@@ -89,7 +90,6 @@ include '../documentation-main/documentation_header.php';
             will be restricted by these, regardless of dragging the header or using on
             of the API buttons.</li>
         </ul>
-    </p>
     <p>
         In the example below,  Also of note
         is the second column, which has both a min and max size set, which is also respected
@@ -121,14 +121,14 @@ include '../documentation-main/documentation_header.php';
     <p>
         When you resize a group, it will distribute the extra room to all columns in the group equally.
         The example below the groups can be resizes as follows:
-        <ul>
+    </p>
+        <ul class="content">
             <li>The group 'Everything Resizes' will resize all columns.</li>
             <li>The group 'Only Year Resizes' will resize only year, because the other columns
                 have <code>suppressResize=true</code>.</li>
             <li>The group 'Nothing Resizes' cannot be resized at all because all the columns
                 in the groups have <code>suppressResize=true</code>.</li>
         </ul>
-    </p>
 
     <?= example('Resizing Groups', 'resizing-groups', 'generated') ?>
 

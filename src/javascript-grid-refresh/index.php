@@ -23,7 +23,8 @@ include '../documentation-main/documentation_header.php';
     <p>
         To deal with the scenario where the row data is changed without the grid been aware,
         the grid provides the following methods:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 <b>Refresh Cells</b>: <code>api.refreshCells(cellRefreshParams)</code> - Gets the grid to refresh all cells. Change detection will
                 be used to refresh only cells who's display cell values are out of sync with the actual value.
@@ -36,7 +37,6 @@ include '../documentation-main/documentation_header.php';
                 is done.
             </li>
         </ul>
-    </p>
 
     <p>
         Your preference should be to use <code>refreshCells()</code> over <code>redrawRows()</code>.
@@ -104,7 +104,7 @@ interface RefreshCellsParams {
         following can be noted:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             The grid has <code>enableCellChangeFlash=true</code>, so cells that are refreshed will be flashed.
         </li>
@@ -161,7 +161,8 @@ interface RefreshCellsParams {
     <p>
         Use redraw row if you want to create the row again from scratch. This is useful when you have changed a property
         that only gets used when the row is created for the first time such as:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 Whether the row is <a href="../javascript-grid-full-width-rows">fullWidth</a> or not.
             </li>
@@ -173,7 +174,6 @@ interface RefreshCellsParams {
                 or <code>getRowClass()</code>.
             </li>
         </ul>
-    </p>
 
     <p>
         To get the grid to redraw rows, call <code>api.redrawRows()</code>. The interface is as follows:
@@ -195,7 +195,7 @@ interface RedrawRowsParams {
         From the example, the following can be noted:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             The <b>Redraw All Rows</b> redraws all the rows using a different background color by calling
             <code>api.redrawRows()</code> with no parameters.

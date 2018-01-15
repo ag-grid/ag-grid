@@ -66,8 +66,7 @@ include '../documentation-main/documentation_header.php';
         of the following:
     </p>
 
-    <p>
-        <ul>
+        <ul class="content">
             <li><b>Auto Height: </b>Auto height (explained below) allows the grid to resize based
             on the number of rows so that there is no vertical scrolls. Use this if you have relatively
             few rows in your grid and want to pack them into your web-page (so that there is no blank
@@ -77,7 +76,6 @@ include '../documentation-main/documentation_header.php';
             ideal if you want to print the grid, as it will remove all scrolls and pinned areas,
             so that every element is rendered into the DOM.</li>
         </ul>
-    </p>
 
     <h2 id="autoHeight">Auto Height Grid</h2>
 
@@ -100,7 +98,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The example below demonstrates the autoHeight feature. Notice the following:
-        <ul>
+    </p>
+        <ul class="content">
             <li>As you set different numbers of rows into the grid, the grid will resize it's height to just fit the rows.</li>
             <li>As the grid height exceeds the height of the browser, you will need to use the browser vertical scroll
             to view data (or the iFrames scroll if you are looking at the example embedded below).</li>
@@ -108,7 +107,6 @@ include '../documentation-main/documentation_header.php';
             <li>If you have pinned rows, the grid will size to accommodate the pinned rows.</li>
             <li>Vertical scrolling will not happen, however horizontal scrolling, including pinned columns, will work as normal.</li>
         </ul>
-    </p>
 
     <note>
         The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.

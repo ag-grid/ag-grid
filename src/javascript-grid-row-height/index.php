@@ -58,13 +58,13 @@ gridOptions.getRowHeight = function(params) {
 
     <p>
         The params object passed to the callback has the following values:
-    <ul>
+    </p>
+    <ul class="content">
         <li><b>node:</b> The <a href="../javascript-grid-model/#rowNode">rowNode</a> in question.</li>
         <li><b>data:</b> The data for the row.</li>
         <li><b>api:</b> The <a href="../javascript-grid-api/">grid api</a>.</li>
         <li><b>context:</b> The <a href="../javascript-grid-context/">grid context</a>.</li>
     </ul>
-    </p>
 
     <p>
         The example below hows dynamic row height, specifying a different row height for each row.
@@ -127,7 +127,7 @@ gridOptions.getRowHeight = function(params) {
 
     <p>The example below changes the row height in the different ways described above.</p>
 
-    <ul>
+    <ul class="content">
         <li><b>Top Level Groups:</b> The row height for the groups is changed by calling api.resetRowHeights().
         This gets the grid to call <code>api.getRowHeight()</code> again for each row.</li>
         <li><b>Swimming Leaf Rows:</b> Same technique is used here as above above. You will need to expand

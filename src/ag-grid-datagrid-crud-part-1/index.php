@@ -41,7 +41,7 @@ include('../includes/mediaHeader.php');
 
             <h2>Series Chapters</h2>
 
-            <ul>
+            <ul class="content">
                 <li class="bold-roboto">Part 1: Introduction & Initial Setup: Maven, Spring and JPA/Backend (Database)
                 </li>
                 <li><a href="../ag-grid-datagrid-crud-part-2/">Part 2</a>: Middle Tier: Exposing our data with a REST
@@ -61,7 +61,7 @@ include('../includes/mediaHeader.php');
 
             <p>Our application will use the following technologies:</p>
 
-            <ul>
+            <ul class="content">
                 <li><code>Backend</code>: H2 for the Database (Oracle in a later, optional, chapter)</li>
                 <li><code>Middle Tier</code>: Java, Spring, Hibernate</li>
                 <li><code>Front End</code>: ag-Grid, Angular 4.x</li>
@@ -110,7 +110,7 @@ include('../includes/mediaHeader.php');
 
             <p>Subsequent sections will assume these tools have been installed and are available for use.</p>
 
-            <ul>
+            <ul class="content">
                 <li><a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html" target="_blank"> Java 8
                         <i class="fa fa-external-link"></i></a></li>
                 <li><a href="https://maven.apache.org/" target="_blank"> Maven 5 <i class="fa fa-external-link"></i></a>

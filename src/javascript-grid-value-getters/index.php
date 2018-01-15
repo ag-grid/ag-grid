@@ -54,7 +54,7 @@ var countryColDef = {
         The following can be noted from the demo:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>Column 'Number' is a simple column with a <code>field</code> to get the data and without formatting.</li>
         <li>Column 'Formatted' uses the same field, however it formats the value.</li>
         <li>Column 'A + B' uses a value getter to sum the contents of cells 'A' and 'B'.</li>
@@ -181,7 +181,7 @@ colDef.valueFormatter = function(params) {
         The parameters for <code>headerValueGetter</code> differ from standard <code>valueGetter</code> as follows:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>Only one of column or columnGroup will be present, depending on whether it's
             a column or a column group.</li>
         <li>Parameter <code>location</code> allows you to have different column names depending on

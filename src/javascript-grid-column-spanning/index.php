@@ -62,7 +62,7 @@ interface ColSpanParams {
         before going a bit deeper into it's usages. The following can be noted:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             The country column is configured to span 2 columns when 'Russia' and 3 columns
             when 'United States'. All other times it's normal (1 column).
@@ -95,7 +95,7 @@ interface ColSpanParams {
         can be noted from the example:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             The data is formatted in a certain way, it is not intended for the user to sort this
             data or reorder teh columns.

@@ -60,7 +60,8 @@ include '../documentation-main/documentation_header.php';
         The example below shows the impact of change detection on value getters. The grid is
         doing all the refresh by itself with no need for the client application explicitly requesting
         a refresh. Notice the following:
-    <ul>
+    </p>
+    <ul class="content">
         <li>
             The 'Total' column uses a value getter to calculate the sum of all values in that row.
         </li>
@@ -71,7 +72,6 @@ include '../documentation-main/documentation_header.php';
             The 'Total' column gets automatically refreshed and flashes.
         </li>
     </ul>
-    </p>
 
     <?= example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', array("enterprise" => 1)) ?>
 
@@ -177,7 +177,8 @@ colDef = {
         The example below shows change detection impacting the result of groups. The grid is doing
         all the refresh by itself with no need for the client application explicitly requesting a
         refresh. Notice the following:
-    <ul>
+    </p>
+    <ul class="content">
         <li>
             Column 'Group' is marked as a <a href="../javascript-grid-grouping/">Row Group</a>
             and columns A to F are marked as <a href="../javascript-grid-aggregation/">Aggregation</a>
@@ -197,7 +198,6 @@ colDef = {
                 cell renderer</a> instead of flashing cells.
         </li>
     </ul>
-    </p>
 
     <?= example('Change Detection with Groups', 'change-detection-groups', 'generated', array("enterprise" => 1)) ?>
 
@@ -228,12 +228,14 @@ colDef = {
 
     <p>
         When a value changes, the grid's automatic change detection will update:
-    <ul>
+</p>
+    <ul class="content">
         <li>Aggregated values.</li>
         <li>Values displayed in cells.</li>
     </ul>
+
     The grid will <b>not</b>:
-    <ul>
+    <ul class="content">
         <li>Sort</li>
         <li>Filter</li>
         <li>Group</li>
@@ -262,7 +264,8 @@ colDef = {
         <a href="./#example-change-detection-and-groups">Change Detection and Groups</a>
         except it gets the grid to do an batch update so that the grouping, sorting
         and filtering are recomputed. From the example, the following can be noted:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 As before, updating any value will update the total column and aggregated group columns.
             </li>
@@ -282,7 +285,6 @@ colDef = {
                 the filter.
             </li>
         </ul>
-    </p>
 
     <?= example('Change Detection with Filter / Sort / Group', 'change-detection-filter-sort-group', 'generated', array("enterprise" => 1)) ?>
 
@@ -349,7 +351,8 @@ colDef = {
 
     <p>
         So with the example below, open up the console and notice the following:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 When the grid initialises, the aggregation gets complete 84 times
                 (6 columns * 14 groups). That's all paths in the group tree and
@@ -365,7 +368,6 @@ colDef = {
                 then all columns are recomputed but only on the changed path.
             </li>
         </ul>
-    </p>
 
 
     <?= example('Change Detection with Delta Aggregation', 'change-detection-delta-aggregation', 'generated', array("enterprise" => 1)) ?>
@@ -388,7 +390,7 @@ colDef = {
         From the example, you can observe:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             Uncheck '<b>Group & Pivot</b>' to see what the data looks like when it is flat. You can see
             it's a list of student records showing student scores and age. For seeing the impact

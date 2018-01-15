@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The API methods are as follows:
     </p>
-    <ul>
+    <ul class="content">
         <li><b>exportDataAsCsv(params)</b>: Does the full export.</li>
         <li><b>getDataAsCsv(params)</b>: Returns the CSV data for export.</li>
     </ul>
@@ -36,7 +36,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         Each of these methods takes a an optional params object that can take the following:
     </p>
-    <ul>
+    <ul class="content">
         <li><b>skipHeader</b>: Set to true if you don't want to first line to be the column header names.</li>
         <li><b>columnGroups</b>: Set to true to include header column groupings.</li>
         <li><b>skipGroups</b>: Set to true to skip row group headers and footers if grouping rows. No impact if not grouping rows.</li>
@@ -93,9 +93,10 @@ include '../documentation-main/documentation_header.php';
     <p>
         The same data that is in the grid gets exported, but none of the GUI representation of the data will be.
         What this means is:
-        <ul>
+    </p>
+        <ul class="content">
             <li>The raw values, and not the result of cell renderer, will get used, meaning:
-                <ul>
+                <ul class="content">
                     <li>Cell Renderers will NOT be used.</li>
                     <li>Value Getters will be used.</li>
                     <li>Cell Formatters will NOT be used (use <code>processCellCallback</code> instead).</li>
@@ -105,7 +106,6 @@ include '../documentation-main/documentation_header.php';
             <li>If row grouping with footers (groupIncludeFooter=true) the footers will NOT be used -
                 this is a GUI addition that happens for displaying the data in the grid.</li>
         </ul>
-    </p>
 
     <h3 id="example">
         Example
@@ -113,7 +113,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The example below shows the export in action. Notice the following:
     </p>
-    <ul>
+    <ul class="content">
         <li>Filtered rows are not included in the export.</li>
         <li>The sort order is maintained in the export.</li>
         <li>The order of the columns is maintained in the export.</li>

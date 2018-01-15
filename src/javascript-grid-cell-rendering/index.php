@@ -78,34 +78,35 @@ var colDef3 = {
 
 <h2>Grid Provided Renderers</h2>
 
-<p>
-    The grid comes with three built-in renderers which are:
-    <ul>
+<p> The grid comes with three built-in renderers which are: </p>
+    <ul class="content">
         <li><b>agGroupCellRenderer</b>: For displaying group values with expand / collapse functionality.</li>
         <li><b>agAnimateShowChangeCellRenderer</b> and <b>agAnimateSlideCellRenderer</b>: For animating changes in data.</li>
     </ul>
-    The following sections goes through each one in detail.
-</p>
+
+<p> The following sections goes through each one in detail.  </p>
 
 <h2 id="animate-renderer">Grid Renderers - agAnimateShowChangeCellRenderer and agAnimateSlideCellRenderer</h2>
 
 <p>
     The grid provides two cell renderers for animating changes to data. They are:
-<ul>
+</p>
+<ul class="content">
     <li>
-        <b>agAnimateShowChangeCellRenderer:</b> The previous value is temporarily shown beside the old value
+        <code>agAnimateShowChangeCellRenderer:</code> The previous value is temporarily shown beside the old value
         with a directional arrow showing increase or decrease in value. The old value is then faded out.
     </li>
     <li>
-        <b>agAnimateSlideCellRenderer:</b> The previous value shown in a faded fashion and slides, giving a ghosting effect
+        <code>agAnimateSlideCellRenderer:</code> The previous value shown in a faded fashion and slides, giving a ghosting effect
         as the old value fades adn slides away.
     </li>
 </ul>
-</p>
 
 <p>
     The example below shows both types of animation cell renders in action. To test, try the following:
-<ul>
+
+</p>
+<ul class="content">
     <li>
         Columns A, B and C are editable.
     </li>
@@ -119,7 +120,6 @@ var colDef3 = {
         Changes to D and E also result in animations.
     </li>
 </ul>
-</p>
 
 <?= example('Animation Renderers', 'animation-renderers', 'generated') ?>
 
@@ -165,7 +165,7 @@ colDef = {
 
 <p>
     The set of parameters for the group cell renderer are:
-<ul>
+<ul class="content">
     <li><b>suppressCount:</b> One of [true, false], if true, count is not displayed beside the name.</li>
     <li><b>checkbox:</b> One of [true,false], if true, a selection checkbox is included.</li>
     <li><b>suppressPadding:</b> Set to true to node including any padding (indentation) in the child rows.</li>
@@ -185,7 +185,8 @@ colDef = {
 
 <p>
     The example is built up as follows:
-    <ul>
+</p>
+    <ul class="content">
         <li>
             The data is grouped by two columns: <b>Type</b> (one of 'Fiction' or 'Non-Fiction') and <b>Country</b>
             (a country name, eg Ireland or United Kingdom).
@@ -212,7 +213,7 @@ colDef = {
         </li>
         <li>
             The column <b>Group Renderer C</b> builds on before, but adds the following <code>cellRendererParams</code>:
-            <ul>
+            <ul class="content">
                 <li><code>suppressCount=true</code>: Suppresses the row count.</li>
                 <li><code>checkbox=true</code>: Adds a selection checkbox.</li>
                 <li><code>padding=20</code>: Changes the padding (indentation) of the levels.</li>
@@ -225,7 +226,6 @@ colDef = {
             </ul>
         </li>
     </ul>
-</p>
 
 <?= example('Group Renderers', 'group-renderer', 'generated', array("enterprise" => 1)) ?>
 

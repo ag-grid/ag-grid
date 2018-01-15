@@ -352,11 +352,12 @@ console.log(`Sum of 5 and 3 = ${totalSum}`);</snippet>
             With Loaders we can get Webpack to process many types of files - CSS, Images, TypeScript and ES2015 code and
             so on.</p>
 
-        <p>We need 3 Babel dependencies in order to use it with Webpack:
-        <ul><code>babel-loader</code>: The interface between Babel and Webpack</ul>
-        <ul><code>babel-core</code>: Understands how to read & parse code, and generate corresponding output</ul>
-        <ul><code>babel-preset-es2015</code>: Rules for Babel on how to process ES2015 code and convert it into ES5</ul>
-        </p>
+        <p>We need 3 Babel dependencies in order to use it with Webpack: </p>
+        <ul class="content">
+        <li><code>babel-loader</code>: The interface between Babel and Webpack</li>
+        <li><code>babel-core</code>: Understands how to read & parse code, and generate corresponding output</li>
+        <li><code>babel-preset-es2015</code>: Rules for Babel on how to process ES2015 code and convert it into ES5</li>
+        </ul>
 
         <p>The webpack configuration with the Babel Loader in place looks like this:</p>
         <snippet>
@@ -386,8 +387,7 @@ module.exports = {
             providing one
             Loader initially.</p>
 
-        <p>
-        <ul>
+        <ul class="content">
             <li><code>test</code>: We need to tell the Loader that we only want it to process JavaScript files. We don't
                 want it to look for
                 CSS, HTML, images and so on - only JavaScript (.js) files. In order to do so, we provide a regex
@@ -399,7 +399,6 @@ module.exports = {
                 for Babel to convert ES2015 code
             </li>
         </ul>
-        </p>
 
 
         <p>Looking at our bundle.js again (and this time only looking at the part that contains sum.js) we can see the
@@ -495,13 +494,13 @@ document.body.appendChild(sumResultSpan);</snippet>
         <p>The only change from before is that we're now importing the CSS.</p>
 
         <p>We need two Loaders to process our CSS:
-        <ul>
+        </p>
+        <ul class="content">
             <li><code>css-loader</code>: Knows how to process CSS imports - takes the imported CSS and loads the file
                 contents
             </li>
             <li><code>style-loader</code>: Takes CSS data(from imports) and adds them to the HTML document</li>
         </ul>
-        </p>
 
         <p>Our Webpack config now looks like this:</p>
         <snippet>
@@ -531,8 +530,7 @@ module.exports = {
     }
 };</snippet>
 
-        <p>
-        <ul>
+        <ul class="content">
             <li><code>test</code>: as before, we need to tell the Loaders that we only want it to process CSS files -
                 this regex will only process .css files
             </li>
@@ -543,7 +541,6 @@ module.exports = {
                 to the HTML document)
             </li>
         </ul>
-        </p>
 
         <p>If we now run Webpack and reload our application the results will look like this:</p>
         <img src="../images/css_results.png" style="height: 50px; width: 100%">
@@ -642,14 +639,14 @@ span {
             just to add a little colour to our output.</p>
 
         <p>In order to process these images we're going to make use of two Loaders:
-        <ul>
+        </p>
+        <ul class="content">
             <li><code>image-webpack-loader</code>: will try to automatically compress large images for us</li>
             <li><code>url-loader</code>: will inline the results from <code>image-webpack-loader</code> if the results
                 are small, and include
                 the image in the output directory if they are large
             </li>
         </ul>
-        </p>
 
         <p>We have two new images we want to add - multiply.png which is relatively large (about 32kb) and sum.png which
             is relatively small (about 13kb).</p>
@@ -745,8 +742,7 @@ module.exports = {
     ]
 };</snippet>
 
-        <p>
-        <ul>
+        <ul class="content">
             <li><code>output.publicPath</code>Allows the url-loader to know what prefix to add for files that will be
                 saved to disk. For example, a resulting
                 img.src would be img.src='dist/output_file.png'
@@ -759,7 +755,6 @@ module.exports = {
             <li><code>loaders</code>: our loaders to use - remember that Webpack processes Loaders from <strong>right to left</strong>, so the results of <code>image-webpack-loader</code>
                 will be passed to <code>url-loader</code></li>
         </ul>
-        </p>
 
         <p>If we now run Webpack we will see something like the following:</p>
         <snippet>

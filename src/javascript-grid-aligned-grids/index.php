@@ -43,13 +43,15 @@ gridOptionsSecond = {
     <p>
         Below shows two grids, both aligned with the other (so any column change to one will be
         reflected in the other). The following should be noted:
-        <ul>
+</p>
+        <ul class="content">
             <li>When either grid is scrolled horizontally, the other grid follows.</li>
             <li>Showing / hiding a column on either grid (via the checkbox) will show / hide the column
                 on the other grid, despite the API been called on one grid only.</li>
             <li>When a column is resized on either grid, the other grid follows.</li>
             <li>When a column group is opened on either grid, the other grid follows.</li>
         </ul>
+<p>
         The grids don't serve much purpose (why would you show the same grid twice???) however
         it demonstrates the features in an easy to understand way.
     </p>
@@ -59,7 +61,8 @@ gridOptionsSecond = {
     <h2 id="events">Events</h2>
     <p>
         The events which are fired as part of the grid alignment relationship are as follows:
-        <ul>
+    </p>
+        <ul class="content">
             <li>Horizontal Scroll</li>
             <li>Column Hidden / Shown</li>
             <li>Column Moved</li>
@@ -67,7 +70,6 @@ gridOptionsSecond = {
             <li>Column Resized</li>
             <li>Column Pinned</li>
         </ul>
-    </p>
 
     <h2 id="pivots">Pivots</h2>
 

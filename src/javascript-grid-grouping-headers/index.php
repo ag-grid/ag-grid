@@ -157,7 +157,7 @@ gridOptions.columnDefs = [
         demonstrates the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             Both 'Athlete Details' and 'Sports Results' have <code>marryChildren=true</code>.
         </li>
@@ -186,7 +186,8 @@ gridOptions.columnDefs = [
         Winners data and going crazy with the column groups.
         The example also demonstrates the following features:
     </p>
-    <ul>
+
+    <ul class="content">
         <li>
             Using the API to open and close groups. To do this, you will need
             to provide your groups with an ID during the definition, or look up the groups ID via the API
@@ -201,12 +202,6 @@ gridOptions.columnDefs = [
             the headers. Using this technique, you can apply style to any of the header sections.
         </li>
     </ul>
-
-    <p>
-    </p>
-
-    <p>
-    </p>
 
     <?= example('Advanced Grouping', 'advanced-grouping', 'generated', array("extras" => array("fontawesome"))) ?>
 

@@ -64,7 +64,7 @@ colDef = {
         The following variables are available to the expression with the following params mapping:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>x</b> => Mapped from params.value</li>
         <li><b>value</b> => Mapped from params.value</li>
         <li><b>oldValue</b> => Mapped from params.oldValue</li>
@@ -100,7 +100,7 @@ colDef = {
 
     <p>
         The advantage of expressions are:
-    <ul>
+    <ul class="content">
         <li>They keep your column definitions as simple JSON objects (just strings, no functions) which
             makes them candidates for saving in offline storage (eg storing a report definition in a database).</li>
         <li>They make the definitions more compact, thus may make your code more maintainable.</li>
@@ -151,7 +151,7 @@ colDef = {
         grid all have expressions. The following can be noted:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             'Number Squared' and 'Number x 2' both take the number from the header as an input.
         </li>

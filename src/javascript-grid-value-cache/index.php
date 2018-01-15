@@ -59,11 +59,11 @@ include '../documentation-main/documentation_header.php';
         the following can be noted:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             When the grid is initially loaded, the <b>value getter is called over 100 times</b>. This is for the following
             reasons:
-            <ul>
+            <ul class="content">
                 <li>The aggregation requires each value for the group total.</li>
                 <li>The DOM requires each value that is displayed (because of scrolling, not all are displayed)</li>
             </ul>
@@ -129,7 +129,8 @@ include '../documentation-main/documentation_header.php';
     <p>
         The first example above didn't have any editing, so there was no concern for expiring the value cache.
         This example introduces grid editing. The example differs from the last in the following ways:
-        <ul>
+</p>
+        <ul class="content">
             <li>Value Cache is on.</li>
             <li>Editing is enabled.</li>
             <li>There are only 10 rows, so it's easier to count the number of cells.</li>
@@ -139,12 +140,14 @@ include '../documentation-main/documentation_header.php';
                 to the original value getter.
             </li>
         </ul>
+<p>
         As before, we focus on the value getter of the <b>'Total'</b> column and can see how many times it
         gets called via the console. The following can be noted:
     </p>
-    <ul>
+
+    <ul class="content">
         <li>The value's in the <b>Total</b> column are used many times as follows:
-            <ul>
+            <ul class="content">
                 <li>For inserting the value into the DOM (ie what's visible in the cell).</li>
                 <li>For calculating the group total for the total column (ie the figure 87,040 is
                 a sum of the 5 values below it).</li>
@@ -213,7 +216,7 @@ include '../documentation-main/documentation_header.php';
         is turned on but to never invalidate. Note the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             When the grid initialises, there are 12 value getter calls. The values are getting cached.
         </li>

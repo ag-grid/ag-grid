@@ -95,7 +95,8 @@ colDefs = {
 
     <p>
         The example below demonstrates the tool panel. Note the following:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 Columns <code>country, year, date and sport</code> all have <code>enableRowGroup=true</code>
                 and <code>enablePivot: true</code>. This means you can drag the columns to the group
@@ -112,7 +113,6 @@ colDefs = {
             <li>The country column uses a headerValueGetter to give the column a slightly different
             name when dependent on where it appears using the <code>location</code> parameter.</li>
         </ul>
-    </p>
 
     <?= example('Tool Panel Example', 'simple', 'generated', array("enterprise" => 1)) ?>
 
@@ -120,7 +120,8 @@ colDefs = {
 
     <p>
         Below shows using the suppress properties that can be used with the toolpanel as follows:
-        <ul>
+    </p>
+        <ul class="content">
         <li>Grid Property <code>toolPanelSuppressRowGroups</code>: When true, the row group section does not appear in the tool panel.</li>
         <li>Grid Property <code>toolPanelSuppressValues</code>: When true, the value section does not appear in the tool panel.</li>
         <li>Grid Property <code>toolPanelSuppressPivots</code>: When true, the pivot section does not appear in the tool panel.</li>
@@ -128,7 +129,6 @@ colDefs = {
         <li>Column Property <code>suppressToolPanel</code>: When true, the column will not appear in the tool panel or in the column section of the column menu.
         This is useful when you have a column working in the background, eg a column you want to group by, but not present to the user.</li>
     </ul>
-    </p>
 
     <?= example('Suppress Panels', 'suppress', 'generated', array("enterprise" => 1)) ?>
 

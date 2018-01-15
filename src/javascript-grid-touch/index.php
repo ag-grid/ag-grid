@@ -24,8 +24,7 @@ include '../documentation-main/documentation_header.php';
         The following touch gestures are supported by ag-Grid free.
     </p>
 
-    <p>
-        <ul>
+    <ul class="content">
         <li>
             Move columns by touch-dragging the column header with a touch.
         </li>
@@ -39,7 +38,6 @@ include '../documentation-main/documentation_header.php';
             Tap and hold the column header for 500ms to bring up the column menu.
         </li>
     </ul>
-    </p>
 
     <h4 id="touch-gestures-for-ag-grid-enterprise">Touch Gestures for ag-Grid Enterprise</h4>
 
@@ -48,8 +46,7 @@ include '../documentation-main/documentation_header.php';
         gestures mentioned above - they are are relevant to ag-Grid Enterprise only features.
     </p>
 
-    <p>
-        <ul>
+        <ul class="content">
             <li>
                 Drag columns out of the tool panel using drag.
             </li>
@@ -57,7 +54,6 @@ include '../documentation-main/documentation_header.php';
                 Drag columns out of the row group and pivot drop zones by dragging.
             </li>
         </ul>
-    </p>
 
 </div>
 

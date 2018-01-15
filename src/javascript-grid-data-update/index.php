@@ -38,14 +38,14 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         You can set the data onto a rowNode directly using the rowNodes API methods:
-        <ul>
-            <li><b>rowNode.setData(data):</b> Replaces the data on the rowNode. When
+    </p>
+        <ul class="content">
+            <li><code>rowNode.setData(data):</code> Replaces the data on the rowNode. When
             complete, the grid will refresh the the entire rendered row if it is showing.</li>
-            <li><b>rowNode.setDataValue(colKey, value):</b> Replaces the data on the
+            <li><code>rowNode.setDataValue(colKey, value):</code> Replaces the data on the
             rowNode for the specified column. When complete, the grid will refresh
             the rendered cell on the required row only.</li>
         </ul>
-    </p>
 
     <p>
         Updating via the rowNode methods is supported in all row models.
@@ -73,14 +73,16 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        The <a href="../javascript-grid-in-memory/">In Memory Row Model</a> has stages as follows:<br/>
-        <ul>
+        <p>The <a href="../javascript-grid-in-memory/">In Memory Row Model</a> has stages as follows:</p>
+        <ul class="content">
             <li>
                 Group &rArr; Filter &rArr; Pivot &rArr; Aggregate &rArr; Sort &rArr; Map<br/>
             </li>
         </ul>
-        That means, if you call <code>api.refreshInMemoryRowModel('filter')</code>, it will
-        also execute pivot, aggregate, sort and map.
+        <p>
+            That means, if you call <code>api.refreshInMemoryRowModel('filter')</code>, it will
+            also execute pivot, aggregate, sort and map.
+        </p>
     </note>
 
     <h3>Updating RowNodes Data Example</h3>
@@ -89,7 +91,7 @@ include '../documentation-main/documentation_header.php';
         The example below demonstrates the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>Set Price on Toyota:</b> The price value is updated on the Toyota row and the grid refreshes the cell.</li>
         <li><b>Set Data on Ford:</b> The entire data is set on the Ford row and the grid refreshes the entire row.</li>
         <li><b>Sort:</b> Re-runs the sort in the In Memory Row Model - to see this in action, sort the data first, then
@@ -255,7 +257,7 @@ interface RowDataTransaction {
         the results of the call to the console. The following can be noted:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>Add Row</b>: Adds a row to the end of the list.</li>
         <li>
             <b>Insert Row @ 2</b>: Inserts a row at position 2 in the list. This works in the grid
@@ -290,7 +292,7 @@ interface RowDataTransaction {
         When using transactions and grouping, the groups are kept intact as you add, remove and update
         rows. The example below demonstrates the following:
     </p>
-    <ul>
+    <ul class="content">
         <li><b>Add For Sale:</b> Adds a new item to 'For Sale' group.</li>
         <li><b>Add In Workshop:</b> Adds a new item to 'In Workshop' group.</li>
         <li><b>Remove Selected:</b> Removes all selected items.</li>
@@ -302,7 +304,7 @@ interface RowDataTransaction {
     <p>
         Things to try with the below example include:
     </p>
-    <ul>
+    <ul class="content">
         <li>Move rows between groups, see how the grid animates the rows to
             the new location with minimal DOM updates.</li>
         <li>Order by 'Created' and then add rows - notice how the new rows
@@ -364,7 +366,8 @@ interface RowDataTransaction {
 
     <p>
         The grid works out the delta changes with the following rules:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 <b>IF</b> the ID for the new item doesn't have a corresponding item already in the grid
                 <b>THEN</b> it's an 'add'.
@@ -379,7 +382,6 @@ interface RowDataTransaction {
                 <b>THEN</b> it's a 'remove'.
             </li>
         </ul>
-    </p>
 
     <h3>Example - Immutable Store</h3>
 
@@ -399,7 +401,7 @@ interface RowDataTransaction {
         The example demonstrates the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             <b>Append Items</b>: Adds five items to the end ((assuming when no sort applied*).
         </li>
@@ -438,7 +440,8 @@ interface RowDataTransaction {
         Finally, lets go bananas with delta updates. Below is a simplistic trading hierarchy
         with over 11,000 rows with aggregations turned on. It has the following features:
     </p>
-    <ul>
+
+    <ul class="content">
         <li>
             <b>Update Using Transaction</b>: Updates a small bunch of rows by creating a transaction
             with some rows to add, remove and update.

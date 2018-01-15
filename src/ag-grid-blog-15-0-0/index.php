@@ -78,7 +78,7 @@ include('../includes/mediaHeader.php');
         
         <p>You can download <b>ag-Grid</b> by:</p>
         
-        <ul>
+        <ul class="content">
         <li><b>npm install ag-grid</b></li>
         
         <li><b>bower install ag-grid</b></li>

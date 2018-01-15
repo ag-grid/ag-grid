@@ -49,13 +49,13 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
 
     <p>
         Example below shows the following:
-        <ul>
+    </p>
+        <ul class="content">
             <li>Default sorting on the Athlete column.</li>
             <li>When the year column is not sorted, it shows a custom icon, (up/down arrow).</li>
             <li>The date column has strings as the row data, there is custom comparator so that when you sort this column
             it sorts it as dates, not as strings.</li>
         </ul>
-    </p>
 
     <?= example('Custom Sorting', 'custom-sorting', 'generated') ?>
 
@@ -87,14 +87,14 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
 
     <p>
         The example below shows animation of the rows plus different combinations of sorting orders as follows:
-        <ul>
+    </p>
+        <ul class="content">
         <li><b>Grid Default:</b> ascending -> descending -> no sort</li>
         <li><b>Column Athlete:</b> ascending -> descending</li>
         <li><b>Column Age:</b> descending -> ascending</li>
         <li><b>Column Country:</b> descending -> no sort </li>
         <li><b>Column Year:</b> ascending only</li>
     </ul>
-    </p>
 
     <?= example('Sorting Order and Animation', 'sorting-order-and-animation', 'generated') ?>
 
@@ -102,11 +102,11 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
 
     <p>
         Sorting can be controlled via the Sorting API via the following methods:
-        <ul>
+    </p>
+        <ul class="content">
         <li><b>setSortModel(sortModel):</b> To set the sort.</li>
         <li><b>getSortModel():</b> To return the state of the currently active sort.</li>
     </ul>
-    </p>
 
     <p>
         Both methods work with a list of sort objects, each object containing a sort field

@@ -24,7 +24,8 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     To enable Master / Detail, you should set the following grid options:
-    <ul>
+</p>
+    <ul class="content">
         <li>
             <b>masterDetail:</b> Set to true to inform the grid you want to allow
             expanding of rows to reveal detail grids.
@@ -39,7 +40,6 @@ include '../documentation-main/documentation_header.php';
             with rows for display in the detail grids.
         </li>
     </ul>
-</p>
 
 <p>
     These grid options are illustrated below:
@@ -74,7 +74,7 @@ var detailGridOptions = {
 
 <p>
     Below shows a simple Master / Detail setup. From the example you can notice the following:
-    <ul>
+    <ul class="content">
       <li><b>masterDetail</b> - is set to <code>true</code> in the master grid options.</li>
       <li><b>detailCellRendererParams</b> - specifies the <code>detailGridOptions</code> to use and <code>getDetailRowData</code>
     extracts the data for the detail row.</li>
@@ -91,7 +91,7 @@ var detailGridOptions = {
 
     <p>
         There are two ways to achieve this:
-        <ul>
+        <ul class="content">
             <li>
                 <b>String Template</b> - statically overrides the template used by the grid.
                 The same fixed template is used for each row.
@@ -241,7 +241,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
     This example shows how to control cell editing when using Master / Detail. This examples demonstrates
     the following:
 
-    <ul>
+    <ul class="content">
         <li><b>Edit Master</b> - performs editing on a master cell using the master grid options:
                                  <code>masterGridOptions.api.startEditingCell()</code>
         </li>

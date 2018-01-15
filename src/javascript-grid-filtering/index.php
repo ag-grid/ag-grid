@@ -8,9 +8,8 @@ include '../documentation-main/documentation_header.php';
 
     <h1 id="filtering">Column Filter</h1>
 
-    <p>
-        Data in ag-Grid can be filtered in the following ways:
-        <ol>
+    <p> Data in ag-Grid can be filtered in the following ways: </p>
+        <ol class="content">
             <li><b>Column Filter</b>: A column filter is associated with a column and filters data based
             on the value of that column only. The column filter is accessed via the column's menu and
             may also have a <code>floating filter</code> element if floating filters are turned on.</li>
@@ -18,6 +17,7 @@ include '../documentation-main/documentation_header.php';
             <li><a href="../javascript-grid-filter-external/"><b>External Filter</b></a>: External filters is a way for your application to apply bespoke
             filtering with no restriction to the columns.</li>
         </ol>
+    <p>
         Column filters are tied to a column. Quick filter and external filter
         are not tied to a column. This section of the documentation talks about column filters only.
         For quick filter and external filter, see the relevant sections of the documentation.
@@ -117,14 +117,14 @@ columnDefinition = {
 
     <p>
         The example below demonstrates:
-        <ul>
+    </p>
+        <ul class="content">
         <li>Three filter types 1) text filter, 2) number filter and 3) date filter.</li>
         <li>Using the <code>ag-header-cell-filtered</code> class, which is applied to the header
             cell when the header is filtered. By default, no style is applied to this class, the example shows
             applying a different color background to this style.</li>
         <li>'suppressFilter' is set on Total to hide the filter on this column</li>
     </ul>
-    </p>
 
     <?= example('Built-In Filters', 'built-in-filters', 'generated') ?>
 
@@ -168,11 +168,11 @@ columnDefinition = {
 
     <p>
         The example below also demonstrates using the apply button and filter events as follows:
-        <ul>
+    </p>
+        <ul class="content">
             <li>onFilterModified gets called when the filter changes regardless of the apply button.</li>
             <li>onFilterChanged gets called after a new filter is applied.</li>
         </ul>
-    </p>
 
     <?= example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated') ?>
 
@@ -223,7 +223,8 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
     <p>You can reset a filter to its original state by getting the filter instance and then performing the action that makes sense for the filter type.</p>
 
     <p>For all the filter types the sequence would be:</p>
-    <ul>
+
+    <ul class="content">
         <li><code>var filterComponent = gridOptions.api.getFilterInstance('filter_name');</code></li>
         <li>perform reset action for filter type</li>
         <li><code>gridOptions.api.onFilterChanged();</code></li>
@@ -322,7 +323,8 @@ gridOptions = {
 
 <p>
     The following example shows the following features of floating filters:
-    <ul>
+</p>
+    <ul class="content">
         <li>Text filter: Have out of the box read/write floating filters (Sport column)</li>
         <li>Set filter: Have out of the box read floating filters  (Country column)</li>
         <li>Date and number filter: Have out of the box read/write floating filters for all filter except when switching
@@ -337,7 +339,6 @@ gridOptions = {
         <li>Combining suppressMenu and suppressFilter lets you control where the user access to the rich filter. In
         this example suppressMenu = true for all the columns except Silver and Bronze</li>
     </ul>
-</p>
 
 <?= example('Floating Filter', 'floating-filter', 'generated', array("enterprise" => 1)) ?>
 

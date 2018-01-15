@@ -77,7 +77,7 @@ getDataPath: function(data) {
         There are two ways to configure the Group Column:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>Auto Column Group</b> -  this is automatically selected by the grid when in Tree Data mode, however
         you can override the defaults. </li>
         <li><b>Custom Column Group</b> - you can provide your own custom column group definition which gives allows
@@ -213,7 +213,7 @@ var rowData = [
         The following example presents a more complex example which includes Aggregation and Filtering:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>'Add New Group' Button</b> - will add a new group under Music.</li>
         <li><b>'Move Selected to stuff' Button</b> - will move any non parent groups into the 'stuff' folder.</li>
         <li><b>'Remove Selected' Button</b> - will remove selected group along with children.</li>

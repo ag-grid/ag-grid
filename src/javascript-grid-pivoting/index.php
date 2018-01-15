@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>Pivot mode is required to be turned on for pivoting to work. When the grid is in pivot mode, the following
     will happen:</p>
-    <ul>
+    <ul class="content">
         <li>Only columns with Group, Pivot or Value active will be included in the grid.</li>
         <li>Only aggregated rows will be shown, the lowest level rowData will not be displayed.</li>
     </ul>
@@ -77,7 +77,8 @@ gridOptions.columnDefs = [
         The example below demonstrates the difference between pivot mode and having a column with pivot active.
         The example has three modes of operation that can be switched between using the top buttons. The
         modes are as follows:
-        <ul>
+    </p>
+        <ul class="content">
         <li>
             <b>1 - Grouping Active:</b> This is normal grouping. The grid groups with aggregations
             over Gold, Silver and Bronze. The user can drill down to the lowest level row data and columns
@@ -95,7 +96,6 @@ gridOptions.columnDefs = [
             in the second option.
         </li>
     </ul>
-    </p>
 
     <?= example('Pivot Mode Vs Pivot Active', 'pivot-mode', 'generated', array("enterprise" => 1)) ?>
 
@@ -241,11 +241,11 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
 
     <p>
        The example below demonstrates pivot totals as follows:
-       <ul>
+    </p>
+       <ul class="content">
            <li>Pivot totals added on ['sport', 'year'] columns.</li>
            <li>Expanding pivot groups reveals columns that make up totals.</li>
        </ul>
-    </p>
 
     <?= example('Total Pivot Columns', 'totals', 'generated', array("enterprise" => 1)) ?>
 
@@ -319,14 +319,14 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
     <p>
         The example below shows mixing in different options for the row group column. For more info on these properties,
         see <a href="../javascript-grid-grouping/">Grouping Rows</a>.
-        <ul>
+    </p>
+        <ul class="content">
         <li><code>groupHideOpenParents=true: </code> So that when the row group is expanded, the parent row is not
         shown.</li>
         <li><code>groupMultiAutoColumn=true: </code> So that one group column is created for each
         row group column (country and athlete)</li>
         <li><code>groupDefaultExpanded=2: </code> So that all the groups are opened by default</li>
         </ul>
-    </p>
 
     <?= example('Hide Open Parents', 'hide-open-parents', 'generated', array("enterprise" => 1)) ?>
 

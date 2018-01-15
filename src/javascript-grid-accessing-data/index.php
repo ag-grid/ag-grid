@@ -110,7 +110,7 @@ api.forEachLeafNode( function(rowNode, index) {
         The example below shows the different for-Each API methods as follows:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>For-Each Node</b>: Prints out every row in the grid. It ignores filtering and sorting.</li>
         <li><b>For-Each Node After Filter</b>: Prints out every row in the grid, except those filtered out.</li>
         <li><b>For-Each Node After Filter and Sort</b>: Prints our every row in the grid, except those filtered,
@@ -152,7 +152,7 @@ api.forEachLeafNode( function(rowNode, index) {
         The example below demonstrates the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>Get Displayed Row 0:</b> Returns back the first row in the grid. This is not impacted
         by what page you are one, eg if you navigate to the second page, this method will still
         return the first row on the first page. If you sort, the first row will be changed.</li>

@@ -78,7 +78,8 @@ import "ag-grid-enterprise/main";
 
     <p>The example project includes a number of separate grids on a page, with each section demonstrating a different
         feature set:
-    <ul>
+</p>
+    <ul class="content">
         <li>A feature rich grid example, demonstrating many of ag-Grid's features using Aurelia as a wrapper
             <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
@@ -123,7 +124,6 @@ import "ag-grid-enterprise/main";
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
     </ul>
-    </p>
 
     <p>Once you have the ag-Grid dependencies installed, you will then be able to access ag-Grid classes and components
         inside your application:</p>
@@ -176,7 +176,7 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
     <h2 id="configuring-ag-grid-in-aurelia">Configuring ag-Grid in Aurelia</h2>
 
     <p>You can configure the grid in the following ways through Aurelia:</p>
-    <ul>
+    <ul class="content">
         <li><b>Events:</b> All data out of the grid comes through events. These use
             Aurelia event bindings eg <code>model-updated.call="onModelUpdated()"</code>.
             As you interact with the grid, the different events are fixed and

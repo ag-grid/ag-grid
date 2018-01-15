@@ -17,14 +17,16 @@ include '../documentation-main/documentation_header.php';
     </p>
     <p>
         The property <code>menuTabs</code> is an array of strings. The valid values are: 'filterMenuTab', 'generalMenuTab' and
-        'columnsMenuTab'
-        <ul>
+        'columnsMenuTab' </p>
+
+        <ul class="content">
         <li><b>generalMenuTab</b>: Include in the <code>menuTabs</code> array to show the main panel.</li>
         <li><b>filterMenuTab</b>: Include in the <code>menuTabs</code> array to show the filter panel.</li>
         <li><b>columnsMenuTab</b>: Include in the <code>menuTabs</code> array to show the column selection panel.</li>
-    </ul>
-        To not show the menu at all, set this property to an empty array<code>[]</code>. In addition, you can set the
-    attribute <code>suppressMenu=true</code> to the column definition to not show the menu for a particular column.
+        </ul>
+
+        <p>To not show the menu at all, set this property to an empty array<code>[]</code>. In addition, you can set the
+    kattribute <code>suppressMenu=true</code> to the column definition to not show the menu for a particular column.
     </p>
 
     <p>
@@ -79,7 +81,7 @@ MenuItem {
 
     <p>The following is a list of all the default built in menu items with the rules about when they are shown.</p>
 
-    <ul>
+    <ul class="content">
         <li><b>pinSubMenu</b>: Submenu for pinning. Always shown.</li>
         <li><b>valueAggSubMenu</b>: Submenu for value aggregation. Always shown.</li>
         <li><b>autoSizeThis</b>: Auto-size the current column. Always shown.</li>
@@ -133,7 +135,8 @@ menuItems.push('separator')</snippet>
     <p>
         The example below shows the <code>getMainMenuItems()</code> in action. To demonstrate different scenarios,
         the callback returns something different based on the selected column as follows:
-        <ul>
+    </p>
+        <ul class="content">
         <li>Athlete column appends custom items to the list of built in items.</li>
         <li>Athlete column contains a sub menu.</li>
         <li>Age column provides custom items and adds one built in default item.</li>
@@ -148,7 +151,6 @@ menuItems.push('separator')</snippet>
         <li>All other columns return the default list.</li>
         <li><code>postProcessPopup</code> is used on the Gold column to reposition the menu 25px lower.</li>
     </ul>
-    </p>
 
     <?= example('Column Menu', 'column-menu', 'generated', array("enterprise" => 1)) ?>
 

@@ -20,7 +20,8 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Below shows a simple example using full width. The following can be noted:
-    <ul>
+</p>
+    <ul class="content">
         <li>
             The rows for countries France, Italy and Peru have full width components
             instead of cells.
@@ -29,7 +30,6 @@ include '../documentation-main/documentation_header.php';
             Sorting and filtering all work as if the data was displayed as normal.
         </li>
     </ul>
-</p>
 
 <?= example('Simple Full Width', 'simple-full-width', 'generated') ?>
 
@@ -48,14 +48,14 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     A fullWidth (full width) component takes up the entire width of the grid. A fullWidth component:
-<ul>
+</p>
+<ul class="content">
     <li>is not impacted by horizontal scrolling.</li>
     <li>is the width of the grid, regardless of what columns are present.</li>
     <li>is not impacted by pinned sections of the grid, will span left and right pinned areas regardless.</li>
     <li>does not participate in the navigation, rangeSelection (ag-Grid Enterprise) or contextMenu (ag-Grid Enterprise)
         of the main grid.</li>
 </ul>
-</p>
 
 <p>
     To use fullWidth, you must:
@@ -95,7 +95,8 @@ include '../documentation-main/documentation_header.php';
     the full width impacts rows. For demonstration, the pinned rows are shaded blue (with
     full width a darker shade of blue) and body full width rows are green.
     The following points should be noted:
-<ul>
+</p>
+<ul class="content">
     <li>
         Full width can be applied to any row, including pinned rows. The example demonstrates full width in
         floating top, floating bottom and body rows.
@@ -113,7 +114,6 @@ include '../documentation-main/documentation_header.php';
     <li>The example is showing a flat list of data. There is no grouping or parent / child relationships between
         the full width and normal rows.</li>
 </ul>
-</p>
 
 <?= example('Basic Full Width', 'basic-full-width', 'generated') ?>
 
@@ -131,7 +131,7 @@ include '../documentation-main/documentation_header.php';
     performance issue, then set <code>embedFullWidthRows=true</code>. The example below demonstrates as follows:
 </p>
 
-<ul>
+<ul class="content">
     <li>The full width rows are embedded with the main rows.</li>
     <li>Each full width row is split into the pinned areas.</li>
     <li>Each full width row horizontally scrolls with the main grid.</li>

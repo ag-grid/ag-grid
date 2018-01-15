@@ -25,16 +25,16 @@ include '../documentation-main/documentation_header.php';
         Even if you are not mandated to conform to any particular accessibility standard, it can be helpful to understand the
         guidelines outlined as they are generally good practices worth incorporating into your web based applications.
     </p>
-    <p>
-        Currently the most commonly encountered conformance guidelines are:
-        <ul>
+
+    <p> Currently the most commonly encountered conformance guidelines are: </p>
+
+        <ul class="content">
             <li><a href="https://www.ada.gov">ADA</a> - US Department of Justice</li>
             <li><a href="https://www.section508.gov">Section 508</a> - US federal agencies</li>
             <li><a href="https://www.w3.org/WAI/intro/wcag">WCAG 2.0</a> - globally accepted standard</li>
         </ul>
 
-        WCAG 2.0 has 3 levels of conformance; A, AA and AAA (in order of conformance)
-    </p>
+    <p> WCAG 2.0 has 3 levels of conformance; A, AA and AAA (in order of conformance) </p>
 
     <p>
         As meeting WCAG 2.0 level AA guidelines also meets the ADA and Section 508 standards, it is likely that most organisations will want to target this standard.
@@ -101,7 +101,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         When inspecting the DOM you'll notice the following roles and properties have been added:
-        <ul>
+    </p>
+        <ul class="content">
             <li><b>role="grid"</b> - marks the enclosing element of the grid</li>
             <li><b>role="row"</b> - a row of column headers or grid cells</li>
             <li><b>role="columnheader"</b> - element containing a column header</li>
@@ -109,7 +110,6 @@ include '../documentation-main/documentation_header.php';
             <li><b>role="presentation"</b> - indicates an element should be ignored</li>
             <li><b>aria-hidden="true"</b> - indicates an element and child elements should be ignored</li>
         </ul>
-    </p>
 
     <p>
         These attributes will enable screen readers to interpret and navigate the columns and rows of the grid.
@@ -183,15 +183,15 @@ gridOptions.rowBuffer = 9999</snippet>
         The example below presents a simple grid layout with the following properties enabled:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
-            <b>ensureDomOrder</b> - ensures the rows and columns in the DOM always appear in the same order as displayed in the grid.
+            <code>ensureDomOrder</code> - ensures the rows and columns in the DOM always appear in the same order as displayed in the grid.
         </li>
         <li>
-            <b>suppressColumnVirtualisation</b> - ensures all columns are rendered, i.e. appears in the DOM.
+            <code>suppressColumnVirtualisation</code> - ensures all columns are rendered, i.e. appears in the DOM.
         </li>
         <li>
-            <b>rowBuffer</b> - sets the number of rows rendered outside of the scrollable viewable area.
+            <code>rowBuffer</code> - sets the number of rows rendered outside of the scrollable viewable area.
         </li>
     </ul>
 

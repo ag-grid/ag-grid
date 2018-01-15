@@ -12,12 +12,12 @@ include '../documentation-main/documentation_header.php';
     <p>
         Cell customisation is done a the column level via the column definition. You can mix and match any
         of the following mechanisms:
-        <ul>
+    </p>
+        <ul class="content">
             <li><b>Cell Style:</b> Providing a CSS style for the cells.</li>
             <li><b>Cell Class:</b> Providing a CSS class for the cells.</li>
             <li><b>Cell Class Rules:</b> Providing rules for applying CSS classes.</li>
         </ul>
-    </p>
 
     <p>
         Each of these approaches are presented in the following sections.
@@ -145,8 +145,9 @@ export interface CellClassParams {
         by executing the string as if it were a Javascript expression. The expression
         has the following attributes available to it (mapping the the attributes of the equivalent
         params object):
+</p>
 
-        <ul>
+        <ul class="content">
             <li><b>x</b>: maps value</li>
             <li><b>ctx</b>: maps context</li>
             <li><b>node</b>: maps node</li>
@@ -156,6 +157,7 @@ export interface CellClassParams {
             <li><b>api</b>: maps api</li>
         </ul>
 
+<p>
         In other words, x and ctx map value and context, all other attributes map the parameters of the same name.
     </p>
 
@@ -176,7 +178,8 @@ cellClassRules: {
         If you refresh a cell, or a cell is updated due to editing, the cellStyle,
         cellClass and cellClassRules are all applied again. This has the following
         effect:
-        <ul>
+    </p>
+        <ul class="content">
             <li><b>cellStyle</b>: All new styles are applied. If a new style is the
             same as an old style, the new style overwrites the old style.</li>
             <li><b>cellClass</b>: All new classes are applied. Old classes are not
@@ -186,13 +189,13 @@ cellClassRules: {
             applied the second time. Rules tha return false will have the class removed
             second time.</li>
         </ul>
-    </p>
 
     <h2>Example Cell Styling</h2>
 
     <p>Below shows both cssClassRules snippets above in a full working example. The exmaple
     demonstrates the following:
-        <ul>
+    </p>
+        <ul class="content">
             <li>Age uses <code>cellClassRules</code> with expressions (strings instead of functions).
             Editing the cell will update the style.</li>
             <li>Year uses <code>cellClassRules</code> with functions. Editing the cell will update the style.</li>
@@ -203,7 +206,6 @@ cellClassRules: {
             <li>Silver and Bronze set <code>cellStyle</code> using a function and depends on the value.
             Editing will update the cellStyle.</li>
         </ul>
-    </p>
 
     <?= example('Cell Styling', 'cell-styling', 'generated') ?>
 </div>

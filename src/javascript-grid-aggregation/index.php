@@ -87,7 +87,8 @@ colDef = {
     <p>
         The example below shows simple aggregation using the built in functions. The following
         should be noted:
-    <ul>
+    </p>
+    <ul class="content">
         <li>
             In order for aggregations to be used, a group column is specified. The example groups
             by country by setting <code>rowGroupIndex=0</code> for the country column.
@@ -105,7 +106,6 @@ colDef = {
             to selecting only sum, min or max as the aggregation function for this column.
         </li>
     </ul>
-    </p>
 
     <?= example('Built-In Functions', 'built-in-functions', 'generated', array("enterprise" => 1)) ?>
 
@@ -124,7 +124,8 @@ colDef = {
 
     <p>
         The following can be noted from the example:
-    <ul>
+    </p>
+    <ul class="content">
         <li>
             <p>
                 <b>Min/Max on Age Column</b>:
@@ -190,7 +191,6 @@ colDef = {
             </p>
         </li>
     </ul>
-    </p>
 
     <p>
         Note that the example below gives an error on the console saying it cannot find 'xyz'. This is because

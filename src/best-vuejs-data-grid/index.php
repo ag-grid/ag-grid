@@ -447,7 +447,7 @@ this.params.context.componentParent</snippet>
 
 <p>The <span style="font-style: italic">"A Simple Example, using CellRenderers created from VueJS Components"</span>
     above illustrates this in the Child/Parent column:</p>
-<ul>
+<ul class="content">
     <li>
         <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue"
            target="_blank" class="fa fa-external-link"> Parent & Child Component</a></li>

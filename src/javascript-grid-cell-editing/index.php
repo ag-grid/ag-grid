@@ -22,13 +22,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         You configure cell editors as part of the column definition and can be one of the following:
-    <ul>
+    </p>
+    <ul class="content">
         <li>component: The grid will call 'new' on the provided class and treat the object as a component, using
             lifecycle methods.</li>
     <li>string: The <code>cellEditor</code> is looked up from the provided cell editors. Use this if you
             want to use a built in editor.</li>
     </ul>
-    </p>
 
     <h3 id="default-editing">Enabling editing in a column</h3>
 
@@ -83,7 +83,9 @@ include '../documentation-main/documentation_header.php';
     <p>
         If you have <code>colDef.editable=true</code> set for a column then editing will start upon any of the following:
         Editing can start in the following ways:
-        <ul>
+    </p>
+
+        <ul class="content">
         <li><b>Edit Key Pressed</b>: One of the following is pressed: Enter, F2, Backspace, Delete. If this
         happens then params.keyPress will contain the key code of the key that started the edit. The default editor
         will clear the contents of the cell if Backspace or Delete are pressed.</li>
@@ -97,13 +99,13 @@ include '../documentation-main/documentation_header.php';
             your own way of starting editing only, such as clicking a button in your custom cell renderer.</li>
         <li><b>api.startEditingCell()</b>: If you call <code>startEditingCell()</code> on the grid API</li>
     </ul>
-    </p>
-
     <h3 id="stop-end-editing">Stop / End Editing</h3>
 
     <p>
         The grid will stop editing when any of the following happen:
-        <ul>
+    </p>
+
+        <ul class="content">
         <li><b>Callback stopEditing</b>: The callback <code>stopEditing</code> (from the params above) gets called by the
             editor. This is how your cell editor informs the grid to stop editing.</li>
         <li><b>Other Cell Focus</b>: If focus in the grid goes to another cell, the editing will stop.</li>
@@ -120,8 +122,6 @@ include '../documentation-main/documentation_header.php';
             outside the editor. Closing the popup triggers the grid to stop editing.</li>
         <li><b>gridApi.stopEditing()</b>: If you call <code>stopEditing()</code> on the grid API.</li>
     </ul>
-    </p>
-
     <h3 id="popup-vs-in-cell">Popup vs In Cell</h3>
 
     <p>
@@ -175,7 +175,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The grid, out of the box, comes with the following editors:
-        <ul>
+    </p>
+        <ul class="content">
         <li><b>agTextCellEditor</b>: Simple text editor that uses standard HTML Input. This is the default.</li>
         <li><b>agSelectCellEditor</b>: Simple editor that uses standard HTML Select.</li>
         <li><b>agPopupTextCellEditor</b>: Same as 'text' but as popup.</li>
@@ -183,7 +184,6 @@ include '../documentation-main/documentation_header.php';
         <li><b>agLargeTextCellEditor</b>: - A text popup that for inputting larger, multi-line text.</li>
         <li><b>agRichSelectCellEditor (ag-Grid-Enterprise only)</b>: - A rich select popup that uses row virtualisation
     </ul>
-    </p>
 
 <note>We have found the standard HTML <code>select</code> to behave odd when in the grid. This is because the browser
     doesn't have a great API for opening and closing the select's popup. We advise you don't use
@@ -237,13 +237,13 @@ colDef.cellEditorParams = {
     <p>
         <code>api.startEditingCell(params)</code><br/>
         Starts editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. Parameters are as follows:
-        <ul>
+    </p>
+        <ul class="content">
         <li><b>rowIndex</b>: The row index of the row to start editing.</li>
         <li><b>colKey</b>: The column key of the column to start editing.</li>
         <li><b>rowPinned</b>: Set to 'top' or 'bottom' to started editing a pinned row.</li>
         <li><b>keyPress, charPress</b>: The keyPress and charPress that are passed to the cell editor</li>
     </ul>
-    </p>
 
     <p>
         <code>api.stopEditing(cancel)</code><br/>
@@ -257,57 +257,56 @@ colDef.cellEditorParams = {
 
     <p>
         The following events are fired as editing starts and stops:
-        <ul>
+    </p>
+        <ul class="content">
         <li><b>cellEditingStarted: </b> editing has started on a cell.</li>
         <li><b>cellEditingStopped: </b> editing has stopped on a row.</li>
         <li><b>rowEditingStarted: </b> editing has started on a row. Only for full row editing.</li>
         <li><b>rowEditingStopped: </b> editing has stopped on a row. Only for full row editing.</li>
     </ul>
-    </p>
 
     <h3 id="cell-editing-example">Cell Editing Example</h3>
 
     <p>
         The example below illustrates different parts of the editing API. Each button starts
         editing the 'Last Name' column of the first row with the following differences:
-        <ul>
+</p>
+        <ul class="content">
             <li>
-                <b>edit()</b>: Normal editing start.
+                <code>edit()</code>: Normal editing start.
             </li>
             <li>
-                <b>edit(Delete)</b>: Edit as if delete button was pressed (clears contents first).
+                <code>edit(Delete)</code>: Edit as if delete button was pressed (clears contents first).
             </li>
             <li>
-                <b>edit('T')</b>: Edit as if 'T' was pressed (places 'T' into cell).
+                <code>edit('T')</code>: Edit as if 'T' was pressed (places 'T' into cell).
             </li>
             <li>
-                <b>edit(top)</b>: Edits top pinned row.
+                <code>edit(top)</code>: Edits top pinned row.
             </li>
             <li>
-                <b>edit(bottom)</b>: Edits bottom pinned row.
-            </li>
-        </ul>
-        The example then demonstrates the following buttons for edit navigation:
-        <ul>
-            <li>
-                <b>stop()</b>: Stops editing.
-            </li>
-            <li>
-                <b>next()</b>: Edits the next cell.
-            </li>
-            <li>
-                <b>previous()</b>: Edits the previous cell.
+                <code>edit(bottom)</code>: Edits bottom pinned row.
             </li>
         </ul>
-
-    </p>
+        <p>The example then demonstrates the following buttons for edit navigation:</p>
+        <ul class="content">
+            <li>
+                <code>stop()</code>: Stops editing.
+            </li>
+            <li>
+                <code>next()</code>: Edits the next cell.
+            </li>
+            <li>
+                <code>previous()</code>: Edits the previous cell.
+            </li>
+        </ul>
 
     <?= example('Cell Editing', 'cell-editing', 'generated') ?>
 
     <h3 id="datepicker-cell-editing-example">Datepicker Cell Editing Example</h3>
 
     <p>The example below illustrates:
-    <ul>
+    <ul class="content">
         <li>'Date' column uses a Component cell editor that allows you to pick a date using jQuery UI Datepicker.</li>
     </ul>
     <?= example('Datepicker Cell Editing', 'datepicker-cell-editing', 'generated', array("enterprise" => 1, "extras" => array('jquery', 'jqueryui', 'bootstrap') )) ?>
@@ -326,7 +325,7 @@ colDef.cellEditorParams = {
     <p>
         If using custom cell editors, the cell editors will work in the exact same way with the
         following additions:
-        <ul>
+        <ul class="content">
     <li><b>focusIn:</b> If your cell editor has a <code>focusIn()</code> method, it will get called when the
             user tabs into the cell. This should be used to put the focus on the particular item
             to be focused, eg the <code>textfield</code> within your cell editor.</li>
@@ -360,7 +359,8 @@ colDef.cellEditorParams = {
     <p>
         The example below shows full row editing. In addition to standard full row editing,
         the following should also be noted:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 The 'Price' column has a custom editor demonstrating how you should implement
                 the <code>focusIn()</code> method. Both <code>focusIn()</code> and <code>focusOut()</code> for this
@@ -388,7 +388,6 @@ colDef.cellEditorParams = {
                 the editing row.
             </li>
         </ul>
-    </p>
 
     <?= example('Full Row Editing', 'full-row-editing', 'generated', array("enterprise" => 1)) ?>
 
@@ -447,7 +446,9 @@ colDef.cellEditorParams = {
     <p>
         The example below shows the editing with <code>stopEditingWhenGridLosesFocus=true</code>.
         Notice the following:
-        <ul>
+    </p>
+
+        <ul class="content">
             <li>
                 Double click to start editing 'Age', then click outside the grid (on the 'Dummy Save'
                 button, or the dummy text field) and the grid will stop editing.
@@ -457,8 +458,6 @@ colDef.cellEditorParams = {
                 anywhere on the popup editor, but once you click outside the editor, the popup closes.
             </li>
         </ul>
-    </p>
-
     <?= example('Stop Editing When Grid Loses Focus', 'stop-edit-when-grid-loses-focus', 'generated') ?>
 
     <note>Cell Editing can also be done via Cell Editor Components - please see <a href="../javascript-grid-cell-editor">

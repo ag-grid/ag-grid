@@ -51,7 +51,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>In this example the default pagination settings are changed. Note the following:</p>
 
-    <ul>
+    <ul class="content">
         <li><code>paginationPageSize</code> is set to 10</li>
         <li><code>api.paginationGoToPage(4)</code> is called to go to page 4 (0 based, so he 5th page)</li>
         <li>A dropdown to change the page size dynamically is available. This makes a call to
@@ -106,7 +106,7 @@ include '../documentation-main/documentation_header.php';
             <td>
                 <p>This event is triggered every time the paging state changes, Some of the most common scenarios for
                     this event to be triggered are:
-                <ul>
+                <ul class="content">
                     <li>The page size changes</li>
                     <li>The current shown page is changed</li>
                     <li>New data is loaded onto the grid</li>

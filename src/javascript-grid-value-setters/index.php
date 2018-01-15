@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
         a look at the impact of the edits. The following should be noted from the demo:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             <b>Column 'Simple':</b> This is a simple string column using field. It is a simple string column,
             so doesn't need any special treatment.

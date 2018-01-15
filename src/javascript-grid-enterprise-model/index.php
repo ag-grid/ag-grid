@@ -372,7 +372,7 @@ export interface ColumnVO {
 
 <note>
     Performing multiple row selections using 'shift-click' has the following restrictions:
-    <ul>
+    <ul class="content">
         <li>Only works across rows that share the same parent.</li>
         <li>Only works for rows that are loaded (eg a large range selection may span rows that are not loaded).</li>
     </ul>

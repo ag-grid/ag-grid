@@ -227,13 +227,13 @@ include '../documentation-main/documentation_header.php';
     <h4>ag-Grid Enterprise Bundle Types</h4>
     <p>
         Again similar to ag-Grid, ag-Grid-Enterprise has 4 bundles:
-    <ul>
+</p>
+    <ul class="content">
         <li>dist/ag-grid-enterprise.js -> standard bundle containing JavaScript and CSS</li>
         <li>dist/ag-grid-enterprise.min.js -> minified bundle containing JavaScript and CSS</li>
         <li>dist/ag-grid-enterprise.noStyle.js -> standard bundle containing JavaScript without CSS</li>
         <li>dist/ag-grid-enterprise.min.noStyle.js -> minified bundle containing JavaScript without CSS</li>
     </ul>
-    </p>
 
     <p>Even if you are using React, AngularJS 1.x, Angular, VueJS or Web Components, the above is all you need
         to
@@ -262,7 +262,7 @@ include '../documentation-main/documentation_header.php';
         Angular components are based on Web Components. The example demonstrates the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>Events:</b> All data out of the grid comes through events. These events
             are native browser events and can be listened to one of: <br/>
             a) Calling <code>addEventListener(eventName, handler)</code> on the element<br/>

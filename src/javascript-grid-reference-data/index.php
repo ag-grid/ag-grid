@@ -128,7 +128,7 @@ cellEditorParams: {
         The following example demonstrates how <code>Value Handlers</code> can be combined to work with reference data:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             <b>'Make' Column:</b> uses the built-in 'select' <code>Cell Editor</code>. Mapped names are displayed in the drop
             down list and selections are saved as 'make' codes in the underlying data.
@@ -158,7 +158,7 @@ cellEditorParams: {
         The following example demonstrates how the <code>refData</code> property simplifies working with reference data:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             <b>'Make' Column:</b> uses the built-in 'select' <code>Cell Editor</code> with the <code>refData</code> property specified.
             Mapped names are displayed in the drop down list and selections are saved as 'make' codes in the underlying data.

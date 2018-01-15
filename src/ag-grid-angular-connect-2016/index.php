@@ -73,14 +73,14 @@ include('../includes/mediaHeader.php');
         </p>
         <p>
             How much conference planning can you do in five days while still running a business? Quite a lot, it turns out.
-            <ul>
+        </p>
+            <ul class="content">
                 <li>We organised printing a large backdrop for our stand.</li>
                 <li>We recorded a 20-minute demonstration of ag-Grid to play on repeat throughout the conference.</li>
                 <li>We worked up a competition to win an iPad mini.</li>
                 <li>We printed 1,500 fliers explaining what ag-Grid does, to drop into the conference welcome bags.</li>
                 <li>And we prepared a five-minute lightening talk to be delivered on the main stage on day two.</li>
             </ul>
-        </p>
         <div style="float: right; padding-left: 20px; padding-bottom: 20px; padding-top: 5px;">
             <img src="../images/angularConnect2016/dayBefore.png"/>
             <div style="padding: 0px; width: 400px; color: darkgrey; font-size: 12px;">

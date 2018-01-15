@@ -12,21 +12,21 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The grid will animate the rows and columns in the following scenarios:
-        <ul>
+    </p>
+        <ul class="content">
         <li>Column Animations:
-            <ul>
+            <ul class="content">
                 <li>Moving Columns</li>
             </ul>
         </li>
         <li>Row Animations
-            <ul>
+            <ul class="content">
                 <li>Filtering Rows</li>
                 <li>Sorting Rows</li>
                 <li>Expanding / Collapsing Row Groups</li>
             </ul>
         </li>
     </ul>
-    </p>
 
     <h3 id="column-animations">Column Animations</h3>
 
@@ -59,12 +59,14 @@ include '../documentation-main/documentation_header.php';
         You do not need to know how the animations work, you just need to turn them on. However
         if you are creating a theme or otherwise want to adjust the animations, it will be useful
         for you to understand the sequence of rules which are as follows:
-        <ul>
+</p>
+        <ul class="content">
             <li><b>New Rows:</b> Rows that are new to the grid are placed in the new position and faded in.</li>
             <li><b>Old Rows:</b> Rows that are no longer in the grid are left in the same position and faded out.</li>
             <li><b>Moved Rows:</b> Rows that are in a new position get their position transitioned to the new position.</li>
             <li><b>Resized Height Rows:</b> Rows that get their height change will have the height transitioned to the new height.</li>
         </ul>
+<p>
         In addition to the transition animations, old rows are placed behind new rows such that moving rows are
         on top of old rows when moved (hence old rows are not fading out on top of new rows, but behind new rows).
     </p>

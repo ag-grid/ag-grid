@@ -86,18 +86,18 @@ MenuItemDef {
 
     <p>The following is a list of all the default built in menu items with the rules about when they are shown.</p>
 
-    <ul>
-        <li><b>autoSizeAll</b>: Auto-size all columns. Always shown.</li>
-        <li><b>expandAll</b>: Expand all groups. Only shown if grouping by at least one column.</li>
-        <li><b>contractAll</b>: Contract all groups. Only shown if grouping by at least one column.</li>
-        <li><b>copy</b>: Copy selected value to clipboard</li>
-        <li><b>copyWithHeaders</b>Copy selected value to clipboard with headers.</li>
-        <li><b>paste</b>: Always disabled (see note in clipboard section).</li>
-        <li><b>resetColumns</b>: Reset all columns.</li>
-        <li><b>toolPanel</b>: Show / hide the toolpanel.</li>
-        <li><b>export</b>: Export sub menu (containing csvExport and excelExport).</li>
-        <li><b>csvExport</b>: Export to CSV using all default export values.</li>
-        <li><b>excelExport</b>: Export to Excel using all default export values.</li>
+    <ul class="content">
+        <li><code>autoSizeAll</code>: Auto-size all columns. Always shown.</li>
+        <li><code>expandAll</code>: Expand all groups. Only shown if grouping by at least one column.</li>
+        <li><code>contractAll</code>: Contract all groups. Only shown if grouping by at least one column.</li>
+        <li><code>copy</code>: Copy selected value to clipboard</li>
+        <li><code>copyWithHeaders</code>Copy selected value to clipboard with headers.</li>
+        <li><code>paste</code>: Always disabled (see note in clipboard section).</li>
+        <li><code>resetColumns</code>: Reset all columns.</li>
+        <li><code>toolPanel</code>: Show / hide the toolpanel.</li>
+        <li><code>export</code>: Export sub menu (containing csvExport and excelExport).</li>
+        <li><code>csvExport</code>: Export to CSV using all default export values.</li>
+        <li><code>excelExport</code>: Export to Excel using all default export values.</li>
     </ul>
 
     <h3>Default Context Menu</h3>
@@ -127,7 +127,8 @@ MenuItemDef {
     <p>
         Below shows a configured context menu in action demonstrating a customised menu with a mix
         of custom items. You should notice the following:
-        <ul>
+    </p>
+        <ul class="content">
         <li>A mix of built in items and custom items are used.</li>
         <li>The first item uses the contents of the cell to display its value.</li>
         <li>Country and Person are sub menu's. The country sub menu contains icons.</li>
@@ -135,7 +136,6 @@ MenuItemDef {
         <li>The menu item has css classes applied to it.</li>
         <li>The second menu item ('Always Disabled') has a tooltip.</li>
     </ul>
-    </p>
 
     <?= example('Context Menu Example', 'context-menu', 'generated', array("enterprise" => 1)) ?>
 

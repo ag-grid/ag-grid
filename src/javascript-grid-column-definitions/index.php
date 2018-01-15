@@ -63,7 +63,7 @@ var gridOptions = {
         help simplify and avoid duplication of column definitions. This is done through the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>defaultColDef:</b> contains column properties all columns will inherit.</li>
         <li><b>defaultColGroupDef:</b> contains column group properties all column groups will inherit.</li>
         <li><b>columnTypes:</b> specific column types containing properties that column definitions can inherit.</li>
@@ -204,7 +204,7 @@ Examples of state include column visibility, width, row groups and values.
     This is primarily achieved using the following methods:
 </p>
 
-<ul>
+<ul class="content">
     <li><code>columnApi.getColumnState()</code>: Returns the state of a particular column.</li>
     <li><code>columnApi.setColumnState(state)</code>: To set the state of a particular column.</li>
 </ul>
@@ -222,7 +222,8 @@ Examples of state include column visibility, width, row groups and values.
 
 <p>
     The values have the following meaning:
-<ul>
+</p>
+<ul class="content">
     <li><code>colId</code>: The ID of the column. See
         <a href="../javascript-grid-column-definitions/">column definitions</a> for explanation
         of column ID
@@ -237,14 +238,13 @@ Examples of state include column visibility, width, row groups and values.
     <li><code>width</code>: The width of the column. If the column was resized, this reflects the new value.</li>
     <li><code>pinned</code>: The pinned state of the column. Can be either <code>'left'</code> or <code>'right'</code></li>
 </ul>
-</p>
 
 
 <h2 id="column-api-example">Column API Example</h2>
 <p>This section illustrates how to store and restore column state using the <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
 
-<ul>
+<ul class="content">
     <li>hiding / showing columns as well as saving / restoring the entire state</li>
     <li><b>registering for column events, the result of which are printed to the console.</b></li>
 </ul>

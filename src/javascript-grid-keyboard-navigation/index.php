@@ -213,7 +213,8 @@ myInput.addEventListener("keydown", function (event) {
     <p>
         In the following example there is an input box provided to test tabbing into the grid. Notice the following:
 
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 Tabbing out of the input box will gain focus on the first grid cell.
             </li>
@@ -222,7 +223,6 @@ myInput.addEventListener("keydown", function (event) {
                 of the input will cause the grid to navigate to the first cell.
             </li>
         </ul>
-    </p>
 
 
     <?= example('Tabbing into the Grid', 'tabbing-into-grid', 'vanilla') ?>

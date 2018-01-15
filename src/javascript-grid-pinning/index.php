@@ -54,7 +54,8 @@ colDef = {
 
     <p>
         It is possible to pin a column by moving the column in the following ways:
-        <ul>
+</p>
+        <ul class="content">
             <li>
                 When other columns are pinned, drag the column to the existing pinned area.
             </li>
@@ -67,7 +68,6 @@ colDef = {
 
         <img src="../javascript-grid-pinning/pinningByMoving.gif" style="margin: 10px; border: 1px solid #aaa;"/>
 
-    </p>
 
 
     <h2>Lock Pinned</h2>
@@ -75,15 +75,17 @@ colDef = {
     <p>
         If you do not want the user to be able to pin using the UI, set the property
         <code>lockPinned=true</code>. This will block the UI in the following way:
-        <ul>
+    </p>
+        <ul class="content">
             <li>Dragging a column to the pinned section will not pin the column.</li>
             <li>For ag-Grid Enterprise, the column menu will not have a pin option.</li>
         </ul>
-    </p>
 
     <p>
         The example below demonstrates columns with pinning locked. The following can be noted:
-        <ul>
+    </p>
+
+        <ul class="content">
             <li>
                 The column <b>Athlete</b> is pinned via the configuration and has <code>lockPinned=true</code>.
                 This means the column will be pinned always, it is not possible to drag the column out
@@ -98,7 +100,6 @@ colDef = {
                 section by dragging.
             </li>
         </ul>
-    </p>
 
     <?= example('Lock Pinned', 'lock-pinned', 'generated') ?>
 

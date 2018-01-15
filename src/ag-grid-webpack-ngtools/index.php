@@ -127,7 +127,7 @@ export class AppComponent {
             traffic and load times. Let's look at that next.</p>
 
         <p>In this blog I'll run through 3 configurations:</p>
-        <ul>
+        <ul class="content">
             <li><code>JIT (Just-In-Time) Configuration</code>: I'll describe this briefly as well as the results of using it.</li>
             <li><code>Non-AOT Production Configuration</code>: A Production ready configuration, but without AOT support.</li>
             <li><code>AOT Production Configuration</code>: A Production ready configuration, this time with AOT support.</li>
@@ -196,7 +196,7 @@ module.exports = {
 };</snippet>
         <p>The items of note in this configuration is the <code>entry</code> field where we describe our entry points, and
         our <code>loaders</code>:</p>
-        <ul>
+        <ul class="content">
             <li><code>['awesome-typescript-loader', 'angular2-template-loader']</code>: Transpile and process our Angular code.</li>
             <li><code>html-loader</code>: Take the results of our Webpack configuration and inject them into a pre-supplied html file.</li>
         </ul>
@@ -379,7 +379,7 @@ import 'rxjs';</snippet>
   }
 }</snippet>
         <p>The key parts of this are:</p>
-        <ul>
+        <ul class="content">
             <li><code>exclude</code>: We're excluding the <code>aot</code> output folder and <code>boot-aot.ts</code>
             AOT bootstrap file. We exclude the boostrap file as the factory referenced within won't exist yet (the AOT plugin will do this for us, next)</li>
             <li><code>angularCompilerOptions</code>: Specifies AOT compiler properties, specifically the output dir here</li>
@@ -659,7 +659,7 @@ export class AppComponent {
         what improvements I could see. I've excluded file sizes from this as our examples include a number of non-compressible
             images, but looking at the load times I saw the following improvements:</p>
 
-        <ul>
+        <ul class="content">
             <li>Non-AOT: 2.2s</li>
             <li>AOT: 1.64s</li>
         </ul>

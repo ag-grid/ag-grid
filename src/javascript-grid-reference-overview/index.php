@@ -338,7 +338,7 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
         <p>All data out of the grid comes through events. You can specify the events you want to listen to in the
             following ways:</p>
 
-        <ul>
+        <ul class="content">
             <li>On the <code>ag-grid-polymer</code>component at declaration time</li>
             <li>On the <code>gridOptions</code> property</li>
             <li>On the <code>ag-grid-polymer</code>component post creation time, via event listeners</li>

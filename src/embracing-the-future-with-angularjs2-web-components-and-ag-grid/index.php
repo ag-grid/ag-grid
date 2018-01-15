@@ -35,7 +35,7 @@ include('../includes/mediaHeader.php');
             Having spent a considerable time considering the above I have come to the following logical conclusions:
         </p>
 
-        <ul>
+        <ul class="content">
             <li>
                 Right now AngularJS 1.x has a large following. It is probable that a large majority of that following will migrate onto Angular 2 when it is ready.
             </li>

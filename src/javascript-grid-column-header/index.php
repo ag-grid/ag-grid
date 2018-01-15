@@ -112,12 +112,13 @@ include '../documentation-main/documentation_header.php';
 }</snippet>
 
     <p>
-        Note that specifying your own templates is compatible with other configurations: <ul>
+        Note that specifying your own templates is compatible with other configurations: 
+    </p>
+<ul class="content">
         <li>suppressMenu is especified in: Athlete, Country, Date and Bronze columns</li>
         <li>suppressSorting is especified in: Age, Year, Sport Silver and Total columns</li>
         <li>Gold is the only column that doesn't have suppressSorting or suppressSort</li>
     </ul>
-    </p>
 
     <?= example('Header template', 'header-template', 'vanilla', array("extras" => array("fontawesome"))) ?>
 
@@ -146,7 +147,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The following example shows how you can provide a unique look & feel to the headers. Note that:
-    <ul>
+    </pre>
+    <ul class="content">
         <li>The header heights have all been changed in the gridOptions:
 <snippet>
 /* Group columns */
@@ -236,7 +238,6 @@ pivotGroupHeaderHeight:100,
 }</snippet>
         </li>
     </ul>
-    </pre>
 
     <?= example('Header Height and Text Orientation', 'text-orientation', 'generated', array("enterprise" => 1)) ?>
 

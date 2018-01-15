@@ -17,15 +17,16 @@ include '../documentation-main/documentation_header.php';
         Copy to Clipboard
     </h3>
 
-    <p>
-        Copy to clipboard operation can be done in the following ways:
-    <ul>
+    <p> Copy to clipboard operation can be done in the following ways: </p>
+
+    <ul class="content">
         <li>Select 'Copy' from the context menu that appears when you right click over a cell.</li>
         <li>Press keys Ctrl+C while focus is on the grid.</li>
         <li>Use the API methods: copySelectedRowsToClipboard(includeHeaders) and
             copySelectedRangeToClipboard(includeHeaders)
         </li>
     </ul>
+    <p>
     The API calls take a boolean value <code>includeHeaders</code> which when true, will include column headers in what is
     copied.
     </p>
@@ -39,13 +40,12 @@ include '../documentation-main/documentation_header.php';
         Paste from Clipboard
     </h3>
 
-    <p>
-        Paste to clipboard can only be done in one way:
-    <ul>
+    <p> Paste to clipboard can only be done in one way:</p>
+    <ul class="content">
         <li>Press keys Ctrl+V while focus in on the grid with a cell selected.</li>
     </ul>
-    The paste will then proceed starting at the selected cell if multiple cells are to be pasted.
-    </p>
+
+    <p>The paste will then proceed starting at the selected cell if multiple cells are to be pasted.  </p>
 
     <note>
         The 'paste' operation in the context menu is not possible and hence always disabled.
@@ -60,7 +60,8 @@ include '../documentation-main/documentation_header.php';
     <p>
         The copy operation will copy selected ranges, selected rows, or the currently focused cell, based
         on this order:
-    <ul>
+    </p>
+    <ul class="content">
         <li>
             1. If range selected (via range selection), copy range.
         </li>
@@ -71,7 +72,6 @@ include '../documentation-main/documentation_header.php';
             3. Else copy focused cell.
         </li>
     </ul>
-    </p>
 
     <note>
         You can copy multiple ranges in range selection by holding down ctrl to select multiple
@@ -91,13 +91,14 @@ include '../documentation-main/documentation_header.php';
     <h3>Clipboard Example</h3>
 
     <p>
-        Below you can:
-    <ul>
+        Below you can:</p>
+    <ul class="content">
         <li>Copy with the Context Menu or 'Ctrl & C'.</li>
         <li>Paste with 'Ctrl & V'.</li>
         <li>Copy with the provided buttons.</li>
     </ul>
-    The example has both row click selection and range selection enabled. You probably won't do
+
+    <p>The example has both row click selection and range selection enabled. You probably won't do
     this in your application as it's confusing, it's done below just to demonstrate them side by side.
     </p>
 
@@ -129,7 +130,7 @@ include '../documentation-main/documentation_header.php';
     <p>If you wish to process the data before pasting into or out of the Grid, you can use the following call backs to
         do so: </p>
 
-    <ul>
+    <ul class="content">
         <li><code>processCellForClipboard(params):</code>Allows you to process cells for the clipboard. Handy if you have date objects that you need to have a particular format if importing into Excel.
         </li>
         <li><code>processCellFromClipboard(params):</code>Allows you to process cells from the clipboard. Handy if you have for example number fields, and want to block non-numbers from getting into the grid.
@@ -156,7 +157,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The example below demonstrates:
-    <ul>
+    </p>
+    <ul class="content">
         <li>
             Uses CSV by setting <code>clipboardDeliminator=','</code>. To test,
             copy to clipboard, then paste into a text editor.
@@ -166,7 +168,6 @@ include '../documentation-main/documentation_header.php';
             <code>colDef.suppressPaste=true</code>.
         </li>
     </ul>
-    </p>
 
     <?= example('Complex Example', 'complex', 'generated', array("enterprise" => true)) ?>
 

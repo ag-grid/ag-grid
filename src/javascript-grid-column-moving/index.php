@@ -10,29 +10,30 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Columns can be moved in the grid in the following ways:
-    <ul>
+</p>
+    <ul class="content">
         <li>Dragging the column header with the mouse or through touch.</li>
         <li>Using the column API.</li>
     </ul>
-</p>
 
 <h2>API</h2>
 
 <p>
     The column API methods for moving columns are as follows:
-    <ul>
+</p>
+    <ul class="content">
         <li><code>moveColumn(key, toIndex)</code>: Move one column to specific index.</li>
         <li><code>moveColumns(keys, toIndex)</code>: Move list of columns to specific index.</li>
         <li><code>moveColumnByIndex(fromIndex, toIndex)</code>: Move column from <code>fromIndex</code> to <code>toIndex</code>.</li>
     </ul>
-</p>
 
 <h2>Simple Example</h2>
 
 <p>
     The example below demonstrates simple moving via mouse dragging and the API. The following
     can be noted:
-    <ul>
+</p>
+    <ul class="content">
         <li>Dragging the column headers with the mouse moves the column to the new location.</li>
         <li>
             The <b>Medals First</b> and <b>Medals Last</b> buttons call the API
@@ -52,7 +53,6 @@ include '../documentation-main/documentation_header.php';
             to the dev console the current column order.
         </li>
     </ul>
-</p>
 
 <?= example('Column Moving Simple', 'moving-simple', 'generated') ?>
 
@@ -86,7 +86,8 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     The example below demonstrates these properties as follows:
-    <ul>
+</p>
+    <ul class="content">
         <li>
             The column 'Age' is locked into the first position. It is not possible
             to move this column, or have other columns moved over it to impact it's position.
@@ -106,7 +107,6 @@ include '../documentation-main/documentation_header.php';
             change the background color.
         </li>
     </ul>
-</p>
 
 <?= example('Column Suppress & Lock', 'suppress-and-lock', 'generated') ?>
 
@@ -121,7 +121,8 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     From the example the following can be noted:
-    <ul>
+</p>
+    <ul class="content">
         <li>
             The first two columns are locked into first position by setting
             <code>colDef.lockPosition=true</code>. This means they cannot be moved out of place,
@@ -135,7 +136,7 @@ include '../documentation-main/documentation_header.php';
             The sample application listens for column pinned events. If any column is pinned,
             then the locked columns are also pinned. This is to keep the locked columns at the
             first position.
-            <ul>
+            <ul class="content">
                 <li>
                     Clicking <b>Pin Athlete</b> will pin athlete, which will result in fixed columns
                     getting pinned.
@@ -147,7 +148,6 @@ include '../documentation-main/documentation_header.php';
             </ul>
         </li>
     </ul>
-</p>
 
 <?= example('Advanced Lock', 'advanced-lock', 'generated') ?>
 
@@ -155,7 +155,8 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     When you move columns around it is possible to change their visibility as follows:
-    <ul>
+</p>
+    <ul class="content">
         <li>You can hide a column by dragging it outside of the grid.</li>
         <li>
             You can show a column by dragging it from the
@@ -163,7 +164,6 @@ include '../documentation-main/documentation_header.php';
             onto the grid.
         </li>
     </ul>
-</p>
 
 <p>
     The column property <code>lockVisible</code> will stop individual columns from been made
@@ -184,7 +184,8 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     The example below shows lock visible. The following can be noted:
-    <ul>
+</p>
+    <ul class="content">
         <li>
             The columns Age, Gold, Silver and Bronze are all locked visible.
             It is not possible to hide the columns by dragging them out of the grid
@@ -199,7 +200,6 @@ include '../documentation-main/documentation_header.php';
             columns in the group are removed and all locked columns in the group are left intact.
         </li>
     </ul>
-</p>
 
 <?= example('Lock Visible', 'lock-visible', 'generated', array("enterprise" => 1)) ?>
 

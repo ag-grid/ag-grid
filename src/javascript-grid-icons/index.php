@@ -154,7 +154,8 @@ valuePanel // beside where to drop columns for value</snippet>
 
     <p>
         The icon can be any of the following:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 <b>String:</b> The string will be treated as html. Use to return just text, or HTML tags.
             </li>
@@ -162,7 +163,6 @@ valuePanel // beside where to drop columns for value</snippet>
                 <b>Function:</b> A function that returns either a String or a DOM node or element.
             </li>
         </ul>
-    </p>
 
     <p>
         The example below shows a mixture of different methods for providing icons. The grouping is done with images,

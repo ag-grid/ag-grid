@@ -64,7 +64,7 @@ colDef = {
 
 <p>Quick filter cache text can be reset in any of the following ways: </p>
 
-<ul>
+<ul class="content">
     <li>Each rowNode has a <code>resetQuickFilterAggregateText</code> method on it - call this to reset the quick filter</li>
     <li><code>rowNode.setDataValue(colKey, newValue)</code> will also reset the quick filter</li>
     <li>Lastly, if using the grid editing features, when you update a cell, the quick filter will get reset.</li>
@@ -81,7 +81,7 @@ colDef = {
     different as follows:
 </p>
 
-<ul>
+<ul class="content">
     <li>A - Simple column, nothing complex.</li>
     <li>B - Complex object with 'dot' in field, quick filter works fine.</li>
     <li>C - Complex object and value getter used, again quick filter works fine.</li>
@@ -96,7 +96,7 @@ colDef = {
         improve quick filter speed. The cache is demonstrated as follows:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             <b>Normal Quick Filter:</b> The cache is not used. Value getters are executed on each node each
             time the filter is executed. Hitting 'Print Quick Filter Texts' will always return back 'undefined'

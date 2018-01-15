@@ -28,39 +28,40 @@ colDef: {
 <h2 id="params">Number Filter Parameters</h2>
 <p>
     A number filter can take the following parameters:
-<ul>
-    <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter.
+</p>
+
+<ul class="content">
+    <li><code>newRowsAction:</code> What to do when new rows are loaded. The default is to reset the filter.
         If you want to keep the filter status between row loads, then set this value to 'keep'.</li>
-    <li><b>applyButton:</b> Set to true to include an 'Apply' button with the filter and not filter
+    <li><code>applyButton:</code> Set to true to include an 'Apply' button with the filter and not filter
         automatically as the selection changes.</li>
-    <li><b>clearButton:</b> Set to true to include a 'Clear' button with the filter which when cliked
+    <li><code>clearButton:</code> Set to true to include a 'Clear' button with the filter which when cliked
         will remove the filter conditions to this filter.</li>
-    <li><b>inRangeInclusive:</b> Set to true so that when doing inRange number filters it will include
+    <li><code>inRangeInclusive:</code> Set to true so that when doing inRange number filters it will include
         the numbers you specify as minimum and maximum, otherwise it selects only the numbers in between.</li>
-    <li><b>filterOptions:</b> If specified, limits the amount of options presented in the filter UI, it must be
+    <li><code>filterOptions:</code> If specified, limits the amount of options presented in the filter UI, it must be
         a string array containing some of the following values  {equals, notEqual, lessThanOrEqual, greaterThan,
         greaterThanOrEqual, inRange}</li>
-    <li><b>defaultOption:</b> If specified, changes the default filter option to one of {equals, notEqual,
+    <li><code>defaultOption:</code> If specified, changes the default filter option to one of {equals, notEqual,
         lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. If not specified the default type is {equals},
         if {equals} is not available because is removed using <code>filterOptions</code>, then the default
         is the first item in the filterOptions</li>
-    <li><b>debounceMs:</b> If specified, the filter will wait this amount of ms after the user stops entering any characters in the
+    <li><code>debounceMs:</code> If specified, the filter will wait this amount of ms after the user stops entering any characters in the
         input box before is triggered. If not specified this value is 500ms, if the value specified is 0 the filter
         will be immediately triggered</li>
-    <li><b>nullComparator:</b> If specified, it will be used to specify if null values should be included when filtering.
+    <li><code>nullComparator:</code> If specified, it will be used to specify if null values should be included when filtering.
     See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>
 </ul>
 
-The parameters for the filter must be specified in the property filterParams inside the column definition
-object
-<p><snippet>
+<p>The parameters for the filter must be specified in the property filterParams inside the column definition object</p>
+
+<snippet>
 colDef:{
     filter: 'agNumberColumnFilter',
     filterParams: {
         ...
     }
-}</snippet></p>
-</p>
+}</snippet>
 
 <h2 id="model">Number Filter Model</h2>
 
@@ -93,20 +94,20 @@ ageFilterComponent.onFilterChanged()</snippet></p>
 <p>
     The number filter model has the following attributes:
 </p>
-<ul>
-    <li><b>type:</b> The type of number filter to apply. One of: {equals, notEqual, lessThanOrEqual, greaterThan,
+<ul class="content">
+    <li><code>type:</code> The type of number filter to apply. One of: {equals, notEqual, lessThanOrEqual, greaterThan,
         greaterThanOrEqual, inRange}</li>
-    <li><b>filter:</b> The actual filter number to apply, or the start of the range if the filter type is inRange</li>
-    <li><b>filterTo:</b> The end range of the filter if the filter type is inRange, otherwise has no effect.</li>
+    <li><code>filter:</code> The actual filter number to apply, or the start of the range if the filter type is inRange</li>
+    <li><code>filterTo:</code> The end range of the filter if the filter type is inRange, otherwise has no effect.</li>
 </ul>
-
 
 <h2 id="floating">Floating Number Filter</h2>
 <p>
     If your grid has floatingFilter enabled, your columns with number filter will automatically show below the header a new
     column that will show two elements:
+</p>
 
-<ul>
+<ul class="content">
     <li>Filter input box: This input box serves two purposes:
         <ol>
             <li>
@@ -121,13 +122,12 @@ ageFilterComponent.onFilterChanged()</snippet></p>
     </li>
     <li>Filter button: This button is a shortcut to show the rich filter editor</li>
 </ul>
-</p>
 
 <h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
 
 <p>The following can be found in the <a href="../javascript-grid-filtering/">column filtering documentation page</a></p>
-<p>
-<ul>
+
+<ul class="content">
     <li>Common filtering params</li>
     <li>Enabling/Disabling filtering in a column</li>
     <li>Enabling/Disabling floating filter</li>
@@ -135,6 +135,6 @@ ageFilterComponent.onFilterChanged()</snippet></p>
     <li>Filtering animation</li>
     <li>Examples</li>
 </ul>
-</p>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

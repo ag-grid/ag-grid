@@ -184,7 +184,7 @@ module.exports = {
     </h4>
     <p>Loaders tell Webpack how & what to do with certain types of file - we have specified a few here to deal with
         Typescript, HTML, CSS and Images:</p>
-    <ul>
+    <ul class="content">
         <li>ts-loader: transpile Typescript to ES5</li>
         <li>html</li>
         <li>css: extract and bundle imported CSS into chunked files</li>
@@ -193,7 +193,7 @@ module.exports = {
     <h4>
         <code>plugins</code>
     </h4>
-    <ul>
+    <ul class="content">
         <li>ExtractTextPlugin: processes and extracts the imported CSS</li>
         <li>HtmlWebpackPlugin: takes our supplied template index.html and inserts the generates JS & CSS files for us
         </li>

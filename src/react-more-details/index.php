@@ -389,8 +389,7 @@ getRowNodeId(data) {
         property
         unexpectedly - below we document some common pitfalls that are easily avoided:</p>
 
-    <p>
-    <ul>
+    <ul class="content">
         <li>Binding to methods in the React binding</li>
         <li>Changing references to colDefs (even if the contents are the same)</li>
         <li>Changing references to rowData (even if the contents are the same)</li>

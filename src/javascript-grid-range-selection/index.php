@@ -88,7 +88,8 @@ GridCell {
     <p>
         The start and end will be the cells the user started the drag on. Two things to notice
         about the start and end:
-        <ul>
+    </p>
+        <ul class="content">
             <li>The start is the first cell the user clicked on and the end is the cell where
             the user stopped dragging. Do not assume that the start cell's index is numerically
             before the end cell, as the user could of dragged up. Likewise for columns, the end
@@ -102,7 +103,6 @@ GridCell {
             list.
             </li>
         </ul>
-    </p>
 
     <p><b>api.clearRangeSelection()</b></p>
 

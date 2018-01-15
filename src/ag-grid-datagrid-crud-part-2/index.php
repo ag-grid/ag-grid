@@ -36,7 +36,7 @@ if (!d.getElementById(id)) {
 
             <h2>Series Chapters</h2>
 
-            <ul>
+            <ul class="content">
                 <li><a href="../ag-grid-datagrid-crud-part-1/">Part 1</a>: Introduction & Initial Setup: Maven, Spring
                     and JPA/Backend (Database)
                 </li>

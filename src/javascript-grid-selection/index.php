@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         Configure row selection with the following properties:
     </p>
-    <ul>
+    <ul class="content">
         <li><b>rowSelection</b>: Type of row selection, set to either 'single' or 'multiple' to
             enable selection. Single sets to single row selection, such that when you select a row,
             the previously selected row gets unselected. Multiple allows multiple row selection.</li>
@@ -32,11 +32,11 @@ include '../documentation-main/documentation_header.php';
         the selected rows, there are two method types, ones that return nodes, and ones that
         return data items. To get the selected nodes / rows from the grid, use the following
         API methods:
-        <ul>
+    </p>
+        <ul class="content">
             <li><b>api.getSelectedNodes()</b>: Returns an array of the selected nodes.</li>
             <li><b>api.getSelectedRows()</b>: Returns a array of selected rows data.</li>
         </ul>
-    </p>
 
     <p>
         Working with the ag-Grid nodes is preferred over the row data as it provide you with
@@ -87,7 +87,8 @@ include '../documentation-main/documentation_header.php';
     <p>
         When doing grouping, you control what selecting a group means. This is controlled with
         the two properties <code>groupSelectsChildren</code> and <code>groupSelectsFiltered</code>.
-    <ul>
+    </p>
+    <ul class="content">
         <li><b>groupSelectsChildren</b>: When <b>true</b>, selecting a group will have the impact of
             selecting all its children. The group will then display 'selected' when all children
             are selected, 'unselected' when none are selected and 'intermediate' when children have
@@ -101,7 +102,6 @@ include '../documentation-main/documentation_header.php';
             you can apply a filter, then try to select a group, the group will end up in the
             intermediate state as only as subset of the children will be selected.</li>
     </ul>
-    </p>
 
     <h4 id="groupsSelectionExample1">Groups & Checkbox Selection Example 1</h4>
 
@@ -189,7 +189,8 @@ colDef = {
 
     <p>
         The header checkbox has two modes of operation, 'normal' and 'filtered only'.
-        <ul>
+</p>
+        <ul class="content">
             <li><b>colDef.headerCheckboxSelectionFilteredOnly=false</b>: The checkbox
             will select all rows when checked, and un-select all rows when unchecked.
             The checkbox will update its state based on all rows.</li>
@@ -198,6 +199,7 @@ colDef = {
             rows when unchecked. The checkbox will update its state base on only
             filtered rows.</li>
         </ul>
+    <p>
         The examples below demonstrate both of these options.
     </p>
 
@@ -205,12 +207,12 @@ colDef = {
 
     <p>
         This example has the following characteristics:
-        <ul>
+    </p>
+        <ul class="content">
             <li>The checkbox works on filtered only. That means if you filter first, then hit the checkbox to select
                 or un-select, then only the filtered results get impacted.</li>
             <li>The checkbox is always on the athlete column, even if the athlete column is moved.</li>
         </ul>
-    </p>
 
     <?= example('Header Checkbox', 'header-checkbox', 'generated') ?>
 
@@ -218,12 +220,12 @@ colDef = {
 
     <p>
         The next example is similar to the one above with the following changes:
-        <ul>
+    </p>
+        <ul class="content">
         <li>The select selects everything, not just filtered.</li>
         <li>The column that the selection checkbox goes on is always the first column.
         This can be observed by dragging the columns to reorder them.</li>
     </ul>
-    </p>
 
     <?= example('Header Checkbox Entire Set', 'header-checkbox-entire-set', 'generated') ?>
 
@@ -231,7 +233,8 @@ colDef = {
 
     <p>
         There are two events with regards selection:<br/>
-        <ul>
+    </p>
+        <ul class="content">
             <li><b>rowSelected</b>: Gets called when a row is selected or deselected.
                 The event contains the node in question, so call the nodes 'isSelected()'
                 method to see if it was just selected or deselected.</li>
@@ -239,7 +242,6 @@ colDef = {
                 selected or deselected. Use the grid API get a list of selected nodes
                 if you want them.</li>
         </ul>
-    </p>
 
     <?= example('Selection Events', 'selection-events', 'generated') ?>
 
@@ -248,7 +250,8 @@ colDef = {
     <p>
         To select rows programmatically, use the node.setSelected() method. This method takes two
         parameters:
-    <ul>
+</p>
+    <ul class="content">
         <li><b>selected</b>: set to true to select, false to un-select.</li>
         <li><b>clearSelection</b> (optional): for selection only. If true, other nodes selection will be cleared.
             Use this if you do not want multi selection and want this node to be exclusively selected.</li>
@@ -275,7 +278,8 @@ var selected = node.isSelected();</snippet>
 
     <p>
         The grid API has the following methods for selection:
-        <ul>
+    </p>
+        <ul class="content">
         <li><b>api.selectAll()</b>: Select all rows in the grid. This is independent to filtering, it will always
         select everything regardless of filtering.</li>
         <li><b>api.deselectAll()</b>: Un-select all rows, again regardless of filtering.</li>
@@ -284,7 +288,6 @@ var selected = node.isSelected();</snippet>
         <li><b>api.getSelectedNodes()</b>: Returns a list of all the selected row nodes. This again is regardless
         of what filters are set.</li>
     </ul>
-    </p>
     <p>
         If you want to select only filtered out rows nodes, then you do this following:
         <snippet>

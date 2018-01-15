@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
         so you can use similar config for both.
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>exportDataAsExcel(params)</b>: Does the full export and triggers the download of the file in the browser automatically so the user can open immediately.</li>
         <li><b>getDataAsExcel(params)</b>: Returns the Excel XML that represents the export performed by
             <code>exportDataAsExcel(params)</code>. This can then be used by your web application, e.g. to send the data to the
@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
         Each of these methods takes an optional params object that can take the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>skipHeader</b>: Set to true if you don't want the first line to be column header names.</li>
         <li><b>columnGroups</b>: Set to true to include header column groupings.</li>
         <li><b>skipGroups</b>: Set to true to skip row group headers and footers if grouping rows. No impact if not grouping rows.</li>
@@ -121,7 +121,7 @@ include '../documentation-main/documentation_header.php';
     <p>
     <b>Example</b>
     <p>The following example shows 4 custom rows, note that:</p>
-    <ul>
+    <ul class="content">
         <li>The first and the last row are empty '[]'</li>
         <li>The second row spans 2 columns</li>
         <li>The third row has 2 cells. The first cell is a label (string) and the second one a total (number)</li>
@@ -154,9 +154,9 @@ include '../documentation-main/documentation_header.php';
 
     <p>Regardless, the following needs to be taken into consideration</p>
 
-    <ul>
+    <ul class="content">
         <li>The raw values, and not the result of cell renderer, will get used, meaning:
-            <ul>
+            <ul class="content">
                 <li>Cell Renderers will NOT be used.</li>
                 <li>Value Getters will be used.</li>
                 <li>Cell Formatters will NOT be used (use <code>processCellCallback</code> instead).</li>
@@ -176,7 +176,7 @@ include '../documentation-main/documentation_header.php';
         from the example:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>The column grouping is exported.</li>
         <li>Filtered rows are not included in the export.</li>
         <li>The sort order is maintained in the export.</li>
@@ -211,9 +211,9 @@ include '../documentation-main/documentation_header.php';
         An Excel style object has the following properties:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>id</b> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a></li>
-        <li><b>alignment</b> (optional): Vertical and horizontal alignmen:<ul>
+        <li><b>alignment</b> (optional): Vertical and horizontal alignmen:<ul class="content">
                 <li>horizontal: String one of Automatic, Left, Center, Right, Fill, Justify, CenterAcrossSelection, Distributed, and JustifyDistributed</li>
                 <li>indent: Number of indents</li>
                 <li>readingOrder: String one of RightToLeft, LeftToRight, and Context</li>
@@ -225,14 +225,14 @@ include '../documentation-main/documentation_header.php';
                     False means that text either spills or gets truncated at the cell boundary (depending on whether the adjacent cell(s) have content). </li>
             </ul>
         </li>
-        <li><b>borders</b> (optional): All the 4 borders must be specified (explained in next section): <ul>
+        <li><b>borders</b> (optional): All the 4 borders must be specified (explained in next section): <ul class="content">
                 <li>borderBottom</li>
                 <li>borderLeft</li>
                 <li>borderTop</li>
                 <li>borderRight</li>
             </ul>
         </li>
-        <li><b>font</b> (optional):  The color must be declared: <ul>
+        <li><b>font</b> (optional):  The color must be declared: <ul class="content">
                 <li>bold. Boolean</li>
                 <li>color. A color in hexadecimal format</li>
                 <li>fontName. String</li>
@@ -247,7 +247,7 @@ include '../documentation-main/documentation_header.php';
             </ul>
         </li>
         <li><b>interior</b> (optional): The color and pattern must be declared:
-            <ul>
+            <ul class="content">
                 <li><b>color</b>: A color in hexadecimal format</li>
                 <li><b>pattern</b>: One of the following strings: None, Solid, Gray75, Gray50, Gray25, Gray125, Gray0625, HorzStripe, VertStripe, ReverseDiagStripe, DiagStripe, DiagCross, ThickDiagCross, ThinHorzStripe, ThinVertStripe, ThinReverseDiagStripe, ThinDiagStripe, ThinHorzCross, and ThinDiagCross</li>
                 <li><b>patternColor</b>: A color in hexadecimal format</li>
@@ -256,7 +256,7 @@ include '../documentation-main/documentation_header.php';
         <li><b>numberFormat</b> (optional): A javascript object with one property called format, this is any valid Excel format like: #,##0.00 (This formatting is used in the example below in the age column)
         </li>
         <li><b>protection</b> (optional): A javascript object with the following properties:
-            <ul>
+            <ul class="content">
                 <li><b>protected</b>: Boolean. This attribute indicates whether or not this cell is protected.
                     When the worksheet is unprotected, cell-level protection has no effect. When a cell is protected,
                     it will not allow the user to enter information into it.</li>
@@ -276,7 +276,7 @@ include '../documentation-main/documentation_header.php';
         The borderBottom, borderLeft, borderTop, borderRight properties are objects composed of the following mandatory properties:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>lineStyle</b>: One of the following strings: None, Continuous, Dash, Dot, DashDot, DashDotDot, SlantDashDot, and Double.</li>
         <li><b>weight</b>: A number representing the thickness of the border in pixels.</li>
         <li><b>color</b>: A color in hexadecimal format.</b></li>
@@ -369,7 +369,9 @@ var gridOptions = {
 
     <p>
         Some of the most likely errors you can encounter when exporting to Excel are:
-        <ul>
+    </p>
+
+        <ul class="content">
             <li>Not specifying all the attributes of an Excel Style property. If you specify the interior for an
                 Excel style and don't provide a pattern, just color, Excel will fail to open the spreadsheet</li>
             <li>Using invalid characters in attributes, we recommend you not to use special characters.</li>
@@ -378,14 +380,13 @@ var gridOptions = {
             <li>Specifying an invalid enumerated property. It is also important to realise that Excel is case sensitive,
             so Solid is a valid pattern, but SOLID or solid are not</li>
         </ul>
-    </p>
-
     <h3>
         Example 2 - Export With Styles
     </h3>
     <p>
         This example illustrates the following features from the Excel export.
-        <ul>
+    </p>
+        <ul class="content">
             <li>Cells with only one style will be exported to Excel, as you can see in the Country and Gold columns</li>
             <li>Styles can be combined it a similar fashion than CSS, this can be seen in the column age where athletes less than 20 years old get two styles applied (greenBackground and redFont)</li>
             <li>A default columnDef containing cellClassRules can be specified and it will be exported to Excel.
@@ -403,7 +404,6 @@ var gridOptions = {
                 Excel even though all of their cells are numeric
             </li>
         </ul>
-    </p>
 
     <?= example('Excel Export With Styles', 'excel-export-with-styles', 'generated', array("enterprise" => 1)) ?>
 
@@ -413,14 +413,14 @@ var gridOptions = {
 
     <p>
         The following example demonstrates how to use other data types for your export. Note that:
-    <ul>
+    </p>
+    <ul class="content">
         <li>Boolean works off using 1 for true</li>
         <li>The date time format for excel follows this format yyyy-mm-ddThh:MM:ss.mmm: </li>
         <li>If you try to pass data that is not compatible with the underlying data type Excel will throw an error</li>
         <li>When using <code>dataType: 'dateTime'</code> Excel doesn't format the resultant value, in this example
         it shows 39923. You need to add the formatting inside Excel</li>
     </ul>
-    </p>
     <?= example('Excel Data Typs', 'excel-data-types', 'generated', array("enterprise" => 1)) ?>
 
     <h3 id="exportToXlsx">
@@ -454,7 +454,7 @@ var gridOptions = {
     <p>
         In the following example note that:
     </p>
-    <ul>
+    <ul class="content">
         <li><a href="http://sheetjs.com/" target="_blank">sheetJs</a> Is included as a third party library</li>
         <li>
             The "Export to Excel (xlsx)" button reuses the XML and passes it to sheetJs to generate a xlsx</li>

@@ -113,7 +113,7 @@ bower install ag-grid-enterprise</snippet>
 
     <p>Properties on <code>ag-grid-polymer</code> can be provided in the following three ways:</p>
 
-    <ul>
+    <ul class="content">
         <li>LowerCase: ie: <code>enablesorting</code></li>
         <li>CamelCase: ie: <code>enableSorting</code></li>
         <li>Hyphenated Lowercase: ie: <code>enable-sorting</code></li>
@@ -121,7 +121,7 @@ bower install ag-grid-enterprise</snippet>
 
     <p>You can specify the properties in the following ways:</p>
 
-    <ul>
+    <ul class="content">
         <li>On the <code>ag-grid-polymer</code>component at declaration time</li>
         <li>On the <code>gridOptions</code> property</li>
     </ul>
