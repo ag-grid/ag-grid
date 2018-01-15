@@ -107,7 +107,7 @@ export class HeaderGroupWrapperComp extends Component {
             displayName: displayName,
             columnGroup: this.columnGroup,
             setExpanded: (expanded:boolean)=>{
-                this.columnController.setColumnGroupOpened(this.columnGroup.getOriginalColumnGroup(), expanded);
+                this.columnController.setColumnGroupOpened(this.columnGroup.getOriginalColumnGroup(), expanded, "GRID_INITIALIZING");
             },
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -159,8 +159,8 @@ export class HeaderGroupWrapperComp extends Component {
                 // we add in the original group leaf columns, so we move both visible and non-visible items
                 dragItemCallback: this.getDragItemForGroup.bind(this),
                 dragSourceDropTarget: this.dragSourceDropTarget,
-                dragStarted: () => allLeafColumns.forEach( col => col.setMoving(true) ),
-                dragStopped: () => allLeafColumns.forEach( col => col.setMoving(false) )
+                dragStarted: () => allLeafColumns.forEach( col => col.setMoving(true, "UI_COLUMN_DRAGGED") ),
+                dragStopped: () => allLeafColumns.forEach( col => col.setMoving(false, "UI_COLUMN_DRAGGED") )
             };
             this.dragAndDropService.addDragSource(dragSource, true);
             this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
@@ -284,7 +284,7 @@ export class HeaderGroupWrapperComp extends Component {
                     }
                 });
                 if (keys.length>0) {
-                    this.columnController.autoSizeColumns(keys);
+                    this.columnController.autoSizeColumns(keys, "UI_COLUMN_RESIZED");
                 }
             });
         }
@@ -349,7 +349,7 @@ export class HeaderGroupWrapperComp extends Component {
                 // if last col, give it the remaining pixels
                 newChildSize = pixelsToDistribute;
             }
-            this.columnController.setColumnWidth(column, newChildSize, finished);
+            this.columnController.setColumnWidth(column, newChildSize, finished, "UI_COLUMN_DRAGGED");
         });
     }
 

@@ -10,6 +10,7 @@ import {
 import {GridPanel} from "../gridPanel/gridPanel";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {DropListener} from "./bodyDropTarget";
+import {ColumnEventType} from "../events";
 
 export class MoveColumnController implements DropListener {
 
@@ -59,7 +60,7 @@ export class MoveColumnController implements DropListener {
         let dragCameFromToolPanel = draggingEvent.dragSource.type===DragSourceType.ToolPanel;
         if (dragCameFromToolPanel) {
             // the if statement doesn't work if drag leaves grid, then enters again
-            this.setColumnsVisible(columns, true);
+            this.setColumnsVisible(columns, true, "UI_COLUMN_DRAGGED");
         } else {
             // restore previous state of visible columns upon re-entering. this means if the user drags
             // a group out, and then drags the group back in, only columns that were originally visible
@@ -67,10 +68,10 @@ export class MoveColumnController implements DropListener {
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             let visibleState = draggingEvent.dragItem.visibleState;
             let visibleColumns: Column[] = columns.filter(column => visibleState[column.getId()] );
-            this.setColumnsVisible(visibleColumns, true);
+            this.setColumnsVisible(visibleColumns, true, "UI_COLUMN_DRAGGED");
         }
 
-        this.setColumnsPinned(columns, this.pinned);
+        this.setColumnsPinned(columns, this.pinned, "UI_COLUMN_DRAGGED");
         this.onDragging(draggingEvent, true);
     }
 
@@ -79,22 +80,22 @@ export class MoveColumnController implements DropListener {
         if (hideColumnOnExit) {
             let dragItem = draggingEvent.dragSource.dragItemCallback();
             let columns = dragItem.columns;
-            this.setColumnsVisible(columns, false);
+            this.setColumnsVisible(columns, false, "UI_COLUMN_DRAGGED");
         }
         this.ensureIntervalCleared();
     }
 
-    public setColumnsVisible(columns: Column[], visible: boolean) {
+    public setColumnsVisible(columns: Column[], visible: boolean, source: ColumnEventType = "API") {
         if (columns) {
             let allowedCols = columns.filter( c => !c.isLockVisible() );
-            this.columnController.setColumnsVisible(allowedCols, visible);
+            this.columnController.setColumnsVisible(allowedCols, visible, source);
         }
     }
 
-    public setColumnsPinned(columns: Column[], pinned: string) {
+    public setColumnsPinned(columns: Column[], pinned: string, source: ColumnEventType = "API") {
         if (columns) {
             let allowedCols = columns.filter( c => !c.isLockPinned() );
-            this.columnController.setColumnsPinned(allowedCols, pinned);
+            this.columnController.setColumnsPinned(allowedCols, pinned, source);
         }
     }
 
@@ -251,7 +252,7 @@ export class MoveColumnController implements DropListener {
                 continue;
             }
 
-            this.columnController.moveColumns(allMovingColumns, newIndex);
+            this.columnController.moveColumns(allMovingColumns, newIndex, "UI_COLUMN_DRAGGED");
 
             // important to return here, so once we do the first valid move, we don't try do any more
             return;
@@ -385,7 +386,7 @@ export class MoveColumnController implements DropListener {
                 this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
                 if (this.failedMoveAttempts > 7) {
                     let pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
-                    this.setColumnsPinned(columnsThatCanPin, pinType);
+                    this.setColumnsPinned(columnsThatCanPin, pinType, "UI_COLUMN_DRAGGED");
                     this.dragAndDropService.nudge();
                 }
             }

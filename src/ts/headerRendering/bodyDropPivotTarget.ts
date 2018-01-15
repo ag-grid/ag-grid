@@ -75,13 +75,13 @@ export class BodyDropPivotTarget implements DropListener {
     /** Callback for when drag stops */
     public onDragStop(draggingEvent: DraggingEvent): void {
         if (this.columnsToAggregate.length>0) {
-            this.columnController.addValueColumns(this.columnsToAggregate);
+            this.columnController.addValueColumns(this.columnsToAggregate, "TOOL_PANEL_DRAG_AND_DROP");
         }
         if (this.columnsToGroup.length>0) {
-            this.columnController.addRowGroupColumns(this.columnsToGroup);
+            this.columnController.addRowGroupColumns(this.columnsToGroup, "TOOL_PANEL_DRAG_AND_DROP");
         }
         if (this.columnsToPivot.length>0) {
-            this.columnController.addPivotColumns(this.columnsToPivot);
+            this.columnController.addPivotColumns(this.columnsToPivot, "TOOL_PANEL_DRAG_AND_DROP");
         }
     }
     
