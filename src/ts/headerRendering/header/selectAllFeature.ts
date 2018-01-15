@@ -2,7 +2,7 @@
 import {AgCheckbox} from "../../widgets/agCheckbox";
 import {BeanStub} from "../../context/beanStub";
 import {PostConstruct, Autowired} from "../../context/context";
-import {ColumnApi} from "../../columnController/columnController";
+import {ColumnApi} from "../../columnController/columnApi";
 import {GridApi} from "../../gridApi";
 import {Events} from "../../events";
 import {EventService} from "../../eventService";

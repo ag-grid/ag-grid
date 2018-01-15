@@ -1,4 +1,4 @@
-import {ColDef} from "../entities/colDef";
+import {CellClassParams, ColDef} from "../entities/colDef";
 import {Autowired, Bean} from "../context/context";
 import {ExpressionService} from "../valueService/expressionService";
 
@@ -11,7 +11,7 @@ export class StylingService {
         this.processStaticCellClasses(colDef, params, onApplicableClass)
     }
 
-    public processClassRules(classRules: { [cssClassName: string]: (Function | string) }, params:any, onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void) {
+    public processClassRules(classRules: { [cssClassName: string]: (Function | string) }, params:CellClassParams, onApplicableClass:(className:string)=>void, onNotApplicableClass?:(className:string)=>void) {
         if (typeof classRules === 'object' && classRules !== null) {
             let classNames = Object.keys(classRules);
             for (let i = 0; i < classNames.length; i++) {
@@ -32,7 +32,7 @@ export class StylingService {
         }
     }
 
-    public processStaticCellClasses (colDef:ColDef, params:any, onApplicableClass:(className:string)=>void){
+    public processStaticCellClasses (colDef:ColDef, params:CellClassParams, onApplicableClass:(className:string)=>void){
         let cellClass = colDef.cellClass;
         if (cellClass) {
             let classOrClasses: any;

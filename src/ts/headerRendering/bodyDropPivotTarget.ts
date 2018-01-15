@@ -4,8 +4,9 @@ import {Column} from "../entities/column";
 import {ColumnController} from "../columnController/columnController";
 import {Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {DropListener} from "./bodyDropTarget";
 
-export class BodyDropPivotTarget {
+export class BodyDropPivotTarget implements DropListener {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -74,13 +75,13 @@ export class BodyDropPivotTarget {
     /** Callback for when drag stops */
     public onDragStop(draggingEvent: DraggingEvent): void {
         if (this.columnsToAggregate.length>0) {
-            this.columnController.addValueColumns(this.columnsToAggregate);
+            this.columnController.addValueColumns(this.columnsToAggregate, "TOOL_PANEL_DRAG_AND_DROP");
         }
         if (this.columnsToGroup.length>0) {
-            this.columnController.addRowGroupColumns(this.columnsToGroup);
+            this.columnController.addRowGroupColumns(this.columnsToGroup, "TOOL_PANEL_DRAG_AND_DROP");
         }
         if (this.columnsToPivot.length>0) {
-            this.columnController.addPivotColumns(this.columnsToPivot);
+            this.columnController.addPivotColumns(this.columnsToPivot, "TOOL_PANEL_DRAG_AND_DROP");
         }
     }
     

@@ -6,7 +6,10 @@ import {IComponent} from "../../interfaces/iComponent";
 import {ColDef, ColGroupDef} from "../../entities/colDef";
 import {_, Promise} from "../../utils";
 import {NamedComponentResolver} from "./namedComponentResolver";
-import {AgGridComponentFunctionInput, AgGridRegisteredComponentInput} from "./componentProvider";
+import {
+    AgGridComponentFunctionInput, AgGridRegisteredComponentInput, ComponentProvider,
+    RegisteredComponent
+} from "./componentProvider";
 import {AgComponentUtils} from "./agComponentUtils";
 import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
 import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
@@ -54,6 +57,9 @@ export class ComponentResolver {
     @Autowired ("componentMetadataProvider")
     private componentMetadataProvider: ComponentMetadataProvider;
 
+    @Autowired("componentProvider")
+    private componentProvider: ComponentProvider;
+
 
 
     @Optional ("frameworkComponentWrapper")
@@ -73,19 +79,14 @@ export class ComponentResolver {
      *      (global) or columnDef mostly.
      *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
      *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param componentNameOpt: The actual name of the component to instantiate, this is usually the same as propertyName, but in
-     *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
-     *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
-     *      component found, it throws an error, by default all components are MANDATORY
+     *  @param defaultComponentName: The name of the component to load if there is no component specified
      */
     public getComponentToUse<A extends IComponent<any> & B, B>
     (
         holder:ComponentHolder,
         propertyName:string,
-        componentNameOpt?:string
+        defaultComponentName?:string
     ):ResolvedComponent<A, B>{
-        let componentName:string = componentNameOpt == null ? propertyName : componentNameOpt;
-
         /**
          * There are five things that can happen when resolving a component.
          *  a) HardcodedFwComponent: That holder[propertyName]Framework has associated a Framework native component
@@ -168,15 +169,15 @@ export class ComponentResolver {
         }
 
 
-        //^^^^^ABOVE DEPRECATED
+        //^^^^^ABOVE DEPRECATED - AT THIS POINT WE ARE RESOLVING BY NAME
         let componentNameToUse: string;
         if (hardcodedNameComponent){
             componentNameToUse = hardcodedNameComponent;
         } else{
-            componentNameToUse = componentName;
+            componentNameToUse = defaultComponentName;
         }
 
-        return <ResolvedComponent<A,B>>this.namedComponentResolver.resolve(propertyName, componentNameToUse);
+        return componentNameToUse == null ? null : <ResolvedComponent<A,B>>this.namedComponentResolver.resolve(propertyName, componentNameToUse);
     }
 
     /**
@@ -215,7 +216,7 @@ export class ComponentResolver {
      *      specified by the user in the configuration
      *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
      *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param componentNameOpt: The actual name of the component to instantiate, this is usually the same as propertyName, but in
+     *  @param defaultComponentName: The actual name of the component to instantiate, this is usually the same as propertyName, but in
      *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
      *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
@@ -226,54 +227,69 @@ export class ComponentResolver {
         holderOpt:ComponentHolder,
         agGridParams:any,
         propertyName:string,
-        componentNameOpt?:string,
+        defaultComponentName?:string,
         mandatory:boolean = true,
         customInitParamsCb?:(params:any, component:A)=>any
     ): Promise<A>{
         let holder:ComponentHolder = holderOpt == null ? this.gridOptions : holderOpt;
-        let componentName:string = componentNameOpt == null ? propertyName : componentNameOpt;
 
         //Create the component instance
-        let component: A = <A>this.newAgGridComponent(holder, propertyName, componentName, mandatory);
+        let component: A = <A>this.newAgGridComponent(holder, propertyName, defaultComponentName, mandatory);
         if (!component) return null;
 
         //Wire the component and call the init method with the correct params
         let finalParams = this.mergeParams(holder, propertyName, agGridParams);
-        this.context.wireBean(component);
-        let deferredInit:any;
-        if (customInitParamsCb == null){
-            deferredInit = component.init(finalParams);
-        } else {
-            deferredInit = component.init(customInitParamsCb(finalParams, component));
-        }
+
+        let deferredInit : void | Promise<void> = this.initialiseComponent(component, finalParams, customInitParamsCb);
+
 
         if (deferredInit == null){
             return Promise.resolve(component);
-            // return new Promise<A> (resolve=>{
-            //     setTimeout(
-            //         ()=>resolve(component),
-            //         500
-            //     )
-            // })
         } else {
             let asPromise:Promise<void> = <Promise<void>> deferredInit;
             return asPromise.map(notRelevant=>component);
         }
     }
 
+
+    /**
+     * This method creates a component given everything needed to guess what sort of component needs to be instantiated
+     * It takes
+     *  @param clazz: The class to instantiate,
+     *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
+     *      specified by the user in the configuration
+     *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
+     *  params are and the component that init is about to get called for
+     */
+    public createInternalAgGridComponent<A extends IComponent<any>> (
+        clazz:{new(): A},
+        agGridParams:any,
+        customInitParamsCb?:(params:any, component:A)=>any
+    ): A{
+        let internalComponent:A = <A>new clazz();
+
+        this.initialiseComponent(
+            internalComponent,
+            agGridParams,
+            customInitParamsCb
+        );
+
+        return internalComponent;
+    }
+
     private newAgGridComponent<A extends IComponent<any> & B, B>
     (
         holder:ComponentHolder,
         propertyName:string,
-        componentName:string,
+        defaultComponentName?:string,
         mandatory:boolean = true
     ): A{
-        let componentToUse:ResolvedComponent<A,B> = <ResolvedComponent<A,B>>this.getComponentToUse(holder, propertyName, componentName);
+        let componentToUse:ResolvedComponent<A,B> = <ResolvedComponent<A,B>>this.getComponentToUse(holder, propertyName, defaultComponentName);
 
 
         if (!componentToUse || !componentToUse.component) {
             if (mandatory){
-                console.error(`Error creating component ${propertyName}=>${componentName}`);
+                console.error(`Error creating component ${propertyName}=>${defaultComponentName}`);
             }
             return null;
         }
@@ -286,7 +302,20 @@ export class ComponentResolver {
         let FrameworkComponentRaw: {new(): B} = componentToUse.component;
 
         let thisComponentConfig: ComponentMetadata= this.componentMetadataProvider.retrieve(propertyName);
-        return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, componentName);
+        return <A>this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, defaultComponentName);
+    }
+
+    private initialiseComponent <A extends IComponent<any>>(
+        component : A,
+        agGridParams:any,
+        customInitParamsCb?:(params:any, component:A)=>any
+    ):Promise<void> | void{
+        this.context.wireBean(component);
+        if (customInitParamsCb == null){
+            return component.init(agGridParams);
+        } else {
+            return component.init(customInitParamsCb(agGridParams, component));
+        }
     }
 
 }

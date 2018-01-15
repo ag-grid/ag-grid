@@ -3,9 +3,10 @@ import {GridApi} from '../gridApi';
 import {ComponentStateChangedEvent, Events} from '../events';
 import {PropertyKeys} from '../propertyKeys';
 import {Utils as _} from '../utils';
-import {ColumnApi} from '../columnController/columnController';
+import {ColumnApi} from '../columnController/columnApi';
 
-export class ComponentUtil {
+export class
+ComponentUtil {
     // all the events are populated in here AFTER this class (at the bottom of the file).
     public static EVENTS: string[] = [];
 
@@ -140,7 +141,7 @@ export class ComponentUtil {
         }
 
         if (changes.columnDefs) {
-            api.setColumnDefs(changes.columnDefs.currentValue);
+            api.setColumnDefs(changes.columnDefs.currentValue, "GRID_OPTIONS_CHANGED");
         }
 
         if (changes.datasource) {
@@ -156,11 +157,15 @@ export class ComponentUtil {
         }
 
         if (changes.pivotMode) {
-            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue));
+            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue), "GRID_OPTIONS_CHANGED");
         }
 
         if (changes.groupRemoveSingleChildren) {
             api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changes.groupRemoveSingleChildren.currentValue));
+        }
+
+        if (changes.suppressRowDrag) {
+            api.setSuppressRowDrag(ComponentUtil.toBoolean(changes.suppressRowDrag.currentValue));
         }
 
         // copy changes into an event for dispatch

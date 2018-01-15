@@ -15,7 +15,8 @@ import {ComponentUtil} from "./components/componentUtil";
 import {GridApi} from "./gridApi";
 import {ColDef, ColGroupDef, IAggFunc} from "./entities/colDef";
 import {Autowired, Bean, PostConstruct, PreDestroy, Qualifier} from "./context/context";
-import {ColumnApi, ColumnController} from "./columnController/columnController";
+import {ColumnApi} from "./columnController/columnApi";
+import {ColumnController} from "./columnController/columnController";
 import {Utils as _} from "./utils";
 import {IViewportDatasource} from "./interfaces/iViewportDatasource";
 import {ICellRendererComp, ICellRendererFunc} from "./rendering/cellRenderers/iCellRenderer";
@@ -82,6 +83,8 @@ export class GridOptionsWrapper {
     public static PROP_PIVOT_GROUP_HEADER_HEIGHT = 'pivotGroupHeaderHeight';
 
     public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
+
+    public static PROP_SUPPRESS_ROW_DRAG = 'suppressRowDrag';
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
@@ -214,9 +217,12 @@ export class GridOptionsWrapper {
     public isGroupSuppressAutoColumn() { return isTrue(this.gridOptions.groupSuppressAutoColumn); }
     public isSuppressDragLeaveHidesColumns() { return isTrue(this.gridOptions.suppressDragLeaveHidesColumns); }
     public isSuppressScrollOnNewData() { return isTrue(this.gridOptions.suppressScrollOnNewData); }
+    public isRowDragManaged() { return isTrue(this.gridOptions.rowDragManaged); }
+    public isSuppressRowDrag() { return isTrue(this.gridOptions.suppressRowDrag); }
 
     public isForPrint() { return this.gridOptions.domLayout === 'forPrint'; }
     public isAutoHeight() { return this.gridOptions.domLayout === 'autoHeight'; }
+    public isNormalDomLayout() { return !this.isForPrint() && !this.isAutoHeight(); }
 
     public isSuppressHorizontalScroll() { return isTrue(this.gridOptions.suppressHorizontalScroll); }
     public isSuppressLoadingOverlay() { return isTrue(this.gridOptions.suppressLoadingOverlay); }
@@ -313,6 +319,7 @@ export class GridOptionsWrapper {
     public isSuppressAggFuncInHeader() { return isTrue(this.gridOptions.suppressAggFuncInHeader); }
     public isSuppressAggAtRootLevel() { return isTrue(this.gridOptions.suppressAggAtRootLevel); }
     public isEnableRangeSelection(): boolean { return isTrue(this.gridOptions.enableRangeSelection); }
+    public isSuppressMultiRangeSelection(): boolean { return isTrue(this.gridOptions.suppressMultiRangeSelection); }
     public isPaginationAutoPageSize(): boolean { return isTrue(this.gridOptions.paginationAutoPageSize); }
     public isRememberGroupStateWhenNewData(): boolean { return isTrue(this.gridOptions.rememberGroupStateWhenNewData); }
     public getIcons() { return this.gridOptions.icons; }
@@ -642,6 +649,9 @@ export class GridOptionsWrapper {
 
     // responsible for calling the onXXX functions on gridOptions
     public globalEventHandler(eventName: string, event?: any): void {
+        if (eventName==='columnVisible') {
+            console.log('columnVisible');
+        }
         let callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
         if (typeof (<any>this.gridOptions)[callbackMethodName] === 'function') {
             (<any>this.gridOptions)[callbackMethodName](event);

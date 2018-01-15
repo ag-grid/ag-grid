@@ -8,7 +8,7 @@ import {IDatasource} from "../iDatasource";
 import {InfiniteBlock} from "./infiniteBlock";
 import {RowNodeCache, RowNodeCacheParams} from "../cache/rowNodeCache";
 import {GridApi} from "../../gridApi";
-import {ColumnApi} from "../../columnController/columnController";
+import {ColumnApi} from "../../columnController/columnApi";
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;

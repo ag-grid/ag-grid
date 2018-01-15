@@ -1,7 +1,8 @@
 import {Utils as _} from "../../utils";
 import {Constants as constants, Constants} from "../../constants";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {ColumnApi, ColumnController} from "../../columnController/columnController";
+import {ColumnApi} from "../../columnController/columnApi";
+import {ColumnController} from "../../columnController/columnController";
 import {FilterManager} from "../../filter/filterManager";
 import {RowNode} from "../../entities/rowNode";
 import {EventService} from "../../eventService";
@@ -107,6 +108,21 @@ export class InMemoryRowModel {
             this.context, this.eventService, this.columnController);
 
         this.context.wireBean(this.rootNode);
+    }
+
+    // returns false if row was moved, otherwise true
+    public ensureRowAtPixel(rowNode: RowNode, pixel: number): boolean {
+        let indexAtPixelNow = this.getRowIndexAtPixel(pixel);
+        let rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
+
+        if (rowNodeAtPixelNow===rowNode) { return false; }
+
+        _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+        _.insertIntoArray(this.rootNode.allLeafChildren, rowNode, indexAtPixelNow);
+
+        this.refreshModel({step: Constants.STEP_EVERYTHING, keepRenderedRows: true, animate: true, keepEditingRows: true});
+
+        return true;
     }
 
     public isLastRowFound(): boolean {

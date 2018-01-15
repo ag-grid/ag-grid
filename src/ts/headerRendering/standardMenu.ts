@@ -20,6 +20,14 @@ export class StandardMenuFactory implements IMenuFactory {
     @Autowired('gridOptionsWrapper')
     private gridOptionsWrapper:GridOptionsWrapper;
 
+    private hidePopup: ()=> void;
+
+    public hideActiveMenu(): void {
+        if (this.hidePopup) {
+            this.hidePopup();
+        }
+    }
+
     public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent|Touch): void {
         this.showPopup(column, (eMenu: HTMLElement) => {
             this.popupService.positionPopupUnderMouseEvent({
@@ -60,7 +68,7 @@ export class StandardMenuFactory implements IMenuFactory {
         this.eventService.addEventListener('bodyScroll', bodyScrollListener);
         let closedCallback = ()=> {
             this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
-            column.setMenuVisible(false);
+            column.setMenuVisible(false, "CONTEXT_MENU");
         };
 
         // need to show filter before positioning, as only after filter
@@ -77,7 +85,9 @@ export class StandardMenuFactory implements IMenuFactory {
             }
         });
 
-        column.setMenuVisible(true);
+        this.hidePopup = hidePopup;
+
+        column.setMenuVisible(true, "CONTEXT_MENU");
     }
 
     public isMenuEnabled(column: Column): boolean {

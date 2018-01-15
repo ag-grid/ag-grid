@@ -7,13 +7,10 @@ import {Autowired, PostConstruct} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ColumnUtils} from "../columnController/columnUtils";
 import {RowNode} from "./rowNode";
-import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
-import {ICellEditorComp} from "../rendering/cellEditors/iCellEditor";
-import {IFilter} from "../interfaces/iFilter";
 import {IFrameworkFactory} from "../interfaces/iFrameworkFactory";
 import {IEventEmitter} from "../interfaces/iEventEmitter";
-import {ColumnEvent} from "../events";
-import {ColumnApi} from "../columnController/columnController";
+import {ColumnEvent, ColumnEventType} from "../events";
+import {ColumnApi} from "../columnController/columnApi";
 import {GridApi} from "../gridApi";
 
 
@@ -79,6 +76,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private moving = false;
     private menuVisible = false;
 
+    // we copy this from col def, as if it's value changes are column is created,
+    // it will break the logic in the column controller
+    private lockPosition: boolean;
+    private lockPinned: boolean;
+    private lockVisible: boolean;
+
     private lastLeftPinned: boolean;
     private firstRightPinned: boolean;
 
@@ -107,6 +110,21 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.sortedAt = colDef.sortedAt;
         this.colId = colId;
         this.primary = primary;
+        this.lockPosition = colDef.lockPosition === true;
+        this.lockPinned = colDef.lockPinned === true;
+        this.lockVisible = colDef.lockVisible === true;
+    }
+
+    public isLockPosition(): boolean {
+        return this.lockPosition;
+    }
+
+    public isLockVisible(): boolean {
+        return this.lockVisible;
+    }
+
+    public isLockPinned(): boolean {
+        return this.lockPinned;
     }
 
     public setParent(parent: ColumnGroupChild): void {
@@ -158,8 +176,6 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         return showingAllGroups || showingThisGroup;
     }
-
-
 
     public getUniqueId(): string {
         return this.getId();
@@ -263,6 +279,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private createIsColumnFuncParams(rowNode: RowNode): IsColumnFuncParams {
         return {
             node: rowNode,
+            data: rowNode.data,
             column: this,
             colDef: this.colDef,
             context: this.gridOptionsWrapper.getContext(),
@@ -297,6 +314,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.isColumnFunc(rowNode, this.colDef.editable);
     }
 
+    public isRowDrag(rowNode: RowNode): boolean {
+        return this.isColumnFunc(rowNode, this.colDef.rowDrag);
+    }
+
+    public isCellCheckboxSelection(rowNode: RowNode): boolean {
+        return this.isColumnFunc(rowNode, this.colDef.checkboxSelection);
+    }
+
     public isSuppressPaste(rowNode: RowNode): boolean {
         return this.isColumnFunc(rowNode, this.colDef ? this.colDef.suppressPaste : null);
     }
@@ -323,18 +348,19 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return false;
     }
 
-    public setMoving(moving: boolean) {
+    public setMoving(moving: boolean, source: ColumnEventType = "API"): void {
         this.moving = moving;
-        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MOVING_CHANGED));
+        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MOVING_CHANGED, source));
     }
 
-    private createColumnEvent(type: string): ColumnEvent {
+    private createColumnEvent(type: string, source: ColumnEventType ): ColumnEvent {
         return {
             api: this.gridApi,
             columnApi: this.columnApi,
             type: type,
             column: this,
-            columns: [this]
+            columns: [this],
+            source: source
         };
     }
 
@@ -346,17 +372,17 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.sort;
     }
 
-    public setSort(sort: string): void {
+    public setSort(sort: string, source: ColumnEventType = "API"): void {
         if (this.sort !== sort) {
             this.sort = sort;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_SORT_CHANGED));
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_SORT_CHANGED, source));
         }
     }
 
-    public setMenuVisible(visible: boolean): void {
+    public setMenuVisible(visible: boolean, source: ColumnEventType = "API"): void {
         if (this.menuVisible !== visible) {
             this.menuVisible = visible;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MENU_VISIBLE_CHANGED));
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MENU_VISIBLE_CHANGED, source));
         }
     }
 
@@ -408,11 +434,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.left + this.actualWidth;
     }
 
-    public setLeft(left: number) {
+    public setLeft(left: number, source: ColumnEventType = "API") {
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_LEFT_CHANGED));
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_LEFT_CHANGED, source));
         }
     }
 
@@ -420,12 +446,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.filterActive;
     }
 
-    public setFilterActive(active: boolean): void {
+    public setFilterActive(active: boolean, source: ColumnEventType = "API"): void {
         if (this.filterActive !== active) {
             this.filterActive = active;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_ACTIVE_CHANGED));
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_ACTIVE_CHANGED, source));
         }
-        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_CHANGED));
+        this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_CHANGED, source));
     }
 
     public setPinned(pinned: string|boolean): void {
@@ -446,17 +472,17 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     }
 
-    public setFirstRightPinned(firstRightPinned: boolean): void {
+    public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType = "API"): void {
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED));
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, source));
         }
     }
 
-    public setLastLeftPinned(lastLeftPinned: boolean): void {
+    public setLastLeftPinned(lastLeftPinned: boolean, source: ColumnEventType = "API"): void {
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_LAST_LEFT_PINNED_CHANGED));
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_LAST_LEFT_PINNED_CHANGED, source));
         }
     }
 
@@ -484,11 +510,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.pinned;
     }
 
-    public setVisible(visible: boolean): void {
+    public setVisible(visible: boolean, source: ColumnEventType = "API"): void {
         let newValue = visible===true;
         if (this.visible !== newValue) {
             this.visible = newValue;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VISIBLE_CHANGED));
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VISIBLE_CHANGED, source));
         }
     }
 
@@ -543,10 +569,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
     }
 
-    public setActualWidth(actualWidth: number): void {
+    public setActualWidth(actualWidth: number, source: ColumnEventType = "API"): void {
         if (this.actualWidth !== actualWidth) {
             this.actualWidth = actualWidth;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED));
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED, source));
         }
     }
 
@@ -566,14 +592,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.maxWidth;
     }
 
-    public setMinimum(): void {
-        this.setActualWidth(this.minWidth);
+    public setMinimum(source: ColumnEventType = "API"): void {
+        this.setActualWidth(this.minWidth, source);
     }
     
-    public setRowGroupActive(rowGroup: boolean): void {
+    public setRowGroupActive(rowGroup: boolean, source: ColumnEventType = "API"): void {
         if (this.rowGroupActive !== rowGroup) {
             this.rowGroupActive = rowGroup;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_ROW_GROUP_CHANGED));
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_ROW_GROUP_CHANGED, source));
         }
     }
     
@@ -581,10 +607,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.rowGroupActive;
     }
 
-    public setPivotActive(pivot: boolean): void {
+    public setPivotActive(pivot: boolean, source: ColumnEventType = "API"): void {
         if (this.pivotActive !== pivot) {
             this.pivotActive = pivot;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_PIVOT_CHANGED));
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_PIVOT_CHANGED, source));
         }
     }
 
@@ -600,10 +626,10 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.isAllowPivot() || this.isAllowRowGroup() || this.isAllowValue();
     }
 
-    public setValueActive(value: boolean): void {
+    public setValueActive(value: boolean, source: ColumnEventType = "API"): void {
         if (this.aggregationActive !== value) {
             this.aggregationActive = value;
-            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VALUE_CHANGED));
+            this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VALUE_CHANGED, source));
         }
     }
 

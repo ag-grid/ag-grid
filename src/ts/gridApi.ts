@@ -2,7 +2,8 @@ import {CsvCreator} from "./csvCreator";
 import {RowRenderer} from "./rendering/rowRenderer";
 import {HeaderRenderer} from "./headerRendering/headerRenderer";
 import {FilterManager} from "./filter/filterManager";
-import {ColumnApi, ColumnController} from "./columnController/columnController";
+import {ColumnController} from "./columnController/columnController";
+import {ColumnApi} from "./columnController/columnApi";
 import {SelectionController} from "./selectionController";
 import {GridOptionsWrapper} from "./gridOptionsWrapper";
 import {GridPanel} from "./gridPanel/gridPanel";
@@ -42,9 +43,10 @@ import {ImmutableService} from "./rowModels/inMemory/immutableService";
 import {ValueCache} from "./valueService/valueCache";
 import {AlignedGridsService} from "./alignedGridsService";
 import {PinnedRowModel} from "./rowModels/pinnedRowModel";
-import {AgEvent} from "./events";
+import {AgEvent, ColumnEventType} from "./events";
 import {IToolPanel} from "./interfaces/iToolPanel";
 import {GridOptions} from "./entities/gridOptions";
+import {IContextMenuFactory} from "./interfaces/iContextMenuFactory";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -98,6 +100,7 @@ export class GridApi {
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
     @Autowired('cellRendererFactory') private cellRendererFactory: CellRendererFactory;
     @Autowired('cellEditorFactory') private cellEditorFactory: CellEditorFactory;
     @Autowired('valueCache') private valueCache: ValueCache;
@@ -272,8 +275,8 @@ export class GridApi {
         return this.pinnedRowModel.getPinnedBottomRow(index);
     }
 
-    public setColumnDefs(colDefs: (ColDef|ColGroupDef)[]) {
-        this.columnController.setColumnDefs(colDefs);
+    public setColumnDefs(colDefs: (ColDef|ColGroupDef)[], source: ColumnEventType = "API") {
+        this.columnController.setColumnDefs(colDefs, source);
     }
 
     public expireValueCache(): void {
@@ -386,6 +389,7 @@ export class GridApi {
 
     public refreshHeader() {
         this.headerRenderer.refreshHeader();
+        this.gridPanel.setBodyAndHeaderHeights();
     }
 
     public isAnyFilterPresent(): boolean {
@@ -644,7 +648,7 @@ export class GridApi {
     public destroyFilter(key: string|Column) {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.destroyFilter(column);
+            return this.filterManager.destroyFilter(column, "FILTER_DESTROYED");
         }
     }
 
@@ -665,8 +669,8 @@ export class GridApi {
         this.sortController.onSortChanged();
     }
 
-    public setSortModel(sortModel:any) {
-        this.sortController.setSortModel(sortModel);
+    public setSortModel(sortModel:any, source: ColumnEventType = "API") {
+        this.sortController.setSortModel(sortModel, source);
     }
 
     public getSortModel() {
@@ -691,6 +695,10 @@ export class GridApi {
 
     public setFocusedCell(rowIndex: number, colKey: string|Column, floating?: string) {
         this.focusedCellController.setFocusedCell(rowIndex, colKey, floating, true);
+    }
+
+    public setSuppressRowDrag(value: boolean): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_ROW_DRAG, value);
     }
 
     public setHeaderHeight(headerHeight: number) {
@@ -845,6 +853,15 @@ export class GridApi {
     public showColumnMenuAfterMouseClick(colKey: string|Column, mouseEvent: MouseEvent|Touch): void {
         let column = this.columnController.getPrimaryColumn(colKey);
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
+    }
+
+    public hidePopupMenu(): void {
+        // hide the context menu if in enterprise
+        if (this.contextMenuFactory) {
+            this.contextMenuFactory.hideActiveMenu();
+        }
+        // and hide the column menu always
+        this.menuFactory.hideActiveMenu();
     }
 
     public tabToNextCell(): boolean {

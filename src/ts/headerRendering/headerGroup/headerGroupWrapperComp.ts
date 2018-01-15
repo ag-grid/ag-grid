@@ -2,7 +2,8 @@ import {Component} from "../../widgets/component";
 import {Column} from "../../entities/column";
 import {Utils as _} from "../../utils";
 import {ColumnGroup} from "../../entities/columnGroup";
-import {ColumnApi, ColumnController} from "../../columnController/columnController";
+import {ColumnApi} from "../../columnController/columnApi";
+import {ColumnController} from "../../columnController/columnController";
 import {GridOptionsWrapper} from "../../gridOptionsWrapper";
 import {HorizontalDragService} from "../horizontalDragService";
 import {Autowired, Context, PostConstruct} from "../../context/context";
@@ -70,10 +71,31 @@ export class HeaderGroupWrapperComp extends Component {
         this.addClasses();
         this.setupWidth();
         this.addAttributes();
+        this.setupMovingCss();
 
         let setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+    }
+
+    private setupMovingCss(): void {
+        let originalColumnGroup = this.columnGroup.getOriginalColumnGroup();
+        let leafColumns = originalColumnGroup.getLeafColumns();
+        leafColumns.forEach( col => {
+            this.addDestroyableEventListener(col, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
+        });
+        this.onColumnMovingChanged();
+    }
+
+    private onColumnMovingChanged(): void {
+        // this function adds or removes the moving css, based on if the col is moving.
+        // this is what makes the header go dark when it is been moved (gives impression to
+        // user that the column was picked up).
+        if (this.columnGroup.isMoving()) {
+            _.addCssClass(this.getGui(), 'ag-header-cell-moving');
+        } else {
+            _.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+        }
     }
 
     private addAttributes(): void {
@@ -85,12 +107,17 @@ export class HeaderGroupWrapperComp extends Component {
             displayName: displayName,
             columnGroup: this.columnGroup,
             setExpanded: (expanded:boolean)=>{
-                this.columnController.setColumnGroupOpened(this.columnGroup.getOriginalColumnGroup(), expanded);
+                this.columnController.setColumnGroupOpened(this.columnGroup.getOriginalColumnGroup(), expanded, "GRID_INITIALIZING");
             },
             api: this.gridApi,
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
+
+        if(!displayName) {
+            let leafCols = this.columnGroup.getLeafColumns();
+            displayName = leafCols ? leafCols[0].getColDef().headerName : '';
+        }
 
         let callback = this.afterHeaderCompCreated.bind(this, displayName);
 
@@ -122,6 +149,8 @@ export class HeaderGroupWrapperComp extends Component {
 
         if (this.isSuppressMoving()) { return; }
 
+        let allLeafColumns = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+
         if (eHeaderGroup) {
             let dragSource: DragSource = {
                 type: DragSourceType.HeaderCell,
@@ -129,7 +158,9 @@ export class HeaderGroupWrapperComp extends Component {
                 dragItemName: displayName,
                 // we add in the original group leaf columns, so we move both visible and non-visible items
                 dragItemCallback: this.getDragItemForGroup.bind(this),
-                dragSourceDropTarget: this.dragSourceDropTarget
+                dragSourceDropTarget: this.dragSourceDropTarget,
+                dragStarted: () => allLeafColumns.forEach( col => col.setMoving(true, "UI_COLUMN_DRAGGED") ),
+                dragStopped: () => allLeafColumns.forEach( col => col.setMoving(false, "UI_COLUMN_DRAGGED") )
             };
             this.dragAndDropService.addDragSource(dragSource, true);
             this.addDestroyFunc( ()=> this.dragAndDropService.removeDragSource(dragSource) );
@@ -167,7 +198,7 @@ export class HeaderGroupWrapperComp extends Component {
         // if any child is fixed, then don't allow moving
         let childSuppressesMoving = false;
         this.columnGroup.getLeafColumns().forEach( (column: Column) => {
-            if (column.getColDef().suppressMovable) {
+            if (column.getColDef().suppressMovable || column.isLockPosition()) {
                 childSuppressesMoving = true;
             }
         });
@@ -253,7 +284,7 @@ export class HeaderGroupWrapperComp extends Component {
                     }
                 });
                 if (keys.length>0) {
-                    this.columnController.autoSizeColumns(keys);
+                    this.columnController.autoSizeColumns(keys, "UI_COLUMN_RESIZED");
                 }
             });
         }
@@ -318,7 +349,7 @@ export class HeaderGroupWrapperComp extends Component {
                 // if last col, give it the remaining pixels
                 newChildSize = pixelsToDistribute;
             }
-            this.columnController.setColumnWidth(column, newChildSize, finished);
+            this.columnController.setColumnWidth(column, newChildSize, finished, "UI_COLUMN_DRAGGED");
         });
     }
 

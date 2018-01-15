@@ -1,6 +1,6 @@
 import {RowNode} from "./rowNode";
 import {GridApi} from "../gridApi";
-import {ColumnApi} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 import {Column} from "./column";
 import {IViewportDatasource} from "../interfaces/iViewportDatasource";
 import {ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
@@ -48,6 +48,8 @@ export interface GridOptions {
      ****************************************************************/
 
     // set once in init, can never change
+    rowDragManaged?: boolean;
+    suppressRowDrag?: boolean;
     ensureDomOrder?: boolean;
     deltaRowDataMode?: boolean;
     scrollbarWidth?: number;
@@ -105,6 +107,7 @@ export interface GridOptions {
     pivotMode?: boolean;
     pivotTotals?: boolean;
     enableRangeSelection?: boolean;
+    suppressMultiRangeSelection?: boolean;
     // enterprise only
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;

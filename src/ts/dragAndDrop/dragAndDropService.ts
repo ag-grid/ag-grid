@@ -6,12 +6,16 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {DragService, DragListenerParams} from "./dragService";
 import {ColumnController} from "../columnController/columnController";
 import {Environment} from "../environment";
+import {RowNode} from "../entities/rowNode";
 
-export enum DragSourceType { ToolPanel, HeaderCell }
+export enum DragSourceType { ToolPanel, HeaderCell, RowDrag }
 
 export interface DragItem {
-    columns: Column[],
-    visibleState: {[key: string]: boolean};
+    // if moving a row, the, this contains the row node
+    rowNode?: RowNode,
+    // if moving columns, this contains the columns and the visible state
+    columns?: Column[],
+    visibleState?: {[key: string]: boolean};
 }
 
 export interface DragSource {
@@ -27,6 +31,12 @@ export interface DragSource {
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
+    /** After how many pixels of dragging should the drag operation start. Default is 4px. */
+    dragStartPixels?: number;
+    /** Callback for drag started */
+    dragStarted?: ()=>void;
+    /** Callback for drag stopped */
+    dragStopped?: ()=>void;
 }
 
 export interface DropTarget {
@@ -37,6 +47,8 @@ export interface DropTarget {
     getSecondaryContainers?(): HTMLElement[];
     /** Icon to show when drag is over*/
     getIconName?(): string;
+
+    isInterestedIn(type: DragSourceType): boolean;
 
     /** Callback for when drag enters */
     onDragEnter?(params: DraggingEvent): void;
@@ -133,9 +145,22 @@ export class DragAndDropService {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
     }
 
+    private getStringType(type: DragSourceType): string {
+        switch (type) {
+            case DragSourceType.RowDrag: return 'row';
+            case DragSourceType.HeaderCell: return 'headerCell';
+            case DragSourceType.ToolPanel: return 'toolPanel';
+            default:
+                console.warn(`ag-Grid: bug - unknown drag type ${type}`);
+                return null;
+        }
+    }
+
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
-        let params = <DragListenerParams> {
+        let params: DragListenerParams = {
+            type: this.getStringType(dragSource.type),
             eElement: dragSource.eElement,
+            dragStartPixels: dragSource.dragStartPixels,
             onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
             onDragging: this.onDragging.bind(this)
@@ -173,8 +198,12 @@ export class DragAndDropService {
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
         this.dragItem = this.dragSource.dragItemCallback();
-        this.dragItem.columns.forEach(column => column.setMoving(true));
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
+
+        if (this.dragSource.dragStarted) {
+            this.dragSource.dragStarted();
+        }
+
         this.createGhost();
     }
 
@@ -182,7 +211,9 @@ export class DragAndDropService {
         this.eventLastTime = null;
         this.dragging = false;
 
-        this.dragItem.columns.forEach( column => column.setMoving(false) );
+        if (this.dragSource.dragStopped) {
+            this.dragSource.dragStopped();
+        }
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
             let draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
@@ -243,7 +274,7 @@ export class DragAndDropService {
     private isMouseOnDropTarget(mouseEvent: MouseEvent, dropTarget: DropTarget): boolean {
         let allContainers = this.getAllContainersFromDropTarget(dropTarget);
 
-        let gotMatch: boolean = false;
+        let mouseOverTarget: boolean = false;
         allContainers.forEach( (eContainer: HTMLElement) => {
             if (!eContainer) { return; } // secondary can be missing
             let rect = eContainer.getBoundingClientRect();
@@ -258,10 +289,16 @@ export class DragAndDropService {
             //console.log(`rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
 
             if (horizontalFit && verticalFit) {
-                gotMatch = true;
+                mouseOverTarget = true;
             }
         });
-        return gotMatch;
+
+        if (mouseOverTarget) {
+            let mouseOverTargetAndInterested = dropTarget.isInterestedIn(this.dragSource.type);
+            return mouseOverTargetAndInterested;
+        } else {
+            return false;
+        }
     }
 
     public addDropTarget(dropTarget: DropTarget) {

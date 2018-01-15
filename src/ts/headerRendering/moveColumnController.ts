@@ -9,8 +9,10 @@ import {
 } from "../dragAndDrop/dragAndDropService";
 import {GridPanel} from "../gridPanel/gridPanel";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
+import {DropListener} from "./bodyDropTarget";
+import {ColumnEventType} from "../events";
 
-export class MoveColumnController {
+export class MoveColumnController implements DropListener {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('columnController') private columnController: ColumnController;
@@ -58,7 +60,7 @@ export class MoveColumnController {
         let dragCameFromToolPanel = draggingEvent.dragSource.type===DragSourceType.ToolPanel;
         if (dragCameFromToolPanel) {
             // the if statement doesn't work if drag leaves grid, then enters again
-            this.columnController.setColumnsVisible(columns, true);
+            this.setColumnsVisible(columns, true, "UI_COLUMN_DRAGGED");
         } else {
             // restore previous state of visible columns upon re-entering. this means if the user drags
             // a group out, and then drags the group back in, only columns that were originally visible
@@ -66,10 +68,10 @@ export class MoveColumnController {
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             let visibleState = draggingEvent.dragItem.visibleState;
             let visibleColumns: Column[] = columns.filter(column => visibleState[column.getId()] );
-            this.columnController.setColumnsVisible(visibleColumns, true);
+            this.setColumnsVisible(visibleColumns, true, "UI_COLUMN_DRAGGED");
         }
 
-        this.columnController.setColumnsPinned(columns, this.pinned);
+        this.setColumnsPinned(columns, this.pinned, "UI_COLUMN_DRAGGED");
         this.onDragging(draggingEvent, true);
     }
 
@@ -78,9 +80,23 @@ export class MoveColumnController {
         if (hideColumnOnExit) {
             let dragItem = draggingEvent.dragSource.dragItemCallback();
             let columns = dragItem.columns;
-            this.columnController.setColumnsVisible(columns, false);
+            this.setColumnsVisible(columns, false, "UI_COLUMN_DRAGGED");
         }
         this.ensureIntervalCleared();
+    }
+
+    public setColumnsVisible(columns: Column[], visible: boolean, source: ColumnEventType = "API") {
+        if (columns) {
+            let allowedCols = columns.filter( c => !c.isLockVisible() );
+            this.columnController.setColumnsVisible(allowedCols, visible, source);
+        }
+    }
+
+    public setColumnsPinned(columns: Column[], pinned: string, source: ColumnEventType = "API") {
+        if (columns) {
+            let allowedCols = columns.filter( c => !c.isLockPinned() );
+            this.columnController.setColumnsPinned(allowedCols, pinned, source);
+        }
     }
 
     public onDragStop(): void {
@@ -150,6 +166,17 @@ export class MoveColumnController {
 
         let dragSourceType: DragSourceType = draggingEvent.dragSource.type;
         let columnsToMove = draggingEvent.dragSource.dragItemCallback().columns;
+
+        columnsToMove = columnsToMove.filter( col => {
+            if (col.isLockPinned()) {
+                // if locked return true only if both col and container are same pin type.
+                // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
+                return col.getPinned() == this.pinned;
+            } else {
+                // if not pin locked, then always allowed to be in this container
+                return true;
+            }
+        });
 
         this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
     }
@@ -225,7 +252,7 @@ export class MoveColumnController {
                 continue;
             }
 
-            this.columnController.moveColumns(allMovingColumns, newIndex);
+            this.columnController.moveColumns(allMovingColumns, newIndex, "UI_COLUMN_DRAGGED");
 
             // important to return here, so once we do the first valid move, we don't try do any more
             return;
@@ -328,6 +355,8 @@ export class MoveColumnController {
     }
 
     private moveInterval(): void {
+        // the amounts we move get bigger at each interval, so the speed accelerates, starting a bit slow
+        // and getting faster. this is to give smoother user experience. we max at 100px to limit the speed.
         let pixelsToMove: number;
         this.intervalCount++;
         pixelsToMove = 10 + (this.intervalCount * 5);
@@ -346,13 +375,20 @@ export class MoveColumnController {
             this.onDragging(this.lastDraggingEvent);
             this.failedMoveAttempts = 0;
         } else {
+            // we count the failed move attempts. if we fail to move 7 times, then we pin the column.
+            // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
-            this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
-            if (this.failedMoveAttempts > 7) {
-                let columns = this.lastDraggingEvent.dragItem.columns;
-                let pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
-                this.columnController.setColumnsPinned(columns, pinType);
-                this.dragAndDropService.nudge();
+
+            let columns = this.lastDraggingEvent.dragItem.columns;
+            let columnsThatCanPin = columns.filter( c => !c.isLockPinned() );
+
+            if (columnsThatCanPin.length > 0) {
+                this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_PINNED);
+                if (this.failedMoveAttempts > 7) {
+                    let pinType = this.needToMoveLeft ? Column.PINNED_LEFT : Column.PINNED_RIGHT;
+                    this.setColumnsPinned(columnsThatCanPin, pinType, "UI_COLUMN_DRAGGED");
+                    this.dragAndDropService.nudge();
+                }
             }
         }
     }

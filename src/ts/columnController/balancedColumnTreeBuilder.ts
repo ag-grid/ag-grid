@@ -24,6 +24,48 @@ export class BalancedColumnTreeBuilder {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
     }
 
+    public createForAutoGroups(autoGroupCols: Column[], gridBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroupChild[] {
+
+        let autoColBalancedTree: OriginalColumnGroupChild[] = [];
+        autoGroupCols.forEach( col => {
+            let fakeTreeItem = this.createAutoGroupTreeItem(gridBalancedTree, col);
+            autoColBalancedTree.push(fakeTreeItem);
+        });
+
+        return autoColBalancedTree;
+    }
+
+    private createAutoGroupTreeItem(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroupChild {
+
+        let dept = this.findDept(balancedColumnTree);
+
+        // at the end, this will be the top of the tree item.
+        let nextChild: OriginalColumnGroupChild = column;
+
+        for (let i = dept - 1; i>=0; i--) {
+            let autoGroup = new OriginalColumnGroup(
+                null,
+                `FAKE_PATH_${column.getId()}}_${i}`,
+                true);
+            this.context.wireBean(autoGroup);
+            autoGroup.setChildren([nextChild]);
+            nextChild = autoGroup;
+        }
+
+        // at this point, the nextChild is the top most item in the tree
+        return nextChild;
+    }
+
+    private findDept(balancedColumnTree: OriginalColumnGroupChild[]): number {
+        let dept = 0;
+        let pointer = balancedColumnTree;
+        while (pointer && pointer[0] && pointer[0] instanceof OriginalColumnGroup) {
+            dept++;
+            pointer = (<OriginalColumnGroup>pointer[0]).getChildren();
+        }
+        return dept;
+    }
+
     public createBalancedColumnGroups(abstractColDefs: (ColDef|ColGroupDef)[], primaryColumns: boolean): any {
         // column key creator dishes out unique column id's in a deterministic way,
         // so if we have two grids (that cold be master/slave) with same column definitions,

@@ -180,7 +180,8 @@ export class RowComp extends Component {
 
         let rowHeight = this.rowNode.rowHeight;
         let rowClasses = this.getInitialRowClasses(extraCssClass).join(' ');
-        let rowId = this.rowNode.id;
+
+        let rowIdSanitised = _.escape(this.rowNode.id);
 
         let userRowStyles = this.preProcessStylesFromGridOptions();
 
@@ -190,7 +191,7 @@ export class RowComp extends Component {
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
         templateParts.push(` row-index="${this.rowNode.getRowIndexString()}"`);
-        templateParts.push(rowId ? ` row-id="${rowId}"` : ``);
+        templateParts.push(rowIdSanitised ? ` row-id="${rowIdSanitised}"` : ``);
         templateParts.push(businessKey ? ` row-business-key="${businessKey}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
         templateParts.push(` class="${rowClasses}"`);
@@ -427,8 +428,8 @@ export class RowComp extends Component {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
-
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
 
         let eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
@@ -468,7 +469,6 @@ export class RowComp extends Component {
         this.postProcessCss();
     }
 
-
     private onRowNodeCellChanged(event: CellChangedEvent): void {
         // as data has changed, then the style and class needs to be recomputed
         this.postProcessCss();
@@ -478,6 +478,16 @@ export class RowComp extends Component {
         this.postProcessStylesFromGridOptions();
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
+        this.postProcessRowDragging();
+    }
+
+    private onRowNodeDraggingChanged(): void {
+        this.postProcessRowDragging();
+    }
+
+    private postProcessRowDragging(): void {
+        let dragging = this.rowNode.dragging;
+        this.eAllRowContainers.forEach( (row) => _.addOrRemoveCssClass(row, 'ag-row-dragging', dragging) );
     }
 
     private onExpandedChanged(): void {
@@ -893,6 +903,10 @@ export class RowComp extends Component {
             classes.push(this.rowNode.expanded ? 'ag-row-group-expanded' : 'ag-row-group-contracted');
         }
 
+        if (this.rowNode.dragging) {
+            classes.push('ag-row-dragging');
+        }
+
         _.pushAll(classes, this.processClassesFromGridOptions());
         _.pushAll(classes, this.preProcessRowClassRules());
 
@@ -919,10 +933,13 @@ export class RowComp extends Component {
         this.beans.stylingService.processClassRules(
             this.beans.gridOptionsWrapper.rowClassRules(),
             {
+                value: undefined,
+                colDef:undefined,
                 data: this.rowNode.data,
                 node: this.rowNode,
                 rowIndex: this.rowNode.rowIndex,
                 api: this.beans.gridOptionsWrapper.getApi(),
+                $scope: this.scope,
                 context: this.beans.gridOptionsWrapper.getContext()
             }, onApplicableClass, onNotApplicableClass);
     }

@@ -2,13 +2,13 @@
 import {Component} from "../widgets/component";
 import {RowNode} from "../entities/rowNode";
 import {Utils as _} from '../utils';
-import {Autowired, PostConstruct} from "../context/context";
+import {Autowired} from "../context/context";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {Column} from "../entities/column";
 import {Events} from "../events";
 import {EventService} from "../eventService";
 import {GridApi} from "../gridApi";
-import {ColumnApi} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 
 export class CheckboxSelectionComponent extends Component {
 
@@ -23,8 +23,6 @@ export class CheckboxSelectionComponent extends Component {
 
     private rowNode: RowNode;
     private column: Column;
-
-    private visibleFunc: Function;
 
     constructor() {
         super(`<span class="ag-selection-checkbox"/>`);
@@ -77,7 +75,6 @@ export class CheckboxSelectionComponent extends Component {
 
         this.rowNode = params.rowNode;
         this.column = params.column;
-        this.visibleFunc = params.visibleFunc;
 
         this.createAndAddIcons();
 
@@ -96,28 +93,14 @@ export class CheckboxSelectionComponent extends Component {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
 
-        if (this.visibleFunc) {
+        if (typeof this.column.getColDef().checkboxSelection === 'function') {
             this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();
         }
     }
 
     private showOrHideSelect(): void {
-        let params = this.createParams();
-        let visible = this.visibleFunc(params);
+        let visible = this.column.isCellCheckboxSelection(this.rowNode);
         this.setVisible(visible);
-    }
-
-    private createParams(): any {
-        let params = {
-            node: this.rowNode,
-            data: this.rowNode.data,
-            column: this.column,
-            colDef: this.column.getColDef(),
-            context: this.gridOptionsWrapper.getContext(),
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        return params;
     }
 }

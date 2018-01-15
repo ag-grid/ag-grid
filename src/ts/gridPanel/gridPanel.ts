@@ -1,6 +1,7 @@
 import {Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnApi, ColumnController} from "../columnController/columnController";
+import {ColumnController} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 import {RowRenderer} from "../rendering/rowRenderer";
 import {BorderLayout} from "../layout/borderLayout";
 import {Logger, LoggerFactory} from "../logger";
@@ -34,6 +35,8 @@ import {CellComp} from "../rendering/cellComp";
 import {ValueService} from "../valueService/valueService";
 import {LongTapEvent, TouchListener} from "../widgets/touchListener";
 import {ComponentRecipes} from "../components/framework/componentRecipes";
+import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
+import {RowDragFeature} from "./rowDragFeature";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
@@ -158,6 +161,7 @@ export class GridPanel extends BeanStub {
     @Autowired('frameworkFactory') private frameworkFactory: IFrameworkFactory;
     @Autowired('valueService') private  valueService: ValueService;
     @Autowired('componentRecipes') private componentRecipes: ComponentRecipes;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     private layout: BorderLayout;
     private logger: Logger;
@@ -258,6 +262,16 @@ export class GridPanel extends BeanStub {
         }
     }
 
+    private onNewColumnsLoaded(): void {
+        // hide overlay if columns and rows exist, this can happen if columns are loaded after data.
+        // this problem exists before of the race condition between the services (column controller in this case)
+        // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
+        // this race condition would not happen.
+        if (this.columnController.isReady() && !this.paginationProxy.isEmpty()) {
+            this.hideOverlay();
+        }
+    }
+
     public getLayout(): BorderLayout {
         return this.layout;
     }
@@ -300,12 +314,21 @@ export class GridPanel extends BeanStub {
         this.addBodyViewportListener();
         this.addStopEditingWhenGridLosesFocus();
         this.mockContextMenuForIPad();
+        this.addRowDragListener();
 
         if (this.$scope) {
             this.addAngularApplyCheck();
         }
 
         this.onDisplayedColumnsWidthChanged();
+    }
+
+    private addRowDragListener(): void {
+
+        let rowDragFeature = new RowDragFeature(this.eBody);
+        this.context.wireBean(rowDragFeature);
+
+        this.dragAndDropService.addDropTarget(rowDragFeature);
     }
 
     private addStopEditingWhenGridLosesFocus(): void {
@@ -376,6 +399,8 @@ export class GridPanel extends BeanStub {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
 
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
         this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setBodyAndHeaderHeights.bind(this));
 
@@ -397,6 +422,7 @@ export class GridPanel extends BeanStub {
 
         containers.forEach(container => {
             let params: DragListenerParams = {
+                type: 'cell',
                 dragStartPixels: 0,
                 eElement: container,
                 onDragStart: this.rangeController.onDragStart.bind(this.rangeController),
@@ -984,7 +1010,7 @@ export class GridPanel extends BeanStub {
     public sizeColumnsToFit(nextTimeout?: number) {
         let availableWidth = this.getWidthForSizeColsToFit();
         if (availableWidth>0) {
-            this.columnController.sizeColumnsToFit(availableWidth);
+            this.columnController.sizeColumnsToFit(availableWidth, "SIZE_COLUMNS_TO_FIT");
         } else {
             if (nextTimeout===undefined) {
                 setTimeout( ()=> {
@@ -1485,11 +1511,23 @@ export class GridPanel extends BeanStub {
         }
     }
 
+    public setVerticalScrollPosition(vScrollPosition: number): void {
+        this.eBodyViewport.scrollTop = vScrollPosition;
+    }
+
     // tries to scroll by pixels, but returns what the result actually was
     public scrollHorizontally(pixels: number): number {
         let oldScrollPosition = this.eBodyViewport.scrollLeft;
         this.setHorizontalScrollPosition(oldScrollPosition + pixels);
         let newScrollPosition = this.eBodyViewport.scrollLeft;
+        return newScrollPosition - oldScrollPosition;
+    }
+
+    // tries to scroll by pixels, but returns what the result actually was
+    public scrollVertically(pixels: number): number {
+        let oldScrollPosition = this.eBodyViewport.scrollTop;
+        this.setVerticalScrollPosition(oldScrollPosition + pixels);
+        let newScrollPosition = this.eBodyViewport.scrollTop;
         return newScrollPosition - oldScrollPosition;
     }
 

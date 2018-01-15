@@ -154,7 +154,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     }
 
     private setPaddingDeprecatedWay(paddingCount: number, padding: number): void {
-        _.doOnce( () => console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation.'), 'groupCellRenderer->doDeprecatedWay');
+        _.doOnce( () => console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation page for Themes, in particular the property $row-group-indent-size.'), 'groupCellRenderer->doDeprecatedWay');
 
         let paddingPx = paddingCount * padding;
 
