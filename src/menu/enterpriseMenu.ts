@@ -97,7 +97,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             true,
             () => { // menu closed callback
                 menu.destroy();
-                column.setMenuVisible(false);
+                column.setMenuVisible(false, "CONTEXT_MENU");
             }
         );
 
@@ -115,7 +115,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             this.lastSelectedTab = event.key
         } );
 
-        column.setMenuVisible(true);
+        column.setMenuVisible(true, "CONTEXT_MENU");
 
         this.activeMenu = menu;
         menu.addEventListener(BeanStub.EVENT_DESTORYED, ()=> {

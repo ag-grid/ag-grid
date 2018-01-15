@@ -173,7 +173,7 @@ export class ToolPanelGroupComp extends Component {
             }
         } else {
             let allowedColumns = childColumns.filter( c => !c.isLockVisible() );
-            this.columnController.setColumnsVisible(allowedColumns, selected);
+            this.columnController.setColumnsVisible(allowedColumns, selected, "TOOL_PANEL_UI");
         }
     }
 
@@ -196,13 +196,13 @@ export class ToolPanelGroupComp extends Component {
         });
 
         if (columnsToUnPivot.length>0) {
-            this.columnController.removePivotColumns(columnsToUnPivot);
+            this.columnController.removePivotColumns(columnsToUnPivot, "TOOL_PANEL_UI");
         }
         if (columnsToUnGroup.length>0) {
-            this.columnController.removeRowGroupColumns(columnsToUnGroup);
+            this.columnController.removeRowGroupColumns(columnsToUnGroup, "TOOL_PANEL_UI");
         }
         if (columnsToUnValue.length>0) {
-            this.columnController.removeValueColumns(columnsToUnValue);
+            this.columnController.removeValueColumns(columnsToUnValue, "TOOL_PANEL_UI");
         }
     }
 
@@ -227,13 +227,13 @@ export class ToolPanelGroupComp extends Component {
         });
 
         if (columnsToAggregate.length>0) {
-            this.columnController.addValueColumns(columnsToAggregate);
+            this.columnController.addValueColumns(columnsToAggregate, "TOOL_PANEL_UI");
         }
         if (columnsToGroup.length>0) {
-            this.columnController.addRowGroupColumns(columnsToGroup);
+            this.columnController.addRowGroupColumns(columnsToGroup, "TOOL_PANEL_UI");
         }
         if (columnsToPivot.length>0) {
-            this.columnController.addPivotColumns(columnsToPivot);
+            this.columnController.addPivotColumns(columnsToPivot, "TOOL_PANEL_UI");
         }
 
     }

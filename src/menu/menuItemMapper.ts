@@ -46,17 +46,17 @@ export class MenuItemMapper {
             };
             case 'pinLeft': return {
                 name: localeTextFunc('pinLeft', 'Pin Left'),
-                action: ()=> this.columnController.setColumnPinned(column, Column.PINNED_LEFT),
+                action: ()=> this.columnController.setColumnPinned(column, Column.PINNED_LEFT, "CONTEXT_MENU"),
                 checked: column.isPinnedLeft()
             };
             case 'pinRight': return {
                 name: localeTextFunc('pinRight', 'Pin Right'),
-                action: ()=> this.columnController.setColumnPinned(column, Column.PINNED_RIGHT),
+                action: ()=> this.columnController.setColumnPinned(column, Column.PINNED_RIGHT, "CONTEXT_MENU"),
                 checked: column.isPinnedRight()
             };
             case 'clearPinned': return {
                 name: localeTextFunc('noPin', 'No Pin'),
-                action: ()=> this.columnController.setColumnPinned(column, null),
+                action: ()=> this.columnController.setColumnPinned(column, null, "CONTEXT_MENU"),
                 checked: !column.isPinned()
             };
             case 'valueAggSubMenu': return {
@@ -66,25 +66,25 @@ export class MenuItemMapper {
             };
             case 'autoSizeThis': return {
                 name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
-                action: ()=> this.columnController.autoSizeColumn(column)
+                action: ()=> this.columnController.autoSizeColumn(column, "CONTEXT_MENU")
             };
             case 'autoSizeAll': return {
                 name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                action: ()=> this.columnController.autoSizeAllColumns()
+                action: ()=> this.columnController.autoSizeAllColumns("CONTEXT_MENU")
             };
             case 'rowGroup': return {
                 name: localeTextFunc('groupBy', 'Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
-                action: ()=> this.columnController.addRowGroupColumn(column),
+                action: ()=> this.columnController.addRowGroupColumn(column, "CONTEXT_MENU"),
                 icon: Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
             };
             case 'rowUnGroup': return {
                 name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
-                action: ()=> this.columnController.removeRowGroupColumn(column),
+                action: ()=> this.columnController.removeRowGroupColumn(column, "CONTEXT_MENU"),
                 icon: Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };
             case 'resetColumns': return {
                 name: localeTextFunc('resetColumns', 'Reset Columns'),
-                action: ()=> this.columnController.resetColumnState()
+                action: ()=> this.columnController.resetColumnState("CONTEXT_MENU")
             };
             case 'expandAll': return {
                 name: localeTextFunc('expandAll', 'Expand All'),
@@ -164,8 +164,8 @@ export class MenuItemMapper {
             result.push({
                 name: localeTextFunc(funcName, funcName),
                 action: ()=> {
-                    this.columnController.setColumnAggFunc(columnToUse, funcName);
-                    this.columnController.addValueColumn(columnToUse);
+                    this.columnController.setColumnAggFunc(columnToUse, funcName, "CONTEXT_MENU");
+                    this.columnController.addValueColumn(columnToUse, "CONTEXT_MENU");
                 },
                 checked: columnIsAlreadyAggValue && columnToUse.getAggFunc() === funcName
             });

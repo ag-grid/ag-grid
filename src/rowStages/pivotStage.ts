@@ -1,17 +1,17 @@
 import {
-    IRowNodeStage,
     Autowired,
-    ColumnController,
-    ValueService,
-    EventService,
-    RowNode,
-    StageExecuteParams,
-    Column,
-    Utils,
+    Bean,
     ColDef,
     ColGroupDef,
+    Column,
+    ColumnController,
+    EventService,
     IRowModel,
-    Bean
+    IRowNodeStage,
+    RowNode,
+    StageExecuteParams,
+    Utils,
+    ValueService
 } from "ag-grid/main";
 import {PivotColDefService} from "./pivotColDefService";
 
@@ -45,7 +45,7 @@ export class PivotStage implements IRowNodeStage {
     private executePivotOff(): void {
         this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = {};
-        this.columnController.setSecondaryColumns(null);
+        this.columnController.setSecondaryColumns(null, "ROW_MODEL_UPDATED");
     }
 
     private executePivotOn(rootNode: RowNode): void {
@@ -66,7 +66,7 @@ export class PivotStage implements IRowNodeStage {
             let result = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnGroupDefs = result.pivotColumnGroupDefs;
             this.pivotColumnDefs = result.pivotColumnDefs;
-            this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs);
+            this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs, "ROW_MODEL_UPDATED");
         }
     }
 

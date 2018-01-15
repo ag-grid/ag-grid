@@ -113,7 +113,7 @@ export class PivotColumnsPanel extends AbstractColumnDropPanel {
             };
             this.eventService.dispatchEvent(event);
         } else {
-            this.columnController.setPivotColumns(columns);
+            this.columnController.setPivotColumns(columns, "TOOL_PANEL_UI");
         }
     }
 

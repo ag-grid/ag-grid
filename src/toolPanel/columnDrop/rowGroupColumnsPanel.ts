@@ -77,7 +77,7 @@ export class RowGroupColumnsPanel extends AbstractColumnDropPanel {
             };
             this.eventService.dispatchEvent(event);
         } else {
-            this.columnController.setRowGroupColumns(columns);
+            this.columnController.setRowGroupColumns(columns, "TOOL_PANEL_UI");
         }
     }
 
