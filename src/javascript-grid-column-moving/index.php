@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-Column Moving
+<h1>Column Moving</h1>
 
 <p>
     Columns can be moved in the grid in the following ways:
