@@ -92,7 +92,7 @@ export class ComponentMetadataProvider {
         }
     }
 
-    retrieve (name:string):ComponentMetadata{
+    public retrieve (name:string):ComponentMetadata{
         return this.componentMetaData[name];
     }
 }
