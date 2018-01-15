@@ -57,7 +57,3 @@ LINK;
 
 render_menu_items($menu_items);
 ?>
-
-<div>
-    <a class="sidebarLink" href="/archive/">Archive Docs</a>
-</div>

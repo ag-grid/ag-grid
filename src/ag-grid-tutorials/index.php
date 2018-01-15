@@ -7,9 +7,9 @@ $pageGroup = "misc";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h2>Intermediate</h2>
+
+    <h1>Intermediate</h1>
 
     <note>
         These tutorials were created in an older version of ag-Grid. The general principles are all still true,
@@ -38,52 +38,30 @@ include '../documentation-main/documentation_header.php';
 
     <p>The source code for each step is given below each video.</p>
 
-    <h3>Step 1 - Basic Grid</h3>
+    <h2>Step 1 - Basic Grid</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/OEy2CL4jQvU" frameborder="0" allowfullscreen></iframe>
     <?= example('Basic Grid', 'start') ?>
 
-    <h3>Step 2 - Loading Data</h3>
+    <h2>Step 2 - Loading Data</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/BR-ARyQZm4E" frameborder="0" allowfullscreen></iframe>
     <?= example('Loading Data', 'load-data') ?>
 
-    <h3>Step 3 - Value Getters</h3>
+    <h2>Step 3 - Value Getters</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/hZGHoo3RPGI" frameborder="0" allowfullscreen></iframe>
     <?= example('Value Getters', 'value-getters') ?>
 
-    <h3>Step 4 - Cell Class Rules</h3>
+    <h2>Step 4 - Cell Class Rules</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/MRDG741Wz0k" frameborder="0" allowfullscreen></iframe>
     <?= example('Cell Class Rules', 'cell-class-rules') ?>
 
-    <h3>Step 5 - Cell Renderer</h3>
+    <h2>Step 5 - Cell Renderer</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/6Ha1pEuYb6w" frameborder="0" allowfullscreen></iframe>
 
     <?= example('Cell Renderer', 'cell-renderer') ?>
 
-    <h3>Step 6 - Expressions</h3>
+    <h2>Step 6 - Expressions</h2>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/qPKG7KRNbnk" frameborder="0" allowfullscreen></iframe>
 
     <?= example('Expressions', 'expressions') ?>
-</div>
-
-<hr/>
-
-<div id="disqus_thread"></div>
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = 'aggrid';
-
-    /* * * DON'T EDIT BELOW THIS LINE * * */
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-<hr/>
-
-<footer class="license">
-    � Niall Crosby 2015
-</footer>
 
 <?php include '../documentation-main/documentation_footer.php';?>
