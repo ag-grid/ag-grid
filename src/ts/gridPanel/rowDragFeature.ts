@@ -171,8 +171,15 @@ export class RowDragFeature implements DropTarget {
     public dispatchEvent(type: string, draggingEvent: DraggingEvent): void {
 
         let yNormalised = this.normaliseForScroll(draggingEvent.y);
-        let indexAtPixelNow = this.rowModel.getRowIndexAtPixel(yNormalised);
-        let rowNodeAtPixelNow = this.rowModel.getRow(indexAtPixelNow);
+
+        let overIndex = -1;
+        let overNode = null;
+        let mouseIsPastLastRow = yNormalised > this.rowModel.getCurrentPageHeight();
+
+        if (!mouseIsPastLastRow) {
+            overIndex = this.rowModel.getRowIndexAtPixel(yNormalised);
+            overNode = this.rowModel.getRow(overIndex);
+        }
 
         let vDirectionString: string;
         switch (draggingEvent.vDirection) {
@@ -193,8 +200,8 @@ export class RowDragFeature implements DropTarget {
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             event: draggingEvent.event,
             node: draggingEvent.dragItem.rowNode,
-            overIndex: indexAtPixelNow,
-            overNode: rowNodeAtPixelNow,
+            overIndex: overIndex,
+            overNode: overNode,
             y: yNormalised,
             vDirection: vDirectionString
         };
