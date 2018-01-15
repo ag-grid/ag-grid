@@ -68,8 +68,8 @@ include '../documentation-main/documentation_header.php';
             a <code>valueFormatter</code> and the result of editing is parsed to a number using <code>valueParser</code>.
         </li>
         <li>
-            <b>Column 'Name':</b> This is editable. The name value is a combination of <i>firstName</i> and
-            <i>lastName</i>. A <code>valueGetter</code> is used to combine the parts for display, and a
+            <b>Column 'Name':</b> This is editable. The name value is a combination of <code>firstName</code> and
+            <code>lastName</code>. A <code>valueGetter</code> is used to combine the parts for display, and a
             <code>valueSetter</code> is used for setting the parts back into the grid (eg if you type 'Sam Boots',
             then 'Sam' gets set as the first name and 'Boots' as the last name.
         </li>

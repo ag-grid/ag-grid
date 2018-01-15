@@ -70,8 +70,8 @@ gridOptions.columnDefs = [
 
     <p>
         A group can have children initially hidden. If you want to show or hide children,
-        set <i>columnGroupShow</i> to either 'open' or 'closed' to one or more of the children.
-        When a children set has <i>columnGroupShow</i> set, it behaves in the following way:
+        set <code>columnGroupShow</code> to either 'open' or 'closed' to one or more of the children.
+        When a children set has <code>columnGroupShow</code> set, it behaves in the following way:
     </p>
         <ul class="content">
             <li><b>open:</b> The child is only shown when the group is open.</li>
@@ -193,11 +193,11 @@ gridOptions.columnDefs = [
             (as an ID is generated if you don't provide one).
         </li>
         <li>
-            Demonstrates <i>colDef.openByDefault</i> property, where it sets this on F
+            Demonstrates <code>colDef.openByDefault</code> property, where it sets this on F
             and G groups, resulting in these groups appearing as open by default.
         </li>
         <li>
-            Uses <i>defaultColGroupDef</i> and <i>defaultColDef</i> to apply a class to some of
+            Uses <code>defaultColGroupDef</code> and <code>defaultColDef</code> to apply a class to some of
             the headers. Using this technique, you can apply style to any of the header sections.
         </li>
     </ul>

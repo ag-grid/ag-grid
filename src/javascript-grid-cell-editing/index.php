@@ -417,11 +417,11 @@ colDef.cellEditorParams = {
         such as including a button in your cell renderer.
     </p>
 
-    <p> The grid below has <i>singleClickEdit=true</i> so that editing will start on a cell when you single click on it.  </p>
+    <p> The grid below has <code>singleClickEdit=true</code> so that editing will start on a cell when you single click on it.  </p>
 
     <?= example('Single Click Editing', 'single-click-editing', 'generated') ?>
 
-    <p>The grid below has <i>suppressClickEdit=true</i> so that clicking doesn't started editing. The grid configures a cellRenderer with a button to start editing.</p>
+    <p>The grid below has <code>suppressClickEdit=true</code> so that clicking doesn't started editing. The grid configures a cellRenderer with a button to start editing.</p>
 
     <?= example('Single Click Editing', 'single-click-editing-renderer', 'generated') ?>
 

@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        The term <i>Reference Data</i> is used here in a general way to describe data which can be defined using a key /
+        The term <code>Reference Data</code> is used here in a general way to describe data which can be defined using a key /
         value pair relationship (i.e. "tyt": "Toyota"). This data is typically static in nature, i.e. it is not expected
         to change between server requests.
     </note>
@@ -117,7 +117,7 @@ cellEditorParams: {
     refData: carMappings // just required to specify refData!
 }</snippet>
 
-    <p>Like in the previous example using <i>Value Handlers</i>, where the underlying data contains codes, the grid will
+    <p>Like in the previous example using <code>Value Handlers</code>, where the underlying data contains codes, the grid will
        use the specified reference data to display the associated values in the cells and save down the codes (keys) in
        the data when editing.
     </p>
@@ -125,20 +125,20 @@ cellEditorParams: {
     <h2 id="example-reference-data-with-value-handlers">Example - Value Handlers</h2>
 
     <p>
-        The following example demonstrates how <i>Value Handlers</i> can be combined to work with reference data:
+        The following example demonstrates how <code>Value Handlers</code> can be combined to work with reference data:
     </p>
 
     <ul>
         <li>
-            <b>'Make' Column:</b> uses the built-in 'select' <i>Cell Editor</i>. Mapped names are displayed in the drop
+            <b>'Make' Column:</b> uses the built-in 'select' <code>Cell Editor</code>. Mapped names are displayed in the drop
             down list and selections are saved as 'make' codes in the underlying data.
         </li>
         <li>
-            <b>'Exterior Colour' Column:</b> uses the built-in 'richSelect' <i>Cell Editor</i>. Mapped names are displayed
+            <b>'Exterior Colour' Column:</b> uses the built-in 'richSelect' <code>Cell Editor</code>. Mapped names are displayed
             in the drop down list and selections are saved as 'colour' codes in the underlying data.
         </li>
         <li>
-            <b>'Interior Colour' Column:</b> uses a <i>Text Cell Editor</i> with <code>useFormatter=true</code>. Mapped
+            <b>'Interior Colour' Column:</b> uses a <code>Text Cell Editor</code> with <code>useFormatter=true</code>. Mapped
             names are displayed in the cells and edited values are saved as 'colour' codes in the underlying data.
             (Note a valid name must be entered).
         </li>
@@ -160,16 +160,16 @@ cellEditorParams: {
 
     <ul>
         <li>
-            <b>'Make' Column:</b> uses the built-in 'select' <i>Cell Editor</i> with the <code>refData</code> property specified.
+            <b>'Make' Column:</b> uses the built-in 'select' <code>Cell Editor</code> with the <code>refData</code> property specified.
             Mapped names are displayed in the drop down list and selections are saved as 'make' codes in the underlying data.
         </li>
         <li>
-            <b>'Exterior Colour' Column:</b> uses the built-in 'richSelect' <i>Cell Editor</i> with the <code>refData</code>
+            <b>'Exterior Colour' Column:</b> uses the built-in 'richSelect' <code>Cell Editor</code> with the <code>refData</code>
             property specified. Mapped names are displayed in the drop down list and selections are saved as 'colour' codes
             in the underlying data.
         </li>
         <li>
-            <b>'Interior Colour' Column:</b> uses a <i>Text Cell Editor</i> with the <code>refData</code> property specified.
+            <b>'Interior Colour' Column:</b> uses a <code>Text Cell Editor</code> with the <code>refData</code> property specified.
             Mapped names are displayed in the cells and edited values are saved as 'colour' codes in the underlying data.
             (Note a valid name must be entered).
         </li>

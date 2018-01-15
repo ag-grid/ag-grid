@@ -11,10 +11,10 @@ include '../documentation-main/documentation_header.php';
     <h2 id="internationalisation">Internationalisation</h2>
 
     <p>
-        You can change the text in the paging panels and the default filters by providing a <i>localeText</i> or
-        a <i>localeTextFunc</i> to the <i>gridOptions</i>.</p>
+        You can change the text in the paging panels and the default filters by providing a <code>localeText</code> or
+        a <code>localeTextFunc</code> to the <code>gridOptions</code>.</p>
 
-    <h3 id="using-locale-text">Using <i>localeText</i></h3>
+    <h3 id="using-locale-text">Using <code>localeText</code></h3>
 
     <p>
         The example below shows all the text that can be defined.
@@ -111,12 +111,12 @@ localeText = {
 
     <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true)) ?>
 
-    <h3 id="using-locale-text-func">Using <i>localeTextFunc</i></h3>
+    <h3 id="using-locale-text-func">Using <code>localeTextFunc</code></h3>
 
     <p>
         The example above works great if all you are translating is ag-Grid. However what if you want
         to bind into your wider applications internationalisation? That can be done by providing your
-        own <i>localeTextFunc</i>, which is an alternative to the above.
+        own <code>localeTextFunc</code>, which is an alternative to the above.
     </p>
 
     <p>

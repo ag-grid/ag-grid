@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
     <h3 id="row-height-property">rowHeight Property</h3>
 
     <p>
-        To change the row height for the whole grid, set the property <i>rowHeight</i> to a positive number.
+        To change the row height for the whole grid, set the property <code>rowHeight</code> to a positive number.
         For example, to set the height to 50px, do the following:
     </p>
 
@@ -43,7 +43,7 @@ gridOptions.rowHeight = 50;</snippet>
 
     <p>
         To change the row height so that each row can have a different height,
-        implement the <i>getRowHeight()</i> callback. For example, to set the height
+        implement the <code>getRowHeight()</code> callback. For example, to set the height
         to 50px for all non-pinned rows and 25px for pinned rows, do the following:
     </p>
 
@@ -68,7 +68,7 @@ gridOptions.getRowHeight = function(params) {
 
     <p>
         The example below hows dynamic row height, specifying a different row height for each row.
-        It uses the <i>getRowHeight()</i> callback to achieve this.
+        It uses the <code>getRowHeight()</code> callback to achieve this.
     </p>
 
     <?= example('Row Height Simple', 'row-height-simple', 'generated') ?>
@@ -90,14 +90,14 @@ gridOptions.getRowHeight = function(params) {
     <p>
         Setting the row height is done once for each row. Once set, the grid will not ask you
         for the row height again. You can change the row height after it is initially set
-        using a combination of <i>api.resetRowHeights()</i>, <i>rowNode.setRowHeight()</i> and
-        <i>api.onRowHeightChanged()</i>.
+        using a combination of <code>api.resetRowHeights()</code>, <code>rowNode.setRowHeight()</code> and
+        <code>api.onRowHeightChanged()</code>.
     </p>
 
     <h4 id="api-reset-row-heights">api.resetRowHeights()</h4>
     <p>
         Call this API to have the grid clear all the row
-        heights and work them all out again from scratch - if you provide a <i>getRowHeight()</i>
+        heights and work them all out again from scratch - if you provide a <code>getRowHeight()</code>
         callback, it will be called again for each row. The grid will then resize and
         reposition all rows again. This is the shotgun approach.
     </p>
@@ -105,21 +105,21 @@ gridOptions.getRowHeight = function(params) {
     <h4 id="row-node-set-row-height">rowNode.setRowHeight(height) and api.onRowHeightChanged()</h4>
 
     <p>
-        You can call <i>rowNode.setRowHeight(height)</i> directly
+        You can call <code>rowNode.setRowHeight(height)</code> directly
         on the rowNode to set its height. The grid will resize the row but will NOT
         reposition the rows (ie if you make a row shorter, a space will appear between
         it and the next row, the next rows will not be moved up). When you have set the
-        row height (potentially on many rows) you need to call <i>api.onRowHeightChanged()</i>
+        row height (potentially on many rows) you need to call <code>api.onRowHeightChanged()</code>
         to tell the grid to reposition the rows. It is intended that you can call
-        <i>rowNode.setRowHeight(height)</i> many times and then call <i>api.onRowHeightChanged()</i>
+        <code>rowNode.setRowHeight(height)</code> many times and then call <code>api.onRowHeightChanged()</code>
         once at the end.
     </p>
 
     <p>
-        When calling <i>rowNode.setRowHeight(height)</i>, you can either pass in a new height
+        When calling <code>rowNode.setRowHeight(height)</code>, you can either pass in a new height
         or null or undefined. If you pass a height, that height will be used for the row.
         If you pass in null or undefined, the grid will then calculate the row height in the
-        usual way, either use the provided <i>rowHeight</i> property or <i>getRowHeight()</i>
+        usual way, either use the provided <code>rowHeight</code> property or <code>getRowHeight()</code>
         callback.
     </p>
 
@@ -129,7 +129,7 @@ gridOptions.getRowHeight = function(params) {
 
     <ul>
         <li><b>Top Level Groups:</b> The row height for the groups is changed by calling api.resetRowHeights().
-        This gets the grid to call <i>api.getRowHeight()</i> again for each row.</li>
+        This gets the grid to call <code>api.getRowHeight()</code> again for each row.</li>
         <li><b>Swimming Leaf Rows:</b> Same technique is used here as above above. You will need to expand
         a group with swimming (eg America) and the grid works out all row heights again.</li>
         <li><b>Zimbabwe Leaf Rows:</b> The row height is set directly on the rowNode. Then the grid

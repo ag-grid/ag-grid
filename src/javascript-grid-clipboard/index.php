@@ -26,7 +26,7 @@ include '../documentation-main/documentation_header.php';
             copySelectedRangeToClipboard(includeHeaders)
         </li>
     </ul>
-    The API calls take a boolean value <i>includeHeaders</i> which when true, will include column headers in what is
+    The API calls take a boolean value <code>includeHeaders</code> which when true, will include column headers in what is
     copied.
     </p>
 
@@ -103,7 +103,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>When row click selection and range selection are enabled the shortcut would copy the selected row, not the
         selected range, if you wish to let the range take precedence, then you can add this to your gridOptions
-        <i>suppressCopyRowsToClipboard:true</i>
+        <code>suppressCopyRowsToClipboard:true</code>
     </p>
 
     <?= example('Clipboard example', 'simple', 'generated', array("enterprise" => true)) ?>
@@ -112,13 +112,13 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         If you want to do the copy to clipboard yourself (ie not use the grids clipboard interaction)
-        then implement the callback <i>sendToClipboard(params)</i>. Use this if you are in a non-standard
+        then implement the callback <code>sendToClipboard(params)</code>. Use this if you are in a non-standard
         web container that has a bespoke API for interacting with the clipboard. The callback gets the
         data to go into the clipboard, it's your job to call the bespoke API.
     </p>
 
     <p>
-        The example below shows using <i>sendToClipboard(params)</i>, but rather than using the clipboard,
+        The example below shows using <code>sendToClipboard(params)</code>, but rather than using the clipboard,
         demonstrates the callback by just printing the data to the console.
     </p>
 

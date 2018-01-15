@@ -51,7 +51,7 @@ gridOptions.api.hideOverlay()</snippet>
 
     <p>
         If you're not happy with the provided overlay templates, you can provide your own. This is done with
-        the grid properties <i>overlayLoadingTemplate</i> and <i>overlayNoRowsTemplate</i>. These templates
+        the grid properties <code>overlayLoadingTemplate</code> and <code>overlayNoRowsTemplate</code>. These templates
         should be plain HTML.
     </p>
 

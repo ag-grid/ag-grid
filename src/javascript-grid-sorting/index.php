@@ -62,7 +62,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
     <h3 id="sorting-animation">Sorting Animation</h3>
 
     <p>
-        To enable animation of the rows after sorting, set grid property <i>animateRows=true</i>.
+        To enable animation of the rows after sorting, set grid property <code>animateRows=true</code>.
     </p>
 
     <h3 id="sorting-order">Sorting Order</h3>

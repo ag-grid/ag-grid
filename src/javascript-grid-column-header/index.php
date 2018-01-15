@@ -165,7 +165,7 @@ pivotGroupHeaderHeight:50,
 pivotGroupHeaderHeight:100,
 </snippet>
         </li>
-        <li>The grouped column header <i>Athlete Details</i> has an specific style applied to it to make it bigger. Note
+        <li>The grouped column header <code>Athlete Details</code> has an specific style applied to it to make it bigger. Note
             that the style is slightly different depending if pivoting or not:
 <snippet language="css">
 .ag-pivot-off .ag-header-group-cell{

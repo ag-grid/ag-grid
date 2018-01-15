@@ -59,7 +59,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        Updating data using <i>rowNode.setData()</i> and <i>rowNode.setDataValue()</i> do
+        Updating data using <code>rowNode.setData()</code> and <code>rowNode.setDataValue()</code> do
         not update the sorting, filtering or grouping. Using an update transaction
         (explained below) does update the sorting, filtering and grouping.
     </note>
@@ -79,7 +79,7 @@ include '../documentation-main/documentation_header.php';
                 Group &rArr; Filter &rArr; Pivot &rArr; Aggregate &rArr; Sort &rArr; Map<br/>
             </li>
         </ul>
-        That means, if you call <i>api.refreshInMemoryRowModel('filter')</i>, it will
+        That means, if you call <code>api.refreshInMemoryRowModel('filter')</code>, it will
         also execute pivot, aggregate, sort and map.
     </note>
 
@@ -347,7 +347,7 @@ interface RowDataTransaction {
         <p>
             The deltaRowDataMode is designed to allow ag-Grid work with immutable
             stores such as Redux. In an immutable store, a new list of rowData is created if any row within it
-            is added, removed or updated. If using React and Redux, consider setting <i>deltaRowDataMode=true</i>
+            is added, removed or updated. If using React and Redux, consider setting <code>deltaRowDataMode=true</code>
             and bind your Redux managed data to the rowData property.
         </p>
         <p>
@@ -424,10 +424,10 @@ interface RowDataTransaction {
         selected items to that group. Notice how the rows animate to the new position.</li>
     </ul>
 
-    <p><i>
+<note>
         *assuming when no sort applied - because if the grid is sorting, then the grid sort will override any order
         in the provided data.
-    </i></p>
+</note>
 
     <?= example('Simple Immutable Store', 'simple-immutable-store', 'generated', array("enterprise" => 1)) ?>
 

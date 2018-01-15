@@ -84,7 +84,7 @@ columnDefinition = {
     <h3>Complex Objects - keyCreator</h3>
 
     <p>
-        If you are providing complex objects as values, then you need to provide <i>colDef.keyCreator</i> method in your
+        If you are providing complex objects as values, then you need to provide <code>colDef.keyCreator</code> method in your
         object for the set filter to work, giving a unique value for the object. This is because the set filter needs
         a string key to identify the value. The example below demonstrates keyCreator with the country column by replacing
         the country name in the data with a complex object of country name and code. If the keyCreator was not provided
@@ -111,18 +111,18 @@ columnDefinition = {
     </p>
 
     <p>
-        The example also demonstrates using the <i>ag-header-cell-filtered</i> class, which is applied to the header
+        The example also demonstrates using the <code>ag-header-cell-filtered</code> class, which is applied to the header
         cell when the header is filtered. By default, no style is applied to this class, the example shows
         applying a different color background to this style.
     </p>
 
     <p>
-        The column sport has also the property <i>suppressMiniFilter</i> set to true, hiding the text input box for the
+        The column sport has also the property <code>suppressMiniFilter</code> set to true, hiding the text input box for the
         set filter in this column (compare this set filter with athlete which suppressMiniFilter is the default = false).
     </p>
 
     <p>
-        The column country has the property <i>selectAllOnMiniFilter</i> set to true, you can see how the select all only
+        The column country has the property <code>selectAllOnMiniFilter</code> set to true, you can see how the select all only
         applies to the items filtered by the mini filter search box.
     </p>
 

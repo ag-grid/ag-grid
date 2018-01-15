@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     The example below shows external filters in action. There are two methods on gridOptions you
-    need to implement: <i>isExternalFilterPresent()</i> and <i>doesExternalFilterPass(node)</i>.
+    need to implement: <code>isExternalFilterPresent()</code> and <code>doesExternalFilterPass(node)</code>.
 </p>
 <ul>
 

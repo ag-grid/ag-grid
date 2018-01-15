@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
         <ol>
             <li><b>Column Filter</b>: A column filter is associated with a column and filters data based
             on the value of that column only. The column filter is accessed via the column's menu and
-            may also have a <i>floating filter</i> element if floating filters are turned on.</li>
+            may also have a <code>floating filter</code> element if floating filters are turned on.</li>
             <li><a href="../javascript-grid-filter-quick/"><b>Quick Filter</b></a>: The quick filter is a simple text filter that filters across all columns.</li>
             <li><a href="../javascript-grid-filter-external/"><b>External Filter</b></a>: External filters is a way for your application to apply bespoke
             filtering with no restriction to the columns.</li>
@@ -31,8 +31,8 @@ include '../documentation-main/documentation_header.php';
     <h3 id="enable-filtering">Enable Filtering</h3>
 
     <p>
-        Enable filtering by setting grid property <i>enableFilter=true</i>. This turns on filtering on all columns.
-        To turn off filtering for particular columns, set <i>suppressFilter=true</i> on the individual column definition.
+        Enable filtering by setting grid property <code>enableFilter=true</code>. This turns on filtering on all columns.
+        To turn off filtering for particular columns, set <code>suppressFilter=true</code> on the individual column definition.
     </p>
 
     <p>
@@ -95,7 +95,7 @@ gridOptions = {
     <h3 id="filter-parameters">Filter Parameters</h3>
 
     <p>
-        Each filter can take additional filter params by setting <i>colDef.filterParams</i>.
+        Each filter can take additional filter params by setting <code>colDef.filterParams</code>.
         What parameters each filter type takes is explained in the section on each filter.
         As an example, the following sets parameters for the text filter.
     </p>
@@ -119,7 +119,7 @@ columnDefinition = {
         The example below demonstrates:
         <ul>
         <li>Three filter types 1) text filter, 2) number filter and 3) date filter.</li>
-        <li>Using the <i>ag-header-cell-filtered</i> class, which is applied to the header
+        <li>Using the <code>ag-header-cell-filtered</code> class, which is applied to the header
             cell when the header is filtered. By default, no style is applied to this class, the example shows
             applying a different color background to this style.</li>
         <li>'suppressFilter' is set on Total to hide the filter on this column</li>
@@ -131,7 +131,7 @@ columnDefinition = {
     <h3 id="apply-function">Apply Function</h3>
 
     <p>
-        If you want the user to hit an 'Apply' button before the filter is actioned, add <i>apply=true</i>
+        If you want the user to hit an 'Apply' button before the filter is actioned, add <code>apply=true</code>
         to the filter parameters. The example below shows this in action for the first three columns.
     </p>
 
@@ -154,10 +154,10 @@ columnDefinition = {
             <tr>
                 <th>filterModified</th>
                 <td>
-                    Gets called when filter has been modified but <i>filterChanged</i>
+                    Gets called when filter has been modified but <code>filterChanged</code>
                     not necessarily called. This is useful when
                     using an apply button inside the filter, as this event fires
-                    when the filter is modified, and then <i>filterChanged</i>
+                    when the filter is modified, and then <code>filterChanged</code>
                     is fired when the apply button is pressed.
                 </td>
             </tr>
@@ -179,7 +179,7 @@ columnDefinition = {
     <h3 id="filtering-animation">Filtering Animation</h3>
 
     <p>
-        To enable animation of the rows after filtering, set grid property <i>animateRows=true</i>.
+        To enable animation of the rows after filtering, set grid property <code>animateRows=true</code>.
     </p>
 
     <h3 id="accessing-filter-component-instances">Accessing Filter Component Instances</h3>
@@ -257,8 +257,8 @@ gridOptions.api.setFilterModel(null);</snippet>
     <h3 id="get_set_filter_model">Get / Set All Filter Models</h3>
 
     <p>
-        It is possible to get and set the state of <b>all</b> the filters via the api methods <i>api.getFilterModel()</i>
-        and <i>api.setFilterModel()</i>. These methods manage the filters states via the <i>getModel()</i> and <i>setModel()</i>
+        It is possible to get and set the state of <b>all</b> the filters via the api methods <code>api.getFilterModel()</code>
+        and <code>api.setFilterModel()</code>. These methods manage the filters states via the <code>getModel()</code> and <code>setModel()</code>
         methods of the individual filters.
     </p>
     <p>
@@ -289,7 +289,7 @@ gridOptions.api.setFilterModel(null);</snippet>
 </p>
 
 <p>
-    Floating filters are activated by setting grid property <i>floatingFilter=true</i>:
+    Floating filters are activated by setting grid property <code>floatingFilter=true</code>:
 </p>
 
 <snippet>
@@ -302,13 +302,13 @@ gridOptions = {
 <p>
     Floating filters are an accessory to the main column filters. They do not contain their own state,
     rather they display the state of the main filter, and if editable they set state on the main filter.
-    Underneath the hood this is done by using the main filters <i>getModel()</i> and <i>setModel()</i>
+    Underneath the hood this is done by using the main filters <code>getModel()</code> and <code>setModel()</code>
     methods. For this reason, there is no api for getting or setting state of the floating filters.
 </p>
 
 <p>
     All the default filters provided by ag-Grid provide their own implementation of a floating filter.
-    All you need to do to enable these floating filters is set the <i>floatingFilter=true</i> grid property.
+    All you need to do to enable these floating filters is set the <code>floatingFilter=true</code> grid property.
 </p>
 
 <p>

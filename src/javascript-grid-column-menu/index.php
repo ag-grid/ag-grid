@@ -13,18 +13,18 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The menu will be displayed by default and will be made up of three panels. If you want to change the order or
-        what panels are shown, or hide them, you can specify the property <i>menuTabs</i> in the <i>colDef</i>
+        what panels are shown, or hide them, you can specify the property <code>menuTabs</code> in the <code>colDef</code>
     </p>
     <p>
-        The property <i>menuTabs</i> is an array of strings. The valid values are: 'filterMenuTab', 'generalMenuTab' and
+        The property <code>menuTabs</code> is an array of strings. The valid values are: 'filterMenuTab', 'generalMenuTab' and
         'columnsMenuTab'
         <ul>
-        <li><b>generalMenuTab</b>: Include in the <i>menuTabs</i> array to show the main panel.</li>
-        <li><b>filterMenuTab</b>: Include in the <i>menuTabs</i> array to show the filter panel.</li>
-        <li><b>columnsMenuTab</b>: Include in the <i>menuTabs</i> array to show the column selection panel.</li>
+        <li><b>generalMenuTab</b>: Include in the <code>menuTabs</code> array to show the main panel.</li>
+        <li><b>filterMenuTab</b>: Include in the <code>menuTabs</code> array to show the filter panel.</li>
+        <li><b>columnsMenuTab</b>: Include in the <code>menuTabs</code> array to show the column selection panel.</li>
     </ul>
-        To not show the menu at all, set this property to an empty array<i>[]</i>. In addition, you can set the
-    attribute <i>suppressMenu=true</i> to the column definition to not show the menu for a particular column.
+        To not show the menu at all, set this property to an empty array<code>[]</code>. In addition, you can set the
+    attribute <code>suppressMenu=true</code> to the column definition to not show the menu for a particular column.
     </p>
 
     <p>
@@ -32,7 +32,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        If you don't specify a <i>menuTabs</i> for a <i>colDef</i> the default is: <code>['generalMenuTab',
+        If you don't specify a <code>menuTabs</code> for a <code>colDef</code> the default is: <code>['generalMenuTab',
             'filterMenuTab','columnsMenuTab']</code>
     </p>
 
@@ -40,12 +40,12 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The main menu panel, by default, will show a set of items. You can adjust which of these items get display, or you
-        can start from scratch and provide your own items. To customise the menu, provide the <i>getMainMenuItems()</i>
+        can start from scratch and provide your own items. To customise the menu, provide the <code>getMainMenuItems()</code>
         callback.
     </p>
 
     <p>
-        <i>getContextMenuItems()</i> takes the following object as parameters:
+        <code>getContextMenuItems()</code> takes the following object as parameters:
         <snippet>
 GetMainMenuItemsParams {
     column: Column, // the column that was clicked
@@ -57,7 +57,7 @@ GetMainMenuItemsParams {
     </p>
 
     <p>
-        The result of <i>getContextMenuItems()</i> should be a list with each item either a) a string
+        The result of <code>getContextMenuItems()</code> should be a list with each item either a) a string
         or b) a MenuItem description. Use 'string' to pick from built in menu items (listed below)
         and use MenuItem descriptions for your own menu items.
     </p>
@@ -93,15 +93,15 @@ MenuItem {
     </ul>
 
     <p>
-        Reading the list above it can be understood that the list <i>defaultItems</i> changes on
-        different calls to the <i>getContextMenuItems()</i> callback, depending on, for example,
+        Reading the list above it can be understood that the list <code>defaultItems</code> changes on
+        different calls to the <code>getContextMenuItems()</code> callback, depending on, for example,
         what columns are current used for grouping.
     </p>
 
     <p>
-        If you do not provide a <i>getContextMenuItems()</i> callback, then the rules alone decides what gets shown.
-        If you do provide a <i>getContextMenuItems()</i>, then the <i>defaultItems</i> will be filled using the
-        rules above and you return from the callback whatever you want, using the <i>defaultItems</i> only
+        If you do not provide a <code>getContextMenuItems()</code> callback, then the rules alone decides what gets shown.
+        If you do provide a <code>getContextMenuItems()</code>, then the <code>defaultItems</code> will be filled using the
+        rules above and you return from the callback whatever you want, using the <code>defaultItems</code> only
         if you want to.
     </p>
 
@@ -131,7 +131,7 @@ menuItems.push('separator')</snippet>
     <h3>Example Column Menu</h3>
 
     <p>
-        The example below shows the <i>getMainMenuItems()</i> in action. To demonstrate different scenarios,
+        The example below shows the <code>getMainMenuItems()</code> in action. To demonstrate different scenarios,
         the callback returns something different based on the selected column as follows:
         <ul>
         <li>Athlete column appends custom items to the list of built in items.</li>

@@ -49,7 +49,7 @@ A date filter can take the following parameters:
         greaterThanOrEqual, inRange}</li>
     <li><b>defaultOption:</b> If specified, changes the default filter option to one of {equals, notEqual,
         lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. If not specified the default type is {equals},
-        if {equals} is not available because is removed using <i>filterOptions</i>, then the default
+        if {equals} is not available because is removed using <code>filterOptions</code>, then the default
         is the first item in the filterOptions</li>
     <li><b>nullComparator:</b> If specified, it will be used to specify if null values should be included when filtering.
         See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>
@@ -63,11 +63,11 @@ A date filter can take the following parameters:
     application.
 
     If you are filtering JavaScript date objects the filter will work automatically, but if you are representing
-    your date in any other format you will have to provide your own <i>comparator</i> callback.
+    your date in any other format you will have to provide your own <code>comparator</code> callback.
 </p>
 
 <p>
-    The <i>comparator</i> callback takes two parameters. The first parameter is a
+    The <code>comparator</code> callback takes two parameters. The first parameter is a
     Javascript date object with the local date at midnight
     selected in the filter. The second parameter is the current value of the cell being evaluated.
     The callback must return:
@@ -76,7 +76,7 @@ A date filter can take the following parameters:
     <li>0 if the dates are the same</li>
     <li>Any number > 0 if the cell value is greater than the filter date</li>
 </ul>
-This pattern is intended to be similar to the JavaScript <i>compareTo(a,b)</i> function.
+This pattern is intended to be similar to the JavaScript <code>compareTo(a,b)</code> function.
 </p>
 
 <p>

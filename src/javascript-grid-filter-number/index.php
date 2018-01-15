@@ -42,7 +42,7 @@ colDef: {
         greaterThanOrEqual, inRange}</li>
     <li><b>defaultOption:</b> If specified, changes the default filter option to one of {equals, notEqual,
         lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. If not specified the default type is {equals},
-        if {equals} is not available because is removed using <i>filterOptions</i>, then the default
+        if {equals} is not available because is removed using <code>filterOptions</code>, then the default
         is the first item in the filterOptions</li>
     <li><b>debounceMs:</b> If specified, the filter will wait this amount of ms after the user stops entering any characters in the
         input box before is triggered. If not specified this value is 500ms, if the value specified is 0 the filter

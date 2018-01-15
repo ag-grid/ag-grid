@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li><b>exportDataAsExcel(params)</b>: Does the full export and triggers the download of the file in the browser automatically so the user can open immediately.</li>
         <li><b>getDataAsExcel(params)</b>: Returns the Excel XML that represents the export performed by
-            <i>exportDataAsExcel(params)</i>. This can then be used by your web application, e.g. to send the data to the
+            <code>exportDataAsExcel(params)</code>. This can then be used by your web application, e.g. to send the data to the
             server for storing or sending via email etc.</li>
     </ul>
 
@@ -93,13 +93,13 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        You can assign default export parameters to your Excel export by setting the property <i>defaultExportParams</i>
+        You can assign default export parameters to your Excel export by setting the property <code>defaultExportParams</code>
         in your gridOptions. This is useful if you are planning the user to let export the data via the contextual menu.
     </p>
 
     <h4>Custom rows</h4>
 
-    <p>You can pass your custom rows in the properties <i>customHeader</i> amd <i>customFooter</i>. This properties are
+    <p>You can pass your custom rows in the properties <code>customHeader</code> amd <code>customFooter</code>. This properties are
         expected to contain an array of array of ExcelCell objects, which itself contains ExcelData objects. </p>
 
     <p>Each item in the array is considered to be a row in the excel export</p>
@@ -125,7 +125,7 @@ include '../documentation-main/documentation_header.php';
         <li>The first and the last row are empty '[]'</li>
         <li>The second row spans 2 columns</li>
         <li>The third row has 2 cells. The first cell is a label (string) and the second one a total (number)</li>
-        <li>All cells have styles associated. These styles need to be specified as part of the <i>gridOptions</i>. See
+        <li>All cells have styles associated. These styles need to be specified as part of the <code>gridOptions</code>. See
         below 'Export with Styles'
         </li>
     </ul>
@@ -159,7 +159,7 @@ include '../documentation-main/documentation_header.php';
             <ul>
                 <li>Cell Renderers will NOT be used.</li>
                 <li>Value Getters will be used.</li>
-                <li>Cell Formatters will NOT be used (use <i>processCellCallback</i> instead).</li>
+                <li>Cell Formatters will NOT be used (use <code>processCellCallback</code> instead).</li>
             </ul>
         </li>
         <li>If row grouping, all data will be exported regardless of groups open or closed.</li>
@@ -399,7 +399,7 @@ var gridOptions = {
             <li>Note that there are specific to Excel styles applied, the age column has a number formatting style applied
                 and the group column uses italic and bold font</li>
             <li>
-                The silver column has a style with <i>dataType=string</i>. This forces this column to be rendered as text in
+                The silver column has a style with <code>dataType=string</code>. This forces this column to be rendered as text in
                 Excel even though all of their cells are numeric
             </li>
         </ul>
@@ -441,7 +441,7 @@ var gridOptions = {
     party library that would convert it into XLSX.
     </p>
     </p>
-    As specified in the API section above, <i>api.getDataAsExcel(params)</i> is the method that you need to call to
+    As specified in the API section above, <code>api.getDataAsExcel(params)</code> is the method that you need to call to
     obtain the XML that we generate
     </p>
     </p>
@@ -490,8 +490,8 @@ function download (params, content){
 }</snippet></li>
     <li>Note that this example doesnt't import the styles to xls. To add styling to the xlsx, the logic could be extended
         to read the XML styling information received from
-        <i>gridOptions.api.getDataAsExcel(params)</i>, and it could thn be passed into SheetJs through the object returned by
-        <i>XLSX.read(content, {type: 'binary'})</i>. The reason this example is not exporting styles is because that it will
+        <code>gridOptions.api.getDataAsExcel(params)</code>, and it could thn be passed into SheetJs through the object returned by
+        <code>XLSX.read(content, {type: 'binary'})</code>. The reason this example is not exporting styles is because that it will
         go beyond of the purpose of demonstrating that you can reuse the XML we provide anyway you want.
     </li>
     </ul>

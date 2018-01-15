@@ -217,7 +217,7 @@ import "ag-grid-enterprise/main";</snippet>
     <p>
         Notice that the grid has its properties marked as <b>immutable</b>. Hence for
         object properties, the object reference must change for the grid to take impact.
-        For example, <i>rowData</i> must be a new list of data for the grid to be
+        For example, <code>rowData</code> must be a new list of data for the grid to be
         informed to redraw.
     </p>
 

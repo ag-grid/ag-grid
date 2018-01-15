@@ -95,7 +95,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         In order to give screen readers the contextual information they require to interpret and interact with the grid,
         <a href="https://www.w3.org/TR/wai-aria/">ARIA</a> attributes are added to the grid DOM elements. These
-        attributes are particularity useful when plain HTML elements such <i>div</i> and <i>span</i> are used to create
+        attributes are particularity useful when plain HTML elements such <code>div</code> and <code>span</code> are used to create
         complex DOM structures, which is the case with ag-Grid.
     </p>
 

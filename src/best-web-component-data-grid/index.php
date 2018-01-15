@@ -265,9 +265,9 @@ include '../documentation-main/documentation_header.php';
     <ul>
         <li><b>Events:</b> All data out of the grid comes through events. These events
             are native browser events and can be listened to one of: <br/>
-            a) Calling <i>addEventListener(eventName, handler)</i> on the element<br/>
-            b) Add an <i>onXXX</i> handler directly to the element or<br/>
-            c) Add an <i>onXXX</i> handler directly to the grid options. <br/>
+            a) Calling <code>addEventListener(eventName, handler)</code> on the element<br/>
+            b) Add an <code>onXXX</code> handler directly to the element or<br/>
+            c) Add an <code>onXXX</code> handler directly to the grid options. <br/>
             In the example,
             the event 'columnResized' is added in each of these three ways.
         </li>
@@ -295,7 +295,7 @@ include '../documentation-main/documentation_header.php';
             property of the grid.
             <br/>
             b) The 'Refresh Data via Element' generates new data for the grid by attaching
-            it to the <i>rowData</i> property.
+            it to the <code>rowData</code> property.
         </li>
     </ul>
 

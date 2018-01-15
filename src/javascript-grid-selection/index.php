@@ -86,17 +86,17 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         When doing grouping, you control what selecting a group means. This is controlled with
-        the two properties <i>groupSelectsChildren</i> and <i>groupSelectsFiltered</i>.
+        the two properties <code>groupSelectsChildren</code> and <code>groupSelectsFiltered</code>.
     <ul>
         <li><b>groupSelectsChildren</b>: When <b>true</b>, selecting a group will have the impact of
             selecting all its children. The group will then display 'selected' when all children
             are selected, 'unselected' when none are selected and 'intermediate' when children have
             a mix of selected and unselected. When the node is selecting children, it will never appear
-            in the selected set when calling <i>api.getSelectedNodes()</i>.
+            in the selected set when calling <code>api.getSelectedNodes()</code>.
             When <b>false</b>, then the group is selectable independently
             of the child nodes.</li> When selecting the group node independently of the children, it will
-            appear in the set when calling <i>api.getSelectedNodes()</i>.
-        <li><b>groupSelectsFiltered</b>: Gets used when <i>groupSelectsChildren=true</i>. When
+            appear in the set when calling <code>api.getSelectedNodes()</code>.
+        <li><b>groupSelectsFiltered</b>: Gets used when <code>groupSelectsChildren=true</code>. When
             <b>true</b> only filtered children of the group will be selected / unselected. This means
             you can apply a filter, then try to select a group, the group will end up in the
             intermediate state as only as subset of the children will be selected.</li>
@@ -108,7 +108,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         The example below shows checkbox selection with groups. Selecting the group has the
         effect of selecting the children. Likewise selecting all the children automatically
-        selects the group. In this scenario the group itself will never appear in the <i>selectedRows</i>
+        selects the group. In this scenario the group itself will never appear in the <code>selectedRows</code>
         list.
     </p>
 
@@ -126,7 +126,7 @@ include '../documentation-main/documentation_header.php';
         The example below is similar to the previous example except it does not put checkboxes
         on the leaf level nodes, only allowing entire groups to be selected. This is achieved
         by providing functions for
-        <i>colDef.checkboxSelection</i> and <i>autoGroupColumnDef.cellRendererParams.checkbox</i>.
+        <code>colDef.checkboxSelection</code> and <code>autoGroupColumnDef.cellRendererParams.checkbox</code>.
     </p>
 
     <?= example('Selection Checkbox', 'selection-checkbox', 'generated', array("enterprise" => 1)) ?>
@@ -134,7 +134,7 @@ include '../documentation-main/documentation_header.php';
     <h4 id="groupsSelectionExample3">Groups & Checkbox Selection Example 3 - Only Filtered</h4>
 
     <p>
-        Lastly we show an example using <i>groupSelectsFiltered=true</i>. Here, when you filter
+        Lastly we show an example using <code>groupSelectsFiltered=true</code>. Here, when you filter
         the grid and select a group, only the filtered children get selected.
     </p>
 
@@ -156,8 +156,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         It is possible to have a checkbox in the header for selection. To configure the
-        column to have checkbox, set <i>colDef.headerCheckboxSelection=true</i>.
-        <i>headerCheckboxSelection</i> can also be a function, if you want the checkbox
+        column to have checkbox, set <code>colDef.headerCheckboxSelection=true</code>.
+        <code>headerCheckboxSelection</code> can also be a function, if you want the checkbox
         to appear sometimes (eg if the columns is ordered first in the grid).
     </p>
 
@@ -181,7 +181,7 @@ colDef = {
 }</snippet>
 
     <p>
-        If <i>headerCheckboxSelection</i> is a function, the function will be called every
+        If <code>headerCheckboxSelection</code> is a function, the function will be called every
         time there is a change to the displayed columns, to check for changes.
     </p>
 
@@ -295,10 +295,10 @@ api.forEachNodeAfterFilter( function(node) {
 });</snippet>
     </p>
 
-    <h3 id="deep-dive-example-using-for-each-node">Deep Dive Example - Using <i>forEachNode</i></h3>
+    <h3 id="deep-dive-example-using-for-each-node">Deep Dive Example - Using <code>forEachNode</code></h3>
 
     <p>
-        There is an api function <i>forEachNode</i>. This is useful for doing group selections
+        There is an api function <code>forEachNode</code>. This is useful for doing group selections
         on a business key. The example below shows selecting all rows with country = 'United States'.
         This method is also useful when you load data and need to know the node equivalent of the
         data for selection purposes.
@@ -331,7 +331,7 @@ var gridOptions = {
 
 
     <p>
-        From the code below you can see that we iterate over each node and call the <i>setSelected()</i>
+        From the code below you can see that we iterate over each node and call the <code>setSelected()</code>
         method if matches the current rowIndex.</p>
 
     <snippet>

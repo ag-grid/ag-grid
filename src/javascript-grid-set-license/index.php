@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
     <h4><img src="../images/svg/javascript.svg" style="height: 25px" title="JavaScript"/> JavaScript</h4>
 
     <p>
-        Use this if you are using the bundled version of ag-Grid (eg you are using <i>ag-grid-enterprise.js</i>).
+        Use this if you are using the bundled version of ag-Grid (eg you are using <code>ag-grid-enterprise.js</code>).
     </p>
 <snippet>
 agGrid.LicenseManager.setLicenseKey("your license key");

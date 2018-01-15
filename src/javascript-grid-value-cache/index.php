@@ -109,7 +109,9 @@ include '../documentation-main/documentation_header.php';
         fills up. Certain events trigger the value cache to be emptied. This is called expiring the value
         cache. Once expired, every value getter will get executed again next time the value is needed.
         The events that cause the value cache to expire are the following:
-    <ul>
+
+    </p>
+    <ul class="content">
         <li>New row data is set into the grid via <code>setRowData()</code> API or changing the
             <code>rowData</code> framework bound property*.</li>
         <li>New columns are set into the grid via <code>setColumnDefs()</code> API or changing the
@@ -120,8 +122,7 @@ include '../documentation-main/documentation_header.php';
             a cell and enters a new value.</li>
         <li>The <code>expireValueCache()</code> grid API method gets called by the application.</li>
     </ul>
-    <i>* Assuming your framework allows binding properties and this is what you are using.</i>
-    </p>
+    <note>* Assuming your framework allows binding properties and this is what you are using.</note>
 
     <h1>Example - Expiring through Editing</h1>
 

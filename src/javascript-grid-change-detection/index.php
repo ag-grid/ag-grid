@@ -104,7 +104,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        By default the grid will compare values by using triple equals, eg <i>"oldValue === newValue"</i>.
+        By default the grid will compare values by using triple equals, eg <code>"oldValue === newValue"</code>.
         This will work most of the time for you, especially if your values are simple types
         (string, number, boolean) or immutable objects.
         This will be a problem for mutable objects as object references will be used for comparison

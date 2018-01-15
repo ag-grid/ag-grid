@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Pinned rows appear either above or below the normal rows of a table.
-        This feature in other grids is also known as <i>Frozen Rows</i> or <i>Pinned Rows</i>.
+        This feature in other grids is also known as <strong>Frozen Rows</strong> or <strong>Pinned Rows</strong>.
     </p>
 
     <p>
@@ -21,8 +21,8 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        After the grid is created, you can update the pinned rows by calling <i>api.setPinnedTopRowData(rows)</i>
-        and <i>setPinnedBottomRowData(rows)</i>
+        After the grid is created, you can update the pinned rows by calling <code>api.setPinnedTopRowData(rows)</code>
+        and <code>setPinnedBottomRowData(rows)</code>
     </p>
 
     <h3 id="cell-editing">Cell Editing</h3>

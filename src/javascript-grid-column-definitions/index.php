@@ -176,7 +176,7 @@ var gridOptions = {
 
 <p>
     The following example shows how to update a column header name after the grid has been initialised. As we want to update
-    the header name immediately we explicitly invoke <i>refreshHeader()</i> via the <a href="../javascript-grid-api/">Grid API</a>.
+    the header name immediately we explicitly invoke <code>refreshHeader()</code> via the <a href="../javascript-grid-api/">Grid API</a>.
 </p>
 
 <snippet>

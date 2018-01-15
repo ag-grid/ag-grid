@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
         Column animations happen when you move a column. The default is for animations to
         be turned on. It is recommended that you leave the column move animations on unless
         your target platform (browser and hardware) is to slow to manage the animations.
-        To turn OFF column animations, set the grid property <i>suppressColumnMoveAnimation=true</i>.
+        To turn OFF column animations, set the grid property <code>suppressColumnMoveAnimation=true</code>.
     </p>
 
     <p>
@@ -47,7 +47,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         Row animations occur after filtering, sorting, resizing height and expanding / collapsing a row group.
         Each on these animations is turned OFF be default. They are all turned on
-        using using the property <i>animateRows=true</i>.
+        using using the property <code>animateRows=true</code>.
     </p>
 
     <note>

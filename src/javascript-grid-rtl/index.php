@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         RTL is used for displaying languages that go from Right to Left, eg Hebrew and Arabic.
-        To get ag-Grid to display in RTL format, set the property <i>enableRtl=true</i>.
+        To get ag-Grid to display in RTL format, set the property <code>enableRtl=true</code>.
     </p>
 
     <h3 id="simple-example">Simple Example</h3>
@@ -45,8 +45,8 @@ include '../documentation-main/documentation_header.php';
     <p>
         The following CSS classes are added to the grid when RTL is on and off:
         <ul>
-        <li><b>ag-rtl</b>: Added when RTL is ON. It sets the style <i>'direction=rtl'</i>.</li>
-        <li><b>ag-ltr</b>: Added when RTL is OFF. It sets the style <i>'direction=ltr'</i>.</li>
+        <li><b>ag-rtl</b>: Added when RTL is ON. It sets the style <code>'direction=rtl'</code>.</li>
+        <li><b>ag-ltr</b>: Added when RTL is OFF. It sets the style <code>'direction=ltr'</code>.</li>
     </ul>
         You can see these classes by inspecting the DOM of ag-Grid. A lot of the layout of the grid
         is reversed with this simple CSS class change.
@@ -85,7 +85,7 @@ include '../documentation-main/documentation_header.php';
         would all reverse by themselves, however the grid used Column Visualisation, so it needs
         to know exactly where each column is. Hence there is a lot of math logic inside ag-Grid
         that is tied with the scrolling. Not only is the scrolling inverted, all the maths logic
-        is inverted also. All of this is taken care of for you inside ag-Grid. Once <i>enableRtl=true</i>
+        is inverted also. All of this is taken care of for you inside ag-Grid. Once <code>enableRtl=true</code>
         is set, the grid will know to use the RTL varient of all the calculations.
     </p>
 

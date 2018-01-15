@@ -24,7 +24,7 @@ api.setQuickFilter('new filter text');</snippet>
 <p>
     If your data contains complex objects, then the quick filter will end up with [object,object] inside it
     instead of searchable string values. Or maybe you want to format string values for searching (eg take out
-    accent characters, or take out commas from numbers). If you want to do this, then provide a <i>getQuickFilterText</i>
+    accent characters, or take out commas from numbers). If you want to do this, then provide a <code>getQuickFilterText</code>
     to the column definition, eg:
 </p>
 

@@ -49,7 +49,7 @@ colDef:{
         endsWith}</li>
     <li><b>defaultOption:</b> If specified, changes the default filter option to one of {equals, notEqual, contains,
         notContains, startsWith, endsWith}. If not specified the default type is {contains}, if {contains} is not
-        available because is removed using <i>filterOptions</i>, then the default
+        available because is removed using <code>filterOptions</code>, then the default
         is the first item in the filterOptions</li>
     <li><b>textFormatter:</b> If specified, formats the text before applying the filter compare logic, useful for
         instance if substituting accentuated characters or if you want to do case sensitive filtering.</li>
@@ -83,11 +83,11 @@ colDef:{
 </p>
 
 <p>
-    You can change the default behaviour by providing your own <i>textCustomComparator</i>. Using your own <i>textCustomComparator</i>
+    You can change the default behaviour by providing your own <code>textCustomComparator</code>. Using your own <code>textCustomComparator</code>
     you can provide your own logic to decide when to include a row in the filtered results.
 </p>
 
-<p>The <i>textCustomComparator</i> is a function with the following signature:</p>
+<p>The <code>textCustomComparator</code> is a function with the following signature:</p>
 
 <snippet>
 (filter:string, gridValue:any, filterText:string):boolean;</snippet>
@@ -138,7 +138,7 @@ function myComparator (filter, value, filterText){
     accents), or you want to have case sensitive matches, then you should provide your own textFormatter.
 </p>
 <p>
-    The <i>textFormatter</i> is a function with the following signature
+    The <code>textFormatter</code> is a function with the following signature
 <snippet>
 (gridValue:string):string;</snippet>
 <ul>
@@ -148,7 +148,7 @@ function myComparator (filter, value, filterText){
 </ul>
 </p>
 <p>
-    If no <i>textFormatter</i> is provided the grid will convert the text to lower case. Is important to note that when
+    If no <code>textFormatter</code> is provided the grid will convert the text to lower case. Is important to note that when
     comparing to the text entered in the filter box, the text in the filter box is converted always to lower case.
 </p>
 <p>
@@ -224,19 +224,19 @@ athleteFilterComponent.onFilterChanged()</snippet></p>
 <h2 id="example">Example</h2>
 <p>
 <ul>
-    <li>The athlete column has only two filter options: <i>filterOptions=['contains','notContains']</i></li>
+    <li>The athlete column has only two filter options: <code>filterOptions=['contains','notContains']</code></li>
     <li>The athlete column has a text formatter so if you search for 'o' it will find &oslash; You can try this by
-        searching the string 'Bjo'</i></li>
-    <li>The athlete column has a debounce of 0ms <i>debounceMs:0</i> in the column filter menu. The floating filter
+        searching the string 'Bjo'</code></li>
+    <li>The athlete column has a debounce of 0ms <code>debounceMs:0</code> in the column filter menu. The floating filter
     has the default 500ms</li>
     <li>The athlete column filter is case sensitive, note that it has the following flag: <code>caseSensitive:true</code></li>
-    <li>The country column has only one filter option: <i>filterOptions=['contains']</i></li>
-    <li>The country column has a <i>textCustomComparator</i> so that there are aliases that can be entered in the filter
+    <li>The country column has only one filter option: <code>filterOptions=['contains']</code></li>
+    <li>The country column has a <code>textCustomComparator</code> so that there are aliases that can be entered in the filter
     ie: if you filter using the text 'usa' it will match United States or 'holland' will match 'Netherlands'</li>
-    <li>The country column has a debounce of 2000ms <i>debounceMs:2000</i> in the column filter menu. The floating filter
+    <li>The country column has a debounce of 2000ms <code>debounceMs:2000</code> in the column filter menu. The floating filter
         has the default 500ms</li>
-    <li>The year column has one filter option <i>filterOptions=['inRange']. </i></li>
-    <li>The sports column has a different default option <i>defaultOption='startsWith'</i></li>
+    <li>The year column has one filter option <code>filterOptions=['inRange']. </code></li>
+    <li>The sports column has a different default option <code>defaultOption='startsWith'</code></li>
 </ul>
 </p>
 

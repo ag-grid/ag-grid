@@ -98,7 +98,7 @@ include '../documentation-main/documentation_header.php';
                 <ul>
                     <li>Cell Renderers will NOT be used.</li>
                     <li>Value Getters will be used.</li>
-                    <li>Cell Formatters will NOT be used (use <i>processCellCallback</i> instead).</li>
+                    <li>Cell Formatters will NOT be used (use <code>processCellCallback</code> instead).</li>
                 </ul>
             </li>
             <li>If row grouping, all data will be exported regardless of groups open or closed.</li>

@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h2 id="valueHandlers">Value Handlers</h2>
 
 <p>
-    This section gives an overview of the various <i>Value Handlers</i> available that can be used to provide custom handling
+    This section gives an overview of the various <code>Value Handlers</code> available that can be used to provide custom handling
     when displaying and editing values in the grid.
 </p>
 

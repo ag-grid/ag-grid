@@ -94,7 +94,7 @@ gridOptions.rowClassRules: {
 }</snippet>
 
     <p>
-        When a function is provided the params object has the attributes: <i>data, node, rowIndex, api</i> and <i>context</i>.
+        When a function is provided the params object has the attributes: <code>data, node, rowIndex, api</code> and <code>context</code>.
     </p>
 
     <p>

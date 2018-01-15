@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
     <h2 id="auto-page-size">Example: Auto Page Size</h2>
 
     <p>
-        If you set <i>paginationAutoPageSize=true</i> the grid will automatically show as many rows in each page as it can
+        If you set <code>paginationAutoPageSize=true</code> the grid will automatically show as many rows in each page as it can
         fit. This is demonstrated below. Note if you resize the display area of the grid, the page size
         automatically changes. To view this, open the example up in a new tab and resize your browser.
     </p>
@@ -52,10 +52,10 @@ include '../documentation-main/documentation_header.php';
     <p>In this example the default pagination settings are changed. Note the following:</p>
 
     <ul>
-        <li><i>paginationPageSize</i> is set to 10</li>
-        <li><i>api.paginationGoToPage(4)</i> is called to go to page 4 (0 based, so he 5th page)</li>
+        <li><code>paginationPageSize</code> is set to 10</li>
+        <li><code>api.paginationGoToPage(4)</code> is called to go to page 4 (0 based, so he 5th page)</li>
         <li>A dropdown to change the page size dynamically is available. This makes a call to
-            <i>paginationSetPageSize(newPageSize)</i></li>
+            <code>paginationSetPageSize(newPageSize)</code></li>
         <li>The numbers in the pagination panel are formatted differently using the grid callback
             <code>paginationNumberFormatter</code> and putting the numbers into square brackets i.e. [x].</li>
     </ul>
@@ -64,16 +64,16 @@ include '../documentation-main/documentation_header.php';
 
     <h2 id="custom-pagination-controls">Example: Custom Pagination Controls</h2>
 
-    <p>If you set <i>suppressPaginationPanel=true</i>, the grid will not show the standard navigation controls for
+    <p>If you set <code>suppressPaginationPanel=true</code>, the grid will not show the standard navigation controls for
         pagination. This is useful is you want to provide your own navigation controls. </p>
 
-    <p>In the example below you can see how this works. Note that we are listening to <i>onPaginationChanged</i> to
+    <p>In the example below you can see how this works. Note that we are listening to <code>onPaginationChanged</code> to
     update the information about the current pagination status. We also call methods on the pagination API to change
     the pagination state.</p>
 
     <p>A summary of the API methods and events can be found at the top of this documentation page.</p>
 
-    <p>The example also sets property <i>suppressScrollOnNewData=true</i>, which tells the grid to NOT
+    <p>The example also sets property <code>suppressScrollOnNewData=true</code>, which tells the grid to NOT
     scroll to the top when the page changes.</p>
 
     <?= example('Custom Controls', 'custom-controls', 'generated', array("enterprise" => 1)) ?>
@@ -82,7 +82,7 @@ include '../documentation-main/documentation_header.php';
     <?php include_once 'paginationProperties.php' ?>
     <?php printPropertiesTable($paginationProperties) ?>
 
-    <p>The following methods compose the pagination API are all available from <i>gridOptions.api</i></p>
+    <p>The following methods compose the pagination API are all available from <code>gridOptions.api</code></p>
 
     <h2 id="properties">Pagination API</h2>
 
@@ -127,7 +127,7 @@ include '../documentation-main/documentation_header.php';
         <p>
             If you were slicing manually the data in your Datasource to mimic pagination done in the browser only,
             we recommend that you use the default <a href="../javascript-grid-in-memory/">In Memory Row Model</a> and set the row data as normal
-            and then set grid property <i>pagination=true</i>.
+            and then set grid property <code>pagination=true</code>.
         </p>
     </note>
 

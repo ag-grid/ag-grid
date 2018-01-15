@@ -111,7 +111,7 @@ MenuItemDef {
 
     <p>
         Holding down ctrl & context menu bypasses the grids context menu. If you do want the grids context
-        menu, even when ctrl is pressed, then set <i>allowContextMenuWithControlKey=true</i>.
+        menu, even when ctrl is pressed, then set <code>allowContextMenuWithControlKey=true</code>.
     </p>
 
     <h3>Hiding the Context Menu</h3>
