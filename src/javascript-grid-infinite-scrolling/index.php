@@ -151,7 +151,7 @@ interface IGetRowsParams {
             <li>
                 The <b>successCallback(rowsThisBlock, lastRow)</b> should be called when you successfully receive data
                 from the server. The callback has the following parameters:
-                <ul>
+                <ul class="content">
                     <li><b>rowsThisBlock</b> should be the rows you have received for the current block.</li>
                     <li><b>lastRow</b> should be the index of the last row if known.</li>
                 </ul>
@@ -484,7 +484,8 @@ loadingSpinnerColumn = {
     <p>
         Below demonstrates the different api methods via the buttons. The example outputs a lot of debugging items
         to the console because the grid property <code>debug=true</code> is set. The buttons are as follows:
-        <ul>
+</p>
+        <ul class="content">
         <li>
             <b>Inject 1 Row @ 2 / Inject 5 Row @ 2</b>: Inserts either one or five rows at location index 2.
         </li>
@@ -521,6 +522,7 @@ loadingSpinnerColumn = {
         </li>
     </ul>
 
+<p>
     The example also makes each Honda row bold - demonstrating that the callbacks <code>getRowStyle</code> and <code>getRowClass</code>
     get called after the data is set as well as when the row is created (when the data may not yet be available).
     </p>

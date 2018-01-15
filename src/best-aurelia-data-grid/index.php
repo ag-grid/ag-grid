@@ -78,7 +78,8 @@ import "ag-grid-enterprise/main";
 
     <p>The example project includes a number of separate grids on a page, with each section demonstrating a different
         feature set:
-    <ul>
+</p>
+    <ul class="content">
         <li>A feature rich grid example, demonstrating many of ag-Grid's features using Aurelia as a wrapper
             <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
@@ -123,7 +124,6 @@ import "ag-grid-enterprise/main";
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
     </ul>
-    </p>
 
     <p>Once you have the ag-Grid dependencies installed, you will then be able to access ag-Grid classes and components
         inside your application:</p>
@@ -176,9 +176,9 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
     <h2 id="configuring-ag-grid-in-aurelia">Configuring ag-Grid in Aurelia</h2>
 
     <p>You can configure the grid in the following ways through Aurelia:</p>
-    <ul>
+    <ul class="content">
         <li><b>Events:</b> All data out of the grid comes through events. These use
-            Aurelia event bindings eg <i>model-updated.call="onModelUpdated()"</i>.
+            Aurelia event bindings eg <code>model-updated.call="onModelUpdated()"</code>.
             As you interact with the grid, the different events are fixed and
             output text to the console (open the dev tools to see the console).
         </li>
@@ -189,10 +189,10 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
         </li>
         <li><b>Attributes:</b> When the property is just a simple string value, then
             no binding is necessary, just the value is placed as an attribute
-            eg <i>row-height.bind="22"</i>.
+            eg <code>row-height.bind="22"</code>.
         </li>
         <li><b>Grid API via IDs:</b> The grid in the example is created with an id
-            by marking it with <i>#agGrid</i>. This in turn turns into a variable
+            by marking it with <code>#agGrid</code>. This in turn turns into a variable
             which can be used to access the grid's controller. The buttons
             Grid API and Column API buttons use this variable to access the grids
             API (the APIs are attributes on the controller).
@@ -205,14 +205,14 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
             b) The 'Show Tool Panel' checkbox has its value bound to the 'showToolPanel'
             property of the grid.
             c) The 'Refresh Data' generates new data for the grid and updates the
-            <i>rowData</i> property.
+            <code>rowData</code> property.
         </li>
     </ul>
 
     <p>
         Notice that the grid has its properties marked as <b>immutable</b>. Hence for
         object properties, the object reference must change for the grid to take impact.
-        For example, <i>rowData</i> must be a new list of data for the grid to be
+        For example, <code>rowData</code> must be a new list of data for the grid to be
         informed to redraw.
     </p>
 

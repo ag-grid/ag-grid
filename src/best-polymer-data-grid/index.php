@@ -6,13 +6,9 @@ $pageGroup = "basics";
 define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';
 ?>
-
 <div>
 
-    <h1 class="first-h1">
-        <img style="vertical-align: middle" src="/images/polymer-large.png" height="50px"/>
-        Polymer Datagrid
-    </h1>
+    <h1>Polymer Datagrid</h1>
 
     <p class="lead">
         Here we explain how to use ag-Grid inside an Polymer application.

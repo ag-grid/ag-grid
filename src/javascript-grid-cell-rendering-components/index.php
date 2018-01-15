@@ -205,7 +205,7 @@ All of the above will result in the component getting destroyed and recreated.
     The lifecycle of the cell renderer is as follows:
 </p>
 
-<ul>
+<ul class="content">
     <li><code>new</code> is called on the class.</li>
     <li><code>init()</code> is called once.</li>
     <li><code>getGui()</code> is called once.</li>

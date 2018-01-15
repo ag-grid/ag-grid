@@ -47,7 +47,7 @@ if (!d.getElementById(id)) {
 
             <p><img src="themes.jpg" alt="themes" width='80%'/></p>
 
-            <ul>
+            <ul class="content">
             <li>Fresh (<code>ag-theme-fresh</code>)</li>
 
             <li>Dark (<code>ag-theme-dark</code>)</li>
@@ -82,7 +82,7 @@ if (!d.getElementById(id)) {
 
             <p>You can download <strong>ag-Grid</strong> by:</p>
 
-            <ul>
+            <ul class="content">
             <li><strong>npm install ag-grid</strong></li>
 
             <li><strong>bower install ag-grid</strong></li>

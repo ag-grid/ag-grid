@@ -3,13 +3,11 @@ $pageTitle = "ag-Grid Features";
 $pageDescription = "ag-Grid Features";
 $pageKeyboards = "ag-Grid Features";
 $pageGroup = "feature";
+define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
     <h1 id="features" class="first-h1">
-        <img src="../images/svg/docs/features.svg" style="width: 50px; position: relative; top: -10px;"/>
         Features Overview
     </h1>
 
@@ -21,20 +19,15 @@ include '../documentation-main/documentation_header.php';
         or call the API in the way specific to your framework.
     </p>
 
-    <h3 id="examples">ag-Grid Free vs ag-Grid Enterprise</h3>
+    <note>
+        All features that are only available in ag-Grid Enterprise are marked with the enterprise symbol <span class="enterprise-icon">e</span>
+    </note>
 
-    <p>
-        All features that are only available in ag-Grid Enterprise are marked with the enterprise symbol:
-        <img style="padding: 5px; border: 1px solid lightgrey;" src="../images/enterprise.png"/>
-    </p>
+<?php
+$featuresRoot = '.';
+include './gridFeatures.php';
+?>
 
 
-
-    <?php
-        $featuresRoot = '.';
-        include './gridFeatures.php';
-    ?>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

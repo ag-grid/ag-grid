@@ -5,9 +5,9 @@ $pageKeyboards = "ag-Grid Column Definitions";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
-    <h1 id="columnDefinitions" class="first-h1">Column Definitions</h1>
+    <h1>Column Definitions</h1>
 
-    <p>
+    <p class="lead">
         Each column in the grid is defined using a column definition. Columns are positioned in the grid according to the order
         the ColDef's are specified in the grid options. The following example shows a simple grid with 3 columns defined:
     </p>
@@ -63,7 +63,7 @@ var gridOptions = {
         help simplify and avoid duplication of column definitions. This is done through the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>defaultColDef:</b> contains column properties all columns will inherit.</li>
         <li><b>defaultColGroupDef:</b> contains column group properties all column groups will inherit.</li>
         <li><b>columnTypes:</b> specific column types containing properties that column definitions can inherit.</li>
@@ -150,7 +150,7 @@ var gridOptions = {
 
 <h2>Provided Column Types</h2>
 
-<h2 id="built-in-column-definitions">Numeric Columns</h2>
+<h3>Numeric Columns</h3>
 
 <p>
 The grid provides a handy shortcut for formatting numeric columns. 
@@ -176,7 +176,7 @@ var gridOptions = {
 
 <p>
     The following example shows how to update a column header name after the grid has been initialised. As we want to update
-    the header name immediately we explicitly invoke <i>refreshHeader()</i> via the <a href="../javascript-grid-api/">Grid API</a>.
+    the header name immediately we explicitly invoke <code>refreshHeader()</code> via the <a href="../javascript-grid-api/">Grid API</a>.
 </p>
 
 <snippet>
@@ -203,9 +203,10 @@ Examples of state include column visibility, width, row groups and values.
 <p>
     This is primarily achieved using the following methods:
 </p>
-<ul>
-    <li><b>columnApi.getColumnState()</b>: Returns the state of a particular column.</li>
-    <li><b>columnApi.setColumnState(state)</b>: To set the state of a particular column.</li>
+
+<ul class="content">
+    <li><code>columnApi.getColumnState()</code>: Returns the state of a particular column.</li>
+    <li><code>columnApi.setColumnState(state)</code>: To set the state of a particular column.</li>
 </ul>
 
 <p>
@@ -221,29 +222,29 @@ Examples of state include column visibility, width, row groups and values.
 
 <p>
     The values have the following meaning:
-<ul>
-    <li><b>colId</b>: The ID of the column. See
+</p>
+<ul class="content">
+    <li><code>colId</code>: The ID of the column. See
         <a href="../javascript-grid-column-definitions/">column definitions</a> for explanation
         of column ID
     </li>
-    <li><b>aggFunc</b>: If this column is a value column, this field specifies the aggregation function.
+    <li><code>aggFunc</code>: If this column is a value column, this field specifies the aggregation function.
         If the column is not a value column, this field is null.
     </li>
-    <li><b>hide</b>: True if the column is hidden, otherwise false.</li>
-    <li><b>rowGroupIndex</b>: The index of the row group. If the column is not grouped, this field is null.
+    <li><code>hide</code>: True if the column is hidden, otherwise false.</li>
+    <li><code>rowGroupIndex</code>: The index of the row group. If the column is not grouped, this field is null.
         If multiple columns are used to group, this index provides the order of the grouping.
     </li>
-    <li><b>width</b>: The width of the column. If the column was resized, this reflects the new value.</li>
-    <li><b>pinned</b>: The pinned state of the column. Can be either 'left' or 'right'</li>
+    <li><code>width</code>: The width of the column. If the column was resized, this reflects the new value.</li>
+    <li><code>pinned</code>: The pinned state of the column. Can be either <code>'left'</code> or <code>'right'</code></li>
 </ul>
-</p>
 
 
 <h2 id="column-api-example">Column API Example</h2>
 <p>This section illustrates how to store and restore column state using the <a href="../javascript-grid-column-api/">Column API</a>.
 </p>
 
-<ul>
+<ul class="content">
     <li>hiding / showing columns as well as saving / restoring the entire state</li>
     <li><b>registering for column events, the result of which are printed to the console.</b></li>
 </ul>

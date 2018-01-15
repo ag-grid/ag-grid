@@ -7,7 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 
-<h2 id="overview">Text Filter</h2>
+<h1>Text Filter</h1>
 <p>
     Text filters allow users to filter data based on the text contained in the column where this filter is defined. To
     create a new text filter in a column, all you need to do is:
@@ -33,72 +33,73 @@ colDef:{
 
 
 <h2 id="params">Text Filter Parameters</h2>
-<p>
-    A text filter can take the following parameters:
-    <ul>
-    <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter.
+<p> A text filter can take the following parameters: </p>
+
+    <ul class="content">
+    <li><code>newRowsAction:</code> What to do when new rows are loaded. The default is to reset the filter.
         If you want to keep the filter status between row loads, then set this value to 'keep'.</li>
-    <li><b>applyButton:</b> Set to true to include an 'Apply' button with the filter and not filter
+    <li><code>applyButton:</code> Set to true to include an 'Apply' button with the filter and not filter
         automatically as the selection changes.</li>
-    <li><b>clearButton:</b> Set to true to include a 'Clear' button with the filter which when cliked
+    <li><code>clearButton:</code> Set to true to include a 'Clear' button with the filter which when cliked
         will remove the filter conditions to this filter.</li>
-    <li><b>textCustomComparator:</b> Used to override what to filter based on the user input. See textCustomComparator
+    <li><code>textCustomComparator:</code> Used to override what to filter based on the user input. See textCustomComparator
         section below </li>
-    <li><b>filterOptions:</b> If specified, limits the amount of options presented in the filter UI, it must be
+    <li><code>filterOptions:</code> If specified, limits the amount of options presented in the filter UI, it must be
         a string array containing some of the following values {equals, notEqual, contains, notContains, startsWith,
         endsWith}</li>
-    <li><b>defaultOption:</b> If specified, changes the default filter option to one of {equals, notEqual, contains,
+    <li><code>defaultOption:</code> If specified, changes the default filter option to one of {equals, notEqual, contains,
         notContains, startsWith, endsWith}. If not specified the default type is {contains}, if {contains} is not
-        available because is removed using <i>filterOptions</i>, then the default
+        available because is removed using <code>filterOptions</code>, then the default
         is the first item in the filterOptions</li>
-    <li><b>textFormatter:</b> If specified, formats the text before applying the filter compare logic, useful for
+    <li><code>textFormatter:</code> If specified, formats the text before applying the filter compare logic, useful for
         instance if substituting accentuated characters or if you want to do case sensitive filtering.</li>
-    <li><b>debounceMs:</b> If specified, the filter will wait this amount of ms after the user stops entering any characters in the
+    <li><code>debounceMs:</code> If specified, the filter will wait this amount of ms after the user stops entering any characters in the
         input box before is triggered. If not specified this value is 500ms, if the value specified is 0 the filter
         will be immediately triggered</li>
-    <li><b>caseSensitive</b> If true, the text filtering will be case sensitive, if not specified or false, the filtering
+    <li><code>caseSensitive</code> If true, the text filtering will be case sensitive, if not specified or false, the filtering
     will be case insensitive</li>
     </ul>
 
-The parameters for the filter must be specified in the property filterParams inside the column definition
-object
-<p><snippet>
+<p>The parameters for the filter must be specified in the property filterParams inside the column definition object</p>
+
+<snippet>
 colDef:{
     filter:'agTextColumnFilter',
     filterParams: {
         ...
     }
-}</snippet></p>
-</p>
+}</snippet>
 
-<h3 id="textCustomComparator">Text Custom Comparator</h3>
+<h2>Text Custom Comparator</h2>
 <p>
     By default the text filter does strict case insensitive text filtering: ie If you provide as data for a text column
     the following values ['1,234.5USD', '345GBP']:
-    <ul><li><b>contains '1,2'</b> Will show 1 value: ['1,234.5USD']</li>
-    <li><b>contains '12'</b> Will show 0 values</li>
-    <li><b>contains '$'</b> Will show 0 values</li>
-    <li><b>contains 'gbp'</b> Will show 1 value ['345GBP']</li></ul>
-
 </p>
 
+    <ul class="content">
+<li><b>contains '1,2'</b> Will show 1 value: ['1,234.5USD']</li>
+    <li><b>contains '12'</b> Will show 0 values</li>
+    <li><b>contains '$'</b> Will show 0 values</li>
+    <li><b>contains 'gbp'</b> Will show 1 value ['345GBP']</li>
+</ul>
+
 <p>
-    You can change the default behaviour by providing your own <i>textCustomComparator</i>. Using your own <i>textCustomComparator</i>
+    You can change the default behaviour by providing your own <code>textCustomComparator</code>. Using your own <code>textCustomComparator</code>
     you can provide your own logic to decide when to include a row in the filtered results.
 </p>
 
-<p>The <i>textCustomComparator</i> is a function with the following signature:</p>
+<p>The <code>textCustomComparator</code> is a function with the following signature:</p>
 
 <snippet>
 (filter:string, gridValue:any, filterText:string):boolean;</snippet>
 
-<ul>
-    <li><b>filter:string</b> The applicable filter type being tested. One of: {equals, notEqual, contains, notContains,
+<ul class="content">
+    <li><code>filter:string</code> The applicable filter type being tested. One of: {equals, notEqual, contains, notContains,
         startsWith, endsWith}</li>
-    <li><b>gridValue:any</b> The value about to be filtered, if this column has a value getter, this value will be
+    <li><code>gridValue:any</code> The value about to be filtered, if this column has a value getter, this value will be
         coming off the value getter, otherwise it is the raw value injected into the grid</li>
-    <li><b>filterText:string</b> The value to filter by.</li>
-    <li><b>returns:boolean</b> True if the value passes the filter, otherwise false.</li>
+    <li><code>filterText:string</code> The value to filter by.</li>
+    <li><code>returns:boolean</code> True if the value passes the filter, otherwise false.</li>
 </ul>
 
 <p>
@@ -131,29 +132,33 @@ function myComparator (filter, value, filterText){
     }
 }</snippet>
 
-<h3 id="textFormatter">Text Formatter</h3>
+<h2>Text Formatter</h2>
 <p>
     The grid compares the text filter with the values in a case insensite way, thus 'o' will match 'Olivia' and 'Salmon',
     however it will not match against 'Bj&oslash;rk'. If you want to match in any other way (eg you want to makes against
     accents), or you want to have case sensitive matches, then you should provide your own textFormatter.
 </p>
 <p>
-    The <i>textFormatter</i> is a function with the following signature
+    The <code>textFormatter</code> is a function with the following signature
+</p>
 <snippet>
 (gridValue:string):string;</snippet>
-<ul>
+
+<ul class="content">
     <li><b>gridValue:string</b> The value coming from the grid. This can be the valueGetter if there is any for the
     column, or the value as originally provided in the rowData</li>
     <li><b>returns:string</b> The string to be used for the purpose of filtering.</li>
 </ul>
-</p>
+
 <p>
-    If no <i>textFormatter</i> is provided the grid will convert the text to lower case. Is important to note that when
+    If no <code>textFormatter</code> is provided the grid will convert the text to lower case. Is important to note that when
     comparing to the text entered in the filter box, the text in the filter box is converted always to lower case.
 </p>
+
 <p>
     The following is an example to remove accents and convert to lower case.
 </p>
+
 <snippet>
 function(s){
         var r=s.toLowerCase();
@@ -172,7 +177,7 @@ function(s){
         return r;
 };</snippet>
 
-<h2 id="model">Text Filter Model</h2>
+<h2>Text Filter Model</h2>
 
 <p>
     Get and set the state of the text filter by getting and setting the model on the filter instance.
@@ -195,18 +200,20 @@ athleteFilterComponent.onFilterChanged()</snippet></p>
 <p>
     The text filter model has the following attributes:
 </p>
-<ul>
+<ul class="content">
     <li><b>type:</b> The type of text filter to apply. One of: {equals, notEqual, contains, notContains,
         startsWith, endsWith}</li>
     <li><b>filter:</b> The actual filter text to apply.</li>
 </ul>
 
-<h2 id="floating">Floating Text Filter</h2>
+<h2>Floating Text Filter</h2>
+
 <p>
     If your grid has floatingFilter enabled, your columns with text filter will automatically show below the header a new
     column that will show two elements:
+</p>
 
-<ul>
+<ul class="content">
     <li>Filter input box: This input box serves two purposes:
         <ol>
             <li>
@@ -219,34 +226,32 @@ athleteFilterComponent.onFilterChanged()</snippet></p>
         </li>
     <li>Filter button: This button is a shortcut to show the rich filter editor</li>
 </ul>
-</p>
 
-<h2 id="example">Example</h2>
-<p>
-<ul>
-    <li>The athlete column has only two filter options: <i>filterOptions=['contains','notContains']</i></li>
+<h2>Example</h2>
+
+<ul class="content">
+    <li>The athlete column has only two filter options: <code>filterOptions=['contains','notContains']</code></li>
     <li>The athlete column has a text formatter so if you search for 'o' it will find &oslash; You can try this by
-        searching the string 'Bjo'</i></li>
-    <li>The athlete column has a debounce of 0ms <i>debounceMs:0</i> in the column filter menu. The floating filter
+        searching the string 'Bjo'</code></li>
+    <li>The athlete column has a debounce of 0ms <code>debounceMs:0</code> in the column filter menu. The floating filter
     has the default 500ms</li>
     <li>The athlete column filter is case sensitive, note that it has the following flag: <code>caseSensitive:true</code></li>
-    <li>The country column has only one filter option: <i>filterOptions=['contains']</i></li>
-    <li>The country column has a <i>textCustomComparator</i> so that there are aliases that can be entered in the filter
+    <li>The country column has only one filter option: <code>filterOptions=['contains']</code></li>
+    <li>The country column has a <code>textCustomComparator</code> so that there are aliases that can be entered in the filter
     ie: if you filter using the text 'usa' it will match United States or 'holland' will match 'Netherlands'</li>
-    <li>The country column has a debounce of 2000ms <i>debounceMs:2000</i> in the column filter menu. The floating filter
+    <li>The country column has a debounce of 2000ms <code>debounceMs:2000</code> in the column filter menu. The floating filter
         has the default 500ms</li>
-    <li>The year column has one filter option <i>filterOptions=['inRange']. </i></li>
-    <li>The sports column has a different default option <i>defaultOption='startsWith'</i></li>
+    <li>The year column has one filter option <code>filterOptions=['inRange']. </code></li>
+    <li>The sports column has a different default option <code>defaultOption='startsWith'</code></li>
 </ul>
-</p>
 
 <?= example('Text Filter', 'text-filter', 'generated') ?>
 
-<h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
+<h2>Common Column Filtering Functionality And Examples</h2>
 
 <p>The following can be found in the <a href="../javascript-grid-filtering/">column filtering documentation page</a></p>
-<p>
-<ul>
+
+<ul class="content">
     <li>Common filtering params</li>
     <li>Enabling/Disabling filtering in a column</li>
     <li>Enabling/Disabling floating filter</li>
@@ -254,6 +259,6 @@ athleteFilterComponent.onFilterChanged()</snippet></p>
     <li>Filtering animation</li>
     <li>Examples</li>
 </ul>
-</p>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -6,18 +6,18 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 id="filtering">Column Filter</h1>
+    <h1>Column Filter</h1>
 
-    <p>
-        Data in ag-Grid can be filtered in the following ways:
-        <ol>
+    <p> Data in ag-Grid can be filtered in the following ways: </p>
+        <ol class="content">
             <li><b>Column Filter</b>: A column filter is associated with a column and filters data based
             on the value of that column only. The column filter is accessed via the column's menu and
-            may also have a <i>floating filter</i> element if floating filters are turned on.</li>
+            may also have a <code>floating filter</code> element if floating filters are turned on.</li>
             <li><a href="../javascript-grid-filter-quick/"><b>Quick Filter</b></a>: The quick filter is a simple text filter that filters across all columns.</li>
             <li><a href="../javascript-grid-filter-external/"><b>External Filter</b></a>: External filters is a way for your application to apply bespoke
             filtering with no restriction to the columns.</li>
         </ol>
+    <p>
         Column filters are tied to a column. Quick filter and external filter
         are not tied to a column. This section of the documentation talks about column filters only.
         For quick filter and external filter, see the relevant sections of the documentation.
@@ -28,11 +28,11 @@ include '../documentation-main/documentation_header.php';
         what's provided), or bake your own custom filters (no restrictions, build what you want, but takes more time).
     </p>
 
-    <h3 id="enable-filtering">Enable Filtering</h3>
+    <h2>Enable Filtering</h2>
 
     <p>
-        Enable filtering by setting grid property <i>enableFilter=true</i>. This turns on filtering on all columns.
-        To turn off filtering for particular columns, set <i>suppressFilter=true</i> on the individual column definition.
+        Enable filtering by setting grid property <code>enableFilter=true</code>. This turns on filtering on all columns.
+        To turn off filtering for particular columns, set <code>suppressFilter=true</code> on the individual column definition.
     </p>
 
     <p>
@@ -51,13 +51,13 @@ gridOptions = {
     ]
 }</snippet>
 
-    <h3 id="default-built-in-filters">Filter Types</h3>
+    <h2>Filter Types</h2>
 
     <p>
         The following filter options can be set for a column definition:
     </p>
 
-    <table class="table">
+    <table class="table reference">
         <tr>
             <th>Filter</th>
             <th>Description</th>
@@ -92,10 +92,10 @@ gridOptions = {
         for ag-Grid Enterprise.
     </p>
 
-    <h3 id="filter-parameters">Filter Parameters</h3>
+    <h2>Filter Parameters</h2>
 
     <p>
-        Each filter can take additional filter params by setting <i>colDef.filterParams</i>.
+        Each filter can take additional filter params by setting <code>colDef.filterParams</code>.
         What parameters each filter type takes is explained in the section on each filter.
         As an example, the following sets parameters for the text filter.
     </p>
@@ -113,25 +113,25 @@ columnDefinition = {
     filterParams: {apply: true, newRowsAction: 'keep'}
 }</snippet>
 
-    <h3 id="built-in-filters-example">Built In Filters Example</h3>
+    <h2>Built In Filters Example</h2>
 
     <p>
         The example below demonstrates:
-        <ul>
+    </p>
+        <ul class="content">
         <li>Three filter types 1) text filter, 2) number filter and 3) date filter.</li>
-        <li>Using the <i>ag-header-cell-filtered</i> class, which is applied to the header
+        <li>Using the <code>ag-header-cell-filtered</code> class, which is applied to the header
             cell when the header is filtered. By default, no style is applied to this class, the example shows
             applying a different color background to this style.</li>
         <li>'suppressFilter' is set on Total to hide the filter on this column</li>
     </ul>
-    </p>
 
     <?= example('Built-In Filters', 'built-in-filters', 'generated') ?>
 
-    <h3 id="apply-function">Apply Function</h3>
+    <h2>Apply Function</h2>
 
     <p>
-        If you want the user to hit an 'Apply' button before the filter is actioned, add <i>apply=true</i>
+        If you want the user to hit an 'Apply' button before the filter is actioned, add <code>apply=true</code>
         to the filter parameters. The example below shows this in action for the first three columns.
     </p>
 
@@ -140,7 +140,7 @@ columnDefinition = {
         server side filtering (thus preventing unnecessary calls to the server).
     </p>
 
-    <h3 id="events">Filter Events</h3>
+    <h2>Filter Events</h2>
 
     <p>
         Filtering results in the following events getting emitted:
@@ -154,35 +154,35 @@ columnDefinition = {
             <tr>
                 <th>filterModified</th>
                 <td>
-                    Gets called when filter has been modified but <i>filterChanged</i>
+                    Gets called when filter has been modified but <code>filterChanged</code>
                     not necessarily called. This is useful when
                     using an apply button inside the filter, as this event fires
-                    when the filter is modified, and then <i>filterChanged</i>
+                    when the filter is modified, and then <code>filterChanged</code>
                     is fired when the apply button is pressed.
                 </td>
             </tr>
         </table>
     </p>
 
-    <h3 id="filter-and-events-example">Example: Apply Button and Filter Events</h3>
+    <h2>Example: Apply Button and Filter Events</h2>
 
     <p>
         The example below also demonstrates using the apply button and filter events as follows:
-        <ul>
+    </p>
+        <ul class="content">
             <li>onFilterModified gets called when the filter changes regardless of the apply button.</li>
             <li>onFilterChanged gets called after a new filter is applied.</li>
         </ul>
-    </p>
 
     <?= example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated') ?>
 
-    <h3 id="filtering-animation">Filtering Animation</h3>
+    <h2>Filtering Animation</h2>
 
     <p>
-        To enable animation of the rows after filtering, set grid property <i>animateRows=true</i>.
+        To enable animation of the rows after filtering, set grid property <code>animateRows=true</code>.
     </p>
 
-    <h3 id="accessing-filter-component-instances">Accessing Filter Component Instances</h3>
+    <h2>Accessing Filter Component Instances</h2>
 
     <p>
         It is possible to access the filter components directly if you want to interact with the specific
@@ -201,7 +201,7 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
     </p>
 
 
-    <h3>Example Filter API</h3>
+    <h2>Example Filter API</h2>
 
     <p>
         The example below shows controlling the country and age filters via the API.
@@ -218,19 +218,21 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
 
     <?= example('Filter API', 'filter-api', 'generated', array("enterprise" => 1)) ?>
 
-    <h4 id="reset_filters">Reset Individual Filters</h4>
+    <h2>Reset Individual Filters</h2>
 
     <p>You can reset a filter to its original state by getting the filter instance and then performing the action that makes sense for the filter type.</p>
 
     <p>For all the filter types the sequence would be:</p>
-    <ul>
+
+    <ul class="content">
         <li><code>var filterComponent = gridOptions.api.getFilterInstance('filter_name');</code></li>
         <li>perform reset action for filter type</li>
         <li><code>gridOptions.api.onFilterChanged();</code></li>
     </ul>
 
     <p>The following are the appropriate methods for the corresponding filter types:</p>
-    <table class="table">
+
+    <table class="table reference">
         <tr>
             <th>Filter Type</th>
             <th>Action</th>
@@ -249,16 +251,17 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
         </tr>
     </table>
 
-    <h4>Reset All Filters</h4>
+    <h2>Reset All Filters</h2>
+
     <p>You can reset all filters by doing the following:</p>
     <snippet>
 gridOptions.api.setFilterModel(null);</snippet>
 
-    <h3 id="get_set_filter_model">Get / Set All Filter Models</h3>
+    <h2>Get / Set All Filter Models</h2>
 
     <p>
-        It is possible to get and set the state of <b>all</b> the filters via the api methods <i>api.getFilterModel()</i>
-        and <i>api.setFilterModel()</i>. These methods manage the filters states via the <i>getModel()</i> and <i>setModel()</i>
+        It is possible to get and set the state of <b>all</b> the filters via the api methods <code>api.getFilterModel()</code>
+        and <code>api.setFilterModel()</code>. These methods manage the filters states via the <code>getModel()</code> and <code>setModel()</code>
         methods of the individual filters.
     </p>
     <p>
@@ -267,7 +270,7 @@ gridOptions.api.setFilterModel(null);</snippet>
         server.
     </p>
 
-    <h4>Example Get / Set All Filter Models</h4>
+    <h3>Example - Get / Set All Filter Models</h3>
 
     <p>
         The example below shows getting and setting all the filter models in action. The 'save' and 'restore' buttons
@@ -281,7 +284,7 @@ gridOptions.api.setFilterModel(null);</snippet>
 
     <?= example('Filter Model', 'filter-model', 'generated', array("enterprise" => 1)) ?>
 
-<h3 id="floatingFilter">Floating filters</h3>
+<h2>Floating filters</h2>
 
 <p>
     Floating Filters are an additional row under the column headers where the user will be able to
@@ -289,7 +292,7 @@ gridOptions.api.setFilterModel(null);</snippet>
 </p>
 
 <p>
-    Floating filters are activated by setting grid property <i>floatingFilter=true</i>:
+    Floating filters are activated by setting grid property <code>floatingFilter=true</code>:
 </p>
 
 <snippet>
@@ -302,13 +305,13 @@ gridOptions = {
 <p>
     Floating filters are an accessory to the main column filters. They do not contain their own state,
     rather they display the state of the main filter, and if editable they set state on the main filter.
-    Underneath the hood this is done by using the main filters <i>getModel()</i> and <i>setModel()</i>
+    Underneath the hood this is done by using the main filters <code>getModel()</code> and <code>setModel()</code>
     methods. For this reason, there is no api for getting or setting state of the floating filters.
 </p>
 
 <p>
     All the default filters provided by ag-Grid provide their own implementation of a floating filter.
-    All you need to do to enable these floating filters is set the <i>floatingFilter=true</i> grid property.
+    All you need to do to enable these floating filters is set the <code>floatingFilter=true</code> grid property.
 </p>
 
 <p>
@@ -322,7 +325,8 @@ gridOptions = {
 
 <p>
     The following example shows the following features of floating filters:
-    <ul>
+</p>
+    <ul class="content">
         <li>Text filter: Have out of the box read/write floating filters (Sport column)</li>
         <li>Set filter: Have out of the box read floating filters  (Country column)</li>
         <li>Date and number filter: Have out of the box read/write floating filters for all filter except when switching
@@ -337,11 +341,10 @@ gridOptions = {
         <li>Combining suppressMenu and suppressFilter lets you control where the user access to the rich filter. In
         this example suppressMenu = true for all the columns except Silver and Bronze</li>
     </ul>
-</p>
 
 <?= example('Floating Filter', 'floating-filter', 'generated', array("enterprise" => 1)) ?>
 
-<h3>Server Side Filtering</h3>
+<h2>Server Side Filtering</h2>
 
 <p>
     Some of the row models
@@ -353,7 +356,7 @@ gridOptions = {
     <a href="../javascript-grid-virtual-paging/">infinite scrolling</a>.
 </p>
 
-<h3 id="nullFiltering">Filtering null values in Date and Number filters</h3>
+<h2>Filtering null values in Date and Number filters</h2>
 <p>
     If your underlying data representation for a row contains <code>null</code> it won't be included in the filter results. If
     you want to change this behaviour, you can configure the property <code>columnDef.filterParams.nullComparator</code>

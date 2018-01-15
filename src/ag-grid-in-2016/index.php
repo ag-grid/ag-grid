@@ -57,7 +57,8 @@ include('../includes/mediaHeader.php');
             ag-Grid is written using a Data Driven Approach (see my <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
                 Angular Connect talk </a> for this to be explained).
             This has two advantages:
-        <ul>
+        </p>
+        <ul class="content">
             <li>
             <b>Speed</b> - although templates themselves are not necessarily that much slower, the added 'waffle' frameworks
             put in all add up to slowness.
@@ -65,7 +66,6 @@ include('../includes/mediaHeader.php');
             <li><b>Less code</b> - in particular, no HTML and no bindings to worry about. Less code is easier to understand,
             easier to test, easier to maintain.</li>
         </ul>
-        </p>
 
         <p>
             Today's frameworks are very much template driven. This is another reason why
@@ -120,7 +120,7 @@ include('../includes/mediaHeader.php');
             I want to make ag-Grid the best grid it can possibly be. Originally the plan was just to create a
             grid that matched my own requirements. However the community has encouraged me to want to provide
             the best grid available for Javascript development. Next year I plan to focus on the following:
-            <ul>
+            <ul class="content">
             <li><b>Close any Feature Gap:</b> Some 'core' items still need to get done, such as dragging columns to
             reposition, adding / removing rows without a complete reload, having dynamic row height etc.
             I want to get ALL of these done in the first few months of next year so that the grid is not just
@@ -146,7 +146,7 @@ include('../includes/mediaHeader.php');
         </p>
         <p>
             So I'm considering the following items for making money:
-        <ul>
+        <ul class="content">
             <li>
                 <b>Paid support:</b> Each day I'm now spending approx 2 hours helping people on the forum. This does
                 not include the time I spend implementing features that people influence me towards implementing.

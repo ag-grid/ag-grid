@@ -193,7 +193,7 @@ include('../includes/mediaHeader.php');
 
             <p>Here we do a number of bootstrap tasks:</p>
 
-            <ul>
+            <ul class="content">
                 <li>Import our <code>GridDataService</code></li>
                 <li>Create a simple Redux reducer <code>gridDataReducer</code></li>
                 <li>Create the Redux Store</li>
@@ -208,7 +208,7 @@ include('../includes/mediaHeader.php');
 
             <p>We'll modify the seed <code>SimpleGridExample</code> in the following ways:</p>
 
-            <ul>
+            <ul class="content">
                 <li>Delete <code>createRowData</code> - the application will now receive it's data from the Redux store
                 </li>
                 <li>Modify <code>createColumnDefs</code> to reference the new data structure (two columns: "name" and

@@ -40,14 +40,14 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
         </p>
         <p>
         Perks of working for ag-Grid:
-            <ul>
+        </p>
+            <ul class="content">
                 <li>Thriving young company that is self-funded.</li>
                 <li>Work with the latest front end technologies.</li>
                 <li>Excellent software practices, no corporate baggage.</li>
                 <li>Travel to and represent ag-Grid at international conferences.</li>
                 <li>Experience a company grow from a few people to world domination.</li>
             </ul>
-        </p>
 
         <h2>How to Apply</h2>
         <p>
@@ -62,9 +62,9 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
             <p>
                 ag-Grid has almost 900 customers that periodically require assistance using ag-Grid. As a customer success engineer, you will become expert in ag-Grid and associated JavaScript libraries (React, Angular etc.) to ensure customers with queries are assisted. In addition, you will create and improve our documenation and video content to improve customer knowledge. Through this role, you will learn how to use ag-Grid as well as being exposed to the development teams of some of the world's largest companies. This is ideal for people at all levels to improve their all round skills.
             </p>
-            <p>
-                <b>Responsibilities of Role</b>
-            <ul>
+            <p> <b>Responsibilities of Role</b> </p>
+
+            <ul class="content">
                 <li>Become expert in ag-Grid and JavaScript frameworks such as Angular and React.</li>
                 <li>Address customer issues with ag-Grid, both standalone, and with frameworks such as Angular and React.</li>
                 <li>Stay up to date on latest JavaScript framework changes.</li>
@@ -72,16 +72,15 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
                 <li>Become actively involved in strategies to deliver better customer support.</li>
             </ul>
 
-            <p>
-                <b>Skills</b>
-            <ul>
+            <p><b>Skills</b></p>
+
+            <ul class="content">
                 <li>Experience with JavaScript.</li>
                 <li>Experience with frameworks such as Angular and React desirable.</li>
                 <li>Experience with JavaScript grid libraries desirable.</li>
                 <li>Excellent communication skills.</li>
                 <li>Excellent problem solving skills.</li>
             </ul>
-            </p>
         </div>
 
         <div class="job">
@@ -97,9 +96,9 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
                 getting involved in ensuring the books are up to date. We are looking to expand our social media presence
                  through Twitter, LinkedIn and other platforms while also ramping up our content marketing presence.
             </p>
-            <p>
-                <b>Responsibilities of Role</b>
-            <ul>
+            <p> <b>Responsibilities of Role</b></p>
+
+            <ul class="content">
                 <li>Inbound sales enquiries via email and CRM.</li>
                 <li>Daily and weekly metrics.</li>
                 <li>Admin tasks from book-keeping to booking travel.</li>
@@ -108,15 +107,13 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
                 <li>Working with social media platforms especially LinkedIn and Twitter.</li>
                 <li>Assisting with SEO tasks and content marketing.</li>
             </ul>
+            <p> <b>Successful Candidates:</b></p>
 
-            <p>
-                <b>Successful Candidates:</b>
-            <ul>
+            <ul class="content">
                 <li>Attention to detail</li>
                 <li>Excellent written communication skills.</li>
                 <li>Interest in start-up culture.</li>
             </ul>
-            </p>
         </div>
 
         <div class="job">
@@ -128,25 +125,22 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
                 we strive to provide the best customer experience to our visitors to ensure they can get the information
                 that they need. As a web developer, you will be core to the development of the interactive ag-Grid website.
             </p>
-            <p>
-                <b>Responsibilities of Role</b>
-            <ul>
+            <p> <b>Responsibilities of Role</b></p>
+            <ul class="content">
                 <li>Take ownership for the delivery of certain modules within the portal.</li>
                 <li>Provide intuitive interfaces for customers of ag-Grid to access ag-Grid content.</li>
                 <li>Create examples with ag-Grid applications using latest technologies such as Angular and React.</li>
                 <li>UX and UI design for website / customer portal.</li>
             </ul>
 
-            <p>
-                <b>Tech Skills:</b>
-            <ul>
+            <p> <b>Tech Skills:</b></p>
+            <ul class="content">
                 <li>HTML / CSS</li>
                 <li>JavaScript / TypeScript.</li>
                 <li>Experience using ag-Grid or other JavaScript grid library desirable.</li>
                 <li>UI frameworks such as Angular, React desirable.</li>
                 <li>Experience building single page web apps.</li>
             </ul>
-            </p>
         </div>
 
         <div class="job">
@@ -158,9 +152,8 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
                 of companies building software for use within the enterprise. As a core ag-Grid 
                 enterprise developer, you will join the team responsible for future versions of ag-Grid.
             </p>
-            <p>
-                <b>Responsibilities of Role</b>
-            <ul>
+            <p> <b>Responsibilities of Role</b></p>
+            <ul class="content">
                 <li>Contribute towards the development of future ag-Grid releases.</li>
                 <li>Take ownership of ag-Grid features from design, code, test and release.</li>
                 <li>Provide intuitive interfaces for customers of ag-Grid to access ag-Grid content.</li>
@@ -168,9 +161,8 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
                 <li>UX and UI design for website / customer portal.</li>
             </ul>
 
-            <p>
-                <b>Tech Skills:</b>
-            <ul>
+            <p> <b>Tech Skills:</b></p>
+            <ul class="content">
                 <li>5 years experience building either enterprise application development or application library development.</li>
                 <li>2 years experience with JavaScript and / or TypeScript.</li>
                 <li>Experience with popular JavaScript application frameworks eg Angular, React, Vue etc</li>
@@ -182,7 +174,6 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
                 <li>Understanding of Object Oriented and Functional programming.</li>
                 <li>Ability to code complex systems, beyond simple CRUD screens.</li>
             </ul>
-            </p>
         </div>
 
         <div class="job">
@@ -197,9 +188,8 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
                  create applications demonstrating the many features of ag-Grid, then make a name for yourself 
                  online as an ag-Grid expert and advocate.
             </p>
-            <p>
-                <b>Responsibilities of Role</b>
-            <ul>
+            <p> <b>Responsibilities of Role</b></p>
+            <ul class="content">
                 <li>Become expert with the ag-Grid JavaScript library</li>
                 <li>Create online content (blogs, tutorials, videos etc) showing how to use it.</li>
                 <li>Engage with customers and help them build applications with ag-Grid</li>
@@ -207,9 +197,8 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
                 <li>Speak at conferences.</li>
             </ul>
 
-            <p>
-                <b>Tech Skills:</b>
-            <ul>
+            <p> <b>Tech Skills:</b></p>
+            <ul class="content">
                 <li>Excellent written / oral skills in English.</li>
                 <li>Presentation skills.</li>
                 <li>Blog / tutorial skills.</li>
@@ -217,7 +206,6 @@ meta_and_links("Jobs at ag-Grid", "ag-Grid jobs", "We are looking for the best a
                 <li>Web design advantage.</li>
                 <li>Experience with JavaScript &amp; Frameworks (Angular, React etc).</li>
             </ul>
-            </p>
         </div>
 
         </div>

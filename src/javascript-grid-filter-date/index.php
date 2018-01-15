@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="overview">Date Filter</h2>
+<h1>Date Filter</h1>
 <p>
     Date filters allow users to filter data based on the dates contained in the column where this filter is defined. To
     create a new date filter in a column, all you need to do is:
@@ -31,52 +31,53 @@ colDef: {
     filter: 'agDateColumnFilter'
 }</snippet></p>
 
-<h2 id="dateFilterParameters">Date Filter Parameters</h2>
+<h2>Date Filter Parameters</h2>
 
-A date filter can take the following parameters:
-<ul>
-    <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter.
+<p>A date filter can take the following parameters:</p>
+
+<ul class="content">
+    <li><code>newRowsAction:</code> What to do when new rows are loaded. The default is to reset the filter.
         If you want to keep the filter status between row loads, then set this value to 'keep'.</li>
-    <li><b>applyButton:</b> Set to true to include an 'Apply' button with the filter and not filter
+    <li><code>applyButton:</code> Set to true to include an 'Apply' button with the filter and not filter
         automatically as the selection changes.</li>
-    <li><b>clearButton:</b> Set to true to include a 'Clear' button with the filter which when cliked
+    <li><code>clearButton:</code> Set to true to include a 'Clear' button with the filter which when cliked
         will remove the filter conditions to this filter.</li>
-    <li><b>comparator:</b> Needed if the data for this column are not native JS objects. See section below</li>
-    <li><b>inRangeInclusive:</b> Set to true so that when doing inRange date filters it will include
+    <li><code>comparator:</code> Needed if the data for this column are not native JS objects. See section below</li>
+    <li><code>inRangeInclusive:</code> Set to true so that when doing inRange date filters it will include
         the dates you specify as minimum and maximum, otherwise it selects only the dates in between.</li>
-    <li><b>filterOptions:</b> If specified, limits the amount of options presented in the filter UI, it must be
+    <li><code>filterOptions:</code> If specified, limits the amount of options presented in the filter UI, it must be
         a string array containing some of the following values  {equals, notEqual, lessThanOrEqual, greaterThan,
         greaterThanOrEqual, inRange}</li>
-    <li><b>defaultOption:</b> If specified, changes the default filter option to one of {equals, notEqual,
+    <li><code>defaultOption:</code> If specified, changes the default filter option to one of {equals, notEqual,
         lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. If not specified the default type is {equals},
-        if {equals} is not available because is removed using <i>filterOptions</i>, then the default
+        if {equals} is not available because is removed using <code>filterOptions</code>, then the default
         is the first item in the filterOptions</li>
-    <li><b>nullComparator:</b> If specified, it will be used to specify if null values should be included when filtering.
+    <li><code>nullComparator:</code> If specified, it will be used to specify if null values should be included when filtering.
         See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>
 </ul>
 
 
-<h3 id="dateFilterComparator">Date Filter Comparator</h3>
+<h2>Date Filter Comparator</h2>
 <p>
     Dates can be represented in your data in many ways e.g. as a JavaScript Date object, or as a string in
     the format eg "26-MAR-2020" or something else different. How you represent dates will be particular to your
     application.
 
     If you are filtering JavaScript date objects the filter will work automatically, but if you are representing
-    your date in any other format you will have to provide your own <i>comparator</i> callback.
+    your date in any other format you will have to provide your own <code>comparator</code> callback.
 </p>
 
 <p>
-    The <i>comparator</i> callback takes two parameters. The first parameter is a
+    The <code>comparator</code> callback takes two parameters. The first parameter is a
     Javascript date object with the local date at midnight
     selected in the filter. The second parameter is the current value of the cell being evaluated.
     The callback must return:
-<ul>
+<ul class="content">
     <li>Any number < 0 if the cell value is less than the filter date</li>
     <li>0 if the dates are the same</li>
     <li>Any number > 0 if the cell value is greater than the filter date</li>
 </ul>
-This pattern is intended to be similar to the JavaScript <i>compareTo(a,b)</i> function.
+This pattern is intended to be similar to the JavaScript <code>compareTo(a,b)</code> function.
 </p>
 
 <p>
@@ -115,7 +116,7 @@ colDef = {
     }
 }</snippet>
 
-<h2 id="model">Date Filter Model</h2>
+<h2>Date Filter Model</h2>
 
 <p>
     Get and set the state of the date filter by getting and setting the model on the filter instance.
@@ -151,20 +152,21 @@ gridOptions.api.onFilterChanged()</snippet></p>
 <p>
     The number filter model has the following attributes:
 </p>
-<ul>
-    <li><b>type:</b> The type of date filter to apply. One of: {equals, notEqual, lessThanOrEqual, greaterThan,
+<ul class="content">
+    <li><code>type:</code> The type of date filter to apply. One of: {equals, notEqual, lessThanOrEqual, greaterThan,
         greaterThanOrEqual, inRange}</li>
-    <li><b>date:</b> The actual filter date to apply, or the start of the range if the filter type is inRange</li>
-    <li><b>dateTo:</b> The end range of the filter if the filter type is inRange, otherwise has no effect.</li>
+    <li><code>date:</code> The actual filter date to apply, or the start of the range if the filter type is inRange</li>
+    <li><code>dateTo:</code> The end range of the filter if the filter type is inRange, otherwise has no effect.</li>
 </ul>
 
 
-<h2 id="floating">Floating Date Filter</h2>
+<h2>Floating Date Filter</h2>
 <p>
     If your grid has floatingFilter enabled, your columns with number filter will automatically show below the header a new
     column that will show two elements:
+</p>
 
-<ul>
+<ul class="content">
     <li>Filter input box: Dates represented here need to be entered in the following format: yyyy-mm-dd.
         This input box serves two purposes:
         <ol>
@@ -180,13 +182,12 @@ gridOptions.api.onFilterChanged()</snippet></p>
     </li>
     <li>Filter button: This button is a shortcut to show the rich filter editor</li>
 </ul>
-</p>
 
-<h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
+<h2>Common Column Filtering Functionality And Examples</h2>
 
 <p>The following can be found in the <a href="../javascript-grid-filtering/">column filtering documentation page</a></p>
-<p>
-<ul>
+
+<ul class="content">
     <li>Common filtering params</li>
     <li>Enabling/Disabling filtering in a column</li>
     <li>Enabling/Disabling floating filter</li>
@@ -194,8 +195,5 @@ gridOptions.api.onFilterChanged()</snippet></p>
     <li>Filtering animation</li>
     <li>Examples</li>
 </ul>
-</p>
-
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

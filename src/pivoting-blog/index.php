@@ -51,7 +51,7 @@ if (!d.getElementById(id)) {
 
 <p><strong>Plot</strong>: We have a dataset with participants in different games. The participants are located in different countries and have different yearly and monthly winnings. This data is part of a bigger dataset but we will use only some of the attributes:</p>
 
-<ul>
+<ul class="content">
 <li>Name</li>
 
 <li>Country</li>
@@ -75,7 +75,7 @@ if (!d.getElementById(id)) {
 
 <p>Entering 'Pivot Mode' gives us an empty table and some additional sections.
 Important here are these two sections:</p>
-<ul>
+<ul class="content">
 <li><p><strong>Row Groups</strong> - holds the attributes by which we want to group our data. We can add attributes to this section simply by dragging them.</p></li>
 <li><p><strong>Values</strong> - holds the attributes of which we want to have aggregated values. Attibutes can be included by dragging.</p></li>
 </ul>
@@ -118,7 +118,7 @@ There are different technologies offering pivot tables but no worries, you will 
 <p>You can try this by yourself right away, using the <a href="../exmaple.php">ag-Grid demo</a>.
 If you are in a mood for writing code you can download ag-Grid and build your own grid with pivoting.</p>
 
-<ul>
+<ul class="content">
 <li><strong>npm install ag-grid</strong></li>
 
 <li><strong>bower install ag-grid</strong></li>

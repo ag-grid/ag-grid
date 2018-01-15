@@ -210,25 +210,25 @@ export interface ColumnVO {
 </p>
     <ul class="content">
         <li>
-            Columns <i>Athlete, Age, Country, Year</i> and <i>Sport</i> all have <code>enableRowGroup=true</code>
+            Columns <code>Athlete, Age, Country, Year</code> and <code>Sport</code> all have <code>enableRowGroup=true</code>
             which means they can be grouped on. To group you drag the columns to the row group panel section.
-            By default the example is grouping by <i>Country</i> and then <i>Year</i> as these columns have
+            By default the example is grouping by <code>Country</code> and then <code>Year</code> as these columns have
             <code>rowGroup=true</code>.
         </li>
         <li>
-            Columns <i>Gold, Silver</i> and <i>Bronze</i> all have <code>enableValue=true</code> which means
-            they can be aggregated on. To aggregate you drag the column to the <i>Values</i> section.
-            When you are grouping, then all columns in the <i>Values</i> section will be aggregated.
+            Columns <code>Gold, Silver</code> and <code>Bronze</code> all have <code>enableValue=true</code> which means
+            they can be aggregated on. To aggregate you drag the column to the <code>Values</code> section.
+            When you are grouping, then all columns in the <code>Values</code> section will be aggregated.
         </li>
         <li>
-            You can turn the grid into <i>Pivot Mode</i>. To do this, you click the pivot mode checkbox.
+            You can turn the grid into <strong>Pivot Mode</strong>. To do this, you click the pivot mode checkbox.
             When the grid is in pivot mode, the grid behaves similar to an Excel grid. This extra information
             is passed to your server as part of the request and it is your servers responsibility to return
             the data in the correct structure.
         </li>
         <li>
-            Columns <i>Gold, Silver</i> and <i>Bronze</i> all have <code>enablePivot=true</code> which means
-            they can be pivoted on when <i>Pivot Mode</i> is active. To pivot you drag the column to the <i>Pivot</i>
+            Columns <strong>Gold, Silver</strong> and <strong>Bronze</strong> all have <code>enablePivot=true</code> which means
+            they can be pivoted on when <strong>Pivot Mode</strong> is active. To pivot you drag the column to the <strong>Pivot</strong>
             section.
         </li>
         <li>
@@ -236,12 +236,12 @@ export interface ColumnVO {
         </li>
         <li>
             In addition to grouping, aggregation and pivot, the example also demonstrates filtering.
-            The columns <i>Age, Country</i> and <i>Year</i> all have a filter.
+            The columns <code>Age, Country</code> and <code>Year</code> all have a filter.
         </li>
     </ul>
 
 <note>
-    When filtering using the Enterprise Row Model it's important to specify the filter parameter: <i>newRowsAction: 'keep'</i>.
+    When filtering using the Enterprise Row Model it's important to specify the filter parameter: <code>newRowsAction: 'keep'</code>.
     This is to prevent the filter from being reset as data is loaded into the grid.
 </note>
 
@@ -279,8 +279,8 @@ export interface ColumnVO {
 <p>
     Secondary columns are the columns that are created as part of the pivot function. You must provide
     these to the grid in order for the grid to display the correct columns for the active pivot function.
-    For example, if you pivot on <i>Year</i>, you need to tell the grid to create columns for
-    <i>2000, 2002, 2004, 2006, 2008, 2010</i> and <i>2012</i>.
+    For example, if you pivot on <code>Year</code>, you need to tell the grid to create columns for
+    <code>2000, 2002, 2004, 2006, 2008, 2010</code> and <code>2012</code>.
 </p>
 
 <p>
@@ -341,8 +341,8 @@ export interface ColumnVO {
 
 <p>
     Selecting rows and groups in the enterprise row model is supported.
-    Just set the property <i>rowSelection</i> to either <i>single</i>
-    or <i>multiple</i> as with any other row model.
+    Just set the property <code>rowSelection</code> to either <code>single</code>
+    or <code>multiple</code> as with any other row model.
 </p>
 
 <h3>Selecting Group Nodes</h3>
@@ -372,7 +372,7 @@ export interface ColumnVO {
 
 <note>
     Performing multiple row selections using 'shift-click' has the following restrictions:
-    <ul>
+    <ul class="content">
         <li>Only works across rows that share the same parent.</li>
         <li>Only works for rows that are loaded (eg a large range selection may span rows that are not loaded).</li>
     </ul>

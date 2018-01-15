@@ -6,11 +6,11 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h1 class="first-h1" id="value-getters">Value Setters & Value Parsers</h1>
 
-    <p>
+    <h1>Value Setters & Value Parsers</h1>
+
+    <p class="lead">
         The section <a href="../javascript-grid-value-getters">Getters and Formatters</a>
         explained how to use <code>valueGetter</code> and <code>valueFormatter</code>
         to get and format the value before displaying it. This section explains their
@@ -22,6 +22,7 @@ include '../documentation-main/documentation_header.php';
         Use a <code>valueSetter</code> to set a value into your data after editing when the
         normal <code>colDef.field</code> attribute will not suffice.
     </p>
+
     <p>
         Use a <code>valueParser</code> to parse a value after editing.
     </p>
@@ -32,7 +33,7 @@ include '../documentation-main/documentation_header.php';
         Below shows the column definition properties for valueSetters and valueParsers.
     </p>
 
-    <table class="table">
+    <table class="table reference">
         <?php include './settersAndParsersProperties.php' ?>
         <?php printPropertiesRows($settersAndParsersProperties) ?>
     </table>
@@ -53,7 +54,7 @@ include '../documentation-main/documentation_header.php';
         a look at the impact of the edits. The following should be noted from the demo:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             <b>Column 'Simple':</b> This is a simple string column using field. It is a simple string column,
             so doesn't need any special treatment.
@@ -68,8 +69,8 @@ include '../documentation-main/documentation_header.php';
             a <code>valueFormatter</code> and the result of editing is parsed to a number using <code>valueParser</code>.
         </li>
         <li>
-            <b>Column 'Name':</b> This is editable. The name value is a combination of <i>firstName</i> and
-            <i>lastName</i>. A <code>valueGetter</code> is used to combine the parts for display, and a
+            <b>Column 'Name':</b> This is editable. The name value is a combination of <code>firstName</code> and
+            <code>lastName</code>. A <code>valueGetter</code> is used to combine the parts for display, and a
             <code>valueSetter</code> is used for setting the parts back into the grid (eg if you type 'Sam Boots',
             then 'Sam' gets set as the first name and 'Boots' as the last name.
         </li>
@@ -83,7 +84,7 @@ include '../documentation-main/documentation_header.php';
         The flow diagram below shows the flow of a value after it is edited using the UI.
     </p>
 
-    <img src="valueSetterFlow.svg"/>
+    <img src="valueSetterFlow.svg" class="img-fluid">
 
     <h2 id="value-setter">Value Setter</h2>
 
@@ -154,6 +155,6 @@ colDef.valueParser = function(params) {
     return Number(params.newValue);
 }</snippet>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

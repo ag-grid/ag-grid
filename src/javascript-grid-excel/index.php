@@ -6,7 +6,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<p>
     <h1 class="heading-enterprise">JavaScript Grid Excel</h1>
 
     <h2>Exporting ag-Grid Data to Excel</h2>
@@ -14,28 +13,29 @@ include '../documentation-main/documentation_header.php';
     <p>
         Excel Export allows exporting ag-Grid data to Excel using Excel's own XML format. Using this format
         allows for rich Excel files to be created with the following:
-        <ol>
+</p>
+
+        <ol class="content">
             <li>The column width from your grid is exported to Excel, so the columns in Excel will have the same width as your web application</li>
             <li>You can specify Excel styles (colors, fonts, borders etc) to be included in the Excel file.</li>
             <li>The data types of your columns are passed to Excel as part of the export so that if you can to work with the data within Excel in the correct format.</li>
             <li>The cells of the column header groups are merged in the same manner as the group headers in ag-Grid.</li>
         </ol>
-    </p>
 
     <note>If you want to disable Excel export, you can set the property <code>suppressExcelExport = true</code> in your
     <code>gridOptions</code></note>
 
-    <h3 id="ExcelExportApi">API</h3>
+    <h2>API</h2>
 
     <p>
         The export is performed by calling the following API. Note that this API is similar to the <a href="../javascript-grid-export/#cellClassRules">CSV Export</a> API,
         so you can use similar config for both.
     </p>
 
-    <ul>
-        <li><b>exportDataAsExcel(params)</b>: Does the full export and triggers the download of the file in the browser automatically so the user can open immediately.</li>
-        <li><b>getDataAsExcel(params)</b>: Returns the Excel XML that represents the export performed by
-            <i>exportDataAsExcel(params)</i>. This can then be used by your web application, e.g. to send the data to the
+    <ul class="content">
+        <li><code>exportDataAsExcel(params)</code>: Does the full export and triggers the download of the file in the browser automatically so the user can open immediately.</li>
+        <li><code>getDataAsExcel(params)</code>: Returns the Excel XML that represents the export performed by
+            <code>exportDataAsExcel(params)</code>. This can then be used by your web application, e.g. to send the data to the
             server for storing or sending via email etc.</li>
     </ul>
 
@@ -43,28 +43,28 @@ include '../documentation-main/documentation_header.php';
         Each of these methods takes an optional params object that can take the following:
     </p>
 
-    <ul>
-        <li><b>skipHeader</b>: Set to true if you don't want the first line to be column header names.</li>
-        <li><b>columnGroups</b>: Set to true to include header column groupings.</li>
-        <li><b>skipGroups</b>: Set to true to skip row group headers and footers if grouping rows. No impact if not grouping rows.</li>
-        <li><b>skipFooters</b>: Set to true to skip footers only if grouping. No impact if not grouping or if not using footers in grouping.</li>
-        <li><b>fileName</b>: String to use as the file name. If missing, the file name 'export.xls' will be used.</li>
-        <li><b>allColumns</b>: If true, all columns will be exported in the order they appear in columnDefs.
+    <ul class="content">
+        <li><code>skipHeader</code>: Set to true if you don't want the first line to be column header names.</li>
+        <li><code>columnGroups</code>: Set to true to include header column groupings.</li>
+        <li><code>skipGroups</code>: Set to true to skip row group headers and footers if grouping rows. No impact if not grouping rows.</li>
+        <li><code>skipFooters</code>: Set to true to skip footers only if grouping. No impact if not grouping or if not using footers in grouping.</li>
+        <li><code>fileName</code>: String to use as the file name. If missing, the file name 'export.xls' will be used.</li>
+        <li><code>allColumns</code>: If true, all columns will be exported in the order they appear in columnDefs.
             Otherwise only the columns currently showing in the grid, and in that order, are exported.</li>
-        <li><b>onlySelected</b>: Only export selected rows.</li>
-        <li><b>onlySelectedAllPages</b>: Only export selected rows including other pages (only applicable when using pagination).</li>
-        <li><b>columnKeys</b>: Provide a list (an array) of column keys to export specific columns.</li>
-        <li><b>shouldRowBeSkipped</b>: Allows you to skip entire rows from the export.</li>
-        <li><b>processCellCallback</b>: Allows you to process (typically format) cells for the export.</li>
-        <li><b>processHeaderCallback</b>: Allows you to create custom header values for the export.</li>
-        <li><b>customHeader</b>: If you want to put some rows at the top of the xls file, stick it here.
+        <li><code>onlySelected</code>: Only export selected rows.</li>
+        <li><code>onlySelectedAllPages</code>: Only export selected rows including other pages (only applicable when using pagination).</li>
+        <li><code>columnKeys</code>: Provide a list (an array) of column keys to export specific columns.</li>
+        <li><code>shouldRowBeSkipped</code>: Allows you to skip entire rows from the export.</li>
+        <li><code>processCellCallback</code>: Allows you to process (typically format) cells for the export.</li>
+        <li><code>processHeaderCallback</code>: Allows you to create custom header values for the export.</li>
+        <li><code>customHeader</code>: If you want to put some rows at the top of the xls file, stick it here.
             The format of this rows is specified below in the section custom rows.</li>
-        <li><b>customFooter</b>: Same as customHeader, but for the end of the file.</li>
-        <li><b>sheetName</b>: The name of the sheet in excel where the grid will get exported. If not specified defaults to 'ag-grid'.</li>
+        <li><code>customFooter</code>: Same as customHeader, but for the end of the file.</li>
+        <li><code>sheetName</code>: The name of the sheet in excel where the grid will get exported. If not specified defaults to 'ag-grid'.</li>
     </ul>
 
 
-    <h4>shouldRowBeSkipped()</h4>
+    <h3><code>shouldRowBeSkipped()</code></h3>
 
     <p>This callback allows you to entirely skip a row to be exported. The example below has an option 'Skip Group R'
         which will entirely skip all the rows which Group=R.</p>
@@ -73,7 +73,7 @@ include '../documentation-main/documentation_header.php';
         The callback params has the following attributes: node, api, context.
     </p>
 
-    <h4>processCellCallback()</h4>
+    <h3><code>processCellCallback()</code></h3>
 
     <p>This callback allows you to format the cells for the export. The example below has an option 'Use Cell Callback'
         which puts all the items into upper case. This can be useful if, for example, you need to format date cells
@@ -83,7 +83,7 @@ include '../documentation-main/documentation_header.php';
         The callback params has the following attributes: value, node, column, api, columnApi, context.
     </p>
 
-    <h4>processHeaderCallback()</h4>
+    <h3><code>processHeaderCallback()</code></h3>
 
     <p>If you don't like the header names the grid provides then you can provide your own header names. For example, you
         have grouped columns and you want to include the columns parent groups.</p>
@@ -93,13 +93,13 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        You can assign default export parameters to your Excel export by setting the property <i>defaultExportParams</i>
+        You can assign default export parameters to your Excel export by setting the property <code>defaultExportParams</code>
         in your gridOptions. This is useful if you are planning the user to let export the data via the contextual menu.
     </p>
 
-    <h4>Custom rows</h4>
+    <h3>Custom rows</h3>
 
-    <p>You can pass your custom rows in the properties <i>customHeader</i> amd <i>customFooter</i>. This properties are
+    <p>You can pass your custom rows in the properties <code>customHeader</code> amd <code>customFooter</code>. This properties are
         expected to contain an array of array of ExcelCell objects, which itself contains ExcelData objects. </p>
 
     <p>Each item in the array is considered to be a row in the excel export</p>
@@ -108,27 +108,25 @@ include '../documentation-main/documentation_header.php';
 
     <?php include 'customRowProperties.php' ?>
 
-    <p>
-    <b>ExcelCell</b>
+     <h4>ExcelCell</h4>
     <?php printPropertiesTable($excelCell) ?>
-    </p>
 
-    <p>
-    <b>ExcelData</b>
+
+    <h4>ExcelData</h4>
     <?php printPropertiesTable($excelData) ?>
-    </p>
 
-    <p>
-    <b>Example</b>
+    <h4>Example</h4>
     <p>The following example shows 4 custom rows, note that:</p>
-    <ul>
+
+    <ul class="content">
         <li>The first and the last row are empty '[]'</li>
         <li>The second row spans 2 columns</li>
         <li>The third row has 2 cells. The first cell is a label (string) and the second one a total (number)</li>
-        <li>All cells have styles associated. These styles need to be specified as part of the <i>gridOptions</i>. See
+        <li>All cells have styles associated. These styles need to be specified as part of the <code>gridOptions</code>. See
         below 'Export with Styles'
         </li>
     </ul>
+
     <snippet>
 [
     [],
@@ -139,13 +137,8 @@ include '../documentation-main/documentation_header.php';
     ],
     []
 ]</snippet>
-    </p>
 
-    <p>
-
-    <h3>
-        What Gets Exported
-    </h3>
+    <h2> What Gets Exported </h2> 
 
     <p>
         The data in the grid, similar to <a href="../javascript-grid-export/#cellClassRules">CSV Export</a>, gets exported. However unlike <a href="../javascript-grid-export/#cellClassRules">CSV Export</a>, you also get to export styles.
@@ -154,12 +147,12 @@ include '../documentation-main/documentation_header.php';
 
     <p>Regardless, the following needs to be taken into consideration</p>
 
-    <ul>
+    <ul class="content">
         <li>The raw values, and not the result of cell renderer, will get used, meaning:
-            <ul>
+            <ul class="content">
                 <li>Cell Renderers will NOT be used.</li>
                 <li>Value Getters will be used.</li>
-                <li>Cell Formatters will NOT be used (use <i>processCellCallback</i> instead).</li>
+                <li>Cell Formatters will NOT be used (use <code>processCellCallback</code> instead).</li>
             </ul>
         </li>
         <li>If row grouping, all data will be exported regardless of groups open or closed.</li>
@@ -167,7 +160,7 @@ include '../documentation-main/documentation_header.php';
             this is a GUI addition that happens for displaying the data in the grid.</li>
     </ul>
 
-    <h3>Example 1 - Export Without Styles</h3>
+    <h2>Example 1 - Export Without Styles</h2>
 
     <p>
         The example below demonstrates exporting the data without any styling. Note that the grid has CSS Class Rules
@@ -176,7 +169,7 @@ include '../documentation-main/documentation_header.php';
         from the example:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>The column grouping is exported.</li>
         <li>Filtered rows are not included in the export.</li>
         <li>The sort order is maintained in the export.</li>
@@ -189,7 +182,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Excel Export Without Styles', 'excel-export-without-styles', 'generated', array("enterprise" => 1)) ?>
 
-    <h3>Export with Styles</h3>
+    <h2>Export with Styles</h2>
 
     <p>
         The main reason to export to Excel instead of CSV is so that the look and feel remain as consistent as possible with your ag-Grid application. In order to
@@ -205,15 +198,15 @@ include '../documentation-main/documentation_header.php';
         in ag-Grid.
     </p>
 
-    <h4>Excel Style Definition</h4>
+    <h2>Excel Style Definition</h2>
 
     <p>
         An Excel style object has the following properties:
     </p>
 
-    <ul>
-        <li><b>id</b> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a></li>
-        <li><b>alignment</b> (optional): Vertical and horizontal alignmen:<ul>
+    <ul class="content">
+        <li><code>id</code> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a></li>
+        <li><code>alignment</code> (optional): Vertical and horizontal alignmen:<ul class="content">
                 <li>horizontal: String one of Automatic, Left, Center, Right, Fill, Justify, CenterAcrossSelection, Distributed, and JustifyDistributed</li>
                 <li>indent: Number of indents</li>
                 <li>readingOrder: String one of RightToLeft, LeftToRight, and Context</li>
@@ -225,14 +218,14 @@ include '../documentation-main/documentation_header.php';
                     False means that text either spills or gets truncated at the cell boundary (depending on whether the adjacent cell(s) have content). </li>
             </ul>
         </li>
-        <li><b>borders</b> (optional): All the 4 borders must be specified (explained in next section): <ul>
+        <li><code>borders</code> (optional): All the 4 borders must be specified (explained in next section): <ul class="content">
                 <li>borderBottom</li>
                 <li>borderLeft</li>
                 <li>borderTop</li>
                 <li>borderRight</li>
             </ul>
         </li>
-        <li><b>font</b> (optional):  The color must be declared: <ul>
+        <li><code>font</code> (optional):  The color must be declared: <ul class="content">
                 <li>bold. Boolean</li>
                 <li>color. A color in hexadecimal format</li>
                 <li>fontName. String</li>
@@ -246,44 +239,46 @@ include '../documentation-main/documentation_header.php';
                 <li>family. String. Win32-dependent font family. One of Automatic, Decorative, Modern, Roman, Script, and Swiss</li>
             </ul>
         </li>
-        <li><b>interior</b> (optional): The color and pattern must be declared:
-            <ul>
-                <li><b>color</b>: A color in hexadecimal format</li>
-                <li><b>pattern</b>: One of the following strings: None, Solid, Gray75, Gray50, Gray25, Gray125, Gray0625, HorzStripe, VertStripe, ReverseDiagStripe, DiagStripe, DiagCross, ThickDiagCross, ThinHorzStripe, ThinVertStripe, ThinReverseDiagStripe, ThinDiagStripe, ThinHorzCross, and ThinDiagCross</li>
-                <li><b>patternColor</b>: A color in hexadecimal format</li>
+        <li><code>interior</code> (optional): The color and pattern must be declared:
+            <ul class="content">
+                <li><code>color</code>: A color in hexadecimal format</li>
+                <li><code>pattern</code>: One of the following strings: None, Solid, Gray75, Gray50, Gray25, Gray125, Gray0625, HorzStripe, VertStripe, ReverseDiagStripe, DiagStripe, DiagCross, ThickDiagCross, ThinHorzStripe, ThinVertStripe, ThinReverseDiagStripe, ThinDiagStripe, ThinHorzCross, and ThinDiagCross</li>
+                <li><code>patternColor</code>: A color in hexadecimal format</li>
             </ul>
         </li>
-        <li><b>numberFormat</b> (optional): A javascript object with one property called format, this is any valid Excel format like: #,##0.00 (This formatting is used in the example below in the age column)
+        <li><code>numberFormat</code> (optional): A javascript object with one property called format, this is any valid Excel format like: #,##0.00 (This formatting is used in the example below in the age column)
         </li>
-        <li><b>protection</b> (optional): A javascript object with the following properties:
-            <ul>
-                <li><b>protected</b>: Boolean. This attribute indicates whether or not this cell is protected.
+        <li><code>protection</code> (optional): A javascript object with the following properties:
+            <ul class="content">
+                <li><code>protected</code>: Boolean. This attribute indicates whether or not this cell is protected.
                     When the worksheet is unprotected, cell-level protection has no effect. When a cell is protected,
                     it will not allow the user to enter information into it.</li>
-                <li><b>hideFormula</b>: Boolean. This attribute indicates whether or not this cell's formula should be hidden
+                <li><code>hideFormula</code>: Boolean. This attribute indicates whether or not this cell's formula should be hidden
                     when worksheet protection is enabled.</li>
             </ul>
         </li>
-        <li><b>dataType</b> (optional): One of (string, number, boolean, dateTime, error). In most cases this is not necessary since this value is
+        <li><code>dataType</code> (optional): One of (string, number, boolean, dateTime, error). In most cases this is not necessary since this value is
             guessed based in weather the cell content is numeric or not. This is helpful if you want to fix the type of the
             cell. ie. If your cell content is 003, this cell will be default be interpreted as numeric, and in Excel, it will
             show up as 3. But if you want to keep your original formatting, you can do so by setting this property to string.
         </li>
 </ul>
 
-    <h4>Excel borders</h4>
+    <h2>Excel borders</h2>
+
     <p>
         The borderBottom, borderLeft, borderTop, borderRight properties are objects composed of the following mandatory properties:
     </p>
 
-    <ul>
-        <li><b>lineStyle</b>: One of the following strings: None, Continuous, Dash, Dot, DashDot, DashDotDot, SlantDashDot, and Double.</li>
-        <li><b>weight</b>: A number representing the thickness of the border in pixels.</li>
-        <li><b>color</b>: A color in hexadecimal format.</b></li>
+    <ul class="content">
+        <li><code>lineStyle</code>: One of the following strings: None, Continuous, Dash, Dot, DashDot, DashDotDot, SlantDashDot, and Double.</li>
+        <li><code>weight</code>: A number representing the thickness of the border in pixels.</li>
+        <li><code>color</code>: A color in hexadecimal format.</code></li>
     </ul>
 
 
-    <h4>Excel Style Definition Example</h4>
+    <h2>Excel Style Definition Example</h2>
+
     <snippet>
 var columnDef = {
     ...,
@@ -341,7 +336,7 @@ var gridOptions = {
 
    </snippet>
 
-    <h4>Resolving Excel Styles</h4>
+    <h2>Resolving Excel Styles</h2>
 
     <p>
         All the defined classes from <a href="../javascript-grid-cell-styles/#cellClass">cellClass</a> and all the classes resultant of evaluating
@@ -358,7 +353,7 @@ var gridOptions = {
         will have that style applied to them when exported. You can see this is the second example below in this page.
     </p>
 
-    <h4>Dealing With Errors In Excel</h4>
+    <h2>Dealing With Errors In Excel</h2>
 
     <p>
         If you get an error when opening the Excel file, the most likely reason is that there is an error in the definition of the styles.
@@ -369,7 +364,9 @@ var gridOptions = {
 
     <p>
         Some of the most likely errors you can encounter when exporting to Excel are:
-        <ul>
+    </p>
+
+        <ul class="content">
             <li>Not specifying all the attributes of an Excel Style property. If you specify the interior for an
                 Excel style and don't provide a pattern, just color, Excel will fail to open the spreadsheet</li>
             <li>Using invalid characters in attributes, we recommend you not to use special characters.</li>
@@ -378,14 +375,13 @@ var gridOptions = {
             <li>Specifying an invalid enumerated property. It is also important to realise that Excel is case sensitive,
             so Solid is a valid pattern, but SOLID or solid are not</li>
         </ul>
-    </p>
 
-    <h3>
-        Example 2 - Export With Styles
-    </h3>
+    <h2> Example 2 - Export With Styles </h2>
+
     <p>
         This example illustrates the following features from the Excel export.
-        <ul>
+    </p>
+        <ul class="content">
             <li>Cells with only one style will be exported to Excel, as you can see in the Country and Gold columns</li>
             <li>Styles can be combined it a similar fashion than CSS, this can be seen in the column age where athletes less than 20 years old get two styles applied (greenBackground and redFont)</li>
             <li>A default columnDef containing cellClassRules can be specified and it will be exported to Excel.
@@ -399,33 +395,32 @@ var gridOptions = {
             <li>Note that there are specific to Excel styles applied, the age column has a number formatting style applied
                 and the group column uses italic and bold font</li>
             <li>
-                The silver column has a style with <i>dataType=string</i>. This forces this column to be rendered as text in
+                The silver column has a style with <code>dataType=string</code>. This forces this column to be rendered as text in
                 Excel even though all of their cells are numeric
             </li>
         </ul>
-    </p>
 
     <?= example('Excel Export With Styles', 'excel-export-with-styles', 'generated', array("enterprise" => 1)) ?>
 
-    <h3>
-        Example 3 - Data types
-    </h3>
+    <h2> Example 3 - Data types </h2> 
 
     <p>
         The following example demonstrates how to use other data types for your export. Note that:
-    <ul>
+    </p>
+
+    <ul class="content">
         <li>Boolean works off using 1 for true</li>
         <li>The date time format for excel follows this format yyyy-mm-ddThh:MM:ss.mmm: </li>
         <li>If you try to pass data that is not compatible with the underlying data type Excel will throw an error</li>
         <li>When using <code>dataType: 'dateTime'</code> Excel doesn't format the resultant value, in this example
         it shows 39923. You need to add the formatting inside Excel</li>
     </ul>
-    </p>
+
     <?= example('Excel Data Typs', 'excel-data-types', 'generated', array("enterprise" => 1)) ?>
 
-    <h3 id="exportToXlsx">
+    <h2>
         Exporting To XLSX
-    </h3>
+    </h2>
     <p>
         The xls files that we create are based on
         <a href="https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx">Excel own XML specification</a>. This
@@ -433,35 +428,38 @@ var gridOptions = {
     </p>
         Because of that when you open one of our exported files in a recent MS office version you might see this error:
     </p>
+
     <p>
-        <img src="/images/excel_error.png">
+        <img src="/images/excel_error.png" class="img-fluid">
     </p>
+
     </p>
     If you want to export to xlsx, you can reuse the XML that we generate and pass it onto a third
     party library that would convert it into XLSX.
     </p>
     </p>
-    As specified in the API section above, <i>api.getDataAsExcel(params)</i> is the method that you need to call to
+    As specified in the API section above, <code>api.getDataAsExcel(params)</code> is the method that you need to call to
     obtain the XML that we generate
     </p>
     </p>
     The following example shows how this can be achieved by using <a href="http://sheetjs.com/" target="_blank">SheetJs</a>
     </p>
 
-    <h3>
-        SheetJs Custom XLSX Export Example - Without styles
-    </h3>
-    <p>
-        In the following example note that:
-    </p>
-    <ul>
+    <h2> SheetJs Custom XLSX Export Example - Without styles </h2>
+
+    <p> In the following example note that: </p>
+
+    <ul class="content">
         <li><a href="http://sheetjs.com/" target="_blank">sheetJs</a> Is included as a third party library</li>
         <li>
-            The "Export to Excel (xlsx)" button reuses the XML and passes it to sheetJs to generate a xlsx</li>
+            The "Export to Excel (xlsx)" button reuses the XML and passes it to sheetJs to generate a xlsx
 <snippet>
+
     var content = gridOptions.api.getDataAsExcel(params);
     var workbook = XLSX.read(content, {type: 'binary'});
     var xlsxContent = XLSX.write(workbook, {bookType: 'xlsx', type: 'base64'});</snippet>
+
+</li>
         </li>
         <li>There is some code to handle the conversion from base64 to blob adapted from
             <a href="http://stackoverflow.com/questions/16245767/creating-a-blob-from-a-base64-string-in-javascript">stackOverflow</a></li>
@@ -490,19 +488,19 @@ function download (params, content){
 }</snippet></li>
     <li>Note that this example doesnt't import the styles to xls. To add styling to the xlsx, the logic could be extended
         to read the XML styling information received from
-        <i>gridOptions.api.getDataAsExcel(params)</i>, and it could thn be passed into SheetJs through the object returned by
-        <i>XLSX.read(content, {type: 'binary'})</i>. The reason this example is not exporting styles is because that it will
+        <code>gridOptions.api.getDataAsExcel(params)</code>, and it could thn be passed into SheetJs through the object returned by
+        <code>XLSX.read(content, {type: 'binary'})</code>. The reason this example is not exporting styles is because that it will
         go beyond of the purpose of demonstrating that you can reuse the XML we provide anyway you want.
     </li>
     </ul>
 
     <?= example('Custom XLSX', 'custom-xlsx', 'generated', array("enterprise" => 1, "extras" => array('xlsx'))) ?>
 
-    <h1>Export to Excel with iPad</h1>
+    <h2>Export to Excel with iPad</h2>
 
     <p>
         It is not possible to download files directly from JavaScript to an iPad. This is a restriction
-        on iPads and not something wrong with ag-Grid. For this reason, the download links in the context
+        on iOS and not something wrong with ag-Grid. For this reason, the download links in the context
         menu are removed when running on iPad. If you do want to download on iPad, then it is recommended
         you use the api function <code>getDataAsCsv()</code> to get the export data and then send this
         to the server to allow building an endpoint for doing the download.
