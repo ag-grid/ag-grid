@@ -22,6 +22,7 @@ import {NewValueParams, SuppressKeyboardEventParams} from "../entities/colDef";
 import {Beans} from "./beans";
 import {RowComp} from "./rowComp";
 import {RowDragComp} from "./rowDragComp";
+import {EmptyFloatingFilterWrapperComp, IFloatingFilterWrapperComp} from "../filter/floatingFilterWrapper";
 
 
 export class CellComp extends Component {
@@ -1483,13 +1484,13 @@ export class CellComp extends Component {
         // row dragging only available in default row model
         if (!this.beans.gridOptionsWrapper.isRowModelDefault()) {
             _.doOnce(() => console.warn('ag-Grid: row dragging is only allowed in the In Memory Row Model'),
-                'CellComp.addRowDragging')
+                'CellComp.addRowDragging');
             return;
         }
 
         if (this.beans.gridOptionsWrapper.isPagination()) {
             _.doOnce(() => console.warn('ag-Grid: row dragging is not possible when doing pagination'),
-                'CellComp.addRowDragging')
+                'CellComp.addRowDragging');
             return;
         }
 

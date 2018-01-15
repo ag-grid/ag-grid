@@ -135,24 +135,6 @@ export class ComponentRecipes {
         );
     }
 
-    private isBasicFilterType (type:string):boolean {
-        switch (type){
-            case 'text':
-            case 'agTextColumnFilter':
-            case 'number':
-            case 'agNumberColumnFilter':
-            case 'date':
-            case 'agDateColumnFilter':
-            case 'set':
-            case 'agSetColumnFilter':
-                return true;
-
-            default:
-                return false
-        }
-
-    }
-
     public newFullWidthGroupRowInnerCellRenderer (params:ICellRendererParams):Promise<ICellRendererComp>{
         return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptions, params, "groupRowInnerRenderer", "agGroupRowInnerCellRenderer", false);
     }
