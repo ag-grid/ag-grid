@@ -1,0 +1,15 @@
+.category-for-sale {
+    font-weight: bold;
+    background-color: lightgreen !important;
+}
+.category-sold {
+    font-weight: bold;
+    background-color: lightblue !important;;
+}
+.category-in-workshop {
+    font-weight: bold;
+    background-color: orange !important;;
+}
+.bt-action {
+    margin: 0px;
+}

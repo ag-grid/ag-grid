@@ -1,33 +1,21 @@
-<style>
-    .total-col {
-        font-weight: bold;
-        color: burlywood;
-    }
-</style>
-
-<div style="height: 100%; padding-top: 35px; box-sizing: border-box;">
+<div style="height: 100%; padding-top: 60px; box-sizing: border-box;">
     <div id="myGrid" style="height: 100%;" class="ag-theme-dark"></div>
 </div>
 <div style="position: absolute; top: 0; left: 0">
-    <label>
-        <input type="checkbox" id="pivot-mode" onclick="pivotMode()" />
-        Group &amp; Pivot
-    </label>
+    <div>
+        <label>
+            <input type="checkbox" id="pivot-mode" onclick="pivotMode()" />
+            Group &amp; Pivot
+        </label>
+    </div>
 
-    &nbsp;
-    &nbsp;
-    &nbsp;
-
-    <button onclick="updateOneRecord()">Set One Value</button>
-
-    <button onclick="updateUsingTransaction()">Update Points</button>
-
-    <button onclick="addNewGroupUsingTransaction()">Add New Group</button>
-
-    <button onclick="addNewCourse()">Add Physics Row</button>
-
-    <button onclick="removePhysics()">Remove All Physics</button>
-
-    <button onclick="moveCourse()">Move Course</button>
+    <div style="margin-top: 6px;">
+        <button onclick="updateOneRecord()">Set One Value</button>
+        <button onclick="updateUsingTransaction()">Update Points</button>
+        <button onclick="addNewGroupUsingTransaction()">Add New Group</button>
+        <button onclick="addNewCourse()">Add Physics Row</button>
+        <button onclick="removePhysics()">Remove All Physics</button>
+        <button onclick="moveCourse()">Move Course</button>
+    </div>
 
 </div>
