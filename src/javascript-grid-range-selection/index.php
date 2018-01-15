@@ -9,19 +9,19 @@ include '../documentation-main/documentation_header.php';
 <div>
     <h1 class="heading-enterprise">Range Selection</h1>
 
-    <p>
+    <p class="lead">
         Range selection allows Excel-like range selection of cells. Once enabled, you can drag the mouse over
         a set of cells to select a range of cells.
     </p>
 
-    <h3>Selecting Multiple Ranges</h3>
+    <h2>Selecting Multiple Ranges</h2>
 
     <p>
         To select multiple ranges, hold down ctrl while making the selection. To prevent multiple
         selections though the GUI, set grid property <code>suppressMultiRangeSelection=true</code>.
     </p>
 
-    <h3>Ranges with Pinning and Floating</h3>
+    <h2>Ranges with Pinning and Floating</h2>
 
     <p>
         It is possible to select a range that spans pinned and non-pinned sections of the grid.
@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
         in the flattened out version with only full rectangles can be selectable.
     </p>
 
-    <h3>Range Change Event</h3>
+    <h2>Range Change Event</h2>
 
     <p>
         There is one event rangeSelectionChanged to tell you the range selection has changed.
@@ -51,7 +51,7 @@ include '../documentation-main/documentation_header.php';
         is starting or finishing.
         For example, if selecting a range of 10 cells in a row, the user will click the first
         cell and drag to the last cell. This will result in up to 11 events. The first event
-        will have <i>started=true</i>, the last will have <i>finished=true</i>, and
+        will have <code>started=true</code>, the last will have <code>finished=true</code>, and
         all the intermediary events will have both of these values as false.
     </p>
 
@@ -63,12 +63,12 @@ api.addEventListener('rangeSelectionChanged', function(event) {
     console.log('has changed, finished = ' + event.finished);
 });</snippet>
 
-    <h3>Range Selection API</h3>
+    <h2>Range Selection API</h2>
 
-    <p><b>api.getRangeSelections()</b></p>
+    <h3><code>api.getRangeSelections()</code></h3>
 
     <p>
-        Get the selected ranges using <i>api.getRangeSelections()</i>. This will return back
+        Get the selected ranges using <code>api.getRangeSelections()</code>. This will return back
         a list of range selection objects, each object contain the details of one range. The
         structure of the range selection is as follows:
         <snippet>
@@ -88,7 +88,8 @@ GridCell {
     <p>
         The start and end will be the cells the user started the drag on. Two things to notice
         about the start and end:
-        <ul>
+    </p>
+        <ul class="content">
             <li>The start is the first cell the user clicked on and the end is the cell where
             the user stopped dragging. Do not assume that the start cell's index is numerically
             before the end cell, as the user could of dragged up. Likewise for columns, the end
@@ -98,19 +99,18 @@ GridCell {
             may not be what you expect, as the grid may
             display the columns in a different order to what you provided the grid (the user could
             reorder), or columns may be not visible, or column groups may be closed. To avoid all
-            ambiguity, the exact columns in the range are presented individually in the <i>columns</i>
+            ambiguity, the exact columns in the range are presented individually in the <code>columns</code>
             list.
             </li>
         </ul>
-    </p>
 
-    <p><b>api.clearRangeSelection()</b></p>
+    <h3><code>api.clearRangeSelection()</code></h3>
 
     <p>
         Clears the range selection.
     </p>
 
-    <p><b>api.addRangeSelection(rangeSelection)</b></p>
+    <h3><code>api.addRangeSelection(rangeSelection)</code></h3>
 
     <p>
         Adds a range to the selection. This keeps any prevoius ranges. If you wish to have this range
@@ -126,44 +126,44 @@ AddRangeSelectionParams{
 }</snippet>
     </p>
 
-    <h3>Callback processCellForClipboard()</h3>
+    <h3>Callback <code>processCellForClipboard()</code></h3>
 
     <p>
-        There is a grid callback <i>processCellForClipboard()</i> that allows you to format cells before
+        There is a grid callback <code>processCellForClipboard()</code> that allows you to format cells before
         going to the clipboard. This can be useful if, for example, you are pasting to Excel and you need to
         format dates so that Excel can understand them.
     </p>
 
     <p>
-        The callback params has the following attributes: value, node, column, api, columnApi, context, type.
+        The callback params has the following attributes: <code>value, node, column, api, columnApi, context, type</code>.
     </p>
 
-    <h3>Copy Range Down</h3>
+    <h2>Copy Range Down</h2>
 
     <p>
-        When you have more than one row selected in a range, pressing keys Ctrl & D will copy
+        When you have more than one row selected in a range, pressing keys <kbd>Ctrl + D</kbd> will copy
         the range down.
     </p>
 
-    <h1>Range Selection Example</h1>
+    <h2>Range Selection Example</h2>
 
     <p>
         The example below demonstrates range selection. Use your mouse to drag over the cells
         to create selections. Hold down ctrl to select more than one range. The example listens
-        for the <i>rangeSelectionChanged</i> event and creates a sum of all the number values
-        that are in the range (it ignores all non-number values). The <i>finished</i> flag
+        for the <code>rangeSelectionChanged</code> event and creates a sum of all the number values
+        that are in the range (it ignores all non-number values). The <code>finished</code> flag
         is used to update the eager and lazy figures separately.
     </p>
 
     <p>
-        The example also shows use of <i>processCellForClipboard()</i> and <i>processCellFromClipboard()</i>
+        The example also shows use of <code>processCellForClipboard()</code> and <code>processCellFromClipboard()</code>
         by making all the athlete names upper case when copying into the clipboard and lowercase when
         copying it from the clipboard.
     </p>
 
     <?= example('Range Selection', 'range-selection', 'generated', array("enterprise" => 1)) ?>
 
-    <h1>Range Selection Example - Suppress Multi</h1>
+    <h2>Range Selection Example - Suppress Multi</h2>
 
     <p>
         This example differs from above as <code>suppressMultiRangeSelection=true</code> which only allows

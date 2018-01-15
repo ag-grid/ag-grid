@@ -309,7 +309,7 @@ module.exports = {
         and the more fluid application code. Using the <code>entry</code> property we can specify the entry points we
         want to use - we have specified 3 here:
     </p>
-    <ul>
+    <ul class="content">
         <li>polyfills: polyfills we require to run Angular / ES6 applications in current browsers.</li>
         <li>vendor: the vendor (or 3rd party) libraries we need - ag-Grid, Angular etc.</li>
         <li>app: our application code.</li>

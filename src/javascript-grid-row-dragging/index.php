@@ -6,11 +6,11 @@ $pageGroup = "features";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="first-h1" id="row-models">
+    <h1>
         Row Dragging
     </h1>
 
-    <p>
+    <p class="lead">
         Row dragging is used to rearrange rows by dragging the row with the mouse. To
         enable row dragging, set the column property <code>rowDrag</code> on one (typically
         the first) column.
@@ -33,7 +33,8 @@ colDef = {
 
     <p>
         There are two ways in which row dragging works in the grid, managed and unmanaged:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 <b>Managed Dragging</b>: This is the simplest and the grid will rearrange
                 rows as you drag them.
@@ -45,7 +46,6 @@ colDef = {
                 application.
             </li>
         </ul>
-    </p>
 
     <h2>Managed Dragging</h2>
 
@@ -56,7 +56,8 @@ colDef = {
 
     <p>
         The example below shows simple managed dragging. The following can be noted:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 The first column has <code>rowDrag=true</code> which results in a
                 draggable area included in the cell.
@@ -71,13 +72,11 @@ colDef = {
                 This is consistent with the constraints explained after the example.
             </li>
         </ul>
-    </p>
 
     <?= example('Row Drag Simple Managed', 'simple-managed', 'generated') ?>
 
-    <p>
-        The logic for managed dragging is simple and has the following constraints:
-        <ul>
+    <p> The logic for managed dragging is simple and has the following constraints:</p>
+        <ul class="content">
             <li>
                 Works with <a href="../javascript-grid-in-memory/">In Memory</a> row model only and
                 not with the <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
@@ -101,8 +100,8 @@ colDef = {
                 your application knows.
             </li>
         </ul>
-        These constraints are easily got around by using unmanaged row dragging explained below.
-    </p>
+
+        <p>These constraints are easily got around by using unmanaged row dragging explained below.  </p>
 
     <h2>Suppress Row Drag</h2>
 
@@ -113,12 +112,12 @@ colDef = {
 
     <p>
         The example below is almost identical to the previous example with the following differences:
-        <ul>
+    </p>
+        <ul class="content">
             <li>Button <b>Suppress</b> will hide the drag icons.</li>
             <li>Button <b>Remove Suppress</b> will un-hide the drag icons.</li>
             <li>Applying a sort or a filter to the grid will also suppress the drag icons.</li>
         </ul>
-    </p>
 
     <?= example('Suppress Row Drag', 'suppress-row-drag', 'generated') ?>
 
@@ -128,7 +127,8 @@ colDef = {
         Unmanaged dragging is the default dragging for the grid. To use it, do not set
         the property <code>rowDragManaged</code>. Unmanaged dragging differs from managed
         dragging in the following ways:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 The grid does not manage moving of the rows. The only thing the grid
                 responds with is firing drag events. It is up to the application to do
@@ -144,7 +144,6 @@ colDef = {
                 Dragging is allowed while row group or pivot is applied.
             </li>
         </ul>
-    </p>
 
     <note>
         It is not possible for the grid to provide a generic solution for row dragging that fits
@@ -154,9 +153,8 @@ colDef = {
 
     <h3>Row Drag Events</h3>
 
-    <p>
-        There are four grid events associated with row dragging which are:
-        <ul>
+    <p> There are four grid events associated with row dragging which are:</p>
+        <ul class="content">
             <li>
                 <code>rowDragEnter</code>: A drag has started, or dragging already started and the mouse
                 has re-entered the grid having previously left the grid.
@@ -171,21 +169,21 @@ colDef = {
                 <code>rowDragEnd</code>: The drag has finished over the grid.
             </li>
         </ul>
-        Typically a drag will fire the following events:
-        <ol>
+        <p>Typically a drag will fire the following events:</p>
+        <ol class="content">
             <li><code>rowDragEnter</code> fired once - The drag has started.</li>
             <li><code>rowDragMove</code> fired multiple times - The mouse is dragging over the rows.</li>
             <li><code>rowDragEnd</code> fired once - The drag has finished.</li>
         </ol>
-        Additional <code>rowDragLeave</code> and <code>rowDragEnter</code> events are fired if the mouse
+
+    <p>Additional <code>rowDragLeave</code> and <code>rowDragEnter</code> events are fired if the mouse
         leaves or re-enters the grid. If the drag is finished outside of the grid, then the
         <code>rowDragLeave</code> is the last event fired and no <code>rowDragEnd</code> is fired,
         as the drag did not end on the grid.
     </p>
 
-    <p>
-        Each of the four row drag events has the following attributes:
-        <ul>
+    <p> Each of the four row drag events has the following attributes:</p>
+        <ul class="content">
             <li><code>type</code>: One of {rowDragEnter, rowDragMove, rowDragEnd, rowDragLeave}.</li>
             <li><code>api</code>: The grid API.</li>
             <li><code>columnApi</code>: The grid Column API.</li>
@@ -208,7 +206,6 @@ colDef = {
                 horizontally and not vertically).
             </li>
         </ul>
-    </p>
 
     <h3>Example Events</h3>
 
@@ -221,7 +218,8 @@ colDef = {
 
     <p>
         From the example the following can be noted:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 The first column has <code>rowDrag=true</code> which results in a draggable
                 area included in the cell.
@@ -242,7 +240,6 @@ colDef = {
                 property.
             </li>
         </ul>
-    </p>
 
     <?= example('Row Drag Events', 'dragging-events', 'generated') ?>
 
@@ -257,7 +254,8 @@ colDef = {
 
     <p>
         From the example the following can be noted:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 The property <code>suppressRowDrag=true</code> is set by the application
                 depending on whether sorting or filtering is active. This is because the logic
@@ -272,7 +270,6 @@ colDef = {
                 for different options.
             </li>
         </ul>
-    </p>
 
     <?= example('Row Drag Simple Unmanaged', 'simple-unmanaged', 'generated') ?>
 
@@ -301,7 +298,8 @@ colDef = {
     <p>
         The example below shows row dragging with <a href="../javascript-grid-grouping/">Row Grouping</a>
         where the following can be noted:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 The column 'Athlete' has row drag true for non-group rows. This is achieved
                 using the function variant of the <code>rowDrag</code> property.
@@ -328,7 +326,6 @@ colDef = {
                 or filtering is applied.
             </li>
         </ul>
-    </p>
 
     <?= example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', array("enterprise" => 1)) ?>
 
@@ -348,7 +345,8 @@ colDef = {
     <p>
         The example below shows <a href="../javascript-grid-tree-data/">Tree Data</a>
         and row dragging where the following can be noted:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 The <a href="../javascript-grid-grouping/#auto-column-group">auto-group column</a>
                 has row drag true for all rows.
@@ -365,7 +363,6 @@ colDef = {
 
         <?= example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
 
-    </p>
 
     <h3>Example Highlighted Tree Data</h3>
 
@@ -374,7 +371,9 @@ colDef = {
         what folder will be the destination folder. The example below continues with the example
         about by providing hints to the user while the drag is in progress. From the example
         the following can be observed:
-        <ul>
+
+    </p>
+        <ul class="content">
             <li>
                 The example registers for <code>onRowDragMove</code> events and works out what folder
                 the mouse is over as the drag is happening.
@@ -402,8 +401,6 @@ colDef = {
         </ul>
 
         <?= example('Highlighting Drag with Tree Data', 'highlighting-drag-tree-data', 'generated', array('enterprise' => true, 'extras' => array('fontawesome')) ) ?>
-
-    </p>
 
     <h2>Dragging Multiple Rows</h2>
 

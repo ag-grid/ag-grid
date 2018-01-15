@@ -56,7 +56,8 @@ include('../includes/mediaHeader.php');
             with all other grid features. To fix this we have rewritten from scratch the
             <a href="../../javascript-grid-tree-data/">Tree Data</a> so that it now does support all grid features
             including:
-            <ul>
+        </p>
+            <ul class="content">
                 <li>
                     Support for <a href="../../javascript-grid-data-update/">data updates</a>,
                     including <a href="../../javascript-grid-data-update/#transactions">transactions</a>
@@ -70,7 +71,6 @@ include('../includes/mediaHeader.php');
                     Support for aggregations.
                 </li>
             </ul>
-        </p>
 
         <h2>New Feature: Unbalanced Grouping</h2>
 

@@ -6,11 +6,11 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
 
     <h1 id="sorting">Row Sorting</h1>
 
-    <p>
+    <p class="lead">
         This page describes how to get your grid data sorting.
     </p>
 
@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
         <a href="../javascript-grid-virtual-paging/">virtual paging</a>
     </note>
 
-    <h3 id="enable-sorting">Enable Sorting</h3>
+    <h2>Enable Sorting</h2>
 
     <p>
         Turn sorting on for the grid by enabling sorting in the grid options.
@@ -33,7 +33,7 @@ include '../documentation-main/documentation_header.php';
         hold down shift while clicking the column header.
     </p>
 
-    <h3 id="custom-sorting">Custom Sorting</h3>
+    <h2>Custom Sorting</h2>
 
     <p>
         Custom sorting is provided at a column level by configuring a comparator on the column definition.
@@ -45,27 +45,25 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
     return valueA - valueB;
 }</snippet>
 
-    <h3 id="example-custom-sorting">Example: Custom Sorting</h3>
+    <h2>Example: Custom Sorting</h2>
 
-    <p>
-        Example below shows the following:
-        <ul>
+    <p> Example below shows the following: </p>
+        <ul class="content">
             <li>Default sorting on the Athlete column.</li>
             <li>When the year column is not sorted, it shows a custom icon, (up/down arrow).</li>
             <li>The date column has strings as the row data, there is custom comparator so that when you sort this column
             it sorts it as dates, not as strings.</li>
         </ul>
-    </p>
 
     <?= example('Custom Sorting', 'custom-sorting', 'generated') ?>
 
-    <h3 id="sorting-animation">Sorting Animation</h3>
+    <h2>Sorting Animation</h2>
 
     <p>
-        To enable animation of the rows after sorting, set grid property <i>animateRows=true</i>.
+        To enable animation of the rows after sorting, set grid property <code>animateRows=true</code>.
     </p>
 
-    <h3 id="sorting-order">Sorting Order</h3>
+    <h2>Sorting Order</h2>
 
     <p>
         By default, the sorting order is as follows:
@@ -83,30 +81,30 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         preference, allowing you to defined a common default, and then tailoring per column.
     </p>
 
-    <h3 id="example-sorting-order-and-animation">Example: Sorting Order and Animation</h3>
+    <h2>Example: Sorting Order and Animation</h2>
 
     <p>
         The example below shows animation of the rows plus different combinations of sorting orders as follows:
-        <ul>
+    </p>
+        <ul class="content">
         <li><b>Grid Default:</b> ascending -> descending -> no sort</li>
         <li><b>Column Athlete:</b> ascending -> descending</li>
         <li><b>Column Age:</b> descending -> ascending</li>
         <li><b>Column Country:</b> descending -> no sort </li>
         <li><b>Column Year:</b> ascending only</li>
     </ul>
-    </p>
 
     <?= example('Sorting Order and Animation', 'sorting-order-and-animation', 'generated') ?>
 
-    <h3 id="sorting-api">Sorting API</h3>
+    <h2>Sorting API</h2>
 
     <p>
         Sorting can be controlled via the Sorting API via the following methods:
-        <ul>
+    </p>
+        <ul class="content">
         <li><b>setSortModel(sortModel):</b> To set the sort.</li>
         <li><b>getSortModel():</b> To return the state of the currently active sort.</li>
     </ul>
-    </p>
 
     <p>
         Both methods work with a list of sort objects, each object containing a sort field
@@ -121,7 +119,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
     {colId: 'sport', sort: 'desc'}
 ]</snippet>
 
-    <h3 id="example-sorting-api">Example: Sorting API</h3>
+    <h2>Example: Sorting API</h2>
 
     <p>
         The example below shows the API in action.
@@ -129,7 +127,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
 
     <?= example('Sorting API', 'sorting-api', 'generated') ?>
 
-    <h3 id="sorting-groups">Sorting Groups</h3>
+    <h2>Sorting Groups</h2>
 
     <p>
         The grid sorts using a default comparator for grouped columns, if you want to specify your own, you can do
@@ -146,7 +144,7 @@ var groupColumn = {
 };
    </snippet>
 
-    <h3 id="accentedSort">Accented sort</h3>
+    <h2>Accented sort</h2>
 
     <p>
         By default sorting doesn't take into consideration locale specific characters, if you need to make your sort locale
@@ -163,6 +161,6 @@ var groupColumn = {
     </p>
 
     <?= example('Accented Sort', 'accented-sort', 'generated') ?>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

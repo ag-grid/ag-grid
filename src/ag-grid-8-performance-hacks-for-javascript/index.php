@@ -257,7 +257,8 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
         <p>
             So the next performance hack was to break the rendering of the rows into different tasks using animation frames.
             When the user scrolls vertically to show different rows, the following tasks are set up in a task queue:
-            <ul>
+         </p> 
+            <ul class="content">
                 <li>1 task, if pinning then scroll the pinned panels.</li>
                 <li>n tasks to insert each rows container (results in drawing the row background colour).</li>
                 <li>n tasks to insert the cells using string building and <code>innerHTML</code>.</li>
@@ -265,13 +266,15 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
                 <li>n tasks to add <i>mouseenter</i> and <i>mouseleave</i> listeners to all rows (for adding and removing hover class).</li>
                 <li>n tasks to remove the old rows (do not deconstruct cells, just rip the rows out).</li>
             </ul>
+        <p>
             So if you scroll to show 10 new rows, you will have 50+ tasks. Each scroll, row creation, cell
             creation etc. will be an individual task.
         </p>
         <p>
             The grid then uses animation frames (or timeouts if the browser does not support animation frames)
             to execute the tasks using a priority order. The order ensures things such as:
-            <ul>
+</p>
+            <ul class="content">
                 <li>Scrolling will get done first, best efforts are made to keep pinned sections in line.</li>
                 <li>Row containers are second, the first thing the user will see is the outline of the rows.</li>
                 <li>Cells are drawn in stages, as quickly as the browser will allow while giving visual feedback to the user.</li>
@@ -280,6 +283,7 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
                     keeping all pinned areas in sync as a priority.</li>
                 <li>Tasks that are old are cancelled i.e. the user has scrolled past by the the time the row is to be rendered.</li>
             </ul>
+<p>
             Having this many tasks should result in a lot of animation frames. To avoid this, the grid does not put each individual
             task into an animation frame. This would be overkill as then the create, destroy and schedule of
             animations frames would add their own overhead. Instead the grid requests one animation frame

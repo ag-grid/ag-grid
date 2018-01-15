@@ -6,22 +6,22 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
 
     <h1 id="selection">Row Selection</h1>
 
     <p>
         Configure row selection with the following properties:
     </p>
-    <ul>
-        <li><b>rowSelection</b>: Type of row selection, set to either 'single' or 'multiple' to
+    <ul class="content">
+        <li><code>rowSelection</code>: Type of row selection, set to either <code>'single'</code> or <code>'multiple'</code> to
             enable selection. Single sets to single row selection, such that when you select a row,
             the previously selected row gets unselected. Multiple allows multiple row selection.</li>
-        <li><b>rowDeselection</b>: Set to true or false. If true, then rows will be deselected if
+        <li><code>rowDeselection</code>: Set to <code>true</code> or <code>false</code>. If true, then rows will be deselected if
             you hold down ctrl + click the row. Normal behaviour with the grid disallows deselection
             of nodes (ie once a node is selected, it remains selected until another row is selected
             in its place).</li>
-        <li><b>suppressRowClickSelection</b>: If true, rows won't be selected when clicked. Use, for
+        <li><code>suppressRowClickSelection</code>: If <code>true</code>, rows won't be selected when clicked. Use, for
             example, when you want checkbox selection, and don't want to also select when the row
             is clicked.</li>
     </ul>
@@ -32,18 +32,18 @@ include '../documentation-main/documentation_header.php';
         the selected rows, there are two method types, ones that return nodes, and ones that
         return data items. To get the selected nodes / rows from the grid, use the following
         API methods:
-        <ul>
-            <li><b>api.getSelectedNodes()</b>: Returns an array of the selected nodes.</li>
-            <li><b>api.getSelectedRows()</b>: Returns a array of selected rows data.</li>
-        </ul>
     </p>
+        <ul class="content">
+            <li><code>api.getSelectedNodes()</code>: Returns an array of the selected nodes.</li>
+            <li><code>api.getSelectedRows()</code>: Returns a array of selected rows data.</li>
+        </ul>
 
     <p>
         Working with the ag-Grid nodes is preferred over the row data as it provide you with
         more information and maps better to the internal representation of ag-grid.
     </p>
 
-    <h3 id="singleRowSelectionExample">Example - Single Row Selection</h3>
+    <h2>Example - Single Row Selection</h2>
 
     <p>
         The example below shows single row selection.
@@ -51,7 +51,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Single Row Selection', 'single-row-selection', 'generated') ?>
 
-    <h3 id="multiRowSelectionExample">Example - Multiple Row Selection</h3>
+    <h2>Example - Multiple Row Selection</h2>
 
     <p>
         The example below shows multi-row selection.
@@ -59,7 +59,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Multiple Row Selection', 'multiple-row-selection', 'generated') ?>
 
-    <h3 id="checkboxSelection">Checkbox Selection</h3>
+    <h2>Checkbox Selection</h2>
 
     <p>
         Checkbox selection can be used in two places: a) row selection and b) group selection.
@@ -75,40 +75,41 @@ include '../documentation-main/documentation_header.php';
         group renderer. See the grouping section for details on the group renderer.
     </p>
     <p>
-        colDef.checkboxSelection can also be a function that returns true/false - use this if
+        <code>colDef.checkboxSelection</code> can also be a function that returns true/false - use this if
         you want only checkboxes on some rows but not others. gridOptions.checkboxSelection can
         also be specified as a function - use this if you want, for example, the first column
         to have checkbox selection regardless of which column it is (you would do this by looping the columns using the
         column API, and check if the first column is the current one (in checkboxSelection).
     </p>
 
-    <h3 id="groupSelection">Group Selection</h3>
+    <h2>Group Selection</h2>
 
     <p>
         When doing grouping, you control what selecting a group means. This is controlled with
-        the two properties <i>groupSelectsChildren</i> and <i>groupSelectsFiltered</i>.
-    <ul>
-        <li><b>groupSelectsChildren</b>: When <b>true</b>, selecting a group will have the impact of
+        the two properties <code>groupSelectsChildren</code> and <code>groupSelectsFiltered</code>.
+    </p>
+
+    <ul class="content">
+        <li><code>groupSelectsChildren</code>: When <code>true</code>, selecting a group will have the impact of
             selecting all its children. The group will then display 'selected' when all children
             are selected, 'unselected' when none are selected and 'intermediate' when children have
             a mix of selected and unselected. When the node is selecting children, it will never appear
-            in the selected set when calling <i>api.getSelectedNodes()</i>.
-            When <b>false</b>, then the group is selectable independently
+            in the selected set when calling <code>api.getSelectedNodes()</code>.
+            When <code>false</code>, then the group is selectable independently
             of the child nodes.</li> When selecting the group node independently of the children, it will
-            appear in the set when calling <i>api.getSelectedNodes()</i>.
-        <li><b>groupSelectsFiltered</b>: Gets used when <i>groupSelectsChildren=true</i>. When
-            <b>true</b> only filtered children of the group will be selected / unselected. This means
+            appear in the set when calling <code>api.getSelectedNodes()</code>.
+        <li><code>groupSelectsFiltered</code>: Gets used when <code>groupSelectsChildren=true</code>. When
+            <code>true</code> only filtered children of the group will be selected / unselected. This means
             you can apply a filter, then try to select a group, the group will end up in the
             intermediate state as only as subset of the children will be selected.</li>
     </ul>
-    </p>
 
-    <h4 id="groupsSelectionExample1">Groups & Checkbox Selection Example 1</h4>
+    <h3>Groups & Checkbox Selection Example 1</h3>
 
     <p>
         The example below shows checkbox selection with groups. Selecting the group has the
         effect of selecting the children. Likewise selecting all the children automatically
-        selects the group. In this scenario the group itself will never appear in the <i>selectedRows</i>
+        selects the group. In this scenario the group itself will never appear in the <code>selectedRows</code>
         list.
     </p>
 
@@ -120,21 +121,21 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Group Selection', 'group-selection', 'generated', array("enterprise" => 1)) ?>
 
-    <h4 id="groupsSelectionExample2" class="heading-enterprise">Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h4>
+    <h3>Groups & Checkbox Selection Example 2 - No Select Leaf Nodes</h3>
 
     <p>
         The example below is similar to the previous example except it does not put checkboxes
         on the leaf level nodes, only allowing entire groups to be selected. This is achieved
         by providing functions for
-        <i>colDef.checkboxSelection</i> and <i>autoGroupColumnDef.cellRendererParams.checkbox</i>.
+        <code>colDef.checkboxSelection</code> and <code>autoGroupColumnDef.cellRendererParams.checkbox</code>.
     </p>
 
     <?= example('Selection Checkbox', 'selection-checkbox', 'generated', array("enterprise" => 1)) ?>
 
-    <h4 id="groupsSelectionExample3">Groups & Checkbox Selection Example 3 - Only Filtered</h4>
+    <h3>Groups & Checkbox Selection Example 3 - Only Filtered</h3>
 
     <p>
-        Lastly we show an example using <i>groupSelectsFiltered=true</i>. Here, when you filter
+        Lastly we show an example using <code>groupSelectsFiltered=true</code>. Here, when you filter
         the grid and select a group, only the filtered children get selected.
     </p>
 
@@ -152,12 +153,12 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Selection Checkbox Filtered', 'selection-checkbox-filtered', 'generated', array("enterprise" => 1)) ?>
 
-    <h3 id="headerCheckboxSelection">Header Checkbox Selection</h3>
+    <h2>Header Checkbox Selection</h2>
 
     <p>
         It is possible to have a checkbox in the header for selection. To configure the
-        column to have checkbox, set <i>colDef.headerCheckboxSelection=true</i>.
-        <i>headerCheckboxSelection</i> can also be a function, if you want the checkbox
+        column to have checkbox, set <code>colDef.headerCheckboxSelection=true</code>.
+        <code>headerCheckboxSelection</code> can also be a function, if you want the checkbox
         to appear sometimes (eg if the columns is ordered first in the grid).
     </p>
 
@@ -181,15 +182,16 @@ colDef = {
 }</snippet>
 
     <p>
-        If <i>headerCheckboxSelection</i> is a function, the function will be called every
+        If <code>headerCheckboxSelection</code> is a function, the function will be called every
         time there is a change to the displayed columns, to check for changes.
     </p>
 
-    <h4 id="select-everything-or-just-filtered">Select Everything or just Filtered</h4>
+    <h2>Select Everything or just Filtered</h2>
 
     <p>
         The header checkbox has two modes of operation, 'normal' and 'filtered only'.
-        <ul>
+</p>
+        <ul class="content">
             <li><b>colDef.headerCheckboxSelectionFilteredOnly=false</b>: The checkbox
             will select all rows when checked, and un-select all rows when unchecked.
             The checkbox will update its state based on all rows.</li>
@@ -198,40 +200,42 @@ colDef = {
             rows when unchecked. The checkbox will update its state base on only
             filtered rows.</li>
         </ul>
+    <p>
         The examples below demonstrate both of these options.
     </p>
 
-    <h4 id="headerSelectionExample1">Header Checkbox Example 1 - Filtered Only = true</h4>
+    <h3>Header Checkbox Example 1 - Filtered Only = true</h3>
 
     <p>
         This example has the following characteristics:
-        <ul>
+    </p>
+        <ul class="content">
             <li>The checkbox works on filtered only. That means if you filter first, then hit the checkbox to select
                 or un-select, then only the filtered results get impacted.</li>
             <li>The checkbox is always on the athlete column, even if the athlete column is moved.</li>
         </ul>
-    </p>
 
     <?= example('Header Checkbox', 'header-checkbox', 'generated') ?>
 
-    <h4 id="headerSelectionExample2">Header Checkbox Example 2 - Filtered Only = false</h4>
+    <h3>Header Checkbox Example 2 - Filtered Only = false</h3>
 
     <p>
         The next example is similar to the one above with the following changes:
-        <ul>
+    </p>
+        <ul class="content">
         <li>The select selects everything, not just filtered.</li>
         <li>The column that the selection checkbox goes on is always the first column.
         This can be observed by dragging the columns to reorder them.</li>
     </ul>
-    </p>
 
     <?= example('Header Checkbox Entire Set', 'header-checkbox-entire-set', 'generated') ?>
 
-    <h3 id="selectionEvents">Selection Events</h3>
+    <h2>Selection Events</h2>
 
     <p>
         There are two events with regards selection:<br/>
-        <ul>
+    </p>
+        <ul class="content">
             <li><b>rowSelected</b>: Gets called when a row is selected or deselected.
                 The event contains the node in question, so call the nodes 'isSelected()'
                 method to see if it was just selected or deselected.</li>
@@ -239,16 +243,16 @@ colDef = {
                 selected or deselected. Use the grid API get a list of selected nodes
                 if you want them.</li>
         </ul>
-    </p>
 
     <?= example('Selection Events', 'selection-events', 'generated') ?>
 
-    <h3 id="nodeSelectionApi">Node Selection API</h3>
+    <h2>Node Selection API</h2>
 
     <p>
         To select rows programmatically, use the node.setSelected() method. This method takes two
         parameters:
-    <ul>
+</p>
+    <ul class="content">
         <li><b>selected</b>: set to true to select, false to un-select.</li>
         <li><b>clearSelection</b> (optional): for selection only. If true, other nodes selection will be cleared.
             Use this if you do not want multi selection and want this node to be exclusively selected.</li>
@@ -271,20 +275,20 @@ var selected = node.isSelected();</snippet>
     (and grand child) nodes are selected, false if all unselected, or undefined if a mixture.
     </p>
 
-    <h3 id="gridSelectionApi">Grid Selection API</h3>
+    <h2>Grid Selection API</h2>
 
     <p>
         The grid API has the following methods for selection:
-        <ul>
-        <li><b>api.selectAll()</b>: Select all rows in the grid. This is independent to filtering, it will always
+    </p>
+        <ul class="content">
+        <li><code>api.selectAll()</code>: Select all rows in the grid. This is independent to filtering, it will always
         select everything regardless of filtering.</li>
-        <li><b>api.deselectAll()</b>: Un-select all rows, again regardless of filtering.</li>
-        <li><b>api.selectAllFiltered()</b>: Select all filtered rows in the grid.</li>
-        <li><b>api.deselectAllFiltered()</b>: Un-select all filtered rows.</li>
-        <li><b>api.getSelectedNodes()</b>: Returns a list of all the selected row nodes. This again is regardless
+        <li><code>api.deselectAll()</code>: Un-select all rows, again regardless of filtering.</li>
+        <li><code>api.selectAllFiltered()</code>: Select all filtered rows in the grid.</li>
+        <li><code>api.deselectAllFiltered()</code>: Un-select all filtered rows.</li>
+        <li><code>api.getSelectedNodes()</code>: Returns a list of all the selected row nodes. This again is regardless
         of what filters are set.</li>
     </ul>
-    </p>
     <p>
         If you want to select only filtered out rows nodes, then you do this following:
         <snippet>
@@ -295,10 +299,10 @@ api.forEachNodeAfterFilter( function(node) {
 });</snippet>
     </p>
 
-    <h3 id="deep-dive-example-using-for-each-node">Deep Dive Example - Using <i>forEachNode</i></h3>
+    <h3 id="deep-dive-example-using-for-each-node">Deep Dive Example - Using <code>forEachNode</code></h3>
 
     <p>
-        There is an api function <i>forEachNode</i>. This is useful for doing group selections
+        There is an api function <code>forEachNode</code>. This is useful for doing group selections
         on a business key. The example below shows selecting all rows with country = 'United States'.
         This method is also useful when you load data and need to know the node equivalent of the
         data for selection purposes.
@@ -306,7 +310,7 @@ api.forEachNodeAfterFilter( function(node) {
 
     <?= example('Using forEachNode', 'using-foreachnode', 'generated') ?>
 
-    <h3 id="selectionArrowKeys">Selection with Keyboard Arrow Keys</h3>
+    <h2>Selection with Keyboard Arrow Keys</h2>
 
     <p>
         By default, you can select a row on mouse click. And you can navigate up and down the rows
@@ -317,7 +321,7 @@ api.forEachNodeAfterFilter( function(node) {
 
     <p>
         First we need to provide a callback to the navigateToNextCell property in gridOptions to
-        override the default arrow key navigation
+        override the default arrow key navigation:
     </p>
 
     <snippet>
@@ -331,7 +335,7 @@ var gridOptions = {
 
 
     <p>
-        From the code below you can see that we iterate over each node and call the <i>setSelected()</i>
+        From the code below you can see that we iterate over each node and call the <code>setSelected()</code>
         method if matches the current rowIndex.</p>
 
     <snippet>
@@ -374,6 +378,6 @@ function myNavigation(params) {
 
     <?= example('Selection with Keyboard Arrow Keys', 'selection-with-arrow-keys') ?>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

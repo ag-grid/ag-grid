@@ -6,9 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
-    <h1 class="first-h1" id="grouping-columns">Column Groups</h1>
+    <h1>Column Groups</h1>
 
     <p>
         Grouping columns allows you to have multiple levels of columns in your header and the ability,
@@ -46,13 +44,14 @@ gridOptions.columnDefs = [
     }
 ];</snippet>
 
-    <h2 id="column-definitions-vs-column-group-definitions">Column Definitions vs Column Group Definitions</h2>
+    <h2>Column Definitions vs Column Group Definitions</h2>
 
     <p>
-        The list of columns in <i>gridOptions.columnDefs</i> can be a mix of columns and column groups.
+        The list of columns in <code>gridOptions.columnDefs</code> can be a mix of columns and column groups.
         You can mix and match at will, every level can have any number of columns and groups and in any
         order. What you need to understand when defining as follows:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 The 'children' attribute is mandatory for groups and not applicable for columns.
             </li>
@@ -66,20 +65,19 @@ gridOptions.columnDefs = [
                 column a 'groupId') they will be ignored.
             </li>
         </ul>
-    </p>
 
     <h2 id="showing-hiding-columns">Showing / Hiding Columns</h2>
 
     <p>
         A group can have children initially hidden. If you want to show or hide children,
-        set <i>columnGroupShow</i> to either 'open' or 'closed' to one or more of the children.
-        When a children set has <i>columnGroupShow</i> set, it behaves in the following way:
-        <ul>
+        set <code>columnGroupShow</code> to either 'open' or 'closed' to one or more of the children.
+        When a children set has <code>columnGroupShow</code> set, it behaves in the following way:
+    </p>
+        <ul class="content">
             <li><b>open:</b> The child is only shown when the group is open.</li>
             <li><b>closed:</b> The child is only shown when the group is closed.</li>
             <li><b>everything else:</b> Any other value, including null and undefined, the child is always shown.</li>
         </ul>
-    </p>
 
     <p>
         If a group has any child that is dependent on the open / closed state, the open / close icon
@@ -98,7 +96,7 @@ gridOptions.columnDefs = [
         at some point (ie all are set to 'open' or 'closed').
     </p>
 
-    <h2 id="pinning-groups">Pinning and Groups</h2>
+    <h2>Pinning and Groups</h2>
 
     <p>
         Pinned columns break groups. So if you have a group with 10 columns, 4 of which are
@@ -106,14 +104,14 @@ gridOptions.columnDefs = [
         with 6 (not pinned).
     </p>
 
-    <h2 id="moving-columns-and-groups">Moving Columns and Groups</h2>
+    <h2>Moving Columns and Groups</h2>
 
     <p>
         If you move columns so that columns in a group are no longer adjacent, then the group
         will again be broken and displayed as one or more groups in the grid.
     </p>
 
-    <h2 id="resizing-groups">Resizing Groups</h2>
+    <h2>Resizing Groups</h2>
 
     <p>
         If you grab the group resize bar, it resizes each child in the group evenly distributing
@@ -122,14 +120,14 @@ gridOptions.columnDefs = [
     </p>
 
     <p>
-        <img src="headerResize.jpg"/>
+        <img src="headerResize.jpg" class="img-fluid">
     </p>
 
     <h2 id="colouring-groups">Coloring Groups</h2>
 
     <p>
         The grid doesn't color the groups for you. However you can use the column definition
-        <i>headerClass</i> for this purpose. The <i>headerClass</i> attribute is available
+        <code>headerClass</code> for this purpose. The <code>headerClass</code> attribute is available
         on both columns and column groups.
     </p>
 
@@ -159,7 +157,7 @@ gridOptions.columnDefs = [
         demonstrates the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             Both 'Athlete Details' and 'Sports Results' have <code>marryChildren=true</code>.
         </li>
@@ -188,29 +186,24 @@ gridOptions.columnDefs = [
         Winners data and going crazy with the column groups.
         The example also demonstrates the following features:
     </p>
-    <ul>
+
+    <ul class="content">
         <li>
             Using the API to open and close groups. To do this, you will need
             to provide your groups with an ID during the definition, or look up the groups ID via the API
             (as an ID is generated if you don't provide one).
         </li>
         <li>
-            Demonstrates <i>colDef.openByDefault</i> property, where it sets this on F
+            Demonstrates <code>colDef.openByDefault</code> property, where it sets this on F
             and G groups, resulting in these groups appearing as open by default.
         </li>
         <li>
-            Uses <i>defaultColGroupDef</i> and <i>defaultColDef</i> to apply a class to some of
+            Uses <code>defaultColGroupDef</code> and <code>defaultColDef</code> to apply a class to some of
             the headers. Using this technique, you can apply style to any of the header sections.
         </li>
     </ul>
 
-    <p>
-    </p>
-
-    <p>
-    </p>
-
     <?= example('Advanced Grouping', 'advanced-grouping', 'generated', array("extras" => array("fontawesome"))) ?>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

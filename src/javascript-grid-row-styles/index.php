@@ -6,18 +6,15 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-    <h2 id="row-styles">Row Styles</h2>
 
-    <p>
-        Row customisation can be achieved in the following ways:
+    <h1>Row Styles</h1>
 
-        <ul>
+    <p> Row customisation can be achieved in the following ways: </p>
+        <ul class="content">
             <li><b>Row Style:</b> Providing a CSS style for the rows.</li>
             <li><b>Row Class:</b> Providing a CSS class for the rows.</li>
             <li><b>Row Class Rules:</b> Providing rules for applying CSS classes.</li>
         </ul>
-    </p>
 
     <p>
         Each of these approaches are presented in the following sections.
@@ -27,11 +24,11 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         You can add CSS styles to each row in the following ways:
-        <ul>
-            <li><b>rowStyle</b>: Property to set style for all rows. Set to an object of key (style names) and values (style values).</li>
-            <li><b>getRowStyle</b>: Callback to set style for each row individually.</li>
-        </ul>
     </p>
+        <ul class="content">
+            <li><code>rowStyle</code>: Property to set style for all rows. Set to an object of key (style names) and values (style values).</li>
+            <li><code>getRowStyle</code>: Callback to set style for each row individually.</li>
+        </ul>
 
     <snippet>
 // set background color on every row
@@ -47,15 +44,13 @@ gridOptions.getRowStyle = function(params) {
 }</snippet>
 
     <h2 id="row-class">Row Class</h2>
-    <p>
-        You can add CSS classes to each row in the following ways:
-
-    <ul>
-        <li><b>rowClass</b>: Property to set CSS class for all rows. Provide either a string (class name) or array of string (array
-            of class names).</li>
-        <li><b>getRowClass</b>: Callback to set class for each row individually.</li>
-    </ul>
+    <p> You can add CSS classes to each row in the following ways: 
     </p>
+    <ul class="content">
+        <li><code>rowClass</code>: Property to set CSS class for all rows. Provide either a string (class name) or array of string (array
+            of class names).</li>
+        <li><code>getRowClass</code>: Callback to set class for each row individually.</li>
+    </ul>
 
     <snippet>
 // all rows assigned CSS class 'my-green-class'
@@ -68,7 +63,7 @@ gridOptions.getRowClass = function(params) {
     }
 }</snippet>
 
-    <h3 id="row-class-rules">Row Class Rules</h3>
+    <h2>Row Class Rules</h2>
 
     <p>
         You can define rules which can be applied to include certain CSS classes via <code>gridOptions.rowClassRules</code>.
@@ -78,7 +73,7 @@ gridOptions.getRowClass = function(params) {
     </p>
 
     <p>
-        The following snippet shows rowClassRules that use functions and the value from the year column:
+        The following snippet shows <code>rowClassRules</code> that use functions and the value from the year column:
     </p>
 
     <snippet>
@@ -94,7 +89,7 @@ gridOptions.rowClassRules: {
 }</snippet>
 
     <p>
-        When a function is provided the params object has the attributes: <i>data, node, rowIndex, api</i> and <i>context</i>.
+        When a function is provided the params object has the attributes: <code>data, node, rowIndex, api</code> and <code>context</code>.
     </p>
 
     <p>
@@ -104,14 +99,14 @@ gridOptions.rowClassRules: {
         has the following attributes available to it (mapping the the attributes of the equivalent
         params object):
 
-        <ul>
+    </p>
+        <ul class="content">
             <li><b>ctx</b>: maps context</li>
             <li><b>node</b>: maps node</li>
             <li><b>data</b>: maps data</li>
             <li><b>rowIndex</b>: maps rowIndex</li>
             <li><b>api</b>: maps api</li>
         </ul>
-    </p>
 
     <p>
         The following snippet shows <code>gridOptions.rowClassRules</code> applying classes to rows using expressions on an age column value:
@@ -124,12 +119,13 @@ gridOptions.rowClassRules: {
     'rag-red': 'data.age &gt;= 25'
 }</snippet>
 
-    <h4>Refresh of Styles</h4>
+    <h2>Refresh of Styles</h2>
 
     <p>
         If you refresh a row, or a cell is updated due to editing, the rowStyle, rowClass and rowClassRules are all
         applied again. This has the following effect:
-        <ul>
+    </p>
+        <ul class="content">
             <li><b>rowStyle</b>: All new styles are applied. If a new style is the
                 same as an old style, the new style overwrites the old style.</li>
             <li><b>rowClass</b>: All new classes are applied. Old classes are not
@@ -139,22 +135,21 @@ gridOptions.rowClassRules: {
                 applied the second time. Rules tha return false will have the class removed
                 second time.</li>
         </ul>
-    </p>
 
     <h2>Example Row Class Rules</h2>
 
     <p>
         The example below demonstrates rowClassRules:
-        <ul>
+    </p>
+        <ul class="content">
             <li>rowClassRules are used to apply the class 'sick-days-warning' when the number of sick days > 5 and <= 7,
                 and the class 'sick-days-breach' is applied when the number of sick days > 8.</li>
             <li>The grid re-evaluates the rowClassRules when the data is changed. The example
             shows changing the data in the three different ways: <code>rowNode.setDataValue</code>, <code>rowNode.setData</code>
                 and <code>api.updateRowData</code>. See <a href="../javascript-grid-data-update">Updating Data</a> for details on these update functions.</li>
         </ul>
-    </p>
 
     <?= example('Row Class Rules', 'row-class-rules', 'generated') ?>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

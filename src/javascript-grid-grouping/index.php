@@ -5,11 +5,9 @@ $pageKeyboards = "ag-Grid Grid Grouping";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
+    <h1>Row Grouping</h1>
 
-<div>
-    <h1 class="first-h1 heading-enterprise">Row Grouping</h1>
-
-    <p>
+    <p class="lead">
         This page shows how to group your rows. It starts off with Auto Column Groups, the simplest way to configure row
         groups and then builds up into more advanced topics for row grouping.
     </p>
@@ -40,12 +38,12 @@ gridOptions.columnDefs = [
         additional column for displaying the groups in a tree structure, with expand/collapse navigation.
     </p>
 
-    <ul>
+    <ul class="content">
         <li>There is a group column at the left that lets you open/close the groups. It also shows the amount
         of rows grouped in brackets.</li>
         <li>Sorting works out of the box in the group column. You can test this by clicking on the group column header.</li>
         <li>The country and sport columns used for grouping are still shown as normal. You can hide them
-        by adding <code>hide: true</code> to their <i>colDef</i> as illustrated in the Multi Auto Column example.</li>
+        by adding <code>hide: true</code> to their <code>colDef</code> as illustrated in the Multi Auto Column example.</li>
     </ul>
 
     <?= example('Auto Column Group', 'auto-column-group', 'generated', array("enterprise" => 1)) ?>
@@ -57,7 +55,7 @@ gridOptions.columnDefs = [
         The following example illustrates this. Note that:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>There is a group column displayed for each column that we are grouping by (in this case the country and
             year columns).</li>
         <li>Sorting works out of the box in each of these group column. You can test this by clicking on the group column header.</li>
@@ -90,7 +88,7 @@ gridOptions.columnDefs = [
         The following example illustrates how you can configure the auto group columns. Note that:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             For the purpose of simplification this example uses one Auto Row Group Column. If you were to use Multi
             Auto Group Column the configuration would be applied to all the generated columns
@@ -131,13 +129,13 @@ gridOptions.columnDefs = [
 
     <p>
         The following example shows the easiest way to implement this with a single auto group column and a value getter
-        in the <i>autoGroupColumnDef</i> that is returning the athlete column
+        in the <code>autoGroupColumnDef</code> that is returning the athlete column
 
-        Note that
+        Note that:
     </p>
 
 
-    <ul>
+    <ul class="content">
         <li>To see the leaf node values, open any country and any year int the group column. Note how their leaf nodes are showing
             the value for the athlete column, this is achieved with a valueGetter:
 <snippet>
@@ -154,7 +152,7 @@ valueGetter: function (params){
         in the following example. Note the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>To see the leaf node values, open any country and any year group column. Note how their leaf nodes have
         values for the columns 'Country' and 'Year - Group', the default is not to have values for this cells.</li>
         <li>Filtering is switched on so you can see how now you can filter the group column 'Country' and 'Year - Group'
@@ -221,7 +219,7 @@ columnDefs = [
 
     <note>
         Using <code>rowGroup=true</code> is simpler and what most people will prefer using.
-        You will notice that <code>rowGroupIndex</code> is used by the column API <i>getColumnState()</i>
+        You will notice that <code>rowGroupIndex</code> is used by the column API <code>getColumnState()</code>
         method as this cannot depend on the order of the column definitions.
     </note>
 
@@ -282,8 +280,8 @@ columnDefs = [
     <h2>Full Width Groups Rendering</h2>
 
     <p>
-        It is possible to override the rendering of the group row using <i>groupRowRenderer</i> and
-        <i>groupRowInnerRenderer</i>. Use groupRowRenderer to take full control of the row rendering,
+        It is possible to override the rendering of the group row using <code>groupRowRenderer</code> and
+        <code>groupRowInnerRenderer</code>. Use groupRowRenderer to take full control of the row rendering,
         and provide a cellRenderer exactly how you would provide one for custom rendering of cells
         for non-groups.
     </p>
@@ -312,7 +310,9 @@ gridOptions.groupRowInnerRenderer: function(params) {return params.node.key;};
     </p>
     <p>
         The above probably reads a bit confusing. So here are rules to help you choose:
-    <ul>
+    </p>
+
+    <ul class="content">
         <li>
             If you are happy with what you get with just setting groupUseEntireRow = true,
             then stick with that, don't bother with the renderers.
@@ -328,11 +328,11 @@ gridOptions.groupRowInnerRenderer: function(params) {return params.node.key;};
             group renderer.
         </li>
     </ul>
-    </p>
     <p>
         Here is an example of taking full control, creating your own renderer. In practice,
         this example is a bit useless, as you will need to add functionality to at least expand
         and collapse the group, however it demonstrates the configuration:
+    </p>
     <snippet>
 gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowRenderer: function(params) {return params.node.key;};
@@ -340,6 +340,8 @@ gridOptions.groupRowRenderer: function(params) {return params.node.key;};
     <p>
         This example takes full control also, but uses the provided group renderer
         but configured differently by asking for a checkbox for selection:
+</p>
+
     <snippet>
 gridOptions.groupUseEntireRow = true;
 gridOptions.groupRowRenderer: 'agGroupCellRenderer';
@@ -349,12 +351,11 @@ gridOptions.groupRowRendererParams: {
     innerRenderer: function(params) {return params.node.key;},
 }
 </snippet>
-    </p>
 
-    </p>
     <p>
         Below shows an example of aggregating, then using the entire row to give a summary.
     </p>
+
     <p>We use Components for the groupRowRenderer in this example.</p>
 
     <?= example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', array("enterprise" => 1)) ?>
@@ -362,8 +363,9 @@ gridOptions.groupRowRendererParams: {
     <h2>Full Width Group Rows - Embedding</h2>
 
     <p>
-        You have two choices when using full width groups using the property <i>embedFullWidthRows</i> as follows:
-    <ul>
+        You have two choices when using full width groups using the property <code>embedFullWidthRows</code> as follows:
+</p>
+    <ul class="content">
         <li><b>embedFullWidthRows = false: </b> The group row will always
             span the width of the grid including pinned areas and is not impacted by horizontal scrolling.
             This is the most common usage and thus the default. The only drawback is that for some
@@ -371,19 +373,22 @@ gridOptions.groupRowRendererParams: {
         <li><b>embedFullWidthRows = true: </b> The group row will be split into three sections for center,
             pinned left and pinned right. This is not ideal but works much faster with no IE issues.</li>
     </ul>
+    <p>
     So you might ask which one to use? The answer is the first one (just leave the property out, it's defaulted
     to false) unless you want to avoid IE performance issues.
     </p>
 
-    <p>
-        The examples below demonstrate embedFullWidthRows on and off as follows:
-    <ul>
+    <p> The examples below demonstrate embedFullWidthRows on and off as follows:</p>
+
+    <ul class="content">
         <li>Both grids have columns pinned left and right.</li>
         <li>Both grids have group rows spanning the grid width.</li>
         <li>The top grid as embedFullWidthRows=false, the bottom grid has embedFullWidthRows=true.</li>
     </ul>
-    So with this setup, you will notice the following difference:
-    <ul>
+
+    <p>So with this setup, you will notice the following difference:</p>
+
+    <ul class="content">
         <li>
             In the top grid, the group rows are not impacted by the pinning. In the bottom grid,
             the groups are truncated if you make the Athlete & Year columns to small,
@@ -394,25 +399,24 @@ gridOptions.groupRowRendererParams: {
             to the center.
         </li>
     </ul>
-    </p>
 
     <?= example('Full Width Group Rows - embedFullWidthRows=false', 'full-width-group-rows-embedding-false', 'generated', array("enterprise" => 1, "exampleHeight" => 200)) ?>
     <?= example('Full Width Group Rows - embedFullWidthRows=true', 'full-width-group-rows-embedding-true', 'generated', array("enterprise" => 1, "exampleHeight" => 200)) ?>
 
     <p>
         If you are using custom group row rendering (explained below) and embedFullWidthRows = true, the panel
-        you are rendering in is provided via the <i>pinned</i> parameter.
+        you are rendering in is provided via the <code>pinned</code> parameter.
     </p>
 
     <h2 id="unbalanced-groups">Unbalanced Groups</h2>
 
     <p>
         If there are rows containing <code>null</code> or <code>undefined</code> values for the column that is being
-        grouped then these rows will not be grouped. We refer to this scenario as <i>Unbalanced Groups</i> in that
+        grouped then these rows will not be grouped. We refer to this scenario as <strong>Unbalanced Groups</strong> in that
         there is a mix of groups and rows as siblings. The following example demonstrates:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>Data is grouped by column 'State'. Rows are either grouped by state 'New York', 'California' or
             not grouped.</li>
         <li>Removing the grouping shows that the non grouped rows have no 'State' value.</li>
@@ -430,7 +434,7 @@ gridOptions.groupRowRendererParams: {
 
     <p>
         To expand or contract a group via the API, you first must get a reference to the rowNode and then call
-        <i>rowNode.setExpanded(boolean).</i> This will result in the grid getting updated and displaying the
+        <code>rowNode.setExpanded(boolean).</code> This will result in the grid getting updated and displaying the
         correct rows. For example, to expand a group with the name 'Zimbabwe' would be done as follows:
     <snippet>
 gridOptions.api.forEachNode(function(node) {
@@ -441,19 +445,19 @@ gridOptions.api.forEachNode(function(node) {
     </p>
 
     <p>
-        Calling <i>node.setExpanded()</i> causes the grid to get redrawn. If you have many nodes you want to
+        Calling <code>node.setExpanded()</code> causes the grid to get redrawn. If you have many nodes you want to
         expand, then it is best to set node.expanded=true directly, and then call
-        <i>api.onGroupExpandedOrCollapsed()</i> when finished to get the grid to redraw the grid again just once.
+        <code>api.onGroupExpandedOrCollapsed()</code> when finished to get the grid to redraw the grid again just once.
     </p>
 
     <h2>Grouping Complex Objects with Keys</h2>
 
     <p>
         If your rowData has complex objects that you want to group by, then the default grouping
-        will convert each object to <i>"[object object]"</i> which will be useless to you. Instead
+        will convert each object to <code>"[object object]"</code> which will be useless to you. Instead
         you need to get the grid to convert each object into a meaningful string to act as the key
         for the group. You could add a 'toString' method to the objects - but this may not be possible
-        if you are working with JSON data. To get around this, use <i>colDef.keyCreator</i>, which
+        if you are working with JSON data. To get around this, use <code>colDef.keyCreator</code>, which
         gets passed a value and should return the string key for that value.
     </p>
 
@@ -488,13 +492,13 @@ colDef = {
     <h2 id="grouping-footers">Grouping Footers</h2>
 
     <p>
-        If you want to include a footer with each group, set the property <i>groupIncludeFooter</i> to true.
+        If you want to include a footer with each group, set the property <code>groupIncludeFooter</code> to true.
         The footer is displayed as the last line of the group when then group is expanded - it is not displayed
         when the group is collapsed.
     </p>
     <p>
         The footer by default will display the word 'Total' followed by the group key. If this is not what you
-        want, then use the <i>footerValueGetter</i> option. The following shows two snippets for achieving
+        want, then use the <code>footerValueGetter</code> option. The following shows two snippets for achieving
         the same, one using a function, one using an expression.
     </p>
     <snippet>
@@ -512,7 +516,7 @@ cellRendererParams: {
     <p>
         When showing the groups in one column, the aggregation data is displayed
         in the group header when collapsed and only in the footer when expanded (ie it moves from the header
-        to the footer). To have different rendering, provide a custom <i>groupInnerCellRenderer</i>, where
+        to the footer). To have different rendering, provide a custom <code>groupInnerCellRenderer</code>, where
         the renderer can check if it's a header or footer.
     </p>
 
@@ -538,7 +542,7 @@ cellRendererParams: {
 
     <p>
         When you set new data into the group by default all the group open/closed states are reset.
-        If you want to keep the original state, then set the property <i>rememberGroupStateWhenNewData=true</i>.
+        If you want to keep the original state, then set the property <code>rememberGroupStateWhenNewData=true</code>.
         The example below demonstrates this. Only half the data is shown in the grid at any given time,
         either the odd rows or the even rows. Hitting the 'Refresh Data' will set the data to 'the other half'.
         Note that not all groups are present in both sets (eg 'Afghanistan' is only present in one group) and
@@ -556,11 +560,11 @@ cellRendererParams: {
     </p>
 
     <p>
-        To turn this feature on set either <i>groupRemoveSingleChildren=true</i>
-        or <i>groupRemoveLowestSingleChildren=true</i>.
+        To turn this feature on set either <code>groupRemoveSingleChildren=true</code>
+        or <code>groupRemoveLowestSingleChildren=true</code>.
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>groupRemoveSingleChildren:</b> Removes groups from display if they only have one child.</li>
         <li><b>groupRemoveLowestSingleChildren:</b> Removes groups from display if they only have one child and
             the groups is at the lowest level (ie contains leaf nodes).</li>
@@ -568,19 +572,19 @@ cellRendererParams: {
 
     <p>
         The example below shows this feature. Note the following:
-        <ul>
+        <ul class="content">
             <li>
                 <b>Normal:</b> Shows the rows as normal, nothing is removed. All groups have their children
                 count in brackets after the group.
             </li>
             <li>
                 <b>Remove Single Children:</b> Removes single children using the property
-                <i>groupRemoveSingleChildren=true</i>. All groups with just one child
+                <code>groupRemoveSingleChildren=true</code>. All groups with just one child
                 are remove.
             </li>
             <li>
                 <b>Remove Lowest Single Children:</b> Removes single children using the property
-                <i>groupRemoveLowestSingleChildren=true</i>. All groups for the 'City' column with just one child
+                <code>groupRemoveLowestSingleChildren=true</code>. All groups for the 'City' column with just one child
                 are remove. The 'City' column is the lowest level group, so it's the only group candidate to be
                 removed when one child.
             </li>
@@ -597,8 +601,8 @@ cellRendererParams: {
     </note>
 
     <note>
-        The properties <i>groupRemoveSingleChildren</i>, <i>groupRemoveLowestSingleChildren</i>
-        and <i>groupHideOpenParents</i> are mutually exclusive, you can only pick one.
+        The properties <code>groupRemoveSingleChildren</code>, <code>groupRemoveLowestSingleChildren</code>
+        and <code>groupHideOpenParents</code> are mutually exclusive, you can only pick one.
         Technically it doesn't make sense to mix these. Mixing these three will put you down a
         black hole so deep not even Stephen Hawking will be able to save you.
     </note>
@@ -636,27 +640,30 @@ cellRendererParams: {
     </p>
 
     <p>
-        In order to make a column display a group, you need to configure the property <i>coldef.showRowGroup</i> for that
+        In order to make a column display a group, you need to configure the property <code>coldef.showRowGroup</code> for that
         column.
     </p>
 
     <p>
-        <i>coldef.showRowGroup</i> can be configured in two different fashions.
-    <ul>
-        <li>To tell this column to show all the groups: <code>coldef.showRowGroup= true</code></li>
-        <li>To tell this column to show the grouping for a particular column. If you want to do this you need to
-            know the <i>colId</i> of the column that you want to show the group by and set <code>coldef.showRowGroup= colId</code></li>
-    </ul>
+        <code>coldef.showRowGroup</code> can be configured in two different fashions.
     </p>
 
+    <ul class="content">
+        <li>To tell this column to show all the groups: <code>coldef.showRowGroup= true</code></li>
+        <li>To tell this column to show the grouping for a particular column. If you want to do this you need to
+            know the <code>colId</code> of the column that you want to show the group by and set <code>coldef.showRowGroup= colId</code></li>
+    </ul>
+
     <p>
-        If you do specify <i>coldef.showRowGroup</i> you are going to also tell this column how to display the contents
+        If you do specify <code>coldef.showRowGroup</code> you are going to also tell this column how to display the contents
         of this group, the easiest way to do this is by using the out of the box
         <a href="../javascript-grid-cell-rendering">group cell renderer</a> <code>cellRenderer:'agGroupCellRenderer'</code>
     </p>
 
     <p>
         This illustrates how to configure an specific column to show the groups generated by the country column
+    </p>
+
     <snippet>
 coldefs:[
     // The column we are grouping by, it is also hidden.
@@ -687,6 +694,7 @@ coldefs:[
         and for backwards compatibility for when we only supported this style of configuration.</note>
 
     <h2>Grid Grouping Properties</h2>
+
     <p>
         Grouping has the following grid properties (set these as grid properties, e.g. on the gridOptions, not on the columns):
     </p>
@@ -715,12 +723,12 @@ coldefs:[
             <th>groupRowInnerRenderer</th>
             <td>Similar to groupRowRenderer, except the grid will provide a default shell for row which includes an
                 expand / collapse function. The innerRenderer is responsible for just the inside part of the row.
-                There is no <i>groupRowInnerRendererParams</i> as the <i>groupRowRendererParams</i> are reused
+                There is no <code>groupRowInnerRendererParams</code> as the <code>groupRowRendererParams</code> are reused
                 for both</td>
         </tr>
 
     </table>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

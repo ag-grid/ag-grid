@@ -6,11 +6,11 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
 
     <h1 class="first-h1" id="value-getters">Value Getters and Value Formatters</h1>
 
-    <p>
+    <p class="lead">
         The grid displays values from your data. The easiest way to configure this is to set <code>colDef.field</code>.
         The grid then pulls the gets and sets (after editing) the data to this location and does no formatting
         for the value.
@@ -35,7 +35,7 @@ var countryColDef = {
         Below shows the column definition properties for valueGetters and valueFormatters.
     </p>
 
-    <table class="table">
+    <table class="table reference">
         <?php include './gettersAndFormattersProperties.php' ?>
         <?php printPropertiesRows($gettersAndFormattersProperties) ?>
     </table>
@@ -54,7 +54,7 @@ var countryColDef = {
         The following can be noted from the demo:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>Column 'Number' is a simple column with a <code>field</code> to get the data and without formatting.</li>
         <li>Column 'Formatted' uses the same field, however it formats the value.</li>
         <li>Column 'A + B' uses a value getter to sum the contents of cells 'A' and 'B'.</li>
@@ -73,7 +73,7 @@ var countryColDef = {
         The flow diagram below shows the flow of the value to displaying it on the screen.
     </p>
 
-    <img src="valueGetterFlow.svg"/>
+    <img src="valueGetterFlow.svg" class="img-fluid" >
 
     <h2 id="value-getter">Value Getter</h2>
 
@@ -109,7 +109,7 @@ colDef.valueGetter = function(params) {
         valueGetter once during a redraw, even though the value may be used multiple times. For example, the
         value will be used to display the cell value, however it can additionally be used to provide values
         to an aggregation function when grouping, or can be used as input to another valueGetter via the
-        params.getValue() function.
+        <code>params.getValue()</code> function.
     </note>
 
     <h2 id="value-formatter">Value Formatter</h2>
@@ -181,7 +181,7 @@ colDef.valueFormatter = function(params) {
         The parameters for <code>headerValueGetter</code> differ from standard <code>valueGetter</code> as follows:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>Only one of column or columnGroup will be present, depending on whether it's
             a column or a column group.</li>
         <li>Parameter <code>location</code> allows you to have different column names depending on
@@ -207,7 +207,5 @@ colDef.valueFormatter = function(params) {
         You can use the same formatter for pinned rows and normal rows and check the row type.
         You can check if the row is floating by checking <code>params.node.floating</code> property.
     </note>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

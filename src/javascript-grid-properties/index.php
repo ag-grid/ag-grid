@@ -506,8 +506,8 @@ include '../documentation-main/documentation_header.php';
 
         <tr>
             <th>localeText, localeTextFunc</th>
-            <td>You can change the text in the paging panels and the default filters by providing a <i>localeText</i> or
-                a <i>localeTextFunc</i> (see below). See <a href="../javascript-grid-internationalisation/">Internationalisation</a>.</td>
+            <td>You can change the text in the paging panels and the default filters by providing a <code>localeText</code> or
+                a <code>localeTextFunc</code> (see below). See <a href="../javascript-grid-internationalisation/">Internationalisation</a>.</td>
         </tr>
 
         <tr class="title-row">

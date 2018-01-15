@@ -6,11 +6,11 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h1 class="first-h1" id="width-and-height">Grid Size</h1>
 
-    <p>
+    <h1>Grid Size</h1>
+
+    <p class="lead">
         The grid width and height should be set using CSS width and height styles.
         This can be done using pixels or percentages.
     </p>
@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
 // OR set width using fixed pixels
 &lt;div id="myGrid" class="ag-theme-fresh" style="width: 500px; height: 200px;"&gt;&lt;/div&gt;</snippet>
 
-    <h3 id="percent-width-and-height">Pitfall When Using Percent Width & Height</h3>
+    <h2>Pitfall When Using Percent Width & Height</h2>
 
     <p>
         If using % for your height, then make sure the container you are putting the grid into
@@ -33,7 +33,7 @@ include '../documentation-main/documentation_header.php';
         you want, then you have a CSS layout issue to solve outside of the grid.
     </p>
 
-    <h3 id="changing-width-and-height">Changing Width and Height</h3>
+    <h2>Changing Width and Height</h2>
 
     <p>
         If the width and / or height change after the grid is initialised, the grid will
@@ -44,14 +44,14 @@ include '../documentation-main/documentation_header.php';
         There is no JavaScript event for when an element changes size (there is a window resized
         event, but no element resized) so the grid checks its size every 500ms. If your application
         changes the size of the grid, you can get the grid to resize immediatly (rather than wait
-        for the next 500ms check) by calling <i>api.doLayout()</i>.
+        for the next 500ms check) by calling <code>api.doLayout()</code>.
     </p>
 
-    <h3 id="example-width-and-height">Example: Setting and Changing Grid Width and Height</h3>
+    <h3>Example: Setting and Changing Grid Width and Height</h3>
 
     <p>
         The example below shows setting the grid size and then changing it as the user
-        selects the buttons. Notice that the example calls <i>api.doLayout()</i> after
+        selects the buttons. Notice that the example calls <code>api.doLayout()</code> after
         the resize to avoid a flicker.
     </p>
 
@@ -66,8 +66,7 @@ include '../documentation-main/documentation_header.php';
         of the following:
     </p>
 
-    <p>
-        <ul>
+        <ul class="content">
             <li><b>Auto Height: </b>Auto height (explained below) allows the grid to resize based
             on the number of rows so that there is no vertical scrolls. Use this if you have relatively
             few rows in your grid and want to pack them into your web-page (so that there is no blank
@@ -77,7 +76,6 @@ include '../documentation-main/documentation_header.php';
             ideal if you want to print the grid, as it will remove all scrolls and pinned areas,
             so that every element is rendered into the DOM.</li>
         </ul>
-    </p>
 
     <h2 id="autoHeight">Auto Height Grid</h2>
 
@@ -100,7 +98,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         The example below demonstrates the autoHeight feature. Notice the following:
-        <ul>
+    </p>
+        <ul class="content">
             <li>As you set different numbers of rows into the grid, the grid will resize it's height to just fit the rows.</li>
             <li>As the grid height exceeds the height of the browser, you will need to use the browser vertical scroll
             to view data (or the iFrames scroll if you are looking at the example embedded below).</li>
@@ -108,7 +107,6 @@ include '../documentation-main/documentation_header.php';
             <li>If you have pinned rows, the grid will size to accommodate the pinned rows.</li>
             <li>Vertical scrolling will not happen, however horizontal scrolling, including pinned columns, will work as normal.</li>
         </ul>
-    </p>
 
     <note>
         The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.
@@ -117,7 +115,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Auto Height', 'auto-height', 'generated', array("enterprise" => 1, "noStyle" => 1)) ?>
 
-    <h3>Animation with Auto Height</h3>
+    <h2>Animation with Auto Height</h2>
 
     <p>
         The autoHeight will do a complete refresh of the grid rows after any sort, filter or row group open
@@ -127,7 +125,7 @@ include '../documentation-main/documentation_header.php';
         using top pixel location - which is needed for the animations to work.
     </p>
 
-    <h3>Full Width and Auto Height</h3>
+    <h2>Full Width and Auto Height</h2>
 
     <p>
         The <a href="../javascript-grid-full-width-rows/">fullWidth</a> feature, when used with autoHeight,
@@ -136,7 +134,7 @@ include '../documentation-main/documentation_header.php';
         pinning, the fullWidth row will be split into the pinned sections.
     </p>
 
-    <h3>Max Height with Auto Height</h3>
+    <h2>Max Height with Auto Height</h2>
 
     <p>
         It is not possible to specify a max height when using auto-height. It is also not possible to change
@@ -144,7 +142,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        Users ask on the forum, is it possible to set a max height when using auto-height? The answer is no.
+        Users ask is it possible to set a max height when using auto-height? The answer is no.
         If using auto-height, the grid is set up to work in a different way. It is not possible to switch.
         If you do need to switch, you will need to change to a new instance of the grid.
     </note>
@@ -167,6 +165,6 @@ include '../documentation-main/documentation_header.php';
         of rows. Instead the grid will happily take the rows and then the user will use
         group / filter / sort to get to the data that they want.
     </p>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

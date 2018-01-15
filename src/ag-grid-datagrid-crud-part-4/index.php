@@ -38,7 +38,7 @@ include('../includes/mediaHeader.php');
 
     <h2>Series Chapters</h2>
 
-    <ul>
+    <ul class="content">
         <li><a href="../ag-grid-datagrid-crud-part-1/">Part 1</a>: Introduction & Initial Setup: Maven, Spring
             and JPA/Backend (Database)
         </li>
@@ -440,7 +440,7 @@ Observable.forkJoin(...deleteSubscriptions).subscribe(results => this.setAthlete
 
     <p>This is a fairly naive and inefficient implementation - there are two obvious improvements to be
         made:</p>
-    <ul>
+    <ul class="content">
         <li>Batch the deletes - let the middle/backend do the work</li>
         <li>Make use of ag-Grid <a href="../javascript-grid-data-update">Update</a> functionality so that we
             only

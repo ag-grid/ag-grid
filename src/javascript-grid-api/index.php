@@ -392,8 +392,7 @@ include '../documentation-main/documentation_header.php';
         <tr id="getVerticalPixelRange">
             <th>getVerticalPixelRange()</th>
             <td>Returns a JSON object with two properties:
-                <p>
-                <ul>
+                <ul class="content">
                     <li>
                         top: The top pixel position of the current scroll in the grid
                     </li>

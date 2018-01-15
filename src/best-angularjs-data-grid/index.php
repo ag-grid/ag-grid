@@ -228,7 +228,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     Angular compiling is turned on by setting the grid options attribute angularCompileRows to true.
 </p>
 
-<ul>
+<ul class="content">
     <li><b>angularCompileRows:</b> Whether to compile the rows for Angular.</li>
     <li><b>angularCompileFilters:</b> Whether to compile provided custom filters.</li>
     <li><b>angularCompileHeaders:</b> Whether to compile the customer headers for AngularJS 1.x.</li>
@@ -242,7 +242,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     Below then uses three columns rendered using custom Angular renderers.
 </p>
 
-<ul>
+<ul class="content">
     <li><b>Athlete:</b> Uses simple binding to display text.</li>
     <li><b>Age:</b> Uses simple binding to display a button, with a button click event using ng-click.</li>
     <li><b>Country:</b> Uses a custom Angular directive to display the country.</li>
@@ -271,9 +271,8 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     it is reused.
 </p>
 
-<p>
-    The example below uses cell templates for the first three columns.
-<ul>
+<p> The example below uses cell templates for the first three columns.</p>
+<ul class="content">
     <li><b>Col 1 - </b> The first column uses a static template. Pretty pointless as you can't change
         the content between rows.
     </li>
@@ -284,7 +283,6 @@ var module = angular.module("example", ["agGrid"]);</snippet>
         the template from the server.
     </li>
 </ul>
-</p>
 
 <note>
     In the example, as you scroll up and down, the redraw on the AngularJS 1.x columns has a lag.

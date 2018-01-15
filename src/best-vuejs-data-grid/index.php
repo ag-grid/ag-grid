@@ -217,7 +217,7 @@ import "ag-grid-enterprise/main";</snippet>
     <p>
         Notice that the grid has its properties marked as <b>immutable</b>. Hence for
         object properties, the object reference must change for the grid to take impact.
-        For example, <i>rowData</i> must be a new list of data for the grid to be
+        For example, <code>rowData</code> must be a new list of data for the grid to be
         informed to redraw.
     </p>
 
@@ -447,7 +447,7 @@ this.params.context.componentParent</snippet>
 
 <p>The <span style="font-style: italic">"A Simple Example, using CellRenderers created from VueJS Components"</span>
     above illustrates this in the Child/Parent column:</p>
-<ul>
+<ul class="content">
     <li>
         <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue"
            target="_blank" class="fa fa-external-link"> Parent & Child Component</a></li>

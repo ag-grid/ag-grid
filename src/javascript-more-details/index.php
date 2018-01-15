@@ -63,13 +63,13 @@ include '../documentation-main/documentation_header.php';
     <h3>ag-Grid Bundle Types</h3>
     <p>
         There are four bundle files in the distribution:
-    <ul>
+</p>
+    <ul class="content">
         <li><code>dist/ag-grid.js</code> &mdash; standard bundle containing JavaScript and CSS</li>
         <li><code>dist/ag-grid.min.js</code> &mdash; minified bundle containing JavaScript and CSS</li>
         <li><code>dist/ag-grid.noStyle.js</code> &mdash; standard bundle containing JavaScript without CSS</li>
         <li><code>dist/ag-grid.min.noStyle.js</code> &mdash; minified bundle containing JavaScript without CSS</li>
     </ul>
-    </p>
 
     <h3>JavaScript modules</h3>
 
@@ -142,7 +142,8 @@ import {Grid} from 'ag-grid';
 
     <p>
         Again similar to ag-Grid, ag-Grid-Enterprise has 4 bundles:
-    <ul>
+    </p>
+    <ul class="content">
         <li><code>dist/ag-grid-enterprise.js</code> &mdash; standard bundle containing JavaScript and CSS</li>
         <li><code>dist/ag-grid-enterprise.min.js</code> &mdash; minified bundle containing JavaScript and CSS</li>
         <li><code>dist/ag-grid-enterprise.noStyle.js</code> &mdash; standard bundle containing JavaScript without CSS</li>

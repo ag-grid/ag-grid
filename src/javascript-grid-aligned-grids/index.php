@@ -6,11 +6,11 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
 
     <h1 class="first-h1" id="master-slave">Aligned Grids</h1>
 
-    <p>
+    <p class="lead">
         Aligning two or more grids means columns will be kept aligned in all grids.
         In other words, column changes to one grid (column width, column order, column visibility etc)
         are reflected in the other grid.
@@ -18,12 +18,13 @@ include '../documentation-main/documentation_header.php';
         and you want to keep the columns aligned.
     </p>
 
-    <h3 id="configuration">Configuration</h3>
+    <h2>Configuration</h2>
 
     <p>
         To have one (the first) grid reflect column changes in another (the second), place the
         first grid's options in <code>alignedGrids</code> property of the second grids.
     </p>
+
     <snippet>
 gridOptionsFirst = {
     // some grid options here
@@ -43,13 +44,15 @@ gridOptionsSecond = {
     <p>
         Below shows two grids, both aligned with the other (so any column change to one will be
         reflected in the other). The following should be noted:
-        <ul>
+</p>
+        <ul class="content">
             <li>When either grid is scrolled horizontally, the other grid follows.</li>
             <li>Showing / hiding a column on either grid (via the checkbox) will show / hide the column
                 on the other grid, despite the API been called on one grid only.</li>
             <li>When a column is resized on either grid, the other grid follows.</li>
             <li>When a column group is opened on either grid, the other grid follows.</li>
         </ul>
+<p>
         The grids don't serve much purpose (why would you show the same grid twice???) however
         it demonstrates the features in an easy to understand way.
     </p>
@@ -59,7 +62,8 @@ gridOptionsSecond = {
     <h2 id="events">Events</h2>
     <p>
         The events which are fired as part of the grid alignment relationship are as follows:
-        <ul>
+    </p>
+        <ul class="content">
             <li>Horizontal Scroll</li>
             <li>Column Hidden / Shown</li>
             <li>Column Moved</li>
@@ -67,7 +71,6 @@ gridOptionsSecond = {
             <li>Column Resized</li>
             <li>Column Pinned</li>
         </ul>
-    </p>
 
     <h2 id="pivots">Pivots</h2>
 
@@ -127,6 +130,6 @@ gridOptionsSecond = {
         between grids causing infinite firing of events if two grids are aligned to each other.
     </p>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

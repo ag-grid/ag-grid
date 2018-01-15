@@ -6,10 +6,10 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
     <h1 class="heading-enterprise">Set Filter</h1>
 
-    <p>
+    <p class="lead">
         A set filter, influenced by how filters work in Microsoft Excel. Set filters can be provided with
         additional options through the filterParams attribute.
     </p>
@@ -33,43 +33,42 @@ columnDefinition = {
         The set filter params are specific to each filter and have the following meanings:
     </p>
 
-    <ul>
-        <li><b>cellRenderer:</b> Similar to the cell renderer for the grid (you can use the same one in both locations).
+    <ul class="content">
+        <li><code>cellRenderer:</code> Similar to the cell renderer for the grid (you can use the same one in both locations).
             Setting it separately here allows for the value to be rendered differently in the filter. Note that
             the cell renderer for the set filter only receives the value as a parameter, as opposed to the cell renderer
             in the colDef that receives more information.
         </li>
-        <li><b>cellHeight:</b> The height of the cell.</li>
-        <li><b>values:</b> The values to display in the filter. If this is not set, then the filter will
+        <li><code>cellHeight:</code> The height of the cell.</li>
+        <li><code>values:</code> The values to display in the filter. If this is not set, then the filter will
             takes its values from what is loaded in the table. Setting it allows you to set values where a) the
             value may not be present in the list (for example, if you want to show all states in America so
             that the user is not confused by missing states, even though states are missing from the data set
             in the grid) and b) the list is not available (happens when doing server side filtering in pagination
             and infinite scrolling).</li>
-        <li><b>newRowsAction:</b> What to do when new rows are loaded. The default is to reset the filter,
+        <li><code>newRowsAction:</code> What to do when new rows are loaded. The default is to reset the filter,
             as the set of values to select from can have changed. If you want to keep the selection, then
             set this value to 'keep'. This can be useful if you are using values (above) or otherwise know that the
             list to select from will not change. If the list does change, then it can be confusing what
             to do with new values into the set (should they be selected or not??).</li>
-        <li><b>apply:</b> Set to true to include an 'Apply' button with the filter and not filter
+        <li><code>apply:</code> Set to true to include an 'Apply' button with the filter and not filter
             automatically as the selection changes.</li>
-        <li><b>suppressRemoveEntries:</b> Set to true to stop the filter from removing values that are no
+        <li><code>suppressRemoveEntries:</code> Set to true to stop the filter from removing values that are no
             longer available (like what Excel does).</li>
-        <li><b>comparator(a,b):</b> Comparator for sorting. If not provided, the colDef comparator is used. If colDef
+        <li><code>comparator(a,b):</code> Comparator for sorting. If not provided, the colDef comparator is used. If colDef
             also not provided, the default (agGrid provided) comparator is used.</li>
-        <li><b>suppressSorting:</b> If true, sorting will not be done on the set filter values. Use this is providing
+        <li><code>suppressSorting:</code> If true, sorting will not be done on the set filter values. Use this is providing
             your own values and don't want them sorted as you are providing in the order you want.</li>
-        <li><b>suppressMiniFilter:</b> Set to false(default)/true to show/hide the input text box to filter the set
+        <li><code>suppressMiniFilter:</code> Set to false(default)/true to show/hide the input text box to filter the set
             entries displayed in the filter .</li>
-        <li><b>selectAllOnMiniFilter:</b> Set to false(default)/true so that the checkbox "select all" applies to:
+        <li><code>selectAllOnMiniFilter:</code> Set to false(default)/true so that the checkbox "select all" applies to:
             all the filters items/just the ones filtered by the mini filter . </li>
-        <li><b>textFormatter:</b> If specified, formats the text before applying the mini filter compare logic, useful for
+        <li><code>textFormatter:</code> If specified, formats the text before applying the mini filter compare logic, useful for
             instance if substituting accentuated characters or if you want to do case sensitive mini filtering. This
             matches the <a href="../javascript-grid-filter-text/index.php#textFormatter">text formatter used for text filters</a></li>
-        <li><b>debounceMs:</b> If specified, the filter will wait this amount of ms after the user stops selecting optoins in the
+        <li><code>debounceMs:</code> If specified, the filter will wait this amount of ms after the user stops selecting optoins in the
             mini filter before is triggered. If not specified there won't be any debounce.</li>
     </ul>
-    </p>
 
     <note>
         The comparator for a set filter is only provided the values as the first two parameters, whereas the comparator for the colDef
@@ -81,17 +80,17 @@ columnDefinition = {
         the set filter with an alternative comparator that doesn't depend on the row data.
     </note>
 
-    <h3>Complex Objects - keyCreator</h3>
+    <h2>Complex Objects - keyCreator</h2>
 
     <p>
-        If you are providing complex objects as values, then you need to provide <i>colDef.keyCreator</i> method in your
+        If you are providing complex objects as values, then you need to provide <code>colDef.keyCreator</code> method in your
         object for the set filter to work, giving a unique value for the object. This is because the set filter needs
         a string key to identify the value. The example below demonstrates keyCreator with the country column by replacing
         the country name in the data with a complex object of country name and code. If the keyCreator was not provided
         on the colDef, the set filter would not work.
     </p>
 
-    <h3>Set Filter - Search Field</h3>
+    <h2>Set Filter - Search Field</h2>
 
     <p>
         The text box in the set filter is to allow filtering of displayed filter items, but doesn't actually change the
@@ -99,7 +98,7 @@ columnDefinition = {
         in the search box and then finally select the filter entries you want to actually filter on.
     </p>
 
-    <h3>Set Filters Example</h3>
+    <h2>Set Filters Example</h2>
 
     <p>
         The example below demonstrates the set filter.
@@ -111,18 +110,18 @@ columnDefinition = {
     </p>
 
     <p>
-        The example also demonstrates using the <i>ag-header-cell-filtered</i> class, which is applied to the header
+        The example also demonstrates using the <code>ag-header-cell-filtered</code> class, which is applied to the header
         cell when the header is filtered. By default, no style is applied to this class, the example shows
         applying a different color background to this style.
     </p>
 
     <p>
-        The column sport has also the property <i>suppressMiniFilter</i> set to true, hiding the text input box for the
+        The column sport has also the property <code>suppressMiniFilter</code> set to true, hiding the text input box for the
         set filter in this column (compare this set filter with athlete which suppressMiniFilter is the default = false).
     </p>
 
     <p>
-        The column country has the property <i>selectAllOnMiniFilter</i> set to true, you can see how the select all only
+        The column country has the property <code>selectAllOnMiniFilter</code> set to true, you can see how the select all only
         applies to the items filtered by the mini filter search box.
     </p>
 
@@ -132,7 +131,7 @@ columnDefinition = {
 
     <?= example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1)) ?>
 
-    <h3 id="sortingSetFilter">Asynchronous Values</h3>
+    <h2>Asynchronous Values</h2>
 
     <p>
         In addition to being able to specify a hardcoded list of values for your setFilter, you can provide a callback
@@ -142,8 +141,11 @@ columnDefinition = {
 
     <p>
         This can be observed in the next example. Note that:
-        <ul>
-            <li><code>colDef.filterParams.values</code> specifies the values for the set filter in a callback and introduces a 5 second delay</li>
+
+    </p>
+
+        <ul class="content">
+            <li><code>colDef.filterParams.values</code> specifies the values for the set filter in a callback and introduces a 5 second delay
 <snippet>
     filterParams: {
         values: (params)=>{
@@ -152,6 +154,8 @@ columnDefinition = {
             }, 5000)
         }
     }</snippet>
+</li>
+
             <li>While the data is obtained, (the 5s delay), the setFilter is showing a loading message</li>
             <li>The loading message can be configured, check our <a href="../javascript-grid-internationalisation/">
                     internationalisation docs</a>. The key for this string is <code>loadingOoo</code></li>
@@ -159,12 +163,9 @@ columnDefinition = {
             the values are not loaded again.</li>
         </ul>
 
-    </p>
-
-
     <?= example('Callback/Async', 'callback-async', 'generated', array("enterprise" => 1)) ?>
 
-    <h3 id="sortingSetFilter">Sorting And Formatting Set Filter Values List</h3>
+    <h2>Sorting And Formatting Set Filter Values List</h2>
 
     <p>
         Values inside a set filter will be sorted by their string value by default. If you want a different sort
@@ -184,7 +185,7 @@ columnDefinition = {
 
     <?= example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1)) ?>
 
-    <h2 id="refreshAfterEdit">Refresh After Edit</h2>
+    <h2>Refresh After Edit</h2>
 
     <p>
         The set filter does NOT refresh after you edit the data. If the data is changing and you want the
@@ -201,7 +202,8 @@ columnDefinition = {
     <p>
         The example below shows different approaches on handling data changes for set filters.
         From the example, the following can be noted:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 All 4 columns have set filter with different responses to data changing.
             </li>
@@ -230,7 +232,6 @@ columnDefinition = {
                 1 and 2 will not have their filters updated.
             </li>
         </ul>
-    </p>
 
     <?= example('Refresh After Edit', 'refresh-after-edit', 'generated', array("enterprise" => 1)) ?>
 
@@ -239,7 +240,7 @@ columnDefinition = {
         this would cause the following issues:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             Rows could disappear while editing if there was a filter set and the edit make a row fail
             a filter that was previously passing the filter.
@@ -249,18 +250,21 @@ columnDefinition = {
         </li>
     </ul>
 
-    <h2 id="newRowsSetFilter">New Rows Action and Values Example</h2>
+    <h2>New Rows Action and Values Example</h2>
 
     <p>
         Below demonstrates using New Rows Action and Values. The example is not meant to make business sense,
         it just demonstrates the filters with random unrelated data. The example has the columns configured
         as follows:
-        <ul>
+    </p>
+
+    <ul class="content">
         <li>Column Fruit - Normal</li>
         <li>Column Animal - Using newRowsAction = Keep</li>
         <li>Column Color - Using values</li>
         <li>Column Location - Using values and using newRowsAction = Keep</li>
     </ul>
+    <p>
         The 'Set New Data' button sets new data into the grid. It is suggested you set the filters and then
         observe what happens when you hit 'Set New Data'.
     </p>
@@ -277,13 +281,13 @@ columnDefinition = {
 
     <?= example('Set Filter New Rows', 'set-filter-new-rows', 'generated', array("enterprise" => 1)) ?>
 
-    <h2 id="model">Set Filter Model</h2>
+    <h2>Set Filter Model</h2>
 
     <p>
         Get and set the state of the set filter by getting and setting the model on the filter instance.
     </p>
 
-    <p>
+
 <snippet>
 // get filter instance
 var countryFilterComponent = gridOptions.api.getFilterInstance('country');
@@ -294,17 +298,18 @@ var model = countryFilterComponent.getModel();
 // OR set filter model and update
 countryFilterComponent.setModel(['Spain','Ireland','South Africa','Australia','England']);
 countryFilterComponent.onFilterChanged()</snippet>
-</p>
+
 
     <p>
         The number filter model its an straight string array where each item in the array corresponds to an element
         to be selected from the set:
     </p>
 
-    <h2 id="setFilterApi">Set Filter API</h2>
+    <h2>Set Filter API</h2>
     <p>
         The set filter has on top of the getModel and setModel methods common to all the filters the following API:
-    <ul>
+    </p>
+    <ul class="content">
         <li><b>setMiniFilter(newMiniFilter)</b>: Sets the filter at the top of the filter (the 'quick search' in the popup)</li>
         <li><b>getMiniFilter()</b>: Gets the mini filter text.</li>
         <li><b>selectEverything()</b>: Selects everything</li>
@@ -321,7 +326,6 @@ countryFilterComponent.onFilterChanged()</snippet>
         <li><b>resetFilterValues()</b>: Useful if you want to rebuild the filter options based on the underlying data</li>
         <li><b>setLoading(loading)</b>: Useful if you want to show/hide the loading overlay in the set filter.</li>
     </ul>
-    </p>
 
     <p>
         Is important to note that when updating the set filter through the API is up to the developer to call
@@ -336,12 +340,13 @@ countryFilterComponent.onFilterChanged()</snippet>
 
     <?= example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1)) ?>
 
-    <h2 id="floating">Floating Set Filter</h2>
+    <h2>Floating Set Filter</h2>
     <p>
         If your grid has floatingFilter enabled, your columns with set filter will automatically show below the header a new
         column that<!----> will show two elements:
+    </p>
 
-    <ul>
+    <ul class="content">
         <li>Filter input box: It reflects any change made to the set filtering from anywhere within the application. This includes
                     changes on the rich filter for this column made by the user directly or changes made to the filter through
                     a call to setModel or the API to this filter component</li>
@@ -349,13 +354,12 @@ countryFilterComponent.onFilterChanged()</snippet>
         </li>
         <li>Filter button: This button is a shortcut to show the rich filter editor</li>
     </ul>
-    </p>
 
-    <h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
+    <h2>Common Column Filtering Functionality And Examples</h2>
 
     <p>The following can be found in the <a href="../javascript-grid-filtering/">column filtering documentation page</a></p>
-    <p>
-    <ul>
+
+    <ul class="content">
         <li>Common filtering params</li>
         <li>Enabling/Disabling filtering in a column</li>
         <li>Enabling/Disabling floating filter</li>
@@ -363,9 +367,7 @@ countryFilterComponent.onFilterChanged()</snippet>
         <li>Filtering animation</li>
         <li>Examples</li>
     </ul>
-    </p>
 
 
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

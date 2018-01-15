@@ -75,7 +75,7 @@ include('../includes/mediaHeader.php');
         </p>
         <p>
             First step was technology choice. I wrote the following prototypes, wanting to consider every possibility:
-            <ul>
+            <ul class="content">
                 <li><b>SVG:</b></li> I created a prototype using <a href="http://www.w3.org/Graphics/SVG/">SVG</a> DOM elements. I considered
                 using D3 to interface with the DOM, but for the fastest possible grid, I thought D3
                 could add an unnecessary layer. So I wrote raw Javascript creating <a href="http://www.w3.org/Graphics/SVG/">SVG</a>. I virtualised
@@ -141,7 +141,7 @@ include('../includes/mediaHeader.php');
             under my belt, I felt I had the workings of a grid worthy of investing more time in,
             so I came up with a list of all the things I wanted in a grid. My list was
             as follows (otherwise known as requirements):
-            <ul>
+            <ul class="content">
                 <li><a href="https://angularjs.org/">AngularJS 1.x</a> Interface</li> - Influenced by <a href="http://angular-ui.github.io/ui-grid/">ng-grid</a>. I wanted it to be simple to
                 pop in a list of rows and columns and off you go. The default settings
                 would cater for everything else.
