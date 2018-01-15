@@ -6,9 +6,9 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h2 id="animation">Animation</h2>
+
+    <h1>Animation</h1>
 
     <p>
         The grid will animate the rows and columns in the following scenarios:
@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <h3 id="column-animations">Column Animations</h3>
+    <h2>Column Animations</h2>
 
     <p>
         Column animations happen when you move a column. The default is for animations to
@@ -42,7 +42,7 @@ include '../documentation-main/documentation_header.php';
         it animates to the new position. No other attribute apart from position is animated.
     </p>
 
-    <h3 id="row-animations">Row Animations</h3>
+    <h2>Row Animations</h2>
 
     <p>
         Row animations occur after filtering, sorting, resizing height and expanding / collapsing a row group.
@@ -80,15 +80,12 @@ include '../documentation-main/documentation_header.php';
         situations (eg finance traders or air traffic control) may prefer no animation and focus on the data.
     </note>
 
-    <h3 id="example-animation">Example Animation</h3>
+    <h2>Example Animation</h2>
 
     <p>
         The example below shows the animations by the JavaScript calling the grid's api. So no touching, just looking!!!
     </p>
 
     <?= example('Animation', 'animation', 'generated', array("enterprise" => 1)) ?>
-
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

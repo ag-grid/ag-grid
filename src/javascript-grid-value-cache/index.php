@@ -6,11 +6,10 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
     <h1 class="first-h1">Value Cache</h1>
 
-    <p>
+    <p class="lead">
         The value cache is used for the results of <a href="../javascript-grid-value-getters">valueGetters</a>.
         If you are not using value getters, then you do not need the value cache.
     </p>
@@ -49,7 +48,7 @@ include '../documentation-main/documentation_header.php';
         </p>
     </note>
 
-    <h1>Example - Value Cache</h1>
+    <h2>Example - Value Cache</h2>
 
     <p>
         Below shows a grid demonstrating the value cache. The column on the right has a value getter
@@ -91,18 +90,18 @@ include '../documentation-main/documentation_header.php';
         value getters.
     </note>
 
-    <h1>Value Cache Properties</h1>
+    <h2>Value Cache Properties</h2>
 
     <p>
         The following are the grid properties related to the value cache.
     </p>
 
-    <table class="table">
+    <table class="table reference">
         <?php include './valueCacheProperties.php' ?>
         <?php printPropertiesRows($valueCacheProperties) ?>
     </table>
 
-    <h1 id="expiring">Expiring the Value Cache</h1>
+    <h2>Expiring the Value Cache</h2>
 
     <p>
         The value cache starts empty. Then as value getters execute, their results are stored and the value cache
@@ -124,7 +123,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
     <note>* Assuming your framework allows binding properties and this is what you are using.</note>
 
-    <h1>Example - Expiring through Editing</h1>
+    <h2>Example - Expiring through Editing</h2>
 
     <p>
         The first example above didn't have any editing, so there was no concern for expiring the value cache.
@@ -192,12 +191,12 @@ include '../documentation-main/documentation_header.php';
         is concerned so the whole value cache is invalidated.
     </note>
 
-    <h1>Setting to Never Expire</h1>
+    <h2>Setting to Never Expire</h2>
 
     <p>
         Above details how the cache operates under normal operations. In essence, the value cache gets expired
         whenever the grid is aware of a change to the underlying data. This strategy is the default strategy for
-        the cache. If you want to <b>not</b> expire the cache when data updates, then set the grid property
+        the cache. If you want to <strong>persist the cache</strong> when data updates, then set the grid property
         <code>valueCacheNeverExpires=true</code>.
 
     </p>
@@ -209,7 +208,7 @@ include '../documentation-main/documentation_header.php';
         want to control exactly when the value cache is expired.
     </p>
 
-    <h2>Example - Never Expire</h2>
+    <h3>Example - Never Expire</h3>
 
     <p>
         This example is again almost identical to the example above. The difference here is the value cache
@@ -233,7 +232,5 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <?= example('Never expire Value change', 'never-expire', 'generated', array("enterprise" => 1)) ?>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

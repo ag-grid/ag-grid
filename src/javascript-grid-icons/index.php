@@ -6,11 +6,11 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-<h1 class="first-h1" id="icons">Icons</h1>
 
-    <p>
+<h1>Icons</h1>
+
+    <p class="lead">
     By default, ag-Grid comes with a set of SVG icons. You can provide your own icons for the grid to use.
 </p>
 
@@ -37,7 +37,7 @@ include '../documentation-main/documentation_header.php';
 
     </note>
 
-<h3>Change Individual Icons (CSS)</h3>
+<h2>Change Individual Icons (CSS)</h2>
 
 <p>You can change individual icons by overriding the background images for the respective CSS selector. 
 The following code snippet overrides the fresh theme pin icon  used in the drag hint when reordering columns:<p>
@@ -53,7 +53,7 @@ The following code snippet overrides the fresh theme pin icon  used in the drag 
 
 <p>The icon classes follow the <code>.ag-icon-{icon-file-name}</code> convention.</p>
 
-<h3>Replace the icons by changing the icons path (Scss)</h3>
+<h2>Replace the icons by changing the icons path (Scss)</h2>
 
 <p>If you are using Sass/Scss in your project, you can include the ag-grid theme source file and customize its properties by overriding the default variables, including the path to the icons. </p>
 
@@ -79,7 +79,8 @@ $ag-icons-path: "./my-icons/";
 
 <p>A working Sass / Webpack which includes the source theme file is available in the <a href="https://github.com/ag-grid/ag-grid-seed/tree/master/typescript-webpack/src">ag grid seed repository</a>.
 
-<h3>Set the icons through <code>gridOptions</code> (JavaScript)</h3>
+<h2>Set the icons through <code>gridOptions</code> (JavaScript)</h2>
+
     <p>
         The icons can either be set on the grid options (all icons) or on the column definition (all except group).
         If defined in both the grid options and column definitions, the column definition will get used. This
@@ -174,6 +175,6 @@ valuePanel // beside where to drop columns for value</snippet>
     </p>
 
     <?= example('Icons', 'icons', 'generated', array('enterprise' => true, 'extras' => array('fontawesome') )) ?>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

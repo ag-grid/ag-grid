@@ -6,20 +6,21 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="quickFilter">Quick Filter</h2>
+<h1>Quick Filter</h1>
 
 <p>
     In addition to the column specific filtering, a 'quick filter' (influenced by how filtering is done in Google
     GMail) can also be applied. Set the quick filter by using the Grid's API:
+</p>
 
     <snippet>
 api.setQuickFilter('new filter text');</snippet>
 
-    If you are using a framework such as Angular or React, you can set bind the quick filter text to the
+    <p>If you are using a framework such as Angular or React, you can set bind the quick filter text to the
     <code>quickFilter</code> attribute.
 </p>
 
-<h3 id="overridingQuickFilter">Overriding the Quick Filter Value</h3>
+<h2>Overriding the Quick Filter Value</h2>
 
 <p>
     If your data contains complex objects, then the quick filter will end up with [object,object] inside it
@@ -35,6 +36,7 @@ colDef = {
         return params.value.name;
     }
 }</snippet>
+
 <p>Params contains {value, node, data, column, colDef}.</p>
 
 <note>
@@ -42,7 +44,7 @@ colDef = {
     problem, you don't need to use it, quick filter will work 'out of the box' in most cases.
 </note>
 
-<h3 id="quick-filter-cache">Quick Filter Cache</h3>
+<h2>Quick Filter Cache</h2>
 
 <p>
     By default, the quick filter checks each columns value, including running it's value getters
@@ -60,7 +62,7 @@ colDef = {
     data that you provide is not changed.
 </p>
 
-<h4 id="reset-quick-filters">Reset Cache Text</h4>
+<h2>Reset Cache Text</h2>
 
 <p>Quick filter cache text can be reset in any of the following ways: </p>
 
@@ -74,7 +76,7 @@ colDef = {
     If you are not using the cache setting, then you can ignore all this.
 </p>
 
-<h3 id="quick-filter-example">Quick Filter Example</h3>
+<h2>Quick Filter Example</h2>
 
 <p>
     The example below shows the quick filter working on different data types. Each column demonstrates something
@@ -113,7 +115,7 @@ colDef = {
 
 <?= example('Quick Filter', 'quick-filter', 'vanilla') ?>
 
-<h3 id="server-side-filtering">Server Side Data</h3>
+<h2>Server Side Data</h2>
 
 <p>
     Quick Filters only make sense with client side data (i.e. when using the In Memory row model).
@@ -121,7 +123,5 @@ colDef = {
     <a href="../javascript-grid-virtual-paging/">infinite scrolling</a> etc) you would need to implement your own server side sorting to
     replicate Quick Filter functionality.
 </p>
-
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

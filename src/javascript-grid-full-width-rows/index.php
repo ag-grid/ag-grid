@@ -6,9 +6,9 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1" id="full-width-rows-master-detail-grids">Full Width Rows</h1>
+<h1>Full Width Rows</h1>
 
-<p>
+<p class="lead">
     Under normal operation, ag-Grid will render each row as a horizontal list of cells. Each cell in the row
     will correspond to one column definition. It is possible to switch this off and allow you to provide
     one component to span the entire width of the grid and not use columns. This is useful if you want to
@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
     used for displaying panels of information.
 </p>
 
-<h3>Simple Example of Full Width Rows</h3>
+<h2>Simple Example of Full Width Rows</h2>
 
 <p>
     Below shows a simple example using full width. The following can be noted:
@@ -42,13 +42,14 @@ include '../documentation-main/documentation_header.php';
     supported, the usefulness of full width is reduced.
 </note>
 
-<h1 id="understanding-full-width">
+<h2>
     Understanding Full Width
-</h1>
+</h2>
 
 <p>
     A fullWidth (full width) component takes up the entire width of the grid. A fullWidth component:
 </p>
+
 <ul class="content">
     <li>is not impacted by horizontal scrolling.</li>
     <li>is the width of the grid, regardless of what columns are present.</li>
@@ -58,14 +59,15 @@ include '../documentation-main/documentation_header.php';
 </ul>
 
 <p>
-    To use fullWidth, you must:
+    To use <code>fullWidth</code>, you must:
+</p>
+
 <ol>
     <li>Implement the <code>isFullWidthCell(rowNode)</code> callback, to tell the grid which rows should be treated
         as fullWidth.</li>
     <li>Provide a <code>fullWidthCellRenderer</code>, to tell the grid what cellRenderer to use when doing
         fullWidth rendering.</li>
 </ol>
-</p>
 
 <p>
     The cell renderer can be any ag-Grid cell renderer. Refer to
@@ -80,14 +82,14 @@ include '../documentation-main/documentation_header.php';
     (use fullWidth) or false (do not use fullWidth and render as normal).
 </p>
 
-<h3 id="sorting-filtering">Sorting and Filtering</h3>
+<h2>Sorting and Filtering</h2>
 
 <p>
     Sorting and Filtering are NOT impacted by full width. Full width is a rendering time feature. The sorting
     and filtering applied to the data is done before rendering and is not impacted.
 </p>
 
-<h3 id="basic-fullwidth-example">Detailed Full Width Example</h3>
+<h2>Detailed Full Width Example</h2>
 
 <p>
     Below shows a detailed full width example including pinned rows and columns.
@@ -96,6 +98,7 @@ include '../documentation-main/documentation_header.php';
     full width a darker shade of blue) and body full width rows are green.
     The following points should be noted:
 </p>
+
 <ul class="content">
     <li>
         Full width can be applied to any row, including pinned rows. The example demonstrates full width in
@@ -117,7 +120,7 @@ include '../documentation-main/documentation_header.php';
 
 <?= example('Basic Full Width', 'basic-full-width', 'generated') ?>
 
-<h1 id="embeddedFullWidth">Embedded Full Width vs Normal Full Width</h1>
+<h2>Embedded Full Width vs Normal Full Width</h2>
 
 <p>
     The grid uses a trick of placing the full width rows in another div, outside of the main rows and cells.

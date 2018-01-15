@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="overview">Date Filter</h2>
+<h1>Date Filter</h1>
 <p>
     Date filters allow users to filter data based on the dates contained in the column where this filter is defined. To
     create a new date filter in a column, all you need to do is:
@@ -31,7 +31,7 @@ colDef: {
     filter: 'agDateColumnFilter'
 }</snippet></p>
 
-<h2 id="dateFilterParameters">Date Filter Parameters</h2>
+<h2>Date Filter Parameters</h2>
 
 <p>A date filter can take the following parameters:</p>
 
@@ -57,7 +57,7 @@ colDef: {
 </ul>
 
 
-<h3 id="dateFilterComparator">Date Filter Comparator</h3>
+<h2>Date Filter Comparator</h2>
 <p>
     Dates can be represented in your data in many ways e.g. as a JavaScript Date object, or as a string in
     the format eg "26-MAR-2020" or something else different. How you represent dates will be particular to your
@@ -116,7 +116,7 @@ colDef = {
     }
 }</snippet>
 
-<h2 id="model">Date Filter Model</h2>
+<h2>Date Filter Model</h2>
 
 <p>
     Get and set the state of the date filter by getting and setting the model on the filter instance.
@@ -160,7 +160,7 @@ gridOptions.api.onFilterChanged()</snippet></p>
 </ul>
 
 
-<h2 id="floating">Floating Date Filter</h2>
+<h2>Floating Date Filter</h2>
 <p>
     If your grid has floatingFilter enabled, your columns with number filter will automatically show below the header a new
     column that will show two elements:
@@ -183,7 +183,7 @@ gridOptions.api.onFilterChanged()</snippet></p>
     <li>Filter button: This button is a shortcut to show the rich filter editor</li>
 </ul>
 
-<h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
+<h2>Common Column Filtering Functionality And Examples</h2>
 
 <p>The following can be found in the <a href="../javascript-grid-filtering/">column filtering documentation page</a></p>
 

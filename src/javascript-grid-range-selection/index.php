@@ -9,19 +9,19 @@ include '../documentation-main/documentation_header.php';
 <div>
     <h1 class="heading-enterprise">Range Selection</h1>
 
-    <p>
+    <p class="lead">
         Range selection allows Excel-like range selection of cells. Once enabled, you can drag the mouse over
         a set of cells to select a range of cells.
     </p>
 
-    <h3>Selecting Multiple Ranges</h3>
+    <h2>Selecting Multiple Ranges</h2>
 
     <p>
         To select multiple ranges, hold down ctrl while making the selection. To prevent multiple
         selections though the GUI, set grid property <code>suppressMultiRangeSelection=true</code>.
     </p>
 
-    <h3>Ranges with Pinning and Floating</h3>
+    <h2>Ranges with Pinning and Floating</h2>
 
     <p>
         It is possible to select a range that spans pinned and non-pinned sections of the grid.
@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
         in the flattened out version with only full rectangles can be selectable.
     </p>
 
-    <h3>Range Change Event</h3>
+    <h2>Range Change Event</h2>
 
     <p>
         There is one event rangeSelectionChanged to tell you the range selection has changed.
@@ -63,9 +63,9 @@ api.addEventListener('rangeSelectionChanged', function(event) {
     console.log('has changed, finished = ' + event.finished);
 });</snippet>
 
-    <h3>Range Selection API</h3>
+    <h2>Range Selection API</h2>
 
-    <p><b>api.getRangeSelections()</b></p>
+    <h3><code>api.getRangeSelections()</code></h3>
 
     <p>
         Get the selected ranges using <code>api.getRangeSelections()</code>. This will return back
@@ -104,13 +104,13 @@ GridCell {
             </li>
         </ul>
 
-    <p><b>api.clearRangeSelection()</b></p>
+    <h3><code>api.clearRangeSelection()</code></h3>
 
     <p>
         Clears the range selection.
     </p>
 
-    <p><b>api.addRangeSelection(rangeSelection)</b></p>
+    <h3><code>api.addRangeSelection(rangeSelection)</code></h3>
 
     <p>
         Adds a range to the selection. This keeps any prevoius ranges. If you wish to have this range
@@ -126,7 +126,7 @@ AddRangeSelectionParams{
 }</snippet>
     </p>
 
-    <h3>Callback processCellForClipboard()</h3>
+    <h3>Callback <code>processCellForClipboard()</code></h3>
 
     <p>
         There is a grid callback <code>processCellForClipboard()</code> that allows you to format cells before
@@ -135,17 +135,17 @@ AddRangeSelectionParams{
     </p>
 
     <p>
-        The callback params has the following attributes: value, node, column, api, columnApi, context, type.
+        The callback params has the following attributes: <code>value, node, column, api, columnApi, context, type</code>.
     </p>
 
-    <h3>Copy Range Down</h3>
+    <h2>Copy Range Down</h2>
 
     <p>
-        When you have more than one row selected in a range, pressing keys Ctrl & D will copy
+        When you have more than one row selected in a range, pressing keys <kbd>Ctrl + D</kbd> will copy
         the range down.
     </p>
 
-    <h1>Range Selection Example</h1>
+    <h2>Range Selection Example</h2>
 
     <p>
         The example below demonstrates range selection. Use your mouse to drag over the cells
@@ -163,7 +163,7 @@ AddRangeSelectionParams{
 
     <?= example('Range Selection', 'range-selection', 'generated', array("enterprise" => 1)) ?>
 
-    <h1>Range Selection Example - Suppress Multi</h1>
+    <h2>Range Selection Example - Suppress Multi</h2>
 
     <p>
         This example differs from above as <code>suppressMultiRangeSelection=true</code> which only allows

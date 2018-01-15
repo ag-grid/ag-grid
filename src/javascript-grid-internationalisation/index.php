@@ -6,19 +6,17 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h2 id="internationalisation">Internationalisation</h2>
 
-    <p>
+    <h1>Internationalisation</h1>
+
+    <p class="lead">
         You can change the text in the paging panels and the default filters by providing a <code>localeText</code> or
         a <code>localeTextFunc</code> to the <code>gridOptions</code>.</p>
 
-    <h3 id="using-locale-text">Using <code>localeText</code></h3>
+    <h2>Using <code>localeText</code></h2>
 
-    <p>
-        The example below shows all the text that can be defined.
-    </p>
+    <p> The example below shows all the text that can be defined.  </p>
 
     <snippet>
 localeText = {
@@ -111,7 +109,7 @@ localeText = {
 
     <?= example('Internationalisation', 'internationalisation', 'generated', array('enterprise' => true)) ?>
 
-    <h3 id="using-locale-text-func">Using <code>localeTextFunc</code></h3>
+    <h2>Using <code>localeTextFunc</code></h2>
 
     <p>
         The example above works great if all you are translating is ag-Grid. However what if you want
@@ -147,6 +145,5 @@ var gridOptions = {
     }
 };</snippet>
 
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

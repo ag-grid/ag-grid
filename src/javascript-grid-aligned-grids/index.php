@@ -6,11 +6,11 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
 
     <h1 class="first-h1" id="master-slave">Aligned Grids</h1>
 
-    <p>
+    <p class="lead">
         Aligning two or more grids means columns will be kept aligned in all grids.
         In other words, column changes to one grid (column width, column order, column visibility etc)
         are reflected in the other grid.
@@ -18,12 +18,13 @@ include '../documentation-main/documentation_header.php';
         and you want to keep the columns aligned.
     </p>
 
-    <h3 id="configuration">Configuration</h3>
+    <h2>Configuration</h2>
 
     <p>
         To have one (the first) grid reflect column changes in another (the second), place the
         first grid's options in <code>alignedGrids</code> property of the second grids.
     </p>
+
     <snippet>
 gridOptionsFirst = {
     // some grid options here
@@ -129,6 +130,6 @@ gridOptionsSecond = {
         between grids causing infinite firing of events if two grids are aligned to each other.
     </p>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

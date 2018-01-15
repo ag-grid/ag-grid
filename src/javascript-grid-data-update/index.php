@@ -6,24 +6,23 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+    <h1>Updating Data</h1>
 
-    <h2 id="insert-remove">Updating Data</h2>
-
-    <p>
+    <p class="lead">
         Data can be updated inside the grid using the grid's API.
     </p>
+
     <p>
         The grid also allows updating data in the following other ways which are explained in other
         sections of the documentation:
-        <ol>
-            <li>Using the grids <a href="../javascript-grid-cell-editing">in-line editing</a> feature,
+    </p>
+
+        <ol class="content">
+            <li>Using the grid's <a href="../javascript-grid-cell-editing">in-line editing</a> feature,
                 eg double clicking on a cell and editing the value.</li>
             <li>Updating the data directly in your application - which the grid is not aware of the changes
                 and you need to tell the grid to <a href="../javascript-grid-refresh">refresh the view</a>.</li>
         </ol>
-    </p>
-
     <p>
         This section of the documentation is regarding using the grid's API to update data. The grid
         will then be aware of the change and also update the relevant parts of the UI.
@@ -108,7 +107,7 @@ include '../documentation-main/documentation_header.php';
         If you want to update more than one row at a time, then you have the following options:
     </p>
 
-    <p><b>Method 1 - Transaction</b></p>
+    <h3>Method 1 - Transaction</h3>
 
     <p>
         The first method is to pass a transaction object to the grid containing rows to add, remove
@@ -123,7 +122,7 @@ include '../documentation-main/documentation_header.php';
         boost. All row and range selection will be kept.
     </p>
 
-    <p><b>Method 2 - Row Data (Normal)</b></p>
+    <h3>Method 2 - Row Data (Normal)</h3>
 
     <p>
         The next way is to replace all the row data in the grid be calling <code>api.setRowData(newData)</code>
@@ -138,7 +137,7 @@ include '../documentation-main/documentation_header.php';
         around from the old dataset.
     </p>
 
-    <p><b>Method 3 - Delta Row Data</b></p>
+    <h3>Method 3 - Delta Row Data</h3>
 
     <p>
         The final method is using the row data method above but having the property
@@ -507,6 +506,6 @@ interface RowDataTransaction {
         the animation) then override the relevant CSS classes.
     </p>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

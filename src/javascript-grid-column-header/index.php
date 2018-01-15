@@ -6,16 +6,16 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div xmlns="http://www.w3.org/1999/html">
 
-    <h1 class="first-h1" id="headerHeight">Column Headers</h1>
 
-    <p>
+    <h1>Column Headers</h1>
+
+    <p class="lead">
         Each column has a header at the top that typically displays the column name and has access to column
         features, such as sorting, filtering and a column menu. This page explains how you can manage the headers.
     </p>
 
-    <h2 id="header-template">Header Templates</h2>
+    <h2>Header Templates</h2>
 
     <p>
         You can provide a header template used by the default header component for simple layout changes. If you
@@ -26,6 +26,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         This is the default template used in ag-grid
     </p>
+
     <snippet>&lt;div class="ag-cell-label-container" role="presentation"&gt;
     &lt;span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"&gt;&lt;/span&gt;
     &lt;div ref="eLabel" class="ag-header-cell-label" role="presentation"&gt;
@@ -39,7 +40,7 @@ include '../documentation-main/documentation_header.php';
 &lt;/div&gt;</snippet>
 
     <p>When you provide your own template, everything should work as expected as long as you reuse the same refs.</p>
-    <table class="table">
+    <table class="table reference">
         <tr>
             <th>Ref</th>
             <th>Description</th>
@@ -86,7 +87,7 @@ include '../documentation-main/documentation_header.php';
         looking to change the icons, check our <a href="../javascript-grid-icons">icon docs</a>
     </note>
 
-    <h3 id="example-header-template">Example - Simple Header Templates</h3>
+    <h3>Example - Simple Header Templates</h3>
 
     <p>
         In the following example you can see how we are reusing the default grid template to change the layout of
@@ -143,7 +144,7 @@ include '../documentation-main/documentation_header.php';
         and also provide the adequate header heights using the appropriate grid property.
     </p>
 
-    <h2 id="headerHeightExample">Header Height and Text Orientation Example</h2>
+    <h3>Example - Header Height and Text Orientation</h3>
 
     <p>
         The following example shows how you can provide a unique look & feel to the headers. Note that:
@@ -266,7 +267,7 @@ pivotGroupHeaderHeight:100,
         header check how to create your own <a href="../javascript-grid-header-rendering/">Header Components</a>.
     </p>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
 

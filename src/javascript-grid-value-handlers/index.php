@@ -3,10 +3,11 @@ $pageTitle = "ag-Grid Value Handlers";
 $pageDescription = "ag-Grid Value Handlers";
 $pageKeyboards = "ag-Grid Value Handlers";
 $pageGroup = "feature";
+define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="valueHandlers">Value Handlers</h2>
+<h1>Value Handlers</h1>
 
 <p>
     This section gives an overview of the various <code>Value Handlers</code> available that can be used to provide custom handling
@@ -51,7 +52,7 @@ include '../documentation-main/documentation_header.php';
     The flow diagram below illustrates the chain of handlers that get invoked prior to a value being displayed in a cell:
 </p>
 
-<img src="valueGetterFlow.svg"/>
+<img src="valueGetterFlow.svg" class="img-fluid" />
 
 <h2>Value Saving Flow</h2>
 
@@ -77,12 +78,10 @@ include '../documentation-main/documentation_header.php';
         </td>
     </tr>
 </table>
-
-<br>
 <p>
     The flow diagram below shows the flow of a value after it is edited using the UI.
 </p>
 
-<img src="valueSetterFlow.svg"/>
+<img src="valueSetterFlow.svg" class="img-fluid" />
 
 <?php include '../documentation-main/documentation_footer.php';?>

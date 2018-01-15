@@ -23,3 +23,8 @@ pre[class*="language-"], snippet pre {
 code {
     color: $red-highlight;
 }
+
+h2 code, h3 code, h4 code {
+    background-color: transparent;
+    color: inherit;
+}

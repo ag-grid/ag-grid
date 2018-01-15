@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="first-h1 heading-enterprise">Pivoting</h1>
+    <h1>Pivoting</h1>
 
     <p>
         Pivoting allows you to take a columns values and turn them into columns. For example you can pivot on Country
@@ -44,6 +44,7 @@ include '../documentation-main/documentation_header.php';
         To pivot rows by a particular column, mark the column you want to group with <code>pivot=true</code>.
         There is no limit on the number of columns that the grid can pivot by.
         For example, the following will pivot the rows in the grid by country and then sport:
+</p>
     <snippet>
 gridOptions.columnDefs = [
     {headerName: "Country", field: "country", pivot: true},

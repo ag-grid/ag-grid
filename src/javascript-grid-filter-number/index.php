@@ -7,7 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 
-<h2 id="overview">Number Filter</h2>
+<h1>Number Filter</h1>
 <p>
     Number filters allow users to filter data based on the numbers contained in the column where this filter is defined. To
     create a new text filter in a column, all you need to do is:
@@ -25,7 +25,7 @@ colDef: {
     filter:'agNumberColumnFilter'
 }</snippet></p>
 
-<h2 id="params">Number Filter Parameters</h2>
+<h2>Number Filter Parameters</h2>
 <p>
     A number filter can take the following parameters:
 </p>
@@ -101,7 +101,7 @@ ageFilterComponent.onFilterChanged()</snippet></p>
     <li><code>filterTo:</code> The end range of the filter if the filter type is inRange, otherwise has no effect.</li>
 </ul>
 
-<h2 id="floating">Floating Number Filter</h2>
+<h2>Floating Number Filter</h2>
 <p>
     If your grid has floatingFilter enabled, your columns with number filter will automatically show below the header a new
     column that will show two elements:
@@ -123,7 +123,7 @@ ageFilterComponent.onFilterChanged()</snippet></p>
     <li>Filter button: This button is a shortcut to show the rich filter editor</li>
 </ul>
 
-<h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
+<h2>Common Column Filtering Functionality And Examples</h2>
 
 <p>The following can be found in the <a href="../javascript-grid-filtering/">column filtering documentation page</a></p>
 

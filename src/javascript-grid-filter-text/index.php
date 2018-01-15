@@ -7,7 +7,7 @@ include '../documentation-main/documentation_header.php';
 ?>
 
 
-<h2 id="overview">Text Filter</h2>
+<h1>Text Filter</h1>
 <p>
     Text filters allow users to filter data based on the text contained in the column where this filter is defined. To
     create a new text filter in a column, all you need to do is:
@@ -33,9 +33,8 @@ colDef:{
 
 
 <h2 id="params">Text Filter Parameters</h2>
-<p>
-    A text filter can take the following parameters:
-</p>
+<p> A text filter can take the following parameters: </p>
+
     <ul class="content">
     <li><code>newRowsAction:</code> What to do when new rows are loaded. The default is to reset the filter.
         If you want to keep the filter status between row loads, then set this value to 'keep'.</li>
@@ -71,7 +70,7 @@ colDef:{
     }
 }</snippet>
 
-<h3 id="textCustomComparator">Text Custom Comparator</h3>
+<h2>Text Custom Comparator</h2>
 <p>
     By default the text filter does strict case insensitive text filtering: ie If you provide as data for a text column
     the following values ['1,234.5USD', '345GBP']:
@@ -133,7 +132,7 @@ function myComparator (filter, value, filterText){
     }
 }</snippet>
 
-<h3 id="textFormatter">Text Formatter</h3>
+<h2>Text Formatter</h2>
 <p>
     The grid compares the text filter with the values in a case insensite way, thus 'o' will match 'Olivia' and 'Salmon',
     however it will not match against 'Bj&oslash;rk'. If you want to match in any other way (eg you want to makes against
@@ -178,7 +177,7 @@ function(s){
         return r;
 };</snippet>
 
-<h2 id="model">Text Filter Model</h2>
+<h2>Text Filter Model</h2>
 
 <p>
     Get and set the state of the text filter by getting and setting the model on the filter instance.
@@ -207,7 +206,7 @@ athleteFilterComponent.onFilterChanged()</snippet></p>
     <li><b>filter:</b> The actual filter text to apply.</li>
 </ul>
 
-<h2 id="floating">Floating Text Filter</h2>
+<h2>Floating Text Filter</h2>
 
 <p>
     If your grid has floatingFilter enabled, your columns with text filter will automatically show below the header a new
@@ -228,7 +227,7 @@ athleteFilterComponent.onFilterChanged()</snippet></p>
     <li>Filter button: This button is a shortcut to show the rich filter editor</li>
 </ul>
 
-<h2 id="example">Example</h2>
+<h2>Example</h2>
 
 <ul class="content">
     <li>The athlete column has only two filter options: <code>filterOptions=['contains','notContains']</code></li>
@@ -248,7 +247,7 @@ athleteFilterComponent.onFilterChanged()</snippet></p>
 
 <?= example('Text Filter', 'text-filter', 'generated') ?>
 
-<h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
+<h2>Common Column Filtering Functionality And Examples</h2>
 
 <p>The following can be found in the <a href="../javascript-grid-filtering/">column filtering documentation page</a></p>
 

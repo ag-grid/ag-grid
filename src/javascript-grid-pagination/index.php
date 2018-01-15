@@ -6,11 +6,11 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
 
     <h1 class="first-h1" id="pagination">Pagination</h1>
 
-    <p>
+    <p class="lead">
         To enable pagination in, set the grid property <code>pagination=true</code>.
         The following simple example shows this, the only difference to this and previous
         examples is the <code>pagination=true</code> property.
@@ -19,10 +19,11 @@ include '../documentation-main/documentation_header.php';
     <?= example('Client Paging', 'client-paging', 'generated', array("enterprise" => 1)) ?>
 
     <h2 id="clientPagination">Supported Row Models</h2>
+
     <p>Pagination in ag-Grid is supported in <a href="../javascript-grid-row-models/">all the different row models</a>.
         The <a href="../javascript-grid-in-memory/">in memory row model</a> (the default
         row model) is used for the examples on this page.</p>
-    
+
     <p>To see the specifics of pagination on the
     other row models check the relevant documentation for <a href="../javascript-grid-infinite-scrolling/#pagination">infinite row model</a>,
     <a href="../javascript-grid-viewport/#pagination">viewport row model</a> and
@@ -78,24 +79,26 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Custom Controls', 'custom-controls', 'generated', array("enterprise" => 1)) ?>
 
-    <h2 id="properties">Pagination Properties</h2>
+    <h2>Pagination Properties</h2>
+
     <?php include_once 'paginationProperties.php' ?>
+
     <?php printPropertiesTable($paginationProperties) ?>
 
     <p>The following methods compose the pagination API are all available from <code>gridOptions.api</code></p>
 
-    <h2 id="properties">Pagination API</h2>
+    <h2>Pagination API</h2>
 
     <?php include_once 'paginationProperties.php' ?>
     <?php printPropertiesTable($paginationApi) ?>
 
-    <h2 id="properties">Pagination Callbacks</h2>
+    <h2>Pagination Callbacks</h2>
 
     <?php include_once 'paginationProperties.php' ?>
     <?php printPropertiesTable($paginationCallbacks) ?>
 
-    <br>
-    <h2 id="events">Pagination Events</h2>
+    <h2>Pagination Events</h2>
+
     <table class="table">
         <tr>
             <th>Event</th>
@@ -130,7 +133,5 @@ include '../documentation-main/documentation_header.php';
             and then set grid property <code>pagination=true</code>.
         </p>
     </note>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

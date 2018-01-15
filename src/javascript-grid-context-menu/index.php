@@ -6,11 +6,9 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+    <h1>Context Menu</h1>
 
-    <h1 class="first-h1 heading-enterprise">Context Menu</h1>
-
-    <p>
+    <p class="lead">
         The user can bring up the context menu by right clicking on a cell.
         By default, the context menu provides the values 'copy' and 'paste'. Copy will copy the selected
         cells or rows to the clipboard. Paste will always, forever, be disabled.</p>
@@ -25,7 +23,7 @@ include '../documentation-main/documentation_header.php';
         the shortcut as a hint to the user.
     </note>
 
-    <h3>Configuring the Context Menu</h3>
+    <h2>Configuring the Context Menu</h2>
 
     <p>
         You can customise the context menu by providing a <code>getContextMenuItems()</code> callback.
@@ -36,6 +34,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         <code>getContextMenuItems()</code> takes the following object as parameters:
+</p>
         <snippet>
 GetContextMenuItemsParams {
     column: Column, // the column that was clicked
@@ -46,7 +45,6 @@ GetContextMenuItemsParams {
     context: any, // the grid context
     defaultItems: string[] // names of the items that would be provided by default
 }</snippet>
-    </p>
 
     <p>
         The result of <code>getContextMenuItems()</code> should be a list with each item either a) a string
@@ -59,7 +57,7 @@ GetContextMenuItemsParams {
     </p>
 
     <p>
-        A MenuItem description looks as follows (items with question marks are optional):
+        A <code>MenuItem</code> description looks as follows (items with question marks are optional):
         <snippet>
 MenuItemDef {
     name: string, // name of menu item
@@ -82,7 +80,7 @@ MenuItemDef {
         If you want to turn off the context menu completely, set the grid property <code>suppressContextMenu=true</code>.
     </p>
 
-    <h3>Built In Menu Items</h3>
+    <h2>Built In Menu Items</h2>
 
     <p>The following is a list of all the default built in menu items with the rules about when they are shown.</p>
 
@@ -100,7 +98,7 @@ MenuItemDef {
         <li><code>excelExport</code>: Export to Excel using all default export values.</li>
     </ul>
 
-    <h3>Default Context Menu</h3>
+    <h2>Default Context Menu</h2>
 
     <p>
         One drawback of using the ag-Grid context menu is that you may want to show the browsers context
@@ -114,7 +112,7 @@ MenuItemDef {
         menu, even when ctrl is pressed, then set <code>allowContextMenuWithControlKey=true</code>.
     </p>
 
-    <h3>Hiding the Context Menu</h3>
+    <h2>Hiding the Context Menu</h2>
 
     <p>
         Hide the context menu with the grid API <code>hidePopupMenu()</code>, which will hide
@@ -122,7 +120,7 @@ MenuItemDef {
         whichever is showing.
     </p>
 
-    <h3>Context Menu Example</h3>
+    <h2>Context Menu Example</h2>
 
     <p>
         Below shows a configured context menu in action demonstrating a customised menu with a mix
@@ -138,7 +136,5 @@ MenuItemDef {
     </ul>
 
     <?= example('Context Menu Example', 'context-menu', 'generated', array("enterprise" => 1)) ?>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

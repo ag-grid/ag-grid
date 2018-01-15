@@ -6,12 +6,12 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h2 class="first-h1" id="pinning">Column Pinning</h2>
 
-    <p>
-        You can pin columns by setting the pinned attribute on the column definition to either 'left' or 'right'.
+    <h1>Column Pinning</h1>
+
+    <p class="lead">
+        You can pin columns by setting the <code>pinned</code> attribute on the column definition to either <code>'left'</code> or <code>'right'</code>.
     </p>
 
     <snippet>
@@ -30,7 +30,7 @@ colDef = {
         columns such that when 'Country' is pinned, it jumps to the first position.
     </p>
 
-    <h3 id="jump-to-pinning">Jump To & Pinning</h3>
+    <h2>Jump To & Pinning</h2>
 
     <p>
         Below shows jumping to rows and cols via the API. Jumping to a pinned col makes no sense, as the pinned
@@ -103,6 +103,6 @@ colDef = {
 
     <?= example('Lock Pinned', 'lock-pinned', 'generated') ?>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

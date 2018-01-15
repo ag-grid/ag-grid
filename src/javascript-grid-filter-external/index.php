@@ -3,12 +3,13 @@ $pageTitle = "JavaScript Grid Quick Filter";
 $pageDescription = "ag-Grid comes with a quick filter. This sections explains how to use the quick filter.";
 $pageKeyboards = "ag-Grid Quick Filter";
 $pageGroup = "feature";
+define('skipInPageNav', true);
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h2 id="externalFilter">External Filter</h2>
+<h1>External Filter</h1>
 
-<p>
+<p class="lead">
     It is common for you to want to have widgets on the top of your grid that influence the grids filtering.
     External filtering allows you to mix your own 'outside of the grid' filtering with the grids filtering.
 </p>
@@ -30,12 +31,12 @@ include '../documentation-main/documentation_header.php';
         the node will be excluded from the final set.
     </li>
 </ul>
-<p>
-    If the external filter changes, then you need to call api.onFilterChanged() to tell the grid
-</p>
-<p>
-    The example below shows the external filters in action.
-</p>
+
+<note>
+    If the external filter changes, then you need to call api.onFilterChanged() to tell the grid.
+</note>
+
+<p> The example below shows the external filters in action.  </p>
 
 <?= example('External Filter', 'external-filter', 'vanilla') ?>
 

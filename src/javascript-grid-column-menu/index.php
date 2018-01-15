@@ -6,31 +6,32 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
     <h1 class="heading-enterprise">Column Menu</h1>
 
-    <h3>Showing the Column Menu</h3>
+    <h2>Showing the Column Menu</h2>
 
     <p>
         The menu will be displayed by default and will be made up of three panels. If you want to change the order or
         what panels are shown, or hide them, you can specify the property <code>menuTabs</code> in the <code>colDef</code>
     </p>
+
     <p>
         The property <code>menuTabs</code> is an array of strings. The valid values are: 'filterMenuTab', 'generalMenuTab' and
         'columnsMenuTab' </p>
 
         <ul class="content">
-        <li><b>generalMenuTab</b>: Include in the <code>menuTabs</code> array to show the main panel.</li>
-        <li><b>filterMenuTab</b>: Include in the <code>menuTabs</code> array to show the filter panel.</li>
-        <li><b>columnsMenuTab</b>: Include in the <code>menuTabs</code> array to show the column selection panel.</li>
+        <li><code>generalMenuTab</code>: Include in the <code>menuTabs</code> array to show the main panel.</li>
+        <li><code>filterMenuTab</code>: Include in the <code>menuTabs</code> array to show the filter panel.</li>
+        <li><code>columnsMenuTab</code>: Include in the <code>menuTabs</code> array to show the column selection panel.</li>
         </ul>
 
         <p>To not show the menu at all, set this property to an empty array<code>[]</code>. In addition, you can set the
-    kattribute <code>suppressMenu=true</code> to the column definition to not show the menu for a particular column.
+    attribute <code>suppressMenu=true</code> to the column definition to not show the menu for a particular column.
     </p>
 
     <p>
-        The order of the menu tabs shown in the menu will match the order you specify in this array
+        The order of the menu tabs shown in the menu will match the order you specify in this array.
     </p>
 
     <p>
@@ -38,7 +39,7 @@ include '../documentation-main/documentation_header.php';
             'filterMenuTab','columnsMenuTab']</code>
     </p>
 
-    <h3>Customising the General Menu Tab</h3>
+    <h2>Customising the General Menu Tab</h2>
 
     <p>
         The main menu panel, by default, will show a set of items. You can adjust which of these items get display, or you
@@ -77,21 +78,21 @@ MenuItem {
     subMenu?: MenuItemDef[] // if this menu is a sub menu, contains a list of sub menu item definitions
 }</snippet>
 
-    <h4>Built In Menu Items</h4>
+    <h2>Built In Menu Items</h2>
 
     <p>The following is a list of all the default built in menu items with the rules about when they are shown.</p>
 
     <ul class="content">
-        <li><b>pinSubMenu</b>: Submenu for pinning. Always shown.</li>
-        <li><b>valueAggSubMenu</b>: Submenu for value aggregation. Always shown.</li>
-        <li><b>autoSizeThis</b>: Auto-size the current column. Always shown.</li>
-        <li><b>autoSizeAll</b>: Auto-size all columns. Always shown.</li>
-        <li><b>rowGroup</b>: Group by this column. Only shown if column is not grouped.</li>
-        <li><b>rowUnGroup</b>: Un-group by this column. Only shown if column is grouped.</li>
-        <li><b>resetColumns</b>: Reset column details. Always shown.</li>
-        <li><b>expandAll</b>: Expand all groups. Only shown if grouping by at least one column.</li>
-        <li><b>contractAll</b>: Contract all groups. Only shown if grouping by at least one column.</li>
-        <li><b>toolPanel</b>: Show the tool panel.</li>
+        <li><code>pinSubMenu</code>: Submenu for pinning. Always shown.</li>
+        <li><code>valueAggSubMenu</code>: Submenu for value aggregation. Always shown.</li>
+        <li><code>autoSizeThis</code>: Auto-size the current column. Always shown.</li>
+        <li><code>autoSizeAll</code>: Auto-size all columns. Always shown.</li>
+        <li><code>rowGroup</code>: Group by this column. Only shown if column is not grouped.</li>
+        <li><code>rowUnGroup</code>: Un-group by this column. Only shown if column is grouped.</li>
+        <li><code>resetColumns</code>: Reset column details. Always shown.</li>
+        <li><code>expandAll</code>: Expand all groups. Only shown if grouping by at least one column.</li>
+        <li><code>contractAll</code>: Contract all groups. Only shown if grouping by at least one column.</li>
+        <li><code>toolPanel</code>: Show the tool panel.</li>
     </ul>
 
     <p>
@@ -107,22 +108,22 @@ MenuItem {
         if you want to.
     </p>
 
-    <h4>Menu Item Separators</h4>
+    <h2>Menu Item Separators</h2>
     <p>You can add menu item separators as follows:</p>
     <snippet>
 menuItems.push('separator')</snippet>
 
     <?php include './postProcessPopup.php';?>
 
-    <h3>Overriding Column Menu Width</h3>
+    <h2>Overriding Column Menu Width</h2>
     <p>You can override the menu width by overriding the corresponding CSS:</p>
 
-    <snippet>
+    <snippet language="css">
 .ag-set-filter-list {
     width: 500px !important;
 }</snippet>
 
-    <h3>Hiding the Column Menu</h3>
+    <h2>Hiding the Column Menu</h2>
 
     <p>
         Hide the column menu with the grid API <code>hidePopupMenu()</code>, which will hide
@@ -130,12 +131,13 @@ menuItems.push('separator')</snippet>
         whichever is showing.
     </p>
 
-    <h3>Example Column Menu</h3>
+    <h2>Example Column Menu</h2>
 
     <p>
         The example below shows the <code>getMainMenuItems()</code> in action. To demonstrate different scenarios,
         the callback returns something different based on the selected column as follows:
     </p>
+
         <ul class="content">
         <li>Athlete column appends custom items to the list of built in items.</li>
         <li>Athlete column contains a sub menu.</li>
@@ -154,6 +156,6 @@ menuItems.push('separator')</snippet>
 
     <?= example('Column Menu', 'column-menu', 'generated', array("enterprise" => 1)) ?>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -6,8 +6,8 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-    <h2 id="cell-styling">Cell Styles</h2>
+
+    <h1>Cell Styles</h1>
 
     <p>
         Cell customisation is done a the column level via the column definition. You can mix and match any
@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
         Each of these approaches are presented in the following sections.
     </p>
 
-    <h3 id="column-definition-cellstyle">Cell Style</h3>
+    <h2>Cell Style</h2>
 
     <p>
         Used to provide CSS styles directly (not using a class) to the cell. Can be either an object
@@ -53,11 +53,12 @@ var colDef = {
 }</snippet>
 
 
-    <h3 id="cellClass">Cell Class</h3>
+    <h2>Cell Class</h2>
 
     <p>
         Provides a class for the cells in this column. Can be a string (a class), array of strings
         (array of classes), or a function (that returns a string or an array of strings).
+    </p>
 
     <snippet>
 // return same class for each row
@@ -88,9 +89,8 @@ var colDef4 = {
     cellClass: function(params) { return ['my-class-1','my-class-2']; }
 }</snippet>
 
-    </p>
 
-    <h3 id="cellClassRules">Cell Class Rules</h3>
+    <h2>Cell Class Rules</h2>
 
     <p>
         You can define rules which can be applied to include certain CSS classes via via <code>colDef.cellClassRules</code>.
@@ -112,7 +112,8 @@ cellClassRules: {
     // apply red to 2000
     'rag-red-outer': function(params) { return params.value === 2000}
 }</snippet>
-    <h3 id="cell-style-cell-class-params">Cell Style, Cell Class & Cell Class Rules Params</h3>
+
+    <h2>Cell Style, Cell Class & Cell Class Rules Params</h2>
 
     <p>
         All cellClass cellStyle and cellClassRules functions take a params object that implements the following interface:
@@ -148,13 +149,13 @@ export interface CellClassParams {
 </p>
 
         <ul class="content">
-            <li><b>x</b>: maps value</li>
-            <li><b>ctx</b>: maps context</li>
-            <li><b>node</b>: maps node</li>
-            <li><b>data</b>: maps data</li>
-            <li><b>colDef</b>: maps colDef</li>
-            <li><b>rowIndex</b>: maps rowIndex</li>
-            <li><b>api</b>: maps api</li>
+            <li><code>x</code>: maps value</li>
+            <li><code>ctx</code>: maps context</li>
+            <li><code>node</code>: maps node</li>
+            <li><code>data</code>: maps data</li>
+            <li><code>colDef</code>: maps colDef</li>
+            <li><code>rowIndex</code>: maps rowIndex</li>
+            <li><code>api</code>: maps api</li>
         </ul>
 
 <p>
@@ -172,7 +173,7 @@ cellClassRules: {
     'rag-red': 'x &gt;= 25'
 }</snippet>
 
-    <h4>Refresh of Styles</h4>
+    <h2>Refresh of Styles</h2>
 
     <p>
         If you refresh a cell, or a cell is updated due to editing, the cellStyle,
@@ -180,19 +181,19 @@ cellClassRules: {
         effect:
     </p>
         <ul class="content">
-            <li><b>cellStyle</b>: All new styles are applied. If a new style is the
+            <li><code>cellStyle</code>: All new styles are applied. If a new style is the
             same as an old style, the new style overwrites the old style.</li>
-            <li><b>cellClass</b>: All new classes are applied. Old classes are not
+            <li><code>cellClass</code>: All new classes are applied. Old classes are not
             removed so be aware that classes will accumulate. If you want to remove
             old classes, then use cellClassRules.</li>
-            <li><b>cellClassRules</b>: Rules that return true will have the class
+            <li><code>cellClassRules</code>: Rules that return true will have the class
             applied the second time. Rules tha return false will have the class removed
             second time.</li>
         </ul>
 
     <h2>Example Cell Styling</h2>
 
-    <p>Below shows both cssClassRules snippets above in a full working example. The exmaple
+    <p>Below shows both cssClassRules snippets above in a full working example. The example
     demonstrates the following:
     </p>
         <ul class="content">
@@ -208,6 +209,6 @@ cellClassRules: {
         </ul>
 
     <?= example('Cell Styling', 'cell-styling', 'generated') ?>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

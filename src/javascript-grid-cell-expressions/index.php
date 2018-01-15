@@ -6,9 +6,9 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h1 class="first-h1" id="expressions">Expressions</h1>
+
+    <h1>Expressions</h1>
 
     <p>
         Expressions can be used in two different ways as follows:
@@ -65,19 +65,19 @@ colDef = {
     </p>
 
     <ul class="content">
-        <li><b>x</b> => Mapped from params.value</li>
-        <li><b>value</b> => Mapped from params.value</li>
-        <li><b>oldValue</b> => Mapped from params.oldValue</li>
-        <li><b>newValue</b> => Mapped from params.newValue</li>
-        <li><b>node</b> => Mapped from params.node</li>
-        <li><b>data</b> => Mapped from params.data</li>
-        <li><b>colDef</b> => Mapped from params.colDef</li>
-        <li><b>column</b> => Mapped from params.column</li>
-        <li><b>columnGroup</b> => Mapped from params.columnGroup</li>
-        <li><b>getValue</b> => Mapped from params.getValue</li>
-        <li><b>api</b> => Mapped from params.api</li>
-        <li><b>columnApi</b> => Mapped from params.columnApi</li>
-        <li><b>ctx</b> => Mapped from params.context</li>
+        <li><code>x</code> => Mapped from params.value</li>
+        <li><code>value</code> => Mapped from params.value</li>
+        <li><code>oldValue</code> => Mapped from params.oldValue</li>
+        <li><code>newValue</code> => Mapped from params.newValue</li>
+        <li><code>node</code> => Mapped from params.node</li>
+        <li><code>data</code> => Mapped from params.data</li>
+        <li><code>colDef</code> => Mapped from params.colDef</li>
+        <li><code>column</code> => Mapped from params.column</li>
+        <li><code>columnGroup</code> => Mapped from params.columnGroup</li>
+        <li><code>getValue</code> => Mapped from params.getValue</li>
+        <li><code>api</code> => Mapped from params.api</li>
+        <li><code>columnApi</code> => Mapped from params.columnApi</li>
+        <li><code>ctx</code> => Mapped from params.context</li>
     </ul>
 
     <p>
@@ -100,12 +100,13 @@ colDef = {
 
     <p>
         The advantage of expressions are:
+    </p>
+
     <ul class="content">
         <li>They keep your column definitions as simple JSON objects (just strings, no functions) which
             makes them candidates for saving in offline storage (eg storing a report definition in a database).</li>
         <li>They make the definitions more compact, thus may make your code more maintainable.</li>
     </ul>
-    </p>
 
     <h2 id="cell-expressions">Cell Expressions</h2>
 
@@ -144,7 +145,7 @@ colDef = {
         from outside of the grid.
     </p>
 
-    <h3 id="example-expressions">Example Cell Expressions</h3>
+    <h2>Example Cell Expressions</h2>
 
     <p>
         This example demonstrates cell expressions. The second column values in the LHS (Left Hand Side)
@@ -198,6 +199,6 @@ ___compiledValueGetter = function(node, data, colDef, column, api, columnApi, co
         line and also provide the 'return' statement.
     </p>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

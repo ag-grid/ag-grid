@@ -6,10 +6,10 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
     <h1 class="first-h1">View Refresh</h1>
 
-    <p>
+    <p class="lead">
         The grid has change detection. So as long as you are updating the data via the grid's API,
         the values displayed should be the most recent up to date values.
     </p>
@@ -208,6 +208,6 @@ interface RedrawRowsParams {
 
     <?= example('Redraw Rows', 'redraw-rows', 'generated') ?>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

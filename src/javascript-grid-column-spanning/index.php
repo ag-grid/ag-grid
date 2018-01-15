@@ -6,17 +6,17 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
 
     <h1 class="first-h1">Column Spanning</h1>
 
-    <p>
+    <p class="lead">
         By default, each cell will take up the width of one column. You can change this behaviour
         to allow cells to span multiple columns. This feature is similar to 'cell merging' in Excel
         or 'column spanning' in HTML tables.
     </p>
 
-    <h3>Configuring Column Spanning</h3>
+    <h2>Configuring Column Spanning</h2>
 
     <p>
         Column spanning is set configured at the column definition level. To have a cell
@@ -108,6 +108,6 @@ interface ColSpanParams {
     </ul>
 
     <?= example('Column Spanning Complex', 'column-spanning-complex', 'generated') ?>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

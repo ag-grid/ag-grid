@@ -6,12 +6,10 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
-    <h2 id="row-height">Row Height</h2>
+    <h1>Row Height</h1>
 
     <p>
-        By default, the grid will display rows at 25px. You can change this for each row individually to give
+        By default, the grid will display rows at <code>25px</code>. You can change this for each row individually to give
         each row a different height.
     </p>
 
@@ -25,7 +23,7 @@ include '../documentation-main/documentation_header.php';
         assume the row height is fixed.
     </note>
 
-    <h3 id="row-height-property">rowHeight Property</h3>
+    <h2><code>rowHeight</code> Property</h2>
 
     <p>
         To change the row height for the whole grid, set the property <code>rowHeight</code> to a positive number.
@@ -39,7 +37,7 @@ gridOptions.rowHeight = 50;</snippet>
         Changing the property will set a new row height for all rows, including pinned rows top and bottom.
     </p>
 
-    <h3 id="get-row-height-callback">getRowHeight Callback</h3>
+    <h2><code>getRowHeight</code> Callback</h2>
 
     <p>
         To change the row height so that each row can have a different height,
@@ -59,6 +57,7 @@ gridOptions.getRowHeight = function(params) {
     <p>
         The params object passed to the callback has the following values:
     </p>
+
     <ul class="content">
         <li><b>node:</b> The <a href="../javascript-grid-model/#rowNode">rowNode</a> in question.</li>
         <li><b>data:</b> The data for the row.</li>
@@ -73,7 +72,7 @@ gridOptions.getRowHeight = function(params) {
 
     <?= example('Row Height Simple', 'row-height-simple', 'generated') ?>
 
-    <h3 id="row-height-more-complex-example">Row Height More Complex Example</h3>
+    <h2>Row Height More Complex Example</h2>
 
     <p>
         Below shows a more complex example, where the row height is changed based on contents of
@@ -85,7 +84,7 @@ gridOptions.getRowHeight = function(params) {
 
     <?= example('Row Height Complex', 'row-height-complex', 'generated') ?>
 
-    <h3 id="changingRowHeight">Changing Row Height</h3>
+    <h2>Changing Row Height</h2>
 
     <p>
         Setting the row height is done once for each row. Once set, the grid will not ask you
@@ -94,7 +93,7 @@ gridOptions.getRowHeight = function(params) {
         <code>api.onRowHeightChanged()</code>.
     </p>
 
-    <h4 id="api-reset-row-heights">api.resetRowHeights()</h4>
+    <h3><code>api.resetRowHeights()</code></h3>
     <p>
         Call this API to have the grid clear all the row
         heights and work them all out again from scratch - if you provide a <code>getRowHeight()</code>
@@ -102,7 +101,7 @@ gridOptions.getRowHeight = function(params) {
         reposition all rows again. This is the shotgun approach.
     </p>
 
-    <h4 id="row-node-set-row-height">rowNode.setRowHeight(height) and api.onRowHeightChanged()</h4>
+    <h3><code>rowNode.setRowHeight(height)</code> and <code>api.onRowHeightChanged()</code></h3>
 
     <p>
         You can call <code>rowNode.setRowHeight(height)</code> directly
@@ -142,7 +141,7 @@ gridOptions.getRowHeight = function(params) {
 
     <?= example('Changing Row Height', 'row-height-change', 'generated', array("enterprise" => 1)) ?>
 
-    <h3 id="height-for-floating-rows">Height for Pinned Rows</h3>
+    <h2>Height for Pinned Rows</h2>
 
     <p>
         Row height for pinned rows works exactly as per normal rows with one difference - it
@@ -151,7 +150,5 @@ gridOptions.getRowHeight = function(params) {
         data again is not a problem for pinned rows as it doesn't impact scroll position, filtering,
         sorting or group open / closed positions as it would with normal rows if the data was reset.
     </p>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -6,11 +6,11 @@ $pageGroup = "features";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 class="first-h1" id="row-models">
+    <h1>
         Row Dragging
     </h1>
 
-    <p>
+    <p class="lead">
         Row dragging is used to rearrange rows by dragging the row with the mouse. To
         enable row dragging, set the column property <code>rowDrag</code> on one (typically
         the first) column.

@@ -6,11 +6,11 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h1 class="first-h1" id="value-getters">Value Setters & Value Parsers</h1>
 
-    <p>
+    <h1>Value Setters & Value Parsers</h1>
+
+    <p class="lead">
         The section <a href="../javascript-grid-value-getters">Getters and Formatters</a>
         explained how to use <code>valueGetter</code> and <code>valueFormatter</code>
         to get and format the value before displaying it. This section explains their
@@ -22,6 +22,7 @@ include '../documentation-main/documentation_header.php';
         Use a <code>valueSetter</code> to set a value into your data after editing when the
         normal <code>colDef.field</code> attribute will not suffice.
     </p>
+
     <p>
         Use a <code>valueParser</code> to parse a value after editing.
     </p>
@@ -32,7 +33,7 @@ include '../documentation-main/documentation_header.php';
         Below shows the column definition properties for valueSetters and valueParsers.
     </p>
 
-    <table class="table">
+    <table class="table reference">
         <?php include './settersAndParsersProperties.php' ?>
         <?php printPropertiesRows($settersAndParsersProperties) ?>
     </table>
@@ -83,7 +84,7 @@ include '../documentation-main/documentation_header.php';
         The flow diagram below shows the flow of a value after it is edited using the UI.
     </p>
 
-    <img src="valueSetterFlow.svg"/>
+    <img src="valueSetterFlow.svg" class="img-fluid">
 
     <h2 id="value-setter">Value Setter</h2>
 
@@ -154,6 +155,6 @@ colDef.valueParser = function(params) {
     return Number(params.newValue);
 }</snippet>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -6,10 +6,10 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
     <h1 class="first-h1 heading-enterprise">Tree Data</h1>
 
-    <p>
+    <p class="lead">
         Use Tree Data to display data that has parent / child relationships where the parent / child relationships are
         provided as part of the data. For example, a folder can contain zero or more files and other folders.
     </p>
@@ -297,6 +297,6 @@ var rowData = [
         grid does not need to create any filler groups.
     </p>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -6,9 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
-    <h1 class="first-h1" id="overlays">Overlays</h1>
+    <h1>Overlays</h1>
 
     <p>
         At present, there are two overlays for the grid:
@@ -24,7 +22,7 @@ include '../documentation-main/documentation_header.php';
         When the api function setRowData is called, the loading panel is hidden.
     </p>
 
-    <h3 id="overlay-api">Overlay API</h3>
+    <h2>Overlay API</h2>
 
     <p>
         At any point, you can show or hide any of the overlays using the methods below.
@@ -47,7 +45,7 @@ gridOptions.api.hideOverlay()</snippet>
         The overlays are mutually exclusive, you cannot show more than one overlay at any given time.
     </p>
 
-    <h3 id="custom-templates">Custom Templates</h3>
+    <h2>Custom Templates</h2>
 
     <p>
         If you're not happy with the provided overlay templates, you can provide your own. This is done with
@@ -55,7 +53,7 @@ gridOptions.api.hideOverlay()</snippet>
         should be plain HTML.
     </p>
 
-    <h3 id="example">Example</h3>
+    <h2>Example</h2>
 
     <p>
         In the example below, the table is not provided with rows on initialisation, hence the loading icon is shown.
@@ -72,6 +70,6 @@ gridOptions.api.hideOverlay()</snippet>
     <note>It is also possible to provide your own custom Overlay Components - please see <a href="../javascript-grid-overlay-component">
             Overlay Component</a> for more information.</note>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -6,16 +6,16 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
 
     <h1 id="keyboard-navigation">Keyboard Navigation</h1>
 
-    <p>
+    <p class="lead">
         Clicking on a cell gives the cell focus. You can then navigate and interact with the grid in the
-        following ways...
+        following ways:
     </p>
 
-    <h3 id="navigation">Navigation</h3>
+    <h2>Navigation</h2>
 
     <p>
         Use the <b>arrow keys</b> to move focus to the selection up, down, left and right. If the selected cell is
@@ -34,7 +34,7 @@ include '../documentation-main/documentation_header.php';
         navigating, the grouping row is skipped.
     </p>
 
-    <h3 id="groups">Groups</h3>
+    <h2>Groups</h2>
 
     <p>
         If on a group element, hitting the <b>enter key</b> will expand or collapse the group. This only works
@@ -42,21 +42,21 @@ include '../documentation-main/documentation_header.php';
         is not selectable.
     </p>
 
-    <h3 id="editing">Editing</h3>
+    <h2>Editing</h2>
 
     <p>
         Pressing the <b>enter key</b> on a cell will put the cell into edit mode, if editing is allowed on the cell.
         This will work for the default cell editor.
     </p>
 
-    <h3 id="selection">Selection</h3>
+    <h2>Selection</h2>
 
     <p>
         Pressing the <b>space key</b> on a cell will select the cells row, or deselect the row if already selected.
         If multi-select is enabled, then the selection will not remove any previous selections.
     </p>
 
-    <h3 id="custom-actions">Custom Actions</h3>
+    <h2>Custom Actions</h2>
 
     <p>
         Custom cell renderers can listen to key presses on the focused div. The grid element that receives
@@ -65,20 +65,20 @@ include '../documentation-main/documentation_header.php';
         on the cell eg hitting 'x' may execute a command in your application for that cell.
     </p>
 
-    <h3 id="suppress-cell-selection">Suppress Cell Selection</h3>
+    <h2>Suppress Cell Selection</h2>
 
     <p>
         If you want keyboard navigation turned off, then set <code>suppressCellSelection=true</code> in the <code>gridOptions</code>.
     </p>
 
-    <h3>Example</h3>
+    <h2>Example</h2>
 
     <p>
         All the items above (navigation, editing, groups, selection) are observable in the test drive.
         As such, a separate example is not provided here.
     </p>
 
-    <h3 id="customNavigation">Custom Navigation</h3>
+    <h2>Custom Navigation</h2>
 
     <p>
         Most people will be happy with the default navigation the grid does when you use the arrow keys
@@ -87,7 +87,7 @@ include '../documentation-main/documentation_header.php';
         two methods: <code>navigateToNextCell</code> and <code>tabToNextCell</code>.
     </p>
 
-    <h3 id="navigate-to-next-cell">navigateToNextCell</h3>
+    <h2><code>navigateToNextCell</code></h2>
 
     <p>
         Provide a callback <code>navigateToNextCell</code> if you want to override the arrow key navigation. The
@@ -107,7 +107,7 @@ interface NavigateToNextCellParams {
     nextCellDef: GridCellDef;
 }</snippet>
 
-    <h3 id="tab-to-next-cell">tabToNextCell</h3>
+    <h2><code>tabToNextCell</code></h2>
 
     <p>
         Provide a callback <code>tabToNextCell</code> if you want to override the tab key navigation. The
@@ -131,7 +131,7 @@ interface TabToNextCellParams {
     nextCellDef: GridCellDef;
 }</snippet>
 
-    <h3 id="grid-cell-def">GridCellDef</h3>
+    <h2><code>GridCellDef</code></h2>
 
     <p>
         Both functions above use GridCellDef. This is an object that represents a cell in the grid. Its
@@ -157,7 +157,7 @@ interface GridCellDef {
         to stick with the grid default behaviour. Return null/undefined to skip the navigation.
     </p>
 
-    <h3 id="example-custom-navigation">Example Custom Navigation</h3>
+    <h2>Example Custom Navigation</h2>
 
     <p>
         The example below shows both <code>navigateToNextCell</code> and <code>tabToNextCell</code> in practice.
@@ -168,7 +168,7 @@ interface GridCellDef {
     <?= example('Custom Keyboard Navigation', 'custom-keyboard-navigation', 'generated') ?>
 
 
-    <h1 id="tabbing-into-grid">Tabbing into the Grid</h1>
+    <h2>Tabbing into the Grid</h2>
 
     <p>
         In applications where the grid is embedded into a larger page it may be useful to tab into grid from another
@@ -212,7 +212,6 @@ myInput.addEventListener("keydown", function (event) {
 
     <p>
         In the following example there is an input box provided to test tabbing into the grid. Notice the following:
-
     </p>
         <ul class="content">
             <li>
@@ -226,7 +225,5 @@ myInput.addEventListener("keydown", function (event) {
 
 
     <?= example('Tabbing into the Grid', 'tabbing-into-grid', 'vanilla') ?>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

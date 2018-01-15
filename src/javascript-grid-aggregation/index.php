@@ -6,9 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
-    <h2 class="heading-enterprise">Aggregation</h2>
+    <h1>Aggregation</h1>
 
     <p>
         When grouping, you can apply an aggregation function to any column to populate the group
@@ -16,28 +14,29 @@ include '../documentation-main/documentation_header.php';
         provide your own.
     </p>
 
-    <h3>Defining Aggregations</h3>
+    <h2>Defining Aggregations</h2>
 
     <p>
         You can define aggregations on columns in the following three ways:
-        <ol>
-        <li>
-            <b>Built In Functions: </b>Out of the box the grid provides <code>sum, min, max,
-                count, avg, first, last</code>. To use one of these, set <code>colDef.aggFunc</code> to the string
-            of the function you require.
-        </li>
-        <li>
-            <b>User Registered Functions: </b>You can install your own aggregation functions into the
-            grid and reference them as if they were grid provided functions by calling api.addAggFunc(key,func).
-        </li>
-        <li>
-            <b>Direct Functions: </b>Lastly you can provide a
-            function directly by setting <code>colDef.aggFunc</code>
-            to your custom function. Direct functions do not appear in the toolPanel when selecting functions
-            for your columns.
-        </li>
-        </ol>
     </p>
+
+    <ol class="content">
+    <li>
+        <b>Built In Functions: </b>Out of the box the grid provides <code>sum, min, max,
+            count, avg, first, last</code>. To use one of these, set <code>colDef.aggFunc</code> to the string
+        of the function you require.
+    </li>
+    <li>
+        <b>User Registered Functions: </b>You can install your own aggregation functions into the
+        grid and reference them as if they were grid provided functions by calling api.addAggFunc(key,func).
+    </li>
+    <li>
+        <b>Direct Functions: </b>Lastly you can provide a
+        function directly by setting <code>colDef.aggFunc</code>
+        to your custom function. Direct functions do not appear in the toolPanel when selecting functions
+        for your columns.
+    </li>
+    </ol>
 
     <p>
         Aggregation functions are provided with an array of values that it should
@@ -64,7 +63,7 @@ function myCustomAggFunc(values) {
     return sum;
 }</snippet>
 
-    <h3>Restricting Functions</h3>
+    <h2>Restricting Functions</h2>
 
     <p>
         By default, all functions are available to all value columns. To restrict the functions on
@@ -82,12 +81,13 @@ colDef = {
 }</snippet>
     </p>
 
-    <h3>Example 1 - Built In Functions</h3>
+    <h2>Example 1 - Built In Functions</h2>
 
     <p>
         The example below shows simple aggregation using the built in functions. The following
         should be noted:
     </p>
+
     <ul class="content">
         <li>
             In order for aggregations to be used, a group column is specified. The example groups
@@ -115,7 +115,7 @@ colDef = {
     </note>
 
 
-    <h3 id="custom-aggregation-functions">Example 2 - Custom Aggregation Functions</h3>
+    <h2>Example 2 - Custom Aggregation Functions</h2>
 
     <p>
         The next example shows many custom aggregation functions configured in a variety
@@ -125,6 +125,7 @@ colDef = {
     <p>
         The following can be noted from the example:
     </p>
+
     <ul class="content">
         <li>
             <p>
@@ -203,22 +204,22 @@ colDef = {
 
     <?= example('Custom Aggregation Functions', 'custom-agg-functions', 'generated', array("enterprise" => 1)) ?>
 
-    <h3>Aggregation API</h3>
+    <h2>Aggregation API</h2>
 
     <p>
         After the grid is initialised, there are two steps to set an aggregation on a column:
-        <ol>
+    </p>
+        <ol class="content">
             <li>Set the aggregation function on the column via <code>columnApi.setColumnAggFunc(colKey, aggFunc)</code></li>
             <li>Add the columns to the list of value columns via <code>columnApi.addValueColumn(colKey)</code></li>
         </ol>
-    </p>
 
     <p>
         When the grid initialises, any column definitions that have <code>aggFunc</code> set will be automatically
         added as a value column.
     </p>
 
-    <h3>Column Headers</h3>
+    <h2>Column Headers</h2>
 
     <p>
         When aggregating, the column headers will include the aggregation function for the column. For example the
@@ -226,7 +227,7 @@ colDef = {
         To turn this off and display simply <code>'Bank Balance'</code> then set the grid property <code>suppressAggFuncInHeader</code>.
     </p>
 
-    <h3>Custom Full Row Aggregation</h3>
+    <h2>Custom Full Row Aggregation</h2>
 
     <p>
         Using <code>colDef.aggFunc</code> is the preferred way of doing aggregations. However you may find scenarios
@@ -266,12 +267,13 @@ colDef = {
 
     <?= example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'generated', array("enterprise" => 1)) ?>
 
-    <h3>Recomputing Aggregates</h3>
+    <h2>Recomputing Aggregates</h2>
 
     <p>
         If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates through the
         api method <code>recomputeAggregates</code>. For example, if you allow editing,
         and want the aggregates to update as new values are edited, then create code like the following:
+</p>
 
         <snippet>
 // add a listener to the editable colDef
@@ -279,6 +281,6 @@ colDef.onCellValueChanged = function() {
     gridOptions.api.recomputeAggregates();
 }</snippet>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

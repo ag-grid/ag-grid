@@ -6,13 +6,15 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1" id="cell-editors">Cell Rendering</h1>
+<h1>Cell Rendering</h1>
 
 <p>
     By default, the grid will place the values of your data into the cells as simple strings.
     If you want something other than simple strings, then you use a cell renderer.
     So for rendering your values, you have the following three options:
-    <ol>
+</p>
+
+    <ol class="content">
         <li>Do nothing, simple strings get used to display the data.</li>
         <li>Use one of the grid provided cell renderers.</li>
         <li>Build your own cell renderer.</li>
@@ -37,6 +39,7 @@ var colDef3 = {
     ...
 }</snippet>
 
+<p>
     This section of the documentation explains the first two items above, how to use no cell
     renderer and how to use the grid provided cell renderers. To build your own cell renderer,
     see the section <a href="../javascript-grid-cell-rendering-components/">Cell Rendering Components</a>.
@@ -60,7 +63,7 @@ var colDef3 = {
     <code>colDef.cellRenderer</code>.
 </p>
 
-<img src="../javascript-grid-value-getters/valueGetterFlow.svg"/>
+<img class="img-fluid" src="../javascript-grid-value-getters/valueGetterFlow.svg"/>
 
 <h2>Choosing No Cell Renderer</h2>
 
@@ -91,6 +94,7 @@ var colDef3 = {
 <p>
     The grid provides two cell renderers for animating changes to data. They are:
 </p>
+
 <ul class="content">
     <li>
         <code>agAnimateShowChangeCellRenderer:</code> The previous value is temporarily shown beside the old value
@@ -102,9 +106,7 @@ var colDef3 = {
     </li>
 </ul>
 
-<p>
-    The example below shows both types of animation cell renders in action. To test, try the following:
-
+<p> The example below shows both types of animation cell renders in action. To test, try the following:
 </p>
 <ul class="content">
     <li>
@@ -163,8 +165,8 @@ colDef = {
     ...
 };</snippet>
 
-<p>
-    The set of parameters for the group cell renderer are:
+<p> The set of parameters for the group cell renderer are: </p>
+
 <ul class="content">
     <li><b>suppressCount:</b> One of [true, false], if true, count is not displayed beside the name.</li>
     <li><b>checkbox:</b> One of [true,false], if true, a selection checkbox is included.</li>
@@ -172,7 +174,6 @@ colDef = {
     <li><b>innerRenderer:</b> The renderer to use for inside the cell (after grouping functions are added).</li>
     <li><b>footerValueGetter:</b> The value getter for the footer text. Can be a function or expression.</li>
 </ul>
-</p>
 
 <h3>Example Group cellRenderer</h3>
 
@@ -231,7 +232,7 @@ colDef = {
 
 <note>
     If you don't like the grid provided group cell renderer, you can build your own cell renderer and provide
-    the grouping functionality. If you do this, then take a look at the grids source code and see how we
+    the grouping functionality. If you do this, then take a look at the grid's source code and see how we
     implemented the ag-Grid group cell renderer.
 </note>
 

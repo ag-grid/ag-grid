@@ -6,8 +6,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
     <h1 class="heading-enterprise">Tool Panel</h1>
 
     <p>
@@ -20,7 +18,7 @@ include '../documentation-main/documentation_header.php';
         the tool panel is showing with the api <code>isToolPanelShowing()</code>.
     </p>
 
-    <h4>Suppress Values</h4>
+    <h2>Suppress Values</h2>
 
     <p>
         If you don't want to show the values list in the tool panel, set <code>toolPanelSuppressValues=true</code>
@@ -28,7 +26,7 @@ include '../documentation-main/documentation_header.php';
         aggregation function (which would then not use the values selected here).
     </p>
 
-    <h4>Suppress Group</h4>
+    <h2>Suppress Group</h2>
 
     <p>
         If you don't want to show the group row, set <code>toolPanelSuppressRowGroups=true</code> property.
@@ -37,9 +35,9 @@ include '../documentation-main/documentation_header.php';
         doesn't make sense to have values if you are not grouping.
     </p>
 
-    <h3>Tool Panel Actions</h3>
+    <h2>Tool Panel Actions</h2>
 
-    <h4>Show / Hide Columns</h4>
+    <h3>Show / Hide Columns</h3>
     <p>
         All columns are visible by default. To hide a column when first displaying the grid, mark
         the column definition with <code>hide = true</code>.
@@ -49,14 +47,14 @@ include '../documentation-main/documentation_header.php';
         To hide a column using the tool panel, click the icon beside the columns name.
     </p>
 
-    <h4>Group by Columns</h4>
+    <h3>Group by Columns</h3>
     <p>
         To group by a column, drag the column down to the group GUI. The order of the column
         in the group list can be changed by dragging, with the first value been the top most
         group.
     </p>
 
-    <h4>Aggregate Columns</h4>
+    <h3>Aggregate Columns</h3>
     <p>
         To mark a column as a value (for aggregation), drag the column down to the value
         GUI. From here you can select the aggregation function (sum, min or max). This
@@ -70,7 +68,7 @@ include '../documentation-main/documentation_header.php';
         columns to the desired sections from the Tool Panel.
     </note>
 
-    <h3 id="stylingToolPanel">Styling Columns in Tool Panel</h3>
+    <h2>Styling Columns in Tool Panel</h2>
 
     <p>
         You can add a CSS class to the columns in the tool panel by specifying <code>toolPanelHeaderClass</code>
@@ -91,7 +89,7 @@ colDefs = {
 }</snippet>
     </p>
 
-    <h3 id="toolPanelExample">Tool Panel Example</h3>
+    <h2>Tool Panel Example</h2>
 
     <p>
         The example below demonstrates the tool panel. Note the following:
@@ -116,7 +114,7 @@ colDefs = {
 
     <?= example('Tool Panel Example', 'simple', 'generated', array("enterprise" => 1)) ?>
 
-    <h3 id="suppressExample">Suppress Panels</h3>
+    <h2>Suppress Panels</h2>
 
     <p>
         Below shows using the suppress properties that can be used with the toolpanel as follows:
@@ -132,7 +130,7 @@ colDefs = {
 
     <?= example('Suppress Panels', 'suppress', 'generated', array("enterprise" => 1)) ?>
 
-    <h3 id="read-only-functions">Read Only Functions</h3>
+    <h2>Read Only Functions</h2>
 
     <p>
         By setting the property <code>functionsReadOnly=true</code>, the grid will prevent changes to group, pivot or
@@ -142,6 +140,6 @@ colDefs = {
 
     <?= example('Read Only Example', 'read-only', 'generated', array("enterprise" => 1)) ?>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

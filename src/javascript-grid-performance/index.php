@@ -7,11 +7,11 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h1 class="first-h1">Performance</h1>
 
-    <p>
+    <h1>Performance</h1>
+
+    <p class="lead">
         ag-Grid is fast. However ag-Grid can also be configured and extended in many ways.
 
         Often people come to the ag-Grid forum and ask 'why is the grid in my application not that fast?'.
@@ -97,6 +97,6 @@ include '../documentation-main/documentation_header.php';
         Read the article <a href="../ag-grid-8-performance-hacks-for-javascript/">8 Performance Hacks for JavaScript</a>
         so you know what the grid is doing, that way you will be able to reason with it.
     </p>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

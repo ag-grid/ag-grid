@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1 id="filtering">Column Filter</h1>
+    <h1>Column Filter</h1>
 
     <p> Data in ag-Grid can be filtered in the following ways: </p>
         <ol class="content">
@@ -28,7 +28,7 @@ include '../documentation-main/documentation_header.php';
         what's provided), or bake your own custom filters (no restrictions, build what you want, but takes more time).
     </p>
 
-    <h3 id="enable-filtering">Enable Filtering</h3>
+    <h2>Enable Filtering</h2>
 
     <p>
         Enable filtering by setting grid property <code>enableFilter=true</code>. This turns on filtering on all columns.
@@ -51,13 +51,13 @@ gridOptions = {
     ]
 }</snippet>
 
-    <h3 id="default-built-in-filters">Filter Types</h3>
+    <h2>Filter Types</h2>
 
     <p>
         The following filter options can be set for a column definition:
     </p>
 
-    <table class="table">
+    <table class="table reference">
         <tr>
             <th>Filter</th>
             <th>Description</th>
@@ -92,7 +92,7 @@ gridOptions = {
         for ag-Grid Enterprise.
     </p>
 
-    <h3 id="filter-parameters">Filter Parameters</h3>
+    <h2>Filter Parameters</h2>
 
     <p>
         Each filter can take additional filter params by setting <code>colDef.filterParams</code>.
@@ -113,7 +113,7 @@ columnDefinition = {
     filterParams: {apply: true, newRowsAction: 'keep'}
 }</snippet>
 
-    <h3 id="built-in-filters-example">Built In Filters Example</h3>
+    <h2>Built In Filters Example</h2>
 
     <p>
         The example below demonstrates:
@@ -128,7 +128,7 @@ columnDefinition = {
 
     <?= example('Built-In Filters', 'built-in-filters', 'generated') ?>
 
-    <h3 id="apply-function">Apply Function</h3>
+    <h2>Apply Function</h2>
 
     <p>
         If you want the user to hit an 'Apply' button before the filter is actioned, add <code>apply=true</code>
@@ -140,7 +140,7 @@ columnDefinition = {
         server side filtering (thus preventing unnecessary calls to the server).
     </p>
 
-    <h3 id="events">Filter Events</h3>
+    <h2>Filter Events</h2>
 
     <p>
         Filtering results in the following events getting emitted:
@@ -164,7 +164,7 @@ columnDefinition = {
         </table>
     </p>
 
-    <h3 id="filter-and-events-example">Example: Apply Button and Filter Events</h3>
+    <h2>Example: Apply Button and Filter Events</h2>
 
     <p>
         The example below also demonstrates using the apply button and filter events as follows:
@@ -176,13 +176,13 @@ columnDefinition = {
 
     <?= example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated') ?>
 
-    <h3 id="filtering-animation">Filtering Animation</h3>
+    <h2>Filtering Animation</h2>
 
     <p>
         To enable animation of the rows after filtering, set grid property <code>animateRows=true</code>.
     </p>
 
-    <h3 id="accessing-filter-component-instances">Accessing Filter Component Instances</h3>
+    <h2>Accessing Filter Component Instances</h2>
 
     <p>
         It is possible to access the filter components directly if you want to interact with the specific
@@ -201,7 +201,7 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
     </p>
 
 
-    <h3>Example Filter API</h3>
+    <h2>Example Filter API</h2>
 
     <p>
         The example below shows controlling the country and age filters via the API.
@@ -218,7 +218,7 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
 
     <?= example('Filter API', 'filter-api', 'generated', array("enterprise" => 1)) ?>
 
-    <h4 id="reset_filters">Reset Individual Filters</h4>
+    <h2>Reset Individual Filters</h2>
 
     <p>You can reset a filter to its original state by getting the filter instance and then performing the action that makes sense for the filter type.</p>
 
@@ -231,7 +231,8 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
     </ul>
 
     <p>The following are the appropriate methods for the corresponding filter types:</p>
-    <table class="table">
+
+    <table class="table reference">
         <tr>
             <th>Filter Type</th>
             <th>Action</th>
@@ -250,12 +251,13 @@ var nameFilterInstance = api.getFilterInstance('name');</snippet>
         </tr>
     </table>
 
-    <h4>Reset All Filters</h4>
+    <h2>Reset All Filters</h2>
+
     <p>You can reset all filters by doing the following:</p>
     <snippet>
 gridOptions.api.setFilterModel(null);</snippet>
 
-    <h3 id="get_set_filter_model">Get / Set All Filter Models</h3>
+    <h2>Get / Set All Filter Models</h2>
 
     <p>
         It is possible to get and set the state of <b>all</b> the filters via the api methods <code>api.getFilterModel()</code>
@@ -268,7 +270,7 @@ gridOptions.api.setFilterModel(null);</snippet>
         server.
     </p>
 
-    <h4>Example Get / Set All Filter Models</h4>
+    <h3>Example - Get / Set All Filter Models</h3>
 
     <p>
         The example below shows getting and setting all the filter models in action. The 'save' and 'restore' buttons
@@ -282,7 +284,7 @@ gridOptions.api.setFilterModel(null);</snippet>
 
     <?= example('Filter Model', 'filter-model', 'generated', array("enterprise" => 1)) ?>
 
-<h3 id="floatingFilter">Floating filters</h3>
+<h2>Floating filters</h2>
 
 <p>
     Floating Filters are an additional row under the column headers where the user will be able to
@@ -342,7 +344,7 @@ gridOptions = {
 
 <?= example('Floating Filter', 'floating-filter', 'generated', array("enterprise" => 1)) ?>
 
-<h3>Server Side Filtering</h3>
+<h2>Server Side Filtering</h2>
 
 <p>
     Some of the row models
@@ -354,7 +356,7 @@ gridOptions = {
     <a href="../javascript-grid-virtual-paging/">infinite scrolling</a>.
 </p>
 
-<h3 id="nullFiltering">Filtering null values in Date and Number filters</h3>
+<h2>Filtering null values in Date and Number filters</h2>
 <p>
     If your underlying data representation for a row contains <code>null</code> it won't be included in the filter results. If
     you want to change this behaviour, you can configure the property <code>columnDef.filterParams.nullComparator</code>

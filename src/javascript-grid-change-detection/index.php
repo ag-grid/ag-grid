@@ -6,11 +6,11 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
 
     <h1 class="first-h1">Change Detection</h1>
 
-    <p>
+    <p class="lead">
         The grid has built in change detection.
         When a value in the grid changes, either via the UI or via the grid API, the grid will check
         all cells to see which ones need updating and update exactly only those cells, so minimal
@@ -26,7 +26,8 @@ include '../documentation-main/documentation_header.php';
 -->
     <p>
         Change detection can be broken down into the following two categories:
-        <ol>
+    </p>
+        <ol class="content">
             <li>
                 <b>Value Change Detection:</b> When a value for any cell changes (e.g. after an edit),
                 the grid goes through
@@ -44,13 +45,12 @@ include '../documentation-main/documentation_header.php';
                 results (the values in the grouped row) up to date as the data beneath it changes.
             </li>
         </ol>
-    </p>
 
     <note>
         If you are using Angular or React to build your cells (eg using an Angular or React cellRenderer),
         then you will be already benefiting from binding and change detection that your framework provides.
-        In this scenario, your components refresh() method will get called with the new value when the value
-        changes. It is your components responsibility to save this new value to the components state
+        In this scenario, your component's <code>refresh()</code> method will get called with the new value when the value
+        changes. It is your component's responsibility to save this new value to the components state
         so it will be picked up as a change from the frameworks change detection.
     </note>
 
@@ -75,7 +75,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Change Detection and Value Getters', 'change-detection-value-getters', 'generated', array("enterprise" => 1)) ?>
 
-    <h1>1. Value Change Detection</h1>
+    <h2>1. Value Change Detection</h2>
 
     <p>
         The grid keeps a local copy of all values rendered in each cell. When a refresh of the cell
@@ -137,16 +137,17 @@ colDef = {
     ...
 }</snippet>
 
-    <h2>Triggering Value Change Detection</h2>
+    <h3>Triggering Value Change Detection</h3>
 
     <p>
         The following operations will <b>automatically</b> trigger change detection on all visible cells:
-        <ol>
+    </p>
+
+        <ol class="content">
             <li>Editing any value via the grid UI (e.g. double clicking a cell and entering a new value).</li>
             <li>Using the <code>rowNode.setDataValue(col,value)</code> Row Node method.</li>
             <li>Using the <code>api.updateRowData(transaction)</code> API method.</li>
         </ol>
-    </p>
 
     <p>
         If you do not want change detection to be automatically done, then set the grid property
@@ -162,7 +163,7 @@ colDef = {
         call <a href="../javascript-grid-refresh/">api.refreshCells()</a>.
     </p>
 
-    <h1>2. Aggregation Change Detection</h1>
+    <h2>2. Aggregation Change Detection</h2>
 
     <p>
         Aggregation change detection means rerunning
@@ -171,13 +172,14 @@ colDef = {
         those values change, then the summed value should also change.
     </p>
 
-    <h2 id="example-change-detection-and-groups">Example - Re-Aggregation of Groups</h2>
+    <h3>Example - Re-Aggregation of Groups</h3>
 
     <p>
         The example below shows change detection impacting the result of groups. The grid is doing
         all the refresh by itself with no need for the client application explicitly requesting a
         refresh. Notice the following:
     </p>
+
     <ul class="content">
         <li>
             Column 'Group' is marked as a <a href="../javascript-grid-grouping/">Row Group</a>
@@ -207,16 +209,16 @@ colDef = {
         This is discussed below in the section <a href="#sorting-filtering-grouping">Change Detection and Sorting, Filtering, Grouping</a>.
     </p>
 
-    <h2>Triggering Aggregation Change Detection</h2>
+    <h3>Triggering Aggregation Change Detection</h3>
 
     <p>
-        The following operations will <b>automatically</b> trigger aggregation change detection:
+        The following operations will <strong>automatically</strong> trigger aggregation change detection:
+    </p>
         <ol>
             <li>Editing any value via the grid UI (e.g. double clicking a cell and entering a new value).</li>
             <li>Using the <code>rowNode.setDataValue(col,value)</code> Row Node method.</li>
             <li>Using the <code>api.updateRowData(transaction)</code> API method.</li>
         </ol>
-    </p>
 
     <p>
         To <b>manually</b> run aggregation change detection to re-compute the aggregated values,
@@ -226,21 +228,19 @@ colDef = {
 
     <h2 id="sorting-filtering-grouping">Change Detection and Sorting, Filtering, Grouping</h2>
 
-    <p>
-        When a value changes, the grid's automatic change detection will update:
-</p>
+    <p> When a value changes, the grid's automatic change detection will update: </p>
     <ul class="content">
         <li>Aggregated values.</li>
         <li>Values displayed in cells.</li>
     </ul>
 
-    The grid will <b>not</b>:
+    <p>The grid will <b>not</b>:</p>
+
     <ul class="content">
         <li>Sort</li>
         <li>Filter</li>
         <li>Group</li>
     </ul>
-    </p>
 
     <p>
         The reason why sorting, filtering and grouping is not done automatically is that it
@@ -257,7 +257,7 @@ colDef = {
         with the rows that were updated.
     </p>
 
-    <h2>Example - Change Detection and Filter / Sort / Group</h2>
+    <h3>Example - Change Detection and Filter / Sort / Group</h3>
 
     <p>
         The following example is the same as the example above
@@ -288,7 +288,7 @@ colDef = {
 
     <?= example('Change Detection with Filter / Sort / Group', 'change-detection-filter-sort-group', 'generated', array("enterprise" => 1)) ?>
 
-    <h1 id="path-selection">Aggregation Path Selection</h1>
+    <h2>Aggregation Path Selection</h2>
 
     <p>
         When data in the grid updates and aggregations are active, the grid will not recompute
@@ -296,7 +296,7 @@ colDef = {
         need to be re-computed.
     </p>
 
-    <h3 id="tree-path-selection">Tree Path Selection</h3>
+    <h2>Tree Path Selection</h2>
 
     <p>
         When a value changes, the grid will recompute the immediate group the row is in, and then any parent
@@ -310,7 +310,7 @@ colDef = {
         impacted paths only.
     </p>
 
-    <h3>Column Path Selection</h3>
+    <h2>Column Path Selection</h2>
 
     <p>
         By default, the grid will recalculate aggregations on all columns for the updated tree path,
@@ -373,11 +373,11 @@ colDef = {
     <?= example('Change Detection with Delta Aggregation', 'change-detection-delta-aggregation', 'generated', array("enterprise" => 1)) ?>
 
 
-    <h1 id="pivot-example">Change Detection and Pivot</h1>
+    <h2>Change Detection and Pivot</h2>
 
     <p>
         Everything above stands for when you are doing <a href="../javascript-grid-pivoting/">pivoting</a>.
-        There are no new concepts to introduce, so lets just get stuck into an example.
+        There are no new concepts to introduce, so let's just get stuck into an example.
     </p>
 
     <p>
@@ -428,7 +428,5 @@ colDef = {
     </ul>
 
     <?= example('Change Detection Pivot', 'change-detection-pivot', 'generated', array("enterprise" => 1)) ?>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -6,21 +6,18 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<p>
-    <h1 class="first-h1" id="accessibility">
-        <img src="../images/svg/docs/accessibility.svg" width="50"/>
+    <h1>
         Accessibility
     </h1>
 
-    <p>
-        ag-Grid provides amongst the best support for accessibility compared to other grids available on the market today.
-    </p>
-
-    <p>
+    <p class="lead">
+        ag-Grid provides amongst the best support for accessibility compared to other grids available on the market today.  
         This page provides guidance on how to address accessibility concerns in your grid implementations.
     </p>
 
+
     <h2>Web Conformance Guidelines</h2>
+
     <p>
         Even if you are not mandated to conform to any particular accessibility standard, it can be helpful to understand the
         guidelines outlined as they are generally good practices worth incorporating into your web based applications.
@@ -48,9 +45,7 @@ include '../documentation-main/documentation_header.php';
         Using our demo page as an example, the chrome plugin <a href="https://chrome.google.com/webstore/detail/colorblinding/dgbgleaofjainknadoffbjkclicbbgaa?hl=en">Colorblinding</a>
         shows how cells with colour indicators might appear to someone with total colour blindness (Monochromacy).
     </p>
-    <p>
-        <img style="border: 1px solid lightgrey" src="accessibility-colour-contrast.png"/>
-    </p>
+        <img class="img-fluid" src="accessibility-colour-contrast.png"/>
     <p>
         To create a high contrast theme please check out the <a href="../javascript-grid-styling/">Themes</a>
         documentation for details.
@@ -65,6 +60,7 @@ include '../documentation-main/documentation_header.php';
         to provide custom navigation which could come in useful for some accessibility requirements.</p>
 
     <h2>Skip Navigation</h2>
+
     <p>It may also be worth considering providing a "skip link" to easily navigate to the grid. For example you could
         provide a hyperlink to the grid class attribute, i.e. href='#myGrid'.</p>
 
@@ -80,6 +76,7 @@ include '../documentation-main/documentation_header.php';
     }</snippet>
 
     <h2>Screen Readers</h2>
+
     <p>
         Users who are blind or visually impaired will typically require the assistance of a screen reader to interpret and
         interact with grid based application.
@@ -92,6 +89,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <h2>ARIA Attributes</h2>
+
     <p>
         In order to give screen readers the contextual information they require to interpret and interact with the grid,
         <a href="https://www.w3.org/TR/wai-aria/">ARIA</a> attributes are added to the grid DOM elements. These
@@ -102,6 +100,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         When inspecting the DOM you'll notice the following roles and properties have been added:
     </p>
+
         <ul class="content">
             <li><b>role="grid"</b> - marks the enclosing element of the grid</li>
             <li><b>role="row"</b> - a row of column headers or grid cells</li>
@@ -200,5 +199,4 @@ gridOptions.rowBuffer = 9999</snippet>
     <note>
         Tested on Windows using JAWS (version 18) and Mac using VoiceOver (Sierra 10.12.4)
     </note>
-</div>
 <?php include '../documentation-main/documentation_footer.php';?>

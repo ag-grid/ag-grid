@@ -6,11 +6,11 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h1 class="first-h1" id="width-and-height">Grid Size</h1>
 
-    <p>
+    <h1>Grid Size</h1>
+
+    <p class="lead">
         The grid width and height should be set using CSS width and height styles.
         This can be done using pixels or percentages.
     </p>
@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
 // OR set width using fixed pixels
 &lt;div id="myGrid" class="ag-theme-fresh" style="width: 500px; height: 200px;"&gt;&lt;/div&gt;</snippet>
 
-    <h3 id="percent-width-and-height">Pitfall When Using Percent Width & Height</h3>
+    <h2>Pitfall When Using Percent Width & Height</h2>
 
     <p>
         If using % for your height, then make sure the container you are putting the grid into
@@ -33,7 +33,7 @@ include '../documentation-main/documentation_header.php';
         you want, then you have a CSS layout issue to solve outside of the grid.
     </p>
 
-    <h3 id="changing-width-and-height">Changing Width and Height</h3>
+    <h2>Changing Width and Height</h2>
 
     <p>
         If the width and / or height change after the grid is initialised, the grid will
@@ -47,7 +47,7 @@ include '../documentation-main/documentation_header.php';
         for the next 500ms check) by calling <code>api.doLayout()</code>.
     </p>
 
-    <h3 id="example-width-and-height">Example: Setting and Changing Grid Width and Height</h3>
+    <h3>Example: Setting and Changing Grid Width and Height</h3>
 
     <p>
         The example below shows setting the grid size and then changing it as the user
@@ -115,7 +115,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Auto Height', 'auto-height', 'generated', array("enterprise" => 1, "noStyle" => 1)) ?>
 
-    <h3>Animation with Auto Height</h3>
+    <h2>Animation with Auto Height</h2>
 
     <p>
         The autoHeight will do a complete refresh of the grid rows after any sort, filter or row group open
@@ -125,7 +125,7 @@ include '../documentation-main/documentation_header.php';
         using top pixel location - which is needed for the animations to work.
     </p>
 
-    <h3>Full Width and Auto Height</h3>
+    <h2>Full Width and Auto Height</h2>
 
     <p>
         The <a href="../javascript-grid-full-width-rows/">fullWidth</a> feature, when used with autoHeight,
@@ -134,7 +134,7 @@ include '../documentation-main/documentation_header.php';
         pinning, the fullWidth row will be split into the pinned sections.
     </p>
 
-    <h3>Max Height with Auto Height</h3>
+    <h2>Max Height with Auto Height</h2>
 
     <p>
         It is not possible to specify a max height when using auto-height. It is also not possible to change
@@ -142,7 +142,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        Users ask on the forum, is it possible to set a max height when using auto-height? The answer is no.
+        Users ask is it possible to set a max height when using auto-height? The answer is no.
         If using auto-height, the grid is set up to work in a different way. It is not possible to switch.
         If you do need to switch, you will need to change to a new instance of the grid.
     </note>
@@ -165,6 +165,6 @@ include '../documentation-main/documentation_header.php';
         of rows. Instead the grid will happily take the rows and then the user will use
         group / filter / sort to get to the data that they want.
     </p>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -6,16 +6,12 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
     <h1 class="heading-enterprise">Clipboard</h1>
 
-    <p>
-        You can copy and paste items to and from the grid using the system clipboard.
-    </p>
+    <p> You can copy and paste items to and from the grid using the system clipboard.  </p>
 
-    <h3>
-        Copy to Clipboard
-    </h3>
+    <h2> Copy to Clipboard </h2>
 
     <p> Copy to clipboard operation can be done in the following ways: </p>
 
@@ -26,6 +22,7 @@ include '../documentation-main/documentation_header.php';
             copySelectedRangeToClipboard(includeHeaders)
         </li>
     </ul>
+
     <p>
     The API calls take a boolean value <code>includeHeaders</code> which when true, will include column headers in what is
     copied.
@@ -36,11 +33,10 @@ include '../documentation-main/documentation_header.php';
         but rather copy them vertically to the clipboard.
     </note>
 
-    <h3>
-        Paste from Clipboard
-    </h3>
+    <h2> Paste from Clipboard </h2>
 
     <p> Paste to clipboard can only be done in one way:</p>
+
     <ul class="content">
         <li>Press keys Ctrl+V while focus in on the grid with a cell selected.</li>
     </ul>
@@ -61,15 +57,16 @@ include '../documentation-main/documentation_header.php';
         The copy operation will copy selected ranges, selected rows, or the currently focused cell, based
         on this order:
     </p>
-    <ul class="content">
+
+    <ol class="content">
         <li>
-            1. If range selected (via range selection), copy range.
+            If range selected (via range selection), copy range.
         </li>
         <li>
-            2. Else if rows selected (via row selection), copy rows.
+            Else if rows selected (via row selection), copy rows.
         </li>
         <li>
-            3. Else copy focused cell.
+            Else copy focused cell.
         </li>
     </ul>
 
@@ -78,7 +75,7 @@ include '../documentation-main/documentation_header.php';
         ranges and then copy.
     </note>
 
-    <h3>Safari Support</h3>
+    <h2>Safari Support</h2>
 
     <p>
         Copy to clipboard is not supported in Safari. This is because the Safari browser does not implement the
@@ -88,10 +85,11 @@ include '../documentation-main/documentation_header.php';
         the target audience for this feature resides.
     </p>
 
-    <h3>Clipboard Example</h3>
+    <h2>Clipboard Example</h2>
 
     <p>
         Below you can:</p>
+
     <ul class="content">
         <li>Copy with the Context Menu or 'Ctrl & C'.</li>
         <li>Paste with 'Ctrl & V'.</li>
@@ -109,7 +107,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Clipboard example', 'simple', 'generated', array("enterprise" => true)) ?>
 
-    <h3 id="sendToClipboard">Controlling Clipboard Copy</h3>
+    <h2>Controlling Clipboard Copy</h2>
 
     <p>
         If you want to do the copy to clipboard yourself (ie not use the grids clipboard interaction)
@@ -125,7 +123,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Controlling Clipboard Copy', 'custom', 'generated', array("enterprise" => true)) ?>
 
-    <h3 class="processClipboard">Processing Clipboard Data</h3>
+    <h2>Processing Clipboard Data</h2>
 
     <p>If you wish to process the data before pasting into or out of the Grid, you can use the following call backs to
         do so: </p>
@@ -137,7 +135,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <h3 id="deliminator">Changing the Deliminator</h3>
+    <h2>Changing the Deliminator</h2>
 
     <p>
         By default, the grid will use '\t' (tab) as the field deliminator. This is to keep the
@@ -145,7 +143,7 @@ include '../documentation-main/documentation_header.php';
         property <code>clipboardDeliminator</code>.
     </p>
 
-    <h3 id="suppressPaste">Suppress Paste</h3>
+    <h2>Suppress Paste</h2>
 
     <p>
         The colDef has a property <code>suppressPaste</code> where you can specify to not allowing
@@ -153,11 +151,12 @@ include '../documentation-main/documentation_header.php';
         to specify for a particular cell, or boolean for the whole column).
     </p>
 
-    <h3>More Complex Example</h3>
+    <h2>More Complex Example</h2>
 
     <p>
         The example below demonstrates:
     </p>
+
     <ul class="content">
         <li>
             Uses CSV by setting <code>clipboardDeliminator=','</code>. To test,
@@ -170,7 +169,5 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <?= example('Complex Example', 'complex', 'generated', array("enterprise" => true)) ?>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -6,10 +6,10 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
     <h1 class="heading-enterprise">Set Filter</h1>
 
-    <p>
+    <p class="lead">
         A set filter, influenced by how filters work in Microsoft Excel. Set filters can be provided with
         additional options through the filterParams attribute.
     </p>
@@ -69,7 +69,6 @@ columnDefinition = {
         <li><code>debounceMs:</code> If specified, the filter will wait this amount of ms after the user stops selecting optoins in the
             mini filter before is triggered. If not specified there won't be any debounce.</li>
     </ul>
-    </p>
 
     <note>
         The comparator for a set filter is only provided the values as the first two parameters, whereas the comparator for the colDef
@@ -81,7 +80,7 @@ columnDefinition = {
         the set filter with an alternative comparator that doesn't depend on the row data.
     </note>
 
-    <h3>Complex Objects - keyCreator</h3>
+    <h2>Complex Objects - keyCreator</h2>
 
     <p>
         If you are providing complex objects as values, then you need to provide <code>colDef.keyCreator</code> method in your
@@ -91,7 +90,7 @@ columnDefinition = {
         on the colDef, the set filter would not work.
     </p>
 
-    <h3>Set Filter - Search Field</h3>
+    <h2>Set Filter - Search Field</h2>
 
     <p>
         The text box in the set filter is to allow filtering of displayed filter items, but doesn't actually change the
@@ -99,7 +98,7 @@ columnDefinition = {
         in the search box and then finally select the filter entries you want to actually filter on.
     </p>
 
-    <h3>Set Filters Example</h3>
+    <h2>Set Filters Example</h2>
 
     <p>
         The example below demonstrates the set filter.
@@ -132,7 +131,7 @@ columnDefinition = {
 
     <?= example('Set Filter', 'set-filter', 'generated', array("enterprise" => 1)) ?>
 
-    <h3 id="sortingSetFilter">Asynchronous Values</h3>
+    <h2>Asynchronous Values</h2>
 
     <p>
         In addition to being able to specify a hardcoded list of values for your setFilter, you can provide a callback
@@ -166,7 +165,7 @@ columnDefinition = {
 
     <?= example('Callback/Async', 'callback-async', 'generated', array("enterprise" => 1)) ?>
 
-    <h3 id="sortingSetFilter">Sorting And Formatting Set Filter Values List</h3>
+    <h2>Sorting And Formatting Set Filter Values List</h2>
 
     <p>
         Values inside a set filter will be sorted by their string value by default. If you want a different sort
@@ -186,7 +185,7 @@ columnDefinition = {
 
     <?= example('Set Filter Comparator', 'set-filter-comparator', 'generated', array("enterprise" => 1)) ?>
 
-    <h2 id="refreshAfterEdit">Refresh After Edit</h2>
+    <h2>Refresh After Edit</h2>
 
     <p>
         The set filter does NOT refresh after you edit the data. If the data is changing and you want the
@@ -251,14 +250,15 @@ columnDefinition = {
         </li>
     </ul>
 
-    <h2 id="newRowsSetFilter">New Rows Action and Values Example</h2>
+    <h2>New Rows Action and Values Example</h2>
 
     <p>
         Below demonstrates using New Rows Action and Values. The example is not meant to make business sense,
         it just demonstrates the filters with random unrelated data. The example has the columns configured
         as follows:
     </p>
-        <ul class="content">
+
+    <ul class="content">
         <li>Column Fruit - Normal</li>
         <li>Column Animal - Using newRowsAction = Keep</li>
         <li>Column Color - Using values</li>
@@ -281,13 +281,13 @@ columnDefinition = {
 
     <?= example('Set Filter New Rows', 'set-filter-new-rows', 'generated', array("enterprise" => 1)) ?>
 
-    <h2 id="model">Set Filter Model</h2>
+    <h2>Set Filter Model</h2>
 
     <p>
         Get and set the state of the set filter by getting and setting the model on the filter instance.
     </p>
 
-    <p>
+
 <snippet>
 // get filter instance
 var countryFilterComponent = gridOptions.api.getFilterInstance('country');
@@ -298,14 +298,14 @@ var model = countryFilterComponent.getModel();
 // OR set filter model and update
 countryFilterComponent.setModel(['Spain','Ireland','South Africa','Australia','England']);
 countryFilterComponent.onFilterChanged()</snippet>
-</p>
+
 
     <p>
         The number filter model its an straight string array where each item in the array corresponds to an element
         to be selected from the set:
     </p>
 
-    <h2 id="setFilterApi">Set Filter API</h2>
+    <h2>Set Filter API</h2>
     <p>
         The set filter has on top of the getModel and setModel methods common to all the filters the following API:
     </p>
@@ -340,7 +340,7 @@ countryFilterComponent.onFilterChanged()</snippet>
 
     <?= example('Set Filter API', 'set-filter-api', 'generated', array("enterprise" => 1)) ?>
 
-    <h2 id="floating">Floating Set Filter</h2>
+    <h2>Floating Set Filter</h2>
     <p>
         If your grid has floatingFilter enabled, your columns with set filter will automatically show below the header a new
         column that<!----> will show two elements:
@@ -355,7 +355,7 @@ countryFilterComponent.onFilterChanged()</snippet>
         <li>Filter button: This button is a shortcut to show the rich filter editor</li>
     </ul>
 
-    <h2 id="commonFunctionality">Common Column Filtering Functionality And Examples</h2>
+    <h2>Common Column Filtering Functionality And Examples</h2>
 
     <p>The following can be found in the <a href="../javascript-grid-filtering/">column filtering documentation page</a></p>
 
@@ -368,6 +368,6 @@ countryFilterComponent.onFilterChanged()</snippet>
         <li>Examples</li>
     </ul>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -6,16 +6,17 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-    <h1 class="reference-data" id="value-getters">Reference Data</h1>
-    <p>
+
+    <h1>Reference Data</h1>
+
+    <p class="lead">
         This section describes two different strategies for managing reference data in your application. Both approaches
         implement the same grid example so they can be easily compared.
     </p>
 
     <note>
-        The term <code>Reference Data</code> is used here in a general way to describe data which can be defined using a key /
-        value pair relationship (i.e. "tyt": "Toyota"). This data is typically static in nature, i.e. it is not expected
+        The term <strong>Reference Data</strong> is used here in a general way to describe data which can be defined using a key /
+        value pair relationship (i.e. <code>"tyt": "Toyota"</code>). This data is typically static in nature, i.e. it is not expected
         to change between server requests.
     </note>
 
@@ -182,7 +183,5 @@ cellEditorParams: {
     </ul>
 
     <?= example('Ref Data Property', 'ref-data-property', 'generated', array("enterprise" => 1)) ?>
-
-</div>
 
 <?php include '../documentation-main/documentation_footer.php';?>
