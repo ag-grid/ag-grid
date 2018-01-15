@@ -8,16 +8,12 @@ include '../documentation-main/documentation_header.php';
 
     <h1>JavaScript Grid</h1>
 
-    <h2>
-        Getting Started With ag-Grid and Plain JavaScript
-    </h2>
-
     <p>This section documents how to get started with ag-Grid and JavaScript as quickly as possible. You will start off
         with
         a simple application and section by section add Grid features to the application ending up with a fully fledged
         application with ag-Grid at the heart of it.</p>
 
-    <h3>Prerequisites</h3>
+    <h2>Prerequisites</h2>
 
     <p>You will need the following build tools installed at a minimum:</p>
 
@@ -25,7 +21,7 @@ include '../documentation-main/documentation_header.php';
         <li>Git: Please see <a href="https://git-scm.com/">Git</a> for installation options</li>
     </ul>
 
-    <h3>Scaffolding</h3>
+    <h2>Scaffolding</h2>
 
     <p>To get started as quickly as possible we provide a <code>"Seed"</code> repo on Git that you can use. Let's clone
         this
@@ -45,7 +41,7 @@ open index.html
 
     <p>Great! A working Grid application in no time at all. Let's break down the application into its main parts:</p>
 
-    <h3>Row Data</h3>
+    <h2>Row Data</h2>
 
     <p>At a minimum, a Grid requires row data &amp; column definitions. Row data is provided to the grid as an array of
         JavaScript objects:</p>
@@ -62,7 +58,7 @@ open index.html
 <p>Here we have 3 rows of data, with <code>make</code>, <code>model</code> and <code>price</code> making up the
     data.</p>
 
-<h3>Column Definitions</h3>
+<h2>Column Definitions</h2>
 
     <p>To display this information we need to tell the Grid what data we're interested in. Let's define the three
         columns
@@ -82,7 +78,7 @@ open index.html
         <code>Model</code>
         and <code>Price</code>, each of which correspond to their lowercase equivalent in the row data above.</p>
 
-<h3>Grid Definition</h3>
+<h2>Grid Definition</h2>
 
     <p>Ok, so now we know how to define our row and column data - how do we define our actual Grid?</p>
 
@@ -164,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <p>Ok, great - so far so good. But wouldn't it be nice to be able to sort the data to help us see which car is the
         most expensive (or least!)?</p>
 
-    <h4>Sorting</h4>
+    <h3>Sorting</h3>
 
     <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
         enabled by setting a Grid property to true:</p>
@@ -187,7 +183,7 @@ var gridOptions = {
 
     <p><img src="../images/js-gs-sorting.png" alt="ag-Grid with Sorting" height="183"></p>
 
-    <h4>Filtering</h4>
+    <h3>Filtering</h3>
 
     <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a
         real-world
@@ -217,7 +213,7 @@ var gridOptions = {
 
     <p><img src="../images/js-gs-filtering.png" height="179" alt="ag-Grid with filtering"></p>
 
-    <h3 id="summary">Summary</h3>
+    <h2 id="summary">Summary</h2>
 
     <p>We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
         the left

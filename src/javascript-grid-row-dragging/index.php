@@ -369,7 +369,7 @@ colDef = {
     <p>
         The example above works, however it is not intuitive as the user is given no visual hint
         what folder will be the destination folder. The example below continues with the example
-        about by providing hints to the user while the drag is in progress. From the example
+        above by providing hints to the user while the drag is in progress. From the example
         the following can be observed:
 
     </p>

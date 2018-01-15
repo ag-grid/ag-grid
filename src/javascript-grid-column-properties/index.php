@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     <table class="table reference">
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2"><h2>Properties for Columns and Column Groups</h2></td>
+            <td colspan="2"><h2>Columns and Column Groups</h2></td>
         </tr>
         <tr>
             <th>headerName</th>
@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2"><h2>Properties for Columns Only</h2></td>
+            <td colspan="2"><h2>Columns Only</h2></td>
         </tr>
         <tr>
             <th>field</th>
@@ -292,7 +292,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2"><h2>Properties for Column Groups Only</h2></td>
+            <td colspan="2"><h2>Column Groups Only</h2></td>
         </tr>
         <tr>
             <th>groupId</th>
