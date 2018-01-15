@@ -62,6 +62,7 @@ function onRowDragEnd(event) {
 
     // this is the row the mouse is hovering over
     var overNode = event.overNode;
+    if (!overNode) { return; }
 
     // folder to drop into is where we are going to move the file/folder to
     var folderToDropInto = overNode.data.type === 'folder'
