@@ -402,6 +402,7 @@ CellValueChangedEvent {
         ├── ColumnEvent <span class="event-properties">{
         │   │    <span class="event-attribute">column</span>: Column, // the impacted column, only set if action was on one column
         │   │    <span class="event-attribute">columns</span>: Column[] // list of all impacted columns
+        │   │    <span class="event-attribute">source</span>: string // A string describing where the event is coming from
         │   │  }</span>
         │   ├── ColumnPivotChangedEvent <span class="event-properties">{}</span> // a column was added / removed to pivot list
         │   ├── ColumnRowGroupChangedEvent <span class="event-properties">{}</span> // a column was added / removed to row group list
