@@ -45,8 +45,6 @@ include '../documentation-main/documentation_header.php';
     </div>
 </div>
 
-    <h2>Feature Roadshow</h2>
-
 <?php
 $featuresRoot = '../javascript-grid-features';
 include '../javascript-grid-features/gridFeatures.php';

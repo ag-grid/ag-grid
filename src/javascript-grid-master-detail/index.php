@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Master / Detail</h1>
+<h1 class="heading-enterprise">Master / Detail</h1>
 
 <p class="lead">
     Master / Detail allows you to nest grids inside grids. The top level grid is referred to as the 'master grid'.

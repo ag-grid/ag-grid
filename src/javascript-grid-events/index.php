@@ -25,12 +25,8 @@ include '../documentation-main/documentation_header.php';
         See the <a href="#properties-and-hierarchy">Event Properties & Hierarchy</a> below for what properties each event has.
     </note>
 
-    <table id="ag-grid-events" class="table reference">
-
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2"><h2>Selection</h2></td>
-        </tr>
+    <h2>Selection</h2>
+    <table class="table reference">
 
         <tr>
             <th>cellClicked</th>
@@ -76,10 +72,9 @@ include '../documentation-main/documentation_header.php';
             <th>rangeSelectionChanged</th>
             <td>A change to range selection has occurred.</td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2"><h2>Editing</h2></td>
-        </tr>
+    </table>
+    <h2>Editing</h2>
+    <table class="table reference">
 
         <tr>
             <th>cellValueChanged</th>
@@ -103,10 +98,10 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-cell-editing/#start-stop-editing-events">Full Row Editing</a> only.
             </td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2"><h2>Sort & Filter</h2></td>
-        </tr>
+
+    </table>
+<h2>Sort & Filter</h2>
+    <table class="table reference">
 
         <tr>
             <th>sortChanged</th>
@@ -127,10 +122,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2"><h2>Row Drag & Drop</h2></td>
-        </tr>
+    </table>
+<h2>Row Drag & Drop</h2>
+    <table class="table reference">
 
         <tr>
             <th>rowDragEnter</th>
@@ -161,10 +155,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2"><h2>Columns</h2></td>
-        </tr>
+    </table>
+<h2>Columns</h2>
+    <table class="table reference">
 
         <tr>
             <th>columnVisible</th>
@@ -229,10 +222,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2"><h2>Miscellaneous</h2></td>
-        </tr>
+    </table>
+<h2>Miscellaneous</h2>
+    <table class="table reference">
         <tr>
             <th>gridReady</th>
             <td>ag-Grid has initialised. The name 'ready'

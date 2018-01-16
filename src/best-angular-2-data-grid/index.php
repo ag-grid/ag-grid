@@ -53,8 +53,6 @@ include '../documentation-main/documentation_header.php';
     <p> <a href="../example-angular/">Go Full Examples with Angular</a> </p>
     </div>
 </div>
-    
-<h2>Feature Roadshow</h2>
 
 <?php
 $featuresRoot = '../javascript-grid-features';

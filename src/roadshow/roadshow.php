@@ -8,7 +8,7 @@ foreach($features as $feature) {
 }
 
 foreach ($groups as $group) {
-    echo "<div><h3>" . $group['group'] . "</h3></div>";
+    echo "<div class=\"feature-group\"><h3>" . $group['group'] . "</h3></div>";
     foreach($group['items'] as $item) {
         $feature = $mapped_features[$item];
          

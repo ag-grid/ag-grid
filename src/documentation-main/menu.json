@@ -336,7 +336,8 @@
             },
             {
                 "title": "Master / Detail",
-                "url": "javascript-grid-master-detail/"
+                "url": "javascript-grid-master-detail/",
+                "enterprise": true
             },
             {
                 "title": "Aligned Grids",

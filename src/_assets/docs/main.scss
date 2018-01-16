@@ -234,18 +234,29 @@
     }
     // docs homepage 
     .docs-homepage-section-preview {
+        border:1px solid $border-color;
+        border-top-width: 0;
+        padding: 2rem;
+
         &:first-of-type {
-            @extend .pt-4, .mt-4;
+            @extend .mt-4;
             // border-top: 1px solid $border-color;
+            border-top-width: 1px;
+        }
+
+        // this does not work for some reason
+        // &:last-of-type {
+        //     @extend .mb-4;
+        //     color: red;
+        // }
+
+        &:nth-of-type(2n-1) {
+            background-color: $offwhite;
         }
 
         &:first-child {
-            padding-top: 0 !important;
             margin-top: 0 !important;
         }
-
-        @extend .mb-4, .pb-4;
-        border-bottom: 1px solid $border-color;
 
         h2 {
             @extend h4;
@@ -356,10 +367,6 @@
         margin: auto;
     }
 
-    table.content {
-        margin-bottom: 2rem;
-    }
-
     ul.content, ol.content {
         li {
             margin-bottom: 0.5rem;
@@ -385,7 +392,13 @@
 
 table.reference {
     border-collapse: collapse;
-    margin-bottom: 2rem;
+    margin-bottom: 3rem;
+    width: 100%;
+
+    th:first-child, td:first-child {
+        width: 40%;
+    }
+
     td, th {
         padding: .5rem 1rem;
         vertical-align: top;
@@ -393,7 +406,7 @@ table.reference {
         border-bottom: 1px solid $border-color;
     }
 
-    tr:nth-child(2n) {
+    tr:nth-child(2n -1) {
         td:not([colspan='2']), th {
             background-color: $offwhite;
         }
@@ -414,3 +427,9 @@ table.reference {
     font-weight: bold;
     color: darkorchid;
 }
+
+.feature-roadshow-heading {
+    @extend .display-2, .text-center;
+    margin-top: 4rem;
+}
+
