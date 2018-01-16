@@ -1,8 +1,11 @@
 @import '~prismjs/themes/prism-okaidia';
 
+snippet {
+}
+
 pre[class*="language-"], snippet pre {
     margin-top: 0;
-    margin-bottom: 1rem;
+    margin-bottom: 2rem;
     @extend .rounded;
     background-color: $code-background-color;
     color: $gray-100;

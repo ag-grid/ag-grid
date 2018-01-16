@@ -31,7 +31,8 @@ include('../includes/mediaHeader.php');
             }(document, 'script', 'twitter-wjs');</script>
     </div>
 
-    <img src="cover15-0-0.png" class="large-cover-img">
+    <img src="cover15-0-0.png" class="large-cover-img img-fluid">
+
 <div class="row">
     <div class="col-md-8">
     

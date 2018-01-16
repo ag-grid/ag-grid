@@ -13,7 +13,7 @@ include '../documentation-main/documentation_header.php';
 
     <p class="lead">
         Below we illustrate how you might import an Excel spreadsheet into ag-Grid using a third-party library - in this
-        example we're using <a href="https://github.com/protobi/js-xlsx">xlsx-style</a>
+        example we're using <a href="https://github.com/protobi/js-xlsx">xlsx-style</a>.
     </p>
 
     <p>
