@@ -144,10 +144,6 @@ include '../documentation-main/documentation_header.php';
             <td>Callback for after the value of a cell has changed, due to editing or the application calling api.setValue().</td>
         </tr>
         <tr>
-            <th>volatile</th>
-            <td>If true, this cell gets refreshed when api.refreshVolatileCells() gets called.</td>
-        </tr>
-        <tr>
             <th>cellRenderer<br/>cellRendererFramework</th>
             <td>cellRenderer to use for this column.</td>
         </tr>

@@ -59,7 +59,6 @@ interface RefreshCellsParams {
     rowNodes?: RowNode[]; // specify rows, or all rows by default
     columns?: (string|Column)[]; // specify columns, or all columns by default
     force?: boolean; // skips change detection, refresh everything
-    volatile?: boolean; // only volatile cells - deprecated - for backwards compatibility
 }</snippet>
 
     <p>
@@ -67,34 +66,6 @@ interface RefreshCellsParams {
         all cells using <a href="../javascript-grid-change-detection/">change detection</a> (change
         detection means it will only refresh cells who's values have changed).
     </p>
-
-    <note>
-        <h3>Deprecated - Volatile Columns</h3>
-
-        <p>
-            Volatile columns allowed you to mark specific columns for refresh when you called
-            <code>api.softRefresh()</code>.
-        </p>
-
-        <p>
-            Columns were marked as volatile by setting the column definition property
-            <code>volatile = true</code>.
-        </p>
-
-        <p>
-            This feature is no longer needed, as you can pass a list of columns to refresh
-            to the 'cellRefresh()' method.
-        </p>
-
-        <p>
-            If you are using volatile columns, instead of calling <code>api.softRefresh()</code>,
-            you can call <code>api.refreshCells({volatile: true})</code> instead to achieve the same.
-            However volatile columns are deprecated so will be removed in a future release.
-            You should instead move to passing a list of columns to the <code>api.refreshCells()</code>
-            method.
-        </p>
-
-    </note>
 
     <h3>Example Refresh Cells</h3>
 
