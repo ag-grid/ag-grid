@@ -343,7 +343,7 @@ export class CellComp extends Component {
     // + rowComp: event dataChanged {animate: update, newData: !update}
     // + rowComp: api refreshCells() {animate: true/false}
     // + rowRenderer: api softRefreshView() {}
-    public refreshCell(params?: { suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean, volatile?: boolean }) {
+    public refreshCell(params?: { suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean }) {
 
         if (this.editingCell) {
             return;
@@ -351,13 +351,7 @@ export class CellComp extends Component {
 
         let newData = params && params.newData;
         let suppressFlash = params && params.suppressFlash;
-        let volatile = params && params.volatile;
         let forceRefresh = params && params.forceRefresh;
-
-        // if only refreshing volatile cells, then skip the refresh if we are not volatile
-        if (volatile && !this.isVolatile()) {
-            return;
-        }
 
         let oldValue = this.value;
         this.getValueAndFormat();
@@ -365,38 +359,39 @@ export class CellComp extends Component {
         // for simple values only (not pojo's), see if the value is the same, and if it is, skip the refresh.
         // when never allow skipping after an edit, as after editing, we need to put the GUI back to the way
         // if was before the edit.
-        let skipRefresh = !forceRefresh && this.valuesAreEqual(oldValue, this.value);
-        if (skipRefresh) {
-            return;
+        let valuesDifferent = !this.valuesAreEqual(oldValue, this.value);
+        let dataNeedsUpdating = forceRefresh || valuesDifferent;
+
+        if (dataNeedsUpdating) {
+
+            let cellRendererRefreshed: boolean;
+
+            // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
+            // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
+            // then we are not showing a movement in the stock price, rather we are showing different stock.
+            if (newData || suppressFlash) {
+                cellRendererRefreshed = false;
+            } else {
+                cellRendererRefreshed = this.attemptCellRendererRefresh();
+            }
+
+            // we do the replace if not doing refresh, or if refresh was unsuccessful.
+            // the refresh can be unsuccessful if we are using a framework (eg ng2 or react) and the framework
+            // wrapper has the refresh method, but the underlying component doesn't
+            if (!cellRendererRefreshed) {
+                this.replaceContentsAfterRefresh();
+            }
+
+            this.refreshToolTip();
+
+            if (!suppressFlash) {
+                this.flashCell();
+            }
+
+            // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
+            this.postProcessStylesFromColDef();
+            this.postProcessClassesFromColDef();
         }
-
-        let cellRendererRefreshed: boolean;
-
-        // if it's 'new data', then we don't refresh the cellRenderer, even if refresh method is available.
-        // this is because if the whole data is new (ie we are showing stock price 'BBA' now and not 'SSD')
-        // then we are not showing a movement in the stock price, rather we are showing different stock.
-        if (newData || suppressFlash) {
-            cellRendererRefreshed = false;
-        } else {
-            cellRendererRefreshed = this.attemptCellRendererRefresh();
-        }
-
-        // we do the replace if not doing refresh, or if refresh was unsuccessful.
-        // the refresh can be unsuccessful if we are using a framework (eg ng2 or react) and the framework
-        // wrapper has the refresh method, but the underlying component doesn't
-        if (!cellRendererRefreshed) {
-            this.replaceContentsAfterRefresh();
-        }
-
-        this.refreshToolTip();
-
-        if (!suppressFlash) {
-            this.flashCell();
-        }
-
-        // need to check rules. note, we ignore colDef classes and styles, these are assumed to be static
-        this.postProcessStylesFromColDef();
-        this.postProcessClassesFromColDef();
         this.postProcessCellClassRules();
     }
 
@@ -556,10 +551,6 @@ export class CellComp extends Component {
         // backwards compatibility, we assume if method exists and returns nothing,
         // that it was successful.
         return result === true || result === undefined;
-    }
-
-    public isVolatile() {
-        return this.column.getColDef().volatile;
     }
 
     private refreshToolTip() {

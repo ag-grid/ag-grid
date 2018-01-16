@@ -249,9 +249,6 @@ export interface ColDef extends AbstractColDef {
      * Return false if the values are the same (ie no update). */
     newValueHandler?: (params: any)=>boolean;
 
-    /** If true, this cell gets refreshed when api.softRefreshView() gets called. */
-    volatile?: boolean;
-
     /** Cell template to use for cell. Useful for AngularJS cells. */
     template?: string;
 
@@ -294,11 +291,11 @@ export interface ColDef extends AbstractColDef {
     pivotTotalColumnIds?: string[];
 
     /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
-    headerComponent?:{new(): any}
+    headerComponent?: {new(): any}
     /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
     headerComponentFramework?: {new (): any};
     /** The custom header component parameters**/
-    headerComponentParams?:any
+    headerComponentParams?: any
 
     /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
     floatingFilterComponent?: {new(): IFloatingFilterComp<any, any, any>};

@@ -266,6 +266,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         if (colDefAny.headerCellRenderer) {
             console.warn('ag-Grid: since v15, headerCellRenderer is gone, use header component instead.');
         }
+
+        if (colDefAny.volatile) {
+            console.warn('ag-Grid: since v16, colDef.volatile is gone, please check refresh docs on how to refresh specific cells.');
+        }
+
+
     }
     
     public addEventListener(eventType: string, listener: Function): void {

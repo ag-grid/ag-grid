@@ -544,7 +544,9 @@ export class Utils {
             return;
         }
         if (element.classList) {
-            element.classList.add(className);
+            if (!element.classList.contains(className)) {
+                element.classList.add(className);
+            }
         } else {
             if (element.className && element.className.length > 0) {
                 let cssClasses = element.className.split(' ');
@@ -606,7 +608,9 @@ export class Utils {
 
     static removeCssClass(element: HTMLElement, className: string) {
         if (element.classList) {
-            element.classList.remove(className);
+            if (element.classList.contains(className)) {
+                element.classList.remove(className);
+            }
         } else {
             if (element.className && element.className.length > 0) {
                 let cssClasses = element.className.split(' ');

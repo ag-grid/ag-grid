@@ -88,7 +88,6 @@ export class ColDefUtil {
         'editable',
         'suppressPaste',
         'suppressNavigable',
-        'volatile',
         'enableCellChangeFlash',
         'rowDrag'
     ];

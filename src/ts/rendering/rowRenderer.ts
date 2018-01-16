@@ -403,7 +403,6 @@ export class RowRenderer extends BeanStub {
 
                 cellComp.refreshCell({
                     forceRefresh: params.force,
-                    volatile: params.volatile,
                     newData: false
                 });
             });

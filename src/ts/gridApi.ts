@@ -57,7 +57,6 @@ export interface StartEditingCellParams {
 }
 
 export interface RefreshCellsParams {
-    volatile?: boolean;
     rowNodes?: RowNode[];
     columns?: (string|Column)[];
     force?: boolean;
@@ -371,8 +370,7 @@ export class GridApi {
 
     // *** deprecated
     public softRefreshView() {
-        console.warn('ag-Grid: since v11.1, softRefreshView() is deprecated, call refreshCells(params) instead.');
-        this.refreshCells({volatile: true});
+        console.error('ag-Grid: since v16, softRefreshView() is no longer supported. Please check the documentation on how to refresh.');
     }
 
     // *** deprecated
