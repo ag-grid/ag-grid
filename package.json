@@ -52,7 +52,7 @@
     "merge-stream": "^1.0.1",
     "mkdir-p": "0.0.7",
     "mkdirp": "^0.5.1",
-    "prettier": "^1.7.4",
+    "prettier": "^1.10.2",
     "ts-node": "^3.3.0",
     "typescript-require": "^0.2.9-1",
     "webpack-dev-middleware": "^1.12.0",
