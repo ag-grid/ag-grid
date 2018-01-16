@@ -202,6 +202,7 @@ columnDefs = [
     <p>
         To explicitly set the order of the grouping and not depend on the column order, then use
         <code>rowGroupIndex</code> instead of <code>rowGroup</code> as follows:
+    </p>
     <snippet>
 columnDefs = [
     // index = 1, gets grouped second
@@ -209,7 +210,6 @@ columnDefs = [
     // index = 0, gets grouped first
     {headerName: "Sport", field: "sport", rowGroupIndex: 0},
 ];</snippet>
-    </p>
 
     <p>
         The grid will order sort the columns based on the <code>rowGroupIndex</code>. The values
@@ -463,6 +463,7 @@ gridOptions.api.forEachNode(function(node) {
 
     <p>
         The example below shows grouping on the county, with country an object within each row.
+    </p>
     <snippet>
 // row item has complex object for country
 rowItem = {
@@ -698,7 +699,7 @@ coldefs:[
     <p>
         Grouping has the following grid properties (set these as grid properties, e.g. on the gridOptions, not on the columns):
     </p>
-    <table class="table">
+    <table class="table reference">
         <tr>
             <th>Property</th>
             <th>Description</th>
@@ -707,7 +708,9 @@ coldefs:[
         <?php printPropertiesRowsWithHelp($rowGroupingProperties) ?>
     </table>
 
-    <table class="table">
+    <h2>Grid Grouping Callbacks</h2>
+
+    <table class="table reference">
         <tr>
             <th>Callback</th>
             <th>Description</th>
@@ -724,9 +727,8 @@ coldefs:[
             <td>Similar to groupRowRenderer, except the grid will provide a default shell for row which includes an
                 expand / collapse function. The innerRenderer is responsible for just the inside part of the row.
                 There is no <code>groupRowInnerRendererParams</code> as the <code>groupRowRendererParams</code> are reused
-                for both</td>
+                for both.</td>
         </tr>
-
     </table>
 
 
