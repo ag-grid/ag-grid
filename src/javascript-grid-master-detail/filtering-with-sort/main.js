@@ -8,7 +8,6 @@ var columnDefs = [
 
 var gridOptions = {
     columnDefs: columnDefs,
-    rowData: rowData,
     enableSorting: true,
     enableFilter: true,
     masterDetail: true,
