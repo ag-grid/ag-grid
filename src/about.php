@@ -52,7 +52,7 @@ meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and ex
 
             <p>We give away what others charge for. <strong>ag-Grid Free</strong> provides all of the features of our competion. We only charge when we go above and beyond, with features that other grids don’t provide.  </p>
 
-            <h2 id="tech_team">The Technical Team</h2>
+            <h2 id="team">The Technical Team</h2>
 
 
             <div class="inline-container team">
