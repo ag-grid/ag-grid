@@ -175,8 +175,7 @@ meta_and_links($title, $keywords, $description, false);
     </div>
 
     <div id="stage-scenarios">
-        <h2 id="heading-scenarios">Complex Scenarios
-            <span>Made Easy.</span>
+        <h2 id="heading-scenarios">Complex Scenarios, Made Easy
         </h2>
 
         <ul id="nav-scenarios">
