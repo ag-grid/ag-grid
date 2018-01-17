@@ -9,15 +9,37 @@ include('../includes/mediaHeader.php');
 
 <div style="margin-top:20px;">
     <div class="row">
-        <a style="color:black; text-decoration:none;" href="../ag-grid-blog-15-0-0/"> <h3 style="font-size:35px; text-align:center;font-weight:bold">Happy New ag-Grid v15.0.0</h3></a>
-        <p style="text-align: center;color:grey">by Sophia Lazarova | 13 December 2017</p>
-        <a href="../ag-grid-blog-15-0-0/"><img style="margin-bottom:30px;" src="../ag-grid-blog-15-0-0/cover15-0-0.png" width='100%'/></a>
+        <a style="color:black; text-decoration:none;" href="../ag-grid-proud-to-support-plunker/"> <h3 style="font-size:35px; text-align:center;font-weight:bold">Plunker is now backed by ag-Grid</h3></a>
+        <p style="text-align: center;color:grey">by John Masterson | 17 January 2017</p>
+        <a href="../ag-grid-proud-to-support-plunker/"><img style="margin-bottom:30px; align:center;" src="../images/ag-grid-and-plunker.png"/></a>
     </div>
 
 
     <section>
         <h1>FEATURED</h1>
         <div class="row">
+
+            <div class="col-sm-4 col-md-4">
+                <div class="thumbnail">
+                    <a href="../ag-grid-blog-15-0-0/"><img src="../ag-grid-blog-15-0-0/img15-0-0.png" alt="..."></a>
+                    <div class="caption">
+                        <a style="color:black; text-decoration:none; font-size:24px; font-weight:bold" href="../ag-grid-blog-15-0-0/">Happy New ag-Grid v15.0.0</a>
+                        <div class="media">
+                            <div class="media-left">
+                                <div style="background-color:#838384; border-radius: 50%; width:35px;height:35px; padding:2px;">
+                                    <img class="media-object" src="/images/team/sophia.jpg" style="width: 30px; border-radius: 50%;">
+                                </div>
+                            </div>
+                            <div class="media-body">
+                                <p style="font-size:85%; margin-bottom:0px">Sophia Lazarova</p>
+                                <p style="color: #838384; font-size:85%">13 December 2017</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
             <div class="col-sm-4 col-md-4">
                 <div class="thumbnail">
                     <a href="../ag-grid-datagrid-crud-part-4/"><img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" alt="..."></a>
@@ -52,26 +74,6 @@ include('../includes/mediaHeader.php');
                             <div class="media-body">
                                 <p style="font-size:85%; margin-bottom:0px">Sean Landsman</p>
                                 <p style="color: #838384; font-size:85%">21 November 2017</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-sm-4 col-md-4">
-                <div class="thumbnail">
-                    <a href="../ag-grid-datagrid-crud-part-2/"><img src="../ag-grid-datagrid-crud-part-1/crud_overview.png" alt="..."></a>
-                    <div class="caption">
-                        <a style="color:black; text-decoration:none; font-size:24px; font-weight:bold" href="../ag-grid-datagrid-crud-part-2/">Building a CRUD Application with ag-Grid - Part 2</a>
-                        <div class="media">
-                            <div class="media-left">
-                                <div style="background-color:#838384; border-radius: 50%; width:35px;height:35px; padding:2px;">
-                                    <img class="media-object" src="/images/team/sean.jpg" style="width: 30px; border-radius: 50%;">
-                                </div>
-                            </div>
-                            <div class="media-body">
-                                <p style="font-size:85%; margin-bottom:0px">Sean Landsman</p>
-                                <p style="color: #838384; font-size:85%">07 November 2017</p>
                             </div>
                         </div>
                     </div>
