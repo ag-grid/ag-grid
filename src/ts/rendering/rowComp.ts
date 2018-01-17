@@ -185,13 +185,15 @@ export class RowComp extends Component {
         let userRowStyles = this.preProcessStylesFromGridOptions();
 
         let businessKey = this.getRowBusinessKey();
+        let businessKeySanitised = _.escape(businessKey);
+
         let rowTopStyle = this.getInitialRowTopStyle();
 
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
         templateParts.push(` row-index="${this.rowNode.getRowIndexString()}"`);
         templateParts.push(rowIdSanitised ? ` row-id="${rowIdSanitised}"` : ``);
-        templateParts.push(businessKey ? ` row-business-key="${businessKey}"` : ``);
+        templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
         templateParts.push(` class="${rowClasses}"`);
         templateParts.push(` style="height: ${rowHeight}px; ${rowTopStyle} ${userRowStyles}">`);
