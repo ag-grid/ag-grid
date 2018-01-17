@@ -45,7 +45,7 @@ export class PivotStage implements IRowNodeStage {
     private executePivotOff(): void {
         this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = {};
-        this.columnController.setSecondaryColumns(null, "ROW_MODEL_UPDATED");
+        this.columnController.setSecondaryColumns(null, "rowModelUpdated");
     }
 
     private executePivotOn(rootNode: RowNode): void {
@@ -66,7 +66,7 @@ export class PivotStage implements IRowNodeStage {
             let result = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnGroupDefs = result.pivotColumnGroupDefs;
             this.pivotColumnDefs = result.pivotColumnDefs;
-            this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs, "ROW_MODEL_UPDATED");
+            this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs, "rowModelUpdated");
         }
     }
 

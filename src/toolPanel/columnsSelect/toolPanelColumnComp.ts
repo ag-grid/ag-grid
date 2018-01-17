@@ -120,7 +120,7 @@ export class ToolPanelColumnComp extends Component {
                 this.actionUnCheckedPivotMode();
             }
         } else {
-            this.columnController.setColumnVisible(this.column, event.selected, "COLUMN_MENU");
+            this.columnController.setColumnVisible(this.column, event.selected, "columnMenu");
         }
     }
 
@@ -142,7 +142,7 @@ export class ToolPanelColumnComp extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                columnController.removePivotColumn(column, "COLUMN_MENU");
+                columnController.removePivotColumn(column, "columnMenu");
             }
         }
         // remove value if column is value
@@ -158,7 +158,7 @@ export class ToolPanelColumnComp extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                columnController.removeValueColumn(column, "COLUMN_MENU");
+                columnController.removeValueColumn(column, "columnMenu");
             }
         }
         // remove group if column is grouped
@@ -174,7 +174,7 @@ export class ToolPanelColumnComp extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                columnController.removeRowGroupColumn(column, "COLUMN_MENU");
+                columnController.removeRowGroupColumn(column, "columnMenu");
             }
         }
     }
@@ -199,7 +199,7 @@ export class ToolPanelColumnComp extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.addValueColumn(column, "COLUMN_MENU");
+                this.columnController.addValueColumn(column, "columnMenu");
             }
         } else if (column.isAllowRowGroup()) {
             if (functionPassive) {
@@ -213,7 +213,7 @@ export class ToolPanelColumnComp extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.addRowGroupColumn(column, "COLUMN_MENU");
+                this.columnController.addRowGroupColumn(column, "columnMenu");
             }
         } else if (column.isAllowPivot()) {
             if (functionPassive) {
@@ -227,7 +227,7 @@ export class ToolPanelColumnComp extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.addPivotColumn(column, "COLUMN_MENU");
+                this.columnController.addPivotColumn(column, "columnMenu");
             }
         }
     }

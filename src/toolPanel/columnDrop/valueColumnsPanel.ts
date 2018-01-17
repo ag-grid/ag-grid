@@ -81,7 +81,7 @@ export class ValuesColumnPanel extends AbstractColumnDropPanel {
             };
             this.eventService.dispatchEvent(event);
         } else {
-            this.columnController.setValueColumns(columns, "TOOL_PANEL_UI");
+            this.columnController.setValueColumns(columns, "toolPanelUi");
         }
     }
 
