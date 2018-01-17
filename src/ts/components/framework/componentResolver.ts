@@ -5,10 +5,10 @@ import {FrameworkComponentWrapper} from "./frameworkComponentWrapper";
 import {IComponent} from "../../interfaces/iComponent";
 import {ColDef, ColGroupDef} from "../../entities/colDef";
 import {_, Promise} from "../../utils";
-import {NamedComponentResolver} from "./namedComponentResolver";
+
 import {
     AgGridComponentFunctionInput, AgGridRegisteredComponentInput, ComponentProvider,
-    RegisteredComponent
+    RegisteredComponent, RegisteredComponentSource
 } from "./componentProvider";
 import {AgComponentUtils} from "./agComponentUtils";
 import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
@@ -47,9 +47,6 @@ export class ComponentResolver {
 
     @Autowired("context")
     private context: Context;
-
-    @Autowired("namedComponentResolver")
-    private namedComponentResolver: NamedComponentResolver;
 
     @Autowired ("agComponentUtils")
     private agComponentUtils: AgComponentUtils;
@@ -177,8 +174,46 @@ export class ComponentResolver {
             componentNameToUse = defaultComponentName;
         }
 
-        return componentNameToUse == null ? null : <ResolvedComponent<A,B>>this.namedComponentResolver.resolve(propertyName, componentNameToUse);
+        return componentNameToUse == null ? null : <ResolvedComponent<A,B>>this.resolveByName(propertyName, componentNameToUse);
     }
+
+    private resolveByName<A extends IComponent<any> & B, B> (
+        propertyName:string,
+        componentNameOpt?:string
+    ):ResolvedComponent<A, B>{
+        let componentName:string = componentNameOpt != null ? componentNameOpt : propertyName;
+
+        let registeredComponent:RegisteredComponent<A,B> = this.componentProvider.retrieve(componentName);
+        if (registeredComponent == null) return null;
+
+        //If it is a FW it has to be registered as a component
+        if (registeredComponent.type == ComponentType.FRAMEWORK){
+            return {
+                component: <{new(): B}>registeredComponent.component,
+                type: ComponentType.FRAMEWORK,
+                source: ComponentSource.REGISTERED_BY_NAME
+            }
+        }
+
+
+        //If it is JS it may be a function or a component
+        if (this.agComponentUtils.doesImplementIComponent(<AgGridRegisteredComponentInput<A>>registeredComponent.component)){
+            return {
+                component: <{new(): A}>registeredComponent.component,
+                type: ComponentType.AG_GRID,
+                source: (registeredComponent.source == RegisteredComponentSource.REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT
+            }
+        }
+
+        // This is a function
+        return this.agComponentUtils.adaptFunction(
+            propertyName,
+            <AgGridComponentFunctionInput>registeredComponent.component,
+            registeredComponent.type,
+            (registeredComponent.source == RegisteredComponentSource.REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT
+        );
+    }
+
 
     /**
      * Useful to check what would be the resultant params for a given object

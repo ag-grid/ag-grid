@@ -23,7 +23,7 @@ import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRe
 import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
 import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
 import {Promise} from "../../utils";
-import {IOverlayWrapperComp} from "../../rendering/overlays/overlayWrapperComponent";
+import {IOverlayWrapperComp, OverlayWrapperComponent} from "../../rendering/overlays/overlayWrapperComponent";
 import {ILoadingOverlayComp} from "../../rendering/overlays/loadingOverlayComponent";
 import {INoRowsOverlayComp} from "../../rendering/overlays/noRowsOverlayComponent";
 
@@ -136,23 +136,26 @@ export class ComponentRecipes {
     }
 
     public newFullWidthGroupRowInnerCellRenderer (params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptions, params, "groupRowInnerRenderer", "agGroupRowInnerCellRenderer", false);
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptions, params, "groupRowInnerRenderer", null, false);
     }
 
     public newCellRenderer (target: ColDef | ISetFilterParams | IRichCellEditorParams, params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "cellRenderer", "agCellRenderer", false);
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "cellRenderer", null, false);
     }
 
     public newInnerCellRenderer (target: GroupCellRendererParams, params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "innerRenderer", "agInnerCellRenderer");
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "innerRenderer", null);
     }
 
     public newFullRowGroupRenderer (params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptionsWrapper, params, "fullWidthCellRenderer", "agFullWidthCellRenderer");
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptionsWrapper, params, "fullWidthCellRenderer", null);
     }
 
-    public newOverlayWrapperComponent(): Promise<IOverlayWrapperComp> {
-        return this.componentResolver.createAgGridComponent<IOverlayWrapperComp>(this.gridOptions, null, "overlayWrapperComponent", "agOverlayWrapper");
+    public newOverlayWrapperComponent(): IOverlayWrapperComp {
+        return this.componentResolver.createInternalAgGridComponent (
+            OverlayWrapperComponent,
+            null
+        );
     }
 
     public newLoadingOverlayComponent(): Promise<ILoadingOverlayComp> {
@@ -173,7 +176,7 @@ export class ComponentRecipes {
             column: column,
             floatingFilterComp: null
         };
-        return this.componentResolver.createInternalAgGridComponent<IFloatingFilterWrapperComp<any, any, any, any>>(
+        return this.componentResolver.createInternalAgGridComponent (
             EmptyFloatingFilterWrapperComp,
             floatingFilterWrapperComponentParams
         );

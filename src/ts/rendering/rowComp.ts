@@ -56,7 +56,6 @@ export class RowComp extends Component {
     public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
 
     private static FULL_WIDTH_CELL_RENDERER = 'fullWidthCellRenderer';
-    private static FULL_WIDTH_CELL_RENDERER_COMP_NAME = 'agFullWidthCellRenderer';
 
     private static GROUP_ROW_RENDERER = 'groupRowRenderer';
     private static GROUP_ROW_RENDERER_COMP_NAME = 'agGroupRowRenderer';
@@ -317,7 +316,7 @@ export class RowComp extends Component {
         } else if (isDetailCell) {
             this.createFullWidthRows(RowComp.DETAIL_CELL_RENDERER, RowComp.DETAIL_CELL_RENDERER_COMP_NAME);
         } else if (isFullWidthCell) {
-            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, RowComp.FULL_WIDTH_CELL_RENDERER_COMP_NAME);
+            this.createFullWidthRows(RowComp.FULL_WIDTH_CELL_RENDERER, null);
         } else if (isGroupSpanningRow) {
             this.createFullWidthRows(RowComp.GROUP_ROW_RENDERER, RowComp.GROUP_ROW_RENDERER_COMP_NAME);
         } else {

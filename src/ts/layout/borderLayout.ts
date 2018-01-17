@@ -67,7 +67,7 @@ export class BorderLayout {
 
     private sizeChangeListeners = <any>[];
 
-    private overlayWrapperComp: Promise<IOverlayWrapperComp>;
+    private overlayWrapper: IOverlayWrapperComp;
 
     constructor(params: any) {
 
@@ -108,7 +108,7 @@ export class BorderLayout {
         }
 
         if (params.componentRecipes) {
-            this.overlayWrapperComp = params.componentRecipes.newOverlayWrapperComponent();
+            this.overlayWrapper = params.componentRecipes.newOverlayWrapperComponent();
         }
     }
 
@@ -314,14 +314,14 @@ export class BorderLayout {
     }
 
     public showLoadingOverlay() {
-        this.overlayWrapperComp.then(overlayComp => overlayComp.showLoadingOverlay(this.eOverlayWrapper));
+        this.overlayWrapper.showLoadingOverlay(this.eOverlayWrapper);
     }
 
     public showNoRowsOverlay() {
-        this.overlayWrapperComp.then(overlayComp => overlayComp.showNoRowsOverlay(this.eOverlayWrapper));
+        this.overlayWrapper.showNoRowsOverlay(this.eOverlayWrapper);
     }
 
     public hideOverlay() {
-        this.overlayWrapperComp.then(overlayComp => overlayComp.hideOverlay(this.eOverlayWrapper));
+        this.overlayWrapper.hideOverlay(this.eOverlayWrapper);
     }
 }

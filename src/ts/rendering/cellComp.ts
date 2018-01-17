@@ -3,7 +3,8 @@ import {Column} from "../entities/column";
 import {CellChangedEvent, RowNode} from "../entities/rowNode";
 import {Constants} from "../constants";
 import {
-    CellClickedEvent, CellContextMenuEvent,
+    CellClickedEvent,
+    CellContextMenuEvent,
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
@@ -22,7 +23,6 @@ import {NewValueParams, SuppressKeyboardEventParams} from "../entities/colDef";
 import {Beans} from "./beans";
 import {RowComp} from "./rowComp";
 import {RowDragComp} from "./rowDragComp";
-import {EmptyFloatingFilterWrapperComp, IFloatingFilterWrapperComp} from "../filter/floatingFilterWrapper";
 
 
 export class CellComp extends Component {
@@ -55,7 +55,6 @@ export class CellComp extends Component {
     private usingCellRenderer: boolean;
     // the cellRenderer class to use - this is decided once when the grid is initialised
     private cellRendererType: string;
-    private cellRendererComponentName: string;
 
     // instance of the cellRenderer class
     private cellRenderer: ICellRendererComp;
@@ -675,16 +674,14 @@ export class CellComp extends Component {
             return;
         }
 
-        let cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer', 'agCellRenderer');
-        let pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer', 'agPinnedRowCellRenderer');
+        let cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer', null);
+        let pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer', null);
 
         if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
             this.cellRendererType = 'pinnedRowCellRenderer';
-            this.cellRendererComponentName = 'agPinnedRowCellRenderer';
             this.usingCellRenderer = true;
         } else if (cellRenderer) {
             this.cellRendererType = 'cellRenderer';
-            this.cellRendererComponentName = 'agCellRenderer';
             this.usingCellRenderer = true;
         } else {
             this.usingCellRenderer = false;
@@ -697,7 +694,7 @@ export class CellComp extends Component {
         this.cellRendererVersion++;
         let callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
 
-        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType, this.cellRendererComponentName).then(callback);
+        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType, null).then(callback);
     }
 
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {

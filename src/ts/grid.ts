@@ -67,7 +67,6 @@ import {ComponentRecipes} from "./components/framework/componentRecipes";
 import {ComponentProvider} from "./components/framework/componentProvider";
 import {AgComponentUtils} from "./components/framework/agComponentUtils";
 import {ComponentMetadataProvider} from "./components/framework/componentMetadataProvider";
-import {NamedComponentResolver} from "./components/framework/namedComponentResolver";
 import {Beans} from "./rendering/beans";
 import {Environment} from "./environment";
 import {AnimationFrameService} from "./misc/animationFrameService";
@@ -161,7 +160,7 @@ export class Grid {
             seed: seed,
             //Careful with the order of the beans here, there are dependencies between them that need to be kept
             beans: [rowModelClass, PaginationAutoPageSizeService, GridApi, ComponentProvider, AgComponentUtils, ComponentMetadataProvider,
-                ComponentProvider, ComponentResolver, ComponentRecipes, NamedComponentResolver,
+                ComponentProvider, ComponentResolver, ComponentRecipes,
                 CellRendererFactory, HorizontalDragService, PinnedRowModel, DragService,
                 DisplayedGroupCreator, EventService, GridOptionsWrapper, SelectionController,
                 FilterManager, ColumnController, PaginationProxy, RowRenderer, HeaderRenderer, ExpressionService,
