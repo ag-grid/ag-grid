@@ -542,7 +542,10 @@ include '../documentation-main/documentation_header.php';
         </table>
 <h2>Miscellaneous</h2>
     <table class="table content reference">
-
+        <tr>
+            <th>popupParent</th>
+            <td>DOM element to use as <a href="../javascript-grid-context-menu/#popup-parent">popup parent</a> for grid popups (context menu, column menu etc).</td>
+        </tr>
         <?php include '../javascript-grid-value-cache/valueCacheProperties.php' ?>
         <?php printPropertiesRows($valueCacheProperties) ?>
         <tr>
