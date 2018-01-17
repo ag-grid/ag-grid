@@ -10,7 +10,8 @@ define('AUTHORS', array(
 'niall' => 'Niall Crosby',
 'sean' => 'Sean Landsman',
 'sophia' => 'Sophia Lazarova',
-'amit' => 'Amit Moryossef'
+'amit' => 'Amit Moryossef',
+'john' => 'John Masterson'
 ));
 
 function featuredBlog($title, $cardImage, $link, $author, $date) {
@@ -80,21 +81,21 @@ HTML;
         '../pivoting-blog/img-pivot.png',
         '../pivoting-blog/',
         'sophia',
-        '15 December 2017'
+        '22nd January 2018'
+    );
+
+    featuredBlog(
+        'Plunker is now backed by ag-Grid',
+        '../images/ag-grid-and-plunker.png',
+        '../ag-grid-proud-to-support-plunker/',
+        'john',
+        '17 January 2018'
     );
 
     featuredBlog(
         'Building a CRUD Application with ag-Grid - Part 4',
         '../ag-grid-datagrid-crud-part-1/crud_overview.png',
         '../ag-grid-datagrid-crud-part-4/',
-        'sean',
-        '5 December 2017'
-    );
-
-    featuredBlog(
-        'Building a CRUD Application with ag-Grid - Part 3',
-        '../ag-grid-datagrid-crud-part-1/crud_overview.png',
-        '../ag-grid-datagrid-crud-part-3/',
         'sean',
         '21 November 2017'
     );

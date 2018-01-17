@@ -167,7 +167,7 @@ meta_and_links($title, $keywords, $description, false);
                     <img src="_assets/fw-logos/plunker.svg" />
                     <div class="media-body">
                         <h3>Plunker</h3>
-                        <p><a href="#">Read about ag-Grid's Partnership with Plunker.</a></p>
+                        <p><a href="/ag-grid-proud-to-support-plunker/">Read about ag-Grid's Partnership with Plunker.</a></p>
                     </div>
                 </div>
             </div>
