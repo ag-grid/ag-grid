@@ -205,7 +205,7 @@ export class Grid {
         let valueService: ValueService = this.context.getBean('valueService');
 
         if (_.exists(columnDefs)) {
-            columnController.setColumnDefs(columnDefs, "GRID_INITIALIZING");
+            columnController.setColumnDefs(columnDefs, "gridInitializing");
         }
 
         if (_.exists(rowData) && rowModel.getType()===Constants.ROW_MODEL_TYPE_IN_MEMORY) {

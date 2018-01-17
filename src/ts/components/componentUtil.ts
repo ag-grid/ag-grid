@@ -141,7 +141,7 @@ ComponentUtil {
         }
 
         if (changes.columnDefs) {
-            api.setColumnDefs(changes.columnDefs.currentValue, "GRID_OPTIONS_CHANGED");
+            api.setColumnDefs(changes.columnDefs.currentValue, "gridOptionsChanged");
         }
 
         if (changes.datasource) {
@@ -157,7 +157,7 @@ ComponentUtil {
         }
 
         if (changes.pivotMode) {
-            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue), "GRID_OPTIONS_CHANGED");
+            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue), "gridOptionsChanged");
         }
 
         if (changes.groupRemoveSingleChildren) {

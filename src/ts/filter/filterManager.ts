@@ -217,7 +217,7 @@ export class FilterManager {
 
     public onFilterChanged(): void {
         this.setAdvancedFilterPresent();
-        this.updateFilterFlagInColumns("FILTER_CHANGED");
+        this.updateFilterFlagInColumns("filterChanged");
         this.checkExternalFilter();
 
         _.iterateObject(this.allFilters, function (key, filterWrapper:FilterWrapper) {
@@ -473,7 +473,7 @@ export class FilterManager {
     }
 
     // destroys the filter, so it not longer takes part
-    public destroyFilter(column: Column, source: ColumnEventType = "API"): void {
+    public destroyFilter(column: Column, source: ColumnEventType = "api"): void {
         let filterWrapper:FilterWrapper = this.allFilters[column.getColId()];
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper, source);
@@ -498,7 +498,7 @@ export class FilterManager {
     @PreDestroy
     public destroy() {
         _.iterateObject(this.allFilters, (key: string, filterWrapper: any) => {
-            this.disposeFilterWrapper(filterWrapper, "FILTER_DESTROYED");
+            this.disposeFilterWrapper(filterWrapper, "filterDestroyed");
         });
     }
 

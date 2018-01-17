@@ -354,7 +354,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return false;
     }
 
-    public setMoving(moving: boolean, source: ColumnEventType = "API"): void {
+    public setMoving(moving: boolean, source: ColumnEventType = "api"): void {
         this.moving = moving;
         this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MOVING_CHANGED, source));
     }
@@ -378,14 +378,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.sort;
     }
 
-    public setSort(sort: string, source: ColumnEventType = "API"): void {
+    public setSort(sort: string, source: ColumnEventType = "api"): void {
         if (this.sort !== sort) {
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_SORT_CHANGED, source));
         }
     }
 
-    public setMenuVisible(visible: boolean, source: ColumnEventType = "API"): void {
+    public setMenuVisible(visible: boolean, source: ColumnEventType = "api"): void {
         if (this.menuVisible !== visible) {
             this.menuVisible = visible;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MENU_VISIBLE_CHANGED, source));
@@ -440,7 +440,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.left + this.actualWidth;
     }
 
-    public setLeft(left: number, source: ColumnEventType = "API") {
+    public setLeft(left: number, source: ColumnEventType = "api") {
         this.oldLeft = this.left;
         if (this.left !== left) {
             this.left = left;
@@ -452,7 +452,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.filterActive;
     }
 
-    public setFilterActive(active: boolean, source: ColumnEventType = "API"): void {
+    public setFilterActive(active: boolean, source: ColumnEventType = "api"): void {
         if (this.filterActive !== active) {
             this.filterActive = active;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FILTER_ACTIVE_CHANGED, source));
@@ -478,14 +478,14 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     }
 
-    public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType = "API"): void {
+    public setFirstRightPinned(firstRightPinned: boolean, source: ColumnEventType = "api"): void {
         if (this.firstRightPinned !== firstRightPinned) {
             this.firstRightPinned = firstRightPinned;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_FIRST_RIGHT_PINNED_CHANGED, source));
         }
     }
 
-    public setLastLeftPinned(lastLeftPinned: boolean, source: ColumnEventType = "API"): void {
+    public setLastLeftPinned(lastLeftPinned: boolean, source: ColumnEventType = "api"): void {
         if (this.lastLeftPinned !== lastLeftPinned) {
             this.lastLeftPinned = lastLeftPinned;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_LAST_LEFT_PINNED_CHANGED, source));
@@ -516,7 +516,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.pinned;
     }
 
-    public setVisible(visible: boolean, source: ColumnEventType = "API"): void {
+    public setVisible(visible: boolean, source: ColumnEventType = "api"): void {
         let newValue = visible===true;
         if (this.visible !== newValue) {
             this.visible = newValue;
@@ -575,7 +575,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         }
     }
 
-    public setActualWidth(actualWidth: number, source: ColumnEventType = "API"): void {
+    public setActualWidth(actualWidth: number, source: ColumnEventType = "api"): void {
         if (this.actualWidth !== actualWidth) {
             this.actualWidth = actualWidth;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_WIDTH_CHANGED, source));
@@ -598,11 +598,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.maxWidth;
     }
 
-    public setMinimum(source: ColumnEventType = "API"): void {
+    public setMinimum(source: ColumnEventType = "api"): void {
         this.setActualWidth(this.minWidth, source);
     }
     
-    public setRowGroupActive(rowGroup: boolean, source: ColumnEventType = "API"): void {
+    public setRowGroupActive(rowGroup: boolean, source: ColumnEventType = "api"): void {
         if (this.rowGroupActive !== rowGroup) {
             this.rowGroupActive = rowGroup;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_ROW_GROUP_CHANGED, source));
@@ -613,7 +613,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.rowGroupActive;
     }
 
-    public setPivotActive(pivot: boolean, source: ColumnEventType = "API"): void {
+    public setPivotActive(pivot: boolean, source: ColumnEventType = "api"): void {
         if (this.pivotActive !== pivot) {
             this.pivotActive = pivot;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_PIVOT_CHANGED, source));
@@ -632,7 +632,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.isAllowPivot() || this.isAllowRowGroup() || this.isAllowValue();
     }
 
-    public setValueActive(value: boolean, source: ColumnEventType = "API"): void {
+    public setValueActive(value: boolean, source: ColumnEventType = "api"): void {
         if (this.aggregationActive !== value) {
             this.aggregationActive = value;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_VALUE_CHANGED, source));
