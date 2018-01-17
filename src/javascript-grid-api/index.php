@@ -435,7 +435,10 @@ include '../documentation-main/documentation_header.php';
     </table>
 <h2>Miscellaneous</h2>
     <table class="table reference">
-
+        <tr>
+            <th>setPopupParent(element)</th>
+            <td>DOM element to use as <a href="../javascript-grid-context-menu/#popup-parent">popup parent</a> for grid popups (context menu, column menu etc).</td>
+        </tr>
         <tr>
             <th>addRenderedRowListener(event, rowIndex, callback)</th>
             <td>Registers a callback to a virtual row. A virtual row is a row that
