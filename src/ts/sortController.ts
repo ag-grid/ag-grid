@@ -20,12 +20,12 @@ export class SortController {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
-    public progressSort(column: Column, multiSort: boolean, source: ColumnEventType = "API"): void {
+    public progressSort(column: Column, multiSort: boolean, source: ColumnEventType = "api"): void {
         let nextDirection = this.getNextSortDirection(column);
         this.setSortForColumn(column, nextDirection, multiSort, source);
     }
 
-    public setSortForColumn(column: Column, sort: string, multiSort: boolean, source: ColumnEventType = "API"): void {
+    public setSortForColumn(column: Column, sort: string, multiSort: boolean, source: ColumnEventType = "api"): void {
 
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
         if (sort!==Column.SORT_ASC && sort!==Column.SORT_DESC) { sort = null; }
@@ -122,7 +122,7 @@ export class SortController {
         });
     }
 
-    public setSortModel(sortModel: any, source: ColumnEventType = "API") {
+    public setSortModel(sortModel: any, source: ColumnEventType = "api") {
         if (!this.gridOptionsWrapper.isEnableSorting()) {
             console.warn('ag-grid: You are setting the sort model on a grid that does not have sorting enabled');
             return;

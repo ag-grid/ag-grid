@@ -61,7 +61,7 @@ export class ColumnApi {
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnController.moveRowGroupColumn(fromIndex, toIndex); }
     public setColumnAggFunc(column: Column, aggFunc: string): void { this.columnController.setColumnAggFunc(column, aggFunc); }
     public setColumnWidth(key: string|Column, newWidth: number, finished: boolean = true): void { this.columnController.setColumnWidth(key, newWidth, finished); }
-    public setPivotMode(pivotMode: boolean, source:ColumnEventType = "API"): void { this.columnController.setPivotMode(pivotMode); }
+    public setPivotMode(pivotMode: boolean, source:ColumnEventType = "api"): void { this.columnController.setPivotMode(pivotMode); }
     public isPivotMode(): boolean { return this.columnController.isPivotMode(); }
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string|Column): Column { return this.columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); }
 

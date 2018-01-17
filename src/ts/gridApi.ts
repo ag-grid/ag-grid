@@ -274,7 +274,7 @@ export class GridApi {
         return this.pinnedRowModel.getPinnedBottomRow(index);
     }
 
-    public setColumnDefs(colDefs: (ColDef|ColGroupDef)[], source: ColumnEventType = "API") {
+    public setColumnDefs(colDefs: (ColDef|ColGroupDef)[], source: ColumnEventType = "api") {
         this.columnController.setColumnDefs(colDefs, source);
     }
 
@@ -646,7 +646,7 @@ export class GridApi {
     public destroyFilter(key: string|Column) {
         let column = this.columnController.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.destroyFilter(column, "FILTER_DESTROYED");
+            return this.filterManager.destroyFilter(column, "filterDestroyed");
         }
     }
 
@@ -667,7 +667,7 @@ export class GridApi {
         this.sortController.onSortChanged();
     }
 
-    public setSortModel(sortModel:any, source: ColumnEventType = "API") {
+    public setSortModel(sortModel:any, source: ColumnEventType = "api") {
         this.sortController.setSortModel(sortModel, source);
     }
 
