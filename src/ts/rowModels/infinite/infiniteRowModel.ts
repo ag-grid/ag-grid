@@ -63,6 +63,7 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     private addEventListeners(): void {
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
     }
 
     private onFilterChanged(): void {
@@ -72,6 +73,13 @@ export class InfiniteRowModel extends BeanStub implements IRowModel {
     }
 
     private onSortChanged(): void {
+        if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
+            this.reset();
+        }
+    }
+
+    private onColumnEverything(): void {
+        // if the columns get reset, then this means the sort order could be impacted
         if (this.gridOptionsWrapper.isEnableServerSideSorting()) {
             this.reset();
         }
