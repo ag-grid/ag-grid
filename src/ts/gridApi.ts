@@ -862,6 +862,10 @@ export class GridApi {
         this.menuFactory.hideActiveMenu();
     }
 
+    public setPopupParent(ePopupParent: HTMLElement): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_POPUP_PARENT, ePopupParent);
+    }
+
     public tabToNextCell(): boolean {
         return this.rowRenderer.tabToNextCell(false);
     }

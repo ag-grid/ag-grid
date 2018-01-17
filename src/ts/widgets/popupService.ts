@@ -6,6 +6,7 @@ import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {PostProcessPopupParams} from "../entities/gridOptions";
 import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
+import {Environment} from "../environment";
 
 @Bean('popupService')
 export class PopupService {
@@ -14,13 +15,18 @@ export class PopupService {
     // maybe popups in the future should be parent to the body??
     @Autowired('gridCore') private gridCore: GridCore;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-
-    // this.popupService.setPopupParent(this.eRootPanel.getGui());
+    @Autowired('environment') private environment: Environment;
 
     private activePopupElements: HTMLElement[] = [];
 
     private getPopupParent(): HTMLElement {
-        return this.gridCore.getRootGui();
+        let ePopupParent = this.gridOptionsWrapper.getPopupParent();
+        if (ePopupParent) {
+            // user provided popup parent, may not have the right theme applied
+            return ePopupParent;
+        } else {
+            return this.gridCore.getRootGui();
+        }
     }
 
     public positionPopupForMenu(params: {eventSource: any, ePopup: HTMLElement}) {
@@ -255,7 +261,13 @@ export class PopupService {
 
         let ePopupParent = this.getPopupParent();
 
-        ePopupParent.appendChild(eChild);
+        // add env CSS class to child, in case user provided a popup parent, which means
+        // theme class may be missing
+        let eWrapper = document.createElement('div');
+        _.addCssClass(eWrapper, this.environment.getTheme());
+        eWrapper.appendChild(eChild);
+
+        ePopupParent.appendChild(eWrapper);
         this.activePopupElements.push(eChild);
 
         let popupHidden = false;
@@ -288,7 +300,7 @@ export class PopupService {
             if (popupHidden) { return; }
             popupHidden = true;
 
-            ePopupParent.removeChild(eChild);
+            ePopupParent.removeChild(eWrapper);
             _.removeFromArray(this.activePopupElements, eChild);
 
             eBody.removeEventListener('keydown', hidePopupOnKeyboardEvent);

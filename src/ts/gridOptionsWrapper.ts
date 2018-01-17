@@ -85,6 +85,7 @@ export class GridOptionsWrapper {
     public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
 
     public static PROP_SUPPRESS_ROW_DRAG = 'suppressRowDrag';
+    public static PROP_POPUP_PARENT = 'popupParent';
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('columnController') private columnController: ColumnController;
@@ -244,6 +245,7 @@ export class GridOptionsWrapper {
     public getRowStyleFunc() { return this.gridOptions.getRowStyle; }
     public getRowClassFunc() { return this.gridOptions.getRowClass; }
     public rowClassRules() { return this.gridOptions.rowClassRules;}
+    public getPopupParent() { return this.gridOptions.popupParent;}
     public getPostProcessPopupFunc(): (params: PostProcessPopupParams)=>void { return this.gridOptions.postProcessPopup; }
     public getDoesDataFlowerFunc(): (data: any)=>boolean { return this.gridOptions.doesDataFlower; }
     public getPaginationNumberFormatterFunc(): (params: PaginationNumberFormatterParams)=>string { return this.gridOptions.paginationNumberFormatter; }

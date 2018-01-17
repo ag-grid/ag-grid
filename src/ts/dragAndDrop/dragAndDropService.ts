@@ -396,7 +396,7 @@ export class DragAndDropService {
 
     private createGhost(): void {
         this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
-        this.eGhost.classList.add(this.environment.getTheme());
+        _.addCssClass(this.eGhost, this.environment.getTheme());
         this.eGhostIcon = <HTMLElement> this.eGhost.querySelector('.ag-dnd-ghost-icon');
 
         this.setGhostIcon(null);

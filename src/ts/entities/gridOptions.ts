@@ -212,6 +212,7 @@ export interface GridOptions {
     overlayNoRowsTemplate?: string;
     rowHeight?: number;
     detailRowHeight?: number;
+    popupParent?: HTMLElement;
 
     masterDetail?: boolean;
     isRowMaster?: IsRowMaster;
