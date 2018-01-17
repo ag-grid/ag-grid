@@ -655,7 +655,7 @@ export class GridPanel extends BeanStub {
                 rowEnd = this.paginationProxy.getTotalRowCount() - 1;
             } else {
                 floatingEnd = Constants.PINNED_BOTTOM;
-                rowEnd = this.pinnedRowModel.getPinnedBottomRowData().length = 1;
+                rowEnd = this.pinnedRowModel.getPinnedBottomRowData().length - 1;
             }
 
             let allDisplayedColumns = this.columnController.getAllDisplayedColumns();
