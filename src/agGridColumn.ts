@@ -267,4 +267,9 @@ export class AgGridColumn {
     @Input() public refData?: {
         [key: string]: string;
     };
+
+    @Input() public tooltip: any;
+    @Input() public lockPosition: any;
+    @Input() public lockVisible: any;
+    @Input() public lockPinned: any;
 }
