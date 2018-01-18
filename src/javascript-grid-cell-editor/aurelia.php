@@ -96,3 +96,6 @@ export class NumericEditor extends BaseAureliaEditor {
         All of the other methods (<code>isPopup(), getValue(), isCancelBeforeStart(), isCancelAfterEnd()</code> etc)
         should be put onto your Aurelia component and will work as normal.
     </p>
+
+    <h3 id="aurelia-editor">Editor Component in Aurelia</h3>
+    <?= example('Editor Component in Aurelia', 'aurelia-editor', 'as-is', array("noPlunker" => 1, "usePath" => "#/?route=editor")) ?>
