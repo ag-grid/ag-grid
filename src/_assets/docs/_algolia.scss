@@ -1,0 +1,39 @@
+#search-wrapper {
+  margin-bottom: 2rem;
+  
+  @include media-breakpoint-down(lg) {
+    width: 80%;
+  }
+}
+#search-input {
+  @extend .form-control;
+}
+.algolia-autocomplete {
+  width: 100%;
+}
+.algolia-autocomplete .aa-input,
+.algolia-autocomplete .aa-hint {
+  @extend .form-control;
+}
+
+.algolia-autocomplete .aa-hint {
+  color: #999;
+}
+.algolia-autocomplete .aa-dropdown-menu {
+  border: 1px solid $border-color;
+  width: 30rem;
+  @extend %card;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion {
+  cursor: pointer;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid $border-color;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion.aa-cursor {
+  background-color: $blue-2;
+  color: $white;
+}
+.algolia-autocomplete .aa-dropdown-menu .aa-suggestion em {
+  font-weight: bold;
+  font-style: normal;
+}

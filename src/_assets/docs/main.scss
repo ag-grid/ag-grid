@@ -9,6 +9,7 @@
 @import '../common/note.scss';
 @import './example-runner.scss';
 @import './legacy.scss';
+@import './algolia.scss';
 
 #documentation {
     @extend .container-fluid;
@@ -17,7 +18,7 @@
         @extend .row, .full-width-row;
 
         aside {
-            @extend .col-md-2;
+            @extend .col-lg-2;
             font-size: 90%;
 
             ul {
@@ -36,20 +37,20 @@
             padding-right: 15px;
         }
 
-        #side-nav > ul > li > ul {
-            height: 0;
-            overflow: hidden;
-            transition: height 0.3s ease-out;
-        }
-
-        #side-nav > ul > li.expanded > ul {
-            height: auto;
-        }
-
         #side-nav,
         & > section {
             padding-top: 3rem;
             padding-bottom: 3rem;
+        }
+        
+        #side-nav-toggle {
+            @extend .d-block, .d-lg-none, .navbar-toggler;
+            float: right;
+
+            span {
+                @extend .navbar-toggler-icon;
+                background-image: $navbar-light-toggler-icon-bg;
+            }
         }
 
         #side-nav {
@@ -95,12 +96,6 @@
                 padding-start: 0;
             }
 
-            & > ul > li > a,
-            & > ul > li > span {
-                font-size: 115%;
-                font-weight: 500;
-            }
-
             ul ul ul {
                 font-weight: 200;
                 font-size: 95%;
@@ -115,7 +110,37 @@
             }
         }
 
-        #side-nav > ul {
+        #side-nav-container {
+            @extend .d-lg-block;
+            // @include media-breakpoint-up(lg) { @extend .d-block; }
+
+            /*
+            @extend .d-none, .d-lg-block;
+
+            &.show {
+                @extend .d-block;
+            }
+            */
+        }
+
+        #side-nav-container > ul > li > ul {
+            height: 0;
+            overflow: hidden;
+            transition: height 0.3s ease-out;
+        }
+
+        #side-nav-container > ul > li.expanded > ul {
+            height: auto;
+        }
+
+        #side-nav-container > ul > li > a,
+        #side-nav-container > ul > li > span {
+            font-size: 115%;
+            font-weight: 500;
+        }
+
+        #side-nav-container > ul {
+
             > li > a:after,
             > li > span:after {
                 content: '❯ ';

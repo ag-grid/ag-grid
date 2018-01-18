@@ -182,7 +182,6 @@ meta_and_links($title, $keywords, $description, false);
             <li><a href="#" class="active">Rich Grid</a></li>
             <li><a href="#">Trader Live Dashboard</a></li>
             <li><a href="#">Grid API Demo</a></li>
-            <li><a href="#">File Explorer</a></li>
         </ul>
 
         <section>
@@ -207,13 +206,6 @@ meta_and_links($title, $keywords, $description, false);
                         <a href="/javascript-grid-animation/">View Code</a>
                     </div>
                 </div>
-
-                <div id="demo-4" class="demo">
-                    <?php include 'home/file-browser.php' ?>
-                    <div class="view-code">
-                        <a href="/example-file-browser/">View Code</a>
-                    </div>
-                </div>
             </div>
 
         </section>
@@ -223,7 +215,10 @@ meta_and_links($title, $keywords, $description, false);
         <h2>Feature Highlights</h2>
 
         <div id="feature-content">
-            <aside></aside>
+            <aside>
+                <div class="scroll-wrapper">
+                </div>
+            </aside>
             <section>
             <?php include 'roadshow/roadshow.php' ?>
             </section>

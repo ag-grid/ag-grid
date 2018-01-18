@@ -128,7 +128,7 @@ $(() => {
     };
 
     anchors.add('#stage-feature-highlights section h3, #stage-feature-highlights section h4');
-    var nav = $('#stage-feature-highlights aside');
+    var nav = $('#stage-feature-highlights aside .scroll-wrapper');
 
     var level = 3;
     var prevLink = null;

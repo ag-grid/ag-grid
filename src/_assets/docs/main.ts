@@ -1,7 +1,36 @@
 import './main.scss';
 import '../../example-runner/example-runner.ts';
-
 import {$, lazyload, AnchorJS, Prism, initCookieDisclaimer} from '../common/vendor';
+
+declare const autocomplete: any;
+declare const algoliasearch: any;
+
+$(function() {
+    var client = algoliasearch('O1K1ESGB5K', '29b87d27d24660f31e63cbcfd7a0316f');
+
+    var index = client.initIndex('AG-GRID');
+    var searchConfig = { hitsPerPage: 5, snippetEllipsisText: '&hellip;', attributesToSnippet: JSON.stringify(['text:15']) }
+    var autocompleteConfig = {
+        hint: false, 
+        debug: true,
+        autoselect: true,
+        keyboardShortcuts: ['s', '/'] 
+    }
+    
+    autocomplete('#search-input', autocompleteConfig, [
+        {
+            source: autocomplete.sources.hits(index, searchConfig),
+            displayKey: 'title',
+            templates: {
+                suggestion: function(suggestion) {
+                    return `<strong>${suggestion._highlightResult.title.value}</strong><br>${suggestion._snippetResult.text.value}`;
+                }
+            }
+        }
+    ]).on('autocomplete:selected', function(event, suggestion, dataset) {
+        location.href = '/' + suggestion.objectID;
+    });
+})
 
 $(function() {
     var $currentlyExpanded = $('#side-nav > ul > li.expanded > ul');
