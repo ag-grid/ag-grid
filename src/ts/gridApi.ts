@@ -539,7 +539,8 @@ export class GridApi {
     }
 
     public recomputeAggregates(): void {
-        if (_.missing(this.inMemoryRowModel)) { console.log('cannot call recomputeAggregates unless using normal row model') }
+        if (_.missing(this.inMemoryRowModel)) { console.warn('cannot call recomputeAggregates unless using normal row model') }
+        console.warn(`recomputeAggregates is deprecated, please call api.refreshInMemoryRowModel('aggregate') instead`);
         this.inMemoryRowModel.refreshModel({step: Constants.STEP_AGGREGATE});
     }
 
