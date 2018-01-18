@@ -11,7 +11,7 @@ include('../includes/mediaHeader.php');
     <div class="row">
         <a style="color:black; text-decoration:none;" href="../ag-grid-proud-to-support-plunker/"> <h3 style="font-size:35px; text-align:center;font-weight:bold">Plunker is now backed by ag-Grid</h3></a>
         <p style="text-align: center;color:grey">by John Masterson | 17 January 2017</p>
-        <a href="../ag-grid-proud-to-support-plunker/"><img style="margin-bottom:30px; align:center;" src="../images/ag-grid-and-plunker.png"/></a>
+        <a href="../ag-grid-proud-to-support-plunker/"><img style="margin-bottom:30px;" src="../images/Plunker_Cover.png" width='99%'/></a>
     </div>
 
 
@@ -21,9 +21,9 @@ include('../includes/mediaHeader.php');
 
             <div class="col-sm-4 col-md-4">
                 <div class="thumbnail">
-                    <a href="../ag-grid-blog-15-0-0/"><img src="../ag-grid-blog-15-0-0/img15-0-0.png" alt="..."></a>
+                    <a href="../ag-grid-blog-15-0-0/"><img src="../ag-grid-blog-15-0-0/img15-0-0.png" style="height: 235px;" alt="..."></a>
                     <div class="caption">
-                        <a style="color:black; text-decoration:none; font-size:24px; font-weight:bold" href="../ag-grid-blog-15-0-0/">Happy New ag-Grid v15.0.0</a>
+                        <a style="color:black; text-decoration:none; font-size:24px; font-weight:bold" href="../ag-grid-blog-15-0-0/">Happy New ag-Grid: v15.0.0 Released</a>
                         <div class="media">
                             <div class="media-left">
                                 <div style="background-color:#838384; border-radius: 50%; width:35px;height:35px; padding:2px;">

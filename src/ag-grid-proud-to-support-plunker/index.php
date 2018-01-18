@@ -15,21 +15,17 @@ include('../includes/mediaHeader.php');
             <i>John Masterson, 17th January, 2017.</i>
              </p>
         </div>
-        <img src="../images/ag-grid-and-plunker.png" style="width: 600px;"/>
-
-        <p>
-            As of today, ag-Grid is providing financial backing to help <a href="https://plnkr.co/">Plunker</a> and say thanks! 
-        </p>
-
-
+        <img src="../images/Plunker_Cover.png" style="width: 850px;"/>
+        <h3><strong>As of today, ag-Grid is providing financial backing to help <a href="https://plnkr.co/">Plunker</a> and say thanks!</strong></h3>
+        
         <h3>Why Plunker?</h3>
  
          <p>
-             Many of you will already be using <a href="https://plnkr.co/">Plunker</a>, it's the best tool to prototype, experiment, share and debug your ideas on the web platform. From idea to implementation, <a href="https://plnkr.co/">Plunker</a> helps you build something quickly and frictionlessly. It's our tool of choice for <a href="https://www.ag-grid.com/javascript-grid-examples/">examples</a> in our <a href="https://www.ag-grid.com/documentation-main/documentation.php">Documentation.</a> We also use it extensively when delivering support to our customers. 
+             Many of you will already be using <a href="https://plnkr.co/">Plunker</a>, it's the best tool to prototype, experiment, share and debug your ideas on the web platform. From idea to implementation, <a href="https://plnkr.co/">Plunker</a> helps you build something quickly and frictionlessly. It's ag-Grid's tool of choice for <a href="https://www.ag-grid.com/javascript-grid-examples/">examples</a> in our <a href="https://www.ag-grid.com/documentation-main/documentation.php">Documentation.</a> We also use it extensively when delivering support to our customers. 
          </p>
  
          <p>
-             At the end of last year, we got in contact with Geoff Goodman and we quickly found common ground. This led to us providing support for Geoff and his team. As Geoff says:
+             At the end of last year, we got in contact with Geoff Goodman, creator of <a href="https://plnkr.co/">Plunker</a>, and we quickly found common ground. This led to us providing support for Geoff and his team. As Geoff says:
          </p>
  
          <p>
@@ -39,7 +35,17 @@ include('../includes/mediaHeader.php');
          </p>
              It's important to us that we give back to the community which supported us in our early days. Projects such as <a href="https://plnkr.co/">Plunker</a> provide an amazing service at no charge so it's only fair that they are compensated for their time and effort.
          </p>
- 
+
+         <h3>About ag-Grid</h3>
+         
+         <p>
+             Our mission is simple: Build the best datagrid in the world. Born out of frustration with existing solutions, ag-Grid evolved from a side project to becoming the leading JavaScript datagrid on the market. We are a company built by developers for developers. True to these roots, we offer <a href="https://www.ag-grid.com/javascript-grid-getting-started/">ag-Grid Free:</a> an open-source project that delivers world class grid performance. You can use this entirely free under MIT license.
+         </p>
+        
+         <p>
+            ag-Grid Enterprise is our commercially-licensed offering which has enjoyed widespread adoption and drives us to keep delivering on our mission. You can take a <a href="https://www.ag-grid.com/start-trial.php">free trial</a> to see if it fits your needs.
+        </p>
+
          <h3>Corporate ‘Open-Source’ Social Responsibility</h3>
  
          <p>
@@ -49,17 +55,7 @@ include('../includes/mediaHeader.php');
          <p>
              We also love the idea of giving back, we'll be on the lookout for other projects that fit with our vision. We strongly enourage you to do the same at your company.
          </p>
- 
-         <h3>About ag-Grid</h3>
- 
-         <p>
-             At ag-Grid, our mission is simple: Build the best datagrid in the world. Born out of frustration with existing solutions, ag-Grid evolved from a side project to becoming the leading JavaScript datagrid on the market. We are a company built by developers for developers. True to these roots, we offer <a href="https://www.ag-grid.com/javascript-grid-getting-started/">ag-Grid Free:</a> an open-source project that delivers world class grid performance. You can use this entirely free under MIT license.
-         </p>
- 
-         <p>
-             ag-Grid Enterprise is our commercially-licensed offering which has enjoyed widespread adoption and drives us to keep delivering on our mission. You can take a <a href="https://www.ag-grid.com/start-trial.php">free trial</a> to see if it fits your needs.
-         </p>
-
+  
         <div style="background-color: #eee; padding: 10px; display: inline-block;">
 
             <div style="margin-bottom: 5px;">If you liked this article then please share</div>
