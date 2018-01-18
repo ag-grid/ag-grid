@@ -6,15 +6,15 @@ $pageKeyboards = "blogs ag-grid angular react webpack";
 
 include('../includes/mediaHeader.php');
 
-define('AUTHORS', array(
+$authors = array(
 'niall' => 'Niall Crosby',
 'sean' => 'Sean Landsman',
 'sophia' => 'Sophia Lazarova',
 'amit' => 'Amit Moryossef'
-));
+);
 
 function featuredBlog($title, $cardImage, $link, $author, $date) {
-    $authors = AUTHORS;
+    $authors = $GLOBALS['authors'];
     echo <<<HTML
     <div class="col-md-4">
         <div class="card">
@@ -37,7 +37,7 @@ HTML;
 }
 
 function recentBlog($title, $summary, $image, $link, $author, $date) {
-    $authors = AUTHORS;
+    $authors = $GLOBALS['authors'];
     echo <<<HTML
     <div class="row post-summary">
         <div class="col-md-3">
