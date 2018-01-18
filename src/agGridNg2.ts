@@ -372,6 +372,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressMultiRangeSelection: any = undefined;
     @Input() public rowDragManaged: any = undefined;
     @Input() public suppressRowDrag: any = undefined;
+    @Input() public popupParent: any = undefined;
 
     /**
      * Outputs
