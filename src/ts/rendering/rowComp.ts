@@ -246,7 +246,7 @@ export class RowComp extends Component {
         if (setRowTop) {
             // if sliding in, we take the old row top. otherwise we just set the current row top.
             let pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
-            let pixelsWithOffset = this.applyPixelOffset(pixels);
+            let pixelsWithOffset = this.applyPaginationOffset(pixels);
             // if not setting row top, then below is empty string
             rowTopStyle = `top: ${pixelsWithOffset}px; `;
         }
@@ -1193,8 +1193,10 @@ export class RowComp extends Component {
     // at a speed the user can see.
     private roundRowTopToBounds(rowTop: number): number {
         let range = this.beans.gridPanel.getVerticalPixelRange();
-        let minPixel = range.top - 100;
-        let maxPixel = range.bottom + 100;
+
+        let minPixel = this.applyPaginationOffset(range.top, true) - 100;
+        let maxPixel = this.applyPaginationOffset(range.bottom, true) + 100;
+
         if (rowTop < minPixel) {
             return minPixel;
         } else if (rowTop > maxPixel) {
@@ -1312,11 +1314,19 @@ export class RowComp extends Component {
         this.setRowTop(this.rowNode.rowTop);
     }
 
-    private applyPixelOffset(pixels: number): number {
+    // applies pagination offset, eg if on second page, and page height is 500px, then removes
+    // 500px from the top position, so a row with rowTop 600px is displayed at location 100px.
+    // reverse will take the offset away rather than add.
+    private applyPaginationOffset(topPx: number, reverse = false): number {
         if (this.rowNode.isRowPinned()) {
-            return pixels;
+            return topPx;
         } else {
-            return pixels - this.beans.paginationProxy.getPixelOffset();
+            let pixelOffset = this.beans.paginationProxy.getPixelOffset();
+            if (reverse) {
+                return topPx + pixelOffset;
+            } else {
+                return topPx - pixelOffset;
+            }
         }
     }
 
@@ -1324,7 +1334,8 @@ export class RowComp extends Component {
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
         if (_.exists(pixels)) {
-            let pixelsWithOffset = this.applyPixelOffset(pixels);
+            let pixelsWithOffset = this.applyPaginationOffset(pixels);
+
             let topPx = pixelsWithOffset + "px";
             this.eAllRowContainers.forEach( row => row.style.top = topPx);
         }
