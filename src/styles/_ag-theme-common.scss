@@ -249,10 +249,6 @@
         @include bottom-border($border-color);
     }
 
-    .ag-row-hover {
-        background-color: $hover-color;
-    }
-
     @if map-get($params, 'odd-row-background-color') {
         .ag-row-odd {
             background-color: map-get($params, 'odd-row-background-color');
@@ -260,6 +256,10 @@
         .ag-row-even {
             background-color: map-get($params, 'background-color');
         }
+    }
+
+    .ag-row-hover {
+        background-color: $hover-color;
     }
 
     .ag-numeric-cell {
@@ -356,7 +356,7 @@
     ////////////////////////////////////////
     .ag-header-cell-resize {
         position: absolute;
-        right: -($grid-size);
+        right: -($grid-size) + 1px;
         width: $grid-size * 2;
         z-index: 4;
 
