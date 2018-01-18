@@ -549,14 +549,6 @@
                 "url": "example-angular-typeahead/"
             },
             {
-                "title": "Styled Report",
-                "url": "example-account-report/"
-            },
-            {
-                "title": "File Browser",
-                "url": "example-file-browser/"
-            },
-            {
                 "title": "Expressions & Context",
                 "url": "example-expressions-and-context/"
             },
@@ -583,7 +575,8 @@
         "items": [
             {
                 "title": "Change log",
-                "url": "change-log/changeLogIndex.php"
+                "url": "change-log/changeLogIndex.php",
+                "skipIndex": true
             },
             {
                 "title": "OpenFin",
@@ -607,7 +600,8 @@
             },
             {
                 "title": "Archive Docs",
-                "url": "archive/"
+                "url": "archive/",
+                "skipIndex": true
             }
         ]
     }
