@@ -69,7 +69,12 @@ export class AgCheckbox extends Component {
     }
 
     @Listener('click')
-    private onClick(): void {
+    private onClick(event: MouseEvent): void {
+        // if we don't set the path, then won't work in Edge, as once the <span> is removed from the dom,
+        // it's not possible to calculate the path by following the parent's chain. in other browser (eg
+        // chrome) there is event.path for this purpose, but missing in Edge.
+        _.addAgGridEventPath(event);
+
         if (!this.readOnly) {
             this.toggle();
         }
