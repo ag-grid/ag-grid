@@ -6,12 +6,14 @@ $pageKeyboards = "blogs ag-grid angular react webpack";
 
 include('../includes/mediaHeader.php');
 
-define('niall', 'Niall Crosby');
-define('sean', 'Sean Landsman');
-define('sophia', 'Sophia Lazarova');
-define('amit', 'Amit Moryossef');
+define('AUTHORS', array(
+'niall' => 'Niall Crosby',
+'sean' => 'Sean Landsman',
+'sophia' => 'Sophia Lazarova',
+'amit' => 'Amit Moryossef'
+));
 
-function featuredBlog($title, $cardImage, $link, $author, $date, $authorImage) {
+function featuredBlog($title, $cardImage, $link, $author, $date) {
     $authors = AUTHORS;
     echo <<<HTML
     <div class="col-md-4">
@@ -23,9 +25,9 @@ function featuredBlog($title, $cardImage, $link, $author, $date, $authorImage) {
             </h3>
 
             <div class="media">
-                <img src="/images/team/{$authorImage}.jpg">
+                <img src="/images/team/{$author}.jpg">
                 <div class="media-body">
-                    <h4>{$author} <span>$date</span> </h4>
+                    <h4>{$authors[$author]} <span>$date</span> </h4>
                 </div>
             </div>
           </div>
@@ -34,7 +36,7 @@ function featuredBlog($title, $cardImage, $link, $author, $date, $authorImage) {
 HTML;
 }
 
-function recentBlog($title, $summary, $image, $link, $author, $date, $authorImage) {
+function recentBlog($title, $summary, $image, $link, $author, $date) {
     $authors = AUTHORS;
     echo <<<HTML
     <div class="row post-summary">
@@ -46,9 +48,9 @@ function recentBlog($title, $summary, $image, $link, $author, $date, $authorImag
             <h3 class="card-title"> <a href="$link">$title</a> </h3>
             <p>$summary</p>
             <div class="media">
-                <img src="/images/team/{$authorImage}.jpg">
+                <img src="/images/team/{$author}.jpg">
                 <div class="media-body">
-                    <h4>{$author} <span>$date</span> </h4>
+                    <h4>{$authors[$author]} <span>$date</span> </h4>
                 </div>
             </div>
         </div>
@@ -77,28 +79,24 @@ HTML;
         'Understand your data: The power of pivot tables',
         '../pivoting-blog/img-pivot.png',
         '../pivoting-blog/',
-        sophia,
-        '15 December 2017',
-        'sophia'
+        'sophia',
+        '15 December 2017'
     );
 
     featuredBlog(
         'Building a CRUD Application with ag-Grid - Part 4',
         '../ag-grid-datagrid-crud-part-1/crud_overview.png',
         '../ag-grid-datagrid-crud-part-4/',
-         sean,
-        '5 December 2017',
-        'sean'
-
+        'sean',
+        '5 December 2017'
     );
 
     featuredBlog(
         'Building a CRUD Application with ag-Grid - Part 4',
         '../ag-grid-datagrid-crud-part-1/crud_overview.png',
         '../ag-grid-datagrid-crud-part-3/',
-        sean,
-        '21 November 2017',
-        'sean'
+        'sean',
+        '21 November 2017'
     );
 
     ?>
@@ -117,8 +115,7 @@ $blogPosts = json_decode(file_get_contents('blog-posts.json'), true);
             $post['img'],
             $post['link'],
             $post['author'],
-            $post['date'],
-            $post['authorImage']
+            $post['date']
         );
     }
 ?>
