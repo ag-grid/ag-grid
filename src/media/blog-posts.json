@@ -5,7 +5,8 @@
     "link": "../ag-grid-blog-14-2-0/",
     "img": "../ag-grid-blog-14-2-0/cover.jpg",
     "date": "14 November 2017",
-    "author": "sophia"
+    "author": "Sophia Lazarova",
+    "authorImage": "sophia"
   },
   {
     "title": "Building a CRUD Application with ag-Grid - Part 2",
@@ -13,7 +14,8 @@
     "link": "../ag-grid-datagrid-crud-part-2/",
     "img": "../ag-grid-datagrid-crud-part-1/crud_overview.png",
     "date": "07 November 2017",
-    "author": "sean"
+    "author": "Sean Landsman",
+    "authorImage": "sean"
   },
   {
     "title": "ag-Grid v14 Released",
@@ -21,7 +23,8 @@
     "link": "../ag-grid-blog-14-0-0/",
     "img": "../ag-grid-blog-14-0-0/v14-200.png",
     "date": "02 November 2017",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Building a CRUD Application with ag-Grid - Part 1",
@@ -29,7 +32,8 @@
     "link": "../ag-grid-datagrid-crud-part-1/",
     "img": "../ag-grid-datagrid-crud-part-1/crud_overview.png",
     "date": "24 October 2017",
-    "author": "sean"
+    "author": "Sean Landsman",
+    "authorImage": "sean"
   },
   {
     "title": " 8 Performance Hacks for JavaScript",
@@ -37,7 +41,8 @@
     "link": "../ag-grid-8-performance-hacks-for-javascript/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "08 September 2017",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Big Data / Small Browser",
@@ -45,7 +50,8 @@
     "link": "../ag-grid-big-data-small-browser/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "19 May 2017",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Building a React Datagrid with Redux and ag-Grid",
@@ -53,7 +59,8 @@
     "link": "../ag-grid-react-datagrid/",
     "img": "../images/react.png",
     "date": "13 May 2017",
-    "author": "sean"
+    "author": "Sean Landsman",
+    "authorImage": "sean"
   },
   {
     "title": "ag-Grid Partners with Webpack",
@@ -61,7 +68,8 @@
     "link": "../ag-grid-partners-with-webpack/",
     "img": "../images/ag_grid_and_webpack_small.png",
     "date": "20 March 2017",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Webpack Tutorial: Using @ngTools/webpack",
@@ -69,7 +77,8 @@
     "link": "../ag-grid-webpack-ngtools/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "14 March 2017",
-    "author": "sean"
+    "author": "Sean Landsman",
+    "authorImage": "sean"
   },
   {
     "title": "From Hater to Fan – How I fell in Love with ag-Grid",
@@ -77,7 +86,8 @@
     "link": "../review-of-angularjs-grids/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "15 february 2017",
-    "author": "amit"
+    "author": "Amit Moryossef",
+    "authorImage": "amit"
   },
   {
     "title": "Git on the Command Line - Improving the Experience",
@@ -85,7 +95,8 @@
     "link": "../git-color/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "06 February 2017",
-    "author": "sean"
+    "author": "Sean Landsman",
+    "authorImage": "amit"
   },
   {
     "title": "Webpack Tutorial: Understanding How it Works",
@@ -93,7 +104,8 @@
     "link": "../ag-grid-understanding-webpack/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "23 January 2017",
-    "author": "sean"
+    "author": "Sean Landsman",
+    "authorImage": "sean"
   },
   {
     "title": "Understanding AOT and Dynamic Components in Angular 2",
@@ -101,7 +113,8 @@
     "link": "../ag-grid-angular-aot-dynamic-components/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "08 December 2016",
-    "author": "sean"
+    "author": "Sean Landsman",
+    "authorImage": "sean"
   },
   {
     "title": "ag-Grid v7: AOT & Angular 2 Components",
@@ -109,7 +122,8 @@
     "link": "../ag-grid-angular2-support-v7/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "30 November 2016",
-    "author": "sean"
+    "author": "Sean Landsman",
+    "authorImage": "sean"
   },
   {
     "title": "ag-Grid - The Enterprise Datagrid For Aurelia",
@@ -117,7 +131,8 @@
     "link": "/ag-grid-datagrid-aurelia/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "30 November 2016",
-    "author": "sean"
+    "author": "Sean Landsman",
+    "authorImage": "sean"
   },
   {
     "title": "8 reasons to choose ag-Grid as your JavaScript Datagrid",
@@ -125,7 +140,8 @@
     "link": "../javascript-datagrid/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "27 October 2016",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "We're gonna need a bigger boat: from speaker to sponsor with ag-Grid",
@@ -133,7 +149,8 @@
     "link": "../ag-grid-angular-connect-2016/",
     "img": "../images/angularConnect2016/agGridStand-small.png",
     "date": "05 October 2016",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Announcing ag-Grid v6 and Angular 2 Support",
@@ -141,7 +158,8 @@
     "link": "../ag-grid-angular2-support-v6/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "21 September 2016",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Announcing ag-Grid v5 and Pivot",
@@ -149,7 +167,8 @@
     "link": "../ag-grid-javascript-pivot-grid/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "13 July 2016",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "ag-Grid Goes Commercial",
@@ -157,7 +176,8 @@
     "link": "/ag-grid-goes-commercial/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "09 March 2016",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else",
@@ -165,7 +185,8 @@
     "link": "/understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "09 February 2016",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Announcing React and ag-Grid",
@@ -173,7 +194,8 @@
     "link": "/react-and-ag-grid/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "28 January 2016",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Stepping it Up, ag-Grid Focuses on Agnostic in 2016",
@@ -181,7 +203,8 @@
     "link": "/ag-grid-in-2016/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "25 October 2015",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Building Performant components for AngularJS 1.x",
@@ -189,7 +212,8 @@
     "link": "https://www.youtube.com/watch?v=gNhPeLCBbE0",
     "img": "/images/angularConnectTalk.png",
     "date": "21 October 2015",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Embracing the Future with Angular 2.0, Web Components and ag-Grid",
@@ -197,7 +221,8 @@
     "link": "/embracing-the-future-with-angularjs2-web-components-and-ag-grid/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "25 September 2015",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Angular Air Episode 32: ag-Grid",
@@ -205,7 +230,8 @@
     "link": "https://www.youtube.com/watch?v=jQ_nyTiKbZg",
     "img": "/images/angularAir.png",
     "date": "15 September 2015",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   },
   {
     "title": "Why The World Needed Another AngularJS 1.x Grid",
@@ -213,6 +239,7 @@
     "link": "../why-the-world-needed-another-angularjs-grid/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "31 March 2015",
-    "author": "niall"
+    "author": "Niall Crosby",
+    "authorImage": "niall"
   }
 ]
