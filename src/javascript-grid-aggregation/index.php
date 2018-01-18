@@ -270,17 +270,8 @@ colDef = {
     <h2>Recomputing Aggregates</h2>
 
     <p>
-        If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates through the
-        api method <code>recomputeAggregates</code>. For example, if you allow editing,
-        and want the aggregates to update as new values are edited, then create code like the following:
-</p>
-
-        <snippet>
-// add a listener to the editable colDef
-colDef.onCellValueChanged = function() {
-    gridOptions.api.recomputeAggregates();
-}</snippet>
-
-
+        If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates
+        through the api method <code>refreshInMemoryRowModel('aggregate')</code>.
+    </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
