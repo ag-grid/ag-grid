@@ -33,15 +33,15 @@ $(function() {
 })
 
 $(function() {
-    var $currentlyExpanded = $('#side-nav > ul > li.expanded > ul');
+    var $currentlyExpanded = $('#side-nav-container > ul > li.expanded > ul');
 
     if ($currentlyExpanded.length) {
         $currentlyExpanded.css('height', $currentlyExpanded[0].scrollHeight);
     }
 
-    $('#side-nav > ul > li > span').on('click', function() {
+    $('#side-nav-container > ul > li > span').on('click', function() {
         var $parent = $(this).parent();
-        var $otherCats = $('#side-nav > ul > li').not($parent);
+        var $otherCats = $('#side-nav-container > ul > li').not($parent);
 
         $otherCats.removeClass('expanded');
         $otherCats.find('> ul').css('height', '0');
