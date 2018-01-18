@@ -14,7 +14,7 @@ import "ag-grid-enterprise";
 import RichGridExample from "./rich-grid-example/RichGridExample.vue";
 import DynamicComponentExample from "./dynamic-component-example/DynamicComponentExample.vue";
 import EditorComponentExample from "./editor-component-example/EditorComponentExample.vue";
-import FloatingRowExample from "./floating-row-example/FloatingRowExample.vue";
+import PinnedRowExample from "./pinned-row-example/PinnedRowExample.vue";
 import FullWidthRowExample from "./full-width-example/FullWidthExample.vue";
 import GroupedRowExample from "./grouped-row-example/GroupedRowExample.vue";
 import FilterExample from "./filter-example/FilterExample.vue";
@@ -27,14 +27,19 @@ const routes = [
         path: '/',
         components: {
             default: RichGridExample,
-            dynamic: DynamicComponentExample
+            dynamic: DynamicComponentExample,
+            editor: EditorComponentExample,
+            pinned: PinnedRowExample,
+            "full-width": FullWidthRowExample,
+            "grouped-row": GroupedRowExample,
+            filter: FilterExample
         },
         name: "Rich Grid with Pure JavaScript"
     },
     // {path: '/', component: RichGridExample, name: "Rich Grid with Pure JavaScript"},
     {path: '/dynamic', component: DynamicComponentExample, name: "Dynamic Components Example"},
     {path: '/editor', component: EditorComponentExample, name: "Editor Component Example"},
-    {path: '/floating', component: FloatingRowExample, name: "Pinned Row Example"},
+    {path: '/pinned', component: PinnedRowExample, name: "Pinned Row Example"},
     {path: '/full-width', component: FullWidthRowExample, name: "Full Width Row Example"},
     {path: '/grouped-row', component: GroupedRowExample, name: "Grouped Row Example"},
     {path: '/filter', component: FilterExample, name: "Filter Example"},

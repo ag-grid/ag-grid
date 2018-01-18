@@ -6,7 +6,7 @@ $pageGroup = "misc";
 include('../includes/mediaHeader.php');
 ?>
 
-<div style="padding: 20px;">
+<div id="content">
 
     <note>
         For a detailed breakdown of items please refer to the detailed pipeline <a href="../ag-grid-pipeline/">here</a>.

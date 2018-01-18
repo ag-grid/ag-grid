@@ -325,23 +325,11 @@
         @extend .full-width-row, .list-unstyled, .row, .mb-3;
 
         li {
-            @extend .col-sm-3, .text-center;
+            @extend .col-sm-4, .text-center;
         }
 
-        a,
-        a:hover {
-            text-decoration: none;
-            color: $primary;
-        }
-
-        a:hover {
-            border-bottom: 1px solid $primary;
-        }
-
-        .active,
-        .active:hover {
-            cursor: default;
-            border-bottom: 2px solid $primary;
+        a {
+            @extend .btn, .btn-primary;
         }
     }
 
@@ -410,58 +398,51 @@
 
         aside {
             @extend .col-sm-2;
-
-            & > ul {
-                border-right: $border-width solid $gray-200;
-                font-size: 80%;
-            }
-
-            li {
-                margin-bottom: 0.5rem;
-            }
-
-            a + ul {
-                margin-top: 0.5rem;
-                margin-bottom: 1.5rem;
-            }
-
-            ul {
-                -webkit-padding-start: 0;
-                list-style-type: none;
+            > .scroll-wrapper {
+                height: 100vh;
+                overflow: auto;
                 position: -webkit-sticky;
                 position: sticky;
-                top: 1rem;
+                padding-right: 3rem;
+                top: 0rem;
+
+                & > ul {
+                    font-size: 80%;
+                }
+
+                li {
+                    margin-bottom: 0.5rem;
+                }
+
+                a + ul {
+                    margin-top: 0.5rem;
+                    margin-bottom: 1.5rem;
+                }
 
                 ul {
-                    font-weight: 200;
-                }
+                    -webkit-padding-start: 0;
+                    list-style-type: none;
 
-                a {
-                    display: block;
-                    color: $gray-700;
-                }
-
-                a:hover {
-                    text-decoration: none;
-                }
-
-                a:after {
-                    content: '\00a0';
-                    border-right: $border-width solid $gray-200;
-                    position: absolute;
-                    right: -$border-width;
-                }
-
-                .current-feature {
-                    > a,
-                    > a:hover {
-                        color: $blue-2;
-                        text-decoration: none;
-                        cursor: default;
+                    ul {
+                        font-weight: 200;
                     }
 
-                    > a:after {
-                        border-right: $border-width solid $blue-2;
+                    a {
+                        display: block;
+                        color: $gray-700;
+                    }
+
+                    a:hover {
+                        text-decoration: none;
+                    }
+
+                    .current-feature {
+                        > a,
+                        > a:hover {
+                            color: $blue-2;
+                            text-decoration: none;
+                            cursor: default;
+                        }
                     }
                 }
             }

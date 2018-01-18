@@ -381,9 +381,6 @@
         The example below shows a rich configuration of ag-Grid, with a VueJS Header Group Component and custom
         Date Component Filter (under the DOB column).
     </p>
-    <show-example url="../framework-examples/vue-examples/#/"
-                  jsfile="../framework-examples/vue-examples/src/rich-grid-example/RichGridExample.vue"
-                  exampleHeight="525px"></show-example>
 
 </div>
 
