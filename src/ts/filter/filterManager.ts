@@ -449,6 +449,10 @@ export class FilterManager {
         filterWrapper.filterPromise.then(filter=>{
             let guiFromFilter = filter.getGui();
 
+            if (_.missing(guiFromFilter)) {
+                console.warn(`getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`);
+            }
+
             // for backwards compatibility with Angular 1 - we
             // used to allow providing back HTML from getGui().
             // once we move away from supporting Angular 1
