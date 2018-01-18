@@ -246,14 +246,7 @@ include '../documentation-main/documentation_header.php';
         The example below shows a simple grid using Web Components.
     </p>
 
-    <show-complex-example example="./examples/simple-grid/simple-grid-example.html"
-                          sources="{
-                                [
-                                    { root: './examples/simple-grid/', files: 'simple-grid-example.html,simple-grid-example.js' }
-                                ]
-                              }"
-                          exampleheight="150px">
-    </show-complex-example>
+    <?= example('Simple Web Components with ag-Grid', 'simple-grid', 'as-is', array("noPlunker" => 1, "exampleHeight" => 150)) ?>
 
     <h2 id="complex-web-components-example">Complex Web Components Example</h2>
 
@@ -299,13 +292,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <show-complex-example example="./examples/rich-grid/rich-grid-example.html"
-                          sources="{
-                                [
-                                    { root: './examples/rich-grid/', files: 'rich-grid-example.html,rich-grid-example.js' }
-                                ]
-                              }">
-    </show-complex-example>
+    <?= example('Rich Web Components with ag-Grid', 'rich-grid', 'as-is', array("noPlunker" => 1, "exampleHeight" => 500)) ?>
 
     <h2 id="destroy">Destroy</h2>
 
