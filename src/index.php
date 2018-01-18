@@ -195,9 +195,6 @@ meta_and_links($title, $keywords, $description, false);
 
                 <div id="demo-2" class="demo">
                     <?php include 'home/demo-2.php' ?>
-                    <div class="view-code">
-                        <a href="/ag-grid-trader-dashboard/">View Code</a>
-                    </div>
                 </div>
 
                 <div id="demo-3" class="demo">
