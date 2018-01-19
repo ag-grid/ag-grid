@@ -1,10 +1,10 @@
 var columnDefs = [
     {
         headerName: 'Set filter col', field: 'value', width: 150, filter: 'agSetColumnFilter', filterParams: {
-            values: (params)=>{
-                setTimeout(()=>{
+            values: function (params) {
+                setTimeout( function() {
                     params.success(['value 1', 'value 2'])
-                }, 5000)
+                }, 5000);
             }
         }
     }
