@@ -41,6 +41,7 @@
 
 @mixin card($params) {
     @extend %card !optional;
+
     background: map-get($params, 'card-background-color');
     border-radius: map-get($params, 'card-radius');
     box-shadow: map-get($params, 'card-shadow');

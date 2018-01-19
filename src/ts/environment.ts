@@ -7,7 +7,7 @@ const themeClass = new RegExp(`ag-(${themes.join('|')})`);
 const matGridSize = 8;
 type HardCodedSize = {[key: string]: {[key: string]: number}};
 const freshGridSize = 4;
-const balhamGridSize = 6;
+const balhamGridSize = 4;
 
 const HARD_CODED_SIZES: HardCodedSize = {
     'ag-theme-material': {
@@ -21,9 +21,9 @@ const HARD_CODED_SIZES: HardCodedSize = {
         rowHeight: 25
     },
     'ag-theme-balham': {
-        headerHeight: balhamGridSize * 7,
-        virtualItemHeight: balhamGridSize * 5,
-        rowHeight: balhamGridSize * 6
+        headerHeight: balhamGridSize * 8,
+        virtualItemHeight: balhamGridSize * 7,
+        rowHeight: balhamGridSize * 7
     }
 };
 

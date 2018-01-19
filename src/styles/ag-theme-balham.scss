@@ -3,6 +3,7 @@
 
 $default-background: white;
 $chrome-background: lighten($flat-clouds, 3);
+$active: $flat-belize-hole;
 
 // Taken from the palette of angular material: https://github.com/angular/material2/blob/master/src/lib/core/theming/_palette.scss
 $mat-grey-0: #fff;
@@ -26,15 +27,20 @@ $disabled-foreground-color-opacity: 0.38 !default;
 // The variables below can be overriden to adjust the look up to the app color scheme
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
+
 // Sizing
-$grid-size: 6px !default;
+$grid-size: 4px !default;
 $icon-size: 16px !default;
-$header-height: $grid-size * 7 !default;
-$row-height: $grid-size * 6 !default;
+
+// these three should be changed in envronment.ts, too
+$row-height: $grid-size * 7 !default;
+$header-height: $grid-size * 8 !default;
+$virtual-item-height: $grid-size * 7;
+
 $toolpanel-indent-size: $grid-size + $icon-size !default;
 $row-group-indent-size: $grid-size * 3 + $icon-size !default;
 $cell-horizontal-padding: $grid-size * 3 !default;
-$virtual-item-height: $grid-size * 5;
+
 $header-icon-size: 14px !default;
 $border-radius: 2px;
 $odd-row-background-color: rgb(252, 253, 254);
@@ -50,7 +56,7 @@ $font-weight: 400 !default;
 
 $secondary-font-family: $font-family !default; //font-secondary
 $secondary-font-size: 11px !default; // font-secondary-size
-$secondary-font-weight: 700 !default; // font-secondary-weight
+$secondary-font-weight: 600 !default; // font-secondary-weight
 
 // Colors
 $foreground-color: rgba(#000, $foreground-opacity) !default; // foreground
@@ -59,9 +65,9 @@ $disabled-foreground-color: rgba(#000, $disabled-foreground-color-opacity) !defa
 
 $border-color: $flat-silver !default;
 
-$primary-color: $flat-peter-river !default;
+$primary-color: $active !default;
 
-$accent-color: $flat-peter-river !default;
+$accent-color: $active !default;
 $icon-color: $flat-gray-4 !default;
 $alt-icon-color: $default-background !default;
 
@@ -73,14 +79,14 @@ $panel-background-color: $chrome-background !default;
 
 $tool-panel-background-color: $chrome-background !default;
 $header-background-color: $chrome-background !default;
-$chip-background-color: $flat-clouds !default;
+$chip-background-color: darken($flat-clouds, 5) !default;
 
-$range-selection-background-color: lighten($flat-peter-river, 30) !default;
-$range-selection-highlight-color: $flat-peter-river !default;
+$range-selection-background-color: transparentize($active, 0.8) !default;
+$range-selection-highlight-color: $active !default;
 
 $hover-color: $flat-clouds !default;
 
-$selected-color: lighten($flat-peter-river, 40) !default;
+$selected-color: lighten($active, 40) !default;
 
 $cell-data-changed-color: $mat-pink-50 !default;
 
@@ -129,8 +135,6 @@ $params: (
     background-color: $background-color,
     border-color: $border-color,
 
-    button-background-color: transparent,
-
     icon-color: $icon-color,
     alt-icon-color: $alt-icon-color,
 
@@ -144,7 +148,6 @@ $params: (
     range-selection-background-color: $range-selection-background-color,
     range-selection-highlight-color: $range-selection-highlight-color,
 
-
     panel-background-color: $panel-background-color,
     tool-panel-background-color: $tool-panel-background-color,
 
@@ -155,17 +158,10 @@ $params: (
 
     icon-opacity: $foreground-opacity,
     button-text-transform: uppercase,
-    card-radius: $card-radius,
-    card-shadow: $card-shadow,
-    focused-textbox-border: 2px solid $primary-color,
-
-    input-border-width: 0,
-    input-bottom-border: 1px solid $border-color,
-    input-height: $grid-size * 3,
+    card-radius: 2px,
+    card-shadow: none,
+    input-height: $grid-size * 4,
     use-icons-for-pager-buttons: true,
-    customize-inputs: true,
-    customize-buttons: true,
-    full-width-tabs: true,
     value-change-delta-up-color: $value-change-delta-up-color,
     value-change-delta-down-color: $value-change-delta-down-color,
     value-change-value-highlight-background-color: $value-change-value-highlight-background-color,
@@ -175,6 +171,25 @@ $params: (
 .ag-theme-balham {
     %selected-tab {
         border-bottom: 2px solid $primary-color;
+    }
+
+    %card {
+        border: 1px solid $border-color;
+    }
+
+    %tab {
+        border: 1px solid transparent;
+        border-bottom-width: 0;
+        display: inline-block;
+        margin: $grid-size;
+        margin-bottom: 0;
+        padding: $grid-size $grid-size * 2;
+    }
+
+    %selected-tab {
+        background-color: $default-background;
+        border-bottom: 2px solid $default-background;
+        border-color: $border-color;
     }
 
     .ag-layout-normal {
@@ -190,10 +205,6 @@ $params: (
 
     .ag-cell-highlight {
         background-color: $range-selection-highlight-color !important;
-    }
-
-    .ag-cell-highlight-animation {
-        transition: background-color 1s;
     }
 
     .ag-row-drag {
@@ -214,11 +225,154 @@ $params: (
     }
 
     .ag-root {
-        border-top: 1px solid $border-color;
         border-right: 1px solid $border-color;
+        border-top: 1px solid $border-color;
     }
 
+    .ag-row {
+        border-bottom-color: lighten($border-color, 10);
+    }
+
+    //
+    // taken from classic
+    //
+
+    .ag-column-drop-cell {
+        height: $grid-size * 6 !important;
+
+        .ag-column-drop-cell-button {
+            box-sizing: border-box;
+            height: calc(100% - #{$grid-size});
+            margin-bottom: $grid-size / 2;
+            margin-top: $grid-size / 2;
+        }
+
+        .ag-column-drop-cell-button:hover {
+            border: 1px solid $border-color;
+        }
+    }
+
+    .ag-column-drop-vertical .ag-column-drop-cell {
+        display: block;
+        float: none;
+        margin-left: $grid-size * 2;
+        margin-right: $grid-size * 2;
+
+        .ag-column-drop-cell-text {
+            line-height: $grid-size * 6;
+            margin-left: $grid-size * 2;
+        }
+    }
+
+    .ag-column-drop-horizontal {
+        background-color: $panel-background-color;
+        height: $header-height;
+
+        .ag-column-drop-empty-message {
+            line-height: $header-height;
+        }
+
+        .ag-column-drop-cell-text {
+            line-height: $grid-size * 6;
+            margin-left: $grid-size * 2;
+        }
+    }
+
+    .ag-filter .ag-filter-header-container {
+        height: $grid-size * 6;
+    }
+
+    // bootstrap overrides
+    .ag-tab {
+        box-sizing: initial;
+    }
+
+    .ag-filter .ag-filter-value {
+        line-height: $icon-size + $grid-size;
+    }
+
+    // tool panel
     .ag-tool-panel {
         border-top: 1px solid $border-color;
+
+        .ag-column-select-panel {
+            padding: $grid-size * 2 0;
+
+            .ag-column-select-column-group,
+            .ag-column-select-column {
+                height: $grid-size * 5;
+                line-height: $grid-size * 5;
+            }
+        }
+
+        .ag-column-drop {
+            padding-bottom: $grid-size * 2;
+            padding-top: $grid-size * 2;
+
+            .ag-icon {
+                margin-bottom: $grid-size;
+            }
+
+            .ag-column-drop-title {
+                display: inline-block;
+                float: none;
+                margin-bottom: $grid-size;
+            }
+
+            .ag-column-drop-empty-message {
+                height: $grid-size * 4;
+                line-height: $grid-size * 4;
+                padding-left: $icon-size + $grid-size * 2;
+            }
+        }
+    }
+
+    // real crude adjustments, due to line of elements with display: inline-block in the group cell
+    .ag-row-group {
+        .ag-icon-expanded,
+        .ag-icon-contracted {
+            transform: translateY(2px);
+        }
+    }
+
+    // context menu spacing
+    .ag-menu-option {
+        height: $grid-size * 7;
+        line-height: $grid-size * 7;
+    }
+
+    .ag-column-select-panel {
+        .ag-column-select-column-group,
+        .ag-column-select-column {
+            height: $grid-size * 5;
+            line-height: $grid-size * 5;
+        }
+    }
+
+    .ag-filter-filter {
+        margin-left: $grid-size;
+        margin-right: $grid-size;
+        width: calc(100% - #{$grid-size * 2});
+    }
+
+    .ag-tab-header {
+        border-bottom: 1px solid $border-color;
+
+        .ag-tab {
+            margin-bottom: -2px;
+        }
+
+        .ag-tab.ag-tab-selected {
+            border-bottom-color: transparent;
+        }
+    }
+
+    .ag-cell-inline-editing {
+        height: $row-height;
+        padding: 0;
+
+        input {
+            box-sizing: border-box;
+        }
     }
 }
