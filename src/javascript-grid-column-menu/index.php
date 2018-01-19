@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Javascript Grid Column Menu";
-$pageDescription = "Clicking the menu icon on a header brings up the grid's column menu. This page describes how to configure the menu.";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Column Menu";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Menu. The Column Menu drops down from the column header. Use the default options or provide your own. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Javascript Grid Column Menu";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

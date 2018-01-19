@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Javascript Grid Excel";
-$pageDescription = "We are now supporting JavaScript Export to Excel. This page explains how to use this new feature to Export to Excel along with properties you can set to get the configure the exports.";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Excel Export";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Excel Export. Export in native Excel Format which will maintain the column widths and also allow exporting of styles. For example, you can color cells in the grid and have the equivalent cells colored in the Excel export. Free and Commercial version available.";
 $pageKeyboards = "JavaScript Grid Excel";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

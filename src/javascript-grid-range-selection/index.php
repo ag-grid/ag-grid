@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Range Selection";
-$pageDescription = "Explains how to do range selection in ag-Grid.";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Range Selection";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Range Selection. Drag the mouse over cells to create a Range Selection. This is handy for highlighting data or for copying to the clipboard. Free and Commercial version available.";
 $pageKeyboards = "range selection javascript grid ag-grid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid JavaScript Master Detail DataGrid";
-$pageDescription = "ag-Grid allows to use one component to span the entire width of the grid. This can be used to achieve a master detail datagrid, or grids inside grids.";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Master Detail";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Master Detail. Use Master Detail to expand rows and have another grid with different columns inside. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid full width master detail javascript datagrid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
