@@ -76,6 +76,9 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
 
     // listener on EVENT_LOAD_COMPLETE
     protected onPageLoaded(event: any): void {
+        this.cacheParams.rowNodeBlockLoader.loadComplete();
+        this.checkBlockToLoad();
+
         // if we are not active, then we ignore all events, otherwise we could end up getting the
         // grid to refresh even though we are no longer the active cache
         if (!this.isActive()) {
@@ -83,8 +86,6 @@ export abstract class RowNodeCache<T extends RowNodeBlock, P extends RowNodeCach
         }
 
         this.logger.log(`onPageLoaded: page = ${event.page.getBlockNumber()}, lastRow = ${event.lastRow}`);
-        this.cacheParams.rowNodeBlockLoader.loadComplete();
-        this.checkBlockToLoad();
 
         if (event.success) {
             this.checkVirtualRowCount(event.page, event.lastRow);
