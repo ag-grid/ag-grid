@@ -10,6 +10,7 @@ import "../../../../ag-grid/src/styles/ag-theme-fresh.scss";
 import "../../../../ag-grid/src/styles/ag-theme-dark.scss";
 import "../../../../ag-grid/src/styles/ag-theme-blue.scss";
 import "../../../../ag-grid/src/styles/ag-theme-bootstrap.scss";
+import "../../../../ag-grid/src/styles/ag-theme-balham.scss";
 
 
 declare var HMR: boolean;

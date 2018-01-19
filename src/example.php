@@ -76,8 +76,8 @@ meta_and_links("ag-Grid Data Grid Example", "react angular angularjs data grid e
 </div>
 
 <!-- The table div -->
-<div id="grid-wrapper">
-    <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-fresh"></div>
+<div id="grid-wrapper" style="padding: 1rem;">
+    <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-balham"></div>
 </div>
 </div> <!-- example wrapper -->
 

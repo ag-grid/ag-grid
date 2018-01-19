@@ -80,7 +80,17 @@ button[disabled] {
 
 .stretch-html {
     height: 100%;
+
     body {
         height: 100%;
     }
+}
+
+.ag-theme-balham .flag {
+    margin-bottom: 3px;
+    margin-right: 4px;
+}
+
+.ag-theme-balham .content-icon {
+    margin-top: 4px;
 }

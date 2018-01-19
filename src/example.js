@@ -197,18 +197,6 @@ var gridOptions = {
 //headerCellRenderer: headerCellRenderer_dom,
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
-    icons: {
-        //menu: '<i class="fa fa-bars"/>',
-        //columnVisible: '<i class="fa fa-eye"/>',
-        //columnHidden: '<i class="fa fa-eye-slash"/>',
-        columnRemoveFromGroup: '<i class="fa fa-remove"/>',
-        sortAscending: '<i class="fa fa-long-arrow-down"/>',
-        sortDescending: '<i class="fa fa-long-arrow-up"/>',
-        // groupExpanded: '<i class="fa fa-minus-square-o"/>',
-        // groupContracted: '<i class="fa fa-plus-square-o"/>',
-        // columnGroupOpened: '<i class="fa fa-minus-square-o"/>',
-        // columnGroupClosed: '<i class="fa fa-plus-square-o"/>'
-    },
     aggFuncs: {
         'zero': function() {return 0;}
     },
@@ -304,7 +292,7 @@ function getContextMenuItems(params) {
     result.push(
         {
             name: 'Custom Menu Item',
-            icon: '<img src="../images/lab.png" style="width: 14px;"/>',
+            icon: '<img src="images/lab.svg" style="width: 14px;"/>',
             //shortcut: 'Alt + M',
             action: function () {
                 var value = params.value ? params.value : '<empty>';
@@ -355,11 +343,7 @@ var defaultCols = [
                     // we put checkbox on the name if we are not doing grouping
                     return params.columnApi.getRowGroupColumns().length === 0;
                 },
-                headerCheckboxSelectionFilteredOnly: true,
-                icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
-                }
+                headerCheckboxSelectionFilteredOnly: true
             },
             {
                 headerName: "Language", field: "language", width: 150, editable: true, filter: 'agSetColumnFilter',
@@ -378,10 +362,6 @@ var defaultCols = [
                     selectAllOnMiniFilter: true,
                     newRowsAction: 'keep',
                     clearButton: true
-                },
-                icons: {
-                    sortAscending: '<i class="fa fa-sort-alpha-asc"/>',
-                    sortDescending: '<i class="fa fa-sort-alpha-desc"/>'
                 }
             },
             {
@@ -1017,9 +997,9 @@ function booleanCellRenderer(params) {
 
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        return "<span title='true' class='ag-icon ag-icon-tick'></span>";
+        return "<span title='true' class='ag-icon ag-icon-tick content-icon'></span>";
     } else if (valueCleaned === false) {
-        return "<span title='false' class='ag-icon ag-icon-cross'></span>";
+        return "<span title='false' class='ag-icon ag-icon-cross content-icon'></span>";
     } else if (params.value !==null && params.value !== undefined) {
         return params.value.toString();
     } else {
@@ -1030,9 +1010,9 @@ function booleanCellRenderer(params) {
 function booleanFilterCellRenderer(params) {
     var valueCleaned = booleanCleaner(params.value);
     if (valueCleaned === true) {
-        return "<span title='true' class='ag-icon ag-icon-tick'></span>";
+        return "<span title='true' class='ag-icon ag-icon-tick content-icon'></span>";
     } else if (valueCleaned === false) {
-        return "<span title='false' class='ag-icon ag-icon-cross'></span>";
+        return "<span title='false' class='ag-icon ag-icon-cross content-icon'></span>";
     } else {
         return "(empty)";
     }
@@ -1072,7 +1052,7 @@ CountryFloatingFilterComponent.prototype.onParentModelChanged = function(model) 
             var toPrint = model;
         }
         toPrint.forEach(function(country) {
-            flagsHtml.push('<img style="border: 0px; width: 15px; height: 10px; margin-left: 2px" ' +
+            flagsHtml.push('<img class="flag" style="border: 0px; width: 15px; height: 10px; margin-left: 2px" ' +
                 'src="https://flags.fmcdn.net/data/flags/mini/'
                 + COUNTRY_CODES[country] + '.png">');
         });
@@ -1090,7 +1070,7 @@ function countryCellRenderer(params) {
     if (params.value === "" || params.value === undefined || params.value === null) {
         return '';
     } else {
-        var flag = '<img border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
+        var flag = '<img class="flag" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
         return flag + ' ' + params.value;
     }
 }
