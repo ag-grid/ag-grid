@@ -15,7 +15,7 @@ foreach ($groups as $group) {
         if (!$feature['src']) {
             echo "<div " . ($feature["enterprise"] ? 'class="enterprise"' : '') . ">
                 <div>
-                    <h4>" . $feature['title']  . "</h4>
+                    <h4><a href='/" . $feature['url'] . "'>" . $feature['title']  . "</a></h4>
                     <p>" . $feature['description']  . "</p>
                 </div>
 
@@ -24,7 +24,7 @@ foreach ($groups as $group) {
         } else {
             echo "<div " . ($feature["enterprise"] ? 'class="enterprise"' : '') . ">
                 <div>
-                    <h4>" . $feature['title']  . "</h4>
+                    <h4><a href='/" . $feature['url'] . "'>" . $feature['title']  . "</a></h4>
                     <p>" . $feature['description']  . "</p>
                     " .  ($feature["snippet"] ? '<pre><code class="language-js">' . htmlspecialchars($feature['snippet']) . '</code></pre>' : '') . "
                 </div>

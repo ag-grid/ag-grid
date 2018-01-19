@@ -48,8 +48,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('Auto Page Size', 'auto-page-size', 'generated', array("enterprise" => 1)) ?>
 
-    <h2 id="customising-pagination">Example: Customising Pagination</h2>
-
+    <h2 id="customising-pagination">Example: Customising Pagination</h2> 
     <p>In this example the default pagination settings are changed. Note the following:</p>
 
     <ul class="content">
@@ -99,7 +98,7 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Pagination Events</h2>
 
-    <table class="table">
+    <table class="table reference">
         <tr>
             <th>Event</th>
             <th>Description</th>
