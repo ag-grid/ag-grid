@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "We're gonna need a bigger boat: from speaker to sponsor with ag-Grid";
-$pageDescription = "Here’s the story how, in under a year, my side project grew into a company that was a major sponsor at Angular Connect 2016 – one of Europe’s largest Angular conferences.";
+$pageTitle = "ag-Grid Blog: We're Gonna Need a Bigger Boat";
+$pageDescription = "Here’s the story how, in under a year, my side project grew into a company that was a major sponsor at Angular Connect 2016 – one of Europe’s largest Angular conferences. It's been a wild ride .";
 $pageKeyboards = "ag-Grid angular connect 2016";
 
 include('../includes/mediaHeader.php');

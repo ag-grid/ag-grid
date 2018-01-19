@@ -1,8 +1,8 @@
 
 <?php
 
-$pageTitle = "Aurelia Datagrid Support";
-$pageDescription = "ag-Grid now supports Aurelia - a discussion on what this means for ag-Grid.";
+$pageTitle = "ag-Grid Blog: Announcing Aurelia Datagrid support";
+$pageDescription = "We're delighted to announce that we will be supporting Aurelia. You can now use the leading Javascript datagrid with this powerful and flexible framework. Its part of our commitment to support emerging frameworks in the JavaScript space. This blog gives a step-by-step guide to building an Aurelia application with the ag-Grid datagrid.";
 $pageKeyboards = "ag-grid datagrid aurelia framework";
 
 include('../includes/mediaHeader.php');

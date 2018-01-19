@@ -1,12 +1,12 @@
 <?php
 
-$pageTitle = "Blog: JavaScript Big Data in a Small Browser";
-$pageDescription = "A story on how the browser is limited to how much memory it can use, and how ag-Grid challenges the problem.";
+$pageTitle = "ag-Grid Blog: Our JavaScript Datagrid Delivers Big Data in the Small Browser";
+$pageDescription = "How can you solve the problem of Big Data in the Small Browser. In this post, Niall takes you through the Enterprise Row Model. This is our solution to the age old problem using our JavaScript datagrid.";
 $pageKeyboards = "big data javascript browser";
 
 include('../includes/mediaHeader.php');
 ?>
-<h1>JavaScript Big Data in a Small Browser</h1>
+<h1>Delivering Big Data in the Small Browser</h1>
 
 <div class="row">
     <div class="col-md-8">

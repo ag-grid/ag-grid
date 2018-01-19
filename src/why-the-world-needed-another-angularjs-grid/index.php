@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "Why The World Needed Another AngularJS Grid";
-$pageDescription = "A discussion on why I built ag-Grid after experience with ui-grid, ng-grid, jqxGrid and Slickgrid";
+$pageTitle = "ag-Grid Blog: Why The World Needed Another Datagrid";
+$pageDescription = "The Origin Story. Niall Crosby, creator of ag-Grid, discusses why he built it after experience with ui grid, ng-grid, jqxGrid and Slickgrid. He shares his experience of building a successful JavaScript datagrid - the pitfalls and the learnings.";
 $pageKeyboards = "angularjs ag-grid grid ui-grid ng-grid jqxgrid slickgrid";
 
 include('../includes/mediaHeader.php');

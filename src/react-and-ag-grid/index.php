@@ -1,13 +1,13 @@
 <?php
 
-$pageTitle = "React and ag-Grid, the Perfect Match";
-$pageDescription = "ag-Grid is a world leading Enterprise Javascript Data-Grid. React is a world leading Javascript Javascript Rendering Library. This page explains how they both work really well together.";
+$pageTitle = "ag-Grid Blog: Building a React Datagrid using ag-Grid";
+$pageDescription = "We're delighted to announce that you can now use React seamlessly with ag-Grid so you can add feature rich datagrid to your React application. This post takes you through it step by step..";
 $pageKeyboards = "react ag-grid javascript grid";
 
 include('../includes/mediaHeader.php');
 ?>
 
-            <h1>React and ag-Grid, the Perfect Match</h1>
+            <h1>Building a React Datagrid using ag-Grid - a Perfect Match</h1>
 
 <div class="row">
     <div class="col-md-8">
@@ -24,8 +24,8 @@ include('../includes/mediaHeader.php');
 
         <p>
             Now ag-Grid is providing
-            an optional React component and React rendering.
-            ag-Grid is fully in bed with React and treats React as a first class component
+            a React component and React rendering.
+            ag-Grid is fully integrated with React and treats React as a first class component
             - meaning if you are using React, ag-Grid is NOT using any other
             framework to get the job done.
         </p>

@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "ag-Grid Blog";
-$pageDescription = "a collection of blogs from ag-Grid team";
+$pageTitle = "ag-Grid Blog: Home";
+$pageDescription = "Welcome to the ag-Grid Blog where we provide information on our new releases and lots of useful tutorials and guides to our products and the frameworks that we support.";
 $pageKeyboards = "blogs ag-grid angular react webpack";
 
 include('../includes/mediaHeader.php');

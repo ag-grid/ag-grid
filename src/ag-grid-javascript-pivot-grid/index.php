@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "Announcing ag-Grid v5 and Pivot";
-$pageDescription = "ag-Grid v5 Introduces Pivot - a discussion on what this means for ag-Grid.";
+$pageTitle = "ag-Grid Blog: Version 5 Release - Bringing the Pivot Table to the JavaScript Datagrid";
+$pageDescription = "This release sees the inclusion of Pivot Tables in our grid. We're the first grid to offer pivot tables combined with all of our other features. Learn about how we achieved this and our plans for the future.";
 $pageKeyboards = "ag-Grid javascript datagrid pivot";
 
 include('../includes/mediaHeader.php');

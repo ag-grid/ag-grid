@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "Angular 2 Datagrid Support";
-$pageDescription = "ag-Grid v7 offers full Angular 2 AOT Support - a discussion on what this means for ag-Grid.";
+$pageTitle = "ag-Grid Blog: Version 7 Release - Support for Angular 2 Datagrid AOT";
+$pageDescription = "Version 7 of ag-Grid sees support for Angular 2 and AOT. This is major move forward as we drop our reliance on Runtime Compiler. This blog guides you through the improvements in ag-Grid.";
 $pageKeyboards = "ag-Grid javascript datagrid angular 2 aot";
 
 include('../includes/mediaHeader.php');
