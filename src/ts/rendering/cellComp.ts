@@ -832,7 +832,8 @@ export class CellComp extends Component {
         this.beans.eventService.dispatchEvent(cellContextMenuEvent);
 
         if (colDef.onCellContextMenu) {
-            colDef.onCellContextMenu(cellContextMenuEvent);
+            // to make the callback async, do in a timeout
+            setTimeout( ()=> colDef.onCellContextMenu(cellContextMenuEvent), 0);
         }
     }
 
@@ -878,7 +879,8 @@ export class CellComp extends Component {
 
         // check if colDef also wants to handle event
         if (typeof colDef.onCellDoubleClicked === 'function') {
-            colDef.onCellDoubleClicked(cellDoubleClickedEvent);
+            // to make the callback async, do in a timeout
+            setTimeout( ()=> colDef.onCellDoubleClicked(cellDoubleClickedEvent), 0);
         }
 
         let editOnDoubleClick = !this.beans.gridOptionsWrapper.isSingleClickEdit()
@@ -1306,7 +1308,8 @@ export class CellComp extends Component {
         let colDef = this.column.getColDef();
 
         if (colDef.onCellClicked) {
-            colDef.onCellClicked(cellClickedEvent);
+            // to make callback async, do in a timeout
+            setTimeout( ()=> colDef.onCellClicked(cellClickedEvent), 0);
         }
 
         let editOnSingleClick = this.beans.gridOptionsWrapper.isSingleClickEdit()
