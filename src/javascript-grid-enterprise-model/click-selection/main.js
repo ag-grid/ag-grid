@@ -14,7 +14,6 @@ var gridOptions = {
         suppressFilter: true,
         width: 100
     },
-    rowBuffer: 0,
     columnDefs: columnDefs,
     enableColResize: true,
     rowModelType: 'enterprise',
