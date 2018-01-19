@@ -40,7 +40,7 @@
 
     #featured-blogs {
         .cover {
-            @extend .card-header;
+            @extend .card-header; 
         }
 
         .card-title {
@@ -58,6 +58,7 @@
     #featured-blogs .cover,
     #recent-blogs .cover {
         background-size: cover;
+        background-position: center;
         display: block;
         height: 7rem;
         overflow: hidden;
