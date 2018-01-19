@@ -332,11 +332,6 @@ include '../documentation-main/documentation_header.php';
                 work out the final set of 'to be displayed' rows again (ie expand or collapse the group visually).
             </td>
         </tr>
-        <tr>
-            <th>recomputeAggregates()</th>
-            <td>Recomputes the aggregates in the model and refreshes all the group rows.
-            </td>
-        </tr>
 
     </table>
 <h2>Rendering</h2>

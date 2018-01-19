@@ -16,23 +16,20 @@ var listOfCountries = ['United States','Russia','Australia','Canada','Norway','C
 }
 
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", enableRowGroup: true, enablePivot: true, suppressFilter: true},
-    {headerName: "Age", field: "age", enablePivot: true, enableRowGroup: true, filter: 'agNumberColumnFilter',
-        filterParams: {
-            filterOptions: ['equals','lessThan','greaterThan'],
-            newRowsAction: 'keep'
-        }
+    {field: "athlete", enableRowGroup: true, enablePivot: true, suppressFilter: true},
+    {field: "age", enablePivot: true, enableRowGroup: true,
+        filter: 'customAgeFilter'
     },
-    {headerName: "Country", field: "country", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'agSetColumnFilter',
+    {field: "country", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'agSetColumnFilter',
         filterParams: {values: countries(), newRowsAction: 'keep'}
     },
-    {headerName: "Year", field: "year", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'agSetColumnFilter',
+    {field: "year", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'agSetColumnFilter',
         filterParams: {values: ['2000','2004','2008','2012'], newRowsAction: 'keep'}
     },
-    {headerName: "Sport", field: "sport", enableRowGroup: true, enablePivot: true, suppressFilter: true},
-    {headerName: "Gold", field: "gold", aggFunc: 'sum', suppressFilter: true, enableValue: true},
-    {headerName: "Silver", field: "silver", aggFunc: 'sum', suppressFilter: true, enableValue: true},
-    {headerName: "Bronze", field: "bronze", aggFunc: 'sum', suppressFilter: true, enableValue: true}
+    {field: "sport", enableRowGroup: true, enablePivot: true, suppressFilter: true},
+    {field: "gold", aggFunc: 'sum', suppressFilter: true, enableValue: true},
+    {field: "silver", aggFunc: 'sum', suppressFilter: true, enableValue: true},
+    {field: "bronze", aggFunc: 'sum', suppressFilter: true, enableValue: true}
 ];
 
 var gridOptions = {
@@ -42,6 +39,9 @@ var gridOptions = {
         // include a custom function 'random' that just returns a
         // random number
         allowedAggFuncs: ['sum','min','max','random']
+    },
+    components: {
+        customAgeFilter: CustomAgeFilter
     },
     rowBuffer: 0,
     columnDefs: columnDefs,
