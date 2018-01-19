@@ -118,15 +118,15 @@ export class EnterpriseRowModel extends BeanStub implements IEnterpriseRowModel 
     }
 
     private onRowGroupOpened(event: any): void {
-        let openedNode = <RowNode> event.node;
-        if (openedNode.expanded) {
-            if (_.missing(openedNode.childrenCache)) {
-                this.createNodeCache(openedNode);
+        let rowNode = <RowNode> event.node;
+        if (rowNode.expanded) {
+            if (_.missing(rowNode.childrenCache)) {
+                this.createNodeCache(rowNode);
             }
         } else {
-            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(openedNode.childrenCache)) {
-                openedNode.childrenCache.destroy();
-                openedNode.childrenCache = null;
+            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
+                rowNode.childrenCache.destroy();
+                rowNode.childrenCache = null;
             }
         }
         this.updateRowIndexesAndBounds();
