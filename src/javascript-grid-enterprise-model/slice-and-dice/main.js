@@ -43,7 +43,6 @@ var gridOptions = {
     components: {
         customAgeFilter: CustomAgeFilter
     },
-    rowBuffer: 0,
     columnDefs: columnDefs,
     enableColResize: true,
     rowModelType: 'enterprise',
