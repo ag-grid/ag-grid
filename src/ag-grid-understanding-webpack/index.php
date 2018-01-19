@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "Webpack Tutorial: Understanding How it Works";
+$pageTitle = "ag-Grid Blog: Webpack Tutorial - Understanding How it Works";
 $pageDescription = "This Webpack tutorial demonstrates building a simple application to learn how Webpack works. It's the guide we wish we had found before learning Webpack.";
 $pageKeyboards = "Webpack Tutorial";
 
