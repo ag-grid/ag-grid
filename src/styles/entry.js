@@ -1,6 +1,11 @@
-require('./ag-grid.scss');
-require('./theme-material.scss');
-require('./theme-dark.scss');
-require('./theme-blue.scss');
-require('./theme-bootstrap.scss');
-require('./theme-fresh.scss');
+require("./ag-grid.scss");
+require("./theme-material.scss");
+require("./theme-dark.scss");
+require("./theme-blue.scss");
+require("./theme-bootstrap.scss");
+require("./theme-fresh.scss");
+require("./ag-theme-material.scss");
+require("./ag-theme-dark.scss");
+require("./ag-theme-blue.scss");
+require("./ag-theme-bootstrap.scss");
+require("./ag-theme-fresh.scss");
