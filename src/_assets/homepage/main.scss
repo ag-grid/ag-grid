@@ -50,6 +50,10 @@
             @extend .py-5, .col-md-10, .offset-md-1;
         }
 
+        > section.blog-section {
+            @extend .col-md-12, .ml-0;
+        }
+
         h1 {
             margin-bottom: 2rem;
         }
