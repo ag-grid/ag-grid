@@ -31,11 +31,15 @@
                     {
                         "title": "More Details",
                         "url": "react-more-details/"
+                    },
+                    {
+                        "title": "Redux Integration",
+                        "url": "react-redux-integration/"
                     }
                 ]
             },
             {
-                "title": "Angular 2.x/4.x",
+                "title": "Angular",
                 "url": "best-angular-2-data-grid/",
                 "items": [
                     {

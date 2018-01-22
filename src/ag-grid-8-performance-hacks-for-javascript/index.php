@@ -16,6 +16,7 @@ include('../includes/mediaHeader.php');
 </style>
 
         <h1>8 Performance Hacks for JavaScript</h1>
+        <p class="blog-author">Niall Crosby | 8th September 2017</p>
 
 <div class="row">
     <div class="col-md-8">

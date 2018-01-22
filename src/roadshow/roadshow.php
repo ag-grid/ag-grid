@@ -14,8 +14,8 @@ foreach ($groups as $group) {
          
         if (!$feature['src']) {
             echo "<div " . ($feature["enterprise"] ? 'class="enterprise"' : '') . ">
+                <h4><a href='/" . $feature['url'] . "'>" . $feature['title']  . "</a></h4>
                 <div>
-                    <h4><a href='/" . $feature['url'] . "'>" . $feature['title']  . "</a></h4>
                     <p>" . $feature['description']  . "</p>
                 </div>
 
@@ -23,8 +23,8 @@ foreach ($groups as $group) {
             </div>";
         } else {
             echo "<div " . ($feature["enterprise"] ? 'class="enterprise"' : '') . ">
+                <h4><a href='/" . $feature['url'] . "'>" . $feature['title']  . "</a></h4>
                 <div>
-                    <h4><a href='/" . $feature['url'] . "'>" . $feature['title']  . "</a></h4>
                     <p>" . $feature['description']  . "</p>
                     " .  ($feature["snippet"] ? '<pre><code class="language-js">' . htmlspecialchars($feature['snippet']) . '</code></pre>' : '') . "
                 </div>

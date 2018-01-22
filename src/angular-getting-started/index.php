@@ -8,7 +8,10 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1"> Angular 2+ Datagrid - Getting Started </h1>
+    <h1 class="first-h1"> Angular Datagrid - Getting Started </h1>
+
+    <note>This section documents how to use ag-Grid with Angular 2.x/4.x/5.x and onwards. For AnguarJS 1.x please refer
+        to the <a href="/best-angularjs-data-grid">Angular JS 1.x</a> documentation.</note>
 
     <p class="lead">This section documents how to get started with ag-Grid and Angular as quickly as possible. You will start off with
         a simple application and section by section add Grid features to the application ending up with a fully fledged

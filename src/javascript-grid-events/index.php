@@ -286,7 +286,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>componentStateChanged</th>
             <td>
-                Only used by React, Angular 2+, Web Components, Aurelia and VueJS ag-Grid components
+                Only used by React, Angular, Web Components, Aurelia and VueJS ag-Grid components
                 (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
                 to bound properties, this event fires after the grid has finished processing the
                 change.

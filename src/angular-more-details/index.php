@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1 heading-enterprise">Angular 2+ Datagrid - More Details</h1>
+    <h1 class="first-h1 heading-enterprise">Angular Datagrid - More Details</h1>
 
     <note>Full working examples of ag-Grid and Angular can be found in <a href="https://github.com/ag-grid/ag-grid-angular-example">Github</a>, illustrating
         (amongst others) Rich Grids, Filtering with Angular Components, Master/Detail Grid and so on.</note>

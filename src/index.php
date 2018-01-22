@@ -97,6 +97,62 @@ meta_and_links($title, $keywords, $description, false);
         </section>
     </div>
 
+
+
+    <div class="stage-scenarios">
+        <h2 class="heading-scenarios">Complex Scenarios, Made Easy </h2>
+
+        <section>
+            <div class="demo">
+                <?php include 'home/demo-1.php' ?>
+                <div class="view-code">
+                    <a href="/javascript-getting-started#summary">View Code</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="stage-sponsorships">
+        <section id="sponsorships">
+            <div>
+                <h2>Supporting open&ndash;source</h2>
+                <h3>We are proud to sponsor the tools we love and use daily.</h3>
+            </div>
+
+            <div>
+                <div class="media">
+                    <img src="_assets/fw-logos/webpack.svg" />
+                    <div class="media-body">
+                        <h3>Webpack</h3>
+                        <p><a href="/ag-grid-partners-with-webpack/">Read about ag-Grid's Partnership with webpack.</a></p>
+                    </div>
+                </div>
+
+                <div class="media">
+                    <img src="_assets/fw-logos/plunker.svg" />
+                    <div class="media-body">
+                        <h3>Plunker</h3>
+                        <p><a href="/ag-grid-proud-to-support-plunker/">Read about ag-Grid's Partnership with Plunker.</a></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="stage-scenarios">
+        <h2 class="heading-scenarios">Live Streaming Updates</h2>
+
+        <section>
+            <div class="demo">
+                <?php include 'home/demo-2.php' ?>
+                <div class="view-code">
+                    &nbsp;
+                </div>
+            </div>
+        </section>
+</div>
+
+
     <div id="stage-testimonials">
         <section>
             <div>
@@ -147,64 +203,16 @@ meta_and_links($title, $keywords, $description, false);
         </section>
     </div>
 
-    <div id="stage-sponsorships">
-        <section id="sponsorships">
-            <div>
-                <h2>Supporting open&ndash;source</h2>
-                <h3>We are proud to sponsor the tools we love and use daily.</h3>
-            </div>
-
-            <div>
-                <div class="media">
-                    <img src="_assets/fw-logos/webpack.svg" />
-                    <div class="media-body">
-                        <h3>Webpack</h3>
-                        <p><a href="/ag-grid-partners-with-webpack/">Read about ag-Grid's Partnership with webpack.</a></p>
-                    </div>
-                </div>
-
-                <div class="media">
-                    <img src="_assets/fw-logos/plunker.svg" />
-                    <div class="media-body">
-                        <h3>Plunker</h3>
-                        <p><a href="/ag-grid-proud-to-support-plunker/">Read about ag-Grid's Partnership with Plunker.</a></p>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </div>
-
-    <div id="stage-scenarios">
-        <h2 id="heading-scenarios">Complex Scenarios, Made Easy
-        </h2>
-
-        <ul id="nav-scenarios">
-            <li><a href="#" class="active">Rich Grid</a></li>
-            <li><a href="#">Trader Live Dashboard</a></li>
-            <li><a href="#">Grid API Demo</a></li>
-        </ul>
+    <div class="stage-scenarios">
+        <h2 class="heading-scenarios">Developer Friendly API</h2>
 
         <section>
-            <div class="demos">
-                <div id="demo-1" class="demo current">
-                    <?php include 'home/demo-1.php' ?>
-                    <div class="view-code">
-                        <a href="/javascript-getting-started#summary">View Code</a>
-                    </div>
-                </div>
-
-                <div id="demo-2" class="demo">
-                    <?php include 'home/demo-2.php' ?>
-                </div>
-
-                <div id="demo-3" class="demo">
-                    <?php include 'home/demo-api.php' ?>
-                    <div class="view-code">
-                        <a href="/javascript-grid-animation/">View Code</a>
-                    </div>
+            <div class="demo">
+                <?php include 'home/demo-api.php' ?>
+                <div class="view-code">
+                    <a href="/javascript-grid-animation/">View Code</a>
                 </div>
             </div>
-
         </section>
     </div>
 

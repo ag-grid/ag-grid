@@ -9,6 +9,7 @@ include('../includes/mediaHeader.php');
 <link rel="stylesheet" href="../documentation-main/documentation.css">
 
         <h1>ag-Grid v7: AOT & Angular 2 Components</h1>
+        <p class="blog-author">Sean Landsman | 30th November 2016</p>
 
 <div class="row">
     <div class="col-md-8">
