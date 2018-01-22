@@ -8,7 +8,7 @@ include '../documentation-main/documentation_header.php';
 ?>
     <div>
         <h1 class="first-h1">
-            Angular 2+ Datagrid - Building
+            Angular Datagrid - Building
         </h1>
 
         <p class="lead">This section documents options on how to build and distribute your ag-Grid / Angular application, using the

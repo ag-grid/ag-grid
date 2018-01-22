@@ -37,28 +37,19 @@ include('../includes/mediaHeader.php');
     <div class="col-md-8">
     
         <p class="lead">
-            ag-Grid Phoenix is Now Live and So is Our Brand New Website!
+            <strong>ag-Grid Phoenix</strong> is Now Live and So is Our Brand New Website!
         </p>
         <p>The first days of the year are usually a start of a new page but for us they are an energetic continuation of a very successful year. 
         We are sliding into 2018 packed with lots of goodies and with a brand new website.</p>
-
-        <h2>Time For a Change</h2>
-
-        <p>Evolution is a slow, constant proccess of building small pieces above what you already have.
-        But sometimes evolution requires a change in order to accomplish a higher goal.
-        This is why we are making a step aside of our well-known look and taking a direction, matching the goals of an evolving company with a growing team. We are not simply a successful open-source project anymore, we are a company ready to take over the world!</p>
-
-        <p><img src="homepage.png" alt="" width="85%" /></p>
-
-        <p><img src="docs.png" alt="" width="85%" /></p>
+        <p>The highlights of v16 include couple of your most wanted feature requests along with some sugar bits like bug fixes and minor features. Let's roll!</p>
 
         <h2>Row Drag and Drop</h2>
 
-        <p>From v16.0.0 you can not only drag columns but also rows.</p>
+        <p>From <strong>v16.0.0</strong> you can not only drag columns but also rows.</p>
 
         <p><img src="rowdnd.gif" alt="" width="85%"/></p>
 
-        <p>The feature has two modes:</p>
+        <p>The <strong>row drag-and-drop</strong> has two modes:</p>
         <ul>
         <li><strong>Managed Dragging</strong> - The grid will rearrange rows as you drag them.</li>
 
@@ -71,11 +62,11 @@ include('../includes/mediaHeader.php');
 
         <p><img src="treedatadnd.gif" alt="" width="85%"/></p>
 
-        <p>To find out more about row drag-and-drop refer to the <a href="../javascript-grid-row-dragging/">dedicated article</a> in our documentation.</p>
+        <p>To find out more about <strong>row drag-and-drop</strong> refer to the <a href="../javascript-grid-row-dragging/">dedicated article</a> in our documentation.</p>
 
         <h2>Introducing Locked Position and Locked Visibility for Columns</h2>
 
-        <p><strong>Phoenix</strong> adds <strong>locked position</strong> and <strong>locked visibility</strong> to the wide variety of features supported by ag-Grid.
+        <p><strong>Phoenix</strong> adds <strong>locked position</strong> and <strong>locked visibility</strong> to the wide variety of features supported by <strong>ag-Grid</strong>.
         In order to use the new functionality you should use the following properties:</p>
 
         <ul>
@@ -95,6 +86,15 @@ include('../includes/mediaHeader.php');
         <h2>Bug Fixing and Smaller Features</h2>
 
         <p>Of course <strong>v16.0.0 Phoenix</strong> has a lot more to offer. There are multiple bug fixes and minor features introduced in this release. To find a full list of what's included in the current version and what's about to come next, check out the public  <a href="../ag-grid-pipeline/">pipeline</a> and our <a href="../change-log/changeLogIndex.php">change-log</a>. </p>
+
+        <h2>Time For a Change</h2>
+
+        <p>Evolution is a constant proccess of building small pieces above what you already have.
+        But sometimes evolution requires a change in order to accomplish a higher goal.
+        This is why we are making a step aside of our well-known look and taking a direction, matching the goals of an evolving company with a growing team. We are not just a successful open-source project anymore, we are a company ready to take over the world!</p>
+
+        <p><img src="homepage.png" alt="" width="85%" /></p>
+        <p><img src="docs.png" alt="" width="85%" /></p>
 
         <h2>Give it a Try and Share</h2>
 
