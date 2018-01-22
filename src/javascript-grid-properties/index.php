@@ -221,13 +221,11 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
         <tr>
-            <th>enterAfterEditAction</th>
+            <th>enterMovesDownAfterEdit</th>
             <td>
-                Sets the navigation action for when editing is completed with the Enter key.
-                Not setting this property will leave navigation on the previously editing cell.
-                Setting the value to 'down' will <a href="../javascript-grid-cell-editing/#enter-key-down">move focus down</a>,
-                an option to be consistent with Excel. There are no other possible values
-                apart from 'down'.
+                Set to true to <a href="../javascript-grid-cell-editing/#enter-key-down">move enter down
+                after edit</a>. This allows consistency with Excel. The default is to keep focus on
+                the previously editing cell.
             </td>
         </tr>
 

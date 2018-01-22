@@ -312,9 +312,9 @@ colDef.cellEditorParams = {
     </p>
 
     <p>
-        To allow consistency with applications wanting to behave like Excel, you can
-        configure the grid with property <code>enterAfterEditAction='down'</code> to move
-        the focus down after the user finishes editing using the enter key.
+        To allow consistency with Excel set the grid property
+        <code>enterMovesDownAfterEdit=true</code> to move
+        focus down after Enter is pressed while editing.
     </p>
 
     <p>
