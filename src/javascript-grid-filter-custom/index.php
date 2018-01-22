@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "JavaScript Grid Custom Filter";
-$pageDescription = "ag-Grid comes with a custom filter. This sections explains how to use the custom filter.";
+$pageTitle = "ag-Grid - Core Grid Features: Custom Filter";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Custom Filter. Create your own Custom Filter to match your own business requirements. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Custom Filter";
 $pageGroup = "feature";
 define('skipInPageNav', true);

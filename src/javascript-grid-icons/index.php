@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Icons";
-$pageDescription = "ag-Grid comes with default svg icons. You can provide your own icons for the grid to use.";
+$pageTitle = "ag-Grid - Styling & Appearance: Custom icons";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Custom Icons. All the icons in the grid can be replaced with your own Custom Icons. You can either use CSS or provide your own images. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Pinning";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

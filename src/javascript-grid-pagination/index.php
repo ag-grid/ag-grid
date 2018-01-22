@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Pagination";
-$pageDescription = "You can load data in pages from the server, delegating filtering and sorting to the server also. This page explains how to do this with ag-Grid.";
+$pageTitle = "ag-Grid - Core Grid Features: Pagination";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Pagination. Use Pagination when you don't want the user to have to scroll. Pagination allows viewing rows one page at a time. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Pagination";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

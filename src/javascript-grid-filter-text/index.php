@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "JavaScript Grid Text Filter";
-$pageDescription = "ag-Grid comes with a text filter. This sections explains how to use the text filter.";
+$pageTitle = "ag-Grid - Core Grid Features: Text Filter";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Text Filter. Text Filter allows filtering text strings with {equals, notEqual, contains, notContains, startsWith, endsWith}. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Text Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

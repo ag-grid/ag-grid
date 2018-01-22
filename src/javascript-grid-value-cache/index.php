@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Value Cache";
-$pageDescription = "ag-Grid uses a Value Cache to store the results from executing value getters. This cache can be configured to behave in different ways depending on how changeable your data is.";
+$pageTitle = "ag-Grid - Working with Data: Value Cache";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Value Cache. The Value Cache is used to store results of value getters. It is always on, enhancing the performance of the grid. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Value Cache";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Pinned Rows";
-$pageDescription = "ag-Grid Pinned Rows";
+$pageTitle = "ag-Grid - Styling & Appearance: Row Pinning";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Pinning. Use Pinned Rows to pin one or more rows to the top or the bottom. Pinned rows are always present and not impacted by vertical scroll. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Pinned Rows";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

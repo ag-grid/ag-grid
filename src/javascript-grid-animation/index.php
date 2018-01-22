@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Javascript Grid Animation";
-$pageDescription = "ag-Grid can use animation for rows and columns inside the grid. Learn how this animation works and how it can be customised.";
+$pageTitle = "ag-Grid - Styling & Appearance: Animation";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Animation. Rows in the grid will Animate into place after the user sorts or filters. Free and Commercial version available.";
 $pageKeyboards = "Javascript Grid Animation";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

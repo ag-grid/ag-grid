@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Reference Data";
-$pageDescription = "This page explains how to use Value Handlers in ag-Grid with Reference Data";
+$pageTitle = "ag-Grid Reference: Reference Data";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Reference Data. Use Reference Data for easier editing of data that uses reference data for display. For example, you might have country codes in your data e.g. {IE, UK, USA} but you display values e.g. {Ireland, Great Britain, United States of America}). Using reference data simplifies this, especially if editing. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Value Handlers";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

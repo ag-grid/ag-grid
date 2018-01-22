@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Pinning";
-$pageDescription = "ag-Grid Pinning";
+$pageTitle = "ag-Grid - Core Grid Features: Column Pinning";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Pinning. Use Columm Pinning to pin one or more columns to the left or to the right. Pinned columns are always present and not impacted by horizontal scroll. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Pinning";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

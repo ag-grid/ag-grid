@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Column Definitions";
-$pageDescription = "ag-Grid Column Definitions";
+$pageTitle = "ag-Grid - Core Grid Features: Column Definitions";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Definitions. Columns are configured in the grid by providing a list of Column Definitions. The attributes you set on the column definitions define how the columns behave e.g. title, width etc. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Column Definitions";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

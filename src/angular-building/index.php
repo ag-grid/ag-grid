@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Building Angular 2";
-$pageDescription = "Building ag-Grid with Angular 2 and different build tools";
+$pageTitle = "ag-Grid Reference: Building Angular";
+$pageDescription = "Building ag-Grid with Angular and different build tools";
 $pageKeyboards = "Building Angular 2";
 $pageGroup = "basics";
 define('skipInPageNav', true);

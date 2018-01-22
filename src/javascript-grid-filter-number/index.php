@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "JavaScript Grid Number Filter";
-$pageDescription = "ag-Grid comes with a number filter. This sections explains how to use the number filter.";
+$pageTitle = "ag-Grid - Core Grid Features: Number Filter";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Number Filter. Number Filter allows filtering numbers with {equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange} Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Number Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

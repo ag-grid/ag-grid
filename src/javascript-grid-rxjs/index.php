@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid with RxJS";
+$pageTitle = "ag-Grid Reference: RxJS";
 $pageDescription = "ag-Grid with RxJS";
 $pageKeyboards = "ag-Grid rxjs";
 $pageGroup = "feature";

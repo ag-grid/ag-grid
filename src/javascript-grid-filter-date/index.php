@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "JavaScript Grid Date Filter";
-$pageDescription = "ag-Grid comes with a date filter. This sections explains how to use the date filter.";
+$pageTitle = "ag-Grid - Core Grid Features: Date Filter";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Date Filter. Date Filter allows filtering dates with {equals, notEquals, lessThanOrEqual, greaterThan, greaterThanOrEqual, inRange}. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Date Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

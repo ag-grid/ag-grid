@@ -1,6 +1,6 @@
 <?php
-$key = "Performance";
-$pageTitle = "ag-Grid Performance";
+$key = "ag-Grid - Styling & Appearance: Performance";
+$pageTitle = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Performance. The core grid engine gives Performance unlike that seen before. The grid uses row and column virtualisation, animation frames and many other techniques. Free and Commercial version available.";
 $pageDescription = "ag-Grid Performance";
 $pageKeyboards = "ag-Grid Performance";
 $pageGroup = "feature";

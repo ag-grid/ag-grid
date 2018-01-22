@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Width and Height";
-$pageDescription = "ag-Grid Resizing";
+$pageTitle = "ag-Grid - Core Grid Features: Grid Size";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Grid Size. Rows in the grid will Animate into place after the user sorts or filters. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Resizing";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

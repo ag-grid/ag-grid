@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Data Export";
-$pageDescription = "Data in the grid can be exported to csv. This page explains how to do exports along with properties you can set to get the exports done.";
+$pageTitle = "ag-Grid - Core Grid Features: CSV Export";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is CSV Export. Use CSV Export to take data out of the grid and into another application for further processing such as Excel. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Data Export Javascript CSV";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

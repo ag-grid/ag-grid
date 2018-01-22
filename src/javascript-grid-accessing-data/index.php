@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Accessing Data";
-$pageDescription = "Shows how to access the data inside ag-Grid.";
+$pageTitle = "ag-Grid - Working with Data: Accessing Data";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Accessing Data. Once data is in the grid, you can Access the Data using the grid's API. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Accessing Data";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

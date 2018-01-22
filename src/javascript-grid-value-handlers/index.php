@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Value Handlers";
-$pageDescription = "ag-Grid Value Handlers";
+$pageTitle = "ag-Grid - Working with Data: Value Handlers";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Value Handlers. Each grid column typically has a field where it gets the value to display. However you can provide more logic here to get finer control over how data is retrieved (for display) and stored (after editing) with the family of Value Handlers. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Value Handlers";
 $pageGroup = "feature";
 define('skipInPageNav', true);

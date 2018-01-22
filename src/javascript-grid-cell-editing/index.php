@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Cell Editing";
-$pageDescription = "You can integrate your own editors into ag-Grid that will bind into the grids navigation.";
+$pageTitle = "ag-Grid - Core Grid Features: Cell Editing";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Cell Editing. Users can update data with Cell Editing. Use one of the provided cell editors or create your own to suit your business needs. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Cell Editors";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

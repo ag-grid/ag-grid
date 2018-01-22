@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Data Update";
-$pageDescription = "ag-Grid allows you to insert and remove rows into the grid without destroying the rows that are currently in the grid.";
+$pageTitle = "ag-Grid - Working with Data: Updating Data";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Updating Data. Data can be updated in real time. The grid can highlight the change by flashing the cells or by animation inside the cell as the cell refreshes. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Insert Remove";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
