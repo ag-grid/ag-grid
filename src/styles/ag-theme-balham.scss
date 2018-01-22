@@ -169,6 +169,10 @@ $params: (
 );
 
 .ag-theme-balham {
+    .ag-header, .ag-row, .ag-header-cell, .ag-header-group-cell, .ag-root {
+        box-sizing: border-box;
+    }
+
     %selected-tab {
         border-bottom: 2px solid $primary-color;
     }
@@ -192,10 +196,6 @@ $params: (
         border-color: $border-color;
     }
 
-    .ag-layout-normal {
-        border: 1px solid $border-color;
-    }
-
     @include ag-grid-theme($params);
 
     .ag-header {
@@ -207,35 +207,33 @@ $params: (
         background-color: $range-selection-highlight-color !important;
     }
 
-    .ag-row-drag {
-        background-position-y: center;
-    }
-
     .ag-header-cell-resize::after {
         height: $header-height - 16px;
         margin-top: 8px;
     }
 
-    .ag-header-cell {
-        box-sizing: border-box;
-    }
+    [ref=north] {
+        .ag-column-drop {
+            border: 1px solid $border-color;
+            border-bottom: 0;
+        }
 
-    .ag-header-group-cell {
-        box-sizing: border-box;
-    }
-
-    .ag-root {
-        border-right: 1px solid $border-color;
-        border-top: 1px solid $border-color;
+        .ag-column-drop.ag-width-half:first-child {
+            border-right: 0;
+        }
     }
 
     .ag-row {
         border-bottom-color: lighten($border-color, 10);
     }
 
-    //
-    // taken from classic
-    //
+    .ag-row-selected {
+        border-bottom-color: $selected-color;
+    }
+
+    .ag-row-drag {
+        background-position-y: center;
+    }
 
     .ag-column-drop-cell {
         height: $grid-size * 6 !important;
@@ -282,6 +280,10 @@ $params: (
         height: $grid-size * 6;
     }
 
+    .ag-root {
+        border: 1px solid $border-color;
+    }
+
     // bootstrap overrides
     .ag-tab {
         box-sizing: initial;
@@ -293,7 +295,9 @@ $params: (
 
     // tool panel
     .ag-tool-panel {
+        border-right: 1px solid $border-color;
         border-top: 1px solid $border-color;
+        border-bottom: 1px solid $border-color;
 
         .ag-column-select-panel {
             padding: $grid-size * 2 0;
