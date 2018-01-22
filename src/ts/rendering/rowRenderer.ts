@@ -764,9 +764,8 @@ export class RowRenderer extends BeanStub {
 
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    public navigateToNextCell(event: KeyboardEvent, key: number, rowIndex: number, column: Column, floating: string) {
+    public navigateToNextCell(event: KeyboardEvent, key: number, previousCell: GridCell, allowUserOverride: boolean) {
 
-        let previousCell = new GridCell({rowIndex: rowIndex, floating: floating, column: column});
         let nextCell = previousCell;
 
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
@@ -788,20 +787,23 @@ export class RowRenderer extends BeanStub {
             }
         }
 
-        // allow user to override what cell to go to next
-        let userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
-        if (_.exists(userFunc)) {
-            let params = <NavigateToNextCellParams> {
-                key: key,
-                previousCellDef: previousCell,
-                nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
-                event: event
-            };
-            let nextCellDef = userFunc(params);
-            if (_.exists(nextCellDef)) {
-                nextCell = new GridCell(nextCellDef);
-            } else {
-                nextCell = null;
+        // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
+        // we allow this, however if processing 'enter after edit' we don't allow override
+        if (allowUserOverride) {
+            let userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
+            if (_.exists(userFunc)) {
+                let params = <NavigateToNextCellParams> {
+                    key: key,
+                    previousCellDef: previousCell,
+                    nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
+                    event: event
+                };
+                let nextCellDef = userFunc(params);
+                if (_.exists(nextCellDef)) {
+                    nextCell = new GridCell(nextCellDef);
+                } else {
+                    nextCell = null;
+                }
             }
         }
 

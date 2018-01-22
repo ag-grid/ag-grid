@@ -1076,6 +1076,7 @@ export class CellComp extends Component {
     private stopEditingAndFocus(): void {
         this.stopRowOrCellEdit();
         this.focusCell(true);
+        this.navigateAfterEdit();
     }
 
     private parseValue(newValue: any): any {
@@ -1182,7 +1183,7 @@ export class CellComp extends Component {
         if (this.editingCell) {
             this.stopRowOrCellEdit();
         }
-        this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell.rowIndex, this.column, this.rowNode.rowPinned);
+        this.beans.rowRenderer.navigateToNextCell(event, key, this.gridCell, true);
         // if we don't prevent default, the grid will scroll with the navigation keys
         event.preventDefault();
     }
@@ -1202,10 +1203,20 @@ export class CellComp extends Component {
 
     private onEnterKeyDown(): void {
         if (this.editingCell || this.rowComp.isEditing()) {
-            this.stopRowOrCellEdit();
-            this.focusCell(true);
+            this.stopEditingAndFocus();
         } else {
             this.startRowOrCellEdit(Constants.KEY_ENTER);
+        }
+    }
+
+    private navigateAfterEdit(): void {
+        let fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
+        if (fullRowEdit) { return; }
+
+        let enterAfterEditAction = this.beans.gridOptionsWrapper.getEnterAfterEditAction();
+
+        if (enterAfterEditAction==='down') {
+            this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.gridCell, false);
         }
     }
 
