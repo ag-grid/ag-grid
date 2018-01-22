@@ -2,8 +2,7 @@ export class PropertyKeys {
     public static STRING_PROPERTIES = [
         'sortingOrder', 'rowClass', 'rowSelection', 'overlayLoadingTemplate',
         'overlayNoRowsTemplate', 'quickFilterText', 'rowModelType',
-        'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow',
-        'enterAfterEditAction'];
+        'editType', 'domLayout', 'clipboardDeliminator', 'rowGroupPanelShow'];
 
     public static OBJECT_PROPERTIES = [
         'components', 'frameworkComponents', 'rowStyle', 'context', 'autoGroupColumnDef', 'groupColumnDef', 'localeText',
@@ -53,7 +52,8 @@ export class PropertyKeys {
         'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
         'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection',
         'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame',
-        'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail', 'isRowMaster', 'suppressMultiRangeSelection'
+        'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail', 'isRowMaster',
+        'suppressMultiRangeSelection', 'enterMovesDownAfterEdit'
     ];
 
     public static FUNCTION_PROPERTIES = ['localeTextFunc', 'groupRowInnerRenderer', 'groupRowInnerRendererFramework',

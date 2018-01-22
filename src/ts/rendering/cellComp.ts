@@ -1213,9 +1213,9 @@ export class CellComp extends Component {
         let fullRowEdit = this.beans.gridOptionsWrapper.isFullRowEdit();
         if (fullRowEdit) { return; }
 
-        let enterAfterEditAction = this.beans.gridOptionsWrapper.getEnterAfterEditAction();
+        let enterMovesDownAfterEdit = this.beans.gridOptionsWrapper.isEnterMovesDownAfterEdit();
 
-        if (enterAfterEditAction==='down') {
+        if (enterMovesDownAfterEdit) {
             this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.gridCell, false);
         }
     }

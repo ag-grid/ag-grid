@@ -76,7 +76,7 @@ export interface GridOptions {
     enableStatusBar?: boolean;
     alwaysShowStatusBar?: boolean;
     enableGroupEdit?: boolean;
-    enterAfterEditAction?: string;
+    enterMovesDownAfterEdit?: boolean;
     suppressMiddleClickScrolls?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
     suppressScrollOnNewData?: boolean;

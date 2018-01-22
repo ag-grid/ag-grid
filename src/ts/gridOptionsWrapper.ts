@@ -240,13 +240,13 @@ export class GridOptionsWrapper {
     public isCacheQuickFilter() { return isTrue(this.gridOptions.cacheQuickFilter); }
     public isUnSortIcon() { return isTrue(this.gridOptions.unSortIcon); }
     public isSuppressMenuHide() { return isTrue(this.gridOptions.suppressMenuHide); }
+    public isEnterMovesDownAfterEdit() { return isTrue(this.gridOptions.enterMovesDownAfterEdit); }
     public getRowStyle() { return this.gridOptions.rowStyle; }
     public getRowClass() { return this.gridOptions.rowClass; }
     public getRowStyleFunc() { return this.gridOptions.getRowStyle; }
     public getRowClassFunc() { return this.gridOptions.getRowClass; }
     public rowClassRules() { return this.gridOptions.rowClassRules; }
     public getPopupParent() { return this.gridOptions.popupParent; }
-    public getEnterAfterEditAction() { return this.gridOptions.enterAfterEditAction; }
     public getPostProcessPopupFunc(): (params: PostProcessPopupParams)=>void { return this.gridOptions.postProcessPopup; }
     public getDoesDataFlowerFunc(): (data: any)=>boolean { return this.gridOptions.doesDataFlower; }
     public getPaginationNumberFormatterFunc(): (params: PaginationNumberFormatterParams)=>string { return this.gridOptions.paginationNumberFormatter; }
