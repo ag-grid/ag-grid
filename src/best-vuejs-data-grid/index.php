@@ -91,51 +91,27 @@ import "ag-grid-enterprise/main";
 
     <p>The example project includes a number of separate grids on a page, with each section demonstrating a different
         feature set:
-</p>
+    </p>
     <ul class="content">
-        <li>
-            <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/rich-grid-example/RichGridExample.vue"
-               target="_blank">
-A feature rich grid example, demonstrating many of ag-Grid's features using VueJS as a wrapper<i class="fa fa-external-link"></i></a>
+        <li>A feature rich grid example, demonstrating many of ag-Grid's features using VueJS as a wrapper
         </li>
-        <li>
-            <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/dynamic-component-example/DynamicComponentExample.vue"
-               target="_blank"> Vue A Simple Example, using CellRenderers created from VueJS Components <i class="fa fa-external-link"></i></a>
+        <li>Vue A Simple Example, using CellRenderers created from VueJS Components
         </li>
-        <li>
-            <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/rich-dynamic-component-example/RichDynamicComponentExample.vue"
-               target="_blank">A Richer Example, using CellRenderers created from VueJS Components, with child components, and two-way binding (parent to child components events)<i class="fa fa-external-link"></i></a>
+        <li>A Richer Example, using CellRenderers created from VueJS Components, with child components, and two-way
+            binding (parent to child components events)
         </li>
-        <li>
-            <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/editor-component-example/EditorComponentExample.vue"
-               target="_blank">A Cell Editor example - one with a popup editor, and another with a numeric editor. Each demonstrates different editor related features<i class="fa fa-external-link"></i></a>
+        <li>A Cell Editor example - one with a popup editor, and another with a numeric editor. Each demonstrates
+            different editor related features
         </li>
-        <li>
-            <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/floating-row-example/FloatingRowExample.vue"
-               target="_blank">A Pinned Row Renderer Example<i class="fa fa-external-link"></i></a>
+        <li>A Pinned Row Renderer Example
         </li>
-        <li>
-            <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/full-width-example/FullWidthExample.vue"
-               target="_blank">A Full Width Renderer Example<i class="fa fa-external-link"></i></a>
+        <li>A Full Width Renderer Example
         </li>
-        <li>
-            <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/grouped-row-example/GroupedRowExample.vue"
-               target="_blank">A Group Row Inner Renderer Example<i class="fa fa-external-link"></i></a>
+        <li>A Group Row Inner Renderer Example
         </li>
-        <li>
-            <a href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/filter-example/FilterExample.vue"
-               target="_blank">A Filter Example, with the filter written as a VueJS Component<i class="fa fa-external-link"></i></a>
+        <li>A Filter Example, with the filter written as a VueJS Component
         </li>
-        <li>A Master/Detail Example, with both the Master and the Detail elements being VueJS Components
-            <ul class="content">
-                <li><a
-                            href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/master-detail-example/MasterDetailExample.vue"
-                            target="_blank">Master<i class="fa fa-external-link"></i></a></li>
-                <li><a
-                            href="https://github.com/ag-grid/ag-grid-vue-example/blob/master/src/master-detail-example/DetailPanelComponent.vue"
-                            target="_blank">Detail<i class="fa fa-external-link"></i></a></li>
-            </ul>
-        </li>
+        <li>A Master/Detail Example, with both the Master and the Detail elements being VueJS Components</li>
     </ul>
     </p>
 
@@ -200,7 +176,8 @@ import "ag-grid-enterprise/main";</snippet>
         </li>
         <li><b>Attributes:</b> When the property is just a simple string value, then
             no binding is necessary, just the value is placed as an attribute
-            eg <code>rowHeight="22"</code>.If the attribute is a boolean and a value is not provided, it is taken as false.
+            eg <code>rowHeight="22"</code>.If the attribute is a boolean and a value is not provided, it is taken as
+            false.
         </li>
         <li><b>Changing Properties:</b> When a property changes value, VueJS
             automatically passes the new value onto the grid. This is used in
@@ -413,7 +390,7 @@ this.columnDefs = [
         Date Component Filter (under the DOB column).
     </p>
 
-    <?= example('ag-Grid in VueJS', 'rich-grid', 'as-is', array("noPlunker"=> 1, "skipDirs" => array("dist"))) ?>
+    <?= example('ag-Grid in VueJS', 'rich-grid', 'as-is', array("noPlunker" => 1, "skipDirs" => array("dist"))) ?>
 
 </div>
 
@@ -454,7 +431,8 @@ this.params.context.componentParent</snippet>
 </ul>
 
 <h3 id="router-link">Router Links in Grid Components</h3>
-<p>You can provide <code>Vue Router</code> links within the Grid, but you need to ensure that you provide a Router to the
+<p>You can provide <code>Vue Router</code> links within the Grid, but you need to ensure that you provide a Router to
+    the
     Grid Component being created.</p>
 
 <snippet>
