@@ -92,7 +92,7 @@ HTML;
     );
 
     featuredBlog(
-        'Building a CRUD Application with ag-Grid - Part 4',
+        'Building a CRUD Application with ag-Grid - Part 3',
         '../ag-grid-datagrid-crud-part-1/crud_overview.png',
         '../ag-grid-datagrid-crud-part-3/',
         'sean',
