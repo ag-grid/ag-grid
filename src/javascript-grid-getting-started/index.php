@@ -61,11 +61,11 @@ $linkHref = "<a href='" . $link . "'>here</a>";
 </div></div>
 
 <div><div class="get-started-framework card-angular">
-    <a href="../best-angular-2-data-grid/">Angular 2+</a>
+    <a href="../best-angular-2-data-grid/">Angular</a>
     <div>
-        <h2>Angular 2+</h2>
-        <p class="card-text">See how ag-Grid works in the Angular 2+ context.</p>
-        <p><a href="../best-angular-2-data-grid/">Start With Angular 2+</a></p>
+        <h2>Angular</h2>
+        <p class="card-text">See how ag-Grid works in the Angular context.</p>
+        <p><a href="../best-angular-2-data-grid/">Start With Angular</a></p>
     </div>
 </div></div>
 

@@ -143,6 +143,7 @@ var gridOptions = {
 //    {name: 'Kevin'},
 //    {name: 'Brian'}
 //],
+    enterMovesDownAfterEdit: true,
     groupKeys: undefined, //set as string of keys eg ["region","country"],
     // groupUseEntireRow: true, //one of [true, false]
 //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1

@@ -220,6 +220,14 @@ include '../documentation-main/documentation_header.php';
                 until focus goes onto another cell. For inline (non-popup) editors only.
             </td>
         </tr>
+        <tr>
+            <th>enterMovesDownAfterEdit</th>
+            <td>
+                Set to true to <a href="../javascript-grid-cell-editing/#enter-key-down">move enter down
+                after edit</a>. This allows consistency with Excel. The default is to keep focus on
+                the previously editing cell.
+            </td>
+        </tr>
 
         </table>
 <h2>Headers</h2>

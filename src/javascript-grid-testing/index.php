@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
 
     <h2>Testing ag-Grid with Karma & Jasmine</h2>
     <p>Information on testing in a JavaScript application can be found in the <a href="../javascript-more-details#aggrid-javascript-testing">JavaScript More Details</a> section,
-    while details on testing in an Angular 2.x/4.x application can be found in the <a href="../angular-more-details#aggrid-angular-testing">Angular More Details</a> section.</p>
+    while details on testing in an Angular application can be found in the <a href="../angular-more-details#aggrid-angular-testing">Angular More Details</a> section.</p>
 
     <h2 id="e2e-testing">End to End (e2e) Testing</h2>
 
