@@ -304,6 +304,26 @@ colDef.cellEditorParams = {
 
     <?= example('Cell Editing', 'cell-editing', 'generated') ?>
 
+    <h2 id="enter-key-down">Enter Key Navigation</h2>
+
+    <p>
+        By default pressing <b>Enter</b> will start editing on a cell, or stop editing
+        on an editing cell. It will not navigate to the next cell.
+    </p>
+
+    <p>
+        To allow consistency with applications wanting to behave like Excel, you can
+        configure the grid with property <code>enterAfterEditAction='down'</code> to move
+        the focus down after the user finishes editing using the enter key.
+    </p>
+
+    <p>
+        The example below demonstrates the focus moving down when <b>Enter</b> is pressed
+        after editing.
+    </p>
+
+    <?= example('Enter Key Navigation', 'enter-key-navigation', 'generated') ?>
+
     <h2>Datepicker Cell Editing Example</h2>
 
     <p>The example below illustrates:

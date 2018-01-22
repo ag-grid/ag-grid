@@ -220,6 +220,16 @@ include '../documentation-main/documentation_header.php';
                 until focus goes onto another cell. For inline (non-popup) editors only.
             </td>
         </tr>
+        <tr>
+            <th>enterAfterEditAction</th>
+            <td>
+                Sets the navigation action for when editing is completed with the Enter key.
+                Not setting this property will leave navigation on the previously editing cell.
+                Setting the value to 'down' will <a href="../javascript-grid-cell-editing/#enter-key-down">move focus down</a>,
+                an option to be consistent with Excel. There are no other possible values
+                apart from 'down'.
+            </td>
+        </tr>
 
         </table>
 <h2>Headers</h2>
