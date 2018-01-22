@@ -17,8 +17,6 @@ include('../includes/mediaHeader.php');
 <div class="row">
 <div class="col-md-8">
 
-    <img style="margin-left: 10%" src="ag-grid-react-redux-file-browser/redux-file-browser.png" width="80%" height="4%"/>
-
     <p style="margin-top: 20px">
         In this blog post we will use a file browser component to demonstrate how to move local component state to a Redux
         store. Updates to the files state will be retrieved from the Redux store, while UI events to add, move and delete
@@ -44,7 +42,6 @@ include('../includes/mediaHeader.php');
     <p>Redux has a single store which contains all application state. It has one Root Reducer which is responsible for
        transforming the application state and is typically created by combining several smaller reducers.</p>
 
-    <img style="margin-left: 15%" src="ag-grid-react-redux-file-browser/redux-store.png" width="70%" height="3%"/>
 
     <p>Actions describe the operation the reducer should perform on the state. They may also contain an optional payload
        containing data used by the reducer to transform the state. For example an action to create a new file might
