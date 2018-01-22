@@ -80,6 +80,14 @@
     "author": "sean"
   },
   {
+    "title": "VueJS Grid",
+    "summary": "Using ag-Grid inside a VueJS application",
+    "link": "../vue-js-grid/",
+    "img": "../images/vue_large.png",
+    "date": "1 March 2017",
+    "author": "sean"
+  },
+  {
     "title": "From Hater to Fan – How I fell in Love with ag-Grid",
     "summary": "This is a guest blog from one of our users, Amit Moryossef, who describes his experience in working with ag-Grid.",
     "link": "../review-of-angularjs-grids/",
