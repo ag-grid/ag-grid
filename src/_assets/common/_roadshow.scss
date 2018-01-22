@@ -1,6 +1,6 @@
 @mixin roadshow {
     & > div {
-        @extend .row, .py-5;
+        @extend .row, .pb-5;
         background-position-y: bottom;
         background-position-x: center;
         background-repeat: no-repeat;
@@ -9,12 +9,12 @@
     }
 
     & > div:nth-child(odd) {
-        div:nth-child(1) {
+        div:nth-child(2) {
             @extend .col-sm-6;
         }
 
         & > pre,
-        & > div:nth-child(2) {
+        & > div:nth-child(3) {
             @extend .col-sm-5, .ml-auto;
             a {
                 display: block;
@@ -24,12 +24,12 @@
     }
 
     & > div:nth-child(even) {
-        div:nth-child(1) {
+        div:nth-child(2) {
             @extend .col-sm-6, .order-2, .ml-auto;
         }
 
         & > pre,
-        & > div:nth-child(2) {
+        & > div:nth-child(3) {
             @extend .col-sm-5;
             a {
                 display: block;
@@ -63,11 +63,13 @@
 
     h3,
     h4 {
-        line-height: 2rem;
-
         .anchorjs-link {
             display: none;
         }
+    }
+
+    h4 {
+        @extend .col-md-12, .py-3;
     }
 
     .enterprise h3:after, .enterprise h4:after {
