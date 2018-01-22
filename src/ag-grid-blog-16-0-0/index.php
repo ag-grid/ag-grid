@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "ag-Grid v16.0.0 Released";
+$pageTitle = "ag-Grid Blog: Version 16 'Phoenix' Release";
 $pageDescription = "ag-Grid v16.0.0 Phoenix is now released!";
 $pageKeyboards = "ag-grid v16.0.0 Phoenix";
 $socialUrl = "https://www.ag-grid.com/ag-grid-blog-16-0-0/";
@@ -12,8 +12,8 @@ include('../includes/mediaHeader.php');
 <div>
 
     <!-- <link rel="stylesheet" href="../documentation-main/documentation.css"> -->
-    <h1>Meet ag-Grid v16 Phoenix & our new Website</h1>
-    <p class="blog-author">Sophia Lazarova | 22th January 2018</p>
+    <h1>Introducing Version 16: Phoenix and Our New Website</h1>
+    <p class="blog-author">Sophia Lazarova | 22nd January 2018</p>
 
     <div>
         <a href="https://twitter.com/share" class="twitter-share-button"

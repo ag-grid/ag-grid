@@ -67,7 +67,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                Nov 15, 2017: version 14.2.0 is here! <a href="/404">See what is new</a>.
+                January 23rd, 2018: Version 16 released featuring Row Drag & Drop and Locked Columns. <a href="/ag-grid-blog-16-0-0/">See what is new</a>.
             </div>
         </section>
 
@@ -115,8 +115,8 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-sponsorships">
         <section id="sponsorships">
             <div>
-                <h2>Supporting open&ndash;source</h2>
-                <h3>We are proud to sponsor the tools we love and use daily.</h3>
+                <h2>Supporting Open Source</h2>
+                <h3>We are proud to sponsor the tools we use and love.</h3>
             </div>
 
             <div>
@@ -124,7 +124,7 @@ meta_and_links($title, $keywords, $description, false);
                     <img src="_assets/fw-logos/webpack.svg" />
                     <div class="media-body">
                         <h3>Webpack</h3>
-                        <p><a href="/ag-grid-partners-with-webpack/">Read about ag-Grid's Partnership with webpack.</a></p>
+                        <p><a href="/ag-grid-partners-with-webpack/">Read about our Partnership with webpack.</a></p>
                     </div>
                 </div>
 
@@ -132,7 +132,7 @@ meta_and_links($title, $keywords, $description, false);
                     <img src="_assets/fw-logos/plunker.svg" />
                     <div class="media-body">
                         <h3>Plunker</h3>
-                        <p><a href="/ag-grid-proud-to-support-plunker/">Read about ag-Grid's Partnership with Plunker.</a></p>
+                        <p><a href="/ag-grid-proud-to-support-plunker/">Read about our Backing of Plunker.</a></p>
                     </div>
                 </div>
             </div>

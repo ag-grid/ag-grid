@@ -7,831 +7,1233 @@
 <!-- www.check-domains.com sitemap generator -->
 
 <url>
-   <loc>https://www.ag-grid.com/</loc>
+   <loc>http://localhost:8080/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>1.0000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/example.php</loc>
+   <loc>http://localhost:8080/example.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/documentation-main/documentation.php</loc>
+   <loc>http://localhost:8080/documentation-main/documentation.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/media/media.php</loc>
+   <loc>http://localhost:8080/media/media.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/support.php</loc>
+   <loc>http://localhost:8080/support.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/about.php</loc>
+   <loc>http://localhost:8080/about.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/license-pricing.php</loc>
+   <loc>http://localhost:8080/license-pricing.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-getting-started/</loc>
+   <loc>http://localhost:8080/javascript-grid-getting-started/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/start-trial.php</loc>
+   <loc>http://localhost:8080/start-trial.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/best-angular-2-data-grid/</loc>
+   <loc>http://localhost:8080/best-angular-2-data-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/best-react-data-grid/</loc>
+   <loc>http://localhost:8080/best-react-data-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/best-polymer-data-grid/</loc>
+   <loc>http://localhost:8080/best-polymer-data-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/best-vuejs-data-grid/</loc>
+   <loc>http://localhost:8080/best-vuejs-data-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/best-angularjs-data-grid/</loc>
+   <loc>http://localhost:8080/best-angularjs-data-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/best-javascript-data-grid/</loc>
+   <loc>http://localhost:8080/best-javascript-data-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/best-aurelia-data-grid/</loc>
+   <loc>http://localhost:8080/best-aurelia-data-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/best-web-component-data-grid/</loc>
+   <loc>http://localhost:8080/best-web-component-data-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-trader-dashboard/</loc>
+   <loc>http://localhost:8080/ag-grid-trader-dashboard/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-animation/</loc>
+   <loc>http://localhost:8080/javascript-grid-animation/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-filter-external/</loc>
+   <loc>http://localhost:8080/testimonials.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-filtering/</loc>
+   <loc>http://localhost:8080/example-file-browser/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-filter-set/</loc>
+   <loc>http://localhost:8080/javascript-grid-filter-external/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-filter-quick/</loc>
+   <loc>http://localhost:8080/javascript-grid-filtering/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-pivoting/</loc>
+   <loc>http://localhost:8080/javascript-grid-filter-set/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-viewport/</loc>
+   <loc>http://localhost:8080/javascript-grid-filter-quick/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-refresh/</loc>
+   <loc>http://localhost:8080/javascript-grid-pivoting/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-cell-editing/</loc>
+   <loc>http://localhost:8080/javascript-grid-viewport/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-cell-editor/</loc>
+   <loc>http://localhost:8080/javascript-grid-refresh/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-excel/</loc>
+   <loc>http://localhost:8080/javascript-grid-cell-editing/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-clipboard/</loc>
+   <loc>http://localhost:8080/javascript-grid-cell-editor/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-range-selection/</loc>
+   <loc>http://localhost:8080/javascript-grid-excel/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-resizing/</loc>
+   <loc>http://localhost:8080/javascript-grid-clipboard/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-pinning/</loc>
+   <loc>http://localhost:8080/javascript-grid-range-selection/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-grouping-headers/</loc>
+   <loc>http://localhost:8080/javascript-grid-resizing/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-header-rendering/</loc>
+   <loc>http://localhost:8080/javascript-grid-pinning/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-sorting/</loc>
+   <loc>http://localhost:8080/javascript-grid-grouping-headers/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-properties/</loc>
+   <loc>http://localhost:8080/javascript-grid-header-rendering/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-api/</loc>
+   <loc>http://localhost:8080/javascript-grid-sorting/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-column-definitions/</loc>
+   <loc>http://localhost:8080/javascript-grid-properties/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-column-api/</loc>
+   <loc>http://localhost:8080/javascript-grid-api/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-events/</loc>
+   <loc>http://localhost:8080/javascript-grid-column-definitions/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-callbacks/</loc>
+   <loc>http://localhost:8080/javascript-grid-column-api/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-pagination/</loc>
+   <loc>http://localhost:8080/javascript-grid-events/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-tree/</loc>
+   <loc>http://localhost:8080/javascript-grid-callbacks/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-grouping/</loc>
+   <loc>http://localhost:8080/javascript-grid-pagination/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-aggregation/</loc>
+   <loc>http://localhost:8080/javascript-grid-tree/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-full-width-rows/</loc>
+   <loc>http://localhost:8080/javascript-grid-grouping/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-styling/</loc>
+   <loc>http://localhost:8080/javascript-grid-aggregation/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-cell-styling/</loc>
+   <loc>http://localhost:8080/javascript-grid-full-width-rows/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-value-getters/</loc>
+   <loc>http://localhost:8080/javascript-grid-styling/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-master-detail/</loc>
+   <loc>http://localhost:8080/javascript-grid-themes/blue-theme.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-cell-rendering/</loc>
+   <loc>http://localhost:8080/javascript-grid-themes/dark-theme.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-graphing/</loc>
+   <loc>http://localhost:8080/javascript-grid-themes/material-theme.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-themes/fresh-theme.php</loc>
+   <loc>http://localhost:8080/javascript-grid-themes/bootstrap-theme.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-cell-expressions/</loc>
+   <loc>http://localhost:8080/javascript-grid-cell-styling/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.8000</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-partners-with-webpack/</loc>
+   <loc>http://localhost:8080/javascript-grid-value-getters/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-master-detail/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-cell-rendering/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-graphing/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-themes/fresh-theme.php</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-cell-expressions/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.8000</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/ag-grid-partners-with-webpack/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-reference-overview/</loc>
+   <loc>http://localhost:8080/javascript-grid-reference-overview/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-features/</loc>
+   <loc>http://localhost:8080/javascript-grid-features/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-row-models/</loc>
+   <loc>http://localhost:8080/javascript-grid-row-models/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-components/</loc>
+   <loc>http://localhost:8080/javascript-grid-components/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-examples/</loc>
+   <loc>http://localhost:8080/javascript-grid-examples/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-third-party/</loc>
+   <loc>http://localhost:8080/javascript-grid-third-party/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-reference-data/</loc>
+   <loc>http://localhost:8080/change-log/changeLogIndex.php</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-column-spanning/</loc>
+   <loc>http://localhost:8080/javascript-grid-reference-data/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-enterprise-model/</loc>
+   <loc>http://localhost:8080/weekly-update/20170816/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-change-detection/</loc>
+   <loc>http://localhost:8080/weekly-update/20170801/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-value-cache/</loc>
+   <loc>http://localhost:8080/weekly-update/20170726/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-accessibility/</loc>
+   <loc>http://localhost:8080/javascript-grid-column-spanning/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-big-data-small-browser/</loc>
+   <loc>http://localhost:8080/javascript-grid-enterprise-model/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-react-datagrid/</loc>
+   <loc>http://localhost:8080/javascript-grid-change-detection/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/vue-js-grid/</loc>
+   <loc>http://localhost:8080/javascript-grid-value-cache/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-webpack-ngtools/</loc>
+   <loc>http://localhost:8080/weekly-update/20170718/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/review-of-angularjs-grids/</loc>
+   <loc>http://localhost:8080/weekly-update/20170711/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/git-color/</loc>
+   <loc>http://localhost:8080/weekly-update/20170704/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-understanding-webpack/</loc>
+   <loc>http://localhost:8080/weekly-update/20170627/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-angular-aot-dynamic-components/</loc>
+   <loc>http://localhost:8080/javascript-grid-accessibility/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-datagrid/</loc>
+   <loc>http://localhost:8080/example-angular-rxjs/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-angular2-support-v7/</loc>
+   <loc>http://localhost:8080/ag-grid-big-data-small-browser/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-datagrid-aurelia/</loc>
+   <loc>http://localhost:8080/ag-grid-react-datagrid/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/vue-js-grid/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/ag-grid-webpack-ngtools/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/review-of-angularjs-grids/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/git-color/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/ag-grid-understanding-webpack/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/ag-grid-angular-aot-dynamic-components/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-datagrid/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/ag-grid-angular2-support-v7/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/ag-grid-datagrid-aurelia/</loc>
    <lastmod>2017-09-08T12:09:13+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-angular-connect-2016/</loc>
+   <loc>http://localhost:8080/ag-grid-angular-connect-2016/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-angular2-support/</loc>
+   <loc>http://localhost:8080/ag-grid-angular2-support/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-angular2-support-v6/</loc>
+   <loc>http://localhost:8080/ag-grid-angular2-support-v6/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-javascript-pivot-grid/</loc>
+   <loc>http://localhost:8080/ag-grid-javascript-pivot-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-goes-commercial/</loc>
+   <loc>http://localhost:8080/ag-grid-goes-commercial/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/</loc>
+   <loc>http://localhost:8080/understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/react-and-ag-grid/</loc>
+   <loc>http://localhost:8080/react-and-ag-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-in-2016/</loc>
+   <loc>http://localhost:8080/ag-grid-in-2016/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/embracing-the-future-with-angularjs2-web-components-and-ag-grid/</loc>
+   <loc>http://localhost:8080/embracing-the-future-with-angularjs2-web-components-and-ag-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/why-the-world-needed-another-angularjs-grid/</loc>
+   <loc>http://localhost:8080/why-the-world-needed-another-angularjs-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-jobs-board/</loc>
+   <loc>http://localhost:8080/ag-grid-jobs-board/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/angular-getting-started/</loc>
+   <loc>http://localhost:8080/angular-getting-started/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/angular-more-details/</loc>
+   <loc>http://localhost:8080/angular-more-details/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/angular-building/</loc>
+   <loc>http://localhost:8080/angular-building/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/react-getting-started/</loc>
+   <loc>http://localhost:8080/example-angular/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/react-more-details/</loc>
+   <loc>http://localhost:8080/react-getting-started/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/polymer-getting-started/</loc>
+   <loc>http://localhost:8080/react-more-details/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/polymer-more-details/</loc>
+   <loc>http://localhost:8080/example-react/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-cell-rendering-components/</loc>
+   <loc>http://localhost:8080/polymer-getting-started/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-getting-started/</loc>
+   <loc>http://localhost:8080/polymer-more-details/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-more-details/</loc>
+   <loc>http://localhost:8080/javascript-grid-cell-rendering-components/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-filter-number/</loc>
+   <loc>http://localhost:8080/javascript-getting-started/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-filter-text/</loc>
+   <loc>http://localhost:8080/javascript-more-details/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-filter-date/</loc>
+   <loc>http://localhost:8080/javascript-grid-filter-number/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-filter-component/</loc>
+   <loc>http://localhost:8080/javascript-grid-filter-text/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-floating-filter-component/</loc>
+   <loc>http://localhost:8080/javascript-grid-filter-date/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-export/</loc>
+   <loc>http://localhost:8080/javascript-grid-filter-component/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-selection/</loc>
+   <loc>http://localhost:8080/javascript-grid-floating-filter-component/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-in-memory/</loc>
+   <loc>http://localhost:8080/javascript-grid-export/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-data-update/</loc>
+   <loc>http://localhost:8080/javascript-grid-selection/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-column-header/</loc>
+   <loc>http://localhost:8080/javascript-grid-in-memory/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-tool-panel/</loc>
+   <loc>http://localhost:8080/javascript-grid-data-update/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-row-pinning/</loc>
+   <loc>http://localhost:8080/javascript-grid-column-header/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-aligned-grids/</loc>
+   <loc>http://localhost:8080/javascript-grid-tool-panel/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-icons/</loc>
+   <loc>http://localhost:8080/javascript-grid-row-pinning/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-row-height/</loc>
+   <loc>http://localhost:8080/javascript-grid-aligned-grids/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-internationalisation/</loc>
+   <loc>http://localhost:8080/javascript-grid-icons/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-width-and-height/</loc>
+   <loc>http://localhost:8080/javascript-grid-row-height/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-for-print/</loc>
+   <loc>http://localhost:8080/javascript-grid-internationalisation/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-overlays/</loc>
+   <loc>http://localhost:8080/javascript-grid-width-and-height/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-rtl/</loc>
+   <loc>http://localhost:8080/javascript-grid-for-print/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-context/</loc>
+   <loc>http://localhost:8080/javascript-grid-overlays/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-column-properties/</loc>
+   <loc>http://localhost:8080/javascript-grid-rtl/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-infinite-scrolling/</loc>
+   <loc>http://localhost:8080/javascript-grid-context/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-changelog/</loc>
+   <loc>http://localhost:8080/javascript-grid-column-properties/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-pipeline/</loc>
+   <loc>http://localhost:8080/javascript-grid-infinite-scrolling/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.6400</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-angular-angularcli/</loc>
+   <loc>http://localhost:8080/ag-grid-changelog/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/ag-grid-pipeline/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.6400</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-react-redux/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-angular-webpack/</loc>
+   <loc>http://localhost:8080/ag-grid-angular-angularcli/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-angular-webpack-2/</loc>
+   <loc>http://localhost:8080/ag-grid-angular-webpack/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-angular-webpack-3/</loc>
+   <loc>http://localhost:8080/ag-grid-angular-webpack-2/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/ag-grid-angular-systemjs/</loc>
+   <loc>http://localhost:8080/ag-grid-angular-ngtools-webpack/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-date-component/</loc>
+   <loc>http://localhost:8080/ag-grid-angular-systemjs/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-keyboard-navigation/</loc>
+   <loc>http://localhost:8080/javascript-grid-date-component/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-value-setters/</loc>
+   <loc>http://localhost:8080/javascript-grid-keyboard-navigation/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-row-node/</loc>
+   <loc>http://localhost:8080/javascript-grid-value-setters/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-openfin/</loc>
+   <loc>http://localhost:8080/javascript-grid-row-node/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-openfin-dashboard/</loc>
+   <loc>http://localhost:8080/example-javascript/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-column-menu/</loc>
+   <loc>http://localhost:8080/example-polymer/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
 </url>
 <url>
-   <loc>https://www.ag-grid.com/javascript-grid-accessing-data/</loc>
+   <loc>http://localhost:8080/example-react-rich-grid/</loc>
    <lastmod>2017-09-18T16:23:15+00:00</lastmod>
    <changefreq>monthly</changefreq>
    <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-react-filter/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-react-editor/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-react-floating-row/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-react-full-width-rows/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-react-grouped-row/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-react-master-detail/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-angular-rich-grid/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-angular-rich-grid-markup/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-angular-editor/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-angular-filter/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-angular-floating-row/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-angular-full-width-rows/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-angular-grouped-row/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-angular-master-detail/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-polymer-rich-grid/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-polymer-editor/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-polymer-filter/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-polymer-floating-row/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-polymer-full-width-rows/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-polymer-grouped-row/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-polymer-master-detail/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-account-report/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-expressions-and-context/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-openfin/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-openfin-dashboard/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-column-menu/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-accessing-data/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-context-menu/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-touch/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/best-javascript-data-grid/example-js.html</loc>
+   <lastmod>2017-06-08T09:52:39+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/weekly-update/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-themes/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-status-bar/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.5120</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/ag-grid-react-trader-dashboard/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-polymer-dynamic/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-react-dynamic/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-angular-dynamic/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/example-angular-third-party/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-testing/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-rxjs/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/weekly-update/20170620/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/weekly-update/20170613/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/weekly-update/20170606/</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-themes/example-blue.html</loc>
+   <lastmod>2017-09-08T12:09:14+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-themes/example-bootstrap.html</loc>
+   <lastmod>2017-09-08T12:09:14+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-themes/example-dark.html</loc>
+   <lastmod>2017-09-08T12:09:14+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-themes/example-fresh.html</loc>
+   <lastmod>2017-09-08T12:09:14+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-themes/example-material.html</loc>
+   <lastmod>2017-09-08T12:09:14+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-themes/example-theme-material.html</loc>
+   <lastmod>2017-09-08T12:09:14+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
+</url>
+<url>
+   <loc>http://localhost:8080/javascript-grid-themes/material-next-theme.php</loc>
+   <lastmod>2017-09-18T16:23:15+00:00</lastmod>
+   <changefreq>monthly</changefreq>
+   <priority>0.4096</priority>
 </url>
 </urlset>
