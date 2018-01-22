@@ -312,7 +312,7 @@
         }
     }
 
-    #heading-scenarios {
+    .heading-scenarios {
         @extend .display-4, .text-center, .full-width-row, .mb-4;
 
         span {
@@ -321,40 +321,19 @@
         }
     }
 
-    #nav-scenarios {
-        @extend .full-width-row, .list-unstyled, .row, .mb-3;
-
-        li {
-            @extend .col-sm-4, .text-center;
-        }
-
-        a {
-            @extend .btn, .btn-primary;
-        }
-    }
-
     section {
         @extend .row, .full-width-row;
 
-        .demos {
+        .demo {
             @extend .col-md-12;
         }
 
         .demo {
-            visibility: hidden;
             display: block;
-            position: absolute;
             width: calc(100% - 30px);
-            top: -10000px;
         }
 
-        .current {
-            visibility: visible;
-            position: static;
-            width: auto;
-        }
-
-        #view-code {
+        .view-code {
             @extend .text-right, .col, .mt-3;
         }
 
