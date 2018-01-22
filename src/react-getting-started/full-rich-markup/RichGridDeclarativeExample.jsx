@@ -147,7 +147,7 @@ export default class RichGridDeclarativeExample extends Component {
                             <button onClick={this.dobFilter} className="btn btn-primary">DOB equals to 01/01/2000ß</button>
                         </div>
                     </div>
-                    <div style={{height: 440, width: 900}} className="ag-fresh">
+                    <div style={{height: 440, width: 900}} className="ag-theme-balham">
                         <AgGridReact
                             // listening for events
                             onGridReady={this.onGridReady}
@@ -172,8 +172,6 @@ export default class RichGridDeclarativeExample extends Component {
                             enableSorting
                             enableFilter
                             groupHeaders
-                            rowHeight="22"
-
                             // setting grid wide date component
                             dateComponentFramework={DateComponent}
 

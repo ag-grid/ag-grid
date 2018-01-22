@@ -19,7 +19,7 @@ export default class Grid extends Component {
 
     render() {
         return (
-            <div style={{height: 525, width: 900}} className="ag-theme-fresh">
+            <div style={{height: 525, width: 900}} className="ag-theme-balham">
                 <AgGridReact
                     // binding to array properties
                     columnDefs={this.state.columnDefs}

@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'my-app',
   template: `
-    <ag-grid-angular style="width: 900px; height: 115px;" class="ag-theme-fresh"
+    <ag-grid-angular style="width: 902px; height: 131px;" class="ag-theme-balham"
                  [rowData]="rowData"
                  [columnDefs]="columnDefs">
 </ag-grid-angular>

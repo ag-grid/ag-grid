@@ -14,7 +14,7 @@ import {HttpClient} from '@angular/common/http';
             <ag-grid-angular
             style="width: 100%; height: 45%"
             #topGrid
-            class="ag-theme-fresh"
+            class="ag-theme-balham"
             [rowData]="rowData"
             [gridOptions]="topOptions"
             [columnDefs]="columnDefs">
@@ -23,7 +23,7 @@ import {HttpClient} from '@angular/common/http';
             <ag-grid-angular
             style="width: 100%; height: 45%"
             #bottomGrid
-            class="ag-theme-fresh"
+            class="ag-theme-balham"
             [rowData]="rowData"
             [gridOptions]="bottomOptions"
             [columnDefs]="columnDefs">

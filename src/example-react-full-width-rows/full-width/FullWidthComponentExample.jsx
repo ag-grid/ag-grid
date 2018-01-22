@@ -69,7 +69,7 @@ export default class FullWidthComponentExample extends Component {
     render() {
         return (
             <div style={{height: 490, width: 900}}
-                 className="ag-theme-fresh">
+                 className="ag-theme-balham">
                 <AgGridReact
                     // properties
                     columnDefs={this.state.columnDefs}

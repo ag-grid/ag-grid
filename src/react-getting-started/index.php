@@ -115,7 +115,7 @@ npm start
     <p>Of course there is much more we can do - in the following sections we will build on this starting point. For our
         seed application here is the complete example:</p>
 
-    <?= example('ag-Grid in React', 'hello-world', 'react',  array( "exampleHeight" => 130, "showResult" => true)); ?>
+    <?= example('ag-Grid in React', 'hello-world', 'react',  array( "exampleHeight" => 150, "showResult" => true)); ?>
 
     <h2>Adding Features</h2>
 

@@ -76,7 +76,7 @@ export default class extends Component {
     render() {
         return (
             <div style={{height: '100%'}}>
-                <div style={{boxSizing: 'border-box', paddingTop: '30px', height: '100%'}} className="ag-theme-fresh">
+                <div style={{boxSizing: 'border-box', paddingTop: '30px', height: '100%'}} className="ag-theme-balham">
                     <div style={this.state.style}>
                         <AgGridReact
                             columnDefs={this.state.columnDefs}
