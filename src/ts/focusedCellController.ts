@@ -57,20 +57,15 @@ export class FocusedCellController {
         if (!this.focusedCell) {
             return null;
         }
-        
+
+        // we check that the browser is actually focusing on the grid, if it is not, then
+        // we have nothing to worry about
         let browserFocusedCell = this.getGridCellForDomElement(document.activeElement);
         if (!browserFocusedCell) {
             return null;
         }
 
-        let gridFocusId = this.focusedCell.createId();
-        let browserFocusId = browserFocusedCell.createId();
-
-        if (gridFocusId === browserFocusId) {
-            return this.focusedCell;
-        } else {
-            return null;
-        }
+        return this.focusedCell;
     }
 
     private getGridCellForDomElement(eBrowserCell: Node): GridCell {
