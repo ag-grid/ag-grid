@@ -53,7 +53,8 @@ include '../documentation-main/documentation_header.php';
             on. What the user selects will then be forwarded to your datasource as part of the request. This feature
             is advanced and will require some difficult server side coding from you, however if done correctly then
             your users will have an experience of slicing and dicing large data in real time, something previously
-            only available in expensive reporting tools, now you can embed it into your JavaScript application.</li>
+            only available in expensive reporting tools, now you can embed it into your JavaScript application.
+        </li>
     </ul>
 
 
@@ -177,7 +178,7 @@ export interface ColumnVO {
             the aggregation function via the column menu. The server just assumes if grouping,
             then these columns should be aggregated using a sum function.
         </li>
-        <li><b>Sorting:</b> The sorting, similar to filtering, is done on the server side.
+        <li><b>Sorting:</b> The sorting is done on the server side.
             For example, sort by Athlete, then expand a group and you will
             see Athlete is sorted. </li>
     </ul>
@@ -236,7 +237,9 @@ export interface ColumnVO {
         </li>
         <li>
             In addition to grouping, aggregation and pivot, the example also demonstrates filtering.
-            The columns <code>Age, Country</code> and <code>Year</code> all have a filter.
+            The columns <b>Country</b> and <b>Year</b> have grid provided filters. The column <b>Age</b>
+            has an example provided custom filter. You can use whatever filter you want, as long as
+            your server side knows what to do with it.
         </li>
     </ul>
 

@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "Review of AngularJS 1.x Grids";
-$pageDescription = "Review of AngularJS 1.x Grids - a User's perspective";
+$pageTitle = "ag-Grid Blog: From Hater to Fan – How I fell in Love with Ag-Grid";
+$pageDescription = "Review of Angular Datagrid - a User's perspective. We've asked one of our users to talk through his experience, it wasn't all positive at the start but he was converted.";
 $pageKeyboards = "Review angularjs grid";
 
 include('../includes/mediaHeader.php');

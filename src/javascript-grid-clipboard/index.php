@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Javascript Grid Clipboard";
-$pageDescription = "ag-Grid can use the clipboard. This page explains how to interact with the clipboard using ag-Grid.";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Clipboard";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Clipboard. Copy and paste data to and from the Clipboard. Users will be able to edit data in Excel, then copy the data back into the grid when done. Free and Commercial version available.";
 $pageKeyboards = "Javascript Grid Clipboard";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

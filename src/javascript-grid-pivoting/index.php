@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Angular | Javascript | React Pivot Table";
-$pageDescription = "One of the most powerful features of ag-Grid is its ability to pivot data. Learn how to pivot using ag-Grid";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Pivot Tables";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Pivoting. Make columns out of values by Pivoting on the data, similar to Pivot Tables in Excel. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid JavaScritp Grid Pivot";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

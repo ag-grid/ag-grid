@@ -1,8 +1,8 @@
 <?php
 
-$pageTitle = "Building Components for Javascript, React, Angular and Everything Else";
-$pageDescription = "ag-Grid is a reusable component that is used in many frameworks including AngularJS 1.x and JavaReact. This article describes the build process that was used.";
-$pageKeyboards = "javascript build gulp typescript react angularjs";
+$pageTitle = "ag-Grid Blog: Building Components for Javascript, React, Angular and Everything Else";
+$pageDescription = "An in-depth guide to building a JavaScript component. This covers everything we did to build ag-Grid, a commercially successful datgrid component.";
+$pageKeyboards = "javascript build components gulp typescript react angularjs";
 
 include('../includes/mediaHeader.php');
 ?>

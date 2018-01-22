@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Javascript Grid Context Menu";
-$pageDescription = "Right clicking on a cell brings up the grid's context menu. You can use the default or configure your own details.";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Context Menu";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Context Menu. The Context Menu appears when you right click on a cell. Use the default options or provide your own. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Javascript Grid Context Menu";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

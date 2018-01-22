@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "Angular 2 Datagrid Support";
-$pageDescription = "ag-Grid v6 offers full Angular 2 Support - a discussion on what this means for ag-Grid.";
+$pageTitle = "ag-Grid Blog: Version 6 Release - Support for Angular 2 Datagrid";
+$pageDescription = "Version 6 of ag-Grid sees support for Angular 2, promptly after its release. This blog post covers how to use Angular 2 components within ag-Grid. This release greatls simplifies working with Angular 2 and the leading datagrid.";
 $pageKeyboards = "ag-Grid javascript datagrid pivot";
 
 include('../includes/mediaHeader.php');

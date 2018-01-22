@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Blog: ag-Grid Partners with webpack";
-$pageDescription = "ag-Grid is an open source JavaScript data grid with an optional enterprise paid component. webpack is an open-source collaborative effort with no revenue stream. ag-Grid is going to help webpack by generously giving money!";
+$pageTitle = "ag-Grid Blog: Our Partnership with webpack";
+$pageDescription = "We're going to be supporting webpack so they can continue to deliver their very popular product to the JavaScript developer community. We'll be a major contributor to the open collective which fuds webpack. We see it as a great way to support the community where we have our roots.";
 $pageKeyboards = "ag-Grid JavaScript ";
 
 include('../includes/mediaHeader.php');

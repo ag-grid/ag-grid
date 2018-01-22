@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Grid Grouping";
-$pageDescription = "ag-Grid Grid Grouping";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Grouping by Row";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Grouping by Row. Use Grouping Rows to group the data over selected dimensions. You can set the data to group by specific columns, or allow the user to drag and drop columns of their choice and have it grouped on the fly. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Grid Grouping";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

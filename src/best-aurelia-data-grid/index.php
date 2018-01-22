@@ -76,6 +76,9 @@ import "ag-grid-enterprise/main";
         on Github.
     </p>
 
+    <h3 id="rich-example">Rich Grid with Aurelia</h3>
+    <?= example('ag-Grid in Aurelia', 'rich-grid', 'as-is', array("noPlunker" => 1, "usePath" => "#/?route=rich-grid")) ?>
+
     <p>The example project includes a number of separate grids on a page, with each section demonstrating a different
         feature set:
 </p>
@@ -293,7 +296,7 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
 
 <h3 id="setting-column-properties">Setting Column Properties</h3>
 <p>There are some simple rules you should follow when setting column properties via Markup:</p>
-<snippet ng-non-bindable>
+<snippet>
 // string value
 property-name="String Value"
 property-name="'String Value'"
@@ -301,7 +304,7 @@ property-name="${Interpolated Value}"
 
 // boolean value
 property-name.bind="true|false"
-property-name.bind="{{Interpolated Value}}"
+property-name.bind="<span  ng-non-bindable>{</span>{Interpolated Value}}"
 property-name.bind="functionCallReturningABoolean()"
 
 // numeric value
@@ -354,16 +357,17 @@ private getCountryFilterParams():any {
 
 <p>
     Although it is possible to use Aurelia for your customisations of ag-Grid, it is not necessary. The grid
-    will happily work with both Aurelia and non-Aurelia portions (eg cellRenderers in Aurelia or normal JavaScript).
+    will happily work with both Aurelia and non-Aurelia portions (eg cellRenderers in Aurelia or normal JavaScript).</p>
+<p>
     If you do use Aurelia, be aware that you are adding an extra layer of indirection into ag-Grid. ag-Grid's
     internal framework is already highly tuned to work incredibly fast and does not require Aurelia or anything
-    else to make it faster. If you are looking for a lightning fast grid, even if you are using Aurelia and
+    else to make it faster.</p><p>If you are looking for a lightning fast grid, even if you are using Aurelia and
     the ag-grid-aurelia component, consider using plain ag-Grid Components (as explained on the pages for
     rendering etc) inside ag-Grid instead of creating Aurelia counterparts.
 </p>
 
-<?= example('ag-Grid in Aurelia', 'rich-grid', 'as-is', array("noPlunker" => 1, "usePath" => "#/?route=rich-grid")) ?>
-<?//= example('ag-Grid in Aurelia', 'rich-grid', 'as-is', array("noPlunker" => 1, "usePath" => "#/?route=full-width")) ?>
+<h3 id="declarative-example">Rich Declarative Aurelia Example</h3>
+<?= example('Declarative Aurelia with ag-Grid', 'aurelia-declarative', 'as-is', array("noPlunker" => 1, "usePath" => "#/?route=richgrid-declarative")) ?>
 
 <h2 id="next-steps">Next Steps...</h2>
 

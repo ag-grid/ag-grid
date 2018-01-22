@@ -1,5 +1,13 @@
 [
   {
+    "title": "Happy New ag-Grid v15.0.0",
+    "summary": "Merry Christmas and Happy New ag-Grid v15! Read about the highlights of v15 and what new it brings to the stage.",
+    "link": "../ag-grid-blog-15-0-0/",
+    "img": "../ag-grid-blog-15-0-0/img15-0-0.png",
+    "date": "13 December 2017",
+    "author": "sophia"
+  },
+  {
     "title": "What's New in ag-Grid v14.2.0",
     "summary": " ag-Grid v14.2.0 is here, packed with new features and enhancements!",
     "link": "../ag-grid-blog-14-2-0/",
@@ -69,6 +77,14 @@
     "link": "../ag-grid-webpack-ngtools/",
     "img": "../_assets/common/default-blog-cover.svg",
     "date": "14 March 2017",
+    "author": "sean"
+  },
+  {
+    "title": "VueJS Grid",
+    "summary": "Using ag-Grid inside a VueJS application",
+    "link": "../vue-js-grid/",
+    "img": "../images/vue_large.png",
+    "date": "1 March 2017",
     "author": "sean"
   },
   {

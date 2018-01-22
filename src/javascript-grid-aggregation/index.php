@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Aggregation";
-$pageDescription = "One of the most powerful features of ag-Grid is its ability to aggregate data. Learn how to aggregate using ag-Grid";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Aggregation";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Aggregation. When grouping you can also do Aggregation to get aggregate values for the data i.e. sum, min, max etc. Use the built in functions or create your own. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid JavaScript Grid Aggregation";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -270,17 +270,8 @@ colDef = {
     <h2>Recomputing Aggregates</h2>
 
     <p>
-        If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates through the
-        api method <code>recomputeAggregates</code>. For example, if you allow editing,
-        and want the aggregates to update as new values are edited, then create code like the following:
-</p>
-
-        <snippet>
-// add a listener to the editable colDef
-colDef.onCellValueChanged = function() {
-    gridOptions.api.recomputeAggregates();
-}</snippet>
-
-
+        If the data changes after the aggregation is done, you can tell the grid to recompute the aggregates
+        through the api method <code>refreshInMemoryRowModel('aggregate')</code>.
+    </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -1,25 +1,24 @@
 <?php
 
-$pageTitle = "ag-Grid Blog";
-$pageDescription = "a collection of blogs from ag-Grid team";
+$pageTitle = "ag-Grid Blog: Home";
+$pageDescription = "Welcome to the ag-Grid Blog where we provide information on our new releases and lots of useful tutorials and guides to our products and the frameworks that we support.";
 $pageKeyboards = "blogs ag-grid angular react webpack";
 
 include('../includes/mediaHeader.php');
 
-define('AUTHORS', array(
+$authors = array(
 'niall' => 'Niall Crosby',
 'sean' => 'Sean Landsman',
 'sophia' => 'Sophia Lazarova',
-'amit' => 'Amit Moryossef',
-'john' => 'John Masterson'
-));
+'amit' => 'Amit Moryossef'
+);
 
 function featuredBlog($title, $cardImage, $link, $author, $date) {
-    $authors = AUTHORS;
+    $authors = $GLOBALS['authors'];
     echo <<<HTML
     <div class="col-md-4">
         <div class="card">
-          <a href="$link" class="cover" style="background-image: url($cardImage)" title="$title">$title</a>
+          <a href="$link" class="cover" style="background-image: url($cardImage);" title="$title">$title</a>
           <div class="card-body">
             <h3 class="card-title">
                 <a href="$link">$title</a>
@@ -38,7 +37,7 @@ HTML;
 }
 
 function recentBlog($title, $summary, $image, $link, $author, $date) {
-    $authors = AUTHORS;
+    $authors = $GLOBALS['authors'];
     echo <<<HTML
     <div class="row post-summary">
         <div class="col-md-3">
@@ -64,11 +63,11 @@ HTML;
 
 <div id="headline">
     <h1>
-        <a href="../ag-grid-blog-15-0-0/">Happy New ag-Grid v15.0.0</a>
-        <span>by Sophia Lazarova | 13 December 2017</span>
+        <a href="../ag-grid-blog-16-0-0/">Meet ag-Grid Phoenix & our new Website</a>
+        <span>by Sophia Lazarova | 22 January 2018</span>
     </h1>
 
-    <a href="../ag-grid-blog-15-0-0/"><img style="margin-bottom:30px;" src="../ag-grid-blog-15-0-0/cover15-0-0.png" width='100%' class="rounded" /></a>
+    <a href="../ag-grid-blog-16-0-0/"><img style="margin-bottom:30px;" src="../ag-grid-blog-16-0-0/cover.svg" width='100%' class="rounded" /></a>
 </div>
 
 <div id="featured-blogs">
@@ -81,21 +80,21 @@ HTML;
         '../pivoting-blog/img-pivot.png',
         '../pivoting-blog/',
         'sophia',
-        '22nd January 2018'
-    );
-
-    featuredBlog(
-        'Plunker is now backed by ag-Grid',
-        '../images/ag-grid-and-plunker.png',
-        '../ag-grid-proud-to-support-plunker/',
-        'john',
-        '17 January 2018'
+        '15 December 2017'
     );
 
     featuredBlog(
         'Building a CRUD Application with ag-Grid - Part 4',
         '../ag-grid-datagrid-crud-part-1/crud_overview.png',
         '../ag-grid-datagrid-crud-part-4/',
+        'sean',
+        '5 December 2017'
+    );
+
+    featuredBlog(
+        'Building a CRUD Application with ag-Grid - Part 4',
+        '../ag-grid-datagrid-crud-part-1/crud_overview.png',
+        '../ag-grid-datagrid-crud-part-3/',
         'sean',
         '21 November 2017'
     );

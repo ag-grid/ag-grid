@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Tool Panel";
-$pageDescription = "The tool panel allows you to work with the columns at run time, but showing and hiding, and grouping.";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Tool Panel";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Tool Panel. The Tool Panel allows the user to manipulate the list of columns, such as show and hide, or drag columns to group or pivot. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Show Hide Column Tool Panel";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

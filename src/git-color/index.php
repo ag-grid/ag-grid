@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "Git Color";
-$pageDescription = "Git on the Command Line - Improving the Experience - How we use Git at ag-Grid";
+$pageTitle = "ag-Grid Blog: Git on the Command Line - Improving the Experience";
+$pageDescription = "This blog covers how to add some colour into your Git life. A quick step-by-step guide to customising your command line.";
 $pageKeyboards = "Git Command Line";
 
 include('../includes/mediaHeader.php');

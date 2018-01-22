@@ -60,10 +60,6 @@ Include ag-Grid as a dependency of your module like this:
     minimum you should provide the columns (columnDefs) and the rows (rowData).
 </p>
 
-<h2 id="basic-angularjs-1-x-example">Basic AngularJS 1.x Example</h2>
-<show-example example="example-ajs" example-height="200px"></show-example>
-
-
 <h2 id="destroy">Destroy</h2>
 
 <p>

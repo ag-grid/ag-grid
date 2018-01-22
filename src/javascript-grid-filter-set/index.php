@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid JavaScript Data Grid Excel Set Filtering";
-$pageDescription = "ag-Grid can filter like Excel, by providing you with a set that you can select from.";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Set Filter";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Set Filter. Set Filter works like Excel, providing checkboxes to select values from a set. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid JavaScript Data Grid Excel Set Filtering";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
