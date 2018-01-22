@@ -8,7 +8,7 @@ include('../includes/mediaHeader.php');
 ?>
 
         <h1>8 reasons to choose ag-Grid as your JavaScript Datagrid</h1>
-
+<p class="blog-author">Sean Landsman | 27th October 2016</p>
 <div class="row">
     <div class="col-md-8">
 

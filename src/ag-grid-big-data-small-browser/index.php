@@ -7,6 +7,7 @@ $pageKeyboards = "big data javascript browser";
 include('../includes/mediaHeader.php');
 ?>
 <h1>Delivering Big Data in the Small Browser</h1>
+<p class="blog-author">Niall Crosby | 19th May 2017</p>
 
 <div class="row">
     <div class="col-md-8">
