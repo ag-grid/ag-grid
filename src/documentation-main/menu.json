@@ -31,6 +31,10 @@
                     {
                         "title": "More Details",
                         "url": "react-more-details/"
+                    },
+                    {
+                        "title": "Redux Integration",
+                        "url": "react-redux-integration/"
                     }
                 ]
             },
