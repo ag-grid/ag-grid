@@ -245,7 +245,7 @@ export class FilterManager {
     }
 
     private doesRowPassQuickFilterNoCache(node: RowNode): boolean {
-        let columns = this.columnController.getAllPrimaryColumns();
+        let columns = this.columnController.getAllColumnsForQuickFilter();
         let filterPasses = false;
         columns.forEach( column => {
             if (filterPasses) { return; }
@@ -335,7 +335,7 @@ export class FilterManager {
 
     private aggregateRowForQuickFilter(node: RowNode) {
         let stringParts: string[] = [];
-        let columns = this.columnController.getAllPrimaryColumns();
+        let columns = this.columnController.getAllColumnsForQuickFilter();
         columns.forEach( column => {
             let part = this.getQuickFilterTextForColumn(column, node);
             if (_.exists(part)) {

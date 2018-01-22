@@ -79,6 +79,10 @@ export class ColumnController {
     private secondaryHeaderRowCount = 0;
     private secondaryColumnsPresent = false;
 
+    // the columns the quick filter should use. this will be all primary columns
+    // plus the autoGroupColumns if any exist
+    private columnsForQuickFilter: Column[];
+
     // these are all columns that are available to the grid for rendering after pivot
     private gridBalancedTree: OriginalColumnGroupChild[];
     private gridColumns: Column[];
@@ -974,6 +978,10 @@ export class ColumnController {
         return this.primaryColumns;
     }
 
+    public getAllColumnsForQuickFilter(): Column[] {
+        return this.columnsForQuickFilter;
+    }
+
     // + moveColumnController
     public getAllGridColumns(): Column[] {
         return this.gridColumns;
@@ -1866,6 +1874,8 @@ export class ColumnController {
 
         this.addAutoGroupToGridColumns();
 
+        this.setupQuickFilterColumns();
+
         this.clearDisplayedColumns();
 
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
@@ -1876,6 +1886,19 @@ export class ColumnController {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
+    }
+
+    // if we are using autoGroupCols, then they should be included for quick filter. this covers the
+    // following scenarios:
+    // a) user provides 'field' into autoGroupCol of normal grid, so now because a valid col to filter leafs on
+    // b) using tree data and user depends on autoGroupCol for first col, and we also want to filter on this
+    //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
+    private setupQuickFilterColumns(): void {
+        if (this.groupAutoColumns) {
+            this.columnsForQuickFilter = this.primaryColumns.concat(this.groupAutoColumns);
+        } else {
+            this.columnsForQuickFilter = this.primaryColumns;
+        }
     }
 
     private putFixedColumnsFirst(): void {
