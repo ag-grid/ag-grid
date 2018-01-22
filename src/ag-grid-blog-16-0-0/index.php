@@ -41,7 +41,7 @@ include('../includes/mediaHeader.php');
         </p>
         <p>The first days of the year are usually a start of a new page but for us they are an energetic continuation of a very successful year. 
         We are sliding into 2018 packed with lots of goodies and with a brand new website.</p>
-        <p>The highlights of v16 include couple of your most wanted feature request along with some sugar bits like bug fixes and minor features. Let's roll!</p>
+        <p>The highlights of v16 include couple of your most wanted feature requests along with some sugar bits like bug fixes and minor features. Let's roll!</p>
 
         <h2>Row Drag and Drop</h2>
 
