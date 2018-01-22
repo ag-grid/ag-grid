@@ -12,6 +12,7 @@ include('../includes/mediaHeader.php');
 
 
         <h1> Git on the Command Line - Improving the Experience</h1>
+        <p class="blog-author">Sean Landsman | 6th February 2017</p>
 
 <div class="row" ng-app="documentation">
     <div class="col-md-8">

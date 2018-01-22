@@ -7,9 +7,13 @@ include('../includes/mediaHeader.php');
 ?>
 
         <h1>ag-Grid partners with webpack</h1>
-        <img src="../images/ag_grid_and_webpack.png" class="large-cover-img">
+        <p class="blog-author">Niall Crosby | 20th March 2017</p>
+
+
 <div class="row">
     <div class="col-md-8">
+        <img src="../images/ag_grid_and_webpack.png" class="large-cover-img">
+
 
         <p>
             ag-Grid started life as an open source project and true to these roots, it now comes in two versions; ag-Grid Free 

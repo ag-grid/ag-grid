@@ -8,7 +8,7 @@ include('../includes/mediaHeader.php');
 ?>
 
         <h1>From Hater to Fan – How I fell in Love with ag-Grid</h1>
-
+        <p class="blog-author">Amit Moryossef | 15th February 2017</p>
 <div class="row" ng-app="documentation">
     <div class="col-md-8">
 

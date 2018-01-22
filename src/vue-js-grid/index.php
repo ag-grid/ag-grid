@@ -11,15 +11,9 @@ include('../includes/mediaHeader.php');
 <script src="../documentation-main/documentation.js"></script>
 
 
-<div class="row">
-    <div class="col-md-2" style="padding-top: 20px; padding-bottom: 20px;">
-        <img src="../images/vue_large.png" style="position: relative; top: 15px; left: 40px;"/>
-    </div>
-    <div class="col-md-10" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1>VueJS Grid</h1>
-        <h3>Using ag-Grid inside a VueJS application</h3>
-    </div>
-</div>
+<h1><img src="../images/vue_large.png"/>VueJS Grid</h1>
+<h3>Using ag-Grid inside a VueJS application</h3>
+<p class="blog-author">Sean Landsman | 14th March 2017</p>
 
 <div class="row" ng-app="documentation">
     <div class="col-md-9">

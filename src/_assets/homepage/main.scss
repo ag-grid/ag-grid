@@ -17,6 +17,7 @@
 @import '../pages/testimonials.scss';
 @import '../pages/pipeline.scss';
 @import '../pages/blog.scss';
+@import '../docs/example-runner.scss';
 
 
 .stretch-contents {
@@ -47,6 +48,10 @@
 
         > section {
             @extend .py-5, .col-md-10, .offset-md-1;
+        }
+
+        > section.blog-section {
+            @extend .col-md-12, .ml-0;
         }
 
         h1 {
@@ -300,7 +305,7 @@
     }
 }
 
-#stage-scenarios {
+.stage-scenarios {
     @extend %stage;
     background-color: $offwhite;
 
@@ -312,7 +317,7 @@
         }
     }
 
-    #heading-scenarios {
+    .heading-scenarios {
         @extend .display-4, .text-center, .full-width-row, .mb-4;
 
         span {
@@ -321,40 +326,19 @@
         }
     }
 
-    #nav-scenarios {
-        @extend .full-width-row, .list-unstyled, .row, .mb-3;
-
-        li {
-            @extend .col-sm-4, .text-center;
-        }
-
-        a {
-            @extend .btn, .btn-primary;
-        }
-    }
-
     section {
         @extend .row, .full-width-row;
 
-        .demos {
+        .demo {
             @extend .col-md-12;
         }
 
         .demo {
-            visibility: hidden;
             display: block;
-            position: absolute;
             width: calc(100% - 30px);
-            top: -10000px;
         }
 
-        .current {
-            visibility: visible;
-            position: static;
-            width: auto;
-        }
-
-        #view-code {
+        .view-code {
             @extend .text-right, .col, .mt-3;
         }
 

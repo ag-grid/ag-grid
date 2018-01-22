@@ -24,4 +24,4 @@ meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
 
 <div class="info-page">
     <div class="row">
-        <section>
+        <section class="blog-section">

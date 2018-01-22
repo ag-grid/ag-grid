@@ -12,7 +12,7 @@ include('../includes/mediaHeader.php');
 
 
         <h1> Webpack Tutorial: Understanding How it Works</h1>
-
+        <p class="blog-author">Sean Landsman | 23rd January 2017</p>
 <div class="row" ng-app="documentation">
     <div class="col-md-8">
 

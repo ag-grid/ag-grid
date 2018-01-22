@@ -11,6 +11,7 @@ include('../includes/mediaHeader.php');
 ?>
 
 <h1>Building a CRUD Application with ag-Grid - Part 3</h1>
+<p class="blog-author">Sean Landsman | 21st November 2017</p>
 
 <div>
     <a href="https://twitter.com/share" class="twitter-share-button"
@@ -47,10 +48,6 @@ include('../includes/mediaHeader.php');
                 </li>
                 <li class="bold-roboto">Part 3: Front End - Initial Implementation</li>
                 <li>Part 4: Front End - Grid Features & CRUD (Creation, Updates and Deletion)</li>
-                <li>Part 5: Front End - Aggregation & Pivoting</li>
-                <li>Part 6: Front End - Enterprise Row Model</li>
-                <li>Part 7: Packaging (Optional)</li>
-                <li>Part 8: Back End (Optional) - Using Oracle DB</li>
             </ul>
 
             <h2>Introduction</h2>
@@ -485,7 +482,7 @@ private createColumnDefs() {
                           exampleHeight="500px">
             </show-sources>
 
-            <h2>Summary</h2>
+            <h2 style="margin-top: 10px">Summary</h2>
 
             <p>That might have seemed like a fair bit of work, but it's worth noting that we only had to import a single
                 module
