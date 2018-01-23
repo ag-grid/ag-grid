@@ -24,9 +24,7 @@ include '../documentation-main/documentation_header.php';
         <img style="margin-left: 10%" src="redux-file-browser.png" width="80%" height="4%"/>
     </p>
 
-    <note>
-        This section assumes the reader is familiar with React and ES6 Javascript features.
-    </note>
+    <note>This section assumes the reader is familiar with React and ES6 Javascript features.</note>
 
     <h2 id="do-i-need-redux">Do I need Redux?</h2>
 
@@ -520,10 +518,5 @@ autoGroupColumnDef = {
         <li>Delta Row Updates</li>
         <li>Custom Cell Renderer Components</li>
     </ul>
-
-    <p>
-        Finally you can also check out the <a href="/ag-grid-react-trader-dashboard" target="_blank">Trader Dashboard
-        <i class="fa fa-external-link"></i></a> example which also uses Redux.
-    </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
