@@ -316,11 +316,9 @@ $params: (
     }
 
     // real crude adjustments, due to line of elements with display: inline-block in the group cell
-    .ag-row-group {
-        .ag-icon-expanded,
-        .ag-icon-contracted {
-            transform: translateY(2px);
-        }
+    .ag-icon-expanded,
+    .ag-icon-contracted {
+        transform: translateY(2px);
     }
 
     // context menu spacing
@@ -367,5 +365,9 @@ $params: (
         input {
             box-sizing: border-box;
         }
+    }
+
+    .ag-details-row {
+        background-color: $default-background;
     }
 }
