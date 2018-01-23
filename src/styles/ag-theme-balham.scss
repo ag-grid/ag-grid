@@ -1,5 +1,5 @@
-@import './ag-theme-common';
-@import './flat-colors';
+@import "./ag-theme-common";
+@import "./flat-colors";
 
 $default-background: white;
 $chrome-background: lighten($flat-clouds, 3);
@@ -27,7 +27,6 @@ $disabled-foreground-color-opacity: 0.38 !default;
 // The variables below can be overriden to adjust the look up to the app color scheme
 /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 // Sizing
 $grid-size: 4px !default;
 $icon-size: 16px !default;
@@ -46,7 +45,7 @@ $border-radius: 2px;
 $odd-row-background-color: rgb(252, 253, 254);
 
 // Icons
-$icons-path: './balham-icons/' !default;
+$icons-path: "./balham-icons/" !default;
 
 // Fonts
 $font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif !default;
@@ -101,7 +100,6 @@ $value-change-delta-down-color: #e53935 !default;
 $value-change-value-highlight-background-color: #00acc1 !default;
 
 $params: (
-    // sizing
     grid-size: $grid-size,
     icon-size: $icon-size,
     header-icon-size: $header-icon-size,
@@ -112,50 +110,35 @@ $params: (
     cell-horizontal-padding: $cell-horizontal-padding,
     toolpanel-indent-size: $toolpanel-indent-size,
     row-group-indent-size: $row-group-indent-size,
-
     icons-path: $icons-path,
-
     font-family: $font-family,
     font-size: $font-size,
     font-weight: $font-weight,
-
     secondary-font-family: $secondary-font-family,
     secondary-font-size: $secondary-font-size,
     secondary-font-weight: $secondary-font-weight,
-
     foreground-color: $foreground-color,
     foreground-opacity: $foreground-opacity,
-
     secondary-foreground-color-opacity: $secondary-foreground-color-opacity,
     secondary-foreground-color: $secondary-foreground-color,
-
     disabled-foreground-color-opacity: $disabled-foreground-color-opacity,
     disabled-foreground-color: $disabled-foreground-color,
-
     background-color: $background-color,
     border-color: $border-color,
-
     icon-color: $icon-color,
     alt-icon-color: $alt-icon-color,
-
     cell-data-changed-color: $cell-data-changed-color,
-
     chip-background-color: $chip-background-color,
-
     card-background-color: $background-color,
     editor-background-color-color: $editor-background-color,
-
     range-selection-background-color: $range-selection-background-color,
     range-selection-highlight-color: $range-selection-highlight-color,
-
     panel-background-color: $panel-background-color,
     tool-panel-background-color: $tool-panel-background-color,
-
     accent-color: $accent-color,
     primary-color: $primary-color,
     hover-color: $hover-color,
     selected-color: $selected-color,
-
     icon-opacity: $foreground-opacity,
     button-text-transform: uppercase,
     card-radius: 2px,
@@ -169,7 +152,11 @@ $params: (
 );
 
 .ag-theme-balham {
-    .ag-header, .ag-row, .ag-header-cell, .ag-header-group-cell, .ag-root {
+    .ag-header,
+    .ag-row,
+    .ag-header-cell,
+    .ag-header-group-cell,
+    .ag-root {
         box-sizing: border-box;
     }
 
@@ -212,7 +199,7 @@ $params: (
         margin-top: 8px;
     }
 
-    [ref=north] {
+    [ref="north"] {
         .ag-column-drop {
             border: 1px solid $border-color;
             border-bottom: 0;
@@ -295,9 +282,9 @@ $params: (
 
     // tool panel
     .ag-tool-panel {
+        border-bottom: 1px solid $border-color;
         border-right: 1px solid $border-color;
         border-top: 1px solid $border-color;
-        border-bottom: 1px solid $border-color;
 
         .ag-column-select-panel {
             padding: $grid-size * 2 0;
@@ -369,6 +356,10 @@ $params: (
         .ag-tab.ag-tab-selected {
             border-bottom-color: transparent;
         }
+    }
+
+    .ag-tab-body {
+        background-color: $default-background;
     }
 
     .ag-cell-inline-editing {
