@@ -9,7 +9,8 @@ import {
     GridOptions,
     DetailGridInfo,
     GridOptionsWrapper,
-    ICellRendererParams
+    ICellRendererParams,
+    Environment
 } from "ag-grid/main";
 
 export class DetailCellRenderer extends Component {
@@ -20,8 +21,8 @@ export class DetailCellRenderer extends Component {
         </div>`;
 
     @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('environment') private environment: Environment;
 
     private detailGridOptions: GridOptions;
 
@@ -37,6 +38,7 @@ export class DetailCellRenderer extends Component {
         this.selectAndSetTemplate(params);
 
         if (_.exists(this.eDetailGrid)) {
+            this.addThemeToDetailGrid();
             this.createDetailsGrid(params);
             this.registerDetailWithMaster(params.node);
             this.loadRowData(params);
@@ -46,6 +48,15 @@ export class DetailCellRenderer extends Component {
         } else {
             console.warn('ag-Grid: reference to eDetailGrid was missing from the details template. ' +
                 'Please add ref="eDetailGrid" to the template.');
+        }
+    }
+
+    private addThemeToDetailGrid(): void {
+        // this is needed by environment service of the child grid, the class needs to be on
+        // the grid div itself - the browser's CSS on the other hand just inherits from the parent grid theme.
+        let theme = this.environment.getTheme();
+        if (_.exists(theme)) {
+            _.addCssClass(this.eDetailGrid, theme);
         }
     }
 
