@@ -34,8 +34,8 @@ include('../includes/mediaHeader.php');
 
         <h2>Summary</h2>
 
-        <p>In Part 4 of this Series we create the scaffolding for our Angular application and get our data displayed
-            in our first, simple, grid.</p>
+        <p>In Part 4 of this Series hook up the front end all the way down to the database, including support for all
+            CRUD operations (create, read, update and deletion).</p>
 
         <h2>Series Chapters</h2>
 
@@ -47,7 +47,7 @@ include('../includes/mediaHeader.php');
                 Service
             </li>
             <li><a href="../ag-grid-datagrid-crud-part-3/">Part 3</a>: Front End - Initial Implementation</li>
-            <li class="bold-roboto">Part 4: Front End - Grid Features & CRUD (Creation, Updates and Deletion)</li>
+            <li class="bold-roboto">Part 4: Front End - Grid Features & CRUD (Creation, Reads, Updates and Deletion)</li>
         </ul>
 
         <h2>Introduction</h2>
