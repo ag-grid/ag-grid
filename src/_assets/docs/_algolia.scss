@@ -48,16 +48,24 @@
 
 input + #kbd-hint {
     font-size: 70%;
-    opacity: 0.5;
+    opacity: 1;
     position: absolute;
     right: 0.7rem;
     top: 0.7rem;
+    transition: all 0.5s linear;
+
+    kbd {
+        background-color: $gray-100;
+        border: 1px solid $border-color;
+        border-bottom-width: 2px;
+        color: $gray-700;
+    }
 }
 
 input:focus + #kbd-hint {
-    display: none;
+    opacity: 0;
 }
 
 input:not(:empty) + #kbd-hint {
-    display: none;
+    opacity: 0;
 }

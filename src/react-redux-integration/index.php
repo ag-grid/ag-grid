@@ -177,7 +177,7 @@ export const actions = {
         component. This is achieved through the <code>Provider</code> component from the react-redux project.
     </p>
 
-    <p>In the entry point of our application we wrap out file browser component in the <code>Provider</code> component
+    <p>In the entry point of our application we wrap the <code>FileBrowser</code> component in the <code>Provider</code> component
        as shown below:
     </p>
 
@@ -216,7 +216,9 @@ import {bindActionCreators} from 'redux';
 
 class FileBrowser extends Component {
     render() {
-        // Warning: Not a real implementation of render()!!!
+
+        /******* Warning, not a real implementation of render(), eg no html! */
+        /******* The proper render method is given later. */
 
         // an immutable copy of the file state is accessed using:
         this.props.files;
@@ -238,7 +240,7 @@ const mapDispatchToProps = (dispatch) => ({actions: bindActionCreators(actions, 
 export default connect(mapStateToProps, mapDispatchToProps)(FileBrowser);
 </snippet>
     <p>
-        In the code above we pass two function to <code>connect</code> to map the required state (mapStateToProps) and
+        In the code above we pass two functions to <code>connect</code> to map the required state (mapStateToProps) and
         actions (mapDispatchToProps). When binding our actions we are using the <code>bindActionCreators</code> utility
         which wraps our action creators into a <code>dispatch</code> call.
     </p>
@@ -306,7 +308,7 @@ render() {
     </p>
 
     <p>
-        The file structure in our file browser is captures in our state as an array of files, where each array entry
+        The file structure in the file browser is captured in the state as an array of files, where each array entry
         contains it's hierarchy in the <code>filePath</code> attribute.
     </p>
 
@@ -326,6 +328,7 @@ files: [
 
     <p>
         For more details see our documentation on <a href="../javascript-grid-tree-data/">Tree Data</a>.
+        The mechanism for connecting Redux to ag-Grid applies equally to when the Tree Data feature is not used.
     </p>
 
     <h2 id="row-data-updates">Row Data Updates</h2>

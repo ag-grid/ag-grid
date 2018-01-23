@@ -9,63 +9,56 @@ include '../documentation-main/documentation_header.php';
 <h1>Cell Rendering</h1>
 
 <p>
-    By default, the grid will place the values of your data into the cells as simple strings.
-    If you want something other than simple strings, then you use a cell renderer.
-    So for rendering your values, you have the following three options:
+    By default the grid renders values into the cells as strings.
+    If you want something more complex you use a cell renderer.
 </p>
 
+<p>
+    The cell editor for a column is set via <code>colDef.cellRenderer</code> and can
+    be any of the following types:
     <ol class="content">
-        <li>Do nothing, simple strings get used to display the data.</li>
-        <li>Use one of the grid provided cell renderers.</li>
-        <li>Build your own cell renderer.</li>
+        <li><code>undefined / null</code>: Grid renders the value as a string.</li>
+        <li><code>String</code>: The name of a cell renderer registered with the grid.</li>
+        <li><code>Class</code>: Provide your own cell renderer component directly without registering.</li>
+        <li><code>Function</code>: A function that returns either an HTML string or DOM element for display.</li>
     </ol>
+    The code snippet below demonstrates each of these method types.
+</p>
 
 <snippet>
-// 1 - do nothing, simple text is used by the grid
+// 1 - undefined / null - Grid renders the value as a string.
 var colDef1 = {
     cellRenderer: null,
     ...
 }
 
-// 2 - use one of the grids provided cell renderers, reference it by name
+// 2 - String - The name of a cell renderer registered with the grid.
 var colDef2 = {
-    cellRenderer:'agGroupCellRenderer',
+    cellRenderer: 'agGroupCellRenderer',
     ...
 }
 
-// 3 - provide your own cell renderer
+// 3 - Class - Provide your own cell renderer component directly without registering.
 var colDef3 = {
     cellRenderer: MyCustomCellRendererClass,
     ...
-}</snippet>
+}
+
+// 4 - Function - A function that returns an HTML string or DOM element for display
+var colDef3 = function(params) {
+    // put the value in bold
+    return 'Value is &lt;b>'+params.value+'&lt;/b>';
+}
+
+</snippet>
 
 <p>
-    This section of the documentation explains the first two items above, how to use no cell
-    renderer and how to use the grid provided cell renderers. To build your own cell renderer,
-    see the section <a href="../javascript-grid-cell-rendering-components/">Cell Rendering Components</a>.
+    This remainder of this documentation page goes through the grid provided cell renderer's.
+    To build your own cell renderer see the section
+    <a href="../javascript-grid-cell-rendering-components/">Cell Rendering Components</a>.
 </p>
 
-<p>
-    This section of the documentation also lists how to use all the grids provided renderers.
-</p>
-
-<h2>Cell Rendering Flow</h2>
-
-<p>
-    The diagram below (which is taken from the section <a href="../javascript-grid-value-getters/">Value Getters & Formatters</a>)
-    summarises the steps the grid takes while working out what to render and how to render.
-</p>
-
-<p>
-    In short, a value is prepared. The value comes using either the <code>colDef.field</code> or the
-    <code>colDef.valueGetter</code>. The value is also optionally passed through a <code>colDef.valueFormatter</code>
-    if it exists. Then the value is finally placed into the DOM, either directly, or by using the chosen
-    <code>colDef.cellRenderer</code>.
-</p>
-
-<img class="img-fluid" src="../javascript-grid-value-getters/valueGetterFlow.svg"/>
-
-<h2>Choosing No Cell Renderer</h2>
+<h2>No Cell Renderer</h2>
 
 <p>
     If you have no requirements for custom cells, then you should use no cell renderer.

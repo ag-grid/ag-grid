@@ -1,7 +1,7 @@
 <?php
-$key = "ag-Grid Reference: Angular with Webpack";
-$pageTitle = "Angular Webpack 2";
-$pageDescription = "How to build ag-Grid using Angular and Webpack 2.";
+
+$pageTitle = "ag-Grid Reference: Using Angular with webpack 2";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. In this article, we describe how to build ag-Grid using Angular and webpack 2.";
 $pageKeyboards = "Angular Webpack 2";
 $pageGroup = "basics";
 $angularParent = "checked";

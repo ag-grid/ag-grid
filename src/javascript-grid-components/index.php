@@ -15,72 +15,39 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    The following sections show how to use your own components inside the grid:
+    The full list of component types you can provide in ag-Grid are as follows:
+    <ul>
+        <li>
+            <a href="../javascript-grid-cell-rendering-components/">Cell Renderer</a>:
+            To customises the contents of a cell.
+        </li>
+        <li>
+            <a href="../javascript-grid-cell-editor/">Cell Editor</a>:
+            To customises editing of a cell.
+        </li>
+        <li>
+            <a href="../javascript-grid-filter-component/">Filter Component</a>:
+            For custom column filter that appears inside the column menu.
+        </li>
+        <li>
+            <a href="../javascript-grid-floating-filter-component/">Floating Filter</a>:
+            For custom column filter that appears inside the column menu.
+        </li>
+        <li>
+            <a href="../javascript-grid-date-component/">Date Component</a>:
+            To customise the date selection component in the date filter.
+        </li>
+        <li>
+            <a href="../javascript-grid-header-rendering/">Header Component</a>:
+            To customise the header of a column and column groups.
+        </li>
+        <li>
+            <a href="../javascript-grid-overlay-component/">Overlay Component</a>:
+            To customise loading and no rows overlay components.
+        </li>
+    </ul>
+    The remainder of this page gives information that is common across all the component types.
 </p>
-
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Cell Renderer</h2>
-    <p> A cell renderer customises the contents of a cell.  </p>
-    <p> <a href="../javascript-grid-cell-rendering-components/">Go to Cell Renderer Component</a> </p>
-    </div>
-</div>
-
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Cell Editor</h2>
-    <p> A cell renderer customises the contents of a cell.  </p>
-    <p> <a href="../javascript-grid-cell-editor/">Go to Cell Editor Component</a> </p>
-    </div>
-</div>
-
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Filter Component</h2>
-    <p> For custom column filter that appears inside the column menu.  </p>
-    <p> <a href="../javascript-grid-filter-component/">Go to Filter Component Component</a> </p>
-    </div>
-</div>
-
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Floating Filter</h2>
-    <p> For custom column filter that appears inside the column menu.  </p>
-    <p> <a href="../javascript-grid-floating-filter-component/">Go to Floating Filter Component</a> </p>
-    </div>
-</div>
-
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Floating Filter</h2>
-    <p> For custom column floating filters that display in the header area.  </p>
-    <p> <a href="../javascript-grid-floating-filter-component/">Go to Floating Filter Component</a> </p>
-    </div>
-</div>
-
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Date Component</h2>
-    <p> To customise the date selection component in the date filter.  </p>
-    <p> <a href="../javascript-grid-date-component/">Go to Date Component</a> </p>
-    </div>
-</div>
-
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Header Component</h2>
-    <p> To customise column headers, including column groups.  </p>
-    <p> <a href="../javascript-grid-header-rendering/">Go to Header Component</a> </p>
-    </div>
-</div>
-
-<div class="docs-homepage-section-preview">
-    <div>
-    <h2>Overlay Component</h2>
-    <p> To customise loading and no rows overlay components.  </p>
-    <p> <a href="../javascript-grid-header-rendering/">Go to Overlay Component</a> </p>
-    </div>
-</div>
 
         <h2>Registering Custom Components</h2>
 
