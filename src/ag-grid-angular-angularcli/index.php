@@ -1,7 +1,7 @@
 <?php
 $key = "ag-Grid Reference: Building with Angular Cli";
 $pageTitle = "Angular CLI";
-$pageDescription = "How to build ag-Grid using Angular CLI.";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. This page details how to build ag-Grid using Angular CLI.";
 $pageKeyboards = "Angular CLI";
 $pageGroup = "basics";
 $angularParent = "checked";
