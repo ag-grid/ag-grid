@@ -7,7 +7,7 @@ include '../jira_reports/jira_utilities.php';
 <html>
 <head lang="en">
 <?php
-meta_and_links("ag-Grid Pipeline", "ag-Grid javascript grid pipeline changelog release notes", "ag-Grid - Pipeline / Changelog of Work.", false);
+meta_and_links("ag-Grid: Pipeline of Upcoming Features and Roadmap", "ag-Grid javascript grid pipeline changelog release notes", "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. Our Pipeline lists all known bugs, upcoming features and our Roadmap for major future releases. Version 16 is out now.", false);
 ?>
 <link rel="stylesheet" href="../dist/homepage.css">
 <link rel="stylesheet" href="../dist/aui/css/aui.css" media="all">
