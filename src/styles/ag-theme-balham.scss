@@ -97,7 +97,7 @@ $card-radius: 2px;
 // delta changes
 $value-change-delta-up-color: #43a047 !default;
 $value-change-delta-down-color: #e53935 !default;
-$value-change-value-highlight-background-color: #00acc1 !default;
+$value-change-value-highlight-background-color: transparentize($flat-green-2, 0.5) !default;
 
 $params: (
     grid-size: $grid-size,
@@ -160,10 +160,6 @@ $params: (
         box-sizing: border-box;
     }
 
-    %selected-tab {
-        border-bottom: 2px solid $primary-color;
-    }
-
     %card {
         border: 1px solid $border-color;
     }
@@ -179,6 +175,7 @@ $params: (
 
     %selected-tab {
         background-color: $default-background;
+        border-bottom: 2px solid $primary-color;
         border-bottom: 2px solid $default-background;
         border-color: $border-color;
     }
@@ -358,7 +355,8 @@ $params: (
         }
     }
 
-    .ag-tab-body {
+    .ag-tab-body,
+    .ag-menu {
         background-color: $default-background;
     }
 
