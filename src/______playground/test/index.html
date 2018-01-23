@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="pragma" content="no-cache" />
+
+
+    <script src="angular.js"></script>
+    <script src="ag-grid-enterprise.js"></script>
+
+    <script src="app.js"></script>
+</head>
+<body ng-controller="main as ctrl" >
+    <h1>ag-grid bug</h1>
+    <div ag-grid="ctrl.gridOptions" class="ag-fresh" style="height: 200px; width: 800px"></div>
+
+    <button ng-click="ctrl.setData()">setData</button>
+    <button ng-click="ctrl.addData()">add data</button>
+    <button ng-click="ctrl.openNewWindow()">open</button>
+</body>
+</html>

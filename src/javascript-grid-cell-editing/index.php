@@ -300,7 +300,58 @@ colDef.cellEditorParams = {
 
     <?= example('Cell Editing', 'cell-editing', 'generated') ?>
 
-    <h2 id="enter-key-down">Enter Key Navigation</h2>
+
+    <h2>Many Editors One Column</h2>
+
+    <p>It is also possible to use different editors for different rows in the same column.
+        Typically an application might check the rows contents and choose and editor accordingly.
+        To configure this set <code>colDef.cellEditorSelector</code>
+        to a function that returns the name of the component to be used as an editor
+        and optionally the custom params to be passed into it<p>
+
+    <p>The parameters that these functions will receive are:<p>
+    <snippet>interface DynamicComponentParams {
+        data: any,
+        node: RowNode,
+        colDef: ColDef,
+        column: Column,
+        rowIndex: number,
+        api: GridApi,
+        columnApi: ColumnApi
+    }
+    </snippet>
+
+    <p>The following example illustrates how to use different editors and parameters in the same column. Note that:</p>
+
+    <ul class="content">
+        <li>The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
+        </li>
+        <li><code>colDef.cellEditorSelector</code> is a function that returns the name of the component to use to edit based on the
+            type of data for that row
+        </li>
+        <snippet>cellEditorSelector:function (params){
+                if (params.data.type === 'age') return {
+                    component: 'numericCellEditor'
+                };
+                if (params.data.type === 'gender') return {
+                    component: 'agRichSelect',
+                    params: {values: ['Male', 'Female']}
+                };
+                if (params.data.type === 'mood') return {
+                    component: 'agRichSelect'
+                };
+
+                return null;
+            }</snippet>
+        <li>
+            Edit a cell by double clicking to observe the different editors used.
+        </li>
+    </ul>
+
+    <?= example('Dynamic Editor Component', 'dynamic-editor-component', 'vanilla', array("enterprise" => 1, "exampleHeight" => 250)) ?>
+
+
+<h2 id="enter-key-down">Enter Key Navigation</h2>
 
     <p>
         By default pressing <b>Enter</b> will start editing on a cell, or stop editing

@@ -189,6 +189,30 @@ detailCellRendererParams: {
 
 <?= example('Custom Detail Cell Renderer with Form', 'custom-detail-with-form', 'generated', array("enterprise" => 1)) ?>
 
+<h2 id="grid-per-row">Configure Grid per Row</h2>
+
+<p>
+    The property <code>detailCellRendererParams</code> can be a function to allow providing
+    different parameters for each row. This can be used to provide a differently configured grid
+    for each row.
+</p>
+
+<p>
+    The example below shows different grid configurations based on the data. Note the following:
+    <ul>
+        <li>
+            Expanding rows 'Mila Smith' or 'Harper Johnson' will use a detail grid with the
+            columns {Call ID, Number}.
+        </li>
+        <li>
+            Expanding all other rows will use a detail grid with the columns {Call ID, Direction,
+            Duration, Switch Code}.
+        </li>
+    </ul>
+</p>
+
+<?= example('Dynamic Params', 'dynamic-params', 'generated', array("enterprise" => 1)) ?>
+
 <h2>Accessing Detail Grid API</h2>
 
 <p>

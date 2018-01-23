@@ -1,0 +1,17 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="pragma" content="no-cache" />
+
+    <script src="angular.js"></script>
+    <script src="external.js"></script>
+</head>
+<body ng-controller="external as ctrl">
+    <h1>external window</h1>
+    {{ctrl.something}}
+    <button ng-click="ctrl.addData()">add data</button>
+</body>
+</html>
