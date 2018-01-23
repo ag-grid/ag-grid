@@ -2,10 +2,8 @@
 include 'utils.php';
 $example = getExampleInfo('angular');
 $generated = isset($_GET['generated']);
-if ($generated) { 
-    echo "<!DOCTYPE html>\n";
-};
 ?>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Angular 2 ag-Grid starter</title>
