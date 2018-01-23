@@ -36,9 +36,6 @@ meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
 
         <div id="search-wrapper">
             <input type="text" id="search-input" placeholder="Search Docs" />
-            <span id="kbd-hint">
-                (press <kbd>s</kbd> to focus)
-            </span>
         </div>
 
     <div id="side-nav-container" class="collapse">

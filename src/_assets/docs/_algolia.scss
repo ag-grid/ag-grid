@@ -46,11 +46,18 @@
     font-weight: bold;
 }
 
-#kbd-hint {
+input + #kbd-hint {
     font-size: 70%;
     opacity: 0.5;
+    position: absolute;
+    right: 0.7rem;
+    top: 0.7rem;
+}
 
-    kbd {
-        padding: 0.1rem 0.2rem;
-    }
+input:focus + #kbd-hint {
+    display: none;
+}
+
+input:not(:empty) + #kbd-hint {
+    display: none;
 }
