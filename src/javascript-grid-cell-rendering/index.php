@@ -20,11 +20,7 @@ include '../documentation-main/documentation_header.php';
         <li><code>undefined / null</code>: Grid renders the value as a string.</li>
         <li><code>String</code>: The name of a cell renderer registered with the grid.</li>
         <li><code>Class</code>: Provide your own cell renderer component directly without registering.</li>
-        <li>
-            <code>Function</code>: A function that returns either:
-                <b>A)</b> a cell renderer name that is subsequently looked up or
-                <b>B)</b> an HTML string or DOM element for display.
-        </li>
+        <li><code>Function</code>: A function that returns either an HTML string or DOM element for display.</li>
     </ol>
     The code snippet below demonstrates each of these method types.
 </p>
@@ -48,14 +44,7 @@ var colDef3 = {
     ...
 }
 
-// 4.a - Function - A function that returns a cell renderer name (which subsequently gets looked up)
-var colDef3 = function(params) {
-    var isATrade = params.data.type==='trade';
-    // assumes 'myTradeCellRenderer' and 'myOtherCellRenderer' are registered with the grid
-    return isATrade ? 'myTradeCellRenderer' : 'myOtherCellRenderer';
-}
-
-// 4.b - Function - A function that returns an HTML string or DOM element for display
+// 4 - Function - A function that returns an HTML string or DOM element for display
 var colDef3 = function(params) {
     // put the value in bold
     return 'Value is &lt;b>'+params.value+'&lt;/b>';
@@ -82,6 +71,52 @@ var colDef3 = function(params) {
     If you just want to do simple formatting of the data (eg currency or date formatting)
     then you can use <code>colDef.valueFormatter</code>.
 </p>
+
+<h2>Many Renderers One Column</h2>
+
+<p>It is also possible to use different renderers for different rows in the same column.
+    Typically an application might check the rows contents and choose a renderer accordingly.
+    To configure this set <code>colDef.cellRendererSelector</code>
+    to a function that returns the name of the component to be used as a renderer and optionally
+    the custom params to be passed into it<p>
+
+<p>The parameters that this functions will receive the same parameters than a renderer would receive:<p>
+
+<p>The following example illustrates how to use different renderers and parameters in the same column. Note that:</p>
+
+<ul class="content">
+    <li>The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
+    </li>
+    <li><code>colDef.cellRendererSelector</code> is a function that selects the renderer based on the row data
+    </li>
+    <snippet>cellRendererSelector:function (params) {
+            var moodDetails = {
+                component: 'moodCellRenderer'
+            };
+
+            var genderDetails = {
+                component: 'genderCellRenderer',
+                params: {values: ['Male', 'Female']}
+            };
+
+            if (params.data.type === 'gender')
+                return genderDetails;
+            else if (params.data.type === 'mood')
+                return moodDetails;
+            else
+                return null;
+
+        }
+</snippet>
+    <li>
+        The column 'Rendered Value' show the data rendered applying the component and params specified by <code>
+            colDef.cellRendererSelector</code>
+    </li>
+</ul>
+
+<?= example('Dynamic Rendering Component', 'dynamic-rendering-component', 'vanilla', array("enterprise" => 1, "exampleHeight" => 250)) ?>
+
+
 
 <h2>Grid Provided Renderers</h2>
 
