@@ -9,15 +9,10 @@ include '../documentation-main/documentation_header.php';
     <h1>Cell Editing</h1>
 
     <p class="lead">
-        Cell Renderers and Cell Editors, the former for showing the data, the latter for editing the data.
+        Cell Renderers are for displaying data and Cell Editors are for editing data.
         If your application is for showing data only, such as a reporting application, then you will not
-        need to use cell editors. If you are editing your data like a spreadsheet, then cell editors are
-        going to be your best friend as you build your application using ag-Grid.
-    </p>
-
-    <p>
-        Use Cell Editors to provide editing functionality to your data through the grid that ties in
-        with the grid navigation, refresh and general data management.
+        need to use cell editors. If you are editing your data like a spreadsheet, then you will
+        need Cell Editors to do the editing.
     </p>
 
     <p>
@@ -25,10 +20,14 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <ul class="content">
-        <li>component: The grid will call 'new' on the provided class and treat the object as a component, using
-            lifecycle methods.</li>
-    <li>string: The <code>cellEditor</code> is looked up from the provided cell editors. Use this if you
-            want to use a built in editor.</li>
+        <li><code>undefined / null</code>: The grid uses the default text cell editor.</li>
+        <li>
+            <code>string</code>: The name of a cell renderer registered with the grid.
+        </li>
+        <li>
+            <code>Function</code>: A function that returns either a cell renderer name that is subsequently looked up.
+        </li>
+        <li><code>Class</code>: Provide your own cell renderer component directly without registering.</li>
     </ul>
 
     <h2>Enabling editing in a column</h2>

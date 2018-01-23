@@ -225,6 +225,22 @@ In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> a
     again to get a new version of the GUI.
 </p>
 
+<h2>Cell Rendering Flow</h2>
+
+<p>
+    The diagram below (which is taken from the section <a href="../javascript-grid-value-getters/">Value Getters & Formatters</a>)
+    summarises the steps the grid takes while working out what to render and how to render.
+</p>
+
+<p>
+    In short, a value is prepared. The value comes using either the <code>colDef.field</code> or the
+    <code>colDef.valueGetter</code>. The value is also optionally passed through a <code>colDef.valueFormatter</code>
+    if it exists. Then the value is finally placed into the DOM, either directly, or by using the chosen
+    <code>colDef.cellRenderer</code>.
+</p>
+
+<img class="img-fluid" src="../javascript-grid-value-getters/valueGetterFlow.svg"/>
+
 <h2>Complementing Cell Renderer Params</h2>
 
 <p>
