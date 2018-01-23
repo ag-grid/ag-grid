@@ -12,9 +12,8 @@ include('../includes/mediaHeader.php');
 
 
     <!-- <link rel="stylesheet" href="../documentation-main/documentation.css"> -->
-    <h1>How to Add JavaScript Pivot Tables to your App</h1>
+    <h1>Become a data guru with ag-Grid and JavaScript pivot tables</h1>
     <p class="blog-author">Sophia Lazarova | 14th November 2017</p>
-    <p class="lead">Data is not to be stored but to be understood! By adding pivot tables to your JavaScript application, you can empower your users to make the most of their data. This article runs through practical advice with steps on how to use ag-Grid Enterprise to quickly add pivot tables to your app for any of the major frameworks such as Angular, React or Vue.</p>
 
     <div>
         <a href="https://twitter.com/share" class="twitter-share-button"
@@ -37,17 +36,18 @@ if (!d.getElementById(id)) {
 <div class="row">
 <div class="col-md-8">
 
+<p class="lead">Data is not to be stored but to be understood! By adding pivot tables to your JavaScript application, you can empower your users to make the most of their data. This article gives an insight on pivot tables, their common usage and their integration with JavaScript applications.</p>
+
 <p>For your users, working with big amounts of data has never been easy. Data without insight is worthless, we end up wondering what to do with our pile of rows and records. Fear not, there is an easy way to handle your data without being a data scientist or database guru.</p>
 
-<p>In this article, we will explore the capabilities of pivot tables. Don't worry if you still have no idea what I am referring to, we are starting from ground zero.</p>
+<h2>In Theory</h2>
 
-<h2>First Principles - What are Pivot Tables?</h2>
+<p>For most people, pivot table is a fancy word, widely used among the Excel spreadsheet lovers. And if you are like me, you have probably Googled the meaning at least once. Well, turns out pivot tables are a really powerful feature that gives the user insight into their data. Their purpose is to summarize large amounts of data by applying operations such as averaging, sorting and grouping.
+As a result a pile of rows and data can quicly become a well-shaped and beautifully stuctured report.</p>
 
-<p>For most people, pivot tables means Excel spreadsheets - thousands of rows which eventually become well-shaped reports. If you are like me, you have to Google how to do it each time. It's a really powerful feature that gives the user insight into their data. Their purpose is to summarize large amounts of data by applying operations such as averaging, sorting and grouping.</p>
-
-<h2>How to add Pivot Tables to your JavaScript App</h2>
-
-<p>Let's have a look at the following example and see how things are really working. We will use <strong>ag-Grid</strong> for explaining the concept of pivot tables.</p>
+<h2>In Practice</h2>
+<p>You are still not sure what's the actual purpose of the pivot tables? No worries, an example is worth a thousand words!
+Let's have a look at the following example and see how we can use pivot tables.</p>
 
 <p><strong>Plot</strong>: We have a dataset with participants in different games. The participants are located in different countries and have different yearly and monthly winnings. This data is part of a bigger dataset but we will use only some of the attributes:</p>
 
@@ -65,9 +65,10 @@ if (!d.getElementById(id)) {
 
 <img src="initial-grid.png" alt="pipeline" width="85%"/>
 
-<h3>Let's get to work</h3>
+<p></p>
+<h4>Pivot Tables to the Rescue</h4>
 
-<p>In order to find the total winnings for each country we need to find all participant from a country and sum their winnings. Easy, right?</p>
+<p>To solve our task we will use the magic power of pivoting in <strong>ag-Grid</strong>. So in order to find the total winnings for each country we need to find all participant from a country and sum their winnings. Easy, right?</p>
 
 <p>First we need to enter 'Pivot Mode' or in other words - start a pivot table.</p>
 
@@ -81,7 +82,7 @@ Important here are these two sections:</p>
 </ul>
 <p><img src="sections.png" alt="pipeline" width="35%"/></p>
 <p></p>
-<h4><strong>Grouping</strong></h4>
+<h5>Grouping</h5>
 
 <p>Let's start by presenting a list of all coutries with participants.</p>
 <p>Since we want to find the winnings of each country we should group our data by 'Country'.</p>
@@ -90,13 +91,13 @@ Important here are these two sections:</p>
 
 <p>Piece of cake!</p>
 
-<h4><strong>Aggregation</strong></h4>
+<h5>Aggregation</h5>
 
 <p>Aggregation is used for presenting sum, average, min, etc. values of attributes with numeric values. We will use aggregation to get the sum of the winnings for each country.</p>
 
 <p><img src="aggr.gif" alt="aggregation" width="85%"  /></p>
 
-<h3>Oh well, looks like we are ready!</h3>
+<h4>Oh well, looks like we are ready!</h4>
 
 <p>Now we have all the countries with their corresponding total winnings.
 Beautiful, isn't it? In just a few clicks we have a summarized report of our complexed data.</p>
@@ -109,11 +110,29 @@ Have in mind that the default aggregation value is <strong>SUM</strong>.</p>
 <p>Just as easy we can get summary not only of the total winnings but of the monthly breakdown.</p>
 
 <img src="final.png" alt="pipeline" width="85%"/>
+
+<p></p>
+<h2>Talk technie to me!</h2>
+<p>It is clear now what pivot tables are and how we can use them, but there is still one unsolved question - how do we enable them in our JavaScript application?</p>
+<p>As you already know we don't need to build pivot table from scratch, we can simply use the capabilities of <strong>ag-Grid.</strong></p>
+<p>Pivoting is, no doubt, one of the top features of <strong>ag-Grid Enterprise</strong>. Make sure you are using <strong>ag-Grid Enterprise</strong>
+in order to use pivoting and other high profile goods. You can find <strong>ag-Grid</strong> and <strong>ag-Grid Enterprise</strong> on npm and bower. If you have any difficulties you can refer to <a href="../javascript-grid-getting-started/">our getting started articles.</a></p>
+<p> Once you are packed with <strong>ag-Grid Enterprise</strong>, you should simply edit the column definitions and add the <em>enablePivot</em> property with value <em>true</em>.
+<snippet language="sh">
+this.columnDefs = [
+            {headerName: "Make", field: "make", enablePivot: true},
+            {headerName: "Model", field: "model", cellRendererFramework: RedComponentComponent, enablePivot: true},
+            {headerName: "Price", field: "price", enablePivot: true}
+        ];
+</snippet>
+
+<p>This is a simple exmaple of enabling pivoting in <strong>ag-Grid</strong>. Of course, <strong>ag-Grid</strong> has more advanced settings for pivoting in complecated scenarios.
+To find out more about pivoting, read the <a href="../javascript-grid-pivoting/">dedicated article</a> in our documentation.</p>
+
 <h2 id="conclusion">Conclusion</h2>
 
 <p>Congrats, you are a master of the advanced reports now! </p>
 <p>Pivot tables are a powerful tool which is fairly simple to use once you know it's tricks.
-There are different technologies offering pivot tables but no worries, you will feel pretty comfortable with any of them since the logic behind is the same.</p>
 
 <p>You can try this by yourself right away, using the <a href="../exmaple.php">ag-Grid demo</a>.
 If you are in a mood for writing code you can download ag-Grid and build your own grid with pivoting.</p>
