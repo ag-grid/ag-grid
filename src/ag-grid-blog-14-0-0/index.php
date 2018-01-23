@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid v14 Released";
+$pageTitle = "ag-Grid Blog: Version 14 Release";
 $pageDescription = "ag-Grid v14 'Halloween' is now released with features including enhanced tree data, unbalanced grouping, enhanced Angular and React examples and many more features and bug fixes.";
 $pageKeyboards = "ag-grid new features halloween";
 $socialUrl = "https://www.ag-grid.com/ag-grid-blog-14-0-0/";

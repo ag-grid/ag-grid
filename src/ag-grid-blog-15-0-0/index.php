@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "ag-Grid v15.0.0 Released";
+$pageTitle = "ag-Grid Blog: Version 15 Release";
 $pageDescription = "ag-Grid v15.0.0 is now released!";
 $pageKeyboards = "ag-grid v15.0.0";
 $socialUrl = "https://www.ag-grid.com/ag-grid-blog-15-0-0/";
