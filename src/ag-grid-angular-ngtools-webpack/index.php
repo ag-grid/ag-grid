@@ -1,7 +1,7 @@
 <?php
-$key = "ag-Grid Reference: Angular, ngtools and webpack";
-$pageTitle = "Angular Datagrid using @ngtools/webpack";
-$pageDescription = "Demonstrate the best Angular datagrid using @ngtools/webpack.";
+
+$pageTitle = "ag-Grid Reference: Angular, ngtools and webpack";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. This guide runs through how to build Angular datagrid with ngtools, webpack and TypeScript.";
 $pageKeyboards = "Angular Grid ngtools webpack 2";
 $pageGroup = "basics";
 $angularParent = "checked";

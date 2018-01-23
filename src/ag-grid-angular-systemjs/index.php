@@ -1,7 +1,6 @@
 <?php
-$key = "ag-Grid Reference: AngularJS with SystemJS";
-$pageTitle = "Angular Datagrid using SystemJS";
-$pageDescription = "Demonstrate the best Angular datagrid using SystemJS and SystemJS Builder";
+$pageTitle = "ag-Grid Reference: Building with Angular with SystemJS";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. This reference guide demonstrates building the Angular datagrid using SystemJS and SystemJS Builder.";
 $pageKeyboards = "Angular Grid SystemJS";
 $pageGroup = "basics";
 $angularParent = "checked";
