@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Cell Expressions";
-$pageDescription = "ag-Grid provides the ability to have expressions as cell values, just like in Excel. This page describes how to do this.";
+$pageTitle = "ag-Grid - Working with Data: Expressions";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Expressions. Expressions allow you to use simple strings instead of functions for value getters, setters, formatters and parsers. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Cell Expressions";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

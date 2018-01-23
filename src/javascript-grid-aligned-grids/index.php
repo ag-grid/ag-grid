@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Aligned Grids";
-$pageDescription = "ag-Grid Aligned Grids";
+$pageTitle = "ag-Grid - Core Grid Features: Aligned Grids";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Aligned Grids. Have one or more grids horizontally Aligned so that any column changes in one grid impact the other grid. This allows two grids with different data to be kept horizontally in sync. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Aligned Grids";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Printing";
-$pageDescription = "If you want to print your grid, then it should be rendered without scrolls. This page shows you how to do it.";
+$pageTitle = "ag-Grid - Core Grid Features: Layout For Print";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Layout For Print. Use For Print to have the grid render without using any scrollbars. This is useful for printing the grid, where all rows should be printed, not just what's visible on the screen. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Printing";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

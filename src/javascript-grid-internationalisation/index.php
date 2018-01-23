@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Internationalisation";
-$pageDescription = "You can change text used in different parts of the grid for Internationalisation. This page explains how to change languages via the grid options.";
+$pageTitle = "ag-Grid - Styling & Appearance: Internationalisation";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Internationalisation. Support multiple languages with Internationalisation. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Internationalisation";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Change Detection";
-$pageDescription = "ag-Grid uses Change Detection to allow updating only cells that have changed values. This page explains how you can use the change detection inside of ag-Grid.";
+$pageTitle = "ag-Grid - Working with Data: Change Detection";
+$pageDescription = "aag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Change Detection. As you change data inside the grid, the grid runs Change Detection to check if any other cells need to be updated to reflect the change. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Change Detection";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

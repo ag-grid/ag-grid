@@ -1,31 +1,6 @@
-export const types = {
-  NEW_FILE: 'NEW_FILE',
-  MOVE_FILES: 'MOVE_FILES',
-  DELETE_FILES: 'DELETE_FILES',
-};
+import {types} from '../types/fileTypes.jsx'
 
-export const actions = {
-  newFile(filePath) {
-    return {
-      type: types.NEW_FILE,
-      payload: {filePath}
-    };
-  },
-  moveFiles(pathToMove, targetPath) {
-    return {
-      type: types.MOVE_FILES,
-      payload: {pathToMove, targetPath}
-    };
-  },
-  deleteFiles(pathToRemove) {
-    return {
-      type: types.DELETE_FILES,
-      payload: {pathToRemove}
-    };
-  }
-};
-
-export function reducer(state = {}, action) {
+export default function fileReducer(state = {}, action) {
   const payload = action.payload;
   switch (action.type) {
     case types.NEW_FILE:

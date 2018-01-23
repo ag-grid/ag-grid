@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Column Header";
-$pageDescription = "Explains details about the column header.";
+$pageTitle = "ag-Grid - Styling & Appearance: Column Headers";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Headers. The display of column headers can be fine-tuned to change Header Height and Text Orientation for example. Free and Commercial version available.";
 $pageKeyboards = "grid header";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

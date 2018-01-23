@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "JavaScript Grid Quick Filter";
-$pageDescription = "ag-Grid comes with a quick filter. This section explains how to use the quick filter.";
+$pageTitle = "ag-Grid - Core Grid Features: Quick Filter";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Quick Filter. Quick Filter filters all columns simultaneously with a simple text search, just like how you filter your Gmail. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Quick Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

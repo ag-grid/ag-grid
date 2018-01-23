@@ -7,11 +7,11 @@ include('../includes/mediaHeader.php');
 ?>
 
         <h1>Plunker is now backed by ag-Grid</h1>
-        <img src="../images/ag-grid-and-plunker.png" class="large-cover-img">
+        <img src="../images/Plunker_Cover.png" class="large-cover-img">
 <div class="row">
     <div class="col-md-8">
 
-        <p>
+        <p class="lead">
             As of today, ag-Grid is providing financial backing to help <a href="https://plnkr.co/">Plunker</a> and say thanks! 
         </p>
 
@@ -22,7 +22,7 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            At the end of last year, we got in contact with Geoff Goodman and we quickly found common ground. This led to us providing support for Geoff and his team. As Geoff says:
+            At the end of last year, we got in contact with Geoff Goodman, creator of Plunker, and we quickly found common ground. This led to us providing support for Geoff and his team. As Geoff says:
         </p>
 
         <p>
@@ -31,6 +31,16 @@ include('../includes/mediaHeader.php');
             </blockquote>
         </p>
             It's important to us that we give back to the community which supported us in our early days. Projects such as <a href="https://plnkr.co/">Plunker</a> provide an amazing service at no charge so it's only fair that they are compensated for their time and effort.
+        </p>
+
+        <h3>About ag-Grid</h3>
+
+        <p>
+            At ag-Grid, our mission is simple: Build the best datagrid in the world. Born out of frustration with existing solutions, ag-Grid evolved from a side project to becoming the leading JavaScript datagrid on the market. We are a company built by developers for developers. True to these roots, we offer <a href="https://www.ag-grid.com/javascript-grid-getting-started/">ag-Grid Free:</a> an open-source project that delivers world class grid performance. You can use this entirely free under MIT license.
+        </p>
+
+        <p>
+            ag-Grid Enterprise is our commercially-licensed offering which has enjoyed widespread adoption and drives us to keep delivering on our mission. You can take a <a href="https://www.ag-grid.com/start-trial.php">free trial</a> to see if it fits your needs.
         </p>
 
         <h3>Corporate ‘Open-Source’ Social Responsibility</h3>

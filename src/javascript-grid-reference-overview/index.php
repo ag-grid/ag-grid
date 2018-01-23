@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Reference Overview";
+$pageTitle = "ag-Grid Reference: Overview";
 $pageDescription = "Learn how to interface with ag-Grid using events, functions and the API.";
 $pageKeyboards = "html5 data grid ag-Grid reference events functions api";
 $pageGroup = "reference";

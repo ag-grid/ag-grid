@@ -10,7 +10,8 @@ $authors = array(
 'niall' => 'Niall Crosby',
 'sean' => 'Sean Landsman',
 'sophia' => 'Sophia Lazarova',
-'amit' => 'Amit Moryossef'
+'amit' => 'Amit Moryossef',
+'john' => 'John Masterson'
 );
 
 function featuredBlog($title, $cardImage, $link, $author, $date) {
@@ -63,8 +64,8 @@ HTML;
 
 <div id="headline">
     <h1>
-        <a href="../ag-grid-blog-16-0-0/">Meet ag-Grid Phoenix & our new Website</a>
-        <span>by Sophia Lazarova | 22 January 2018</span>
+        <a href="../ag-grid-blog-16-0-0/">Introducing Version 16: Phoenix and Our New Website</a>
+        <span>by Sophia Lazarova | 22nd January 2018</span>
     </h1>
 
     <a href="../ag-grid-blog-16-0-0/"><img style="margin-bottom:30px;" src="../ag-grid-blog-16-0-0/cover.svg" width='100%' class="rounded" /></a>
@@ -76,11 +77,19 @@ HTML;
     <div class="row">
     <?php
     featuredBlog(
-        'Understand your data: The power of pivot tables',
-        '../pivoting-blog/img-pivot.png',
-        '../pivoting-blog/',
+        'Plunker is now backed by ag-Grid',
+        '../images/Plunker_Cover_Smaller.png',
+        '../ag-grid-proud-to-support-plunker/',
+        'john',
+        '17th January 2018'
+    );
+
+    featuredBlog(
+        'Happy New ag-Grid v15.0.0',
+        '../ag-grid-blog-15-0-0/img15-0-0.png',
+        '../ag-grid-blog-15-0-0/',
         'sophia',
-        '15 December 2017'
+        '13th December 2017'
     );
 
     featuredBlog(
@@ -88,15 +97,7 @@ HTML;
         '../ag-grid-datagrid-crud-part-1/crud_overview.png',
         '../ag-grid-datagrid-crud-part-4/',
         'sean',
-        '5 December 2017'
-    );
-
-    featuredBlog(
-        'Building a CRUD Application with ag-Grid - Part 3',
-        '../ag-grid-datagrid-crud-part-1/crud_overview.png',
-        '../ag-grid-datagrid-crud-part-3/',
-        'sean',
-        '21 November 2017'
+        '5th December 2017'
     );
 
     ?>

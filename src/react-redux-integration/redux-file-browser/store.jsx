@@ -1,6 +1,6 @@
 import {createStore, applyMiddleware} from 'redux';
 
-import {reducer} from './ducks/files.jsx';
+import fileReducer from './reducers/fileReducer.jsx';
 import logger from "./middleware/logger.jsx";
 
 const initialState = {
@@ -22,4 +22,4 @@ const initialState = {
   ]
 };
 
-export default createStore(reducer, initialState, applyMiddleware(logger));
+export default createStore(fileReducer, initialState, applyMiddleware(logger));

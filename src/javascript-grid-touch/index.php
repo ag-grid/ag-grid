@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "JavaScript DataGrid Touch";
-$pageDescription = "Learn how to interact with ag-Grid on a touch device.";
+$pageTitle = "ag-Grid - Core Grid Features: Touch support";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Touch Support. User can navigate the features of the grid on a touch device with the built-in Touch Support. You don't need to do anything, it works out of the box. Free and Commercial version available.";
 $pageKeyboards = "JavaScript DataGrid Touch";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

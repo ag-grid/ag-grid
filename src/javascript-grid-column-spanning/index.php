@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Javascript Grid Column Spanning";
-$pageDescription = "Explains how to set column spanning on ag-Grid, to all the grid's cells to span multiple columns.";
+$pageTitle = "ag-Grid - Styling & Appearance: Column Spanning";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Spanning. Column Spanning allows cells to span columns, similar to cell span in Excel Free and Commercial version available.";
 $pageKeyboards = "Javascript Grid Column Spanning";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

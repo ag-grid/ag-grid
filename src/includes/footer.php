@@ -35,7 +35,7 @@
     </div>
 
     <div id="copy">
-        <div>ag-Grid LTD registered in the United Kingdom. Company No 07318192.</div> 
+        <div>ag-Grid Limited registered in the United Kingdom. Company No. 07318192.</div> 
         <div>&copy; ag-Grid Ltd. 2015-2018</div>
     </div>
 </footer>

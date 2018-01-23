@@ -1,28 +1,31 @@
 #nav {
     @extend .bg-light;
-    padding-bottom: 2rem;
+
     background-image: linear-gradient(to top left, $blue-2, $blue-1);
-    box-shadow: inset 0px -8px 121px -50px $blue-1;
+    box-shadow: inset 0 -8px 121px -50px $blue-1;
+    padding-bottom: 2rem;
 
     nav {
         @extend .navbar, .navbar-expand-sm, .navbar-light, .full-width-row;
     }
 
     &.compact {
+        margin-bottom: 0;
         padding-bottom: 0;
-        margin-bottom: 0rem;
     }
 
     $logo-scale: 6;
 
     #logo {
         @extend .text-hide;
-        background-image: url('../svg/logo.svg?color1=%23FFFFFF');
+
+        background-image: url("../svg/logo.svg?color1=%23FFFFFF");
         background-repeat: no-repeat;
         background-size: 100%;
         display: inline-block;
         height: 248px / $logo-scale;
         margin-top: 6px;
+        min-width: 40px;
         width: 500px / $logo-scale;
     }
 
@@ -41,9 +44,9 @@
             @extend .nav-item, .ml-3;
 
             a {
+                color: lighten($blue-3, 10);
                 display: block;
                 padding: 0.5rem 1rem;
-                color: lighten($blue-3, 10);
             }
 
             a:hover {
@@ -55,8 +58,10 @@
                 color: $white;
             }
         }
+
         #trial a {
             @extend .rounded;
+
             background-color: $offwhite;
             color: $blue-2 !important;
         }

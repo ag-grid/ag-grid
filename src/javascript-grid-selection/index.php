@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Selection";
-$pageDescription = "ag-Grid Selection";
+$pageTitle = "ag-Grid - Core Grid Features: Row Selection";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Row Selection. Row Selection to select rows. Choose between click selection or checkbox selection. Selecting groups will select children. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Selection";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

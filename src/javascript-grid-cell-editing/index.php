@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Cell Editing";
-$pageDescription = "You can integrate your own editors into ag-Grid that will bind into the grids navigation.";
+$pageTitle = "ag-Grid - Core Grid Features: Cell Editing";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Cell Editing. Users can update data with Cell Editing. Use one of the provided cell editors or create your own to suit your business needs. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Cell Editors";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -303,6 +303,26 @@ colDef.cellEditorParams = {
         </ul>
 
     <?= example('Cell Editing', 'cell-editing', 'generated') ?>
+
+    <h2 id="enter-key-down">Enter Key Navigation</h2>
+
+    <p>
+        By default pressing <b>Enter</b> will start editing on a cell, or stop editing
+        on an editing cell. It will not navigate to the next cell.
+    </p>
+
+    <p>
+        To allow consistency with Excel set the grid property
+        <code>enterMovesDownAfterEdit=true</code> to move
+        focus down after Enter is pressed while editing.
+    </p>
+
+    <p>
+        The example below demonstrates the focus moving down when <b>Enter</b> is pressed
+        after editing.
+    </p>
+
+    <?= example('Enter Key Navigation', 'enter-key-navigation', 'generated') ?>
 
     <h2>Datepicker Cell Editing Example</h2>
 

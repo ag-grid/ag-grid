@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Overlays";
-$pageDescription = "Overlays are placed on top of the grid when loading rows, or when no rows showing. These overlays can be customised to what you want the user to see.";
+$pageTitle = "ag-Grid - Styling & Appearance: Overlays";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Overlays. Full control of Overlays to display messages to the user on top of the grid Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Overlays";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

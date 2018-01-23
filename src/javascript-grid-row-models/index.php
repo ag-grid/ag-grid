@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Row Models";
+$pageTitle = "ag-Grid Reference: Row Models";
 $pageDescription = "ag-Grid can be configured to retrieve rows from the server in different ways. Select which way is best for your application.";
 $pageKeyboards = "Javascript Grid Row Model Pagination Infinate Scrolling";
 $pageGroup = "row_models";
