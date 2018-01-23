@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from "react-redux";
 import {bindActionCreators} from 'redux';
 import {AgGridReact} from "ag-grid-react";
-import {actions} from "./ducks/files.jsx";
+import {actions} from './actions/fileActions.jsx'
 
 import "ag-grid-enterprise";
 
@@ -34,7 +34,6 @@ class FileBrowser extends Component {
           <AgGridReact
             columnDefs={this.colDefs}
             rowData={this.props.files}
-            frameworkComponents={this.frameworkComponents}
             treeData={true}
             groupDefaultExpanded={-1}
             getDataPath={data => data.filePath}
@@ -43,7 +42,8 @@ class FileBrowser extends Component {
             getContextMenuItems={this.getContextMenuItems}
             deltaRowDataMode={true}
             getRowNodeId={data => data.id}
-            onRowDragEnd={this.onRowDragEnd}>
+            onRowDragEnd={this.onRowDragEnd}
+            frameworkComponents={this.frameworkComponents}>
           </AgGridReact>
         </div>
       </div>
