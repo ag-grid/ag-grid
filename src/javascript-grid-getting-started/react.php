@@ -74,7 +74,6 @@
             rowSelection="multiple"
             enableSorting="true"
             enableFilter="true"
-            rowHeight="22"
             /&gt;
         </snippet>
     </p>

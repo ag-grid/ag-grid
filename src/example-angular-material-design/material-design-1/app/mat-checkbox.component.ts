@@ -1,13 +1,13 @@
-import {Component} from "@angular/core";
-import {ICellRendererAngularComp} from "ag-grid-angular/main";
+import { Component } from "@angular/core";
+import { ICellRendererAngularComp } from "ag-grid-angular/main";
 
 @Component({
-    selector: 'checkbox-cell',
+    selector: "checkbox-cell",
     template: `
         <mat-checkbox [ngModel]="checked" (ngModelChange)="onChange($event)"></mat-checkbox>
     `,
     styles: [
-            `
+        `
             ::ng-deep
             .mat-checkbox-layout {
                 /* horizontally align the checkbox */
@@ -32,13 +32,13 @@ export class MatCheckboxComponent implements ICellRendererAngularComp {
 
     agInit(params: any): void {
         this.params = params;
-        this.checked = this.params.value === 'On';
+        this.checked = this.params.value === "On";
     }
 
     // demonstrates how you can do "inline" editing of a cell
     onChange(checked: boolean) {
         this.checked = checked;
-        this.params.node.setDataValue(this.params.colDef, (this.checked ? "On" : "Off"));
+        this.params.node.setDataValue(this.params.colDef, this.checked ? "On" : "Off");
     }
 
     refresh(params: any): boolean {

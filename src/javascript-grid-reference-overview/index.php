@@ -105,7 +105,6 @@ var gridOptions = {
 
     // PROPERTIES - simple boolean / string / number properties
     enableColResize: true,
-    rowHeight: 22,
     rowSelection: 'single',
 
     // EVENTS - add event callback handlers
@@ -196,7 +195,6 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     ref="agGrid"
 
     // these are simple attributes, not bound to any state or prop
-    rowHeight="22"
     rowSelection="multiple"
 
     // these are bound props, so can use anything in React state or props
@@ -467,7 +465,6 @@ this.$.myGrid.oncolumnresized = (event) =&gt; {
 <snippet language="html">
 &lt;ag-grid-vue
     // these are attributes, not bound, give explicit values here
-    rowHeight="22"
     rowSelection="multiple"
 
     // these are boolean values

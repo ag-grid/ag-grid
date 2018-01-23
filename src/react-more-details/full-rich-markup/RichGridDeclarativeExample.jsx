@@ -79,7 +79,6 @@ export default class RichGridDeclarativeExample extends Component {
                     enableFilter
                     floatingFilter
                     groupHeaders
-                    rowHeight="22"
 
                     // setting grid wide date component
                     dateComponentFramework={DateComponent}

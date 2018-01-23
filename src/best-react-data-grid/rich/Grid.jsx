@@ -33,7 +33,6 @@ export default class Grid extends Component {
                     enableFilter="true"
                     animateRows="true"
                     groupHeaders="true"
-                    rowHeight="22"
                 />
             </div>
         );

@@ -148,7 +148,6 @@
             enableColResize: true,
             enableSorting: true,
             enableFilter: true,
-            rowHeight: 22,
             onModelUpdated: onModelUpdated,
             suppressRowClickSelection: true
         };

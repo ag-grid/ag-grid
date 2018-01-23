@@ -50,7 +50,6 @@
                          :suppressRowClickSelection="true"
                          :toolPanelSuppressGroups="true"
                          :toolPanelSuppressValues="true"
-                         rowHeight="22"
                          rowSelection="multiple"
 
                          :modelUpdated="onModelUpdated"
