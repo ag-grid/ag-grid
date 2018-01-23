@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
     <h1>Cell Editing</h1>
 
     <p class="lead">
-        Cell Renderers are for displaying data and Cell Editors are for editing data.
+        Cell Renderer's are for displaying data and Cell Editors are for editing data.
         If your application is for showing data only, such as a reporting application, then you will not
         need to use cell editors. If you are editing your data like a spreadsheet, then you will
         need Cell Editors to do the editing.
@@ -23,9 +23,6 @@ include '../documentation-main/documentation_header.php';
         <li><code>undefined / null</code>: The grid uses the default text cell editor.</li>
         <li>
             <code>string</code>: The name of a cell renderer registered with the grid.
-        </li>
-        <li>
-            <code>Function</code>: A function that returns either a cell renderer name that is subsequently looked up.
         </li>
         <li><code>Class</code>: Provide your own cell renderer component directly without registering.</li>
     </ul>

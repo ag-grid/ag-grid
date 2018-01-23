@@ -20,11 +20,7 @@ include '../documentation-main/documentation_header.php';
         <li><code>undefined / null</code>: Grid renders the value as a string.</li>
         <li><code>String</code>: The name of a cell renderer registered with the grid.</li>
         <li><code>Class</code>: Provide your own cell renderer component directly without registering.</li>
-        <li>
-            <code>Function</code>: A function that returns either:
-                <b>A)</b> a cell renderer name that is subsequently looked up or
-                <b>B)</b> an HTML string or DOM element for display.
-        </li>
+        <li><code>Function</code>: A function that returns either an HTML string or DOM element for display.</li>
     </ol>
     The code snippet below demonstrates each of these method types.
 </p>
@@ -48,14 +44,7 @@ var colDef3 = {
     ...
 }
 
-// 4.a - Function - A function that returns a cell renderer name (which subsequently gets looked up)
-var colDef3 = function(params) {
-    var isATrade = params.data.type==='trade';
-    // assumes 'myTradeCellRenderer' and 'myOtherCellRenderer' are registered with the grid
-    return isATrade ? 'myTradeCellRenderer' : 'myOtherCellRenderer';
-}
-
-// 4.b - Function - A function that returns an HTML string or DOM element for display
+// 4 - Function - A function that returns an HTML string or DOM element for display
 var colDef3 = function(params) {
     // put the value in bold
     return 'Value is &lt;b>'+params.value+'&lt;/b>';
