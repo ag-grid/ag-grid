@@ -1,18 +1,20 @@
-@import '~prismjs/themes/prism-okaidia';
+@import "~prismjs/themes/prism-okaidia";
 
 snippet {
 }
 
-pre[class*="language-"], snippet pre {
-    margin-top: 0;
-    margin-bottom: 2rem;
-    @extend .rounded;
+pre[class*="language-"],
+snippet pre {
     background-color: $code-background-color;
-    color: $gray-100;
     border: 1px solid $gray-300;
-    padding: 1rem;
+    color: $gray-100;
     font-size: 80%;
+    margin-bottom: 2rem;
+    margin-top: 0;
+    padding: 1rem;
     white-space: pre-wrap;
+
+    @extend .rounded;
 }
 
 .token.keyword {
@@ -27,7 +29,9 @@ code {
     color: $red-highlight;
 }
 
-h2 code, h3 code, h4 code {
+h2 code,
+h3 code,
+h4 code {
     background-color: transparent;
     color: inherit;
 }

@@ -35,7 +35,7 @@ meta_and_links($pageTitle, $pageKeyboards, $pageDescription, false);
         <button id="side-nav-toggle" type="button" data-toggle="collapse" data-target="#side-nav-container" aria-controls="side-nav-container" aria-expanded="false" aria-label="Toggle navigation"><span>&nbsp;</span></button>
 
         <div id="search-wrapper">
-            <input type="text" id="search-input" placeholder="Search ag-Grid Docs" />
+            <input type="text" id="search-input" placeholder="Search Docs" />
         </div>
 
     <div id="side-nav-container" class="collapse">

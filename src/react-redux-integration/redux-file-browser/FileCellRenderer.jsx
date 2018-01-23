@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 
 export default class FileCellRenderer extends Component {
-
   render() {
     return (
       <div>
