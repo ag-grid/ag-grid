@@ -674,8 +674,9 @@ export class CellComp extends Component {
             return;
         }
 
-        let cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer', null);
-        let pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer', null);
+        let params = this.createCellRendererParams();
+        let cellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'cellRenderer', params,null);
+        let pinnedRowCellRenderer = this.beans.componentResolver.getComponentToUse(colDef, 'pinnedRowCellRenderer', params,null);
 
         if (pinnedRowCellRenderer && this.rowNode.rowPinned) {
             this.cellRendererType = 'pinnedRowCellRenderer';
@@ -694,7 +695,7 @@ export class CellComp extends Component {
         this.cellRendererVersion++;
         let callback = this.afterCellRendererCreated.bind(this, this.cellRendererVersion);
 
-        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType, null).then(callback);
+        this.beans.componentResolver.createAgGridComponent(this.column.getColDef(), params, this.cellRendererType, params, null).then(callback);
     }
 
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {

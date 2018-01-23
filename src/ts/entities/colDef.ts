@@ -8,6 +8,7 @@ import {ColumnApi} from "../columnController/columnApi";
 import {IHeaderGroupComp} from "../headerRendering/headerGroup/headerGroupComp";
 import {IFloatingFilterComp} from "../filter/floatingFilter";
 import {CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent} from "../events";
+import {DynamicComponentDef, DynamicComponentParams} from "../components/framework/componentResolver";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. PLEASE!*
@@ -124,11 +125,13 @@ export interface ColDef extends AbstractColDef {
     cellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     cellRendererFramework?: any;
     cellRendererParams?: any;
+    cellRendererSelector?: (params:DynamicComponentParams)=>DynamicComponentDef;
 
     /** Cell editor */
-    cellEditor?: {new(): ICellEditorComp} | string;
+    cellEditor?: {new(): ICellEditorComp} | string ;
     cellEditorFramework?: any;
     cellEditorParams?: any;
+    cellEditorSelector?: (params:DynamicComponentParams)=>DynamicComponentDef;
 
     /** A function for rendering a pinned row cell. */
     pinnedRowCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;

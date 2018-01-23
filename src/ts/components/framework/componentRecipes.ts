@@ -26,6 +26,8 @@ import {Promise} from "../../utils";
 import {IOverlayWrapperComp, OverlayWrapperComponent} from "../../rendering/overlays/overlayWrapperComponent";
 import {ILoadingOverlayComp} from "../../rendering/overlays/loadingOverlayComponent";
 import {INoRowsOverlayComp} from "../../rendering/overlays/noRowsOverlayComponent";
+import {GridApi} from "../../gridApi";
+import {ColumnApi} from "../../columnController/columnApi";
 
 enum ComponentType {
     AG_GRID, FRAMEWORK
@@ -49,6 +51,12 @@ export class ComponentRecipes {
     @Autowired("gridOptions")
     private gridOptions: GridOptions;
 
+    @Autowired("gridApi")
+    private gridApi: GridApi;
+
+    @Autowired("columnApi")
+    private columnApi: ColumnApi;
+
     @Autowired("gridOptionsWrapper")
     private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -70,15 +78,44 @@ export class ComponentRecipes {
     };
 
     public newDateComponent (params: IDateParams): Promise<IDateComp>{
-        return this.componentResolver.createAgGridComponent<IDateComp>(this.gridOptions, params, "dateComponent", "agDateInput");
+        return this.componentResolver.createAgGridComponent<IDateComp>(
+            this.gridOptions,
+            params,
+            "dateComponent",
+            {
+                api: this.gridApi,
+                columnApi: this.columnApi
+            },
+            "agDateInput"
+        );
     }
 
     public newHeaderComponent(params:IHeaderParams): Promise<IHeaderComp> {
-        return this.componentResolver.createAgGridComponent<IHeaderComp>(params.column.getColDef(), params, "headerComponent", "agColumnHeader");
+        return this.componentResolver.createAgGridComponent<IHeaderComp>(
+            params.column.getColDef(),
+            params,
+            "headerComponent",
+            {
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                column: params.column,
+                colDef: params.column.getColDef()
+            },
+            "agColumnHeader"
+        );
     }
 
     public newHeaderGroupComponent(params:IHeaderGroupParams): Promise<IHeaderGroupComp> {
-        return this.componentResolver.createAgGridComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agColumnGroupHeader");
+        return this.componentResolver.createAgGridComponent(
+            params.columnGroup.getColGroupDef(),
+            params,
+            "headerGroupComponent",
+            {
+                api: this.gridApi,
+                columnApi: this.columnApi
+            },
+            "agColumnGroupHeader"
+        );
     }
 
     public newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>> (column:Column, params:IFloatingFilterParams<M, any>):IFloatingFilterWrapperComp<M, any, any, any>{
@@ -96,17 +133,24 @@ export class ComponentRecipes {
             defaultFloatingFilterType = ComponentRecipes.filterToFloatingFilterNames[colDef.filter]
         }
 
+        let dynamicComponentParams = {
+            column: column,
+            colDef: colDef,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        };
         let floatingFilter: Promise<IFloatingFilterComp<M, any, P>> = this.componentResolver.createAgGridComponent<IFloatingFilterComp<M, any, any>>(
             colDef,
             params,
             "floatingFilterComponent",
+            dynamicComponentParams,
             defaultFloatingFilterType,
             false
         );
         let floatingFilterWrapperComponentParams : IFloatingFilterWrapperParams <M, any, any> = <any>{
             column: column,
             floatingFilterComp: floatingFilter,
-            suppressFilterButton: this.componentResolver.mergeParams(colDef, 'floatingFilterComponent',params).suppressFilterButton
+            suppressFilterButton: this.componentResolver.mergeParams(colDef, 'floatingFilterComponent', dynamicComponentParams, params).suppressFilterButton
         };
 
         if (!floatingFilter){
@@ -136,19 +180,19 @@ export class ComponentRecipes {
     }
 
     public newFullWidthGroupRowInnerCellRenderer (params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptions, params, "groupRowInnerRenderer", null, false);
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptions, params, "groupRowInnerRenderer", params, null, false);
     }
 
     public newCellRenderer (target: ColDef | ISetFilterParams | IRichCellEditorParams, params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "cellRenderer", null, false);
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "cellRenderer", params,null, false);
     }
 
     public newInnerCellRenderer (target: GroupCellRendererParams, params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "innerRenderer", null);
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(target, params, "innerRenderer", params,null);
     }
 
     public newFullRowGroupRenderer (params:ICellRendererParams):Promise<ICellRendererComp>{
-        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptionsWrapper, params, "fullWidthCellRenderer", null);
+        return this.componentResolver.createAgGridComponent<ICellRendererComp>(this.gridOptionsWrapper, params, "fullWidthCellRenderer", params,null);
     }
 
     public newOverlayWrapperComponent(): IOverlayWrapperComp {
@@ -159,16 +203,37 @@ export class ComponentRecipes {
     }
 
     public newLoadingOverlayComponent(): Promise<ILoadingOverlayComp> {
-        return this.componentResolver.createAgGridComponent<ILoadingOverlayComp>(this.gridOptions, null, "loadingOverlayComponent", "agLoadingOverlay");
+        return this.componentResolver.createAgGridComponent<ILoadingOverlayComp>(
+            this.gridOptions,
+            null,
+            "loadingOverlayComponent",
+            {
+                api: this.gridApi,
+                columnApi: this.columnApi
+            },
+            "agLoadingOverlay"
+        );
     }
 
     public newNoRowsOverlayComponent(): Promise<INoRowsOverlayComp> {
-        return this.componentResolver.createAgGridComponent<INoRowsOverlayComp>(this.gridOptions, null, "noRowsOverlayComponent", "agNoRowsOverlay");
+        return this.componentResolver.createAgGridComponent<INoRowsOverlayComp>(
+            this.gridOptions,
+            null,
+            "noRowsOverlayComponent",
+            {
+                api: this.gridApi,
+                columnApi: this.columnApi
+            },
+            "agNoRowsOverlay");
     }
 
     private getFilterComponentPrototype<A extends IComponent<any> & B, B>
     (colDef: ColDef): ComponentToUse<A, B> {
-        return <ComponentToUse<A, B>>this.componentResolver.getComponentToUse(colDef, "filter");
+        return <ComponentToUse<A, B>>this.componentResolver.getComponentToUse(colDef, "filter", {
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            colDef: colDef
+        });
     }
 
     private newEmptyFloatingFilterWrapperComponent(column:Column): IFloatingFilterWrapperComp<any, any, any, any> {
