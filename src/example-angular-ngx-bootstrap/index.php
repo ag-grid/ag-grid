@@ -10,8 +10,8 @@ include '../documentation-main/documentation_header.php';
 
     <h1>ag-Grid Angular Examples with ngx-bootstrap</h1>
 
-    <h2>Cell Editor with ng2-bootstrap Components</h2>
-    <p>This example uses ng2-bootstrap as part of an Editor Components.</p>
+    <h2>Cell Editor with ngx-bootstrap Components</h2>
+    <p>This example uses ngx-bootstrap as part of an Editor Components.</p>
 
     <ul class="content">
         <li>Date Picker</li>
