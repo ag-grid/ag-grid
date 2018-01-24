@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "8 Performance Hacks for JavaScript";
-$pageDescription = "Explaining the performance hacks and techniques used in ag-Grid to make it render really fast.";
+$pageTitle = "ag-Grid Blog: 8 Performance Hacks for JavaScript";
+$pageDescription = "Niall Crosby, CEO and Founder of ag-Grid explains the performance hacks and techniques used in ag-Grid to make it render really fast.";
 $pageKeyboards = "javascript performance";
 $socialUrl = "https://www.ag-grid.com/ag-grid-performance-hacks/";
 $socialImage = "https://www.ag-grid.com/ag-grid-performance-hacks/images/PerformanceHacks.png";

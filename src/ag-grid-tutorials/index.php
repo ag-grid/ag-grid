@@ -1,7 +1,6 @@
 <?php
-$key = "Intermediate Tutorial";
-$pageTitle = "ag-Grid Intermediate Tutorials and Examples";
-$pageDescription = "This page has step by step videos on building up ag-Grid. Follow the videos to learn how the examples are build.";
+$pageTitle = "ag-Grid Tutorials: Intermediate Level with Examples";
+$pageDescription = "We've put together some tutorials so you can get the best from ag-Grid. This page has step by step videos on building up ag-Grid. Follow the videos to learn how the examples are built.";
 $pageKeyboards = "ag-Grid tutorials";
 $pageGroup = "misc";
 include '../documentation-main/documentation_header.php';
