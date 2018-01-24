@@ -182,6 +182,10 @@ $params: (
         right: -($grid-size) + 1px;
     }
 
+    .ag-rtl .ag-header .ag-header-cell-resize {
+        left: -($grid-size) + 1px;
+    }
+
     .ag-header-cell-resize::after {
         height: $header-height - 16px;
         margin-top: 8px;
@@ -306,10 +310,19 @@ $params: (
         }
     }
 
+    .ag-rtl .ag-tool-panel {
+        border-left: 1px solid $border-color;
+        border-right: 0;
+    }
+
     // real crude adjustments, due to line of elements with display: inline-block in the group cell
     .ag-icon-expanded,
     .ag-icon-contracted {
         transform: translateY(2px);
+    }
+
+    .ag-rtl .ag-icon-expanded {
+        transform: translateY(2px) rotate(180deg);
     }
 
     // context menu spacing
