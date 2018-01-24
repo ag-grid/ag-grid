@@ -375,7 +375,7 @@
     ////////////////////////////////////////
     .ag-header-cell-resize {
         position: absolute;
-        right: -($grid-size) + 1px;
+        right: -($grid-size);
         width: $grid-size * 2;
         z-index: 4;
 
