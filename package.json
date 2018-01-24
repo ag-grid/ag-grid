@@ -67,7 +67,7 @@
     "sass-loader": "^6.0.6",
     "style-loader": "0.13.0",
     "stylus": "0.53.0",
-    "svg-colorize-loader": "^0.1.0",
+    "svg-colorize-loader": "^0.1.1",
     "typescript": "2.4.1",
     "url-loader": "^0.5.9",
     "vinyl-buffer": "1.0.0",

@@ -424,8 +424,9 @@ export class Utils {
     }
 
     //if value is undefined, null or blank, returns null, otherwise returns the value
-    static makeNull(value: any) {
-        if (value === null || value === undefined || value === "") {
+    static makeNull<T>(value: T): T {
+        let valueNoType = <any> value;
+        if (value === null || value === undefined || valueNoType === "") {
             return null;
         } else {
             return value;
@@ -543,7 +544,9 @@ export class Utils {
             return;
         }
         if (element.classList) {
-            element.classList.add(className);
+            if (!element.classList.contains(className)) {
+                element.classList.add(className);
+            }
         } else {
             if (element.className && element.className.length > 0) {
                 let cssClasses = element.className.split(' ');
@@ -605,7 +608,9 @@ export class Utils {
 
     static removeCssClass(element: HTMLElement, className: string) {
         if (element.classList) {
-            element.classList.remove(className);
+            if (element.classList.contains(className)) {
+                element.classList.remove(className);
+            }
         } else {
             if (element.className && element.className.length > 0) {
                 let cssClasses = element.className.split(' ');
@@ -1095,7 +1100,8 @@ export class Utils {
 
     // firefox doesn't have event.path set, or any alternative to it, so we hack
     // it in. this is needed as it's to late to work out the path when the item is
-    // removed from the dom
+    // removed from the dom. used by MouseEventService, where it works out if a click
+    // was from the current grid, or a detail grid (master / detail).
     static addAgGridEventPath(event: Event): void {
         (<any>event).__agGridEventPath = this.getEventPath(event);
     }
@@ -1674,6 +1680,16 @@ export class Promise<T> {
     public then(func: (result: any)=>void) {
         if (this.status === PromiseStatus.IN_PROGRESS){
             this.listOfWaiters.push(func);
+        } else {
+            func(this.resolution);
+        }
+    }
+
+    public firstOneOnly(func: (result: any)=>void) {
+        if (this.status === PromiseStatus.IN_PROGRESS){
+            if (this.listOfWaiters.length === 0) {
+                this.listOfWaiters.push(func);
+            }
         } else {
             func(this.resolution);
         }

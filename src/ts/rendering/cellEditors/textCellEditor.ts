@@ -71,8 +71,11 @@ export class TextCellEditor extends Component implements ICellEditorComp {
             if (isNavigationKey) {
                 // this stops the grid from executing keyboard navigation
                 event.stopPropagation();
-                if (!(event.keyCode===Constants.KEY_LEFT) && !(event.keyCode===Constants.KEY_RIGHT)){
-                    // this stops the browser from scrolling
+
+                // this stops the browser from scrolling up / down
+                let pageUp = event.keyCode===Constants.KEY_PAGE_UP;
+                let pageDown = event.keyCode===Constants.KEY_PAGE_DOWN;
+                if (pageUp || pageDown) {
                     event.preventDefault();
                 }
             }

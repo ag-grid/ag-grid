@@ -62,6 +62,7 @@ export class DateFilter extends ScalarBaseFilter<Date, IDateFilterParams, Serial
     }
 
     public initialiseFilterBodyUi(): void {
+        super.initialiseFilterBodyUi();
         let dateComponentParams: IDateParams = {
             onDateChanged: this.onDateChanged.bind(this)
         };

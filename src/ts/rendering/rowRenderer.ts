@@ -13,7 +13,8 @@ import {Constants} from "../constants";
 import {CellComp} from "./cellComp";
 import {Autowired, Bean, Context, Optional, PostConstruct, PreDestroy, Qualifier} from "../context/context";
 import {GridCore} from "../gridCore";
-import {ColumnApi, ColumnController} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
+import {ColumnController} from "../columnController/columnController";
 import {Logger, LoggerFactory} from "../logger";
 import {FocusedCellController} from "../focusedCellController";
 import {IRangeController} from "../interfaces/iRangeController";
@@ -402,7 +403,6 @@ export class RowRenderer extends BeanStub {
 
                 cellComp.refreshCell({
                     forceRefresh: params.force,
-                    volatile: params.volatile,
                     newData: false
                 });
             });
@@ -764,9 +764,8 @@ export class RowRenderer extends BeanStub {
 
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    public navigateToNextCell(event: KeyboardEvent, key: number, rowIndex: number, column: Column, floating: string) {
+    public navigateToNextCell(event: KeyboardEvent, key: number, previousCell: GridCell, allowUserOverride: boolean) {
 
-        let previousCell = new GridCell({rowIndex: rowIndex, floating: floating, column: column});
         let nextCell = previousCell;
 
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
@@ -788,20 +787,23 @@ export class RowRenderer extends BeanStub {
             }
         }
 
-        // allow user to override what cell to go to next
-        let userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
-        if (_.exists(userFunc)) {
-            let params = <NavigateToNextCellParams> {
-                key: key,
-                previousCellDef: previousCell,
-                nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
-                event: event
-            };
-            let nextCellDef = userFunc(params);
-            if (_.exists(nextCellDef)) {
-                nextCell = new GridCell(nextCellDef);
-            } else {
-                nextCell = null;
+        // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
+        // we allow this, however if processing 'enter after edit' we don't allow override
+        if (allowUserOverride) {
+            let userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
+            if (_.exists(userFunc)) {
+                let params = <NavigateToNextCellParams> {
+                    key: key,
+                    previousCellDef: previousCell,
+                    nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
+                    event: event
+                };
+                let nextCellDef = userFunc(params);
+                if (_.exists(nextCellDef)) {
+                    nextCell = new GridCell(nextCellDef);
+                } else {
+                    nextCell = null;
+                }
             }
         }
 
@@ -882,41 +884,79 @@ export class RowRenderer extends BeanStub {
         return result;
     }
 
-    // returns true if moving to next cell was successful
     private moveToCellAfter(previousRenderedCell: CellComp, backwards: boolean): boolean {
-
         let editing = previousRenderedCell.isEditing();
+        let res: boolean;
+        if (editing) {
+            if (this.gridOptionsWrapper.isFullRowEdit()) {
+                res = this.moveToNextEditingRow(previousRenderedCell, backwards);
+            } else {
+                res = this.moveToNextEditingCell(previousRenderedCell, backwards);
+            }
+        } else {
+            res = this.moveToNextCellNotEditing(previousRenderedCell, backwards);
+        }
+        return res;
+    }
+
+    private moveToNextEditingCell(previousRenderedCell: CellComp, backwards: boolean): boolean {
+
         let gridCell = previousRenderedCell.getGridCell();
 
+        // need to do this before getting next cell to edit, in case the next cell
+        // has editable function (eg colDef.editable=func() ) and it depends on the
+        // result of this cell, so need to save updates from the first edit, in case
+        // the value is referenced in the function.
+        previousRenderedCell.stopEditing();
+
         // find the next cell to start editing
-        let nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, editing);
+        let nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, true);
 
         let foundCell = _.exists(nextRenderedCell);
 
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
         if (foundCell) {
-
-            if (editing) {
-                if (this.gridOptionsWrapper.isFullRowEdit()) {
-                    this.moveEditToNextCellOrRow(previousRenderedCell, nextRenderedCell);
-                } else {
-                    this.moveEditToNextCell(previousRenderedCell, nextRenderedCell);
-                }
-            } else {
-                nextRenderedCell.focusCell(true);
-            }
-
-            return true;
-        } else {
-            return false;
+            nextRenderedCell.startEditingIfEnabled(null, null, true);
+            nextRenderedCell.focusCell(false);
         }
+
+        return foundCell;
     }
 
-    private moveEditToNextCell(previousRenderedCell: CellComp, nextRenderedCell: CellComp): void {
-        previousRenderedCell.stopEditing();
-        nextRenderedCell.startEditingIfEnabled(null, null, true);
-        nextRenderedCell.focusCell(false);
+    private moveToNextEditingRow(previousRenderedCell: CellComp, backwards: boolean): boolean {
+
+        let gridCell = previousRenderedCell.getGridCell();
+
+        // find the next cell to start editing
+        let nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, true);
+
+        let foundCell = _.exists(nextRenderedCell);
+
+        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
+        // to the normal tabbing so user can exit the grid.
+        if (foundCell) {
+            this.moveEditToNextCellOrRow(previousRenderedCell, nextRenderedCell);
+        }
+
+        return foundCell;
+    }
+
+    private moveToNextCellNotEditing(previousRenderedCell: CellComp, backwards: boolean): boolean {
+        let gridCell = previousRenderedCell.getGridCell();
+
+        // find the next cell to start editing
+        let nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, false);
+
+        let foundCell = _.exists(nextRenderedCell);
+
+        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
+        // to the normal tabbing so user can exit the grid.
+        if (foundCell) {
+            nextRenderedCell.focusCell(true);
+        }
+
+        return foundCell;
     }
 
     private moveEditToNextCellOrRow(previousRenderedCell: CellComp, nextRenderedCell: CellComp): void {

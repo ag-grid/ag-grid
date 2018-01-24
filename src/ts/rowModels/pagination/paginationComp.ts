@@ -54,8 +54,12 @@ export class PaginationComp extends Component {
     }
 
     private setCurrentPageLabel(): void {
+        let pagesExist = this.paginationProxy.getTotalPages() > 0;
         let currentPage = this.paginationProxy.getCurrentPage();
-        this.lbCurrent.innerHTML = this.formatNumber(currentPage + 1);
+
+        let toDisplay = pagesExist ? currentPage + 1 : 0;
+
+        this.lbCurrent.innerHTML = this.formatNumber(toDisplay);
     }
 
     private formatNumber(value: number): string {

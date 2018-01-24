@@ -7,6 +7,8 @@ import {AgEvent} from "../events";
 
 export class BeanStub implements IEventEmitter {
 
+    public static EVENT_DESTORYED = 'destroyed';
+
     private localEventService: EventService;
 
     private destroyFunctions: (()=>void)[] = [];
@@ -17,6 +19,8 @@ export class BeanStub implements IEventEmitter {
         this.destroyFunctions.forEach( func => func() );
         this.destroyFunctions.length = 0;
         this.destroyed = true;
+
+        this.dispatchEvent({type: BeanStub.EVENT_DESTORYED});
     }
 
     public addEventListener(eventType: string, listener: Function): void {

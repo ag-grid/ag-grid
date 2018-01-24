@@ -36,11 +36,11 @@ export class HeaderRowComp extends Component {
     private dept: number;
     private pinned: string;
 
-    private headerCompPromises: {[key: string]: Promise<IComponent<any>>} = {};
+    private headerComps: { [key: string]: IComponent<any> } = {};
 
     private eRoot: HTMLElement;
     private dropTarget: DropTarget;
-    
+
     private type: HeaderRowType;
 
     constructor(dept: number, type: HeaderRowType, pinned: string, eRoot: HTMLElement, dropTarget: DropTarget) {
@@ -52,47 +52,44 @@ export class HeaderRowComp extends Component {
         this.dropTarget = dropTarget;
     }
 
-    public forEachHeaderElement(callback: (comp: IComponent<any>)=>void): void {
-        let promises:Promise<IComponent<any>>[] = []
-        Object.keys(this.headerCompPromises).forEach( key => {
-            promises.push(this.headerCompPromises[key]);
+    public forEachHeaderElement(callback: (comp: IComponent<any>) => void): void {
+        Object.keys(this.headerComps).forEach(key => {
+            callback(this.headerComps[key]);
         });
-        Promise.all<IComponent<any>>(promises).then((combined:IComponent<any>[])=>combined.forEach(headerElement=>callback(headerElement)) );
     }
 
     public destroy(): void {
-        let idsOfAllChildren = Object.keys(this.headerCompPromises);
+        let idsOfAllChildren = Object.keys(this.headerComps);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
         super.destroy();
     }
 
     private removeAndDestroyChildComponents(idsToDestroy: string[]): void {
-        idsToDestroy.forEach( id => {
-            this.headerCompPromises[id].then(childPromise=>{
-                this.getGui().removeChild(childPromise.getGui());
-                if (childPromise.destroy){
-                    childPromise.destroy();
-                }
-                delete this.headerCompPromises[id];
-            })
+        idsToDestroy.forEach(id => {
+            let childHeaderComp: IComponent<any> = this.headerComps[id];
+            this.getGui().removeChild(childHeaderComp.getGui());
+            if (childHeaderComp.destroy) {
+                childHeaderComp.destroy();
+            }
+            delete this.headerComps[id];
         });
     }
 
     private onRowHeightChanged(): void {
         let headerRowCount = this.columnController.getHeaderRowCount();
-        let sizes:number[]=[];
+        let sizes: number[] = [];
 
         let numberOfFloating = 0;
-        let groupHeight:number;
-        let headerHeight:number;
-        if (!this.columnController.isPivotMode()){
-            if (this.gridOptionsWrapper.isFloatingFilter()){
-                headerRowCount ++;
+        let groupHeight: number;
+        let headerHeight: number;
+        if (!this.columnController.isPivotMode()) {
+            if (this.gridOptionsWrapper.isFloatingFilter()) {
+                headerRowCount++;
             }
             numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter()) ? 1 : 0;
             groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
             headerHeight = this.gridOptionsWrapper.getHeaderHeight();
-        }else{
+        } else {
             numberOfFloating = 0;
             groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
             headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
@@ -100,12 +97,12 @@ export class HeaderRowComp extends Component {
         let numberOfNonGroups = 1 + numberOfFloating;
         let numberOfGroups = headerRowCount - numberOfNonGroups;
 
-        for (let i=0; i<numberOfGroups; i++) sizes.push(groupHeight);
+        for (let i = 0; i < numberOfGroups; i++) sizes.push(groupHeight);
         sizes.push(headerHeight);
-        for (let i=0; i<numberOfFloating; i++) sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight());
+        for (let i = 0; i < numberOfFloating; i++) sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight());
 
         let rowHeight = 0;
-        for (let i=0; i<this.dept; i++) rowHeight+=sizes[i];
+        for (let i = 0; i < this.dept; i++) rowHeight += sizes[i];
 
         this.getGui().style.top = rowHeight + 'px';
         this.getGui().style.height = sizes[this.dept] + 'px';
@@ -119,18 +116,18 @@ export class HeaderRowComp extends Component {
         this.onVirtualColumnsChanged();
         this.setWidth();
 
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this) );
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.onRowHeightChanged.bind(this) );
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
 
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this) );
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this) );
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
 
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.onRowHeightChanged.bind(this) );
+        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.onRowHeightChanged.bind(this));
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this) );
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this) );
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this) );
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this) );
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
     }
 
     private onColumnResized(): void {
@@ -147,7 +144,7 @@ export class HeaderRowComp extends Component {
     }
 
     private removeAndDestroyAllChildComponents(): void {
-        let idsOfAllChildren = Object.keys(this.headerCompPromises);
+        let idsOfAllChildren = Object.keys(this.headerComps);
         this.removeAndDestroyChildComponents(idsOfAllChildren);
     }
 
@@ -155,57 +152,55 @@ export class HeaderRowComp extends Component {
         this.onVirtualColumnsChanged();
         this.setWidth();
     }
-    
+
     private onVirtualColumnsChanged(): void {
 
-        let currentChildIds = Object.keys(this.headerCompPromises);
+        let currentChildIds = Object.keys(this.headerComps);
 
         let itemsAtDepth = this.columnController.getVirtualHeaderGroupRow(
             this.pinned,
             this.type == HeaderRowType.FLOATING_FILTER ?
-                this.dept -1 :
+                this.dept - 1 :
                 this.dept
         );
 
         let ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         let eBefore: HTMLElement;
 
-        itemsAtDepth.forEach( (child: ColumnGroupChild) => {
+        itemsAtDepth.forEach((child: ColumnGroupChild) => {
             // skip groups that have no displayed children. this can happen when the group is broken,
             // and this section happens to have nothing to display for the open / closed state.
             // (a broken group is one that is split, ie columns in the group have a non-group column
             // in between them)
-            if (child.isEmptyGroup()) { return; }
+            if (child.isEmptyGroup()) {
+                return;
+            }
 
             let idOfChild = child.getUniqueId();
             let eParentContainer = this.getGui();
 
             // if we already have this cell rendered, do nothing
             let colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
-            let headerCompPromise: Promise<IComponent<any>>;
+            let headerComp: IComponent<any>;
             let eHeaderCompGui: HTMLElement;
             if (colAlreadyInDom) {
                 _.removeFromArray(currentChildIds, idOfChild);
-                headerCompPromise = this.headerCompPromises[idOfChild];
-                headerCompPromise.then(headerComp=>{
-                    eHeaderCompGui = headerComp.getGui();
-                    if (ensureDomOrder) {
-                        _.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
-                    }
-                    eBefore = eHeaderCompGui;
-                });
+                headerComp = this.headerComps[idOfChild];
+                eHeaderCompGui = headerComp.getGui();
+                if (ensureDomOrder) {
+                    _.ensureDomOrder(eParentContainer, eHeaderCompGui, eBefore);
+                }
+                eBefore = eHeaderCompGui;
             } else {
-                headerCompPromise = this.createHeaderComp(child);
-                this.headerCompPromises[idOfChild] = headerCompPromise;
-                headerCompPromise.then(headerComp=>{
-                    eHeaderCompGui = headerComp.getGui();
-                    if (ensureDomOrder) {
-                        _.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
-                    } else {
-                        eParentContainer.appendChild(eHeaderCompGui);
-                    }
-                    eBefore = eHeaderCompGui;
-                });
+                headerComp = this.createHeaderComp(child);
+                this.headerComps[idOfChild] = headerComp;
+                eHeaderCompGui = headerComp.getGui();
+                if (ensureDomOrder) {
+                    _.insertWithDomOrder(eParentContainer, eHeaderCompGui, eBefore);
+                } else {
+                    eParentContainer.appendChild(eHeaderCompGui);
+                }
+                eBefore = eHeaderCompGui;
             }
         });
 
@@ -213,77 +208,77 @@ export class HeaderRowComp extends Component {
         this.removeAndDestroyChildComponents(currentChildIds);
     }
 
-    private createHeaderComp(columnGroupChild:ColumnGroupChild): Promise<IComponent<any>> {
-        let resultPromise: Promise<IComponent<any>>;
+    private createHeaderComp(columnGroupChild: ColumnGroupChild): IComponent<any> {
+        let result: IComponent<any>;
 
         switch (this.type) {
             case HeaderRowType.COLUMN :
-                resultPromise = Promise.resolve<IComponent<any>>(new HeaderWrapperComp(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
+                result = new HeaderWrapperComp(<Column> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.COLUMN_GROUP :
-                resultPromise = Promise.resolve<IComponent<any>>(new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned));
+                result = new HeaderGroupWrapperComp(<ColumnGroup> columnGroupChild, this.eRoot, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER :
                 let column = <Column> columnGroupChild;
-                resultPromise = this.createFloatingFilterWrapper(column);
+                result = this.createFloatingFilterWrapper(column);
                 break;
         }
 
-        resultPromise.then(result=>this.context.wireBean(result));
+        this.context.wireBean(result);
 
-        return resultPromise;
+        return result;
     }
 
-    private createFloatingFilterWrapper(column: Column):Promise<IFloatingFilterWrapperComp<any, any, any, any>> {
+    private createFloatingFilterWrapper(column: Column): IFloatingFilterWrapperComp<any, any, any, any> {
         let floatingFilterParams: IFloatingFilterParams<any, any> = this.createFloatingFilterParams(column);
 
-        let floatingFilterWrapperPromise: Promise<IFloatingFilterWrapperComp<any, any, any, any>> = this.componentRecipes.newFloatingFilterWrapperComponent(
+        let floatingFilterWrapper: IFloatingFilterWrapperComp<any, any, any, any> = this.componentRecipes.newFloatingFilterWrapperComponent(
             column,
             <null>floatingFilterParams
         );
-        floatingFilterWrapperPromise.then(floatingFilterWrapper=>{
-            this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
-                let filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column);
-                floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, filter=>filter.getModel()));
-            });
-            let cachedFilter = <any>this.filterManager.cachedFilter(column);
-            if (cachedFilter){
-                let filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column);
-                floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, filter=>filter.getModel()));
-            }
+
+        this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
+            let filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column);
+            floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, filter => filter.getModel()));
         });
-        return floatingFilterWrapperPromise;
+        let cachedFilter = <any>this.filterManager.cachedFilter(column);
+        if (cachedFilter) {
+            let filterComponentPromise: Promise<IFilterComp> = this.filterManager.getFilterComponent(column);
+            floatingFilterWrapper.onParentModelChanged(filterComponentPromise.resolveNow(null, filter => filter.getModel()));
+        }
+
+        return floatingFilterWrapper;
     }
 
-    private createFloatingFilterParams<M, F extends FloatingFilterChange>(column: Column):IFloatingFilterParams<M, F> {
+    private createFloatingFilterParams<M, F extends FloatingFilterChange>(column: Column): IFloatingFilterParams<M, F> {
         // We always get the freshest reference to the baseFilter because the filters get sometimes created
         // and destroyed between calls
         //
         // let filterComponent:BaseFilter<any, any, any> = <any>this.filterManager.getFilterComponent(column);
         //
-        let baseParams:IFloatingFilterParams<M, F> = {
-            api:this.gridApi,
-            column:column,
+        let baseParams: IFloatingFilterParams<M, F> = {
+            api: this.gridApi,
+            column: column,
             currentParentModel: (): M => {
                 let filterComponentPromise: Promise<IFilterComp> = <any>this.filterManager.getFilterComponent(column);
-                return filterComponentPromise.resolveNow(null, (filter:any)=>
+                return filterComponentPromise.resolveNow(null, (filter: any) =>
                     (filter.getNullableModel) ?
                         filter.getNullableModel() :
                         filter.getModel()
                 )
             },
-            onFloatingFilterChanged: (change: F|M): boolean => {
-                let captureModelChangedResolveFunc:(modelChanged:boolean)=>void;
-                let modelChanged: Promise<boolean> = new Promise((resolve)=>{
+            onFloatingFilterChanged: (change: F | M): boolean => {
+                let captureModelChangedResolveFunc: (modelChanged: boolean) => void;
+                let modelChanged: Promise<boolean> = new Promise((resolve) => {
                     captureModelChangedResolveFunc = resolve;
                 });
                 let filterComponentPromise: Promise<IFilterComp> = <any>this.filterManager.getFilterComponent(column);
-                filterComponentPromise.then(filterComponent=>{
-                    if (filterComponent.onFloatingFilterChanged){
+                filterComponentPromise.then(filterComponent => {
+                    if (filterComponent.onFloatingFilterChanged) {
                         //If going through this branch of code the user MUST
                         //be passing an object of type change that contains
                         //a model propery inside and some other stuff
-                        let result:boolean = filterComponent.onFloatingFilterChanged(<F>change);
+                        let result: boolean = filterComponent.onFloatingFilterChanged(<F>change);
                         captureModelChangedResolveFunc(result);
                     } else {
                         //If going through this branch of code the user MUST
@@ -295,7 +290,7 @@ export class HeaderRowComp extends Component {
                         captureModelChangedResolveFunc(true)
                     }
                 })
-                return modelChanged.resolveNow(true, modelChanged=>modelChanged);
+                return modelChanged.resolveNow(true, modelChanged => modelChanged);
             },
             //This one might be overriden from the colDef
             suppressFilterButton: false

@@ -4,10 +4,11 @@ import {ICellRendererComp, ICellRendererFunc, ICellRendererParams} from "../rend
 import {Column} from "./column";
 import {IFilterComp} from "../interfaces/iFilter";
 import {GridApi} from "../gridApi";
-import {ColumnApi} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 import {IHeaderGroupComp} from "../headerRendering/headerGroup/headerGroupComp";
 import {IFloatingFilterComp} from "../filter/floatingFilter";
 import {CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent} from "../events";
+import {DynamicComponentDef, DynamicComponentParams} from "../components/framework/componentResolver";
 
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. PLEASE!*
@@ -89,6 +90,8 @@ export interface ColDef extends AbstractColDef {
 
     /** The field where we get the tooltip on the object */
     tooltipField?: string;
+    /** The function used to calculate the tooltip of the object, tooltipField takes precedence*/
+    tooltip?: (params:TooltipParams)=>string;
     
     /** Tooltip for the column header */
     headerTooltip?: string;
@@ -113,7 +116,7 @@ export interface ColDef extends AbstractColDef {
     maxWidth?: number;
 
     /** Class to use for the cell. Can be string, array of strings, or function. */
-    cellClass?: string | string[]| ((cellClassParams:any) => string | string[]);
+    cellClass?: string | string[]| ((cellClassParams:CellClassParams) => string | string[]);
 
     /** An object of css values. Or a function returning an object of css values. */
     cellStyle?: {} | ((params:any) => {});
@@ -122,11 +125,13 @@ export interface ColDef extends AbstractColDef {
     cellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
     cellRendererFramework?: any;
     cellRendererParams?: any;
+    cellRendererSelector?: (params:DynamicComponentParams)=>DynamicComponentDef;
 
     /** Cell editor */
-    cellEditor?: {new(): ICellEditorComp} | string;
+    cellEditor?: {new(): ICellEditorComp} | string ;
     cellEditorFramework?: any;
     cellEditorParams?: any;
+    cellEditorSelector?: (params:DynamicComponentParams)=>DynamicComponentDef;
 
     /** A function for rendering a pinned row cell. */
     pinnedRowCellRenderer?: {new(): ICellRendererComp} | ICellRendererFunc | string;
@@ -177,6 +182,8 @@ export interface ColDef extends AbstractColDef {
     /** If true, the header checkbox selection will work on filtered items*/
     headerCheckboxSelectionFilteredOnly?: boolean;
 
+    rowDrag?: boolean | ((params: any)=>boolean);
+
     /** Set to true if no menu should be shown for this column header. */
     suppressMenu?: boolean;
 
@@ -189,6 +196,15 @@ export interface ColDef extends AbstractColDef {
 
     /** Set to true to not allow moving this column via dragging it's header */
     suppressMovable?: boolean;
+
+    /** Set to true to make sure this column is always first. Other columns, if movable, cannot move before this column. */
+    lockPosition?: boolean;
+
+    /** Set to true to block the user showing / hiding the column, the column can only be shown / hidden via definitions or API */
+    lockVisible?: boolean;
+
+    /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */
+    lockPinned?: boolean;
 
     /** Set to true to not allow filter on this column */
     suppressFilter?: boolean;
@@ -236,9 +252,6 @@ export interface ColDef extends AbstractColDef {
      * Return false if the values are the same (ie no update). */
     newValueHandler?: (params: any)=>boolean;
 
-    /** If true, this cell gets refreshed when api.softRefreshView() gets called. */
-    volatile?: boolean;
-
     /** Cell template to use for cell. Useful for AngularJS cells. */
     template?: string;
 
@@ -281,11 +294,11 @@ export interface ColDef extends AbstractColDef {
     pivotTotalColumnIds?: string[];
 
     /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
-    headerComponent?:{new(): any}
+    headerComponent?: {new(): any}
     /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
     headerComponentFramework?: {new (): any};
     /** The custom header component parameters**/
-    headerComponentParams?:any
+    headerComponentParams?: any
 
     /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
     floatingFilterComponent?: {new(): IFloatingFilterComp<any, any, any>};
@@ -301,6 +314,7 @@ export interface IsColumnFunc {
 
 export interface IsColumnFuncParams {
     node: RowNode;
+    data: any;
     column: Column;
     colDef: ColDef;
     context: any;
@@ -352,4 +366,27 @@ export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
     event: KeyboardEvent;
     // whether the cell is editing or not
     editing: boolean;
+}
+
+export interface CellClassParams {
+    value: any,
+    data: any,
+    node: RowNode,
+    colDef: ColDef,
+    rowIndex: number,
+    $scope: any,
+    api: GridApi,
+    context: any
+}
+
+export interface TooltipParams {
+    value: any,
+    valueFormatted: any,
+    data: any,
+    node: RowNode,
+    colDef: ColDef,
+    rowIndex: number,
+    $scope: any,
+    api: GridApi,
+    context: any,
 }

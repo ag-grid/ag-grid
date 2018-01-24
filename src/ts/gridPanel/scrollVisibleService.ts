@@ -2,7 +2,8 @@ import {Bean, Autowired} from "../context/context";
 import {Utils as _} from "../utils";
 import {EventService} from "../eventService";
 import {Events, ScrollVisibilityChangedEvent} from "../events";
-import {ColumnApi, ColumnController} from "../columnController/columnController";
+import {ColumnController} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 import {GridApi} from "../gridApi";
 
 export interface SetScrollsVisibleParams {
