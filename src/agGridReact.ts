@@ -154,6 +154,14 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         return AgGridReact.areEquivalent(this.copy(a), this.copy(b))
     }
 
+    /*
+     * slightly modified, but taken from https://stackoverflow.com/questions/1068834/object-comparison-in-javascript
+     *
+     * What we're trying to do here is determine if the property being checked has changed in _value_, not just in reference
+     *
+     * For eg, if a user updates the columnDefs via property binding, but the actual columns defs are the same before and
+     * after, then we don't want the grid to re-render
+     */
     static areEquivalent(a, b) {
         a = AgGridReact.unwrapStringOrNumber(a);
         b = AgGridReact.unwrapStringOrNumber(b);
@@ -169,33 +177,33 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             return a == b; //for boolean, number, string, function, xml
         }
 
-        const newA = (a.areEquivalent_Eq_91_2_34 === undefined),
-            newB = (b.areEquivalent_Eq_91_2_34 === undefined);
+        const newA = (a.areEquivPropertyTracking === undefined),
+            newB = (b.areEquivPropertyTracking === undefined);
         try {
             let prop;
             if (newA) {
-                a.areEquivalent_Eq_91_2_34 = [];
+                a.areEquivPropertyTracking = [];
             }
-            else if (a.areEquivalent_Eq_91_2_34.some(
+            else if (a.areEquivPropertyTracking.some(
                     function (other) {
                         return other === b;
                     })) return true;
             if (newB) {
-                b.areEquivalent_Eq_91_2_34 = [];
+                b.areEquivPropertyTracking = [];
             }
-            else if (b.areEquivalent_Eq_91_2_34.some((other) => other === a)) {
+            else if (b.areEquivPropertyTracking.some((other) => other === a)) {
                 return true;
             }
-            a.areEquivalent_Eq_91_2_34.push(b);
-            b.areEquivalent_Eq_91_2_34.push(a);
+            a.areEquivPropertyTracking.push(b);
+            b.areEquivPropertyTracking.push(a);
 
             const tmp = {};
             for (prop in a)
-                if (prop != "areEquivalent_Eq_91_2_34") {
+                if (prop != "areEquivPropertyTracking") {
                     tmp[prop] = null;
                 }
             for (prop in b)
-                if (prop != "areEquivalent_Eq_91_2_34") {
+                if (prop != "areEquivPropertyTracking") {
                     tmp[prop] = null;
                 }
 
@@ -206,8 +214,8 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             }
             return true;
         } finally {
-            if (newA) delete a.areEquivalent_Eq_91_2_34;
-            if (newB) delete b.areEquivalent_Eq_91_2_34;
+            if (newA) delete a.areEquivPropertyTracking;
+            if (newB) delete b.areEquivPropertyTracking;
         }
     }
 }
