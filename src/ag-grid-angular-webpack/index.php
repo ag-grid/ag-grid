@@ -11,7 +11,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 id="angular-building-with-webpack">Building an ag-Grid Application with Angular and Webpack</h1>
+    <h1 id="angular-building-with-webpack">Angular Webpack</h1>
 
     <p class="lead">We walk through the main steps required when using ag-Grid, Angular and Webpack below, but please refer to
         <a href="https://github.com/ag-grid/ag-grid-angular-example">ag-grid-angular-example</a> on GitHub for a full working example of this.</p>

@@ -142,7 +142,7 @@ export class RichGridComponent {
                     {
                         headerName: "Proficiency",
                         field: "proficiency",
-                        width: 150,
+                        width: 160,
                         cellRenderer: percentCellRenderer,
                         filter: ProficiencyFilter
                     },
