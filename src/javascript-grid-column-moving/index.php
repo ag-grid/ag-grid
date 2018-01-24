@@ -89,8 +89,8 @@ include '../documentation-main/documentation_header.php';
 </p>
     <ul class="content">
         <li>
-            The column 'Age' is locked into the first position. It is not possible
-            to move this column, or have other columns moved over it to impact it's position.
+            The column 'Age' is locked as first column in the scrollable area of the grid. It is not possible
+            to move this column, or have other columns moved over it to impact it's position. As a result the 'Age' column marks the beggining of the scrollable area regardless it's position. 
         </li>
         <li>
             The column 'Athlete' has moving suppressed. It is not possible to move
