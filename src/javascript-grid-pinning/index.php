@@ -43,7 +43,7 @@ colDef = {
     <?= example('Column Pinning', 'column-pinning', 'generated') ?>
 
     <note>
-        If you pin to many columns, so that the pinned columns take up the whole width of the grid,
+        If you pin too many columns, so that the pinned columns take up the whole width of the grid,
         you will not be able to view the non-pinned columns. If this happens for you, please do not
         raise an issue with the ag-Grid team. Instead tell your users to stop pinning so many columns.
         Every month someone raises this with us and asks us to fix - it's like saying when I take the
@@ -52,9 +52,7 @@ colDef = {
 
     <h2>Pinning via Column Dragging</h2>
 
-    <p>
-        It is possible to pin a column by moving the column in the following ways:
-</p>
+    <p> It is possible to pin a column by moving the column in the following ways: </p>
         <ul class="content">
             <li>
                 When other columns are pinned, drag the column to the existing pinned area.
