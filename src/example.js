@@ -156,7 +156,6 @@ var gridOptions = {
     // suppressTouch: true,
     // suppressDragLeaveHidesColumns: true,
 //unSortIcon: true,
-//     rowHeight: 30, // defaults to 25, can be any integer
 //     enableRtl: true,
     animateRows: true,
     enableColResize: true, //one of [true, false]

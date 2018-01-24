@@ -264,7 +264,6 @@ gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
     enable-filter
 
     // these are attributes, not bound, give explicit values here
-    row-height="22"
     row-selection="multiple"
 
     // these are bound properties, bound to the AngularJS 1.x current context (that's what a

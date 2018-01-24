@@ -90,7 +90,6 @@ $ bower install ag-grid-polymer
                                       suppress-row-click-selection
                                       tool-panel-suppress-groups
                                       tool-panel-suppress-values
-                                      row-height="22"
                                       row-selection="multiple"
                                       pinned-column-count="3"
                                       on-grid-ready="[[onGridReady]]"></ag-grid-polymer>
