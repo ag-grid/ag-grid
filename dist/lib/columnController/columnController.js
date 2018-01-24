@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,148 +38,7 @@ var columnAnimationService_1 = require("../rendering/columnAnimationService");
 var autoGroupColService_1 = require("./autoGroupColService");
 var valueCache_1 = require("../valueService/valueCache");
 var gridApi_1 = require("../gridApi");
-var ColumnApi = (function () {
-    function ColumnApi() {
-    }
-    ColumnApi.prototype.sizeColumnsToFit = function (gridWidth) { this._columnController.sizeColumnsToFit(gridWidth); };
-    ColumnApi.prototype.setColumnGroupOpened = function (group, newValue) { this._columnController.setColumnGroupOpened(group, newValue); };
-    ColumnApi.prototype.getColumnGroup = function (name, instanceId) { return this._columnController.getColumnGroup(name, instanceId); };
-    ColumnApi.prototype.getOriginalColumnGroup = function (name) { return this._columnController.getOriginalColumnGroup(name); };
-    ColumnApi.prototype.getDisplayNameForColumn = function (column, location) { return this._columnController.getDisplayNameForColumn(column, location); };
-    ColumnApi.prototype.getDisplayNameForColumnGroup = function (columnGroup, location) { return this._columnController.getDisplayNameForColumnGroup(columnGroup, location); };
-    ColumnApi.prototype.getColumn = function (key) { return this._columnController.getPrimaryColumn(key); };
-    ColumnApi.prototype.setColumnState = function (columnState) { return this._columnController.setColumnState(columnState); };
-    ColumnApi.prototype.getColumnState = function () { return this._columnController.getColumnState(); };
-    ColumnApi.prototype.resetColumnState = function () { this._columnController.resetColumnState(); };
-    ColumnApi.prototype.getColumnGroupState = function () { return this._columnController.getColumnGroupState(); };
-    ColumnApi.prototype.setColumnGroupState = function (stateItems) { this._columnController.setColumnGroupState(stateItems); };
-    ColumnApi.prototype.resetColumnGroupState = function () { this._columnController.resetColumnGroupState(); };
-    ColumnApi.prototype.isPinning = function () { return this._columnController.isPinningLeft() || this._columnController.isPinningRight(); };
-    ColumnApi.prototype.isPinningLeft = function () { return this._columnController.isPinningLeft(); };
-    ColumnApi.prototype.isPinningRight = function () { return this._columnController.isPinningRight(); };
-    ColumnApi.prototype.getDisplayedColAfter = function (col) { return this._columnController.getDisplayedColAfter(col); };
-    ColumnApi.prototype.getDisplayedColBefore = function (col) { return this._columnController.getDisplayedColBefore(col); };
-    ColumnApi.prototype.setColumnVisible = function (key, visible) { this._columnController.setColumnVisible(key, visible); };
-    ColumnApi.prototype.setColumnsVisible = function (keys, visible) { this._columnController.setColumnsVisible(keys, visible); };
-    ColumnApi.prototype.setColumnPinned = function (key, pinned) { this._columnController.setColumnPinned(key, pinned); };
-    ColumnApi.prototype.setColumnsPinned = function (keys, pinned) { this._columnController.setColumnsPinned(keys, pinned); };
-    ColumnApi.prototype.getAllColumns = function () { return this._columnController.getAllPrimaryColumns(); };
-    ColumnApi.prototype.getAllGridColumns = function () { return this._columnController.getAllGridColumns(); };
-    ColumnApi.prototype.getDisplayedLeftColumns = function () { return this._columnController.getDisplayedLeftColumns(); };
-    ColumnApi.prototype.getDisplayedCenterColumns = function () { return this._columnController.getDisplayedCenterColumns(); };
-    ColumnApi.prototype.getDisplayedRightColumns = function () { return this._columnController.getDisplayedRightColumns(); };
-    ColumnApi.prototype.getAllDisplayedColumns = function () { return this._columnController.getAllDisplayedColumns(); };
-    ColumnApi.prototype.getAllDisplayedVirtualColumns = function () { return this._columnController.getAllDisplayedVirtualColumns(); };
-    ColumnApi.prototype.moveColumn = function (key, toIndex) {
-        if (typeof key === 'number') {
-            // moveColumn used to take indexes, so this is advising user who hasn't moved to new method name
-            console.log('ag-Grid: you are using moveColumn(fromIndex, toIndex) - moveColumn takes a column key and a destination index, not two indexes, to move with indexes use moveColumnByIndex(from,to) instead');
-            this._columnController.moveColumnByIndex(key, toIndex);
-        }
-        else {
-            this._columnController.moveColumn(key, toIndex);
-        }
-    };
-    ColumnApi.prototype.moveColumnByIndex = function (fromIndex, toIndex) { this._columnController.moveColumnByIndex(fromIndex, toIndex); };
-    ColumnApi.prototype.moveColumns = function (columnsToMoveKeys, toIndex) { this._columnController.moveColumns(columnsToMoveKeys, toIndex); };
-    ColumnApi.prototype.moveRowGroupColumn = function (fromIndex, toIndex) { this._columnController.moveRowGroupColumn(fromIndex, toIndex); };
-    ColumnApi.prototype.setColumnAggFunc = function (column, aggFunc) { this._columnController.setColumnAggFunc(column, aggFunc); };
-    ColumnApi.prototype.setColumnWidth = function (key, newWidth, finished) {
-        if (finished === void 0) { finished = true; }
-        this._columnController.setColumnWidth(key, newWidth, finished);
-    };
-    ColumnApi.prototype.setPivotMode = function (pivotMode) { this._columnController.setPivotMode(pivotMode); };
-    ColumnApi.prototype.isPivotMode = function () { return this._columnController.isPivotMode(); };
-    ColumnApi.prototype.getSecondaryPivotColumn = function (pivotKeys, valueColKey) { return this._columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); };
-    ColumnApi.prototype.setValueColumns = function (colKeys) { this._columnController.setValueColumns(colKeys); };
-    ColumnApi.prototype.getValueColumns = function () { return this._columnController.getValueColumns(); };
-    ColumnApi.prototype.removeValueColumn = function (colKey) { this._columnController.removeValueColumn(colKey); };
-    ColumnApi.prototype.removeValueColumns = function (colKeys) { this._columnController.removeValueColumns(colKeys); };
-    ColumnApi.prototype.addValueColumn = function (colKey) { this._columnController.addValueColumn(colKey); };
-    ColumnApi.prototype.addValueColumns = function (colKeys) { this._columnController.addValueColumns(colKeys); };
-    ColumnApi.prototype.setRowGroupColumns = function (colKeys) { this._columnController.setRowGroupColumns(colKeys); };
-    ColumnApi.prototype.removeRowGroupColumn = function (colKey) { this._columnController.removeRowGroupColumn(colKey); };
-    ColumnApi.prototype.removeRowGroupColumns = function (colKeys) { this._columnController.removeRowGroupColumns(colKeys); };
-    ColumnApi.prototype.addRowGroupColumn = function (colKey) { this._columnController.addRowGroupColumn(colKey); };
-    ColumnApi.prototype.addRowGroupColumns = function (colKeys) { this._columnController.addRowGroupColumns(colKeys); };
-    ColumnApi.prototype.getRowGroupColumns = function () { return this._columnController.getRowGroupColumns(); };
-    ColumnApi.prototype.setPivotColumns = function (colKeys) { this._columnController.setPivotColumns(colKeys); };
-    ColumnApi.prototype.removePivotColumn = function (colKey) { this._columnController.removePivotColumn(colKey); };
-    ColumnApi.prototype.removePivotColumns = function (colKeys) { this._columnController.removePivotColumns(colKeys); };
-    ColumnApi.prototype.addPivotColumn = function (colKey) { this._columnController.addPivotColumn(colKey); };
-    ColumnApi.prototype.addPivotColumns = function (colKeys) { this._columnController.addPivotColumns(colKeys); };
-    ColumnApi.prototype.getPivotColumns = function () { return this._columnController.getPivotColumns(); };
-    ColumnApi.prototype.getLeftDisplayedColumnGroups = function () { return this._columnController.getLeftDisplayedColumnGroups(); };
-    ColumnApi.prototype.getCenterDisplayedColumnGroups = function () { return this._columnController.getCenterDisplayedColumnGroups(); };
-    ColumnApi.prototype.getRightDisplayedColumnGroups = function () { return this._columnController.getRightDisplayedColumnGroups(); };
-    ColumnApi.prototype.getAllDisplayedColumnGroups = function () { return this._columnController.getAllDisplayedColumnGroups(); };
-    ColumnApi.prototype.autoSizeColumn = function (key) { return this._columnController.autoSizeColumn(key); };
-    ColumnApi.prototype.autoSizeColumns = function (keys) { return this._columnController.autoSizeColumns(keys); };
-    ColumnApi.prototype.autoSizeAllColumns = function () { this._columnController.autoSizeAllColumns(); };
-    ColumnApi.prototype.setSecondaryColumns = function (colDefs) { this._columnController.setSecondaryColumns(colDefs); };
-    // below goes through deprecated items, prints message to user, then calls the new version of the same method
-    ColumnApi.prototype.columnGroupOpened = function (group, newValue) {
-        console.error('ag-Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
-        this.setColumnGroupOpened(group, newValue);
-    };
-    ColumnApi.prototype.hideColumns = function (colIds, hide) {
-        console.error('ag-Grid: hideColumns is deprecated, use setColumnsVisible');
-        this._columnController.setColumnsVisible(colIds, !hide);
-    };
-    ColumnApi.prototype.hideColumn = function (colId, hide) {
-        console.error('ag-Grid: hideColumn is deprecated, use setColumnVisible');
-        this._columnController.setColumnVisible(colId, !hide);
-    };
-    ColumnApi.prototype.setState = function (columnState) {
-        console.error('ag-Grid: setState is deprecated, use setColumnState');
-        return this.setColumnState(columnState);
-    };
-    ColumnApi.prototype.getState = function () {
-        console.error('ag-Grid: getState is deprecated, use getColumnState');
-        return this.getColumnState();
-    };
-    ColumnApi.prototype.resetState = function () {
-        console.error('ag-Grid: resetState is deprecated, use resetColumnState');
-        this.resetColumnState();
-    };
-    ColumnApi.prototype.getAggregationColumns = function () {
-        console.error('ag-Grid: getAggregationColumns is deprecated, use getValueColumns');
-        return this._columnController.getValueColumns();
-    };
-    ColumnApi.prototype.removeAggregationColumn = function (colKey) {
-        console.error('ag-Grid: removeAggregationColumn is deprecated, use removeValueColumn');
-        this._columnController.removeValueColumn(colKey);
-    };
-    ColumnApi.prototype.removeAggregationColumns = function (colKeys) {
-        console.error('ag-Grid: removeAggregationColumns is deprecated, use removeValueColumns');
-        this._columnController.removeValueColumns(colKeys);
-    };
-    ColumnApi.prototype.addAggregationColumn = function (colKey) {
-        console.error('ag-Grid: addAggregationColumn is deprecated, use addValueColumn');
-        this._columnController.addValueColumn(colKey);
-    };
-    ColumnApi.prototype.addAggregationColumns = function (colKeys) {
-        console.error('ag-Grid: addAggregationColumns is deprecated, use addValueColumns');
-        this._columnController.addValueColumns(colKeys);
-    };
-    ColumnApi.prototype.setColumnAggFunction = function (column, aggFunc) {
-        console.error('ag-Grid: setColumnAggFunction is deprecated, use setColumnAggFunc');
-        this._columnController.setColumnAggFunc(column, aggFunc);
-    };
-    ColumnApi.prototype.getDisplayNameForCol = function (column) {
-        console.error('ag-Grid: getDisplayNameForCol is deprecated, use getDisplayNameForColumn');
-        return this.getDisplayNameForColumn(column, null);
-    };
-    __decorate([
-        context_1.Autowired('columnController'),
-        __metadata("design:type", ColumnController)
-    ], ColumnApi.prototype, "_columnController", void 0);
-    ColumnApi = __decorate([
-        context_1.Bean('columnApi')
-    ], ColumnApi);
-    return ColumnApi;
-}());
-exports.ColumnApi = ColumnApi;
+var columnApi_1 = require("./columnApi");
 var ColumnController = (function () {
     function ColumnController() {
         // header row count, based on user provided columns
@@ -286,7 +145,8 @@ var ColumnController = (function () {
             return true;
         }
     };
-    ColumnController.prototype.setPivotMode = function (pivotMode) {
+    ColumnController.prototype.setPivotMode = function (pivotMode, source) {
+        if (source === void 0) { source = "api"; }
         if (pivotMode === this.pivotMode) {
             return;
         }
@@ -294,7 +154,7 @@ var ColumnController = (function () {
             return;
         }
         this.pivotMode = pivotMode;
-        this.updateDisplayedColumns();
+        this.updateDisplayedColumns(source);
         var event = {
             type: events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
             api: this.gridApi,
@@ -322,7 +182,7 @@ var ColumnController = (function () {
     ColumnController.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ColumnController');
     };
-    ColumnController.prototype.setFirstRightAndLastLeftPinned = function () {
+    ColumnController.prototype.setFirstRightAndLastLeftPinned = function (source) {
         var lastLeft;
         var firstRight;
         if (this.gridOptionsWrapper.isEnableRtl()) {
@@ -334,11 +194,11 @@ var ColumnController = (function () {
             firstRight = this.displayedRightColumns ? this.displayedRightColumns[0] : null;
         }
         this.gridColumns.forEach(function (column) {
-            column.setLastLeftPinned(column === lastLeft);
-            column.setFirstRightPinned(column === firstRight);
+            column.setLastLeftPinned(column === lastLeft, source);
+            column.setFirstRightPinned(column === firstRight, source);
         });
     };
-    ColumnController.prototype.autoSizeColumns = function (keys) {
+    ColumnController.prototype.autoSizeColumns = function (keys, source) {
         // because of column virtualisation, we can only do this function on columns that are
         // actually rendered, as non-rendered columns (outside the viewport and not rendered
         // due to column virtualisation) are not present. this can result in all rendered columns
@@ -347,6 +207,7 @@ var ColumnController = (function () {
         // the LHS sized, but RHS no. so we keep looping through teh visible columns until
         // no more cols are available (rendered) to be resized
         var _this = this;
+        if (source === void 0) { source = "api"; }
         // keep track of which cols we have resized in here
         var columnsAutosized = [];
         // initialise with anything except 0 so that while loop executs at least once
@@ -363,12 +224,12 @@ var ColumnController = (function () {
                 // preferredWidth = -1 if this col is not on the screen
                 if (preferredWidth > 0) {
                     var newWidth = _this.normaliseColumnWidth(column, preferredWidth);
-                    column.setActualWidth(newWidth);
+                    column.setActualWidth(newWidth, source);
                     columnsAutosized.push(column);
                     changesThisTimeAround++;
                 }
                 return true;
-            });
+            }, source);
         }
         if (columnsAutosized.length > 0) {
             var event_2 = {
@@ -377,17 +238,20 @@ var ColumnController = (function () {
                 column: columnsAutosized.length === 1 ? columnsAutosized[0] : null,
                 finished: true,
                 api: this.gridApi,
-                columnApi: this.columnApi
+                columnApi: this.columnApi,
+                source: "autosizeColumns"
             };
             this.eventService.dispatchEvent(event_2);
         }
     };
-    ColumnController.prototype.autoSizeColumn = function (key) {
-        this.autoSizeColumns([key]);
+    ColumnController.prototype.autoSizeColumn = function (key, source) {
+        if (source === void 0) { source = "api"; }
+        this.autoSizeColumns([key], source);
     };
-    ColumnController.prototype.autoSizeAllColumns = function () {
+    ColumnController.prototype.autoSizeAllColumns = function (source) {
+        if (source === void 0) { source = "api"; }
         var allDisplayedColumns = this.getAllDisplayedColumns();
-        this.autoSizeColumns(allDisplayedColumns);
+        this.autoSizeColumns(allDisplayedColumns, source);
     };
     ColumnController.prototype.getColumnsFromTree = function (rootColumns) {
         var result = [];
@@ -521,8 +385,9 @@ var ColumnController = (function () {
     ColumnController.prototype.getPinnedRightContainerWidth = function () {
         return this.getWidthOfColsInList(this.displayedRightColumns);
     };
-    ColumnController.prototype.updatePrimaryColumnList = function (keys, masterList, actionIsAdd, columnCallback, eventType) {
+    ColumnController.prototype.updatePrimaryColumnList = function (keys, masterList, actionIsAdd, columnCallback, eventType, source) {
         var _this = this;
+        if (source === void 0) { source = "api"; }
         if (utils_1.Utils.missingOrEmpty(keys)) {
             return;
         }
@@ -550,61 +415,75 @@ var ColumnController = (function () {
         if (!atLeastOne) {
             return;
         }
-        this.updateDisplayedColumns();
+        if (this.autoGroupsNeedBuilding) {
+            this.updateGridColumns();
+        }
+        this.updateDisplayedColumns(source);
         var event = {
             type: eventType,
             columns: masterList,
             column: masterList.length === 1 ? masterList[0] : null,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            source: source
         };
         this.eventService.dispatchEvent(event);
     };
-    ColumnController.prototype.setRowGroupColumns = function (colKeys) {
+    ColumnController.prototype.setRowGroupColumns = function (colKeys, source) {
+        if (source === void 0) { source = "api"; }
         this.autoGroupsNeedBuilding = true;
-        this.setPrimaryColumnList(colKeys, this.rowGroupColumns, events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.setRowGroupActive.bind(this));
+        this.setPrimaryColumnList(colKeys, this.rowGroupColumns, events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.setRowGroupActive.bind(this), source);
     };
-    ColumnController.prototype.setRowGroupActive = function (active, column) {
+    ColumnController.prototype.setRowGroupActive = function (active, column, source) {
         if (active === column.isRowGroupActive()) {
             return;
         }
-        column.setRowGroupActive(active);
+        column.setRowGroupActive(active, source);
         if (!active) {
-            column.setVisible(true);
+            column.setVisible(true, source);
         }
     };
-    ColumnController.prototype.addRowGroupColumn = function (key) {
-        this.addRowGroupColumns([key]);
+    ColumnController.prototype.addRowGroupColumn = function (key, source) {
+        if (source === void 0) { source = "api"; }
+        this.addRowGroupColumns([key], source);
     };
-    ColumnController.prototype.addRowGroupColumns = function (keys) {
+    ColumnController.prototype.addRowGroupColumns = function (keys, source) {
+        if (source === void 0) { source = "api"; }
         this.autoGroupsNeedBuilding = true;
-        this.updatePrimaryColumnList(keys, this.rowGroupColumns, true, this.setRowGroupActive.bind(this, true), events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
+        this.updatePrimaryColumnList(keys, this.rowGroupColumns, true, this.setRowGroupActive.bind(this, true), events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, source);
     };
-    ColumnController.prototype.removeRowGroupColumns = function (keys) {
+    ColumnController.prototype.removeRowGroupColumns = function (keys, source) {
+        if (source === void 0) { source = "api"; }
         this.autoGroupsNeedBuilding = true;
-        this.updatePrimaryColumnList(keys, this.rowGroupColumns, false, this.setRowGroupActive.bind(this, false), events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED);
+        this.updatePrimaryColumnList(keys, this.rowGroupColumns, false, this.setRowGroupActive.bind(this, false), events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, source);
     };
-    ColumnController.prototype.removeRowGroupColumn = function (key) {
-        this.removeRowGroupColumns([key]);
+    ColumnController.prototype.removeRowGroupColumn = function (key, source) {
+        if (source === void 0) { source = "api"; }
+        this.removeRowGroupColumns([key], source);
     };
-    ColumnController.prototype.addPivotColumns = function (keys) {
-        this.updatePrimaryColumnList(keys, this.pivotColumns, true, function (column) { return column.setPivotActive(true); }, events_1.Events.EVENT_COLUMN_PIVOT_CHANGED);
+    ColumnController.prototype.addPivotColumns = function (keys, source) {
+        if (source === void 0) { source = "api"; }
+        this.updatePrimaryColumnList(keys, this.pivotColumns, true, function (column) { return column.setPivotActive(true, source); }, events_1.Events.EVENT_COLUMN_PIVOT_CHANGED, source);
     };
-    ColumnController.prototype.setPivotColumns = function (colKeys) {
+    ColumnController.prototype.setPivotColumns = function (colKeys, source) {
+        if (source === void 0) { source = "api"; }
         this.setPrimaryColumnList(colKeys, this.pivotColumns, events_1.Events.EVENT_COLUMN_PIVOT_CHANGED, function (added, column) {
-            column.setPivotActive(added);
-        });
+            column.setPivotActive(added, source);
+        }, source);
     };
-    ColumnController.prototype.addPivotColumn = function (key) {
-        this.addPivotColumns([key]);
+    ColumnController.prototype.addPivotColumn = function (key, source) {
+        if (source === void 0) { source = "api"; }
+        this.addPivotColumns([key], source);
     };
-    ColumnController.prototype.removePivotColumns = function (keys) {
-        this.updatePrimaryColumnList(keys, this.pivotColumns, false, function (column) { return column.setPivotActive(false); }, events_1.Events.EVENT_COLUMN_PIVOT_CHANGED);
+    ColumnController.prototype.removePivotColumns = function (keys, source) {
+        if (source === void 0) { source = "api"; }
+        this.updatePrimaryColumnList(keys, this.pivotColumns, false, function (column) { return column.setPivotActive(false, source); }, events_1.Events.EVENT_COLUMN_PIVOT_CHANGED, source);
     };
-    ColumnController.prototype.removePivotColumn = function (key) {
-        this.removePivotColumns([key]);
+    ColumnController.prototype.removePivotColumn = function (key, source) {
+        if (source === void 0) { source = "api"; }
+        this.removePivotColumns([key], source);
     };
-    ColumnController.prototype.setPrimaryColumnList = function (colKeys, masterList, eventName, columnCallback) {
+    ColumnController.prototype.setPrimaryColumnList = function (colKeys, masterList, eventName, columnCallback, source) {
         var _this = this;
         masterList.length = 0;
         if (utils_1.Utils.exists(colKeys)) {
@@ -617,40 +496,49 @@ var ColumnController = (function () {
             var added = masterList.indexOf(column) >= 0;
             columnCallback(added, column);
         });
-        this.updateDisplayedColumns();
+        if (this.autoGroupsNeedBuilding) {
+            this.updateGridColumns();
+        }
+        this.updateDisplayedColumns(source);
         var event = {
             type: eventName,
             columns: masterList,
             column: masterList.length === 1 ? masterList[0] : null,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            source: source
         };
         this.eventService.dispatchEvent(event);
     };
-    ColumnController.prototype.setValueColumns = function (colKeys) {
-        this.setPrimaryColumnList(colKeys, this.valueColumns, events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.setValueActive.bind(this));
+    ColumnController.prototype.setValueColumns = function (colKeys, source) {
+        if (source === void 0) { source = "api"; }
+        this.setPrimaryColumnList(colKeys, this.valueColumns, events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.setValueActive.bind(this), source);
     };
-    ColumnController.prototype.setValueActive = function (active, column) {
+    ColumnController.prototype.setValueActive = function (active, column, source) {
         if (active === column.isValueActive()) {
             return;
         }
-        column.setValueActive(active);
+        column.setValueActive(active, source);
         if (active && !column.getAggFunc()) {
             var defaultAggFunc = this.aggFuncService.getDefaultAggFunc(column);
             column.setAggFunc(defaultAggFunc);
         }
     };
-    ColumnController.prototype.addValueColumns = function (keys) {
-        this.updatePrimaryColumnList(keys, this.valueColumns, true, this.setValueActive.bind(this, true), events_1.Events.EVENT_COLUMN_VALUE_CHANGED);
+    ColumnController.prototype.addValueColumns = function (keys, source) {
+        if (source === void 0) { source = "api"; }
+        this.updatePrimaryColumnList(keys, this.valueColumns, true, this.setValueActive.bind(this, true), events_1.Events.EVENT_COLUMN_VALUE_CHANGED, source);
     };
-    ColumnController.prototype.addValueColumn = function (colKey) {
-        this.addValueColumns([colKey]);
+    ColumnController.prototype.addValueColumn = function (colKey, source) {
+        if (source === void 0) { source = "api"; }
+        this.addValueColumns([colKey], source);
     };
-    ColumnController.prototype.removeValueColumn = function (colKey) {
-        this.removeValueColumns([colKey]);
+    ColumnController.prototype.removeValueColumn = function (colKey, source) {
+        if (source === void 0) { source = "api"; }
+        this.removeValueColumns([colKey], source);
     };
-    ColumnController.prototype.removeValueColumns = function (keys) {
-        this.updatePrimaryColumnList(keys, this.valueColumns, false, this.setValueActive.bind(this, false), events_1.Events.EVENT_COLUMN_VALUE_CHANGED);
+    ColumnController.prototype.removeValueColumns = function (keys, source) {
+        if (source === void 0) { source = "api"; }
+        this.updatePrimaryColumnList(keys, this.valueColumns, false, this.setValueActive.bind(this, false), events_1.Events.EVENT_COLUMN_VALUE_CHANGED, source);
     };
     // returns the width we can set to this col, taking into consideration min and max widths
     ColumnController.prototype.normaliseColumnWidth = function (column, newWidth) {
@@ -671,7 +559,8 @@ var ColumnController = (function () {
             return this.getGridColumn(key);
         }
     };
-    ColumnController.prototype.setColumnWidth = function (key, newWidth, finished) {
+    ColumnController.prototype.setColumnWidth = function (key, newWidth, finished, source) {
+        if (source === void 0) { source = "api"; }
         var column = this.getPrimaryOrGridColumn(key);
         if (!column) {
             return;
@@ -679,8 +568,8 @@ var ColumnController = (function () {
         newWidth = this.normaliseColumnWidth(column, newWidth);
         var widthChanged = column.getActualWidth() !== newWidth;
         if (widthChanged) {
-            column.setActualWidth(newWidth);
-            this.setLeftValues();
+            column.setActualWidth(newWidth, source);
+            this.setLeftValues(source);
         }
         this.updateBodyWidths();
         this.checkDisplayedVirtualColumns();
@@ -696,23 +585,27 @@ var ColumnController = (function () {
                 column: column,
                 finished: finished,
                 api: this.gridApi,
-                columnApi: this.columnApi
+                columnApi: this.columnApi,
+                source: source
             };
             this.eventService.dispatchEvent(event_3);
         }
     };
-    ColumnController.prototype.setColumnAggFunc = function (column, aggFunc) {
+    ColumnController.prototype.setColumnAggFunc = function (column, aggFunc, source) {
+        if (source === void 0) { source = "api"; }
         column.setAggFunc(aggFunc);
         var event = {
             type: events_1.Events.EVENT_COLUMN_VALUE_CHANGED,
             columns: [column],
             column: column,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            source: source
         };
         this.eventService.dispatchEvent(event);
     };
-    ColumnController.prototype.moveRowGroupColumn = function (fromIndex, toIndex) {
+    ColumnController.prototype.moveRowGroupColumn = function (fromIndex, toIndex, source) {
+        if (source === void 0) { source = "api"; }
         var column = this.rowGroupColumns[fromIndex];
         this.rowGroupColumns.splice(fromIndex, 1);
         this.rowGroupColumns.splice(toIndex, 0, column);
@@ -721,11 +614,13 @@ var ColumnController = (function () {
             columns: this.rowGroupColumns,
             column: this.rowGroupColumns.length === 1 ? this.rowGroupColumns[0] : null,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            source: source
         };
         this.eventService.dispatchEvent(event);
     };
-    ColumnController.prototype.moveColumns = function (columnsToMoveKeys, toIndex) {
+    ColumnController.prototype.moveColumns = function (columnsToMoveKeys, toIndex, source) {
+        if (source === void 0) { source = "api"; }
         this.columnAnimationService.start();
         if (toIndex > this.gridColumns.length - columnsToMoveKeys.length) {
             console.warn('ag-Grid: tried to insert columns in invalid location, toIndex = ' + toIndex);
@@ -739,22 +634,50 @@ var ColumnController = (function () {
             return;
         }
         utils_1.Utils.moveInArray(this.gridColumns, columnsToMove, toIndex);
-        this.updateDisplayedColumns();
+        this.updateDisplayedColumns(source);
         var event = {
             type: events_1.Events.EVENT_COLUMN_MOVED,
             columns: columnsToMove,
             column: columnsToMove.length === 1 ? columnsToMove[0] : null,
             toIndex: toIndex,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            source: source
         };
         this.eventService.dispatchEvent(event);
         this.columnAnimationService.finish();
     };
     ColumnController.prototype.doesMovePassRules = function (columnsToMove, toIndex) {
-        var allColumnsCopy = this.gridColumns.slice();
-        utils_1.Utils.moveInArray(allColumnsCopy, columnsToMove, toIndex);
-        var rulesPass = true;
+        // make a copy of what the grid columns would look like after the move
+        var proposedColumnOrder = this.gridColumns.slice();
+        utils_1.Utils.moveInArray(proposedColumnOrder, columnsToMove, toIndex);
+        // then check that the new proposed order of the columns passes all rules
+        if (!this.doesMovePassMarryChildren(proposedColumnOrder)) {
+            return false;
+        }
+        if (!this.doesMovePassLockedPositions(proposedColumnOrder)) {
+            return false;
+        }
+        return true;
+    };
+    ColumnController.prototype.doesMovePassLockedPositions = function (proposedColumnOrder) {
+        var foundNonLocked = false;
+        var rulePassed = true;
+        // go though the cols, see if any non-locked appear before any locked
+        proposedColumnOrder.forEach(function (col) {
+            if (col.isLockPosition()) {
+                if (foundNonLocked) {
+                    rulePassed = false;
+                }
+            }
+            else {
+                foundNonLocked = true;
+            }
+        });
+        return rulePassed;
+    };
+    ColumnController.prototype.doesMovePassMarryChildren = function (allColumnsCopy) {
+        var rulePassed = true;
         this.columnUtils.depthFirstOriginalTreeSearch(this.gridBalancedTree, function (child) {
             if (!(child instanceof originalColumnGroup_1.OriginalColumnGroup)) {
                 return;
@@ -771,24 +694,26 @@ var ColumnController = (function () {
             });
             var maxIndex = Math.max.apply(Math, newIndexes);
             var minIndex = Math.min.apply(Math, newIndexes);
-            // width is how far the first column in this group is away from the last column
+            // spread is how far the first column in this group is away from the last column
             var spread = maxIndex - minIndex;
             var maxSpread = columnGroup.getLeafColumns().length - 1;
             // if the columns
             if (spread > maxSpread) {
-                rulesPass = false;
+                rulePassed = false;
             }
             // console.log(`maxIndex = ${maxIndex}, minIndex = ${minIndex}, spread = ${spread}, maxSpread = ${maxSpread}, fail = ${spread > (count-1)}`)
             // console.log(allColumnsCopy.map( col => col.getColDef().field).join(','));
         });
-        return rulesPass;
+        return rulePassed;
     };
-    ColumnController.prototype.moveColumn = function (key, toIndex) {
-        this.moveColumns([key], toIndex);
+    ColumnController.prototype.moveColumn = function (key, toIndex, source) {
+        if (source === void 0) { source = "api"; }
+        this.moveColumns([key], toIndex, source);
     };
-    ColumnController.prototype.moveColumnByIndex = function (fromIndex, toIndex) {
+    ColumnController.prototype.moveColumnByIndex = function (fromIndex, toIndex, source) {
+        if (source === void 0) { source = "api"; }
         var column = this.gridColumns[fromIndex];
-        this.moveColumn(column, toIndex);
+        this.moveColumn(column, toIndex, source);
     };
     // used by:
     // + angularGrid -> for setting body width
@@ -867,6 +792,9 @@ var ColumnController = (function () {
     ColumnController.prototype.getAllPrimaryColumns = function () {
         return this.primaryColumns;
     };
+    ColumnController.prototype.getAllColumnsForQuickFilter = function () {
+        return this.columnsForQuickFilter;
+    };
     // + moveColumnController
     ColumnController.prototype.getAllGridColumns = function () {
         return this.gridColumns;
@@ -877,33 +805,43 @@ var ColumnController = (function () {
     ColumnController.prototype.isRowGroupEmpty = function () {
         return utils_1.Utils.missingOrEmpty(this.rowGroupColumns);
     };
-    ColumnController.prototype.setColumnVisible = function (key, visible) {
-        this.setColumnsVisible([key], visible);
+    ColumnController.prototype.setColumnVisible = function (key, visible, source) {
+        if (source === void 0) { source = "api"; }
+        this.setColumnsVisible([key], visible, source);
     };
-    ColumnController.prototype.setColumnsVisible = function (keys, visible) {
+    ColumnController.prototype.setColumnsVisible = function (keys, visible, source) {
         var _this = this;
+        if (source === void 0) { source = "api"; }
         this.columnAnimationService.start();
         this.actionOnGridColumns(keys, function (column) {
-            column.setVisible(visible);
-            return true;
-        }, function () {
+            if (column.isVisible() !== visible) {
+                column.setVisible(visible, source);
+                return true;
+            }
+            else {
+                return false;
+            }
+        }, source, function () {
             var event = {
                 type: events_1.Events.EVENT_COLUMN_VISIBLE,
                 visible: visible,
                 column: null,
                 columns: null,
                 api: _this.gridApi,
-                columnApi: _this.columnApi
+                columnApi: _this.columnApi,
+                source: source
             };
             return event;
         });
         this.columnAnimationService.finish();
     };
-    ColumnController.prototype.setColumnPinned = function (key, pinned) {
-        this.setColumnsPinned([key], pinned);
+    ColumnController.prototype.setColumnPinned = function (key, pinned, source) {
+        if (source === void 0) { source = "api"; }
+        this.setColumnsPinned([key], pinned, source);
     };
-    ColumnController.prototype.setColumnsPinned = function (keys, pinned) {
+    ColumnController.prototype.setColumnsPinned = function (keys, pinned, source) {
         var _this = this;
+        if (source === void 0) { source = "api"; }
         this.columnAnimationService.start();
         var actualPinned;
         if (pinned === true || pinned === column_1.Column.PINNED_LEFT) {
@@ -923,14 +861,15 @@ var ColumnController = (function () {
             else {
                 return false;
             }
-        }, function () {
+        }, source, function () {
             var event = {
                 type: events_1.Events.EVENT_COLUMN_PINNED,
                 pinned: actualPinned,
                 column: null,
                 columns: null,
                 api: _this.gridApi,
-                columnApi: _this.columnApi
+                columnApi: _this.columnApi,
+                source: source
             };
             return event;
         });
@@ -946,7 +885,7 @@ var ColumnController = (function () {
         // and won't be included in the event
         action, 
         // should return back a column event of the right type
-        createEvent) {
+        source, createEvent) {
         var _this = this;
         if (utils_1.Utils.missingOrEmpty(keys)) {
             return;
@@ -967,7 +906,7 @@ var ColumnController = (function () {
         if (updatedColumns.length === 0) {
             return;
         }
-        this.updateDisplayedColumns();
+        this.updateDisplayedColumns(source);
         if (utils_1.Utils.exists(createEvent)) {
             var event_5 = createEvent();
             event_5.columns = updatedColumns;
@@ -1046,7 +985,8 @@ var ColumnController = (function () {
             return posA - posB;
         });
     };
-    ColumnController.prototype.resetColumnState = function () {
+    ColumnController.prototype.resetColumnState = function (source) {
+        if (source === void 0) { source = "api"; }
         // we can't use 'allColumns' as the order might of messed up, so get the primary ordered list
         var primaryColumns = this.getColumnsFromTree(this.primaryBalancedTree);
         var state = [];
@@ -1063,10 +1003,11 @@ var ColumnController = (function () {
                 });
             });
         }
-        this.setColumnState(state);
+        this.setColumnState(state, source);
     };
-    ColumnController.prototype.setColumnState = function (columnState) {
+    ColumnController.prototype.setColumnState = function (columnState, source) {
         var _this = this;
+        if (source === void 0) { source = "api"; }
         if (utils_1.Utils.missingOrEmpty(this.primaryColumns)) {
             return false;
         }
@@ -1087,7 +1028,7 @@ var ColumnController = (function () {
                     success = false;
                 }
                 else {
-                    _this.syncColumnWithStateItem(column, stateItem, rowGroupIndexes, pivotIndexes);
+                    _this.syncColumnWithStateItem(column, stateItem, rowGroupIndexes, pivotIndexes, source);
                     utils_1.Utils.removeFromArray(columnsWithNoState, column);
                 }
             });
@@ -1097,14 +1038,16 @@ var ColumnController = (function () {
         // sort the lists according to the indexes that were provided
         this.rowGroupColumns.sort(this.sortColumnListUsingIndexes.bind(this, rowGroupIndexes));
         this.pivotColumns.sort(this.sortColumnListUsingIndexes.bind(this, pivotIndexes));
-        this.copyDownGridColumns();
-        var orderOfColIds = columnState.map(function (stateItem) { return stateItem.colId; });
-        this.gridColumns.sort(function (colA, colB) {
-            var indexA = orderOfColIds.indexOf(colA.getId());
-            var indexB = orderOfColIds.indexOf(colB.getId());
-            return indexA - indexB;
-        });
-        this.updateDisplayedColumns();
+        this.updateGridColumns();
+        if (columnState) {
+            var orderOfColIds_1 = columnState.map(function (stateItem) { return stateItem.colId; });
+            this.gridColumns.sort(function (colA, colB) {
+                var indexA = orderOfColIds_1.indexOf(colA.getId());
+                var indexB = orderOfColIds_1.indexOf(colB.getId());
+                return indexA - indexB;
+            });
+        }
+        this.updateDisplayedColumns(source);
         var event = {
             type: events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             api: this.gridApi,
@@ -1118,26 +1061,26 @@ var ColumnController = (function () {
         var indexB = indexes[colB.getId()];
         return indexA - indexB;
     };
-    ColumnController.prototype.syncColumnWithNoState = function (column) {
-        column.setVisible(false);
+    ColumnController.prototype.syncColumnWithNoState = function (column, source) {
+        column.setVisible(false, source);
         column.setAggFunc(null);
         column.setPinned(null);
-        column.setRowGroupActive(false);
-        column.setPivotActive(false);
-        column.setValueActive(false);
+        column.setRowGroupActive(false, source);
+        column.setPivotActive(false, source);
+        column.setValueActive(false, source);
     };
-    ColumnController.prototype.syncColumnWithStateItem = function (column, stateItem, rowGroupIndexes, pivotIndexes) {
+    ColumnController.prototype.syncColumnWithStateItem = function (column, stateItem, rowGroupIndexes, pivotIndexes, source) {
         // following ensures we are left with boolean true or false, eg converts (null, undefined, 0) all to true
-        column.setVisible(!stateItem.hide);
+        column.setVisible(!stateItem.hide, source);
         // sets pinned to 'left' or 'right'
         column.setPinned(stateItem.pinned);
         // if width provided and valid, use it, otherwise stick with the old width
         if (stateItem.width >= this.gridOptionsWrapper.getMinColWidth()) {
-            column.setActualWidth(stateItem.width);
+            column.setActualWidth(stateItem.width, source);
         }
         if (typeof stateItem.aggFunc === 'string') {
             column.setAggFunc(stateItem.aggFunc);
-            column.setValueActive(true);
+            column.setValueActive(true, source);
             this.valueColumns.push(column);
         }
         else {
@@ -1147,23 +1090,23 @@ var ColumnController = (function () {
                     'intended for the column state to be stored and retrieved as simple JSON.');
             }
             column.setAggFunc(null);
-            column.setValueActive(false);
+            column.setValueActive(false, source);
         }
         if (typeof stateItem.rowGroupIndex === 'number') {
             this.rowGroupColumns.push(column);
-            column.setRowGroupActive(true);
+            column.setRowGroupActive(true, source);
             rowGroupIndexes[column.getId()] = stateItem.rowGroupIndex;
         }
         else {
-            column.setRowGroupActive(false);
+            column.setRowGroupActive(false, source);
         }
         if (typeof stateItem.pivotIndex === 'number') {
             this.pivotColumns.push(column);
-            column.setPivotActive(true);
+            column.setPivotActive(true, source);
             pivotIndexes[column.getId()] = stateItem.pivotIndex;
         }
         else {
-            column.setPivotActive(false);
+            column.setPivotActive(false, source);
         }
     };
     ColumnController.prototype.getGridColumns = function (keys) {
@@ -1367,7 +1310,8 @@ var ColumnController = (function () {
         });
         return result;
     };
-    ColumnController.prototype.setColumnDefs = function (columnDefs) {
+    ColumnController.prototype.setColumnDefs = function (columnDefs, source) {
+        if (source === void 0) { source = "api"; }
         // always invalidate cache on changing columns, as the column id's for the new columns
         // could overlap with the old id's, so the cache would return old values for new columns.
         this.valueCache.expire();
@@ -1379,11 +1323,11 @@ var ColumnController = (function () {
         this.primaryBalancedTree = balancedTreeResult.balancedTree;
         this.primaryHeaderRowCount = balancedTreeResult.treeDept + 1;
         this.primaryColumns = this.getColumnsFromTree(this.primaryBalancedTree);
-        this.extractRowGroupColumns();
-        this.extractPivotColumns();
-        this.createValueColumns();
-        this.copyDownGridColumns();
-        this.updateDisplayedColumns();
+        this.extractRowGroupColumns(source);
+        this.extractPivotColumns(source);
+        this.createValueColumns(source);
+        this.updateGridColumns();
+        this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
         this.ready = true;
         var eventEverythingChanged = {
@@ -1402,15 +1346,15 @@ var ColumnController = (function () {
     ColumnController.prototype.isReady = function () {
         return this.ready;
     };
-    ColumnController.prototype.extractRowGroupColumns = function () {
+    ColumnController.prototype.extractRowGroupColumns = function (source) {
         var _this = this;
-        this.rowGroupColumns.forEach(function (column) { return column.setRowGroupActive(false); });
+        this.rowGroupColumns.forEach(function (column) { return column.setRowGroupActive(false, source); });
         this.rowGroupColumns = [];
         // pull out items with rowGroupIndex
         this.primaryColumns.forEach(function (column) {
             if (typeof column.getColDef().rowGroupIndex === 'number') {
                 _this.rowGroupColumns.push(column);
-                column.setRowGroupActive(true);
+                column.setRowGroupActive(true, source);
             }
         });
         // then sort them
@@ -1426,19 +1370,19 @@ var ColumnController = (function () {
                     return;
                 }
                 _this.rowGroupColumns.push(column);
-                column.setRowGroupActive(true);
+                column.setRowGroupActive(true, source);
             }
         });
     };
-    ColumnController.prototype.extractPivotColumns = function () {
+    ColumnController.prototype.extractPivotColumns = function (source) {
         var _this = this;
-        this.pivotColumns.forEach(function (column) { return column.setPivotActive(false); });
+        this.pivotColumns.forEach(function (column) { return column.setPivotActive(false, source); });
         this.pivotColumns = [];
         // pull out items with pivotIndex
         this.primaryColumns.forEach(function (column) {
             if (typeof column.getColDef().pivotIndex === 'number') {
                 _this.pivotColumns.push(column);
-                column.setPivotActive(true);
+                column.setPivotActive(true, source);
             }
         });
         // then sort them
@@ -1453,11 +1397,12 @@ var ColumnController = (function () {
                     return;
                 }
                 _this.pivotColumns.push(column);
-                column.setPivotActive(true);
+                column.setPivotActive(true, source);
             }
         });
     };
-    ColumnController.prototype.resetColumnGroupState = function () {
+    ColumnController.prototype.resetColumnGroupState = function (source) {
+        if (source === void 0) { source = "api"; }
         var stateItems = [];
         this.columnUtils.depthFirstOriginalTreeSearch(this.primaryBalancedTree, function (child) {
             if (child instanceof originalColumnGroup_1.OriginalColumnGroup) {
@@ -1468,7 +1413,7 @@ var ColumnController = (function () {
                 stateItems.push(groupState);
             }
         });
-        this.setColumnGroupState(stateItems);
+        this.setColumnGroupState(stateItems, source);
     };
     ColumnController.prototype.getColumnGroupState = function () {
         var columnGroupState = [];
@@ -1483,8 +1428,9 @@ var ColumnController = (function () {
         });
         return columnGroupState;
     };
-    ColumnController.prototype.setColumnGroupState = function (stateItems) {
+    ColumnController.prototype.setColumnGroupState = function (stateItems, source) {
         var _this = this;
+        if (source === void 0) { source = "api"; }
         this.columnAnimationService.start();
         var impactedGroups = [];
         stateItems.forEach(function (stateItem) {
@@ -1501,7 +1447,7 @@ var ColumnController = (function () {
             originalColumnGroup.setExpanded(newValue);
             impactedGroups.push(originalColumnGroup);
         });
-        this.updateGroupsAndDisplayedColumns();
+        this.updateGroupsAndDisplayedColumns(source);
         impactedGroups.forEach(function (originalColumnGroup) {
             var event = {
                 type: events_1.Events.EVENT_COLUMN_GROUP_OPENED,
@@ -1514,7 +1460,8 @@ var ColumnController = (function () {
         this.columnAnimationService.finish();
     };
     // called by headerRenderer - when a header is opened or closed
-    ColumnController.prototype.setColumnGroupOpened = function (key, newValue) {
+    ColumnController.prototype.setColumnGroupOpened = function (key, newValue, source) {
+        if (source === void 0) { source = "api"; }
         var keyAsString;
         if (key instanceof originalColumnGroup_1.OriginalColumnGroup) {
             keyAsString = key.getId();
@@ -1522,7 +1469,7 @@ var ColumnController = (function () {
         else {
             keyAsString = key;
         }
-        this.setColumnGroupState([{ groupId: keyAsString, open: newValue }]);
+        this.setColumnGroupState([{ groupId: keyAsString, open: newValue }], source);
     };
     ColumnController.prototype.getOriginalColumnGroup = function (key) {
         if (key instanceof originalColumnGroup_1.OriginalColumnGroup) {
@@ -1544,20 +1491,25 @@ var ColumnController = (function () {
         return res;
     };
     ColumnController.prototype.calculateColumnsForDisplay = function () {
+        var _this = this;
         var columnsForDisplay;
         if (this.pivotMode && !this.secondaryColumnsPresent) {
             // pivot mode is on, but we are not pivoting, so we only
             // show columns we are aggregating on
-            columnsForDisplay = this.createColumnsToDisplayFromValueColumns();
+            columnsForDisplay = utils_1.Utils.filter(this.gridColumns, function (column) {
+                var isAutoGroupCol = _this.groupAutoColumns && _this.groupAutoColumns.indexOf(column) >= 0;
+                var isValueCol = _this.valueColumns && _this.valueColumns.indexOf(column) >= 0;
+                return isAutoGroupCol || isValueCol;
+            });
         }
         else {
             // otherwise continue as normal. this can be working on the primary
             // or secondary columns, whatever the gridColumns are set to
-            columnsForDisplay = utils_1.Utils.filter(this.gridColumns, function (column) { return column.isVisible(); });
-        }
-        this.createGroupAutoColumnsIfNeeded();
-        if (utils_1.Utils.exists(this.groupAutoColumns)) {
-            columnsForDisplay = this.groupAutoColumns.concat(columnsForDisplay);
+            columnsForDisplay = utils_1.Utils.filter(this.gridColumns, function (column) {
+                // keep col if a) it's auto-group or b) it's visible
+                var isAutoGroupCol = _this.groupAutoColumns && _this.groupAutoColumns.indexOf(column) >= 0;
+                return isAutoGroupCol || column.isVisible();
+            });
         }
         return columnsForDisplay;
     };
@@ -1587,29 +1539,19 @@ var ColumnController = (function () {
     ColumnController.prototype.getGroupDisplayColumns = function () {
         return this.groupDisplayColumns;
     };
-    ColumnController.prototype.createColumnsToDisplayFromValueColumns = function () {
-        var _this = this;
-        // make a copy of the value columns, so we have to side effects
-        var result = this.valueColumns.slice();
-        // order the columns as per the grid columns. having the order is
-        // important as without it, reordering of columns would have no impact
-        result.sort(function (colA, colB) {
-            return _this.gridColumns.indexOf(colA) - _this.gridColumns.indexOf(colB);
-        });
-        return result;
-    };
-    ColumnController.prototype.updateDisplayedColumns = function () {
+    ColumnController.prototype.updateDisplayedColumns = function (source) {
         var columnsForDisplay = this.calculateColumnsForDisplay();
         this.buildDisplayedTrees(columnsForDisplay);
         this.calculateColumnsForGroupDisplay();
         // this is also called when a group is opened or closed
-        this.updateGroupsAndDisplayedColumns();
-        this.setFirstRightAndLastLeftPinned();
+        this.updateGroupsAndDisplayedColumns(source);
+        this.setFirstRightAndLastLeftPinned(source);
     };
     ColumnController.prototype.isSecondaryColumnsPresent = function () {
         return this.secondaryColumnsPresent;
     };
-    ColumnController.prototype.setSecondaryColumns = function (colDefs) {
+    ColumnController.prototype.setSecondaryColumns = function (colDefs, source) {
+        if (source === void 0) { source = "api"; }
         var newColsPresent = colDefs && colDefs.length > 0;
         // if not cols passed, and we had to cols anyway, then do nothing
         if (!newColsPresent && !this.secondaryColumnsPresent) {
@@ -1629,8 +1571,8 @@ var ColumnController = (function () {
             this.secondaryColumns = null;
             this.secondaryColumnsPresent = false;
         }
-        this.copyDownGridColumns();
-        this.updateDisplayedColumns();
+        this.updateGridColumns();
+        this.updateDisplayedColumns(source);
     };
     ColumnController.prototype.processSecondaryColumnDefinitions = function (colDefs) {
         var columnCallback = this.gridOptionsWrapper.getProcessSecondaryColDefFunc();
@@ -1658,8 +1600,8 @@ var ColumnController = (function () {
             });
         }
     };
-    // called from: setColumnState, setColumnDefs, setAlternativeColumnDefs
-    ColumnController.prototype.copyDownGridColumns = function () {
+    // called from: setColumnState, setColumnDefs, setSecondaryColumns
+    ColumnController.prototype.updateGridColumns = function () {
         if (this.secondaryColumns) {
             this.gridBalancedTree = this.secondaryBalancedTree.slice();
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
@@ -1670,6 +1612,9 @@ var ColumnController = (function () {
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
             this.gridColumns = this.primaryColumns.slice();
         }
+        this.putFixedColumnsFirst();
+        this.addAutoGroupToGridColumns();
+        this.setupQuickFilterColumns();
         this.clearDisplayedColumns();
         this.colSpanActive = this.checkColSpanActiveInCols(this.gridColumns);
         var event = {
@@ -1678,6 +1623,34 @@ var ColumnController = (function () {
             columnApi: this.columnApi
         };
         this.eventService.dispatchEvent(event);
+    };
+    // if we are using autoGroupCols, then they should be included for quick filter. this covers the
+    // following scenarios:
+    // a) user provides 'field' into autoGroupCol of normal grid, so now because a valid col to filter leafs on
+    // b) using tree data and user depends on autoGroupCol for first col, and we also want to filter on this
+    //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
+    ColumnController.prototype.setupQuickFilterColumns = function () {
+        if (this.groupAutoColumns) {
+            this.columnsForQuickFilter = this.primaryColumns.concat(this.groupAutoColumns);
+        }
+        else {
+            this.columnsForQuickFilter = this.primaryColumns;
+        }
+    };
+    ColumnController.prototype.putFixedColumnsFirst = function () {
+        var locked = this.gridColumns.filter(function (c) { return c.isLockPosition(); });
+        var unlocked = this.gridColumns.filter(function (c) { return !c.isLockPosition(); });
+        this.gridColumns = locked.concat(unlocked);
+    };
+    ColumnController.prototype.addAutoGroupToGridColumns = function () {
+        // add in auto-group here
+        this.createGroupAutoColumnsIfNeeded();
+        if (utils_1.Utils.missing(this.groupAutoColumns)) {
+            return;
+        }
+        this.gridColumns = this.groupAutoColumns.concat(this.gridColumns);
+        var autoColBalancedTree = this.balancedColumnTreeBuilder.createForAutoGroups(this.groupAutoColumns, this.gridBalancedTree);
+        this.gridBalancedTree = autoColBalancedTree.concat(this.gridBalancedTree);
     };
     // gets called after we copy down grid columns, to make sure any part of the gui
     // that tries to draw, eg the header, it will get empty lists of columns rather
@@ -1697,9 +1670,9 @@ var ColumnController = (function () {
         this.allDisplayedColumns = [];
         this.allDisplayedVirtualColumns = [];
     };
-    ColumnController.prototype.updateGroupsAndDisplayedColumns = function () {
-        this.updateGroups();
-        this.updateDisplayedColumnsFromTrees();
+    ColumnController.prototype.updateGroupsAndDisplayedColumns = function (source) {
+        this.updateOpenClosedVisibilityInColumnGroups();
+        this.updateDisplayedColumnsFromTrees(source);
         this.updateVirtualSets();
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
@@ -1710,12 +1683,12 @@ var ColumnController = (function () {
         };
         this.eventService.dispatchEvent(event);
     };
-    ColumnController.prototype.updateDisplayedColumnsFromTrees = function () {
+    ColumnController.prototype.updateDisplayedColumnsFromTrees = function (source) {
         this.addToDisplayedColumns(this.displayedLeftColumnTree, this.displayedLeftColumns);
         this.addToDisplayedColumns(this.displayedCentreColumnTree, this.displayedCenterColumns);
         this.addToDisplayedColumns(this.displayedRightColumnTree, this.displayedRightColumns);
         this.setupAllDisplayedColumns();
-        this.setLeftValues();
+        this.setLeftValues(source);
     };
     ColumnController.prototype.setupAllDisplayedColumns = function () {
         if (this.gridOptionsWrapper.isEnableRtl()) {
@@ -1730,11 +1703,11 @@ var ColumnController = (function () {
         }
     };
     // sets the left pixel position of each column
-    ColumnController.prototype.setLeftValues = function () {
-        this.setLeftValuesOfColumns();
+    ColumnController.prototype.setLeftValues = function (source) {
+        this.setLeftValuesOfColumns(source);
         this.setLeftValuesOfGroups();
     };
-    ColumnController.prototype.setLeftValuesOfColumns = function () {
+    ColumnController.prototype.setLeftValuesOfColumns = function (source) {
         var _this = this;
         // go through each list of displayed columns
         var allColumns = this.primaryColumns.slice(0);
@@ -1746,14 +1719,14 @@ var ColumnController = (function () {
                 var left_1 = _this.getWidthOfColsInList(columns);
                 columns.forEach(function (column) {
                     left_1 -= column.getActualWidth();
-                    column.setLeft(left_1);
+                    column.setLeft(left_1, source);
                 });
             }
             else {
                 // otherwise normal LTR, we start at zero
                 var left_2 = 0;
                 columns.forEach(function (column) {
-                    column.setLeft(left_2);
+                    column.setLeft(left_2, source);
                     left_2 += column.getActualWidth();
                 });
             }
@@ -1763,7 +1736,7 @@ var ColumnController = (function () {
         // important for the rows, as if a col is made visible, then taken out, then made visible again,
         // we don't want the animation of the cell floating in from the old position, whatever that was.
         allColumns.forEach(function (column) {
-            column.setLeft(null);
+            column.setLeft(null, source);
         });
     };
     ColumnController.prototype.setLeftValuesOfGroups = function () {
@@ -1867,8 +1840,9 @@ var ColumnController = (function () {
         return utils_1.Utils.filter(this.displayedCenterColumns, this.isColumnInViewport.bind(this));
     };
     // called from api
-    ColumnController.prototype.sizeColumnsToFit = function (gridWidth) {
+    ColumnController.prototype.sizeColumnsToFit = function (gridWidth, source) {
         var _this = this;
+        if (source === void 0) { source = "api"; }
         // avoid divide by zero
         var allDisplayedColumns = this.getAllDisplayedColumns();
         if (gridWidth <= 0 || allDisplayedColumns.length === 0) {
@@ -1889,7 +1863,7 @@ var ColumnController = (function () {
             if (availablePixels <= 0) {
                 // no width, set everything to minimum
                 colsToSpread.forEach(function (column) {
-                    column.setMinimum();
+                    column.setMinimum(source);
                 });
             }
             else {
@@ -1902,29 +1876,29 @@ var ColumnController = (function () {
                     var column = colsToSpread[i];
                     var newWidth = Math.round(column.getActualWidth() * scale);
                     if (newWidth < column.getMinWidth()) {
-                        column.setMinimum();
+                        column.setMinimum(source);
                         moveToNotSpread(column);
                         finishedResizing = false;
                     }
                     else if (column.isGreaterThanMax(newWidth)) {
-                        column.setActualWidth(column.getMaxWidth());
+                        column.setActualWidth(column.getMaxWidth(), source);
                         moveToNotSpread(column);
                         finishedResizing = false;
                     }
                     else {
                         var onLastCol = i === 0;
                         if (onLastCol) {
-                            column.setActualWidth(pixelsForLastCol);
+                            column.setActualWidth(pixelsForLastCol, source);
                         }
                         else {
-                            column.setActualWidth(newWidth);
+                            column.setActualWidth(newWidth, source);
                         }
                     }
                     pixelsForLastCol -= newWidth;
                 }
             }
         }
-        this.setLeftValues();
+        this.setLeftValues(source);
         this.updateBodyWidths();
         colsToFireEventFor.forEach(function (column) {
             var event = {
@@ -1933,7 +1907,8 @@ var ColumnController = (function () {
                 columns: [column],
                 finished: true,
                 api: _this.gridApi,
-                columnApi: _this.columnApi
+                columnApi: _this.columnApi,
+                source: "sizeColumnsToFit"
             };
             _this.eventService.dispatchEvent(event);
         });
@@ -1957,12 +1932,12 @@ var ColumnController = (function () {
         this.displayedRightColumnTree = this.displayedGroupCreator.createDisplayedGroups(rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, this.displayedRightColumnTree);
         this.displayedCentreColumnTree = this.displayedGroupCreator.createDisplayedGroups(centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, this.displayedCentreColumnTree);
     };
-    ColumnController.prototype.updateGroups = function () {
-        var allGroups = this.getAllDisplayedColumnGroups();
-        this.columnUtils.depthFirstAllColumnTreeSearch(allGroups, function (child) {
+    ColumnController.prototype.updateOpenClosedVisibilityInColumnGroups = function () {
+        var allColumnGroups = this.getAllDisplayedColumnGroups();
+        this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, function (child) {
             if (child instanceof columnGroup_1.ColumnGroup) {
-                var group = child;
-                group.calculateDisplayedColumns();
+                var columnGroup = child;
+                columnGroup.calculateDisplayedColumns();
             }
         });
     };
@@ -1986,8 +1961,8 @@ var ColumnController = (function () {
             this.groupAutoColumns = null;
         }
     };
-    ColumnController.prototype.createValueColumns = function () {
-        this.valueColumns.forEach(function (column) { return column.setValueActive(false); });
+    ColumnController.prototype.createValueColumns = function (source) {
+        this.valueColumns.forEach(function (column) { return column.setValueActive(false, source); });
         this.valueColumns = [];
         // override with columns that have the aggFunc specified explicitly
         for (var i = 0; i < this.primaryColumns.length; i++) {
@@ -1995,7 +1970,7 @@ var ColumnController = (function () {
             if (column.getColDef().aggFunc) {
                 column.setAggFunc(column.getColDef().aggFunc);
                 this.valueColumns.push(column);
-                column.setValueActive(true);
+                column.setValueActive(true, source);
             }
         }
     };
@@ -2063,7 +2038,7 @@ var ColumnController = (function () {
     ], ColumnController.prototype, "valueCache", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], ColumnController.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "../../interfaces/iComponent";
@@ -23,10 +23,6 @@ export declare type AgGridRegisteredComponentInput<A extends IComponent<any>> = 
     new (): A;
 };
 export declare type AgGridComponentFunctionInput = (params: any) => string | HTMLElement;
-export interface AgGridProvidedComponentDef {
-    overridable: boolean;
-    defaultImpl: AgGridRegisteredComponentInput<any>;
-}
 export interface DeprecatedComponentName {
     propertyHolder: string;
     newComponentName: string;
@@ -38,8 +34,8 @@ export declare class ComponentProvider {
     private agDeprecatedNames;
     private jsComponents;
     private frameworkComponents;
-    postConstruct(): void;
     private init();
+    registerDefaultComponent<A extends IComponent<any>>(rawName: string, component: AgGridRegisteredComponentInput<A>, overridable?: boolean): void;
     registerComponent<A extends IComponent<any>>(rawName: string, component: AgGridRegisteredComponentInput<A>): void;
     /**
      * B the business interface (ie IHeader)
@@ -53,6 +49,5 @@ export declare class ComponentProvider {
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
     retrieve<A extends IComponent<any> & B, B>(rawName: string): RegisteredComponent<A, B>;
-    private assertCanBeOverride<A, B>(name, toAssert);
     private translateIfDeprecated(raw);
 }

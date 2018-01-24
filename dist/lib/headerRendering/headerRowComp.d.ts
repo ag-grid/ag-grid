@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../widgets/component";
@@ -19,7 +19,7 @@ export declare class HeaderRowComp extends Component {
     private componentRecipes;
     private dept;
     private pinned;
-    private headerCompPromises;
+    private headerComps;
     private eRoot;
     private dropTarget;
     private type;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,6 +30,7 @@ var context_1 = require("../../context/context");
 var column_1 = require("../../entities/column");
 var utils_1 = require("../../utils");
 var dragAndDropService_1 = require("../../dragAndDrop/dragAndDropService");
+var columnApi_1 = require("../../columnController/columnApi");
 var columnController_1 = require("../../columnController/columnController");
 var horizontalDragService_1 = require("../horizontalDragService");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
@@ -109,10 +110,10 @@ var HeaderWrapperComp = (function (_super) {
                 _this.gridApi.showColumnMenuAfterButtonClick(_this.column, source);
             },
             progressSort: function (multiSort) {
-                _this.sortController.progressSort(_this.column, !!multiSort);
+                _this.sortController.progressSort(_this.column, !!multiSort, "uiColumnSorted");
             },
             setSort: function (sort, multiSort) {
-                _this.sortController.setSortForColumn(_this.column, sort, !!multiSort);
+                _this.sortController.setSortForColumn(_this.column, sort, !!multiSort, "uiColumnSorted");
             },
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -143,6 +144,7 @@ var HeaderWrapperComp = (function (_super) {
         var _this = this;
         var suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
             || this.column.getColDef().suppressMovable
+            || this.column.isLockPosition()
             || this.gridOptionsWrapper.isForPrint();
         if (suppressMove) {
             return;
@@ -153,7 +155,9 @@ var HeaderWrapperComp = (function (_super) {
                 eElement: eHeaderCellLabel,
                 dragItemCallback: function () { return _this.createDragItem(); },
                 dragItemName: displayName,
-                dragSourceDropTarget: this.dragSourceDropTarget
+                dragSourceDropTarget: this.dragSourceDropTarget,
+                dragStarted: function () { return _this.column.setMoving(true, "uiColumnMoved"); },
+                dragStopped: function () { return _this.column.setMoving(false, "uiColumnMoved"); }
             };
             this.dragAndDropService.addDragSource(dragSource_1, true);
             this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });
@@ -189,14 +193,14 @@ var HeaderWrapperComp = (function (_super) {
         var weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
         if (weWantAutoSize) {
             this.addDestroyableEventListener(this.eResize, 'dblclick', function () {
-                _this.columnController.autoSizeColumn(_this.column);
+                _this.columnController.autoSizeColumn(_this.column, "uiColumnResized");
             });
         }
     };
     HeaderWrapperComp.prototype.onDragging = function (dragChange, finished) {
         var dragChangeNormalised = this.normaliseDragChange(dragChange);
         var newWidth = this.startWidth + dragChangeNormalised;
-        this.columnController.setColumnWidth(this.column, newWidth, finished);
+        this.columnController.setColumnWidth(this.column, newWidth, finished, "uiColumnDragged");
     };
     HeaderWrapperComp.prototype.onDragStart = function () {
         this.startWidth = this.column.getActualWidth();
@@ -282,7 +286,7 @@ var HeaderWrapperComp = (function (_super) {
     ], HeaderWrapperComp.prototype, "gridApi", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], HeaderWrapperComp.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('sortController'),

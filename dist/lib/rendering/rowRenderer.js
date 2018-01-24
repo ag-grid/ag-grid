@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,6 +41,7 @@ var constants_1 = require("../constants");
 var cellComp_1 = require("./cellComp");
 var context_1 = require("../context/context");
 var gridCore_1 = require("../gridCore");
+var columnApi_1 = require("../columnController/columnApi");
 var columnController_1 = require("../columnController/columnController");
 var logger_1 = require("../logger");
 var focusedCellController_1 = require("../focusedCellController");
@@ -341,7 +342,6 @@ var RowRenderer = (function (_super) {
                 }
                 cellComp.refreshCell({
                     forceRefresh: params.force,
-                    volatile: params.volatile,
                     newData: false
                 });
             });
@@ -644,8 +644,7 @@ var RowRenderer = (function (_super) {
     };
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    RowRenderer.prototype.navigateToNextCell = function (event, key, rowIndex, column, floating) {
-        var previousCell = new gridCell_1.GridCell({ rowIndex: rowIndex, floating: floating, column: column });
+    RowRenderer.prototype.navigateToNextCell = function (event, key, previousCell, allowUserOverride) {
         var nextCell = previousCell;
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         while (true) {
@@ -664,21 +663,24 @@ var RowRenderer = (function (_super) {
                 break;
             }
         }
-        // allow user to override what cell to go to next
-        var userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
-        if (utils_1.Utils.exists(userFunc)) {
-            var params = {
-                key: key,
-                previousCellDef: previousCell,
-                nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
-                event: event
-            };
-            var nextCellDef = userFunc(params);
-            if (utils_1.Utils.exists(nextCellDef)) {
-                nextCell = new gridCell_1.GridCell(nextCellDef);
-            }
-            else {
-                nextCell = null;
+        // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
+        // we allow this, however if processing 'enter after edit' we don't allow override
+        if (allowUserOverride) {
+            var userFunc = this.gridOptionsWrapper.getNavigateToNextCellFunc();
+            if (utils_1.Utils.exists(userFunc)) {
+                var params = {
+                    key: key,
+                    previousCellDef: previousCell,
+                    nextCellDef: nextCell ? nextCell.getGridCellDef() : null,
+                    event: event
+                };
+                var nextCellDef = userFunc(params);
+                if (utils_1.Utils.exists(nextCellDef)) {
+                    nextCell = new gridCell_1.GridCell(nextCellDef);
+                }
+                else {
+                    nextCell = null;
+                }
             }
         }
         // no next cell means we have reached a grid boundary, eg left, right, top or bottom of grid
@@ -749,37 +751,63 @@ var RowRenderer = (function (_super) {
         var result = this.moveToCellAfter(renderedCell, backwards);
         return result;
     };
-    // returns true if moving to next cell was successful
     RowRenderer.prototype.moveToCellAfter = function (previousRenderedCell, backwards) {
         var editing = previousRenderedCell.isEditing();
+        var res;
+        if (editing) {
+            if (this.gridOptionsWrapper.isFullRowEdit()) {
+                res = this.moveToNextEditingRow(previousRenderedCell, backwards);
+            }
+            else {
+                res = this.moveToNextEditingCell(previousRenderedCell, backwards);
+            }
+        }
+        else {
+            res = this.moveToNextCellNotEditing(previousRenderedCell, backwards);
+        }
+        return res;
+    };
+    RowRenderer.prototype.moveToNextEditingCell = function (previousRenderedCell, backwards) {
         var gridCell = previousRenderedCell.getGridCell();
+        // need to do this before getting next cell to edit, in case the next cell
+        // has editable function (eg colDef.editable=func() ) and it depends on the
+        // result of this cell, so need to save updates from the first edit, in case
+        // the value is referenced in the function.
+        previousRenderedCell.stopEditing();
         // find the next cell to start editing
-        var nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, editing);
+        var nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, true);
         var foundCell = utils_1.Utils.exists(nextRenderedCell);
         // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
         // to the normal tabbing so user can exit the grid.
         if (foundCell) {
-            if (editing) {
-                if (this.gridOptionsWrapper.isFullRowEdit()) {
-                    this.moveEditToNextCellOrRow(previousRenderedCell, nextRenderedCell);
-                }
-                else {
-                    this.moveEditToNextCell(previousRenderedCell, nextRenderedCell);
-                }
-            }
-            else {
-                nextRenderedCell.focusCell(true);
-            }
-            return true;
+            nextRenderedCell.startEditingIfEnabled(null, null, true);
+            nextRenderedCell.focusCell(false);
         }
-        else {
-            return false;
-        }
+        return foundCell;
     };
-    RowRenderer.prototype.moveEditToNextCell = function (previousRenderedCell, nextRenderedCell) {
-        previousRenderedCell.stopEditing();
-        nextRenderedCell.startEditingIfEnabled(null, null, true);
-        nextRenderedCell.focusCell(false);
+    RowRenderer.prototype.moveToNextEditingRow = function (previousRenderedCell, backwards) {
+        var gridCell = previousRenderedCell.getGridCell();
+        // find the next cell to start editing
+        var nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, true);
+        var foundCell = utils_1.Utils.exists(nextRenderedCell);
+        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
+        // to the normal tabbing so user can exit the grid.
+        if (foundCell) {
+            this.moveEditToNextCellOrRow(previousRenderedCell, nextRenderedCell);
+        }
+        return foundCell;
+    };
+    RowRenderer.prototype.moveToNextCellNotEditing = function (previousRenderedCell, backwards) {
+        var gridCell = previousRenderedCell.getGridCell();
+        // find the next cell to start editing
+        var nextRenderedCell = this.findNextCellToFocusOn(gridCell, backwards, false);
+        var foundCell = utils_1.Utils.exists(nextRenderedCell);
+        // only prevent default if we found a cell. so if user is on last cell and hits tab, then we default
+        // to the normal tabbing so user can exit the grid.
+        if (foundCell) {
+            nextRenderedCell.focusCell(true);
+        }
+        return foundCell;
     };
     RowRenderer.prototype.moveEditToNextCellOrRow = function (previousRenderedCell, nextRenderedCell) {
         var pGridCell = previousRenderedCell.getGridCell();
@@ -931,7 +959,7 @@ var RowRenderer = (function (_super) {
     ], RowRenderer.prototype, "cellNavigationService", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], RowRenderer.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),

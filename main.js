@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -252,8 +252,8 @@ exports.BaseGridSerializingSession = gridSerializer_1.BaseGridSerializingSession
 exports.RowType = gridSerializer_1.RowType;
 var logger_2 = require("./dist/lib/logger");
 exports.LoggerFactory = logger_2.LoggerFactory;
-var columnController_2 = require("./dist/lib/columnController/columnController");
-exports.ColumnApi = columnController_2.ColumnApi;
+var columnApi_1 = require("./dist/lib/columnController/columnApi");
+exports.ColumnApi = columnApi_1.ColumnApi;
 var frameworkComponentWrapper_1 = require("./dist/lib/components/framework/frameworkComponentWrapper");
 exports.BaseComponentWrapper = frameworkComponentWrapper_1.BaseComponentWrapper;
 var environment_1 = require("./dist/lib/environment");

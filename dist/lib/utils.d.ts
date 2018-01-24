@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -53,7 +53,7 @@ export declare class Utils {
     static isNodeOrElement(o: any): boolean;
     static isEventFromPrintableCharacter(event: KeyboardEvent): boolean;
     static addChangeListener(element: HTMLElement, listener: EventListener): void;
-    static makeNull(value: any): any;
+    static makeNull<T>(value: T): T;
     static missing(value: any): boolean;
     static missingOrEmpty(value: any[] | string): boolean;
     static missingOrEmptyObject(value: any): boolean;
@@ -285,6 +285,7 @@ export declare class Promise<T> {
     static external<T>(): ExternalPromise<T>;
     constructor(callback: ResolveAndRejectCallback<T>);
     then(func: (result: any) => void): void;
+    firstOneOnly(func: (result: any) => void): void;
     map<Z>(adapter: (from: T) => Z): Promise<Z>;
     resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T) => Z): Z;
     private onDone(value);

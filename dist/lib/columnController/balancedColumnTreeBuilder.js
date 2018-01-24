@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,6 +33,37 @@ var BalancedColumnTreeBuilder = (function () {
     }
     BalancedColumnTreeBuilder.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('BalancedColumnTreeBuilder');
+    };
+    BalancedColumnTreeBuilder.prototype.createForAutoGroups = function (autoGroupCols, gridBalancedTree) {
+        var _this = this;
+        var autoColBalancedTree = [];
+        autoGroupCols.forEach(function (col) {
+            var fakeTreeItem = _this.createAutoGroupTreeItem(gridBalancedTree, col);
+            autoColBalancedTree.push(fakeTreeItem);
+        });
+        return autoColBalancedTree;
+    };
+    BalancedColumnTreeBuilder.prototype.createAutoGroupTreeItem = function (balancedColumnTree, column) {
+        var dept = this.findDept(balancedColumnTree);
+        // at the end, this will be the top of the tree item.
+        var nextChild = column;
+        for (var i = dept - 1; i >= 0; i--) {
+            var autoGroup = new originalColumnGroup_1.OriginalColumnGroup(null, "FAKE_PATH_" + column.getId() + "}_" + i, true);
+            this.context.wireBean(autoGroup);
+            autoGroup.setChildren([nextChild]);
+            nextChild = autoGroup;
+        }
+        // at this point, the nextChild is the top most item in the tree
+        return nextChild;
+    };
+    BalancedColumnTreeBuilder.prototype.findDept = function (balancedColumnTree) {
+        var dept = 0;
+        var pointer = balancedColumnTree;
+        while (pointer && pointer[0] && pointer[0] instanceof originalColumnGroup_1.OriginalColumnGroup) {
+            dept++;
+            pointer = pointer[0].getChildren();
+        }
+        return dept;
     };
     BalancedColumnTreeBuilder.prototype.createBalancedColumnGroups = function (abstractColDefs, primaryColumns) {
         // column key creator dishes out unique column id's in a deterministic way,

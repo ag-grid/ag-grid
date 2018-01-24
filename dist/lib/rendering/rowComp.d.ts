@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { CellComp } from "./cellComp";
@@ -21,7 +21,6 @@ export declare class LoadingCellRenderer extends Component {
 export declare class RowComp extends Component {
     static DOM_DATA_KEY_RENDERED_ROW: string;
     private static FULL_WIDTH_CELL_RENDERER;
-    private static FULL_WIDTH_CELL_RENDERER_COMP_NAME;
     private static GROUP_ROW_RENDERER;
     private static GROUP_ROW_RENDERER_COMP_NAME;
     private static LOADING_CELL_RENDERER;
@@ -88,6 +87,8 @@ export declare class RowComp extends Component {
     private onRowNodeDataChanged(event);
     private onRowNodeCellChanged(event);
     private postProcessCss();
+    private onRowNodeDraggingChanged();
+    private postProcessRowDragging();
     private onExpandedChanged();
     private onDisplayedColumnsChanged();
     private destroyFullWidthComponents();
@@ -140,7 +141,7 @@ export declare class RowComp extends Component {
     private onCellFocusChanged();
     private onPaginationChanged();
     private onTopChanged();
-    private applyPixelOffset(pixels);
+    private applyPaginationOffset(topPx, reverse?);
     private setRowTop(pixels);
     getAndClearNextVMTurnFunctions(): Function[];
     getRowNode(): RowNode;

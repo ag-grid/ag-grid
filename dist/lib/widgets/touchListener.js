@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9,22 +9,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var eventService_1 = require("../eventService");
 var utils_1 = require("../utils");
 var TouchListener = (function () {
-    function TouchListener(eElement) {
+    function TouchListener(eElement, preventMouseClick) {
+        if (preventMouseClick === void 0) { preventMouseClick = false; }
         var _this = this;
         this.destroyFuncs = [];
         this.touching = false;
         this.eventService = new eventService_1.EventService();
         this.eElement = eElement;
+        this.preventMouseClick = preventMouseClick;
         var startListener = this.onTouchStart.bind(this);
         var moveListener = this.onTouchMove.bind(this);
         var endListener = this.onTouchEnd.bind(this);
         this.eElement.addEventListener('touchstart', startListener, { passive: true });
         this.eElement.addEventListener('touchmove', moveListener, { passive: true });
-        this.eElement.addEventListener('touchend', endListener, { passive: true });
+        // we set passive=false, as we want to prevent default on this event
+        this.eElement.addEventListener('touchend', endListener, { passive: false });
         this.destroyFuncs.push(function () {
             _this.eElement.addEventListener('touchstart', startListener, { passive: true });
             _this.eElement.addEventListener('touchmove', moveListener, { passive: true });
-            _this.eElement.addEventListener('touchend', endListener, { passive: true });
+            _this.eElement.addEventListener('touchend', endListener, { passive: false });
         });
     }
     TouchListener.prototype.getActiveTouch = function (touchList) {
@@ -88,6 +91,10 @@ var TouchListener = (function () {
                 touchStart: this.touchStart
             };
             this.eventService.dispatchEvent(event_2);
+            // stops the tap from also been processed as a mouse click
+            if (this.preventMouseClick) {
+                touchEvent.preventDefault();
+            }
         }
         this.touching = false;
     };

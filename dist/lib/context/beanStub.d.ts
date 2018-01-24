@@ -1,10 +1,11 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 export declare class BeanStub implements IEventEmitter {
+    static EVENT_DESTORYED: string;
     private localEventService;
     private destroyFunctions;
     private destroyed;

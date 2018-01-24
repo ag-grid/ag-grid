@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -82,13 +82,15 @@ export declare class RowRenderer extends BeanStub {
     private keepRowBecauseEditing(rowComp);
     private createRowComp(rowNode, animate, afterScroll);
     getRenderedNodes(): RowNode[];
-    navigateToNextCell(event: KeyboardEvent, key: number, rowIndex: number, column: Column, floating: string): void;
+    navigateToNextCell(event: KeyboardEvent, key: number, previousCell: GridCell, allowUserOverride: boolean): void;
     startEditingCell(gridCell: GridCell, keyPress: number, charPress: string): void;
     private getComponentForCell(gridCell);
     onTabKeyDown(previousRenderedCell: CellComp, keyboardEvent: KeyboardEvent): void;
     tabToNextCell(backwards: boolean): boolean;
     private moveToCellAfter(previousRenderedCell, backwards);
-    private moveEditToNextCell(previousRenderedCell, nextRenderedCell);
+    private moveToNextEditingCell(previousRenderedCell, backwards);
+    private moveToNextEditingRow(previousRenderedCell, backwards);
+    private moveToNextCellNotEditing(previousRenderedCell, backwards);
     private moveEditToNextCellOrRow(previousRenderedCell, nextRenderedCell);
     private findNextCellToFocusOn(gridCell, backwards, startEditing);
 }

@@ -1,11 +1,11 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
 import { GetContextMenuItems, GetMainMenuItems, GetRowNodeIdFunc, GridOptions, IsRowMaster, NavigateToNextCellParams, NodeChildDetails, PaginationNumberFormatterParams, PostProcessPopupParams, ProcessRowParams, TabToNextCellParams } from "./entities/gridOptions";
 import { GridApi } from "./gridApi";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
-import { ColumnApi } from "./columnController/columnController";
+import { ColumnApi } from "./columnController/columnApi";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IDatasource } from "./rowModels/iDatasource";
 import { GridCellDef } from "./entities/gridCell";
@@ -25,6 +25,8 @@ export declare class GridOptionsWrapper {
     static PROP_GROUP_HEADER_HEIGHT: string;
     static PROP_PIVOT_GROUP_HEADER_HEIGHT: string;
     static PROP_FLOATING_FILTERS_HEIGHT: string;
+    static PROP_SUPPRESS_ROW_DRAG: string;
+    static PROP_POPUP_PARENT: string;
     private gridOptions;
     private columnController;
     private eventService;
@@ -75,8 +77,11 @@ export declare class GridOptionsWrapper {
     isGroupSuppressAutoColumn(): boolean;
     isSuppressDragLeaveHidesColumns(): boolean;
     isSuppressScrollOnNewData(): boolean;
+    isRowDragManaged(): boolean;
+    isSuppressRowDrag(): boolean;
     isForPrint(): boolean;
     isAutoHeight(): boolean;
+    isNormalDomLayout(): boolean;
     isSuppressHorizontalScroll(): boolean;
     isSuppressLoadingOverlay(): boolean;
     isSuppressNoRowsOverlay(): boolean;
@@ -91,6 +96,7 @@ export declare class GridOptionsWrapper {
     isCacheQuickFilter(): boolean;
     isUnSortIcon(): boolean;
     isSuppressMenuHide(): boolean;
+    isEnterMovesDownAfterEdit(): boolean;
     getRowStyle(): any;
     getRowClass(): string | string[];
     getRowStyleFunc(): Function;
@@ -98,6 +104,7 @@ export declare class GridOptionsWrapper {
     rowClassRules(): {
         [cssClassName: string]: string | Function;
     };
+    getPopupParent(): HTMLElement;
     getPostProcessPopupFunc(): (params: PostProcessPopupParams) => void;
     getDoesDataFlowerFunc(): (data: any) => boolean;
     getPaginationNumberFormatterFunc(): (params: PaginationNumberFormatterParams) => string;
@@ -161,6 +168,7 @@ export declare class GridOptionsWrapper {
     isSuppressAggFuncInHeader(): boolean;
     isSuppressAggAtRootLevel(): boolean;
     isEnableRangeSelection(): boolean;
+    isSuppressMultiRangeSelection(): boolean;
     isPaginationAutoPageSize(): boolean;
     isRememberGroupStateWhenNewData(): boolean;
     getIcons(): any;

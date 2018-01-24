@@ -1,7 +1,7 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { ColumnApi } from "./columnController/columnController";
+import { ColumnApi } from "./columnController/columnApi";
 import { ColDef, ColGroupDef, IAggFunc } from "./entities/colDef";
 import { RowNode } from "./entities/rowNode";
 import { Column } from "./entities/column";
@@ -16,7 +16,7 @@ import { IDatasource } from "./rowModels/iDatasource";
 import { IEnterpriseDatasource } from "./interfaces/iEnterpriseDatasource";
 import { RowDataTransaction, RowNodeTransaction } from "./rowModels/inMemory/inMemoryRowModel";
 import { AlignedGridsService } from "./alignedGridsService";
-import { AgEvent } from "./events";
+import { AgEvent, ColumnEventType } from "./events";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column;
@@ -25,7 +25,6 @@ export interface StartEditingCellParams {
     charPress?: string;
 }
 export interface RefreshCellsParams {
-    volatile?: boolean;
     rowNodes?: RowNode[];
     columns?: (string | Column)[];
     force?: boolean;
@@ -63,6 +62,7 @@ export declare class GridApi {
     private clipboardService;
     private aggFuncService;
     private menuFactory;
+    private contextMenuFactory;
     private cellRendererFactory;
     private cellEditorFactory;
     private valueCache;
@@ -98,7 +98,7 @@ export declare class GridApi {
     getPinnedBottomRowCount(): number;
     getPinnedTopRow(index: number): RowNode;
     getPinnedBottomRow(index: number): RowNode;
-    setColumnDefs(colDefs: (ColDef | ColGroupDef)[]): void;
+    setColumnDefs(colDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
     expireValueCache(): void;
     getVerticalPixelRange(): any;
     refreshToolPanel(): void;
@@ -160,7 +160,7 @@ export declare class GridApi {
     getColumnDef(key: string | Column): ColDef;
     onFilterChanged(): void;
     onSortChanged(): void;
-    setSortModel(sortModel: any): void;
+    setSortModel(sortModel: any, source?: ColumnEventType): void;
     getSortModel(): {
         colId: string;
         sort: string;
@@ -170,6 +170,7 @@ export declare class GridApi {
     getFocusedCell(): GridCell;
     clearFocusedCell(): void;
     setFocusedCell(rowIndex: number, colKey: string | Column, floating?: string): void;
+    setSuppressRowDrag(value: boolean): void;
     setHeaderHeight(headerHeight: number): void;
     setGroupHeaderHeight(headerHeight: number): void;
     setFloatingFiltersHeight(headerHeight: number): void;
@@ -199,6 +200,8 @@ export declare class GridApi {
     copySelectedRangeDown(): void;
     showColumnMenuAfterButtonClick(colKey: string | Column, buttonElement: HTMLElement): void;
     showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void;
+    hidePopupMenu(): void;
+    setPopupParent(ePopupParent: HTMLElement): void;
     tabToNextCell(): boolean;
     tabToPreviousCell(): boolean;
     stopEditing(cancel?: boolean): void;

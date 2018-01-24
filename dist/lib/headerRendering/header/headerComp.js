@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -83,7 +83,7 @@ var HeaderComp = (function (_super) {
         }
         if (this.params.enableSorting) {
             var tapListener = function () {
-                _this.sortController.progressSort(_this.params.column, false);
+                _this.sortController.progressSort(_this.params.column, false, "uiColumnSorted");
             };
             this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, tapListener);
         }

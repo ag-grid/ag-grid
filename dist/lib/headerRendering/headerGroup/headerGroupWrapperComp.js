@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,7 @@ var component_1 = require("../../widgets/component");
 var column_1 = require("../../entities/column");
 var utils_1 = require("../../utils");
 var columnGroup_1 = require("../../entities/columnGroup");
+var columnApi_1 = require("../../columnController/columnApi");
 var columnController_1 = require("../../columnController/columnController");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var horizontalDragService_1 = require("../horizontalDragService");
@@ -59,9 +60,30 @@ var HeaderGroupWrapperComp = (function (_super) {
         this.addClasses();
         this.setupWidth();
         this.addAttributes();
+        this.setupMovingCss();
         var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
         setLeftFeature.init();
         this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+    };
+    HeaderGroupWrapperComp.prototype.setupMovingCss = function () {
+        var _this = this;
+        var originalColumnGroup = this.columnGroup.getOriginalColumnGroup();
+        var leafColumns = originalColumnGroup.getLeafColumns();
+        leafColumns.forEach(function (col) {
+            _this.addDestroyableEventListener(col, column_1.Column.EVENT_MOVING_CHANGED, _this.onColumnMovingChanged.bind(_this));
+        });
+        this.onColumnMovingChanged();
+    };
+    HeaderGroupWrapperComp.prototype.onColumnMovingChanged = function () {
+        // this function adds or removes the moving css, based on if the col is moving.
+        // this is what makes the header go dark when it is been moved (gives impression to
+        // user that the column was picked up).
+        if (this.columnGroup.isMoving()) {
+            utils_1.Utils.addCssClass(this.getGui(), 'ag-header-cell-moving');
+        }
+        else {
+            utils_1.Utils.removeCssClass(this.getGui(), 'ag-header-cell-moving');
+        }
     };
     HeaderGroupWrapperComp.prototype.addAttributes = function () {
         this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
@@ -72,12 +94,16 @@ var HeaderGroupWrapperComp = (function (_super) {
             displayName: displayName,
             columnGroup: this.columnGroup,
             setExpanded: function (expanded) {
-                _this.columnController.setColumnGroupOpened(_this.columnGroup.getOriginalColumnGroup(), expanded);
+                _this.columnController.setColumnGroupOpened(_this.columnGroup.getOriginalColumnGroup(), expanded, "gridInitializing");
             },
             api: this.gridApi,
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
+        if (!displayName) {
+            var leafCols = this.columnGroup.getLeafColumns();
+            displayName = leafCols ? leafCols[0].getColDef().headerName : '';
+        }
         var callback = this.afterHeaderCompCreated.bind(this, displayName);
         this.componentRecipes.newHeaderGroupComponent(params).then(callback);
     };
@@ -107,6 +133,7 @@ var HeaderGroupWrapperComp = (function (_super) {
         if (this.isSuppressMoving()) {
             return;
         }
+        var allLeafColumns = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
         if (eHeaderGroup) {
             var dragSource_1 = {
                 type: dragAndDropService_1.DragSourceType.HeaderCell,
@@ -114,7 +141,9 @@ var HeaderGroupWrapperComp = (function (_super) {
                 dragItemName: displayName,
                 // we add in the original group leaf columns, so we move both visible and non-visible items
                 dragItemCallback: this.getDragItemForGroup.bind(this),
-                dragSourceDropTarget: this.dragSourceDropTarget
+                dragSourceDropTarget: this.dragSourceDropTarget,
+                dragStarted: function () { return allLeafColumns.forEach(function (col) { return col.setMoving(true, "uiColumnDragged"); }); },
+                dragStopped: function () { return allLeafColumns.forEach(function (col) { return col.setMoving(false, "uiColumnDragged"); }); }
             };
             this.dragAndDropService.addDragSource(dragSource_1, true);
             this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });
@@ -146,7 +175,7 @@ var HeaderGroupWrapperComp = (function (_super) {
         // if any child is fixed, then don't allow moving
         var childSuppressesMoving = false;
         this.columnGroup.getLeafColumns().forEach(function (column) {
-            if (column.getColDef().suppressMovable) {
+            if (column.getColDef().suppressMovable || column.isLockPosition()) {
                 childSuppressesMoving = true;
             }
         });
@@ -218,7 +247,7 @@ var HeaderGroupWrapperComp = (function (_super) {
                     }
                 });
                 if (keys.length > 0) {
-                    _this.columnController.autoSizeColumns(keys);
+                    _this.columnController.autoSizeColumns(keys, "uiColumnResized");
                 }
             });
         }
@@ -275,7 +304,7 @@ var HeaderGroupWrapperComp = (function (_super) {
                 // if last col, give it the remaining pixels
                 newChildSize = pixelsToDistribute;
             }
-            _this.columnController.setColumnWidth(column, newChildSize, finished);
+            _this.columnController.setColumnWidth(column, newChildSize, finished, "uiColumnDragged");
         });
     };
     // optionally inverts the drag, depending on pinned and RTL
@@ -329,7 +358,7 @@ var HeaderGroupWrapperComp = (function (_super) {
     ], HeaderGroupWrapperComp.prototype, "gridApi", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], HeaderGroupWrapperComp.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('beans'),

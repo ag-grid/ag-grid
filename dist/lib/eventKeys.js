@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -93,12 +93,16 @@ var Events = (function () {
      * to bound properties, this event fires after the grid has finished processing the change. */
     Events.EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
     /** All items from here down are used internally by the grid, not intended for external use. */
-    // not documented, either experimental, or we just don't want users using an ddepending on them
+    // not documented, either experimental, or we just don't want users using an depending on them
     Events.EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
     Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
     Events.EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
     Events.EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
     Events.EVENT_FLASH_CELLS = 'flashCells';
+    Events.EVENT_ROW_DRAG_ENTER = 'rowDragEnter';
+    Events.EVENT_ROW_DRAG_MOVE = 'rowDragMove';
+    Events.EVENT_ROW_DRAG_LEAVE = 'rowDragLeave';
+    Events.EVENT_ROW_DRAG_END = 'rowDragEnd';
     // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
     // to design these better around server side functions and then release to general public when fully working with
     // all the row models.

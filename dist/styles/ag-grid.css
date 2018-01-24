@@ -1170,6 +1170,11 @@ ag-grid-aurelia {
   width: 100%;
   height: 100%; }
 
+.ag-react-container {
+  display: inline-block;
+  width: 100%;
+  height: 100%; }
+
 .ag-ltr .ag-toolpanel-indent-1 {
   padding-left: 10px; }
 

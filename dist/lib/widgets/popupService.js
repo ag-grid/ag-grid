@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,13 +20,20 @@ var constants_1 = require("../constants");
 var context_1 = require("../context/context");
 var gridCore_1 = require("../gridCore");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
+var environment_1 = require("../environment");
 var PopupService = (function () {
     function PopupService() {
-        // this.popupService.setPopupParent(this.eRootPanel.getGui());
         this.activePopupElements = [];
     }
     PopupService.prototype.getPopupParent = function () {
-        return this.gridCore.getRootGui();
+        var ePopupParent = this.gridOptionsWrapper.getPopupParent();
+        if (ePopupParent) {
+            // user provided popup parent, may not have the right theme applied
+            return ePopupParent;
+        }
+        else {
+            return this.gridCore.getRootGui();
+        }
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
@@ -200,7 +207,12 @@ var PopupService = (function () {
             return;
         }
         var ePopupParent = this.getPopupParent();
-        ePopupParent.appendChild(eChild);
+        // add env CSS class to child, in case user provided a popup parent, which means
+        // theme class may be missing
+        var eWrapper = document.createElement('div');
+        utils_1.Utils.addCssClass(eWrapper, this.environment.getTheme());
+        eWrapper.appendChild(eChild);
+        ePopupParent.appendChild(eWrapper);
         this.activePopupElements.push(eChild);
         var popupHidden = false;
         var hidePopupOnKeyboardEvent = function (event) {
@@ -231,7 +243,7 @@ var PopupService = (function () {
                 return;
             }
             popupHidden = true;
-            ePopupParent.removeChild(eChild);
+            ePopupParent.removeChild(eWrapper);
             utils_1.Utils.removeFromArray(_this.activePopupElements, eChild);
             eBody.removeEventListener('keydown', hidePopupOnKeyboardEvent);
             eBody.removeEventListener('click', hidePopupOnMouseEvent);
@@ -301,6 +313,10 @@ var PopupService = (function () {
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], PopupService.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('environment'),
+        __metadata("design:type", environment_1.Environment)
+    ], PopupService.prototype, "environment", void 0);
     PopupService = __decorate([
         context_1.Bean('popupService')
     ], PopupService);

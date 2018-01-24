@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,7 +19,7 @@ var column_1 = require("./column");
 var eventService_1 = require("../eventService");
 var context_1 = require("../context/context");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var columnController_1 = require("../columnController/columnController");
+var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
 var ColumnGroup = (function () {
     function ColumnGroup(originalColumnGroup, groupId, instanceId) {
@@ -52,6 +52,19 @@ var ColumnGroup = (function () {
     };
     ColumnGroup.prototype.isEmptyGroup = function () {
         return this.displayedChildren.length === 0;
+    };
+    ColumnGroup.prototype.isMoving = function () {
+        var allLeafColumns = this.getOriginalColumnGroup().getLeafColumns();
+        if (!allLeafColumns || allLeafColumns.length === 0) {
+            return false;
+        }
+        var allMoving = true;
+        allLeafColumns.forEach(function (col) {
+            if (!col.isMoving()) {
+                allMoving = false;
+            }
+        });
+        return allMoving;
     };
     ColumnGroup.prototype.checkLeft = function () {
         // first get all children to setLeft, as it impacts our decision below
@@ -255,14 +268,14 @@ var ColumnGroup = (function () {
     ColumnGroup.HEADER_GROUP_SHOW_OPEN = 'open';
     ColumnGroup.HEADER_GROUP_SHOW_CLOSED = 'closed';
     ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
-    ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED = 'leftChanged';
+    ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
         __metadata("design:type", gridOptionsWrapper_1.GridOptionsWrapper)
     ], ColumnGroup.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], ColumnGroup.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,6 +16,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
+var columnApi_1 = require("../columnController/columnApi");
 var columnController_1 = require("../columnController/columnController");
 var gridApi_1 = require("../gridApi");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
@@ -37,6 +38,9 @@ var gridPanel_1 = require("../gridPanel/gridPanel");
 var paginationProxy_1 = require("../rowModels/paginationProxy");
 var animationFrameService_1 = require("../misc/animationFrameService");
 var componentResolver_1 = require("../components/framework/componentResolver");
+var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
+var sortController_1 = require("../sortController");
+var filterManager_1 = require("../filter/filterManager");
 var Beans = (function () {
     function Beans() {
     }
@@ -58,7 +62,7 @@ var Beans = (function () {
     ], Beans.prototype, "context", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], Beans.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),
@@ -152,6 +156,18 @@ var Beans = (function () {
         context_1.Autowired('animationFrameService'),
         __metadata("design:type", animationFrameService_1.AnimationFrameService)
     ], Beans.prototype, "taskQueue", void 0);
+    __decorate([
+        context_1.Autowired('dragAndDropService'),
+        __metadata("design:type", dragAndDropService_1.DragAndDropService)
+    ], Beans.prototype, "dragAndDropService", void 0);
+    __decorate([
+        context_1.Autowired('sortController'),
+        __metadata("design:type", sortController_1.SortController)
+    ], Beans.prototype, "sortController", void 0);
+    __decorate([
+        context_1.Autowired('filterManager'),
+        __metadata("design:type", filterManager_1.FilterManager)
+    ], Beans.prototype, "filterManager", void 0);
     __decorate([
         context_1.PostConstruct,
         __metadata("design:type", Function),

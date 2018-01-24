@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,7 +34,7 @@ var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var gridPanel_1 = require("../gridPanel/gridPanel");
 var scrollVisibleService_1 = require("../gridPanel/scrollVisibleService");
 var selectionController_1 = require("../selectionController");
-var columnController_1 = require("../columnController/columnController");
+var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
 var PaginationAutoPageSizeService = (function (_super) {
     __extends(PaginationAutoPageSizeService, _super);
@@ -298,7 +298,7 @@ var PaginationProxy = (function (_super) {
     ], PaginationProxy.prototype, "selectionController", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], PaginationProxy.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),

@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IEventEmitter } from "../interfaces/iEventEmitter";
@@ -19,7 +19,8 @@ export declare class TouchListener implements IEventEmitter {
     private eventService;
     static EVENT_TAP: string;
     static EVENT_LONG_TAP: string;
-    constructor(eElement: HTMLElement);
+    private preventMouseClick;
+    constructor(eElement: HTMLElement, preventMouseClick?: boolean);
     private getActiveTouch(touchList);
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;

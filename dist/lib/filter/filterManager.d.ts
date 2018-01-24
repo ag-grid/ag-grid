@@ -1,8 +1,9 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ExternalPromise, Promise } from "../utils";
 import { Column } from "../entities/column";
+import { ColumnEventType } from "../events";
 import { IFilterComp } from "../interfaces/iFilter";
 export declare class FilterManager {
     private $compile;
@@ -30,7 +31,7 @@ export declare class FilterManager {
     getFilterModel(): any;
     isAdvancedFilterPresent(): boolean;
     private setAdvancedFilterPresent();
-    private updateFilterFlagInColumns();
+    private updateFilterFlagInColumns(source);
     isAnyFilterPresent(): boolean;
     private doesFilterPass(node, filterToSkip?);
     private parseQuickFilter(newFilter);
@@ -45,7 +46,7 @@ export declare class FilterManager {
     doesRowPassFilter(node: any, filterToSkip?: any): boolean;
     private getQuickFilterTextForColumn(column, rowNode);
     private aggregateRowForQuickFilter(node);
-    private onNewRowsLoaded();
+    private onNewRowsLoaded(source);
     private createValueGetter(column);
     getFilterComponent(column: Column): Promise<IFilterComp>;
     getOrCreateFilterWrapper(column: Column): FilterWrapper;
@@ -54,8 +55,8 @@ export declare class FilterManager {
     private createFilterWrapper(column);
     private putIntoGui(filterWrapper);
     private onNewColumnsLoaded();
-    destroyFilter(column: Column): void;
-    private disposeFilterWrapper(filterWrapper);
+    destroyFilter(column: Column, source?: ColumnEventType): void;
+    private disposeFilterWrapper(filterWrapper, source);
     destroy(): void;
 }
 export interface FilterWrapper {

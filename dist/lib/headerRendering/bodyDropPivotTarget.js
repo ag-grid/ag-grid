@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -79,13 +79,13 @@ var BodyDropPivotTarget = (function () {
     /** Callback for when drag stops */
     BodyDropPivotTarget.prototype.onDragStop = function (draggingEvent) {
         if (this.columnsToAggregate.length > 0) {
-            this.columnController.addValueColumns(this.columnsToAggregate);
+            this.columnController.addValueColumns(this.columnsToAggregate, "toolPanelDragAndDrop");
         }
         if (this.columnsToGroup.length > 0) {
-            this.columnController.addRowGroupColumns(this.columnsToGroup);
+            this.columnController.addRowGroupColumns(this.columnsToGroup, "toolPanelDragAndDrop");
         }
         if (this.columnsToPivot.length > 0) {
-            this.columnController.addPivotColumns(this.columnsToPivot);
+            this.columnController.addPivotColumns(this.columnsToPivot, "toolPanelDragAndDrop");
         }
     };
     __decorate([

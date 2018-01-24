@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -25,6 +25,7 @@ export declare class InfiniteRowModel extends BeanStub implements IRowModel {
     private addEventListeners();
     private onFilterChanged();
     private onSortChanged();
+    private onColumnEverything();
     destroy(): void;
     getType(): string;
     setDatasource(datasource: IDatasource): void;

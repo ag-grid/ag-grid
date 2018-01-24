@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,7 +21,7 @@ var utils_1 = require("../utils");
 var eventService_1 = require("../eventService");
 var events_1 = require("../events");
 var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
-var columnController_1 = require("../columnController/columnController");
+var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
@@ -111,6 +111,13 @@ var DragService = (function () {
     // gets called whenever mouse down on any drag source
     DragService.prototype.onMouseDown = function (params, mouseEvent) {
         var _this = this;
+        // if there are two elements with parent / child relationship, and both are draggable,
+        // when we drag the child, we should NOT drag the parent. an example of this is row moving
+        // and range selection - row moving should get preference when use drags the rowDrag component.
+        if (mouseEvent._alreadyProcessedByDragService) {
+            return;
+        }
+        mouseEvent._alreadyProcessedByDragService = true;
         // only interested in left button clicks
         if (mouseEvent.button !== 0) {
             return;
@@ -246,7 +253,7 @@ var DragService = (function () {
     ], DragService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], DragService.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),

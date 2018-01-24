@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,7 +35,7 @@ var logger_1 = require("../../logger");
 var infiniteBlock_1 = require("./infiniteBlock");
 var rowNodeCache_1 = require("../cache/rowNodeCache");
 var gridApi_1 = require("../../gridApi");
-var columnController_1 = require("../../columnController/columnController");
+var columnApi_1 = require("../../columnController/columnApi");
 var InfiniteCache = (function (_super) {
     __extends(InfiniteCache, _super);
     function InfiniteCache(params) {
@@ -153,7 +153,7 @@ var InfiniteCache = (function (_super) {
     ], InfiniteCache.prototype, "context", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], InfiniteCache.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),

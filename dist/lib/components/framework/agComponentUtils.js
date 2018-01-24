@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,17 +26,18 @@ var AgComponentUtils = (function () {
             return {
                 component: null,
                 type: type,
-                source: source
+                source: source,
+                dynamicParams: null
             };
         var metadata = this.componentMetadataProvider.retrieve(propertyName);
         if (metadata && metadata.functionAdapter) {
             return {
                 type: type,
                 component: metadata.functionAdapter(hardcodedJsFunction),
-                source: source
+                source: source,
+                dynamicParams: null
             };
         }
-        console.error("It seems like you are providing a function as a component: " + hardcodedJsFunction + ", but this component: [" + propertyName + "] doesnt accept functions");
         return null;
     };
     AgComponentUtils.prototype.adaptCellRendererFunction = function (callback) {

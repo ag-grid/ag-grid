@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { IComponent } from "../../interfaces/iComponent";
-import { ColumnApi } from "../../columnController/columnController";
+import { ColumnApi } from "../../columnController/columnApi";
 import { GridApi } from "../../gridApi";
 export interface IHeaderParams {
     column: Column;

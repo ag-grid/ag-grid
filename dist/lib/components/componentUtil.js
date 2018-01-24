@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -114,7 +114,7 @@ var ComponentUtil = (function () {
             api.setPinnedBottomRowData(changes.pinnedBottomRowData.currentValue);
         }
         if (changes.columnDefs) {
-            api.setColumnDefs(changes.columnDefs.currentValue);
+            api.setColumnDefs(changes.columnDefs.currentValue, "gridOptionsChanged");
         }
         if (changes.datasource) {
             api.setDatasource(changes.datasource.currentValue);
@@ -126,10 +126,13 @@ var ComponentUtil = (function () {
             api.paginationSetPageSize(ComponentUtil.toNumber(changes.paginationPageSize.currentValue));
         }
         if (changes.pivotMode) {
-            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue));
+            columnApi.setPivotMode(ComponentUtil.toBoolean(changes.pivotMode.currentValue), "gridOptionsChanged");
         }
         if (changes.groupRemoveSingleChildren) {
             api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changes.groupRemoveSingleChildren.currentValue));
+        }
+        if (changes.suppressRowDrag) {
+            api.setSuppressRowDrag(ComponentUtil.toBoolean(changes.suppressRowDrag.currentValue));
         }
         // copy changes into an event for dispatch
         var event = {

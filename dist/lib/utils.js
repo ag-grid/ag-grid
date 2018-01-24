@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -381,7 +381,8 @@ var Utils = (function () {
     };
     //if value is undefined, null or blank, returns null, otherwise returns the value
     Utils.makeNull = function (value) {
-        if (value === null || value === undefined || value === "") {
+        var valueNoType = value;
+        if (value === null || value === undefined || valueNoType === "") {
             return null;
         }
         else {
@@ -492,7 +493,9 @@ var Utils = (function () {
             return;
         }
         if (element.classList) {
-            element.classList.add(className);
+            if (!element.classList.contains(className)) {
+                element.classList.add(className);
+            }
         }
         else {
             if (element.className && element.className.length > 0) {
@@ -554,7 +557,9 @@ var Utils = (function () {
     };
     Utils.removeCssClass = function (element, className) {
         if (element.classList) {
-            element.classList.remove(className);
+            if (element.classList.contains(className)) {
+                element.classList.remove(className);
+            }
         }
         else {
             if (element.className && element.className.length > 0) {
@@ -960,7 +965,8 @@ var Utils = (function () {
     };
     // firefox doesn't have event.path set, or any alternative to it, so we hack
     // it in. this is needed as it's to late to work out the path when the item is
-    // removed from the dom
+    // removed from the dom. used by MouseEventService, where it works out if a click
+    // was from the current grid, or a detail grid (master / detail).
     Utils.addAgGridEventPath = function (event) {
         event.__agGridEventPath = this.getEventPath(event);
     };
@@ -1532,6 +1538,16 @@ var Promise = (function () {
     Promise.prototype.then = function (func) {
         if (this.status === PromiseStatus.IN_PROGRESS) {
             this.listOfWaiters.push(func);
+        }
+        else {
+            func(this.resolution);
+        }
+    };
+    Promise.prototype.firstOneOnly = function (func) {
+        if (this.status === PromiseStatus.IN_PROGRESS) {
+            if (this.listOfWaiters.length === 0) {
+                this.listOfWaiters.push(func);
+            }
         }
         else {
             func(this.resolution);

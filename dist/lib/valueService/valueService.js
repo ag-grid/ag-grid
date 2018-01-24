@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -128,7 +128,8 @@ var ValueService = (function () {
         this.valueCache.onDataChanged();
         params.newValue = this.getValue(column, rowNode);
         if (typeof column.getColDef().onCellValueChanged === 'function') {
-            column.getColDef().onCellValueChanged(params);
+            // to make callback async, do in a timeout
+            setTimeout(function () { return column.getColDef().onCellValueChanged(params); }, 0);
         }
         var event = {
             type: events_1.Events.EVENT_CELL_VALUE_CHANGED,
