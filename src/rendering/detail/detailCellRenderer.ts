@@ -124,7 +124,12 @@ export class DetailCellRenderer extends Component {
 
         // IMPORTANT - gridOptions must be cloned
         this.detailGridOptions = _.cloneObject(gridOptions);
-        new Grid(this.eDetailGrid, this.detailGridOptions);
+        //Passing a dummy agGridReact bean in case this is for a REACT grid
+        new Grid(this.eDetailGrid, this.detailGridOptions, {
+            seedBeanInstances: {
+                agGridReact: {}
+            }
+        });
 
         this.addDestroyFunc( () => this.detailGridOptions.api.destroy() );
     }
