@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid JavaScript Grid Documentation";
+$pageTitle = "ag-Grid Documentation:  JavaScript Grid Documentation";
 $pageDescription = "Introduction page of documentation for ag-Grid JavaScript Grid";
 $pageKeyboards = "ag-Grid JavaScript Grid Documentation";
 define('skipInPageNav', true);

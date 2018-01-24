@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Polymer Grid";
-$pageDescription = "A feature rich data grid designed for Enterprise. Easily integrate with Polymer to deliver filtering, grouping, aggregation, pivoting and much more.";
+$pageTitle = "ag-Grid: The Best Polymer Datagrid in the World";
+$pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Polymer to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "Polymer Grid";
 $pageGroup = "basics";
 define('skipInPageNav', true);

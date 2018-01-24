@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "VueJS Grid";
-$pageDescription = "ag-Grid can be used as a data grid inside your VueJS application. This page details how to get started using ag-Grid inside an VueJS application.";
+$pageTitle = "ag-Grid: The Best VueJS Datagrid in the World";
+$pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Vue to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "VueJS Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
