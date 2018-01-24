@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import { AgGridReact } from "ag-grid-react";
+import "ag-grid-enterprise";
 
 export default class DetailCellRenderer extends Component {
     constructor(props) {

@@ -6,52 +6,51 @@ var columnDefs = [
     {field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'"}
 ];
 
-function detailCellRendererParamsFunc(params) {
-    var res = {};
-
-    // we use the same getDetailRowData for both options
-    res.getDetailRowData = function(params) {
-        params.successCallback(params.data.callRecords);
-    };
-
-    var nameMatch = params.data.name === 'Mila Smith' || params.data.name === 'Harper Johnson';
-
-    if (nameMatch) {
-        // grid options for columns {callId, number}
-        res.detailGridOptions = {
-            columnDefs: [
-                {field: 'callId'},
-                {field: 'number'}
-            ],
-            onGridReady: function (params) {
-                params.api.sizeColumnsToFit();
-                console.log('Using option 1 with columns {callId, number}');
-            }
-        };
-    } else {
-        // grid options for columns {callId, direction, duration, switchCode}
-        res.detailGridOptions = {
-            columnDefs: [
-                {field: 'callId'},
-                {field: 'direction'},
-                {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
-                {field: 'switchCode'}
-            ],
-            onGridReady: function (params) {
-                params.api.sizeColumnsToFit();
-                console.log('Using option 2 with columns {callId, direction, duration, switchCode}');
-            }
-        };
-    }
-
-    return res;
-}
 
 var gridOptions = {
     columnDefs: columnDefs,
     masterDetail: true,
     detailRowHeight: 150,
-    detailCellRendererParams: detailCellRendererParamsFunc,
+    detailCellRendererParams: function (params){
+        var res = {};
+
+        // we use the same getDetailRowData for both options
+        res.getDetailRowData = function(params) {
+            params.successCallback(params.data.callRecords);
+        };
+
+        var nameMatch = params.data.name === 'Mila Smith' || params.data.name === 'Harper Johnson';
+
+        if (nameMatch) {
+            // grid options for columns {callId, number}
+            res.detailGridOptions = {
+                columnDefs: [
+                    {field: 'callId'},
+                    {field: 'number'}
+                ],
+                onGridReady: function (params) {
+                    params.api.sizeColumnsToFit();
+                    console.log('Using option 1 with columns {callId, number}');
+                }
+            };
+        } else {
+            // grid options for columns {callId, direction, duration, switchCode}
+            res.detailGridOptions = {
+                columnDefs: [
+                    {field: 'callId'},
+                    {field: 'direction'},
+                    {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
+                    {field: 'switchCode'}
+                ],
+                onGridReady: function (params) {
+                    params.api.sizeColumnsToFit();
+                    console.log('Using option 2 with columns {callId, direction, duration, switchCode}');
+                }
+            };
+        }
+
+        return res;
+    },
     onGridReady: function(params) {
         setInitialLayout(params.api);
     }
