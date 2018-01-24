@@ -818,6 +818,8 @@ $icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkb
 
 .ag-react-container {
     display: inline-block;
+    width: 100%;
+    height: 100%;
 }
 
 $toolpanel-indent-size: 10px !default;
