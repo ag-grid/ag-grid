@@ -84,7 +84,7 @@
                 '@angular/cdk/table': 'npm:@angular/cdk/bundles/cdk-table.umd.js',
                 '@angular/cdk/stepper': 'npm:@angular/cdk/bundles/cdk-stepper.umd.js',
                 // ngx bootstrap
-                'ngx-bootstrap': 'npm:ngx-bootstrap/bundles/ngx-bootstrap.umd.js',
+                'ngx-bootstrap': 'npm:ngx-bootstrap@2.0.0-rc.0',
                 // ng2 typeahead
                 'ng2-typeahead': 'npm:ng2-typeahead@1.2.0',
                 
