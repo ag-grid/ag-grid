@@ -75,7 +75,7 @@ $ag-icons-path: "./my-icons/";
 // The "~" path prefix below relies on Webpack's sass-loader -
 // https://github.com/webpack-contrib/sass-loader. 
 @import "~ag-grid/src/styles/ag-grid.scss";
-@import "~ag-grid/src/styles/theme-fresh.scss";</snippet>
+@import "~ag-grid/src/styles/ag-theme-balham.scss";</snippet>
 
 <p>A working Sass / Webpack which includes the source theme file is available in the <a href="https://github.com/ag-grid/ag-grid-seed/tree/master/typescript-webpack/src">ag grid seed repository</a>.
 

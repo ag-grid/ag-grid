@@ -171,13 +171,13 @@ export default {
     </p>
     <snippet>
 &lt;link href="node_modules/ag-grid/dist/styles/ag-grid.css" rel="stylesheet" /&gt;
-&lt;link href="node_modules/ag-grid/dist/styles/theme-fresh.css" rel="stylesheet" /&gt;</snippet>
+&lt;link href="node_modules/ag-grid/dist/styles/ag-theme-balham.css" rel="stylesheet" /&gt;</snippet>
 
     <p>If you're using the <code>style-loader</code> you can also import the CSS dependencies into your final bundle:
     </p>
     <snippet>
 import "../node_modules/ag-grid/dist/styles/ag-grid.css"
-import "../node_modules/ag-grid/dist/styles/theme-fresh.css"
+import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css"
 
 // only needed if you're using enterprise features
 import "ag-grid-enterprise/main";</snippet>
