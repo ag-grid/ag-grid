@@ -1,5 +1,4 @@
 <?php
-$key = "Events";
 $pageTitle = "ag-Grid Events";
 $pageDescription = "Learn how each events impacts ag-Grid.";
 $pageKeyboards = "javascript data grid ag-Grid events";
@@ -19,19 +18,15 @@ include '../documentation-main/documentation_header.php';
 
     <note>
         TypeScript users can take advantage of the events interfaces. You can work our the interface name by putting
-        'Event' after the event name. For example, the cellClicked event uses the interface CellClickedEvent.
+        <code>Event</code> after the event name. For example, the <code>cellClicked</code> event uses the interface <code>CellClickedEvent</code>.
     </note>
 
     <note>
         See the <a href="#properties-and-hierarchy">Event Properties & Hierarchy</a> below for what properties each event has.
     </note>
 
-    <table id="ag-grid-events" class="table">
-
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Selection</td>
-        </tr>
+    <h2>Selection</h2>
+    <table class="table reference">
 
         <tr>
             <th>cellClicked</th>
@@ -77,10 +72,9 @@ include '../documentation-main/documentation_header.php';
             <th>rangeSelectionChanged</th>
             <td>A change to range selection has occurred.</td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Editing</td>
-        </tr>
+    </table>
+    <h2>Editing</h2>
+    <table class="table reference">
 
         <tr>
             <th>cellValueChanged</th>
@@ -104,10 +98,10 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-cell-editing/#start-stop-editing-events">Full Row Editing</a> only.
             </td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Sort & Filter</td>
-        </tr>
+
+    </table>
+<h2>Sort & Filter</h2>
+    <table class="table reference">
 
         <tr>
             <th>sortChanged</th>
@@ -128,10 +122,42 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Columns</td>
+    </table>
+<h2>Row Drag & Drop</h2>
+    <table class="table reference">
+
+        <tr>
+            <th>rowDragEnter</th>
+            <td>
+                A drag has started, or dragging already started and the mouse
+                has re-entered the grid having previously left the grid.
+            </td>
         </tr>
+
+        <tr>
+            <th>rowDragMove</th>
+            <td>
+                The mouse has moved while dragging.
+            </td>
+        </tr>
+
+        <tr>
+            <th>rowDragLeave</th>
+            <td>
+                The mouse has left the grid while dragging.
+            </td>
+        </tr>
+
+        <tr>
+            <th>rowDragEnd</th>
+            <td>
+                The drag has finished over the grid.
+            </td>
+        </tr>
+
+    </table>
+<h2>Columns</h2>
+    <table class="table reference">
 
         <tr>
             <th>columnVisible</th>
@@ -196,10 +222,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Miscellaneous</td>
-        </tr>
+    </table>
+<h2>Miscellaneous</h2>
+    <table class="table reference">
         <tr>
             <th>gridReady</th>
             <td>ag-Grid has initialised. The name 'ready'
@@ -261,7 +286,7 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>componentStateChanged</th>
             <td>
-                Only used by React, Angular 2+, Web Components, Aurelia and VueJS ag-Grid components
+                Only used by React, Angular, Web Components, Aurelia and VueJS ag-Grid components
                 (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
                 to bound properties, this event fires after the grid has finished processing the
                 change.
@@ -308,8 +333,6 @@ CellValueChangedEvent {
         ├── ColumnPivotModeChangedEvent <span class="event-properties">{}</span>
         ├── ColumnEverythingChangedEvent <span class="event-properties">{}</span>
         ├── DisplayedColumnsChangedEvent <span class="event-properties">{}</span>
-        ├── DragStartedEvent <span class="event-properties">{}</span>
-        ├── DragStoppedEvent <span class="event-properties">{}</span>
         ├── CellFocusedEvent <span class="event-properties">{
         │       <span class="event-attribute">rowIndex</span>: number, // the row index of the focused cell
         │       <span class="event-attribute">column</span>: Column, // the column of the focused cell
@@ -351,9 +374,27 @@ CellValueChangedEvent {
         ├── ComponentStateChangedEvent <span class="event-properties">{
         │       // one attribute for each changed property
         │     }</span>
+        ├── DragEvent <span class="event-properties">{
+        │   │    <span class="event-attribute">type</span>: string, // one of {'cell','row','headerCell','toolPanel'}
+        │   │  }</span>
+        │   ├── DragStartedEvent <span class="event-properties">{}</span>
+        │   ├── DragStoppedEvent <span class="event-properties">{}</span>
+        ├── RowDragEvent <span class="event-properties">{ // abstract event, never fired
+        │   │    <span class="event-attribute">event</span>: MouseEvent, // The underlying mouse move event associated with the drag.
+        │   │    <span class="event-attribute">node</span>: RowNode, // The row node getting dragged.
+        │   │    <span class="event-attribute">overIndex</span>: number, // The row index the mouse is dragging over.
+        │   │    <span class="event-attribute">overNode</span>: RowNode, // The row node the mouse is dragging over.
+        │   │    <span class="event-attribute">y</span>: number, // The vertical pixel location the mouse is over.
+        │   │    <span class="event-attribute">vDirection</span>: string, // Direction of the drag, either 'up', 'down' or null.
+        │   │  }</span>
+        │   ├── RowDragEnterEvent <span class="event-properties">{}</span> // row drag has started / re-entered
+        │   ├── RowDragMoveEvent <span class="event-properties">{}</span> // mouse moved while dragging
+        │   ├── RowDragEndEvent <span class="event-properties">{}</span> // row drag finished while mouse over grid
+        │   ├── RowDragLeaveEvent <span class="event-properties">{}</span> // mouse left grid while dragging
         ├── ColumnEvent <span class="event-properties">{
         │   │    <span class="event-attribute">column</span>: Column, // the impacted column, only set if action was on one column
         │   │    <span class="event-attribute">columns</span>: Column[] // list of all impacted columns
+        │   │    <span class="event-attribute">source</span>: string // A string describing where the event is coming from
         │   │  }</span>
         │   ├── ColumnPivotChangedEvent <span class="event-properties">{}</span> // a column was added / removed to pivot list
         │   ├── ColumnRowGroupChangedEvent <span class="event-properties">{}</span> // a column was added / removed to row group list

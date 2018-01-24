@@ -1,0 +1,1217 @@
+[
+  {
+    "Symbol": "aapl",
+    "Date": "2-Mar-17",
+    "Open": 140,
+    "High": 140.28,
+    "Low": 138.76,
+    "Close": 138.96,
+    "Volume": 26210984,
+    "CloseTrends": [
+      {
+        "Date": "3/4/2017",
+        "Close": 138.96
+      },
+      {
+        "Date": "10/2/2016",
+        "Close": 113
+      },
+      {
+        "Date": "5/2/2016",
+        "Close": 93.42
+      },
+      {
+        "Date": "12/5/2015",
+        "Close": 113.18
+      },
+      {
+        "Date": "7/1/2015",
+        "Close": 132.07
+      },
+      {
+        "Date": "2/1/2015",
+        "Close": 133
+      },
+      {
+        "Date": "9/4/2014",
+        "Close": 97.87
+      },
+      {
+        "Date": "5/4/2014",
+        "Close": 84.5
+      },
+      {
+        "Date": "12/2/2013",
+        "Close": 80.9
+      },
+      {
+        "Date": "7/3/2013",
+        "Close": 60.1
+      },
+      {
+        "Date": "2/2/2013",
+        "Close": 66.84
+      },
+      {
+        "Date": "9/4/2012",
+        "Close": 97.57
+      },
+      {
+        "Date": "4/4/2012",
+        "Close": 83.92
+      },
+      {
+        "Date": "11/1/2011",
+        "Close": 52.72
+      },
+      {
+        "Date": "6/2/2011",
+        "Close": 47.89
+      },
+      {
+        "Date": "2/2/2011",
+        "Close": 49.29
+      },
+      {
+        "Date": "9/2/2010",
+        "Close": 36.83
+      },
+      {
+        "Date": "4/2/2010",
+        "Close": 34.63
+      },
+      {
+        "Date": "11/3/2009",
+        "Close": 29.04
+      },
+      {
+        "Date": "6/4/2009",
+        "Close": 19.41
+      },
+      {
+        "Date": "1/4/2009",
+        "Close": 12.62
+      }
+    ],
+    "AverageVolume": [
+      {
+        "Year": 2010,
+        "AverageVolume": 149851702.64143425
+      },
+      {
+        "Year": 2011,
+        "AverageVolume": 123447490.1111111
+      },
+      {
+        "Year": 2012,
+        "AverageVolume": 131976305.384
+      },
+      {
+        "Year": 2013,
+        "AverageVolume": 101612690.47222222
+      },
+      {
+        "Year": 2014,
+        "AverageVolume": 63232113.84920635
+      },
+      {
+        "Year": 2015,
+        "AverageVolume": 51666428.333333336
+      },
+      {
+        "Year": 2016,
+        "AverageVolume": 38197699.95634921
+      },
+      {
+        "Year": 2017,
+        "AverageVolume": 29290860.390243903
+      }
+    ],
+    "targetExpenditure": "R&D",
+    "Expenditure": {
+      "R&D": 45,
+      "Marketing": 7,
+      "Infrastructure": 48
+    }
+  },
+  {
+    "Symbol": "adbe",
+    "Date": "2-Mar-17",
+    "Open": 120.09,
+    "High": 120.12,
+    "Low": 119.28,
+    "Close": 119.9,
+    "Volume": 1819664,
+    "CloseTrends": [
+      {
+        "Date": "3/4/2017",
+        "Close": 119.9
+      },
+      {
+        "Date": "10/2/2016",
+        "Close": 108.39
+      },
+      {
+        "Date": "5/2/2016",
+        "Close": 96.52
+      },
+      {
+        "Date": "12/5/2015",
+        "Close": 91.42
+      },
+      {
+        "Date": "7/1/2015",
+        "Close": 82.09
+      },
+      {
+        "Date": "2/1/2015",
+        "Close": 78.1
+      },
+      {
+        "Date": "9/4/2014",
+        "Close": 67.71
+      },
+      {
+        "Date": "5/4/2014",
+        "Close": 62.59
+      },
+      {
+        "Date": "12/2/2013",
+        "Close": 56.4
+      },
+      {
+        "Date": "7/3/2013",
+        "Close": 47.25
+      },
+      {
+        "Date": "2/2/2013",
+        "Close": 38.89
+      },
+      {
+        "Date": "9/4/2012",
+        "Close": 32.81
+      },
+      {
+        "Date": "4/4/2012",
+        "Close": 32.9
+      },
+      {
+        "Date": "11/1/2011",
+        "Close": 26.63
+      },
+      {
+        "Date": "6/2/2011",
+        "Close": 30.79
+      },
+      {
+        "Date": "2/2/2011",
+        "Close": 33.51
+      },
+      {
+        "Date": "9/2/2010",
+        "Close": 29.17
+      },
+      {
+        "Date": "4/2/2010",
+        "Close": 34.75
+      },
+      {
+        "Date": "11/3/2009",
+        "Close": 35.92
+      },
+      {
+        "Date": "6/4/2009",
+        "Close": 28.72
+      },
+      {
+        "Date": "1/4/2009",
+        "Close": 19.32
+      }
+    ],
+    "AverageVolume": [
+      {
+        "Year": 2010,
+        "AverageVolume": 9180804.860557768
+      },
+      {
+        "Year": 2011,
+        "AverageVolume": 6303568.071428572
+      },
+      {
+        "Year": 2012,
+        "AverageVolume": 4109195.284
+      },
+      {
+        "Year": 2013,
+        "AverageVolume": 3597186.738095238
+      },
+      {
+        "Year": 2014,
+        "AverageVolume": 3362148.8333333335
+      },
+      {
+        "Year": 2015,
+        "AverageVolume": 2788823.511904762
+      },
+      {
+        "Year": 2016,
+        "AverageVolume": 2818514.464285714
+      },
+      {
+        "Year": 2017,
+        "AverageVolume": 2244176.43902439
+      }
+    ],
+    "targetExpenditure": "Marketing",
+    "Expenditure": {
+      "R&D": 53,
+      "Marketing": 4,
+      "Infrastructure": 43
+    }
+  },
+  {
+    "Symbol": "amzn",
+    "Date": "2-Mar-17",
+    "Open": 853.08,
+    "High": 854.82,
+    "Low": 847.28,
+    "Close": 848.91,
+    "Volume": 2132098,
+    "CloseTrends": [
+      {
+        "Date": "3/4/2017",
+        "Close": 848.91
+      },
+      {
+        "Date": "10/2/2016",
+        "Close": 834.03
+      },
+      {
+        "Date": "5/2/2016",
+        "Close": 703.07
+      },
+      {
+        "Date": "12/5/2015",
+        "Close": 640.15
+      },
+      {
+        "Date": "7/1/2015",
+        "Close": 488.1
+      },
+      {
+        "Date": "2/1/2015",
+        "Close": 380.14
+      },
+      {
+        "Date": "9/4/2014",
+        "Close": 321.93
+      },
+      {
+        "Date": "5/4/2014",
+        "Close": 307.89
+      },
+      {
+        "Date": "12/2/2013",
+        "Close": 384.66
+      },
+      {
+        "Date": "7/3/2013",
+        "Close": 292.33
+      },
+      {
+        "Date": "2/2/2013",
+        "Close": 258.7
+      },
+      {
+        "Date": "9/4/2012",
+        "Close": 260.24
+      },
+      {
+        "Date": "4/4/2012",
+        "Close": 191.1
+      },
+      {
+        "Date": "11/1/2011",
+        "Close": 189.25
+      },
+      {
+        "Date": "6/2/2011",
+        "Close": 202.35
+      },
+      {
+        "Date": "2/2/2011",
+        "Close": 172.11
+      },
+      {
+        "Date": "9/2/2010",
+        "Close": 137.22
+      },
+      {
+        "Date": "4/2/2010",
+        "Close": 140.16
+      },
+      {
+        "Date": "11/3/2009",
+        "Close": 129.91
+      },
+      {
+        "Date": "6/4/2009",
+        "Close": 81.6
+      },
+      {
+        "Date": "1/4/2009",
+        "Close": 49.94
+      }
+    ],
+    "AverageVolume": [
+      {
+        "Year": 2010,
+        "AverageVolume": 7288139.848605578
+      },
+      {
+        "Year": 2011,
+        "AverageVolume": 5810698.134920635
+      },
+      {
+        "Year": 2012,
+        "AverageVolume": 4200934.124
+      },
+      {
+        "Year": 2013,
+        "AverageVolume": 2969755.757936508
+      },
+      {
+        "Year": 2014,
+        "AverageVolume": 4088199.4325396824
+      },
+      {
+        "Year": 2015,
+        "AverageVolume": 3786689.6785714286
+      },
+      {
+        "Year": 2016,
+        "AverageVolume": 4103240.003968254
+      },
+      {
+        "Year": 2017,
+        "AverageVolume": 3594024.3658536584
+      }
+    ],
+    "targetExpenditure": "Infrastructure",
+    "Expenditure": {
+      "R&D": 21,
+      "Marketing": 23,
+      "Infrastructure": 56
+    }
+  },
+  {
+    "Symbol": "ea",
+    "Date": "2-Mar-17",
+    "Open": 87.9,
+    "High": 88.25,
+    "Low": 86.46,
+    "Close": 87.01,
+    "Volume": 1709488,
+    "CloseTrends": [
+      {
+        "Date": "3/4/2017",
+        "Close": 87.01
+      },
+      {
+        "Date": "10/2/2016",
+        "Close": 85.56
+      },
+      {
+        "Date": "5/2/2016",
+        "Close": 64.54
+      },
+      {
+        "Date": "12/5/2015",
+        "Close": 67.17
+      },
+      {
+        "Date": "7/1/2015",
+        "Close": 74.79
+      },
+      {
+        "Date": "2/1/2015",
+        "Close": 57.55
+      },
+      {
+        "Date": "9/4/2014",
+        "Close": 35.82
+      },
+      {
+        "Date": "5/4/2014",
+        "Close": 28.74
+      },
+      {
+        "Date": "12/2/2013",
+        "Close": 21.54
+      },
+      {
+        "Date": "7/3/2013",
+        "Close": 23.9
+      },
+      {
+        "Date": "2/2/2013",
+        "Close": 17.54
+      },
+      {
+        "Date": "9/4/2012",
+        "Close": 14.24
+      },
+      {
+        "Date": "4/4/2012",
+        "Close": 14.76
+      },
+      {
+        "Date": "11/1/2011",
+        "Close": 21.62
+      },
+      {
+        "Date": "6/2/2011",
+        "Close": 22.55
+      },
+      {
+        "Date": "2/2/2011",
+        "Close": 15.62
+      },
+      {
+        "Date": "9/2/2010",
+        "Close": 16.06
+      },
+      {
+        "Date": "4/2/2010",
+        "Close": 19.32
+      },
+      {
+        "Date": "11/3/2009",
+        "Close": 18.45
+      },
+      {
+        "Date": "6/4/2009",
+        "Close": 20.52
+      },
+      {
+        "Date": "1/4/2009",
+        "Close": 16.5
+      }
+    ],
+    "AverageVolume": [
+      {
+        "Year": 2010,
+        "AverageVolume": 6318185.896414342
+      },
+      {
+        "Year": 2011,
+        "AverageVolume": 6706964.916666667
+      },
+      {
+        "Year": 2012,
+        "AverageVolume": 6460065.664
+      },
+      {
+        "Year": 2013,
+        "AverageVolume": 4768706.174603174
+      },
+      {
+        "Year": 2014,
+        "AverageVolume": 4233206.670634921
+      },
+      {
+        "Year": 2015,
+        "AverageVolume": 3404482.4404761903
+      },
+      {
+        "Year": 2016,
+        "AverageVolume": 3594666.3492063493
+      },
+      {
+        "Year": 2017,
+        "AverageVolume": 2905403.2926829266
+      }
+    ],
+    "targetExpenditure": "Marketing",
+    "Expenditure": {
+      "R&D": 33,
+      "Marketing": 13,
+      "Infrastructure": 54
+    }
+  },
+  {
+    "Symbol": "goog",
+    "Date": "2-Mar-17",
+    "Open": 833.85,
+    "High": 834.51,
+    "Low": 829.64,
+    "Close": 830.63,
+    "Volume": 942476,
+    "CloseTrends": [
+      {
+        "Date": "3/4/2017",
+        "Close": 830.63
+      },
+      {
+        "Date": "10/2/2016",
+        "Close": 776.43
+      },
+      {
+        "Date": "5/2/2016",
+        "Close": 723.18
+      },
+      {
+        "Date": "12/5/2015",
+        "Close": 738.87
+      },
+      {
+        "Date": "7/1/2015",
+        "Close": 663.02
+      },
+      {
+        "Date": "2/1/2015",
+        "Close": 531.91
+      },
+      {
+        "Date": "9/4/2014",
+        "Close": 575.06
+      },
+      {
+        "Date": "5/4/2014",
+        "Close": 531.35
+      },
+      {
+        "Date": "12/2/2013",
+        "Close": 526.1
+      },
+      {
+        "Date": "7/3/2013",
+        "Close": 452.54
+      },
+      {
+        "Date": "2/2/2013",
+        "Close": 389.96
+      },
+      {
+        "Date": "9/4/2012",
+        "Close": 352.67
+      },
+      {
+        "Date": "4/4/2012",
+        "Close": 299.35
+      },
+      {
+        "Date": "11/1/2011",
+        "Close": 290.18
+      },
+      {
+        "Date": "6/2/2011",
+        "Close": 246.58
+      },
+      {
+        "Date": "2/2/2011",
+        "Close": 305.21
+      },
+      {
+        "Date": "9/2/2010",
+        "Close": 231.97
+      },
+      {
+        "Date": "4/2/2010",
+        "Close": 293.09
+      },
+      {
+        "Date": "11/3/2009",
+        "Close": 284.99
+      },
+      {
+        "Date": "6/4/2009",
+        "Close": 206.82
+      },
+      {
+        "Date": "1/4/2009",
+        "Close": 153.1
+      }
+    ],
+    "AverageVolume": [
+      {
+        "Year": 2010,
+        "AverageVolume": 0
+      },
+      {
+        "Year": 2011,
+        "AverageVolume": 0
+      },
+      {
+        "Year": 2012,
+        "AverageVolume": 0
+      },
+      {
+        "Year": 2013,
+        "AverageVolume": 0
+      },
+      {
+        "Year": 2014,
+        "AverageVolume": 1491386
+      },
+      {
+        "Year": 2015,
+        "AverageVolume": 2064590.4841269841
+      },
+      {
+        "Year": 2016,
+        "AverageVolume": 1824663.0952380951
+      },
+      {
+        "Year": 2017,
+        "AverageVolume": 1499057.536585366
+      }
+    ],
+    "targetExpenditure": "Infrastructure",
+    "Expenditure": {
+      "R&D": 18,
+      "Marketing": 20,
+      "Infrastructure": 62
+    }
+  },
+  {
+    "Symbol": "has",
+    "Date": "2-Mar-17",
+    "Open": 97.88,
+    "High": 98.61,
+    "Low": 97.28,
+    "Close": 97.53,
+    "Volume": 1055930,
+    "CloseTrends": [
+      {
+        "Date": "3/4/2017",
+        "Close": 97.53
+      },
+      {
+        "Date": "10/2/2016",
+        "Close": 80.42
+      },
+      {
+        "Date": "5/2/2016",
+        "Close": 86.33
+      },
+      {
+        "Date": "12/5/2015",
+        "Close": 68.37
+      },
+      {
+        "Date": "7/1/2015",
+        "Close": 83.15
+      },
+      {
+        "Date": "2/1/2015",
+        "Close": 62.02
+      },
+      {
+        "Date": "9/4/2014",
+        "Close": 54.65
+      },
+      {
+        "Date": "5/4/2014",
+        "Close": 55.66
+      },
+      {
+        "Date": "12/2/2013",
+        "Close": 52.97
+      },
+      {
+        "Date": "7/3/2013",
+        "Close": 46.95
+      },
+      {
+        "Date": "2/2/2013",
+        "Close": 39.89
+      },
+      {
+        "Date": "9/4/2012",
+        "Close": 39.07
+      },
+      {
+        "Date": "4/4/2012",
+        "Close": 35.78
+      },
+      {
+        "Date": "11/1/2011",
+        "Close": 35.09
+      },
+      {
+        "Date": "6/2/2011",
+        "Close": 44.62
+      },
+      {
+        "Date": "2/2/2011",
+        "Close": 43.86
+      },
+      {
+        "Date": "9/2/2010",
+        "Close": 43.23
+      },
+      {
+        "Date": "4/2/2010",
+        "Close": 39.31
+      },
+      {
+        "Date": "11/3/2009",
+        "Close": 29.22
+      },
+      {
+        "Date": "6/3/2009",
+        "Close": 24.8
+      },
+      {
+        "Date": "1/3/2009",
+        "Close": 26.95
+      }
+    ],
+    "AverageVolume": [
+      {
+        "Year": 2010,
+        "AverageVolume": 1778375.4143426295
+      },
+      {
+        "Year": 2011,
+        "AverageVolume": 1700941.119047619
+      },
+      {
+        "Year": 2012,
+        "AverageVolume": 1671752.252
+      },
+      {
+        "Year": 2013,
+        "AverageVolume": 1476625.884920635
+      },
+      {
+        "Year": 2014,
+        "AverageVolume": 1210869.503968254
+      },
+      {
+        "Year": 2015,
+        "AverageVolume": 1312583.753968254
+      },
+      {
+        "Year": 2016,
+        "AverageVolume": 1244882.2261904762
+      },
+      {
+        "Year": 2017,
+        "AverageVolume": 1921588.975609756
+      }
+    ],
+    "targetExpenditure": "R&D",
+    "Expenditure": {
+      "R&D": 21,
+      "Marketing": 23,
+      "Infrastructure": 56
+    }
+  },
+  {
+    "Symbol": "intc",
+    "Date": "2-Mar-17",
+    "Open": 35.93,
+    "High": 36.02,
+    "Low": 35.65,
+    "Close": 35.91,
+    "Volume": 23602100,
+    "CloseTrends": [
+      {
+        "Date": "3/4/2017",
+        "Close": 35.91
+      },
+      {
+        "Date": "10/2/2016",
+        "Close": 37.54
+      },
+      {
+        "Date": "5/2/2016",
+        "Close": 30.14
+      },
+      {
+        "Date": "12/5/2015",
+        "Close": 34.27
+      },
+      {
+        "Date": "7/1/2015",
+        "Close": 29.1
+      },
+      {
+        "Date": "2/1/2015",
+        "Close": 33.76
+      },
+      {
+        "Date": "9/4/2014",
+        "Close": 34.14
+      },
+      {
+        "Date": "5/4/2014",
+        "Close": 26.45
+      },
+      {
+        "Date": "12/2/2013",
+        "Close": 23.55
+      },
+      {
+        "Date": "7/3/2013",
+        "Close": 23.25
+      },
+      {
+        "Date": "2/2/2013",
+        "Close": 21.19
+      },
+      {
+        "Date": "9/4/2012",
+        "Close": 23.36
+      },
+      {
+        "Date": "4/4/2012",
+        "Close": 27.69
+      },
+      {
+        "Date": "11/1/2011",
+        "Close": 23.57
+      },
+      {
+        "Date": "6/2/2011",
+        "Close": 21.49
+      },
+      {
+        "Date": "2/2/2011",
+        "Close": 21.48
+      },
+      {
+        "Date": "9/2/2010",
+        "Close": 18.12
+      },
+      {
+        "Date": "4/2/2010",
+        "Close": 22.77
+      },
+      {
+        "Date": "11/3/2009",
+        "Close": 19.84
+      },
+      {
+        "Date": "6/4/2009",
+        "Close": 15.87
+      },
+      {
+        "Date": "1/4/2009",
+        "Close": 12.82
+      }
+    ],
+    "AverageVolume": [
+      {
+        "Year": 2010,
+        "AverageVolume": 66829243.01992032
+      },
+      {
+        "Year": 2011,
+        "AverageVolume": 61293879.68650793
+      },
+      {
+        "Year": 2012,
+        "AverageVolume": 42298300.732
+      },
+      {
+        "Year": 2013,
+        "AverageVolume": 39086647.428571425
+      },
+      {
+        "Year": 2014,
+        "AverageVolume": 31636008.996031746
+      },
+      {
+        "Year": 2015,
+        "AverageVolume": 30175331.722222224
+      },
+      {
+        "Year": 2016,
+        "AverageVolume": 22790532.54761905
+      },
+      {
+        "Year": 2017,
+        "AverageVolume": 24186713.292682927
+      }
+    ],
+    "targetExpenditure": "R&D",
+    "Expenditure": {
+      "R&D": 56,
+      "Marketing": 0,
+      "Infrastructure": 44
+    }
+  },
+  {
+    "Symbol": "msft",
+    "Date": "2-Mar-17",
+    "Open": 64.69,
+    "High": 64.75,
+    "Low": 63.88,
+    "Close": 64.01,
+    "Volume": 24539597,
+    "CloseTrends": [
+      {
+        "Date": "3/4/2017",
+        "Close": 64.01
+      },
+      {
+        "Date": "10/2/2016",
+        "Close": 57.24
+      },
+      {
+        "Date": "5/2/2016",
+        "Close": 51.02
+      },
+      {
+        "Date": "12/5/2015",
+        "Close": 54.06
+      },
+      {
+        "Date": "7/1/2015",
+        "Close": 46.92
+      },
+      {
+        "Date": "2/1/2015",
+        "Close": 44.15
+      },
+      {
+        "Date": "9/4/2014",
+        "Close": 46.04
+      },
+      {
+        "Date": "5/4/2014",
+        "Close": 40
+      },
+      {
+        "Date": "12/2/2013",
+        "Close": 38.31
+      },
+      {
+        "Date": "7/3/2013",
+        "Close": 34.7
+      },
+      {
+        "Date": "2/2/2013",
+        "Close": 27.88
+      },
+      {
+        "Date": "9/4/2012",
+        "Close": 30.94
+      },
+      {
+        "Date": "4/4/2012",
+        "Close": 31.01
+      },
+      {
+        "Date": "11/1/2011",
+        "Close": 25
+      },
+      {
+        "Date": "6/2/2011",
+        "Close": 25.8
+      },
+      {
+        "Date": "2/2/2011",
+        "Close": 27.99
+      },
+      {
+        "Date": "9/2/2010",
+        "Close": 23.96
+      },
+      {
+        "Date": "4/2/2010",
+        "Close": 30.45
+      },
+      {
+        "Date": "11/3/2009",
+        "Close": 29.12
+      },
+      {
+        "Date": "6/4/2009",
+        "Close": 23.5
+      },
+      {
+        "Date": "1/4/2009",
+        "Close": 17.11
+      }
+    ],
+    "AverageVolume": [
+      {
+        "Year": 2010,
+        "AverageVolume": 63035152.055776894
+      },
+      {
+        "Year": 2011,
+        "AverageVolume": 60779089.26984127
+      },
+      {
+        "Year": 2012,
+        "AverageVolume": 47940766.644
+      },
+      {
+        "Year": 2013,
+        "AverageVolume": 48625849.54365079
+      },
+      {
+        "Year": 2014,
+        "AverageVolume": 33392007.32142857
+      },
+      {
+        "Year": 2015,
+        "AverageVolume": 35794658.46825397
+      },
+      {
+        "Year": 2016,
+        "AverageVolume": 30869624.54761905
+      },
+      {
+        "Year": 2017,
+        "AverageVolume": 24064803.048780486
+      }
+    ],
+    "targetExpenditure": "R&D",
+    "Expenditure": {
+      "R&D": 30,
+      "Marketing": 24,
+      "Infrastructure": 46
+    }
+  },
+  {
+    "Symbol": "tsla",
+    "Date": "2-Mar-17",
+    "Open": 249.71,
+    "High": 253.28,
+    "Low": 248.27,
+    "Close": 250.48,
+    "Volume": 3351833,
+    "CloseTrends": [
+      {
+        "Date": "3/4/2017",
+        "Close": 250.48
+      },
+      {
+        "Date": "10/5/2016",
+        "Close": 199.97
+      },
+      {
+        "Date": "6/4/2016",
+        "Close": 212.28
+      },
+      {
+        "Date": "3/3/2016",
+        "Close": 188.34
+      },
+      {
+        "Date": "10/4/2015",
+        "Close": 211.63
+      },
+      {
+        "Date": "7/3/2015",
+        "Close": 269.15
+      },
+      {
+        "Date": "3/2/2015",
+        "Close": 199.56
+      },
+      {
+        "Date": "10/3/2014",
+        "Close": 238.1
+      },
+      {
+        "Date": "7/2/2014",
+        "Close": 239.72
+      },
+      {
+        "Date": "3/1/2014",
+        "Close": 250.56
+      },
+      {
+        "Date": "10/2/2013",
+        "Close": 164.47
+      },
+      {
+        "Date": "7/1/2013",
+        "Close": 117.18
+      },
+      {
+        "Date": "3/5/2013",
+        "Close": 34.65
+      },
+      {
+        "Date": "10/4/2012",
+        "Close": 27.52
+      },
+      {
+        "Date": "6/3/2012",
+        "Close": 31.96
+      },
+      {
+        "Date": "2/2/2012",
+        "Close": 33.81
+      },
+      {
+        "Date": "10/3/2011",
+        "Close": 27.98
+      },
+      {
+        "Date": "6/2/2011",
+        "Close": 28.11
+      },
+      {
+        "Date": "2/1/2011",
+        "Close": 23.89
+      },
+      {
+        "Date": "10/3/2010",
+        "Close": 21
+      },
+      {
+        "Date": "6/2/2010",
+        "Close": 23.89
+      }
+    ],
+    "AverageVolume": [
+      {
+        "Year": 2010,
+        "AverageVolume": 1580673.923076923
+      },
+      {
+        "Year": 2011,
+        "AverageVolume": 1293715.376984127
+      },
+      {
+        "Year": 2012,
+        "AverageVolume": 1228787.124
+      },
+      {
+        "Year": 2013,
+        "AverageVolume": 8409442.202380951
+      },
+      {
+        "Year": 2014,
+        "AverageVolume": 6923669.027777778
+      },
+      {
+        "Year": 2015,
+        "AverageVolume": 4308886.003968254
+      },
+      {
+        "Year": 2016,
+        "AverageVolume": 4595612.400793651
+      },
+      {
+        "Year": 2017,
+        "AverageVolume": 5570362.024390244
+      }
+    ],
+    "targetExpenditure": "Infrastructure",
+    "Expenditure": {
+      "R&D": 20,
+      "Marketing": 10,
+      "Infrastructure": 70
+    }
+  }
+]

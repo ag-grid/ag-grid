@@ -97,7 +97,7 @@ $border-radius: $unit;
 
     .code-browser {
         display: flex;
-        flex: 1;
+        max-width: gg
     }
 
     ul.secondary {
@@ -150,6 +150,7 @@ $border-radius: $unit;
         align-items: center;
         justify-content: center;
     }
+
     .tab-contents {
         background-color: white;
         border-bottom-left-radius: $border-radius;
@@ -175,12 +176,15 @@ $border-radius: $unit;
         border: none;
         height: 450px;
         overflow: auto;
+        font-size: 0.7rem;
+        padding: 1rem;
         margin: 0;
 
         code {
-            word-break: keep-all;
-            word-wrap: normal;
+            word-break: break-all;
+            // word-wrap: normal;
             white-space: pre;
+            width: 100%;
         }
     }
 
@@ -231,17 +235,17 @@ $border-radius: $unit;
     }
 
     .runner-item-angular {
-        background: transparent url('../images/svg/angular.svg') 0px center no-repeat;
+        background: transparent url('../_assets/fw-logos/angular.svg') 0px center no-repeat;
         background-size: 25px 25px;
     }
 
     .runner-item-vanilla {
-        background: transparent url('../images/svg/javascript.svg') 0px center no-repeat;
+        background: transparent url('../_assets/fw-logos/javascript.svg') 0px center no-repeat;
         background-size: 25px 25px;
     }
 
     .runner-item-react {
-        background: transparent url('../images/svg/react.svg') 0px center no-repeat;
+        background: transparent url('../_assets/fw-logos/react.svg') 0px center no-repeat;
         background-size: 25px 25px;
     }
 

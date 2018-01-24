@@ -9,7 +9,8 @@ const PIPELINE_SECTIONS = array(
     'issue_by_epic' => JIRA_ENDPOINT . '11726+order+by+cf%5B10005%5D+desc+%2C+priority+desc',
     'epic_by_priority' => JIRA_ENDPOINT . '11727+order+by+cf[10005]+asc+%2C+priority+desc',
     'parked' => JIRA_ENDPOINT . '11732',
-    'changelog' => JIRA_ENDPOINT . '11703+order+by+priority+desc'
+    'changelog' => JIRA_ENDPOINT . '10203+order+by+fixversion+desc',
+
 );
 
 function remoteJiraRequest($report_type, $startAt, $maxResults, $username, $password)
@@ -17,6 +18,7 @@ function remoteJiraRequest($report_type, $startAt, $maxResults, $username, $pass
     $jiraFilterUrl = PIPELINE_SECTIONS[$report_type];
 
     $url = $jiraFilterUrl . '&startAt=' . $startAt . '&maxResults=' . $maxResults;
+
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_USERPWD, "$username:$password");
     curl_setopt($curl, CURLOPT_URL, $url);
@@ -39,38 +41,22 @@ function localJiraRequest($report_type)
 
 function jiraRequest($report_type, $startAt, $maxResults, $jira_config)
 {
-    if ($jira_config->{'local-dev'}) {
-        return localJiraRequest($report_type);
+    // favour credentials file if it exists - only applicable when deployed
+    $prod_file = dirname(__FILE__) . "/prod/credentials.json";
+    if (file_exists($prod_file)) {
+        // live
+        $credentials = json_decode(file_get_contents($prod_file));
+        $username = $credentials->{'username'};
+        $password = $credentials->{'password'};
     } else {
-        // favour credentials file if it exists - only applicable when deployed
-        $prod_file = dirname(__FILE__) . "/prod/credentials.json";
-        if (file_exists($prod_file)) {
-            // live
-            $credentials = json_decode(file_get_contents($prod_file));
-            $username = $credentials->{'username'};
-            $password = $credentials->{'password'};
-        } else {
-            // for testing live jira data locally
-            $username = $jira_config->{'username'};
-            $password = $jira_config->{'password'};
-        }
-
-        $data = remoteJiraRequest($report_type, $startAt, $maxResults, $username, $password);
-
-        return $data;
+        // for testing live jira data locally
+        $username = $jira_config->{'username'};
+        $password = $jira_config->{'password'};
     }
-}
 
-/**
- * @param $report_type
- * @param $data
- */
-function updateLocalData($report_type, $data)
-{
-    $file = "../mock_jira_data/" . $report_type . ".json";
-    $handle = fopen($file, 'w') or die('Cannot open file:  ' . $file);
-    fwrite($handle, $data);
-    fclose($handle);
+    $data = remoteJiraRequest($report_type, $startAt, $maxResults, $username, $password);
+
+    return $data;
 }
 
 function getCacheFile($report_type)
@@ -109,17 +95,17 @@ function retrieveJiraFilterData($report_type)
     $maxResults = 100;
 
     if ($jira_config->{'local-dev'}) {
-        // initial query gets the first "page" of data, as well as the total number of issues to retrieve
-        $issue_list = jiraRequest($report_type, 0, $maxResults, $jira_config);
-        $tempArray = json_decode($issue_list, true);
-
-        $dataAsJson = json_encode($tempArray);
-        if ($jira_config->{'update-mock-data'}) {
-            updateLocalData($report_type, $dataAsJson);
+        // if updating local data, update cache
+        // the cache will be the local data (it wont expire...)
+        if ($jira_config->{'update-local-data'}) {
+            $dataAsJson = getLiveJiraFilterData($report_type, $maxResults, $jira_config);
+            updateCache($report_type, $dataAsJson);
         }
+
+        $dataAsJson = getFromCache($report_type);
     } else {
         // cache valid? retrieve from cache
-        if(cacheEntryValid($report_type, $jira_config)) {
+        if (cacheEntryValid($report_type, $jira_config)) {
             $dataAsJson = getFromCache($report_type);
         } else {
             // other get live data and update cache for next time
@@ -147,7 +133,7 @@ function getLiveJiraFilterData($report_type, $maxResults, $jira_config)
         $issue_list = jiraRequest($report_type, ($maxResults * $page), $maxResults, $jira_config);
         $currentPageData = json_decode($issue_list, true);
 
-        for ($x = 0; $x <= count($currentPageData); $x++) {
+        for ($x = 0; $x <= count($currentPageData['issues']); $x++) {
             array_push($tempArray['issues'], $currentPageData['issues'][$x]);
         }
     }

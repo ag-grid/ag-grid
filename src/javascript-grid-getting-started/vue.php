@@ -335,7 +335,7 @@
     </snippet>
 
     <p>Please see the relevant sections on <a href="../javascript-grid-cell-rendering-components/#vueCellRendering">cell
-            renderer's</a>,
+            renderers</a>,
         <a href="../javascript-grid-cell-editing/#vueCellEditing">cell editors</a> and
         <a href="../javascript-grid-filtering/#vueFiltering">filters</a> for configuring and using VueJS Components in
         ag-Grid.</p>
@@ -381,9 +381,6 @@
         The example below shows a rich configuration of ag-Grid, with a VueJS Header Group Component and custom
         Date Component Filter (under the DOB column).
     </p>
-    <show-example url="../framework-examples/vue-examples/#/"
-                  jsfile="../framework-examples/vue-examples/src/rich-grid-example/RichGridExample.vue"
-                  exampleHeight="525px"></show-example>
 
 </div>
 

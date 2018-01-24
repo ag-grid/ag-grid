@@ -5,12 +5,13 @@
     }
 ?>
 
-</div>
+    </section> 
+    </div> <!-- .row -->
+</div> <!-- #info-page -->
 
 <?php include_once($rootFolder."/includes/footer.php"); ?>
+<?php include_once($rootFolder."/includes/analytics.php"); ?>
+<?php docScripts(); ?>
 
 </body>
-
-<?php include_once($rootFolder."/includes/analytics.php"); ?>
-
 </html>

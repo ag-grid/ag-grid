@@ -1,23 +1,18 @@
 <?php
 
-$pageTitle = "Stepping it Up, ag-Grid Focuses on Agnostic in 2016";
-$pageDescription = "2015 was a busy year for ag-Grid. This article discuses how things have gone and what 2016 holds in store for ag-Grid.";
+$pageTitle = "ag-Grid Blog: 2016 - The Year We are Stepping it Up with a Focus on all Frameworks";
+$pageDescription = "2015 was a busy year for ag-Grid. We run through our plans for 2016, we'll be focussing on adding support for more frameworks. We believe in being agnostic to frameworks and will be delivering this philosophy in 2016.";
 $pageKeyboards = "javscript ag-grid grid agnostic component";
 
 include('../includes/mediaHeader.php');
 ?>
 
-<div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2>
-            <h2>Stepping it Up, ag-Grid Focuses on Agnostic in 2016</h2>
-    </div>
-</div>
+            <h1>Stepping it Up, ag-Grid Focuses on Agnostic in 2016</h1>
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-8">
 
-        <h3>The Road So Far</h3>
+        <h2>The Road So Far</h2>
 
         <p>
             23rd of December 2014. That is the date of the first ag-Grid commit to Github. Ten months later and
@@ -62,7 +57,8 @@ include('../includes/mediaHeader.php');
             ag-Grid is written using a Data Driven Approach (see my <a href="https://www.youtube.com/watch?v=gNhPeLCBbE0">
                 Angular Connect talk </a> for this to be explained).
             This has two advantages:
-        <ul>
+        </p>
+        <ul class="content">
             <li>
             <b>Speed</b> - although templates themselves are not necessarily that much slower, the added 'waffle' frameworks
             put in all add up to slowness.
@@ -70,7 +66,6 @@ include('../includes/mediaHeader.php');
             <li><b>Less code</b> - in particular, no HTML and no bindings to worry about. Less code is easier to understand,
             easier to test, easier to maintain.</li>
         </ul>
-        </p>
 
         <p>
             Today's frameworks are very much template driven. This is another reason why
@@ -125,7 +120,7 @@ include('../includes/mediaHeader.php');
             I want to make ag-Grid the best grid it can possibly be. Originally the plan was just to create a
             grid that matched my own requirements. However the community has encouraged me to want to provide
             the best grid available for Javascript development. Next year I plan to focus on the following:
-            <ul>
+            <ul class="content">
             <li><b>Close any Feature Gap:</b> Some 'core' items still need to get done, such as dragging columns to
             reposition, adding / removing rows without a complete reload, having dynamic row height etc.
             I want to get ALL of these done in the first few months of next year so that the grid is not just
@@ -151,7 +146,7 @@ include('../includes/mediaHeader.php');
         </p>
         <p>
             So I'm considering the following items for making money:
-        <ul>
+        <ul class="content">
             <li>
                 <b>Paid support:</b> Each day I'm now spending approx 2 hours helping people on the forum. This does
                 not include the time I spend implementing features that people influence me towards implementing.
@@ -193,44 +188,7 @@ include('../includes/mediaHeader.php');
         </div>
 
     </div>
-    <div class="col-md-3">
-
-        <img src="../images/ag-Grid2-200.png" style="display: inline-block; padding-bottom: 20px;"/>
-
-        <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-in-2016/" data-text="Stepping it Up, ag-Grid Focuses on Agnostic in 2016" data-via="ceolter" data-size="large">Tweet</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-        </div>
-
-        <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-            <p>
-                <img src="/niall.png"/>
-            </p>
-            <p>
-                About Me
-            </p>
-            <p>
-                I have been writing software all my life! Starting with Assembly, C++ and MFC,
-                moving onto full stack Java / JSP / GWT and now focusing on full stack
-                Java / Javascript.
-            </p>
-            <p>
-                Currently working on ag-Grid full time.
-            </p>
-
-            <div>
-                <br/>
-                <a href="http://uk.linkedin.com/in/niallcrosby"><img src="/images/linked-in.png"/></a>
-                <br/>
-                <br/>
-                <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-        </div>
-
-    </div>
+<?php include '../blog-authors/niall.php' ?>
 </div>
 
 
@@ -250,10 +208,6 @@ include('../includes/mediaHeader.php');
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 <hr/>
-
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

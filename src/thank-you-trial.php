@@ -1,40 +1,27 @@
+<?php
+include_once 'includes/html-helpers.php';
+?>
 <!DOCTYPE html>
-<html>
+<html class="stretch-html">
 <head lang="en">
-    <meta charset="UTF-8">
-
-    <title>Thanks!</title>
-    <meta name="description" content="Thank you page for new evaluation request">
-    <meta name="keywords" content="ag-Grid Javascript Grid Evaluation Request"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css" rel="stylesheet">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-
-
-    <link rel="stylesheet" type="text/css" href="/style.css">
-
-    <link rel="shortcut icon" href="https://www.ag-grid.com/favicon.ico"/>
-
+<?php
+meta_and_links("Thanks!", "ag-Grid Javascript Grid Evaluation Request", "Thank you page for new evaluation request", true);
+?>
+<link rel="stylesheet" href="dist/homepage.css">
 </head>
 
-<body ng-app="index" class="big-text">
+<body>
+<div class="stretch-contents">
+<header id="nav" class="compact">
+<?php 
+    $version = 'latest';
+    include './includes/navbar.php';
+?>
+</header>
 
-<?php $navKey = "thankYouEvaluation";
-include 'includes/navbar.php'; ?>
-
-<?php $headerTitle = "Your Request has been Received...";
-include 'includes/headerRow.php'; ?>
-
-<div class="container info-page">
-
+<div class="info-page">
     <div class="row">
-        <div class="col-md-12">
-
+        <section>
             <h1>
                 Thank you!
             </h1>
@@ -59,23 +46,14 @@ include 'includes/headerRow.php'; ?>
                 </li>
             </ul>
             </p>
-        </div>
+        </section>
     </div>
+</div>
+
+<?php include("includes/footer.php"); ?>
+<?php include_once("includes/analytics.php"); ?>
 
 </div>
 
-<!--         <div class="HomeSectionParent">
-
-            <?php include 'home/intro2.php'; ?>
-
-            <?php include 'home/features.php'; ?>
-
-        </div> -->
-
-<?php include("includes/footer.php"); ?>
-
 </body>
-
-<?php include_once("includes/analytics.php"); ?>
-
 </html>

@@ -1,22 +1,21 @@
 <?php
-$key = "Column Header";
-$pageTitle = "Column Header";
-$pageDescription = "Explains details about the column header.";
+$pageTitle = "ag-Grid - Styling & Appearance: Column Headers";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Headers. The display of column headers can be fine-tuned to change Header Height and Text Orientation for example. Free and Commercial version available.";
 $pageKeyboards = "grid header";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div xmlns="http://www.w3.org/1999/html">
 
-    <h1 class="first-h1" id="headerHeight">Column Headers</h1>
 
-    <p>
+    <h1>Column Headers</h1>
+
+    <p class="lead">
         Each column has a header at the top that typically displays the column name and has access to column
         features, such as sorting, filtering and a column menu. This page explains how you can manage the headers.
     </p>
 
-    <h2 id="header-template">Header Templates</h2>
+    <h2>Header Templates</h2>
 
     <p>
         You can provide a header template used by the default header component for simple layout changes. If you
@@ -27,6 +26,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         This is the default template used in ag-grid
     </p>
+
     <snippet>&lt;div class="ag-cell-label-container" role="presentation"&gt;
     &lt;span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"&gt;&lt;/span&gt;
     &lt;div ref="eLabel" class="ag-header-cell-label" role="presentation"&gt;
@@ -40,7 +40,7 @@ include '../documentation-main/documentation_header.php';
 &lt;/div&gt;</snippet>
 
     <p>When you provide your own template, everything should work as expected as long as you reuse the same refs.</p>
-    <table class="table">
+    <table class="table reference">
         <tr>
             <th>Ref</th>
             <th>Description</th>
@@ -87,7 +87,7 @@ include '../documentation-main/documentation_header.php';
         looking to change the icons, check our <a href="../javascript-grid-icons">icon docs</a>
     </note>
 
-    <h3 id="example-header-template">Example - Simple Header Templates</h3>
+    <h3>Example - Simple Header Templates</h3>
 
     <p>
         In the following example you can see how we are reusing the default grid template to change the layout of
@@ -113,12 +113,13 @@ include '../documentation-main/documentation_header.php';
 }</snippet>
 
     <p>
-        Note that specifying your own templates is compatible with other configurations: <ul>
+        Note that specifying your own templates is compatible with other configurations: 
+    </p>
+<ul class="content">
         <li>suppressMenu is especified in: Athlete, Country, Date and Bronze columns</li>
         <li>suppressSorting is especified in: Age, Year, Sport Silver and Total columns</li>
         <li>Gold is the only column that doesn't have suppressSorting or suppressSort</li>
     </ul>
-    </p>
 
     <?= example('Header template', 'header-template', 'vanilla', array("extras" => array("fontawesome"))) ?>
 
@@ -143,11 +144,12 @@ include '../documentation-main/documentation_header.php';
         and also provide the adequate header heights using the appropriate grid property.
     </p>
 
-    <h2 id="headerHeightExample">Header Height and Text Orientation Example</h2>
+    <h3>Example - Header Height and Text Orientation</h3>
 
     <p>
         The following example shows how you can provide a unique look & feel to the headers. Note that:
-    <ul>
+    </pre>
+    <ul class="content">
         <li>The header heights have all been changed in the gridOptions:
 <snippet>
 /* Group columns */
@@ -166,7 +168,7 @@ pivotGroupHeaderHeight:50,
 pivotGroupHeaderHeight:100,
 </snippet>
         </li>
-        <li>The grouped column header <i>Athlete Details</i> has an specific style applied to it to make it bigger. Note
+        <li>The grouped column header <code>Athlete Details</code> has an specific style applied to it to make it bigger. Note
             that the style is slightly different depending if pivoting or not:
 <snippet language="css">
 .ag-pivot-off .ag-header-group-cell{
@@ -237,7 +239,6 @@ pivotGroupHeaderHeight:100,
 }</snippet>
         </li>
     </ul>
-    </pre>
 
     <?= example('Header Height and Text Orientation', 'text-orientation', 'generated', array("enterprise" => 1)) ?>
 
@@ -251,22 +252,13 @@ pivotGroupHeaderHeight:100,
 
     <?= example('Dynamic Header Height', 'dynamic-height', 'generated', array("enterprise" => 1)) ?>
 
-    <h2 id="refresh-headers-and-footers">Refresh Headers and Footers</h2>
-
-    <p>
-        If you call <code>api.recomputeAggregates()</code>, all header and footer rows will subsequently get ripped
-        out and redrawn to show the new aggregate values. If you want to refresh all headers and footers without
-        recomputing the aggregates, you can call <code>api.refreshCells()</code> - useful if you want to refresh
-        for reasons other than the aggregates being recomputed.
-    </p>
-
     <h2 id="customHeader">Custom Header</h2>
     <p>
         Header templates are meant to be used for simple UI customisation, if you need to have more control over the
         header check how to create your own <a href="../javascript-grid-header-rendering/">Header Components</a>.
     </p>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
 

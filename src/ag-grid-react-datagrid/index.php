@@ -1,27 +1,17 @@
 <?php
 
-$pageTitle = "Blog: React datagrid";
-$pageDescription = "Building a React DataGrid Redux and ag-Grid";
+$pageTitle = "ag-Grid Blog: Building React and Redux application with ag-Grid DataGrid";
+$pageDescription = "A step-by-step guide for building an application using React and Redux. Includes sample code and simple instructions to complete an application featuring ag-Grid's datagrid.";
 $pageKeyboards = "react datagrid redux";
 
 include('../includes/mediaHeader.php');
 ?>
 
-<link rel="stylesheet" href="../documentation-main/documentation.css">
-<script src="../documentation-main/documentation.js"></script>
-
-<div class="row">
-    <div class="col-md-4" style="padding-top: 20px;">
-        <img style="vertical-align: baseline" src="../images/react_large.png"/>
-        <img style="vertical-align: baseline" src="../images/logo/SVG_ag_grid_bright-bg.svg" width="200px"/>
-    </div>
-    <div class="col-md-8" style="padding-top: 40px;">
-        <h1 style="margin-top: 0">Building a React Datagrid</h1>
-        <h2 style="margin-top: 0">Using Redux and ag-Grid</h2>
-    </div>
+        <h1>Building a React Datagrid with Redux and ag-Grid</h1>
+        <p class="blog-author">Sean Landsman | 13th May 2017</p>
 
     <div class="row" ng-app="documentation">
-        <div class="col-md-9">
+        <div class="col-md-8">
 
             <h2>Motivation</h2>
 
@@ -95,43 +85,43 @@ include('../includes/mediaHeader.php');
             <h3>The Service</h3>
             <p>First let's start with our <code>GridDataService</code>:</p>
 
-            <snippet>
-                // src/GridDataService.js
-                export default class GridDataService {
-                constructor(dispatch) {
-                this.dispatch = dispatch;
+<snippet>
+// src/GridDataService.js
+export default class GridDataService {
+    constructor(dispatch) {
+        this.dispatch = dispatch;
 
-                this.rowData = [
-                {symbol: "AAPL", name: "Apple Corp", price: 154.99},
-                {symbol: "GOOG", name: "Google", price: 983.41},
-                {symbol: "MSFT", name: "Microsoft", price: 71.95}
-                ];
-                }
+        this.rowData = [
+            {symbol: "AAPL", name: "Apple Corp", price: 154.99},
+            {symbol: "GOOG", name: "Google", price: 983.41},
+            {symbol: "MSFT", name: "Microsoft", price: 71.95}
+        ];
+    }
 
-                start() {
-                setInterval(() =&gt; {
-                this.applyPriceUpdateToRandomRow();
+    start() {
+        setInterval(() =&gt; {
+            this.applyPriceUpdateToRandomRow();
 
-                this.dispatch({
+            this.dispatch({
                 type: 'ROW_DATA_CHANGED',
                 rowData: this.rowData.slice(0)
-                })
-                }, 1500);
-                }
+            })
+        }, 1500);
+    }
 
-                applyPriceUpdateToRandomRow() {
-                let swingPositive = Math.random() &gt;= 0.5; // if the price is going up or down
+    applyPriceUpdateToRandomRow() {
+        let swingPositive = Math.random() &gt;= 0.5; // if the price is going up or down
 
-                let rowIndexToUpdate = Math.floor(Math.random() * 3);
-                let rowToUpdate = this.rowData[rowIndexToUpdate];
-                let currentPrice = rowToUpdate.price;
-                let swing = currentPrice / 10; // max of 10% swing
+        let rowIndexToUpdate = Math.floor(Math.random() * 3);
+        let rowToUpdate = this.rowData[rowIndexToUpdate];
+        let currentPrice = rowToUpdate.price;
+        let swing = currentPrice / 10; // max of 10% swing
 
-                let newPrice = currentPrice + (swingPositive ? 1 : -1) * swing;
-                rowToUpdate.price = newPrice;
-                }
-                }
-            </snippet>
+        let newPrice = currentPrice + (swingPositive ? 1 : -1) * swing;
+        rowToUpdate.price = newPrice;
+    }
+}
+</snippet>
 
             <p>The service manages the data - it has the current data and makes it available via <a
                         href="http://redux.js.org/docs/introduction/">Redux</a>. In this example
@@ -148,63 +138,63 @@ include('../includes/mediaHeader.php');
             <p>We'll create the <code>Redux Store</code> and the <code>GridDataService</code> in our entry file
                 <code>src/index.js</code>:</p>
 
-            <snippet>
-                // src/index.js
-                'use strict';
+<snippet>
+// src/index.js
+'use strict';
 
-                import React from "react";
-                import {render} from "react-dom";
-                import {Provider} from "react-redux";
-                import {createStore} from "redux";
+import React from "react";
+import {render} from "react-dom";
+import {Provider} from "react-redux";
+import {createStore} from "redux";
 
-                // pull in the ag-grid styles we're interested in
-                import "ag-grid-root/dist/styles/ag-grid.css";
-                import "ag-grid-root/dist/styles/ag-theme-fresh.css";
+// pull in the ag-grid styles we're interested in
+import "ag-grid-root/dist/styles/ag-grid.css";
+import "ag-grid-root/dist/styles/ag-theme-fresh.css";
 
-                // only necessary if you're using ag-Grid-Enterprise features
-                // import "ag-grid-enterprise";
+// only necessary if you're using ag-Grid-Enterprise features
+// import "ag-grid-enterprise";
 
-                // our application
-                import SimpleGridExample from "./SimpleGridExample";
-                import GridDataService from "./GridDataService";
+// our application
+import SimpleGridExample from "./SimpleGridExample";
+import GridDataService from "./GridDataService";
 
-                // a simple reducer
-                let gridDataReducer = (state = {rowData: []}, action) =&gt; {
-                switch (action.type) {
-                case 'ROW_DATA_CHANGED':
-                return {
-                ...state,
-                rowData: action.rowData,
-                };
-                default:
-                return state;
-                }
-                };
+// a simple reducer
+let gridDataReducer = (state = {rowData: []}, action) =&gt; {
+    switch (action.type) {
+        case 'ROW_DATA_CHANGED':
+        return {
+            ...state,
+            rowData: action.rowData,
+        };
+    default:
+        return state;
+    }
+};
 
-                // create the Redux store
-                let store = createStore(gridDataReducer);
+// create the Redux store
+let store = createStore(gridDataReducer);
 
-                // instantiate our Service and pass in the Redux store dispatch method
-                let gridDataService = new GridDataService(store.dispatch);
+// instantiate our Service and pass in the Redux store dispatch method
+let gridDataService = new GridDataService(store.dispatch);
 
-                // wait for the dom to be ready, then render our application
-                document.addEventListener('DOMContentLoaded', () =&gt; {
-                render(
-                // make our application redux aware
-                &lt;Provider store={store}&gt;
-                &lt;SimpleGridExample/&gt;
-                &lt;/Provider&gt;,
-                document.querySelector('#app')
-                );
+// wait for the dom to be ready, then render our application
+document.addEventListener('DOMContentLoaded', () =&gt; {
+    render(
+        // make our application redux aware
+        &lt;Provider store={store}&gt;
+        &lt;SimpleGridExample/&gt;
+        &lt;/Provider&gt;,
+        document.querySelector('#app')
+    );
 
-                // kick off our service updates
-                gridDataService.start();
-                });
-            </snippet>
+    // kick off our service updates
+    gridDataService.start();
+});
+</snippet>
 
             <p>Here we do a number of bootstrap tasks:</p>
 
-            <ul>
+            <ul class="content">
                 <li>Import our <code>GridDataService</code></li>
                 <li>Create a simple Redux reducer <code>gridDataReducer</code></li>
                 <li>Create the Redux Store</li>
@@ -219,7 +209,7 @@ include('../includes/mediaHeader.php');
 
             <p>We'll modify the seed <code>SimpleGridExample</code> in the following ways:</p>
 
-            <ul>
+            <ul class="content">
                 <li>Delete <code>createRowData</code> - the application will now receive it's data from the Redux store
                 </li>
                 <li>Modify <code>createColumnDefs</code> to reference the new data structure (two columns: "name" and
@@ -231,65 +221,65 @@ include('../includes/mediaHeader.php');
 
             <p>The <code>GridDataService</code> now looks like this:</p>
 
-            <snippet>
-                import React, {Component} from "react";
-                import {AgGridReact} from "ag-grid-react";
-                import {connect} from "react-redux";
+<snippet>
+import React, {Component} from "react";
+import {AgGridReact} from "ag-grid-react";
+import {connect} from "react-redux";
 
-                class SimpleGridExample extends Component {
-                constructor(props) {
-                super(props);
+class SimpleGridExample extends Component {
+    constructor(props) {
+        super(props);
 
-                this.state = {
-                columnDefs: this.createColumnDefs()
-                }
-                }
+        this.state = {
+            columnDefs: this.createColumnDefs()
+        }
+    }
 
-                onGridReady(params) {
-                this.gridApi = params.api;
-                this.columnApi = params.columnApi;
+    onGridReady(params) {
+        this.gridApi = params.api;
+        this.columnApi = params.columnApi;
 
-                this.gridApi.sizeColumnsToFit();
-                }
+        this.gridApi.sizeColumnsToFit();
+    }
 
-                createColumnDefs() {
-                return [
-                {headerName: "Company", field: "name"},
-                {headerName: "Price", field: "price", cellFormatter: (params) =&gt; params.value.toFixed(2)}
-                ];
-                }
+    createColumnDefs() {
+        return [
+            {headerName: "Company", field: "name"},
+            {headerName: "Price", field: "price", cellFormatter: (params) =&gt; params.value.toFixed(2)}
+        ];
+    }
 
-                render() {
-                let containerStyle = {
-                height: 115,
-                width: 500
-                };
+    render() {
+        let containerStyle = {
+            height: 115,
+            width: 500
+        };
 
-                return (
-                &lt;div style={containerStyle} className="ag-theme-fresh"&gt;
+        return (
+            &lt;div style={containerStyle} className="ag-theme-fresh"&gt;
                 &lt;h1&gt;Simple ag-Grid React Example&lt;/h1&gt;
                 &lt;AgGridReact
-                // properties
-                columnDefs={this.state.columnDefs}
-                rowData={this.props.rowData}
+                    // properties
+                    columnDefs={this.state.columnDefs}
+                    rowData={this.props.rowData}
 
-                // events
-                onGridReady={this.onGridReady}&gt;
+                    // events
+                    onGridReady={this.onGridReady}&gt;
                 &lt;/AgGridReact&gt;
-                &lt;/div&gt;
-                )
-                }
-                }
+            &lt;/div&gt;
+        )
+    }
+}
 
-                // pull off row data changes
-                export default connect(
-                (state) =&gt; {
-                return {
-                rowData: state.rowData
-                }
-                }
-                )(SimpleGridExample);
-            </snippet>
+// pull off row data changes
+export default connect(
+    (state) =&gt; {
+        return {
+            rowData: state.rowData
+        }
+    }
+)(SimpleGridExample);
+</snippet>
 
             <p>With a fairly small number of changes to the seed project we now have a <a
                         href="https://facebook.github.io/react/">React</a> application using both
@@ -318,15 +308,15 @@ include('../includes/mediaHeader.php');
 
             <snippet>
                 &lt;AgGridReact
-                // properties
-                columnDefs={this.state.columnDefs}
-                rowData={this.props.rowData}
+                    // properties
+                    columnDefs={this.state.columnDefs}
+                    rowData={this.props.rowData}
 
-                deltaRowDataMode
-                getRowNodeId={(data) =&gt; data.symbol}
+                    deltaRowDataMode
+                    getRowNodeId={(data) =&gt; data.symbol}
 
-                // events
-                onGridReady={this.onGridReady}&gt;
+                    // events
+                    onGridReady={this.onGridReady}&gt;
                 &lt;/AgGridReact&gt;
             </snippet>
 
@@ -367,90 +357,32 @@ include('../includes/mediaHeader.php');
             </div>
 
         </div>
-        <div class="col-md-3">
-
-            <div>
-                <a href="https://twitter.com/share" class="twitter-share-button"
-                   data-url="https://www.ag-grid.com/ag-grid-react-datagrid/"
-                   data-text="Building a React Datagrid Using Redux and ag-Grid" data-via="seanlandsman"
-                   data-size="large">Tweet</a>
-                <script>!function (d, s, id) {
-                        var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                        if (!d.getElementById(id)) {
-                            js = d.createElement(s);
-                            js.id = id;
-                            js.src = p + '://platform.twitter.com/widgets.js';
-                            fjs.parentNode.insertBefore(js, fjs);
-                        }
-                    }(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-            <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-                <p><img src="../images/sean.png"/></p>
-                <p style="font-weight: bold;">
-                    Sean Landsman
-                </p>
-                <p>
-                    Sean was the first person that Niall asked to join the team. Sean ensures that we can keep the
-                    agnostic in ag-Grid... he is responsible for integrating with all of our supported frameworks. Many
-                    of customers will be familiar with Sean as he is very active in our user forums supporting the needs
-                    of our customers. He has also recently given a number of talks at conferences where his calm manner
-                    belies his years of experience.
-                </p>
-                <p>
-                    Lead Developer - Frameworks
-                </p>
-
-                <div>
-                    <br/>
-                    <a href="https://www.linkedin.com/in/sean-landsman-9780092"><img src="../images/linked-in.png"/></a>
-                    <br/>
-                    <br/>
-                    <a href="https://twitter.com/seanlandsman" class="twitter-follow-button" data-show-count="false"
-                       data-size="large">@seanlandsman</a>
-                    <script>!function (d, s, id) {
-                            var js, fjs = d.getElementsByTagName(s)[0],
-                                p = /^http:/.test(d.location) ? 'http' : 'https';
-                            if (!d.getElementById(id)) {
-                                js = d.createElement(s);
-                                js.id = id;
-                                js.src = p + '://platform.twitter.com/widgets.js';
-                                fjs.parentNode.insertBefore(js, fjs);
-                            }
-                        }(document, 'script', 'twitter-wjs');</script>
-                </div>
-
-            </div>
-
-        </div>
+<?php include '../blog-authors/sean.php'; ?>
     </div>
+
 
 
     <hr/>
 
     <div id="disqus_thread"></div>
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES * * */
-        var disqus_shortname = 'aggrid';
+<script type="text/javascript">
+/* * * CONFIGURATION VARIABLES * * */
+var disqus_shortname = 'aggrid';
 
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function () {
-            var dsq = document.createElement('script');
-            dsq.type = 'text/javascript';
-            dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function () {
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
         })();
     </script>
     <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments
             powered by Disqus.</a></noscript>
     <hr/>
 
-    <footer class="license">
-        © ag-Grid Ltd. 2015-2017
-    </footer>
 
-    <?php
-    include('../includes/mediaFooter.php');
-    ?>
+<?php
+include('../includes/mediaFooter.php');
+?>

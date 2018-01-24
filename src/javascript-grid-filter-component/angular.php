@@ -1,10 +1,4 @@
-<p>
-
-    <!-- start of angular -->
-<h2 id="ng2Filtering">
-    <img src="../images/angular2_large.png" style="width: 60px"/>
-    Angular Filtering
-</h2>
+<h2 id="ng2Filtering"> Angular Filtering </h2>
 
 <p>
     It is possible to provide Angular filters for ag-Grid to use if you are are using the
@@ -17,7 +11,7 @@
     mandatory methods on the interface on the created component (and will call optional methods if they're present).
 </p>
 
-<h3 id="angular-params"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Params</h3>
+<h3 id="angular-params">Angular Params</h3>
 
 <p>The ag Framework expects to find the <code>agInit</code> (on the <code>AgFilterComponent</code> interface) method on
     the created component, and uses it to supply the 'filter params'.</p>
@@ -27,38 +21,39 @@ agInit(params:IFilterParams):void {
     this.params = params;
     this.valueGetter = params.valueGetter;
 }</snippet>
-</p>
 
-<h3 id="angular-methods-lifecycle"><img src="../images/angular2_large.png" style="width: 20px;"/> Angular Methods /
-    Lifecycle</h3>
+<h3 id="angular-methods-lifecycle">Angular Methods / Lifecycle</h3>
 
 <p>
     All of the methods in the IFilter interface described above are applicable
     to the Angular Component with the following exceptions:
-<ul>
-    <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the
+</p>
+
+<ul class="content">
+    <li><code>init()</code> is not used. Instead implement the <code>agInit</code> method (on the
         <code>AgRendererComponent</code> interface).
     </li>
-    <li><i>destroy()</i> is not used. Instead implement the Angular<code>OnDestroy</code> interface
+    <li><code>destroy()</code> is not used. Instead implement the Angular<code>OnDestroy</code> interface
         (<code>ngOnDestroy</code>) for
         any cleanup you need to do.
     </li>
-    <li><i>getGui()</i> is not used. Angular will provide the Gui via the supplied template.</li>
+    <li><code>getGui()</code> is not used. Angular will provide the Gui via the supplied template.</li>
 </ul>
 
 <p>
-    After that, all the other methods (<i>onNewRowsLoaded(), getModel(), setModel()</i> etc) behave the
+    After that, all the other methods (<code>onNewRowsLoaded(), getModel(), setModel()</code> etc) behave the
     same so put them directly onto your Angular Component.
 </p>
 
-<h3 id="accessing-the-angular-component-instance"><img src="../images/angular2_large.png" style="width: 20px;"/>
-    Accessing the Angular Component Instance</h3>
+<h3 id="accessing-the-angular-component-instance">Accessing the Angular Component Instance</h3>
 
 <p>
-    ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>
+    ag-Grid allows you to get a reference to the filter instances via the <code>api.getFilterInstance(colKey)</code>
     method. If your component is a Angular component, then this will give you a reference to the ag-Grid's
     Component which wraps your Angular Component. Just like Russian Dolls. To get to the wrapped Angular instance
-    of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
+    of your component, use the <code>getFrameworkComponentInstance()</code> method as follows:
+</p>
+
     <snippet>
 // lets assume a Angular component as follows
 @Component({
@@ -89,10 +84,9 @@ laterOnInYourApplicationSomewhere() {
     // now we're sucking diesel!!!
     ng2FilterInstance.myMethod();
 }</snippet>
-</p>
 
-<h3 id="example-filtering-using-angular-components"><img src="../images/angular2_large.png" style="width: 20px;"/>
-    Example: Filtering using Angular Components</h3>
+<h3 id="example-filtering-using-angular-components">Example: Filtering using Angular Components</h3>
+
 <p>
     Using Angular Components as a partial text Filter in the "Filter Component" column, illustrating filtering and
     lifecycle events.

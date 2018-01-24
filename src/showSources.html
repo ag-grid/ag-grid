@@ -4,10 +4,12 @@
     </ul>
 
     <div style="margin-top: 5px" class="tab-pane">
-        <ul class="nav nav-pills">
-            <li role="presentation" ng-repeat="extraPage in extraPages" ng-class="{active: isActivePage(extraPage)}" ><a ng-click="setActivePage(extraPage)">{{extraPage}}</a></li>
-        </ul>
+        <nav class="nav nav-pills">
+            <a ng-repeat="extraPage in extraPages" ng-class="{'nav-link': true, 'nav-item': true, active: isActivePage(extraPage)}" ng-click="setActivePage(extraPage)">{{extraPage}}</a>
+        </nav>
+
         <div ng-style="iframeStyle" style="overflow: auto;"  ng-bind-html="extraPageContent[extraPage]">
+
         </div>
     </div>
 </div>

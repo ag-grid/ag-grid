@@ -1,19 +1,10 @@
 <?php
-$key = "Angular ngtools Webpack";
-$pageTitle = "Angular Datagrid using @ngtools/webpack";
-$pageDescription = "Demonstrate the best Angular datagrid using @ngtools/webpack.";
+
+$pageTitle = "ag-Grid Reference: Angular, ngtools and webpack";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. This guide runs through how to build Angular datagrid with ngtools, webpack and TypeScript.";
 $pageKeyboards = "Angular Grid ngtools webpack 2";
 $pageGroup = "basics";
 $angularParent = "checked";
-
-$framework = $_GET['framework'];
-if(is_null($framework)) {
-    ?>
-    <script>
-        window.location.href = '?framework=angular';
-    </script>
-    <?php
-}
 
 include '../documentation-main/documentation_header.php';
 ?>
@@ -334,7 +325,7 @@ module.exports = {
             and the more fluid application code. Using the <code>entry</code> property we can specify the entry points we
             want to use - we have specified 3 here:
         </p>
-        <ul>
+        <ul class="content">
             <li>polyfills: polyfills we require to run Angular / ES6 applications in current browsers.</li>
             <li>vendor: the vendor (or 3rd party) libraries we need - ag-Grid, Angular etc.</li>
             <li>app: our application code.</li>
@@ -350,7 +341,7 @@ module.exports = {
             <code>module.loaders</code>
         </p>
         <p>Loaders tell Webpack how & what to do with certain types of file - we have specified a few here to deal with Typescript, HTML, CSS and Images:</p>
-        <ul>
+        <ul class="content">
             <li>awesome-typescript-loader: transpile Typescript to ES5</li>
             <li>angular2-template-loader: processes Angular components' template/styles</li>
             <li>html</li>
@@ -362,7 +353,7 @@ module.exports = {
         <p>
             <code>plugins</code>
         </p>
-        <ul>
+        <ul class="content">
             <li>CommonsChunkPlugin: separates our entry points into distinct files (one each for polyfills, vendor and application)</li>
             <li>HtmlWebpackPlugin: takes our supplied template index.html and inserts the generates JS & CSS files for us</li>
         </ul>
@@ -573,7 +564,7 @@ if (process.env.ENV === 'production') {
 
         <h3>Override ag-Grid CSS</h3>
         <p>There are many ways to override the CSS with Webpack, but if you use the configuration above then you can override ag-Grid CSS as follows:</p>
-        <ul>
+        <ul class="content">
             <li>Place your application-wide CSS file(s) in a directory other than <code>./app</code> - for example <code>./css/</code>.
                 Remember that CSS under <code>./app</code> is treated differently - it is used for component-scoped styles.</li>
             <li>In a suitable component - we suggest <code>boot.ts</code> import the CSS you want to include:</li>

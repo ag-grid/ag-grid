@@ -1,0 +1,20 @@
+<style>
+    .ag-cell-inline-editing {
+        border: 1px solid lightgreen !important;
+    }
+    .yearSelect {
+        padding: 4px; border: 1px groove gray; background: white; text-align: center;
+    }
+
+    .yearButton {
+        margin: 4px;
+    }
+</style>
+
+<div style="height: 100%; box-sizing: border-box; padding-top: 40px;">
+    <div id="myGrid" class="ag-theme-fresh" style="height: 100%;"></div>
+</div>
+<div style="position: absolute; top: 0px; left: 0px; padding: 4px 4px 4px 10px;">
+    Clicking outside the grid will stop the editing <button style="font-size: 12px">Dummy Save</button>
+    <input placeholder="click here, editing stops"/>
+</div>

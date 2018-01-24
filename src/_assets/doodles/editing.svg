@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="360px" height="117px" viewBox="0 0 360 117" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>editing</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Chalkboard-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD" transform="translate(-68.000000, -124.000000)">
+            <g id="editing" transform="translate(68.000000, 124.000000)">
+                <path d="M10.5,56.5 L349.5,56.5" id="Line-Copy" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M10.5,76.5 L349.5,76.5" id="Line-Copy-2" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M29.5,96.5 L359.5,94.5" id="Line-Copy-3" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M276.5,36.5 L276.5,110.5" id="Line-Copy-4" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M136.5,6.5 L136.5,95.5" id="Line-Copy-5" stroke="#087FFF" stroke-linecap="square"></path>
+                <path d="M31.5,18.5 L31.5,97.5" id="Line-Copy-6" stroke="#0084E7" stroke-linecap="square"></path>
+                <rect id="Rectangle-2" stroke="#8ABDE3" x="136.5" y="55.5" width="137" height="18"></rect>
+                <polyline id="Line-5" stroke="#8ABDE3" stroke-linecap="square" points="272.5 56 273.5 73.5 275.5 72.5"></polyline>
+                <path d="M137.5,54.5 L136.5,74.5" id="Line-2" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <g id="carret" transform="translate(143.000000, 58.000000)" stroke="#8ABDE3" stroke-linecap="square">
+                    <path d="M1.5,2.5 L1.5,11.5" id="Line-3"></path>
+                    <path d="M2.5,1.5 L0.5,1.5" id="Line-4"></path>
+                    <path d="M2.5,11.5 L0.5,11.5" id="Line-4-Copy"></path>
+                </g>
+                <path d="M124.5,79 L119.73686,87.25 L129.26314,87.25 L124.5,79 Z" id="Polygon" stroke="#8ABDE3" transform="translate(124.500000, 84.500000) rotate(180.000000) translate(-124.500000, -84.500000) "></path>
+                <path d="M124.5,90.5 L128.5,80.5" id="Line-16" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <path d="M127.5,81.5 L118.5,81.5" id="Line-17" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <path d="M5.5,81.5 C8.26142375,81.5 10.5,79.2614237 10.5,76.5 C10.5,73.7385763 8.26142375,71.5 5.5,71.5 C2.73857625,71.5 0.5,73.7385763 0.5,76.5 C0.5,79.2614237 2.73857625,81.5 5.5,81.5 Z" id="Oval" stroke="#0084E7"></path>
+                <circle id="Oval-Copy" stroke="#087FFF" cx="136.5" cy="3.5" r="3"></circle>
+                <circle id="Oval-Copy-4" stroke="#0084E7" cx="276.5" cy="113.5" r="3"></circle>
+                <path d="M10.5,36.5 L349.5,36.5" id="Line" stroke="#0084E7" stroke-linecap="square"></path>
+            </g>
+        </g>
+    </g>
+</svg>

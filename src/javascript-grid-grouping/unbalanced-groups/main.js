@@ -61,18 +61,6 @@ var COUNTRY_CODES = {
     "USA": "us"
 };
 
-function groupByState() {
-    gridOptions.columnApi.setRowGroupColumns(['state']);
-    gridOptions.columnApi.setColumnVisible('state', false);
-    gridOptions.columnApi.setColumnVisible('city', false);
-}
-
-function resetGroup() {
-    gridOptions.columnApi.setRowGroupColumns([]);
-    gridOptions.columnApi.setColumnVisible('state', true);
-    gridOptions.columnApi.setColumnVisible('city', true);
-}
-
 function numberParser(params) {
     return parseInt(params.newValue);
 }

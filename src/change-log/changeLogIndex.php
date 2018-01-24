@@ -1,5 +1,4 @@
 <?php
-$key = "Change Log";
 $pageTitle = "ag-Grid Change Log";
 $pageDescription = "ag-Grid change log. Details the items that have change between each release.";
 $pageKeyboards = "ag-Grid Change Log";
@@ -7,12 +6,19 @@ $pageGroup = "misc";
 include('../includes/mediaHeader.php');
 ?>
 
-<div style="padding: 20px;">
+<div id="content">
 
     <note>
         For a detailed breakdown of items please refer to the detailed pipeline <a href="../ag-grid-pipeline/">here</a>.
     </note>
 
+    <h2>Next</h2>
+
+    <ul>
+        <li>AG-1208: Set filter 'mini search' is now case insensitive.</li>
+        <li>AG-1119: New api method <code>hidePopupMenu()</code> for closing column menu and context menu.</li>
+        <li>AG-1258: Now consistent behaviour for indeterminate checkbox across selection and set filter.</li>
+    </ul>
 
 
     <h2>15.x</h2>
@@ -609,7 +615,7 @@ include('../includes/mediaHeader.php');
         </li>
         <li>
             New feature: <a href="../javascript-grid-value-cache/">Value Cache</a>. Get better performance if your
-            valueGetter's are CPU intensive.
+            valueGetters are CPU intensive.
         </li>
         <li>
             New feature: <a href="../javascript-grid-column-spanning/">Column Spanning</a>.
@@ -1207,7 +1213,7 @@ include('../includes/mediaHeader.php');
 
     <b>Refactoring:</b>
     <ul>
-        Refactor: Virtual Row Model is now called Infinite Row Model. All properties and API's related to this
+        Refactor: Virtual Row Model is now called Infinite Row Model. All properties and APIs related to this
         are now call 'Infinite' eg <i>setVirtualRowCount()</i> is now <i>setInfiniteRowCount()</i>. Grid will
         log to console and help you when you are using the old method and property names.
     </ul>
@@ -1300,7 +1306,7 @@ include('../includes/mediaHeader.php');
         </li>
         <li>Enhancement: Navigation support for Page Up, Page Down, Home, End, Ctrl+left, Ctrl+right.</li>
         <li>Enhancement: New APIs <i>api.selectAllFiltered()</i> and <i>api.deselectAllFiltered()</i></li>
-        <li>Enhancement: Added <i>skipRefresh</i> to the add/remove row API's, so if you want to add / remove
+        <li>Enhancement: Added <i>skipRefresh</i> to the add/remove row APIs, so if you want to add / remove
             lots of rows, you only refresh on the last update.
         </li>
         <li>Enhancement: Property <i>groupDefaultExpanded</i> now works with flower nodes</li>
@@ -2123,7 +2129,7 @@ params = {
         showColumnMenuAfterMouseClick(colKey, mouseEvent)
     </li>
     <li>Enhancement: new function colDef.valueFormatter - value formatting responsibility used to tie in cellRenderer,
-        now it's broken out into valueFormatter, allows reusing cellRenderer's against different formats.
+        now it's broken out into valueFormatter, allows reusing cellRenderers against different formats.
     </li>
     <li>Enhancement: added 'destroyFilter' api</li>
     <li>Enhancement: columnApi.addRowGroupColumn() and columnApi.removeRowGroupColumn() now work off colKey and not

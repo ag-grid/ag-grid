@@ -1,17 +1,16 @@
 <?php
-$key = "Touch";
-$pageTitle = "JavaScript DataGrid Touch";
-$pageDescription = "Learn how to interact with ag-Grid on a touch device.";
+$pageTitle = "ag-Grid - Core Grid Features: Touch support";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Touch Support. User can navigate the features of the grid on a touch device with the built-in Touch Support. You don't need to do anything, it works out of the box. Free and Commercial version available.";
 $pageKeyboards = "JavaScript DataGrid Touch";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h2 id="touch">Touch</h2>
 
-    <p>
+    <h1>Touch</h1>
+
+    <p class="lead">
         ag-Grid is designed to work on touch devices. By default, browsers convert tap events to mouse
         click events. This means, for example, if you tap on a cell in ag-Grid, the cell will get selected
         just like you clicked on the cell with a mouse. The remainder of this page explains touch gestured
@@ -19,14 +18,13 @@ include '../documentation-main/documentation_header.php';
         gestures coded into the grid.
     </p>
 
-    <h4 id="touch-gestures-for-ag-grid-free">Touch Gestures for ag-Grid Free</h4>
+    <h2>Touch Gestures for ag-Grid Free</h2>
 
     <p>
         The following touch gestures are supported by ag-Grid free.
     </p>
 
-    <p>
-        <ul>
+    <ul class="content">
         <li>
             Move columns by touch-dragging the column header with a touch.
         </li>
@@ -40,17 +38,15 @@ include '../documentation-main/documentation_header.php';
             Tap and hold the column header for 500ms to bring up the column menu.
         </li>
     </ul>
-    </p>
 
-    <h4 id="touch-gestures-for-ag-grid-enterprise">Touch Gestures for ag-Grid Enterprise</h4>
+    <h2 class="heading-enterprise">Touch Gestures for ag-Grid Enterprise</h2>
 
     <p>
         The following touch gestures are support by ag-Grid Enterprise - these are in addition to the ag-Grid free
         gestures mentioned above - they are are relevant to ag-Grid Enterprise only features.
     </p>
 
-    <p>
-        <ul>
+        <ul class="content">
             <li>
                 Drag columns out of the tool panel using drag.
             </li>
@@ -58,8 +54,7 @@ include '../documentation-main/documentation_header.php';
                 Drag columns out of the row group and pivot drop zones by dragging.
             </li>
         </ul>
-    </p>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

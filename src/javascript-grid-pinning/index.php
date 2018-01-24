@@ -1,18 +1,17 @@
 <?php
-$key = "Pinning";
-$pageTitle = "ag-Grid Pinning";
-$pageDescription = "ag-Grid Pinning";
+$pageTitle = "ag-Grid - Core Grid Features: Column Pinning";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Column Pinning. Use Columm Pinning to pin one or more columns to the left or to the right. Pinned columns are always present and not impacted by horizontal scroll. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Pinning";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h2 class="first-h1" id="pinning">Column Pinning</h2>
 
-    <p>
-        You can pin columns by setting the pinned attribute on the column definition to either 'left' or 'right'.
+    <h1>Column Pinning</h1>
+
+    <p class="lead">
+        You can pin columns by setting the <code>pinned</code> attribute on the column definition to either <code>'left'</code> or <code>'right'</code>.
     </p>
 
     <snippet>
@@ -31,7 +30,7 @@ colDef = {
         columns such that when 'Country' is pinned, it jumps to the first position.
     </p>
 
-    <h3 id="jump-to-pinning">Jump To & Pinning</h3>
+    <h2>Jump To & Pinning</h2>
 
     <p>
         Below shows jumping to rows and cols via the API. Jumping to a pinned col makes no sense, as the pinned
@@ -51,6 +50,59 @@ colDef = {
         wheels off my car it is not possible to steer!
     </note>
 
-</div>
+    <h2>Pinning via Column Dragging</h2>
+
+    <p>
+        It is possible to pin a column by moving the column in the following ways:
+</p>
+        <ul class="content">
+            <li>
+                When other columns are pinned, drag the column to the existing pinned area.
+            </li>
+            <li>
+                When no columns are pinned, drag the column to the edge of the grid and wait
+                for approximately one second. The grid will then assume you want to pin and create
+                a pinned area and place the column into it.
+            </li>
+        </ul>
+
+        <img src="../javascript-grid-pinning/pinningByMoving.gif" style="margin: 10px; border: 1px solid #aaa;"/>
+
+
+
+    <h2>Lock Pinned</h2>
+
+    <p>
+        If you do not want the user to be able to pin using the UI, set the property
+        <code>lockPinned=true</code>. This will block the UI in the following way:
+    </p>
+        <ul class="content">
+            <li>Dragging a column to the pinned section will not pin the column.</li>
+            <li>For ag-Grid Enterprise, the column menu will not have a pin option.</li>
+        </ul>
+
+    <p>
+        The example below demonstrates columns with pinning locked. The following can be noted:
+    </p>
+
+        <ul class="content">
+            <li>
+                The column <b>Athlete</b> is pinned via the configuration and has <code>lockPinned=true</code>.
+                This means the column will be pinned always, it is not possible to drag the column out
+                of the pinned section.
+            </li>
+            <li>
+                The column <b>Age</b> is not pinned and has <code>lockPinned=true</code>.
+                This means the column cannot be pinned by dragging the column.
+            </li>
+            <li>
+                All other columns act as normal. They can be added and removed from the pinned
+                section by dragging.
+            </li>
+        </ul>
+
+    <?= example('Lock Pinned', 'lock-pinned', 'generated') ?>
+
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

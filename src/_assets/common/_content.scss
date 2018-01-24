@@ -1,0 +1,53 @@
+.content-list {
+    padding-inline-start: 1rem;
+    padding-block-start: 0;
+
+    li {
+        margin-bottom: 0.5rem;
+    }
+}
+
+.heading-enterprise {
+    &:after {
+        @include enterprise-icon;
+        margin-left: 6px;
+    }
+}
+
+.inline-container {
+    @extend .container-fluid;
+    margin: 0;
+    padding: 0;
+
+    .row {
+        margin: 0;
+        padding: 0;
+        @extend .no-gutters;
+    }
+}
+
+h2.small-block {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.figure {
+    display: block;
+    margin: 1rem auto;
+    text-align: center;
+}
+
+dl.content {
+    dd {
+        margin-bottom: 1em;
+    }
+
+    dt code {
+        margin-left: 1em;
+    }
+}
+
+.theme-table td,
+.theme-table th {
+    padding-left: 2em;
+}

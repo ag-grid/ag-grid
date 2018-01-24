@@ -1,0 +1,26 @@
+<style>
+    .greenBackground{
+        background-color: #008000;
+        color: #e0ffc1;
+    }
+
+    .blueBackground{
+        background-color: #00008B;
+        color: white;
+    }
+</style>
+
+<div style="padding-bottom: 4px;">
+    <label>
+        File Name:
+        <input type="text" id="fileName"/>
+    </label>
+    <label>
+        Sheet Name:
+        <input type="text" id="sheetName"/>
+    </label>
+    <label style="margin-left: 20px;">
+        <button onclick="onBtExport()">Export to Excel</button>
+    </label>
+</div>
+<div id="myGrid" style="height: 380px;" class="ag-theme-fresh"></div>

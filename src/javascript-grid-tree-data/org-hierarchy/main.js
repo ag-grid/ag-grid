@@ -32,14 +32,20 @@ var gridOptions = {
     getDataPath: function(data) {
         return data.orgHierarchy;
     },
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    },
     autoGroupColumnDef: {
         headerName: "Organisation Hierarchy",
         cellRendererParams: {
-            suppressCount: true,
-            padding: 20
+            suppressCount: true
         }
     }
 };
+
+function onFilterTextBoxChanged() {
+    gridOptions.api.setQuickFilter(document.getElementById('filter-text-box').value);
+}
 
 // wait for the document to be loaded, otherwise
 // ag-Grid will not find the div in the document.

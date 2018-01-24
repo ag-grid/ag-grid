@@ -71,8 +71,6 @@
         The example below shows a simple grid using Web Components.
     </p>
 
-    <show-example example="example-wc" example-height="160px"></show-example>
-
     <h2 id="destroy">Destroy</h2>
 
     <p>

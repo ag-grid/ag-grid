@@ -1,0 +1,25 @@
+<div style="height: 100%; padding-top: 30px; box-sizing: border-box;">
+    <div id="myGrid" class="ag-theme-fresh" style="height: 100%;"></div>
+</div>
+<div style="position: absolute; top: 0px; left: 0px; padding: 4px;">
+        <span>
+            Rows to Pin on Top:
+        </span>
+        <select onchange="onPinnedRowTopCount()" id="top-row-count" style="margin-left: 10px; margin-right: 20px;">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+        <span>
+            Rows to Pin on Bottom:
+        </span>
+        <select onchange="onPinnedRowBottomCount()" id="bottom-row-count" style="margin-left: 10px;">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+        </select>
+</div>

@@ -43,7 +43,7 @@ var rowData = [
 ];
 
 var gridOptions = {
-    components:{
+    components: {
         fileCellRenderer: getFileCellRenderer()
     },
     columnDefs: columnDefs,

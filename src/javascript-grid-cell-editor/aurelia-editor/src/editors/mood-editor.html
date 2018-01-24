@@ -1,0 +1,8 @@
+<template>
+    <require from="./mood-editor.css"></require>
+
+    <div class.bind="'mood'" tabindex="0" focus.bind="hasFocus" keydown.trigger="onKeyDown($event)">
+        <img src="/images/smiley.png" click.delegate="setHappy(true)" class.bind="happy ? 'selected' : 'default'">
+        <img src="/images/smiley-sad.png" click.delegate="setHappy(false)" class.bind="!happy ? 'selected' : 'default'">
+    </div>
+</template>

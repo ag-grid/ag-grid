@@ -1,24 +1,18 @@
 <?php
 
-$pageTitle = "Blog: Webpack Tutorial: Using ngTools/webpack";
-$pageDescription = "Webpack Tutorial - ngTools/webpack- Lessons Learnt at ag-Grid";
+$pageTitle = "ag-Grid Blog: Webpack Tutorial: Using ngTools and webpack";
+$pageDescription = "This blog post covers a tutorial on using webpack and ngTools. It describes the lessons learnt at ag-Grid while using both. You'll be guided through step by step.";
 $pageKeyboards = "webpack tutorial ngtools";
 
 include('../includes/mediaHeader.php');
 ?>
 
-<link rel="stylesheet" href="../documentation-main/documentation.css">
-<script src="../documentation-main/documentation.js"></script>
 
-
-<div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1><img src="../images/webpack_large.png"/> Webpack Tutorial: Understanding @ngtools/webpack</h1>
-    </div>
-</div>
+        <h1> Webpack Tutorial: Understanding @ngtools/webpack</h1>
+        <p class="blog-author">Sean Landsman | 14th March 2017</p>
 
 <div class="row" ng-app="documentation">
-    <div class="col-md-9">
+    <div class="col-md-8">
 
         <h2>Motivation</h2>
 
@@ -134,7 +128,7 @@ export class AppComponent {
             traffic and load times. Let's look at that next.</p>
 
         <p>In this blog I'll run through 3 configurations:</p>
-        <ul>
+        <ul class="content">
             <li><code>JIT (Just-In-Time) Configuration</code>: I'll describe this briefly as well as the results of using it.</li>
             <li><code>Non-AOT Production Configuration</code>: A Production ready configuration, but without AOT support.</li>
             <li><code>AOT Production Configuration</code>: A Production ready configuration, this time with AOT support.</li>
@@ -203,7 +197,7 @@ module.exports = {
 };</snippet>
         <p>The items of note in this configuration is the <code>entry</code> field where we describe our entry points, and
         our <code>loaders</code>:</p>
-        <ul>
+        <ul class="content">
             <li><code>['awesome-typescript-loader', 'angular2-template-loader']</code>: Transpile and process our Angular code.</li>
             <li><code>html-loader</code>: Take the results of our Webpack configuration and inject them into a pre-supplied html file.</li>
         </ul>
@@ -386,7 +380,7 @@ import 'rxjs';</snippet>
   }
 }</snippet>
         <p>The key parts of this are:</p>
-        <ul>
+        <ul class="content">
             <li><code>exclude</code>: We're excluding the <code>aot</code> output folder and <code>boot-aot.ts</code>
             AOT bootstrap file. We exclude the boostrap file as the factory referenced within won't exist yet (the AOT plugin will do this for us, next)</li>
             <li><code>angularCompilerOptions</code>: Specifies AOT compiler properties, specifically the output dir here</li>
@@ -666,7 +660,7 @@ export class AppComponent {
         what improvements I could see. I've excluded file sizes from this as our examples include a number of non-compressible
             images, but looking at the load times I saw the following improvements:</p>
 
-        <ul>
+        <ul class="content">
             <li>Non-AOT: 2.2s</li>
             <li>AOT: 1.64s</li>
         </ul>
@@ -711,58 +705,7 @@ export class AppComponent {
         </div>
 
     </div>
-    <div class="col-md-3">
-
-        <div>
-            <a href="https://twitter.com/share" class="twitter-share-button"
-               data-url="https://www.ag-grid.com/ag-grid-webpack-ngtools/"
-               data-text="Webpack Tutorial: Understanding ngtools/webpack" data-via="seanlandsman"
-               data-size="large">Tweet</a>
-            <script>!function (d, s, id) {
-                    var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                    if (!d.getElementById(id)) {
-                        js = d.createElement(s);
-                        js.id = id;
-                        js.src = p + '://platform.twitter.com/widgets.js';
-                        fjs.parentNode.insertBefore(js, fjs);
-                    }
-                }(document, 'script', 'twitter-wjs');</script>
-        </div>
-
-        <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-            <p><img src="../images/sean.png"/></p>
-            <p style="font-weight: bold;">
-                Sean Landsman
-            </p>
-            <p>                
-                Sean was the first person that Niall asked to join the team. Sean ensures that we can keep the agnostic in ag-Grid... he is responsible for integrating with all of our supported frameworks. Many of customers will be familiar with Sean as he is very active in our user forums supporting the needs of our customers. He has also recently given a number of talks at conferences where his calm manner belies his years of experience.
-            </p>
-            <p>
-               Lead Developer - Frameworks
-            </p>
-
-            <div>
-                <br/>
-                <a href="https://www.linkedin.com/in/sean-landsman-9780092"><img src="/images/linked-in.png"/></a>
-                <br/>
-                <br/>
-                <a href="https://twitter.com/seanlandsman" class="twitter-follow-button" data-show-count="false"
-                   data-size="large">@seanlandsman</a>
-                <script>!function (d, s, id) {
-                        var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                        if (!d.getElementById(id)) {
-                            js = d.createElement(s);
-                            js.id = id;
-                            js.src = p + '://platform.twitter.com/widgets.js';
-                            fjs.parentNode.insertBefore(js, fjs);
-                        }
-                    }(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-        </div>
-
-    </div>
+<?php include '../blog-authors/sean.php'; ?>
 </div>
 
 
@@ -785,10 +728,6 @@ export class AppComponent {
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments
         powered by Disqus.</a></noscript>
 <hr/>
-
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

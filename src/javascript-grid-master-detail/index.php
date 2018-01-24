@@ -1,15 +1,14 @@
 <?php
-$key = "Master Detail";
-$pageTitle = "ag-Grid JavaScript Master Detail DataGrid";
-$pageDescription = "ag-Grid allows to use one component to span the entire width of the grid. This can be used to achieve a master detail datagrid, or grids inside grids.";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Master Detail";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Master Detail. Use Master Detail to expand rows and have another grid with different columns inside. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid full width master detail javascript datagrid";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Master / Detail</h1>
+<h1 class="heading-enterprise">Master / Detail</h1>
 
-<p>
+<p class="lead">
     Master / Detail allows you to nest grids inside grids. The top level grid is referred to as the 'master grid'.
     The nested grid is referred to as the 'detail grid'. Typically the detail grid gives more information
     about the row in the master grid that was expanded to reveal the detail grid.
@@ -25,7 +24,8 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     To enable Master / Detail, you should set the following grid options:
-    <ul>
+</p>
+    <ul class="content">
         <li>
             <b>masterDetail:</b> Set to true to inform the grid you want to allow
             expanding of rows to reveal detail grids.
@@ -40,7 +40,6 @@ include '../documentation-main/documentation_header.php';
             with rows for display in the detail grids.
         </li>
     </ul>
-</p>
 
 <p>
     These grid options are illustrated below:
@@ -71,30 +70,28 @@ var detailGridOptions = {
 }</snippet>
 
 
-<h3>Example - Simple Master / Detail</h3>
+<h2>Example - Simple Master / Detail</h2>
 
 <p>
     Below shows a simple Master / Detail setup. From the example you can notice the following:
-    <ul>
+</p>
+    <ul class="content">
       <li><b>masterDetail</b> - is set to <code>true</code> in the master grid options.</li>
       <li><b>detailCellRendererParams</b> - specifies the <code>detailGridOptions</code> to use and <code>getDetailRowData</code>
     extracts the data for the detail row.</li>
     </ul>
-</p>
-<br/>
-<?= example('Simple Example', 'simple', 'vanilla', array("enterprise" => 1)) ?>
 
+<?= example('Simple Example', 'simple', 'generated', array("enterprise" => 1)) ?>
 
-<h1 id="overriding-default-detail-cell-renderer">Overriding the Default Detail Cell Renderer</h1>
+<h2>Overriding the Default Detail Cell Renderer</h2>
+
     <p>
         The template used by default detail Cell Renderer can be overridden with a user defined template. This is a convenient
         way to provide custom layouts and styles to the detail rows.
     </p>
 
-   <p>
-        There are two ways to achieve this:
-
-        <ul>
+    <p> There are two ways to achieve this: </p>
+        <ul class="content">
             <li>
                 <b>String Template</b> - statically overrides the template used by the grid.
                 The same fixed template is used for each row.
@@ -105,8 +102,7 @@ var detailGridOptions = {
             </li>
         </ul>
 
-        Both methods require specifying the <code>detailCellRendererParams.template</code>property as shown below:
-    </p>
+<p> Both methods require specifying the <code>detailCellRendererParams.template</code>property as shown below: </p>
 
 <snippet>
 // override using string template
@@ -137,28 +133,29 @@ detailCellRendererParams: {
 </p>
 
 <p>
-    The follow examples demonstrate both approaches.
+    The following examples demonstrate both approaches.
 </p>
 
-<h3>Example - Customising via String Template</h3>
+<h2>Example - Customising via String Template</h2>
+
 <p>
     This examples demonstrates a static string template which is supplied to the <code>detailCellRendererParams.template</code>
     property to customise the layout and background colour.
 </p>
 
-<?= example('Customising via String Template', 'string-template-customisation', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Customising via String Template', 'string-template-customisation', 'generated', array("enterprise" => 1)) ?>
 
-<h3>Example - Customising via Template Callback</h3>
+<h2>Example - Customising via Template Callback</h2>
 
 <p>
     A template callback function is supplied to the <code>detailCellRendererParams.template</code> property to customise
     the layout and background colour. It additionally adds the name from the master row using the data supplied via callback parameters.
 </p>
 
-<?= example('Customising via Template Callback', 'template-callback-customisation', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Customising via Template Callback', 'template-callback-customisation', 'generated', array("enterprise" => 1)) ?>
 
 
-<h1 id="providing-custom-detail-cell-renderer">Providing a custom Detail Cell Renderer</h1>
+<h2>Providing a custom Detail Cell Renderer</h2>
 
 <p>
     The previous section described how to override the detail template used in the default Cell Renderer, however it is also
@@ -176,25 +173,47 @@ detailCellRendererParams: {
     The following examples demonstrate custom Cell Renderer components for the detail row with and without a grid.
 </p>
 
-<h3>Example - Custom Detail Cell Renderer with a Grid</h3>
+<h2>Example - Custom Detail Cell Renderer with a Grid</h2>
 
 <p>
     This example demonstrates how to embeds a grid into the detail row using a custom Cell Renderer component:
 </p>
 
-<?= example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'generated', array("enterprise" => 1)) ?>
 
-
-<h3>Example - Custom Detail Cell Renderer with a Form</h3>
+<h2>Example - Custom Detail Cell Renderer with a Form</h2>
 
 <p>
     This example demonstrates a custom Cell Renderer Component that uses a form rather than a grid:
 </p>
 
-<?= example('Custom Detail Cell Renderer with Form', 'custom-detail-with-form', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Custom Detail Cell Renderer with Form', 'custom-detail-with-form', 'generated', array("enterprise" => 1)) ?>
 
+<h2 id="grid-per-row">Configure Grid per Row</h2>
 
-<h1 id="accessing-detail-grid-api">Accessing Detail Grid API</h1>
+<p>
+    The property <code>detailCellRendererParams</code> can be a function to allow providing
+    different parameters for each row. This can be used to provide a differently configured grid
+    for each row.
+</p>
+
+<p>
+    The example below shows different grid configurations based on the data. Note the following:
+    <ul>
+        <li>
+            Expanding rows 'Mila Smith' or 'Harper Johnson' will use a detail grid with the
+            columns {Call ID, Number}.
+        </li>
+        <li>
+            Expanding all other rows will use a detail grid with the columns {Call ID, Direction,
+            Duration, Switch Code}.
+        </li>
+    </ul>
+</p>
+
+<?= example('Dynamic Params', 'dynamic-params', 'generated', array("enterprise" => 1)) ?>
+
+<h2>Accessing Detail Grid API</h2>
 
 <p>
     You can access the API of all detail grids via the master grid. The API for each detail grid
@@ -219,7 +238,7 @@ interface DetailGridInfo {
 <p>
     The <code>DetailGridInfo</code> is accessed via the <code>GridApi</code> of the master
     <code>gridOptions</code>. You can either reference a particular detail grid API by ID,
-    or loop through all the existing detail grid API's.
+    or loop through all the existing detail grid APIs.
 </p>
 
 <snippet>
@@ -240,33 +259,33 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
     will only operate on the specific detail grid.
 </p>
 
-<h3>Example - Editing Cells with Master / Detail</h3>
+<h2>Example - Editing Cells with Master / Detail</h2>
 
 <p>
     This example shows how to control cell editing when using Master / Detail. This examples demonstrates
     the following:
 
-    <ul>
-        <li><b>Edit Master</b> - performs editing on a master cell using the master grid options:
-                                 <code>masterGridOptions.api.startEditingCell()</code>
-        </li>
-        <li><b>Stop Edit Master</b> - iterates over each master row node using <code>masterGridOptions.api.forEachNode</code>
-                                      and then calls <code>masterGridOptions.api.stopEditing()</code> on each node.
-        </li>
-        <li><b>Edit Detail</b> - looks up the corresponding <code>DetailGridInfo</code> using <code>masterGridOptions.api.getDetailGridInfo()</code>
-                                 and then uses the grid api on that detail grid start editing: <code>detailGrid.api.startEditingCell()</code>
-        </li>
-        <li><b>Stop Edit Detail</b> - iterates over each detail grid using <code>masterGridOptions.api.forEachDetailGridInfo()</code>
-                                      and then calls <code>detailGridApi.api.stopEditing()</code> on each detail grid.
-        </li>
-    </ul>
 </p>
-<br/>
 
-<?= example('Editing Cells with Master / Detail', 'cell-editing', 'vanilla', array("enterprise" => 1)) ?>
+<ul class="content">
+    <li><b>Edit Master</b> - performs editing on a master cell using the master grid options:
+                             <code>masterGridOptions.api.startEditingCell()</code>
+    </li>
+    <li><b>Stop Edit Master</b> - iterates over each master row node using <code>masterGridOptions.api.forEachNode</code>
+                                  and then calls <code>masterGridOptions.api.stopEditing()</code> on each node.
+    </li>
+    <li><b>Edit Detail</b> - looks up the corresponding <code>DetailGridInfo</code> using <code>masterGridOptions.api.getDetailGridInfo()</code>
+                             and then uses the grid api on that detail grid start editing: <code>detailGrid.api.startEditingCell()</code>
+    </li>
+    <li><b>Stop Edit Detail</b> - iterates over each detail grid using <code>masterGridOptions.api.forEachDetailGridInfo()</code>
+                                  and then calls <code>detailGridApi.api.stopEditing()</code> on each detail grid.
+    </li>
+</ul>
+
+<?= example('Editing Cells with Master / Detail', 'cell-editing', 'generated', array("enterprise" => 1)) ?>
 
 
-<h1 id="dynamically-specify-master-nodes">Dynamically Specify Master Nodes</h1>
+<h2>Dynamically Specify Master Nodes</h2>
 
 <p>
     It certain cases it may be required to not treat all top level rows as a master rows. For instance if a master has
@@ -290,11 +309,12 @@ masterGridOptions.isRowMaster = function (dataItem) {
 </p>
 
 <h3>Example - Dynamically Specify Master Nodes</h3>
+
 <p>
     The following example only shows detail rows when there are corresponding child records.
 </p>
 
-<?= example('Dynamically Specify Master Nodes', 'dynamic-master-nodes', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Dynamically Specify Master Nodes', 'dynamic-master-nodes', 'generated', array("enterprise" => 1)) ?>
 
 <h2>Nesting Master / Detail</h2>
 
@@ -346,14 +366,15 @@ var gridOptionsLevel3Detail = {
     The example has very little data - this is on purpose to focus on the nesting.
 </p>
 
-<?= example('Nesting Master / Detail', 'nesting', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Nesting Master / Detail', 'nesting', 'generated', array("enterprise" => 1)) ?>
 
 
-<h1 id="detail-row-height">Detail Row Height</h1>
+<h2>Detail Row Height</h2>
 
 <p>
     The height of detail rows can be configured in one of the following two ways:
-    <ol>
+</p>
+    <ol class="content">
         <li>
             Use property <code>detailRowHeight</code> to set a fixed height for each detail row.
         </li>
@@ -363,7 +384,6 @@ var gridOptionsLevel3Detail = {
             including master rows.
         </li>
     </ol>
-</p>
 
 <p>
     The following snippet compares both approaches:
@@ -401,16 +421,16 @@ masterGridOptions.getRowHeight = function (params) {
     The following demonstrates a fixed detail row height:
 </p>
 
-<?= example('Fixed Detail Row Height', 'fixed-detail-row-height', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Fixed Detail Row Height', 'fixed-detail-row-height', 'generated', array("enterprise" => 1)) ?>
 
 <h3>Example - Dynamic Detail Row Height</h3>
 <p>
     The following example demonstrates dynamic detail row heights:
 </p>
 
-<?= example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', array("enterprise" => 1)) ?>
 
-<h1 id="filtering-and-sorting">Filtering and Sorting</h1>
+<h2>Filtering and Sorting</h2>
 <p>
     There are no specific configurations for filtering and sorting with Master / Detail but as there are multiple grids
     each grid will filter and sort independently.
@@ -422,9 +442,9 @@ masterGridOptions.getRowHeight = function (params) {
     Below shows a simple Master / Detail setup which has filtering and sorting enabled in both master and detail grids.
 </p>
 
-<?= example('Filtering with Sort', 'filtering-with-sort', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Filtering with Sort', 'filtering-with-sort', 'generated', array("enterprise" => 1)) ?>
 
-<h1 id="lazy-load-detail-rows">Lazy Load Detail Rows</h1>
+<h2>Lazy Load Detail Rows</h2>
 <p>
     It is possible to lazy load detail row data as it becomes available. For instance an asynchronous request could be
     sent when expanding a master row to fetch detail records.
@@ -460,10 +480,9 @@ var masterGridOptions = {
     in the detail rows:
 </p>
 
-<?= example('Lazy Load Detail Rows', 'lazy-load-rows', 'vanilla', array("enterprise" => 1)) ?>
+<?= example('Lazy Load Detail Rows', 'lazy-load-rows', 'generated', array("enterprise" => 1)) ?>
 
-
-<h1 id="supported-modes">Supported Modes</h1>
+<h2>Supported Modes</h2>
 
 <p>
     The Master / Detail feature organises the grid in a way which overlaps with other features.

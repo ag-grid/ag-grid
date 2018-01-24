@@ -1,5 +1,4 @@
 <?php
-$key = "Getting Started Aurelia";
 $pageTitle = "Aurelia Datagrid";
 $pageDescription = "ag-Grid can be used as a data grid inside your Aurelia application. This page details how to get started.";
 $pageKeyboards = "Aurelia Datagrid";
@@ -10,11 +9,10 @@ include '../documentation-main/documentation_header.php';
 <div>
 
     <h1 class="first-h1" id="implementing-the-aurelia-datagrid">
-        <img style="vertical-align: middle" src="../images/aurelia_large.png" height="50px" alt="Aurelia Datagrid" title="Aurelia"/>
         Aurelia Datagrid
     </h1>
 
-    <p>This page shows you how to get started with ag-Grid and Aurelia.</p>
+    <p class="lead">This page shows you how to get started with ag-Grid and Aurelia.</p>
 
     <?php
     $frameworkChild = 'aurelia';
@@ -25,14 +23,6 @@ include '../documentation-main/documentation_header.php';
 
     <table>
         <tr>
-            <td style="padding: 10px;"><img src="../images/bower.png"/></td>
-            <td>
-                <b>Bower</b><br/>
-                bower install ag-grid-enterprise
-            </td>
-
-            <td style="width: 20px;"/>
-
             <td style="padding: 10px;"><img src="../images/npm.png"/></td>
             <td>
                 <b>NPM</b><br/>
@@ -54,8 +44,7 @@ include '../documentation-main/documentation_header.php';
     <snippet>
 import {GridOptions} from "ag-grid";
 import "ag-grid-enterprise/main";
-
-...other dependencies';</snippet>
+</snippet>
 
     <p style="margin-top: 5px">
         If you are building an Aurelia application then you have the choice between A) using the plain JavaScript
@@ -87,9 +76,13 @@ import "ag-grid-enterprise/main";
         on Github.
     </p>
 
+    <h3 id="rich-example">Rich Grid with Aurelia</h3>
+    <?= example('ag-Grid in Aurelia', 'rich-grid', 'as-is', array("noPlunker" => 1, "usePath" => "#/?route=rich-grid")) ?>
+
     <p>The example project includes a number of separate grids on a page, with each section demonstrating a different
         feature set:
-    <ul>
+</p>
+    <ul class="content">
         <li>A feature rich grid example, demonstrating many of ag-Grid's features using Aurelia as a wrapper
             <a href="https://github.com/ag-grid/ag-grid-aurelia-example/blob/master/src/components/rich-grid-example/rich-grid-example.ts"
                target="_blank" class="fa fa-external-link"> TypeScript</a> <a
@@ -134,7 +127,6 @@ import "ag-grid-enterprise/main";
                     target="_blank" class="fa fa-external-link"> html</a>
         </li>
     </ul>
-    </p>
 
     <p>Once you have the ag-Grid dependencies installed, you will then be able to access ag-Grid classes and components
         inside your application:</p>
@@ -187,9 +179,9 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
     <h2 id="configuring-ag-grid-in-aurelia">Configuring ag-Grid in Aurelia</h2>
 
     <p>You can configure the grid in the following ways through Aurelia:</p>
-    <ul>
+    <ul class="content">
         <li><b>Events:</b> All data out of the grid comes through events. These use
-            Aurelia event bindings eg <i>model-updated.call="onModelUpdated()"</i>.
+            Aurelia event bindings eg <code>model-updated.call="onModelUpdated()"</code>.
             As you interact with the grid, the different events are fixed and
             output text to the console (open the dev tools to see the console).
         </li>
@@ -200,13 +192,13 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
         </li>
         <li><b>Attributes:</b> When the property is just a simple string value, then
             no binding is necessary, just the value is placed as an attribute
-            eg <i>row-height.bind="22"</i>.
+            eg <code>row-height.bind="22"</code>.
         </li>
         <li><b>Grid API via IDs:</b> The grid in the example is created with an id
-            by marking it with <i>#agGrid</i>. This in turn turns into a variable
+            by marking it with <code>#agGrid</code>. This in turn turns into a variable
             which can be used to access the grid's controller. The buttons
             Grid API and Column API buttons use this variable to access the grids
-            API (the API's are attributes on the controller).
+            API (the APIs are attributes on the controller).
         </li>
         <li><b>Changing Properties:</b> When a property changes value, Aurelia
             automatically passes the new value onto the grid. This is used in
@@ -216,14 +208,14 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
             b) The 'Show Tool Panel' checkbox has its value bound to the 'showToolPanel'
             property of the grid.
             c) The 'Refresh Data' generates new data for the grid and updates the
-            <i>rowData</i> property.
+            <code>rowData</code> property.
         </li>
     </ul>
 
     <p>
         Notice that the grid has its properties marked as <b>immutable</b>. Hence for
         object properties, the object reference must change for the grid to take impact.
-        For example, <i>rowData</i> must be a new list of data for the grid to be
+        For example, <code>rowData</code> must be a new list of data for the grid to be
         informed to redraw.
     </p>
 
@@ -304,7 +296,7 @@ import {GridOptions, GridApi, ColumnApi} from "ag-grid";</snippet>
 
 <h3 id="setting-column-properties">Setting Column Properties</h3>
 <p>There are some simple rules you should follow when setting column properties via Markup:</p>
-<snippet ng-non-bindable>
+<snippet>
 // string value
 property-name="String Value"
 property-name="'String Value'"
@@ -312,7 +304,7 @@ property-name="${Interpolated Value}"
 
 // boolean value
 property-name.bind="true|false"
-property-name.bind="{{Interpolated Value}}"
+property-name.bind="<span  ng-non-bindable>{</span>{Interpolated Value}}"
 property-name.bind="functionCallReturningABoolean()"
 
 // numeric value
@@ -357,7 +349,7 @@ private getCountryFilterParams():any {
 
 <p>
     It is possible to build
-    <a href="../javascript-grid-cell-rendering-components/#aureliaCellRendering">cell renderer's</a>,
+    <a href="../javascript-grid-cell-rendering-components/#aureliaCellRendering">cell renderers</a>,
     <a href="../javascript-grid-cell-editing/#aureliaCellEditing">cell editors</a> and
     <a href="../javascript-grid-filtering/#aureliaFiltering">filters</a> using Aurelia. Doing each of these
     is explained in the section on each.
@@ -365,13 +357,17 @@ private getCountryFilterParams():any {
 
 <p>
     Although it is possible to use Aurelia for your customisations of ag-Grid, it is not necessary. The grid
-    will happily work with both Aurelia and non-Aurelia portions (eg cellRenderers in Aurelia or normal JavaScript).
+    will happily work with both Aurelia and non-Aurelia portions (eg cellRenderers in Aurelia or normal JavaScript).</p>
+<p>
     If you do use Aurelia, be aware that you are adding an extra layer of indirection into ag-Grid. ag-Grid's
     internal framework is already highly tuned to work incredibly fast and does not require Aurelia or anything
-    else to make it faster. If you are looking for a lightning fast grid, even if you are using Aurelia and
+    else to make it faster.</p><p>If you are looking for a lightning fast grid, even if you are using Aurelia and
     the ag-grid-aurelia component, consider using plain ag-Grid Components (as explained on the pages for
     rendering etc) inside ag-Grid instead of creating Aurelia counterparts.
 </p>
+
+<h3 id="declarative-example">Rich Declarative Aurelia Example</h3>
+<?= example('Declarative Aurelia with ag-Grid', 'aurelia-declarative', 'as-is', array("noPlunker" => 1, "usePath" => "#/?route=richgrid-declarative")) ?>
 
 <h2 id="next-steps">Next Steps...</h2>
 

@@ -1,0 +1,15 @@
+.controls {
+    height: 12%;
+}
+
+.controls > div {
+margin-right: 30px; float: left;
+}
+.controls > div > div {
+    float: left;
+}
+
+.controls > div > div:last-child {
+    float: none;
+    clear: both;
+}

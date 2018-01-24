@@ -1,0 +1,12 @@
+.input-panel {
+    position: absolute;
+    border-radius: 5px;
+    border: solid lightgray 1px;
+    padding: 15px;
+    background-color: whitesmoke;
+}
+
+.submit-pane {
+    overflow: hidden;
+    margin-top: 10px;
+}

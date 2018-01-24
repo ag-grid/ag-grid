@@ -68,7 +68,7 @@
                 <ag-grid-column headerName="Country" field="country" [width]="150" [cellRenderer]="countryCellRenderer"
                                 [pinned]="true" [filterParams]="getCountryFilterParams()"></ag-grid-column>
                 <ag-grid-column headerName="Date of Birth" field="dob" [width]="130" [pinned]="true" [columnGroupShow]="'open'"
-                                [cellRenderer]="parseDate" [filter]="'date'"></ag-grid-column>
+                                [cellRenderer]="parseDate" [filter]="'agDateColumnFilter'"></ag-grid-column>
             </ag-grid-column>
             <ag-grid-column headerName="IT Skills">
                 <ag-grid-column headerName="Skills" [width]="125" [suppressSorting]="true"
@@ -77,9 +77,9 @@
                                 [cellRenderer]="percentCellRenderer" [filter]="getProficiencyFilter()"></ag-grid-column>
             </ag-grid-column>
             <ag-grid-column headerName="Contact">
-                <ag-grid-column headerName="Mobile" field="mobile" [width]="150" filter="text"></ag-grid-column>
-                <ag-grid-column headerName="Land-line" field="landline" [width]="150" filter="text"></ag-grid-column>
-                <ag-grid-column headerName="Address" field="address" [width]="500" filter="text"></ag-grid-column>
+                <ag-grid-column headerName="Mobile" field="mobile" [width]="150" filter="agTextColumnFilter"></ag-grid-column>
+                <ag-grid-column headerName="Land-line" field="landline" [width]="150" filter="agTextColumnFilter"></ag-grid-column>
+                <ag-grid-column headerName="Address" field="address" [width]="500" filter="agTextColumnFilter"></ag-grid-column>
             </ag-grid-column>
         </ag-grid-angular>
     </div>

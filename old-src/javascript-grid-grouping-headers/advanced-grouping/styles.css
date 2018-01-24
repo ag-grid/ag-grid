@@ -1,0 +1,16 @@
+.column-group-g {
+    background-color: #1b6d85;
+}
+.column-group-c {
+    background-color: #67b168;
+}
+.wrapper {
+    height: 100%;
+    padding-top: 38px;
+    box-sizing: border-box;
+}
+.button-bar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+}

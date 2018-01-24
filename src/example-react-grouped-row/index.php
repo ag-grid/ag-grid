@@ -1,5 +1,4 @@
 <?php
-$key = "React Group Row";
 $pageTitle = "ag-Grid React Grouped Row Renderer";
 $pageDescription = "ag-Grid React Grouped Row Renderer Example";
 $pageKeyboards = "ag-Grid react grouped row component";

@@ -1,5 +1,4 @@
 <?php
-$key = "Grid API";
 $pageTitle = "ag-Grid API";
 $pageDescription = "ag-Grid API";
 $pageKeyboards = "ag-Grid API";
@@ -7,14 +6,10 @@ $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
     <h1 id="grid-api" class="first-h1">Grid API</h1>
 
-    <table class="table">
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Columns</td>
-        </tr>
+    <h2>Columns</h2>
+    <table class="table reference">
         <tr>
             <th>sizeColumnsToFit()</th>
             <td>Gets columns to adjust in size to fit the grid horizontally.</td>
@@ -25,10 +20,10 @@ include '../documentation-main/documentation_header.php';
                 and then redraw all of the rows. The rows will not be discarded, so any selections, scrolling or groups
                 open, will stay.</td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Data</td>
-        </tr>
+
+    </table>
+    <h2>Data</h2>
+    <table class="table reference">
 
         <tr>
             <th>setRowData(rows)</th>
@@ -70,18 +65,17 @@ include '../documentation-main/documentation_header.php';
                 Gets the In Memory Row Model to refresh, executing the grouping, filtering and sorting again.
             </td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Accessing Row Nodes</td>
-        </tr>
+
+    </table>
+    <h2>Accessing Row Nodes</h2>
+    <table class="table reference">
 
         <?php include '../javascript-grid-accessing-data/accessingDataProperties.php' ?>
         <?php printPropertiesRows($getRowNodeApi) ?>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Master Detail</td>
-        </tr>
+    </table>
+<h2>Master Detail</h2>
+    <table class="table reference">
         <tr>
             <th>getDetailGridInfo(detailGridId)</th>
             <td>Returns the <code>DetailGridInfo</code> corresponding to the supplied <code>detailGridId</code>. See
@@ -95,12 +89,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <!------------------->
-        <!-- Selection -->
-        <!------------------->
-        <tr class="title-row">
-            <td colspan="2">Selection</td>
-        </tr>
+    </table>
+<h2>Selection</h2>
+    <table class="table reference">
         <tr>
             <th>selectAll()</th>
             <td>Select all rows (even rows that are not visible due to grouping being enabled and their groups not expanded).</td>
@@ -147,10 +138,9 @@ include '../documentation-main/documentation_header.php';
             <td>Clears the selected range.</td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Refresh</td>
-        </tr>
+    </table>
+<h2>Refresh</h2>
+    <table class="table reference">
 
         <tr>
             <th>refreshCells(params)</th>
@@ -164,10 +154,10 @@ include '../documentation-main/documentation_header.php';
             <th>refreshHeader()</th>
             <td>Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed.</td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Sort & Filter</td>
-        </tr>
+
+    </table>
+<h2>Sort & Filter</h2>
+    <table class="table reference">
 
         <tr>
             <th>setQuickFilter(quickFilter)</th>
@@ -237,10 +227,10 @@ include '../documentation-main/documentation_header.php';
             <td>Returns the sort state of the grid.
             </td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Navigation</td>
-        </tr>
+
+    </table>
+<h2>Navigation</h2>
+    <table class="table reference">
 
         <tr>
             <th>getFocusedCell()</th>
@@ -263,11 +253,9 @@ include '../documentation-main/documentation_header.php';
             <td>Navigates the grid focus to the previous cell, as if shift-tabbing.</td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Editing</td>
-        </tr>
-
+    </table>
+<h2>Editing</h2>
+    <table class="table reference">
         <tr>
             <th>stopEditing(cancel?)</th>
             <td>If a cell is editing, it stops the editing. Pass 'true' if you want to cancel the editing
@@ -278,10 +266,9 @@ include '../documentation-main/documentation_header.php';
             <td>Gets the grid to start editing on a particular cell.</td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Export</td>
-        </tr>
+    </table>
+<h2>Export</h2>
+    <table class="table reference">
 
         <tr>
             <th>exportDataAsCsv(params)</th>
@@ -300,10 +287,9 @@ include '../documentation-main/documentation_header.php';
             <td>Similar to exportDataAsExcel, except returns result as a string rather than export it.</td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Events</td>
-        </tr>
+    </table>
+<h2>Events</h2>
+    <table class="table reference">
 
         <tr>
             <th>addEventListener(eventType, listener)</th>
@@ -327,10 +313,9 @@ include '../documentation-main/documentation_header.php';
                 to fire events such as 'cellValueChanged'.</td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Row Groups</td>
-        </tr>
+    </table>
+<h2>Row Groups</h2>
+    <table class="table reference">
 
         <tr>
             <th>expandAll()</th>
@@ -347,16 +332,10 @@ include '../documentation-main/documentation_header.php';
                 work out the final set of 'to be displayed' rows again (ie expand or collapse the group visually).
             </td>
         </tr>
-        <tr>
-            <th>recomputeAggregates()</th>
-            <td>Recomputes the aggregates in the model and refreshes all the group rows.
-            </td>
-        </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Rendering</td>
-        </tr>
+    </table>
+<h2>Rendering</h2>
+    <table class="table reference">
 
         <tr>
             <th>getRenderedNodes()</th>
@@ -365,10 +344,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2" id="scrolling">Scrolling</td>
-        </tr>
+    </table>
+<h2>Scrolling</h2>
+    <table class="table reference">
 
         <tr>
             <th>ensureIndexVisible(index, position)</th>
@@ -394,8 +372,7 @@ include '../documentation-main/documentation_header.php';
         <tr id="getVerticalPixelRange">
             <th>getVerticalPixelRange()</th>
             <td>Returns a JSON object with two properties:
-                <p>
-                <ul>
+                <ul class="content">
                     <li>
                         top: The top pixel position of the current scroll in the grid
                     </li>
@@ -406,10 +383,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Overlays</td>
-        </tr>
+    </table>
+<h2>Overlays</h2>
+    <table class="table reference">
 
         <tr>
             <th>showLoadingOverlay()</th>
@@ -424,10 +400,9 @@ include '../documentation-main/documentation_header.php';
             <td>Hides the overlay if showing.</td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Clipboard</td>
-        </tr>
+    </table>
+<h2>Clipboard</h2>
+    <table class="table reference">
 
         <tr>
             <th>copySelectedRangeToClipboard(includeHeaders)</th>
@@ -438,27 +413,27 @@ include '../documentation-main/documentation_header.php';
             <td>Copies the selected range down, similar to Ctrl+D in Excel.</td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Pagination</td>
-        </tr>
+    </table>
+<h2>Pagination</h2>
+    <table class="table reference">
 
         <?php include '../javascript-grid-pagination/paginationProperties.php' ?>
         <?php printPropertiesRows($paginationApi) ?>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Headers</td>
-        </tr>
+    </table>
+<h2>Headers</h2>
+    <table class="table reference">
 
         <?php include '../javascript-grid-column-header/headerHeightProperties.php' ?>
         <?php printPropertiesRows($headerHeightApi) ?>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Miscellaneous</td>
+    </table>
+<h2>Miscellaneous</h2>
+    <table class="table reference">
+        <tr>
+            <th>setPopupParent(element)</th>
+            <td>DOM element to use as <a href="../javascript-grid-context-menu/#popup-parent">popup parent</a> for grid popups (context menu, column menu etc).</td>
         </tr>
-
         <tr>
             <th>addRenderedRowListener(event, rowIndex, callback)</th>
             <td>Registers a callback to a virtual row. A virtual row is a row that
@@ -529,7 +504,20 @@ include '../documentation-main/documentation_header.php';
             <th>addAggFunc(key, aggFunc), addAggFuncs(aggFuncs), clearAggFuncs()</th>
             <td>Adding and clearing of aggregation functions.</td>
         </tr>
+        <tr>
+            <th>hidePopupMenu()</th>
+            <td>
+                Hides any showing <a href="../javascript-grid-context-menu">context menu</a>
+                or <a href="../javascript-grid-column-menu">column menu</a>.
+            </td>
+        </tr>
+        <tr>
+            <th>setSuppressRowDrag(value)</th>
+            <td>
+                Sets teh suppressRowDrag property.
+            </td>
+        </tr>
     </table>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

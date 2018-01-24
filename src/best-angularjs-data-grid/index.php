@@ -1,5 +1,4 @@
 <?php
-$key = "Getting Started ng1";
 $pageTitle = "Angular Grid";
 $pageDescription = "ag-Grid can be used as a data grid inside your Angular application. This page details how to get started using ag-Grid inside an Angular application.";
 $pageKeyboards = "Angular Grid";
@@ -9,13 +8,12 @@ include '../documentation-main/documentation_header.php';
 
 <div>
     <h1 class="first-h1" id="implementing-the-angularjs-datagrid">
-        <img style="vertical-align: middle" src="../images/angularjs_large.png" height="50px" alt="Angular"/>
-        Angular Grid
+        AngularJS 1.x Grid
     </h1>
 </div>
 
-<p>
-    This page details how to set up ag-Grid inside and Angular 1.x application.
+<p class="lead">
+    This page details how to set up ag-Grid inside and AngularJS 1.x application.
 </p>
 
 <?php include '../javascript-grid-getting-started/ag-grid-dependency.php' ?>
@@ -32,12 +30,12 @@ include '../documentation-main/documentation_header.php';
 
 <h3>Download ag-Grid-Enterprise</h3>
 
-<table>
+<table class="content">
     <tr>
         <td style="padding: 10px;"><img src="../images/bower.png"/></td>
         <td>
             <b>Bower</b><br/>
-            bower install ag-grid-enterprise
+            <code>bower install ag-grid-enterprise</code>
         </td>
 
         <td style="width: 20px;"/>
@@ -45,7 +43,7 @@ include '../documentation-main/documentation_header.php';
         <td style="padding: 10px;"><img src="../images/npm.png"/></td>
         <td>
             <b>NPM</b><br/>
-            npm install ag-grid-enterprise
+            <code>npm install ag-grid-enterprise</code>
         </td>
 
         <td style="width: 20px;"/>
@@ -66,7 +64,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>As with the ag-Grid example, all we need to do is reference the ag-grid-enterprise dependency and we're good
     to go:</p>
-<snippet>
+<snippet language="html">
 &lt;html&gt;
 &lt;head&gt;
     &lt;script src="path-to-ag-grid-enterprise/ag-grid-enterprise.js"&gt;&lt;/script&gt;
@@ -88,18 +86,17 @@ include '../documentation-main/documentation_header.php';
 <h4>ag-Grid Enterprise Bundle Types</h4>
 <p>
     Again similar to ag-Grid, ag-Grid-Enterprise has 4 bundles:
-<ul>
+</p>
+
+<ul class="content">
     <li>dist/ag-grid-enterprise.js -> standard bundle containing JavaScript and CSS</li>
     <li>dist/ag-grid-enterprise.min.js -> minified bundle containing JavaScript and CSS</li>
     <li>dist/ag-grid-enterprise.noStyle.js -> standard bundle containing JavaScript without CSS</li>
     <li>dist/ag-grid-enterprise.min.noStyle.js -> minified bundle containing JavaScript without CSS</li>
 </ul>
-</p>
 
-<p>Even if you are using React, AngularJS 1.x, Angular, VueJS or Web Components, the above is all you need
-    to
-    do.
-    Any grid you create will be an enterprise grid once you load the library.</p>
+<p>Even if you are using React, AngularJS 1.x, Angular, VueJS or Web Components, the above is all you need to do. 
+ Any grid you create will be an enterprise grid once you load the library.</p>
 
 <h4>CommonJS</h4>
 <p>
@@ -121,8 +118,9 @@ import 'ag-grid-enterprise/main';</snippet>
 
 
 <h3 id="creating-the-angularjs-module">Creating the AngularJS 1.x Module</h3>
-Include ag-Grid as a dependency of your module like this:
-<p/>
+
+<p>Include ag-Grid as a dependency of your module like this: </p>
+
 <snippet>
 // if you're using ag-Grid-Enterprise, you'll need to provide the License Key before doing anything else
 // not necessary if you're just using ag-Grid
@@ -134,18 +132,18 @@ agGrid.initialiseAgGridWithAngular1(angular);
 // create your module with ag-Grid as a dependency
 var module = angular.module("example", ["agGrid"]);</snippet>
 
-<h4 id="ag-grid-div">ag-Grid Div</h4>
+<h4 id="ag-grid-div">ag-Grid div</h4>
 
 <p>
-    To include a grid in your html, add the <i>ag-grid</i> attribute to a div. The value
+    To include a grid in your html, add the <code>ag-grid</code> attribute to a div. The value
     of the div should be the provided grid options on the scope.
 </p>
 
 <p>
     It is also usual to provide a styling theme to
-    the grid. Three themes come with the grid, ag-theme-fresh, ag-theme-dark and ag-theme-blue. Each one is
+    the grid. Three themes come with the grid, <code>ag-theme-fresh</code>, <code>ag-theme-dark</code> and <code>ag-theme-blue</code>. Each one is
     set by applying the corresponding class of the same name to the div. In the
-    example, ag-theme-fresh is used.
+    example, <code>ag-theme-fresh</code> is used.
 </p>
 
 <p>
@@ -153,7 +151,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     the width and height you give it.
 </p>
 
-<snippet>
+<snippet language="html">
 &lt;div ag-grid="gridOptions" class="ag-theme-fresh" style="height: 100%;"&gt;&lt;/div&gt;
 </snippet>
 
@@ -168,13 +166,15 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </p>
 
 <h2 id="basic-angularjs-1-x-example">Basic AngularJS 1.x Example</h2>
-<?= example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', array( 'extras' => array('angularjs1'))) ?>
+<?= example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', array("exampleHeight" => 130, 'extras' => array('angularjs1'))) ?>
 <h2 class="components">Components</h2>
 
-<p>When using <a href="../javascript-grid-components">Components</a> within an AngularJS 1.x application you need to manage
+<p>When using <a href="../javascript-grid-components">Components</a> within an AngularJS 1.x application you need to
+    manage
     both the scope yourself - the Grid does not provide the scope to the Components nor will it destroy it.</p>
 
-<p>You need to ensure provide an appropriate scope to the Components and ensure you delete it when the component is destroyed.</p>
+<p>You need to ensure provide an appropriate scope to the Components and ensure you delete it when the component is
+    destroyed.</p>
 
 <p><code>angularCompileRows</code>, <code>angularCompileFilters</code> and <code>angularCompileHeaders</code> are not
     supported within Components.</p>
@@ -186,7 +186,6 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     and releases all resources when the directive is destroyed.
 </p>
 
-<!--
 <h2 id="advanced-angularjs-1-x-example">Advanced AngularJS 1.x Example</h2>
 
 <p>
@@ -195,8 +194,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     different options are configured is explained in the relevant parts of the documentation.
 </p>
 
-<?= example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', array( 'extras' => array('angularjs1'))) ?>
--->
+<?= example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', array('extras' => array('angularjs1'))) ?>
 
 <h2 id="angular-compiling">Angular Compiling</h2>
 
@@ -230,7 +228,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     Angular compiling is turned on by setting the grid options attribute angularCompileRows to true.
 </p>
 
-<ul>
+<ul class="content">
     <li><b>angularCompileRows:</b> Whether to compile the rows for Angular.</li>
     <li><b>angularCompileFilters:</b> Whether to compile provided custom filters.</li>
     <li><b>angularCompileHeaders:</b> Whether to compile the customer headers for AngularJS 1.x.</li>
@@ -243,13 +241,14 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 <p>
     Below then uses three columns rendered using custom Angular renderers.
 </p>
-<ul>
+
+<ul class="content">
     <li><b>Athlete:</b> Uses simple binding to display text.</li>
     <li><b>Age:</b> Uses simple binding to display a button, with a button click event using ng-click.</li>
     <li><b>Country:</b> Uses a custom Angular directive to display the country.</li>
 </ul>
 
-<?= example('Angular compiling', 'compiling', 'vanilla', array( 'extras' => array('angularjs1'))) ?>
+<?= example('Angular compiling', 'compiling', 'vanilla', array('extras' => array('angularjs1'))) ?>
 
 <note>
     When scrolling the example above up and down, the cells rendered using Angular are blank
@@ -272,9 +271,8 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     it is reused.
 </p>
 
-<p>
-    The example below uses cell templates for the first three columns.
-<ul>
+<p> The example below uses cell templates for the first three columns.</p>
+<ul class="content">
     <li><b>Col 1 - </b> The first column uses a static template. Pretty pointless as you can't change
         the content between rows.
     </li>
@@ -285,22 +283,22 @@ var module = angular.module("example", ["agGrid"]);</snippet>
         the template from the server.
     </li>
 </ul>
-</p>
 
 <note>
     In the example, as you scroll up and down, the redraw on the AngularJS 1.x columns has a lag.
     This is waiting for the AngularJS 1.x digest cycle to kick in to populate the values into these rows.
 </note>
 
-<?= example('Cell Templates', 'cell-templates', 'vanilla', array( 'enterprise' => true, 'extras' => array('angularjs1'))) ?>
+<?= example('Cell Templates', 'cell-templates', 'vanilla', array('enterprise' => true, 'extras' => array('angularjs1'))) ?>
 
 <h2 id="ng1Components">Angular 1.x and ag-Grid Components</h2>
 
 <p>
-    ag-Grid does not provide direct support for it's <a href="../javascript-grid-components/">components</a> and AngularJS 1.x. If you want to put custom
+    ag-Grid does not provide direct support for it's <a href="../javascript-grid-components/">components</a> and
+    AngularJS 1.x. If you want to put custom
     AngularJS 1.x components into ag-Grid, follow the instructions for plain JavaScript component. You will
-    then need to manage creating and destroying child scopes yourself inside the <i>init()</i> and
-    <i>destroy()</i> methods.
+    then need to manage creating and destroying child scopes yourself inside the <code>init()</code> and
+    <code>destroy()</code> methods.
 </p>
 
 <p><code>angularCompileRows</code>, <code>angularCompileFilters</code> and <code>angularCompileHeaders</code> are not
@@ -315,7 +313,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     cycle for each one would kill performance. So you may want to $scope.$apply() after you handle the event.
 </p>
 
-<h2 id="next-steps">Next Steps...</h2>
+<h2 id="next-steps">Next Steps</h2>
 
 <p>
     Now you can go to <a href="../javascript-grid-interfacing-overview/">interfacing</a>

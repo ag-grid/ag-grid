@@ -1,7 +1,6 @@
 <?php
-$key = "Getting Started Angular";
-$pageTitle = "Angular 2 Grid";
-$pageDescription = "ag-Grid can be used as a data grid inside your Angular 2 application. This page details how to get started using ag-Grid inside an Angular 2 application.";
+$pageTitle = "ag-Grid Reference: Getting Started with Angular";
+$pageDescription = "ag-Grid can be used as a datagrid inside your Angular application. This page details how to get started using ag-Grid inside an Angular application.";
 $pageKeyboards = "Angular 2 Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
@@ -9,12 +8,12 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1">
-        <img style="vertical-align: middle" src="../images/angular2_large.png" height="50px"/>
-        Angular 2+ Datagrid - Getting Started
-    </h1>
+    <h1 class="first-h1"> Angular Datagrid - Getting Started </h1>
 
-    <p>This section documents how to get started with ag-Grid and Angular as quickly as possible. You will start off with
+    <note>This section documents how to use ag-Grid with Angular 2.x/4.x/5.x and onwards. For AnguarJS 1.x please refer
+        to the <a href="/best-angularjs-data-grid">Angular JS 1.x</a> documentation.</note>
+
+    <p class="lead">This section documents how to get started with ag-Grid and Angular as quickly as possible. You will start off with
         a simple application and section by section add Grid features to the application ending up with a fully fledged
         application, with ag-Grid and Angular at the heart of it.</p>
 
@@ -22,14 +21,14 @@ include '../documentation-main/documentation_header.php';
 
     <p>You will need the following build tools installed at a minimum:</p>
 
-    <ul>
+    <ul class="content">
         <li>Git: Please see <a href="https://git-scm.com/">Git</a> for installation options</li>
         <li>npm: Please see <a href="https://www.npmjs.com/get-npm">npm</a> for installation options</li>
     </ul>
 
     <h2>Scaffolding</h2>
 
-    <p>To get started as quickly as possible we provide a <code>"Seed"</code> repo on Git that you can use. Let's clone
+    <p>To get started as quickly as possible we provide a Seed repo on Git that you can use. Let's clone
         this
         repo, install the dependencies and start it up:</p>
 
@@ -39,7 +38,7 @@ git clone https://github.com/ag-grid/ag-grid-angular-seed
 cd ag-grid-angular-seed/angular-cli
 
 # install the project dependencies
-npm i
+npm install
 
 # build & start the application
 npm start</snippet>
@@ -112,12 +111,12 @@ npm start</snippet>
     <?= example('Simple Grid', 'hello-world', 'angular', array( "exampleHeight" => 150, "showResult" => true)) ?>
 
 
-    <h3>Adding Features</h3>
+    <h2>Adding Features</h2>
 
     <p>Ok, great - so far so good. But wouldn't it be nice to be able to sort the data to help us see which car is the
         most expensive (or least!)?</p>
 
-    <h4>Sorting</h4>
+    <h3>Sorting</h3>
 
     <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
         enabled by setting a Grid property to true:</p>
@@ -138,7 +137,7 @@ npm start</snippet>
 
     <img src="../images/angular-gs-sorting.png" style="display: block;margin: auto;height: 200px;">
 
-    <h4>Filtering</h4>
+    <h3>Filtering</h3>
 
     <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a
         real-world
@@ -165,11 +164,10 @@ npm start</snippet>
 
     <img src="../images/angular-gs-filtering.png" style="display: block;margin: auto;height: 200px;">
 
-    <h3>Summary</h3>
+    <h2>Summary</h2>
 
     <p id="angular-rich-grid-example">We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
-        the left
-        hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
+        the left hand navigation for an idea of what's on offer, but below we show a feature rich example:</p>
 
     <?= example('ag-Grid in Angular', 'rich-grid-example', 'angular', array( "enterprise" => 1, "exampleHeight" => 525, "showResult" => true, "extras" => array( "fontawesome", "bootstrap" ) )); ?>
 
@@ -179,9 +177,7 @@ npm start</snippet>
         scratching the surface - we've only just gotten started with with ag-Grid can do!</p>
 
     <p>Please read the <a href="../angular-more-details">More Details</a> section next to get a deeper understanding of
-        how to
-        use ag-Grid and Angular, as well as the options in installing dependencies and accessing the <code>Enterprise
-            Features</code>.</p>
+        how to use ag-Grid and Angular, as well as the options in installing dependencies and accessing the <strong>Enterprise Features</strong>.</p>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

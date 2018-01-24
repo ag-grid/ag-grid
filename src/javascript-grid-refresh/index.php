@@ -1,16 +1,15 @@
 <?php
-$key = "Refresh";
-$pageTitle = "ag-Grid Refresh";
-$pageDescription = "It is possible to refresh ag-Grid in many ways. This page explains how to refresh cells inside the grid.";
+$pageTitle = "ag-Grid - Working with Data: View Refresh";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is View Refresh. If the data changes outside of the grid, get the grid to do a View Refresh to update the UI to the latest values. The grid will use change detection to only refresh values that have changed. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Refresh";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+
     <h1 class="first-h1">View Refresh</h1>
 
-    <p>
+    <p class="lead">
         The grid has change detection. So as long as you are updating the data via the grid's API,
         the values displayed should be the most recent up to date values.
     </p>
@@ -24,7 +23,8 @@ include '../documentation-main/documentation_header.php';
     <p>
         To deal with the scenario where the row data is changed without the grid been aware,
         the grid provides the following methods:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 <b>Refresh Cells</b>: <code>api.refreshCells(cellRefreshParams)</code> - Gets the grid to refresh all cells. Change detection will
                 be used to refresh only cells who's display cell values are out of sync with the actual value.
@@ -37,7 +37,6 @@ include '../documentation-main/documentation_header.php';
                 is done.
             </li>
         </ul>
-    </p>
 
     <p>
         Your preference should be to use <code>refreshCells()</code> over <code>redrawRows()</code>.
@@ -60,7 +59,6 @@ interface RefreshCellsParams {
     rowNodes?: RowNode[]; // specify rows, or all rows by default
     columns?: (string|Column)[]; // specify columns, or all columns by default
     force?: boolean; // skips change detection, refresh everything
-    volatile?: boolean; // only volatile cells - deprecated - for backwards compatibility
 }</snippet>
 
     <p>
@@ -68,34 +66,6 @@ interface RefreshCellsParams {
         all cells using <a href="../javascript-grid-change-detection/">change detection</a> (change
         detection means it will only refresh cells who's values have changed).
     </p>
-
-    <note>
-        <h3>Deprecated - Volatile Columns</h3>
-
-        <p>
-            Volatile columns allowed you to mark specific columns for refresh when you called
-            <code>api.softRefresh()</code>.
-        </p>
-
-        <p>
-            Columns were marked as volatile by setting the column definition property
-            <code>volatile = true</code>.
-        </p>
-
-        <p>
-            This feature is no longer needed, as you can pass a list of columns to refresh
-            to the 'cellRefresh()' method.
-        </p>
-
-        <p>
-            If you are using volatile columns, instead of calling <code>api.softRefresh()</code>,
-            you can call <code>api.refreshCells({volatile: true})</code> instead to achieve the same.
-            However volatile columns are deprecated so will be removed in a future release.
-            You should instead move to passing a list of columns to the <code>api.refreshCells()</code>
-            method.
-        </p>
-
-    </note>
 
     <h3>Example Refresh Cells</h3>
 
@@ -105,7 +75,7 @@ interface RefreshCellsParams {
         following can be noted:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             The grid has <code>enableCellChangeFlash=true</code>, so cells that are refreshed will be flashed.
         </li>
@@ -162,7 +132,8 @@ interface RefreshCellsParams {
     <p>
         Use redraw row if you want to create the row again from scratch. This is useful when you have changed a property
         that only gets used when the row is created for the first time such as:
-        <ul>
+    </p>
+        <ul class="content">
             <li>
                 Whether the row is <a href="../javascript-grid-full-width-rows">fullWidth</a> or not.
             </li>
@@ -174,7 +145,6 @@ interface RefreshCellsParams {
                 or <code>getRowClass()</code>.
             </li>
         </ul>
-    </p>
 
     <p>
         To get the grid to redraw rows, call <code>api.redrawRows()</code>. The interface is as follows:
@@ -196,7 +166,7 @@ interface RedrawRowsParams {
         From the example, the following can be noted:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             The <b>Redraw All Rows</b> redraws all the rows using a different background color by calling
             <code>api.redrawRows()</code> with no parameters.
@@ -209,6 +179,6 @@ interface RedrawRowsParams {
 
     <?= example('Redraw Rows', 'redraw-rows', 'generated') ?>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

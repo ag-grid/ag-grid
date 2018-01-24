@@ -1,5 +1,4 @@
 <?php
-$key = "Getting Started Javascript";
 $pageTitle = "JavaScript Grid";
 $pageDescription = "ag-Grid can be used as a data grid inside your plain JavaScript application. This page details how to get started.";
 $pageKeyboards = "Javascript Grid";
@@ -7,30 +6,22 @@ $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>
-        <img src="../images/svg/docs/getting_started.svg" width="50"/>
-        <img style="vertical-align: middle" src="../images/svg/javascript.svg" height="25px"/>
-        JavaScript Grid
-    </h1>
-
-    <h2>
-        Getting Started With ag-Grid and Plain JavaScript
-    </h2>
+    <h1>JavaScript Grid</h1>
 
     <p>This section documents how to get started with ag-Grid and JavaScript as quickly as possible. You will start off
         with
         a simple application and section by section add Grid features to the application ending up with a fully fledged
         application with ag-Grid at the heart of it.</p>
 
-    <h3>Prerequisites</h3>
+    <h2>Prerequisites</h2>
 
     <p>You will need the following build tools installed at a minimum:</p>
 
-    <ul>
+    <ul class="content">
         <li>Git: Please see <a href="https://git-scm.com/">Git</a> for installation options</li>
     </ul>
 
-    <h3>Scaffolding</h3>
+    <h2>Scaffolding</h2>
 
     <p>To get started as quickly as possible we provide a <code>"Seed"</code> repo on Git that you can use. Let's clone
         this
@@ -48,16 +39,11 @@ start index.html
 open index.html
 </snippet>
 
-    <p>With those 2 commands you should now see the following application:</p>
-<div>
+    <p>Great! A working Grid application in no time at all. Let's break down the application into its main parts:</p>
 
-</div>
+    <h2>Row Data</h2>
 
-    <p>Great! A working Grid application in no time at all. Let's break down the application into it's main parts:</p>
-
-    <h3>Row Data</h3>
-
-    <p>At a minimum, a Grid requires row data & column definitions. Row data is provided to the grid as an array of
+    <p>At a minimum, a Grid requires row data &amp; column definitions. Row data is provided to the grid as an array of
         JavaScript objects:</p>
 
 <snippet>
@@ -72,7 +58,7 @@ open index.html
 <p>Here we have 3 rows of data, with <code>make</code>, <code>model</code> and <code>price</code> making up the
     data.</p>
 
-<h3>Column Definitions</h3>
+<h2>Column Definitions</h2>
 
     <p>To display this information we need to tell the Grid what data we're interested in. Let's define the three
         columns
@@ -92,19 +78,18 @@ open index.html
         <code>Model</code>
         and <code>Price</code>, each of which correspond to their lowercase equivalent in the row data above.</p>
 
-<h3>Grid Definition</h3>
+<h2>Grid Definition</h2>
 
     <p>Ok, so now we know how to define our row and column data - how do we define our actual Grid?</p>
 
     <p>For a JavaScript application, you need to reference ag-Grid in your html file and provide a container (typically
-        a
-        <code>div</code> for ag-Grid to use::</p>
+        a <code>div</code> for ag-Grid to use:</p>
 
 <snippet language="html">
 &lt;html&gt;
 &lt;head&gt;
     &lt;!-- reference the ag-Grid library--&gt;
-    &lt;script src="https://cdnjs.cloudflare.com/ajax/libs/ag-grid/10.1.0/ag-grid.js"&gt;&lt;/script&gt;
+    &lt;script src="https://unpkg.com/ag-grid/dist/ag-grid.min.js"&gt;&lt;/script&gt;
 
     &lt;!-- our application code --&gt;
     &lt;script src="example.js"&gt;&lt;/script&gt;
@@ -119,7 +104,7 @@ open index.html
 &lt;/html&gt;
 </snippet>
 
-    <p>Here we're referencing version 10.1.0 from a CDN. You can use a CDN too, download ag-Grid (see <a
+    <p>Here we're referencing the latest version from the <a href="https://unpkg.com/ag-grid/">unpkg CDN service</a>. You can use a CDN too, download ag-Grid (see <a
                 href="../javascript-more-details">More Details</a>) or bundle it with a tool like <a
                 href="https://webpack.github.io/">Webpack</a>.</p>
 
@@ -127,13 +112,11 @@ open index.html
         any unit
         of course, including <code>%</code>.</p>
 
-    <p>Finally, we provide a <code>theme</code> for our Grid - the theme determines the Grids look and feel. Please see
-        <a
-                href="../javascript-grid-styling">Themes</a> for more information.</p>
+    <p>Finally, we provide a <code>theme</code> for our Grid - the theme determines the Grid's look and feel. Please see
+        <a href="../javascript-grid-styling">themes</a> for more information.</p>
 
-    <p>Next in our application, we define a gridOptions object that we will pass to the Grid - in this we declare the
-        row and column
-        information we want displayed:</p>
+    <p>Next in our application, we define a <code>gridOptions</code> object that we will pass to the Grid - in this we declare the
+        row and column information we want displayed:</p>
 
 <snippet>
 // Grid Definition 
@@ -177,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function() {
     <p>Ok, great - so far so good. But wouldn't it be nice to be able to sort the data to help us see which car is the
         most expensive (or least!)?</p>
 
-    <h4>Sorting</h4>
+    <h3>Sorting</h3>
 
     <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
         enabled by setting a Grid property to true:</p>
@@ -198,9 +181,9 @@ var gridOptions = {
         clicking and it will cycle through ascending, descending and no sort). Note that in this example we're sorting
         by <code>Price</code> in ascending order (indicated by the up arrow):</p>
 
-    <img src="../images/js-gs-sorting.png" style="display: block;margin: auto;height: 200px;">
+    <p><img src="../images/js-gs-sorting.png" alt="ag-Grid with Sorting" height="183"></p>
 
-    <h4>Filtering</h4>
+    <h3>Filtering</h3>
 
     <p>Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to imagine how a
         real-world
@@ -228,9 +211,9 @@ var gridOptions = {
         <code>Model</code>
         column by the text <code>Celica</code> - only the row with <code>Celica</code> is shown now.</p>
 
-    <img src="../images/js-gs-filtering.png" style="display: block;margin: auto;height: 200px;">
+    <p><img src="../images/js-gs-filtering.png" height="179" alt="ag-Grid with filtering"></p>
 
-    <h3 id="summary">Summary</h3>
+    <h2 id="summary">Summary</h2>
 
     <p>We've only scratched the surface with what you can do with the Grid - please refer to the full set of features on
         the left
@@ -239,7 +222,7 @@ var gridOptions = {
     <?= example('Advanced ag-Grid Example', 'rich-grid', 'vanilla', array("enterprise" => 1, "showResult" => true, "exampleHeight" => 460, "extras" => array("bootstrap", "jquery"))) ?>
 
 
-    <p>This example makes use of custom <code>cell renderer's</code> to show data in a visually friendly way, demonstrates
+    <p>This example makes use of custom <code>cell renderers</code> to show data in a visually friendly way, demonstrates
         <code>column grouping</code> as well as using <code>JavaScript Components</code> in the header. And even this
         rich
         example is only scratching the surface - we've only just gotten started with with ag-Grid can do!</p>
