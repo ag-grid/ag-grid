@@ -275,7 +275,7 @@ cellRenderer: (params) => params.value.name
 
     <snippet>
 &lt;ag-grid-angular style="width: 100%; height: 500px;"
-         class="ag-fresh"
+         class="ag-theme-balham"
 
          [columnDefs]="columnDefs"
          [rowData]="rowData"
@@ -345,7 +345,7 @@ this.athleteService.save(params.data)
 
     <snippet language="html">
 &lt;ag-grid-angular style="width: 100%; height: 500px;"
-         class="ag-fresh"
+         class="ag-theme-balham"
 
          [columnDefs]="columnDefs"
          [rowData]="rowData"
@@ -395,7 +395,7 @@ checkboxSelection: true
 &lt;/div&gt;
 &lt;div&gt;
 &lt;ag-grid-angular style="width: 100%; height: 500px;"
-             class="ag-fresh"
+             class="ag-theme-balham"
 
              [columnDefs]="columnDefs"
              [rowData]="rowData"
@@ -485,7 +485,7 @@ Observable.forkJoin(...deleteSubscriptions).subscribe(results => this.setAthlete
 &lt;div&gt;
 &lt;button (click)="insertNewResult()"&gt;Insert New Result&lt;/button&gt;
 &lt;ag-grid-angular style="width: 100%; height: 200px;"
-                 class="ag-fresh"
+                 class="ag-theme-balham"
 
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"
@@ -634,7 +634,7 @@ this.onAthleteSaved.emit(athlete);
 &lt;/div&gt;
 &lt;div&gt;
 &lt;ag-grid-angular style="width: 100%; height: 500px;"
-             class="ag-fresh"
+             class="ag-theme-balham"
 
              [columnDefs]="columnDefs"
              [rowData]="rowData"
@@ -710,7 +710,7 @@ this.editInProgress = false;
 &lt;/div&gt;
 &lt;div&gt;
 &lt;ag-grid-angular style="width: 100%; height: 500px;"
-             class="ag-fresh"
+             class="ag-theme-balham"
 
              [columnDefs]="columnDefs"
              [rowData]="rowData"
@@ -902,7 +902,7 @@ private Long version = 0L;
 
 <snippet language="html">
 &lt;ag-grid-angular style="width: 100%; height: 500px;"
-         class="ag-fresh"
+         class="ag-theme-balham"
 
          #grid
 
@@ -998,7 +998,7 @@ this.width = this.width + 'px'
 
 <snippet language="html">
 &lt;ag-grid-angular style="width: 100%; height: 500px;"
-         class="ag-fresh"
+         class="ag-theme-balham"
 
          ...reset of grid definition
 
