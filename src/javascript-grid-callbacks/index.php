@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Reference: angular webpack";
-$pageDescription = "Learn how each callbacks impacts ag-Grid.";
+$pageTitle = "ag-Grid Reference: Grid Callbacks";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference guide covers all of the available Grid Callbacks.";
 $pageKeyboards = "javascript data grid ag-Grid Callbacks";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';

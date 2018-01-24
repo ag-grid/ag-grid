@@ -1,7 +1,6 @@
 <?php
-$key = "Angular Full Width";
-$pageTitle = "ag-Grid Angular Full Width Example";
-$pageDescription = "A Full Width Renderer Component";
+$pageTitle = "ag-Grid Examples: Angular Full Width Renderer";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows a Full Width Renderer Component with Angular";
 $pageKeyboards = "ag-Grid angular full width component";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';

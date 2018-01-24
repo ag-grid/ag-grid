@@ -5,7 +5,7 @@ include_once 'includes/html-helpers.php';
 <html>
 <head lang="en">
 <?php
-meta_and_links("ag-Grid Testimonials", "ag-Grid Javascript Grid Testimonials", "ag-Grid comes either as free or as Enterprise with support. This page explains the different support models for the free and Enterprise versions of ag-Grid.", true);
+meta_and_links("ag-Grid: Customer Testimonials", "ag-Grid Javascript Grid Testimonials", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. We've had great feedback from our customers and you can read those reviews here.", true);
 ?>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>

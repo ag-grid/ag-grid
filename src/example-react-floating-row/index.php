@@ -1,7 +1,6 @@
 <?php
-$key = "React Pinned Row";
-$pageTitle = "ag-Grid React Pinned Row";
-$pageDescription = "ag-Grid React Pinned Row Example";
+$pageTitle = "ag-Grid Examples: React Pinned Row";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows a React pinned row example.";
 $pageKeyboards = "ag-Grid react pinned row";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';

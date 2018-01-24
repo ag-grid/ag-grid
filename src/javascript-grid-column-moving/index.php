@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Javascript Grid Column Moving";
-$pageDescription = "Explains how to move columns in ag-Grid, including moving via the API and fixing columns.";
+$pageTitle = "ag-Grid: Core Features - Column Moving";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. Here we explains how to move columns in ag-Grid, including moving via the API and fixing columns.";
 $pageKeyboards = "Javascript Grid Column Moving";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

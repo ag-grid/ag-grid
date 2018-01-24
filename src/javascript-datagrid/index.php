@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "ag-Grid Blog: 8 Things to Look our for When Selecting a JavaScript DataGrid";
+$pageTitle = "ag-Grid Blog: 8 Things to Know in picking a JavaScript DataGrid";
 $pageDescription = "We run through the major things you have to watch out for when picking the right datagrid for your JavaScript application. Be it React or Angular, we've listed the 8 most important.";
 $pageKeyboards = "Choosing JavaScript DataGrid";
 

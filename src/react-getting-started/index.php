@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "React Datagrid";
-$pageDescription = "ag-Grid can be used as a data grid inside your React application. This page details how to get started.";
+$pageTitle = "ag-Grid Reference: Getting Started with the React Datagrid";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple React Datagrid. We also cover basisc configuration.";
 $pageKeyboards = "React Datagrid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';

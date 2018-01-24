@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Column API";
-$pageDescription = "ag-Grid allows you to save and restore the column state. This includes column widths, agg fields and visibility.";
+$pageTitle = "ag-Grid Reference: Column API";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference guide covers the methods available in the Column API. It also covers how to save and restore the column state. This includes column widths, aggregation fields and visibility.";
 $pageKeyboards = "ag-Grid Column API";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';

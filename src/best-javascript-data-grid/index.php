@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid: The Best HTML5 JavaScript Datagrid in the World";
+$pageTitle = "ag-Grid: The Best Plain JavaScript Datagrid in the World";
 $pageDescription = "A feature rich data grid designed for Enterprise applications. Built in Plain JavaScript to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "JavaScript Datagrid";
 $pageGroup = "basics";

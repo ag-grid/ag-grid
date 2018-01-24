@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "JavaScript Grid";
-$pageDescription = "A feature rich datagrid designed for Enterprise. Easily integrate with React to deliver filtering, grouping, aggregation, pivoting and much more.";
+$pageTitle = "ag-Grid Reference: JavaScript Datagrid - More Details";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page covers downloading the JavaScript packages for ag-Grid and ag-Grid Enterprise and setting up the correct modules for use.";
 $pageKeyboards = "JavaScript Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';

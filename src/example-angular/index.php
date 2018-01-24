@@ -1,7 +1,6 @@
 <?php
-$key = "Angular Examples";
-$pageTitle = "ag-Grid Angular Examples";
-$pageDescription = "ag-Grid Angular Examples";
+$pageTitle = "ag-Grid Examples: Angular";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page lists all of the examples using Angular and ag-Grid.";
 $pageKeyboards = "ag-Grid angular examples";
 $pageGroup = "examples";
 define('skipInPageNav', true);

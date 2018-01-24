@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Reference: Enterprise Row Model";
-$pageDescription = "ag-Grid is going bringing datagrids to the next level with its Enterprise Data Model, allowing slicing and dicing of data driven by your UI.";
+$pageTitle = "ag-Grid Row Models: The Enterprise Row Model";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Enterprise Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
 $pageKeyboards = "ag-Grid Enterprise Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';

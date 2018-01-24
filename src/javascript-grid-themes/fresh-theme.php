@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Fresh Theme Data Grid";
-$pageDescription = "ag-Grid Fresh Theme Data Grid";
+$pageTitle = "ag-Grid Themes: The Fresh Datagrid Theme";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It comes with five themes out of the box, this page covers the Fresh Theme for your datagrid.";
 $pageKeyboards = "ag-Grid Fresh Theme Data Grid";
 $pageGroup = "themes";
 include '../documentation-main/documentation_header.php';

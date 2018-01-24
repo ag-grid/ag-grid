@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid React Redux Examples";
-$pageDescription = "Example using Redux - utilising ag-Grids deltaRowDataMode";
+$pageTitle = "ag-Grid Examples: React and Redux Simple Datagrid";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This example runs through a simple datagrid wusing React and Redux.";
 $pageKeyboards = "ag-Grid react redux immutable component";
 $pageGroup = "examples";
 define('skipInPageNav', true);

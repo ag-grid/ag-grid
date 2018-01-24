@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Cell Editor Component";
-$pageDescription = "You can integrate your own editors into ag-Grid that will bind into the grids navigation.";
+$pageTitle = "ag-Grid Components: Cell Editors";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It supports the use of components, one of which is Cell Editors. Users can update data with Cell Editing. Use one of the provided cell editors or create your own to suit your business needs.";
 $pageKeyboards = "ag-Grid Cell Editor Component";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';

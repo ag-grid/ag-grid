@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Responsiveness";
-$pageDescription = "ag-Grid Responsive Web Design";
+$pageTitle = "ag-Grid Reference: Responsive Web Design for Datagrid";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It works on all platforms from phone to tablet up to desktop. This reference guide covers our recommendations for Responsive Web Design in a Datagrid.";
 $pageKeyboards = "ag-Grid Responsive Web Design";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

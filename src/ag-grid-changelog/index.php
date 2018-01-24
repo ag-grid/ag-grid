@@ -6,7 +6,7 @@ include_once '../includes/html-helpers.php';
 <html>
 <head lang="en">
 <?php
-meta_and_links("ag-Grid Pipeline", "ag-Grid javascript grid pipeline changelog release notes", "ag-Grid - Pipeline / Changelog of Work.", false);
+meta_and_links("ag-Grid: Change Log for Releases", "ag-Grid javascript grid pipeline changelog release notes", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page lists all the Changes completed in recent releases.", false);
 ?>
 <link rel="stylesheet" href="../dist/homepage.css">
 <link rel="stylesheet" href="../dist/aui/css/aui.css" media="all">

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Reference: Row Models";
-$pageDescription = "ag-Grid can be configured to retrieve rows from the server in different ways. Select which way is best for your application.";
+$pageTitle = "ag-Grid Row Models: Overview";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, we recommend that you choose carefully so that it matches your application. This page gives an overview of each with links to get a detailed view.";
 $pageKeyboards = "Javascript Grid Row Model Pagination Infinate Scrolling";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';

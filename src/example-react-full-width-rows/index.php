@@ -1,7 +1,6 @@
 <?php
-$key = "React Full Width";
-$pageTitle = "ag-Grid React Full Width Example";
-$pageDescription = "A Full Width Renderer Component";
+$pageTitle = "ag-Grid Examples: React Full Width";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows a Full Width Renderer Component in React.";
 $pageKeyboards = "ag-Grid react full width component";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';

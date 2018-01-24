@@ -1,7 +1,6 @@
 <?php
-$key = "Polymer Dynamic";
-$pageTitle = "ag-Grid Polymer Dynamic Components";
-$pageDescription = "Examples showing Polymer Components as Cell Renderers";
+$pageTitle = "ag-Grid Examples: Polymer Dynamic Components";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows examples showing Polymer Components as Cell Renderers.";
 $pageKeyboards = "ag-Grid polymer grid component dynamic cell renderer";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';

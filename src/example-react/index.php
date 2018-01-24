@@ -1,7 +1,6 @@
 <?php
-$key = "React Examples";
-$pageTitle = "ag-Grid React Examples";
-$pageDescription = "ag-Grid React Examples";
+$pageTitle = "ag-Grid Examples: React";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows React examples.";
 $pageKeyboards = "ag-Grid react examples";
 $pageGroup = "examples";
 define('skipInPageNav', true);

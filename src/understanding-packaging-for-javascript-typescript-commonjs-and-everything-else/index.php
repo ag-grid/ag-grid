@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "ag-Grid Blog: Building Components for Javascript, React, Angular and Everything Else";
+$pageTitle = "ag-Grid Blog: Building Components for Javascript, React, Angular";
 $pageDescription = "An in-depth guide to building a JavaScript component. This covers everything we did to build ag-Grid, a commercially successful datgrid component.";
 $pageKeyboards = "javascript build components gulp typescript react angularjs";
 

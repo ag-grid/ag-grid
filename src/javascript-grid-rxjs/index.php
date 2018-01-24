@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Reference: RxJS";
-$pageDescription = "ag-Grid with RxJS";
+$pageTitle = "ag-Grid Reference: Using RxJS";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference page covers how to use RxJS with the datagrid.";
 $pageKeyboards = "ag-Grid rxjs";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

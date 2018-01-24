@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Angular Components with RxJS";
-$pageDescription = "Examples of using ag-Grid with Angular and RxJS";
+$pageTitle = "ag-Grid Examples: Angular Components with RxJS";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows examples of using ag-Grid with Angular and RxJS";
 $pageKeyboards = "ag-Grid angular rxjs";
 $pageGroup = "examples";
 // define('skipInPageNav', true);

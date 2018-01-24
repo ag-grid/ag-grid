@@ -1,7 +1,6 @@
 <?php
-$key = "Angular Dynamic";
-$pageTitle = "ag-Grid Angular Dynamic Components";
-$pageDescription = "Examples showing Angular Components as Cell Renderers";
+$pageTitle = "ag-Grid Examples:  Angular Dynamic Components";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page lists all of the examples showing Angular Components as Cell Renderers";
 $pageKeyboards = "ag-Grid angular grid component dynamic cell renderer";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';

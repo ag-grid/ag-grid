@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Change Log";
-$pageDescription = "ag-Grid change log. Details the items that have change between each release.";
+$pageTitle = "ag-Grid: Change Log for Releases";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page lists all the Changes completed in recent releases.";
 $pageKeyboards = "ag-Grid Change Log";
 $pageGroup = "misc";
 include('../includes/mediaHeader.php');

@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Blue Theme Data Grid";
-$pageDescription = "ag-Grid Blue Theme Data Grid";
+$pageTitle = "ag-Grid Themes: The Blue Datagrid Theme";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It comes with five themes out of the box, this page covers the Blue Theme for your datagrid.";
 $pageKeyboards = "ag-Grid Blue Theme Data Grid";
 $pageGroup = "themes";
 include '../documentation-main/documentation_header.php';

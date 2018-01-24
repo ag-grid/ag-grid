@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Accessibility";
-$pageDescription = "ag-Grid Accessibility";
+$pageTitle = "ag-Grid: Core Grid Features - Accessibility";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. The grid has ARIA roles inside the cells for Accessibility to enable navigation with screen readers.ag-Grid Accessibility";
 $pageKeyboards = "ag-Grid Accessibility";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

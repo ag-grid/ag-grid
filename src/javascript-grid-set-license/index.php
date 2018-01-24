@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid JavaScript Data Grid Set License Key";
-$pageDescription = "How to set the License Key in ag-Grid Enterprise";
+$pageTitle = "ag-Grid Reference: Setting the License Key";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page explains how to set the License Key in ag-Grid Enterprise";
 $pageKeyboards = "ag-Grid JavaScript Data Grid Excel License Key";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';

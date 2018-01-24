@@ -1,7 +1,6 @@
 <?php
-$key = "Polymer Group Row";
-$pageTitle = "ag-Grid Polymer Grouped Row Renderer";
-$pageDescription = "ag-Grid Polymer Grouped Row Renderer Example";
+$pageTitle = "ag-Grid Examples: Polymer Grouped Row Renderer";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows a Polymer grouped row renderer example.";
 $pageKeyboards = "ag-Grid polymer grouped row component";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';

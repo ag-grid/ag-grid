@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Date Component";
-$pageDescription = "Describes how to implement customer date components for ag-Grid";
+$pageTitle = "ag-Grid Components: Date Component";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It supports the use of components, here we describe how to use a Date Component. The grid comes with a default date picker but you can also use your own.";
 $pageKeyboards = "JavaScript Date Component";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';

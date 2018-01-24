@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Gallery";
-$pageDescription = "Shows random examples of ag-Grid mixing different parts of the library.";
+$pageTitle = "ag-Grid Examples: Gallery";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows a range of examples mixing different parts of the library.";
 $pageKeyboards = "ag-Grid Gallery";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';

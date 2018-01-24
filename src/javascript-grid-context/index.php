@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Context";
-$pageDescription = "ag-Grid provides the ability to pass down values to the renderers or use in the rendering process. These are stored in the context in the grid options.";
+$pageTitle = "ag-Grid Features: Context";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It provides the ability to pass down values to the renderers or use in the rendering process. These are stored in the context in the grid options.";
 $pageKeyboards = "ag-Grid Context";
 $pageGroup = "feature";
 define('skipInPageNav', true);

@@ -1,13 +1,13 @@
 <?php
-$pageTitle = "ag-Grid Material Design Data Grid";
-$pageDescription = "ag-Grid Material Design Data Grid";
+$pageTitle = "ag-Grid Themes: The Material Design Datagrid Theme";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It comes with five themes out of the box, this page covers the Material Design Theme for your datagrid.";
 $pageKeyboards = "ag-Grid Material Design Data Grid";
 $pageGroup = "themes";
 include '../documentation-main/documentation_header.php';
 ?>
 
 
-    <h1>Material Theme</h1>
+    <h1>Material Design Theme</h1>
 
     <p class="lead">
         The New material theme is available from <strong>version 13.0</strong> onwards. 

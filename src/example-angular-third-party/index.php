@@ -1,7 +1,6 @@
 <?php
-$key = "Angular Third Party";
-$pageTitle = "ag-Grid Angular Third Party Examples";
-$pageDescription = "A feature rich Grid example, demonstrating many of ag-Grid's features, including Date, Header and Header Group Components.";
+$pageTitle = "ag-Grid Examples: Angular Third Party Libraries";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows examples of using common Angular Third Party Libraries.";
 $pageKeyboards = "ag-Grid angular features third party material design typeahead bootstrap";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';
