@@ -94,7 +94,7 @@ npm start</snippet>
     <snippet>
 // Grid Definition
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                 class="ag-theme-fresh"
+                 class="ag-theme-balham"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
                  onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
@@ -111,11 +111,11 @@ npm start</snippet>
 &lt;dom-module id="simple-grid"&gt;
     &lt;template&gt;
         &lt;link rel="stylesheet" href="bower_components/ag-grid/dist/styles/ag-grid.css"&gt;
-        &lt;link rel="stylesheet" href="bower_components/ag-grid/dist/styles/ag-theme-fresh.css"&gt;
+        &lt;link rel="stylesheet" href="bower_components/ag-grid/dist/styles/ag-theme-balham.css"&gt;
 
         &lt;h1&gt;Simple ag-Grid Polymer Example&lt;/h1&gt;
         &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                         class="ag-theme-fresh"
+                         class="ag-theme-balham"
                          rowData="{{rowData}}"
                          columnDefs="{{columnDefs}}"
                          onGridReady="{{onGridReady}}"&gt;&lt;/ag-grid-polymer&gt;
@@ -167,7 +167,7 @@ npm start</snippet>
     <snippet language="html">
 &lt;!-- Grid Definition -->
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                 class="ag-theme-fresh"
+                 class="ag-theme-balham"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
                  enableSorting
@@ -192,7 +192,7 @@ npm start</snippet>
     <snippet language="html">
 &lt;!-- Grid Definition -->
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-                 class="ag-theme-fresh"
+                 class="ag-theme-balham"
                  rowData="{{rowData}}"
                  columnDefs="{{columnDefs}}"
                  enableFilter="true"

@@ -50,7 +50,7 @@ import {Grid, GridOptions} from "ag-grid/main";
 //import 'ag-grid-enterprise/main';
 
 import "ag-grid/dist/styles/ag-grid.css";
-import "ag-grid/dist/styles/ag-theme-fresh.css";
+import "ag-grid/dist/styles/ag-theme-balham.css";
 
 class SimpleGrid {
     private gridOptions: GridOptions = &lt;GridOptions&gt;{};
@@ -92,7 +92,7 @@ new SimpleGrid();</snippet>
 &lt;head&gt;
 &lt;/head&gt;
 &lt;body&gt;
-&lt;div id="myGrid" style="height: 150px;width: 600px" class="ag-theme-fresh"&gt;&lt;/div&gt;
+&lt;div id="myGrid" style="height: 150px;width: 600px" class="ag-theme-balham"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</snippet>
 

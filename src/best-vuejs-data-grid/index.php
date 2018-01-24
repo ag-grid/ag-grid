@@ -377,7 +377,7 @@ this.columnDefs = [
     </p>
 
     <snippet>
-&lt;ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-fresh"
+&lt;ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-balham"
     // these are attributes, not bound, give explicit values here
     rowHeight="22"
     rowSelection="multiple"

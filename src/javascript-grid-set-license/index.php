@@ -78,7 +78,7 @@ import React from "react";
 import {render} from "react-dom";
 
 import "ag-grid-root/dist/styles/ag-grid.css";
-import "ag-grid-root/dist/styles/ag-theme-fresh.css";
+import "ag-grid-root/dist/styles/ag-theme-balham.css";
 
 import {LicenseManager} from "ag-grid-enterprise/main";
 LicenseManager.setLicenseKey("your license key");
@@ -103,7 +103,7 @@ document.querySelector('#app')
 import Vue from "vue";
 
 import "../node_modules/ag-grid/dist/styles/ag-grid.css";
-import "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css";
+import "../node_modules/ag-grid/dist/styles/ag-theme-balham.css";
 
 import "ag-grid-enterprise/main";
 import {LicenseManager} from "ag-grid-enterprise/main";
@@ -158,7 +158,7 @@ agGrid.LicenseManager.setLicenseKey("your license key")
 &lt;template id="template"&gt;
 &lt;div &gt;
 &lt;ag-grid-polymer style="width: 100%; height: 350px;"
-class="ag-theme-fresh"
+class="ag-theme-balham"
 rowData="{{rowData}}"
 columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
 &lt;/div&gt;

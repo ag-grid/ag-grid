@@ -118,7 +118,7 @@ export class AppComponent {
 }</snippet>
 <snippet>
 // app/app.component.html 
-&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-fresh"
+&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-balham"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"&gt;
@@ -158,7 +158,7 @@ import 'rxjs';
 
 // ag-grid
 import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid/dist/styles/ag-theme-fresh.css';
+import 'ag-grid/dist/styles/ag-theme-balham.css';
 
 import 'ag-grid-angular/main'</snippet>
 <snippet>

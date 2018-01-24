@@ -93,7 +93,7 @@ npm start</snippet>
 
     <snippet>
 // src/app/my-grid-application/my-grid-application.component.html
-&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-fresh"
+&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-balham"
                  [rowData]="rowData"
                  [columnDefs]="columnDefs"&gt;
 &lt;/ag-grid-angular&gt;</snippet>
@@ -120,7 +120,7 @@ npm start</snippet>
 
     <snippet>
 // Grid Definition 
-&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-fresh"
+&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-balham"
                  [rowData]="rowData"
                  [columnDefs]="columnDefs"&gt;
 
@@ -146,7 +146,7 @@ npm start</snippet>
 
     <snippet>
 // Grid Definition 
-&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-fresh"
+&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-balham"
                  [rowData]="rowData"
                  [columnDefs]="columnDefs"&gt;
 

@@ -44,7 +44,7 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 // component template
-&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-fresh"
+&lt;ag-grid-angular style="width: 500px; height: 115px;" class="ag-theme-balham"
                 [rowData]="rowData"
                 [columnDefs]="columnDefs"&gt;
 &lt;/ag-grid-angular&gt;</snippet>
@@ -164,7 +164,7 @@ for configuring and using Angular Components in ag-Grid.</p>
 
     <snippet>
 // notice the grid has an id called agGrid, which can be used to call the API
-&lt;ag-grid-angular #agGrid style="width: 100%; height: 350px;" class="ag-theme-fresh"
+&lt;ag-grid-angular #agGrid style="width: 100%; height: 350px;" class="ag-theme-balham"
 
     // items bound to properties on the controller
     [gridOptions]="gridOptions"

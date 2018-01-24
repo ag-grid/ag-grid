@@ -124,7 +124,7 @@
 
     // src/app/my-grid-application/my-grid-application.component.html
     &lt;div style="width: 200px;"&gt;
-    &lt;ag-grid-angular #agGrid style="width: 100%; height: 200px;" class="ag-theme-fresh"
+    &lt;ag-grid-angular #agGrid style="width: 100%; height: 200px;" class="ag-theme-balham"
     [gridOptions]="gridOptions"&gt;
     &lt;/ag-grid-angular&gt;
     &lt;/div&gt;
@@ -164,7 +164,7 @@
 <snippet>
     "styles": [
     "../node_modules/ag-grid/dist/styles/ag-grid.css",
-    "../node_modules/ag-grid/dist/styles/ag-theme-fresh.css"
+    "../node_modules/ag-grid/dist/styles/ag-theme-balham.css"
     ],
 </snippet>
 

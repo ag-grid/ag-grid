@@ -42,7 +42,7 @@ $ bower install ag-grid-polymer
      <dom-module id="rich-grid-example">
          <template>
              <link rel="stylesheet" href="../../bower_components/ag-grid/dist/styles/ag-grid.css">
-             <link rel="stylesheet" href="../../bower_components/ag-grid/dist/styles/ag-theme-fresh.css">
+             <link rel="stylesheet" href="../../bower_components/ag-grid/dist/styles/ag-theme-balham.css">
              <link rel="stylesheet" href="rich-grid-example.css">
      
              <div style="width: 800px;">
@@ -82,7 +82,7 @@ $ bower install ag-grid-polymer
                      <!-- Properties can be either hypenated or camelCased-->
                      <ag-grid-polymer id="myGrid"
                                       style="height: 350px; width: 800px;display: block;"
-                                      class="ag-theme-fresh ag-basic"
+                                      class="ag-theme-balham ag-basic"
                                       enableColResize
                                       enableSorting
                                       enable-filter

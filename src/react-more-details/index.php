@@ -208,7 +208,7 @@ resolve: {
     Once this is done, we can then access the two css files that we need as follows:
     <snippet>
 import 'ag-grid/dist/styles/ag-grid.css';
-import 'ag-grid-root/dist/styles/ag-theme-fresh.css';</snippet>
+import 'ag-grid-root/dist/styles/ag-theme-balham.css';</snippet>
     You will also need to configure CSS loaders for Webpack - you can find a full working example of this in our <a
                 href="https://github.com/ag-grid/ag-grid-react-example">React Examples</a>  Repo on Github.
     </p>
@@ -217,7 +217,7 @@ import 'ag-grid-root/dist/styles/ag-theme-fresh.css';</snippet>
 
     <p>
         You need to set a theme for the grid. You do this by giving the grid a CSS class, one
-        of <code>ag-theme-material</code>, <code>ag-theme-fresh</code>, <code>ag-theme-blue</code> or <code>ag-theme-dark</code>. You must have the CSS loaded as specified above
+        of <code>ag-theme-balham</code>, <code>ag-theme-material</code>, <code>ag-theme-fresh</code>, <code>ag-theme-blue</code> or <code>ag-theme-dark</code>. You must have the CSS loaded as specified above
         for this to work.
     </p>
 
@@ -226,11 +226,11 @@ import 'ag-grid-root/dist/styles/ag-theme-fresh.css';</snippet>
 // if you only every wanted to use one style of grid
 
 // HTML
-&lt;div class="ag-theme-fresh"&gt;
+&lt;div class="ag-theme-balham"&gt;
     ...
 
 // OR JSX
-&lt;div className="ag-theme-fresh"&gt;
+&lt;div className="ag-theme-balham"&gt;
     ...
 
     // then later, use the grid
@@ -341,7 +341,7 @@ class TopMoversGrid extends Component {
 
     render() {
         return (
-            &lt;div className="ag-theme-fresh"&gt;
+            &lt;div className="ag-theme-balham"&gt;
                 &lt;AgGridReact
                     // events
                     onGridReady={this.onGridReady}&gt;
