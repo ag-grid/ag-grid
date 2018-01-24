@@ -12,9 +12,11 @@ import {SetFilterModel, SetFilterModelValuesType} from "./setFilterModel";
 import {SetFilterListItem} from "./setFilterListItem";
 import {VirtualList, VirtualListModel} from "../rendering/virtualList";
 
+enum CheckboxState {CHECKED, UNCHECKED, INTERMEDIATE};
+
 export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
+
     private model: SetFilterModel;
-    private suppressSorting: boolean;
 
     @QuerySelector('#selectAll')
     private eSelectAll: HTMLInputElement;
@@ -25,6 +27,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     @RefSelector('ag-filter-loading')
     private eFilterLoading: HTMLInputElement;
 
+    private selectAllState: CheckboxState;
 
     private virtualList: VirtualList;
     private debounceFilterChanged: () => void;
@@ -32,8 +35,6 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     private eCheckedIcon: HTMLElement;
     private eUncheckedIcon: HTMLElement;
     private eIndeterminateCheckedIcon: HTMLElement;
-
-    private selected: boolean = true;
 
     constructor() {
         super();
@@ -54,19 +55,25 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
     }
 
     private updateCheckboxIcon() {
-        if (this.eSelectAll.children) {
-            for (let i = 0; i < this.eSelectAll.children.length; i++) {
-                this.eSelectAll.removeChild(this.eSelectAll.children.item(i));
-            }
+        _.removeAllChildren(this.eSelectAll);
+
+        let icon: HTMLElement;
+        switch (this.selectAllState) {
+            case CheckboxState.INTERMEDIATE:
+                icon = this.eIndeterminateCheckedIcon;
+                break;
+            case CheckboxState.CHECKED:
+                icon = this.eCheckedIcon;
+                break;
+            case CheckboxState.UNCHECKED:
+                icon = this.eUncheckedIcon;
+                break;
+            default: // default happens when initialising for first time
+                icon = this.eCheckedIcon;
+                break;
         }
 
-        if (this.eSelectAll.indeterminate) {
-            this.eSelectAll.appendChild(this.eIndeterminateCheckedIcon);
-        } else if (this.eSelectAll.checked) {
-            this.eSelectAll.appendChild(this.eCheckedIcon);
-        } else {
-            this.eSelectAll.appendChild(this.eUncheckedIcon);
-        }
+        this.eSelectAll.appendChild(icon);
     }
 
     public setLoading(loading:boolean):void{
@@ -168,7 +175,7 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
     public onNewRowsLoaded(): void {
         let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
-        let isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
+        let isSelectAll = this.selectAllState===CheckboxState.CHECKED;
 
         // default is reset
         this.model.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
@@ -185,17 +192,19 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
      * @param notify If we should let know the model that the values of the filter have changed
      */
     public setFilterValues(options: string[], selectAll:boolean = false, notify:boolean = true): void {
-        let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
-        let isSelectAll = selectAll  || (this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate);
+        this.model.onFilterValuesReady (()=>{
+            let keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
+            let isSelectAll = selectAll  || (this.selectAllState===CheckboxState.CHECKED);
 
-        this.model.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
-        this.model.refreshValues(options, keepSelection, isSelectAll);
-        this.updateSelectAll();
-        options.forEach(option=>this.model.selectValue(option));
-        this.virtualList.refresh();
-        if (notify){
-            this.debounceFilterChanged();
-        }
+            this.model.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
+            this.model.refreshValues(options, keepSelection, isSelectAll);
+            this.updateSelectAll();
+            options.forEach(option=>this.model.selectValue(option));
+            this.virtualList.refresh();
+            if (notify){
+                this.debounceFilterChanged();
+            }
+        });
     }
 
     //noinspection JSUnusedGlobalSymbols
@@ -232,13 +241,11 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
     private updateSelectAll(): void {
         if (this.model.isEverythingSelected()) {
-            this.eSelectAll.indeterminate = false;
-            this.eSelectAll.checked = true;
+            this.selectAllState = CheckboxState.CHECKED;
         } else if (this.model.isNothingSelected()) {
-            this.eSelectAll.indeterminate = false;
-            this.eSelectAll.checked = false;
+            this.selectAllState = CheckboxState.UNCHECKED;
         } else {
-            this.eSelectAll.indeterminate = true;
+            this.selectAllState = CheckboxState.INTERMEDIATE;
         }
         this.updateCheckboxIcon();
     }
@@ -253,12 +260,16 @@ export class SetFilter extends BaseFilter <string, ISetFilterParams, string[]> {
 
     private onSelectAll(event: Event) {
         _.addAgGridEventPath(event);
-        this.eSelectAll.checked = !this.eSelectAll.checked;
+        if (this.selectAllState === CheckboxState.CHECKED) {
+            this.selectAllState = CheckboxState.UNCHECKED;
+        } else {
+            this.selectAllState = CheckboxState.CHECKED;
+        }
         this.doSelectAll();
     }
 
     private doSelectAll(): void {
-        let checked = this.eSelectAll.checked;
+        let checked = this.selectAllState === CheckboxState.CHECKED;
         if (checked) {
             this.model.selectEverything();
         } else {

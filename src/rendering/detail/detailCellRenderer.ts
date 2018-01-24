@@ -9,7 +9,8 @@ import {
     GridOptions,
     DetailGridInfo,
     GridOptionsWrapper,
-    ICellRendererParams
+    ICellRendererParams,
+    Environment
 } from "ag-grid/main";
 
 export class DetailCellRenderer extends Component {
@@ -20,8 +21,8 @@ export class DetailCellRenderer extends Component {
         </div>`;
 
     @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('environment') private environment: Environment;
 
     private detailGridOptions: GridOptions;
 
@@ -37,6 +38,7 @@ export class DetailCellRenderer extends Component {
         this.selectAndSetTemplate(params);
 
         if (_.exists(this.eDetailGrid)) {
+            this.addThemeToDetailGrid();
             this.createDetailsGrid(params);
             this.registerDetailWithMaster(params.node);
             this.loadRowData(params);
@@ -49,8 +51,17 @@ export class DetailCellRenderer extends Component {
         }
     }
 
+    private addThemeToDetailGrid(): void {
+        // this is needed by environment service of the child grid, the class needs to be on
+        // the grid div itself - the browser's CSS on the other hand just inherits from the parent grid theme.
+        let theme = this.environment.getTheme();
+        if (_.exists(theme)) {
+            _.addCssClass(this.eDetailGrid, theme);
+        }
+    }
+
     private setupGrabMouseWheelEvent(): void {
-        let mouseWheelListener = ()=> {
+        let mouseWheelListener = (event: WheelEvent) => {
             event.stopPropagation();
         };
 
@@ -79,7 +90,7 @@ export class DetailCellRenderer extends Component {
         });
     }
 
-    public selectAndSetTemplate(params: ICellRendererParams): void {
+    private selectAndSetTemplate(params: ICellRendererParams): void {
         let paramsAny = <any> params;
 
         if (_.missing(paramsAny.template)) {
@@ -113,7 +124,12 @@ export class DetailCellRenderer extends Component {
 
         // IMPORTANT - gridOptions must be cloned
         this.detailGridOptions = _.cloneObject(gridOptions);
-        new Grid(this.eDetailGrid, this.detailGridOptions);
+        //Passing a dummy agGridReact bean in case this is for a REACT grid
+        new Grid(this.eDetailGrid, this.detailGridOptions, {
+            seedBeanInstances: {
+                agGridReact: {}
+            }
+        });
 
         this.addDestroyFunc( () => this.detailGridOptions.api.destroy() );
     }
@@ -133,7 +149,7 @@ export class DetailCellRenderer extends Component {
         userFunc(funcParams);
     }
 
-    public setRowData(rowData: any[]): void {
+    private setRowData(rowData: any[]): void {
         this.detailGridOptions.api.setRowData(rowData);
     }
 

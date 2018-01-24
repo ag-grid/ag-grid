@@ -213,7 +213,7 @@ export class ColumnComponent extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.setColumnAggFunc(this.column, value);
+                this.columnController.setColumnAggFunc(this.column, value, "toolPanelDragAndDrop");
             }
         };
 

@@ -20,7 +20,7 @@ import {
     Utils
 } from "ag-grid/main";
 
-export class RenderedGroup extends Component {
+export class ToolPanelGroupComp extends Component {
 
     private static TEMPLATE =
         '<div class="ag-column-select-column-group">' +
@@ -68,7 +68,7 @@ export class RenderedGroup extends Component {
 
     @PostConstruct
     public init(): void {
-        this.setTemplate(RenderedGroup.TEMPLATE);
+        this.setTemplate(ToolPanelGroupComp.TEMPLATE);
 
         this.instantiate(this.context);
 
@@ -89,7 +89,7 @@ export class RenderedGroup extends Component {
         this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
 
         let eCheckboxAndText = this.queryForHtmlElement('#eCheckboxAndText');
-        let touchListener = new TouchListener(eCheckboxAndText);
+        let touchListener = new TouchListener(eCheckboxAndText, true);
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onClick.bind(this) );
         this.addDestroyFunc( touchListener.destroy.bind(touchListener) );
 
@@ -148,13 +148,15 @@ export class RenderedGroup extends Component {
         this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
 
         let eColumnGroupIcons = this.queryForHtmlElement('#eColumnGroupIcons');
-        let touchListener = new TouchListener(eColumnGroupIcons);
+        let touchListener = new TouchListener(eColumnGroupIcons, true);
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
         this.addDestroyFunc( touchListener.destroy.bind(touchListener) );
     }
 
     private onClick(): void {
-        this.cbSelect.setSelected(!this.cbSelect.isSelected());
+        if (!this.cbSelect.isReadOnly()) {
+            this.cbSelect.setSelected(!this.cbSelect.isSelected());
+        }
     }
 
     private onCheckboxChanged(): void {
@@ -170,7 +172,8 @@ export class RenderedGroup extends Component {
                 this.actionUnCheckedReduce(childColumns)
             }
         } else {
-            this.columnController.setColumnsVisible(childColumns, selected);
+            let allowedColumns = childColumns.filter( c => !c.isLockVisible() );
+            this.columnController.setColumnsVisible(allowedColumns, selected, "toolPanelUi");
         }
     }
 
@@ -193,13 +196,13 @@ export class RenderedGroup extends Component {
         });
 
         if (columnsToUnPivot.length>0) {
-            this.columnController.removePivotColumns(columnsToUnPivot);
+            this.columnController.removePivotColumns(columnsToUnPivot, "toolPanelUi");
         }
         if (columnsToUnGroup.length>0) {
-            this.columnController.removeRowGroupColumns(columnsToUnGroup);
+            this.columnController.removeRowGroupColumns(columnsToUnGroup, "toolPanelUi");
         }
         if (columnsToUnValue.length>0) {
-            this.columnController.removeValueColumns(columnsToUnValue);
+            this.columnController.removeValueColumns(columnsToUnValue, "toolPanelUi");
         }
     }
 
@@ -224,25 +227,54 @@ export class RenderedGroup extends Component {
         });
 
         if (columnsToAggregate.length>0) {
-            this.columnController.addValueColumns(columnsToAggregate);
+            this.columnController.addValueColumns(columnsToAggregate, "toolPanelUi");
         }
         if (columnsToGroup.length>0) {
-            this.columnController.addRowGroupColumns(columnsToGroup);
+            this.columnController.addRowGroupColumns(columnsToGroup, "toolPanelUi");
         }
         if (columnsToPivot.length>0) {
-            this.columnController.addPivotColumns(columnsToPivot);
+            this.columnController.addPivotColumns(columnsToPivot, "toolPanelUi");
         }
 
     }
 
     private onColumnStateChanged(): void {
-        let columnsReduced = this.columnController.isPivotMode();
+        let selectedValue = this.workOutSelectedValue();
+        let readOnlyValue = this.workOutReadOnlyValue();
+        this.processingColumnStateChange = true;
+        this.cbSelect.setSelected(selectedValue);
+        this.cbSelect.setReadOnly(readOnlyValue);
+        this.processingColumnStateChange = false;
+    }
+
+    private workOutReadOnlyValue(): boolean {
+        let pivotMode = this.columnController.isPivotMode();
+
+        let colsThatCanAction = 0;
+
+        this.columnGroup.getLeafColumns().forEach( col => {
+            if (pivotMode) {
+                if (col.isAnyFunctionAllowed()) {
+                    colsThatCanAction++;
+                }
+            } else {
+                if (!col.isLockVisible()) {
+                    colsThatCanAction++;
+                }
+            }
+        });
+
+        return colsThatCanAction === 0;
+    }
+
+    private workOutSelectedValue(): boolean {
+        let pivotMode = this.columnController.isPivotMode();
 
         let visibleChildCount = 0;
         let hiddenChildCount = 0;
 
         this.columnGroup.getLeafColumns().forEach( (column: Column) => {
-            if (this.isColumnVisible(column, columnsReduced)) {
+            if (this.isColumnVisible(column, pivotMode)) {
                 visibleChildCount++;
             } else {
                 hiddenChildCount++;
@@ -258,13 +290,11 @@ export class RenderedGroup extends Component {
             selectedValue = false;
         }
 
-        this.processingColumnStateChange = true;
-        this.cbSelect.setSelected(selectedValue);
-        this.processingColumnStateChange = false;
+        return selectedValue;
     }
 
-    private isColumnVisible(column: Column, columnsReduced: boolean): boolean {
-        if (columnsReduced) {
+    private isColumnVisible(column: Column, pivotMode: boolean): boolean {
+        if (pivotMode) {
             let pivoted = column.isPivotActive();
             let grouped = column.isRowGroupActive();
             let aggregated = column.isValueActive();

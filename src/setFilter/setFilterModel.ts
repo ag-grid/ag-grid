@@ -5,6 +5,7 @@ import {TextFormatter} from "ag-grid/main";
 import {TextFilter} from "ag-grid/main";
 import {InMemoryRowModel, IRowModel, Constants} from 'ag-grid';
 import {SetFilterValuesFunc, SetFilterValuesFuncParams} from "ag-grid/main";
+import {ExternalPromise, Promise} from 'ag-grid';
 
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
@@ -22,14 +23,14 @@ export class SetFilterModel {
 
     private inMemoryRowModel: InMemoryRowModel;
     private valueGetter: any;
-    private allUniqueValues: any[]; // all values in the table
-    private availableUniqueValues: any[]; // all values not filtered by other rows
+    private allUniqueValues: string[]; // all values in the table
+    private availableUniqueValues: string[]; // all values not filtered by other rows
     private displayedValues: any[]; // all values we are rendering on screen (ie after mini filter)
-    private miniFilter: any;
-    private selectedValuesCount: any;
-    private selectedValuesMap: any;
+    private miniFilter: string;
+    private selectedValuesCount: number;
+    private selectedValuesMap: {[value: string]: any};
     private suppressSorting: boolean;
-    private formatter:TextFormatter;
+    private formatter: TextFormatter;
 
     // to make code more readable, we work these out once, and
     // then refer to each time. both are derived from the filterParams
@@ -39,6 +40,9 @@ export class SetFilterModel {
     private doesRowPassOtherFilters: any;
     private modelUpdatedFunc: (values: string[]) => void;
     private isLoadingFunc: (loading: boolean) => void;
+
+    private filterValuesExternalPromise: ExternalPromise<void>;
+    private filterValuesPromise: Promise<void>;
 
     constructor(
         colDef: ColDef,
@@ -129,7 +133,10 @@ export class SetFilterModel {
         if (this.areValuesSync()) {
             let valuesToUse: string[] = this.extractSyncValuesToUse();
             this.setValues(valuesToUse);
+            this.filterValuesPromise = Promise.resolve(null);
         } else {
+            this.filterValuesExternalPromise = Promise.external<void>();
+            this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
             let callback = <SetFilterValuesFunc> this.filterParams.values;
@@ -143,6 +150,7 @@ export class SetFilterModel {
     private onAsyncValuesLoaded(values:string[]): void {
         this.modelUpdatedFunc(values);
         this.isLoadingFunc(false);
+        this.filterValuesExternalPromise.resolve(null);
     }
 
     private areValuesSync() {
@@ -249,7 +257,7 @@ export class SetFilterModel {
     }
 
     //sets mini filter. returns true if it changed from last value, otherwise false
-    public setMiniFilter(newMiniFilter: any) {
+    public setMiniFilter(newMiniFilter: string): boolean {
         newMiniFilter = Utils.makeNull(newMiniFilter);
         if (this.miniFilter === newMiniFilter) {
             //do nothing if filter has not changed
@@ -273,13 +281,25 @@ export class SetFilterModel {
 
         // if filter present, we filter down the list
         this.displayedValues = [];
-        let miniFilterFormatted = this.formatter(this.miniFilter);
+        const miniFilter = this.formatter(this.miniFilter);
+
+        // make upper case to have search case insensitive
+        const miniFilterUpperCase = miniFilter.toUpperCase();
+
         for (let i = 0, l = this.availableUniqueValues.length; i < l; i++) {
             let filteredValue = this.availableUniqueValues[i];
             if (filteredValue){
-                let filteredValueFormatted = this.formatter(filteredValue.toString());
-                if (filteredValueFormatted !== null && filteredValueFormatted.indexOf(miniFilterFormatted) >= 0) {
-                    this.displayedValues.push(filteredValue);
+                const value = this.formatter(filteredValue.toString());
+
+                if (value !== null) {
+
+                    // allow for case insensitive searches, make both filter and value uppercase
+                    const valueUpperCase = value.toUpperCase();
+
+                    if (valueUpperCase.indexOf(miniFilterUpperCase) >= 0) {
+                        this.displayedValues.push(filteredValue);
+                    }
+
                 }
 
             }
@@ -328,11 +348,11 @@ export class SetFilterModel {
         }
     }
 
-    public isFilterActive() {
+    public isFilterActive(): boolean {
         return this.allUniqueValues.length !== this.selectedValuesCount;
     }
 
-    public selectNothing() {
+    public selectNothing(): void {
         if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter){
             this.selectedValuesMap = {};
             this.selectedValuesCount = 0;
@@ -341,11 +361,11 @@ export class SetFilterModel {
         }
     }
 
-    public getUniqueValueCount() {
+    public getUniqueValueCount(): number {
         return this.allUniqueValues.length;
     }
 
-    public getUniqueValue(index: any) {
+    public getUniqueValue(index: any): string {
         return this.allUniqueValues[index];
     }
 
@@ -370,7 +390,7 @@ export class SetFilterModel {
         return this.selectedValuesMap[safeKey] !== undefined;
     }
 
-    public isEverythingSelected() {
+    public isEverythingSelected(): boolean {
         if (!this.filterParams.selectAllOnMiniFilter || !this.miniFilter){
             return this.allUniqueValues.length === this.selectedValuesCount;
         } else {
@@ -398,7 +418,7 @@ export class SetFilterModel {
         return selectedValues;
     }
 
-    public setModel(model: string[], isSelectAll = false) {
+    public setModel(model: string[], isSelectAll = false): void {
         if (model && !isSelectAll) {
             this.selectNothing();
             for (let i = 0; i < model.length; i++) {
@@ -411,5 +431,14 @@ export class SetFilterModel {
         } else {
             this.selectEverything();
         }
+    }
+
+    public onFilterValuesReady (callback:()=>void):void{
+        //This guarantees that if the user is racing to set values async into the set filter, only the first instance
+        //will be used
+        // ie Values are async and the user manually wants to override them before the retrieval of values is triggered
+        // (set filter values in the following example)
+        // http://plnkr.co/edit/eFka7ynvPj68tL3VJFWf?p=preview
+        this.filterValuesPromise.firstOneOnly(callback)
     }
 }

@@ -24,7 +24,7 @@ import {
     Utils
 } from "ag-grid/main";
 
-export class RenderedColumn extends Component {
+export class ToolPanelColumnComp extends Component {
 
     private static TEMPLATE =
         '<div class="ag-column-select-column">' +
@@ -63,7 +63,7 @@ export class RenderedColumn extends Component {
     @PostConstruct
     public init(): void {
 
-        this.setTemplate(RenderedColumn.TEMPLATE);
+        this.setTemplate(ToolPanelColumnComp.TEMPLATE);
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         this.eText.innerHTML = this.displayName;
@@ -94,7 +94,7 @@ export class RenderedColumn extends Component {
     }
 
     private addTap(): void {
-        let touchListener = new TouchListener(this.getGui());
+        let touchListener = new TouchListener(this.getGui(), true);
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onClick.bind(this));
         this.addDestroyFunc( touchListener.destroy.bind(touchListener) );
     }
@@ -120,7 +120,7 @@ export class RenderedColumn extends Component {
                 this.actionUnCheckedPivotMode();
             }
         } else {
-            this.columnController.setColumnVisible(this.column, event.selected);
+            this.columnController.setColumnVisible(this.column, event.selected, "columnMenu");
         }
     }
 
@@ -142,7 +142,7 @@ export class RenderedColumn extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                columnController.removePivotColumn(column);
+                columnController.removePivotColumn(column, "columnMenu");
             }
         }
         // remove value if column is value
@@ -158,7 +158,7 @@ export class RenderedColumn extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                columnController.removeValueColumn(column);
+                columnController.removeValueColumn(column, "columnMenu");
             }
         }
         // remove group if column is grouped
@@ -174,7 +174,7 @@ export class RenderedColumn extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                columnController.removeRowGroupColumn(column);
+                columnController.removeRowGroupColumn(column, "columnMenu");
             }
         }
     }
@@ -199,7 +199,7 @@ export class RenderedColumn extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.addValueColumn(column);
+                this.columnController.addValueColumn(column, "columnMenu");
             }
         } else if (column.isAllowRowGroup()) {
             if (functionPassive) {
@@ -213,7 +213,7 @@ export class RenderedColumn extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.addRowGroupColumn(column);
+                this.columnController.addRowGroupColumn(column, "columnMenu");
             }
         } else if (column.isAllowPivot()) {
             if (functionPassive) {
@@ -227,7 +227,7 @@ export class RenderedColumn extends Component {
                 };
                 this.eventService.dispatchEvent(event);
             } else {
-                this.columnController.addPivotColumn(column);
+                this.columnController.addPivotColumn(column, "columnMenu");
             }
         }
     }
@@ -264,12 +264,18 @@ export class RenderedColumn extends Component {
             this.cbSelect.setSelected(this.column.isVisible());
         }
 
-        // read only in pivot mode if:
-        let checkboxReadOnly = isPivotMode
-            // a) gui is not allowed make any changes or
-            && (this.gridOptionsWrapper.isFunctionsReadOnly()
-            // b) column is not allow any functions on it
-            || !this.column.isAnyFunctionAllowed());
+        let checkboxReadOnly: boolean;
+        if (isPivotMode) {
+            // when in pivot mode, the item should be read only if:
+            //  a) gui is not allowed make any changes
+            let functionsReadOnly = this.gridOptionsWrapper.isFunctionsReadOnly();
+            //  b) column is not allow any functions on it
+            let noFunctionsAllowed = !this.column.isAnyFunctionAllowed();
+            checkboxReadOnly = functionsReadOnly || noFunctionsAllowed;
+        } else {
+            // when in normal mode, the checkbox is read only if visibility is locked
+            checkboxReadOnly = this.column.isLockVisible();
+        }
 
         this.cbSelect.setReadOnly(checkboxReadOnly);
 
