@@ -2,7 +2,7 @@
 
 set -e
 
-git-checkout-all-into-latest.sh
+git-checkout-fw-into-latest.sh $1
 cd latest
 dev-npm-install-all.sh
 dev-build-and-install-once.sh

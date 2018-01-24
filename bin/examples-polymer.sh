@@ -11,7 +11,7 @@ current_dir=$(pwd)
 echo =============================================================================================
 echo =============================================================================================
 echo =============================================================================================
-echo "Preparing examples for aurelia"
+echo "Preparing examples for polymer"
 
 ## for all the package.json containers replace version number
 declare -a subfolders=("ag-grid-polymer-example")
@@ -29,13 +29,13 @@ do
     bower link
     cd ../ag-grid-polymer-example
 
-    bower link ag-grid
-    bower link ag-grid-enterprise
-    bower link ag-grid-polymer
-
     npm i
     bower install
 
+    bower link ag-grid
+    bower link ag-grid-enterprise
+    bower link ag-grid-polymer
+    
     cd "$current_dir"
     dist-just-module.sh $subfolder
     if [ $? -ne 0 ]
