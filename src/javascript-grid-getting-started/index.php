@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "JavaScript Grid";
-$pageDescription = "JavaScript Grid";
+$pageTitle = "ag-Grid Reference: Choose Your Framework";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. We support all the najor JavaScript frameworks, this page is the jumping off point for all the individual guides.";
 $pageKeyboards = "JavaScript Grid";
 $pageGroup = "basics";
 define('skipInPageNav', true);

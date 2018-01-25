@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "polymer Grid";
-$pageDescription = "ag-Grid can be used as a data grid inside your polymer application. This page details how to get started using ag-Grid inside an polymer application.";
+$pageTitle = "ag-Grid Reference: Polymer Datagrid - More Details";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page covers setting up the ag-Grid Polymer Component, ag-Grid Polymer dependency and getting through some of the fundamental setup.";
 $pageKeyboards = "polymer Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';

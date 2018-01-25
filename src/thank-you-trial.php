@@ -5,7 +5,7 @@ include_once 'includes/html-helpers.php';
 <html class="stretch-html">
 <head lang="en">
 <?php
-meta_and_links("Thanks!", "ag-Grid Javascript Grid Evaluation Request", "Thank you page for new evaluation request", true);
+meta_and_links("ag-Grid: Thanks, we will be in touch.", "ag-Grid Javascript Grid Evaluation Request", "Thank you page for new evaluation request", true);
 ?>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>

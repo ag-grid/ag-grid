@@ -1,7 +1,6 @@
 <?php
-$key = "Angular Pinned Row";
-$pageTitle = "ag-Grid Angular Pinned Row";
-$pageDescription = "ag-Grid Angular Pinned Row Example";
+$pageTitle = "ag-Grid Examples: Angular Pinned Row";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows an example of Pinned Rows with Angular.";
 $pageKeyboards = "ag-Grid angular pinned row";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';

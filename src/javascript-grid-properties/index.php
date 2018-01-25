@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Properties";
-$pageDescription = "Learn how each property impacts ag-Grid.";
+$pageTitle = "ag-Grid Reference: Properties";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference guide covers the properties that are available the GridOptions.";
 $pageKeyboards = "javascript data grid ag-Grid properties";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';

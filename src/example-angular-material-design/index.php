@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Angular with Material Design Components";
-$pageDescription = "ag-Grid Angular with Material Design Components";
+$pageTitle = "ag-Grid Examples: Angular with Material Design Components";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page demostrates Angular with Material Design Components.";
 $pageKeyboards = "ag-Grid angular features third party material design component";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';

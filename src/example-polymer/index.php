@@ -1,7 +1,6 @@
 <?php
-$key = "Polymer Examples";
-$pageTitle = "ag-Grid Polymer Examples";
-$pageDescription = "ag-Grid Polymer Examples";
+$pageTitle = "ag-Grid Examples: Polymer";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows Polymer examples.";
 $pageKeyboards = "ag-Grid Polymer examples";
 $pageGroup = "examples";
 define('skipInPageNav', true);

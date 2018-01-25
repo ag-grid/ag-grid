@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Reference: In Memory Row Model";
-$pageDescription = "Row data in ag-Grid is stored internally in a row model. This page describes how this row model works and how to interact with it.";
+$pageTitle = "ag-Grid Row Models: In Memory";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the simplest one is the In Memory model. We recommend using this as a default.";
 $pageKeyboards = "ag-Grid data row model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';

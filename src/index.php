@@ -9,9 +9,9 @@ $version = 'latest';
 <html lang="en">
 <head>
 <?
-$title = 'Best HTML 5 Grid in the World';
+$title = 'ag-Grid: The Best HTML5 Datagrid in the World';
 $keywords = 'javascript data grid react angularjs angular 2 web components aurelia';
-$description = 'A feature rich datagrid designed for Enterprise. Easily integrate with your framework to deliver filtering, grouping, aggregation, pivoting and much more.';
+$description = 'ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. Easily integrate with your framework to deliver filtering, grouping, aggregation, pivoting and much more. Version 16 just released.';
 meta_and_links($title, $keywords, $description, false);
 ?>
 <link rel="stylesheet" href="dist/homepage.css">
@@ -67,7 +67,7 @@ meta_and_links($title, $keywords, $description, false);
     <div id="stage-frameworks">
         <section id="news-flash">
             <div>
-                January 23rd, 2018: Version 16 released featuring Row Drag & Drop and Locked Columns. <a href="/ag-grid-blog-16-0-0/">See what is new</a>.
+                January 24th, 2018: Version 16 released featuring Row Drag & Drop and Locked Columns. <a href="/ag-grid-blog-16-0-0/">See what is new</a>.
             </div>
         </section>
 

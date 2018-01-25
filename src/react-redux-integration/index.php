@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "React Redux Integration";
-$pageDescription = "ag-Grid can be used as a data grid inside your React application. This page details how to get started.";
+$pageTitle = "ag-Grid Detailed Guides: React Redux Integration";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is a detailed guide on how to use with React and Redux. We explore how a React component using ag-Grid can take advantage of a Redux store to simplify state management.";
 $pageKeyboards = "React Redux Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';

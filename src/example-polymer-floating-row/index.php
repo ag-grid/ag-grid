@@ -1,7 +1,6 @@
 <?php
-$key = "Polymer Pinned Row";
-$pageTitle = "ag-Grid Polymer Pinned Row";
-$pageDescription = "ag-Grid Polymer Pinned Row Example";
+$pageTitle = "ag-Grid Examples: Polymer Pinned Row";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows a Polymer pinned row example.";
 $pageKeyboards = "ag-Grid polymer pinned row";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';

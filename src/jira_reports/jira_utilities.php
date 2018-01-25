@@ -10,6 +10,7 @@ const PIPELINE_SECTIONS = array(
     'epic_by_priority' => JIRA_ENDPOINT . '11727+order+by+cf[10005]+asc+%2C+priority+desc',
     'parked' => JIRA_ENDPOINT . '11732',
     'changelog' => JIRA_ENDPOINT . '10203+order+by+fixversion+desc',
+    'kanban' => JIRA_ENDPOINT . '11716+order+by+fixversion+desc'
 
 );
 

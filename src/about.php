@@ -5,7 +5,7 @@ include_once 'includes/html-helpers.php';
 <html>
 <head lang="en">
 <?php
-meta_and_links("About Us", "About ag-Grid", "This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
+meta_and_links("ag-Grid: About our Company", "About ag-Grid", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is the story of ag-Grid and explains our mission, where we came from and who we are.", true);
 ?>
 <link rel="stylesheet" href="dist/homepage.css">
 </head>

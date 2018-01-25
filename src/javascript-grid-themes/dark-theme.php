@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Dark Theme";
-$pageDescription = "ag-Grid Dark Theme";
+$pageTitle = "ag-Grid Themes: The Dark Datagrid Theme";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It comes with five themes out of the box, this page covers the Dark Theme for your datagrid. This theme has proved very popular for financial applications.";
 $pageKeyboards = "ag-Grid Dark Theme";
 $pageGroup = "themes";
 include '../documentation-main/documentation_header.php';

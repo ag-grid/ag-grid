@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Web Component Grid";
-$pageDescription = "ag-Grid can be used as a Web Component grid inside your application. This page details how to get started.";
+$pageTitle = "ag-Grid: The Best Web Component Datagrid in the World";
+$pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Web Components to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "Web Component Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';

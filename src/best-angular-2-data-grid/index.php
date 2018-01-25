@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "Angular 2 Grid";
-$pageDescription = "A feature rich data grid designed for Enterprise. Easily integrate with Angular 2 to deliver filtering, grouping, aggregation, pivoting and much more.";
+$pageTitle = "ag-Grid: The Best Angular Datagrid in the World";
+$pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Angular to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "Angular 2 Grid";
 $pageGroup = "basics";
 define('skipInPageNav', true);

@@ -1,7 +1,6 @@
 <?php
-$key = "React Dynamic";
-$pageTitle = "ag-Grid React Dynamic Components";
-$pageDescription = "Examples showing React Components as Cell Renderers";
+$pageTitle = "ag-Grid Examples: React Dynamic Components";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows examples showing React Components as Cell Renderers.";
 $pageKeyboards = "ag-Grid react grid component dynamic cell renderer";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';

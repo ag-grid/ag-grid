@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Styling";
-$pageDescription = "ag-Grid Styling";
+$pageTitle = "ag-Grid Themes: Overview of our Themes.";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It comes with five themes out of the box, this page covers how to use these themes, how to style theme and when to create your own.";
 $pageKeyboards = "ag-Grid Styling";
 $pageGroup = "themes";
 include '../documentation-main/documentation_header.php';

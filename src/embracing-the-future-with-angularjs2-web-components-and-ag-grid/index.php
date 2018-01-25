@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "ag-Grid Blog: Embracing the Future with Angular 2, Web Components and ag-Grid";
+$pageTitle = "ag-Grid Blog: Embracing the Future: Angular 2 and Web Components";
 $pageDescription = "A discussion on how ag-Grid is positioning itself to take advantage of Angular 2 and Web Components.";
 $pageKeyboards = "web components Angular 2 ag-grid grid";
 

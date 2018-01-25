@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid Angular Grouped Row Renderer";
-$pageDescription = "ag-Grid Angular Grouped Row Renderer Example";
+$pageTitle = "ag-Grid Examples: Angular Grouped Row Renderer";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows an example of Angular Grouped Row Renderers.";
 $pageKeyboards = "ag-Grid angular grouped row component";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';

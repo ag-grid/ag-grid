@@ -1,6 +1,6 @@
 <?php
-$pageTitle = "ag-Grid JavaScript Examples";
-$pageDescription = "ag-Grid JavaScript Examples";
+$pageTitle = "ag-Grid Examples: Plain JavaScript";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page shows Plain JavaScript examples.";
 $pageKeyboards = "ag-Grid JavaScript examples";
 $pageGroup = "examples";
 include '../documentation-main/documentation_header.php';
