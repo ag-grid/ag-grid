@@ -35,8 +35,8 @@ if (USE_LOCAL) {
     );
 // production mode, return from unpkg
 } else {
-    define(AG_GRID_SCRIPT_PATH, "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js");
-    define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.js");
+    define(AG_GRID_SCRIPT_PATH, "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.min.js");
+    define(AG_GRID_ENTERPRISE_SCRIPT_PATH, "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.min.js");
 
     $systemJsMap = array(
         "ag-grid" => "https://unpkg.com/ag-grid@" . AG_GRID_VERSION . "/dist/ag-grid.js",
