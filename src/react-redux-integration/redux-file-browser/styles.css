@@ -15,3 +15,7 @@
   color: black;
   font-size: 16px
 }
+
+.ag-react-container {
+  display: inline-block !important;
+}

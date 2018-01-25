@@ -32,12 +32,6 @@ export default class DetailCellRenderer extends Component {
                 columnDefs={this.state.colDefs}
                 rowData={this.state.rowData}
               />
-              <div className="full-width-grid-toolbar">
-                   <img className="full-width-phone-icon" src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/phone.png"/>
-                   <button><img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/fire.png"/></button>
-                   <button><img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/frost.png"/></button>
-                   <button><img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/sun.png"/></button>
-              </div>
             </div>
         );
     }

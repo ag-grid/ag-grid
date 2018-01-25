@@ -30,12 +30,6 @@ DetailCellRenderer.prototype.getTemplate = function(data) {
         '    <div class="full-width-detail"><b>Account: </b>'+data.account+'</div>' +
         '  </div>'+
         '  <div class="full-width-grid"></div>' +
-        '  <div class="full-width-grid-toolbar">' +
-        '       <img class="full-width-phone-icon" src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/phone.png"/>' +
-        '       <button><img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/fire.png"/></button>' +
-        '       <button><img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/frost.png"/></button>' +
-        '       <button><img src="https://raw.githubusercontent.com/ag-grid/ag-grid-docs/master/src/images/sun.png"/></button>' +
-        '  </div>'+
         '</div>';
 
     return template;
