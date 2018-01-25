@@ -18,3 +18,4 @@ require('./dist/styles/ag-theme-dark.css');
 require('./dist/styles/ag-theme-fresh.css');
 require('./dist/styles/ag-theme-material.css');
 require('./dist/styles/ag-theme-balham.css');
+require('./dist/styles/ag-theme-balham-dark.css');

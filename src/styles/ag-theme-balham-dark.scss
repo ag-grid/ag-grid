@@ -2,14 +2,15 @@
 @import "./flat-colors";
 
 // theme shortcuts
-$default-background: white !default;
-$chrome-background: lighten($flat-clouds, 3) !default;
-$active: $flat-belize-hole !default;
-$foreground-color: #000 !default;
-$border-color: $flat-silver !default;
-$icon-color: $flat-gray-4 !default;
-$alt-background: $flat-clouds !default;
-$odd-row-background-color: rgb(252, 253, 254) !default;
+$default-background: #2d3436 !default;
+$foreground-color: #dfe6e9 !default;
+
+$chrome-background: darken(#636e72, 30) !default;
+$active: #e17055 !default;
+$border-color: #444 !default;
+$icon-color: #ecf0f1 !default;
+$alt-background: darken(#2d3436, 3) !default;
+$odd-row-background-color: $alt-background;
 
 // Derived from above
 $foreground-color: rgba($foreground-color, $foreground-opacity) !default; // foreground
@@ -20,7 +21,7 @@ $primary-color: $active !default;
 $accent-color: $active !default;
 $range-selection-background-color: transparentize($active, 0.8) !default;
 $range-selection-highlight-color: $active !default;
-$selected-color: lighten($active, 40) !default;
+$selected-color: darken($active, 30) !default;
 
 $alt-icon-color: $default-background !default;
 $background-color: $default-background !default;
@@ -30,7 +31,7 @@ $panel-background-color: $chrome-background !default;
 $tool-panel-background-color: $chrome-background !default;
 $header-background-color: $chrome-background !default;
 
-$hover-color: $alt-background !default;
+$hover-color: lighten($alt-background, 10) !default;
 $chip-background-color: darken($alt-background, 5) !default;
 
 // delta changes
@@ -41,6 +42,21 @@ $value-change-value-highlight-background-color: transparentize(#16A085, 0.5) !de
 
 @import './ag-theme-balham-vars';
 
-.ag-theme-balham {
+.ag-theme-balham-dark {
     @include ag-theme-balham($params);
+
+    input,
+    select {
+        background-color: $odd-row-background-color;
+        color: $foreground-color;
+    }
+
+    .ag-floating-filter-body input {
+        border-width: 1px;
+        border-style: solid;
+    }
+
+    .ag-floating-filter-body input[readonly] {
+        background: rgba(48, 46, 46, 0.3);
+    }
 }

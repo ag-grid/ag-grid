@@ -24,7 +24,7 @@ const HARD_CODED_SIZES: HardCodedSize = {
         headerHeight: balhamGridSize * 8,
         virtualItemHeight: balhamGridSize * 7,
         rowHeight: balhamGridSize * 7
-    }
+   }
 };
 
 @Bean('environment')
@@ -59,7 +59,7 @@ export class Environment {
         if (theme == 'ag-theme-material') {
             return HARD_CODED_SIZES['ag-theme-material'][key];
         }
-        else if (theme == 'ag-theme-balham') {
+        else if (theme == 'ag-theme-balham' || theme == 'ag-theme-balham-dark') {
             return HARD_CODED_SIZES['ag-theme-balham'][key];
         }
         return HARD_CODED_SIZES['ag-theme-classic'][key];
