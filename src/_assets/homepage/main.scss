@@ -1,24 +1,23 @@
-@import '../common/vars.scss';
-@import '../common/bootstrap.scss';
-@import '../common/syntax-highlight.scss';
-@import '../common/grid.scss';
+@import "../common/vars.scss";
+@import "../common/bootstrap.scss";
+@import "../common/syntax-highlight.scss";
+@import "../common/grid.scss";
 
-@import '../common/nav.scss';
-@import '../common/footer.scss';
-@import '../common/content.scss';
-@import '../common/note.scss';
-@import '../common/roadshow.scss';
-@import './punch.scss';
+@import "../common/nav.scss";
+@import "../common/footer.scss";
+@import "../common/content.scss";
+@import "../common/note.scss";
+@import "../common/roadshow.scss";
+@import "./punch.scss";
 
-@import './demo-1.scss';
-@import '../pages/example.scss';
-@import '../pages/support.scss';
-@import '../pages/license-pricing.scss';
-@import '../pages/testimonials.scss';
-@import '../pages/pipeline.scss';
-@import '../pages/blog.scss';
-@import '../docs/example-runner.scss';
-
+@import "./demo-1.scss";
+@import "../pages/example.scss";
+@import "../pages/support.scss";
+@import "../pages/license-pricing.scss";
+@import "../pages/testimonials.scss";
+@import "../pages/pipeline.scss";
+@import "../pages/blog.scss";
+@import "../docs/example-runner.scss";
 
 .stretch-contents {
     background-color: red;
@@ -73,7 +72,9 @@
     }
 
     .team {
-        p, h4, img {
+        p,
+        h4,
+        img {
             max-width: 90%;
         }
 
@@ -183,7 +184,7 @@
             $i: index($frameworks, $framework);
 
             #fw-#{$framework} a {
-                background-image: url('../fw-logos/#{$framework}.svg');
+                background-image: url("../fw-logos/#{$framework}.svg");
 
                 @media (max-width: 729px) {
                     border-bottom: 1px solid $gray-300;
@@ -250,11 +251,11 @@
         p {
             margin-top: 1rem;
             &:before {
-                content: '\201C';
+                content: "\201C";
             }
 
             &:after {
-                content: '\201D';
+                content: "\201D";
             }
         }
 
@@ -352,7 +353,7 @@
                 text-align: right;
             }
 
-            input[type='text'] {
+            input[type="text"] {
                 @extend .form-control;
             }
         }
@@ -405,6 +406,7 @@
 
                 ul {
                     -webkit-padding-start: 0;
+                    padding-inline-start: 0;
                     list-style-type: none;
 
                     ul {
