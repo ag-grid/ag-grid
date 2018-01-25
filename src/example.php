@@ -53,7 +53,8 @@ meta_and_links("ag-Grid Data Grid Example", "react angular angularjs data grid e
                     <select onchange="onThemeChanged(this.value)" style="width: 90px; color: #333;"
                             class="hide-when-small">
                         <option value="">-none-</option>
-                        <option value="ag-theme-balham" selected>Balham</option>
+                        <option value="ag-theme-balham">Balham</option>
+                        <option value="ag-theme-balham-dark" selected>Balham (dark)</option>
                         <option value="ag-theme-material">Material</option>
                         <option value="ag-theme-fresh">Fresh</option>
                         <option value="ag-theme-dark">Dark</option>
@@ -78,7 +79,7 @@ meta_and_links("ag-Grid Data Grid Example", "react angular angularjs data grid e
 
 <!-- The table div -->
 <div id="grid-wrapper" style="padding: 1rem;">
-    <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-balham"></div>
+    <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-balham-dark"></div>
 </div>
 </div> <!-- example wrapper -->
 
