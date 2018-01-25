@@ -12,18 +12,14 @@ include('../includes/mediaHeader.php');
         For a detailed breakdown of items please refer to the detailed pipeline <a href="../ag-grid-pipeline/">here</a>.
     </note>
 
-    <h3>Version 16.0.0 [24-JAN-2018]</h3>
-    <p>For details of this release, check our dedicated <a href="../ag-grid-blog-X-Y-Z/">blog post for v16.0.0</a>.</p>
+    <h3>Version 16.0.0 [25-JAN-2018]</h3>
+    <p>For details of this release, check our dedicated <a href="../ag-grid-blog-16-0-0/">blog post for v16.0.0</a>.</p>
     <h4>Enhancements</h4>
     <ul>
         <li>
+            AG-116: Allow row drag and drop </li>
+        <li>
             AG-1397: Add example on how to add a dynamic component into a cell </li>
-        <li>
-            AG-1390: Row drag icon needs better graphic design </li>
-        <li>
-            AG-1384: Create cellStyleParams interface as per https://www.ag-grid.com/javascript-grid-cell-styles </li>
-        <li>
-            AG-1191: Show context menu when the user right clicks on the header </li>
         <li>
             AG-1435: Maintain cell focus on data updates </li>
         <li>
@@ -33,17 +29,23 @@ include('../includes/mediaHeader.php');
         <li>
             AG-1388: Support for Enter to commit changes to cell and to navigate to the next row </li>
         <li>
-            AG-1382: Allow the detail grid of master detail to be defined with callback </li>
-        <li>
             AG-1338: Use Value Formatter with Tooltips </li>
-        <li>
-            AG-1285: Allow disabling ctrl to add cells to a currently existing range </li>
         <li>
             AG-1208: Make setFilter mini search case insensitive </li>
         <li>
-            AG-1206: Add source information in the column events so that the user knows where the event came from ie From reset columns button </li>
+            AG-1382: Allow the detail grid of master detail to be defined with callback </li>
         <li>
             AG-1194: Add double click = expand/collapse column group </li>
+        <li>
+            AG-1390: Row drag icon needs better graphic design </li>
+        <li>
+            AG-1384: Create cellStyleParams interface as per https://www.ag-grid.com/javascript-grid-cell-styles </li>
+        <li>
+            AG-1191: Show context menu when the user right clicks on the header </li>
+        <li>
+            AG-1285: Allow disabling ctrl to add cells to a currently existing range </li>
+        <li>
+            AG-1206: Add source information in the column events so that the user knows where the event came from ie From reset columns button </li>
         <li>
             AG-1119: Add api call to hideContextMenu </li>
         <li>
@@ -52,8 +54,6 @@ include('../includes/mediaHeader.php');
             AG-514: Allow columns to be fixed so they can not be moved from their configured position </li>
         <li>
             AG-128: Add suppressHidden and suppressPinning to ColDefs </li>
-        <li>
-            AG-116: Allow row drag and drop </li>
     </ul>
     <h4>Bugs</h4>
     <ul>
