@@ -39351,7 +39351,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    LicenseManager.setLicenseKey = function (licenseKey) {
 	        LicenseManager_1.licenseKey = licenseKey;
 	    };
-	    LicenseManager.RELEASE_INFORMATION = 'MTUxMzAyODcyMTY2MQ==';
+	    LicenseManager.RELEASE_INFORMATION = 'MTUxNjgwMzAyNTAwNQ==';
 	    __decorate([
 	        main_1.Autowired('md5'),
 	        __metadata("design:type", md5_1.MD5)
