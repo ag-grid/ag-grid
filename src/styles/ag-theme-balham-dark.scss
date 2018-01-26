@@ -1,13 +1,15 @@
 @import "./ag-theme-balham-common";
 @import "./flat-colors";
 
+$secondary-foreground-color-opacity: 0.64;
+
 // theme shortcuts
 $default-background: #2d3436 !default;
-$foreground-color: #dfe6e9 !default;
+$foreground-color: #F5F5F5 !default;
 
 $chrome-background: darken(#636e72, 30) !default;
-$active: #e17055 !default;
-$border-color: #444 !default;
+$active: #00B0FF !default;
+$border-color: #424242 !default;
 $icon-color: #ecf0f1 !default;
 $alt-background: darken(#2d3436, 3) !default;
 $odd-row-background-color: $alt-background;
@@ -21,7 +23,7 @@ $primary-color: $active !default;
 $accent-color: $active !default;
 $range-selection-background-color: transparentize($active, 0.8) !default;
 $range-selection-highlight-color: $active !default;
-$selected-color: darken($active, 30) !default;
+$selected-color: darken($active, 25) !default;
 
 $alt-icon-color: $default-background !default;
 $background-color: $default-background !default;
