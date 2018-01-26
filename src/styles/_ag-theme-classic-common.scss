@@ -28,23 +28,23 @@
     }
 
     %card {
-        border: 1px solid $border-color;
         background-color: $editor-background-color;
+        border: 1px solid $border-color;
     }
 
     %tab {
+        border: 1px solid transparent;
+        border-bottom-width: 0;
         display: inline-block;
         margin: $grid-size;
         margin-bottom: 0;
         padding: $grid-size $grid-size * 2;
-        border: 1px solid transparent;
-        border-bottom-width: 0;
     }
 
     %selected-tab {
         background-color: $editor-background-color;
-        border-color: $border-color;
         border-bottom: 2px solid $editor-background-color !important;
+        border-color: $border-color;
     }
 
     @include ag-grid-theme($params);
@@ -57,7 +57,7 @@
         opacity: 0.3;
     }
 
-    [ref=north] {
+    [ref='north'] {
         .ag-column-drop {
             border: 1px solid $border-color;
             border-bottom: 0;
@@ -69,13 +69,13 @@
     }
 
     .ag-header {
-        border-bottom: 1px solid $border-color;
         background-image: $header-background-image;
+        border-bottom: 1px solid $border-color;
     }
 
     .ag-header-cell-resize::after {
-        margin-top: 0;
         height: $header-height;
+        margin-top: 0;
     }
 
     .ag-header-cell {
@@ -120,10 +120,6 @@
         margin-top: $grid-size * 2;
     }
 
-    .ag-menu .ag-menu-option {
-        line-height: $grid-size * 5;
-    }
-
     .ag-filter .ag-filter-apply-panel {
         border-top: 1px solid $border-color;
         justify-content: flex-start;
@@ -143,22 +139,36 @@
 
     .ag-column-drop-cell {
         background: $chip-background-color;
-        border-radius: 0;
         background-image: $header-background-image;
-        height: $grid-size * 4.5 !important;
         border: 1px solid $border-color;
+        border-radius: 0;
+        height: $grid-size * 4.5 !important;
+
+        .ag-column-drop-cell-button {
+            box-sizing: border-box;
+            height: calc(100% - #{$grid-size});
+            margin-bottom: $grid-size / 2;
+            margin-top: $grid-size / 2;
+        }
+
+        .ag-column-drop-cell-button:hover {
+            border: 1px solid $border-color;
+        }
     }
 
     // we do not want to color the range color when the cell is also focused
     .ag-cell-range-selected-1:not(.ag-cell-focus) {
         background-color: $ag-range-selected-color-1;
     }
+
     .ag-cell-range-selected-2:not(.ag-cell-focus) {
         background-color: $ag-range-selected-color-2;
     }
+
     .ag-cell-range-selected-3:not(.ag-cell-focus) {
         background-color: $ag-range-selected-color-3;
     }
+
     .ag-cell-range-selected-4:not(.ag-cell-focus) {
         background-color: $ag-range-selected-color-4;
     }
@@ -183,24 +193,11 @@
     }
 
     .ag-cell-inline-editing {
-        padding: 0;
         height: $row-height;
+        padding: 0;
 
         input {
             box-sizing: border-box;
-        }
-    }
-
-    .ag-column-drop-cell {
-        .ag-column-drop-cell-button {
-            box-sizing: border-box;
-            height: calc(100% - #{$grid-size});
-            margin-top: $grid-size / 2;
-            margin-bottom:  $grid-size / 2;
-        }
-
-        .ag-column-drop-cell-button:hover {
-            border: 1px solid $border-color;
         }
     }
 
@@ -231,7 +228,7 @@
     }
 
     .ag-filter .ag-filter-value {
-       line-height: $icon-size + $grid-size; 
+        line-height: $icon-size + $grid-size;
     }
 
     .ag-selection-checkbox span {
@@ -246,6 +243,7 @@
     .ag-header-cell-moving .ag-header-cell-label {
         opacity: 0.5;
     }
+
     .ag-header-cell-moving {
         background-color: map-get($params, 'header-cell-moving-background-color');
     }
@@ -253,6 +251,7 @@
     .ag-ltr .ag-pinned-right-header {
         border-left: 1px solid $border-color;
     }
+
     .ag-rtl .ag-pinned-left-header {
         border-right: 1px solid $border-color;
     }
@@ -262,10 +261,10 @@
     }
 
     .ag-overlay-loading-center {
-        background-color: #ffffff;
+        background-color: #fff;
         border: 1px solid $border-color;
         border-radius: 10px;
-        padding: 10px;
         color: black;
+        padding: 10px;
     }
 }
