@@ -1920,11 +1920,12 @@ export class ColumnController {
 
         if (_.missing(this.groupAutoColumns)) { return; }
 
-        this.gridColumns = this.groupAutoColumns.concat(this.gridColumns);
+        let autoGroupColumnIndex = this.gridOptionsWrapper.getAutoGroupColumnIndex() || 0;
+        _.insertArrayIntoArray(this.gridColumns, this.groupAutoColumns, autoGroupColumnIndex);
 
         let autoColBalancedTree = this.balancedColumnTreeBuilder.createForAutoGroups(this.groupAutoColumns, this.gridBalancedTree);
 
-        this.gridBalancedTree = autoColBalancedTree.concat(this.gridBalancedTree);
+        _.insertArrayIntoArray(this.gridBalancedTree, autoColBalancedTree, autoGroupColumnIndex);
     }
 
     // gets called after we copy down grid columns, to make sure any part of the gui
