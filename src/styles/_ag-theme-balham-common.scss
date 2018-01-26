@@ -153,7 +153,6 @@ $disabled-foreground-color-opacity: 0.38 !default;
 
     // tool panel
     .ag-tool-panel {
-        border-bottom: 1px solid $border-color;
         border-right: 1px solid $border-color;
         border-top: 1px solid $border-color;
 
@@ -237,6 +236,7 @@ $disabled-foreground-color-opacity: 0.38 !default;
     }
 
     .ag-tab-body,
+    .ag-popup-editor,
     .ag-menu {
         color: $foreground-color;
         background-color: $default-background;
