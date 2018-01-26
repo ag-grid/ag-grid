@@ -232,6 +232,7 @@ $disabled-foreground-color-opacity: 0.38 !default;
 
         .ag-tab.ag-tab-selected {
             border-bottom-color: transparent;
+            background-color: $default-background;
         }
     }
 

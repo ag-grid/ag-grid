@@ -1,6 +1,6 @@
 import {PreDestroy, Bean, Qualifier, Autowired, PostConstruct, Optional, Context} from './context/context';
 
-let themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'balham'];
+let themeNames = ['fresh', 'dark', 'blue', 'bootstrap', 'material', 'balham-dark', 'balham'];
 const themes = themeNames.concat(themeNames.map(name => `theme-${name}`));
 const themeClass = new RegExp(`ag-(${themes.join('|')})`);
 

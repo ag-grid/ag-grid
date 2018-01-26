@@ -30,6 +30,7 @@ $secondary-font-weight: 600 !default; // font-secondary-weight
 $transition-speed: 120ms !default;
 
 $params: (
+    default-background: $default-background,
     grid-size: $grid-size,
     icon-size: $icon-size,
     header-background-color: $header-background-color,
