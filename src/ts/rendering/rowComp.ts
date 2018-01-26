@@ -248,7 +248,7 @@ export class RowComp extends Component {
             let pixels = this.slideRowIn ? this.roundRowTopToBounds(this.rowNode.oldRowTop) : this.rowNode.rowTop;
             let pixelsWithOffset = this.applyPaginationOffset(pixels);
             // if not setting row top, then below is empty string
-            rowTopStyle = `top: ${pixelsWithOffset}px; `;
+            rowTopStyle = `transform: translateY(${pixelsWithOffset}px); `;
         }
         return rowTopStyle;
     }
@@ -1337,7 +1337,7 @@ export class RowComp extends Component {
             let pixelsWithOffset = this.applyPaginationOffset(pixels);
 
             let topPx = pixelsWithOffset + "px";
-            this.eAllRowContainers.forEach( row => row.style.top = topPx);
+            this.eAllRowContainers.forEach( row => row.style.transform = `translateY(${topPx})` );
         }
     }
 

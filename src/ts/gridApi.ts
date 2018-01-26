@@ -36,6 +36,7 @@ import {IEnterpriseDatasource} from "./interfaces/iEnterpriseDatasource";
 import {PaginationProxy} from "./rowModels/paginationProxy";
 import {IEnterpriseRowModel} from "./interfaces/iEnterpriseRowModel";
 import {
+    BatchTransactionItem,
     InMemoryRowModel, RefreshModelParams, RowDataTransaction,
     RowNodeTransaction
 } from "./rowModels/inMemory/inMemoryRowModel";
@@ -932,6 +933,14 @@ export class GridApi {
         }
 
         return res;
+    }
+
+    public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: ()=>void): void {
+        if (!this.inMemoryRowModel) {
+            console.error('ag-Grid: api.batchUpdateRowData() only works with InMemoryRowModel.');
+            return;
+        }
+        this.inMemoryRowModel.batchUpdateRowData(rowDataTransaction, callback);
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {
