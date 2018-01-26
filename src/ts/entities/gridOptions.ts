@@ -193,6 +193,7 @@ export interface GridOptions {
     //Deprecated in v11.0 substituted by autoGroupColumnDef
     groupColumnDef?: ColDef;
     autoGroupColumnDef?: ColDef;
+    autoGroupColumnIndex?: number;
     // deprecated - should use domLayout
     forPrint?: boolean;
 

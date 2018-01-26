@@ -283,6 +283,7 @@ export class GridOptionsWrapper {
     public isGroupUseEntireRow() { return isTrue(this.gridOptions.groupUseEntireRow); }
     public isEnableRtl() { return isTrue(this.gridOptions.enableRtl); }
     public getAutoGroupColumnDef(): ColDef { return this.gridOptions.autoGroupColumnDef; }
+    public getAutoGroupColumnIndex(): number { return this.gridOptions.autoGroupColumnIndex; }
     public isGroupSuppressRow() { return isTrue(this.gridOptions.groupSuppressRow); }
     public getRowGroupPanelShow() { return this.gridOptions.rowGroupPanelShow; }
     public getPivotPanelShow() { return this.gridOptions.pivotPanelShow; }

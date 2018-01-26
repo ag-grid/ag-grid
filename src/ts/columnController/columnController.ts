@@ -1171,6 +1171,10 @@ export class ColumnController {
         let columnStateList = this.primaryColumns.map(this.createStateItemFromColumn.bind(this));
 
         if (!this.pivotMode) {
+            if (this.groupAutoColumns) {
+                // to keep the order of auto group column in setColumnState()
+                columnStateList.push({ colId: AutoGroupColService.GROUP_AUTO_COLUMN_ID });
+            }
             this.orderColumnStateList(columnStateList);
         }
 
@@ -1228,6 +1232,9 @@ export class ColumnController {
 
         if (columnState) {
             columnState.forEach((stateItem: any) => {
+                if (stateItem.colId == AutoGroupColService.GROUP_AUTO_COLUMN_ID) {
+                    return;
+                }
                 let column = this.getPrimaryColumn(stateItem.colId);
                 if (!column) {
                     console.warn('ag-grid: column ' + stateItem.colId + ' not found');
@@ -1913,11 +1920,12 @@ export class ColumnController {
 
         if (_.missing(this.groupAutoColumns)) { return; }
 
-        this.gridColumns = this.groupAutoColumns.concat(this.gridColumns);
+        let autoGroupColumnIndex = this.gridOptionsWrapper.getAutoGroupColumnIndex() || 0;
+        _.insertArrayIntoArray(this.gridColumns, this.groupAutoColumns, autoGroupColumnIndex);
 
         let autoColBalancedTree = this.balancedColumnTreeBuilder.createForAutoGroups(this.groupAutoColumns, this.gridBalancedTree);
 
-        this.gridBalancedTree = autoColBalancedTree.concat(this.gridBalancedTree);
+        _.insertArrayIntoArray(this.gridBalancedTree, autoColBalancedTree, autoGroupColumnIndex);
     }
 
     // gets called after we copy down grid columns, to make sure any part of the gui
