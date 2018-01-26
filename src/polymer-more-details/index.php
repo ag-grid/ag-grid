@@ -58,7 +58,7 @@ bower install -save ag-grid-polymer</snippet>
 
     <snippet language="html">
 &lt;ag-grid-polymer style="width: 500px; height: 120px;"
-         class="ag-theme-fresh"
+         class="ag-theme-balham"
          rowData="{{rowData}}"
 columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;</snippet>
 

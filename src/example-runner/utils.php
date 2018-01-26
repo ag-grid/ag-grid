@@ -190,7 +190,7 @@ function example($title, $dir, $type = 'vanilla', $options = array())
     }
 
     $gridSettings = array(
-        'theme' => 'ag-theme-fresh',
+        'theme' => 'ag-theme-balham',
         'noStyle' => $options['noStyle'] ? $options['noStyle'] : 0,
         'height' => '100%',
         'width' => '100%',

@@ -55,11 +55,10 @@ export default class RichGridDeclarativeExample extends Component {
 
     render() {
         return (
-            <div style={{height: 525, width: 900}} className="ag-theme-fresh">
+            <div style={{height: 525, width: 900}} className="ag-theme-balham">
                 <AgGridReact
                     // binding to array properties
                     rowData={this.state.rowData}
-
                     // no binding, just providing hard coded strings for the properties
                     // boolean properties will default to true if provided (ie enableColResize => enableColResize="true")
                     suppressRowClickSelection
@@ -68,7 +67,7 @@ export default class RichGridDeclarativeExample extends Component {
                     enableSorting
                     enableFilter
                     groupHeaders
-                    rowHeight="22">
+                    >
                     {/* first column has the checkboxes */}
                     <AgGridColumn headerName="#" width={30} checkboxSelection suppressSorting suppressMenu suppressFilter pinned></AgGridColumn>
                     {/* the first three columns are grouped in a group called 'Employee' */}

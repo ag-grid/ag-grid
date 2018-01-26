@@ -173,7 +173,7 @@ include '../documentation-main/documentation_header.php';
 &lt;body&gt;
 &lt;ag-grid id="myGrid"
          style="height: 140px; width: 350px;"
-         class="ag-theme-fresh"&gt;&lt;/ag-grid&gt;
+         class="ag-theme-balham"&gt;&lt;/ag-grid&gt;
 &lt;/body&gt;
    </snippet>
 
@@ -183,7 +183,7 @@ include '../documentation-main/documentation_header.php';
 &lt;body&gt;
     &lt;ag-grid id="myGrid"
              style="height: 140px; width: 350px;"
-             class="ag-theme-fresh"&gt
+             class="ag-theme-balham"&gt
              enable-col-resize
              enable-sorting
              enable-filter&lt;/ag-grid&gt;
@@ -216,7 +216,7 @@ include '../documentation-main/documentation_header.php';
 &lt;body&gt;
 &lt;span style="font-weight: bold"&gt;&lt;ag-grid id="myGrid"
          style="height: 140px; width: 350px;"
-         class="ag-theme-fresh"&gt;&lt;/ag-grid&gt;&lt;/span&gt;
+         class="ag-theme-balham"&gt;&lt;/ag-grid&gt;&lt;/span&gt;
 &lt;/body&gt;
 &lt;/html&gt;</snippet>
 

@@ -34,7 +34,7 @@ foreach ($files as $file) {
     }
 }
 ?>
-<?php if ($generated) { echo "<!DOCTYPE html>\n"; } ?>
+<!DOCTYPE html>
 <html>
 <head>
 <style> html, body { margin: 0; padding: 0; height: 100%; } </style>

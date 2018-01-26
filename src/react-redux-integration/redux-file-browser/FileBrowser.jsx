@@ -30,7 +30,7 @@ class FileBrowser extends Component {
   render() {
     return (
       <div>
-        <div style={{height: 500}} className="ag-theme-fresh">
+        <div style={{height: 500}} className="ag-theme-balham">
           <AgGridReact
             columnDefs={this.colDefs}
             rowData={this.props.files}

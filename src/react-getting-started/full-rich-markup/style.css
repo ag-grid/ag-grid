@@ -90,17 +90,13 @@ button {
         -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
         transform: rotate(180deg);
     }
+
     to {
         color: cornflowerblue;
         -ms-transform: rotate(0deg); /* IE 9 */
         -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
         transform: rotate(0deg);
     }
-}
-
-.ag-cell {
-    padding-top: 2px !important;
-    padding-bottom: 2px !important;
 }
 
 label {
@@ -114,10 +110,10 @@ label {
 }
 
 .div-percent-value {
-    position: absolute;
-    padding-left: 4px;
-    font-weight: bold;
     font-size: 13px;
+    font-weight: bold;
+    padding-left: 4px;
+    position: absolute;
 }
 
 .div-outer-div {
@@ -126,4 +122,7 @@ label {
     width: 100%;
 }
 
-
+.fa-times, .fa-long-arrow-up, .fa-long-arrow-down, .fa-bars, .customExpandButton {
+    display: inline-block;
+    margin-top: 10px;
+}

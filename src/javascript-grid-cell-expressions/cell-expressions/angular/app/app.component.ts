@@ -1,8 +1,9 @@
-import {Component, ViewChild} from '@angular/core';
+import { Component, ViewChild } from "@angular/core";
 
 @Component({
-    selector: 'my-app',
+    selector: "my-app",
     template: `
+<div style="height: 100%">
 <div style="float: left; width: 50%;">
     <div style="height: 10%; box-sizing: border-box; padding: 8px;">
         Enter a number to analyse:
@@ -11,7 +12,7 @@ import {Component, ViewChild} from '@angular/core';
             <div style="padding: 10px;">
             <ag-grid-angular
             #leftGrid
-            style="height: 90%; box-sizing: border-box;" id="myGridLeft" class="ag-theme-dark"
+            style="height: 500px; box-sizing: border-box;" id="myGridLeft" class="ag-theme-dark"
             [context]="leftContext"
             [rowData]="rowDataLeft"
             enableCellExpressions="true"
@@ -27,29 +28,30 @@ import {Component, ViewChild} from '@angular/core';
     </div>
             <div style="padding: 10px;">
             <ag-grid-angular
-            style="height: 90%; box-sizing: border-box;" id="myGridRight" class="ag-theme-dark"
+            style="height: 500px; box-sizing: border-box;" id="myGridRight" class="ag-theme-dark"
             (gridReady)="gridReady($event)"
             [rowData]="rowDataRight"
             [columnDefs]="columnDefsRight">
             </ag-grid-angular>
             </div>
 </div>
+</div>
     `
 })
 export class AppComponent {
-    @ViewChild('leftGrid') leftGrid;
+    @ViewChild("leftGrid") leftGrid;
     columnDefsLeft = [
-        {headerName: 'Function', field: 'function', width: 150},
-        {headerName: 'Value', field: 'value', width: 100},
-        {headerName: 'Times 10', valueGetter: 'getValue("value") * 10', width: 100}
+        { headerName: "Function", field: "function", width: 150 },
+        { headerName: "Value", field: "value", width: 100 },
+        { headerName: "Times 10", valueGetter: 'getValue("value") * 10', width: 100 }
     ];
 
     rowDataLeft = [
-        {function: 'Number Squared', value: '=ctx.theNumber * ctx.theNumber'},
-        {function: 'Number x 2', value: '=ctx.theNumber * 2'},
-        {function: "Today's Date", value: '=new Date().toLocaleDateString()'},
-        {function: 'Sum A', value: '=ctx.sum("a")'},
-        {function: 'Sum B', value: '=ctx.sum("b")'}
+        { function: "Number Squared", value: "=ctx.theNumber * ctx.theNumber" },
+        { function: "Number x 2", value: "=ctx.theNumber * 2" },
+        { function: "Today's Date", value: "=new Date().toLocaleDateString()" },
+        { function: "Sum A", value: '=ctx.sum("a")' },
+        { function: "Sum B", value: '=ctx.sum("b")' }
     ];
 
     leftContext = {
@@ -64,16 +66,16 @@ export class AppComponent {
     };
     columnDefsRight = [
         {
-            headerName: 'A',
-            field: 'a',
+            headerName: "A",
+            field: "a",
             width: 150,
             editable: true,
             newValueHandler: this.numberNewValueHandler,
             onCellValueChanged: this.cellValueChanged.bind(this)
         },
         {
-            headerName: 'B',
-            field: 'b',
+            headerName: "B",
+            field: "b",
             width: 150,
             editable: true,
             newValueHandler: this.numberNewValueHandler,
@@ -81,7 +83,7 @@ export class AppComponent {
         }
     ];
 
-    rowDataRight = [{a: 1, b: 22}, {a: 2, b: 33}, {a: 3, b: 44}, {a: 4, b: 55}, {a: 5, b: 66}, {a: 6, b: 77}, {a: 7, b: 88}];
+    rowDataRight = [{ a: 1, b: 22 }, { a: 2, b: 33 }, { a: 3, b: 44 }, { a: 4, b: 55 }, { a: 5, b: 66 }, { a: 6, b: 77 }, { a: 7, b: 88 }];
 
     onNewNumber(value) {
         this.leftContext.theNumber = parseInt(value);

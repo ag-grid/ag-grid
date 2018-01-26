@@ -395,7 +395,7 @@ This is a redundant step we are looking into removing in the future.
 
 <snippet>
 // Customize the look and feel of the grid with Sass variables
-// Up-to-date list of variables is available in the source code: https://github.com/ag-grid/ag-grid/blob/latest/src/styles/theme-fresh.scss 
+// Up-to-date list of variables is available in the source code: https://github.com/ag-grid/ag-grid/blob/latest/src/styles/ag-theme-fresh.scss 
 $icons-path: "~ag-grid/src/styles/icons/";
 
 // changes the border color

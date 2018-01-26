@@ -8,45 +8,62 @@ button[disabled] {
 }
 
 .ag-theme-fresh .good-score {
-    background-color: rgba(0, 200, 0, 0.4)
+    background-color: rgba(0, 200, 0, 0.4);
 }
 
 .ag-theme-blue .good-score {
-    background-color: rgba(0, 200, 0, 0.4)
+    background-color: rgba(0, 200, 0, 0.4);
 }
 
 .ag-theme-dark .good-score {
-    background-color: rgba(0, 100, 0, 0.4)
+    background-color: rgba(0, 100, 0, 0.4);
 }
 
 .ag-theme-fresh .bad-score {
-    background-color: rgba(200, 0, 0, 0.4)
+    background-color: rgba(200, 0, 0, 0.4);
 }
 
 .ag-theme-blue .bad-score {
-    background-color: rgba(200, 0, 0, 0.4)
+    background-color: rgba(200, 0, 0, 0.4);
 }
 
 .ag-theme-dark .bad-score {
-    background-color: rgba(100, 0, 0, 0.4)
+    background-color: rgba(100, 0, 0, 0.4);
 }
 
-.ag-theme-dark .star {
+.ag-theme-dark .start,
+.ag-theme-balham-dark .star {
     filter: invert(100%);
 }
 
 .ag-theme-material .good-score {
-    background-color: rgba(185,246,202 , 0.4);
+    background-color: rgba(185, 246, 202, 0.4);
 }
 
 .ag-theme-material .bad-score {
-    background-color: rgba(255,128,171 , 0.4);
+    background-color: rgba(255, 128, 171, 0.4);
 }
 
+.ag-theme-balham .good-score {
+    background-color: rgba(185, 246, 202, 0.4);
+}
+
+.ag-theme-balham .bad-score {
+    background-color: rgba(255, 128, 171, 0.4);
+}
+
+.ag-theme-balham-dark .good-score {
+    background-color: transparentize(#76ff03, 0.2);
+    color: #000;
+}
+
+.ag-theme-balham-dark .bad-score {
+    background-color: transparentize(#e84393, 0.3);
+}
 
 #example-toolbar {
     @extend .container-fluid;
-    
+
     > div {
         @extend .full-width-row, .row;
 
@@ -58,9 +75,9 @@ button[disabled] {
             @extend .col-md-3, .text-right;
 
             a {
+                background: transparent url("./youtube.svg") left center no-repeat;
                 float: right;
-                margin-top: .8rem;
-                background: transparent url('./youtube.svg') left center no-repeat;
+                margin-top: 0.8rem;
                 padding-left: 2rem;
             }
         }
@@ -80,7 +97,19 @@ button[disabled] {
 
 .stretch-html {
     height: 100%;
+
     body {
         height: 100%;
     }
+}
+
+.ag-theme-balham .flag,
+.ag-theme-balham-dark .flag {
+    margin-bottom: 3px;
+    margin-right: 4px;
+}
+
+.ag-theme-balham .content-icon,
+.ag-theme-balham-dark .content-icon {
+    margin-top: 4px;
 }

@@ -1,7 +1,7 @@
 <template>
     <div style="width: 900px;">
         <button style="margin-bottom: 10px" @click="onClicked()">Filter Instance Method</button>
-        <ag-grid-vue style="width: 100%; height: 350px;" class="ag-fresh"
+        <ag-grid-vue style="width: 100%; height: 350px;" class="ag-theme-balham"
                      :gridOptions="gridOptions">
         </ag-grid-vue>
     </div>
