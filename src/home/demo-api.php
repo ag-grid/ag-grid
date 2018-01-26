@@ -23,7 +23,7 @@
     transition: width 3.5s;
 }
 </style>
-    <div style="background-color: #302e2e; border: 2px outset grey;">
+    <div style="background-color: rgba(44, 51, 53, 0.95);">
         <div style="padding-left: 8px; padding-top: 4px;">
             <div style="float: left; display: inline-block;">
                 <div style="display: inline-block; height: 10px; margin-top: 5px; margin-right: 10px; width: 100px; border: 1px solid grey;">
@@ -32,7 +32,7 @@
             </div>
             <span id="animationAction"></span>
         </div>
-        <div id="animationGrid" class="ag-theme-dark" style="height: 400px;"></div>
+        <div id="animationGrid" class="ag-theme-balham-dark" style="height: 400px;"></div>
     </div>
 
 
