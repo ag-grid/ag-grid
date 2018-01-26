@@ -31,7 +31,8 @@ button[disabled] {
     background-color: rgba(100, 0, 0, 0.4);
 }
 
-.ag-theme-dark .star {
+.ag-theme-dark .start,
+.ag-theme-balham-dark .star {
     filter: invert(100%);
 }
 
@@ -52,7 +53,8 @@ button[disabled] {
 }
 
 .ag-theme-balham-dark .good-score {
-    background-color: transparentize(#2ecc71, 0.3);
+    background-color: transparentize(#76ff03, 0.2);
+    color: #000;
 }
 
 .ag-theme-balham-dark .bad-score {
