@@ -1240,16 +1240,8 @@ export class RowComp extends Component {
         super.removeEventListener(eventType, listener);
     }
 
-    private destroyScope(): void {
-        if (this.scope) {
-            this.scope.$destroy();
-            this.scope = null;
-        }
-    }
-
     public destroy(animate = false): void {
         super.destroy();
-        this.destroyScope();
 
         this.active = false;
 
