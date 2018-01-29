@@ -1,10 +1,10 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
 import { IComponent } from "../../interfaces/iComponent";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { ColumnApi } from "../../columnController/columnController";
+import { ColumnApi } from "../../columnController/columnApi";
 import { GridApi } from "../../gridApi";
 export interface IHeaderGroupParams {
     columnGroup: ColumnGroup;
@@ -28,7 +28,7 @@ export declare class HeaderGroupComp extends Component implements IHeaderGroupCo
     constructor();
     init(params: IHeaderGroupParams): void;
     private setupExpandIcons();
-    private addTouchAndClickListeners(eElement);
+    private addTouchAndClickListeners(eElement, action);
     private updateIconVisibility();
     private addInIcon(iconName, refName);
     private addGroupExpandIcon();

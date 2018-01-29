@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,7 +19,7 @@ var columnGroup_1 = require("./columnGroup");
 var column_1 = require("./column");
 var eventService_1 = require("../eventService");
 var context_1 = require("../context/context");
-var columnController_1 = require("../columnController/columnController");
+var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
 var OriginalColumnGroup = (function () {
     function OriginalColumnGroup(colGroupDef, groupId, padding) {
@@ -76,6 +76,9 @@ var OriginalColumnGroup = (function () {
         return result;
     };
     OriginalColumnGroup.prototype.addLeafColumns = function (leafColumns) {
+        if (!this.children) {
+            return;
+        }
         this.children.forEach(function (child) {
             if (child instanceof column_1.Column) {
                 leafColumns.push(child);
@@ -153,7 +156,7 @@ var OriginalColumnGroup = (function () {
     OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], OriginalColumnGroup.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),

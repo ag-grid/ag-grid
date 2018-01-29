@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IMenuFactory } from "../interfaces/iMenuFactory";
@@ -8,6 +8,8 @@ export declare class StandardMenuFactory implements IMenuFactory {
     private filterManager;
     private popupService;
     private gridOptionsWrapper;
+    private hidePopup;
+    hideActiveMenu(): void;
     showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch): void;
     showMenuAfterButtonClick(column: Column, eventSource: HTMLElement): void;
     showPopup(column: Column, positionCallback: (eMenu: HTMLElement) => void): void;

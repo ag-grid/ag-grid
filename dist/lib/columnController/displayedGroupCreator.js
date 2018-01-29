@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -127,33 +127,45 @@ var DisplayedGroupCreator = (function () {
             }
         });
     };
-    DisplayedGroupCreator.prototype.createFakePath = function (balancedColumnTree) {
-        var result = [];
-        var currentChildren = balancedColumnTree;
-        // this while look does search on the balanced tree, so our result is the right length
-        var index = 0;
-        while (currentChildren && currentChildren[0] && currentChildren[0] instanceof originalColumnGroup_1.OriginalColumnGroup) {
-            // putting in a deterministic fake id, in case the API in the future needs to reference the col
-            var fakePath = new originalColumnGroup_1.OriginalColumnGroup(null, 'FAKE_PATH_' + index, true);
-            this.context.wireBean(fakePath);
-            result.push(fakePath);
-            currentChildren = currentChildren[0].getChildren();
-            index++;
-        }
-        return result;
-    };
+    // private createFakePath(balancedColumnTree: OriginalColumnGroupChild[], column: Column): OriginalColumnGroup[] {
+    //     let fakePath: OriginalColumnGroup[] = [];
+    //     let currentChildren = balancedColumnTree;
+    //     // this while loop does search on the balanced tree, so our result is the right length
+    //     let index = 0;
+    //     while (currentChildren && currentChildren[0] && currentChildren[0] instanceof OriginalColumnGroup) {
+    //         // putting in a deterministic fake id, in case the API in the future needs to reference the col
+    //         let fakeGroup = new OriginalColumnGroup(null, 'FAKE_PATH_' + index, true);
+    //         this.context.wireBean(fakeGroup);
+    //
+    //         // fakePath.setChildren(children);
+    //
+    //         fakePath.push(fakeGroup);
+    //         currentChildren = (<OriginalColumnGroup>currentChildren[0]).getChildren();
+    //         index++;
+    //     }
+    //
+    //     fakePath.forEach( (fakePathGroup: OriginalColumnGroup, i: number) => {
+    //         let lastItemInList = i === fakePath.length-1;
+    //         let child = lastItemInList ? column : fakePath[i+1];
+    //         fakePathGroup.setChildren([child]);
+    //     });
+    //
+    //     return fakePath;
+    // }
     DisplayedGroupCreator.prototype.getOriginalPathForColumn = function (balancedColumnTree, column) {
         var result = [];
         var found = false;
         recursePath(balancedColumnTree, 0);
         // it's possible we didn't find a path. this happens if the column is generated
-        // by the grid, in that the definition didn't come from the client. in this case,
+        // by the grid (auto-group), in that the definition didn't come from the client. in this case,
         // we create a fake original path.
         if (found) {
             return result;
         }
         else {
-            return this.createFakePath(balancedColumnTree);
+            console.log('could not get path');
+            return null;
+            // return this.createFakePath(balancedColumnTree, column);
         }
         function recursePath(balancedColumnTree, dept) {
             for (var i = 0; i < balancedColumnTree.length; i++) {

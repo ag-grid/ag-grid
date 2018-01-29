@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -6,6 +6,7 @@ import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
 import { AbstractColDef, ColDef, IAggFunc } from "./colDef";
 import { RowNode } from "./rowNode";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
+import { ColumnEventType } from "../events";
 export declare class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEventEmitter {
     static EVENT_MOVING_CHANGED: string;
     static EVENT_LEFT_CHANGED: string;
@@ -41,6 +42,9 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private sortedAt;
     private moving;
     private menuVisible;
+    private lockPosition;
+    private lockPinned;
+    private lockVisible;
     private lastLeftPinned;
     private firstRightPinned;
     private minWidth;
@@ -55,6 +59,9 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private primary;
     private parent;
     constructor(colDef: ColDef, colId: String, primary: boolean);
+    isLockPosition(): boolean;
+    isLockVisible(): boolean;
+    isLockPinned(): boolean;
     setParent(parent: ColumnGroupChild): void;
     getParent(): ColumnGroupChild;
     initialise(): void;
@@ -71,15 +78,17 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     private createIsColumnFuncParams(rowNode);
     isSuppressNavigable(rowNode: RowNode): boolean;
     isCellEditable(rowNode: RowNode): boolean;
+    isRowDrag(rowNode: RowNode): boolean;
+    isCellCheckboxSelection(rowNode: RowNode): boolean;
     isSuppressPaste(rowNode: RowNode): boolean;
     isResizable(): boolean;
     private isColumnFunc(rowNode, value);
-    setMoving(moving: boolean): void;
-    private createColumnEvent(type);
+    setMoving(moving: boolean, source?: ColumnEventType): void;
+    private createColumnEvent(type, source);
     isMoving(): boolean;
     getSort(): string;
-    setSort(sort: string): void;
-    setMenuVisible(visible: boolean): void;
+    setSort(sort: string, source?: ColumnEventType): void;
+    setMenuVisible(visible: boolean, source?: ColumnEventType): void;
     isMenuVisible(): boolean;
     isSortAscending(): boolean;
     isSortDescending(): boolean;
@@ -92,19 +101,19 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     getLeft(): number;
     getOldLeft(): number;
     getRight(): number;
-    setLeft(left: number): void;
+    setLeft(left: number, source?: ColumnEventType): void;
     isFilterActive(): boolean;
-    setFilterActive(active: boolean): void;
+    setFilterActive(active: boolean, source?: ColumnEventType): void;
     setPinned(pinned: string | boolean): void;
-    setFirstRightPinned(firstRightPinned: boolean): void;
-    setLastLeftPinned(lastLeftPinned: boolean): void;
+    setFirstRightPinned(firstRightPinned: boolean, source?: ColumnEventType): void;
+    setLastLeftPinned(lastLeftPinned: boolean, source?: ColumnEventType): void;
     isFirstRightPinned(): boolean;
     isLastLeftPinned(): boolean;
     isPinned(): boolean;
     isPinnedLeft(): boolean;
     isPinnedRight(): boolean;
     getPinned(): string;
-    setVisible(visible: boolean): void;
+    setVisible(visible: boolean, source?: ColumnEventType): void;
     isVisible(): boolean;
     getColDef(): ColDef;
     getColumnGroupShow(): string;
@@ -113,18 +122,18 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     getDefinition(): AbstractColDef;
     getActualWidth(): number;
     getColSpan(rowNode: RowNode): number;
-    setActualWidth(actualWidth: number): void;
+    setActualWidth(actualWidth: number, source?: ColumnEventType): void;
     isGreaterThanMax(width: number): boolean;
     getMinWidth(): number;
     getMaxWidth(): number;
-    setMinimum(): void;
-    setRowGroupActive(rowGroup: boolean): void;
+    setMinimum(source?: ColumnEventType): void;
+    setRowGroupActive(rowGroup: boolean, source?: ColumnEventType): void;
     isRowGroupActive(): boolean;
-    setPivotActive(pivot: boolean): void;
+    setPivotActive(pivot: boolean, source?: ColumnEventType): void;
     isPivotActive(): boolean;
     isAnyFunctionActive(): boolean;
     isAnyFunctionAllowed(): boolean;
-    setValueActive(value: boolean): void;
+    setValueActive(value: boolean, source?: ColumnEventType): void;
     isValueActive(): boolean;
     isAllowPivot(): boolean;
     isAllowValue(): boolean;

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var column_1 = require("./entities/column");
 var context_1 = require("./context/context");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
+var columnApi_1 = require("./columnController/columnApi");
 var columnController_1 = require("./columnController/columnController");
 var eventService_1 = require("./eventService");
 var events_1 = require("./events");
@@ -28,17 +29,19 @@ var SortController = (function () {
     function SortController() {
     }
     SortController_1 = SortController;
-    SortController.prototype.progressSort = function (column, multiSort) {
+    SortController.prototype.progressSort = function (column, multiSort, source) {
+        if (source === void 0) { source = "api"; }
         var nextDirection = this.getNextSortDirection(column);
-        this.setSortForColumn(column, nextDirection, multiSort);
+        this.setSortForColumn(column, nextDirection, multiSort, source);
     };
-    SortController.prototype.setSortForColumn = function (column, sort, multiSort) {
+    SortController.prototype.setSortForColumn = function (column, sort, multiSort, source) {
+        if (source === void 0) { source = "api"; }
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
         if (sort !== column_1.Column.SORT_ASC && sort !== column_1.Column.SORT_DESC) {
             sort = null;
         }
         // update sort on current col
-        column.setSort(sort);
+        column.setSort(sort, source);
         // sortedAt used for knowing order of cols when multi-col sort
         if (column.getSort()) {
             var sortedAt = Number(new Date().valueOf());
@@ -50,7 +53,7 @@ var SortController = (function () {
         var doingMultiSort = multiSort && !this.gridOptionsWrapper.isSuppressMultiSort();
         // clear sort on all columns except this one, and update the icons
         if (!doingMultiSort) {
-            this.clearSortBarThisColumn(column);
+            this.clearSortBarThisColumn(column, source);
         }
         this.dispatchSortChangedEvents();
     };
@@ -67,11 +70,11 @@ var SortController = (function () {
         };
         this.eventService.dispatchEvent(event);
     };
-    SortController.prototype.clearSortBarThisColumn = function (columnToSkip) {
+    SortController.prototype.clearSortBarThisColumn = function (columnToSkip, source) {
         this.columnController.getPrimaryAndSecondaryAndAutoColumns().forEach(function (columnToClear) {
             // Do not clear if either holding shift, or if column in question was clicked
             if (!(columnToClear === columnToSkip)) {
-                columnToClear.setSort(null);
+                columnToClear.setSort(null, source);
             }
         });
     };
@@ -117,8 +120,9 @@ var SortController = (function () {
             };
         });
     };
-    SortController.prototype.setSortModel = function (sortModel) {
+    SortController.prototype.setSortModel = function (sortModel, source) {
         var _this = this;
+        if (source === void 0) { source = "api"; }
         if (!this.gridOptionsWrapper.isEnableSorting()) {
             console.warn('ag-grid: You are setting the sort model on a grid that does not have sorting enabled');
             return;
@@ -141,11 +145,11 @@ var SortController = (function () {
                 }
             }
             if (sortForCol) {
-                column.setSort(sortForCol);
+                column.setSort(sortForCol, source);
                 column.setSortedAt(sortedAt);
             }
             else {
-                column.setSort(null);
+                column.setSort(null, source);
                 column.setSortedAt(null);
             }
         });
@@ -188,7 +192,7 @@ var SortController = (function () {
     ], SortController.prototype, "eventService", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], SortController.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),

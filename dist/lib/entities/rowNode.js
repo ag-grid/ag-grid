@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21,6 +21,7 @@ var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var selectionController_1 = require("../selectionController");
 var valueService_1 = require("../valueService/valueService");
 var columnController_1 = require("../columnController/columnController");
+var columnApi_1 = require("../columnController/columnApi");
 var context_1 = require("../context/context");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
@@ -159,6 +160,15 @@ var RowNode = (function () {
         this.rowTop = rowTop;
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_TOP_CHANGED));
+        }
+    };
+    RowNode.prototype.setDragging = function (dragging) {
+        if (this.dragging === dragging) {
+            return;
+        }
+        this.dragging = dragging;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DRAGGING_CHANGED));
         }
     };
     RowNode.prototype.setAllChildrenCount = function (allChildrenCount) {
@@ -565,6 +575,7 @@ var RowNode = (function () {
     RowNode.EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
     RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
     RowNode.EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
+    RowNode.EVENT_DRAGGING_CHANGED = 'draggingChanged';
     __decorate([
         context_1.Autowired('eventService'),
         __metadata("design:type", eventService_1.EventService)
@@ -599,7 +610,7 @@ var RowNode = (function () {
     ], RowNode.prototype, "valueCache", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], RowNode.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),

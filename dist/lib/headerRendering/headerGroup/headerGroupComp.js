@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,25 +45,26 @@ var HeaderGroupComp = (function (_super) {
         this.setupExpandIcons();
     };
     HeaderGroupComp.prototype.setupExpandIcons = function () {
+        var _this = this;
         this.addInIcon('columnGroupOpened', 'agOpened');
         this.addInIcon('columnGroupClosed', 'agClosed');
-        this.addTouchAndClickListeners(this.eCloseIcon);
-        this.addTouchAndClickListeners(this.eOpenIcon);
+        var expandAction = function () {
+            var newExpandedValue = !_this.params.columnGroup.isExpanded();
+            _this.columnController.setColumnGroupOpened(_this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
+        };
+        this.addTouchAndClickListeners(this.eCloseIcon, expandAction);
+        this.addTouchAndClickListeners(this.eOpenIcon, expandAction);
+        this.addDestroyableEventListener(this.getGui(), 'dblclick', expandAction);
         this.updateIconVisibility();
         var originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();
         this.addDestroyableEventListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
         this.addDestroyableEventListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
     };
-    HeaderGroupComp.prototype.addTouchAndClickListeners = function (eElement) {
-        var _this = this;
-        var expandAction = function () {
-            var newExpandedValue = !_this.params.columnGroup.isExpanded();
-            _this.columnController.setColumnGroupOpened(_this.params.columnGroup.getOriginalColumnGroup(), newExpandedValue);
-        };
+    HeaderGroupComp.prototype.addTouchAndClickListeners = function (eElement, action) {
         var touchListener = new touchListener_1.TouchListener(this.eCloseIcon);
-        this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, expandAction);
+        this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, action);
         this.addDestroyFunc(function () { return touchListener.destroy(); });
-        this.addDestroyableEventListener(eElement, 'click', expandAction);
+        this.addDestroyableEventListener(eElement, 'click', action);
     };
     HeaderGroupComp.prototype.updateIconVisibility = function () {
         var columnGroup = this.params.columnGroup;
@@ -98,7 +99,7 @@ var HeaderGroupComp = (function (_super) {
             eInnerText.innerHTML = this.params.displayName;
         }
     };
-    HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\">" +
+    HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\" ref=\"agContainer\">" +
         "<span ref=\"agLabel\" class=\"ag-header-group-text\"></span>" +
         "<span ref=\"agOpened\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded\"></span>" +
         "<span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>" +

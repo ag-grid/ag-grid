@@ -1,6 +1,7 @@
 
 import {Autowired, Bean, Context, Optional, PostConstruct} from "../context/context";
-import {ColumnApi, ColumnController} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
+import {ColumnController} from "../columnController/columnController";
 import {GridApi} from "../gridApi";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {ExpressionService} from "../valueService/expressionService";
@@ -25,6 +26,9 @@ import {ComponentRecipes} from "../components/framework/componentRecipes";
 import {AnimationFrameService} from "../misc/animationFrameService";
 import {ComponentResolver} from "../components/framework/componentResolver";
 import {_} from "../utils";
+import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
+import {SortController} from "../sortController";
+import {FilterManager} from "../filter/filterManager";
 
 @Bean('beans')
 export class Beans {
@@ -56,6 +60,9 @@ export class Beans {
     @Autowired('enterprise') public enterprise: boolean;
     @Autowired('componentResolver') public componentResolver: ComponentResolver;
     @Autowired('animationFrameService') public taskQueue: AnimationFrameService;
+    @Autowired('dragAndDropService') public dragAndDropService: DragAndDropService;
+    @Autowired('sortController') public sortController: SortController;
+    @Autowired('filterManager') public filterManager: FilterManager;
 
     public forPrint: boolean;
     public doingMasterDetail: boolean;

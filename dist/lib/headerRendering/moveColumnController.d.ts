@@ -1,8 +1,11 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { Column } from "../entities/column";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
-export declare class MoveColumnController {
+import { DropListener } from "./bodyDropTarget";
+import { ColumnEventType } from "../events";
+export declare class MoveColumnController implements DropListener {
     private loggerFactory;
     private columnController;
     private gridPanel;
@@ -23,6 +26,8 @@ export declare class MoveColumnController {
     getIconName(): string;
     onDragEnter(draggingEvent: DraggingEvent): void;
     onDragLeave(draggingEvent: DraggingEvent): void;
+    setColumnsVisible(columns: Column[], visible: boolean, source?: ColumnEventType): void;
+    setColumnsPinned(columns: Column[], pinned: string, source?: ColumnEventType): void;
     onDragStop(): void;
     private normaliseX(x);
     private checkCenterForScrolling(xAdjustedForScroll);

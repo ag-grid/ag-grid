@@ -8,7 +8,8 @@ import {SelectionController} from "../selectionController";
 import {ColDef} from "./colDef";
 import {Column} from "./column";
 import {ValueService} from "../valueService/valueService";
-import {ColumnApi, ColumnController} from "../columnController/columnController";
+import {ColumnController} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 import {Autowired, Context} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {Constants} from "../constants";
@@ -64,6 +65,7 @@ export class RowNode implements IEventEmitter {
     public static EVENT_ROW_INDEX_CHANGED = 'rowIndexChanged';
     public static EVENT_EXPANDED_CHANGED = 'expandedChanged';
     public static EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
+    public static EVENT_DRAGGING_CHANGED = 'draggingChanged';
 
     @Autowired('eventService') private mainEventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -96,6 +98,8 @@ export class RowNode implements IEventEmitter {
     public rowGroupIndex: number;
     /** True if this node is a group node (ie has children) */
     public group: boolean;
+    /** True if this row is getting dragged */
+    public dragging: boolean;
 
     /** True if this row is a master row, part of master / detail (ie row can be expanded to show detail) */
     public master: boolean;
@@ -316,6 +320,14 @@ export class RowNode implements IEventEmitter {
         this.rowTop = rowTop;
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_TOP_CHANGED));
+        }
+    }
+
+    public setDragging(dragging: boolean): void {
+        if (this.dragging === dragging) { return; }
+        this.dragging = dragging;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DRAGGING_CHANGED));
         }
     }
 

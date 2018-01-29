@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,6 +52,7 @@ var DateFilter = (function (_super) {
     };
     DateFilter.prototype.initialiseFilterBodyUi = function () {
         var _this = this;
+        _super.prototype.initialiseFilterBodyUi.call(this);
         var dateComponentParams = {
             onDateChanged: this.onDateChanged.bind(this)
         };

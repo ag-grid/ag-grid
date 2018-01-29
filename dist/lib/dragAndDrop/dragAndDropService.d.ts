@@ -1,14 +1,17 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
+import { RowNode } from "../entities/rowNode";
 export declare enum DragSourceType {
     ToolPanel = 0,
     HeaderCell = 1,
+    RowDrag = 2,
 }
 export interface DragItem {
-    columns: Column[];
-    visibleState: {
+    rowNode?: RowNode;
+    columns?: Column[];
+    visibleState?: {
         [key: string]: boolean;
     };
 }
@@ -25,6 +28,12 @@ export interface DragSource {
     /** The drop target associated with this dragSource. So when dragging starts, this target does not get
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
+    /** After how many pixels of dragging should the drag operation start. Default is 4px. */
+    dragStartPixels?: number;
+    /** Callback for drag started */
+    dragStarted?: () => void;
+    /** Callback for drag stopped */
+    dragStopped?: () => void;
 }
 export interface DropTarget {
     /** The main container that will get the drop. */
@@ -34,6 +43,7 @@ export interface DropTarget {
     getSecondaryContainers?(): HTMLElement[];
     /** Icon to show when drag is over*/
     getIconName?(): string;
+    isInterestedIn(type: DragSourceType): boolean;
     /** Callback for when drag enters */
     onDragEnter?(params: DraggingEvent): void;
     /** Callback for when drag leaves */
@@ -99,6 +109,7 @@ export declare class DragAndDropService {
     private eDropNotAllowedIcon;
     private init();
     private setBeans(loggerFactory);
+    private getStringType(type);
     addDragSource(dragSource: DragSource, allowTouch?: boolean): void;
     removeDragSource(dragSource: DragSource): void;
     private destroy();

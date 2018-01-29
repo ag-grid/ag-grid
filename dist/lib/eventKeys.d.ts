@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -91,6 +91,10 @@ export declare class Events {
     static EVENT_SCROLL_VISIBILITY_CHANGED: string;
     static EVENT_COLUMN_HOVER_CHANGED: string;
     static EVENT_FLASH_CELLS: string;
+    static EVENT_ROW_DRAG_ENTER: string;
+    static EVENT_ROW_DRAG_MOVE: string;
+    static EVENT_ROW_DRAG_LEAVE: string;
+    static EVENT_ROW_DRAG_END: string;
     static EVENT_COLUMN_ROW_GROUP_CHANGE_REQUEST: string;
     static EVENT_COLUMN_PIVOT_CHANGE_REQUEST: string;
     static EVENT_COLUMN_VALUE_CHANGE_REQUEST: string;

@@ -2,13 +2,14 @@ import {ExternalPromise, Promise, Utils as _} from "../utils";
 import {GridOptionsWrapper} from "../gridOptionsWrapper";
 import {PopupService} from "../widgets/popupService";
 import {ValueService} from "../valueService/valueService";
-import {ColumnApi, ColumnController} from "../columnController/columnController";
+import {ColumnController} from "../columnController/columnController";
+import {ColumnApi} from "../columnController/columnApi";
 import {RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {Autowired, Bean, Context, PostConstruct, PreDestroy} from "../context/context";
 import {IRowModel} from "../interfaces/iRowModel";
 import {EventService} from "../eventService";
-import {Events, FilterChangedEvent, FilterModifiedEvent} from "../events";
+import {ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent} from "../events";
 import {IDoesFilterPassParams, IFilterComp, IFilterParams} from "../interfaces/iFilter";
 import {ColDef, GetQuickFilterTextParams} from "../entities/colDef";
 import {GridApi} from "../gridApi";
@@ -133,10 +134,10 @@ export class FilterManager {
         this.advancedFilterPresent = atLeastOneActive;
     }
 
-    private updateFilterFlagInColumns(): void {
+    private updateFilterFlagInColumns(source:ColumnEventType): void {
         _.iterateObject(this.allFilters, function (key, filterWrapper:FilterWrapper) {
             let filterActive = filterWrapper.filterPromise.resolveNow(false, filter=>filter.isFilterActive());
-            filterWrapper.column.setFilterActive(filterActive);
+            filterWrapper.column.setFilterActive(filterActive, source);
         });
     }
 
@@ -216,7 +217,7 @@ export class FilterManager {
 
     public onFilterChanged(): void {
         this.setAdvancedFilterPresent();
-        this.updateFilterFlagInColumns();
+        this.updateFilterFlagInColumns("filterChanged");
         this.checkExternalFilter();
 
         _.iterateObject(this.allFilters, function (key, filterWrapper:FilterWrapper) {
@@ -244,7 +245,7 @@ export class FilterManager {
     }
 
     private doesRowPassQuickFilterNoCache(node: RowNode): boolean {
-        let columns = this.columnController.getAllPrimaryColumns();
+        let columns = this.columnController.getAllColumnsForQuickFilter();
         let filterPasses = false;
         columns.forEach( column => {
             if (filterPasses) { return; }
@@ -334,7 +335,7 @@ export class FilterManager {
 
     private aggregateRowForQuickFilter(node: RowNode) {
         let stringParts: string[] = [];
-        let columns = this.columnController.getAllPrimaryColumns();
+        let columns = this.columnController.getAllColumnsForQuickFilter();
         columns.forEach( column => {
             let part = this.getQuickFilterTextForColumn(column, node);
             if (_.exists(part)) {
@@ -344,7 +345,7 @@ export class FilterManager {
         node.quickFilterAggregateText = stringParts.join(FilterManager.QUICK_FILTER_SEPARATOR);
     }
 
-    private onNewRowsLoaded() {
+    private onNewRowsLoaded(source: ColumnEventType) {
         _.iterateObject(this.allFilters, function (key, filterWrapper: FilterWrapper) {
             filterWrapper.filterPromise.then(filter=>{
                 if (filter.onNewRowsLoaded) {
@@ -352,7 +353,7 @@ export class FilterManager {
                 }
             });
         });
-        this.updateFilterFlagInColumns();
+        this.updateFilterFlagInColumns(source);
         this.setAdvancedFilterPresent();
     }
 
@@ -417,6 +418,12 @@ export class FilterManager {
             sanitisedColDef,
             params,
             'filter',
+            {
+                api: this.gridApi,
+                columnApi: this.columnApi,
+                column: column,
+                colDef: sanitisedColDef
+            },
             defaultFilter,
             true,
             (params, filter)=>_.assign(params, {
@@ -448,6 +455,10 @@ export class FilterManager {
         filterWrapper.filterPromise.then(filter=>{
             let guiFromFilter = filter.getGui();
 
+            if (_.missing(guiFromFilter)) {
+                console.warn(`getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`);
+            }
+
             // for backwards compatibility with Angular 1 - we
             // used to allow providing back HTML from getGui().
             // once we move away from supporting Angular 1
@@ -472,21 +483,21 @@ export class FilterManager {
     }
 
     // destroys the filter, so it not longer takes part
-    public destroyFilter(column: Column): void {
+    public destroyFilter(column: Column, source: ColumnEventType = "api"): void {
         let filterWrapper:FilterWrapper = this.allFilters[column.getColId()];
         if (filterWrapper) {
-            this.disposeFilterWrapper(filterWrapper);
+            this.disposeFilterWrapper(filterWrapper, source);
             this.onFilterChanged();
         }
     }
 
-    private disposeFilterWrapper(filterWrapper: FilterWrapper): void {
+    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: ColumnEventType): void {
         filterWrapper.filterPromise.then(filter=>{
             filter.setModel(null);
             if (filter.destroy) {
                 filter.destroy();
             }
-            filterWrapper.column.setFilterActive(false);
+            filterWrapper.column.setFilterActive(false, source);
             if (filterWrapper.scope) {
                 filterWrapper.scope.$destroy();
             }
@@ -497,7 +508,7 @@ export class FilterManager {
     @PreDestroy
     public destroy() {
         _.iterateObject(this.allFilters, (key: string, filterWrapper: any) => {
-            this.disposeFilterWrapper(filterWrapper);
+            this.disposeFilterWrapper(filterWrapper, "filterDestroyed");
         });
     }
 

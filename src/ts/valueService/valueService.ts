@@ -135,7 +135,8 @@ export class ValueService {
         params.newValue = this.getValue(column, rowNode);
 
         if (typeof column.getColDef().onCellValueChanged === 'function') {
-            column.getColDef().onCellValueChanged(params);
+            // to make callback async, do in a timeout
+            setTimeout( ()=> column.getColDef().onCellValueChanged(params), 0);
         }
 
         let event: CellValueChangedEvent = {

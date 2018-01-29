@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,7 @@ var context_3 = require("./context/context");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
 var context_4 = require("./context/context");
 var constants_1 = require("./constants");
-var columnController_1 = require("./columnController/columnController");
+var columnApi_1 = require("./columnController/columnApi");
 var gridApi_1 = require("./gridApi");
 var SelectionController = (function () {
     function SelectionController() {
@@ -301,7 +301,7 @@ var SelectionController = (function () {
     ], SelectionController.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_3.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], SelectionController.prototype, "columnApi", void 0);
     __decorate([
         context_3.Autowired('gridApi'),

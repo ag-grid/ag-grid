@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -198,8 +198,9 @@ var GridApi = (function () {
     GridApi.prototype.getPinnedBottomRow = function (index) {
         return this.pinnedRowModel.getPinnedBottomRow(index);
     };
-    GridApi.prototype.setColumnDefs = function (colDefs) {
-        this.columnController.setColumnDefs(colDefs);
+    GridApi.prototype.setColumnDefs = function (colDefs, source) {
+        if (source === void 0) { source = "api"; }
+        this.columnController.setColumnDefs(colDefs, source);
     };
     GridApi.prototype.expireValueCache = function () {
         this.valueCache.expire();
@@ -281,8 +282,7 @@ var GridApi = (function () {
     };
     // *** deprecated
     GridApi.prototype.softRefreshView = function () {
-        console.warn('ag-Grid: since v11.1, softRefreshView() is deprecated, call refreshCells(params) instead.');
-        this.refreshCells({ volatile: true });
+        console.error('ag-Grid: since v16, softRefreshView() is no longer supported. Please check the documentation on how to refresh.');
     };
     // *** deprecated
     GridApi.prototype.refreshGroupRows = function () {
@@ -296,6 +296,7 @@ var GridApi = (function () {
     };
     GridApi.prototype.refreshHeader = function () {
         this.headerRenderer.refreshHeader();
+        this.gridPanel.setBodyAndHeaderHeights();
     };
     GridApi.prototype.isAnyFilterPresent = function () {
         return this.filterManager.isAnyFilterPresent();
@@ -433,8 +434,9 @@ var GridApi = (function () {
     };
     GridApi.prototype.recomputeAggregates = function () {
         if (utils_1.Utils.missing(this.inMemoryRowModel)) {
-            console.log('cannot call recomputeAggregates unless using normal row model');
+            console.warn('cannot call recomputeAggregates unless using normal row model');
         }
+        console.warn("recomputeAggregates is deprecated, please call api.refreshInMemoryRowModel('aggregate') instead");
         this.inMemoryRowModel.refreshModel({ step: constants_1.Constants.STEP_AGGREGATE });
     };
     GridApi.prototype.sizeColumnsToFit = function () {
@@ -525,7 +527,7 @@ var GridApi = (function () {
     GridApi.prototype.destroyFilter = function (key) {
         var column = this.columnController.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.destroyFilter(column);
+            return this.filterManager.destroyFilter(column, "filterDestroyed");
         }
     };
     GridApi.prototype.getColumnDef = function (key) {
@@ -543,8 +545,9 @@ var GridApi = (function () {
     GridApi.prototype.onSortChanged = function () {
         this.sortController.onSortChanged();
     };
-    GridApi.prototype.setSortModel = function (sortModel) {
-        this.sortController.setSortModel(sortModel);
+    GridApi.prototype.setSortModel = function (sortModel, source) {
+        if (source === void 0) { source = "api"; }
+        this.sortController.setSortModel(sortModel, source);
     };
     GridApi.prototype.getSortModel = function () {
         return this.sortController.getSortModel();
@@ -563,6 +566,9 @@ var GridApi = (function () {
     };
     GridApi.prototype.setFocusedCell = function (rowIndex, colKey, floating) {
         this.focusedCellController.setFocusedCell(rowIndex, colKey, floating, true);
+    };
+    GridApi.prototype.setSuppressRowDrag = function (value) {
+        this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_SUPPRESS_ROW_DRAG, value);
     };
     GridApi.prototype.setHeaderHeight = function (headerHeight) {
         this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_HEADER_HEIGHT, headerHeight);
@@ -700,6 +706,17 @@ var GridApi = (function () {
     GridApi.prototype.showColumnMenuAfterMouseClick = function (colKey, mouseEvent) {
         var column = this.columnController.getPrimaryColumn(colKey);
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
+    };
+    GridApi.prototype.hidePopupMenu = function () {
+        // hide the context menu if in enterprise
+        if (this.contextMenuFactory) {
+            this.contextMenuFactory.hideActiveMenu();
+        }
+        // and hide the column menu always
+        this.menuFactory.hideActiveMenu();
+    };
+    GridApi.prototype.setPopupParent = function (ePopupParent) {
+        this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_POPUP_PARENT, ePopupParent);
     };
     GridApi.prototype.tabToNextCell = function () {
         return this.rowRenderer.tabToNextCell(false);
@@ -1020,6 +1037,10 @@ var GridApi = (function () {
         context_1.Autowired('menuFactory'),
         __metadata("design:type", Object)
     ], GridApi.prototype, "menuFactory", void 0);
+    __decorate([
+        context_1.Optional('contextMenuFactory'),
+        __metadata("design:type", Object)
+    ], GridApi.prototype, "contextMenuFactory", void 0);
     __decorate([
         context_1.Autowired('cellRendererFactory'),
         __metadata("design:type", cellRendererFactory_1.CellRendererFactory)

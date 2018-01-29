@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var agCheckbox_1 = require("../../widgets/agCheckbox");
 var beanStub_1 = require("../../context/beanStub");
 var context_1 = require("../../context/context");
-var columnController_1 = require("../../columnController/columnController");
+var columnApi_1 = require("../../columnController/columnApi");
 var gridApi_1 = require("../../gridApi");
 var events_1 = require("../../events");
 var eventService_1 = require("../../eventService");
@@ -185,7 +185,7 @@ var SelectAllFeature = (function (_super) {
     ], SelectAllFeature.prototype, "gridApi", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], SelectAllFeature.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('eventService'),

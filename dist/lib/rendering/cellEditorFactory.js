@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,7 +35,15 @@ var CellEditorFactory = (function () {
     // }
     CellEditorFactory.prototype.createCellEditor = function (column, params) {
         var _this = this;
-        var cellEditorPromise = this.componentResolver.createAgGridComponent(column, params, 'cellEditor', 'agCellEditor');
+        var cellEditorPromise = this.componentResolver.createAgGridComponent(column, params, 'cellEditor', {
+            api: params.api,
+            columnApi: params.columnApi,
+            node: params.node,
+            data: params.node.data,
+            rowIndex: params.rowIndex,
+            column: params.column,
+            colDef: params.column.getColDef()
+        }, 'agCellEditor');
         return cellEditorPromise.map(function (cellEditor) {
             var isPopup = cellEditor.isPopup && cellEditor.isPopup();
             if (!isPopup) {

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49,7 +49,7 @@ var BorderLayout = (function () {
             this.setupPanels(params);
         }
         if (params.componentRecipes) {
-            this.overlayWrapperComp = params.componentRecipes.newOverlayWrapperComponent();
+            this.overlayWrapper = params.componentRecipes.newOverlayWrapperComponent();
         }
     }
     BorderLayout.prototype.addSizeChangeListener = function (listener) {
@@ -74,6 +74,10 @@ var BorderLayout = (function () {
         this.eCenterWrapper = this.getRefElement('center');
         this.eOverlayWrapper = this.getRefElement('overlay');
         this.eCenterRow = this.getRefElement('centerRow');
+        // initially hide the overlay. this is needed for IE10, if we don't hide the overlay,
+        // then it grabs mouse events, and it blocks clicking on the grid (as the overlay consumes
+        // the mouse events).
+        this.eOverlayWrapper.style.display = 'none';
         this.eNorthChildLayout = this.setupPanel(params.north, this.eNorthWrapper);
         this.eSouthChildLayout = this.setupPanel(params.south, this.eSouthWrapper);
         this.eEastChildLayout = this.setupPanel(params.east, this.eEastWrapper);
@@ -223,16 +227,13 @@ var BorderLayout = (function () {
         this.doLayout();
     };
     BorderLayout.prototype.showLoadingOverlay = function () {
-        var _this = this;
-        this.overlayWrapperComp.then(function (overlayComp) { return overlayComp.showLoadingOverlay(_this.eOverlayWrapper); });
+        this.overlayWrapper.showLoadingOverlay(this.eOverlayWrapper);
     };
     BorderLayout.prototype.showNoRowsOverlay = function () {
-        var _this = this;
-        this.overlayWrapperComp.then(function (overlayComp) { return overlayComp.showNoRowsOverlay(_this.eOverlayWrapper); });
+        this.overlayWrapper.showNoRowsOverlay(this.eOverlayWrapper);
     };
     BorderLayout.prototype.hideOverlay = function () {
-        var _this = this;
-        this.overlayWrapperComp.then(function (overlayComp) { return overlayComp.hideOverlay(_this.eOverlayWrapper); });
+        this.overlayWrapper.hideOverlay(this.eOverlayWrapper);
     };
     // this is used if there user has not specified any north or south parts
     BorderLayout.TEMPLATE_FULL_HEIGHT = '<div class="ag-bl ag-bl-full-height">' +

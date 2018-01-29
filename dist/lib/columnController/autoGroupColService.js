@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -80,7 +80,7 @@ var AutoGroupColService = (function () {
             cellRenderer: 'agGroupCellRenderer'
         };
         // we never allow moving the group column
-        defaultAutoColDef.suppressMovable = true;
+        // defaultAutoColDef.suppressMovable = true;
         if (rowGroupCol) {
             var rowGroupColDef = rowGroupCol.getColDef();
             utils_1._.assign(defaultAutoColDef, {

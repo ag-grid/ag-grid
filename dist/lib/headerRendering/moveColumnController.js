@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,7 +43,7 @@ var MoveColumnController = (function () {
         var dragCameFromToolPanel = draggingEvent.dragSource.type === dragAndDropService_1.DragSourceType.ToolPanel;
         if (dragCameFromToolPanel) {
             // the if statement doesn't work if drag leaves grid, then enters again
-            this.columnController.setColumnsVisible(columns, true);
+            this.setColumnsVisible(columns, true, "uiColumnDragged");
         }
         else {
             // restore previous state of visible columns upon re-entering. this means if the user drags
@@ -52,9 +52,9 @@ var MoveColumnController = (function () {
             // be dragged out, then when it's dragged in again, all three are visible. this stops that.
             var visibleState_1 = draggingEvent.dragItem.visibleState;
             var visibleColumns = columns.filter(function (column) { return visibleState_1[column.getId()]; });
-            this.columnController.setColumnsVisible(visibleColumns, true);
+            this.setColumnsVisible(visibleColumns, true, "uiColumnDragged");
         }
-        this.columnController.setColumnsPinned(columns, this.pinned);
+        this.setColumnsPinned(columns, this.pinned, "uiColumnDragged");
         this.onDragging(draggingEvent, true);
     };
     MoveColumnController.prototype.onDragLeave = function (draggingEvent) {
@@ -62,9 +62,23 @@ var MoveColumnController = (function () {
         if (hideColumnOnExit) {
             var dragItem = draggingEvent.dragSource.dragItemCallback();
             var columns = dragItem.columns;
-            this.columnController.setColumnsVisible(columns, false);
+            this.setColumnsVisible(columns, false, "uiColumnDragged");
         }
         this.ensureIntervalCleared();
+    };
+    MoveColumnController.prototype.setColumnsVisible = function (columns, visible, source) {
+        if (source === void 0) { source = "api"; }
+        if (columns) {
+            var allowedCols = columns.filter(function (c) { return !c.isLockVisible(); });
+            this.columnController.setColumnsVisible(allowedCols, visible, source);
+        }
+    };
+    MoveColumnController.prototype.setColumnsPinned = function (columns, pinned, source) {
+        if (source === void 0) { source = "api"; }
+        if (columns) {
+            var allowedCols = columns.filter(function (c) { return !c.isLockPinned(); });
+            this.columnController.setColumnsPinned(allowedCols, pinned, source);
+        }
     };
     MoveColumnController.prototype.onDragStop = function () {
         this.ensureIntervalCleared();
@@ -106,6 +120,7 @@ var MoveColumnController = (function () {
         }
     };
     MoveColumnController.prototype.onDragging = function (draggingEvent, fromEnter) {
+        var _this = this;
         if (fromEnter === void 0) { fromEnter = false; }
         this.lastDraggingEvent = draggingEvent;
         // if moving up or down (ie not left or right) then do nothing
@@ -122,6 +137,17 @@ var MoveColumnController = (function () {
         var hDirectionNormalised = this.normaliseDirection(draggingEvent.hDirection);
         var dragSourceType = draggingEvent.dragSource.type;
         var columnsToMove = draggingEvent.dragSource.dragItemCallback().columns;
+        columnsToMove = columnsToMove.filter(function (col) {
+            if (col.isLockPinned()) {
+                // if locked return true only if both col and container are same pin type.
+                // double equals (==) here on purpose so that null==undefined is true (for not pinned options)
+                return col.getPinned() == _this.pinned;
+            }
+            else {
+                // if not pin locked, then always allowed to be in this container
+                return true;
+            }
+        });
         this.attemptMoveColumns(dragSourceType, columnsToMove, hDirectionNormalised, xNormalised, fromEnter);
     };
     MoveColumnController.prototype.normaliseDirection = function (hDirection) {
@@ -185,7 +211,7 @@ var MoveColumnController = (function () {
             if (!this.columnController.doesMovePassRules(allMovingColumns, newIndex)) {
                 continue;
             }
-            this.columnController.moveColumns(allMovingColumns, newIndex);
+            this.columnController.moveColumns(allMovingColumns, newIndex, "uiColumnDragged");
             // important to return here, so once we do the first valid move, we don't try do any more
             return;
         }
@@ -274,6 +300,8 @@ var MoveColumnController = (function () {
         }
     };
     MoveColumnController.prototype.moveInterval = function () {
+        // the amounts we move get bigger at each interval, so the speed accelerates, starting a bit slow
+        // and getting faster. this is to give smoother user experience. we max at 100px to limit the speed.
         var pixelsToMove;
         this.intervalCount++;
         pixelsToMove = 10 + (this.intervalCount * 5);
@@ -292,13 +320,18 @@ var MoveColumnController = (function () {
             this.failedMoveAttempts = 0;
         }
         else {
+            // we count the failed move attempts. if we fail to move 7 times, then we pin the column.
+            // this is how we achieve pining by dragging the column to the edge of the grid.
             this.failedMoveAttempts++;
-            this.dragAndDropService.setGhostIcon(dragAndDropService_1.DragAndDropService.ICON_PINNED);
-            if (this.failedMoveAttempts > 7) {
-                var columns = this.lastDraggingEvent.dragItem.columns;
-                var pinType = this.needToMoveLeft ? column_1.Column.PINNED_LEFT : column_1.Column.PINNED_RIGHT;
-                this.columnController.setColumnsPinned(columns, pinType);
-                this.dragAndDropService.nudge();
+            var columns = this.lastDraggingEvent.dragItem.columns;
+            var columnsThatCanPin = columns.filter(function (c) { return !c.isLockPinned(); });
+            if (columnsThatCanPin.length > 0) {
+                this.dragAndDropService.setGhostIcon(dragAndDropService_1.DragAndDropService.ICON_PINNED);
+                if (this.failedMoveAttempts > 7) {
+                    var pinType = this.needToMoveLeft ? column_1.Column.PINNED_LEFT : column_1.Column.PINNED_RIGHT;
+                    this.setColumnsPinned(columnsThatCanPin, pinType, "uiColumnDragged");
+                    this.dragAndDropService.nudge();
+                }
             }
         }
     };

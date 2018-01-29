@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,7 +24,7 @@ var events_1 = require("../events");
 var context_3 = require("../context/context");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
-var columnController_1 = require("../columnController/columnController");
+var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
 var PinnedRowModel = (function () {
     function PinnedRowModel() {
@@ -152,7 +152,7 @@ var PinnedRowModel = (function () {
     ], PinnedRowModel.prototype, "context", void 0);
     __decorate([
         context_2.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], PinnedRowModel.prototype, "columnApi", void 0);
     __decorate([
         context_2.Autowired('gridApi'),

@@ -116,12 +116,17 @@ export class Events {
     public static EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
 
     /** All items from here down are used internally by the grid, not intended for external use. */
-    // not documented, either experimental, or we just don't want users using an ddepending on them
+    // not documented, either experimental, or we just don't want users using an depending on them
     public static EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
     public static EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED = 'displayedColumnsWidthChanged';
     public static EVENT_SCROLL_VISIBILITY_CHANGED = 'scrollVisibilityChanged';
     public static EVENT_COLUMN_HOVER_CHANGED = 'columnHoverChanged';
     public static EVENT_FLASH_CELLS = 'flashCells';
+
+    public static EVENT_ROW_DRAG_ENTER = 'rowDragEnter';
+    public static EVENT_ROW_DRAG_MOVE = 'rowDragMove';
+    public static EVENT_ROW_DRAG_LEAVE = 'rowDragLeave';
+    public static EVENT_ROW_DRAG_END = 'rowDragEnd';
 
     // these are used for server side group and agg - only used by CS with Viewport Row Model - intention is
     // to design these better around server side functions and then release to general public when fully working with

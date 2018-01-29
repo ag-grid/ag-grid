@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -18,6 +18,8 @@ export declare class CellComp extends Component {
     private gridCell;
     private rangeCount;
     private usingWrapper;
+    private includeSelectionComponent;
+    private includeRowDraggingComponent;
     private cellFocused;
     private editingCell;
     private cellEditorInPopup;
@@ -25,7 +27,6 @@ export declare class CellComp extends Component {
     private lastIPadMouseClickEvent;
     private usingCellRenderer;
     private cellRendererType;
-    private cellRendererComponentName;
     private cellRenderer;
     private cellRendererGui;
     private cellEditor;
@@ -34,6 +35,7 @@ export declare class CellComp extends Component {
     private rowComp;
     private rangeSelectionEnabled;
     private value;
+    private valueFormatted;
     private colsSpanning;
     private scope;
     private cellEditorVersion;
@@ -57,7 +59,6 @@ export declare class CellComp extends Component {
         suppressFlash?: boolean;
         newData?: boolean;
         forceRefresh?: boolean;
-        volatile?: boolean;
     }): void;
     private flashCell();
     private animateCell(cssName);
@@ -71,7 +72,6 @@ export declare class CellComp extends Component {
     private processClassesFromColDef(onApplicableClass);
     private putDataIntoCellAfterRefresh();
     attemptCellRendererRefresh(): boolean;
-    isVolatile(): boolean;
     private refreshToolTip();
     private valuesAreEqual(val1, val2);
     private getToolTip();
@@ -83,8 +83,10 @@ export declare class CellComp extends Component {
     private createCellRendererInstance();
     private afterCellRendererCreated(cellRendererVersion, cellRenderer);
     private attachCellRenderer();
-    private createCellRendererParams(valueFormatted);
+    private createCellRendererParams();
     private formatValue(value);
+    private getValueToUse();
+    private getValueAndFormat();
     private getValue();
     onMouseEvent(eventName: string, mouseEvent: MouseEvent): void;
     dispatchCellContextMenuEvent(event: Event): void;
@@ -113,6 +115,7 @@ export declare class CellComp extends Component {
     private onTabKeyDown(event);
     private onBackspaceOrDeleteKeyPressed(key);
     private onEnterKeyDown();
+    private navigateAfterEdit();
     private onF2KeyDown();
     private onEscapeKeyDown();
     onKeyPress(event: KeyboardEvent): void;
@@ -135,6 +138,8 @@ export declare class CellComp extends Component {
     private onRangeSelectionChanged();
     private onFirstRightPinnedChanged();
     private onLastLeftPinnedChanged();
+    private populateTemplate();
+    private addRowDragging();
     private addSelectionCheckbox();
     private addDomData();
     private onCellFocused(event?);

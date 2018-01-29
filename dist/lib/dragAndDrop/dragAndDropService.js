@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,7 @@ var DragSourceType;
 (function (DragSourceType) {
     DragSourceType[DragSourceType["ToolPanel"] = 0] = "ToolPanel";
     DragSourceType[DragSourceType["HeaderCell"] = 1] = "HeaderCell";
+    DragSourceType[DragSourceType["RowDrag"] = 2] = "RowDrag";
 })(DragSourceType = exports.DragSourceType || (exports.DragSourceType = {}));
 var VDirection;
 (function (VDirection) {
@@ -61,10 +62,22 @@ var DragAndDropService = (function () {
     DragAndDropService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
     };
+    DragAndDropService.prototype.getStringType = function (type) {
+        switch (type) {
+            case DragSourceType.RowDrag: return 'row';
+            case DragSourceType.HeaderCell: return 'headerCell';
+            case DragSourceType.ToolPanel: return 'toolPanel';
+            default:
+                console.warn("ag-Grid: bug - unknown drag type " + type);
+                return null;
+        }
+    };
     DragAndDropService.prototype.addDragSource = function (dragSource, allowTouch) {
         if (allowTouch === void 0) { allowTouch = false; }
         var params = {
+            type: this.getStringType(dragSource.type),
             eElement: dragSource.eElement,
+            dragStartPixels: dragSource.dragStartPixels,
             onDragStart: this.onDragStart.bind(this, dragSource),
             onDragStop: this.onDragStop.bind(this),
             onDragging: this.onDragging.bind(this)
@@ -96,14 +109,18 @@ var DragAndDropService = (function () {
         this.dragSource = dragSource;
         this.eventLastTime = mouseEvent;
         this.dragItem = this.dragSource.dragItemCallback();
-        this.dragItem.columns.forEach(function (column) { return column.setMoving(true); });
         this.lastDropTarget = this.dragSource.dragSourceDropTarget;
+        if (this.dragSource.dragStarted) {
+            this.dragSource.dragStarted();
+        }
         this.createGhost();
     };
     DragAndDropService.prototype.onDragStop = function (mouseEvent) {
         this.eventLastTime = null;
         this.dragging = false;
-        this.dragItem.columns.forEach(function (column) { return column.setMoving(false); });
+        if (this.dragSource.dragStopped) {
+            this.dragSource.dragStopped();
+        }
         if (this.lastDropTarget && this.lastDropTarget.onDragStop) {
             var draggingEvent = this.createDropTargetEvent(this.lastDropTarget, mouseEvent, null, null, false);
             this.lastDropTarget.onDragStop(draggingEvent);
@@ -156,7 +173,7 @@ var DragAndDropService = (function () {
     // checks if the mouse is on the drop target. it checks eContainer and eSecondaryContainers
     DragAndDropService.prototype.isMouseOnDropTarget = function (mouseEvent, dropTarget) {
         var allContainers = this.getAllContainersFromDropTarget(dropTarget);
-        var gotMatch = false;
+        var mouseOverTarget = false;
         allContainers.forEach(function (eContainer) {
             if (!eContainer) {
                 return;
@@ -170,10 +187,16 @@ var DragAndDropService = (function () {
             var verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
             //console.log(`rect.width = ${rect.width} || rect.height = ${rect.height} ## verticalFit = ${verticalFit}, horizontalFit = ${horizontalFit}, `);
             if (horizontalFit && verticalFit) {
-                gotMatch = true;
+                mouseOverTarget = true;
             }
         });
-        return gotMatch;
+        if (mouseOverTarget) {
+            var mouseOverTargetAndInterested = dropTarget.isInterestedIn(this.dragSource.type);
+            return mouseOverTargetAndInterested;
+        }
+        else {
+            return false;
+        }
     };
     DragAndDropService.prototype.addDropTarget = function (dropTarget) {
         this.dropTargets.push(dropTarget);
@@ -260,7 +283,7 @@ var DragAndDropService = (function () {
     };
     DragAndDropService.prototype.createGhost = function () {
         this.eGhost = utils_1.Utils.loadTemplate(DragAndDropService_1.GHOST_TEMPLATE);
-        this.eGhost.classList.add(this.environment.getTheme());
+        utils_1.Utils.addCssClass(this.eGhost, this.environment.getTheme());
         this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon');
         this.setGhostIcon(null);
         var eText = this.eGhost.querySelector('.ag-dnd-ghost-label');

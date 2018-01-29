@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "../../interfaces/iComponent";
@@ -6,7 +6,7 @@ import { RowNode } from "../../entities/rowNode";
 import { ColDef } from "../../entities/colDef";
 import { Column } from "../../entities/column";
 import { GridApi } from "../../gridApi";
-import { ColumnApi } from "../../columnController/columnController";
+import { ColumnApi } from "../../columnController/columnApi";
 export interface ICellRendererParams {
     value: any;
     valueFormatted: any;

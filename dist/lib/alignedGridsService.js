@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -152,7 +152,7 @@ var AlignedGridsService = (function () {
             return;
         }
         this.logger.log('onColumnEvent-> processing ' + event + ' expanded = ' + masterColumnGroup.isExpanded());
-        this.columnController.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded());
+        this.columnController.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
     };
     AlignedGridsService.prototype.processColumnEvent = function (colEvent) {
         var _this = this;
@@ -176,23 +176,23 @@ var AlignedGridsService = (function () {
             case events_1.Events.EVENT_COLUMN_MOVED:
                 var movedEvent = colEvent;
                 this.logger.log('onColumnEvent-> processing ' + colEvent.type + ' toIndex = ' + movedEvent.toIndex);
-                this.columnController.moveColumns(columnIds, movedEvent.toIndex);
+                this.columnController.moveColumns(columnIds, movedEvent.toIndex, "alignedGridChanged");
                 break;
             case events_1.Events.EVENT_COLUMN_VISIBLE:
                 var visibleEvent = colEvent;
                 this.logger.log('onColumnEvent-> processing ' + colEvent.type + ' visible = ' + visibleEvent.visible);
-                this.columnController.setColumnsVisible(columnIds, visibleEvent.visible);
+                this.columnController.setColumnsVisible(columnIds, visibleEvent.visible, "alignedGridChanged");
                 break;
             case events_1.Events.EVENT_COLUMN_PINNED:
                 var pinnedEvent = colEvent;
                 this.logger.log('onColumnEvent-> processing ' + colEvent.type + ' pinned = ' + pinnedEvent.pinned);
-                this.columnController.setColumnsPinned(columnIds, pinnedEvent.pinned);
+                this.columnController.setColumnsPinned(columnIds, pinnedEvent.pinned, "alignedGridChanged");
                 break;
             case events_1.Events.EVENT_COLUMN_RESIZED:
                 var resizedEvent_1 = colEvent;
                 masterColumns.forEach(function (masterColumn) {
                     _this.logger.log('onColumnEvent-> processing ' + colEvent.type + ' actualWidth = ' + masterColumn.getActualWidth());
-                    _this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), resizedEvent_1.finished);
+                    _this.columnController.setColumnWidth(masterColumn.getColId(), masterColumn.getActualWidth(), resizedEvent_1.finished, "alignedGridChanged");
                 });
                 break;
         }

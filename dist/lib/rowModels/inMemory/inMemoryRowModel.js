@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../../utils");
 var constants_1 = require("../../constants");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
+var columnApi_1 = require("../../columnController/columnApi");
 var columnController_1 = require("../../columnController/columnController");
 var filterManager_1 = require("../../filter/filterManager");
 var rowNode_1 = require("../../entities/rowNode");
@@ -57,6 +58,18 @@ var InMemoryRowModel = (function () {
         this.rootNode = new rowNode_1.RowNode();
         this.nodeManager = new inMemoryNodeManager_1.InMemoryNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService, this.columnController);
         this.context.wireBean(this.rootNode);
+    };
+    // returns false if row was moved, otherwise true
+    InMemoryRowModel.prototype.ensureRowAtPixel = function (rowNode, pixel) {
+        var indexAtPixelNow = this.getRowIndexAtPixel(pixel);
+        var rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
+        if (rowNodeAtPixelNow === rowNode) {
+            return false;
+        }
+        utils_1.Utils.removeFromArray(this.rootNode.allLeafChildren, rowNode);
+        utils_1.Utils.insertIntoArray(this.rootNode.allLeafChildren, rowNode, indexAtPixelNow);
+        this.refreshModel({ step: constants_1.Constants.STEP_EVERYTHING, keepRenderedRows: true, animate: true, keepEditingRows: true });
+        return true;
     };
     InMemoryRowModel.prototype.isLastRowFound = function () {
         return true;
@@ -547,7 +560,7 @@ var InMemoryRowModel = (function () {
     ], InMemoryRowModel.prototype, "valueCache", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], InMemoryRowModel.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),

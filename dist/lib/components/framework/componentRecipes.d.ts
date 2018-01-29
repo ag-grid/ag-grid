@@ -1,4 +1,4 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDateComp, IDateParams } from "../../rendering/dateComponent";
@@ -19,19 +19,20 @@ import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayCompon
 export declare class ComponentRecipes {
     private componentResolver;
     private gridOptions;
+    private gridApi;
+    private columnApi;
     private gridOptionsWrapper;
     private filterManager;
+    private static filterToFloatingFilterNames;
     newDateComponent(params: IDateParams): Promise<IDateComp>;
     newHeaderComponent(params: IHeaderParams): Promise<IHeaderComp>;
     newHeaderGroupComponent(params: IHeaderGroupParams): Promise<IHeaderGroupComp>;
-    private newFloatingFilterComponent<M>(typeRaw, colDef, params);
-    newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>>(column: Column, params: IFloatingFilterParams<M, any>): Promise<IFloatingFilterWrapperComp<M, any, any, any>>;
-    private isBasicFilterType(type);
+    newFloatingFilterWrapperComponent<M, P extends IFloatingFilterParams<M, any>>(column: Column, params: IFloatingFilterParams<M, any>): IFloatingFilterWrapperComp<M, any, any, any>;
     newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): Promise<ICellRendererComp>;
     newCellRenderer(target: ColDef | ISetFilterParams | IRichCellEditorParams, params: ICellRendererParams): Promise<ICellRendererComp>;
     newInnerCellRenderer(target: GroupCellRendererParams, params: ICellRendererParams): Promise<ICellRendererComp>;
     newFullRowGroupRenderer(params: ICellRendererParams): Promise<ICellRendererComp>;
-    newOverlayWrapperComponent(): Promise<IOverlayWrapperComp>;
+    newOverlayWrapperComponent(): IOverlayWrapperComp;
     newLoadingOverlayComponent(): Promise<ILoadingOverlayComp>;
     newNoRowsOverlayComponent(): Promise<INoRowsOverlayComp>;
     private getFilterComponentPrototype<A, B>(colDef);

@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,7 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var gridOptionsWrapper_1 = require("../../gridOptionsWrapper");
 var utils_1 = require("../../utils");
-var namedComponentResolver_1 = require("./namedComponentResolver");
+var componentProvider_1 = require("./componentProvider");
 var agComponentUtils_1 = require("./agComponentUtils");
 var componentMetadataProvider_1 = require("./componentMetadataProvider");
 var ComponentType;
@@ -48,13 +48,11 @@ var ComponentResolver = (function () {
      *      (global) or columnDef mostly.
      *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
      *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param componentNameOpt: The actual name of the component to instantiate, this is usually the same as propertyName, but in
-     *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
-     *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
-     *      component found, it throws an error, by default all components are MANDATORY
+     *  @param dynamicComponentParams: Params to be passed to the dynamic component function in case it needs to be
+     *      invoked
+     *  @param defaultComponentName: The name of the component to load if there is no component specified
      */
-    ComponentResolver.prototype.getComponentToUse = function (holder, propertyName, componentNameOpt) {
-        var componentName = componentNameOpt == null ? propertyName : componentNameOpt;
+    ComponentResolver.prototype.getComponentToUse = function (holder, propertyName, dynamicComponentParams, defaultComponentName) {
         /**
          * There are five things that can happen when resolving a component.
          *  a) HardcodedFwComponent: That holder[propertyName]Framework has associated a Framework native component
@@ -67,6 +65,7 @@ var ComponentResolver = (function () {
         var HardcodedJsComponent = null;
         var hardcodedJsFunction = null;
         var HardcodedFwComponent = null;
+        var dynamicComponentFn;
         if (holder != null) {
             var componentPropertyValue = holder[propertyName];
             if (componentPropertyValue != null) {
@@ -81,6 +80,7 @@ var ComponentResolver = (function () {
                 }
             }
             HardcodedFwComponent = holder[propertyName + "Framework"];
+            dynamicComponentFn = holder[propertyName + "Selector"];
         }
         /**
          * Since we allow many types of flavors for specifying the components, let's make sure this is not an illegal
@@ -89,10 +89,13 @@ var ComponentResolver = (function () {
         if ((HardcodedJsComponent && HardcodedFwComponent) ||
             (hardcodedNameComponent && HardcodedFwComponent) ||
             (hardcodedJsFunction && HardcodedFwComponent)) {
-            throw Error("You are trying to specify: " + propertyName + " twice as a component.");
+            throw Error("ag-grid: you are trying to specify: " + propertyName + " twice as a component.");
         }
         if (HardcodedFwComponent && !this.frameworkComponentWrapper) {
-            throw Error("You are specifying a framework component but you are not using a framework version of ag-grid for : " + propertyName);
+            throw Error("ag-grid: you are specifying a framework component but you are not using a framework version of ag-grid for : " + propertyName);
+        }
+        if (dynamicComponentFn && (hardcodedNameComponent || HardcodedJsComponent || hardcodedJsFunction || HardcodedFwComponent)) {
+            throw Error("ag-grid: you can't specify both, the selector and the component of ag-grid for : " + propertyName);
         }
         /**
          * At this stage we are guaranteed to either have,
@@ -110,7 +113,8 @@ var ComponentResolver = (function () {
             return {
                 type: ComponentType.FRAMEWORK,
                 component: HardcodedFwComponent,
-                source: ComponentSource.HARDCODED
+                source: ComponentSource.HARDCODED,
+                dynamicParams: null
             };
         }
         if (HardcodedJsComponent) {
@@ -119,7 +123,8 @@ var ComponentResolver = (function () {
             return {
                 type: ComponentType.AG_GRID,
                 component: HardcodedJsComponent,
-                source: ComponentSource.HARDCODED
+                source: ComponentSource.HARDCODED,
+                dynamicParams: null
             };
         }
         if (hardcodedJsFunction) {
@@ -127,15 +132,53 @@ var ComponentResolver = (function () {
             // console.warn(`${hardcodedJsFunction}`);
             return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, ComponentType.AG_GRID, ComponentSource.HARDCODED);
         }
-        //^^^^^ABOVE DEPRECATED
+        if (dynamicComponentFn) {
+            var dynamicComponentDef = dynamicComponentFn(dynamicComponentParams);
+            if (dynamicComponentDef != null) {
+                if (dynamicComponentDef.component == null) {
+                    dynamicComponentDef.component = defaultComponentName;
+                }
+                var dynamicComponent = this.resolveByName(propertyName, dynamicComponentDef.component);
+                return utils_1._.assign(dynamicComponent, {
+                    dynamicParams: dynamicComponentDef.params
+                });
+            }
+        }
+        //^^^^^ABOVE DEPRECATED - AT THIS POINT WE ARE RESOLVING BY NAME
         var componentNameToUse;
         if (hardcodedNameComponent) {
             componentNameToUse = hardcodedNameComponent;
         }
         else {
-            componentNameToUse = componentName;
+            componentNameToUse = defaultComponentName;
         }
-        return this.namedComponentResolver.resolve(propertyName, componentNameToUse);
+        return componentNameToUse == null ? null : this.resolveByName(propertyName, componentNameToUse);
+    };
+    ComponentResolver.prototype.resolveByName = function (propertyName, componentNameOpt) {
+        var componentName = componentNameOpt != null ? componentNameOpt : propertyName;
+        var registeredComponent = this.componentProvider.retrieve(componentName);
+        if (registeredComponent == null)
+            return null;
+        //If it is a FW it has to be registered as a component
+        if (registeredComponent.type == ComponentType.FRAMEWORK) {
+            return {
+                component: registeredComponent.component,
+                type: ComponentType.FRAMEWORK,
+                source: ComponentSource.REGISTERED_BY_NAME,
+                dynamicParams: null
+            };
+        }
+        //If it is JS it may be a function or a component
+        if (this.agComponentUtils.doesImplementIComponent(registeredComponent.component)) {
+            return {
+                component: registeredComponent.component,
+                type: ComponentType.AG_GRID,
+                source: (registeredComponent.source == componentProvider_1.RegisteredComponentSource.REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT,
+                dynamicParams: null
+            };
+        }
+        // This is a function
+        return this.agComponentUtils.adaptFunction(propertyName, registeredComponent.component, registeredComponent.type, (registeredComponent.source == componentProvider_1.RegisteredComponentSource.REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT);
     };
     /**
      * Useful to check what would be the resultant params for a given object
@@ -147,11 +190,22 @@ var ComponentResolver = (function () {
      *      specified by the user in the configuration
      * @returns {any} It merges the user agGridParams with the actual params specified by the user.
      */
-    ComponentResolver.prototype.mergeParams = function (holder, propertyName, agGridParams) {
-        var customParams = holder ? holder[propertyName + "Params"] : null;
+    ComponentResolver.prototype.mergeParams = function (holder, propertyName, agGridParams, dynamicCustomParams, dynamicParams) {
+        if (dynamicParams === void 0) { dynamicParams = null; }
+        var customParamsRaw = holder ? holder[propertyName + "Params"] : null;
         var finalParams = {};
         utils_1._.mergeDeep(finalParams, agGridParams);
-        utils_1._.mergeDeep(finalParams, customParams);
+        if (customParamsRaw != null) {
+            var customParams = null;
+            if (typeof customParamsRaw === 'function') {
+                customParams = customParamsRaw(dynamicCustomParams);
+            }
+            else {
+                customParams = customParamsRaw;
+            }
+            utils_1._.mergeDeep(finalParams, customParams);
+        }
+        utils_1._.mergeDeep(finalParams, dynamicParams);
         if (!finalParams.api) {
             finalParams.api = this.gridOptions.api;
         }
@@ -166,61 +220,78 @@ var ComponentResolver = (function () {
      *      specified by the user in the configuration
      *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
      *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param componentNameOpt: The actual name of the component to instantiate, this is usually the same as propertyName, but in
+     *  @param dynamicComponentParams: Params to be passed to the dynamic component function in case it needs to be
+     *      invoked
+     *  @param defaultComponentName: The actual name of the component to instantiate, this is usually the same as propertyName, but in
      *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
      *  @param mandatory: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
      *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
      */
-    ComponentResolver.prototype.createAgGridComponent = function (holderOpt, agGridParams, propertyName, componentNameOpt, mandatory, customInitParamsCb) {
+    ComponentResolver.prototype.createAgGridComponent = function (holderOpt, agGridParams, propertyName, dynamicComponentParams, defaultComponentName, mandatory, customInitParamsCb) {
         if (mandatory === void 0) { mandatory = true; }
         var holder = holderOpt == null ? this.gridOptions : holderOpt;
-        var componentName = componentNameOpt == null ? propertyName : componentNameOpt;
         //Create the component instance
-        var component = this.newAgGridComponent(holder, propertyName, componentName, mandatory);
-        if (!component)
+        var componentAndParams = this.newAgGridComponent(holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory);
+        if (!componentAndParams)
             return null;
         //Wire the component and call the init method with the correct params
-        var finalParams = this.mergeParams(holder, propertyName, agGridParams);
-        this.context.wireBean(component);
-        var deferredInit;
-        if (customInitParamsCb == null) {
-            deferredInit = component.init(finalParams);
-        }
-        else {
-            deferredInit = component.init(customInitParamsCb(finalParams, component));
-        }
+        var finalParams = this.mergeParams(holder, propertyName, agGridParams, dynamicComponentParams, componentAndParams[1]);
+        var deferredInit = this.initialiseComponent(componentAndParams[0], finalParams, customInitParamsCb);
         if (deferredInit == null) {
-            return utils_1.Promise.resolve(component);
-            // return new Promise<A> (resolve=>{
-            //     setTimeout(
-            //         ()=>resolve(component),
-            //         500
-            //     )
-            // })
+            return utils_1.Promise.resolve(componentAndParams[0]);
         }
         else {
             var asPromise = deferredInit;
-            return asPromise.map(function (notRelevant) { return component; });
+            return asPromise.map(function (notRelevant) { return componentAndParams[0]; });
         }
     };
-    ComponentResolver.prototype.newAgGridComponent = function (holder, propertyName, componentName, mandatory) {
+    /**
+     * This method creates a component given everything needed to guess what sort of component needs to be instantiated
+     * It takes
+     *  @param clazz: The class to instantiate,
+     *  @param agGridParams: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
+     *      specified by the user in the configuration
+     *  @param customInitParamsCb: A chance to customise the params passed to the init method. It receives what the current
+     *  params are and the component that init is about to get called for
+     */
+    ComponentResolver.prototype.createInternalAgGridComponent = function (clazz, agGridParams, customInitParamsCb) {
+        var internalComponent = new clazz();
+        this.initialiseComponent(internalComponent, agGridParams, customInitParamsCb);
+        return internalComponent;
+    };
+    ComponentResolver.prototype.newAgGridComponent = function (holder, propertyName, dynamicComponentParams, defaultComponentName, mandatory) {
         if (mandatory === void 0) { mandatory = true; }
-        var componentToUse = this.getComponentToUse(holder, propertyName, componentName);
+        var componentToUse = this.getComponentToUse(holder, propertyName, dynamicComponentParams, defaultComponentName);
         if (!componentToUse || !componentToUse.component) {
             if (mandatory) {
-                console.error("Error creating component " + propertyName + "=>" + componentName);
+                console.error("Error creating component " + propertyName + "=>" + defaultComponentName);
             }
             return null;
         }
         if (componentToUse.type === ComponentType.AG_GRID) {
-            return new componentToUse.component();
+            return [
+                new componentToUse.component(),
+                componentToUse.dynamicParams
+            ];
         }
         //Using framework component
         var FrameworkComponentRaw = componentToUse.component;
         var thisComponentConfig = this.componentMetadataProvider.retrieve(propertyName);
-        return this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, componentName);
+        return [
+            this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, defaultComponentName),
+            componentToUse.dynamicParams
+        ];
+    };
+    ComponentResolver.prototype.initialiseComponent = function (component, agGridParams, customInitParamsCb) {
+        this.context.wireBean(component);
+        if (customInitParamsCb == null) {
+            return component.init(agGridParams);
+        }
+        else {
+            return component.init(customInitParamsCb(agGridParams, component));
+        }
     };
     __decorate([
         context_1.Autowired("gridOptions"),
@@ -235,10 +306,6 @@ var ComponentResolver = (function () {
         __metadata("design:type", context_1.Context)
     ], ComponentResolver.prototype, "context", void 0);
     __decorate([
-        context_1.Autowired("namedComponentResolver"),
-        __metadata("design:type", namedComponentResolver_1.NamedComponentResolver)
-    ], ComponentResolver.prototype, "namedComponentResolver", void 0);
-    __decorate([
         context_1.Autowired("agComponentUtils"),
         __metadata("design:type", agComponentUtils_1.AgComponentUtils)
     ], ComponentResolver.prototype, "agComponentUtils", void 0);
@@ -246,6 +313,10 @@ var ComponentResolver = (function () {
         context_1.Autowired("componentMetadataProvider"),
         __metadata("design:type", componentMetadataProvider_1.ComponentMetadataProvider)
     ], ComponentResolver.prototype, "componentMetadataProvider", void 0);
+    __decorate([
+        context_1.Autowired("componentProvider"),
+        __metadata("design:type", componentProvider_1.ComponentProvider)
+    ], ComponentResolver.prototype, "componentProvider", void 0);
     __decorate([
         context_1.Optional("frameworkComponentWrapper"),
         __metadata("design:type", Object)

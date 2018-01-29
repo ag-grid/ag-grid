@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,7 +33,7 @@ var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var events_1 = require("../events");
 var eventService_1 = require("../eventService");
 var gridApi_1 = require("../gridApi");
-var columnController_1 = require("../columnController/columnController");
+var columnApi_1 = require("../columnController/columnApi");
 var CheckboxSelectionComponent = (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
@@ -78,7 +78,6 @@ var CheckboxSelectionComponent = (function (_super) {
     CheckboxSelectionComponent.prototype.init = function (params) {
         this.rowNode = params.rowNode;
         this.column = params.column;
-        this.visibleFunc = params.visibleFunc;
         this.createAndAddIcons();
         this.onSelectionChanged();
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
@@ -91,27 +90,14 @@ var CheckboxSelectionComponent = (function (_super) {
         this.addDestroyableEventListener(this.eIndeterminateIcon, 'click', this.onIndeterminateClicked.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
-        if (this.visibleFunc) {
+        if (typeof this.column.getColDef().checkboxSelection === 'function') {
             this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();
         }
     };
     CheckboxSelectionComponent.prototype.showOrHideSelect = function () {
-        var params = this.createParams();
-        var visible = this.visibleFunc(params);
+        var visible = this.column.isCellCheckboxSelection(this.rowNode);
         this.setVisible(visible);
-    };
-    CheckboxSelectionComponent.prototype.createParams = function () {
-        var params = {
-            node: this.rowNode,
-            data: this.rowNode.data,
-            column: this.column,
-            colDef: this.column.getColDef(),
-            context: this.gridOptionsWrapper.getContext(),
-            api: this.gridApi,
-            columnApi: this.columnApi
-        };
-        return params;
     };
     __decorate([
         context_1.Autowired('gridOptionsWrapper'),
@@ -127,7 +113,7 @@ var CheckboxSelectionComponent = (function (_super) {
     ], CheckboxSelectionComponent.prototype, "gridApi", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], CheckboxSelectionComponent.prototype, "columnApi", void 0);
     return CheckboxSelectionComponent;
 }(component_1.Component));

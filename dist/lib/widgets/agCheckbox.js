@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,7 +66,11 @@ var AgCheckbox = (function (_super) {
             this.eIndeterminate.appendChild(utils_1.Utils.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, null));
         }
     };
-    AgCheckbox.prototype.onClick = function () {
+    AgCheckbox.prototype.onClick = function (event) {
+        // if we don't set the path, then won't work in Edge, as once the <span> is removed from the dom,
+        // it's not possible to calculate the path by following the parent's chain. in other browser (eg
+        // chrome) there is event.path for this purpose, but missing in Edge.
+        utils_1.Utils.addAgGridEventPath(event);
         if (!this.readOnly) {
             this.toggle();
         }
@@ -166,7 +170,7 @@ var AgCheckbox = (function (_super) {
     __decorate([
         componentAnnotations_1.Listener('click'),
         __metadata("design:type", Function),
-        __metadata("design:paramtypes", []),
+        __metadata("design:paramtypes", [MouseEvent]),
         __metadata("design:returntype", void 0)
     ], AgCheckbox.prototype, "onClick", null);
     return AgCheckbox;

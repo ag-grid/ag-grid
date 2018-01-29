@@ -67,7 +67,7 @@ export class BorderLayout {
 
     private sizeChangeListeners = <any>[];
 
-    private overlayWrapperComp: Promise<IOverlayWrapperComp>;
+    private overlayWrapper: IOverlayWrapperComp;
 
     constructor(params: any) {
 
@@ -108,7 +108,7 @@ export class BorderLayout {
         }
 
         if (params.componentRecipes) {
-            this.overlayWrapperComp = params.componentRecipes.newOverlayWrapperComponent();
+            this.overlayWrapper = params.componentRecipes.newOverlayWrapperComponent();
         }
     }
 
@@ -137,6 +137,11 @@ export class BorderLayout {
         this.eCenterWrapper = this.getRefElement('center');
         this.eOverlayWrapper = this.getRefElement('overlay');
         this.eCenterRow = this.getRefElement('centerRow');
+
+        // initially hide the overlay. this is needed for IE10, if we don't hide the overlay,
+        // then it grabs mouse events, and it blocks clicking on the grid (as the overlay consumes
+        // the mouse events).
+        this.eOverlayWrapper.style.display = 'none';
 
         this.eNorthChildLayout = this.setupPanel(params.north, this.eNorthWrapper);
         this.eSouthChildLayout = this.setupPanel(params.south, this.eSouthWrapper);
@@ -309,14 +314,14 @@ export class BorderLayout {
     }
 
     public showLoadingOverlay() {
-        this.overlayWrapperComp.then(overlayComp => overlayComp.showLoadingOverlay(this.eOverlayWrapper));
+        this.overlayWrapper.showLoadingOverlay(this.eOverlayWrapper);
     }
 
     public showNoRowsOverlay() {
-        this.overlayWrapperComp.then(overlayComp => overlayComp.showNoRowsOverlay(this.eOverlayWrapper));
+        this.overlayWrapper.showNoRowsOverlay(this.eOverlayWrapper);
     }
 
     public hideOverlay() {
-        this.overlayWrapperComp.then(overlayComp => overlayComp.hideOverlay(this.eOverlayWrapper));
+        this.overlayWrapper.hideOverlay(this.eOverlayWrapper);
     }
 }

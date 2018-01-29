@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,6 +19,7 @@ var context_1 = require("./context/context");
 var eventService_1 = require("./eventService");
 var events_1 = require("./events");
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
+var columnApi_1 = require("./columnController/columnApi");
 var columnController_1 = require("./columnController/columnController");
 var utils_1 = require("./utils");
 var gridCell_1 = require("./entities/gridCell");
@@ -57,18 +58,13 @@ var FocusedCellController = (function () {
         if (!this.focusedCell) {
             return null;
         }
+        // we check that the browser is actually focusing on the grid, if it is not, then
+        // we have nothing to worry about
         var browserFocusedCell = this.getGridCellForDomElement(document.activeElement);
         if (!browserFocusedCell) {
             return null;
         }
-        var gridFocusId = this.focusedCell.createId();
-        var browserFocusId = browserFocusedCell.createId();
-        if (gridFocusId === browserFocusId) {
-            return this.focusedCell;
-        }
-        else {
-            return null;
-        }
+        return this.focusedCell;
     };
     FocusedCellController.prototype.getGridCellForDomElement = function (eBrowserCell) {
         var ePointer = eBrowserCell;
@@ -143,7 +139,7 @@ var FocusedCellController = (function () {
     ], FocusedCellController.prototype, "columnController", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], FocusedCellController.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),

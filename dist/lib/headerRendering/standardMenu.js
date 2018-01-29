@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,6 +24,11 @@ var eventService_1 = require("../eventService");
 var StandardMenuFactory = (function () {
     function StandardMenuFactory() {
     }
+    StandardMenuFactory.prototype.hideActiveMenu = function () {
+        if (this.hidePopup) {
+            this.hidePopup();
+        }
+    };
     StandardMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent) {
         var _this = this;
         this.showPopup(column, function (eMenu) {
@@ -60,7 +65,7 @@ var StandardMenuFactory = (function () {
         this.eventService.addEventListener('bodyScroll', bodyScrollListener);
         var closedCallback = function () {
             _this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
-            column.setMenuVisible(false);
+            column.setMenuVisible(false, "contextMenu");
         };
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
@@ -74,7 +79,8 @@ var StandardMenuFactory = (function () {
                 filter.afterGuiAttached(params);
             }
         });
-        column.setMenuVisible(true);
+        this.hidePopup = hidePopup;
+        column.setMenuVisible(true, "contextMenu");
     };
     StandardMenuFactory.prototype.isMenuEnabled = function (column) {
         // for standard, we show menu if filter is enabled, and he menu is not suppressed

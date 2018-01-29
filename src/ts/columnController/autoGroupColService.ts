@@ -82,7 +82,7 @@ export class AutoGroupColService {
         };
 
         // we never allow moving the group column
-        defaultAutoColDef.suppressMovable = true;
+        // defaultAutoColDef.suppressMovable = true;
 
         if (rowGroupCol) {
             let rowGroupColDef = rowGroupCol.getColDef();

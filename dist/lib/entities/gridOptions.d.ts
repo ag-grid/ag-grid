@@ -1,9 +1,9 @@
-// Type definitions for ag-grid v15.0.0
+// Type definitions for ag-grid v16.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
 import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columnController/columnController";
+import { ColumnApi } from "../columnController/columnApi";
 import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
@@ -25,6 +25,8 @@ export interface GridOptions {
     /****************************************************************
      * Don't forget to update ComponentUtil if changing this class. PLEASE!*
      ****************************************************************/
+    rowDragManaged?: boolean;
+    suppressRowDrag?: boolean;
     ensureDomOrder?: boolean;
     deltaRowDataMode?: boolean;
     scrollbarWidth?: number;
@@ -51,6 +53,7 @@ export interface GridOptions {
     enableStatusBar?: boolean;
     alwaysShowStatusBar?: boolean;
     enableGroupEdit?: boolean;
+    enterMovesDownAfterEdit?: boolean;
     suppressMiddleClickScrolls?: boolean;
     suppressPreventDefaultOnMouseWheel?: boolean;
     suppressScrollOnNewData?: boolean;
@@ -82,6 +85,7 @@ export interface GridOptions {
     pivotMode?: boolean;
     pivotTotals?: boolean;
     enableRangeSelection?: boolean;
+    suppressMultiRangeSelection?: boolean;
     rowGroupPanelShow?: string;
     pivotPanelShow?: string;
     suppressContextMenu?: boolean;
@@ -167,6 +171,7 @@ export interface GridOptions {
     overlayNoRowsTemplate?: string;
     rowHeight?: number;
     detailRowHeight?: number;
+    popupParent?: HTMLElement;
     masterDetail?: boolean;
     isRowMaster?: IsRowMaster;
     detailCellRenderer?: {

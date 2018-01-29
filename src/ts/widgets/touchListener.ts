@@ -31,8 +31,11 @@ export class TouchListener implements IEventEmitter {
     public static EVENT_TAP = 'tap';
     public static EVENT_LONG_TAP = 'longTap';
 
-    constructor(eElement: HTMLElement) {
+    private preventMouseClick: boolean;
+
+    constructor(eElement: HTMLElement, preventMouseClick = false) {
         this.eElement = eElement;
+        this.preventMouseClick = preventMouseClick;
 
         let startListener = this.onTouchStart.bind(this);
         let moveListener = this.onTouchMove.bind(this);
@@ -40,12 +43,13 @@ export class TouchListener implements IEventEmitter {
 
         this.eElement.addEventListener('touchstart', startListener, <any>{passive:true});
         this.eElement.addEventListener('touchmove', moveListener, <any>{passive:true});
-        this.eElement.addEventListener('touchend', endListener, <any>{passive:true});
+        // we set passive=false, as we want to prevent default on this event
+        this.eElement.addEventListener('touchend', endListener, <any>{passive:false});
 
         this.destroyFuncs.push( ()=> {
             this.eElement.addEventListener('touchstart', startListener, <any>{passive:true});
             this.eElement.addEventListener('touchmove', moveListener, <any>{passive:true});
-            this.eElement.addEventListener('touchend', endListener, <any>{passive:true});
+            this.eElement.addEventListener('touchend', endListener, <any>{passive:false});
         });
     }
 
@@ -119,6 +123,11 @@ export class TouchListener implements IEventEmitter {
                 touchStart: this.touchStart
             };
             this.eventService.dispatchEvent(event);
+
+            // stops the tap from also been processed as a mouse click
+            if (this.preventMouseClick) {
+                touchEvent.preventDefault();
+            }
         }
 
         this.touching = false;

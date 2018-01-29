@@ -1,6 +1,6 @@
 /**
  * ag-grid - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v15.0.0
+ * @version v16.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,7 @@ var eventService_1 = require("../eventService");
 var context_1 = require("../context/context");
 var events_1 = require("../events");
 var beanStub_1 = require("../context/beanStub");
-var columnController_1 = require("../columnController/columnController");
+var columnApi_1 = require("../columnController/columnApi");
 var gridApi_1 = require("../gridApi");
 var ColumnHoverService = (function (_super) {
     __extends(ColumnHoverService, _super);
@@ -67,7 +67,7 @@ var ColumnHoverService = (function (_super) {
     ], ColumnHoverService.prototype, "eventService", void 0);
     __decorate([
         context_1.Autowired('columnApi'),
-        __metadata("design:type", columnController_1.ColumnApi)
+        __metadata("design:type", columnApi_1.ColumnApi)
     ], ColumnHoverService.prototype, "columnApi", void 0);
     __decorate([
         context_1.Autowired('gridApi'),
