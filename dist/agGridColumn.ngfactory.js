@@ -38,7 +38,7 @@ exports.AgGridColumnNgFactory = i0.ɵccf('ag-grid-column', i1.AgGridColumn, View
     pivotIndex: 'pivotIndex', pivot: 'pivot', comparator: 'comparator', equals: 'equals',
     pivotComparator: 'pivotComparator', checkboxSelection: 'checkboxSelection', headerCheckboxSelection: 'headerCheckboxSelection',
     headerCheckboxSelectionFilteredOnly: 'headerCheckboxSelectionFilteredOnly',
-    suppressMenu: 'suppressMenu', menuTabs: 'menuTabs', suppressSorting: 'suppressSorting',
+    rowDrag: 'rowDrag', suppressMenu: 'suppressMenu', menuTabs: 'menuTabs', suppressSorting: 'suppressSorting',
     suppressMovable: 'suppressMovable', suppressFilter: 'suppressFilter', unSortIcon: 'unSortIcon',
     suppressSizeToFit: 'suppressSizeToFit', suppressResize: 'suppressResize', suppressAutoSize: 'suppressAutoSize',
     suppressKeyboardEvent: 'suppressKeyboardEvent', enableRowGroup: 'enableRowGroup',
@@ -51,5 +51,6 @@ exports.AgGridColumnNgFactory = i0.ɵccf('ag-grid-column', i1.AgGridColumn, View
     icons: 'icons', enableCellChangeFlash: 'enableCellChangeFlash', headerComponent: 'headerComponent',
     headerComponentFramework: 'headerComponentFramework', headerComponentParams: 'headerComponentParams',
     floatingFilterComponent: 'floatingFilterComponent', floatingFilterComponentParams: 'floatingFilterComponentParams',
-    floatingFilterComponentFramework: 'floatingFilterComponentFramework', refData: 'refData' }, {}, []);
+    floatingFilterComponentFramework: 'floatingFilterComponentFramework', refData: 'refData',
+    tooltip: 'tooltip', lockPosition: 'lockPosition', lockVisible: 'lockVisible', lockPinned: 'lockPinned' }, {}, []);
 //# sourceMappingURL=agGridColumn.ngfactory.js.map

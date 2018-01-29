@@ -1,5 +1,5 @@
-import { EventEmitter, ViewContainerRef, ElementRef, QueryList, AfterViewInit, ComponentFactoryResolver } from "@angular/core";
-import { GridOptions, GridApi, ColumnApi } from "ag-grid/main";
+import { AfterViewInit, ComponentFactoryResolver, ElementRef, EventEmitter, QueryList, ViewContainerRef } from "@angular/core";
+import { ColumnApi, GridApi, GridOptions } from "ag-grid/main";
 import { Ng2FrameworkFactory } from "./ng2FrameworkFactory";
 import { AgGridColumn } from "./agGridColumn";
 import { Ng2FrameworkComponentWrapper } from "./ng2FrameworkComponentWrapper";
@@ -12,6 +12,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     private _initialised;
     private _destroyed;
     private gridParams;
+    private _fullyReady;
     api: GridApi;
     columnApi: ColumnApi;
     columns: QueryList<AgGridColumn>;
@@ -235,6 +236,7 @@ export declare class AgGridNg2 implements AfterViewInit {
     detailGridOptions: any;
     getDetailRowData: any;
     masterDetail: any;
+    isRowMaster: any;
     detailCellRenderer: any;
     detailCellRendererFramework: any;
     detailCellRendererParams: any;
@@ -244,6 +246,11 @@ export declare class AgGridNg2 implements AfterViewInit {
     noRowsOverlayComponent: any;
     noRowsOverlayComponentFramework: any;
     noRowsOverlayComponentParams: any;
+    suppressMultiRangeSelection: any;
+    rowDragManaged: any;
+    suppressRowDrag: any;
+    popupParent: any;
+    enterMovesDownAfterEdit: any;
     /**
      * Outputs
      */
@@ -315,6 +322,10 @@ export declare class AgGridNg2 implements AfterViewInit {
     paginationChanged: EventEmitter<any>;
     bodyHeightChanged: EventEmitter<any>;
     componentStateChanged: EventEmitter<any>;
+    rowDragEnter: EventEmitter<any>;
+    rowDragMove: EventEmitter<any>;
+    rowDragLeave: EventEmitter<any>;
+    rowDragEnd: EventEmitter<any>;
     beforeFilterChanged: EventEmitter<any>;
     afterFilterChanged: EventEmitter<any>;
     beforeSortChanged: EventEmitter<any>;

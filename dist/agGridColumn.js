@@ -101,6 +101,7 @@ AgGridColumn.propDecorators = {
     'checkboxSelection': [{ type: core_1.Input },],
     'headerCheckboxSelection': [{ type: core_1.Input },],
     'headerCheckboxSelectionFilteredOnly': [{ type: core_1.Input },],
+    'rowDrag': [{ type: core_1.Input },],
     'suppressMenu': [{ type: core_1.Input },],
     'menuTabs': [{ type: core_1.Input },],
     'suppressSorting': [{ type: core_1.Input },],
@@ -139,6 +140,10 @@ AgGridColumn.propDecorators = {
     'floatingFilterComponentParams': [{ type: core_1.Input },],
     'floatingFilterComponentFramework': [{ type: core_1.Input },],
     'refData': [{ type: core_1.Input },],
+    'tooltip': [{ type: core_1.Input },],
+    'lockPosition': [{ type: core_1.Input },],
+    'lockVisible': [{ type: core_1.Input },],
+    'lockPinned': [{ type: core_1.Input },],
 };
 exports.AgGridColumn = AgGridColumn;
 //# sourceMappingURL=agGridColumn.js.map

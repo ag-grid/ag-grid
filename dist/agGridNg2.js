@@ -13,6 +13,10 @@ var AgGridNg2 = (function () {
         this._componentFactoryResolver = _componentFactoryResolver;
         this._initialised = false;
         this._destroyed = false;
+        // in order to ensure firing of gridReady is deterministic
+        this._fullyReady = new main_1.Promise(function (resolve) {
+            resolve(true);
+        });
         this.slaveGrids = undefined;
         this.rowData = undefined;
         this.floatingTopRowData = undefined;
@@ -223,6 +227,7 @@ var AgGridNg2 = (function () {
         this.detailGridOptions = undefined;
         this.getDetailRowData = undefined;
         this.masterDetail = undefined;
+        this.isRowMaster = undefined;
         this.detailCellRenderer = undefined;
         this.detailCellRendererFramework = undefined;
         this.detailCellRendererParams = undefined;
@@ -232,6 +237,11 @@ var AgGridNg2 = (function () {
         this.noRowsOverlayComponent = undefined;
         this.noRowsOverlayComponentFramework = undefined;
         this.noRowsOverlayComponentParams = undefined;
+        this.suppressMultiRangeSelection = undefined;
+        this.rowDragManaged = undefined;
+        this.suppressRowDrag = undefined;
+        this.popupParent = undefined;
+        this.enterMovesDownAfterEdit = undefined;
         /**
          * Outputs
          */
@@ -303,6 +313,10 @@ var AgGridNg2 = (function () {
         this.paginationChanged = new core_1.EventEmitter();
         this.bodyHeightChanged = new core_1.EventEmitter();
         this.componentStateChanged = new core_1.EventEmitter();
+        this.rowDragEnter = new core_1.EventEmitter();
+        this.rowDragMove = new core_1.EventEmitter();
+        this.rowDragLeave = new core_1.EventEmitter();
+        this.rowDragEnd = new core_1.EventEmitter();
         // deprecated
         this.beforeFilterChanged = new core_1.EventEmitter();
         this.afterFilterChanged = new core_1.EventEmitter();
@@ -345,6 +359,10 @@ var AgGridNg2 = (function () {
             this.columnApi = this.gridOptions.columnApi;
         }
         this._initialised = true;
+        // sometimes, especially in large client apps gridReady can fire before ngAfterViewInit
+        // this ties these together so that gridReady will always fire after AgGridNg2's ngAfterViewInit
+        // the actual containing component's ngAfterViewInit will fire just after AgGridNg2's
+        this._fullyReady.resolveNow(null, function (resolve) { return resolve; });
     };
     AgGridNg2.prototype.ngOnChanges = function (changes) {
         if (this._initialised) {
@@ -368,7 +386,16 @@ var AgGridNg2 = (function () {
         // generically look up the eventType
         var emitter = this[eventType];
         if (emitter) {
-            emitter.emit(event);
+            if (eventType === 'gridReady') {
+                // if the user is listening for gridReady, wait for ngAfterViewInit to fire first, then emit the
+                // gridReady event
+                this._fullyReady.then((function (result) {
+                    emitter.emit(event);
+                }));
+            }
+            else {
+                emitter.emit(event);
+            }
         }
         else {
             console.log('ag-Grid-ng2: could not find EventEmitter: ' + eventType);
@@ -609,6 +636,7 @@ AgGridNg2.propDecorators = {
     'detailGridOptions': [{ type: core_1.Input },],
     'getDetailRowData': [{ type: core_1.Input },],
     'masterDetail': [{ type: core_1.Input },],
+    'isRowMaster': [{ type: core_1.Input },],
     'detailCellRenderer': [{ type: core_1.Input },],
     'detailCellRendererFramework': [{ type: core_1.Input },],
     'detailCellRendererParams': [{ type: core_1.Input },],
@@ -618,6 +646,11 @@ AgGridNg2.propDecorators = {
     'noRowsOverlayComponent': [{ type: core_1.Input },],
     'noRowsOverlayComponentFramework': [{ type: core_1.Input },],
     'noRowsOverlayComponentParams': [{ type: core_1.Input },],
+    'suppressMultiRangeSelection': [{ type: core_1.Input },],
+    'rowDragManaged': [{ type: core_1.Input },],
+    'suppressRowDrag': [{ type: core_1.Input },],
+    'popupParent': [{ type: core_1.Input },],
+    'enterMovesDownAfterEdit': [{ type: core_1.Input },],
     'gridReady': [{ type: core_1.Output },],
     'columnEverythingChanged': [{ type: core_1.Output },],
     'newColumnsLoaded': [{ type: core_1.Output },],
@@ -686,6 +719,10 @@ AgGridNg2.propDecorators = {
     'paginationChanged': [{ type: core_1.Output },],
     'bodyHeightChanged': [{ type: core_1.Output },],
     'componentStateChanged': [{ type: core_1.Output },],
+    'rowDragEnter': [{ type: core_1.Output },],
+    'rowDragMove': [{ type: core_1.Output },],
+    'rowDragLeave': [{ type: core_1.Output },],
+    'rowDragEnd': [{ type: core_1.Output },],
     'beforeFilterChanged': [{ type: core_1.Output },],
     'afterFilterChanged': [{ type: core_1.Output },],
     'beforeSortChanged': [{ type: core_1.Output },],
