@@ -525,6 +525,11 @@ batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowN
 </snippet>
 
     <p>
+        The default wait between executing batches if 50ms. This can be changed using the grid
+        property <code>batchUpdateWaitMillis</code>.
+    </p>
+
+    <p>
         Use batch updates if you have streaming data going into the grid and want don't want the grid's
         rendering and recalculating to be a bottleneck.
     </p>

@@ -115,6 +115,8 @@ var gridOptions = {
     enableSorting: true,
     suppressAggFuncInHeader: true,
     animateRows: true,
+    rowGroupPanelShow: 'always',
+    pivotPanelShow: 'always',
     getRowNodeId: function(data) { return data.trade; },
     defaultColDef: {
         width: 120
