@@ -8,7 +8,7 @@ include_once 'includes/html-helpers.php';
 <?php
 meta_and_links("ag-Grid: Datagrid Example", "react angular angularjs data grid example", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is our fully interactive demo showcasing all of our features and our performance with large datasets.", false);
 ?>
-<link rel="stylesheet" href="../dist/homepage.css">
+<link rel="stylesheet" href="./dist/homepage.css">
 
 <style></style>
 
