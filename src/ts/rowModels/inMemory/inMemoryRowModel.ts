@@ -55,7 +55,7 @@ export interface RowNodeTransaction {
 
 export interface BatchTransactionItem {
     rowDataTransaction: RowDataTransaction;
-    callback: ()=>void;
+    callback: (res: RowNodeTransaction)=>void;
 }
 
 @Bean('rowModel')
@@ -610,7 +610,7 @@ export class InMemoryRowModel {
             newData: true});
     }
 
-    public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: ()=>void): void {
+    public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction)=>void): void {
         if (!this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch = [];
             setTimeout( ()=> {

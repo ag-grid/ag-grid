@@ -935,7 +935,7 @@ export class GridApi {
         return res;
     }
 
-    public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: ()=>void): void {
+    public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction)=>void): void {
         if (!this.inMemoryRowModel) {
             console.error('ag-Grid: api.batchUpdateRowData() only works with InMemoryRowModel.');
             return;
