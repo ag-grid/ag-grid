@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "15.0.0",
+  "version": "16.0.0",
   "description": "ag-Grid React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -24,6 +24,9 @@
     "url": "https://github.com/ag-grid/ag-grid-react/issues"
   },
   "homepage": "http://www.ag-grid.com/",
+  "dependencies": {
+    "prop-types": "15.6.0"
+  },
   "devDependencies": {
     "@types/ag-grid": "3.2.0",
     "@types/react": "^16.0.20",
@@ -35,12 +38,12 @@
     "react-dom": "^16.0.0",
     "react-dom-factories": "^1.0.0",
     "merge2": "1.0.x",
-    "prop-types": "15.6.0",
     "typescript": "2.5.x",
-    "gulp-rename": "1.2.2"
+    "gulp-rename": "1.2.2",
+    "ag-grid": "^16.0.0"
   },
   "peerDependencies": {
-    "ag-grid": "^15.x",
+    "ag-grid": "^16.0.0",
     "react": "^15.5.0 || ^16.0.0",
     "react-dom": "^15.5.0 || ^16.0.0",
     "react-dom-factories" : "^1.0.0"
