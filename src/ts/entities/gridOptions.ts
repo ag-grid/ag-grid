@@ -133,6 +133,7 @@ export interface GridOptions {
     aggregateOnlyChangedColumns?: boolean;
     valueCache?: boolean;
     valueCacheNeverExpires?: boolean;
+    batchUpdateWaitMillis?: number;
 
     cacheOverflowSize?: number;
     infiniteInitialRowCount?: number;

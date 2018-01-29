@@ -613,10 +613,11 @@ export class InMemoryRowModel {
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction)=>void): void {
         if (!this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch = [];
+            let waitMillis = this.gridOptionsWrapper.getBatchUpdateWaitMillis();
             setTimeout( ()=> {
                 this.executeBatchUpdateRowData();
                 this.rowDataTransactionBatch = null;
-            }, 50 );
+            }, waitMillis);
         }
         this.rowDataTransactionBatch.push({rowDataTransaction: rowDataTransaction, callback: callback});
     }

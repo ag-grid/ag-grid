@@ -308,6 +308,10 @@ export class GridOptionsWrapper {
     public isEnableFilter() { return isTrue(this.gridOptions.enableFilter) || isTrue(this.gridOptions.enableServerSideFilter); }
     public isPagination() { return isTrue(this.gridOptions.pagination); }
 
+    public getBatchUpdateWaitMillis(): number {
+        return _.exists(this.gridOptions.batchUpdateWaitMillis) ? this.gridOptions.batchUpdateWaitMillis : Constants.BATCH_WAIT_MILLIS;
+    }
+
     // these are deprecated, should remove them when we take out server side pagination
     public isEnableServerSideFilter() { return this.gridOptions.enableServerSideFilter; }
     public isEnableServerSideSorting() { return isTrue(this.gridOptions.enableServerSideSorting); }
