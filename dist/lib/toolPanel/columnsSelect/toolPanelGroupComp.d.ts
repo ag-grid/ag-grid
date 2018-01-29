@@ -1,4 +1,4 @@
-// ag-grid-enterprise v16.0.0
+// ag-grid-enterprise v16.0.1
 import { Component, OriginalColumnGroup } from "ag-grid/main";
 export declare class ToolPanelGroupComp extends Component {
     private static TEMPLATE;
