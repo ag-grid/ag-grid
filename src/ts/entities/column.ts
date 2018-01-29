@@ -359,7 +359,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_MOVING_CHANGED, source));
     }
 
-    private createColumnEvent(type: string, source: ColumnEventType ): ColumnEvent {
+    private createColumnEvent(type: string, source: ColumnEventType): ColumnEvent {
         return {
             api: this.gridApi,
             columnApi: this.columnApi,

@@ -13,8 +13,7 @@ import {EventService} from "../eventService";
 import {ColumnUtils} from "./columnUtils";
 import {Logger, LoggerFactory} from "../logger";
 import {
-    ColumnEvent,
-   ColumnEventType, ColumnEverythingChangedEvent,
+    ColumnEvent, ColumnEventType, ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnMovedEvent,
     ColumnPinnedEvent,
