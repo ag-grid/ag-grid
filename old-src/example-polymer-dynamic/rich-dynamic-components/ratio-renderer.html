@@ -1,0 +1,59 @@
+<dom-module id="ratio-renderer">
+    <template>
+        <style>
+            :host {
+                display: block;
+                overflow: hidden;
+                border: 1px solid #ccc;
+                border-radius: 6px;
+                background: #fff;
+                height:20px;
+                margin: -1px;
+
+            }
+
+            svg {
+                width:100%;
+                height:100%;
+                pointer-events: none;
+            }
+
+            .topBar {
+                fill: #ff9933;
+            }
+
+            .bottomBar {
+                fill: #6699ff;
+            }
+
+        </style>
+        <svg viewBox="0 0 300 100" preserveAspectRatio="none">
+            <rect x="0" y="0" width$="[[topWidth]]" height="50" rx="4" ry="4" class="topBar"/>
+            <rect x="0" y="50" width$="[[bottomWidth]]" height="50" rx="4" ry="4" class="bottomBar"/>
+        </svg>
+    </template>
+
+    <script>
+        class RatioRenderer extends Polymer.Element {
+            static get is() {
+                return 'ratio-renderer'
+            }
+
+            agInit(params) {
+                this.params = params;
+
+                this.topWidth = this.params.value.top * 300;
+                this.bottomWidth = this.params.value.bottom * 300;
+            }
+
+            static get properties() {
+                return {
+                    topWidth: Number,
+                    bottomWidth: Number
+                };
+            }
+        }
+
+        customElements.define(RatioRenderer.is, RatioRenderer);
+    </script>
+</dom-module>

@@ -1,0 +1,21 @@
+.fa-folder {
+  color: darkorange;
+}
+.fa-file-pdf-o {
+  color: red;
+}
+.fa-file-excel-o {
+  color: green;
+}
+.fa-file-audio-o {
+  color: blue;
+}
+.filename {
+  padding:5px;
+  color: black;
+  font-size: 16px
+}
+
+.ag-react-container {
+  display: inline-block !important;
+}

@@ -6,6 +6,7 @@ var columnDefs = [
     {headerName: "Date", field: "date", width: 145, filter:'agDateColumnFilter', filterParams:{
         comparator:function (filterLocalDateAtMidnight, cellValue){
             var dateAsString = cellValue;
+            if (dateAsString == null) return -1;
             var dateParts  = dateAsString.split("/");
             var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 

@@ -1,5 +1,5 @@
-<p>
-    <h1 id="polymerFiltering"><img src="../images/polymer-large.png" style="width: 60px"/>Polymer Filtering</h1>
+
+    <h2>Polymer Filtering</h2>
 
     <p>
         It is possible to provide Polymer filters for ag-Grid to use if you are are using the
@@ -7,7 +7,7 @@
         registering framework components</a> for how to register framework components.
     </p>
 
-    <h3 id="specifying-a-polymer-filter"><img src="../images/polymer-large.png" style="width: 20px;"/> Specifying a Polymer Filter</h3>
+    <h3 id="specifying-a-polymer-filter"> Specifying a Polymer Filter</h3>
 
     <p>
         If you are using the ag-grid-polymer component to create the ag-Grid instance,
@@ -15,11 +15,14 @@
         as Polymer components.
     </p>
 
-    <snippet ng-non-bindable>
+<pre class="language-html">
+<code ng-non-bindable>
 // create your filter as a Polymer component
 &lt;dom-module id="partial-match-filter"&gt;
     &lt;template&gt;
-        Filter: &lt;input style="height: 20px" id="input" on-input="onChange" value="{{text::input}}"&gt;
+        Filter: &lt;input 
+        style="height: 20px" id="input" 
+        on-input="onChange" value="{{text::input}}"&gt;
     &lt;/template&gt;
 
     &lt;script&gt;
@@ -40,14 +43,18 @@
             }
 
             isFilterActive() {
-                return this.text !== null && this.text !== undefined && this.text !== '';
+                return this.text !== null && 
+            this.text !== undefined && this.text !== '';
             }
 
             doesFilterPass(params) {
                 return this.text.toLowerCase()
                     .split(" ")
                     .every((filterWord) =&gt; {
-                        return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) &gt;= 0;
+                        return this
+                            .valueGetter(params.node)
+                            .toString().toLowerCase()
+                            .indexOf(filterWord) &gt;= 0;
                     });
             }
 
@@ -90,7 +97,9 @@ colDef = {
     headerName: 'Name',
     field: 'firstName',
     ...
-}</snippet>
+}
+</code>
+</pre>
 
     <p>
         Your Polymer components need to implement <code>IFilter</code>. The ag Framework expects to find the
@@ -98,72 +107,80 @@ colDef = {
         as well as <code>agInit</code>, which the grid uses to provide initial state & parameters.
     </p>
 
-    <h3 id="polymer-params"><img src="../images/polymer-large.png" style="width: 20px;"/> Polymer Params</h3>
+    <h3 id="polymer-params">Polymer Params</h3>
 
     <p>The ag Framework expects to find the <code>agInit</code> method on the created component, and uses it to supply the 'filter params'.</p>
 
-<snippet ng-non-bindable>
+<snippet>
 agInit(params:IFilterParams):void {
     this.params = params;
     this.valueGetter = params.valueGetter;
 }</snippet>
-    </p>
 
-    <h3 id="polymer-methods-lifecycle"><img src="../images/polymer-large.png" style="width: 20px;"/> Polymer Methods / Lifecycle</h3>
+
+    <h3 id="polymer-methods-lifecycle">Polymer Methods / Lifecycle</h3>
 
     <p>
         All of the methods in the IFilter interface described above are applicable
         to the Polymer Component with the following exceptions:
-    <ul>
-        <li><i>init()</i> is not used. Instead implement the <code>agInit</code> method (on the <code>AgRendererComponent</code> interface).</li>
-        <li><i>getGui()</i> is not used. Polymer will provide the Gui via the supplied template.</li>
+</p>
+
+    <ul class="content">
+        <li><code>init()</code> is not used. Instead implement the <code>agInit</code> method (on the <code>AgRendererComponent</code> interface).</li>
+        <li><code>getGui()</code> is not used. Polymer will provide the Gui via the supplied template.</li>
     </ul>
 
     <p>
-        After that, all the other methods (<i>onNewRowsLoaded(), getModel(), setModel()</i> etc) behave the
+        After that, all the other methods (<code>onNewRowsLoaded(), getModel(), setModel()</code> etc) behave the
         same so put them directly onto your Polymer Component.
     </p>
 
-    <h3 id="accessing-the-polymer-component-instance"><img src="../images/polymer-large.png" style="width: 20px;"/> Accessing the Polymer Component Instance</h3>
+    <h3 id="accessing-the-polymer-component-instance"> Accessing the Polymer Component Instance</h3>
 
     <p>
-        ag-Grid allows you to get a reference to the filter instances via the <i>api.getFilterInstance(colKey)</i>
+        ag-Grid allows you to get a reference to the filter instances via the <code>api.getFilterInstance(colKey)</code>
         method. If your component is a Polymer component, then this will give you a reference to the ag-Grid's
         Component which wraps your Polymer Component. Just like Russian Dolls. To get to the wrapped Polymer instance
-        of your component, use the <i>getFrameworkComponentInstance()</i> method as follows:
-        <snippet ng-non-bindable>
+        of your component, use the <code>getFrameworkComponentInstance()</code> method as follows:
+</p>
+<pre class="language-html">
+<code ng-non-bindable>
 // lets assume a Polymer component as follows
 &lt;dom-module id="partial-match-filter"&gt;
     &lt;template&gt;
-        Filter: &lt;input style="height: 20px" id="input" on-input="onChange" value="{{text::input}}"&gt;
+        Filter: &lt;input style="height: 20px" 
+        id="input" on-input="onChange" value="{{text::input}}"&gt;
     &lt;/template&gt;
 
     &lt;script&gt;
         class PartialMatchFilter extends Polymer.Element {
     ... // standard filter methods hidden
 
-    // put a custom method on the filter
-    componentMethod() {
-        // does something
+        // put a custom method on the filter
+        componentMethod() {
+            // does something
+        }
     }
-}
+    &lt;script&gt;
 
 // then in your app, if you want to execute myMethod()...
 laterOnInYourApplicationSomewhere() {
 
     // get reference to the ag-Grid Filter component
     let agGridFilter = this.gridOptions.api.getFilterInstance("name");
-    let agGridFilter = api.getFilterInstance('name'); // assume filter on name column
+    // assume filter on name column
+    let agGridFilter = api.getFilterInstance('name'); 
 
     // get Polymer instance from the ag-Grid instance
     let polymerFilterInstance = getFrameworkComponentInstance();
 
     // now we're sucking diesel!!!
     polymerFilterInstance.componentMethod("Hello World!");
-}</snippet>
-    </p>
+}
+</code>
+</pre>
+    <h3 id="example-filtering-using-polymer-components"> Example: Filtering using Polymer Components</h3>
 
-    <h3 id="example-filtering-using-polymer-components"><img src="../images/polymer-large.png" style="width: 20px;"/> Example: Filtering using Polymer Components</h3>
     <p>
         Using Polymer Components as a partial text Filter in the "Filter Component" column, illustrating filtering and lifecycle events.
     </p>

@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "8 Performance Hacks for JavaScript";
-$pageDescription = "Explaining the performance hacks and techniques used in ag-Grid to make it render really fast.";
+$pageTitle = "ag-Grid Blog: 8 Performance Hacks for JavaScript";
+$pageDescription = "Niall Crosby, CEO and Founder of ag-Grid explains the performance hacks and techniques used in ag-Grid to make it render really fast.";
 $pageKeyboards = "javascript performance";
 $socialUrl = "https://www.ag-grid.com/ag-grid-performance-hacks/";
 $socialImage = "https://www.ag-grid.com/ag-grid-performance-hacks/images/PerformanceHacks.png";
@@ -15,14 +15,11 @@ include('../includes/mediaHeader.php');
     }
 </style>
 
-<div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
         <h1>8 Performance Hacks for JavaScript</h1>
-    </div>
-</div>
+        <p class="blog-author">Niall Crosby | 8th September 2017</p>
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-8">
 
         <h2>Make It Faster</h2>
 
@@ -261,7 +258,8 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
         <p>
             So the next performance hack was to break the rendering of the rows into different tasks using animation frames.
             When the user scrolls vertically to show different rows, the following tasks are set up in a task queue:
-            <ul>
+         </p> 
+            <ul class="content">
                 <li>1 task, if pinning then scroll the pinned panels.</li>
                 <li>n tasks to insert each rows container (results in drawing the row background colour).</li>
                 <li>n tasks to insert the cells using string building and <code>innerHTML</code>.</li>
@@ -269,13 +267,15 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
                 <li>n tasks to add <i>mouseenter</i> and <i>mouseleave</i> listeners to all rows (for adding and removing hover class).</li>
                 <li>n tasks to remove the old rows (do not deconstruct cells, just rip the rows out).</li>
             </ul>
+        <p>
             So if you scroll to show 10 new rows, you will have 50+ tasks. Each scroll, row creation, cell
             creation etc. will be an individual task.
         </p>
         <p>
             The grid then uses animation frames (or timeouts if the browser does not support animation frames)
             to execute the tasks using a priority order. The order ensures things such as:
-            <ul>
+</p>
+            <ul class="content">
                 <li>Scrolling will get done first, best efforts are made to keep pinned sections in line.</li>
                 <li>Row containers are second, the first thing the user will see is the outline of the rows.</li>
                 <li>Cells are drawn in stages, as quickly as the browser will allow while giving visual feedback to the user.</li>
@@ -284,6 +284,7 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
                     keeping all pinned areas in sync as a priority.</li>
                 <li>Tasks that are old are cancelled i.e. the user has scrolled past by the the time the row is to be rendered.</li>
             </ul>
+<p>
             Having this many tasks should result in a lot of animation frames. To avoid this, the grid does not put each individual
             task into an animation frame. This would be overkill as then the create, destroy and schedule of
             animations frames would add their own overhead. Instead the grid requests one animation frame
@@ -386,34 +387,9 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
         </div>
 
     </div>
-    <div class="col-md-3
-    ">
+    
+        <?php include '../blog-authors/niall.php'; ?>
 
-        <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-            <p>
-            <img src='../images/niall.png' width="232.5px"/>
-            </p>
-
-            <p>
-                <b>Niall Crosby, CEO & CTO</b>
-            </p>
-            <p>
-                Niall provides the technical vision for ag-Grid, juggling this with the usual CEO duties. 15 years of experience building Enterprise applications has given Niall unique insight into the challenges while equipping him with the technical skills to deliver the correct solutions. Niall focuses primarily on developing and maintaining the core of ag-Grid and is very much at the heartbeat of the company.
-            </p>
-
-            <div>
-                <br/>
-                <a href="http://uk.linkedin.com/in/niallcrosby"><img src="/images/linked-in.png"/></a>
-                <br/>
-                <br/>
-                <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-        </div>
-
-    </div>
 </div>
 
 
@@ -433,10 +409,6 @@ eContainer.insertAdjacentHTML(rowHtml);</snippet>
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 <hr/>
-
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

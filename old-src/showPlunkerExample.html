@@ -1,0 +1,20 @@
+<div class="bs-example bs-example-tabs" style="margin-top: 20px">
+    <ul class="nav nav-tabs">
+        <a href="{{source}}" target="_blank" style="float: right;">open example in new tab</a>
+        <li ng-show="extraPages.length > 0" ng-class="{active: selectedTab=='source'}" ><a ng-click="selectedTab='source'">Source Code</a></li>
+        <li ng-class="{active: selectedTab=='editplunker'}" class="active"><a ng-click="selectedTab='editplunker'"><img src="/images/plunker.png" height="20px"> Edit Plunker</a></li>
+        <li><a href="{{editPlunker}}" target="_blank"><img src="/images/plunker.png" height="20px"> Open in Plunker <span class="fa fa-external-link"></span></a></li>
+    </ul>
+
+    <div style="margin-top: 5px" class="tab-pane" ng-show="selectedTab=='source'">
+        <ul class="nav nav-pills">
+            <li role="presentation" ng-repeat="extraPage in extraPages" ng-class="{active: isActivePage(extraPage)}" ><a ng-click="setActivePage(extraPage)">{{extraPage}}</a></li>
+        </ul>
+        <div style="height: 500px; overflow: auto;">
+            <pre><code>{{extraPageContent[extraPage]}}</code></pre>
+        </div>
+    </div>
+    <div class="tab-pane" ng-show="selectedTab=='editplunker'">
+        <iframe style="width: 100%; height: 600px" ng-src="{{plunker}}" frameborder="0" allowfullscren="allowfullscren"></iframe>
+    </div>
+</div>

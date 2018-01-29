@@ -1,5 +1,4 @@
 <h2 id="react-header-rendering">
-    <img src="../images/react_large.png" style="width: 60px;"/>
     React Header Rendering
 </h2>
 
@@ -7,14 +6,15 @@
 
 <p>
     Implementing a header component in React differs from the standard header component in the following ways:
-<ul>
-    <li>Implement <i>IHeaderReactComp</i> instead of <i>IHeaderComp</i>.</li>
-    <li>Use <i>colDef.headerComponentFramework</i> instead of <i>colDef.headerComponent</i>.</li>
-</ul>
 </p>
 
+<ul class="content">
+    <li>Implement <code>IHeaderReactComp</code> instead of <code>IHeaderComp</code>.</li>
+    <li>Use <code>colDef.headerComponentFramework</code> instead of <code>colDef.headerComponent</code>.</li>
+</ul>
+
 <p>
-    The interface <i>IHeaderReactComp</i> is empty. The params object (IHeaderCompParams) is passed as a
+    The interface <code>IHeaderReactComp</code> is empty. The params object (IHeaderCompParams) is passed as a
     constructor to your React component.
 </p>
 
@@ -23,14 +23,15 @@
 
 <p>
     Implementing a header group component in React differs from the standard header group component in the following ways:
-<ul>
-    <li>Implement <i>IHeaderGroupReactComp</i> instead of <i>IHeaderGroupComp</i>.</li>
-    <li>Use <i>colDef.headerGroupComponentFramework</i> instead of <i>colDef.headerGroupComponent</i>.</li>
-</ul>
 </p>
 
+<ul class="content">
+    <li>Implement <code>IHeaderGroupReactComp</code> instead of <code>IHeaderGroupComp</code>.</li>
+    <li>Use <code>colDef.headerGroupComponentFramework</code> instead of <code>colDef.headerGroupComponent</code>.</li>
+</ul>
+
 <p>
-    The interface <i>IHeaderReactComp</i> is empty. The params object (IHeaderGroupCompParams) is passed as a
+    The interface <code>IHeaderReactComp</code> is empty. The params object (IHeaderGroupCompParams) is passed as a
     constructor to your React component.
 </p>
 

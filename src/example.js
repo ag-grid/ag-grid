@@ -40,10 +40,10 @@ var games = ["Chess", "Cross and Circle", "Daldos", "Downfall", "DVONN", "Fanoro
 ];
 var booleanValues = [true, "true", false, "false"];
 
-var firstNames = ["Tony", "Andrew", "Kevin", "Dimple", "Bas", "Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
+var firstNames = ["Tony", "Andrew", "Kevin", "Bricker", "Dimple", "Bas", "Sophie", "Isabelle", "Emily", "Olivia", "Lily", "Chloe", "Isabella",
     "Amelia", "Jessica", "Sophia", "Ava", "Charlotte", "Mia", "Lucy", "Grace", "Ruby",
     "Ella", "Evie", "Freya", "Isla", "Poppy", "Daisy", "Layla"];
-var lastNames = ["Smith", "Connell", "Flanagan", "Unalkat", "Rahman", "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
+var lastNames = ["Smith", "Connell", "Flanagan", "McGee", "Unalkat", "Rahman", "Beckham", "Black", "Braxton", "Brennan", "Brock", "Bryson", "Cadwell",
     "Cage", "Carson", "Chandler", "Cohen", "Cole", "Corbin", "Dallas", "Dalton", "Dane",
     "Donovan", "Easton", "Fisher", "Fletcher", "Grady", "Greyson", "Griffin", "Gunner",
     "Hayden", "Hudson", "Hunter", "Jacoby", "Jagger", "Jaxon", "Jett", "Kade", "Kane",
@@ -112,6 +112,7 @@ var gridOptions = {
         minWidth: 50
     },
     enableCellChangeFlash: true,
+    rowDragManaged: true,
     // ensureDomOrder: true,
     // postProcessPopup: function(params) {
     //     console.log(params);
@@ -126,6 +127,7 @@ var gridOptions = {
 //debug: true,
 //     editType: 'fullRow',
 //     debug: true,
+//     suppressMultiRangeSelection: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     pivotTotals: true,
@@ -141,6 +143,7 @@ var gridOptions = {
 //    {name: 'Kevin'},
 //    {name: 'Brian'}
 //],
+    enterMovesDownAfterEdit: true,
     groupKeys: undefined, //set as string of keys eg ["region","country"],
     // groupUseEntireRow: true, //one of [true, false]
 //        groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
@@ -239,7 +242,7 @@ var gridOptions = {
         // console.log("Callback onCellClicked: " + params.value + " - " + params.colDef.field + ' - ' + params.event);
     },
     onColumnVisible: function(event) {
-        // console.log("Callback onColumnVisible:", event);
+        console.log("Callback onColumnVisible:", event);
     },
     onCellValueChanged: function (params) {
         console.log("Callback onCellValueChanged:", params);
@@ -337,6 +340,7 @@ var defaultCols = [
         children: [
             {
                 headerName: 'Name',
+                rowDrag: true,
                 field: 'name',
                 width: 200,
                 editable: true,

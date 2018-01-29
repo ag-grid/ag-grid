@@ -1,0 +1,50 @@
+<div class="grid-wrapper">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-fresh"></div>
+</div>
+<div class="button-bar">
+    <table>
+        <tr>
+            <td>pivot (<span id="pivot">off</span>)</td>
+            <td>
+                <button onclick="setPivotOn()">on</button>
+                <button onclick="setPivotOff()">off</button>
+            </td>
+        </tr>
+        <tr>
+            <td>groupHeaderHeight (<span id="groupHeaderHeight">null</span>):</td>
+            <td>
+                <button onclick="setGroupHeaderHeight(40)">40px</button>
+                <button onclick="setGroupHeaderHeight(60)">60px</button>
+                <button onclick="setGroupHeaderHeight(null)">null</button>
+            </td>
+            <td>headerHeight (<span id="headerHeight">null</span>)</td>
+            <td>
+                <button onclick="setHeaderHeight(70)">70px</button>
+                <button onclick="setHeaderHeight(80)">80px</button>
+                <button onclick="setHeaderHeight(null)">null</button>
+            </td>
+        </tr>
+        <tr id="requiresPivot" class="hidden">
+            <td>pivotGroupHeaderHeight (<span id="pivotGroupHeaderHeight">null</span>)</td>
+            <td>
+                <button onclick="setPivotGroupHeaderHeight(50)">50px</button>
+                <button onclick="setPivotGroupHeaderHeight(70)">70px</button>
+                <button onclick="setPivotGroupHeaderHeight(null)">null</button>
+            </td>
+            <td>pivotHeaderHeight (<span id="pivotHeaderHeight">null</span>)</td>
+            <td>
+                <button onclick="setPivotHeaderHeight(60)">60px</button>
+                <button onclick="setPivotHeaderHeight(80)">80px</button>
+                <button onclick="setPivotHeaderHeight(null)">null</button>
+            </td>
+        </tr>
+        <tr id="requiresNotPivot">
+            <td>floatingFiltersHeight (<span id="floatingFiltersHeight">null</span>)</td>
+            <td>
+                <button onclick="setFloatingFiltersHeight(35)">35px</button>
+                <button onclick="setFloatingFiltersHeight(55)">55px</button>
+                <button onclick="setFloatingFiltersHeight(null)">null</button>
+            </td>
+        </tr>
+    </table>
+</div>

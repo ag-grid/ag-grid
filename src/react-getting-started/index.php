@@ -1,7 +1,6 @@
 <?php
-$key = "Getting Started React";
-$pageTitle = "React Datagrid";
-$pageDescription = "ag-Grid can be used as a data grid inside your React application. This page details how to get started.";
+$pageTitle = "ag-Grid Reference: Getting Started with the React Datagrid";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This Getting Start guide covers installing our seed repo and getting up and running with a simple React Datagrid. We also cover basisc configuration.";
 $pageKeyboards = "React Datagrid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
@@ -9,8 +8,7 @@ include '../documentation-main/documentation_header.php';
 
 <div>
 
-    <h1 class="first-h1">
-        <img style="vertical-align: middle" src="/images/react_large.png" title="React Datagrid" alt="React Datagrid" height="50px"/>
+    <h1>
         React Datagrid - Getting Started
     </h1>
 
@@ -22,7 +20,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>You will need the following build tools installed at a minimum:</p>
 
-    <ul>
+    <ul class="content">
         <li>Git: Please see <a href="https://git-scm.com/">Git</a> for installation options</li>
         <li>npm: Please see <a href="https://www.npmjs.com/get-npm">npm</a> for installation options</li>
     </ul>
@@ -40,7 +38,7 @@ git clone https://github.com/ag-grid/ag-grid-react-seed
 cd ag-grid-react-seed/react
 
 # install the project dependencies
-npm i
+npm install
 
 # build & start the application
 npm start
@@ -76,7 +74,7 @@ npm start
         columns
         that match the data above:</p>
 
-<snippet language="html">
+<snippet language="jsx">
 // column definitions
 &lt;AgGridColumn field="make">&lt;/AgGridColumn>
 &lt;AgGridColumn field="model">&lt;/AgGridColumn>
@@ -97,7 +95,7 @@ npm start
     <p>For a React application, you need to pull in the <code>AgGridReact</code> Component and include it in your <code>render</code>
         function:</p>
 
-<snippet language="html">
+<snippet language="jsx">
 // Grid Definition 
 &lt;AgGridReact
     columnDefs={this.state.columnDefs}
@@ -129,7 +127,7 @@ npm start
     <p>Adding sorting to our application is very easy - all you need to do is let the Grid know you want sorting to be
         enabled by setting a the <code>enableSorting</code>Grid property. Notice that <code>enableSorting</code> is shorthand for <code>enableSorting=true</code>.</p>
 
-<snippet language="html">
+<snippet language="jsx">
 // Grid Definition 
 &lt;AgGridReact
     columnDefs={this.state.columnDefs}
@@ -159,7 +157,7 @@ npm start
 
 <p>As with sorting, enabling filtering is as easy as setting <code>enableFilter</code> in our Grid definition:</p>
 
-<snippet language="html">
+<snippet language="jsx">
 // Grid Definition 
 &lt;AgGridReact
     columnDefs={this.state.columnDefs}

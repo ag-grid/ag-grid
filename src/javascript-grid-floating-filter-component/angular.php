@@ -1,8 +1,5 @@
 <!-- Angular from here -->
-<h2 id="ng2Angular">
-    <img src="../images/angular2_large.png" style="width: 60px;"/>
-    Angular Floating Filters
-</h2>
+<h2> Angular Floating Filters </h2>
 
 <p>
     It is possible to provide Angular floating filter for ag-Grid to use if you are are using the

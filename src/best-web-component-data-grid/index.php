@@ -1,7 +1,6 @@
 <?php
-$key = "Getting Started Web Components";
-$pageTitle = "Web Component Grid";
-$pageDescription = "ag-Grid can be used as a Web Component grid inside your application. This page details how to get started.";
+$pageTitle = "ag-Grid: The Best Web Component Datagrid in the World";
+$pageDescription = "A feature rich data grid designed for Enterprise applications. Easily integrate with Web Components to deliver filtering, grouping, aggregation, pivoting and much more. Try our Community version now or take a free 2 month trial of Enterprise Version.";
 $pageKeyboards = "Web Component Grid";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
@@ -228,13 +227,13 @@ include '../documentation-main/documentation_header.php';
     <h4>ag-Grid Enterprise Bundle Types</h4>
     <p>
         Again similar to ag-Grid, ag-Grid-Enterprise has 4 bundles:
-    <ul>
+</p>
+    <ul class="content">
         <li>dist/ag-grid-enterprise.js -> standard bundle containing JavaScript and CSS</li>
         <li>dist/ag-grid-enterprise.min.js -> minified bundle containing JavaScript and CSS</li>
         <li>dist/ag-grid-enterprise.noStyle.js -> standard bundle containing JavaScript without CSS</li>
         <li>dist/ag-grid-enterprise.min.noStyle.js -> minified bundle containing JavaScript without CSS</li>
     </ul>
-    </p>
 
     <p>Even if you are using React, AngularJS 1.x, Angular, VueJS or Web Components, the above is all you need
         to
@@ -247,14 +246,7 @@ include '../documentation-main/documentation_header.php';
         The example below shows a simple grid using Web Components.
     </p>
 
-    <show-complex-example example="./examples/simple-grid/simple-grid-example.html"
-                          sources="{
-                                [
-                                    { root: './examples/simple-grid/', files: 'simple-grid-example.html,simple-grid-example.js' }
-                                ]
-                              }"
-                          exampleheight="150px">
-    </show-complex-example>
+    <?= example('Simple Web Components with ag-Grid', 'simple-grid', 'as-is', array("noPlunker" => 1, "exampleHeight" => 150)) ?>
 
     <h2 id="complex-web-components-example">Complex Web Components Example</h2>
 
@@ -263,12 +255,12 @@ include '../documentation-main/documentation_header.php';
         Angular components are based on Web Components. The example demonstrates the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li><b>Events:</b> All data out of the grid comes through events. These events
             are native browser events and can be listened to one of: <br/>
-            a) Calling <i>addEventListener(eventName, handler)</i> on the element<br/>
-            b) Add an <i>onXXX</i> handler directly to the element or<br/>
-            c) Add an <i>onXXX</i> handler directly to the grid options. <br/>
+            a) Calling <code>addEventListener(eventName, handler)</code> on the element<br/>
+            b) Add an <code>onXXX</code> handler directly to the element or<br/>
+            c) Add an <code>onXXX</code> handler directly to the grid options. <br/>
             In the example,
             the event 'columnResized' is added in each of these three ways.
         </li>
@@ -296,17 +288,11 @@ include '../documentation-main/documentation_header.php';
             property of the grid.
             <br/>
             b) The 'Refresh Data via Element' generates new data for the grid by attaching
-            it to the <i>rowData</i> property.
+            it to the <code>rowData</code> property.
         </li>
     </ul>
 
-    <show-complex-example example="./examples/rich-grid/rich-grid-example.html"
-                          sources="{
-                                [
-                                    { root: './examples/rich-grid/', files: 'rich-grid-example.html,rich-grid-example.js' }
-                                ]
-                              }">
-    </show-complex-example>
+    <?= example('Rich Web Components with ag-Grid', 'rich-grid', 'as-is', array("noPlunker" => 1, "exampleHeight" => 500)) ?>
 
     <h2 id="destroy">Destroy</h2>
 

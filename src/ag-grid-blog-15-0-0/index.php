@@ -1,6 +1,6 @@
 <?php
 
-$pageTitle = "ag-Grid v15.0.0 Released";
+$pageTitle = "ag-Grid Blog: Version 15 Release";
 $pageDescription = "ag-Grid v15.0.0 is now released!";
 $pageKeyboards = "ag-grid v15.0.0";
 $socialUrl = "https://www.ag-grid.com/ag-grid-blog-15-0-0/";
@@ -9,11 +9,12 @@ $socialImage = "https://www.ag-grid.com/ag-grid-blog-15-0-0/img15-0-0.png";
 include('../includes/mediaHeader.php');
 ?>
 
-<div class="container-fluid">
+<div>
 
     <!-- <link rel="stylesheet" href="../documentation-main/documentation.css"> -->
-    <h1 style='font-size: 70px;'>Happy New ag-Grid v15.0.0</h1>
-    <p style='display: inline'>Sophia Lazarova | 13th December 2017</p>
+    <h1>Happy New ag-Grid v15.0.0</h1>
+    <p class="blog-author">Sophia Lazarova | 13th December 2017</p>
+
     <div>
         <a href="https://twitter.com/share" class="twitter-share-button"
             data-url="https://www.ag-grid.com/ag-grid-blog-15-0-0/"
@@ -30,18 +31,22 @@ include('../includes/mediaHeader.php');
             }(document, 'script', 'twitter-wjs');</script>
     </div>
 
-    <img src="cover15-0-0.png" width='94%'/>
-    <div style="margin-top: 20px;" class="col-md-8">
+    <img src="cover15-0-0.png" class="large-cover-img img-fluid">
+
+<div class="row">
+    <div class="col-md-8">
     
-        <h3><strong>Winter is finally here and it's packed with snow, Christmas spirit and the new version of ag-Grid!</strong></h3>
+<p class="lead">
+    Winter is finally here and it's packed with snow, Christmas spirit and the new version of ag-Grid!
+</p>
         
-        <p>The end of the year is traditionally a time for retrospectives, this is why our last release for 2017 is dedicated to cleaning our bug backlog. Of course we have also a few Christmas suprises coming with <b>v15.0.0</b>!</p>
+        <p>The end of the year is traditionally a time for retrospectives, this is why our last release for 2017 is dedicated to cleaning our bug backlog. Of course, we  also have a few Christmas surprises with <b>v15.0.0</b>!</p>
         
         <h2>Stay up to Date with Our Work</h2>
         
         <p><strong>Have you ever wondered what we are about to include in our next release?</strong></p>
         
-        <p>No more wondering! Now you can be up to date with every our decision. As of this release we introduce the <b>ag-Grid pipeline</b> which makes public all the items on our roadmap with their current status. </p>
+        <p>No more wondering! Now you can be up to date with every decision. As of this release, we introduce the <b>ag-Grid pipeline</b> which makes public all the items on our roadmap with their current status. </p>
         
         <img src="pipeline.png" alt="pipeline" width="85%" />
         
@@ -56,7 +61,7 @@ include('../includes/mediaHeader.php');
         
         <h2>Overlay Component</h2>
         
-        <p>This component allows you to add your own overlays above the grid. You can use the built-in overlays or simply create your own which suit your needs.</p>
+        <p>This component allows you to add your own overlays above the grid. You can use the built-in overlays or simply create your own to suit your needs.</p>
         
         <img src="overlay.png" alt="overlay" width="85%" />
         
@@ -64,7 +69,7 @@ include('../includes/mediaHeader.php');
         
         <h2>Register Components by Name</h2>
         
-        <p>As of <b>v15.0.0</b> you can register your custom components both by <strong>name</strong> and by <strong>direct reference</strong>. The registration by name is a commonly used technique which allows you to reuse your components and minimizes the code repetition. </p>
+        <p>As of <b>v15.0.0</b> you can register your custom components both by <strong>name</strong> and by <strong>direct reference</strong>. Registration by name is a commonly used technique which allows you to reuse your components and minimizes code repetition. </p>
         
         <p>You can find detailed information about the <a href="../javascript-grid-components/">component registration</a> in our documentation.</p>
         
@@ -74,7 +79,7 @@ include('../includes/mediaHeader.php');
         
         <p>You can download <b>ag-Grid</b> by:</p>
         
-        <ul>
+        <ul class="content">
         <li><b>npm install ag-grid</b></li>
         
         <li><b>bower install ag-grid</b></li>
@@ -113,28 +118,14 @@ include('../includes/mediaHeader.php');
             </table>
         </div>
     </div>
+
+<?php 
+    include '../blog-authors/sophia.php';
+?>
+
+</div>
     
 
-    <div class="col-md-3" style="font-size: 14px; background-color: #efefef; padding: 15px;margin-top: 40px;margin-left:15px;">
-        <p>
-            <img src="/images/team/sophia.jpg" width="100%"/>
-        </p>
-        <p style="font-weight: bold;">
-            Sophia Lazarova
-        </p>
-        <p>
-            Sophia recently switched her carreer path from being a developer to becoming member of the ag-Grid team as a Developer Advocate.
-            She is interested in various areas of the programming but her tech passion is the mobile world and the mobile technologies.
-            In her "not a techie time" you can find her buying plane tickets and planning her next adventures.
-        </p>
-
-        <div>
-            <br/>
-            <a href="https://twitter.com/sophialazarova" class="twitter-follow-button" data-show-count="false" data-size="large">@sophialazarova</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-        </div>
-
-    </div>
 </div>
 
 
@@ -154,10 +145,6 @@ include('../includes/mediaHeader.php');
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 <hr/>
-
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

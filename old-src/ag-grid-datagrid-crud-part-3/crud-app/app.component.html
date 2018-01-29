@@ -1,0 +1,6 @@
+<div *ngFor="let athlete of athletes">
+    <span>{{athlete.id}}</span>
+    <span>{{athlete.name}}</span>
+    <span>{{athlete?.country?.name}}</span>
+    <span>{{athlete?.results?.length}}</span>
+</div>

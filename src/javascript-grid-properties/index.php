@@ -1,25 +1,17 @@
 <?php
-$key = "Properties";
-$pageTitle = "ag-Grid Properties";
-$pageDescription = "Learn how each property impacts ag-Grid.";
+$pageTitle = "ag-Grid Reference: Properties";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This reference guide covers the properties that are available the GridOptions.";
 $pageKeyboards = "javascript data grid ag-Grid properties";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
+    <h1>Grid Properties</h1>
 
-<div>
-
-    <h1 id="properties" class="first-h1">Grid Properties</h1>
-
-    <p>
+    <p class="lead">
         All of these grid properties are available through the <code>GridOptions</code> interface.
     </p>
-
-    <table class="table">
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Columns</td>
-        </tr>
+    <h2>Columns</h2>
+    <table class="table content reference">
         <tr>
             <th>columnDefs</th>
             <td>Array of <a href="../javascript-grid-column-definitions/">Column Definitions</a>.</td>
@@ -89,11 +81,10 @@ include '../documentation-main/documentation_header.php';
             <td>Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column def is included as the first column definition in the grid. If not grouping,
                 this column is not included.</td>
         </tr>
+    </table>
+    <h2>Sort & Filter</h2>
+    <table class="table content reference">
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Sort & Filter</td>
-        </tr>
         <tr>
             <th>enableSorting</th>
             <td>Set to true when using <a href="../javascript-grid-in-memory/">In Memory</a> Row Model to enable
@@ -149,10 +140,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Selection</td>
-        </tr>
+        </table>
+    <h2>Selection</h2>
+    <table class="table content reference">
 
         <tr>
             <th>suppressRowClickSelection</th>
@@ -170,10 +160,26 @@ include '../documentation-main/documentation_header.php';
             <th>enableRangeSelection</th>
             <td>Set to true to enable <a href="../javascript-grid-range-selection/">Range Selection</a>.</td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Editing</td>
+
+        </table>
+<h2>Row Dragging</h2>
+    <table class="table content reference">
+        <tr>
+            <th>rowDragManaged</th>
+            <td>
+                Set to true to enable <a href="../javascript-grid-row-dragging/#managed-dragging">Managed Row Dragging</a>.
+            </td>
         </tr>
+        <tr>
+            <th>suppressRowDrag</th>
+            <td>
+                Set to true to suppress <a href="../javascript-grid-row-dragging/">Row Dragging</a>.
+            </td>
+        </tr>
+
+        </table>
+<h2>Editing</h2>
+    <table class="table content reference">
         <tr>
             <th>singleClickEdit</th>
             <td>Set to true to enable <a href="../javascript-grid-cell-editing/#singleClickEditing">Single
@@ -214,16 +220,24 @@ include '../documentation-main/documentation_header.php';
                 until focus goes onto another cell. For inline (non-popup) editors only.
             </td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Headers</td>
+        <tr>
+            <th>enterMovesDownAfterEdit</th>
+            <td>
+                Set to true to <a href="../javascript-grid-cell-editing/#enter-key-down">move enter down
+                after edit</a>. This allows consistency with Excel. The default is to keep focus on
+                the previously editing cell.
+            </td>
         </tr>
+
+        </table>
+<h2>Headers</h2>
+    <table class="table content reference">
         <?php include '../javascript-grid-column-header/headerHeightProperties.php' ?>
         <?php printPropertiesRowsWithHelp($headerHeightProperties) ?>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Row Grouping & Pivoting</td>
-        </tr>
+
+        </table>
+    <h2>Row Grouping & Pivoting</h2>
+    <table class="table content reference">
         <?php include '../javascript-grid-grouping/rowGroupingProperties.php' ?>
         <?php printPropertiesRowsWithHelp($rowGroupingProperties) ?>
         <tr>
@@ -268,10 +282,10 @@ include '../documentation-main/documentation_header.php';
                 See example <a href="../javascript-grid-aggregation/#custom-aggregation-functions">Custom Aggregation Functions</a>.
             </td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Tool Panel</td>
-        </tr>
+
+        </table>
+<h2>Tool Panel</h2>
+    <table class="table content reference">
         <tr>
             <th>toolPanelSuppressRowGroups, toolPanelSuppressValues, toolPanelSuppressPivots, toolPanelSuppressPivotMode</th>
             <td>Set to true to hide the relevant sections in the <a href="../javascript-grid-tool-panel">Tool Panel</a>.
@@ -281,10 +295,10 @@ include '../documentation-main/documentation_header.php';
             <th>showToolPanel</th>
             <td>Set to true to show the <a href="../javascript-grid-tool-panel">Tool Panel</a> by default.</td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Data & Row Models</td>
-        </tr>
+
+        </table>
+<h2>Data & Row Models</h2>
+    <table class="table content reference">
         <tr>
             <th>rowModelType</th>
             <td>Sets the <a href="../javascript-grid-row-models/">Row Model</a> type.
@@ -306,10 +320,10 @@ include '../documentation-main/documentation_header.php';
             <th>pinnedBottomRowData</th>
             <td>Data to be displayed as <a href="../javascript-grid-row-pinning/">Pinned Bottom Rows</a> in the grid.</td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Selection</td>
-        </tr>
+
+        </table>
+    <h2>Selection</h2>
+    <table class="table content reference">
         <tr>
             <th>rowSelection</th>
             <td>Type of <a href="../javascript-grid-selection/">Row Selection</a>, set to either 'single' or 'multiple'.</td>
@@ -318,10 +332,10 @@ include '../documentation-main/documentation_header.php';
             <th>rowDeselection</th>
             <td>If true then rows will be deselected if you hold down ctrl + click the row.</td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Scrolling</td>
-        </tr>
+
+        </table>
+    <h2>Scrolling</h2>
+    <table class="table content reference">
         <tr>
             <th>suppressHorizontalScroll</th>
             <td>
@@ -353,17 +367,17 @@ include '../documentation-main/documentation_header.php';
             if the grid is working fast enough that you don't need animations frame and you don't want
             the grid to flicker.</td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Pagination</td>
-        </tr>
+
+        </table>
+<h2>Pagination</h2>
+    <table class="table content reference">
         <?php include '../javascript-grid-pagination/paginationProperties.php'?>
         <?php printPropertiesRowsWithHelp($paginationProperties) ?>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Row Block Loading: Infinite & Enterprise Row Models</td>
-        </tr>
+
+        </table>
+<h2>Row Block Loading: Infinite & Enterprise Row Models</h2>
+    <table class="table content reference">
         <tr>
             <th>maxConcurrentDatasourceRequests</th>
             <td>How many concurrent data requests are allowed. Default is 2, so server is
@@ -382,10 +396,10 @@ include '../documentation-main/documentation_header.php';
             <td>How many rows to initially allow scrolling to in the grid.</td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Row Model: Viewport</td>
-        </tr>
+
+        </table>
+<h2>Row Model: Viewport</h2>
+    <table class="table content reference">
         <tr>
             <th>viewportRowModelPageSize</th>
             <td>When using viewport row model, sets the pages size for the viewport.</td>
@@ -399,10 +413,10 @@ include '../documentation-main/documentation_header.php';
             <td>To use the viewportRowModel you provide the grid with a viewportDatasource. See <a href="../javascript-grid-viewport/">Viewport</a> for more information.</td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Full Width Renderers</td>
-        </tr>
+
+        </table>
+<h2>Full Width Renderers</h2>
+    <table class="table content reference">
         <tr>
             <th>groupRowRenderer <br/>groupRowRendererFramework <br/>groupRowRendererParams</th>
             <td>
@@ -425,10 +439,9 @@ include '../documentation-main/documentation_header.php';
                 <a href="../javascript-grid-full-width-rows/">Full Width Rows</a>.</td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Master Detail</td>
-        </tr>
+        </table>
+<h2>Master Detail</h2>
+    <table class="table content reference">
         <tr>
             <th>masterDetail</th>
             <td>Set to true to enable the Master Detail. See <a href="../javascript-grid-master-detail">Master Detail</a>
@@ -442,10 +455,9 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Rendering & Styling</td>
-        </tr>
+        </table>
+<h2>Rendering & Styling</h2>
+    <table class="table content reference">
         <tr>
             <th>icons</th>
             <td>
@@ -485,21 +497,19 @@ include '../documentation-main/documentation_header.php';
                 its calculations.
             </td>
         </tr>
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Localisation</td>
-        </tr>
+        </table>
+<h2>Localisation</h2>
+    <table class="table content reference">
 
         <tr>
             <th>localeText, localeTextFunc</th>
-            <td>You can change the text in the paging panels and the default filters by providing a <i>localeText</i> or
-                a <i>localeTextFunc</i> (see below). See <a href="../javascript-grid-internationalisation/">Internationalisation</a>.</td>
+            <td>You can change the text in the paging panels and the default filters by providing a <code>localeText</code> or
+                a <code>localeTextFunc</code> (see below). See <a href="../javascript-grid-internationalisation/">Internationalisation</a>.</td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Overlays</td>
-        </tr>
+        </table>
+    <h2>Overlays</h2>
+    <table class="table content reference">
         <tr>
             <th>suppressLoadingOverlay</th>
             <td>Disables the 'loading' <a href="../javascript-grid-overlays/">overlay</a>.</td>
@@ -537,11 +547,13 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
 
-        <tr class="title-row">
-            <!-- TITLE ROW -->
-            <td colspan="2">Miscellaneous</td>
+        </table>
+<h2>Miscellaneous</h2>
+    <table class="table content reference">
+        <tr>
+            <th>popupParent</th>
+            <td>DOM element to use as <a href="../javascript-grid-context-menu/#popup-parent">popup parent</a> for grid popups (context menu, column menu etc).</td>
         </tr>
-
         <?php include '../javascript-grid-value-cache/valueCacheProperties.php' ?>
         <?php printPropertiesRows($valueCacheProperties) ?>
         <tr>
@@ -717,6 +729,6 @@ include '../documentation-main/documentation_header.php';
             </td>
         </tr>
     </table>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

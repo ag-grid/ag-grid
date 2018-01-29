@@ -1,15 +1,14 @@
 <?php
-$key = "Cell Rendering Components";
-$pageTitle = "ag-Grid Cell Rendering";
-$pageDescription = "You can customise every cell in ag-Grid. This is done by providing cell renderers. This page describe creating cell renderers.";
+$pageTitle = "ag-Grid Components: Cell Renderers";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. Use Cell Rendering to have cells rendering values other than simple strings. For example, put country flags beside country names, or push buttons for actions.";
 $pageKeyboards = "ag-Grid Cell Renderers";
 $pageGroup = "components";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="first-h1" id="cell-rendering">Cell Renderer</h1>
+<h1>Cell Renderer</h1>
 
-<p>
+<p class="lead">
     The job of the grid is to lay out the cells. By default the grid will create the cell values
     using simple text. If you want more complex HTML inside the cells then this is achieved using
     cell renderers.
@@ -22,7 +21,7 @@ include '../documentation-main/documentation_header.php';
     first read the JavaScript sections as the framework sections build on this.
 </p>
 
-<h1 id="simple-cell-renderer-example">Simple Cell Renderer Example</h1>
+<h2>Simple Cell Renderer Example</h2>
 
 <p>
     The example below shows a simple cell renderer in action. It uses a cell renderer to show a hash '#'
@@ -31,7 +30,7 @@ include '../documentation-main/documentation_header.php';
 
 <?= example('Simple Cell Renderer', 'simple-javascript', 'vanilla', array("showResult" => true, "exampleHeight" => 460)) ?>
 
-<h1 id="cell-renderer-component">Cell Renderer Component</h1>
+<h2>Cell Renderer Component</h2>
 
 <p>
     The interface for the cell renderer component is as follows:
@@ -57,6 +56,7 @@ interface ICellRendererComp {
 </snippet>
 
 <p>The interface for the cell renderer parameters is as follows:</p>
+
 <snippet>
 interface ICellRendererParams {
     value: any, // value to be rendered
@@ -78,9 +78,7 @@ interface ICellRendererParams {
 }
 </snippet>
 
-<p>
-    Below is a simple example of cell renderer class:
-</p>
+<p> Below is a simple example of cell renderer class: </p>
 
 <snippet>
 // function to act as a class
@@ -126,25 +124,26 @@ MyCellRenderer.prototype.destroy = function() {
 };
 </snippet>
 
-<h1 id="cell-renderer-component-registering">Registering Cell Renderers with Columns</h1>
+<h2>Registering Cell Renderers with Columns</h2>
 
 <p>
     See the section <a href="../javascript-grid-components/#registering-custom-components">
     registering custom components</a> for details on registering and using custom cell renderers.
 </p>
 
-<h1 id="cell-renderer-component-refresh">Component Refresh</h1>
+<h2>Component Refresh</h2>
 
-<p>
-    Component refresh needs a bit more explanation. Here we go through some of the finer details.
-</p>
+<p>Component refresh needs a bit more explanation. Here we go through some of the finer details. </p>
 
 <h3>Events Causing Refresh</h3>
+
 <p>
     The grid can refresh the data in the browser, but not every refresh / redraw of the grid
     results in the refresh method of your cell renderer getting called. The following items
     are those that <b>do</b> cause refresh to be called:
-<ul>
+</p>
+
+<ul class="content">
     <li>
         Calling <code>rowNode.setDataValue(colKey, value)</code> to set a value directly onto the <code>rowNode</code>.
         This is the preferred API way to change one value from outside of the grid.
@@ -157,14 +156,17 @@ MyCellRenderer.prototype.destroy = function() {
                 href="../javascript-grid-refresh/">Refresh</a>).
     </li>
 </ul>
-If any of the above occur and the grid confirms the data has changed via
+
+<p>If any of the above occur and the grid confirms the data has changed via
 <a href="../javascript-grid-change-detection/">Change Detection</a>, then the <code>refresh()</code>
 method will be called.
 </p>
 
 <p>
-    The following will <b>not</b> result in the cell renderer's refresh method getting called:
-<ul>
+    The following will <b>not</b> result in the cell renderers refresh method getting called:
+</p>
+
+<ul class="content">
     <li>
         Calling <code>rowNode.setData(data)</code> to set new data into a <code>rowNode</code>.
         When you set the data for the whole row, then the whole row in the DOM is recreated again from scratch.
@@ -174,6 +176,8 @@ method will be called.
         due to column virtualisation.
     </li>
 </ul>
+
+<p>
 All of the above will result in the component getting destroyed and recreated.
 </p>
 
@@ -184,7 +188,7 @@ All of the above will result in the component getting destroyed and recreated.
     the refresh of the cell will not take place if the value getting rendered has not changed.
 </p>
 
-<h3 id="grid-vs-cell-refresh">Grid vs Component Refresh</h3>
+<h3>Grid vs Component Refresh</h3>
 
 <p>
     The refresh method returns back a boolean value. If you do not want to handle the refresh in the
@@ -193,19 +197,23 @@ All of the above will result in the component getting destroyed and recreated.
     and create another instance of your component from scratch instead.
 </p>
 
-<h1 id="cell-renderer-component-lifecycle">
+<h2>
     Cell Renderer Component Lifecycle
-</h1>
+</h2>
 
 <p>
     The lifecycle of the cell renderer is as follows:
-<ul>
+</p>
+
+<ul class="content">
     <li><code>new</code> is called on the class.</li>
     <li><code>init()</code> is called once.</li>
     <li><code>getGui()</code> is called once.</li>
     <li><code>refresh()</code> is called 0..n times (ie it may never be called, or called multiple times)</li>
     <li><code>destroy()</code> is called once.</li>
 </ul>
+
+<p>
 In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> and
 <code>destroy()</code> are always called exactly once.
 <code>refresh()</code> is optionally called multiple times.
@@ -217,7 +225,23 @@ In other words, <code>new()</code>, <code>init()</code>, <code>getGui()</code> a
     again to get a new version of the GUI.
 </p>
 
-<h3 id="complementing-cell-renderer-params">Complementing Cell Renderer Params</h3>
+<h2>Cell Rendering Flow</h2>
+
+<p>
+    The diagram below (which is taken from the section <a href="../javascript-grid-value-getters/">Value Getters & Formatters</a>)
+    summarises the steps the grid takes while working out what to render and how to render.
+</p>
+
+<p>
+    In short, a value is prepared. The value comes using either the <code>colDef.field</code> or the
+    <code>colDef.valueGetter</code>. The value is also optionally passed through a <code>colDef.valueFormatter</code>
+    if it exists. Then the value is finally placed into the DOM, either directly, or by using the chosen
+    <code>colDef.cellRenderer</code>.
+</p>
+
+<img class="img-fluid" src="../javascript-grid-value-getters/valueGetterFlow.svg"/>
+
+<h2>Complementing Cell Renderer Params</h2>
 
 <p>
     On top of the parameters provided by the grid, you can also provide your own parameters. This is useful if
@@ -248,16 +272,19 @@ colDef.cellRendererParams = {
 }
 </snippet>
 
-<h1 id="cell-renderers-and-row-groups">Cell Renderer's and Row Groups</h1>
+<h2>Cell Renderers and Row Groups</h2>
 
 <p>
-    If you are mixing cell renderer's and row grouping, then you need to understand that the value and / or data
+    If you are mixing cell renderers and row grouping, then you need to understand that the value and / or data
     may be missing in the group row. You can check if you are on a group row of not by checking
     <code>rowNode.group</code>.
     Groups will have <code>aggData</code> and <code>groupData</code> instead of data.
 </p>
+
 <p>
     This is simply fixed by checking for the existence of the data before you use it like the following:
+</p>
+
 <snippet>
 colDef.cellRenderer = function(params) {
     // check the data exists, to avoid error
@@ -270,9 +297,8 @@ colDef.cellRenderer = function(params) {
     }
 };
 </snippet>
-</p>
 
-<h1 id="cell-renderer-function">Cell Renderer Function</h1>
+<h2>Cell Renderer Function</h2>
 
 <p>
     Instead of using a component, it's possible to use a simple function for a cell renderer.
@@ -326,13 +352,14 @@ colDef.cellRenderer = function(params) {
     interface). If the getGui() method exists, it assumes a component, otherwise it assumes a function.
 </note>
 
-<h1 id="example-using-cell-renderers">Complex Cell Renderer Example</h1>
+<h2>Complex Cell Renderer Example</h2>
 
 <p>
     The example below shows five columns formatted, demonstrating each of the
     methods above.
 </p>
-<ul>
+
+<ul class="content">
     <li>'Month' column uses <code>cellStyle</code> to format each cell in the column with the same style.</li>
     <li>'Max Temp' and 'Min Temp' columns uses the Function method to format each cell in the column with the same
         style.

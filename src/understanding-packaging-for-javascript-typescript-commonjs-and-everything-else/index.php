@@ -1,27 +1,19 @@
 <?php
 
-$pageTitle = "Building Components for Javascript, React, Angular and Everything Else";
-$pageDescription = "ag-Grid is a reusable component that is used in many frameworks including AngularJS 1.x and JavaReact. This article describes the build process that was used.";
-$pageKeyboards = "javascript build gulp typescript react angularjs";
+$pageTitle = "ag-Grid Blog: Building Components for Javascript, React, Angular";
+$pageDescription = "An in-depth guide to building a JavaScript component. This covers everything we did to build ag-Grid, a commercially successful datgrid component.";
+$pageKeyboards = "javascript build components gulp typescript react angularjs";
 
 include('../includes/mediaHeader.php');
 ?>
 
-<div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2>
-            <h2>Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else</h2>
-    </div>
-</div>
+            <h1>Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else</h1>
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-8">
 
-        <p>
-            <span style="font-weight: bold; font-size: 20px;">
-                <span style="color: darkred; ">ag</span><span style="color: #404040">-Grid</span>
-            </span>
-            is an enterprise JavaScript data grid with zero library dependencies.
+        <p class="lead">
+            ag-Grid is an enterprise JavaScript data grid with zero library dependencies.
             The grid is intended to be used either by plain Javascript or alongside a
             JavaScript application frameworks such as React or AngularJS 1.x.
         </p>
@@ -30,14 +22,14 @@ include('../includes/mediaHeader.php');
             Supporting all the frameworks and build systems took days of research and practicing.
             This article goes through lessons learnt and how to structure a project while supporting
             the following:
-            <ul>
+        </p>
+            <ul class="content">
             <li>ECMA 6 imports</li>
             <li>CommonJS Require</li>
             <li>TypeScript and TypeScript Definitions</li>
             <li>Optional Angular 2 and React</li>
             <li>Gulp and Webpack</li>
         </ul>
-        </p>
 
         <p>This page is based on the <a href="https://github.com/ceolter/ag-grid">ag-Grid project on Github</a>. Check the project for
         a full working example of the concepts below. The project is written in TypeScript, however you do not need TypeScript
@@ -47,7 +39,8 @@ include('../includes/mediaHeader.php');
 
         <p>You do not need to be using, or even be a fan of, Angular 2 or Typescript for them to be useful for you.
         You can learn from them and benefit from what they bring to the community even if you're a Babel and React guy.
-        <ul>
+        </p>
+        <ul class="content">
             <li><b>Typescript</b> is written by Microsoft, a proper company with experience writing proper compilers
             including C# and C++. This means I respect more their 'design on things' than I would open source
             community driven projects. Personally I learnt a lot by observing the different options of the Typescript
@@ -56,21 +49,20 @@ include('../includes/mediaHeader.php');
                 in that it's using cutting edge technologies, but it is forcing these technologies into the main
             stream and ironing them out. A lot can be learnt of the future by looking at what Angular 2 is doing
             and I pay respect to the Angular 2 team for taking the brave steps.</li>
-        </ul></p>
-
+        </ul>
 
         <h3>Folder Structure</h3>
 
         <p>
             We are going to be generating a lot of files. To make this easy to work with, we define two
             core folders as follows:
-            <ul>
+        </p>
+            <ul class="content">
             <li><b>src</b>: All the source files that we edit. This includes TypeScript and .styl files (for Stylus,
                 what ag-Grid uses to generate CSS).</li>
             <li><b>dist</b>: All the generated files. This includes TypeScript output (JavaScript),
                 Stylus output (CSS) and WebPack output (JavaScript).</li>
         </ul>
-        </p>
 
         <h3>Configuring Typescript - Internal vs External Modules</h3>
 
@@ -151,7 +143,7 @@ function tscTask() {
 
         <p>The item of interest for now is <i><b>module: 'commonjs'</b></i>. TypeScript supports
         the following 4 Modules: commonjs, amd, system and umd. This is what we think about them:
-            <ul>
+            <ul class="content">
             <li><b>commonjs:</b> This will allow our application to work with today's CommonJS (yeay for React and
                 other people using CommonJS) and the future ECMA 6 is also able to work with CommonJS files
                 (yeay for AngularJS 1.x 2 and SystemX).</li>
@@ -210,11 +202,13 @@ import {Grid} from 'ag-grid/dist/lib/grid';</snippet>
 
         <p>This is great, it works, but it's long winded that the client has to include 'dist/lib' in
         each call. To get around this:
-        <ul>
+</p>
+        <ul class="content">
             <li>Create a main Javascript file in the root of your project to include all your exports. in ag-Grid, this file is called main.js</li>
             <li>Specify the main file in your package.json eg: "main": "./main.js"</li>
         </ul>
-        Then in your main file, specify what you want to export.
+
+        <p>Then in your main file, specify what you want to export.</p>
         <snippet>
 exports.Grid = require('./dist/lib/grid').Grid;</snippet>
         Once this is done, then the client can access the module in the short-hand version of the above.
@@ -231,12 +225,12 @@ import {Grid} from 'ag-grid/main';</snippet>
             It is standard practice to put these main files in the root of your project.
         </p>
 
-        <p>The use of the main files is optional, but highly recommend for the following reasons:
-        <ul>
+        <p>The use of the main files is optional, but highly recommend for the following reasons:</p>
+        <ul class="content">
             <li>Less typing for your clients.</li>
             <li>Decouples clients from the internals, allowing you to restructure code placement.</li>
             <li>Documents an interface, only exposing what you want.</li>
-        </ul></p>
+        </ul>
 
         <h3>TypeScript - Creating Definition Files</h3>
 
@@ -299,14 +293,14 @@ function webpackTask(minify, styles) {
         </p>
         <p>
             What you should note are the following options:
-            <ul>
+        </p>
+            <ul class="content">
             <li><b>entry:</b> Specifies the files to include in the result. Indirectly referenced files will also be included.
             This is the same file we use to expose the CommonJS library to the client.</li>
             <li><b>output.filename: </b>The resulting filename.</li>
             <li><b>output.library & output.libraryTarget: </b>The two of these settings combined tell WebPack to build
                 the library and put it on the global scope. output.library will be the global variable this library will be exposed through.</li>
         </ul>
-        </p>
 
         <p>This technique, btw, is what Angular 2 uses to create its UMD version of Angular 2.0.</p>
 
@@ -328,9 +322,11 @@ require('css!ag-grid/dist/ag-theme-fresh.css')</snippet>
         </p>
         <p>Because you can't know, the safest is to let the client reference the CSS in the client code.</p>
 
+
         <p>As for the Self Contained JavaScript Bundle versions, ag-Grid doesn't know if the client would prefer the CSS bundled with
             the JavaScript code or not, so ag-Grid provides four bundled versions:
-            <ul>
+</p>
+            <ul class="content">
             <li>Normal no CSS</li>
             <li>Normal with CSS</li>
             <li>Minified no CSS</li>
@@ -343,7 +339,8 @@ require('css!ag-grid/dist/ag-theme-fresh.css')</snippet>
             of these libraries, you have to make them as dependencies in your project. The best way to do this is as
             peer dependencies (peerDependencies in package.json) so that the client can control what version of the library
             to use and your component will use what's provided to it. This has the following impacts:
-        <ul>
+</p>
+        <ul class="content">
             <li>Your project will force these dependencies on your client. This would be bad if, for example, your client
                 uses Angular 2 and has no desire to have React as a dependency. ag-Grid supports this by separating
                 out the dependent parts into separate Github projects (eg ag-grid-react and ag-grid-angular projects).
@@ -358,7 +355,7 @@ require('css!ag-grid/dist/ag-theme-fresh.css')</snippet>
                 This means if you included these dependencies in your project they would
                 be dragged into your bundled files. This would be bad, as the client will need
                 to be providing the framework.</li>
-        </ul></p>
+        </ul>
 
         <p>
             One thing to note about the second point and Angular 2 - it says you cannot Webpack UMD bundle Angular 2
@@ -388,44 +385,7 @@ require('css!ag-grid/dist/ag-theme-fresh.css')</snippet>
         </div>
 
     </div>
-    <div class="col-md-3">
-
-        <img src="../images/ag-Grid2-200.png" style="display: inline-block; padding-bottom: 20px;"/>
-
-        <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/understanding-packaging-for-javascript-typescript-commonjs-and-everything-else/" data-text="Understand Packaging for Javascript, TypesScript, CommonJS and Everything Else" data-via="ceolter" data-size="large">Tweet</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-        </div>
-
-        <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-            <p>
-                <img src="/niall.png"/>
-            </p>
-            <p>
-                About Me
-            </p>
-            <p>
-                I have been writing software all my life! Starting with Assembly, C++ and MFC,
-                moving onto full stack Java / JSP / GWT and now focusing on full stack
-                Java / Javascript.
-            </p>
-            <p>
-                Currently working on ag-Grid full time.
-            </p>
-
-            <div>
-                <br/>
-                <a href="http://uk.linkedin.com/in/niallcrosby"><img src="/images/linked-in.png"/></a>
-                <br/>
-                <br/>
-                <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-        </div>
-
-    </div>
+<?php include '../blog-authors/niall.php' ?>
 </div>
 
 
@@ -445,10 +405,6 @@ require('css!ag-grid/dist/ag-theme-fresh.css')</snippet>
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 <hr/>
-
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

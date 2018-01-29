@@ -1,0 +1,11 @@
+.input-panel {
+    border-radius: 5px;
+    border: solid lightgray 1px;
+    margin: 15px;
+    padding: 15px;
+}
+
+.submit-pane {
+    overflow: hidden;
+    margin-top: 10px;
+}

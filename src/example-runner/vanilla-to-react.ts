@@ -96,6 +96,8 @@ function indexTemplate(bindings, componentFilenames) {
     const eventHandlers = bindings.eventHandlers.map(event => event.handler.replace(/^function /, ''));
     const externalEventHandlers = bindings.externalEventHandlers.map(handler => handler.body.replace(/^function /, ''));
 
+    const style = bindings.gridSettings.noStyle ? '' : `style={{width: '100%', height: '100%' }}`;
+
     return `
 'use strict'
 
@@ -122,7 +124,7 @@ class GridExample extends Component {
 ${additional.concat(eventHandlers, externalEventHandlers).join('\n    ')}
     render() {
         return (
-            <div style={{width: '100%', height: '100%' }}>
+            <div ${style}>
                 ${template}
             </div>
         );

@@ -1,0 +1,19 @@
+.dd {
+    width: 30px
+}
+
+.mm {
+    width: 30px
+}
+
+.yyyy {
+    width: 40px
+}
+
+.reset {
+    padding: 2px;
+    background-color: red;
+    border-radius: 3px;
+    font-size: 10px;
+    color: white
+}

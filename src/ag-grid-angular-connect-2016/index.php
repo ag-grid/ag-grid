@@ -1,22 +1,18 @@
 <?php
 
-$pageTitle = "We're gonna need a bigger boat: from speaker to sponsor with ag-Grid";
-$pageDescription = "Here’s the story how, in under a year, my side project grew into a company that was a major sponsor at Angular Connect 2016 – one of Europe’s largest Angular conferences.";
+$pageTitle = "ag-Grid Blog: We're Gonna Need a Bigger Boat";
+$pageDescription = "Here’s the story how, in under a year, my side project grew into a company that was a major sponsor at Angular Connect 2016 – one of Europe’s largest Angular conferences. It's been a wild ride .";
 $pageKeyboards = "ag-Grid angular connect 2016";
 
 include('../includes/mediaHeader.php');
 ?>
 
-<div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2>We're gonna need a bigger boat: from speaker to sponsor with ag-Grid</h2>
-    </div>
-</div>
+        <h1>We're gonna need a bigger boat: from speaker to sponsor with ag-Grid</h1>
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-8">
 
-        <p>
+        <p class="lead">
             At the start of 2015 I was in a day job with a problem: I couldn’t find a decent JavaScript datagrid for our enterprise applications.
         </p>
         <p>
@@ -77,14 +73,14 @@ include('../includes/mediaHeader.php');
         </p>
         <p>
             How much conference planning can you do in five days while still running a business? Quite a lot, it turns out.
-            <ul>
+        </p>
+            <ul class="content">
                 <li>We organised printing a large backdrop for our stand.</li>
                 <li>We recorded a 20-minute demonstration of ag-Grid to play on repeat throughout the conference.</li>
                 <li>We worked up a competition to win an iPad mini.</li>
                 <li>We printed 1,500 fliers explaining what ag-Grid does, to drop into the conference welcome bags.</li>
                 <li>And we prepared a five-minute lightening talk to be delivered on the main stage on day two.</li>
             </ul>
-        </p>
         <div style="float: right; padding-left: 20px; padding-bottom: 20px; padding-top: 5px;">
             <img src="../images/angularConnect2016/dayBefore.png"/>
             <div style="padding: 0px; width: 400px; color: darkgrey; font-size: 12px;">
@@ -290,45 +286,7 @@ include('../includes/mediaHeader.php');
         </div>
 
     </div>
-    <div class="col-md-3">
-
-        <img src="../images/ag-Grid2-200.png" style="display: inline-block; padding-bottom: 20px;"/>
-
-        <div>
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-angular-connect-2016/"
-               data-text="We're Gonna Need a Bigger Boat - ag-Grid Sponsors Angular Connect 2016" data-via="ceolter" data-size="large">Tweet</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-        </div>
-
-        <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-            <p>
-                <img src="/niall.png"/>
-            </p>
-            <p>
-                About Me
-            </p>
-            <p>
-                I have been writing software all my life! Starting with Assembly, C++ and MFC,
-                moving onto full stack Java / JSP / GWT and now focusing on full stack
-                Java / Javascript.
-            </p>
-            <p>
-                Founder, Technical Lead and CEO of ag-Grid LTD.
-            </p>
-
-            <div>
-                <br/>
-                <a href="http://uk.linkedin.com/in/niallcrosby"><img src="/images/linked-in.png"/></a>
-                <br/>
-                <br/>
-                <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-        </div>
-
-    </div>
+    <?php include '../blog-authors/niall.php' ?>
 </div>
 
 

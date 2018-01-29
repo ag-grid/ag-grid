@@ -1,21 +1,16 @@
 <?php
 
-$pageTitle = "React and ag-Grid, the Perfect Match";
-$pageDescription = "ag-Grid is a world leading Enterprise Javascript Data-Grid. React is a world leading Javascript Javascript Rendering Library. This page explains how they both work really well together.";
+$pageTitle = "ag-Grid Blog: Building a React Datagrid using ag-Grid";
+$pageDescription = "We're delighted to announce that you can now use React seamlessly with ag-Grid so you can add feature rich datagrid to your React application. This post takes you through it step by step..";
 $pageKeyboards = "react ag-grid javascript grid";
 
 include('../includes/mediaHeader.php');
 ?>
 
-<div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2>
-            <h2>React and ag-Grid, the Perfect Match</h2>
-    </div>
-</div>
+            <h1>Building a React Datagrid using ag-Grid - a Perfect Match</h1>
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-8">
 
         <p>
             ag-Grid is an enterprise JavaScript data grid with zero library dependencies,
@@ -29,8 +24,8 @@ include('../includes/mediaHeader.php');
 
         <p>
             Now ag-Grid is providing
-            an optional React component and React rendering.
-            ag-Grid is fully in bed with React and treats React as a first class component
+            a React component and React rendering.
+            ag-Grid is fully integrated with React and treats React as a first class component
             - meaning if you are using React, ag-Grid is NOT using any other
             framework to get the job done.
         </p>
@@ -76,55 +71,7 @@ include('../includes/mediaHeader.php');
         </div>
 
     </div>
-    <div class="col-md-3">
-
-        <img src="../images/ag-Grid2-200.png" style="display: inline-block; padding-bottom: 20px;"/>
-
-        <div style="margin-top: 20px;">
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-in-2016/" data-text="Stepping it Up, ag-Grid Focuses on Agnostic in 2016" data-via="ceolter" data-size="large">Tweet</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-        </div>
-
-        <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-            <p>
-                <img src="/niall.png"/>
-            </p>
-            <p>
-                About Me
-            </p>
-            <p>
-                I have been writing software all my life! Starting with Assembly, C++ and MFC,
-                moving onto full stack Java / JSP / GWT and now focusing on full stack
-                Java / Javascript.
-            </p>
-            <p>
-                Currently working on ag-Grid full time.
-            </p>
-
-            <div>
-                <br/>
-                <a href="http://uk.linkedin.com/in/niallcrosby"><img src="/images/linked-in.png"/></a>
-                <br/>
-                <br/>
-                <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-        </div>
-
-        <!--        <div style="font-size: 14px; border: 1px solid lightgrey; margin-top: 25px; padding: 15px;">
-                    This article was was published on:
-                    <br/>
-                    <a href="http://dailyjs.com/2015/03/31/javascript-grid-react-native/?utm_content=buffer98f7e&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer">DailyJS</a>
-                    <br/>
-                    <a href="http://www.dzone.com/links/why_the_world_needed_another_angularjs_grid.html">DZone</a>
-                    <br/>
-                    <a href="http://www.reddit.com/r/angularjs/comments/30uel2/why_the_world_needed_another_angularjs_grid/">reddit</a>
-                    <br/>
-                    <a href="http://t.co/vpH62y3THW">ng-newsletter</a>
-                </div>-->
-    </div>
+<?php include '../blog-authors/niall.php' ?>
 </div>
 
 
@@ -144,10 +91,6 @@ include('../includes/mediaHeader.php');
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 <hr/>
-
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

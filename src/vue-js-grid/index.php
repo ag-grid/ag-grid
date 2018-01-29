@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "Using VueJS Components in ag-Grid";
-$pageDescription = "Using VueJS Components in ag-Grid";
+$pageTitle = "ag-Grid Blog: Using VueJS Components in ag-Grid";
+$pageDescription = "VueJS is a fantastic framework that has experienced amazing growth since it was first released in early 2014. We here at ag-Grid are proud to be able to announce support for VueJS, offering native support of VueJS components within the grid itself. This blog post covers using VueJS Components in ag-Grid";
 $pageKeyboards = "VueJS Vue Component ag-Grid";
 
 include('../includes/mediaHeader.php');
@@ -11,15 +11,9 @@ include('../includes/mediaHeader.php');
 <script src="../documentation-main/documentation.js"></script>
 
 
-<div class="row">
-    <div class="col-md-2" style="padding-top: 20px; padding-bottom: 20px;">
-        <img src="../images/vue_large.png" style="position: relative; top: 15px; left: 40px;"/>
-    </div>
-    <div class="col-md-10" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1>VueJS Grid</h1>
-        <h3>Using ag-Grid inside a VueJS application</h3>
-    </div>
-</div>
+<h1><img src="../images/vue_large.png"/>VueJS Grid</h1>
+<h3>Using ag-Grid inside a VueJS application</h3>
+<p class="blog-author">Sean Landsman | 14th March 2017</p>
 
 <div class="row" ng-app="documentation">
     <div class="col-md-9">

@@ -1,15 +1,12 @@
 <?php
-$key = "For Print";
-$pageTitle = "ag-Grid Printing";
-$pageDescription = "If you want to print your grid, then it should be rendered without scrolls. This page shows you how to do it.";
+$pageTitle = "ag-Grid - Core Grid Features: Layout For Print";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Layout For Print. Use For Print to have the grid render without using any scrollbars. This is useful for printing the grid, where all rows should be printed, not just what's visible on the screen. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Printing";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
-    <h2 class="first-h1" id="for-print">Layout For Print</h2>
+    <h1>Layout For Print</h1>
 
     <p>
         The 'For Print' renders the table without using any scrollbars. The grid will flow outside the
@@ -25,7 +22,7 @@ include '../documentation-main/documentation_header.php';
         to render the page.
     </p>
 
-    <h4 id="why-for-print">Why 'For Print'</h4>
+    <h2>Why 'For Print'</h2>
 
     <p>
         You will want to use 'for print' for printing. The table normally will have parts of the
@@ -33,7 +30,7 @@ include '../documentation-main/documentation_header.php';
         the entire table, perfect for printing.
     </p>
 
-    <h3 id="simple-example">Simple Example</h3>
+    <h2>Simple Example</h2>
 
     <p>
         Below is an example table using 'for print'. The table is also fitted with a border, to
@@ -48,7 +45,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('For Print Simple', 'for-print-simple', 'generated') ?>
 
-    <h3 id="complex-example">Complex Example</h3>
+    <h2>Complex Example</h2>
 
     <p>
         The following example demonstrates for print when used in combination with pinned rows,
@@ -65,18 +62,18 @@ include '../documentation-main/documentation_header.php';
 
     <?= example('For Print Complex', 'for-print-complex', 'generated') ?>
 
-    <h3 id="for-print-and-rtl">For Print and RTL</h3>
+    <h2>For Print and RTL</h2>
 
     <p>
         If you are using RTL (for Right to Left languages), it will work but you need to be careful. The
         grid will expect the browser the horizontally scroll to the left. This means you have to set CSS
-        <i>direction=rtl</i> on the body element of your document. This is demonstrated in the example
+        <code>direction=rtl</code> on the body element of your document. This is demonstrated in the example
         below.
     </p>
 
     <?= example('RTL For Print', 'for-print-rtl', 'generated') ?>
 
-    <h3 id="for-print-child-detail">For Print and Master Detail Grids</h3>
+    <h2>For Print and Master Detail Grids</h2>
 
     <p>
         It is not possible to have one grid embedded inside another grid with the forPrint setting
@@ -84,6 +81,6 @@ include '../documentation-main/documentation_header.php';
         then both grids must have either domLayout="forPrint" on or off.
     </p>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

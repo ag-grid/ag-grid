@@ -1,17 +1,14 @@
 <?php
-$key = "License Key";
-$pageTitle = "ag-Grid JavaScript Data Grid Set License Key";
-$pageDescription = "How to set the License Key in ag-Grid Enterprise";
+$pageTitle = "ag-Grid Reference: Setting the License Key";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page explains how to set the License Key in ag-Grid Enterprise";
 $pageKeyboards = "ag-Grid JavaScript Data Grid Excel License Key";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+    <h1 class="heading-enterprise">Set License</h1>
 
-    <h2><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Set License</h2>
-
-    <p>
+    <p class="lead">
         Set the license key via the JavaScript method as described below.
         ag-Grid checks the license key without making any network calls.
         The license key is set once for the grid library. You do not need to set the license key for each instance of
@@ -27,23 +24,25 @@ include '../documentation-main/documentation_header.php';
         product is JavaScript, there is little we can do to prevent this.
     </note>
 
-    <h4><img src="../images/svg/javascript.svg" style="height: 25px" title="JavaScript"/> JavaScript</h4>
+    <h2>JavaScript</h2>
 
     <p>
-        Use this if you are using the bundled version of ag-Grid (eg you are using <i>ag-grid-enterprise.js</i>).
+        Use this if you are using the bundled version of ag-Grid (e.g. you are using <code>ag-grid-enterprise.js</code>).
     </p>
+
 <snippet>
 agGrid.LicenseManager.setLicenseKey("your license key");
 </snippet>
 
-    <h4>CommonJS</h4>
+    <h2>CommonJS</h2>
+
     <p>Use this if you are using CommonJS to load ag-Grid.</p>
 <snippet>
 var enterprise = require("ag-grid-enterprise");
 enterprise.LicenseManager.setLicenseKey("your license key");
 </snippet>
 
-    <h4>Do Not Mix Loading Mechanisms</h4>
+    <h2>Do Not Mix Loading Mechanisms</h2>
 
     <p>
         If you mix the methods above (eg if you are using CommonJS in your application, but use the JavaScript approach
@@ -51,7 +50,7 @@ enterprise.LicenseManager.setLicenseKey("your license key");
         one will have the license key and the other will be used in your application without the license key.
     </p>
 
-    <h3><img src="../images/angular2_large.png" style="height: 25px" title="Angular"/> Angular</h3>
+    <h2>Angular</h2>
 
     <p>We recommend setting the license key in your main boot files (typically named either <code>main.ts</code> or
         <code>boot.ts</code>, before you bootstrap your application.</p>
@@ -68,11 +67,9 @@ LicenseManager.setLicenseKey("your license key");
 platformBrowser().bootstrapModuleFactory(AppModuleNgFactory);
 </snippet>
 
-    <h3><img src="../images/react_large.png" style="height: 25px" title="React"/> React</h3>
+    <h2>React</h2>
 
-    <p>We recommend setting the license key in your main bootstrap file (typically named <code>index.js</code>), before
-        you
-        bootstrap your application.</p>
+    <p>We recommend setting the license key in your main bootstrap file (typically named <code>index.js</code>), before you bootstrap your application.</p>
 
     <p>For example:</p>
 
@@ -96,11 +93,9 @@ document.querySelector('#app')
 });
 </snippet>
 
-    <h3><img src="../images/vue_large.png" style="height: 25px" title="VueJs"/> VueJS</h3>
+    <h2> VueJS</h2>
 
-    <p>We recommend setting the license key in your main bootstrap file (typically named <code>main.js</code>), before
-        you
-        bootstrap your application.</p>
+    <p>We recommend setting the license key in your main bootstrap file (typically named <code>main.js</code>), before you bootstrap your application.</p>
 
     <p>For example:</p>
 
@@ -121,15 +116,14 @@ el: "#el",
 });
 </snippet>
 
-    <h3><img src="../images/polymer-large.png" style="height: 25px" title="Polymer"/> Polymer</h3>
+    <h2> Polymer</h2>
 
     <p>You have two choices as to where to set your license key in Polymer.</p>
 
     <p>If you have many components with agGrid in, the we suggest
         you run a separate script to reference and set the license key - for example:</p>
 
-<snippet>
-// the main/initial index.html
+<snippet language="html">
 &lt;script src="../bower_components/ag-grid-enterprise/dist/ag-grid-enterprise.noStyle.js"&gt;&lt;/script&gt;
 
 &lt;!-- ag-grid-polymer element --&gt;
@@ -147,12 +141,9 @@ el: "#el",
 agGrid.LicenseManager.setLicenseKey("your license key")
 </snippet>
 
-    <p>If you have a single component, or a single component that in turn has the child components, you can set the
-        license key
-        in this parent component - for example:</p>
+    <p>If you have a single component, or a single component that in turn has the child components, you can set the license key in this parent component - for example:</p>
 
-<snippet>
-// the main/initial index.html
+<snippet language="html">
 &lt;script src="../bower_components/ag-grid-enterprise/dist/ag-grid-enterprise.noStyle.js"&gt;&lt;/script&gt;
 
 &lt;!-- ag-grid-polymer element --&gt;
@@ -162,8 +153,7 @@ agGrid.LicenseManager.setLicenseKey("your license key")
 &lt;link rel="import" href="main-component-one.html"&gt;
 </snippet>
 
-<snippet>
-// main-component-one.html
+<snippet language="html">
 &lt;dom-module id="simple-grid-example"&gt;
 &lt;template id="template"&gt;
 &lt;div &gt;
@@ -180,12 +170,14 @@ agGrid.LicenseManager.setLicenseKey("your license key")
 class SimpleGridExample extends Polymer.Element {
 ...
 }
+&lt;/script&gt;
+
 </snippet>
 
-    <h3><img src="../images/aurelia_large.png" style="height: 25px" title="Aurelia"/> Aurelia</h3>
+    <h2> Aurelia</h2>
 
-    <p>
-        For Aurelia users, we suggest you set your License Key in the <code>configure</code> function, as follows:
+    <p> For Aurelia users, we suggest you set your License Key in the <code>configure</code> function, as follows: </p>
+
 <snippet>
 export function configure(aurelia: Aurelia) {
     aurelia.use
@@ -195,8 +187,8 @@ export function configure(aurelia: Aurelia) {
 
     LicenseManager.setLicenseKey("your license key");
 
-    ...rest of function
+    // ...rest of function
 </snippet>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

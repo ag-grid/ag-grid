@@ -1,0 +1,16 @@
+<div style="height: 100%; padding-top: 60px; box-sizing: border-box;">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-fresh"></div>
+</div>
+<div style="position: absolute; top: 0px; left: 0px;">
+    <div style="padding: 4px;">
+        <button onclick="clearPinned()">Clear Pinned</button>
+        <button onclick="resetPinned()">Left = #, Athlete, Age; Right = Total</button>
+        <button onclick="pinCountry()">Left = Country</button>
+    </div>
+
+    <div style="padding: 4px;">
+        Jump to:
+        <input placeholder="row" type="text" style="width: 40px" id="row" oninput="jumpToRow()" />
+        <input placeholder="col" type="text" style="width: 40px" id="col" oninput="jumpToCol()" />
+    </div>
+</div>

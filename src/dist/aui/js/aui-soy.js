@@ -98,7 +98,7 @@
    * loading base.js.  If a key is defined in {@code CLOSURE_UNCOMPILED_DEFINES},
    * {@code goog.define} will use the value instead of the default value.  This
    * allows flags to be overwritten without compilation (this is normally
-   * accomplished with the compiler's "define" flag).
+   * accomplished with the compilers "define" flag).
    *
    * Example:
    * <pre>

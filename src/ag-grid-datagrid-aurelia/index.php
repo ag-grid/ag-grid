@@ -1,8 +1,8 @@
 
 <?php
 
-$pageTitle = "Aurelia Datagrid Support";
-$pageDescription = "ag-Grid now supports Aurelia - a discussion on what this means for ag-Grid.";
+$pageTitle = "ag-Grid Blog: Announcing Aurelia Datagrid support";
+$pageDescription = "We're delighted to announce that we will be supporting Aurelia. You can now use the leading Javascript datagrid with this powerful and flexible framework. Its part of our commitment to support emerging frameworks in the JavaScript space. This blog gives a step-by-step guide to building an Aurelia application with the ag-Grid datagrid.";
 $pageKeyboards = "ag-grid datagrid aurelia framework";
 
 include('../includes/mediaHeader.php');
@@ -10,14 +10,11 @@ include('../includes/mediaHeader.php');
 
 <!-- <link rel="stylesheet" href="../documentation-main/documentation.css"> -->
 
-<div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h1><img src="/images/aurelia_large.png"/> ag-Grid - The Enterprise Datagrid For Aurelia</h1>
-    </div>
-</div>
+        <h1> ag-Grid - The Enterprise Datagrid For Aurelia</h1>
+        <p class="blog-author">Sean Landsman | 30th November 2016</p>
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-8">
 
         <p>Here at ag-Grid, we are very excited to be able to offer support for Aurelia! Aurelia is a powerful and flexible framework that makes developing applications a breeze.</p>
 
@@ -126,7 +123,7 @@ export class AgGridColumn {
 
         <p>This in turn woud be mapped to a column with a defined cell renderer and cell editor.</p>
 
-        <p>That's pretty much it! In time - and if there's sufficient interest - we'll look at being able to create Renderer's,
+        <p>That's pretty much it! In time - and if there's sufficient interest - we'll look at being able to create Renderers,
         Editors and Filters from Components, in the same way that we do with Angular. Based on feedback we've received this
         declarative/markup driven definition works well for now.</p>
 
@@ -139,43 +136,7 @@ export class AgGridColumn {
         </div>
 
     </div>
-    <div class="col-md-3">
-
-        <div>
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-aurelia-support/" data-text="Announcing ag-Grid v6 and aurelia Datagrid Support" data-via="seanlandsman" data-size="large">Tweet</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-        </div>
-
-        <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-            <p>
-                <img src="/images/sean.png"/>
-            </p>
-            <p style="font-weight: bold;">
-                Sean Landsman
-            </p>
-            <p>
-                I'm an experienced full stack technical lead with an extensive background in enterprise solutions. Over
-                19 years in the industry has taught me the value of quality code and good team collaboration. The bulk
-                of my background is on the server side, but like Niall am increasingly switching focus to include front end
-                technologies.
-            </p>
-            <p>
-                Currently work on ag-Grid full time.
-            </p>
-
-            <div>
-                <br/>
-                <a href="https://www.linkedin.com/in/sean-landsman-9780092"><img src="/images/linked-in.png"/></a>
-                <br/>
-                <br/>
-                <a href="https://twitter.com/seanlandsman" class="twitter-follow-button" data-show-count="false" data-size="large">@seanlandsman</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-        </div>
-
-    </div>
+    <?php include '../blog-authors/sean.php' ?>
 </div>
 
 <hr/>
@@ -198,9 +159,6 @@ export class AgGridColumn {
         powered by Disqus.</a></noscript>
 <hr/>
 
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

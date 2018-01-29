@@ -1,17 +1,16 @@
 <?php
-$key = "Performance";
-$pageTitle = "ag-Grid Performance";
-$pageDescription = "ag-Grid Performance";
+$pageTitle = "ag-Grid: Datagrid Performance";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. The core grid engine gives Performance unlike that seen before. The grid uses row and column virtualisation, animation frames and many other techniques. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Performance";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
 
-    <h1 class="first-h1">Performance</h1>
 
-    <p>
+    <h1>Performance</h1>
+
+    <p class="lead">
         ag-Grid is fast. However ag-Grid can also be configured and extended in many ways.
 
         Often people come to the ag-Grid forum and ask 'why is the grid in my application not that fast?'.
@@ -32,33 +31,34 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         ag-Grid can be slowed down by your custom
-        <a href="../javascript-grid-cell-rendering-components/">cell renderer's</a>. To test this, remove all
-        cell renderer's from your grid and compare the speed again. If the grid does improve it's speed by
-        removing cell renderers, try to introduce the cell renderer's one by one to find out which ones
+        <a href="../javascript-grid-cell-rendering-components/">cell renderers</a>. To test this, remove all
+        cell renderers from your grid and compare the speed again. If the grid does improve it's speed by
+        removing cell renderers, try to introduce the cell renderers one by one to find out which ones
         are adding the most overhead.
     </p>
 
-    <h2>3. Create Fast Cell Renderer's</h2>
+    <h2>3. Create Fast Cell Renderers</h2>
 
-    <p>
-        The fastest cell renderer's have the following properties:
-        <ul>
-            <li>Do NOT use a framework (eg Angular or React) for the cell renderer's. The grid rendering is highly
-            customised and plain JavaScript cell renderer's will work faster than framework equivalents. It is
-            still fine to use the framework version of ag-Grid (eg for setting ag-Grid properties etc) however
-            because there are so many cells getting created and destroyed, the additional layer the frameworks
-            add do not help performance and should be provided if you are having performance concerns.</li>
-        </ul>
-        Not everyone needs blazing fast cell renderer's (eg maybe you have users on fast machines with fast browsers,
-        or maybe your grids have few columns) in which case framework cell renderer's may work fine. The suggestion
+    <p> The fastest cell renderers have the following properties:</p>
+
+    <note>
+        Do NOT use a framework (eg Angular or React) for the cell renderers. The grid rendering is highly
+        customised and plain JavaScript cell renderers will work faster than framework equivalents. It is
+        still fine to use the framework version of ag-Grid (eg for setting ag-Grid properties etc) however
+        because there are so many cells getting created and destroyed, the additional layer the frameworks
+        add do not help performance and should be provided if you are having performance concerns.
+    </note>
+
+   <p>     Not everyone needs blazing fast cell renderers (eg maybe you have users on fast machines with fast browsers,
+        or maybe your grids have few columns) in which case framework cell renderers may work fine. The suggestion
         of not using frameworks for cells is only applicable when you are looking to squeeze for performance gains.
     </p>
 
-    <note>We suggest not using frameworks for cell renderer's for because of the large number of cells getting
+    <note>We suggest not using frameworks for cell renderers for because of the large number of cells getting
     created and destroyed. Most of the time a cell will not have complex features in it, so using plain
     JavaScript should not be a problem. For all other components (filters, editors etc) using the frameworks
     won't make much noticeable difference as these components are not created and destroyed as often as
-    cell renderer's.</note>
+    cell renderers.</note>
 
     <h2>4. Turn Off Animations</h2>
 
@@ -96,6 +96,6 @@ include '../documentation-main/documentation_header.php';
         Read the article <a href="../ag-grid-8-performance-hacks-for-javascript/">8 Performance Hacks for JavaScript</a>
         so you know what the grid is doing, that way you will be able to reason with it.
     </p>
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -1,17 +1,14 @@
 <?php
-$key = "Context Menu";
-$pageTitle = "ag-Grid Javascript Grid Context Menu";
-$pageDescription = "Right clicking on a cell brings up the grid's context menu. You can use the default or configure your own details.";
+$pageTitle = "ag-Grid - Enterprise Grade Features: Context Menu";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Context Menu. The Context Menu appears when you right click on a cell. Use the default options or provide your own. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Javascript Grid Context Menu";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
+    <h1>Context Menu</h1>
 
-    <h1 class="first-h1"><img src="../images/enterprise_50.png" title="Enterprise Feature"/> Context Menu</h1>
-
-    <p>
+    <p class="lead">
         The user can bring up the context menu by right clicking on a cell.
         By default, the context menu provides the values 'copy' and 'paste'. Copy will copy the selected
         cells or rows to the clipboard. Paste will always, forever, be disabled.</p>
@@ -26,7 +23,7 @@ include '../documentation-main/documentation_header.php';
         the shortcut as a hint to the user.
     </note>
 
-    <h3>Configuring the Context Menu</h3>
+    <h2>Configuring the Context Menu</h2>
 
     <p>
         You can customise the context menu by providing a <code>getContextMenuItems()</code> callback.
@@ -37,6 +34,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         <code>getContextMenuItems()</code> takes the following object as parameters:
+</p>
         <snippet>
 GetContextMenuItemsParams {
     column: Column, // the column that was clicked
@@ -47,7 +45,6 @@ GetContextMenuItemsParams {
     context: any, // the grid context
     defaultItems: string[] // names of the items that would be provided by default
 }</snippet>
-    </p>
 
     <p>
         The result of <code>getContextMenuItems()</code> should be a list with each item either a) a string
@@ -60,7 +57,7 @@ GetContextMenuItemsParams {
     </p>
 
     <p>
-        A MenuItem description looks as follows (items with question marks are optional):
+        A <code>MenuItem</code> description looks as follows (items with question marks are optional):
         <snippet>
 MenuItemDef {
     name: string, // name of menu item
@@ -83,25 +80,25 @@ MenuItemDef {
         If you want to turn off the context menu completely, set the grid property <code>suppressContextMenu=true</code>.
     </p>
 
-    <h3>Built In Menu Items</h3>
+    <h2>Built In Menu Items</h2>
 
     <p>The following is a list of all the default built in menu items with the rules about when they are shown.</p>
 
-    <ul>
-        <li><b>autoSizeAll</b>: Auto-size all columns. Always shown.</li>
-        <li><b>expandAll</b>: Expand all groups. Only shown if grouping by at least one column.</li>
-        <li><b>contractAll</b>: Contract all groups. Only shown if grouping by at least one column.</li>
-        <li><b>copy</b>: Copy selected value to clipboard</li>
-        <li><b>copyWithHeaders</b>Copy selected value to clipboard with headers.</li>
-        <li><b>paste</b>: Always disabled (see note in clipboard section).</li>
-        <li><b>resetColumns</b>: Reset all columns.</li>
-        <li><b>toolPanel</b>: Show / hide the toolpanel.</li>
-        <li><b>export</b>: Export sub menu (containing csvExport and excelExport).</li>
-        <li><b>csvExport</b>: Export to CSV using all default export values.</li>
-        <li><b>excelExport</b>: Export to Excel using all default export values.</li>
+    <ul class="content">
+        <li><code>autoSizeAll</code>: Auto-size all columns. Always shown.</li>
+        <li><code>expandAll</code>: Expand all groups. Only shown if grouping by at least one column.</li>
+        <li><code>contractAll</code>: Contract all groups. Only shown if grouping by at least one column.</li>
+        <li><code>copy</code>: Copy selected value to clipboard</li>
+        <li><code>copyWithHeaders</code>Copy selected value to clipboard with headers.</li>
+        <li><code>paste</code>: Always disabled (see note in clipboard section).</li>
+        <li><code>resetColumns</code>: Reset all columns.</li>
+        <li><code>toolPanel</code>: Show / hide the toolpanel.</li>
+        <li><code>export</code>: Export sub menu (containing csvExport and excelExport).</li>
+        <li><code>csvExport</code>: Export to CSV using all default export values.</li>
+        <li><code>excelExport</code>: Export to Excel using all default export values.</li>
     </ul>
 
-    <h3>Default Context Menu</h3>
+    <h2>Default Context Menu</h2>
 
     <p>
         One drawback of using the ag-Grid context menu is that you may want to show the browsers context
@@ -112,15 +109,24 @@ MenuItemDef {
 
     <p>
         Holding down ctrl & context menu bypasses the grids context menu. If you do want the grids context
-        menu, even when ctrl is pressed, then set <i>allowContextMenuWithControlKey=true</i>.
+        menu, even when ctrl is pressed, then set <code>allowContextMenuWithControlKey=true</code>.
     </p>
 
-    <h3>Context Menu Example</h3>
+    <h2>Hiding the Context Menu</h2>
+
+    <p>
+        Hide the context menu with the grid API <code>hidePopupMenu()</code>, which will hide
+        either the context menu or the <a href="../javascript-grid-column-menu">column menu</a>,
+        whichever is showing.
+    </p>
+
+    <h2>Context Menu Example</h2>
 
     <p>
         Below shows a configured context menu in action demonstrating a customised menu with a mix
         of custom items. You should notice the following:
-        <ul>
+    </p>
+    <ul class="content">
         <li>A mix of built in items and custom items are used.</li>
         <li>The first item uses the contents of the cell to display its value.</li>
         <li>Country and Person are sub menu's. The country sub menu contains icons.</li>
@@ -128,10 +134,48 @@ MenuItemDef {
         <li>The menu item has css classes applied to it.</li>
         <li>The second menu item ('Always Disabled') has a tooltip.</li>
     </ul>
-    </p>
 
     <?= example('Context Menu Example', 'context-menu', 'generated', array("enterprise" => 1)) ?>
 
-</div>
+    <h2 id="popup-parent">Popup Parent</h2>
+
+    <p>
+        Under most scenarios, the menu will fit inside the grid. However if the grid is small and / or the menu
+        is very large, then the menu will not fit inside the grid and it will be clipped. This will lead to
+        a bad user experience.
+    </p>
+
+    <p>
+        The following demonstrates the bad user experience - try to open the context menu or the column
+        menu in the grid. The menu will not be fully visible.
+    </p>
+
+    <?= example('Small Grid Problem', 'popup-parent-problem', 'generated', array("enterprise" => 1)) ?>
+
+    <p>
+        The solution is to set the <code>popupParent</code> element which can be set in the following ways:
+        <ul>
+            <li>Property <code>popupParent</code>: Set as a grid property.</li>
+            <li>API <code>setPopupParent(element)</code>: Set via the grid API.</li>
+        </ul>
+        Each mechanism allows you to set the popup parent to any HTML DOM element. The element must:
+        <ol>
+            <li>Exist in the dom.</li>
+            <li>
+                Cover the same area as the grid (or simple be a parent of the grid), so that when the
+                popup is positioned, it can be positioned over the grid.
+            </li>
+        </ol>
+        Most of the time, you will simple set the popup parent to the document body.
+    </p>
+
+    <p>
+        The example below is identical to the previous example except it sets the popup parent
+        to the document body.
+    </p>
+
+    <?= example('Small Grid Solution', 'popup-parent-solution', 'generated', array("enterprise" => 1)) ?>
+
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

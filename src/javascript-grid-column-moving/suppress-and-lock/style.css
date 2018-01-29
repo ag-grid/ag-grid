@@ -1,0 +1,23 @@
+.locked-col {
+    background: #ddd;
+}
+
+.suppress-movable-col {
+    background: #f5f5dc;
+}
+
+.legend-box {
+    border: 1px solid #aaa;
+}
+
+.legend-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.grid-wrapper {
+    height: 100%;
+    padding-top: 26px;
+    box-sizing: border-box;
+}

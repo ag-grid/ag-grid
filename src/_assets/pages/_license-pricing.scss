@@ -1,0 +1,104 @@
+.license-question {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+#licenses {
+    .col-md-4 {
+        @extend .align-self-center;
+    }
+
+    .col-md-4:first-child .license {
+        margin-left: 0;
+    }
+
+    .col-md-4:last-child .license {
+        margin-right: 0;
+    }
+
+    .license.recommended {
+        padding-top: 0rem;
+
+        .card-header {
+            background-color: $blue-2;
+            color: $white;
+        }
+
+        border-color: $blue-2;
+
+        .btn {
+            @extend .btn-primary;
+        }
+    }
+
+    .license {
+        padding-top: 49px;
+
+        margin: 1rem;
+        @extend .card, .text-center;
+        background-color: $gray-100;
+
+        .btn {
+            @extend .btn-outline-secondary, .btn-lg;
+            background-color: $white;
+            display: block;
+        }
+
+        p {
+            @extend .mt-5;
+            font-size: 0.9rem;
+        }
+    }
+
+    h3 {
+        font-size: 1rem;
+    }
+
+    h4 {
+        font-size: 2rem;
+        margin-top: 2rem;
+        span {
+            font-size: 0.7rem;
+            display: block;
+            font-weight: 300;
+        }
+    }
+
+    .card-footer {
+        background-color: transparent;
+        border-top: 0;
+    }
+}
+
+#faq {
+    margin-top: 1rem;
+    dt {
+        margin-bottom: 1rem;
+    }
+
+    dd {
+        margin-bottom: 2rem;
+    }
+}
+
+// taken from old CSS
+.hide {
+    display: none;
+}
+
+.form-control {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.curved-border {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-top: 15px;
+}
+
+.popover{
+    max-width: 100%;
+    width: 600px;
+}

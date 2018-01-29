@@ -1,23 +1,20 @@
 <?php
-$key = "Overlays";
-$pageTitle = "ag-Grid Overlays";
-$pageDescription = "Overlays are placed on top of the grid when loading rows, or when no rows showing. These overlays can be customised to what you want the user to see.";
+$pageTitle = "ag-Grid - Styling & Appearance: Overlays";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Overlays. Full control of Overlays to display messages to the user on top of the grid. Free and Commercial version available.";
 $pageKeyboards = "ag-Grid Overlays";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<div>
-
-    <h1 class="first-h1" id="overlays">Overlays</h1>
+    <h1>Overlays</h1>
 
     <p>
         At present, there are two overlays for the grid:
-        <ul>
+    </p>
+        <ul class="content">
         <li><b>Loading</b>: Gets displayed when the grid is loading data.</li>
         <li><b>No Rows</b>: Gets displayed when loading has complete but no rows to show.</li>
         </ul>
-    </p>
 
     <p>
         The grid manages showing and hiding of the overlays for you, so you may not ever need to call
@@ -25,7 +22,7 @@ include '../documentation-main/documentation_header.php';
         When the api function setRowData is called, the loading panel is hidden.
     </p>
 
-    <h3 id="overlay-api">Overlay API</h3>
+    <h2>Overlay API</h2>
 
     <p>
         At any point, you can show or hide any of the overlays using the methods below.
@@ -48,15 +45,15 @@ gridOptions.api.hideOverlay()</snippet>
         The overlays are mutually exclusive, you cannot show more than one overlay at any given time.
     </p>
 
-    <h3 id="custom-templates">Custom Templates</h3>
+    <h2>Custom Templates</h2>
 
     <p>
         If you're not happy with the provided overlay templates, you can provide your own. This is done with
-        the grid properties <i>overlayLoadingTemplate</i> and <i>overlayNoRowsTemplate</i>. These templates
+        the grid properties <code>overlayLoadingTemplate</code> and <code>overlayNoRowsTemplate</code>. These templates
         should be plain HTML.
     </p>
 
-    <h3 id="example">Example</h3>
+    <h2>Example</h2>
 
     <p>
         In the example below, the table is not provided with rows on initialisation, hence the loading icon is shown.
@@ -73,6 +70,6 @@ gridOptions.api.hideOverlay()</snippet>
     <note>It is also possible to provide your own custom Overlay Components - please see <a href="../javascript-grid-overlay-component">
             Overlay Component</a> for more information.</note>
 
-</div>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>

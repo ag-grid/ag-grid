@@ -1,7 +1,7 @@
 <?php
 
 $pageTitle = "ag-Grid FAQ";
-$pageDescription = "Frequently Asked Questions about ag-Grid";
+$pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. This pages lists all of the Frequnetly Asked Questions around licensing and getting started with our product.";
 $pageKeyboards = "ag-Grid FAQ";
 
 include('../includes/faqHeader.php');

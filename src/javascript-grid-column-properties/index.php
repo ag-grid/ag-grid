@@ -1,22 +1,21 @@
 <?php
-$key = "Column Properties";
-$pageTitle = "Column Properties";
-$pageDescription = "ag-Grid Column Properties";
+$pageTitle = "ag-Grid Reference: Column Properties";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. The columns of the datagrid are controlled by properties, this page outlines each of the Column Properties available.";
 $pageKeyboards = "ag-Grid Column Properties";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
 ?>
     <h1 id="columns" class="first-h1">Column Properties</h1>
 
-    <p>
-        For column groups, the property <i>children</i> is mandatory. When the grid see's <i>children</i>
+    <p class="lead">
+        For column groups, the property <code>children</code> is mandatory. When the grid sees <code>children</code>
         it knows it's a column group.
     </p>
 
-    <table class="table">
+    <table class="table reference">
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Properties for Columns and Column Groups</td>
+            <td colspan="2"><h2>Columns and Column Groups</h2></td>
         </tr>
         <tr>
             <th>headerName</th>
@@ -41,7 +40,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Properties for Columns Only</td>
+            <td colspan="2"><h2>Columns Only</h2></td>
         </tr>
         <tr>
             <th>field</th>
@@ -72,7 +71,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr>
             <th>floatingFilterComponentParams</th>
-            <td>Custom params to be passed to floatingFilterComponent/floatingFilterComponentFramework </td>
+            <td>Custom params to be passed to <code>floatingFilterComponent</code> or <code>floatingFilterComponentFramework</code> </td>
         </tr>
         <tr>
             <th>hide</th>
@@ -83,6 +82,18 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>pinned</th>
             <td>Set to 'left' or 'right' to pin.</td>
+        </tr>
+        <tr>
+            <th>lockPosition</th>
+            <td>Set to true to always have column displayed first.</td>
+        </tr>
+        <tr>
+            <th>lockVisible</th>
+            <td>Set to true block making column visible / hidden via the UI (API will still work).</td>
+        </tr>
+        <tr>
+            <th>lockPinned</th>
+            <td>Set to true block pinning column via the UI (API will still work).</td>
         </tr>
         <tr>
             <th>sort</th>
@@ -103,8 +114,17 @@ include '../documentation-main/documentation_header.php';
             <td>The field of the tooltip to apply to the cell.</td>
         </tr>
         <tr>
+            <th>tooltip</th>
+            <td>A callback that takes (value, valueFormatted, data, node , colDef, rowIndex and api) It must return the
+                string used as a tooltip. <code>tooltipField</code> takes precedence.</td>
+        </tr>
+        <tr>
             <th>checkboxSelection</th>
             <td>Boolean or Function. Set to true (or return true from function) to render a selection checkbox in the column.</td>
+        </tr>
+        <tr>
+            <th>rowDrag</th>
+            <td>Boolean or Function. Set to true (or return true from function) to render a row drag area in the column.</td>
         </tr>
         <tr>
             <th>cellClass</th>
@@ -122,10 +142,6 @@ include '../documentation-main/documentation_header.php';
         <tr>
             <th>onCellValueChanged(params)</th>
             <td>Callback for after the value of a cell has changed, due to editing or the application calling api.setValue().</td>
-        </tr>
-        <tr>
-            <th>volatile</th>
-            <td>If true, this cell gets refreshed when api.refreshVolatileCells() gets called.</td>
         </tr>
         <tr>
             <th>cellRenderer<br/>cellRendererFramework</th>
@@ -272,7 +288,7 @@ include '../documentation-main/documentation_header.php';
         </tr>
         <tr class="title-row">
             <!-- TITLE ROW -->
-            <td colspan="2">Properties for Column Groups Only</td>
+            <td colspan="2"><h2>Column Groups Only</h2></td>
         </tr>
         <tr>
             <th>groupId</th>

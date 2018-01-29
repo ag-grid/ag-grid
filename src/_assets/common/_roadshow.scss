@@ -1,0 +1,79 @@
+@mixin roadshow {
+    & > div {
+        @extend .row, .pb-5;
+        background-position-y: bottom;
+        background-position-x: center;
+        background-repeat: no-repeat;
+        background-size: 600px 1px;
+        border-bottom: 1px solid $gray-200;
+    }
+
+    & > div:nth-child(odd) {
+        div:nth-child(2) {
+            @extend .col-sm-6;
+        }
+
+        & > pre,
+        & > div:nth-child(3) {
+            @extend .col-sm-5, .ml-auto;
+            a {
+                display: block;
+                text-align: right;
+            }
+        }
+    }
+
+    & > div:nth-child(even) {
+        div:nth-child(2) {
+            @extend .col-sm-6, .order-2, .ml-auto;
+        }
+
+        & > pre,
+        & > div:nth-child(3) {
+            @extend .col-sm-5;
+            a {
+                display: block;
+                text-align: right;
+            }
+        }
+    }
+
+    img {
+        @extend .img-fluid, .rounded;
+        width: 100%;
+        border: 1px solid $gray-300;
+    }
+
+    .feature-group {
+        background-image: linear-gradient(180deg, $white, $offwhite);
+        background-repeat: repeat-x;
+        background-size: 100% 100%;
+        background-position-y: 3rem;
+
+        padding: 0 !important;
+    }
+
+    h3 {
+        font-weight: 300;
+        @extend .text-center;
+        width: 100%;
+        margin: 0;
+        padding: 4rem 0;
+    }
+
+    h3,
+    h4 {
+        .anchorjs-link {
+            display: none;
+        }
+    }
+
+    h4 {
+        @extend .col-md-12, .py-3;
+    }
+
+    .enterprise h3:after, .enterprise h4:after {
+        @include enterprise-icon;
+        content: 'e';
+    }
+}

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="194px" height="174px" viewBox="0 0 194 174" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>column-menu</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Chalkboard-Copy" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD" transform="translate(-259.000000, -357.000000)">
+            <g id="column-menu" transform="translate(259.000000, 357.000000)">
+                <path d="M17.5,35.5 L187.5,35.5" id="Line-Copy-12" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M17.5,55.5 L187.5,53.5" id="Line-Copy-13" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M6.5,75.5 L176.5,73.5" id="Line-Copy-14" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M16.5,95.5 L186.5,93.5" id="Line-Copy-15" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M16.5,115.5 L166.5,113.5" id="Line-Copy-16" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M16.5,135.5 L186.5,134.5" id="Line-Copy-17" stroke="#0084E7" stroke-linecap="square"></path>
+                <rect id="Rectangle-2" stroke="#8ABDE3" x="23.5" y="3.5" width="137" height="30"></rect>
+                <polyline id="Line-5" stroke="#8ABDE3" stroke-linecap="square" points="162 1 159.571429 34 163 30.7804878"></polyline>
+                <path d="M22.5,1.80952381 L24.5,34.1904762" id="Line-2" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <path d="M154.5,14.5 L144.5,14.5" id="Line-9" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <path d="M154.5,17.5 L144.5,17.5" id="Line-9-Copy" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <path d="M154.5,20.5 L144.5,20.5" id="Line-9-Copy-2" stroke="#8ABDE3" stroke-linecap="square"></path>
+                <circle id="Oval-Copy-5" stroke="#0084E7" cx="190.5" cy="35.5" r="3"></circle>
+                <circle id="Oval-Copy-6" stroke="#0084E7" cx="3.5" cy="75.5" r="3"></circle>
+                <circle id="Oval-Copy-11" stroke="#0084E7" cx="179.5" cy="73.5" r="3"></circle>
+                <path d="M162.5,0.5 L162.5,172.508333" id="Line-8-Copy" stroke="#0084E7" stroke-linecap="square"></path>
+                <path d="M22.5,0.5 L22.5,152.508333" id="Line-8-Copy-2" stroke="#0084E7" stroke-linecap="square"></path>
+                <polyline id="Path-2" stroke="#8ABDE3" stroke-linecap="square" points="36 19.5 38.5 17 41 19.5"></polyline>
+                <polyline id="Path-2-Copy" stroke="#8ABDE3" stroke-linecap="square" transform="translate(47.000000, 18.000000) rotate(180.000000) translate(-47.000000, -18.000000) " points="45 19 47 17 49 19"></polyline>
+            </g>
+        </g>
+    </g>
+</svg>

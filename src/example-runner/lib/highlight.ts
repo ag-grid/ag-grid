@@ -15,7 +15,8 @@ const LanguageMap: {[key: string]: Prism.LanguageDefinition} = {
     html: Prism.languages.html,
     jsx: Prism.languages.jsx,
     java: Prism.languages.java,
-    sql: Prism.languages.sql
+    sql: Prism.languages.sql,
+    vue: Prism.languages.html
 };
 
 export function highlight(code: string, language: string): string {

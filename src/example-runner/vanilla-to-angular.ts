@@ -16,7 +16,7 @@ function onGridReadyTemplate(readyCode: string, resizeToFit: boolean, data: { ur
     }
 
     if (data) {
-       getData = `this.http.get(${data.url}).subscribe( data => ${data.callback});`
+        getData = `this.http.get(${data.url}).subscribe( data => ${data.callback});`
     }
 
     return `
@@ -65,16 +65,16 @@ function appComponentTemplate(bindings, componentFileNames) {
         });
     }
 
-    const propertyAttributes =[];
-    const propertyVars =[];
-    const propertyAssignments =[];
+    const propertyAttributes = [];
+    const propertyVars = [];
+    const propertyAssignments = [];
 
-    bindings.properties.forEach( property => {
+    bindings.properties.forEach(property => {
         if (property.value === 'null') {
             return;
         }
 
-        if(componentFileNames.length > 0 && property.name === "components") {
+        if (componentFileNames.length > 0 && property.name === "components") {
             property.name = "frameworkComponents";
         }
 
@@ -94,9 +94,11 @@ function appComponentTemplate(bindings, componentFileNames) {
     eventAttributes.push('(gridReady)="onGridReady($event)"');
     additional.push(onGridReadyTemplate(bindings.onGridReady, bindings.resizeToFit, bindings.data));
 
+    const style = bindings.gridSettings.noStyle ? '' : `style="width: ${bindings.gridSettings.width}; height: ${bindings.gridSettings.height};"`;
+
     const agGridTag = `<ag-grid-angular
     #agGrid
-    style="width: ${bindings.gridSettings.width}; height: ${bindings.gridSettings.height};"
+    ${style}
     id="myGrid"
     class="${bindings.gridSettings.theme}"
     ${propertyAttributes.concat(eventAttributes).join('\n    ')}

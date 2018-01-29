@@ -1,0 +1,12 @@
+<template>
+    <require from="./date.component.css"></require>
+
+    <div class="filter">
+        <span class="reset" click.delegate="onResetDate()">x</span>
+        <input class="dd" value.bind="dd" change.delegate="onDateChanged('dd', $event.target.value)" maxLength="2">
+        <span>/</span>
+        <input class="mm" value.bind="mm" change.delegate="onDateChanged('mm', $event.target.value)" maxLength="2">
+        <span>/</span>
+        <input class="yyyy" value.bind="yyyy" change.delegate="onDateChanged('yyyy', $event.target.value)" maxLength="4">
+    </div>
+</template>

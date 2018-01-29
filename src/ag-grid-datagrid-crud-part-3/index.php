@@ -1,7 +1,7 @@
 <?php
 
-$pageTitle = "Blog: Building a CRUD Application with ag-Grid Part 3";
-$pageDescription = "Building a CRUD Application with ag-Grid Part 3";
+$pageTitle = "ag-Grid Blog: Building a CRUD Application with ag-Grid Part 3";
+$pageDescription = "In Part 3 of this series, we create the scaffolding for our Angular application and get our data displayed in our first, simple, datagrid.";
 $pageKeyboards = "ag-grid datagrid crud enterprise";
 
 $socialUrl = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-3/";
@@ -10,15 +10,27 @@ $socialImage = "https://www.ag-grid.com/ag-grid-datagrid-crud-part-1/crud_overvi
 include('../includes/mediaHeader.php');
 ?>
 
-<div class="row">
-    <div class="col-sm-2" style="padding-top: 20px;">
-        <img style="vertical-align: baseline;" src="../images/logo/SVG_ag_grid_bright-bg.svg" width="120px"/>
-    </div>
-    <div class="col-sm-10" style="padding-top: 40px;">
-        <h1 style="margin-top: 0;">Building a CRUD Application with ag-Grid - Part 3</h1>
-    </div>
-    <div class="row" ng-app="documentation">
-        <div class="col-md-9">
+<h1>Building a CRUD Application with ag-Grid - Part 3</h1>
+<p class="blog-author">Sean Landsman | 21st November 2017</p>
+
+<div>
+    <a href="https://twitter.com/share" class="twitter-share-button"
+       data-url="https://www.ag-grid.com/ag-grid-datagrid-crud-part-3/"
+       data-text="Building a CRUD application with ag-Grid Part 3" data-via="seanlandsman"
+       data-size="large">Tweet</a>
+    <script>!function (d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+            if (!d.getElementById(id)) {
+                js = d.createElement(s);
+                js.id = id;
+                js.src = p + '://platform.twitter.com/widgets.js';
+                fjs.parentNode.insertBefore(js, fjs);
+            }
+        }(document, 'script', 'twitter-wjs');</script>
+</div>
+
+    <div class="row">
+        <div class="col-md-8" ng-app="documentation">
 
             <h2>Summary</h2>
 
@@ -27,7 +39,7 @@ include('../includes/mediaHeader.php');
 
             <h2>Series Chapters</h2>
 
-            <ul>
+            <ul class="content">
                 <li><a href="../ag-grid-datagrid-crud-part-1/">Part 1</a>: Introduction & Initial Setup: Maven, Spring
                     and JPA/Backend (Database)
                 </li>
@@ -35,11 +47,7 @@ include('../includes/mediaHeader.php');
                     Service
                 </li>
                 <li class="bold-roboto">Part 3: Front End - Initial Implementation</li>
-                <li><a href="../ag-grid-datagrid-crud-part-4/">Part 4</a>: CRUD (Creation, Updates and Deletion)</li>
-                <li>Part 5: Front End - Aggregation & Pivoting</li>
-                <li>Part 6: Front End - Enterprise Row Model</li>
-                <li>Part 7: Packaging (Optional)</li>
-                <li>Part 8: Back End (Optional) - Using Oracle DB</li>
+                <li>Part 4: Front End - Grid Features & CRUD (Creation, Updates and Deletion)</li>
             </ul>
 
             <h2>Introduction</h2>
@@ -474,7 +482,7 @@ private createColumnDefs() {
                           exampleHeight="500px">
             </show-sources>
 
-            <h2>Summary</h2>
+            <h2 style="margin-top: 10px">Summary</h2>
 
             <p>That might have seemed like a fair bit of work, but it's worth noting that we only had to import a single
                 module
@@ -520,65 +528,11 @@ private createColumnDefs() {
             </div>
 
         </div>
-        <div class="col-md-3">
 
-            <div>
-                <a href="https://twitter.com/share" class="twitter-share-button"
-                   data-url="https://www.ag-grid.com/ag-grid-datagrid-crud-part-3/"
-                   data-text="Building a CRUD application with ag-Grid Part 3" data-via="seanlandsman"
-                   data-size="large">Tweet</a>
-                <script>!function (d, s, id) {
-                        var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                        if (!d.getElementById(id)) {
-                            js = d.createElement(s);
-                            js.id = id;
-                            js.src = p + '://platform.twitter.com/widgets.js';
-                            fjs.parentNode.insertBefore(js, fjs);
-                        }
-                    }(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-            <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-                <p><img src="../images/sean.png"/></p>
-                <p style="font-weight: bold;">
-                    Sean Landsman
-                </p>
-                <p>
-                    Sean was the first person that Niall asked to join the team. Sean ensures that we can keep the
-                    agnostic in ag-Grid... he is responsible for integrating with all of our supported frameworks. Many
-                    of customers will be familiar with Sean as he is very active in our user forums supporting the needs
-                    of our customers. He has also recently given a number of talks at conferences where his calm manner
-                    belies his years of experience.
-                </p>
-                <p>
-                    Lead Developer - Frameworks
-                </p>
-
-                <div>
-                    <br/>
-                    <a href="https://www.linkedin.com/in/sean-landsman-9780092"><img src="../images/linked-in.png"/></a>
-                    <br/>
-                    <br/>
-                    <a href="https://twitter.com/seanlandsman" class="twitter-follow-button" data-show-count="false"
-                       data-size="large">@seanlandsman</a>
-                    <script>!function (d, s, id) {
-                            var js, fjs = d.getElementsByTagName(s)[0],
-                                p = /^http:/.test(d.location) ? 'http' : 'https';
-                            if (!d.getElementById(id)) {
-                                js = d.createElement(s);
-                                js.id = id;
-                                js.src = p + '://platform.twitter.com/widgets.js';
-                                fjs.parentNode.insertBefore(js, fjs);
-                            }
-                        }(document, 'script', 'twitter-wjs');</script>
-                </div>
-
-            </div>
-
-        </div>
+        <?php
+        include '../blog-authors/sean.php';
+        ?>
     </div>
-</div>
 
 <hr/>
 
@@ -599,10 +553,6 @@ private createColumnDefs() {
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments
         powered by Disqus.</a></noscript>
 <hr/>
-
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

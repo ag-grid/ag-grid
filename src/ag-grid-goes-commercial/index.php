@@ -1,21 +1,17 @@
 <?php
 
-$pageTitle = "ag-Grid Goes Commercial";
-$pageDescription = "A discussion on the release of ag-Grid and its commercial plans.";
-$pageKeyboards = "ag-Grid javascritp script ag-grid-enterprise Commercial";
+$pageTitle = "ag-Grid Blog: Why we went Commercial from Open Source";
+$pageDescription = "We finally made the transition from Open Source project to a fully fledged commercial product. This blog post goes through our decision making process and the story from the bedroom to the board room.";
+$pageKeyboards = "ag-Grid javascript ag-grid-enterprise Commercial Open Source";
 
 include('../includes/mediaHeader.php');
 ?>
 
 
-<div class="row">
-    <div class="col-md-12" style="padding-top: 20px; padding-bottom: 20px;">
-        <h2>ag-Grid Goes Commercial</h2>
-    </div>
-</div>
+        <h1>ag-Grid Goes Commercial</h1>
 
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-8">
 
         <p>
             Today sees the release of version 4.x of ag-Grid. This is the first release offering both free and
@@ -48,7 +44,7 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            I do not accept PR's without going through them all with a fine tooth comb. I do not release code
+            I do not accept PRs without going through them all with a fine tooth comb. I do not release code
             without doing full regression testing (takes about one full day). I constantly refactor as complexity
             grows to keep the foundations capable of managing a complex system. Large features that I implement
             take me days of undistracted full dedication, dedication that would not be given if this project was to
@@ -141,44 +137,7 @@ include('../includes/mediaHeader.php');
         </div>
 
     </div>
-    <div class="col-md-3">
-
-        <img src="../images/ag-Grid2-200.png" style="display: inline-block; padding-bottom: 20px;"/>
-
-        <div>
-            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://www.ag-grid.com/ag-grid-goes-commercial/" data-text="ag-Grid Goes Commercial" data-via="ceolter" data-size="large">Tweet</a>
-            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-        </div>
-
-        <div style="font-size: 14px; background-color: #dddddd; padding: 15px;">
-
-            <p>
-                <img src="/niall.png"/>
-            </p>
-            <p>
-                About Me
-            </p>
-            <p>
-                I have been writing software all my life! Starting with Assembly, C++ and MFC,
-                moving onto full stack Java / JSP / GWT and now focusing on full stack
-                Java / Javascript.
-            </p>
-            <p>
-                Consultant working in the financial industry, specialising in web based reporting applications.
-            </p>
-
-            <div>
-                <br/>
-                <a href="http://uk.linkedin.com/in/niallcrosby"><img src="/images/linked-in.png"/></a>
-                <br/>
-                <br/>
-                <a href="https://twitter.com/ceolter" class="twitter-follow-button" data-show-count="false" data-size="large">@ceolter</a>
-                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-            </div>
-
-        </div>
-
-    </div>
+    <?php include '../blog-authors/niall.php' ?>
 </div>
 
 
@@ -198,10 +157,6 @@ include('../includes/mediaHeader.php');
 </script>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 <hr/>
-
-<footer class="license">
-    © ag-Grid Ltd. 2015-2017
-</footer>
 
 <?php
 include('../includes/mediaFooter.php');

@@ -1,4 +1,4 @@
-<h3>Repositioning the Popup</h3>
+<h2>Repositioning the Popup</h2>
 
 <p>
     If not happy with the position of the popup, you can override it's position using
@@ -6,8 +6,7 @@
     so you can change it's position should you wish to.
 </p>
 
-<p>
-    The params for the callback are as follows:
+<p> The params for the callback are as follows:</p>
 
     <snippet>
 interface PostProcessPopupParams {
@@ -30,9 +29,3 @@ interface PostProcessPopupParams {
     // eg user showing context menu
     mouseEvent?: MouseEvent|Touch;
 }</snippet>
-
-</p>
-
-<p>
-
-</p>

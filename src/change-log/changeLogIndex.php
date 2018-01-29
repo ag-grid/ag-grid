@@ -1,19 +1,133 @@
 <?php
-$key = "Change Log";
-$pageTitle = "ag-Grid Change Log";
-$pageDescription = "ag-Grid change log. Details the items that have change between each release.";
+$pageTitle = "ag-Grid: Change Log for Releases";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This page lists all the Changes completed in recent releases.";
 $pageKeyboards = "ag-Grid Change Log";
 $pageGroup = "misc";
 include('../includes/mediaHeader.php');
 ?>
 
-<div style="padding: 20px;">
+<div id="content">
 
     <note>
         For a detailed breakdown of items please refer to the detailed pipeline <a href="../ag-grid-pipeline/">here</a>.
     </note>
 
-
+    <h3>Version 16.0.0 [25-JAN-2018]</h3>
+    <p>For details of this release, check our dedicated <a href="../ag-grid-blog-16-0-0/">blog post for v16.0.0</a>.</p>
+    <h4>Enhancements</h4>
+    <ul>
+        <li>
+            AG-116: Allow row drag and drop </li>
+        <li>
+            AG-1397: Add example on how to add a dynamic component into a cell </li>
+        <li>
+            AG-1435: Maintain cell focus on data updates </li>
+        <li>
+            AG-1419: Allow quickfilter to work with tree data </li>
+        <li>
+            AG-1400: Allow moving of group auto-column </li>
+        <li>
+            AG-1388: Support for Enter to commit changes to cell and to navigate to the next row </li>
+        <li>
+            AG-1338: Use Value Formatter with Tooltips </li>
+        <li>
+            AG-1208: Make setFilter mini search case insensitive </li>
+        <li>
+            AG-1382: Allow the detail grid of master detail to be defined with callback </li>
+        <li>
+            AG-1194: Add double click = expand/collapse column group </li>
+        <li>
+            AG-1390: Row drag icon needs better graphic design </li>
+        <li>
+            AG-1384: Create cellStyleParams interface as per https://www.ag-grid.com/javascript-grid-cell-styles </li>
+        <li>
+            AG-1191: Show context menu when the user right clicks on the header </li>
+        <li>
+            AG-1285: Allow disabling ctrl to add cells to a currently existing range </li>
+        <li>
+            AG-1206: Add source information in the column events so that the user knows where the event came from ie From reset columns button </li>
+        <li>
+            AG-1119: Add api call to hideContextMenu </li>
+        <li>
+            AG-818: Add better support/consistency for addIndex </li>
+        <li>
+            AG-514: Allow columns to be fixed so they can not be moved from their configured position </li>
+        <li>
+            AG-128: Add suppressHidden and suppressPinning to ColDefs </li>
+    </ul>
+    <h4>Bugs</h4>
+    <ul>
+        <li>
+            AG-1186: Using font icons in a renderer in chrome causes them to not be repainted when resizing the column </li>
+        <li>
+            AG-1068: Ipad - Safari/Chrome Csv Export doesn't work </li>
+        <li>
+            AG-1439: Fix issue creating detail row in master/detail with react </li>
+        <li>
+            AG-1434: Fix page message when no rows are present when using pagination. Shows 1 of 0 </li>
+        <li>
+            AG-1431: "Ctrl & A" does not select pinned bottom rows correctly </li>
+        <li>
+            AG-1422: Overlay blocks mouse pointers events in IE10 </li>
+        <li>
+            AG-1421: new property popupParent - so popups (eg menu) don't get clipped into grid </li>
+        <li>
+            AG-1392: getBusinessKeyForNode should sanitise input </li>
+        <li>
+            AG-1374: innerRendererFramework doesn't work in the group column for the master grid in a master/detail configuration </li>
+        <li>
+            AG-1373: Can't nest a framework detail grid in a master detail grid. [ag-Grid: unable to find bean reference agGridReact while initialising frameworkComponentWrapper] </li>
+        <li>
+            AG-1368: Cell focus should not get darker when browser focus is lost </li>
+        <li>
+            AG-1362: columnVisibleChange triggered when column is moved independently if it is visibility changes </li>
+        <li>
+            AG-1361: Header Group Columns are not getting "ag-header-group-cell-moving" CSS class while being dragged&dropped </li>
+        <li>
+            AG-1351: New components naming not backward compatible when using floating filters (filter: 'date' or filter:'text') </li>
+        <li>
+            AG-1345: Number filter defaultOption: "notEqual" not working </li>
+        <li>
+            AG-1342: When press Tab while editing, grid checks "editable" callback of next cell before current cell applied </li>
+        <li>
+            AG-1339: Home/End keys not working in Windows10 </li>
+        <li>
+            AG-1333: getNodeId makes the row render incorrectly if returning partial HTML </li>
+        <li>
+            AG-1283: Cannot override default components with framework components, only with plain JS ones </li>
+        <li>
+            AG-1279: In range date filter breaks if the data contains null dates </li>
+        <li>
+            AG-1278: deprecated api.recomputeAggregates(), use api.api.refreshInMemoryRowModel('aggregate') instead </li>
+        <li>
+            AG-1273: Pagination + Grouping + Enterprise when expanding a group rows bubble up unexpectedly </li>
+        <li>
+            AG-1272: Null pointer exception when trying to save the state of the columns and the passed state is null </li>
+        <li>
+            AG-1258: Have consistent behaviour for indeterminate checkbox across selection and set filter </li>
+        <li>
+            AG-1243: IE Edge issue on colum nenu/columns clicking on the column label is good, clicking on checkbox closes the menu </li>
+        <li>
+            AG-1181: No rows overlay displayed when col defs are supplied after row data </li>
+        <li>
+            AG-1171: setFilterModel is ignored in an async Filter until the async is resolved </li>
+        <li>
+            AG-1166: Inconsistent timing when calling gridReady/ngAfterViewInit in Angular </li>
+        <li>
+            AG-1134: Remove cyclic dependency - Calling setFocusedCell from within onCellValueChanged causes an infinite loop </li>
+        <li>
+            AG-1120: Dragging an ungrouped column by its group shows empty hint </li>
+        <li>
+            AG-958: On mobile devices - Hiding/Showing columns through the column menu doesn't work </li>
+        <li>
+            AG-831: [enterprise row model] Quickly expanding group node doesn't resolve loading </li>
+        <li>
+            AG-798: [drag event] dragStopped gets called when clcking on a cell </li>
+        <li>
+            AG-663: [react headerComponent drag&drop] Cannot drag & drop header with a custom component into the row groups by </li>
+        <li>
+            AG-608: Default sort is not passed to getRows with 'infinite' rowModelType in AngularJS 1.x </li>
+    </ul>
 
     <h2>15.x</h2>
 
@@ -609,7 +723,7 @@ include('../includes/mediaHeader.php');
         </li>
         <li>
             New feature: <a href="../javascript-grid-value-cache/">Value Cache</a>. Get better performance if your
-            valueGetter's are CPU intensive.
+            valueGetters are CPU intensive.
         </li>
         <li>
             New feature: <a href="../javascript-grid-column-spanning/">Column Spanning</a>.
@@ -1207,7 +1321,7 @@ include('../includes/mediaHeader.php');
 
     <b>Refactoring:</b>
     <ul>
-        Refactor: Virtual Row Model is now called Infinite Row Model. All properties and API's related to this
+        Refactor: Virtual Row Model is now called Infinite Row Model. All properties and APIs related to this
         are now call 'Infinite' eg <i>setVirtualRowCount()</i> is now <i>setInfiniteRowCount()</i>. Grid will
         log to console and help you when you are using the old method and property names.
     </ul>
@@ -1300,7 +1414,7 @@ include('../includes/mediaHeader.php');
         </li>
         <li>Enhancement: Navigation support for Page Up, Page Down, Home, End, Ctrl+left, Ctrl+right.</li>
         <li>Enhancement: New APIs <i>api.selectAllFiltered()</i> and <i>api.deselectAllFiltered()</i></li>
-        <li>Enhancement: Added <i>skipRefresh</i> to the add/remove row API's, so if you want to add / remove
+        <li>Enhancement: Added <i>skipRefresh</i> to the add/remove row APIs, so if you want to add / remove
             lots of rows, you only refresh on the last update.
         </li>
         <li>Enhancement: Property <i>groupDefaultExpanded</i> now works with flower nodes</li>
@@ -2123,7 +2237,7 @@ params = {
         showColumnMenuAfterMouseClick(colKey, mouseEvent)
     </li>
     <li>Enhancement: new function colDef.valueFormatter - value formatting responsibility used to tie in cellRenderer,
-        now it's broken out into valueFormatter, allows reusing cellRenderer's against different formats.
+        now it's broken out into valueFormatter, allows reusing cellRenderers against different formats.
     </li>
     <li>Enhancement: added 'destroyFilter' api</li>
     <li>Enhancement: columnApi.addRowGroupColumn() and columnApi.removeRowGroupColumn() now work off colKey and not

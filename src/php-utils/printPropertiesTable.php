@@ -1,6 +1,6 @@
 <?php
     function printPropertiesTable ($properties){
-        print "<table class='table'>";
+        print "<table class='table reference'>";
         printPropertiesRows($properties);
         print "</table>";
     }

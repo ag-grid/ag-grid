@@ -58,16 +58,6 @@
 
 <p>With that in place we have a quick and simple Grid up and running:</p>
 
-<show-complex-example example="example-js.html"
-                      sources="{
-                            [
-                                { root: './', files: 'example-js.html,example-js.js' }
-                            ]
-                          }"
-                      plunker="https://embed.plnkr.co/369YrrgCVrnPjD528OtT/"
-                      exampleheight="130px">
-</show-complex-example>
-
 <h3>A Richer Example</h3>
 <p>
     The below example is a more complex example demonstration much more interactivity and customisation.
@@ -75,7 +65,5 @@
     is the same as before. Don't worry about the finer details for now, how all the
     different options are configured is explained in the relevant parts of the documentation.
 </p>
-
-<show-example example="html5grid"></show-example>
 
 </div>
