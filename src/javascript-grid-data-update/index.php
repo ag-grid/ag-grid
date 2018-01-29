@@ -176,8 +176,6 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
 
-
-
     <h2>Bulk Method 1 - Row Data (Normal)</h2>
 
     <p>
