@@ -298,6 +298,14 @@ export class RowComp extends Component {
             newChildScope.data = data;
             newChildScope.rowNode = this.rowNode;
             newChildScope.context = this.beans.gridOptionsWrapper.getContext();
+
+            this.addDestroyFunc(() => {
+                newChildScope.$destroy();
+                newChildScope.data = null;
+                newChildScope.rowNode = null;
+                newChildScope.context = null;
+            });
+
             return newChildScope;
         } else {
             return null;

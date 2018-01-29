@@ -33,5 +33,6 @@ function AngularDirectiveController($element: any, $scope: any, $compile: any, $
 
     $scope.$on("$destroy", function() {
         grid.destroy();
+        grid = null;
     });
 }
