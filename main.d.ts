@@ -32,10 +32,6 @@ export * from './dist/lib/toolPanel/columnDrop/pivotModePanel';
 export * from './dist/lib/toolPanel/columnDrop/rowGroupColumnsPanel';
 export * from './dist/lib/toolPanel/columnDrop/valueColumnsPanel';
 
-export * from './dist/lib/toolPanel/columnsSelect/columnSelectPanel';
-export * from './dist/lib/toolPanel/columnsSelect/renderedColumn';
-export * from './dist/lib/toolPanel/columnsSelect/renderedGroup';
-
 export * from './dist/lib/rowModels/viewport/viewportRowModel';
 
 export * from './dist/lib/clipboardService';
