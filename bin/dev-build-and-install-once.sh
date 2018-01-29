@@ -1,5 +1,8 @@
 set -e
 
+echo "*********************************************************************************"
+echo "********************************** ag-grid **************************************"
+echo "*********************************************************************************"
 cd ag-grid
 gulp release
 cd ..
@@ -21,17 +24,17 @@ done
 if [ -d "ag-grid-angular-example" ]; then
   cd ag-grid-angular-example
 
-  angular_projects=('webpack' 'webpack2' 'systemjs_aot' 'ngtools_webpack' 'angular-cli')
+  angular_projects=('webpack' 'webpack2' 'systemjs_aot' 'angular-cli')
 
   for angular_project in ${angular_projects[@]}; do
     echo "*********************************************************************************"
-    echo "*************************** $angular_project ************************************"
+    echo "*************************** angular - $angular_project **************************"
     echo "*********************************************************************************"
 
     cd $angular_project
-    npm install ag-grid@file:../../ag-grid
     npm install ag-grid-enterprise@file:../../ag-grid-enterprise
     npm install ag-grid-angulare@file:../../ag-grid-angular
+    npm install ag-grid@file:../../ag-grid
     npm run build
     cd ..
   done

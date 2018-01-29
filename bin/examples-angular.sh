@@ -14,7 +14,7 @@ echo ===========================================================================
 echo "Preparing examples for angular current dir=$current_dir"
 
 ## for all the package.json containers replace version number
-declare -a subfolders=("ag-grid-angular-example/systemjs_aot" "ag-grid-angular-example/webpack" "ag-grid-angular-example/angular-cli" "ag-grid-angular-example/webpack2" "ag-grid-angular-example/ngtools_webpack")
+declare -a subfolders=("ag-grid-angular-example/systemjs_aot" "ag-grid-angular-example/webpack" "ag-grid-angular-example/angular-cli" "ag-grid-angular-example/webpack2")
 
 for subfolder in "${subfolders[@]}"
 do
@@ -81,24 +81,3 @@ echo "./node_modules/.bin/ng build --aot"
 echo "./node_modules/.bin/http-server dist/"
 echo "ctrl-c when done http://127.0.0.1:8080"
 
-
-echo =============================================================================================
-echo =============================================================================================
-echo =============================================================================================
-echo "ngTools manual testing -- COPY AND PASTE THIS!!"
-echo "cd ../ngtools_webpack"
-echo "npm start"
-echo "ctrl-c when done (http://127.0.0.1:8080)"
-echo "npm run build:aot && npm run start:aot"
-echo "ctrl-c when done http://127.0.0.1:8080"
-
-
-echo =============================================================================================
-echo =============================================================================================
-echo =============================================================================================
-echo "ngTools manual testing -- COPY AND PASTE THIS!!"
-echo "cd ../webpack2"
-echo "npm start"
-echo "ctrl-c when done (http://127.0.0.1:8080)"
-echo "npm run build && npm run server"
-echo "ctrl-c when done http://127.0.0.1:8080"
