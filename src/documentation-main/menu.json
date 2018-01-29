@@ -467,6 +467,15 @@
                 "url": "javascript-grid-styling/"
             },
             {
+                "title": "Balham",
+                "url": "javascript-grid-themes/balham-theme.php",
+                "new": true
+            },
+            {
+                "title": "Material",
+                "url": "javascript-grid-themes/material-theme.php"
+            },
+            {
                 "title": "Fresh ",
                 "url": "javascript-grid-themes/fresh-theme.php"
             },
@@ -481,10 +490,6 @@
             {
                 "title": "Bootstrap",
                 "url": "javascript-grid-themes/bootstrap-theme.php"
-            },
-            {
-                "title": "Material",
-                "url": "javascript-grid-themes/material-theme.php"
             }
         ]
     },
