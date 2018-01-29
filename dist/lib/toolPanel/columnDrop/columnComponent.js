@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -151,7 +151,7 @@ var ColumnComponent = (function (_super) {
                 _this.eventService.dispatchEvent(event_1);
             }
             else {
-                _this.columnController.setColumnAggFunc(_this.column, value);
+                _this.columnController.setColumnAggFunc(_this.column, value, "toolPanelDragAndDrop");
             }
         };
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();

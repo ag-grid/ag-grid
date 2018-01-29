@@ -1,5 +1,5 @@
-// ag-grid-enterprise v15.0.0
-import { IMenuFactory, Column, AgEvent } from "ag-grid";
+// ag-grid-enterprise v16.0.0
+import { IMenuFactory, Column, AgEvent, BeanStub } from "ag-grid";
 export interface TabSelectedEvent extends AgEvent {
     key: string;
 }
@@ -8,12 +8,14 @@ export declare class EnterpriseMenuFactory implements IMenuFactory {
     private popupService;
     private gridOptionsWrapper;
     private lastSelectedTab;
+    private activeMenu;
+    hideActiveMenu(): void;
     showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent, defaultTab?: string): void;
     showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?: string, restrictToTabs?: string[]): void;
     showMenu(column: Column, positionCallback: (menu: EnterpriseMenu) => void, defaultTab?: string, restrictToTabs?: string[]): void;
     isMenuEnabled(column: Column): boolean;
 }
-export declare class EnterpriseMenu {
+export declare class EnterpriseMenu extends BeanStub {
     static EVENT_TAB_SELECTED: string;
     static TAB_FILTER: string;
     static TAB_GENERAL: string;
@@ -33,17 +35,14 @@ export declare class EnterpriseMenu {
     private column;
     private mainMenuList;
     private columnSelectPanel;
-    private localEventService;
     private tabItemFilter;
     private tabItemGeneral;
     private tabItemColumns;
     private initialSelection;
-    private destroyFunctions;
     private tabFactories;
     private includeChecks;
     private restrictTo?;
     constructor(column: Column, initialSelection: string, restrictTo?: string[]);
-    addEventListener(event: string, listener: Function): void;
     getMinWidth(): number;
     init(): void;
     private isValidMenuTabItem(menuTabName);

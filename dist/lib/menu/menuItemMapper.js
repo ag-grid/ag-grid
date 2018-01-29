@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -49,17 +49,17 @@ var MenuItemMapper = (function () {
             };
             case 'pinLeft': return {
                 name: localeTextFunc('pinLeft', 'Pin Left'),
-                action: function () { return _this.columnController.setColumnPinned(column, ag_grid_1.Column.PINNED_LEFT); },
+                action: function () { return _this.columnController.setColumnPinned(column, ag_grid_1.Column.PINNED_LEFT, "contextMenu"); },
                 checked: column.isPinnedLeft()
             };
             case 'pinRight': return {
                 name: localeTextFunc('pinRight', 'Pin Right'),
-                action: function () { return _this.columnController.setColumnPinned(column, ag_grid_1.Column.PINNED_RIGHT); },
+                action: function () { return _this.columnController.setColumnPinned(column, ag_grid_1.Column.PINNED_RIGHT, "contextMenu"); },
                 checked: column.isPinnedRight()
             };
             case 'clearPinned': return {
                 name: localeTextFunc('noPin', 'No Pin'),
-                action: function () { return _this.columnController.setColumnPinned(column, null); },
+                action: function () { return _this.columnController.setColumnPinned(column, null, "contextMenu"); },
                 checked: !column.isPinned()
             };
             case 'valueAggSubMenu': return {
@@ -69,25 +69,25 @@ var MenuItemMapper = (function () {
             };
             case 'autoSizeThis': return {
                 name: localeTextFunc('autosizeThiscolumn', 'Autosize This Column'),
-                action: function () { return _this.columnController.autoSizeColumn(column); }
+                action: function () { return _this.columnController.autoSizeColumn(column, "contextMenu"); }
             };
             case 'autoSizeAll': return {
                 name: localeTextFunc('autosizeAllColumns', 'Autosize All Columns'),
-                action: function () { return _this.columnController.autoSizeAllColumns(); }
+                action: function () { return _this.columnController.autoSizeAllColumns("contextMenu"); }
             };
             case 'rowGroup': return {
                 name: localeTextFunc('groupBy', 'Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
-                action: function () { return _this.columnController.addRowGroupColumn(column); },
+                action: function () { return _this.columnController.addRowGroupColumn(column, "contextMenu"); },
                 icon: ag_grid_1.Utils.createIconNoSpan('menuAddRowGroup', this.gridOptionsWrapper, null)
             };
             case 'rowUnGroup': return {
                 name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + this.columnController.getDisplayNameForColumn(column, 'header'),
-                action: function () { return _this.columnController.removeRowGroupColumn(column); },
+                action: function () { return _this.columnController.removeRowGroupColumn(column, "contextMenu"); },
                 icon: ag_grid_1.Utils.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsWrapper, null)
             };
             case 'resetColumns': return {
                 name: localeTextFunc('resetColumns', 'Reset Columns'),
-                action: function () { return _this.columnController.resetColumnState(); }
+                action: function () { return _this.columnController.resetColumnState("contextMenu"); }
             };
             case 'expandAll': return {
                 name: localeTextFunc('expandAll', 'Expand All'),
@@ -164,8 +164,8 @@ var MenuItemMapper = (function () {
             result.push({
                 name: localeTextFunc(funcName, funcName),
                 action: function () {
-                    _this.columnController.setColumnAggFunc(columnToUse, funcName);
-                    _this.columnController.addValueColumn(columnToUse);
+                    _this.columnController.setColumnAggFunc(columnToUse, funcName, "contextMenu");
+                    _this.columnController.addValueColumn(columnToUse, "contextMenu");
                 },
                 checked: columnIsAlreadyAggValue && columnToUse.getAggFunc() === funcName
             });

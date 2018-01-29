@@ -1,6 +1,6 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 import { Column, Component } from "ag-grid/main";
-export declare class RenderedColumn extends Component {
+export declare class ToolPanelColumnComp extends Component {
     private static TEMPLATE;
     private gridOptionsWrapper;
     private columnController;

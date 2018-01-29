@@ -1,6 +1,6 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 import { Component, OriginalColumnGroup } from "ag-grid/main";
-export declare class RenderedGroup extends Component {
+export declare class ToolPanelGroupComp extends Component {
     private static TEMPLATE;
     private gridOptionsWrapper;
     private columnController;
@@ -29,7 +29,9 @@ export declare class RenderedGroup extends Component {
     private actionUnCheckedReduce(columns);
     private actionCheckedReduce(columns);
     private onColumnStateChanged();
-    private isColumnVisible(column, columnsReduced);
+    private workOutReadOnlyValue();
+    private workOutSelectedValue();
+    private isColumnVisible(column, pivotMode);
     private onExpandOrContractClicked();
     private setOpenClosedIcons();
     isExpanded(): boolean;

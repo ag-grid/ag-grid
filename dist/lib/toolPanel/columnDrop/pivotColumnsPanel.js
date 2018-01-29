@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -100,7 +100,7 @@ var PivotColumnsPanel = (function (_super) {
             this.eventService.dispatchEvent(event_1);
         }
         else {
-            this.columnController.setPivotColumns(columns);
+            this.columnController.setPivotColumns(columns, "toolPanelUi");
         }
     };
     PivotColumnsPanel.prototype.getIconName = function () {

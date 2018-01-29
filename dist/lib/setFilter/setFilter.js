@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -24,12 +24,17 @@ var main_1 = require("ag-grid/main");
 var setFilterModel_1 = require("./setFilterModel");
 var setFilterListItem_1 = require("./setFilterListItem");
 var virtualList_1 = require("../rendering/virtualList");
+var CheckboxState;
+(function (CheckboxState) {
+    CheckboxState[CheckboxState["CHECKED"] = 0] = "CHECKED";
+    CheckboxState[CheckboxState["UNCHECKED"] = 1] = "UNCHECKED";
+    CheckboxState[CheckboxState["INTERMEDIATE"] = 2] = "INTERMEDIATE";
+})(CheckboxState || (CheckboxState = {}));
+;
 var SetFilter = (function (_super) {
     __extends(SetFilter, _super);
     function SetFilter() {
-        var _this = _super.call(this) || this;
-        _this.selected = true;
-        return _this;
+        return _super.call(this) || this;
     }
     SetFilter.prototype.customInit = function () {
         var _this = this;
@@ -43,20 +48,23 @@ var SetFilter = (function (_super) {
         this.eIndeterminateCheckedIcon = main_1._.createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.filterParams.column);
     };
     SetFilter.prototype.updateCheckboxIcon = function () {
-        if (this.eSelectAll.children) {
-            for (var i = 0; i < this.eSelectAll.children.length; i++) {
-                this.eSelectAll.removeChild(this.eSelectAll.children.item(i));
-            }
+        main_1._.removeAllChildren(this.eSelectAll);
+        var icon;
+        switch (this.selectAllState) {
+            case CheckboxState.INTERMEDIATE:
+                icon = this.eIndeterminateCheckedIcon;
+                break;
+            case CheckboxState.CHECKED:
+                icon = this.eCheckedIcon;
+                break;
+            case CheckboxState.UNCHECKED:
+                icon = this.eUncheckedIcon;
+                break;
+            default:// default happens when initialising for first time
+                icon = this.eCheckedIcon;
+                break;
         }
-        if (this.eSelectAll.indeterminate) {
-            this.eSelectAll.appendChild(this.eIndeterminateCheckedIcon);
-        }
-        else if (this.eSelectAll.checked) {
-            this.eSelectAll.appendChild(this.eCheckedIcon);
-        }
-        else {
-            this.eSelectAll.appendChild(this.eUncheckedIcon);
-        }
+        this.eSelectAll.appendChild(icon);
     };
     SetFilter.prototype.setLoading = function (loading) {
         main_1._.setVisible(this.eFilterLoading, loading);
@@ -132,7 +140,7 @@ var SetFilter = (function (_super) {
     };
     SetFilter.prototype.onNewRowsLoaded = function () {
         var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
-        var isSelectAll = this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate;
+        var isSelectAll = this.selectAllState === CheckboxState.CHECKED;
         // default is reset
         this.model.refreshAfterNewRowsLoaded(keepSelection, isSelectAll);
         this.updateSelectAll();
@@ -150,16 +158,18 @@ var SetFilter = (function (_super) {
         var _this = this;
         if (selectAll === void 0) { selectAll = false; }
         if (notify === void 0) { notify = true; }
-        var keepSelection = this.filterParams && this.filterParams.newRowsAction === 'keep';
-        var isSelectAll = selectAll || (this.eSelectAll && this.eSelectAll.checked && !this.eSelectAll.indeterminate);
-        this.model.setValuesType(setFilterModel_1.SetFilterModelValuesType.PROVIDED_LIST);
-        this.model.refreshValues(options, keepSelection, isSelectAll);
-        this.updateSelectAll();
-        options.forEach(function (option) { return _this.model.selectValue(option); });
-        this.virtualList.refresh();
-        if (notify) {
-            this.debounceFilterChanged();
-        }
+        this.model.onFilterValuesReady(function () {
+            var keepSelection = _this.filterParams && _this.filterParams.newRowsAction === 'keep';
+            var isSelectAll = selectAll || (_this.selectAllState === CheckboxState.CHECKED);
+            _this.model.setValuesType(setFilterModel_1.SetFilterModelValuesType.PROVIDED_LIST);
+            _this.model.refreshValues(options, keepSelection, isSelectAll);
+            _this.updateSelectAll();
+            options.forEach(function (option) { return _this.model.selectValue(option); });
+            _this.virtualList.refresh();
+            if (notify) {
+                _this.debounceFilterChanged();
+            }
+        });
     };
     //noinspection JSUnusedGlobalSymbols
     /**
@@ -180,15 +190,13 @@ var SetFilter = (function (_super) {
     };
     SetFilter.prototype.updateSelectAll = function () {
         if (this.model.isEverythingSelected()) {
-            this.eSelectAll.indeterminate = false;
-            this.eSelectAll.checked = true;
+            this.selectAllState = CheckboxState.CHECKED;
         }
         else if (this.model.isNothingSelected()) {
-            this.eSelectAll.indeterminate = false;
-            this.eSelectAll.checked = false;
+            this.selectAllState = CheckboxState.UNCHECKED;
         }
         else {
-            this.eSelectAll.indeterminate = true;
+            this.selectAllState = CheckboxState.INTERMEDIATE;
         }
         this.updateCheckboxIcon();
     };
@@ -201,11 +209,16 @@ var SetFilter = (function (_super) {
     };
     SetFilter.prototype.onSelectAll = function (event) {
         main_1._.addAgGridEventPath(event);
-        this.eSelectAll.checked = !this.eSelectAll.checked;
+        if (this.selectAllState === CheckboxState.CHECKED) {
+            this.selectAllState = CheckboxState.UNCHECKED;
+        }
+        else {
+            this.selectAllState = CheckboxState.CHECKED;
+        }
         this.doSelectAll();
     };
     SetFilter.prototype.doSelectAll = function () {
-        var checked = this.eSelectAll.checked;
+        var checked = this.selectAllState === CheckboxState.CHECKED;
         if (checked) {
             this.model.selectEverything();
         }

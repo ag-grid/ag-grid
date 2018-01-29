@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -72,7 +72,7 @@ var ValuesColumnPanel = (function (_super) {
             this.eventService.dispatchEvent(event_1);
         }
         else {
-            this.columnController.setValueColumns(columns);
+            this.columnController.setValueColumns(columns, "toolPanelUi");
         }
     };
     ValuesColumnPanel.prototype.getExistingColumns = function () {

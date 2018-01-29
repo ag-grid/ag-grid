@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -347,6 +347,9 @@ var GroupStage = (function () {
     };
     GroupStage.prototype.getGroupInfoFromCallback = function (rowNode) {
         var keys = this.getDataPath(rowNode.data);
+        if (keys === null || keys === undefined || keys.length === 0) {
+            main_1._.doOnce(function () { return console.warn("getDataPath() should not return an empty path for data", rowNode.data); }, 'groupStage.getGroupInfoFromCallback');
+        }
         var groupInfoMapper = function (key) { return ({ key: key, field: null, rowGroupColumn: null }); };
         return keys ? keys.map(groupInfoMapper) : [];
     };

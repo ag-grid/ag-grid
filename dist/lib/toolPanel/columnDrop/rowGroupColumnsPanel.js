@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -69,7 +69,7 @@ var RowGroupColumnsPanel = (function (_super) {
             this.eventService.dispatchEvent(event_1);
         }
         else {
-            this.columnController.setRowGroupColumns(columns);
+            this.columnController.setRowGroupColumns(columns, "toolPanelUi");
         }
     };
     RowGroupColumnsPanel.prototype.getIconName = function () {

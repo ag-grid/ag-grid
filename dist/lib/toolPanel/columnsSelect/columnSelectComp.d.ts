@@ -1,6 +1,6 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 import { Component } from "ag-grid/main";
-export declare class ColumnSelectPanel extends Component {
+export declare class ColumnSelectComp extends Component {
     private columnController;
     private globalEventService;
     private context;

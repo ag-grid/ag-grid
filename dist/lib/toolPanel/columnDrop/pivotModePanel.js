@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -41,7 +41,7 @@ var PivotModePanel = (function (_super) {
     PivotModePanel.prototype.onBtPivotMode = function () {
         var newValue = this.cbPivotMode.isSelected();
         if (newValue !== this.columnController.isPivotMode()) {
-            this.columnController.setPivotMode(newValue);
+            this.columnController.setPivotMode(newValue, "toolPanelUi");
             this.gridOptionsWrapper.getApi().refreshHeader();
         }
     };

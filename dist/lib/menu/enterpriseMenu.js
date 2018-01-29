@@ -1,5 +1,15 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,13 +21,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var ag_grid_1 = require("ag-grid");
-var columnSelectPanel_1 = require("../toolPanel/columnsSelect/columnSelectPanel");
+var columnSelectComp_1 = require("../toolPanel/columnsSelect/columnSelectComp");
 var menuList_1 = require("./menuList");
 var menuItemComponent_1 = require("./menuItemComponent");
 var menuItemMapper_1 = require("./menuItemMapper");
 var EnterpriseMenuFactory = (function () {
     function EnterpriseMenuFactory() {
     }
+    EnterpriseMenuFactory.prototype.hideActiveMenu = function () {
+        if (this.activeMenu) {
+            this.activeMenu.destroy();
+        }
+    };
     EnterpriseMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent, defaultTab) {
         var _this = this;
         this.showMenu(column, function (menu) {
@@ -59,7 +74,7 @@ var EnterpriseMenuFactory = (function () {
         // is visible can we find out what the width of it is
         var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () {
             menu.destroy();
-            column.setMenuVisible(false);
+            column.setMenuVisible(false, "contextMenu");
         });
         positionCallback(menu);
         menu.afterGuiAttached({
@@ -71,7 +86,13 @@ var EnterpriseMenuFactory = (function () {
         menu.addEventListener(EnterpriseMenu.EVENT_TAB_SELECTED, function (event) {
             _this.lastSelectedTab = event.key;
         });
-        column.setMenuVisible(true);
+        column.setMenuVisible(true, "contextMenu");
+        this.activeMenu = menu;
+        menu.addEventListener(ag_grid_1.BeanStub.EVENT_DESTORYED, function () {
+            if (_this.activeMenu === menu) {
+                _this.activeMenu = null;
+            }
+        });
     };
     EnterpriseMenuFactory.prototype.isMenuEnabled = function (column) {
         return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
@@ -94,32 +115,29 @@ var EnterpriseMenuFactory = (function () {
     return EnterpriseMenuFactory;
 }());
 exports.EnterpriseMenuFactory = EnterpriseMenuFactory;
-var EnterpriseMenu = (function () {
+var EnterpriseMenu = (function (_super) {
+    __extends(EnterpriseMenu, _super);
     function EnterpriseMenu(column, initialSelection, restrictTo) {
-        var _this = this;
-        this.localEventService = new ag_grid_1.EventService();
-        this.destroyFunctions = [];
-        this.tabFactories = {};
-        this.includeChecks = {};
-        this.column = column;
-        this.initialSelection = initialSelection;
-        this.tabFactories[EnterpriseMenu.TAB_GENERAL] = this.createMainPanel.bind(this);
-        this.tabFactories[EnterpriseMenu.TAB_FILTER] = this.createFilterPanel.bind(this);
-        this.tabFactories[EnterpriseMenu.TAB_COLUMNS] = this.createColumnsPanel.bind(this);
-        this.includeChecks[EnterpriseMenu.TAB_GENERAL] = function () { return true; };
-        this.includeChecks[EnterpriseMenu.TAB_FILTER] = function () {
+        var _this = _super.call(this) || this;
+        _this.tabFactories = {};
+        _this.includeChecks = {};
+        _this.column = column;
+        _this.initialSelection = initialSelection;
+        _this.tabFactories[EnterpriseMenu.TAB_GENERAL] = _this.createMainPanel.bind(_this);
+        _this.tabFactories[EnterpriseMenu.TAB_FILTER] = _this.createFilterPanel.bind(_this);
+        _this.tabFactories[EnterpriseMenu.TAB_COLUMNS] = _this.createColumnsPanel.bind(_this);
+        _this.includeChecks[EnterpriseMenu.TAB_GENERAL] = function () { return true; };
+        _this.includeChecks[EnterpriseMenu.TAB_FILTER] = function () {
             var isFilterEnabled = _this.gridOptionsWrapper.isEnableFilter();
             var isFloatingFiltersEnabled = _this.gridOptionsWrapper.isFloatingFilter();
             var isAnyFilteringEnabled = isFilterEnabled || isFloatingFiltersEnabled;
             var suppressFilterForThisColumn = _this.column.getColDef().suppressFilter;
             return isAnyFilteringEnabled && !suppressFilterForThisColumn;
         };
-        this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = function () { return true; };
-        this.restrictTo = restrictTo;
+        _this.includeChecks[EnterpriseMenu.TAB_COLUMNS] = function () { return true; };
+        _this.restrictTo = restrictTo;
+        return _this;
     }
-    EnterpriseMenu.prototype.addEventListener = function (event, listener) {
-        this.localEventService.addEventListener(event, listener);
-    };
     EnterpriseMenu.prototype.getMinWidth = function () {
         return this.tabbedLayout.getMinWidth();
     };
@@ -196,7 +214,7 @@ var EnterpriseMenu = (function () {
                 type: EnterpriseMenu.EVENT_TAB_SELECTED,
                 key: key
             };
-            this.localEventService.dispatchEvent(event_1);
+            this.dispatchEvent(event_1);
         }
     };
     EnterpriseMenu.prototype.destroy = function () {
@@ -206,7 +224,7 @@ var EnterpriseMenu = (function () {
         if (this.mainMenuList) {
             this.mainMenuList.destroy();
         }
-        this.destroyFunctions.forEach(function (func) { return func(); });
+        _super.prototype.destroy.call(this);
     };
     EnterpriseMenu.prototype.getMenuItems = function () {
         var defaultMenuOptions = this.getDefaultMenuOptions();
@@ -232,6 +250,7 @@ var EnterpriseMenu = (function () {
     };
     EnterpriseMenu.prototype.getDefaultMenuOptions = function () {
         var result = [];
+        var allowPinning = !this.column.isLockPinned();
         var rowGroupCount = this.columnController.getRowGroupColumns().length;
         var doingGrouping = rowGroupCount > 0;
         var groupedByThisColumn = this.columnController.getRowGroupColumns().indexOf(this.column) >= 0;
@@ -240,15 +259,19 @@ var EnterpriseMenu = (function () {
         var isPrimary = this.column.isPrimary();
         var pivotModeOn = this.columnController.isPivotMode();
         var isInMemoryRowModel = this.rowModel.getType() === ag_grid_1.Constants.ROW_MODEL_TYPE_IN_MEMORY;
-        result.push('pinSubMenu');
         var allowValueAgg = 
         // if primary, then only allow aggValue if grouping and it's a value columns
         (isPrimary && doingGrouping && allowValue)
             || !isPrimary;
+        if (allowPinning) {
+            result.push('pinSubMenu');
+        }
         if (allowValueAgg) {
             result.push('valueAggSubMenu');
         }
-        result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
+        if (allowPinning || allowValueAgg) {
+            result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
+        }
         result.push('autoSizeThis');
         result.push('autoSizeAll');
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
@@ -310,7 +333,7 @@ var EnterpriseMenu = (function () {
     EnterpriseMenu.prototype.createColumnsPanel = function () {
         var eWrapperDiv = document.createElement('div');
         ag_grid_1.Utils.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
-        this.columnSelectPanel = new columnSelectPanel_1.ColumnSelectPanel(false);
+        this.columnSelectPanel = new columnSelectComp_1.ColumnSelectComp(false);
         this.context.wireBean(this.columnSelectPanel);
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
         this.tabItemColumns = {
@@ -321,7 +344,6 @@ var EnterpriseMenu = (function () {
         return this.tabItemColumns;
     };
     EnterpriseMenu.prototype.afterGuiAttached = function (params) {
-        var _this = this;
         this.tabbedLayout.setAfterAttachedParams({ hidePopup: params.hidePopup });
         this.hidePopupFunc = params.hidePopup;
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
@@ -331,8 +353,8 @@ var EnterpriseMenu = (function () {
                 params.hidePopup();
             }
         };
-        this.eventService.addEventListener('bodyScroll', onBodyScroll);
-        this.destroyFunctions.push(function () { return _this.eventService.removeEventListener('bodyScroll', onBodyScroll); });
+        this.addDestroyFunc(params.hidePopup);
+        this.addDestroyableEventListener(this.eventService, 'bodyScroll', onBodyScroll);
     };
     EnterpriseMenu.prototype.getGui = function () {
         return this.tabbedLayout.getGui();
@@ -382,5 +404,5 @@ var EnterpriseMenu = (function () {
         __metadata("design:returntype", void 0)
     ], EnterpriseMenu.prototype, "init", null);
     return EnterpriseMenu;
-}());
+}(ag_grid_1.BeanStub));
 exports.EnterpriseMenu = EnterpriseMenu;

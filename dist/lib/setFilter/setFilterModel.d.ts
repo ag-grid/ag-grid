@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 import { ColDef } from "ag-grid/main";
 import { IRowModel } from 'ag-grid';
 export declare enum SetFilterModelValuesType {
@@ -24,6 +24,8 @@ export declare class SetFilterModel {
     private doesRowPassOtherFilters;
     private modelUpdatedFunc;
     private isLoadingFunc;
+    private filterValuesExternalPromise;
+    private filterValuesPromise;
     constructor(colDef: ColDef, rowModel: IRowModel, valueGetter: any, doesRowPassOtherFilters: any, suppressSorting: boolean, modelUpdatedFunc: (values: string[]) => void, isLoadingFunc: (loading: boolean) => void);
     refreshAfterNewRowsLoaded(keepSelection: any, isSelectAll: boolean): void;
     refreshValues(valuesToUse: string[], keepSelection: any, isSelectAll: boolean): void;
@@ -38,8 +40,8 @@ export declare class SetFilterModel {
     private createAvailableUniqueValues();
     private sortValues(values);
     private getUniqueValues(filterOutNotAvailable);
-    setMiniFilter(newMiniFilter: any): boolean;
-    getMiniFilter(): any;
+    setMiniFilter(newMiniFilter: string): boolean;
+    getMiniFilter(): string;
     private processMiniFilter();
     getDisplayedValueCount(): number;
     getDisplayedValue(index: any): any;
@@ -50,7 +52,7 @@ export declare class SetFilterModel {
     isFilterActive(): boolean;
     selectNothing(): void;
     getUniqueValueCount(): number;
-    getUniqueValue(index: any): any;
+    getUniqueValue(index: any): string;
     unselectValue(value: any): void;
     selectValue(value: any): void;
     isValueSelected(value: any): boolean;
@@ -58,4 +60,5 @@ export declare class SetFilterModel {
     isNothingSelected(): boolean;
     getModel(): string[];
     setModel(model: string[], isSelectAll?: boolean): void;
+    onFilterValuesReady(callback: () => void): void;
 }

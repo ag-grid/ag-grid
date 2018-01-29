@@ -1,18 +1,17 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 import { BaseFilter, IDoesFilterPassParams, ISetFilterParams } from "ag-grid/main";
 export declare class SetFilter extends BaseFilter<string, ISetFilterParams, string[]> {
     private model;
-    private suppressSorting;
     private eSelectAll;
     private eSelectAllContainer;
     private eMiniFilter;
     private eFilterLoading;
+    private selectAllState;
     private virtualList;
     private debounceFilterChanged;
     private eCheckedIcon;
     private eUncheckedIcon;
     private eIndeterminateCheckedIcon;
-    private selected;
     constructor();
     customInit(): void;
     private updateCheckboxIcon();
@@ -46,7 +45,7 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
     private doSelectAll();
     private onItemSelected(value, selected);
     setMiniFilter(newMiniFilter: any): void;
-    getMiniFilter(): any;
+    getMiniFilter(): string;
     selectEverything(): void;
     selectNothing(): void;
     unselectValue(value: any): void;
@@ -55,7 +54,7 @@ export declare class SetFilter extends BaseFilter<string, ISetFilterParams, stri
     isEverythingSelected(): boolean;
     isNothingSelected(): boolean;
     getUniqueValueCount(): number;
-    getUniqueValue(index: any): any;
+    getUniqueValue(index: any): string;
     serialize(): string[];
     parse(dataModel: string[]): void;
     resetState(): void;

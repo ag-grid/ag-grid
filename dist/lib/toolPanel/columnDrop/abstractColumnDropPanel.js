@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -58,9 +58,14 @@ var AbstractColumnDropPanel = (function (_super) {
             onDragging: this.onDragging.bind(this),
             onDragEnter: this.onDragEnter.bind(this),
             onDragLeave: this.onDragLeave.bind(this),
-            onDragStop: this.onDragStop.bind(this)
+            onDragStop: this.onDragStop.bind(this),
+            isInterestedIn: this.isInterestedIn.bind(this)
         };
         this.beans.dragAndDropService.addDropTarget(this.dropTarget);
+    };
+    AbstractColumnDropPanel.prototype.isInterestedIn = function (type) {
+        // not interested in row drags
+        return type === main_1.DragSourceType.HeaderCell || type === main_1.DragSourceType.ToolPanel;
     };
     AbstractColumnDropPanel.prototype.checkInsertIndex = function (draggingEvent) {
         var newIndex;

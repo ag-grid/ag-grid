@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -19,10 +19,10 @@ var EnterpriseBoot = (function () {
     function EnterpriseBoot() {
     }
     EnterpriseBoot.prototype.init = function () {
-        this.componentProvider.registerComponent('agRichSelect', richSelectCellEditor_1.RichSelectCellEditor);
-        this.componentProvider.registerComponent('agRichSelectCellEditor', richSelectCellEditor_1.RichSelectCellEditor);
-        this.componentProvider.registerComponent('agSetColumnFilter', setFilter_1.SetFilter);
-        this.componentProvider.registerComponent('agDetailCellRenderer', detailCellRenderer_1.DetailCellRenderer);
+        this.componentProvider.registerDefaultComponent('agRichSelect', richSelectCellEditor_1.RichSelectCellEditor);
+        this.componentProvider.registerDefaultComponent('agRichSelectCellEditor', richSelectCellEditor_1.RichSelectCellEditor);
+        this.componentProvider.registerDefaultComponent('agSetColumnFilter', setFilter_1.SetFilter);
+        this.componentProvider.registerDefaultComponent('agDetailCellRenderer', detailCellRenderer_1.DetailCellRenderer);
         this.licenseManager.validateLicense();
     };
     __decorate([
@@ -42,7 +42,7 @@ var EnterpriseBoot = (function () {
         __metadata("design:type", main_1.ComponentProvider)
     ], EnterpriseBoot.prototype, "componentProvider", void 0);
     __decorate([
-        main_1.PreConstruct,
+        main_1.PostConstruct,
         __metadata("design:type", Function),
         __metadata("design:paramtypes", []),
         __metadata("design:returntype", void 0)

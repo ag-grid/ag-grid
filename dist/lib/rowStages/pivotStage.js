@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -28,7 +28,7 @@ var PivotStage = (function () {
     PivotStage.prototype.executePivotOff = function () {
         this.aggregationColumnsHashLastTime = null;
         this.uniqueValues = {};
-        this.columnController.setSecondaryColumns(null);
+        this.columnController.setSecondaryColumns(null, "rowModelUpdated");
     };
     PivotStage.prototype.executePivotOn = function (rootNode) {
         var uniqueValues = this.bucketUpRowNodes(rootNode);
@@ -44,7 +44,7 @@ var PivotStage = (function () {
             var result = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnGroupDefs = result.pivotColumnGroupDefs;
             this.pivotColumnDefs = result.pivotColumnDefs;
-            this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs);
+            this.columnController.setSecondaryColumns(this.pivotColumnGroupDefs, "rowModelUpdated");
         }
     };
     PivotStage.prototype.setUniqueValues = function (newValues) {

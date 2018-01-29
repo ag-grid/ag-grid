@@ -1,9 +1,10 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
 var main_2 = require("ag-grid/main");
 var ag_grid_1 = require("ag-grid");
+var ag_grid_2 = require("ag-grid");
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
 // storing null values.
@@ -84,8 +85,11 @@ var SetFilterModel = (function () {
         if (this.areValuesSync()) {
             var valuesToUse = this.extractSyncValuesToUse();
             this.setValues(valuesToUse);
+            this.filterValuesPromise = ag_grid_2.Promise.resolve(null);
         }
         else {
+            this.filterValuesExternalPromise = ag_grid_2.Promise.external();
+            this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
             var callback = this.filterParams.values;
@@ -98,6 +102,7 @@ var SetFilterModel = (function () {
     SetFilterModel.prototype.onAsyncValuesLoaded = function (values) {
         this.modelUpdatedFunc(values);
         this.isLoadingFunc(false);
+        this.filterValuesExternalPromise.resolve(null);
     };
     SetFilterModel.prototype.areValuesSync = function () {
         return this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.NOT_PROVIDED;
@@ -216,13 +221,19 @@ var SetFilterModel = (function () {
         }
         // if filter present, we filter down the list
         this.displayedValues = [];
-        var miniFilterFormatted = this.formatter(this.miniFilter);
+        var miniFilter = this.formatter(this.miniFilter);
+        // make upper case to have search case insensitive
+        var miniFilterUpperCase = miniFilter.toUpperCase();
         for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
             var filteredValue = this.availableUniqueValues[i];
             if (filteredValue) {
-                var filteredValueFormatted = this.formatter(filteredValue.toString());
-                if (filteredValueFormatted !== null && filteredValueFormatted.indexOf(miniFilterFormatted) >= 0) {
-                    this.displayedValues.push(filteredValue);
+                var value = this.formatter(filteredValue.toString());
+                if (value !== null) {
+                    // allow for case insensitive searches, make both filter and value uppercase
+                    var valueUpperCase = value.toUpperCase();
+                    if (valueUpperCase.indexOf(miniFilterUpperCase) >= 0) {
+                        this.displayedValues.push(filteredValue);
+                    }
                 }
             }
         }
@@ -348,6 +359,14 @@ var SetFilterModel = (function () {
         else {
             this.selectEverything();
         }
+    };
+    SetFilterModel.prototype.onFilterValuesReady = function (callback) {
+        //This guarantees that if the user is racing to set values async into the set filter, only the first instance
+        //will be used
+        // ie Values are async and the user manually wants to override them before the retrieval of values is triggered
+        // (set filter values in the following example)
+        // http://plnkr.co/edit/eFka7ynvPj68tL3VJFWf?p=preview
+        this.filterValuesPromise.firstOneOnly(callback);
     };
     return SetFilterModel;
 }());

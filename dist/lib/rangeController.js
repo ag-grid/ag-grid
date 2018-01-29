@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -155,7 +155,9 @@ var RangeController = (function () {
             return;
         }
         // ctrlKey for windows, metaKey for Apple
-        var multiSelectKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        var multiKeyPressed = mouseEvent.ctrlKey || mouseEvent.metaKey;
+        var allowMulti = !this.gridOptionsWrapper.isSuppressMultiRangeSelection();
+        var multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
         if (main_1.Utils.missing(this.cellRanges) || !multiSelectKeyPressed) {
             this.cellRanges = [];
         }

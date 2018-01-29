@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -21,7 +21,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var main_1 = require("ag-grid/main");
-var columnSelectPanel_1 = require("./columnsSelect/columnSelectPanel");
+var columnSelectComp_1 = require("./columnsSelect/columnSelectComp");
 var rowGroupColumnsPanel_1 = require("./columnDrop/rowGroupColumnsPanel");
 var pivotColumnsPanel_1 = require("./columnDrop/pivotColumnsPanel");
 var pivotModePanel_1 = require("./columnDrop/pivotModePanel");
@@ -47,7 +47,7 @@ var ToolPanelComp = (function (_super) {
         if (!this.gridOptionsWrapper.isToolPanelSuppressPivotMode()) {
             this.addComponent(new pivotModePanel_1.PivotModePanel());
         }
-        this.addComponent(new columnSelectPanel_1.ColumnSelectPanel(true));
+        this.addComponent(new columnSelectComp_1.ColumnSelectComp(true));
         if (!this.gridOptionsWrapper.isToolPanelSuppressRowGroups()) {
             this.addComponent(new rowGroupColumnsPanel_1.RowGroupColumnsPanel(false));
         }

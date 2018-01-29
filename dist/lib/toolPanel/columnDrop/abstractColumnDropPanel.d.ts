@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 import { Component, EventService, GridOptionsWrapper, Context, LoggerFactory, DragAndDropService, Column } from "ag-grid/main";
 export interface AbstractColumnDropPanelParams {
     dragAndDropIcon: string;
@@ -41,6 +41,7 @@ export declare abstract class AbstractColumnDropPanel extends Component {
     private destroyGui();
     init(params: AbstractColumnDropPanelParams): void;
     private setupDropTarget();
+    private isInterestedIn(type);
     private checkInsertIndex(draggingEvent);
     private getNewHorizontalInsertIndex(draggingEvent);
     private getNewVerticalInsertIndex(draggingEvent);

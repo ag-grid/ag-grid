@@ -1,4 +1,4 @@
-// ag-grid-enterprise v15.0.0
+// ag-grid-enterprise v16.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = Object.setPrototypeOf ||
@@ -30,6 +30,11 @@ var ContextMenuFactory = (function () {
     }
     ContextMenuFactory.prototype.init = function () {
     };
+    ContextMenuFactory.prototype.hideActiveMenu = function () {
+        if (this.activeMenu) {
+            this.activeMenu.destroy();
+        }
+    };
     ContextMenuFactory.prototype.getMenuItems = function (node, column, value) {
         var defaultMenuOptions;
         if (ag_grid_1.Utils.exists(node)) {
@@ -40,7 +45,10 @@ var ContextMenuFactory = (function () {
             }
             defaultMenuOptions.push('toolPanel');
             // if user clicks a cell
-            var anyExport = !this.gridOptionsWrapper.isSuppressExcelExport() || !this.gridOptionsWrapper.isSuppressCsvExport();
+            var suppressExcel = this.gridOptionsWrapper.isSuppressExcelExport();
+            var suppressCsv = this.gridOptionsWrapper.isSuppressCsvExport();
+            var onIPad = ag_grid_1._.isUserAgentIPad();
+            var anyExport = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
                 defaultMenuOptions.push('export');
             }
@@ -68,6 +76,7 @@ var ContextMenuFactory = (function () {
         }
     };
     ContextMenuFactory.prototype.showMenu = function (node, column, value, mouseEvent) {
+        var _this = this;
         var menuItems = this.getMenuItems(node, column, value);
         if (ag_grid_1.Utils.missingOrEmpty(menuItems)) {
             return;
@@ -87,6 +96,12 @@ var ContextMenuFactory = (function () {
         });
         menu.afterGuiAttached({
             hidePopup: hidePopup
+        });
+        this.activeMenu = menu;
+        menu.addEventListener(ag_grid_1.BeanStub.EVENT_DESTORYED, function () {
+            if (_this.activeMenu === menu) {
+                _this.activeMenu = null;
+            }
         });
     };
     __decorate([
