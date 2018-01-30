@@ -43,10 +43,12 @@ $tab-background-color: #626262;
 $cell-highlight-border: 2px solid lightgreen !default;
 $cell-horizontal-border: 1px dotted grey !default;
 
-$ag-range-selected-color-1: rgba(100, 160, 160, 0.4) !default;
-$ag-range-selected-color-2: rgba(80, 80, 80, 0.4) !default;
-$ag-range-selected-color-3: rgba(40, 40, 40, 0.4) !default;
-$ag-range-selected-color-4: rgba(0, 0, 0, 0.4) !default;
+$rect-selection-background-color: rgb(100, 160, 160) !default;
+
+$ag-range-selected-color-1: transparentize($rect-selection-background-color, 0.6) !default;
+$ag-range-selected-color-2: transparentize($rect-selection-background-color, 0.4) !default;
+$ag-range-selected-color-3: transparentize($rect-selection-background-color, 0.3) !default;
+$ag-range-selected-color-4: transparentize($rect-selection-background-color, 0.2) !default;
 
 $row-floating-background-color: #333 !default;
 $row-stub-background-color: #333 !default;

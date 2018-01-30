@@ -166,4 +166,21 @@ $params: (
     .ag-header-cell-resize {
         right: -($grid-size) + 1px;
     }
+
+    // we do not want to color the range color when the cell is also focused
+    .ag-cell-range-selected-1:not(.ag-cell-focus) {
+        background-color: $range-selection-background-color;
+    }
+
+    .ag-cell-range-selected-2:not(.ag-cell-focus) {
+        background-color: darken($range-selection-background-color, 4);
+    }
+
+    .ag-cell-range-selected-3:not(.ag-cell-focus) {
+        background-color: darken($range-selection-background-color, 8);
+    }
+
+    .ag-cell-range-selected-4:not(.ag-cell-focus) {
+        background-color: darken($range-selection-background-color, 12);
+    }
 }
