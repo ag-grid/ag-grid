@@ -1,10 +1,10 @@
 <?php
 
-$pageTitle = "ag-Grid Blog: JavaScript Animation with Translate vs Absolute Positioning";
+$pageTitle = "ag-Grid Blog: JavaScript GPU Animation with Transform and Translate";
 $pageDescription = "Compares examples using translate and absolute positioning for fast animations.";
-$pageKeyboards = "javascript animation translate vs absolute";
-$socialUrl = "https://www.ag-grid.com/ag-grid-translate-vs-absolute-javascript-animations/";
-$socialImage = "https://www.ag-grid.com/ag-grid-translate-vs-absolute-javascript-animations/img.svg";
+$pageKeyboards = "javascript animation transform translate gpu";
+$socialUrl = "https://www.ag-grid.com/ag-grid-gpu-animation-transform-translate/";
+$socialImage = "https://www.ag-grid.com/ag-grid-gpu-animation-transform-translate/img.svg";
 
 include('../includes/mediaHeader.php');
 ?>
@@ -17,7 +17,7 @@ include('../includes/mediaHeader.php');
 
     <div>
         <a href="https://twitter.com/share" class="twitter-share-button"
-            data-url="https://www.ag-grid.com/ag-grid-translate-vs-absolute-javascript-animations/"
+            data-url="https://www.ag-grid.com/ag-grid-gpu-animation-transform-translate/"
             data-text="JavaScript Animation with Translate vs Absolute Positioning"
             data-via="ceolter"
             data-size="large">Tweet</a>
@@ -40,12 +40,12 @@ include('../includes/mediaHeader.php');
         <p class="lead">
             There are two ways to absolute position DOM elements on the screen:
             1) Using CSS <code>position: absolute</code> and <code>top</code>/<code>left</code> attributes;
-            2) Using CSS <code>transform(translateX,translateY)</code> attributes.
+            2) Using CSS <code>position: absolute</code> and <code>transform(translateX,translateY)</code> attributes.
             This article explains what both are and demonstrates how using <code>transform</code>
             animations perform better by utilising the GPU.
         </p>
 
-        <h2>The Approaches Explained</h2>
+        <h2>Using Top / Left Attribute</h2>
 
         <p>
             Using <code>position: absolute</code> and <code>top</code>/<code>left</code> is the traditional
@@ -54,16 +54,22 @@ include('../includes/mediaHeader.php');
         </p>
 
         <p>
-            Using <code>transform(translateX,translateY)</code> is a more modern way
-            of doing things and was designed with utilising the GPU if it is available. The
-            <code>transform / translate</code> maps with
-            <a href="https://en.wikipedia.org/wiki/2D_computer_graphics">2D Graphics</a>
-            operations, thus if doing animations, it can be done with your computers GPU (graphics
-            hardware). If the GPU is used, it will give a much (MUCH) smoother animation
-            experience.
+            The following code snippet shows what setting this up looks like for animating
+            the vertical position of a DOM element using <code>top</code>.
         </p>
 
-        <h2>Example Using Absolute Positioning</h2>
+<snippet>// CSS
+.row {
+    // absolute positioning needed for setting top
+    position: absolute;
+    // put half a second animation for when top changes
+    transition: top 0.5s;
+}
+
+    // JavaScript, set style.top programmatically
+var eRow = document.querySelector('#myElement');
+eRow.style.top = '500px';
+</snippet>
 
         <p>
             Below shows an example data grid (which can be though of as a simple representation of
@@ -75,7 +81,35 @@ include('../includes/mediaHeader.php');
 
         <?= example('Example Absolute', 'example-absolute', 'vanilla') ?>
 
-        <h3>Example Using Transform</h3>
+        <h2>Using Transform</h2>
+
+        <p>
+            Using <code>transform(translateX,translateY)</code> is a more modern way
+            of doing things and was designed with utilising the GPU if it is available. The
+            <code>transform / translate</code> maps with
+            <a href="https://en.wikipedia.org/wiki/2D_computer_graphics">2D Graphics</a>
+            operations, thus if doing animations, it can be done with your computers GPU (graphics
+            hardware). If the GPU is used, it will give a much (MUCH) smoother animation
+            experience.
+        </p>
+
+        <p>
+            The following code snippet shows what setting this up looks like for animating
+            the vertical position of a DOM element using <code>transform</code>.
+        </p>
+
+<snippet>// CSS
+.row {
+    // absolute positioning needed for transform
+    position: absolute;
+    // put half a second animation for when top changes
+    transition: transform 0.5s;
+}
+
+// JavaScript, set style.transform programmatically
+var eRow = document.querySelector('#myElement');
+eRow.style.transform = 'translateY(500px)';
+</snippet>
 
         <p>
             This example is identical to the previous example with one difference - the rows
@@ -86,7 +120,7 @@ include('../includes/mediaHeader.php');
 
         <?= example('Example Transform', 'example-transform', 'vanilla') ?>
 
-        <h3>Conclusion</h3>
+        <h2>Conclusion</h2>
 
         <p>
             If you need to animate the position of DOM elements, then using transforms instead of
@@ -108,7 +142,7 @@ include('../includes/mediaHeader.php');
                     </td>
                     <td>
                         <a href="https://twitter.com/share" class="twitter-share-button"
-                            data-url="https://www.ag-grid.com/ag-grid-translate-vs-absolute-javascript-animations/"
+                            data-url="https://www.ag-grid.com/ag-grid-gpu-animation-transform-translate/"
                             data-text="JavaScript Animation with Translate vs Absolute Positioning"
                             data-via="ceolter"
                             data-size="large">Tweet</a>
