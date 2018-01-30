@@ -49,12 +49,19 @@ ag-grid-aurelia {
 }
 .ag-layout-for-print {
     white-space: nowrap;
-    display: inline-block;
+    display: block;
 }
+
+.ag-layout-for-print .ag-row,
+.ag-layout-for-print .ag-cell {
+    page-break-inside: avoid !important;
+}
+
 .ag-layout-normal {
     height: 100%;
 }
-.ag-layout-auto-height {}
+.ag-layout-auto-height {
+}
 //
 .ag-popup-backdrop {
     position: fixed;
@@ -154,7 +161,7 @@ ag-grid-aurelia {
 // so we cannot style using standard themes. hence we break the rules, and style it here
 .ag-dnd-ghost {
     font-size: 14px;
-    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     position: absolute;
     background: #e5e5e5;
     border: 1px solid black;
@@ -246,7 +253,8 @@ ag-grid-aurelia {
     top: 0px;
     left: 0px;
 }
-.ag-overlay-loading-center {}
+.ag-overlay-loading-center {
+}
 //
 .ag-bl-full-height {
     height: 100%;
@@ -562,17 +570,17 @@ ag-grid-aurelia {
 // however it is not tied to color, only placement and visiblity, which is behaviour and not style,
 // thus belongs here, besides it doesn't change wih the themes
 .ag-value-slide-out {
-    opacity: 1.0;
+    opacity: 1;
     margin-right: 5px;
     transition: opacity 3s, margin-right 3s; // as value fades, it also moves to the left via the margin setting
     transition-timing-function: linear;
 }
 .ag-value-slide-out-end {
-    opacity: 0.0;
+    opacity: 0;
     margin-right: 10px;
 }
 .ag-opacity-zero {
-    opacity: 0.0;
+    opacity: 0;
 }
 .ag-cell-edit-input {
     width: 100%;
@@ -641,7 +649,8 @@ ag-grid-aurelia {
 .ag-menu-separator-cell {
     display: table-cell;
 }
-.ag-filter {}
+.ag-filter {
+}
 //z-index: 100
 
 .ag-virtual-list-viewport {
@@ -704,7 +713,8 @@ ag-grid-aurelia {
     width: 110px;
     margin: 4px 4px 0px 4px;
 }
-.ag-paging-panel {}
+.ag-paging-panel {
+}
 .ag-list-selection {
     user-select: none;
     cursor: default;
@@ -773,26 +783,30 @@ ag-grid-aurelia {
     }
 }
 
-$icons-path: './icons/' !default;
+$icons-path: "./icons/" !default;
 
-@if variable-exists(ag-icons-path) { $icons-path: $ag-icons-path; }
+@if variable-exists(ag-icons-path) {
+    $icons-path: $ag-icons-path;
+}
 
-$ag-icons-filter: 'initial' !default;
+$ag-icons-filter: "initial" !default;
 
 @mixin icon-background($icon) {
     width: 12px;
     height: 12px;
-    background: transparent url('#{$icons-path}#{$icon}.svg') center no-repeat;
+    background: transparent url("#{$icons-path}#{$icon}.svg") center no-repeat;
     background-size: 12px 12px;
     filter: $ag-icons-filter;
 }
 
 /* icons are used outside of the grid root (in the ghost) */
-$icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked column columns contracted copy cut desc expanded eye-slash eye filter folder-open folder group indeterminate left loading menu minus none not-allowed paste pin pivot plus right small-left small-right small-up small-down tick cross tree-open tree-closed;
+$icons: aggregation arrows asc checkbox-checked-readonly checkbox-checked checkbox-indeterminate-readonly checkbox-indeterminate checkbox-unchecked-readonly checkbox-unchecked
+    column columns contracted copy cut desc expanded eye-slash eye filter folder-open folder group indeterminate left loading menu minus none not-allowed paste pin pivot plus right
+    small-left small-right small-up small-down tick cross tree-open tree-closed;
 @each $icon in $icons {
     .ag-icon-#{$icon} {
         display: inline-block;
-        @include icon-background('#{$icon}');
+        @include icon-background("#{$icon}");
     }
 }
 
@@ -821,9 +835,17 @@ $row-group-indent-size: 10px !default;
 
 // Default values for themes that do not use the mixins
 @for $i from 1 to 50 {
-    .ag-ltr .ag-toolpanel-indent-#{$i} { padding-left: $i * $toolpanel-indent-size; }
-    .ag-rtl .ag-toolpanel-indent-#{$i} { padding-right: $i * $toolpanel-indent-size; }
+    .ag-ltr .ag-toolpanel-indent-#{$i} {
+        padding-left: $i * $toolpanel-indent-size;
+    }
+    .ag-rtl .ag-toolpanel-indent-#{$i} {
+        padding-right: $i * $toolpanel-indent-size;
+    }
 
-    .ag-ltr .ag-row-group-indent-#{$i} { padding-left: $i * $row-group-indent-size; }
-    .ag-rtl .ag-row-group-indent-#{$i} { padding-right: $i * $row-group-indent-size; }
+    .ag-ltr .ag-row-group-indent-#{$i} {
+        padding-left: $i * $row-group-indent-size;
+    }
+    .ag-rtl .ag-row-group-indent-#{$i} {
+        padding-right: $i * $row-group-indent-size;
+    }
 }
