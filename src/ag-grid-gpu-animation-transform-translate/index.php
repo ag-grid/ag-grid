@@ -12,7 +12,7 @@ include('../includes/mediaHeader.php');
 <div>
 
     <!-- <link rel="stylesheet" href="../documentation-main/documentation.css"> -->
-    <h1>Translate vs Absolute for JavaScript Animations</h1>
+    <h1>JavaScript GPU Animation with Transform and Translate</h1>
     <p class="blog-author">Niall Crosby | 29th January 2018</p>
 
     <div>
