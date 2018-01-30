@@ -41,7 +41,7 @@ include('../includes/mediaHeader.php');
 
         <h2></h2>
 
-        <?= example('Load and Stress Test of ag-Grid', 'load-and-stress-test', 'vanilla') ?>
+        <?= example('Load and Stress Test of ag-Grid', 'load-and-stress-test', 'vanilla', array('enterprise' => true)) ?>
 
         <div style="background-color: #eee; padding: 10px; display: inline-block;">
 

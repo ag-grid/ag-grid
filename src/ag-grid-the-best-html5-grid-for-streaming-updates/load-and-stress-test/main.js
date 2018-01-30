@@ -100,7 +100,7 @@ var worker;
 
 function startWorker() {
 
-    worker = new Worker('worker.js');
+    worker = new Worker(__basePath + 'worker.js');
 
     worker.onmessage = function(e) {
         switch (e.data.type) {
