@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style> html, body { margin: 0; padding: 0; height: 100%; } </style>
+    <script src="/dev/ag-grid-enterprise-bundle/ag-grid-enterprise.js"></script>
+</head>
+
+<style>
+    body {
+        font: 400 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    }
+    .number { text-align: right; }
+    .ag-row-level-0 { font-weight: bold; }
+    .ag-row-level-1 { color: lightblue; }
+    .ag-row-level-2 { color: lightyellow; }
+</style>
+
+<body>
+
+    <div style="height: 100%; padding-top: 50px; box-sizing: border-box;">
+        <div id="myGrid" style="height: 100%;" class="ag-theme-balham-dark"></div>
+    </div>
+
+    <div style="position: absolute; top: 0px; left: 0px;">
+        <div style="padding: 2px;">
+            <span>Test:</span>
+
+            <button onclick="onStartStress()">&#9658; Stress</button>
+            <button onclick="onStartLoad()">&#9658; Load</button>
+            <button onclick="onStopMessages()">&#9632; Stop</button>
+
+            <span style="padding-left: 6px;">Columns:</span>
+
+            <button onclick="onColumnsFlat()">Flat</button>
+            <button onclick="onColumnsGroup()">Group</button>
+            <button onclick="onColumnsPivot()">Pivot</button>
+
+            <span style="padding-left: 6px;">Tool Panel:</span>
+
+            <button onclick="onShowToolPanel()">Show</button>
+            <button onclick="onHideToolPanel()">Hide</button>
+        </div>
+
+        <div style="padding: 2px;">
+            <span id="eMessage" style="background: #f5f7f7; border: 1px solid #BDC3C7; padding-left: 6px; padding-right: 6px;"></span>
+        </div>
+
+    </div>
+
+</body>
+</html>
+
+<script src="main.js"></script>
