@@ -46,7 +46,7 @@
         "enterprise": false,
         "description":
             "<span class=\"feature-highlight\">Column Filters</span> appear in the column menu.\n        The grid comes with filters out of the box: text, number, date and set filters. You can also create your\n        own customer filter.",
-        "src": "javascript-grid-features/images/textFilter.gif",
+        "src": "javascript-grid-features/images/columnFilter.gif",
         "snippet":
             "gridOptions = {\n    // turn on filtering\n    enableFilter: true,\n    ...\n    columnDefs: [\n    {field: \"athlete\", filter: \"text\"},\n    {field: \"age\",     filter: \"number\"},\n    {field: \"sport\",   filter: MyCustomerFilter}\n]}",
         "level": 0,
@@ -56,7 +56,7 @@
         "title": "Text Filter",
         "enterprise": false,
         "description": "<span class=\"feature-highlight\">Text Filter</span> allows filtering text strings with \n{equals, notEqual, contains, notContains, startsWith, endsWith}.",
-        "src": "javascript-grid-features/images/textFilter.gif",
+        "src": "javascript-grid-features/images/columnFilter.gif",
         "snippet": "colDef = {\n    field: 'athlete',\n    filter: 'text',\n    filterOptions: {'equals', 'contains'}\n}",
         "level": 1,
         "url": "javascript-grid-filter-text/"
