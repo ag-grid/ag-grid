@@ -39,8 +39,8 @@ include('../includes/mediaHeader.php');
 
         <p class="lead">
             There are two ways to absolute position DOM elements on the screen:
-            1) Using CSS <code>position: absolute</code> and <code>top</code>/<code>left</code> attributes;
-            2) Using CSS <code>position: absolute</code> and <code>transform(translateX,translateY)</code> attributes.
+            1) Using CSS <code>position: absolute</code> and <code>style.top</code>/<code>style.left</code> attributes;
+            2) Using CSS <code>position: absolute</code> and <code>style.transform(translateX,translateY)</code> attributes.
             This article explains what both are and demonstrates how using <code>transform</code>
             animations perform better by utilising the GPU.
         </p>
@@ -48,14 +48,14 @@ include('../includes/mediaHeader.php');
         <h2>Using Top / Left Attribute</h2>
 
         <p>
-            Using <code>position: absolute</code> and <code>top</code>/<code>left</code> is the traditional
+            Using <code>position: absolute</code> and <code>style.top</code>/<code>style.left</code> is the traditional
             way of positioning and was designed with web page layout in mind. If you animate transitions
             using this mechanism they do NOT use the GPU if available.
         </p>
 
         <p>
             The following code snippet shows what setting this up looks like for animating
-            the vertical position of a DOM element using <code>top</code>.
+            the vertical position of a DOM element using <code>style.top</code>.
         </p>
 
 <snippet>// CSS
@@ -75,7 +75,7 @@ eRow.style.top = '500px';
             Below shows an example data grid (which can be though of as a simple representation of
             <a href="http://www.ag-grid.com/">ag-Grid</a>). Hitting the 'Shuffle Rows' button will
             reverse the order of the rows akin to row sorting in a data grid. The rows are positioned
-            using <code>position: absolute</code> and <code>top</code>.
+            using <code>position: absolute</code> and <code>style.top</code>.
             Notice how smooth the animation is (or is not) which we will compare with the next example.
         </p>
 
@@ -84,7 +84,7 @@ eRow.style.top = '500px';
         <h2>Using Transform</h2>
 
         <p>
-            Using <code>position: absolute</code> and <code>transform(translateX,translateY)</code>
+            Using <code>position: absolute</code> and <code>style.transform(translateX,translateY)</code>
             is a more modern way of doing things and was designed with utilising the GPU if it is available.
             The <code>transform / translate</code> maps with
             <a href="https://en.wikipedia.org/wiki/2D_computer_graphics">2D Graphics</a>
@@ -95,7 +95,7 @@ eRow.style.top = '500px';
 
         <p>
             The following code snippet shows what setting this up looks like for animating
-            the vertical position of a DOM element using <code>transform</code>.
+            the vertical position of a DOM element using <code>style.transform</code>.
         </p>
 
 <snippet>// CSS
@@ -113,7 +113,7 @@ eRow.style.transform = 'translateY(500px)';
 
         <p>
             This example is identical to the previous example with one difference - the rows
-            are positioned using <code>transform(translateX)</code>. If your computer has a GPU
+            are positioned using <code>style.transform(translateX)</code>. If your computer has a GPU
             for doing 2D operations (all modern computers do) then you will notice a huge increase
             in the animation experience.
         </p>
