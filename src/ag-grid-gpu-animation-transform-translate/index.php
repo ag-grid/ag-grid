@@ -84,9 +84,9 @@ eRow.style.top = '500px';
         <h2>Using Transform</h2>
 
         <p>
-            Using <code>transform(translateX,translateY)</code> is a more modern way
-            of doing things and was designed with utilising the GPU if it is available. The
-            <code>transform / translate</code> maps with
+            Using <code>position: absolute</code> and <code>transform(translateX,translateY)</code>
+            is a more modern way of doing things and was designed with utilising the GPU if it is available.
+            The <code>transform / translate</code> maps with
             <a href="https://en.wikipedia.org/wiki/2D_computer_graphics">2D Graphics</a>
             operations, thus if doing animations, it can be done with your computers GPU (graphics
             hardware). If the GPU is used, it will give a much (MUCH) smoother animation
@@ -119,6 +119,17 @@ eRow.style.transform = 'translateY(500px)';
         </p>
 
         <?= example('Example Transform', 'example-transform', 'vanilla') ?>
+
+        <h2>Usage in ag-Grid</h2>
+
+        <p>
+            For a real world example of this check out the
+            <a href="../example.php">ag-Grid main demo</a>. ag-Grid uses
+            this technique for animating the rows after a) the rows are sorted; b) the rows
+            are filtered and c) a row group is opened (as rows are moved down to expand the group).
+            This is particularly helpful with either very large grids or when using ag-Grid on
+            lower powered devices such as tablets.
+        </p>
 
         <h2>Conclusion</h2>
 
