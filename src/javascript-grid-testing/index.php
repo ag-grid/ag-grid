@@ -86,8 +86,7 @@ Here we specify the Jasmine testing framework as well as our test to run.</snipp
     <note>If you're testing against a non-Angular application then you need to tell <code>Protractor</code>
         not to wait for Angular by adding this to either your configuration or your tests: <code>browser.ignoreSynchronization = true;</code></note>
 
-    <p>For this test we'll testing a simple JavaScript based grid which can be found at the <a
-                href="../best-javascript-data-grid/example-js.html" target="_blank">Getting Started -> JavaScript</a> Section:</p>
+    <p>For this test we'll testing a simple <a href="https://www.ag-grid.com/example-runner/vanilla.php?section=javascript-getting-started&example=hello-world">JavaScript based grid</a> which can be found at the Getting Started -> JavaScript Section:</p>
 
     <img src="../images/example-js.png" class="img-fluid">
 
@@ -104,7 +103,7 @@ describe('ag-Grid Protractor Test', function () {
     browser.ignoreSynchronization = true;
 
     beforeEach(() =&gt; {
-        browser.get("https://www.ag-grid.com/best-javascript-data-grid/example-js.html");
+        browser.get("https://www.ag-grid.com/example-runner/vanilla.php?section=javascript-getting-started&example=hello-world");
     });
 
     it('should have expected column headers', () =&gt; {
