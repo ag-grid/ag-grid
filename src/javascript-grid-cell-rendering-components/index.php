@@ -44,7 +44,7 @@ interface ICellRendererComp {
     // Mandatory - Return the DOM element of the component, this is what the grid puts into the cell
     getGui(): HTMLElement;
 
-    // Optional - Gets called once by grid after editing is finished - if your editor needs to do any cleanup,
+    // Optional - Gets called once by grid after rendering is finished - if your renderer needs to do any cleanup,
     // do it here
     destroy?(): void;
 
