@@ -374,6 +374,7 @@ export class AgGridNg2 implements AfterViewInit {
     @Input() public suppressRowDrag: any = undefined;
     @Input() public popupParent: any = undefined;
     @Input() public enterMovesDownAfterEdit: any = undefined;
+    @Input() public batchUpdateWaitMillis: any = undefined;
 
     /**
      * Outputs
