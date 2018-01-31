@@ -267,6 +267,15 @@ include('../includes/mediaHeader.php');
             and edit the parameters at the top of the file.
         </p>
 
+        <h2>Grid API</h2>
+
+        <p>
+            Users of ag-Grid might wonder if there are any tricks used to get the grid to work
+            this fast. There are no tricks. The only item to take note of is the user of
+            <a href="../javascript-grid-data-update/#batch-transactions">Batch Transactions</a>
+            which makes use of the grid API <code>batchUpdateRowData()</code>.
+        </p>
+
         <h2>Conclusion</h2>
 
         <p>
