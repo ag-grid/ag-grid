@@ -37,10 +37,14 @@ foreach ($files as $file) {
 <!DOCTYPE html>
 <html>
 <head>
+<?php if ($preview) { ?>
+<script> var __basePath = ''; </script>
+<?php } else { ?>
+<script> var __basePath = "<?php echo $path?>/"</script>
+<?php } ?>
 <style> html, body { margin: 0; padding: 0; height: 100%; } </style>
 <?php renderExampleExtras($_GET) ?>
 <?= globalAgGridScript(isset($_GET["enterprise"])) ?>
-
 <?php renderStyles($styles); ?>
 </head>
 <body>
@@ -49,7 +53,9 @@ foreach ($files as $file) {
 include path_combine($path, 'index.html');
 echo "\n";
 foreach ($scripts as $script) {
-echo '    <script src="'.$script.'"></script>' . "\n";
+    if ($script !== 'worker.js') {
+        echo '    <script src="'.$script.'"></script>' . "\n";
+    }
 }
 ?>
 </body>

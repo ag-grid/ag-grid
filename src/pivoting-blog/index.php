@@ -117,7 +117,7 @@ Have in mind that the default aggregation value is <strong>SUM</strong>.</p>
 <p>As you already know we don't need to build pivot table from scratch, we can simply use the capabilities of <strong>ag-Grid.</strong></p>
 <p>Pivoting is, no doubt, one of the top features of <strong>ag-Grid Enterprise</strong>. Make sure you are using <strong>ag-Grid Enterprise</strong>
 in order to use pivoting and other high profile goods. You can find <strong>ag-Grid</strong> and <strong>ag-Grid Enterprise</strong> on npm and bower. If you have any difficulties you can refer to <a href="../javascript-grid-getting-started/">our getting started articles.</a></p>
-<p> Once you are packed with <strong>ag-Grid Enterprise</strong>, you should simply edit the column definitions and add the <em>enablePivot</em> property with value <em>true</em>.
+<p> Once you are packed with <strong>ag-Grid Enterprise</strong>, you should simply edit the column definitions and add the <code>enablePivot</code> property with value <code>true</code>.
 <snippet language="sh">
 this.columnDefs = [
             {headerName: "Make", field: "make", enablePivot: true},
@@ -126,7 +126,7 @@ this.columnDefs = [
         ];
 </snippet>
 
-<p>This is a simple exmaple of enabling pivoting in <strong>ag-Grid</strong>. Of course, <strong>ag-Grid</strong> has more advanced settings for pivoting in complecated scenarios.
+<p>This is a simple example of enabling pivoting in <strong>ag-Grid</strong>. Of course, <strong>ag-Grid</strong> has more advanced settings for pivoting in complecated scenarios.
 To find out more about pivoting, read the <a href="../javascript-grid-pivoting/">dedicated article</a> in our documentation.</p>
 
 <h2 id="conclusion">Conclusion</h2>

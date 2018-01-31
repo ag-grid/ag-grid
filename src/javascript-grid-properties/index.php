@@ -728,6 +728,13 @@ include '../documentation-main/documentation_header.php';
                 Prevents the user to export any grid to Excel.
             </td>
         </tr>
+        <tr>
+            <th>batchUpdateWaitMillis</th>
+            <td>
+                How many milliseconds to wait before executing a
+                <a href="../javascript-grid-data-update/#batch-transactions">batch of update transactions</a>.
+            </td>
+        </tr>
     </table>
 
 

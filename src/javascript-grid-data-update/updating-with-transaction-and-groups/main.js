@@ -1,10 +1,10 @@
 var columnDefs = [
-    {headerName: 'Category', field: 'category', rowGroupIndex: 1, hide: true},
-    {headerName: 'Price', field: 'price', aggFunc: 'sum', valueFormatter: poundFormatter},
-    {headerName: 'Zombies', field: 'zombies'},
-    {headerName: 'Style', field: 'style'},
-    {headerName: 'Clothes', field: 'clothes'},
-    {headerName: 'Created', field: 'created'}
+    {field: 'category', rowGroupIndex: 1, hide: true},
+    {field: 'price', aggFunc: 'sum', valueFormatter: poundFormatter},
+    {field: 'zombies'},
+    {field: 'style'},
+    {field: 'clothes'},
+    {field: 'created'}
 ];
 
 function poundFormatter(params) {
@@ -47,6 +47,9 @@ function createNewRowData(category) {
 
 var gridOptions = {
     columnDefs: columnDefs,
+    defaultColDef: {
+        width: 100
+    },
     groupDefaultExpanded: 1,
     rowData: getInitialRowData(),
     rememberGroupStateWhenNewData: true,
@@ -85,7 +88,7 @@ var gridOptions = {
         }
     },
     onGridReady: function(params) {
-        params.api.sizeColumnsToFit();
+       params.api.sizeColumnsToFit();
     }
 };
 

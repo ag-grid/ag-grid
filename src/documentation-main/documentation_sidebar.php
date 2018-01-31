@@ -36,6 +36,24 @@
 </style>
 
 <div class="news-box">
+    <div class="news-header">17th January 2018</div>
+    <div style="background-color: black; padding: 10px; position: relative;">
+        <a href="../ag-grid-proud-to-support-plunker/">
+            <img src="../images/Plunker_Cover.png" style="width: 100%;"/>
+        </a>
+    </div>
+    <div>
+        <br/>
+        Plunker is now backed by ag-Grid.<br><br>
+        <div>
+            Continuing our support for our community, we have <a href="../ag-grid-proud-to-support-plunker/">announced</a>
+            our financial backing for <a href="https://plnkr.co/">Plunker</a>.
+        </div>
+    </div>
+</div>
+
+
+<div class="news-box">
     <div class="news-header">13th December 2017</div>
     <div style="background-color: black; padding: 10px; position: relative;">
         <a href="../ag-grid-blog-15-0-0/">
