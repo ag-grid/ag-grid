@@ -43,15 +43,15 @@ include('../includes/mediaHeader.php');
             where ag-Grid was given an honorable mention with speed
             as it's downfall. I knew this was not true, ag-Grid can be incredibly
             fast. The article said ag-Grid could only process 60 updates per second.
-            So let me introduce you to ag-Grid processing 150,000 updates per second...
+            So let me introduce you to ag-Grid processing over 150,000 updates per second...
         </p>
 
         <h2>The Test</h2>
 
         <p>
             Before going into all the detail, here is the test running in all it's glory.
-            Open the text in a new tab an play around with it. The test starts up with
-            a load test for processing 1,000 updates every second.
+            You are invited to open the test in a new tab an play around with it. The test
+            starts up with a load test for processing 1,000 updates every second.
         </p>
 
         <?= example('Load and Stress Test of ag-Grid', 'load-and-stress-test', 'vanilla', array('enterprise' => true)) ?>
@@ -59,8 +59,13 @@ include('../includes/mediaHeader.php');
         <h2>Test Results</h2>
 
         <p>
-            These test were done on a Dell XPS laptop with Intel Core i7-6700HQ and 32 GB
-            of memory with Chrome as the browser full screen on 1920 x 1080 resolution.
+            These test were done with the following hardware / software:
+            <ul>
+                <li>Dell XPS 15" 9550</li>
+                <li>Intel Core i7-6700HQ with 32GB Memory</li>
+                <li>Windows 10 Pro 64-bit</li>
+                <li>Chrome Browser full screen on 1920 x 1080 resolution</li>
+            </ul>
         </p>
 
         <p>
@@ -93,7 +98,7 @@ include('../includes/mediaHeader.php');
         <p>
             Typically the amount of data in these data grids is smaller and the amount of
             updates is less frequent than that in the demo here. For example if a grid has
-            one million records then it is useless - no trader is going to scroll down through
+            one million records then it is useless - no user is going to scroll down through
             one millions records. An application that presents one millions records to the
             end user in a flat list is a badly designed application. Likewise data updates
             should be infrequent enough that they can be consumed by a human. If a piece of
@@ -102,17 +107,17 @@ include('../includes/mediaHeader.php');
 
         <p>
             So the use case presented in this demo (over 10,000 records with over 1,000
-            record updates per second) is an unlikely situation to be built into an application.
+            record updates per second) is either an unlikely situation or an edge case situation.
             So the demo can be seen as ag-Grid demonstrating it is more powerful than you
-            will ever need with data updates - it can manage and update data faster than
-            any human is able to consume.
+            will probably ever need with data updates - it can manage and update data faster than
+            humans are able to consume.
         </p>
 
         <h2>More Than Just Updates</h2>
 
         <p>
             The demo is doing more than cell updates. Here are some other things to look out
-            for where the grid is going above and beyond what you might be expecting.
+            for where ag-Grid is going above and beyond what other grids do.
         </p>
 
         <ul>
@@ -142,7 +147,7 @@ include('../includes/mediaHeader.php');
                 </p>
 
                 <p>
-                    One thing to try on the demo is to star the load test and then drag the columns around
+                    One thing to try on the demo is to start the load test and then drag the columns around
                     to play with different group and pivot combinations. Notice that this can all be done
                     while the grid is processing the feed of data updates.
                 </p>
@@ -164,21 +169,23 @@ include('../includes/mediaHeader.php');
                 </p>
 
                 <p>
-                    The animated gif doesn't do the grid's smooth animation justice, so try the sorting
-                    yourself in the demo.
+                    The animated gif's frame rate doesn't show how smooth the animation actually is,
+                    so try the sorting yourself in the demo.
                     The grid uses the GPU (graphics hardware) for moving the rows between sorts by making
                     use of <a href="https://en.wikipedia.org/wiki/2D_computer_graphics">2D Graphics</a>,
                     <a href="https://www.w3schools.com/cssref/css3_pr_transform.asp">CSS Transform</a>
                     and <a href="https://www.w3schools.com/css/css3_transitions.asp">CSS Transitions</a>.
-                    These together relate to very smooth animation as the rows move.
+                    These together create very smooth animations as the rows move.
                 </p>
             </li>
             <li>
                 <h3>Range Selection</h3>
 
                 <p>
-                    In the demo, try dragging the mouse over a selection of cells. On the bottom right
-                    of the grid a panel displays summary appears showing
+                    ag-Grid allows you to do range selections like in Excel.
+                    In the demo, try dragging the mouse over a selection of cells.
+                    On the bottom right of the grid information appears with aggregations
+                    (sum, average e.t.c.) of the values in the selected range.
                 </p>
 
                 <p style="text-align: center;">
@@ -225,7 +232,8 @@ include('../includes/mediaHeader.php');
 
         <p>
             So to sum up canvas grids - they are not necessary. The example on this page demonstrates
-            that standard HTML elements can achieve the performance required.
+            that standard HTML elements can achieve the performance required. Given ag-Grid can
+            do the job with plain HTML then why would you want all the disadvantages of Canvas?
         </p>
 
         <h2>Grouping Updates in Messages</h2>
@@ -246,22 +254,21 @@ include('../includes/mediaHeader.php');
 
         <p>
             The batching of events like this will not degrade the user experience as data changing
-            every 20ms is past the speed our brains can process data. However there is benefit
-            to the computer network as it will lesson congestion on the network.
+            every 20ms is past the speed our brains can process data, so more frequent updates would
+            be simply lost on the human brain. However there is benefit
+            to the computer network in batching as it will lesson congestion on the network.
         </p>
 
         <p>
             In the Load Test and Stress Test each message has 100 record updates. To change this and
-            see how it impacts performance, open the example in Plunker and edit the variables
-            at the top of <code>worker.js</code>. You can then either run the example in Plunker,
-            or download the example for running locally.
+            see how it impacts performance then change the demo...
         </p>
 
         <h2>Changing the Demo</h2>
 
         <p>
-            You can easily change the parameters of the test to see ohw the grid performs under
-            the load that your application has as a business requirement. To do this open the
+            You can change the parameters of the test to see how the grid performs under
+            what your application's requirements are. To do this open the
             example in Plunker. You can edit directly in Plunker, or download the project from
             Plunker to your local machine and edit locally. Open up the file <code>worker.js</code>
             and edit the parameters at the top of the file.
@@ -271,9 +278,9 @@ include('../includes/mediaHeader.php');
 
         <p>
             Users of ag-Grid might wonder if there are any tricks used to get the grid to work
-            this fast. There are no tricks. The only item to take note of is the user of
+            this fast. There are no tricks. The only item to take note of is the use of
             <a href="../javascript-grid-data-update/#batch-transactions">Batch Transactions</a>
-            which makes use of the grid API <code>batchUpdateRowData()</code>.
+            with the grid API <code>batchUpdateRowData()</code>.
         </p>
 
         <h2>Conclusion</h2>
