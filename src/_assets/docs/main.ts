@@ -119,5 +119,5 @@ $(function() {
         breakpoints[i - 1].link.find("> a").addClass("current-section");
     });
 
-    new lazyload(document.querySelectorAll("#feature-roadshow img"), {});
+    new lazyload(document.querySelectorAll("#feature-roadshow img, .lazy-load"), {});
 });

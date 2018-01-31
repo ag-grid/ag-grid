@@ -131,7 +131,7 @@ include('../includes/mediaHeader.php');
                     <b>
                         Animated Gif - Grouping, Pivoting or Flat Under Load
                     </b>
-                    <img src="./flatGroupPivot.gif" style="border: 1px solid grey; padding: 5px; margin: 10px;"/>
+                    <img class="lazy-load" data-src="./flatGroupPivot.gif" style="border: 1px solid grey; padding: 5px; margin: 10px;"/>
                 </p>
 
                 <p>
@@ -160,7 +160,7 @@ include('../includes/mediaHeader.php');
                     <b>
                         Animated Gif - Soring Under Load
                     </b>
-                    <img src="./sorting.gif" style="border: 1px solid grey; padding: 5px; margin: 10px;"/>
+                    <img class="lazy-load" data-src="./sorting.gif" style="border: 1px solid grey; padding: 5px; margin: 10px;"/>
                 </p>
 
                 <p>
