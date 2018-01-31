@@ -158,4 +158,5 @@ document.addEventListener("DOMContentLoaded", function() {
     var eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
     startWorker();
+    onStartLoad();
 });

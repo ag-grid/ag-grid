@@ -1,18 +1,26 @@
+// update these to change the stress test parameters
+var STRESS_TEST_MESSAGE_COUNT = 1000;
+var STRESS_TEST_UPDATES_PER_MESSAGE = 100;
+
+// update these to change the
+var LOAD_TEST_UPDATES_PER_MESSAGE = 100;
+var LOAD_TEST_MILLISECONDS_BETWEEN_MESSAGES = 100;
+
+// update these to change the size of the data initially loaded into the grid for updating
 var BOOK_COUNT = 15;
 var TRADE_COUNT = 5;
 
-var VALUE_FIELDS = ['current','previous','pl1','pl2','gainDx','sxPx','_99Out'];
-
-var products = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','Tin','Aluminium',
+// add / remove products to change the data set
+var PRODUCTS = ['Palm Oil','Rubber','Wool','Amber','Copper','Lead','Zinc','Tin','Aluminium',
     'Aluminium Alloy','Nickel','Cobalt','Molybdenum','Recycled Steel','Corn','Oats','Rough Rice',
     'Soybeans','Rapeseed','Soybean Meal','Soybean Oil','Wheat','Milk','Coca','Coffee C',
     'Cotton No.2','Sugar No.11','Sugar No.14'];
 
-var portfolios = ['Aggressive','Defensive','Income','Speculative','Hybrid'];
+// add / remove portfolios to change the data set
+var PORTFOLIOS = ['Aggressive','Defensive','Income','Speculative','Hybrid'];
 
-// as we create books, we remember what products they belong to, so we can
-// add to these books later when use clicks one of the buttons
-var productToPortfolioToBooks = {};
+// these are the list of columns that updates go to
+var VALUE_FIELDS = ['current','previous','pl1','pl2','gainDx','sxPx','_99Out'];
 
 // a list of the data, that we modify as we go. if you are using an immutable
 // data store (such as Redux) then this would be similar to your store of data.
@@ -28,16 +36,13 @@ var nextBatchId = 101;
 function createRowData() {
     globalRowData = [];
     var thisBatch = nextBatchId++;
-    for (var i = 0; i<products.length; i++) {
-        var product = products[i];
-        productToPortfolioToBooks[product] = {};
-        for (var j = 0; j<portfolios.length; j++) {
-            var portfolio = portfolios[j];
-            productToPortfolioToBooks[product][portfolio] = [];
+    for (var i = 0; i<PRODUCTS.length; i++) {
+        var product = PRODUCTS[i];
+        for (var j = 0; j<PORTFOLIOS.length; j++) {
+            var portfolio = PORTFOLIOS[j];
 
             for (var k = 0; k<BOOK_COUNT; k++) {
                 var book = createBookName();
-                productToPortfolioToBooks[product][portfolio].push(book);
                 for (var l = 0; l < TRADE_COUNT; l++) {
                     var trade = createTradeRecord(product, portfolio, book, thisBatch);
                     globalRowData.push(trade);
@@ -116,14 +121,12 @@ function updateSomeItems(updateCount) {
 
 function sendMessagesWithThrottle(thisTestNumber) {
     var messageCount = null;
-    var updateCount = 100;
-    var interval = 100;
 
     postMessage({
         type: 'start',
         messageCount: messageCount,
-        updateCount: updateCount,
-        interval: interval
+        updateCount: LOAD_TEST_UPDATES_PER_MESSAGE,
+        interval: LOAD_TEST_MILLISECONDS_BETWEEN_MESSAGES
     });
 
     var intervalId;
@@ -131,39 +134,36 @@ function sendMessagesWithThrottle(thisTestNumber) {
     function intervalFunc() {
         postMessage({
             type: 'updateData',
-            records: updateSomeItems(updateCount)
+            records: updateSomeItems(LOAD_TEST_UPDATES_PER_MESSAGE)
         });
         if (thisTestNumber!==latestTestNumber) {
             clearInterval(intervalId);
         }
     }
 
-    intervalId = setInterval(intervalFunc, interval);
+    intervalId = setInterval(intervalFunc, LOAD_TEST_MILLISECONDS_BETWEEN_MESSAGES);
 }
 
 function sendMessagesNoThrottle() {
-    var messageCount = 1000;
-    var updateCount = 100;
-
     postMessage({
         type: 'start',
-        messageCount: messageCount,
-        updateCount: updateCount,
+        messageCount: STRESS_TEST_MESSAGE_COUNT,
+        updateCount: STRESS_TEST_UPDATES_PER_MESSAGE,
         interval: null
     });
 
     // pump in 1000 messages without waiting
-    for (var i = 0; i<=messageCount; i++) {
+    for (var i = 0; i<=STRESS_TEST_MESSAGE_COUNT; i++) {
         postMessage({
             type: 'updateData',
-            records: updateSomeItems(updateCount)
+            records: updateSomeItems(STRESS_TEST_UPDATES_PER_MESSAGE)
         });
     }
 
     postMessage({
         type: 'end',
-        messageCount: messageCount,
-        updateCount: updateCount
+        messageCount: STRESS_TEST_MESSAGE_COUNT,
+        updateCount: STRESS_TEST_UPDATES_PER_MESSAGE
     });
 }
 
