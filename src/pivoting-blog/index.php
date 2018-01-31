@@ -134,7 +134,7 @@ To find out more about pivoting, read the <a href="../javascript-grid-pivoting/"
 <p>Congrats, you are a master of the advanced reports now! </p>
 <p>Pivot tables are a powerful tool which is fairly simple to use once you know it's tricks.
 
-<p>You can try this by yourself right away, using the <a href="../exmaple.php">ag-Grid demo</a>.
+<p>You can try this by yourself right away, using the <a href="../example.php">ag-Grid demo</a>.
 If you are in a mood for writing code you can download ag-Grid and build your own grid with pivoting.</p>
 
 <ul class="content">
