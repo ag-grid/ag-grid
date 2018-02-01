@@ -296,6 +296,7 @@ export class GridPanel extends BeanStub {
         this.layout.addSizeChangeListener(this.setLeftAndRightBounds.bind(this));
 
         this.addScrollListener();
+        this.addPreventHeaderScroll();
 
         if (this.gridOptionsWrapper.isSuppressHorizontalScroll()) {
             this.eBodyViewport.style.overflowX = 'hidden';
@@ -1529,6 +1530,25 @@ export class GridPanel extends BeanStub {
         this.setVerticalScrollPosition(oldScrollPosition + pixels);
         let newScrollPosition = this.eBodyViewport.scrollTop;
         return newScrollPosition - oldScrollPosition;
+    }
+
+    // if the user is in floating filter and hits tab a few times, the header can
+    // end up scrolling to show items off the screen, leaving the grid and header
+    // and the grid columns no longer in sync.
+    private addPreventHeaderScroll() {
+        if (!this.eHeaderViewport) { return; }
+
+        this.addDestroyableEventListener(this.eHeaderViewport, 'scroll', ()=> {
+            // if the header scrolls, the header will be out of sync. so we reset the
+            // header scroll, and then scroll the body, which will in turn set the offset
+            // on the header, giving the impression that the header scrolled as expected.
+            let scrollLeft = this.eHeaderViewport.scrollLeft;
+            if (scrollLeft!==0) {
+                this.scrollHorizontally(scrollLeft);
+                this.eHeaderViewport.scrollLeft = 0;
+            }
+        });
+
     }
 
     private addScrollListener() {
