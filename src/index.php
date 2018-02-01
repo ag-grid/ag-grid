@@ -103,7 +103,7 @@ meta_and_links($title, $keywords, $description, false);
         <h2 class="heading-scenarios">Complex Scenarios, Made Easy </h2>
 
         <section>
-            <div class="demo">
+            <div class="demo" id="demo-1">
                 <?php include 'home/demo-1.php' ?>
                 <div class="view-code">
                     <a href="/javascript-getting-started#summary">View Code</a>
