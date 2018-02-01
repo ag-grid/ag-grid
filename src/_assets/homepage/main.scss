@@ -311,6 +311,10 @@
     @extend %stage;
     background-color: $offwhite;
 
+    @include media-breakpoint-down(sm) {
+        display: none;
+    }
+
     .view-code {
         @extend .text-right;
 

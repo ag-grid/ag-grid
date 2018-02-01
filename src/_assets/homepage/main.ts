@@ -206,6 +206,7 @@ $(() => {
     }
     var observer = new IntersectionObserver(
         targets => {
+            // console.log(targets);
             for (const { target, isIntersecting } of targets) {
                 if (isIntersecting) {
                     observer.unobserve(target);
