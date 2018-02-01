@@ -111,8 +111,8 @@ export class GroupStage implements IRowNodeStage {
             // to rootNode.childrenAfterGroup and maintaining order (as delta transaction misses the order).
             transaction: usingTransaction ? rowNodeTransaction : null,
 
-            // if no transaction, then it's shotgun, so no changed path
-            changedPath: usingTransaction ? changedPath : null
+            // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
+            changedPath: changedPath
         };
 
         return details;
@@ -168,7 +168,7 @@ export class GroupStage implements IRowNodeStage {
 
             // we add node, even if parent has not changed, as the data could have
             // changed, hence aggregations will be wrong
-            if (details.changedPath) {
+            if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(childNode.parent);
             }
 
@@ -198,7 +198,7 @@ export class GroupStage implements IRowNodeStage {
 
         // we add both old and new parents to changed path, as both will need to be refreshed.
         // we already added the old parent (in calling method), so just add the new parent here
-        if (details.changedPath) {
+        if (details.changedPath.isActive()) {
             let newParent = childNode.parent;
             details.changedPath.addParentNode(newParent);
         }
@@ -207,7 +207,7 @@ export class GroupStage implements IRowNodeStage {
     private removeNodes(leafRowNodes: RowNode[], details: GroupingDetails): void {
         leafRowNodes.forEach( leafToRemove => {
             this.removeOneNode(leafToRemove, details);
-            if (details.changedPath) {
+            if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(leafToRemove.parent);
             }
         });
@@ -291,7 +291,7 @@ export class GroupStage implements IRowNodeStage {
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails): void {
         newRowNodes.forEach( rowNode => {
             this.insertOneNode(rowNode, details);
-            if (details.changedPath) {
+            if (details.changedPath.isActive()) {
                 details.changedPath.addParentNode(rowNode.parent);
             }
         });

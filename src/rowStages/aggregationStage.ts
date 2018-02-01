@@ -83,7 +83,9 @@ export class AggregationStage implements IRowNodeStage {
             if (suppressAggAtRootLevel && notPivoting) { return; }
         }
 
-        let skipBecauseNoChangedPath = aggDetails.changedPath && !aggDetails.changedPath.isInPath(rowNode);
+        let skipBecauseNoChangedPath = aggDetails.changedPath.isActive()
+            && !aggDetails.changedPath.isInPath(rowNode);
+
         if (skipBecauseNoChangedPath) { return; }
 
         this.aggregateRowNode(rowNode, aggDetails);
@@ -158,11 +160,11 @@ export class AggregationStage implements IRowNodeStage {
     private aggregateRowNodeUsingValuesOnly(rowNode: RowNode, aggDetails: AggregationDetails): any {
         let result: any = {};
 
-        let changedValueColumns = aggDetails.changedPath ?
+        let changedValueColumns = aggDetails.changedPath.isActive() ?
             aggDetails.changedPath.getValueColumnsForNode(rowNode, aggDetails.valueColumns)
             : aggDetails.valueColumns;
 
-        let notChangedValueColumns = aggDetails.changedPath ?
+        let notChangedValueColumns = aggDetails.changedPath.isActive() ?
             aggDetails.changedPath.getNotValueColumnsForNode(rowNode, aggDetails.valueColumns)
             : null;
 
