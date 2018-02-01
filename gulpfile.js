@@ -24,13 +24,23 @@ gulp.task('webpack-noStyle', ['tsc'], webpackTask.bind(null, false, false));
 gulp.task('webpack-minify', ['tsc'], webpackTask.bind(null, true, true));
 gulp.task('webpack', ['tsc'], webpackTask.bind(null, false, true));
 
-gulp.task('tsc', ['cleanDist'], tscTask);
+gulp.task('tsc', ['tsc-src'], tscExportsTask);
+gulp.task('tsc-src', ['cleanDist'], tscTask);
+gulp.task('tsc-exports', ['cleanExports'], tscExportsTask);
+// gulp.task('tsc', ['cleanDist'], tscTask);
 
 gulp.task('cleanDist', cleanDist);
+gulp.task('cleanExports', cleanExports);
 
 function cleanDist() {
     return gulp
         .src('dist', {read: false})
+        .pipe(clean());
+}
+
+function cleanExports() {
+    return gulp
+        .src(['./main.d.ts','main.js'], {read: false})
         .pipe(clean());
 }
 
@@ -39,7 +49,6 @@ function tscTask() {
 
     var tsResult = gulp
         .src('src/**/*.ts')
-        //.pipe(sourcemaps.init())
         .pipe(gulpTypescript(project));
 
     return merge([
@@ -49,6 +58,25 @@ function tscTask() {
         tsResult.js
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(gulp.dest('dist/lib'))
+    ])
+}
+
+function tscExportsTask() {
+    const project = gulpTypescript.createProject('./tsconfig-exports.json', {typescript: typescript});
+
+    const tsResult = gulp
+        .src('./exports.ts')
+        .pipe(gulpTypescript(project));
+
+    return merge([
+        tsResult.dts
+            .pipe(header(headerTemplate, { pkg : pkg }))
+            .pipe(rename("main.d.ts"))
+            .pipe(gulp.dest('./')),
+        tsResult.js
+            .pipe(header(headerTemplate, { pkg : pkg }))
+            .pipe(rename("main.js"))
+            .pipe(gulp.dest('./'))
     ])
 }
 
