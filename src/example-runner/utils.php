@@ -47,12 +47,19 @@ if (USE_LOCAL) {
     );
 }
 
-function globalAgGridScript($enterprise = false)
+function globalAgGridScript($enterprise = false, $lazyLoad = false)
 {
     $path = $enterprise ? AG_GRID_ENTERPRISE_SCRIPT_PATH : AG_GRID_SCRIPT_PATH;
-    return <<<SCR
+    if ($lazyLoad) {
+     return <<<SCR
+    <script id="ag-grid-script" data-src="$path"></script>
+SCR;
+
+    } else {
+     return <<<SCR
     <script src="$path"></script>
 SCR;
+    }
 }
 
 function path_combine(...$parts)

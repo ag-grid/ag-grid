@@ -328,16 +328,39 @@
         }
     }
 
+    @keyframes appear {
+        from {
+            opacity: 0.3;
+        }
+
+        to {
+            opacity: 0.8;
+        }
+    }
     section {
         @extend .row, .full-width-row;
 
         .demo {
             @extend .col-md-12;
-        }
-
-        .demo {
             display: block;
             width: calc(100% - 30px);
+
+            .loading {
+                animation: appear 500ms linear 0s infinite alternate none running;
+                width: 320px;
+                height: 500px;
+                margin: 0 auto;
+                padding-top: 100px;
+                text-align: center;
+
+                img {
+                    margin-bottom: 1rem;
+                }
+                p {
+                    color: $secondary;
+                    font-size: 0.8rem;
+                }
+            }
         }
 
         .view-code {
@@ -365,6 +388,10 @@
             width: 100%;
             height: 600px;
         }
+    }
+
+    #demo-1 {
+        height: 710px;
     }
 }
 

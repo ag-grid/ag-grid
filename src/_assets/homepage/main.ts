@@ -190,9 +190,33 @@ $(() => {
 });
 
 $(() => {
+    var agGridScriptIsLoaded = false;
+
+    function loadAgGridScript(): Promise<boolean> {
+        if (agGridScriptIsLoaded) {
+            return Promise.resolve(true);
+        } else {
+            return new Promise((resolve, reject) => {
+                $.getScript($("#ag-grid-script").data("src"), (data, status, xhr) => {
+                    agGridScriptIsLoaded = true;
+                    resolve(true);
+                });
+            });
+        }
+    }
     var observer = new IntersectionObserver(
-        ([{ isIntersecting }]) => {
-            console.log(isIntersecting);
+        targets => {
+            for (const { target, isIntersecting } of targets) {
+                if (isIntersecting) {
+                    observer.unobserve(target);
+                    loadAgGridScript().then(() => {
+                        $(target)
+                            .find(".loading")
+                            .load($(target).data("load"))
+                            .removeClass("loading");
+                    });
+                }
+            }
         },
         {
             root: null,
@@ -200,6 +224,7 @@ $(() => {
             threshold: 0
         }
     );
-
-    observer.observe(document.querySelector("#demo-1"));
+    $(".demo").each(function() {
+        observer.observe(this);
+    });
 });
