@@ -149,7 +149,7 @@ include('../includes/mediaHeader.php');
 
         <p>
             There are plenty of other smaller enhancements and bug fixes that didn't make this press release.
-            For the full list of changes see the <a href="../changeLogIndex.php">Change Log</a>.
+            For the full list of changes see the <a href="../change-log/changeLogIndex.php">Change Log</a>.
         </p>
 
         <h2>And Share!!!</h2>
