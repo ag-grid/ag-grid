@@ -188,7 +188,7 @@ export class InMemoryRowModel {
         }
     }
 
-    private createChangePath(): ChangedPath {
+    private createChangePath(rowNodeTransactions: RowNodeTransaction[]): ChangedPath {
 
         // for updates, if the row is updated at all, then we re-calc all the values
         // in that row. we could compare each value to each old value, however if we
@@ -197,11 +197,17 @@ export class InMemoryRowModel {
         // each column is different. that way the changedPath is used so that only
         // the impacted parent rows are recalculated, parents who's children have
         // not changed are not impacted.
+
         let valueColumns = this.columnController.getValueColumns();
 
-        if (!valueColumns || valueColumns.length === 0) { return null; }
+        let noValueColumns = _.missingOrEmpty(valueColumns);
+        let noTransactions = _.missingOrEmpty(rowNodeTransactions);
 
         let changedPath = new ChangedPath(false);
+
+        if (noValueColumns || noTransactions) {
+            changedPath.setInactive();
+        }
 
         return changedPath;
     }
@@ -220,7 +226,7 @@ export class InMemoryRowModel {
         // let start: number;
         // console.log('======= start =======');
 
-        let changedPath: ChangedPath = params.rowNodeTransactions ? this.createChangePath() : null;
+        let changedPath: ChangedPath = this.createChangePath(params.rowNodeTransactions);
 
         switch (params.step) {
             case constants.STEP_EVERYTHING:
@@ -232,7 +238,7 @@ export class InMemoryRowModel {
                 this.doFilter();
                 // console.log('filter = ' + (new Date().getTime() - start));
             case constants.STEP_PIVOT:
-                this.doPivot();
+                this.doPivot(changedPath);
             case constants.STEP_AGGREGATE: // depends on agg fields
                 // start = new Date().getTime();
                 this.doAggregate(changedPath);
@@ -528,7 +534,7 @@ export class InMemoryRowModel {
             } else {
                 // groups are about to get disposed, so need to deselect any that are selected
                 this.selectionController.removeGroupsFromSelection();
-                this.groupStage.execute({rowNode: this.rootNode});
+                this.groupStage.execute({rowNode: this.rootNode, changedPath: changedPath});
                 // set open/closed state on groups
                 this.restoreGroupState(groupState);
             }
@@ -559,9 +565,9 @@ export class InMemoryRowModel {
         this.filterStage.execute({rowNode: this.rootNode});
     }
 
-    private doPivot() {
+    private doPivot(changedPath: ChangedPath) {
         if (this.pivotStage) {
-            this.pivotStage.execute({rowNode: this.rootNode});
+            this.pivotStage.execute({rowNode: this.rootNode, changedPath: changedPath});
         }
     }
 
