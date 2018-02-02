@@ -68,7 +68,7 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     private indentClass: string;
 
     // this cell renderer
-    private cellRenderer: ICellRendererComp;
+    private innerCellRenderer: ICellRendererComp;
 
     constructor() {
         super(GroupCellRenderer.TEMPLATE);
@@ -245,9 +245,11 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
         }
 
         // retain a reference to the created renderer - we'll use this later for cleanup (in destroy)
-        rendererPromise.then((value:ICellRendererComp) => {
-            this.cellRenderer = value;
-        })
+        if(rendererPromise) {
+            rendererPromise.then((value:ICellRendererComp) => {
+                this.innerCellRenderer = value;
+            })
+        }
     }
 
     private addChildCount(): void {
@@ -443,8 +445,8 @@ export class GroupCellRenderer extends Component implements ICellRenderer {
     public destroy() : void {
         super.destroy();
 
-        if(this.cellRenderer && this.cellRenderer.destroy) {
-            this.cellRenderer.destroy();
+        if(this.innerCellRenderer && this.innerCellRenderer.destroy) {
+            this.innerCellRenderer.destroy();
         }
     }
 
