@@ -36,14 +36,10 @@ include('../includes/mediaHeader.php');
     <div class="col-md-8">
 
         <p class="lead">
-            About two months ago I read the post
-            <a href="http://www.crankuptheamps.com/blog/posts/2017/10/05/grid-comparison/">
-                Grids Without Gridlock: Which is Fastest?
-            </a>
-            where ag-Grid was given an honorable mention with speed
-            as it's downfall. I knew this was not true, ag-Grid can be incredibly
-            fast. The article said ag-Grid could only process 60 updates per second.
-            So let me introduce you to ag-Grid processing over 150,000 updates per second...
+            ag-Grid can process over <b>150,000 updates per second</b>.
+            Together with the latest browsers
+            and ag-Grid's cutting edge algorithms, let me introduce you to the
+            fastest JavaScript datagrid in the world!!!
         </p>
 
         <h2>The Test</h2>
